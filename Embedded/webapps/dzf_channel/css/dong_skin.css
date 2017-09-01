@@ -1,0 +1,154 @@
+.dzf-skin .logo{
+    background: #e2e6ea url(../images/skin/dong_zsj.png) no-repeat;  /* 背景色及背景 */
+	background-size: cover;
+}
+.dzf-skin div#sidebar {
+    background: #fff url(../images/skin/dong_zxj.png) no-repeat left bottom;  /* 背景 */
+	background-size: contain;
+}
+.dzf-skin div#sidebar:before {
+    background: rgba(235, 242, 255, 0.7);
+}
+.dzf-skin .nav_li span i {
+    background-image: url(../images/skin/dong_aside_icon.png);
+}
+.dzf-skin .nav_li .menu_1 {
+    background: #bed1ee;
+}
+.dzf-skin .nav_li .menu_1 span{
+	background: #92acd3;
+}
+.dzf-skin .sub_menu_div, .dzf-skin .sub_menu_div1{
+	background-color: #bed1ee;
+}
+.dzf-skin .sub_menu_ul li:hover {
+    background-color: #92acd3;
+}
+
+.dzf-skin .top_text span.home-icon, .dzf-skin .drop_down_block span b {
+    background-color: #acb8c3;
+}
+.dzf-skin .corp_info p {
+    color: #7592a7;
+}
+.dzf-skin .main_cont .tabs li.tabs-selected .tabs-title,
+.dzf-skin .main_cont .tabs li a.tabs-inner:hover .tabs-title {
+    color: #9fb0ca;   /* 字体色 */
+}
+.dzf-skin .w_600 dl dd a{
+	color: #9fb0ca;  
+}
+.dzf-skin .w_600 dl dd a:hover{
+	color: #fff;
+	background: #9fb0ca;
+} 
+.dzf-skin .mod-toolbar-top {
+    /* margin: 0px 18px 18px;
+    margin: 0px 0px 0px; */
+    background:#d1d8e4;
+} 
+/* .dzf-skin .w_600_tab li.wen1, */
+/*  .dzf-skin .hz_tab li.wen1 span,  */
+.dzf-skin .yggzlfx h3, 
+.dzf-skin .ui-btn-xz{
+    background-color: #e2e6ea;  /* 背景色 */
+}
+ .dzf-skin .drop_down{
+	background: #bed1ee;
+}
+.dzf-skin .ui-btn-xz{
+	/* border-bottom: 2px solid #e2e6ea; */
+	border:none;
+}
+.dzf-skin .main_top{
+    background: #e2e6ea url(../images/skin/dong_ysj.png) no-repeat right top;  /* 背景色及背景 */
+}
+
+.dzf-skin .drop_down_block .user-arrow, .dzf-skin .main_cont .tabs-first .tabs-icon, .dzf-skin .main_cont .tabs li a.tabs-close {
+    background-image: url(../images/skin/dongicon.png);  /* 背景 */
+    background-repeat: no-repeat;
+}
+
+.dzf-skin .main_cont .tabs-scroller-left, .dzf-skin .main_cont .tabs-scroller-right, .dzf-skin .manager-tz h4 .msg-more i {
+    background: #F2F2F2 url(../images/skin/dong_left_icon.png) no-repeat left center;  /* 背景 */
+    background-size: contain;
+}
+
+/*按钮颜色, panel window头颜色*/
+.dzf-skin .ui-btn, .dzf-skin .dialog-button .l-btn,
+    .dzf-skin .messager-button .l-btn, .dzf-skin .easyui-linkbutton,
+    .dzf-skin .window .window-header,
+    .dzf-skin .accordion-header-selected {
+    background: #bed1ee;
+    color: #fff;
+    filter:alpha(opacity=100);
+}
+/*按钮悬停颜色*/
+.dzf-skin .ui-btn:hover, .dzf-skin .dialog-button .l-btn:hover,
+.dzf-skin .messager-button .l-btn:hover, .dzf-skin .easyui-linkbutton:hover {
+    background: #ffffff;
+    color: #bed1ee;
+}
+.more_div li a:hover {
+    background: #e2e6ea;
+    color: #fff;
+}
+
+/*上传图片按钮颜色*/
+.dzf-skin #uploader .placeholder .webuploader-pick, .dzf-skin #uploader .statusBar .btns .uploadBtn
+	{
+	background: #bed1ee;
+	color: #fff;
+}
+
+.dzf-skin #uploader .placeholder .webuploader-pick-hover , .dzf-skin #uploader .statusBar .btns .uploadBtn:hover{
+	background: #AFC6EA;
+}
+
+/*dialog关闭按钮*/
+.dzf-skin .panel-tool a:hover {
+    background-color: #e2e6ea;
+}
+
+.dzf-skin .search-rs {
+	background: #e2e6ea;
+}
+.datagrid-cell .dt {
+    background: #e2e6ea;
+}
+.card_alls p a,.card_le .a_sel{
+	background: #e2e6ea;
+    border-color: #e2e6ea;
+}
+.left_ul li{
+    border: 1px solid #e2e6ea;
+   margin: 5px 0;
+}
+.left_ul li:hover,.left_ul .sel{
+	color:#fff;
+}
+.left_ul li:hover,.left_ul .sel,.accordion .accordion-header{
+  	background: #e2e6ea;
+}
+
+.dzf-skin .search_select{
+    background-color: #7D94B8;
+}
+#tabsMenu + .panel .combo-panel{background:#7D94B8;}
+#tabsMenu + .panel .combobox-item-hover{background:none;}
+#tabsMenu + .panel .combobox-item{color:#FFF;}
+#tabsMenu + .panel .combobox-item-selected{background:#bed1ee;}
+
+.dzf-skin .w_600_tab li.wen1{border-top:3px solid #e2e6ea;line-height:24px;background:#f6f8f8;}
+.dzf-skin .hz_tab li.wen1 span{border-top:3px solid #e2e6ea;line-height:44px;background:#f6f8f8;}
+.khjyfx h3{background:#e2e6ea; color:#FFF;}
+
+/*用户信息换肤*/
+.machine li a {border:1px solid #e2e6ea;}
+.box-wrapper{border:1px solid #e2e6ea;}
+.btn_change button{background:#e2e6ea;}
+.dzf-skin .main_cont .tabs li.tabs-selected a.tabs-inner{border:1px solid #cbced1;}
+.dzf-skin .main_cont .tabs li a.tabs-inner{border:1px solid #cbced1;}
+.msg-left{background:#ced1d6;}
+.dzf-skin .user_menu .message-list{background:#ced1d6;}
+.tabs li.tabs-selected a.tabs-inner{background:#e2e6ea;}

@@ -1,0 +1,132 @@
+.other{width:100%;/* margin:0px auto 20px; */overflow:hidden}
+.tit_h5{width:100%;margin:20px auto;overflow:hidden;text-align:center;line-height:30px;}
+.tit_h5 h5{line-height:30px;text-align:center;font-size:16px;margin:0px auto 10px;padding-bottom:10px;border-bottom:1px solid #ddd;}
+.licheng{width:100%;margin:0px auto 10px;overflow:hidden;background:#fff;}
+.licheng ul{padding:20px 0px;overflow:hidden;margin:0px auto;width:95%;}
+/* .licheng ul li{float:left;width:10.5%;padding-right:2%;margin:0px auto 0px;overflow:hidden;background:url(../../images/jiao.png) 98% 18% no-repeat} */
+.licheng ul li{height:92px;float:left;width:10.5%;margin:0px auto 0px;overflow:hidden;background:url(../images/jiao.png) 98% 22% no-repeat}
+.licheng ul li a{color:#777}
+/**
+.licheng ul li a{color:#666;float:left;display:block;width:100%}
+.licheng ul li h6{text-align:center;font-size:16px;font-weight:normal;line-height:30px}
+.licheng ul li span{float:left;display:block;text-align:center;width:100%;margin:25px auto;height:5px;}
+.licheng ul li span b{display:block;float:left;border:1px solid #ddd;height:15px;width:15px;border-radius: 60%;background:#eee;margin-left:46%;margin-top:-7px}
+.licheng ul .zz1 a{color:#434cfc;}
+.licheng ul li span b{}
+**/
+
+.licheng ul li span{display:block;width:20px;height:20px;text-align:center;margin:0px auto 10px;border-radius: 60%;background:#c0c0c0;border:1px solid #b1b1b1;color:#fff;font-size:14px;}
+.licheng ul li span b{display:block;font-weight:normal;line-height:20px;padding-top:20px}
+.licheng ul li p{clear:both;width:100%;line-height:20px;text-align:center;}
+.licheng ul .zz1{background:url(../images/jiao1.png) 98% 22% no-repeat}
+.licheng ul .zz1 a{color:#5474fa}
+.licheng ul .zz1 span{background:#5474fa;border:1px solid #5474fa;}
+
+.xinxi{/* width:95%; *//* margin:0px auto 20px; */overflow:hidden;background:#fff}
+.card_all{background:#ddd;margin:0px auto 20px;overflow:hidden;padding:10px 0px}
+.card_all p{line-height:30px;margin:0px auto 0px;overflow:hidden;padding-left:20px}
+.card_all p span{float:left;margin-right:20px}
+.card_all p span input{margin-right:5px;position:relative;top:3px;}
+.card_all p a{float:left;margin-left:20px;padding:0px 20px;line-height:30px;height:30px;border-radius: 5px;text-align:center;color:#fff;border:1px solid #2a87d5;background:#2a87d5;font-size:14px}
+.card_all p a:hover{border:1px solid #2267a8;background:#2267a8}
+
+.card{width:100%;background: #fff;margin:0px auto 20px;overflow:hidden;}
+.card h3{font-size:16px;margin-bottom:10px;color:#333;background:#fafafa;border-bottom:1px #ddd solid;font-weight:normal;padding:5px 0px 5px 30px;}
+.card_col{margin-bottom:10px;width:95%;overflow:hidden;min-width: 1060px;}
+.card_col:after{content:"";display:block;clear:both;height:0;}
+.card_col label{float:left;width:140px;line-height:28px;font-size:14px;text-align:right;padding-right:10px;}
+.card_col label input{position:relative;top:-4px;}
+.card_col label b{color:red;margin-right:5px;}
+.card_col font{float:left;margin-right:20px;line-height:28px;position:relative;font-size:14px;}
+.card_col font input{padding:0 3px;outline:0 none;font-size:14px;color:#777}
+
+.mers{ width:80%;border-collapse:collapse;margin-left:6%;margin-bottom:20px;}
+.mers caption{line-height:35px;text-align:left;font-size:14px}
+.mers td, .mers th {border:1px solid #ddd;padding:3px 7px 2px 7px;line-height:30px;text-align:center}
+.mers th {background-color:#e4f2ee;color:#;}
+.mers td p{text-align:left;line-height:23px}
+.card_col p textarea{width:88%;padding:10px;line-height:23px;color:#666;font-size:12px}
+.bnt_bc{margin:0px auto 20px;overflow:hidden;padding:10px 0px;text-align:center}
+.bnt_bc a{padding:10px 40px;border-radius: 5px;color:#fff;border:1px solid #2a87d5;background:#2a87d5;font-size:16px}
+.bnt_bc a:hover{border:1px solid #2267a8;background:#2267a8}
+
+.xinxi_s{margin:0px auto 0px;overflow:hidden;width:100%;}
+.card_le{float:right;width:23px;margin:10px auto;overflow:hidden;margin-right:0.6%;/* background:#f5f5f5; */}
+.card_le a{float:left;display:block;margin-top:6px;width:100%;text-align:center;color:#555;padding:10px 0px;
+line-height:18px;border-bottom:1px solid #ddd;border-bottom-right-radius:8px; border-top-right-radius:8px;background:#dddddd;}
+.card_le a:hover{color:#fff;background:#2267a8}
+.card_le .a_sel{color:#fff;background:#2267a8}
+.card_ri{/* float:left;width:96%; */overflow: auto;border:1px solid #cbcfd4;min-height:320px;}
+.bnt_bcs{width:100%;margin:0px auto 20px;overflow:hidden;padding:10px 0px;text-align:center;}
+.bnt_bcs a{ padding:2px 40px 10px 40px;border-radius: 5px;color:#fff;border:1px solid #2a87d5;background:#2a87d5;font-size:16px;}
+.bnt_bcs a:hover{border:1px solid #2267a8;background:#2267a8}
+.card_alls{width:100%;background:#ddd;margin:0px auto 20px;overflow:hidden;padding:10px 0px}
+.card_alls p{line-height:30px;margin:0px auto 0px;overflow:hidden;padding-left:20px}
+.card_alls p span{float:left;margin-right:20px}
+.card_alls p span input{margin-right:5px;position:relative;top:3px}
+.card_alls p a{float:right;margin-right:30px;padding:0px 16px;line-height:24px;height:24px;border-radius: 5px;text-align:center;color:#fff;border:1px solid #2a87d5;background:#2a87d5;font-size:14px}
+.card_alls p a:hover{border:1px solid #2267a8;background:#2267a8}
+
+
+#ptdiv1,#ptdiv2,#ptdiv3{
+				margin: 24px 28px;
+				font-size: 20px;
+				font-family: "microsoft yahei";
+}
+.ptd2 div{
+	width:200px;
+	display: inline-block;
+    text-align: center;
+    margin: 5px 0 10px;
+}
+#ptdiv1 .ptd3{
+	margin: 0 1px 15px 0px;
+}
+#ptdiv2 .ptd3{
+	margin: 0 1px 15px 0px;
+}
+.ptd3 span{
+	margin-right: 7px;
+}
+.ptd3 input{
+	width: 220px;
+	border: 0;
+	height: 38px;
+	background: none;
+}
+.ptd3 img{
+    vertical-align: bottom;
+    margin: 0 10px;
+}
+.ptd3 button{
+	width: 150px;
+	height: 40px;
+	background: #50c5b9;
+	border: 0;
+	border-radius: 20px;
+	color: #fff;
+	font-size: 18px;
+	margin-top: 20px;
+}
+#ptdiv1 .ptd3 button{
+	margin-left: 240px;
+}
+#ptdiv2 .ptd3 button{
+	margin-left: 220px;
+}
+#ptdiv3 .ptd3{
+	margin-left: 200px;
+}
+#ptdiv3 .ptd3 span{
+	line-height: 84px;
+}
+.ipt_wrp{
+	display:inline-block;width:220px;height:38px;border-radius: 3px;border: 1px solid #cccccc;
+    margin-left: 20px;
+}
+.deal_card_class{overflow:hidden;overflow-y:auto;}
+
+
+
+
+

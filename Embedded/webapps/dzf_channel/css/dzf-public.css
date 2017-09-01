@@ -1,0 +1,13 @@
+@charset="utf-8";
+.dzf-wrapper{background:#fff}
+.dzf-wrapper .mod-toolbar-content{background:#fff;border:none}
+/* .dzf-wrapper .textbox-addon .searchbox-button{background:0 0} */
+ .dzf-wrapper .searchbox{border-radius:5px} 
+.dzf-wrapper .ui-btn-xz{border-radius:6px;background:#a8d789;border-bottom:none;margin-bottom:0}
+.dzf-wrapper .ui-btn-xz:hover{background:#e4727a}
+/*.dzf-wrapper .dzf-bgcolor1{background:#e4727a}*/
+.dzf-wrapper .datagrid-header,.dzf-wrapper .datagrid-header-row{background:#cde8fd}
+.dzf-wrapper .panel-body-noheader{border-top-width:0}
+.dzf-wrapper .datagrid-header{border-color:#FFF}
+.dzf-wrapper .datagrid-body td,.dzf-wrapper .datagrid-footer td,.dzf-wrapper .datagrid-header td{border-color:#FFF}
+.dzf-wrapper .datagrid-header td.datagrid-header-over{background:inherit;color:inherit;cursor:default}

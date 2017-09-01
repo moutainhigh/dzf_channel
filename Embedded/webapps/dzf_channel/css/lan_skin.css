@@ -1,0 +1,161 @@
+.dzf-skin .logo {
+    background-color: #066dca;
+}
+.dzf-skin div#sidebar {
+    background: #275482;
+}
+.dzf-skin div#sidebar:before {
+    background: #1e4268;
+}
+.dzf-skin .nav_li span i {
+    background-image: url(../images/iconss.png);
+}
+.dzf-skin .nav_li .menu_1 {
+    background: #1b8cf2;
+}
+.dzf-skin .nav_li .menu_1 span{
+	background: #1675ca;
+}
+.dzf-skin .sub_menu_div, .dzf-skin .sub_menu_div1{
+	background-color: #1b8cf2;
+}
+.dzf-skin .sub_menu_ul li:hover {
+    background-color: #1675ca;
+}
+.dzf-skin .main_top{
+	background-color: #275482;
+}
+.dzf-skin .main_cont .tabs li.tabs-selected .tabs-title {
+    color: #2c9dd8;
+}
+.dzf-skin .main_cont .tabs li a.tabs-inner:hover .tabs-title{
+	color: #178be7;
+}
+/* .dzf-skin .w_600_tab li.wen1 {
+    background: #2c9dd8;
+} */
+.dzf-skin .w_600 dl dd a{
+	color: #178be7;
+}
+.dzf-skin .w_600 dl dd a:hover{
+	color: #fff;
+	background: #178be7;
+} 
+.dzf-skin .yggzlfx h3 {
+    background: #a9bad5;
+}
+.dzf-skin .drop_down_block span b {
+    background-color: #1675ca;
+}
+.dzf-skin .top_text span.home-icon{
+	background-color: #1675ca;
+}
+.dzf-skin .drop_down {
+    background: #1b8cf2;  /*背景色*/
+}
+.dzf-skin .drop_down_block .user-arrow{
+	background-image: url(../images/public.png);
+}
+ .dzf-skin .mod-toolbar-top {
+    /* margin: 0px 18px 18px;
+   margin: 0px 0px 0px; */
+/*    background: #d9ecf6; */
+   background: #EFF1F2;
+} 
+.dzf-skin .ui-btn-xz {
+    background: #2c9dd8;
+    /* border-bottom: 2px solid #2c9dd8; */
+    border:none;
+}
+/* .dzf-skin .hz_tab li.wen1 span {
+    background: #2c9dd8;
+} */
+.dzf-skin .main_cont .tabs-first .tabs-icon{
+	background-image: url(../images/skin/lanicon.png);
+}
+.dzf-skin .main_cont .tabs li a.tabs-close {
+    background-image: url(../images/common.png);
+}
+.dzf-skin .main_cont .tabs-scroller-left, .dzf-skin .main_cont .tabs-scroller-right, .dzf-skin .manager-tz h4 .msg-more i {
+    background: #F2F2F2 url(../images/skin/lan_left_icon.png) no-repeat left center;
+    background-size: contain;
+}
+
+
+/*按钮颜色, panel window头颜色*/
+.dzf-skin .ui-btn, .dzf-skin .dialog-button .l-btn,
+    .dzf-skin .messager-button .l-btn, .dzf-skin .easyui-linkbutton,
+    .dzf-skin .window .window-header,
+    .dzf-skin .accordion-header-selected {
+   /*  background: #2c9dd8; */
+    background: #1675ca;
+    color: #fff;
+    filter:alpha(opacity=100);
+}
+/*按钮悬停颜色*/
+.dzf-skin .ui-btn:hover, .dzf-skin .dialog-button .l-btn:hover,
+.dzf-skin .messager-button .l-btn:hover, .dzf-skin .easyui-linkbutton:hover {
+    background: #fff;
+    color: #2c9dd8;
+}
+.more_div li a:hover {
+    background: #2c9dd8;
+    color: #fff;
+}
+
+/*上传图片按钮颜色*/
+.dzf-skin #uploader .placeholder .webuploader-pick, .dzf-skin #uploader .statusBar .btns .uploadBtn
+	{
+	background: #2c9dd8;
+	color: #fff;
+}
+
+.dzf-skin #uploader .placeholder .webuploader-pick-hover , .dzf-skin #uploader .statusBar .btns .uploadBtn:hover{
+	background: #288EC3;
+}
+
+/*dialog关闭按钮*/
+.dzf-skin .panel-tool a:hover {
+    background-color: #2c9dd8;
+}
+.dzf-skin .search-rs {
+	background: #2c9dd8;
+	color: #fff;
+}
+.datagrid-cell .dt {
+    background: #2c9dd8;
+}
+
+
+.left_ul li{
+    border: 1px solid #2c9dd8;
+   margin: 5px 0;
+}
+.left_ul li:hover,.left_ul .sel{
+	color:#fff;
+}
+.left_ul li:hover,.left_ul .sel,.accordion .accordion-header{
+  	background: #2c9dd8;
+}
+
+.dzf-skin .search_select{
+  /* background-color: #0074B2; */
+     background-color: #FFF; 
+}
+#tabsMenu + .panel .combo-panel{background:#0074B2;}
+#tabsMenu + .panel .combobox-item-hover{color:#FFF;background:none;}
+#tabsMenu + .panel .combobox-item{color:#FFF;}
+#tabsMenu + .panel .combobox-item-selected{background:#2c9dd8;}
+.dzf-skin .w_600_tab li.wen1{border-top:3px solid #1489e4;line-height:24px;background:#f6f8f8;}
+.dzf-skin .hz_tab li.wen1 span{border-top:3px solid #1489e4;line-height:44px;background:#f6f8f8;}
+.khjyfx h3{background:#a9bad5; color:#FFF;}
+
+/*用户信息换肤*/
+.dzf-skin .machine li a {border:1px solid #2c9dd8;}
+.box-wrapper{border:1px solid #2c9dd8;}
+.btn_change button{background:#2c9dd8;}
+.dzf-skin .main_cont .tabs li.tabs-selected a.tabs-inner{border:1px solid #268abf}
+.dzf-skin .main_cont .tabs li a.tabs-inner{border:1px solid #bfbfbf;}
+.msg-left{background:#7494b3;}
+.dzf-skin .user_menu .message-list{background:#7494b3;}
+.tabs li.tabs-selected a.tabs-inner{background:#2c9dd8;}

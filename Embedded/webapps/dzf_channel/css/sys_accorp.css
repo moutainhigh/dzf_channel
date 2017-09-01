@@ -1,0 +1,109 @@
+.preview{
+    font-family: Microsoft YaHei;
+    width: 1080px;
+    margin:0 auto;
+    overflow: hidden;
+    font-weight: bold;
+    font-size:14px;
+    padding-top:0px;
+}
+.change-avatar{
+    width: 215px;
+    float: left;
+    text-align: center;
+}
+.change-avatar-text{
+    font-size: 14px;
+    margin-top: 10px;
+    color: #1489e4;
+    cursor: pointer;
+}
+.personal-infor{
+    width: 805px;
+    height: 600px;
+    float: right;
+    margin-right:40px;
+}
+.title{
+    font-size:14px;
+    margin:10px 0;
+}
+.input-item{
+    height:28px;
+    padding:6px 0;
+}
+.input-item input,
+.input-item select,
+.input-item textarea,
+.button-group button{
+    font-size:14px;
+    font-family: youyuan;
+    font-weight: bold;
+    color: #666;
+}
+.input-item>*{
+    vertical-align: middle;
+}
+.input1{
+    width: 116px;
+    margin-right: 65px;
+}
+.input2{
+    width: 166px;
+}
+.input3{
+    width: 545px;
+}
+.input-item select{
+    appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+    width: 170px;
+    height:30px;
+    font-size:14px;
+    padding:0 10px;
+    background: url("../../../images/website/billperson/arrow-down.png") 145px no-repeat;
+    margin-right: 10px;
+}
+.input-item select:focus{
+    border-color: #218BE1;
+    outline:none;
+}
+.description{
+    padding-top:0;
+    height: auto;
+}
+.description textarea{
+    width: 635px;
+    height:106px;
+    padding: 5px 10px;
+    resize: none;
+}
+.preview label{
+    margin-right:-3px;
+}
+.button-group{
+    margin-top:30px;
+    margin-left:70px;
+}
+.preview button{
+    border:1px solid #1489e4;
+    background: #FFF;
+    outline:none;
+    cursor: pointer;
+    width: 158px;
+    height:48px;
+    color: #1489E4;
+    font-size: 14px;
+    border-radius: 5px;
+}
+.preview button.close{
+    background: #1489e4;
+    color: #FFF;
+}
+.preview button.save{
+    margin-left:120px;
+}
+.input-item{
+	width:1000px;
+}

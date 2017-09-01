@@ -1,0 +1,30 @@
+@charset "utf-8";
+body{background:#eff2f5;margin:0; padding:0; font:12px/1.5 SimSun, Arial, sans-serif;}
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, img, small, strike, sub, sup, tt, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td ifram{ margin: 0; padding: 0; border: 0;  }
+ul , li { list-style:none;}
+a{text-decoration:none;color:#70a1db}
+img{border:none;}
+
+.logo {background:url(../img/logobj-3.png) repeat; width:100%}
+.logo p {width:1000px; margin:0 auto;}
+.logo img { padding:15px;}
+.datu  {background:url(../img/ew2.png) no-repeat; background-size:100% 100%;}
+.zhongbu {width:1000px;overflow:hidden; margin: auto; padding: 80px}
+.zou {float:left; margin-left:60px;}
+.denglu {background:url(../img/s7.png) no-repeat; width;318px; height:410px; width: 358px; float:right;}
+.pass1 { width: 318px; margin: 12px auto; height: 410px;}
+.denglu img { margin: 25px auto 10px;}
+.kuang {overflow:hidden; margin: 0px auto; width: 291px;}
+.kuang p {font-family:"微软雅黑"; font-size:18px; color:#454545; line-height:55px;}
+.kuang p input {width:212px; border:1px #d1d1d1 solid; border-radius:5px; padding:10px;}
+.riqi input {color: #CACACA; letter-spacing:1px; background:url(../img/rili-2.png) no-repeat;background-position: 200px;}
+.zidong {margin:20px auto; font-family:"微软雅黑"; font-size:14px; color:#454545; width:290px;}
+.zidong a { float:right; color:#1e1e1e;}
+.jinru {width: 280px;height: 50px;margin: 0 auto;}
+.jinru button {width: 288px;height: 50px;background: #2954b1;font-size: 26px;color: #fff; border-radius:5px}
+.zidong span {color:#807f7f;}
+
+
+
+.banquan {width:323px; margin:80px auto 0px; clear: left; overflow: hidden; padding:30px;}
+.banquan p {font-family:"微软雅黑"; font-size:14px; color:#454545;}

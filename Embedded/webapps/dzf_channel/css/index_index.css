@@ -1,0 +1,82 @@
+.index_body_index{
+	/* min-height:490px; */
+	overflow:hidden;
+}
+.tz-content{
+  width: 33.5%;
+  line-height: 25px;
+  background: rgb(117, 226, 131);
+  white-space: normal;
+  position: absolute;
+  margin: 0px;
+  color: #fff;
+  text-align: left;
+  padding: 5px 6px;
+}
+.tz-content:before {
+  position: absolute;
+  left: 50px;
+  top: -10px;
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgb(117, 226, 131);
+}
+*{ margin:0px; padding:0px;}
+.info{ width:800px; height:400px; margin:0 auto; position:relative;}
+.info-A,.info-B,.info-C,.info-D,.info-E,.info-F,.info-G,.info-H,.info-I,.info-J{ position:absolute;}
+.info-A{top:90px; left:154px;}
+.info-B{top:90px;left:306px;}
+.info-C{top:90px;left:406px;}
+.info-D{top:90px;left:502px;}
+.info-E{top:90px;left:602px;}
+.info-F{top:90px;left:696px;}
+.info-G{top:250px;left:58px;}
+.info-H{top:250px;left:256px;}
+.info-I{top:250px;left:452px; }
+.info-J{top:250px;left:648px;}
+
+#tabsMenu + .panel .combo-panel {height:auto !important;}
+ .combo-panel{height:240px !important;} 
+.search_select .textbox .textbox-text{color: #fff; cursor: pointer;}
+.panel-body{border:none;overfolw:auto;}
+.textbox{border:none;}
+/* .textbox-icon{display:none;} */
+.tabs-panels{font-weight:bold;}
+.dzf-skin .w_600_tb dl{font-weight:600;}
+.dzf-skin .w_600_tb dl p{font-weight:600;}
+.dzf-skin .w_600_tb dl dd p{color:#555;}
+
+.ui_operation .in a:hover img{ background:url(images/2_03.png) no-repeat !important; }
+.ui_operation .inn a:hover img{ background:url(images/4_03.png) no-repeat !important; }
+
+
+.dzf-skin .ui_operation li.dh-message a b{background: url(../images/xiaoxi.png) no-repeat;}
+.dzf-skin .ui_operation li.dh-message a:hover b{background: url(../images/xiaoxi_hover.png) no-repeat;}
+.dzf-skin .ui_operation li.customer-service a b{background: url(../images/custorms.png) no-repeat;}
+.dzf-skin .ui_operation li.customer-service a:hover b{background: url(../images/custorm.png) no-repeat;}
+.dzf-skin .ui_operation li.log a b{background: url(../images/freshen.png) no-repeat;}
+.dzf-skin .ui_operation li.log a:hover b{background: url(../images/freshen_move.png) no-repeat;} 
+
+
+.dzf-skin .ui_operation li.skin, .dzf-skin .ui_operation li.dh-message{position:relative;height:60px;width:36px;}
+.dzf-skin .ui_operation li.dh-message a b{width:29px;height:31px;float:left;margin:20px -14px 0 0}
+/* .dzf-skin .ui_operation li.dh-message a:hover b{background-position:-20px -143px} */
+
+/* .dzf-skin .ui_operation li.customer-service a b{background-position: -112px -83px;width:29px;height:31px;float:left;margin:15px 10px 0 0} */
+.click a:hover label font{color: #FFFFFF;padding-left:-8px;background: #178be7;border-radius: 26px;padding:2px 8px 4px 8px;font-size: 14px;}
+.tabs li a.tabs-inner{line-height:0px;}
+.shadow{  
+   -webkit-box-shadow:#BBB 0px 0px 5px;  
+   -moz-box-shadow:#BBB 0px 0px 5px;  
+   box-shadow:#BBB 0px 0px 5px;  
+   margin-top: 2px;
+}  
+.layui-upload-iframe {
+	display: none;
+}
+
+ .tabs-panels{font-weight:bold;padding:0 18px;}

@@ -1,0 +1,35 @@
+package com.dzf.service.demp.channel;
+
+import java.util.List;
+
+import com.dzf.model.demp.channel.ChnPayBillVO;
+import com.dzf.model.pub.QryParamVO;
+import com.dzf.pub.DZFWarpException;
+
+public interface IChnPayConfService {
+
+	/**
+	 * 查询数据行数
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 查询数据
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ChnPayBillVO> query(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 确认收款、取消确认操作
+	 * @param billVOs
+	 * @param opertype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid) throws DZFWarpException;
+}
