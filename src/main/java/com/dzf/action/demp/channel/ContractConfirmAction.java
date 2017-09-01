@@ -10,11 +10,11 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.demp.channel.ContractConfrimVO;
+import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.service.demp.channel.IContractConfirm;
+import com.dzf.service.channel.IContractConfirm;
 
 /**
  * 合同确认

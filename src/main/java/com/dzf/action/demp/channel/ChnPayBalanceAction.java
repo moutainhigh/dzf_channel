@@ -10,12 +10,12 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.demp.channel.ChnBalanceVO;
-import com.dzf.model.demp.channel.ChnDetailVO;
+import com.dzf.model.channel.ChnBalanceVO;
+import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.service.demp.channel.IChnPayBalanceService;
+import com.dzf.service.channel.IChnPayBalanceService;
 
 /**
  * 付款余额

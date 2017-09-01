@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.demp.channel.ChnPayBillVO;
+import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
@@ -22,7 +22,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.service.demp.channel.IChnPayConfService;
+import com.dzf.service.channel.IChnPayConfService;
 
 /**
  * 付款单确认

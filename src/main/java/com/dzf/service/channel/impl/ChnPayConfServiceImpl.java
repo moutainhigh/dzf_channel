@@ -1,4 +1,4 @@
-package com.dzf.service.demp.channel.impl;
+package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.demp.channel.ChnBalanceVO;
-import com.dzf.model.demp.channel.ChnDetailVO;
-import com.dzf.model.demp.channel.ChnPayBillVO;
+import com.dzf.model.channel.ChnBalanceVO;
+import com.dzf.model.channel.ChnDetailVO;
+import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -26,7 +26,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
-import com.dzf.service.demp.channel.IChnPayConfService;
+import com.dzf.service.channel.IChnPayConfService;
 
 @Service("chnpayconfser")
 public class ChnPayConfServiceImpl implements IChnPayConfService {

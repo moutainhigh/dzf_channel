@@ -1,4 +1,4 @@
-package com.dzf.model.demp.channel;
+package com.dzf.model.channel;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
@@ -7,21 +7,20 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
- * 渠道-付款-余额VO
- * @author zy
+ * 渠道-付款-明细VO
+ * @author 宗岩
  *
  */
-
 @SuppressWarnings("rawtypes")
-public class ChnBalanceVO extends SuperVO {
+public class ChnDetailVO extends SuperVO {
 
-	private static final long serialVersionUID = 3121686749449715796L;
+	private static final long serialVersionUID = 6842760228104510287L;
 	
 	@FieldAlias("id")
-	private String pk_balance;//主键
+	private String pk_detail;
 	
 	@FieldAlias("corpid")
-	private String pk_corp;//机构主键
+	private String pk_corp;
 	
 	@FieldAlias("corpnm")
 	private String corpname;// 机构名称
@@ -29,17 +28,20 @@ public class ChnBalanceVO extends SuperVO {
 	@FieldAlias("usemny")
 	private DZFDouble nusedmny;//已用金额
 	
+	@FieldAlias("balmny")
+	private DZFDouble nbalance;//余额
+	
 	@FieldAlias("npmny")
 	private DZFDouble npaymny;//付款金额
-	
-	@FieldAlias("tickmny")
-	private DZFDouble nticketmny;//开票金额
 	
 	@FieldAlias("iptype")
 	private Integer ipaytype;//付款类型   1:加盟费；2：预付款
 	
-	@FieldAlias("balmny")
-	private DZFDouble nbalance;//余额
+	@FieldAlias("ptypenm")
+	private String vpaytypename;//付款类型名称 
+	
+	@FieldAlias("billid")
+    private String pk_bill;//业务ID
 	
     @FieldAlias("memo")
     private String vmemo;// 备注
@@ -53,13 +55,13 @@ public class ChnBalanceVO extends SuperVO {
     private Integer dr;
     
     private DZFDateTime ts;
-
-	public DZFDouble getNbalance() {
-		return nbalance;
+    
+	public String getVpaytypename() {
+		return vpaytypename;
 	}
 
-	public void setNbalance(DZFDouble nbalance) {
-		this.nbalance = nbalance;
+	public void setVpaytypename(String vpaytypename) {
+		this.vpaytypename = vpaytypename;
 	}
 
 	public String getCorpname() {
@@ -70,12 +72,20 @@ public class ChnBalanceVO extends SuperVO {
 		this.corpname = corpname;
 	}
 
-	public String getPk_balance() {
-		return pk_balance;
+	public String getPk_bill() {
+		return pk_bill;
 	}
 
-	public void setPk_balance(String pk_balance) {
-		this.pk_balance = pk_balance;
+	public void setPk_bill(String pk_bill) {
+		this.pk_bill = pk_bill;
+	}
+
+	public String getPk_detail() {
+		return pk_detail;
+	}
+
+	public void setPk_detail(String pk_detail) {
+		this.pk_detail = pk_detail;
 	}
 
 	public String getPk_corp() {
@@ -94,20 +104,20 @@ public class ChnBalanceVO extends SuperVO {
 		this.nusedmny = nusedmny;
 	}
 
+	public DZFDouble getNbalance() {
+		return nbalance;
+	}
+
+	public void setNbalance(DZFDouble nbalance) {
+		this.nbalance = nbalance;
+	}
+
 	public DZFDouble getNpaymny() {
 		return npaymny;
 	}
 
 	public void setNpaymny(DZFDouble npaymny) {
 		this.npaymny = npaymny;
-	}
-
-	public DZFDouble getNticketmny() {
-		return nticketmny;
-	}
-
-	public void setNticketmny(DZFDouble nticketmny) {
-		this.nticketmny = nticketmny;
 	}
 
 	public Integer getIpaytype() {
@@ -160,7 +170,7 @@ public class ChnBalanceVO extends SuperVO {
 
 	@Override
 	public String getPKFieldName() {
-		return "pk_balance";
+		return "pk_detail";
 	}
 
 	@Override
@@ -170,7 +180,7 @@ public class ChnBalanceVO extends SuperVO {
 
 	@Override
 	public String getTableName() {
-		return "cn_balance";
+		return "cn_detail";
 	}
 
 }

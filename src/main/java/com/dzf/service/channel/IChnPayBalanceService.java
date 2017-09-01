@@ -1,9 +1,9 @@
-package com.dzf.service.demp.channel;
+package com.dzf.service.channel;
 
 import java.util.List;
 
-import com.dzf.model.demp.channel.ChnBalanceVO;
-import com.dzf.model.demp.channel.ChnDetailVO;
+import com.dzf.model.channel.ChnBalanceVO;
+import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 

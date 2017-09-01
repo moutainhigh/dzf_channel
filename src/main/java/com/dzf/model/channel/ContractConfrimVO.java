@@ -1,4 +1,4 @@
-package com.dzf.model.demp.channel;
+package com.dzf.model.channel;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;

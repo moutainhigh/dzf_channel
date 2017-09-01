@@ -1,8 +1,8 @@
-package com.dzf.service.demp.channel;
+package com.dzf.service.channel;
 
 import java.util.List;
 
-import com.dzf.model.demp.channel.ChnPayBillVO;
+import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 

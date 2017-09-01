@@ -1,4 +1,4 @@
-package com.dzf.service.demp.channel.impl;
+package com.dzf.service.channel.impl;
 
 import java.util.List;
 
@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.demp.channel.ChnPayBillVO;
-import com.dzf.model.demp.channel.ContractConfrimVO;
+import com.dzf.model.channel.ChnPayBillVO;
+import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.service.demp.channel.IContractConfirm;
+import com.dzf.service.channel.IContractConfirm;
 
 @Service("contractconfser")
 public class ContractConfirmImpl implements IContractConfirm {
