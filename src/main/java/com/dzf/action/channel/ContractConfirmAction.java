@@ -1,4 +1,4 @@
-package com.dzf.action.demp.channel;
+package com.dzf.action.channel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -32,34 +32,28 @@ function load(){
 			width : '140',
 			title : '客户名称',
 			halign:'center',
-			field : 'corpnm',
+			field : 'corpkna',
 		}, {
 			width : '140',
 			title : '纳税人性质',
 			halign:'center',
-			field : 'corpnm',
+			field : 'chname',
 		}, {
-			width : '140',
+			width : '200',
 			title : '合同类型',
             halign:'center',
-			field : 'iptype',
-			formatter : function(value) {
-				if (value == '1')
-					return '加盟费';
-				if (value == '2')
-					return '预付款';
-			}
+			field : 'typeminm',
 		}, {
 			width : '140',
 			title : '合同号',
 			halign:'center',
-			field : 'corpnm',
+			field : 'vccode',
 		}, {
 			width : '140',
 			title : '合同总金额',
 			align:'right',
             halign:'center',
-			field : 'npmny',
+			field : 'ntlmny',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
@@ -68,23 +62,23 @@ function load(){
 			width : '140',
 			title : '开始日期',
 			halign:'center',
-			field : 'corpnm',
+			field : 'bdate',
 		}, {
 			width : '140',
 			title : '结束日期',
 			halign:'center',
-			field : 'corpnm',
+			field : 'edate',
 		}, {
 			width : '140',
 			title : '合同周期',
 			halign:'center',
-			field : 'corpnm',
+			field : 'cylnum',
 		}, {
 			width : '140',
 			title : '月服务费',
 			align:'right',
             halign:'center',
-			field : 'usemny',
+			field : 'nmsmny',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
@@ -93,13 +87,22 @@ function load(){
 			width : '140',
 			title : '扣费日期',
 			halign:'center',
-			field : 'corpnm',
+			field : 'dedate',
 		}, {
+			width : '140',
+			title : '扣款比例',
+			halign:'center',
+			field : 'propor',
+			formatter : function(value,row,index){
+				if(!isEmpty(value))
+					return value+"%";
+			}
+		},{
 			width : '140',
 			title : '扣费金额',
 			align:'right',
             halign:'center',
-			field : 'usemny',
+			field : 'ndemny',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
@@ -108,12 +111,14 @@ function load(){
 			width : '140',
 			title : '合同状态',
             halign:'center',
-			field : 'iptype',
+			field : 'destatus',
 			formatter : function(value) {
 				if (value == '1')
-					return '加盟费';
+					return '待确认';
 				if (value == '2')
-					return '预付款';
+					return '待扣款';
+				if (value == '3')
+					return '已扣款';
 			}
 		},] ],
 		onLoadSuccess : function(data) {

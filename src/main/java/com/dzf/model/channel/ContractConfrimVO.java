@@ -51,11 +51,11 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("edate")
     private DZFDate denddate; // 结束日期
     
-    @FieldAlias("chgcycle")
-    private String vchargecycle; // 收款周期
-
     @FieldAlias("cylnum")
     private Integer icyclenum; // 周期数
+    
+    @FieldAlias("nmsmny")
+    private DZFDouble nmservicemny; // 每月服务费
     
     @FieldAlias("dedate")
     private DZFDate deductdata;//扣款日期
@@ -69,6 +69,14 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
     
+	public DZFDouble getNmservicemny() {
+		return nmservicemny;
+	}
+
+	public void setNmservicemny(DZFDouble nmservicemny) {
+		this.nmservicemny = nmservicemny;
+	}
+
 	public Integer getVdeductstatus() {
 		return vdeductstatus;
 	}
@@ -179,14 +187,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setDenddate(DZFDate denddate) {
 		this.denddate = denddate;
-	}
-
-	public String getVchargecycle() {
-		return vchargecycle;
-	}
-
-	public void setVchargecycle(String vchargecycle) {
-		this.vchargecycle = vchargecycle;
 	}
 
 	public Integer getIcyclenum() {
