@@ -55,13 +55,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * FROM cn_paybill WHERE nvl(dr,0) = 0 \n");
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND vstatus = ? \n");
-			spm.addParam(paramvo.getQrytype());
-		}
-		sql.append(" AND vstatus != 1");
-		sql.append(" order by dpaydate desc");
+		sql.append("SELECT  con.* \n") ;
+		sql.append("  FROM ynt_contract con \n") ; 
+		sql.append("  LEFT JOIN bd_account acc ON con.pk_corp = acc.pk_corp \n") ; 
+		sql.append(" WHERE nvl(con.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(acc.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(con.isflag, 'N') = 'Y'\n") ; 
+		sql.append("   AND nvl(acc.ischannel,'N') = 'Y'");
+		
+		sql.append("   AND con.vdeductstatus !=  null \n");
+		sql.append(" order by con.ts desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

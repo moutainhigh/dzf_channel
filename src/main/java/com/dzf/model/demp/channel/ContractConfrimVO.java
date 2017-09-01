@@ -63,9 +63,28 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("ndemny")
     private DZFDate ndeductmny;//扣款金额
     
-    @FieldAlias("confstatus")
-    private Integer vconfstatus;//合同状态
+    @FieldAlias("destatus")
+    private Integer vdeductstatus;//扣款状态  1：待确认；2：待扣款；3：已扣款；
     
+    @FieldAlias("propor")
+    private Integer ideductpropor;//扣款比例
+    
+	public Integer getVdeductstatus() {
+		return vdeductstatus;
+	}
+
+	public void setVdeductstatus(Integer vdeductstatus) {
+		this.vdeductstatus = vdeductstatus;
+	}
+
+	public Integer getIdeductpropor() {
+		return ideductpropor;
+	}
+
+	public void setIdeductpropor(Integer ideductpropor) {
+		this.ideductpropor = ideductpropor;
+	}
+
 	public String getPk_contract() {
 		return pk_contract;
 	}
@@ -192,14 +211,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setNdeductmny(DZFDate ndeductmny) {
 		this.ndeductmny = ndeductmny;
-	}
-
-	public Integer getVconfstatus() {
-		return vconfstatus;
-	}
-
-	public void setVconfstatus(Integer vconfstatus) {
-		this.vconfstatus = vconfstatus;
 	}
 
 	@Override

@@ -134,7 +134,7 @@ function load(){
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpaybalance!query.action';
+	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
 	queryParams.qtype = type;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');

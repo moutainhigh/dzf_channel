@@ -22,7 +22,7 @@ import com.dzf.service.demp.channel.IContractConfirm;
  *
  */
 @ParentPackage("basePackage")
-@Namespace("/chnpay")
+@Namespace("/contract")
 @Action(value = "contractconf")
 public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 
