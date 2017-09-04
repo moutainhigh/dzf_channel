@@ -195,18 +195,6 @@ function loginForm(){
 			},
 			   function(data){
 				if(data.success){
-					/* setTimeout(function(){
-	            		$("#companyInfo").dialog({
-							width : 500,
-							height : 500,
-							readonly : true,
-							title : '选择公司',
-							modal : true,
-							href : data.head,
-							align:"center",
-							buttons : '#cp_buttons'
-					}).dialog("center");
-	            	},0);//1800 */
 					<% if (StringUtil.isEmpty(service) == false) {
 						%>
 							if(data.head){
@@ -265,54 +253,6 @@ function loginForm(){
 				}
 			   }, "json");
 }
-
-/* function dbcheck(){
-	selectCompany();
-} */
-
-<%-- function selectCompany(){
-	
-	var service= '<%=service%>';
-	
-	var row = $("#gsTable").datagrid('getSelected');
-	jQuery.ajax({//提交审批，返回审批结果
-		url : '${pageContext.request.contextPath}/sys/sm_user!gsSelectAdmin.action',
-		data : {
-			id : row.pk_gs,
-			service:service
-		},
-		type : 'post',
-		dataType : 'json',
-		success : function(obj) {
-			if(obj.success){
-				$("#companyInfo").dialog("close");
-				<% if (StringUtil.isEmpty(service) == false) {
-				%>
-					if(obj.head){
-						var info = obj.msg;
-						if (info  == "1")
-						{
-	        				window.location.href=obj.head + "&qz=" + info;
-	        			}
-	        			else
-	        			{
-	        				window.location.href=obj.head;
-	        			}
-					}
-		 	 	<%} else {
-				 %>
-					window.location.href="${pageContext.request.contextPath}/";
-				<%} 
-				 %>	
-			}else{
-				$.messager.show({
-					title:"错误提示",
-					msg:obj.msg
-				})
-			}
-		}
-	});
-} --%>
 
 function changeAu(){
     var timestamp = (new Date()).valueOf();
@@ -374,20 +314,8 @@ function savePsw(){
 		</div>
 		<form id="login" method="post">
 			<div class="denglu module-static">
-			<div class="login-switch" onselectstart="return false;"> <i class="iconfont quick" id="change-quick" onclick="">&#xe628;</i> <i class="iconfont static" id="change-static">&#xe626;</i> </div>
 				<div class="pass1 static-form"> 
-					<%
-					if(basePath.contains(Outresource.b5_gs)){//b5管理端
-					%>
-					<!-- <h2 style="height:60px;line-height:60px">登录企业服务平台</h2> -->
-					<font style="font-size: 22px;height:70px;line-height:70px">登录企业服务平台</font>
-					<%
-					}else{
-					%>				
 					<h1><img src="<%=request.getContextPath()%>/img/daizhang_login.png" /></h1>
-					<%
-					}
-					%>
 					<div class="kuang">
 						<p class="riqi"><label>日期：</label><input class="easyui-datebox" name="date" id="date"  data-options="required:true,width:290,height:50,editable:false" type="text" ></p>
 						<p><label>用户：</label><input name="data.user_code" id="user_code" type="text" class="easyui-validatebox" data-options="required:true"  /></p>
@@ -408,33 +336,7 @@ function savePsw(){
 					</div>
 				</div>
 				<div class="bg_f4">&nbsp;</div>
-				<!--扫码登录开始-->
-		        <div class="pass1 quick-form">         
-		        <div class="qrcode-login">
-		          <div class="login-title">手机扫码，安全登录</div>
-		          <div class="qrcode-mod">
-		            <div class="qrcode-main">
-		              <div id="qrcode-img" class="qrcode-img"><!-- <img src="img/show.png"> --></div>
-		              <div class="msg-err">
-		                <h6>二维码已失效</h6>
-		                <a href="javascript:;" class="refresh">请点击刷新</a> </div>
-		            </div>
-		            <div class="qrcode-desc"> <i class="iconfont">&#xe619;</i>
-		              <p><font class="ft-gray">打开</font><a href="" target="_blank" class="light-link">企业管理平台app</a><br>
-		                <span class="ft-gray">扫一扫登录</span></p>
-		            </div>
-		          </div>
-		          <div class="qrcode-msg">
-		            <div class="msg-ok">
-		              <div class="msg-icon"> <i class="iconfont icon-ok">&#xe60e;</i> <i class="iconfont icon-phone">&#xe611;</i> </div>
-		              <h6>扫描成功！</h6>
-		              <p>请在手机上确认登录</p>
-		              <div class="link"><a href="javascript:;" class="light-link back-quick">返回二维码登录</a></div>
-		            </div>
-		          </div>
-		        </div>       
-		      </div>
-       	  	  <!--扫码登录结束--> 
+				
 			</div>
 		<input type="hidden" name="f" id="force" value="0" />
 		</form>
@@ -471,161 +373,6 @@ function savePsw(){
 	<p><%=resourceVO.getCopyRight() %></p>
 </div>
 
-
-<script>
-$(".refresh").click(function(){
-	$(this).parents(".denglu").removeClass("module-static").addClass("module-quick");
-	if($(".qrcode-login").hasClass("qrcode-login-error")){
-		$(".qrcode-login").removeClass("qrcode-login-error");
-	};
-	var msg;
-	jQuery.ajax({//获取二维码
-		url : '${pageContext.request.contextPath}/app/loginqr!getQRCode2.action',
-		type : 'post',
-		dataType : 'json',
-		success : function(obj) {
-			if(obj.success){
-				$('#qrcode-img').empty();
-				jQuery('#qrcode-img').qrcode(utf16to8(obj.msg));
-				msg = obj.msg;
-			}//else{
-				//$.messager.show({
-				//	title:"错误提示",
-				//	msg:obj.msg
-				//})
-			//}
-		}
-	});
-	var timesRun = 10;
-	timer = setInterval(function(){
-		timesRun -= 1;
-		console.log(timesRun);
-		if(timesRun === 0){
-			clearInterval(timer);
-			$(".qrcode-login").addClass("qrcode-login-error");
-		}else{
-			if(msg != null || msg == ''){
-				longConnCheck(msg, timesRun);
-			}
-			
-		}
-	}, 3000);
-});	
-$("#change-quick").click(function(){
-	$(this).parents(".denglu").removeClass("module-static").addClass("module-quick");
-	if($(".qrcode-login").hasClass("qrcode-login-error")){
-		$(".qrcode-login").removeClass("qrcode-login-error");
-	};
-	var msg;
-	jQuery.ajax({//获取二维码
-		url : '${pageContext.request.contextPath}/app/loginqr!getQRCode2.action',
-		type : 'post',
-		dataType : 'json',
-		success : function(obj) {
-			if(obj.success){
-				$('#qrcode-img').empty();
-				jQuery('#qrcode-img').qrcode(utf16to8(obj.msg));
-				msg = obj.msg;
-			}//else{
-				//$.messager.show({
-				//	title:"错误提示",
-				//	msg:obj.msg
-				//})
-			//}
-		}
-	});
-	var timesRun = 10;
-	timer = setInterval(function(){
-		timesRun -= 1;
-		console.log(timesRun);
-		if(timesRun === 0){
-			clearInterval(timer);
-			$(".qrcode-login").addClass("qrcode-login-error");
-		}else{
-			if(msg != null || msg == ''){
-				longConnCheck(msg, timesRun);
-			}
-			
-		}
-	}, 3000);
-});	
-
-function longConnCheck(msg, timesRun){
-	var service= '<%=service%>';
-	jQuery.ajax({//验证二维码
-		url : '${pageContext.request.contextPath}/app/loginqr!longConnCheck2.action',
-		data: {chdata : msg,
-			service:service
-			},
-		type : 'post',
-		dataType : 'json',
-		success : function(obj) {
-			if(obj.success){
-				if(150 === obj.status){
-					$(".qrcode-login").addClass("qrcode-login-ok");
-				}else if(200 === obj.status){
-					clearInterval(timer);
-					//checkLoginSuccess(msg);
-					
-					<% if (StringUtil.isEmpty(service) == false) {
-					%>
-						if(obj.head){
-							var info = obj.msg;
-							if (info  == "1")
-							{
-		        				window.location.href=obj.head + "&qz=" + info;
-		        			}
-		        			else
-		        			{
-		        				window.location.href=obj.head;
-		        			}
-		        		}
-		 		 	<%} else {
-					 %>
-					 	window.location.href="${pageContext.request.contextPath}/";
-					<%} 
-					 %>
-					 
-					
-				}
-			}//else{
-			//	$.messager.show({
-			//		title:"错误提示",
-			//		msg:obj.msg
-			//	})
-			//}
-		}
-	});
-}
-
-
-$("#change-static").click(function(){
-	clearInterval(timer);
-	$(this).parents(".denglu").removeClass("module-quick").addClass("module-static");
-});
-$(".back-quick").click(function(){
-	$(".qrcode-login").removeClass("qrcode-login-ok");
-})
-function utf16to8(str) {
-    var out, i, len, c;
-    out = "";
-    len = str.length;
-    for (i = 0; i < len; i++) {
-        c = str.charCodeAt(i);
-        if ((c >= 0x0001) && (c <= 0x007F)) {
-            out += str.charAt(i);
-        } else if (c > 0x07FF) {
-            out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
-            out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
-            out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
-        } else {
-            out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
-            out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
-        }
-    }
-    return out;
-}
-</script>
 </body>
 
 </html>		
