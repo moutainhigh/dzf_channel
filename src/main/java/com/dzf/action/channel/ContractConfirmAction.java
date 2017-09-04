@@ -1,7 +1,9 @@
 package com.dzf.action.channel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -9,11 +11,16 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.util.JSONConvtoJAVA;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.IContractConfirm;
 
 /**
@@ -40,14 +47,44 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			int total = contractconfser.queryTotalRow(paramvo);
-			grid.setTotal((long)(total));
-			if(total > 0){
-				List<ContractConfrimVO> clist = contractconfser.query(paramvo);
-				grid.setRows(clist);
+			List<ContractConfrimVO> clist = contractconfser.query(paramvo);
+			int page = paramvo == null ? 1 : paramvo.getPage();
+			int rows = paramvo == null ? 10000 : paramvo.getRows();
+			int len = clist == null ? 0 : clist.size();
+			if(len > 0){
+				grid.setTotal((long) (len));
+				ContractConfrimVO[] conVOs = clist.toArray(new ContractConfrimVO[0]);
+				conVOs = (ContractConfrimVO[]) QueryUtil.getPagedVOs(conVOs, page, rows);
+				grid.setRows(Arrays.asList(conVOs));
+				grid.setSuccess(true);
+				grid.setMsg("操作成功");
 			}else{
+				grid.setTotal(Long.valueOf(0));
 				grid.setRows(new ArrayList<ContractConfrimVO>());
+				grid.setMsg("操作结果为空");
 			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "操作失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 合同确认成功/确认失败
+	 */
+	public void updateConfStatus(){
+		Grid grid = new Grid();
+		try {
+			String confstatus = getRequest().getParameter("confstatus");//操作状态
+			Integer status = Integer.parseInt(confstatus);
+			String data = getRequest().getParameter("data"); // 确认数据
+			data = data.replace("}{", "},{");
+			data = "[" + data + "]";
+			JSONArray array = (JSONArray) JSON.parseArray(data);
+			Map<String, String> bodymapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(array, bodymapping, ContractConfrimVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			contractconfser.updateConfStatus(confrimVOs, status);
 			grid.setSuccess(true);
 			grid.setMsg("操作成功");
 		} catch (Exception e) {

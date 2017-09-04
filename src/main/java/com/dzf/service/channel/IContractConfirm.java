@@ -9,18 +9,18 @@ import com.dzf.pub.DZFWarpException;
 public interface IContractConfirm {
 
 	/**
-	 * 查询数据行数
-	 * @param paramvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException;
-	
-	/**
 	 * 查询数据
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 合同确认成功/确认失败
+	 * @param confrimVOs
+	 * @param status
+	 * @throws DZFWarpException
+	 */
+	public void updateConfStatus(ContractConfrimVO[] confrimVOs, Integer status) throws DZFWarpException;
 }

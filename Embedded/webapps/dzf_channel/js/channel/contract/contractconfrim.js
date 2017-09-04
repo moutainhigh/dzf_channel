@@ -4,9 +4,22 @@ var loadrows = null;
 var isenter = false;//是否快速查询
 
 $(function() {
+	initQueryData();
 	load();
 	fastQry();
+	$('#confreason').textbox('textbox').attr('maxlength', 200);
 });
+
+/**
+ * 查询日期初始化
+ */
+function initQueryData() {
+	var ldate = new Date(Public.getLoginDate());
+    ldate.setMonth(ldate.getMonth()-1);
+    ldate = ldate.Format('yyyy-MM-dd');
+	$("#begdate").datebox("setValue", ldate);
+	$("#enddate").datebox("setValue",Public.getLoginDate());
+}
 
 /**
  * 列表grid初始化
@@ -24,11 +37,36 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		columns : [ [ {
+			width : '100',
+			title : '主键',
+			field : 'id',
+			hidden : true
+		}, {
+			width : '100',
+			title : '合同主键',
+			field : 'contractid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '渠道商主键',
+			field : 'corpid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '客户主键',
+			field : 'corpkid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '业务小类主键',
+			field : 'typemin',
+			hidden : true
+		}, {
 			width : '140',
 			title : '渠道商',
 			halign:'center',
 			field : 'corpnm',
-		},{
+		}, {
 			width : '140',
 			title : '客户名称',
 			halign:'center',
@@ -120,7 +158,12 @@ function load(){
 				if (value == '3')
 					return '已扣款';
 			}
-		},] ],
+		}, {
+			width : '100',
+			title : '时间戳',
+			field : 'tstp',
+			hidden : true
+		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
             if(!isenter){
@@ -177,21 +220,94 @@ function fastQry(){
  * 查询
  */
 function query(){
+	var begdate = $("#begdate").datebox('textbox').val();
+	var enddate = $("#enddate").datebox('textbox').val();
+	if(isEmpty(begdate)){
+		Public.tips({
+			content : '查询开始日期不能为空',
+			type : 2
+		});
+		return;
+	}
+	if(isEmpty(enddate)){
+		Public.tips({
+			content : '查询结束日期不能为空',
+			type : 2
+		});
+		return;
+	}
+	if(!isEmpty(begdate) && !isEmpty(enddate)){
+		if(!checkdate1("begdate","enddate")){
+			return;
+		}		
+	}
 	
+	$('#grid').datagrid('unselectAll');
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+	queryParams.begdate = begdate;
+	queryParams.enddate = enddate;
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
 }
 
 /**
  * 合同确认
  */
 function doConfrim(){
-	
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	$('#confrim_Dialog').dialog({ modal:true });//设置dig属性
+	$('#confrim_Dialog').dialog('open').dialog('center').dialog('setTitle','合同确认');
+	$('#conform').form('clear');
 }
 
 /**
- * 取消确认
+ * 确认成功/确认失败/取消确认
  */
-function doCancel(){
+function confrim(type){
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	row.confreason = $('#confreason').val();
+	var postdata = new Object();
+	postdata["data"] = JSON.stringify(row);
+	postdata["confstatus"] = type;
 	
+	$.messager.progress({
+		text : '数据处理中，请稍后.....'
+	});
+	$('#conform').form('submit', {
+		url : contextPath + '/contract/contractconf!updateConfStatus.action',
+		queryParams : postdata,
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			$.messager.progress('close');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+				$('#confrim_Dialog').dialog('close');
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
 }
 
 /**

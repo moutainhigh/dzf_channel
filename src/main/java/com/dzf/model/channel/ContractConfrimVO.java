@@ -3,6 +3,7 @@ package com.dzf.model.channel;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
@@ -15,8 +16,11 @@ public class ContractConfrimVO extends SuperVO {
 
 	private static final long serialVersionUID = 8799494318014396487L;
 	
+    @FieldAlias("id")
+    private String pk_confrim; // 主键
+	
     @FieldAlias("contractid")
-    private String pk_contract; // 主键
+    private String pk_contract; // 合同主键
 	
     @FieldAlias("corpid")
     private String pk_corp; // 渠道商主键
@@ -69,6 +73,58 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
     
+    @FieldAlias("confreason")
+    private String vconfreason;// 确认失败原因
+    
+    @FieldAlias("tstp")
+    private DZFDateTime tstamp;// 时间戳
+    
+    @FieldAlias("dr")
+    private Integer dr; // 删除标记
+
+    @FieldAlias("ts")
+    private DZFDateTime ts; // 时间戳
+    
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
+	public DZFDateTime getTs() {
+		return ts;
+	}
+
+	public void setTs(DZFDateTime ts) {
+		this.ts = ts;
+	}
+
+	public String getPk_confrim() {
+		return pk_confrim;
+	}
+
+	public void setPk_confrim(String pk_confrim) {
+		this.pk_confrim = pk_confrim;
+	}
+
+	public DZFDateTime getTstamp() {
+		return tstamp;
+	}
+
+	public void setTstamp(DZFDateTime tstamp) {
+		this.tstamp = tstamp;
+	}
+
+	public String getVconfreason() {
+		return vconfreason;
+	}
+
+	public void setVconfreason(String vconfreason) {
+		this.vconfreason = vconfreason;
+	}
+
 	public DZFDouble getNmservicemny() {
 		return nmservicemny;
 	}
@@ -215,7 +271,7 @@ public class ContractConfrimVO extends SuperVO {
 
 	@Override
 	public String getPKFieldName() {
-		return null;
+		return "pk_confrim";
 	}
 
 	@Override
@@ -225,7 +281,7 @@ public class ContractConfrimVO extends SuperVO {
 
 	@Override
 	public String getTableName() {
-		return null;
+		return "chn_contract";
 	}
 
 }

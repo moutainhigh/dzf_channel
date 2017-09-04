@@ -21,15 +21,15 @@
 				
 				<div class="left mod-crumb">
 					<label style="text-align:right">查询期间：</label> 
-					<input id="corpnm" name="corpnm" class="easyui-datebox" style="width:150px;height:28px;text-align:left">
+					<input id="begdate" name="begdate" class="easyui-datebox" style="width:150px;height:28px;text-align:left">
 					---- 
-					<input id="ptypenm" name="ptypenm" class="easyui-datebox" style="width:150px;height:28px;text-align:left">
+					<input id="enddate" name="enddate" class="easyui-datebox" style="width:150px;height:28px;text-align:left">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="query()">查询</a>
 				</div>
 				
 				<div class="left mod-crumb">
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(-1)">全部</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(0)">全部</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(1)">待确认</a>
 						<a href="javascript:void(0)"  
 							style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(2)">代扣款</a>
@@ -46,7 +46,7 @@
 				</div>
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doConfrim()">合同确认</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doCancel()">取消确认</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confrim(3)">取消确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="deduct()">扣款处理</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="dedancel()">取消扣款</a>
 				</div>
@@ -55,6 +55,18 @@
 
 		<div id="dataGrid" class="grid-wrap">
 			<table id="grid"></table>
+		</div>
+		
+		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:300px;padding:10px;" data-options="closed:true">
+			<form id="conform">
+				<textarea id="confreason" name="confreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,200]'" 
+					style="width:400px;height:120px;">
+				</textarea>
+			 </form>
+			 <p style="margin-top:60px;">
+				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;margin-left:46%;">确认成功</a> 
+				<a id="" href="#" class="ui-btn" onclick="confrim(2)">确认失败</a>
+			 </p>
 		</div>
 		
 	</div>

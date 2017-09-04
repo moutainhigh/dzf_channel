@@ -2,6 +2,7 @@ package com.dzf.model.pub;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 
 /**
  * 公用查询条件VO
@@ -46,6 +47,28 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("qtype")
 	private Integer qrytype;//查询状态
 	
+	@FieldAlias("begdate")
+	private DZFDate begdate;// 开始日期
+
+	@FieldAlias("enddate")
+	private DZFDate enddate;// 结束日期
+	
+	public DZFDate getBegdate() {
+		return begdate;
+	}
+
+	public void setBegdate(DZFDate begdate) {
+		this.begdate = begdate;
+	}
+
+	public DZFDate getEnddate() {
+		return enddate;
+	}
+
+	public void setEnddate(DZFDate enddate) {
+		this.enddate = enddate;
+	}
+
 	public String getPk_bill() {
 		return pk_bill;
 	}
