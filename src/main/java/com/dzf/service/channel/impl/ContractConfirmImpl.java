@@ -238,7 +238,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> conflist = (List<ContractConfrimVO>) singleObjectBO.executeQuery(sql.toString(),
 				spm, new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
-			ContractConfrimVO vo = null;
+			ContractConfrimVO vo = conflist.get(0);
 			CorpVO corpvo = null;
 			int icyclenum = 0;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
