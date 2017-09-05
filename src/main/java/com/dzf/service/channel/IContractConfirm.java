@@ -22,5 +22,22 @@ public interface IContractConfirm {
 	 * @param status
 	 * @throws DZFWarpException
 	 */
-	public void updateConfStatus(ContractConfrimVO[] confrimVOs, Integer status) throws DZFWarpException;
+	public ContractConfrimVO updateConfStatus(ContractConfrimVO[] confrimVOs, Integer status) throws DZFWarpException;
+	
+	/**
+	 * 查询待扣款数据
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 收款确认/取消收款
+	 * @param paramvo
+	 * @param opertype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException;
 }

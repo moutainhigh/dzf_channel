@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.Field.FieldMapping;
@@ -73,7 +74,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	 * 合同确认成功/确认失败
 	 */
 	public void updateConfStatus(){
-		Grid grid = new Grid();
+		Json json = new Json();
 		try {
 			String confstatus = getRequest().getParameter("confstatus");//操作状态
 			Integer status = Integer.parseInt(confstatus);
@@ -84,13 +85,53 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> bodymapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(array, bodymapping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			contractconfser.updateConfStatus(confrimVOs, status);
-			grid.setSuccess(true);
-			grid.setMsg("操作成功");
+			ContractConfrimVO retvo = contractconfser.updateConfStatus(confrimVOs, status);
+			json.setRows(retvo);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
 		} catch (Exception e) {
-			printErrorLog(grid, log, e, "操作失败");
+			printErrorLog(json, log, e, "操作失败");
 		}
-		writeJson(grid);
+		writeJson(json);
+	}
+	
+	/**
+	 * 查询待扣款数据
+	 */
+	public void queryDeductData(){
+		Json json = new Json();
+		try {
+			ContractConfrimVO qryvo = (ContractConfrimVO) DzfTypeUtils.cast(getRequest(), new ContractConfrimVO());
+			ContractConfrimVO retvo = contractconfser.queryDebitData(qryvo);
+			json.setRows(retvo);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 收款确认
+	 */
+	public void updateDeductData(){
+		Json json = new Json();
+		try {
+			String type = getRequest().getParameter("opertype");
+			Integer opertype = Integer.parseInt(type);
+			String head = getRequest().getParameter("head");
+			JSON headjs = (JSON) JSON.parse(head);
+			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid());
+			json.setRows(retvo);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
 	}
 
 }

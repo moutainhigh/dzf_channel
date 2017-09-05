@@ -285,21 +285,147 @@ function confrim(type){
 	postdata["data"] = JSON.stringify(row);
 	postdata["confstatus"] = type;
 	
-	$.messager.progress({
-		text : '数据处理中，请稍后.....'
-	});
-	$('#conform').form('submit', {
+//	$.messager.progress({
+//		text : '数据处理中，请稍后.....'
+//	});
+//	$('#conform').form('submit', {
+//		url : contextPath + '/contract/contractconf!updateConfStatus.action',
+//		queryParams : postdata,
+//		success : function(result) {
+//			var result = eval('(' + result + ')');
+//			$.messager.progress('close');
+//			if (result.success) {
+//				Public.tips({
+//					content : result.msg,
+//					type : 0
+//				});
+//				$('#confrim_Dialog').dialog('close');
+//			} else {
+//				Public.tips({
+//					content : result.msg,
+//					type : 2
+//				});
+//			}
+//		}
+//	});
+	
+	$.ajax({
+		type : "post",
+		dataType : "json",
 		url : contextPath + '/contract/contractconf!updateConfStatus.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(result) {
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			} else {
+				Public.tips({
+					content : result.msg,
+				});
+				$('#confrim_Dialog').dialog('close');
+				var rerows = result.rows;
+				var index = $("#grid").datagrid("getRowIndex",row);
+				$('#grid').datagrid('updateRow',{
+            		index: index,
+            		row: result.rows,
+            	});
+				$("#grid").datagrid('uncheckAll');
+			}
+		},
+	});
+}
+
+/**
+ * 扣款处理
+ */
+function deduct(){
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
+	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','扣款');
+	$('#deductfrom').form('clear');
+	initListener();
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: contextPath + '/contract/contractconf!queryDeductData.action',
+        data: row,
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (!data.success) {
+            	Public.tips({content:data.msg,type:1});
+            } else {
+                var row = data.rows;
+                $('#deductfrom').form('load',row);
+                $('#propor').numberbox('setValue', 10);
+                var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
+                var ndemny = parseFloat(ntlmny).mul(parseFloat(10)).div(100);
+                $('#ndemny').numberbox('setValue', ndemny);
+                $("#dedate").datebox("setValue",Public.getLoginDate());
+                $('#vopernm').textbox('setValue',$("#unm").val());
+                $('#voper').val($("#uid").val());
+            }
+        },
+    });
+}
+
+/**
+ * 初始化监听
+ */
+function initListener(){
+	$("#propor").numberbox({
+		onChange : function(n, o) {
+			if (n == ""){
+				n = 0; 
+			}
+			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
+			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
+			$('#ndemny').numberbox('setValue', ndemny);
+		}
+	});
+}
+
+/**
+ * 扣款确认
+ */
+function deductConfri(){
+	var postdata = new Object();
+	postdata["head"] = JSON.stringify(serializeObject($('#deductfrom')));
+	postdata["opertype"] = 1;
+	$.messager.progress({
+		text : '数据保存中，请稍后.....'
+	});
+	$('#deductfrom').form('submit', {
+		url : contextPath + '/contract/contractconf!updateDeductData.action',
 		queryParams : postdata,
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			$.messager.progress('close');
 			if (result.success) {
+				
 				Public.tips({
 					content : result.msg,
 					type : 0
 				});
-				$('#confrim_Dialog').dialog('close');
+				$('#deduct_Dialog').dialog('close');
+				var rerows = result.rows;
+				var index = $("#grid").datagrid("getRowIndex",row);
+				$('#grid').datagrid('updateRow',{
+					index: index,
+					row: result.rows,
+				});
+				$("#grid").datagrid('uncheckAll');
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -311,17 +437,55 @@ function confrim(type){
 }
 
 /**
- * 扣款处理
+ * 扣款取消
  */
-function deduct(){
-	
+function deductCancel(){
+	$('#deduct_Dialog').dialog('close');
 }
 
 /**
  * 取消扣款
  */
-function dedancel(){
-	
+function cancelDeduct(){
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	var postdata = new Object();
+	postdata["head"] = JSON.stringify(row);
+	postdata["opertype"] = 2;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/contract/contractconf!updateDeductData.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(result) {
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			} else {
+				Public.tips({
+					content : result.msg,
+				});
+				$('#deduct_Dialog').dialog('close');
+				var rerows = result.rows;
+				var index = $("#grid").datagrid("getRowIndex",row);
+				$('#grid').datagrid('updateRow',{
+					index: index,
+					row: result.rows,
+				});
+				$("#grid").datagrid('uncheckAll');
+			}
+		},
+	});
 }
 
 

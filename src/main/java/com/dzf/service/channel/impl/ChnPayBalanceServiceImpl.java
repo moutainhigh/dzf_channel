@@ -122,7 +122,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		spm.addParam(paramvo.getQrytype());
 		sql.append(" AND pk_corp = ? \n");
 		spm.addParam(paramvo.getPk_corp());
-		sql.append(" order by ts desc");
+		sql.append(" order by ts asc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

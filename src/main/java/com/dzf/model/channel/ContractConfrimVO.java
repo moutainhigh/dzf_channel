@@ -65,7 +65,7 @@ public class ContractConfrimVO extends SuperVO {
     private DZFDate deductdata;//扣款日期
     
     @FieldAlias("ndemny")
-    private DZFDate ndeductmny;//扣款金额
+    private DZFDouble ndeductmny;//扣款金额
     
     @FieldAlias("destatus")
     private Integer vdeductstatus;//扣款状态  1：待确认；2：待扣款；3：已扣款；
@@ -85,6 +85,50 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("ts")
     private DZFDateTime ts; // 时间戳
     
+    @FieldAlias("conmemo")
+    private String vconmemo; // 备注
+    
+    @FieldAlias("voper")
+    private String voperator; // 经办人
+    
+    @FieldAlias("vopernm")
+    private String vopername; // 经办人姓名
+    
+	@FieldAlias("balmny")
+	private DZFDouble nbalance;//余额
+    
+	public String getVconmemo() {
+		return vconmemo;
+	}
+
+	public void setVconmemo(String vconmemo) {
+		this.vconmemo = vconmemo;
+	}
+
+	public String getVoperator() {
+		return voperator;
+	}
+
+	public void setVoperator(String voperator) {
+		this.voperator = voperator;
+	}
+
+	public String getVopername() {
+		return vopername;
+	}
+
+	public void setVopername(String vopername) {
+		this.vopername = vopername;
+	}
+
+	public DZFDouble getNbalance() {
+		return nbalance;
+	}
+
+	public void setNbalance(DZFDouble nbalance) {
+		this.nbalance = nbalance;
+	}
+
 	public Integer getDr() {
 		return dr;
 	}
@@ -261,11 +305,11 @@ public class ContractConfrimVO extends SuperVO {
 		this.deductdata = deductdata;
 	}
 
-	public DZFDate getNdeductmny() {
+	public DZFDouble getNdeductmny() {
 		return ndeductmny;
 	}
 
-	public void setNdeductmny(DZFDate ndeductmny) {
+	public void setNdeductmny(DZFDouble ndeductmny) {
 		this.ndeductmny = ndeductmny;
 	}
 
@@ -281,7 +325,7 @@ public class ContractConfrimVO extends SuperVO {
 
 	@Override
 	public String getTableName() {
-		return "chn_contract";
+		return "cn_contract";
 	}
 
 }
