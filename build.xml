@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- name：对应工程名字   default：需要的缺省任务 （运行ant不指名任务执行任务） -->
+<project name="dzfyxqd" default="dist" basedir=".">
+
+	<!--建立目录机构 
+src	java源码编辑目录 
+lib	jar包（类库）存放目录 
+bin	编译生成的class存放目录 
+dist	war包和javadoc存放目录 
+WebRoot jsp存放目录 
+config  配置文件存放目录 
+-->
+	<property name="build" value="build" description="输出目录"/>
+	<property name="build.dir" value="${build}/dzfyxqd" description="输出目录"/>
+	<property name="build.web.dir" value="${build.dir}/WEB-INF" description="web配置输出目录"/>
+	<property name="build.web.classes.dir" value="${build.web.dir}/classes" description="web类输出目录"/>
+	<property name="build.web.lib.dir" value="${build.web.dir}/lib" description="web引用jar输出目录" />
+	<property name="srcpath" value="/root/.jenkins/workspace/dzf-yxqd/src/main/resources"/>
+	<property name="jsppath" value="/root/.jenkins/workspace/dzf-yxqd/Embedded/webapps/dzf_channel"></property>
+	<property name="src.dir" value="/root/.jenkins/workspace/dzf-yxqd/src/main/java" description="源代码目录" />
+	<property name="src.pub.dir" value="/root/.jenkins/workspace/dzf_pub/dzf_pub1/src" />  
+    <property name="src.base.dir" value="/root/.jenkins/workspace/dzf_base/dzf_base/src" /> 
+	<property name="lib.dir" value="/root/.jenkins/workspace/dzf-yxqd/Embedded/webapps/dzf_channel/WEB-INF/lib" />
+	<property name="lib.pub.dir" value="/root/.jenkins/workspace/dzf_pub/dzf_pub1/lib" />
+	<property name="lib.base.dir" value="/root/.jenkins/workspace/dzf_base/dzf_base/lib" />
+	<property name="templib" location="${build}/templib"/> 
+	<property name="build.dir.js" value="${build.dir}/js"></property> 
+	<property name="build.dir.css" value="${build.dir}/css"></property> 
+	<property name="dir.lib.yuicompress" value="/root/jar"/><!-- 存放 YUI Compress 二个 .jar 文件的目录 -->
+	<!-- <property name="java.home" value="C:\Java\jdk1.7.0_65"></property> -->
+	<!-- <property name="encoding" value="GBK" />  -->
+	
+
+	
+	<!-- 初始化任务 -->
+	<target name="init">
+		<!-- <delete dir="${build}"/> -->
+		<delete dir="${build.dir}"/>
+		<delete dir="${build}/base"/>
+		<delete dir="${build}/pub"/>
+		<delete dir="${build}/templib"/>
+		<!-- <delete dir="${srcpath}"/>
+		<mkdir dir="${srcpath}"/> -->
+		<mkdir dir="${templib}"/>
+		<mkdir dir="${build.web.classes.dir}" />
+		<mkdir dir="${lib.dir}" />
+		<mkdir dir="${build}/base"/>
+		<mkdir dir="${build}/pub"/>
+		<mkdir dir="${build}/base/WEB-INF/classes"/>
+		<mkdir dir="${build}/pub/WEB-INF/classes"/>
+		<delete file="${lib.dir}/runTomcatServer.jar"/>
+		<delete file="${lib.dir}/dzfbase.jar"/>
+		<delete file="${lib.dir}/dzfpub.jar"/>
+	</target>
+	
+	<path id="project.classpath">
+		<fileset dir="${lib.dir}" >
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+<!-- 	<path id="tomcat_jar">
+		<fileset dir="./tomcatlib">
+			<include name="*.jar"/>
+		</fileset>
+	</path> -->
+	<path id="basejar">
+		<fileset dir="${lib.base.dir}" >
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	<path id="baselib">
+		<fileset dir="${templib}">
+			<include name="base.jar"/>
+		</fileset>
+	</path> 
+	<path id="pubjar">
+		<fileset dir="${lib.pub.dir}" >
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	<path id="publib">
+		<fileset dir="${templib}">
+			<include name="pub.jar"/>
+		</fileset>
+	</path> 
+    <path id="path.build.classpath.yuicompress">  
+	    <fileset dir="${dir.lib.yuicompress}">  
+	        <include name="yuicompressor-2.4.8.jar"/>  
+	        <include name="YUIAnt.jar"/> 
+	    </fileset>  
+	</path> 
+	
+	<!-- Compile Target 编译代码  在这之前现由parpre建立目录结构 -->
+	<!--bootclasspath="${java.home}/lib/rt.jar"  -->
+	<target name="compile" depends="init" description="compile java resources">
+        <javac target="1.7" fork="true" srcdir="${src.base.dir}/main/java" destdir="${build}/base/WEB-INF/classes" 
+        		debug="true" nowarn="yes" memoryInitialSize="256m" memoryMaximumSize="512m" encoding="UTF-8" includeAntRuntime="false" >
+			<classpath refid="project.classpath"/>
+			<classpath refid="basejar"/> 
+		</javac>
+		<jar jarfile="${templib}/base.jar" update="true">
+			<fileset dir="${build}/base/WEB-INF/classes"/>
+		</jar>
+		<javac target="1.7" fork="true" srcdir="${src.pub.dir}" destdir="${build}/pub/WEB-INF/classes" debug="true" nowarn="yes" memoryInitialSize="256m" memoryMaximumSize="512m" encoding="UTF-8" includeAntRuntime="false" >
+			 <compilerarg line="-XDignore.symbol.file"/>
+			<classpath refid="baselib"/>
+			<classpath refid="pubjar"/>
+		</javac>
+		<jar jarfile="${templib}/pub.jar" update="true">
+			<fileset dir="${build}/pub/WEB-INF/classes"/>
+		</jar>
+        
+  
+		<javac destdir="${build.web.classes.dir}" source="1.7" target="1.7" srcdir="${src.dir}" debug="true" nowarn="yes"
+				deprecation="false" optimize="false" failonerror="true" includeAntRuntime="false" >
+			<compilerarg line="-encoding UTF-8 "/>  
+			<compilerarg line="-XDignore.symbol.file"/>
+			<classpath refid="project.classpath" />
+            <classpath refid="baselib"/>
+			<classpath refid="publib"/>
+		</javac>
+		<copy todir="${build.web.classes.dir}">
+			<fileset dir="${src.dir}" excludes="**/*.java">
+			</fileset>
+		</copy>
+<!-- 		<copy todir="${build.dir}">
+			<fileset dir="${webRoot.dir}" excludes="**/*.class">
+			</fileset>
+		</copy> -->
+		<copy todir="${build.web.classes.dir}" preservelastmodified="true">
+			<fileset dir="${build}/base/WEB-INF/classes"/>
+			<fileset dir="${build}/pub/WEB-INF/classes"/>
+			<fileset dir="${srcpath}"/>
+		</copy>
+		<copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${jsppath}">
+				<exclude name="runTomcatServer.jar" />
+				<exclude name="dzfbase.jar" />
+				<exclude name="dzfpub.jar" />
+			</fileset>
+			
+			<!-- <fileset dir="${srcpath}/G/dzf_admin2/src/main/resources"/> -->
+		</copy>
+		<!-- 复制base、pub  jar包 -->
+		<!-- <copy todir="${build.web.lib.dir}" preservelastmodified="true">
+			<fileset dir="${lib.pub.dir}"/>
+			<fileset dir="${lib.base.dir}"/>
+		</copy> -->
+		
+		
+	</target>
+	<target name="compres-js-css" depends="compile" description="压缩 .js 和 .css 文件">
+		    <taskdef name="compress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
+		        <classpath refid="path.build.classpath.yuicompress"/>
+		    </taskdef>  
+		    <compress linebreak="150" warn="false" munge="yes"  
+		            preserveallsemicolons="true" outputfolder="${build.dir.js}">
+		        <fileset dir="${build.dir.js}">
+		            <include name="**/*.js"/>
+		        </fileset>  
+		    </compress>  
+		    <compress linebreak="150" warn="false" munge="yes" charset="UTF-8"  
+		            preserveallsemicolons="true" outputfolder="${build.dir.css}">
+		        <fileset dir="${build.dir.css}">
+		            <include name="**/*.css"/>
+		        </fileset>
+		    </compress>
+		</target>  
+	<target name="main" depends="init,compile,compres-js-css"></target>
+	<target name="dist" depends="main" description="将工程打成war包">
+		<!-- <war destfile="${build.dir}/${ant.project.name}/war" basedir="${build.dir}" webxml="D:\project\git\ch\webadmin\dzf_admin2\Embedded\webapps\dzf_admin2\WEB-INF\web.xml"></war>
+ -->		<!-- <war destfile="${build.dir}/${ant.project.name}/war" basedir="${build.dir}" webxml="${build.web.dir}/web.xml"></war> -->
+		<war warfile="${build}/dzfyxqd.war" webxml="${jsppath}/WEB-INF/web.xml">
+			<fileset dir="${build.dir}"/>
+		</war>
+		
+		<delete dir="${build}/base"/>
+		<delete dir="${build}/pub"/>
+		<delete dir="${build}/templib"/>
+	</target>
+</project>
