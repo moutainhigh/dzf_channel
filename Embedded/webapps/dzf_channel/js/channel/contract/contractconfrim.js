@@ -334,11 +334,11 @@ function confrim(type){
 					content : result.msg,
 				});
 				$('#confrim_Dialog').dialog('close');
-				var rerows = result.rows;
+				var rerow = result.rows;
 				var index = $("#grid").datagrid("getRowIndex",row);
 				$('#grid').datagrid('updateRow',{
             		index: index,
-            		row: result.rows,
+            		row: rerow,
             	});
 				$("#grid").datagrid('uncheckAll');
 			}

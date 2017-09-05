@@ -157,6 +157,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO updateConfStatus(ContractConfrimVO[] confrimVOs, Integer status) throws DZFWarpException {
+		//1-确认成功；2-确认失败；3-取消确认；
 		checkConfStatus(confrimVOs[0], status);
 		ContractConfrimVO retvo = null;
 		StringBuffer sql = new StringBuffer();
@@ -181,6 +182,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);//待确认
 			spm.addParam("");
 			retvo = queryContractById(confrimVOs[0].getPk_contract());
+			retvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		}
 		spm.addParam(confrimVOs[0].getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -193,22 +195,18 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param status
 	 */
 	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
-		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(
-				ContractConfrimVO.class, confrimvo.getPk_confrim());
-		if(oldvo != null){
-			if(IStatusConstant.ICONTRACTCONFRIM_1 == status){
-				if(IStatusConstant.IDEDUCTSTATUS_2 == oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态为待扣款");
-				}else if(IStatusConstant.IDEDUCTSTATUS_3 == oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态为已扣款");
-				}
-			}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status || 
-					IStatusConstant.ICONTRACTCONFRIM_3 == status){
-				if(IStatusConstant.IDEDUCTSTATUS_1 == oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态为待确认");
-				}else if(IStatusConstant.IDEDUCTSTATUS_3 == oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态为已扣款");
-				}
+		if(IStatusConstant.ICONTRACTCONFRIM_1 == status){
+			if(IStatusConstant.IDEDUCTSTATUS_2 == confrimvo.getVdeductstatus()){
+				throw new BusinessException("扣款状态为待扣款");
+			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
+				throw new BusinessException("扣款状态为已扣款");
+			}
+		}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status || 
+				IStatusConstant.ICONTRACTCONFRIM_3 == status){
+			if(IStatusConstant.IDEDUCTSTATUS_1 == confrimvo.getVdeductstatus()){
+				throw new BusinessException("扣款状态为待确认");
+			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
+				throw new BusinessException("扣款状态为已扣款");
 			}
 		}
 	}
