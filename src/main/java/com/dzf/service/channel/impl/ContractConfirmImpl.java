@@ -168,7 +168,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			confrimVOs[0].setTstamp(new DZFDateTime());
 			retvo = (ContractConfrimVO) singleObjectBO.saveObject("000001", confrimVOs[0]);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_2);//待扣款
-			spm.addParam("");
+			spm.addParam(confrimVOs[0].getVconfreason());
 		}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status){
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);//待确认
 			spm.addParam(confrimVOs[0].getVconfreason());
