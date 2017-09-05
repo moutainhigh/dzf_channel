@@ -280,34 +280,41 @@ function confrim(type){
 		});			
 		return;
 	}
+	//1-确认成功；2-确认失败；3-取消确认；
+	if(1 == type){
+		if(row.destatus == 2){
+			Public.tips({
+				content : '扣款状态为待扣款',
+				type : 2
+			});			
+			return;
+		}else if(row.destatus == 3){
+			Public.tips({
+				content : '扣款状态为已扣款',
+				type : 2
+			});			
+			return;
+		}
+	}else if(2 == type || 3 == type){
+		if(row.destatus == 1){
+			Public.tips({
+				content : '扣款状态为待确认',
+				type : 2
+			});			
+			return;
+		}else if(row.destatus == 3){
+			Public.tips({
+				content : '扣款状态为已扣款',
+				type : 2
+			});			
+			return;
+		}
+	}
+	
 	row.confreason = $('#confreason').val();
 	var postdata = new Object();
 	postdata["data"] = JSON.stringify(row);
 	postdata["confstatus"] = type;
-	
-//	$.messager.progress({
-//		text : '数据处理中，请稍后.....'
-//	});
-//	$('#conform').form('submit', {
-//		url : contextPath + '/contract/contractconf!updateConfStatus.action',
-//		queryParams : postdata,
-//		success : function(result) {
-//			var result = eval('(' + result + ')');
-//			$.messager.progress('close');
-//			if (result.success) {
-//				Public.tips({
-//					content : result.msg,
-//					type : 0
-//				});
-//				$('#confrim_Dialog').dialog('close');
-//			} else {
-//				Public.tips({
-//					content : result.msg,
-//					type : 2
-//				});
-//			}
-//		}
-//	});
 	
 	$.ajax({
 		type : "post",
@@ -347,6 +354,13 @@ function deduct(){
 	if(row == null){
 		Public.tips({
 			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	if(row.destatus != 2){
+		Public.tips({
+			content : '扣款状态不为待扣款',
 			type : 2
 		});			
 		return;
@@ -400,6 +414,21 @@ function initListener(){
  * 扣款确认
  */
 function deductConfri(){
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	if(row.destatus != 3){
+		Public.tips({
+			content : '扣款状态不为已扣款',
+			type : 2
+		});			
+		return;
+	}
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#deductfrom')));
 	postdata["opertype"] = 1;
@@ -419,11 +448,17 @@ function deductConfri(){
 					type : 0
 				});
 				$('#deduct_Dialog').dialog('close');
-				var rerows = result.rows;
+				var rerow = result.rows;
 				var index = $("#grid").datagrid("getRowIndex",row);
 				$('#grid').datagrid('updateRow',{
 					index: index,
-					row: result.rows,
+					row : {
+						propor : rerow.propor,
+						ndemny : rerow.ndemny,
+						dedate : rerow.dedate,
+						voper : rerow.voper,
+						destatus : rerow.destatus,
+        			}
 				});
 				$("#grid").datagrid('uncheckAll');
 			} else {
@@ -476,19 +511,20 @@ function cancelDeduct(){
 					content : result.msg,
 				});
 				$('#deduct_Dialog').dialog('close');
-				var rerows = result.rows;
+				var rerow = result.rows;
 				var index = $("#grid").datagrid("getRowIndex",row);
 				$('#grid').datagrid('updateRow',{
 					index: index,
-					row: result.rows,
+					row : {
+						propor : "",
+						ndemny : "",
+						dedate : "",
+						voper : "",
+						destatus : 2,
+        			}
 				});
 				$("#grid").datagrid('uncheckAll');
 			}
 		},
 	});
 }
-
-
-
-
-

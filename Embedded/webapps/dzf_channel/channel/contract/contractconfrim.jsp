@@ -29,6 +29,7 @@
 				</div>
 				
 				<div class="left mod-crumb">
+				
 					<input id="begdate" name="begdate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
 					--
 					<input id="enddate" name="enddate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
@@ -65,11 +66,11 @@
 		</div>
 		
 		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:300px;padding:10px;" data-options="closed:true">
-			<form id="conform">
+		<!-- 	<form id="conform"> -->
 				<textarea id="confreason" name="confreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,200]'" 
 					style="width:400px;height:120px;">
 				</textarea>
-			 </form>
+			<!--  </form> -->
 			 <p style="margin-top:60px;">
 				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;margin-left:46%;">确认成功</a> 
 				<a id="" href="#" class="ui-btn" onclick="confrim(2)">确认失败</a>
@@ -78,11 +79,11 @@
 		
 		<div id="deduct_Dialog" class="easyui-dialog" title="扣款" data-options="modal:true,closed:true" 
 				style="width:930px;height:50%;overflow:auto;">
-				<div class=right style="float:right !important;height:40px;padding-bottom:0px;padding-top:10px;">
+				<div class="mod-toolbar-content" style="text-align: right;">
 					<a id="" href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="deductConfri()">确认</a> 
 					<a id="" href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="deductCancel()">取消</a> 
 				</div>
-			<form id="deductfrom" method="post" enctype="multipart/form-data">
+			<form id="deductfrom" style="margin-top:20px;" method="post" enctype="multipart/form-data">
 				<input id="id" name="id" type="hidden">
 				<input id="corpid" name="corpid" type="hidden">
 				<div class="time_col time_colp11">

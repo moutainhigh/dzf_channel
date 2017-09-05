@@ -71,7 +71,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	}
 	
 	/**
-	 * 合同确认成功/确认失败
+	 * 合同确认成功/确认失败/取消确认
 	 */
 	public void updateConfStatus(){
 		Json json = new Json();
@@ -113,7 +113,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	}
 	
 	/**
-	 * 收款确认
+	 * 收款确认/取消收款
 	 */
 	public void updateDeductData(){
 		Json json = new Json();

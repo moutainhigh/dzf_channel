@@ -157,6 +157,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO updateConfStatus(ContractConfrimVO[] confrimVOs, Integer status) throws DZFWarpException {
+		checkConfStatus(confrimVOs[0], status);
 		ContractConfrimVO retvo = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -184,6 +185,32 @@ public class ContractConfirmImpl implements IContractConfirm {
 		spm.addParam(confrimVOs[0].getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 		return retvo;
+	}
+	
+	/**
+	 * 合同确认成功、合同确认失败、取消确认状态校验
+	 * @param confrimvo
+	 * @param status
+	 */
+	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
+		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(
+				ContractConfrimVO.class, confrimvo.getPk_confrim());
+		if(oldvo != null){
+			if(IStatusConstant.ICONTRACTCONFRIM_1 == status){
+				if(IStatusConstant.IDEDUCTSTATUS_2 == oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态为待扣款");
+				}else if(IStatusConstant.IDEDUCTSTATUS_3 == oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态为已扣款");
+				}
+			}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status || 
+					IStatusConstant.ICONTRACTCONFRIM_3 == status){
+				if(IStatusConstant.IDEDUCTSTATUS_1 == oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态为待确认");
+				}else if(IStatusConstant.IDEDUCTSTATUS_3 == oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态为已扣款");
+				}
+			}
+		}
 	}
 	
 	/**
@@ -267,6 +294,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException {
+		checkDeductStatus(paramvo, opertype);
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" UPDATE cn_contract set ideductpropor = ?, ndeductmny = ?, ");
@@ -305,6 +333,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else{
 				throw new BusinessException("预付款余额不足");
 			}
+			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){
 			spm.addParam("");
 			spm.addParam("");
@@ -328,6 +357,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				SQLParameter delspm = new SQLParameter();
 				delspm.addParam(paramvo.getPk_confrim());
 				singleObjectBO.executeUpdate(delsql, delspm);
+				paramvo.setIdeductpropor(null);
+				paramvo.setNdeductmny(null);
+				paramvo.setDeductdata(null);
+				paramvo.setVoperator(null);
+				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_2);
 			}else{
 				throw new BusinessException("预付款余额错误");
 			}
@@ -337,4 +371,24 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return paramvo;
 	}
 
+	/**
+	 * 收款/取消收款 状态校验
+	 * @param paramvo
+	 * @param opertype
+	 */
+	private void checkDeductStatus(ContractConfrimVO paramvo, Integer opertype){
+		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(
+				ContractConfrimVO.class, paramvo.getPk_confrim());
+		if(oldvo != null){
+			if(IStatusConstant.IDEDUCTYPE_1 == opertype){
+				if(IStatusConstant.IDEDUCTSTATUS_2  != oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态不为待扣款");
+				}
+			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){
+				if(IStatusConstant.IDEDUCTSTATUS_3 != oldvo.getVdeductstatus()){
+					throw new BusinessException("扣款状态不为已扣款");
+				}
+			}
+		}
+	}
 }
