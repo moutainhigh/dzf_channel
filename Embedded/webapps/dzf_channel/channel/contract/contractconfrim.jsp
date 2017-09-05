@@ -86,6 +86,8 @@
 			<form id="deductfrom" style="margin-top:20px;" method="post" enctype="multipart/form-data">
 				<input id="id" name="id" type="hidden">
 				<input id="corpid" name="corpid" type="hidden">
+				<input id="corpkna" name="corpkna" type="hidden">
+				<input id="vccode" name="vccode" type="hidden">
 				<div class="time_col time_colp11">
 					<label style="text-align:right">渠道商：</label> 
 					<input id="corpnm" name="corpnm" class="easyui-textbox" 

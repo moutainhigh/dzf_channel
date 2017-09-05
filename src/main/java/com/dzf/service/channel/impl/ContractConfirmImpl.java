@@ -323,7 +323,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				detvo.setNusedmny(paramvo.getNdeductmny());
 				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);
 				detvo.setPk_bill(paramvo.getPk_confrim());
-				detvo.setVmemo(paramvo.getVconmemo());
+				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
 				detvo.setCoperatorid(cuserid);
 				detvo.setDoperatedate(new DZFDate());
 				detvo.setDr(0);

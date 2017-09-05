@@ -127,8 +127,17 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		detvo.setPk_corp(billvo.getPk_corp());
 		detvo.setNpaymny(billvo.getNpaymny());
 		detvo.setIpaytype(billvo.getIpaytype());
+		if(detvo.getIpaytype() != null){
+			switch (detvo.getIpaytype()){
+			case 1:
+				detvo.setVmemo("加盟费");
+				break;
+			case 2:
+				detvo.setVmemo("预付款");
+				break;
+			}
+		}
 		detvo.setPk_bill(billvo.getPk_paybill());
-		detvo.setVmemo(billvo.getVmemo());
 		detvo.setCoperatorid(cuserid);
 		detvo.setDoperatedate(new DZFDate());
 		detvo.setDr(0);

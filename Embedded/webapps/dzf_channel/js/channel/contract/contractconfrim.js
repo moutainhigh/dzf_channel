@@ -389,6 +389,8 @@ function deduct(){
                 $("#dedate").datebox("setValue",Public.getLoginDate());
                 $('#vopernm').textbox('setValue',$("#unm").val());
                 $('#voper').val($("#uid").val());
+                $('#corpkna').val(row.corpkna);
+                $('#vccode').val(row.vccode);
             }
         },
     });
