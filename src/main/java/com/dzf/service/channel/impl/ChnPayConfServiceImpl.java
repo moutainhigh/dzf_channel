@@ -157,7 +157,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		billvo.setVstatus(opertype);
 		billvo.setCoperatorid(cuserid);
 		billvo.setDconfirmtime(new DZFDateTime());
-		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid"});
+		billvo.setTstamp(new DZFDateTime());
+		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
 		return billvo;
 	}
 	
@@ -204,7 +205,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		billvo.setVstatus(opertype);
 		billvo.setCoperatorid(cuserid);
 		billvo.setDconfirmtime(null);
-		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid"});
+		billvo.setTstamp(new DZFDateTime());
+		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
 		return billvo;
 	}
 	
