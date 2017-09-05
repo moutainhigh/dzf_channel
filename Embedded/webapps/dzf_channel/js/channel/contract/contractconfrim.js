@@ -142,7 +142,7 @@ function load(){
             halign:'center',
 			field : 'ndemny',
 			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
+				if(value == 0)return "";
 				return formatMny(value);
 			}
 		}, {
@@ -422,9 +422,9 @@ function deductConfri(){
 		});			
 		return;
 	}
-	if(row.destatus != 3){
+	if(row.destatus != 2){
 		Public.tips({
-			content : '扣款状态不为已扣款',
+			content : '扣款状态不为待扣款',
 			type : 2
 		});			
 		return;
@@ -486,6 +486,13 @@ function cancelDeduct(){
 	if(row == null){
 		Public.tips({
 			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	if(row.destatus != 3){
+		Public.tips({
+			content : '扣款状态不为已扣款',
 			type : 2
 		});			
 		return;
