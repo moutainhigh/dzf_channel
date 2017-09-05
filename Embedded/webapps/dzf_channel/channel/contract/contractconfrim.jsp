@@ -65,14 +65,14 @@
 			<table id="grid"></table>
 		</div>
 		
-		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:300px;padding:10px;" data-options="closed:true">
-		<!-- 	<form id="conform"> -->
+		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:260px;padding:10px;" data-options="closed:true">
+		 	<form id="conform"> 
 				<textarea id="confreason" name="confreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,200]'" 
-					style="width:400px;height:120px;">
+					style="width:480px;height:120px;margin:0 auto">
 				</textarea>
-			<!--  </form> -->
-			 <p style="margin-top:60px;">
-				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;margin-left:46%;">确认成功</a> 
+			  </form>
+			 <p style="margin-top:30px;text-align: center;">
+				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;">确认成功</a> 
 				<a id="" href="#" class="ui-btn" onclick="confrim(2)">确认失败</a>
 			 </p>
 		</div>
