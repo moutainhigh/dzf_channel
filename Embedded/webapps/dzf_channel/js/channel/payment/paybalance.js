@@ -235,10 +235,10 @@ function initDetailGrid(){
             var usemnysum = parseFloat(0);	// 已用金额
             var balmnysum = parseFloat(0);	// 余额
             for (var i = 0; i < rows.length; i++) {
-            	npmnysum += parseFloat(rows[i].npmny);
-            	usemnysum += parseFloat(rows[i].usemny);
+            	npmnysum += getFloatValue(rows[i].npmny);
+            	usemnysum += getFloatValue(rows[i].usemny);
             	if(i == rows.length - 1){
-            		balmnysum = rows[i].balmny;
+            		balmnysum = getFloatValue(rows[i].balmny);
             	}
             }
             footerData['ddate'] = '合计';
@@ -248,7 +248,6 @@ function initDetailGrid(){
             var fs=new Array(1);
             fs[0] = footerData;
             $('#gridh').datagrid('reloadFooter',fs);
-			
             $('#gridh').datagrid("scrollTo",0);
 		},
 	});
