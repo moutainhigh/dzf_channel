@@ -195,14 +195,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param status
 	 */
 	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
-		if(IStatusConstant.ICONTRACTCONFRIM_1 == status){
+		if(IStatusConstant.ICONTRACTCONFRIM_1 == status || IStatusConstant.ICONTRACTCONFRIM_2 == status ){
 			if(IStatusConstant.IDEDUCTSTATUS_2 == confrimvo.getVdeductstatus()){
 				throw new BusinessException("合同状态为待扣款");
 			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
 				throw new BusinessException("合同状态为已扣款");
 			}
-		}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status || 
-				IStatusConstant.ICONTRACTCONFRIM_3 == status){
+		}else if( IStatusConstant.ICONTRACTCONFRIM_3 == status){
 			if(IStatusConstant.IDEDUCTSTATUS_1 == confrimvo.getVdeductstatus()){
 				throw new BusinessException("合同状态为待确认");
 			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){

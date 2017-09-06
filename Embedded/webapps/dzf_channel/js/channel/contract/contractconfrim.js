@@ -282,7 +282,7 @@ function confrim(type){
 		return;
 	}
 	//1-确认成功；2-确认失败；3-取消确认；
-	if(1 == type){
+	if(1 == type || 2 == type){
 		if(row.destatus == 2){
 			Public.tips({
 				content : '合同状态为待扣款',
@@ -296,7 +296,7 @@ function confrim(type){
 			});			
 			return;
 		}
-	}else if(2 == type || 3 == type){
+	}else if(3 == type){
 		if(row.destatus == 1){
 			Public.tips({
 				content : '合同状态为待确认',
