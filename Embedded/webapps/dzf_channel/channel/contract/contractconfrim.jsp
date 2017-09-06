@@ -41,7 +41,7 @@
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(0)">全部</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(1)">待确认</a>
 						<a href="javascript:void(0)"  
-							style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(2)">代扣款</a>
+							style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(2)">待扣款</a>
 						<a href="javascript:void(0)"  
 							style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(3)">已扣款</a>
 					</div>
