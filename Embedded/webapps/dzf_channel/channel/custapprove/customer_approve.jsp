@@ -8,7 +8,7 @@
 <title>渠道商客户审批</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script type="text/javascript" src=<%UpdateGradeVersion.outversion(out, "../../js/sys_qdsgl/customer_approve.js");%> charset="UTF-8"></script>
+<script type="text/javascript" src=<%UpdateGradeVersion.outversion(out, "../../js/channel/custapprove/customer_approve.js");%> charset="UTF-8"></script>
 <style type="text/css">
 .pos-background {
 	background-color: yellow;
