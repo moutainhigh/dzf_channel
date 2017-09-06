@@ -373,7 +373,11 @@ function deduct(){
         type: "post",
         dataType: "json",
         url: contextPath + '/contract/contractconf!queryDeductData.action',
-        data: row,
+//        data: row,
+        data : {
+        	id : row.id,
+        	corpid : row.corpid,
+		},
         traditional: true,
         async: false,
         success: function(data, textStatus) {
@@ -525,7 +529,7 @@ function cancelDeduct(){
 				$('#grid').datagrid('updateRow',{
 					index: index,
 					row : {
-						propor : "",
+						propor : null,
 						ndemny : "",
 						dedate : "",
 						voper : "",

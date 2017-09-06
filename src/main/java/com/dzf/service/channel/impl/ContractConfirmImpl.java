@@ -280,14 +280,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException {
+		ContractConfrimVO retvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class, paramvo.getPk_confrim());
 		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND ipaytype = 2";//只查询预付款
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(paramvo.getPk_corp());
 		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
 		if(balVOs != null && balVOs.length > 0){
-			paramvo.setNbalance(SafeCompute.sub(balVOs[0].getNpaymny(), balVOs[0].getNusedmny()));
+			retvo.setNbalance(SafeCompute.sub(balVOs[0].getNpaymny(), balVOs[0].getNusedmny()));
 		}
-		return paramvo;
+		return retvo;
 	}
 
 	@Override
@@ -315,8 +316,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(balvo.getNpaymny().compareTo(paramvo.getNdeductmny()) < 0){
 					throw new BusinessException("预付款余额不足");
 				}
-				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), paramvo.getNdeductmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
+//				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), paramvo.getNdeductmny()));
+				balvo.setNusedmny(SafeCompute.add(balvo.getNusedmny(), paramvo.getNdeductmny()));
+				singleObjectBO.update(balvo, new String[]{"nusedmny"});
 				
 				ChnDetailVO detvo = new ChnDetailVO();
 				detvo.setPk_corp(paramvo.getPk_corp());
@@ -349,8 +351,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(balvo.getNpaymny().compareTo(paramvo.getNdeductmny()) < 0){
 					throw new BusinessException("预付款余额不足");
 				}
-				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), paramvo.getNdeductmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
+//				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), paramvo.getNdeductmny()));
+				balvo.setNusedmny(SafeCompute.sub(balvo.getNusedmny(), paramvo.getNdeductmny()));
+				singleObjectBO.update(balvo, new String[]{"nusedmny"});
 				String delsql = " UPDATE cn_detail set dr = 1 WHERE pk_bill = ? ";
 				SQLParameter delspm = new SQLParameter();
 				delspm.addParam(paramvo.getPk_confrim());
