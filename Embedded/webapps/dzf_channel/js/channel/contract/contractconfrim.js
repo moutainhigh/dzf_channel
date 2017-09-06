@@ -284,13 +284,13 @@ function confrim(type){
 	if(1 == type){
 		if(row.destatus == 2){
 			Public.tips({
-				content : '扣款状态为待扣款',
+				content : '合同状态为待扣款',
 				type : 2
 			});			
 			return;
 		}else if(row.destatus == 3){
 			Public.tips({
-				content : '扣款状态为已扣款',
+				content : '合同状态为已扣款',
 				type : 2
 			});			
 			return;
@@ -298,13 +298,13 @@ function confrim(type){
 	}else if(2 == type || 3 == type){
 		if(row.destatus == 1){
 			Public.tips({
-				content : '扣款状态为待确认',
+				content : '合同状态为待确认',
 				type : 2
 			});			
 			return;
 		}else if(row.destatus == 3){
 			Public.tips({
-				content : '扣款状态为已扣款',
+				content : '合同状态为已扣款',
 				type : 2
 			});			
 			return;
@@ -360,7 +360,7 @@ function deduct(){
 	}
 	if(row.destatus != 2){
 		Public.tips({
-			content : '扣款状态不为待扣款',
+			content : '合同状态不为待扣款',
 			type : 2
 		});			
 		return;
@@ -430,7 +430,7 @@ function deductConfri(){
 	}
 	if(row.destatus != 2){
 		Public.tips({
-			content : '扣款状态不为待扣款',
+			content : '合同状态不为待扣款',
 			type : 2
 		});			
 		return;
@@ -498,7 +498,7 @@ function cancelDeduct(){
 	}
 	if(row.destatus != 3){
 		Public.tips({
-			content : '扣款状态不为已扣款',
+			content : '合同状态不为已扣款',
 			type : 2
 		});			
 		return;

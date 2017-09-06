@@ -197,16 +197,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
 		if(IStatusConstant.ICONTRACTCONFRIM_1 == status){
 			if(IStatusConstant.IDEDUCTSTATUS_2 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("扣款状态为待扣款");
+				throw new BusinessException("合同状态为待扣款");
 			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("扣款状态为已扣款");
+				throw new BusinessException("合同状态为已扣款");
 			}
 		}else if(IStatusConstant.ICONTRACTCONFRIM_2 == status || 
 				IStatusConstant.ICONTRACTCONFRIM_3 == status){
 			if(IStatusConstant.IDEDUCTSTATUS_1 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("扣款状态为待确认");
+				throw new BusinessException("合同状态为待确认");
 			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("扣款状态为已扣款");
+				throw new BusinessException("合同状态为已扣款");
 			}
 		}
 	}
@@ -383,11 +383,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(oldvo != null){
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){
 				if(IStatusConstant.IDEDUCTSTATUS_2  != oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态不为待扣款");
+					throw new BusinessException("合同状态不为待扣款");
 				}
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){
 				if(IStatusConstant.IDEDUCTSTATUS_3 != oldvo.getVdeductstatus()){
-					throw new BusinessException("扣款状态不为已扣款");
+					throw new BusinessException("合同状态不为已扣款");
 				}
 			}
 		}
