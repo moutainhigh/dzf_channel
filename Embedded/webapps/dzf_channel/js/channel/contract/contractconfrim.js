@@ -247,6 +247,7 @@ function query(){
 	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
 	queryParams.begdate = begdate;
 	queryParams.enddate = enddate;
+	queryParams.qtype = -1;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }
