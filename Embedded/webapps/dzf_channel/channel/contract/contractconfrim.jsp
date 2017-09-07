@@ -33,11 +33,11 @@
 					<input id="begdate" name="begdate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
 					--
 					<input id="enddate" name="enddate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="query()">查询</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" data-options="plain:true" onclick="query()">查询</a>
 				</div>
 				
 				<div class="left mod-crumb">
-					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
+					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(0)">全部</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(1)">待确认</a>
 						<a href="javascript:void(0)"  
