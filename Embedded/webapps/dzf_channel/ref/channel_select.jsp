@@ -68,7 +68,7 @@ $(function(){
 		pageSize:200,
 	    pageList:[200,300,400,500],
 		showFooter : true,
-		height:300,
+		height:330,
 		striped:true,
 	    columns:[[{field:'pk_gs', title:'主键id',checkbox:true},
 	     		  {field:'incode',title:'公司编码',width:500},
