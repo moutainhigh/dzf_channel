@@ -16,9 +16,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@page import="com.dzf.pub.StringUtil"%>
-<%@page import="com.dzf.service.outresource.AdminOutResourceConst" %>
-<%@page import="com.dzf.service.outresource.OutResourceVO" %>
-<%@page import="com.dzf.pub.Outresource" %>
 
 <%
 	String datevalue = (String)session.getAttribute(IGlobalConstants.login_date);
@@ -71,7 +68,6 @@
 	String chatserver = ChatCommon.readchatServer();
 	
 	String callUrl=request.getRequestURL().toString();
-	OutResourceVO resourceVO=AdminOutResourceConst.getInstance().getResourceVO(callUrl);
 	
 	//"3004753485", "3004754158", "3004770986"
 	String qqline = (String)session.getAttribute("QQLINE");
@@ -83,7 +79,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="renderer" content="webkit|ie-stand|ie-comp">
-<title><%=resourceVO.getIndexTitle() %></title>
+<title>大账房</title>
 <jsp:include page="./inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "css/main.css");%> rel="stylesheet" />
 <link href=<%UpdateGradeVersion.outversion(out, "css/index_index.css");%> rel="stylesheet" />
@@ -96,7 +92,6 @@
 <script language=javaScript> 
 var indexContextPath = "<%=request.getContextPath() %>";
 DZF.contextPath = indexContextPath;
-var SYS_SKIN = {skincode : "lan"};
 var islogin =  "<%=userVo.getIslogin() != null ? userVo.getIslogin() : "N"%>";
 	
 function showOpt(id, show){

@@ -3,9 +3,6 @@
 <%@page import="com.dzf.pub.IGlobalConstants"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
-<%@page import="com.dzf.service.outresource.AdminOutResourceConst" %>
-<%@page import="com.dzf.service.outresource.OutResourceVO" %>
-<%@page import="com.dzf.pub.Outresource" %>
 
 <%
 	String message = (String)session.getAttribute(IGlobalConstants.logout_msg);
@@ -16,7 +13,6 @@
 	String appid = (request.getParameter("appid") == null ? "" : request.getParameter("appid"));
 	
 	String callUrl=request.getRequestURL().toString();
-	OutResourceVO resourceVO=AdminOutResourceConst.getInstance().getResourceVO(callUrl);
 	String path = request.getContextPath(); 
 	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
@@ -24,7 +20,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><%=resourceVO.getLoginTitle() %></title>
+<title>大账房</title>
 <jsp:include page="./inc/easyui.jsp"></jsp:include>
 <%-- <script src="<%=request.getContextPath()%>/js/security.js?v=<%=version%>" charset="UTF-8" type="text/javascript"></script>
 <link href="<%=request.getContextPath()%>/css/login.css?v=<%=version%>" rel="stylesheet" type="text/css" /> --%>
@@ -370,7 +366,7 @@ function savePsw(){
 </div>
 
 <div class="banquan">
-	<p><%=resourceVO.getCopyRight() %></p>
+	<p>©2015 大账房财务系统网站 | 京ICP备14043865号</p>
 </div>
 
 </body>
