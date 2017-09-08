@@ -232,22 +232,26 @@ $(function() {
                 {
                     field: 'bodycode',
                     width: 100,
-                    title: '法定代表人'
+                    title: '法定代表人',
+                    hidden:true,
                 },
                 {
                     field: 'corprhone',
                     width: 100,
-                    title: '法人电话'
+                    title: '法人电话',
+                    hidden:true,
                 },
                 {
                     field: 'chname',
                     width: 150,
-                    title: '纳税人资格'
+                    title: '纳税人资格',
+                    hidden:true,
                 },
                 {
                     field: 'indusname',
                     width: 100,
-                    title: '国家标准行业'
+                    title: '国家标准行业',
+                    hidden:true,
                 },
                 {
                     field: 'cdate',
@@ -269,7 +273,8 @@ $(function() {
 							}
 							return str
 						}
-                    }
+                    },
+                    hidden:true,
                 },
                 {
                     field: 'fname',

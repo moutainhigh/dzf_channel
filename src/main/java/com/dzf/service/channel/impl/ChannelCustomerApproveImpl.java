@@ -13,6 +13,7 @@ import com.dzf.model.sys.sys_power.CorpDocVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.DZfcommonTools;
 import com.dzf.service.channel.IChannelCustomerApprove;
@@ -72,7 +73,9 @@ public class ChannelCustomerApproveImpl implements IChannelCustomerApprove {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder whereSql = new StringBuilder();
 
-		sb.append(" select a.*, u.user_name as approve_user_name, ")
+		sb.append(" select a.pk_corp, a.innercode,a.unitname,a.createdate,a.ischannel,")
+		        .append(" a.approve_status,a.approve_comment,a.approve_user,a.approve_time,")
+		        .append(" u.user_name as approve_user_name,")
 				.append(" t.tradename as indusname, acc.unitname as foreignname from bd_corp a ")
 				.append(" left join sm_user u on a.approve_user = u.cuserid")
 				.append(" left join ynt_bd_trade t on a.industry = t.pk_trade ")
@@ -102,22 +105,22 @@ public class ChannelCustomerApproveImpl implements IChannelCustomerApprove {
 		List<CorpVO> list = (List) singleObjectBO.executeQuery(sb.toString(),
 				sp, new BeanListProcessor(CorpVO.class));
 
-		sb = new StringBuilder();
-		sb.append("select pk_doc, pk_corp, docname, vfilepath from ynt_corpdoc")
-				.append(" where nvl(dr, 0)=0 and pk_corp in ")
-				.append("(select pk_corp from bd_corp a ").append(whereSql)
-				.append(")");
-		List<CorpDocVO> docList = (List) singleObjectBO.executeQuery(
-				sb.toString(), sp, new BeanListProcessor(CorpDocVO.class));
-
-		Map<String, List<CorpDocVO>> docMap = DZfcommonTools.hashlizeObject(
-				docList, new String[] { "pk_corp" });
-		for (CorpVO corp : list) {
-			if (docMap.containsKey(corp.getPk_corp())) {
-				corp.setCorpDocVos(docMap.get(corp.getPk_corp()).toArray(
-						new CorpDocVO[0]));
-			}
-		}
+//		sb = new StringBuilder();
+//		sb.append("select pk_doc, pk_corp, docname, vfilepath from ynt_corpdoc")
+//				.append(" where nvl(dr, 0)=0 and pk_corp in ")
+//				.append("(select pk_corp from bd_corp a ").append(whereSql)
+//				.append(")");
+//		List<CorpDocVO> docList = (List) singleObjectBO.executeQuery(
+//				sb.toString(), sp, new BeanListProcessor(CorpDocVO.class));
+//
+//		Map<String, List<CorpDocVO>> docMap = DZfcommonTools.hashlizeObject(
+//				docList, new String[] { "pk_corp" });
+//		for (CorpVO corp : list) {
+//			if (docMap.containsKey(corp.getPk_corp())) {
+//				corp.setCorpDocVos(docMap.get(corp.getPk_corp()).toArray(
+//						new CorpDocVO[0]));
+//			}
+//		}
 		return list;
 	}
 
