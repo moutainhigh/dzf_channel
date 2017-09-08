@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
@@ -23,6 +25,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
+	
+	@Autowired
+	private SingleObjectBO singleObjectBO;
 	
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -69,18 +74,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		return qryvo;
 	}
 
-	@Override
-	public Integer queryDetailTotal(QryParamVO paramvo) throws DZFWarpException {
-		QrySqlSpmVO sqpvo =  getDetailQry(paramvo);
-		return multBodyObjectBO.queryDataTotal(ChnDetailVO.class,sqpvo.getSql(), sqpvo.getSpm());
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ChnDetailVO> queryDetail(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getDetailQry(paramvo);
-		List<ChnDetailVO> list = (List<ChnDetailVO>) multBodyObjectBO.queryDataPage(ChnDetailVO.class, 
-				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+		List<ChnDetailVO> list = (List<ChnDetailVO>) singleObjectBO.executeQuery(sqpvo.getSql(), 
+				sqpvo.getSpm(), new BeanListProcessor(ChnDetailVO.class));
 		if(list != null && list.size() > 0){
 			CorpVO accvo = null;
 			DZFDouble coutbal = DZFDouble.ZERO_DBL;

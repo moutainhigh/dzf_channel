@@ -182,9 +182,9 @@ function initDetailGrid(){
 		/*height : Public.setGrid().h,*/
 		height:'350',
 		singleSelect : true,
-		pagination : true,// 分页工具栏显示
-		pageSize : DZF.pageSize,
-		pageList : DZF.pageList,
+//		pagination : true,// 分页工具栏显示
+//		pageSize : DZF.pageSize_min,
+//		pageList : DZF.pageList_min,
 		showFooter:true,
 		columns : [ [ {
 			width : '140',

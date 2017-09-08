@@ -64,14 +64,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			int total = paybalanSer.queryDetailTotal(paramvo);
-			grid.setTotal((long)(total));
-			if(total > 0){
-				List<ChnDetailVO> clist = paybalanSer.queryDetail(paramvo);
-				grid.setRows(clist);
-			}else{
-				grid.setRows(new ArrayList<ChnDetailVO>());
-			}
+			List<ChnDetailVO> clist = paybalanSer.queryDetail(paramvo);
+			grid.setRows(clist);
 			grid.setSuccess(true);
 			grid.setMsg("操作成功");
 		} catch (Exception e) {
