@@ -26,7 +26,7 @@ function load(){
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
-		},{
+		}, {
 			width : '140',
 			title : '渠道商',
 			halign:'center',
@@ -35,11 +35,11 @@ function load(){
 			width : '150',
 			title : '付款时间',
 			field : 'dpdate',
-		},{
+		}, {
 			width : '260',
 			title : '单据号',
 			field : 'vcode',
-		}, 	{
+		}, {
 			width : '140',
 			title : '付款类型',
             halign:'center',
@@ -73,7 +73,7 @@ function load(){
 				if (value == '3')
 					return '微信';
 			}
-		},{
+		}, {
 			width : '140',
 			title : '单据状态',
             halign:'center',
@@ -86,17 +86,21 @@ function load(){
 				if (value == '3')
 					return '已确认';
 			}
-		},{
+		}, {
 			width : '140',
 			title : '备注',
             halign:'center',
 			field : 'memo',
-		},{
+		}, {
 			width : '140',
 			title : '收款确认时间',
             halign:'center',
 			field : 'dctime',
-		}] ],
+		}, {
+			field : 'billid',
+			title : '主键',
+			hidden : true
+		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
             if(!isenter){
@@ -205,12 +209,12 @@ function operatData(postdata, rows){
 				if(rerows != null && rerows.length > 0){
 					var map = new HashMap(); 
 					for(var i = 0; i < rerows.length; i++){
-						map.put(rerows[i].chargeid1,rerows[i]);
+						map.put(rerows[i].billid,rerows[i]);
 					}
 					var index;
 					var indexes = new Array();
 					for(var i = 0; i < rows.length; i++){
-						if(map.containsKey(rows[i].chargeid1)){
+						if(map.containsKey(rows[i].billid)){
 							index = $('#grid').datagrid('getRowIndex', rows[i]);
 							indexes.push(index);
 						}

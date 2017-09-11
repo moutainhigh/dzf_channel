@@ -139,8 +139,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		}
 		detvo.setPk_bill(billvo.getPk_paybill());
 		detvo.setCoperatorid(cuserid);
-		detvo.setDoperatedate(new DZFDate());
+		detvo.setDoperatedate(billvo.getDoperatedate());
 		detvo.setDr(0);
+		detvo.setIopertype(IStatusConstant.IDETAILTYPE_1);
 		ChnBalanceVO balvo = null;
 		String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
 		SQLParameter spm = new SQLParameter();

@@ -1,6 +1,11 @@
 package com.dzf.service.channel.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,7 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.IChnPayBalanceService;
@@ -81,10 +87,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<ChnDetailVO> list = (List<ChnDetailVO>) singleObjectBO.executeQuery(sqpvo.getSql(), 
 				sqpvo.getSpm(), new BeanListProcessor(ChnDetailVO.class));
 		if(list != null && list.size() > 0){
+			List<ChnDetailVO> oederlist = getOrderList(list);
 			CorpVO accvo = null;
 			DZFDouble coutbal = DZFDouble.ZERO_DBL;
 			DZFDouble balance = DZFDouble.ZERO_DBL;
-			for(ChnDetailVO vo : list){
+			for(ChnDetailVO vo : oederlist){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
@@ -103,8 +110,49 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				vo.setNbalance(SafeCompute.add(coutbal, balance));
 				coutbal = vo.getNbalance();
 			}
+			return oederlist;
 		}
 		return list;
+	}
+	
+	/**
+	 * 同一天的数据，按照收款在前，付款在后排列
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<ChnDetailVO> getOrderList(List<ChnDetailVO> list) throws DZFWarpException{
+		List<ChnDetailVO> relist = new ArrayList<ChnDetailVO> ();
+		Map<DZFDate,List<ChnDetailVO>> map = new HashMap<DZFDate,List<ChnDetailVO>>();
+		List<ChnDetailVO> newlist = null;
+		List<ChnDetailVO> oldlist = null;
+		List<DZFDate> keylist = new ArrayList<DZFDate>();
+		for(ChnDetailVO vo : list){
+			if(!map.containsKey(vo.getDoperatedate())){
+				newlist = new ArrayList<ChnDetailVO>();
+				newlist.add(vo);
+				map.put(vo.getDoperatedate(), newlist);
+				keylist.add(vo.getDoperatedate());
+			}else{
+				oldlist = map.get(vo.getDoperatedate());
+				oldlist.add(vo);
+			}
+		}
+		for(DZFDate key : keylist){
+			newlist = map.get(key);
+			Collections.sort(newlist,new Comparator<ChnDetailVO>() {
+
+				@Override
+				public int compare(ChnDetailVO o1, ChnDetailVO o2) {
+					return o1.getIopertype().compareTo(o2.getIopertype());
+				}
+				
+			});
+			for(ChnDetailVO vo : newlist){
+				relist.add(vo);
+			}
+		}
+		return relist;
 	}
 	
 	/**
@@ -112,7 +160,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param paramvo
 	 * @return
 	 */
-	private QrySqlSpmVO getDetailQry(QryParamVO paramvo){
+	private QrySqlSpmVO getDetailQry(QryParamVO paramvo) throws DZFWarpException{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
