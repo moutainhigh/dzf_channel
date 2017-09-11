@@ -23,4 +23,8 @@ public interface IStatusConstant {
 	/** 付款类型 (1:加盟费；2：预付款；) */
 	public static int IPAYTYPE_1 = 1;
 	public static int IPAYTYPE_2 = 2;
+	
+	/** 合同明细单操作类型 (1:付款；2：扣款；) */
+	public static int IDETAILTYPE_1 = 1;
+	public static int IDETAILTYPE_2 = 2;
 }
