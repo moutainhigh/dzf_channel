@@ -217,7 +217,7 @@ $(function() {
             	{
                     field: 'fname',
                     width: 200,
-                    title: '渠道商'
+                    title: '加盟商'
                 },
             	{
                     field: 'incode',
@@ -336,7 +336,7 @@ $(function() {
                     width: 600,
                     height: 480,
                     readonly: true,
-                    title: '选择渠道商',
+                    title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channelcorp_select.jsp',
                     buttons: '#kj_buttons',

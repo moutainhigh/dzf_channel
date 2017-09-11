@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>渠道商客户审批</title>
+<title>客户审批</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script type="text/javascript" src=<%UpdateGradeVersion.outversion(out, "../../js/channel/custapprove/customer_approve.js");%> charset="UTF-8"></script>
@@ -49,7 +49,7 @@
 					<input id="area_select" class="easyui-textbox" style="width:219px;height:28px;" />
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:70px;">渠道商：</label>
+					<label style="width:70px;">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" value="" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
