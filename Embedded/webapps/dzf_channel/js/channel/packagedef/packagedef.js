@@ -246,7 +246,6 @@ function initGrid(){
 
 function addType () {
 	showButtons("add");
-	var length = $("#grid").datagrid("getRows").length;
 	$('#grid').datagrid('insertRow',{index: 0,	// 索引从0开始
 		row: {}
 	});
