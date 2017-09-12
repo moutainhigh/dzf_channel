@@ -30,8 +30,8 @@
 				
 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
-						<label class="mr5">渠道商：</label>
-						<input style="height:28px;width:250px" class="easyui-textbox" id="filter_value" prompt="请输入渠道商名称,按Enter键 "/> 
+						<label class="mr5">加盟商：</label>
+						<input style="height:28px;width:250px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
 					</div>
 				</div>
 				<div class="right">
@@ -46,7 +46,7 @@
 		
 		<div id="detail_dialog" class="easyui-dialog" title="付款单余额明细" data-options="modal:true,closed:true" style="width:880px;height:500px;">
 			<div class="time_col" style="padding-top: 10px;;width:90%;margin:0 auto;">
-				<label style="text-align:right">渠道商：</label> 
+				<label style="text-align:right">加盟商：</label> 
 				<input id="corpnm" name="corpnm" class="easyui-textbox" 
 					data-options="readonly:true" style="width:150px;height:28px;text-align:left">
 				<label style="text-align:right">付款类型：</label> 

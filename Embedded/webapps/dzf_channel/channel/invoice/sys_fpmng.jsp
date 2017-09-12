@@ -58,7 +58,7 @@
 					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  value="<%=sdf.format(nowDate)%>" /></font>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:80px;text-align:right">渠道商：</label>
+					<label style="width:80px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>

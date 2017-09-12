@@ -39,7 +39,7 @@ function initDataGrid(){
 		pageSize : 20,
 		pageList : [ 20, 50, 100, 200 ],
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
-		            {width : '100',title : '渠道商',field : 'cname',align:'center'},
+		            {width : '100',title : '加盟商',field : 'cname',align:'center'},
 		            {width : '100',title : '付款类型',field : 'paytype',align:'center',
 						formatter: function(value,row,index){
 			          		if (value == 0){

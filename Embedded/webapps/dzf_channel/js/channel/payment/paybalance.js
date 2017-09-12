@@ -26,7 +26,7 @@ function load(){
 		showFooter:true,
 		columns : [ [ {
 			width : '140',
-			title : '渠道商',
+			title : '加盟商',
 			halign:'center',
 			field : 'corpnm',
 		}, {
