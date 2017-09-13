@@ -10,7 +10,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dzf.dao.bs.DAOException;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
@@ -19,7 +18,6 @@ import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
-import com.dzf.model.demp.contract.ContractVO;
 import com.dzf.model.packagedef.PackageDefVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
@@ -245,66 +243,43 @@ public class ContractConfirmImpl implements IContractConfirm {
 //		return retvo;
 //	}
 	
-	/**
-	 * 合同确认成功、合同确认失败、取消确认状态校验
-	 * @param confrimvo
-	 * @param status
-	 */
-	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
-		if(IStatusConstant.ICONTRACTCONFRIM_1 == status || IStatusConstant.ICONTRACTCONFRIM_2 == status ){
-			if(IStatusConstant.IDEDUCTSTATUS_2 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("合同状态为待扣款");
-			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("合同状态为已扣款");
-			}
-			checkContState(confrimvo);
-		}else if( IStatusConstant.ICONTRACTCONFRIM_3 == status){
-			if(IStatusConstant.IDEDUCTSTATUS_1 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("合同状态为待确认");
-			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
-				throw new BusinessException("合同状态为已扣款");
-			}
-			checkConfState(confrimvo);
-		}
-	}
+//	/**
+//	 * 合同确认成功、合同确认失败、取消确认状态校验
+//	 * @param confrimvo
+//	 * @param status
+//	 */
+//	private void checkConfStatus(ContractConfrimVO confrimvo, Integer status){
+//		if(IStatusConstant.ICONTRACTCONFRIM_1 == status || IStatusConstant.ICONTRACTCONFRIM_2 == status ){
+//			if(IStatusConstant.IDEDUCTSTATUS_2 == confrimvo.getVdeductstatus()){
+//				throw new BusinessException("合同状态为待扣款");
+//			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
+//				throw new BusinessException("合同状态为已扣款");
+//			}
+//			checkContState(confrimvo);
+//		}else if( IStatusConstant.ICONTRACTCONFRIM_3 == status){
+//			if(IStatusConstant.IDEDUCTSTATUS_1 == confrimvo.getVdeductstatus()){
+//				throw new BusinessException("合同状态为待确认");
+//			}else if(IStatusConstant.IDEDUCTSTATUS_3 == confrimvo.getVdeductstatus()){
+//				throw new BusinessException("合同状态为已扣款");
+//			}
+//			checkConfState(confrimvo);
+//		}
+//	}
 	
-	/**
-	 * 合同确认前状态校验
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	private void checkContState(ContractConfrimVO confrimvo) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT tstamp \n") ;
-		sql.append("  FROM ynt_contract t \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
-		sql.append("   AND t.pk_contract = ? ");
-		spm.addParam(confrimvo.getPk_contract());
-		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
-		if(result != null && result.size() > 0){
-			Object[] obj = (Object[]) result.get(0); 
-			DZFDateTime tstamp = new DZFDateTime(String.valueOf(obj[0]));
-			if(tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0){
-				throw new BusinessException("合同号："+confrimvo.getVcontcode()+"数据发生变化，请刷新界面后，再次尝试");
-			}
-		}
-	}
-	
-	/**
-	 * 合同取消确认前状态校验
-	 * @param confrimVOs
-	 * @throws DZFWarpException
-	 */
-	private void checkConfState(ContractConfrimVO confrimvo) throws DZFWarpException {
-		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class, 
-				confrimvo.getPk_confrim());
-		if(oldvo != null){
-			if(oldvo.getTstamp().compareTo(confrimvo.getTstamp()) != 0){
-				throw new BusinessException("合同号："+confrimvo.getVcontcode()+"数据发生变化，请刷新界面后，再次尝试");
-			}
-		}
-	}
+//	/**
+//	 * 合同取消确认前状态校验
+//	 * @param confrimVOs
+//	 * @throws DZFWarpException
+//	 */
+//	private void checkConfState(ContractConfrimVO confrimvo) throws DZFWarpException {
+//		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class, 
+//				confrimvo.getPk_confrim());
+//		if(oldvo != null){
+//			if(oldvo.getTstamp().compareTo(confrimvo.getTstamp()) != 0){
+//				throw new BusinessException("合同号："+confrimvo.getVcontcode()+"数据发生变化，请刷新界面后，再次尝试");
+//			}
+//		}
+//	}
 	
 	/**
 	 * 通过主键查询合同数据
@@ -388,7 +363,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		String errmsg = "";
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 			//1、更新合同加盟合同状态、驳回原因
-			errmsg = updateContract(paramvo);
+			errmsg = updateContract(paramvo, opertype);
 			if(StringUtil.isEmpty(errmsg)){
 				throw new BusinessException(errmsg);
 			}
@@ -402,12 +377,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//4、回写套餐促销活动名额
 			updateSerPackage(paramvo);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-			errmsg = updateContract(paramvo);
+			errmsg = updateContract(paramvo, opertype);
 			if(StringUtil.isEmpty(errmsg)){
 				throw new BusinessException(errmsg);
 			}
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
-			paramvo.setVconfreason(paramvo.getVconfreason());//驳回原因
 		}
 		
 		return paramvo;
@@ -447,24 +421,55 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 * @throws DZFWarpException
 	 */
-	private String updateContract(ContractConfrimVO paramvo) throws DZFWarpException {
-		String msg = "";
-		ContractVO contvo = (ContractVO) singleObjectBO.queryByPrimaryKey(ContractVO.class, paramvo.getPk_contract());
-		if(contvo != null){
-			if(paramvo.getTstamp().compareTo(contvo.getTstamp()) != 0){
-				return "合同数据发生变化，请刷新数据后，再次尝试";
+	private String updateContract(ContractConfrimVO paramvo, Integer opertype) throws DZFWarpException {
+		String msg = checkContState(paramvo);
+		if(StringUtil.isEmpty(msg)){
+			return msg;
+		}
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vconfreason = ? ,");
+		sql.append(" tstamp = ? WHERE nvl(dr,0) = 0 AND pk_corp = ? AND pk_contract = ? ");
+		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_2);
+		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
+		}
+		spm.addParam(paramvo.getVconfreason());
+		spm.addParam(new DZFDateTime());
+		spm.addParam(paramvo.getPk_corp());
+		spm.addParam(paramvo.getPk_contract());
+		singleObjectBO.executeUpdate(sql.toString(), spm);
+		return "";
+	}
+	
+	/**
+	 * 合同审核前状态校验
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private String checkContState(ContractConfrimVO confrimvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT tstamp,vdeductstatus \n") ;
+		sql.append("  FROM ynt_contract t \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("   AND t.pk_contract = ? ");
+		spm.addParam(confrimvo.getPk_contract());
+		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
+		if(result != null && result.size() > 0){
+			Object[] obj = (Object[]) result.get(0); 
+			DZFDateTime tstamp = new DZFDateTime(String.valueOf(obj[0]));
+			if(tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0){
+				return "合同号："+confrimvo.getVcontcode()+"数据发生变化，请刷新界面后，再次尝试";
 			}
-			if(IStatusConstant.IDEDUCTSTATUS_1 != contvo.getVdeductstatus()){
+			if(IStatusConstant.IDEDUCTSTATUS_1 != Integer.parseInt(String.valueOf(obj[1]))){
 				return "合同状态不为待审核";
 			}
-			contvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_2);//已审核
-			contvo.setVconfreason(paramvo.getVconfreason());//驳回原因
-			contvo.setTstamp(new DZFDateTime());
-			singleObjectBO.update(contvo, new String[]{"vdeductstatus","vconfreason","tstamp"});
 		}else{
 			return "合同数据错误";
 		}
-		return msg;
+		return "";
 	}
 	
 	/**
@@ -505,6 +510,56 @@ public class ContractConfirmImpl implements IContractConfirm {
 			return "预付款余额不足";
 		}
 		return "";
+	}
+
+	@Override
+	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, Integer opertype, String cuserid)
+			throws DZFWarpException {
+		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
+		ContractConfrimVO retvo = null;
+		for (ContractConfrimVO vo : confrimVOs) {
+			retvo = updateBathDeductData(vo, opertype, cuserid);
+			retlist.add(retvo);
+		}
+		return retlist;
+	}
+	
+	/**
+	 * 批量审核-审核单个数据
+	 * @param confrimvo
+	 * @param opertype
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, Integer opertype, String cuserid)
+			throws DZFWarpException {
+		String errmsg = "";
+		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+			//1、更新合同加盟合同状态、驳回原因
+			errmsg = updateContract(confrimvo, opertype);
+			if(StringUtil.isEmpty(errmsg)){
+				confrimvo.setVerrmsg(errmsg);
+				return confrimvo;
+			}
+			//2、回写付款余额
+			errmsg = updateBalanceMny(confrimvo, cuserid);
+			if(StringUtil.isEmpty(errmsg)){
+				confrimvo.setVerrmsg(errmsg);
+				return confrimvo;
+			}
+			//3、生成合同审核数据
+			confrimvo = saveContConfrim(confrimvo);
+			//4、回写套餐促销活动名额
+			updateSerPackage(confrimvo);
+		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+			errmsg = updateContract(confrimvo, opertype);
+			if(StringUtil.isEmpty(errmsg)){
+				throw new BusinessException(errmsg);
+			}
+			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
+		}
+		return confrimvo;
 	}
 
 	@Override

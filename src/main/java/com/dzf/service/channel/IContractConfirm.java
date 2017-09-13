@@ -48,5 +48,13 @@ public interface IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ContractDocVO[] getAttatches(ContractDocVO qvo)throws DZFWarpException;
+	public ContractDocVO[] getAttatches(ContractDocVO qvo) throws DZFWarpException;
+	
+	/**
+	 * 批量审核
+	 * @param confrimVOs
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, Integer opertype, String cuserid) throws DZFWarpException;
 }

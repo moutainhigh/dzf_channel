@@ -59,20 +59,7 @@
 			<table id="grid"></table>
 		</div>
 		
-<!-- 		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:260px;padding:10px;" data-options="closed:true">
-		 	<form id="conform"> 
-				<textarea id="confreason" name="confreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,200]'" 
-					style="width:480px;height:120px;margin:0 auto">
-				</textarea>
-			  </form>
-			 <p style="margin-top:30px;text-align: center;">
-				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;">确认成功</a> 
-				<a id="" href="#" class="ui-btn" onclick="confrim(2)">确认失败</a>
-			 </p>
-		</div> -->
-		
-		
-
+		<!-- 单个审核  begin  -->
 		<div id="deduct_Dialog" class="easyui-dialog" style="width:1240px;height:90%;overflow: auto;" data-options="closed:true">
 			<div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
@@ -97,8 +84,8 @@
 							style="width:60%;height:28px;text-align:left; ">
 					</div>
 					<div style="width:18%;display: inline-block;float: right;">
-						<a class="ui-btn save_input" onclick="">确定</a>&emsp;
-						<a class="ui-btn cancel_input" onclick="">取消</a>
+						<a class="ui-btn save_input" onclick="deductConfri()">确定</a>&emsp;
+						<a class="ui-btn cancel_input" onclick="deductCancel()">取消</a>
 					</div>
 				</div>
 			</div>
@@ -134,9 +121,9 @@
 					</div>
 				</div>
 				<div class="time_col time_colp11 ">
-					&emsp;&emsp;<input name="opertype" type="radio" value="" />
+					&emsp;&emsp;<input id="debit" name="opertype" type="radio" value="1" checked />
 					<label>扣款</label>
-					<input name="opertype" type="radio" value="" />
+					<input name="opertype" type="radio" value="2" />
 					<label>驳回</label>
 				</div>
 				<div class="time_col time_colp11 ">
@@ -226,6 +213,7 @@
 			<div id="filedoc"></div>
 			<!-- 合同信息 end -->
 		</div>
+		<!-- 单个审核  end  -->
 		
 		<!-- 查看附件begin -->
 		<div id="attachViewDlg" style="display: none;">	
@@ -238,9 +226,54 @@
 		<div id="tpfd"></div>
 		<!-- 查看附件end -->
 		
+		<!-- 批量审核  begin-->
+		<div id="bdeduct_Dialog" class="easyui-dialog" style="width:1240px;height:60%;overflow: auto;" data-options="closed:true">
+			<div>
+				<div class="time_col time_colp11" style="margin-top:20px;">
+					<!-- <div style="width:60%;display: inline-block;">
+						<label style="width:26%;text-align: right;">促销活动：</label>
+						<input class="easyui-textbox" style="width: 60%; height: 28px; text-align: left; ">
+					</div> -->
+					<div style="width:18%;display: inline-block;float: right;">
+						<a class="ui-btn save_input" onclick="bathconf()">确定</a>&emsp;
+						<a class="ui-btn cancel_input" onclick="bathcanc()">取消</a>
+					</div>
+				</div>
+			</div>
+			<form id="bdeductfrom" style="border-top:2px solid #000;  margin-top:60px;" method="post">
+				<div class="time_col time_colp11" style="margin-top:10px;">
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">扣款比例：</label>
+						<input id="bpropor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,"
+							style="width:50%;height:28px;text-align:left; ">%
+					</div>
 		
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">扣费日期：</label>
+						<input id="bdedate" name="dedate" class="easyui-datebox"  data-options="readonly:true" 
+						style="width:60%;height:28px;text-align:left"></input>
+					</div>
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">经办人：</label>
+						<input id="bvopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
+							style="width:60%;height:28px;text-align:left; ">
+						<input id="bvoper" name="voper" type="hidden">
+					</div>
+				</div>
+				<div class="time_col time_colp11 ">
+					&emsp;&emsp;<input id="bdebit" name="bopertype" type="radio" value="1" checked />
+					<label>扣款</label>
+					<input name="bopertype" type="radio" value="2" />
+					<label>驳回</label>
+				</div>
+				<div class="time_col time_colp11 ">
+					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
+					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
+						 style="height:50px; width:88%;border-radius: 5px;"></textarea>
+				</div>  
+			</form>
+		</div>
+		<!-- 批量审核  end-->
 	</div>
-	
 </body>
-
 </html>

@@ -18,12 +18,14 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
@@ -142,6 +144,32 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	}
 	
 	/**
+	 * 批量审核
+	 */
+	public void bathconfrim(){
+		Json json = new Json();
+		try {
+			String contract = getRequest().getParameter("contract"); // 审核数据
+			if(StringUtil.isEmpty(contract)){
+				throw new BusinessException("数据不能为空");
+			}
+			String type = getRequest().getParameter("opertype");
+			Integer opertype = Integer.parseInt(type);
+			
+			contract = contract.replace("}{", "},{");
+			contract = "[" + contract + "]";
+			JSONArray arrayJson = (JSONArray) JSON.parseArray(contract);
+			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
 	 * 获取附件列表
 	 */
 	public void getAttaches(){
@@ -167,7 +195,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		writeJson(json);
 	}
 	
-	/****
+	/**
 	 * 获取附件显示图片
 	 */
 	public void getAttachImage(){

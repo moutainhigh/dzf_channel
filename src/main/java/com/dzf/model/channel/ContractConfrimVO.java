@@ -133,6 +133,17 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("salespromot")
     private String vsalespromot;//促销活动（数据展示，不存库）
     
+    @FieldAlias("errmsg")
+    private String verrmsg;//错误信息
+    
+	public String getVerrmsg() {
+		return verrmsg;
+	}
+
+	public void setVerrmsg(String verrmsg) {
+		this.verrmsg = verrmsg;
+	}
+
 	public String getVsalespromot() {
 		return vsalespromot;
 	}
