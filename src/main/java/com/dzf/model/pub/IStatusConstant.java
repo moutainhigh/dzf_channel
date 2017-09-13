@@ -11,12 +11,13 @@ public interface IStatusConstant {
 	public static int ICONTRACTCONFRIM_2 = 2;
 	public static int ICONTRACTCONFRIM_3 = 3;
 	
-	/** 合同扣款状态(1：待确认；2：待扣款；3：已扣款；) */
+	/** 合同扣款状态(1：待审核；2：已审核；3：已驳回；4：服务到期；) */
 	public static int IDEDUCTSTATUS_1 = 1;
 	public static int IDEDUCTSTATUS_2 = 2;
 	public static int IDEDUCTSTATUS_3 = 3;
+	public static int IDEDUCTSTATUS_4 = 4;
 
-	/** 合同扣款确认/取消扣款操作 (1：扣款确认；2：取消扣款；) */
+	/** 合同扣款确认/取消扣款操作 (1：扣款；2：驳回；) */
 	public static int IDEDUCTYPE_1 = 1;
 	public static int IDEDUCTYPE_2 = 2;
 	

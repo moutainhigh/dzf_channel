@@ -10,8 +10,9 @@
 <title>合同确认</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out,request.getContextPath()+"/js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/contractconfrim.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/showfile.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 <%
 	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);
@@ -38,12 +39,7 @@
 				
 				<div class="left mod-crumb">
 					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(0)">全部</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(1)">待确认</a>
-						<a href="javascript:void(0)"  
-							style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(2)">待扣款</a>
-						<a href="javascript:void(0)"  
-							style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(3)">已扣款</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryData(1)">待审核</a>
 					</div>
 				</div>
 				
@@ -53,10 +49,8 @@
 					</div>
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doConfrim()">合同确认</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confrim(3)">取消确认</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="deduct()">扣款处理</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancelDeduct()">取消扣款</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">合同审核</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="bathAudit()">批量审核</a>
 				</div>
 			</div>
 		</div>
@@ -65,7 +59,7 @@
 			<table id="grid"></table>
 		</div>
 		
-		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:260px;padding:10px;" data-options="closed:true">
+<!-- 		<div id="confrim_Dialog" class="easyui-dialog" style="width:500px;height:260px;padding:10px;" data-options="closed:true">
 		 	<form id="conform"> 
 				<textarea id="confreason" name="confreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,200]'" 
 					style="width:480px;height:120px;margin:0 auto">
@@ -75,55 +69,176 @@
 				<a id="" href="#" class="ui-btn" onclick="confrim(1)" style="margin-right:10%;">确认成功</a> 
 				<a id="" href="#" class="ui-btn" onclick="confrim(2)">确认失败</a>
 			 </p>
-		</div>
+		</div> -->
 		
-		<div id="deduct_Dialog" class="easyui-dialog" title="扣款" data-options="modal:true,closed:true" 
-				style="width:930px;height:50%;overflow:auto;">
-				<div class="mod-toolbar-content" style="text-align: right;">
-					<a id="" href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="deductConfri()">确认</a> 
-					<a id="" href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="deductCancel()">取消</a> 
+		
+
+		<div id="deduct_Dialog" class="easyui-dialog" style="width:1240px;height:90%;overflow: auto;" data-options="closed:true">
+			<div>
+				<div class="time_col time_colp11 " style="margin-top: 6px;">
+					<div style="width:28%;display: inline-block;">
+						<label style="width:26%;text-align: right;">预付款余额：</label>
+						<input id="balmny" name="balmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
+							 style="width:60%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:50%;display: inline-block;">
+						<label style="width:20%;text-align: right;">促销活动：</label>
+						<input id="promotion" name="promotion" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
+					</div>
 				</div>
-			<form id="deductfrom" style="margin-top:20px;" method="post" enctype="multipart/form-data">
-				<input id="id" name="id" type="hidden">
-				<input id="corpid" name="corpid" type="hidden">
-				<input id="corpkna" name="corpkna" type="hidden">
-				<input id="vccode" name="vccode" type="hidden">
-				<div class="time_col time_colp11">
-					<label style="text-align:right">渠道商：</label> 
-					<input id="corpnm" name="corpnm" class="easyui-textbox" 
-						data-options="readonly:true" style="width:150px;height:28px;text-align:left"> 
-					<label style="text-align:right">剩余金额：</label> 
-					<input id="balmny" name="balmny" class="easyui-numberbox" 
-						data-options="readonly:true,precision:2,groupSeparator:','" style="width:150px;height:28px;text-align:left">
-					<label	style="text-align:right">合同金额：</label> 
-					<input id="ntlmny" name="ntlmny" class="easyui-numberbox" 
-						data-options="readonly:true,precision:2,groupSeparator:','" style="width:150px;height:28px;text-align:left"> 
+				<div class="time_col time_colp11 " style="margin-top: 6px;">
+					<div style="width:28%;display: inline-block;">
+						<label style="width:26%;text-align: right;">渠道商：</label>
+						<input id="corpnm" name="corpnm" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:22%;display: inline-block;">
+						<label style="width:30%;text-align: right;">合同金额：</label>
+						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:60%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:18%;display: inline-block;float: right;">
+						<a class="ui-btn save_input" onclick="">确定</a>&emsp;
+						<a class="ui-btn cancel_input" onclick="">取消</a>
+					</div>
 				</div>
-				<div class="time_col time_colp11">
-					<label style="text-align:right">扣款比例：</label> 
-					<input id="propor" name="propor" class="easyui-numberbox" 
-						data-options="min:0,max:100," style="width:135px;height:28px;text-align:left">% 
-					<label style="text-align:right">扣款金额：</label> 
-					<input id="ndemny" name="ndemny" class="easyui-numberbox" 
-						data-options="readonly:true,precision:2,groupSeparator:','" style="width:150px;height:28px;text-align:left">
+			</div>
+		
+			<form id = "deductfrom" style="border-bottom:2px solid #000;border-top:2px solid #000;  margin-top:30px;"  method="post">
+				<div class="time_col time_colp11 ">
+					<label style="width: 100px;text-align:center;color:blue;">扣款</label>
 				</div>
-				<div class="time_col time_colp11">
-					<label style="text-align:right">扣费日期：</label> 
-					<input id="dedate" name="dedate" class="easyui-datebox" 
-						data-options="readonly:true" style="width:150px;height:28px;text-align:left"> 
-					<label style="text-align:right">经办人：</label> 
-					<input id="vopernm" name="vopernm" class="easyui-textbox" 
-						data-options="readonly:true" style="width:150px;height:28px;text-align:left">
-					<input id="voper" name="voper" type="hidden">
+				<div class="time_col time_colp11 " style="margin-top:10px;">
+					<input id="contractid" name="contractid" type="hidden">
+					<input id="tstp" name="tstp" type="hidden">
+					<input id="area" name="area" type="hidden">
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">扣款比例：</label>
+						<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,"
+							style="width:50%;height:28px;text-align:left; ">%
+					</div>
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">扣款金额：</label>
+						<input id="ndemny" name="ndemny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
+						 style="width:60%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">扣费日期：</label>
+						<input id="dedate" name="dedate" class="easyui-datebox"  data-options="readonly:true" 
+						style="width:60%;height:28px;text-align:left"></input>
+					</div>
+					<div style="width:24%;display: inline-block;">
+						<label style="width:35%;text-align: right;">经办人：</label>
+						<input id="vopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
+							style="width:60%;height:28px;text-align:left; ">
+						<input id="voper" name="voper" type="hidden">
+					</div>
 				</div>
-				<div class="time_col time_colp11">
-					<label style="text-align:right">备注：</label> 
-					<textarea id="conmemo" name="conmemo" class="easyui-textbox" 
-						data-options="multiline:true,validType:'length[0,200]'" style="width:600px;height:80px;">
-					</textarea>
+				<div class="time_col time_colp11 ">
+					&emsp;&emsp;<input name="opertype" type="radio" value="" />
+					<label>扣款</label>
+					<input name="opertype" type="radio" value="" />
+					<label>驳回</label>
+				</div>
+				<div class="time_col time_colp11 ">
+					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
+					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
+						 style="height:50px; width:88%;border-radius: 5px;"></textarea>
+				</div>      	               
+			
+				<!-- 合同信息 begin -->
+				<div>
+					<!-- <form id = "contfrom"   method="post"> -->
+					<div class="time_col time_colp11 ">
+						<label style="width: 100px;text-align:center;color:blue;">合同信息</label>
+					</div>
+					<div class="time_col time_colp11 ">
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">客户名称：</label>
+							<input id="corpkna" name="corpkna" class="easyui-textbox" data-options="readonly:true" 
+								style="width:56%;height:28px;text-align:left;">
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">合同编号：</label>
+							<input id="vccode" name="vccode"  class="easyui-textbox" data-options="readonly:true" 
+								style="width:56%;height:28px;text-align:left;">
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">签订日期：</label>
+							<input id="signdate" name="signdate" class="easyui-datebox"  data-options="readonly:true" 
+								style="width:56%;height:28px;text-align:left">
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">业务类型：</label>
+							<input id="typeminm" name="typeminm" class="easyui-textbox" data-options="readonly:true"
+								style="width:56%;height:28px;text-align:left;">
+						</div>
+					</div>
+					<div class="time_col time_colp11 ">
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">纳税人资格：</label>
+							<input id="chname" name="chname" class="easyui-textbox" data-options="readonly:true"
+								style="width:56%;height:28px;text-align:left;">
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">代账费（元/月）：</label>
+							<input id="nmsmny" name="nmsmny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
+								 style="width:56%;height:28px;text-align:left;">
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">账本费：</label>
+							<input id="nbmny" name="nbmny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
+								 style="width:56%;height:28px;text-align:left"></input>
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:40%;text-align: right;">合同金额：</label>
+							<input id="ntlmny" name="ntlmny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:56%;height:28px;text-align:left;">
+						</div>
+					</div>
+					<div class="time_col time_colp11 ">
+						<div style="width:24%;display:inline-block;">
+							<label style="width:40%;text-align: right;">合同周期（月）：</label>
+							<input id="contcycle" name="contcycle" class="easyui-textbox" style="width:56%; height: 28px; text-align:left;">
+						</div>
+						<div style="width:24%;display:inline-block;">
+							<label style="width:40%;text-align: right;">收款周期（月）：</label>
+							<input id="chgcycle" name="chgcycle" class="easyui-textbox" style="width: 56%; height: 28px; text-align:left;">
+						</div>
+						<div style="width: 48%;display:inline-block;">
+							<div class="time_col">
+								<label style="width: 118px;text-align: right;">服务期限：</label> 
+								<input type="text" id="bperiod" name="bperiod" class="easyui-textbox" style="width:137px; height: 28px; " >-
+								<input type="text" id="eperiod" name="eperiod" class="easyui-textbox" style="width:137px; height: 28px;">
+							</div>
+						</div>
+					</div>
+					<!-- </form> -->
+					<!-- 附件信息begin -->
+					<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+						<div class="entrance_block_tu" id="tpght" style="height:60%;width:99%;">
+							<ul class="tu_block" id="filedocs"></ul>
+						</div>
+					</div>
+					<!-- 附件信息end -->
 				</div>
 			</form>
+			
+			<div id="filedoc"></div>
+			<!-- 合同信息 end -->
 		</div>
+		
+		<!-- 查看附件begin -->
+		<div id="attachViewDlg" style="display: none;">	
+		  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+				<div class="entrance_block_tu" id="tpght" style="overflow-y:auto;height:98%;width:99%;">
+					<ul class="tu_block" id="attachs"></ul>
+				</div>
+			</div>
+		</div>
+		<div id="tpfd"></div>
+		<!-- 查看附件end -->
+		
+		
 	</div>
 	
 </body>

@@ -63,6 +63,11 @@ function load(){
 			hidden : true
 		}, {
 			width : '140',
+			title : '地区',
+			halign:'center',
+			field : 'area',
+		},{
+			width : '140',
 			title : '渠道商',
 			halign:'center',
 			field : 'corpnm',
@@ -87,7 +92,7 @@ function load(){
 			halign:'center',
 			field : 'vccode',
 		}, {
-			width : '140',
+			width : '120',
 			title : '合同总金额',
 			align:'right',
             halign:'center',
@@ -97,22 +102,27 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '140',
+			width : '120',
+			title : '收款周期（月）',
+			halign:'center',
+			field : 'chgcycle',
+		}, {
+			width : '120',
 			title : '开始日期',
 			halign:'center',
 			field : 'bdate',
 		}, {
-			width : '140',
+			width : '120',
 			title : '结束日期',
 			halign:'center',
 			field : 'edate',
 		}, {
-			width : '140',
-			title : '合同周期',
+			width : '120',
+			title : '合同周期（月）',
 			halign:'center',
-			field : 'cylnum',
+			field : 'contcycle',
 		}, {
-			width : '140',
+			width : '100',
 			title : '月服务费',
 			align:'right',
             halign:'center',
@@ -122,12 +132,18 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '140',
+			width : '100',
+			title : '附件',
+			halign:'center',
+			field : 'contdoc',
+			formatter : formatDocLink
+		},{
+			width : '100',
 			title : '扣费日期',
 			halign:'center',
 			field : 'dedate',
 		}, {
-			width : '140',
+			width : '100',
 			title : '扣款比例',
 			halign:'center',
 			field : 'propor',
@@ -136,7 +152,7 @@ function load(){
 					return value+"%";
 			}
 		},{
-			width : '140',
+			width : '100',
 			title : '扣费金额',
 			align:'right',
             halign:'center',
@@ -146,23 +162,42 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '140',
+			width : '100',
 			title : '合同状态',
             halign:'center',
 			field : 'destatus',
 			formatter : function(value) {
 				if (value == '1')
-					return '待确认';
+					return '待审核';
 				if (value == '2')
-					return '待扣款';
+					return '已审核';
 				if (value == '3')
-					return '已扣款';
+					return '已驳回';
+				if (value == '4')
+					return '服务到期';
 			}
 		}, {
 			width : '100',
 			title : '时间戳',
 			field : 'tstp',
 			hidden : true
+		}, {
+			width : '100',
+			title : '制单人',
+			field : 'operatorid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '销售顾问',
+			field : 'adviser',
+		}, {
+			width : '100',
+			title : '经办人',
+			field : 'vopernm',
+		}, {
+			width : '140',
+			title : '驳回原因',
+			field : 'confreason',
 		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
@@ -173,6 +208,17 @@ function load(){
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 超级链接-穿透查询
+ * @param val
+ * @param row
+ * @param index
+ * @returns {String}
+ */
+function formatDocLink(val,row,index){  
+    return '<a href="#" style="color:blue" onclick="viewattach('+index+')">合同附件</a>';  
 }
 
 /**
@@ -252,100 +298,100 @@ function query(){
 	$('#grid').datagrid('reload');
 }
 
-/**
- * 合同确认
- */
-function doConfrim(){
-	var row = $('#grid').datagrid('getSelected');
-	if(row == null){
-		Public.tips({
-			content : '请选择需要处理的数据',
-			type : 2
-		});			
-		return;
-	}
-	$('#confrim_Dialog').dialog({ modal:true });//设置dig属性
-	$('#confrim_Dialog').dialog('open').dialog('center').dialog('setTitle','合同确认');
-	$('#conform').form('clear');
-}
+///**
+// * 合同确认
+// */
+//function doConfrim(){
+//	var row = $('#grid').datagrid('getSelected');
+//	if(row == null){
+//		Public.tips({
+//			content : '请选择需要处理的数据',
+//			type : 2
+//		});			
+//		return;
+//	}
+//	$('#confrim_Dialog').dialog({ modal:true });//设置dig属性
+//	$('#confrim_Dialog').dialog('open').dialog('center').dialog('setTitle','合同确认');
+//	$('#conform').form('clear');
+//}
 
-/**
- * 确认成功/确认失败/取消确认
- */
-function confrim(type){
-	var row = $('#grid').datagrid('getSelected');
-	if(row == null){
-		Public.tips({
-			content : '请选择需要处理的数据',
-			type : 2
-		});			
-		return;
-	}
-	//1-确认成功；2-确认失败；3-取消确认；
-	if(1 == type || 2 == type){
-		if(row.destatus == 2){
-			Public.tips({
-				content : '合同状态为待扣款',
-				type : 2
-			});			
-			return;
-		}else if(row.destatus == 3){
-			Public.tips({
-				content : '合同状态为已扣款',
-				type : 2
-			});			
-			return;
-		}
-	}else if(3 == type){
-		if(row.destatus == 1){
-			Public.tips({
-				content : '合同状态为待确认',
-				type : 2
-			});			
-			return;
-		}else if(row.destatus == 3){
-			Public.tips({
-				content : '合同状态为已扣款',
-				type : 2
-			});			
-			return;
-		}
-	}
-	
-	row.confreason = $('#confreason').val();
-	var postdata = new Object();
-	postdata["data"] = JSON.stringify(row);
-	postdata["confstatus"] = type;
-	
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath + '/contract/contractconf!updateConfStatus.action',
-		data : postdata,
-		traditional : true,
-		async : false,
-		success : function(result) {
-			if (!result.success) {
-				Public.tips({
-					content : result.msg,
-					type : 2
-				});
-			} else {
-				Public.tips({
-					content : result.msg,
-				});
-				$('#confrim_Dialog').dialog('close');
-				var rerow = result.rows;
-				var index = $("#grid").datagrid("getRowIndex",row);
-				$('#grid').datagrid('updateRow',{
-            		index: index,
-            		row: rerow,
-            	});
-				$("#grid").datagrid('uncheckAll');
-			}
-		},
-	});
-}
+///**
+// * 确认成功/确认失败/取消确认
+// */
+//function confrim(type){
+//	var row = $('#grid').datagrid('getSelected');
+//	if(row == null){
+//		Public.tips({
+//			content : '请选择需要处理的数据',
+//			type : 2
+//		});			
+//		return;
+//	}
+//	//1-确认成功；2-确认失败；3-取消确认；
+//	if(1 == type || 2 == type){
+//		if(row.destatus == 2){
+//			Public.tips({
+//				content : '合同状态为待扣款',
+//				type : 2
+//			});			
+//			return;
+//		}else if(row.destatus == 3){
+//			Public.tips({
+//				content : '合同状态为已扣款',
+//				type : 2
+//			});			
+//			return;
+//		}
+//	}else if(3 == type){
+//		if(row.destatus == 1){
+//			Public.tips({
+//				content : '合同状态为待确认',
+//				type : 2
+//			});			
+//			return;
+//		}else if(row.destatus == 3){
+//			Public.tips({
+//				content : '合同状态为已扣款',
+//				type : 2
+//			});			
+//			return;
+//		}
+//	}
+//	
+//	row.confreason = $('#confreason').val();
+//	var postdata = new Object();
+//	postdata["data"] = JSON.stringify(row);
+//	postdata["confstatus"] = type;
+//	
+//	$.ajax({
+//		type : "post",
+//		dataType : "json",
+//		url : contextPath + '/contract/contractconf!updateConfStatus.action',
+//		data : postdata,
+//		traditional : true,
+//		async : false,
+//		success : function(result) {
+//			if (!result.success) {
+//				Public.tips({
+//					content : result.msg,
+//					type : 2
+//				});
+//			} else {
+//				Public.tips({
+//					content : result.msg,
+//				});
+//				$('#confrim_Dialog').dialog('close');
+//				var rerow = result.rows;
+//				var index = $("#grid").datagrid("getRowIndex",row);
+//				$('#grid').datagrid('updateRow',{
+//            		index: index,
+//            		row: rerow,
+//            	});
+//				$("#grid").datagrid('uncheckAll');
+//			}
+//		},
+//	});
+//}
 
 /**
  * 扣款处理
@@ -369,15 +415,17 @@ function deduct(){
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
 	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','扣款');
 	$('#deductfrom').form('clear');
+	$('#contfrom').form('clear');
 	initListener();
 	$.ajax({
         type: "post",
         dataType: "json",
         url: contextPath + '/contract/contractconf!queryDeductData.action',
-//        data: row,
         data : {
-        	id : row.id,
+        	contractid : row.contractid,
         	corpid : row.corpid,
+        	operatorid : row.operatorid,
+        	corpkid : row.corpkid,
 		},
         traditional: true,
         async: false,
@@ -387,6 +435,7 @@ function deduct(){
             } else {
                 var row = data.rows;
                 $('#deductfrom').form('load',row);
+                $('#contfrom').form('load',row);
                 $('#propor').numberbox('setValue', 10);
                 var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
                 var ndemny = parseFloat(ntlmny).mul(parseFloat(10)).div(100);
@@ -394,8 +443,8 @@ function deduct(){
                 $("#dedate").datebox("setValue",Public.getLoginDate());
                 $('#vopernm').textbox('setValue',$("#unm").val());
                 $('#voper').val($("#uid").val());
-                $('#corpkna').val(row.corpkna);
-                $('#vccode').val(row.vccode);
+//                $('#corpkna').val(row.corpkna);
+//                $('#vccode').val(row.vccode);
             }
         },
     });
@@ -413,6 +462,156 @@ function initListener(){
 			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
 			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
 			$('#ndemny').numberbox('setValue', ndemny);
+		}
+	});
+}
+
+///**
+// * 取消扣款
+// */
+//function cancelDeduct(){
+//	var row = $('#grid').datagrid('getSelected');
+//	if(row == null){
+//		Public.tips({
+//			content : '请选择需要处理的数据',
+//			type : 2
+//		});			
+//		return;
+//	}
+//	if(row.destatus != 3){
+//		Public.tips({
+//			content : '合同状态不为已扣款',
+//			type : 2
+//		});			
+//		return;
+//	}
+//	var postdata = new Object();
+//	postdata["head"] = JSON.stringify(row);
+//	postdata["opertype"] = 2;
+//	$.ajax({
+//		type : "post",
+//		dataType : "json",
+//		url : contextPath + '/contract/contractconf!updateDeductData.action',
+//		data : postdata,
+//		traditional : true,
+//		async : false,
+//		success : function(result) {
+//			if (!result.success) {
+//				Public.tips({
+//					content : result.msg,
+//					type : 2
+//				});
+//			} else {
+//				Public.tips({
+//					content : result.msg,
+//				});
+//				$('#deduct_Dialog').dialog('close');
+//				var rerow = result.rows;
+//				var index = $("#grid").datagrid("getRowIndex",row);
+//				$('#grid').datagrid('updateRow',{
+//					index: index,
+//					row : {
+//						propor : null,
+//						ndemny : "",
+//						dedate : "",
+//						voper : "",
+//						destatus : 2,
+//        			}
+//				});
+//				$("#grid").datagrid('uncheckAll');
+//			}
+//		},
+//	});
+//}
+
+/**
+ * 单条审核
+ */
+function audit(){
+	var rows = $('#grid').datagrid('getSelections');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
+	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','扣款');
+	
+	initdeductData(rows[0]);//初始化扣款数据
+	initFileDoc(rows[0]);//初始化附件
+	initListener();//初始化扣款比例监听
+	
+}
+
+/**
+ * 初始化扣款数据
+ */
+function initdeductData(row){
+	$('#deductfrom').form('clear');
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: contextPath + '/contract/contractconf!queryDeductData.action',
+        data : {
+        	contractid : row.contractid,
+        	corpid : row.corpid,
+        	operatorid : row.operatorid,
+        	corpkid : row.corpkid,
+		},
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (!data.success) {
+            	Public.tips({content:data.msg,type:1});
+            } else {
+                var row = data.rows;
+                $('#deductfrom').form('load',row);
+                $('#propor').numberbox('setValue', 10);
+                var ndemny = getFloatValue(row.ntlmny).mul(parseFloat(10)).div(100);
+                $('#ndemny').numberbox('setValue', ndemny);
+                $("#dedate").datebox("setValue",Public.getLoginDate());
+                $('#vopernm').textbox('setValue',$("#unm").val());
+                $('#voper').val($("#uid").val());
+                $('#balmny').numberbox('setValue', row.balmny);//预付款余额
+                $('#corpnm').textbox('setValue', row.corpnm);//渠道商
+                $('#hntlmny').numberbox('setValue', row.ntlmny);//合同金额
+                $('#contractid').val(row.contractid);//合同主键
+            }
+        },
+    });
+}
+
+/**
+ * 初始化附件
+ * @param row
+ */
+function initFileDoc(row){
+	var para = {};
+	para.corp_id = row.corpid;
+	para.c_id = row.contractid;
+	
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/contract/contractconf!getAttaches.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			arrachrows = result.rows;
+			$("#filedocs").html('');
+			for(var i = 0;i<rows.length;i++){
+				var srcpath = rows[i].fpath.replace(/\\/g, "/");
+				var attachImgUrl = getAttachImgUrl(rows[i]);
+				$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
+						'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+						'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+						'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
+						'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
+			}
 		}
 	});
 }
@@ -438,7 +637,7 @@ function deductConfri(){
 	}
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#deductfrom')));
-	postdata["opertype"] = 1;
+//	postdata["opertype"] = 1;
 	$.messager.progress({
 		text : '数据保存中，请稍后.....'
 	});
@@ -486,59 +685,10 @@ function deductCancel(){
 }
 
 /**
- * 取消扣款
+ * 批量审核
  */
-function cancelDeduct(){
-	var row = $('#grid').datagrid('getSelected');
-	if(row == null){
-		Public.tips({
-			content : '请选择需要处理的数据',
-			type : 2
-		});			
-		return;
-	}
-	if(row.destatus != 3){
-		Public.tips({
-			content : '合同状态不为已扣款',
-			type : 2
-		});			
-		return;
-	}
-	var postdata = new Object();
-	postdata["head"] = JSON.stringify(row);
-	postdata["opertype"] = 2;
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath + '/contract/contractconf!updateDeductData.action',
-		data : postdata,
-		traditional : true,
-		async : false,
-		success : function(result) {
-			if (!result.success) {
-				Public.tips({
-					content : result.msg,
-					type : 2
-				});
-			} else {
-				Public.tips({
-					content : result.msg,
-				});
-				$('#deduct_Dialog').dialog('close');
-				var rerow = result.rows;
-				var index = $("#grid").datagrid("getRowIndex",row);
-				$('#grid').datagrid('updateRow',{
-					index: index,
-					row : {
-						propor : null,
-						ndemny : "",
-						dedate : "",
-						voper : "",
-						destatus : 2,
-        			}
-				});
-				$("#grid").datagrid('uncheckAll');
-			}
-		},
-	});
+function bathAudit(){
+	
 }
+
+

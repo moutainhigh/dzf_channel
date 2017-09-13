@@ -21,6 +21,9 @@ public class ContractConfrimVO extends SuperVO {
 	
     @FieldAlias("contractid")
     private String pk_contract; // 合同主键
+    
+    @FieldAlias("area")
+    private String varea;//地区：取客户的省+市
 	
     @FieldAlias("corpid")
     private String pk_corp; // 渠道商主键
@@ -55,26 +58,20 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("edate")
     private DZFDate denddate; // 结束日期
     
-    @FieldAlias("cylnum")
-    private Integer icyclenum; // 周期数
-    
     @FieldAlias("nmsmny")
     private DZFDouble nmservicemny; // 每月服务费
-    
-    @FieldAlias("dedate")
-    private DZFDate deductdata;//扣款日期
     
     @FieldAlias("ndemny")
     private DZFDouble ndeductmny;//扣款金额
     
-    @FieldAlias("destatus")
-    private Integer vdeductstatus;//扣款状态  1：待确认；2：待扣款；3：已扣款；
-    
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
     
+    @FieldAlias("destatus")
+    private Integer vdeductstatus;//加盟商合同状态  1：待审核；2：已审核；3：已驳回；4：服务到期；
+    
     @FieldAlias("confreason")
-    private String vconfreason;// 确认失败原因
+    private String vconfreason;// 驳回原因
     
     @FieldAlias("tstp")
     private DZFDateTime tstamp;// 时间戳
@@ -96,7 +93,150 @@ public class ContractConfrimVO extends SuperVO {
     
 	@FieldAlias("balmny")
 	private DZFDouble nbalance;//余额
+	
+    @FieldAlias("operatorid")
+    private String coperatorid; // 制单人
     
+    @FieldAlias("contcycle")
+    private Integer icontractcycle;//合同周期
+    
+    @FieldAlias("chgcycle")
+    private String vchargecycle; // 收款周期
+    
+    @FieldAlias("adviser")
+    private String vadviser;//销售顾问
+    
+    @FieldAlias("cylnum")
+    private Integer icyclenum; // 周期数（查询使用，不存库）
+    
+    @FieldAlias("nbmny")
+    private DZFDouble nbookmny; // 账本费
+    
+    @FieldAlias("bperiod")
+    private String vbeginperiod;//合同开始期间
+    
+    @FieldAlias("eperiod")
+    private String vendperiod;//合同结束期间
+    
+    @FieldAlias("submitime")
+    private DZFDateTime dsubmitime;//提交时间
+    
+    @FieldAlias("dedate")
+    private DZFDate deductdata;//扣费日期
+    
+    @FieldAlias("ductime")
+    private DZFDateTime deductime;//扣费时间
+    
+    @FieldAlias("pid")
+    private String pk_packagedef; // 套餐主键
+    
+    @FieldAlias("salespromot")
+    private String vsalespromot;//促销活动（数据展示，不存库）
+    
+	public String getVsalespromot() {
+		return vsalespromot;
+	}
+
+	public void setVsalespromot(String vsalespromot) {
+		this.vsalespromot = vsalespromot;
+	}
+
+	public String getPk_packagedef() {
+		return pk_packagedef;
+	}
+
+	public void setPk_packagedef(String pk_packagedef) {
+		this.pk_packagedef = pk_packagedef;
+	}
+
+	public DZFDateTime getDsubmitime() {
+		return dsubmitime;
+	}
+
+	public void setDsubmitime(DZFDateTime dsubmitime) {
+		this.dsubmitime = dsubmitime;
+	}
+
+	public DZFDateTime getDeductime() {
+		return deductime;
+	}
+
+	public void setDeductime(DZFDateTime deductime) {
+		this.deductime = deductime;
+	}
+
+	public Integer getIcontractcycle() {
+		return icontractcycle;
+	}
+
+	public void setIcontractcycle(Integer icontractcycle) {
+		this.icontractcycle = icontractcycle;
+	}
+
+	public DZFDouble getNbookmny() {
+		return nbookmny;
+	}
+
+	public void setNbookmny(DZFDouble nbookmny) {
+		this.nbookmny = nbookmny;
+	}
+
+	public String getVbeginperiod() {
+		return vbeginperiod;
+	}
+
+	public void setVbeginperiod(String vbeginperiod) {
+		this.vbeginperiod = vbeginperiod;
+	}
+
+	public String getVendperiod() {
+		return vendperiod;
+	}
+
+	public void setVendperiod(String vendperiod) {
+		this.vendperiod = vendperiod;
+	}
+
+	public Integer getIcyclenum() {
+		return icyclenum;
+	}
+
+	public void setIcyclenum(Integer icyclenum) {
+		this.icyclenum = icyclenum;
+	}
+
+	public String getVarea() {
+		return varea;
+	}
+
+	public void setVarea(String varea) {
+		this.varea = varea;
+	}
+
+	public String getVchargecycle() {
+		return vchargecycle;
+	}
+
+	public void setVchargecycle(String vchargecycle) {
+		this.vchargecycle = vchargecycle;
+	}
+
+	public String getVadviser() {
+		return vadviser;
+	}
+
+	public void setVadviser(String vadviser) {
+		this.vadviser = vadviser;
+	}
+
+	public String getCoperatorid() {
+		return coperatorid;
+	}
+
+	public void setCoperatorid(String coperatorid) {
+		this.coperatorid = coperatorid;
+	}
+
 	public String getVconmemo() {
 		return vconmemo;
 	}
@@ -287,14 +427,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setDenddate(DZFDate denddate) {
 		this.denddate = denddate;
-	}
-
-	public Integer getIcyclenum() {
-		return icyclenum;
-	}
-
-	public void setIcyclenum(Integer icyclenum) {
-		this.icyclenum = icyclenum;
 	}
 
 	public DZFDate getDeductdata() {
