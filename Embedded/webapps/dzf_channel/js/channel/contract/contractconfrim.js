@@ -342,7 +342,7 @@ function audit(){
 		return;
 	}
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
-	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','扣款');
+	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','合同审核');
 	
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件

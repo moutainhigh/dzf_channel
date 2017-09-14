@@ -62,35 +62,36 @@
 		<!-- 单个审核  begin  -->
 		<div id="deduct_Dialog" class="easyui-dialog" style="width:1160px;height:90%;overflow: auto;" data-options="closed:true">
 			<div>
-				<div class="time_col time_colp11 " style="margin-top: 6px;">
-					<div style="width:28%;display: inline-block;">
-						<label style="width:27%;text-align: right;">预付款余额：</label>
+				<div class="time_col time_colp11 " style="padding-top:20px;border-bottom:2px solid #4292c1;width:96%;margin:0 auto;padding-bottom:20px;">
+					<div style="width:30%;display: inline-block;">
+						<label style="width:27%;text-align: right;color:blue;">预付款余额：</label>
 						<input id="balmny" name="balmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
 							 style="width:60%;height:28px;text-align:left; ">
-					</div>
-					<div style="width:50%;display: inline-block;">
-						<label style="width:20%;text-align: right;">促销活动：</label>
-						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:68%;height:28px;text-align:left; ">
-					</div>
-				</div>
-				<div class="time_col time_colp11 " style="margin-top: 6px;">
-					<div style="width:28%;display: inline-block;">
-						<label style="width:27%;text-align: right;">渠道商：</label>
-						<input id="corpnm" name="corpnm" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
-					</div>
-					<div style="width:22%;display: inline-block;">
-						<label style="width:30%;text-align: right;">合同金额：</label>
-						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
-							style="width:60%;height:28px;text-align:left; ">
 					</div>
 					<div style="width:18%;display: inline-block;float: right;">
 						<a class="ui-btn save_input" onclick="deductConfri()">确定</a>&emsp;
 						<a class="ui-btn cancel_input" onclick="deductCancel()">取消</a>
 					</div>
 				</div>
+				<div class="time_col time_colp11 " style="margin-top:10px;">
+					<div style="width:28%;display: inline-block;">
+						<label style="width:27%;text-align: right;">渠道商：</label>
+						<input id="corpnm" name="corpnm" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:20%;display: inline-block;">
+						<label style="width:32%;text-align: right;">合同金额：</label>
+						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:58%;height:28px;text-align:left; ">
+					</div>
+					<div style="width:50%;display: inline-block;">
+						<label style="width:20%;text-align: right;">促销活动：</label>
+						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:68%;height:28px;text-align:left; ">
+					</div>
+					
+				</div>
 			</div>
 		
-			<form id = "deductfrom" style="border-top:2px solid #4292c1;  margin-top:30px;"  method="post">
+			<form id = "deductfrom" method="post">
 				<div class="time_col time_colp11 ">
 					<label style="width: 100px;text-align:center;color:blue;">扣款</label>
 				</div>
