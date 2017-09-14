@@ -64,7 +64,7 @@
 			<div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
 					<div style="width:28%;display: inline-block;">
-						<label style="width:26%;text-align: right;">预付款余额：</label>
+						<label style="width:27%;text-align: right;">预付款余额：</label>
 						<input id="balmny" name="balmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
 							 style="width:60%;height:28px;text-align:left; ">
 					</div>
@@ -75,7 +75,7 @@
 				</div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
 					<div style="width:28%;display: inline-block;">
-						<label style="width:26%;text-align: right;">渠道商：</label>
+						<label style="width:27%;text-align: right;">渠道商：</label>
 						<input id="corpnm" name="corpnm" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
 					</div>
 					<div style="width:22%;display: inline-block;">
