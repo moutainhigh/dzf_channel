@@ -70,7 +70,7 @@
 					</div>
 					<div style="width:50%;display: inline-block;">
 						<label style="width:20%;text-align: right;">促销活动：</label>
-						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:66%;height:28px;text-align:left; ">
+						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:68%;height:28px;text-align:left; ">
 					</div>
 				</div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
@@ -174,7 +174,7 @@
 								style="width:56%;height:28px;text-align:left;">
 						</div>
 						<div style="width:24%;display: inline-block;">
-							<label style="width:40%;text-align: right;">代账费（元/月）：</label>
+							<label style="width:40%;text-align: right;">代账费(元/月):</label>
 							<input id="nmsmny" name="nmsmny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
 								 style="width:56%;height:28px;text-align:left;">
 						</div>
@@ -191,18 +191,18 @@
 					</div>
 					<div class="time_col time_colp11 ">
 						<div style="width:24%;display:inline-block;">
-							<label style="width:40%;text-align: right;">合同周期（月）：</label>
+							<label style="width:40%;text-align: right;">合同周期(月)：</label>
 							<input id="contcycle" name="contcycle" class="easyui-textbox" data-options="readonly:true" 
 								style="width:56%; height: 28px; text-align:left;">
 						</div>
 						<div style="width:24%;display:inline-block;">
-							<label style="width:40%;text-align: right;">收款周期（月）：</label>
+							<label style="width:40%;text-align: right;">收款周期(月)：</label>
 							<input id="chgcycle" name="chgcycle" class="easyui-textbox" data-options="readonly:true" 
 								style="width: 56%; height: 28px; text-align:left;">
 						</div>
 						<div style="width: 48%;display:inline-block;">
 							<div class="time_col">
-								<label style="width: 118px;text-align: right;">服务期限：</label> 
+								<label style="width: 109px;text-align: right;">服务期限：</label> 
 								<input type="text" id="bperiod" name="bperiod" class="easyui-textbox" data-options="readonly:true"
 									style="width:137px; height: 28px; " >-
 								<input type="text" id="eperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
