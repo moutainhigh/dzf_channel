@@ -6,11 +6,6 @@ public interface IStatusConstant {
 	public static int ICHNOPRATETYPE_2 = 2;
 	public static int ICHNOPRATETYPE_3 = 3; 
 	
-	/** 合同确认操作类型 (1-确认成功；2-确认失败；3-取消确认；) */
-	public static int ICONTRACTCONFRIM_1 = 1;
-	public static int ICONTRACTCONFRIM_2 = 2;
-	public static int ICONTRACTCONFRIM_3 = 3;
-	
 	/** 合同扣款状态(1：待审核；2：已审核；3：已驳回；4：服务到期；) */
 	public static int IDEDUCTSTATUS_1 = 1;
 	public static int IDEDUCTSTATUS_2 = 2;

@@ -173,7 +173,7 @@ function doubleImage(i){
 			title: '原图' ,
 //			width:$("#tpght").width() + 100,
 //			height:$("#tpght").height() + 100,
-			width:'1240',
+			width:'1160',
 			height:'90%',
 //			left: offset.left,
 //			top: offset.top,
@@ -219,7 +219,7 @@ function doubleDocImage(i){
 //		var offset = $("#tpght").offset();
 		$("#filedoc").dialog({
 			title: '原图' ,
-			width:'1240',
+			width:'1160',
 			height:'90%',
 //			left: offset.left,
 //			top: offset.top,

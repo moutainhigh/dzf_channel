@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.Grid;
@@ -79,31 +80,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		writeJson(grid);
 	}
 	
-//	/**
-//	 * 合同确认成功/确认失败/取消确认
-//	 */
-//	public void updateConfStatus(){
-//		Json json = new Json();
-//		try {
-//			String confstatus = getRequest().getParameter("confstatus");//操作状态
-//			Integer status = Integer.parseInt(confstatus);
-//			String data = getRequest().getParameter("data"); // 确认数据
-//			data = data.replace("}{", "},{");
-//			data = "[" + data + "]";
-//			JSONArray array = (JSONArray) JSON.parseArray(data);
-//			Map<String, String> bodymapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
-//			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(array, bodymapping, ContractConfrimVO[].class,
-//					JSONConvtoJAVA.getParserConfig());
-//			ContractConfrimVO retvo = contractconfser.updateConfStatus(confrimVOs, status);
-//			json.setRows(retvo);
-//			json.setSuccess(true);
-//			json.setMsg("操作成功");
-//		} catch (Exception e) {
-//			printErrorLog(json, log, e, "操作失败");
-//		}
-//		writeJson(json);
-//	}
-	
 	/**
 	 * 查询待扣款数据
 	 */
@@ -156,13 +132,43 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			String type = getRequest().getParameter("opertype");
 			Integer opertype = Integer.parseInt(type);
 			
+			String head = getRequest().getParameter("head");
+			JSON headjs = (JSON) JSON.parse(head);
+			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			
 			contract = contract.replace("}{", "},{");
 			contract = "[" + contract + "]";
 			JSONArray arrayJson = (JSONArray) JSON.parseArray(contract);
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			
+			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, paramvo, opertype, getLoginUserid());
+			if(relist != null && relist.size() > 0){
+				int rignum = 0;
+				int errnum = 0;
+				List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
+				for(ContractConfrimVO vo : relist){
+					if(StringUtil.isEmpty(vo.getVerrmsg() )){
+						rignum++;
+						rightlist.add(vo);
+					}else{
+						errnum++;
+					}
+				}
+				json.setSuccess(true);
+				if(rignum > 0 && rignum == relist.size()){
+					json.setRows(relist);
+					json.setMsg("成功"+rignum+"条");
+				}else if(errnum > 0){
+					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
+					json.setStatus(-1);
+					if(rignum > 0){
+						json.setRows(rightlist);
+					}
+				}
+			}
+			json.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}

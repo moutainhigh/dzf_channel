@@ -56,5 +56,6 @@ public interface IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, Integer opertype, String cuserid) throws DZFWarpException;
+	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, ContractConfrimVO paramvo,
+			Integer opertype, String cuserid) throws DZFWarpException;
 }
