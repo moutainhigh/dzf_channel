@@ -162,7 +162,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			
+			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, opertype, getLoginUserid());
+			json.setRows(relist);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
