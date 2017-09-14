@@ -452,6 +452,21 @@ function deductConfri(){
 		});			
 		return;
 	}
+	var propor = $('#propor').numberbox('getValue');
+	if(isEmpty(propor)){
+		Public.tips({
+			content : '扣款比例不能为空',
+			type : 2
+		});			
+		return;
+	}else if(propor == 0){
+		Public.tips({
+			content : '扣款比例不能为0',
+			type : 2
+		});			
+		return;
+	}
+	
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#deductfrom')));
 	postdata["opertype"] = opertype;
@@ -541,6 +556,21 @@ function bathconf(){
 		return;
 	}
 	
+	var propor = $('#bpropor').numberbox('getValue');
+	if(isEmpty(propor)){
+		Public.tips({
+			content : '扣款比例不能为空',
+			type : 2
+		});			
+		return;
+	}else if(propor == 0){
+		Public.tips({
+			content : '扣款比例不能为0',
+			type : 2
+		});			
+		return;
+	}
+	
 	var contract = '';
 	if (rows != null && rows.length > 0) {
 		for (var i = 0; i < rows.length; i++) {
@@ -548,8 +578,10 @@ function bathconf(){
 		}
 	}
 	var postdata = new Object();
+	postdata["head"] = JSON.stringify(serializeObject($('#bdeductfrom')));
 	postdata["contract"] = contract;
 	postdata["opertype"] = opertype;
+	bathconfrim(postdata);
 }
 
 /**

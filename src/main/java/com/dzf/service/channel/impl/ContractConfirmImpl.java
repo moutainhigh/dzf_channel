@@ -23,11 +23,13 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.ResponAreaVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -51,7 +53,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		ContractConfrimVO[] confVOs = (ContractConfrimVO[]) singleObjectBO.queryByCondition(ContractConfrimVO.class,
 				confqryvo.getSql(), confqryvo.getSpm());
 		if(confVOs != null && confVOs.length > 0){
+			UserVO uservo = null;
 			for(ContractConfrimVO confvo : confVOs){
+				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
+				if(uservo != null){
+					confvo.setVopername(uservo.getUser_name());
+				}
 				retlist.add(confvo);
 				pklist.add(confvo.getPk_contract()+""+confvo.getVcontcode());
 			}
@@ -306,14 +313,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 				throw new BusinessException(errmsg);
 			}
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
-			paramvo.setDeductdata(null);
-			paramvo.setIdeductpropor(null);
-			paramvo.setNdeductmny(null);
-			paramvo.setVoperator(null);
-			paramvo.setVopername(null);
+			setNullValue(paramvo);
 		}
 		
 		return paramvo;
+	}
+	
+	/**
+	 * 置空值
+	 * @param paramvo
+	 */
+	private void setNullValue(ContractConfrimVO paramvo){
+		paramvo.setDeductdata(null);
+		paramvo.setIdeductpropor(null);
+		paramvo.setNdeductmny(null);
+		paramvo.setVoperator(null);
+		paramvo.setVopername(null);
 	}
 
 	/**
@@ -346,6 +361,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		paramvo.setDeductime(new DZFDateTime());
 		paramvo.setCoperatorid(cuserid);
 		paramvo.setDr(0);
+		UserVO uservo = UserCache.getInstance().get(paramvo.getVoperator(), null);
+		if(uservo != null){
+			paramvo.setVopername(uservo.getUser_name());
+		}
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", paramvo);
 	}
 	/**
@@ -451,12 +470,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 
 	@Override
-	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, Integer opertype, String cuserid)
+	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, ContractConfrimVO paramvo,
+			Integer opertype, String cuserid )
 			throws DZFWarpException {
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
 		ContractConfrimVO retvo = null;
 		for (ContractConfrimVO vo : confrimVOs) {
-			retvo = updateBathDeductData(vo, opertype, cuserid);
+			retvo = updateBathDeductData(vo, paramvo, opertype, cuserid);
 			retlist.add(retvo);
 		}
 		return retlist;
@@ -470,20 +490,27 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, Integer opertype, String cuserid)
-			throws DZFWarpException {
+	private ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
+			Integer opertype, String cuserid) throws DZFWarpException {
 		String errmsg = "";
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+			if(paramvo != null){
+				countDedMny(confrimvo, paramvo);
+			}else{
+				throw new BusinessException("审核信息获取错误");
+			}
 			//1、更新合同加盟合同状态、驳回原因
 			errmsg = updateContract(confrimvo, opertype);
 			if(StringUtil.isEmpty(errmsg)){
 				confrimvo.setVerrmsg(errmsg);
+				setNullValue(confrimvo);
 				return confrimvo;
 			}
 			//2、回写付款余额
 			errmsg = updateBalanceMny(confrimvo, cuserid);
 			if(StringUtil.isEmpty(errmsg)){
 				confrimvo.setVerrmsg(errmsg);
+				setNullValue(confrimvo);
 				return confrimvo;
 			}
 			//3、生成合同审核数据
@@ -492,12 +519,26 @@ public class ContractConfirmImpl implements IContractConfirm {
 			updateSerPackage(confrimvo);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 			errmsg = updateContract(confrimvo, opertype);
-			if(StringUtil.isEmpty(errmsg)){
+			if(!StringUtil.isEmpty(errmsg)){
 				throw new BusinessException(errmsg);
 			}
 			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
+			setNullValue(confrimvo);
 		}
 		return confrimvo;
+	}
+	
+	/**
+	 * 计算扣款金额
+	 * @param confrimvo
+	 * @param paramvo
+	 */
+	private void countDedMny(ContractConfrimVO confrimvo, ContractConfrimVO paramvo){
+		confrimvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+		confrimvo.setVoperator(paramvo.getVoperator());//经办人
+		confrimvo.setVconfreason(paramvo.getVconfreason());//驳回原因
+		DZFDouble ndeductmny = confrimvo.getNtotalmny().multiply(confrimvo.getIdeductpropor()).div(100);
+		confrimvo.setNdeductmny(ndeductmny);
 	}
 
 	@Override

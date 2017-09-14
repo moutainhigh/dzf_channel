@@ -108,7 +108,7 @@
 					<input id="corpnm" name="corpnm" type="hidden">
 					<div style="width:24%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣款比例：</label>
-						<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,"
+						<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
 							style="width:50%;height:28px;text-align:left; ">%
 					</div>
 					<div style="width:24%;display: inline-block;">
@@ -250,7 +250,7 @@
 				<div class="time_col time_colp11" style="margin-top:10px;">
 					<div style="width:24%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣款比例：</label>
-						<input id="bpropor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,"
+						<input id="bpropor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
 							style="width:50%;height:28px;text-align:left; ">%
 					</div>
 		

@@ -156,13 +156,18 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			String type = getRequest().getParameter("opertype");
 			Integer opertype = Integer.parseInt(type);
 			
+			String head = getRequest().getParameter("head");
+			JSON headjs = (JSON) JSON.parse(head);
+			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			
 			contract = contract.replace("}{", "},{");
 			contract = "[" + contract + "]";
 			JSONArray arrayJson = (JSONArray) JSON.parseArray(contract);
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, opertype, getLoginUserid());
+			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, paramvo, opertype, getLoginUserid());
 			json.setRows(relist);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
