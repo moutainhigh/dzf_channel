@@ -60,7 +60,7 @@
 		</div>
 		
 		<!-- 单个审核  begin  -->
-		<div id="deduct_Dialog" class="easyui-dialog" style="width:1240px;height:90%;overflow: auto;" data-options="closed:true">
+		<div id="deduct_Dialog" class="easyui-dialog" style="width:1160px;height:90%;overflow: auto;" data-options="closed:true">
 			<div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
 					<div style="width:28%;display: inline-block;">
@@ -90,9 +90,9 @@
 				</div>
 			</div>
 		
-			<form id = "deductfrom" style="border-bottom:2px solid #000;border-top:2px solid #000;  margin-top:30px;"  method="post">
+			<form id = "deductfrom" style="border-top:2px solid #4292c1;  margin-top:30px;"  method="post">
 				<div class="time_col time_colp11 ">
-					<label style="width: 100px;text-align:center;color:blue;">扣款</label>
+					<label style="width: 100px;text-align:center;color:#0b6bab;">扣款</label>
 				</div>
 				<div class="time_col time_colp11 " style="margin-top:10px;">
 					<input id="contractid" name="contractid" type="hidden">
@@ -136,7 +136,7 @@
 				<div>
 					<!-- <form id = "contfrom"   method="post"> -->
 					<div class="time_col time_colp11 ">
-						<label style="width: 100px;text-align:center;color:blue;">合同信息</label>
+						<label style="width: 100px;text-align:center;color:#0b6bab;">合同信息</label>
 					</div>
 					<div class="time_col time_colp11 ">
 						<div style="width:24%;display: inline-block;">
@@ -227,7 +227,7 @@
 		<!-- 查看附件end -->
 		
 		<!-- 批量审核  begin-->
-		<div id="bdeduct_Dialog" class="easyui-dialog" style="width:1240px;height:60%;overflow: auto;" data-options="closed:true">
+		<div id="bdeduct_Dialog" class="easyui-dialog" style="width:900px;height:360px;overflow: auto;" data-options="closed:true">
 			<div>
 				<div class="time_col time_colp11" style="margin-top:20px;">
 					<!-- <div style="width:60%;display: inline-block;">
@@ -240,20 +240,20 @@
 					</div>
 				</div>
 			</div>
-			<form id="bdeductfrom" style="border-top:2px solid #000;  margin-top:60px;" method="post">
+			<form id="bdeductfrom" style="border-top:2px solid #4292c1; width:94%;margin:0 auto;  margin-top:60px;" method="post">
 				<div class="time_col time_colp11" style="margin-top:10px;">
-					<div style="width:24%;display: inline-block;">
+					<div style="width:30%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣款比例：</label>
 						<input id="bpropor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,"
 							style="width:50%;height:28px;text-align:left; ">%
 					</div>
 		
-					<div style="width:24%;display: inline-block;">
+					<div style="width:30%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣费日期：</label>
 						<input id="bdedate" name="dedate" class="easyui-datebox"  data-options="readonly:true" 
 						style="width:60%;height:28px;text-align:left"></input>
 					</div>
-					<div style="width:24%;display: inline-block;">
+					<div style="width:30%;display: inline-block;">
 						<label style="width:35%;text-align: right;">经办人：</label>
 						<input id="bvopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
 							style="width:60%;height:28px;text-align:left; ">
@@ -267,9 +267,9 @@
 					<label>驳回</label>
 				</div>
 				<div class="time_col time_colp11 ">
-					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
+					<label style="vertical-align: top;text-align: right;width:92px;">驳回原因：&nbsp;</label>
 					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
-						 style="height:50px; width:88%;border-radius: 5px;"></textarea>
+						 style="height:50px; width:84%;border-radius: 5px;"></textarea>
 				</div>  
 			</form>
 		</div>
