@@ -247,7 +247,7 @@ function initGrid(){
 function addType () {
 	showButtons("add");
 	$('#grid').datagrid('insertRow',{index: 0,	// 索引从0开始
-		row: {}
+		row: {typecode:'FW0101'}
 	});
 //	var vstatus=$('#grid').datagrid('getColumnOption', 'vstatus');
 //	vstatus.editor={};
@@ -409,12 +409,13 @@ function modify() {
 }
 
 function cancel () {
-	var grid = $("#grid");
-	var len = grid.datagrid("getRows").length;
-	for (var i = 0; i < len; i++) {
-		grid.datagrid("cancelEdit", i);
+	var rows = $("#grid").datagrid("getRows");
+	if(rows && rows.length > 0){
+		for (var i = 0; i < rows.length; i++) {
+			$("#grid").datagrid("cancelEdit", i);
+		}
 	}
-	grid.datagrid("rejectChanges");
+	$("#grid").datagrid("rejectChanges");
 	showButtons("brows");
 }
 
