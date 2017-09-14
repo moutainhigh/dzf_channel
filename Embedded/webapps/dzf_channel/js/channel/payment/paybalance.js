@@ -192,7 +192,7 @@ function initDetailGrid(){
 			halign:'center',
 			field : 'ddate',
 		}, {
-			width : '140',
+			width : '180',
 			title : '摘要',
             halign:'center',
 			field : 'memo',

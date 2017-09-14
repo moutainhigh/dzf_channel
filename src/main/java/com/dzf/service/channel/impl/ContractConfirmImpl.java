@@ -293,25 +293,25 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException {
 		String errmsg = "";
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+			//审核前校验
+			errmsg = CheckBeforeAudit(paramvo);
+			if(!StringUtil.isEmpty(errmsg)){
+				throw new BusinessException(errmsg);
+			}
 			//1、更新合同加盟合同状态、驳回原因
-			errmsg = updateContract(paramvo, opertype);
-			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
-			}
+			updateContract(paramvo, opertype);
 			//2、回写付款余额
-			errmsg = updateBalanceMny(paramvo, cuserid);
-			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
-			}
+			updateBalanceMny(paramvo, cuserid);
 			//3、生成合同审核数据
 			paramvo = saveContConfrim(paramvo, cuserid);
 			//4、回写套餐促销活动名额
 			updateSerPackage(paramvo);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-			errmsg = updateContract(paramvo, opertype);
+			errmsg = checkBeforeReject(paramvo);
 			if(!StringUtil.isEmpty(errmsg)){
 				throw new BusinessException(errmsg);
 			}
+			updateContract(paramvo, opertype);
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
 			setNullValue(paramvo);
 		}
@@ -341,6 +341,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(packvo != null){
 				LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 60);
 				Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+				Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+				if(num.compareTo(pulishnum) == 0){
+					throw new BusinessException("套餐发布个数已经用完");
+				}
 				packvo.setIusenum(num + 1);
 				singleObjectBO.update(packvo, new String[]{"iusenum"});
 			}
@@ -373,11 +377,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 * @throws DZFWarpException
 	 */
-	private String updateContract(ContractConfrimVO paramvo, Integer opertype) throws DZFWarpException {
-		String msg = checkContState(paramvo);
-		if(!StringUtil.isEmpty(msg)){
-			return msg;
-		}
+	private void updateContract(ContractConfrimVO paramvo, Integer opertype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vconfreason = ? ,");
@@ -396,7 +396,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
-		return "";
 	}
 	
 	/**
@@ -404,7 +403,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private String checkContState(ContractConfrimVO confrimvo) throws DZFWarpException {
+	private String checkBeforeReject(ContractConfrimVO confrimvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT tstamp,vdeductstatus \n") ;
@@ -434,7 +433,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param cuserid
 	 * @throws DZFWarpException
 	 */
-	private String updateBalanceMny(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException {
+	private void updateBalanceMny(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException {
 		ChnBalanceVO balvo = null;
 		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
 		SQLParameter yespm = new SQLParameter();
@@ -445,8 +444,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			balvo = balVOs[0];
 			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
 			if(balance.compareTo(paramvo.getNdeductmny()) < 0){
-//				throw new BusinessException("预付款余额不足");
-				return "预付款余额不足";
+				throw new BusinessException("预付款余额不足");
 			}
 			balvo.setNusedmny(SafeCompute.add(balvo.getNusedmny(), paramvo.getNdeductmny()));
 			singleObjectBO.update(balvo, new String[]{"nusedmny"});
@@ -464,9 +462,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			singleObjectBO.saveObject("000001", detvo);
 			
 		}else{
-			return "预付款余额不足";
+			throw new BusinessException("预付款余额不足");
 		}
-		return "";
 	}
 
 	@Override
@@ -499,33 +496,86 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else{
 				throw new BusinessException("审核信息获取错误");
 			}
+			errmsg = CheckBeforeAudit(confrimvo);
+			if(!StringUtil.isEmpty(errmsg)){
+				confrimvo.setVerrmsg(errmsg);
+				setNullValue(confrimvo);
+				return confrimvo;
+			}
 			//1、更新合同加盟合同状态、驳回原因
-			errmsg = updateContract(confrimvo, opertype);
-			if(StringUtil.isEmpty(errmsg)){
-				confrimvo.setVerrmsg(errmsg);
-				setNullValue(confrimvo);
-				return confrimvo;
-			}
+			updateContract(confrimvo, opertype);
 			//2、回写付款余额
-			errmsg = updateBalanceMny(confrimvo, cuserid);
-			if(StringUtil.isEmpty(errmsg)){
-				confrimvo.setVerrmsg(errmsg);
-				setNullValue(confrimvo);
-				return confrimvo;
-			}
+			updateBalanceMny(confrimvo, cuserid);
 			//3、生成合同审核数据
 			confrimvo = saveContConfrim(confrimvo, cuserid);
 			//4、回写套餐促销活动名额
 			updateSerPackage(confrimvo);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-			errmsg = updateContract(confrimvo, opertype);
+			errmsg = checkBeforeReject(confrimvo);
 			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
+				confrimvo.setVerrmsg(errmsg);
+				setNullValue(confrimvo);
+				return confrimvo;
 			}
+			updateContract(confrimvo, opertype);
 			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
 			setNullValue(confrimvo);
 		}
 		return confrimvo;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String CheckBeforeAudit(ContractConfrimVO confrimvo) throws DZFWarpException{
+		// 1、数据状态校验
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT tstamp,vdeductstatus \n");
+		sql.append("  FROM ynt_contract t \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND t.pk_contract = ? ");
+		spm.addParam(confrimvo.getPk_contract());
+		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ArrayListProcessor());
+		if (result != null && result.size() > 0) {
+			Object[] obj = (Object[]) result.get(0);
+			DZFDateTime tstamp = new DZFDateTime(String.valueOf(obj[0]));
+			if (tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0) {
+				return "合同号：" + confrimvo.getVcontcode() + "数据发生变化，请刷新界面后，再次尝试";
+			}
+			if (IStatusConstant.IDEDUCTSTATUS_1 != Integer.parseInt(String.valueOf(obj[1]))) {
+				return "合同状态不为待审核";
+			}
+		} else {
+			return "合同数据错误";
+		}
+
+		// 2、预付款余额校验
+		ChnBalanceVO balvo = null;
+		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+		SQLParameter yespm = new SQLParameter();
+		yespm.addParam(confrimvo.getPk_corp());
+		yespm.addParam(IStatusConstant.IPAYTYPE_2);
+		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+		if (balVOs != null && balVOs.length > 0) {
+			balvo = balVOs[0];
+			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+			if (balance.compareTo(confrimvo.getNdeductmny()) < 0) {
+				return "预付款余额不足";
+			}
+		} else {
+			return "预付款余额不足";
+		}
+
+		// 3、套餐发布个数校验
+		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
+				confrimvo.getPk_packagedef());
+		Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+		Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+		if (num.compareTo(pulishnum) == 0) {
+			return "套餐发布个数已经用完";
+		}
+
+		return "";
 	}
 	
 	/**

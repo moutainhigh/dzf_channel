@@ -581,14 +581,14 @@ function bathconf(){
 	postdata["head"] = JSON.stringify(serializeObject($('#bdeductfrom')));
 	postdata["contract"] = contract;
 	postdata["opertype"] = opertype;
-	bathconfrim(postdata);
+	bathconfrim(postdata, rows);
 }
 
 /**
  * 批量审核-确认操作
  * @param postdata
  */
-function bathconfrim(postdata){
+function bathconfrim(postdata, rows){
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -607,13 +607,6 @@ function bathconfrim(postdata){
 					content : result.msg,
 				});
 				$('#bdeduct_Dialog').dialog('close');
-				var rerow = result.rows;
-				
-//				var index = $("#grid").datagrid("getRowIndex",row);
-//				$('#grid').datagrid('updateRow',{
-//	        		index: index,
-//	        		row: rerow,
-//	        	});
 				var rerows = result.rows;
 				if(rerows != null && rerows.length > 0){
 					var map = new HashMap(); 
@@ -631,7 +624,7 @@ function bathconfrim(postdata){
 					for(var i in indexes){
 						$('#grid').datagrid('updateRow', {
 							index : indexes[i],
-							row : result.rows[i]
+							row : rerows[i]
 						});
 					}
 				}
