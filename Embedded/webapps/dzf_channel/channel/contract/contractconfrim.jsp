@@ -70,7 +70,7 @@
 					</div>
 					<div style="width:50%;display: inline-block;">
 						<label style="width:20%;text-align: right;">促销活动：</label>
-						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
+						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:66%;height:28px;text-align:left; ">
 					</div>
 				</div>
 				<div class="time_col time_colp11 " style="margin-top: 6px;">
@@ -137,7 +137,7 @@
 				<div class="time_col time_colp11 ">
 					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
 					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
-						 style="height:50px; width:88%;border-radius: 5px;"></textarea>
+						 style="height:50px; width:86%;border-radius: 5px;"></textarea>
 				</div>      	               
 			
 				<!-- 合同信息 begin -->
@@ -212,7 +212,7 @@
 					</div>
 					<!-- 附件信息begin -->
 					<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
-						<div class="entrance_block_tu" id="tpght" style="height:60%;width:99%;">
+						<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
 							<ul class="tu_block" id="filedocs"></ul>
 						</div>
 					</div>
