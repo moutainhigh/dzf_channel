@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
-import com.dzf.model.packagedef.PackageDefVO;
+import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.packagedef.PackageQryVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.BusiTypeVO;

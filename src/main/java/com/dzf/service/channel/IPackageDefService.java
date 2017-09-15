@@ -1,6 +1,6 @@
 package com.dzf.service.channel;
 
-import com.dzf.model.packagedef.PackageDefVO;
+import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.packagedef.PackageQryVO;
 import com.dzf.pub.DZFWarpException;
 
