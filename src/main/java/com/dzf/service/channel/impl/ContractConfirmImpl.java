@@ -71,7 +71,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		
 		if (conflist != null && conflist.size() > 0) {
 			CorpVO corpvo = null;
-//			int icyclenum = 0;
+			Map<String, String> packmap = queryPackageMap();
 			Map<Integer, String> areamap = queryAreaMap();
 			String aeraname = "";
 			Integer cyclenum = 0;
@@ -84,14 +84,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if (corpvo != null) {
 					aeraname = "";
 					vo.setCorpkname(corpvo.getUnitname());
-					vo.setChargedeptname(corpvo.getChargedeptname());
 					if(!StringUtil.isEmpty(areamap.get(corpvo.getVprovince()))){
 						aeraname = areamap.get(corpvo.getVprovince())+""+areamap.get(corpvo.getVcity());
 					}
 					vo.setVarea(aeraname);
 				}
-//				icyclenum = ToolsUtil.getCyclenum(vo.getDbegindate(), vo.getDenddate());
-//				vo.setIcontractcycle(icyclenum);;//合同周期
+				//从套餐取纳税人性质
+				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
+					if(packmap != null && !packmap.isEmpty()){
+						vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+					}
+				}
 				cyclenum = 0;
 				if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
 					cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
@@ -112,6 +115,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		});
 		return retlist;
+	}
+	
+	/**
+	 * 查询套餐属性
+	 * @return
+	 */
+	private Map<String, String> queryPackageMap(){
+		Map<String, String> map = new HashMap<String, String>();
+		String sql = " nvl(dr,0) = 0 ";
+		PackageDefVO[] packVOs = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, sql, null);
+		if(packVOs != null && packVOs.length > 0){
+			for(PackageDefVO vo : packVOs){
+				map.put(vo.getPk_packagedef(), vo.getVtaxpayertype());
+			}
+		}
+		return map;
 	}
 	
 	/**
@@ -238,7 +257,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			Map<Integer, String> areamap = queryAreaMap();
 			ContractConfrimVO vo = conflist.get(0);
 			CorpVO corpvo = null;
-//			int icyclenum = 0;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 			if (corpvo != null) {
 				vo.setCorpname(corpvo.getUnitname());
@@ -246,15 +264,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if (corpvo != null) {
 				vo.setCorpkname(corpvo.getUnitname());
-				vo.setChargedeptname(corpvo.getChargedeptname());
 				String aeraname = "";
 				if(!StringUtil.isEmpty(areamap.get(corpvo.getVprovince()))){
 					aeraname = areamap.get(corpvo.getVprovince())+""+areamap.get(corpvo.getVcity());
 				}
 				vo.setVarea(aeraname);
 			}
-//			icyclenum = ToolsUtil.getCyclenum(vo.getDbegindate(), vo.getDenddate());
-//			vo.setIcontractcycle(icyclenum);//合同周期
+			Map<String, String> packmap = queryPackageMap();
+			//从套餐取纳税人性质
+			if(!StringUtil.isEmpty(vo.getPk_packagedef())){
+				if(packmap != null && !packmap.isEmpty()){
+					vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+				}
+			}
 			Integer cyclenum = 0;
 			if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
 				cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
@@ -306,6 +328,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo = saveContConfrim(paramvo, cuserid);
 			//4、回写套餐促销活动名额
 			updateSerPackage(paramvo);
+			//5、回写客户纳税人性质
+			Map<String, String> packmap = queryPackageMap();
+			updateCorp(paramvo, packmap);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 			errmsg = checkBeforeReject(paramvo);
 			if(!StringUtil.isEmpty(errmsg)){
@@ -320,10 +345,31 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 	
 	/**
+	 * 更新我的客户“纳税人性质”
+	 * @param paramvo
+	 * @param packmap
+	 * @throws DZFWarpException
+	 */
+	private void updateCorp(ContractConfrimVO confvo, Map<String, String> packmap) throws DZFWarpException{
+		//从套餐取纳税人性质
+		if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
+			if(packmap != null && !packmap.isEmpty()){
+				if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
+					CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+					if(corpvo != null){
+						corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
+						singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * 置空值
 	 * @param paramvo
 	 */
-	private void setNullValue(ContractConfrimVO paramvo){
+	private void setNullValue(ContractConfrimVO paramvo) throws DZFWarpException{
 		paramvo.setDeductdata(null);
 		paramvo.setIdeductpropor(null);
 		paramvo.setNdeductmny(null);
@@ -335,7 +381,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * 更新套餐使用个数
 	 * @param paramvo
 	 */
-	private void updateSerPackage(ContractConfrimVO paramvo){
+	private void updateSerPackage(ContractConfrimVO paramvo) throws DZFWarpException{
 		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 		try {
 			if(packvo != null){
@@ -358,7 +404,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 * @return
 	 */
-	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid){
+	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException{
 		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_2);
 		paramvo.setTstamp(new DZFDateTime());
 		paramvo.setDeductdata(new DZFDate());
@@ -472,8 +518,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throws DZFWarpException {
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
 		ContractConfrimVO retvo = null;
+		Map<String, String> packmap = queryPackageMap();
 		for (ContractConfrimVO vo : confrimVOs) {
-			retvo = updateBathDeductData(vo, paramvo, opertype, cuserid);
+			retvo = updateBathDeductData(vo, paramvo, opertype, cuserid, packmap);
 			retlist.add(retvo);
 		}
 		return retlist;
@@ -488,7 +535,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	private ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid) throws DZFWarpException {
+			Integer opertype, String cuserid, Map<String, String> packmap) throws DZFWarpException {
 		String errmsg = "";
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 			if(paramvo != null){
@@ -510,6 +557,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			confrimvo = saveContConfrim(confrimvo, cuserid);
 			//4、回写套餐促销活动名额
 			updateSerPackage(confrimvo);
+			//5、回写客户纳税人性质
+			updateCorp(paramvo, packmap);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 			errmsg = checkBeforeReject(confrimvo);
 			if(!StringUtil.isEmpty(errmsg)){
