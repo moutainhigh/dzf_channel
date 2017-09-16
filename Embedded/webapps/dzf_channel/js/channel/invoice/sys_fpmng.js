@@ -39,8 +39,8 @@ function initDataGrid(){
 		pageSize : 20,
 		pageList : [ 20, 50, 100, 200 ],
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
-		            {width : '100',title : '加盟商',field : 'cname',align:'center'},
-		            {width : '100',title : '付款类型',field : 'paytype',align:'center',
+		            {width : '150',title : '加盟商',field : 'cname',align:'left'},
+		            {width : '80',title : '付款类型',field : 'paytype',align:'left',
 						formatter: function(value,row,index){
 			          		if (value == 0){
 								return '预付款';
@@ -48,7 +48,7 @@ function initDataGrid(){
 								return '加盟费';
 							} 
 		            }},
-		            {width : '100',title : '发票性质',field : 'nature',align:'center',
+		            {width : '80',title : '发票性质',field : 'nature',align:'left',
 						formatter: function(value,row,index){
 			          		if (value == 0){
 								return '公司';
@@ -56,16 +56,16 @@ function initDataGrid(){
 								return '个人';
 							} 
 		            }},
-		            {width : '100',title : '单位名称',field : 'cname',align:'center'},
-		            {width : '100',title : '税号',field : 'taxnum',align:'center'},
-		            {width : '100',title : '开票金额',field : 'iprice',align:'center',
+		            {width : '180',title : '单位名称',field : 'cname',align:'left'},
+		            {width : '100',title : '税号',field : 'taxnum',align:'left'},
+		            {width : '80',title : '开票金额',field : 'iprice',align:'right',
 		            	formatter: function(value,row,index){
 							if (value == 0) {
 								return "0.00";
 							}
 							return formatMny(value);
 		            }},
-		            {width : '100',title : '发票类型',field : 'itype',align:'right',
+		            {width : '100',title : '发票类型',field : 'itype',align:'left',
 		            	formatter: function(value,row,index){
 		              		if (value == 0){
 								return '专用发票';
@@ -75,15 +75,15 @@ function initDataGrid(){
 								return '电子普通发票';
 							}
 		            }},
-		            {width : '100',title : '公司地址',field : 'caddr',align:'right'},
-		            {width : '100',title : '开票电话',field : 'phone',align:'right'},
-		            {width : '100',title : '开户行',field : 'bname',align:'center'},
-		            {width : '100',title : '开户账户',field : 'bcode',align:'center'},
-		            {width : '100',title : '邮箱',field : 'email',align:'center'},
-		            {width : '100',title : '申请时间',field : 'apptime',align:'center'},
-		            {width : '100',title : '开票日期',field : 'invtime',align:'center'},
-		            {width : '100',title : '经手人',field : 'iperson',align:'center'},
-		            {width : '100',title : '发票状态',field : 'istatus',align:'center',
+		            {width : '180',title : '公司地址',field : 'caddr',align:'left'},
+		            {width : '100',title : '开票电话',field : 'phone',align:'left'},
+		            {width : '100',title : '开户行',field : 'bname',align:'left'},
+		            {width : '100',title : '开户账户',field : 'bcode',align:'left'},
+		            {width : '130',title : '邮箱',field : 'email',align:'left'},
+		            {width : '90',title : '申请时间',field : 'apptime',align:'left'},
+		            {width : '90',title : '开票日期',field : 'invtime',align:'left'},
+		            {width : '100',title : '经手人',field : 'iperson',align:'left'},
+		            {width : '80',title : '发票状态',field : 'istatus',align:'center',
 		            	formatter: function(value,row,index){
 		              		if (value == 0){
 								return '待提交';
