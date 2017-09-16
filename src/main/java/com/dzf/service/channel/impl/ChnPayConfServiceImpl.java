@@ -139,7 +139,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		}
 		detvo.setPk_bill(billvo.getPk_paybill());
 		detvo.setCoperatorid(cuserid);
-		detvo.setDoperatedate(billvo.getDoperatedate());
+		detvo.setDoperatedate(billvo.getDpaydate());
 		detvo.setDr(0);
 		detvo.setIopertype(IStatusConstant.IDETAILTYPE_1);
 		ChnBalanceVO balvo = null;
