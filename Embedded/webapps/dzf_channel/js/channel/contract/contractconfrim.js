@@ -8,23 +8,7 @@ $(function() {
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
-	initRedioListener();
 });
-
-/**
- * 单选按钮初始化
- */
-function initRedioListener(){
-	$(":radio").click( function(){
-		var opertype = $('input:radio[name="opertype"]:checked').val();
-		if(opertype == 1){
-			$("#confreason").textbox('readonly',true);
-			$("#confreason").textbox('setValue',null);
-		}else if(opertype == 2){
-			$("#confreason").textbox('readonly',false);
-		}
-	});
-}
 
 /**
  * 查询日期初始化
@@ -191,7 +175,7 @@ function load(){
 				if (value == '2')
 					return '已审核';
 				if (value == '3')
-					return '已驳回';
+					return '拒绝审核';
 				if (value == '4')
 					return '服务到期';
 			}
@@ -334,6 +318,16 @@ function initListener(){
 			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
 			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
 			$('#ndemny').numberbox('setValue', ndemny);
+		}
+	});
+	
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="opertype"]:checked').val();
+		if(opertype == 1){
+			$("#confreason").textbox('readonly',true);
+			$("#confreason").textbox('setValue',null);
+		}else if(opertype == 2){
+			$("#confreason").textbox('readonly',false);
 		}
 	});
 }
@@ -548,6 +542,22 @@ function bathAudit(){
 	$('#bvopernm').textbox('setValue',$("#unm").val());
 	$('#bvoper').val($("#uid").val());
 	document.getElementById("bdebit").checked="true";
+	initRedioListener();
+}
+
+/**
+ * 单选按钮初始化
+ */
+function initRedioListener(){
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="bopertype"]:checked').val();
+		if(opertype == 1){
+			$("#bconfreason").textbox('readonly',true);
+			$("#bconfreason").textbox('setValue',null);
+		}else if(opertype == 2){
+			$("#bconfreason").textbox('readonly',false);
+		}
+	});
 }
 
 /**

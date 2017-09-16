@@ -107,6 +107,8 @@
 					<input id="edate" name="edate" type="hidden">
 					<input id="typemin" name="typemin" type="hidden">
 					<input id="corpnm" name="corpnm" type="hidden">
+					<input id="adviser" name="adviser" type="hidden">
+					<input id="submitime" name="submitime" type="hidden">
 					<div style="width:24%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣款比例：</label>
 						<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
@@ -276,7 +278,8 @@
 				</div>
 				<div class="time_col time_colp11 ">
 					<label style="vertical-align: top;text-align: right;width:76px;">驳回原因：&nbsp;</label>
-					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
+					<textarea id="bconfreason" name="confreason" class="easyui-textbox"  
+						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
 						 style="height:50px; width:84%;border-radius: 5px;"></textarea>
 				</div>  
 			</form>

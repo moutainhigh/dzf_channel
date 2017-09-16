@@ -383,8 +383,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 60);
 				Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 				Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-				if(num.compareTo(pulishnum) == 0){
-					throw new BusinessException("套餐发布个数已经用完");
+				if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+					if(num.compareTo(pulishnum) == 0){
+						throw new BusinessException("套餐发布个数已经用完");
+					}
 				}
 				packvo.setIusenum(num + 1);
 				singleObjectBO.update(packvo, new String[]{"iusenum"});
@@ -561,6 +563,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				setNullValue(confrimvo);
 				return confrimvo;
 			}
+			confrimvo.setVconfreason(paramvo.getVconfreason());
 			updateContract(confrimvo, opertype);
 			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
 			setNullValue(confrimvo);
