@@ -137,7 +137,8 @@
 				</div>
 				<div class="time_col time_colp11 ">
 					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
-					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
+					<textarea id="confreason" name="confreason" class="easyui-textbox"  
+						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
 						 style="height:50px; width:86%;border-radius: 5px;"></textarea>
 				</div>      	               
 			
