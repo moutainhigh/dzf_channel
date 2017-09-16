@@ -136,6 +136,17 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("errmsg")
     private String verrmsg;//错误信息
     
+    @FieldAlias("signdate")
+    private DZFDate dsigndate;// 签订合同日期
+    
+	public DZFDate getDsigndate() {
+		return dsigndate;
+	}
+
+	public void setDsigndate(DZFDate dsigndate) {
+		this.dsigndate = dsigndate;
+	}
+
 	public String getVerrmsg() {
 		return verrmsg;
 	}
