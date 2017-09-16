@@ -76,7 +76,7 @@
 				<div class="time_col time_colp11 " style="margin-top:10px;">
 					<div style="width:28%;display: inline-block;">
 						<label style="width:27%;text-align: right;">渠道商：</label>
-						<input id="corpnm" name="corpnm" class="easyui-textbox" style="width:60%;height:28px;text-align:left; ">
+						<input id="corpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" style="width:60%;height:28px;text-align:left; ">
 					</div>
 					<div style="width:20%;display: inline-block;">
 						<label style="width:32%;text-align: right;">合同金额：</label>
@@ -85,7 +85,7 @@
 					</div>
 					<div style="width:50%;display: inline-block;">
 						<label style="width:20%;text-align: right;">促销活动：</label>
-						<input id="salespromot" name="salespromot" class="easyui-textbox" style="width:68%;height:28px;text-align:left; ">
+						<input id="salespromot" name="salespromot" class="easyui-textbox" data-options="readonly:true" style="width:68%;height:28px;text-align:left; ">
 					</div>
 					
 				</div>
@@ -137,7 +137,8 @@
 				</div>
 				<div class="time_col time_colp11 ">
 					<label style="vertical-align: top;text-align: right;">驳回原因：&nbsp;&nbsp;</label>
-					<textarea id="confreason" name="confreason" class="easyui-textbox"  data-options="multiline:true,validType:'length[0,200]'" 
+					<textarea id="confreason" name="confreason" class="easyui-textbox"  
+						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
 						 style="height:50px; width:86%;border-radius: 5px;"></textarea>
 				</div>      	               
 			

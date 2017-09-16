@@ -8,7 +8,23 @@ $(function() {
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
+	initRedioListener();
 });
+
+/**
+ * 单选按钮初始化
+ */
+function initRedioListener(){
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="opertype"]:checked').val();
+		if(opertype == 1){
+			$("#confreason").textbox('readonly',true);
+			$("#confreason").textbox('setValue',null);
+		}else if(opertype == 2){
+			$("#confreason").textbox('readonly',false);
+		}
+	});
+}
 
 /**
  * 查询日期初始化
