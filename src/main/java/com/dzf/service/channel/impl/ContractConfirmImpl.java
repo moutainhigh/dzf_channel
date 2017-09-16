@@ -72,8 +72,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (conflist != null && conflist.size() > 0) {
 			CorpVO corpvo = null;
 			Map<String, String> packmap = queryPackageMap();
-			Map<Integer, String> areamap = queryAreaMap();
-			String aeraname = "";
 			Integer cyclenum = 0;
 			for (ContractConfrimVO vo : conflist) {
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
@@ -82,12 +80,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 				if (corpvo != null) {
-					aeraname = "";
 					vo.setCorpkname(corpvo.getUnitname());
-					if(!StringUtil.isEmpty(areamap.get(corpvo.getVprovince()))){
-						aeraname = areamap.get(corpvo.getVprovince())+""+areamap.get(corpvo.getVcity());
-					}
-					vo.setVarea(aeraname);
+				}
+				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+				if(corpvo != null){
+					vo.setVarea(corpvo.getCitycounty());
 				}
 				//从套餐取纳税人性质
 				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
@@ -133,29 +130,29 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return map;
 	}
 	
-	/**
-	 * 查询区域的值
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<Integer, String> queryAreaMap() throws DZFWarpException {
-		Map<Integer, String> areamap = new HashMap<Integer, String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select region_id, region_name\n");
-		sql.append("  from ynt_area\n");
-		sql.append(" where nvl(dr, 0) = 0\n");
-		sql.append("   order by region_id asc ");
-		ArrayList<ResponAreaVO> list = (ArrayList<ResponAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,
-				new BeanListProcessor(ResponAreaVO.class));
-		if(list != null && list.size() > 0){
-			for(ResponAreaVO vo: list){
-				areamap.put(vo.getRegion_id(), vo.getRegion_name());
-			}
-		}
-		return areamap;
-	}
+//	/**
+//	 * 查询区域的值
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	@SuppressWarnings("unchecked")
+//	private Map<Integer, String> queryAreaMap() throws DZFWarpException {
+//		Map<Integer, String> areamap = new HashMap<Integer, String>();
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter sp = new SQLParameter();
+//		sql.append("select region_id, region_name\n");
+//		sql.append("  from ynt_area\n");
+//		sql.append(" where nvl(dr, 0) = 0\n");
+//		sql.append("   order by region_id asc ");
+//		ArrayList<ResponAreaVO> list = (ArrayList<ResponAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+//				new BeanListProcessor(ResponAreaVO.class));
+//		if(list != null && list.size() > 0){
+//			for(ResponAreaVO vo: list){
+//				areamap.put(vo.getRegion_id(), vo.getRegion_name());
+//			}
+//		}
+//		return areamap;
+//	}
 	
 	/**
 	 * 获取确认数据查询条件
@@ -254,7 +251,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> conflist = (List<ContractConfrimVO>) singleObjectBO.executeQuery(sql.toString(),
 				spm, new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
-			Map<Integer, String> areamap = queryAreaMap();
 			ContractConfrimVO vo = conflist.get(0);
 			CorpVO corpvo = null;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
@@ -264,11 +260,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if (corpvo != null) {
 				vo.setCorpkname(corpvo.getUnitname());
-				String aeraname = "";
-				if(!StringUtil.isEmpty(areamap.get(corpvo.getVprovince()))){
-					aeraname = areamap.get(corpvo.getVprovince())+""+areamap.get(corpvo.getVcity());
-				}
-				vo.setVarea(aeraname);
+			}
+			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+			if(corpvo != null){
+				vo.setVarea(corpvo.getCitycounty());
 			}
 			Map<String, String> packmap = queryPackageMap();
 			//从套餐取纳税人性质
