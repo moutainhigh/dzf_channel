@@ -34,6 +34,7 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and dpublishdate <= ?");
             params.addParam(qryvo.getDenddate());
         }
+        str.append(" order by vstatus,dpublishdate desc");
         PackageDefVO[] vos = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, str.toString(), params);
         if(vos != null && vos.length > 0){
             UserVO uvo = null;
