@@ -88,7 +88,8 @@ function initGrid(){
                     	height: 35,
                     	min:0,
                     	precision: 2,
-                    	groupSeparator:','
+                    	groupSeparator:',',
+                    	validType:'length[1,6]',
                     }
                 }
     		}, {
@@ -130,6 +131,7 @@ function initGrid(){
                     	height: 35,
                     	precision: 0,
                     	min:0,
+                    	validType:'length[1,6]',
                     }
                 }
     		}, {
@@ -144,6 +146,7 @@ function initGrid(){
                     	height: 35,
                     	precision: 0,
                     	min:0,
+                    	validType:'length[1,6]',
                     }
                 }
     		}, {
@@ -198,27 +201,6 @@ function initGrid(){
     					text = "已下架";
     				return text;
     			},
-//    			editor: {
-//    				type: 'combobox',
-//                    options: {
-//                    	height: 35,
-//                    	panelHeight: 80,
-//                    	showItemIcon: true,
-//                    	valueField: "value",
-//                    	editable: false,
-//                    	textField: "text",
-//                    	data: [{
-//                    		value: 1,
-//                    		text: '待发布'
-//                    	},{
-//                    		value: 2,
-//                    		text: '已发布'
-//                    	},{
-//                    		value: 3,
-//                    		text: '已下架'
-//                    	}]
-//                    }
-//                }
     		}, {
     			field : 'ispro',
     			title : '是否促销',
@@ -252,14 +234,6 @@ function addType () {
 	$('#grid').datagrid('insertRow',{index: 0,	// 索引从0开始
 		row: {typecode:'FW0101'}
 	});
-//	var vstatus=$('#grid').datagrid('getColumnOption', 'vstatus');
-//	vstatus.editor={};
-//	var dpubdate=$('#grid').datagrid('getColumnOption', 'dpubdate');
-//	dpubdate.editor={};
-//	var offdate=$('#grid').datagrid('getColumnOption', 'offdate');
-//	offdate.editor={};
-//	var coperatorname=$('#grid').datagrid('getColumnOption', 'coperatorname');
-//	coperatorname.editor={};
 	$('#grid').datagrid("beginEdit", 0);
 }
 
