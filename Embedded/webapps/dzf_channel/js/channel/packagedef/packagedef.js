@@ -89,7 +89,7 @@ function initGrid(){
                     	min:0,
                     	precision: 2,
                     	groupSeparator:',',
-                    	validType:'length[1,6]',
+                    	validType:'length[1,8]',
                     }
                 }
     		}, {
