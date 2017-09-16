@@ -86,6 +86,7 @@ function initGrid(){
     				type: 'numberbox',
                     options: {
                     	height: 35,
+                    	min:0,
                     	precision: 2,
                     	groupSeparator:','
                     }
@@ -127,7 +128,8 @@ function initGrid(){
     				type: 'numberbox',
                     options: {
                     	height: 35,
-                    	precision: 0
+                    	precision: 0,
+                    	min:0,
                     }
                 }
     		}, {
@@ -140,7 +142,8 @@ function initGrid(){
     				type: 'numberbox',
                     options: {
                     	height: 35,
-                    	precision: 0
+                    	precision: 0,
+                    	min:0,
                     }
                 }
     		}, {
