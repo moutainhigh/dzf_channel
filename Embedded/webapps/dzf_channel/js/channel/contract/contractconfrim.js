@@ -175,7 +175,7 @@ function load(){
 				if (value == '2')
 					return '已审核';
 				if (value == '3')
-					return '已驳回';
+					return '拒绝审核';
 				if (value == '4')
 					return '服务到期';
 			}

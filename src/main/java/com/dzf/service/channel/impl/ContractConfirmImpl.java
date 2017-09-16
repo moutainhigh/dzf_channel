@@ -561,6 +561,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				setNullValue(confrimvo);
 				return confrimvo;
 			}
+			confrimvo.setVconfreason(paramvo.getVconfreason());
 			updateContract(confrimvo, opertype);
 			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
 			setNullValue(confrimvo);
