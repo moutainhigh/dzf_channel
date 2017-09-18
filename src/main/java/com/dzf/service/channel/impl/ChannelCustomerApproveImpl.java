@@ -26,24 +26,28 @@ public class ChannelCustomerApproveImpl implements IChannelCustomerApprove {
 	@Override
 	public void processApprove(CorpVO[] corps, String user)
 			throws DZFWarpException {
-		for (CorpVO corp : corps) {
-			corp.setApprove_user(user);
-			corp.setApprove_time(new DZFDateTime());
-		}
-		singleObjectBO.updateAry(corps, new String[] { "approve_status",
-				"approve_comment", "approve_user", "approve_time" });
+	    if(corps != null && corps.length > 0){
+	        for (CorpVO corp : corps) {
+	            corp.setApprove_user(user);
+	            corp.setApprove_time(new DZFDateTime());
+	        }
+	        singleObjectBO.updateAry(corps, new String[] { "approve_status",
+	                "approve_comment", "approve_user", "approve_time" });
+	    }
 	}
 
 	@Override
 	public void processAbandonApprove(CorpVO[] corps) throws DZFWarpException {
-		for (CorpVO corp : corps) {
-			corp.setApprove_comment(null);
-			corp.setApprove_time(null);
-			corp.setApprove_user(null);
-			corp.setApprove_status(0);
-		}
-		singleObjectBO.updateAry(corps, new String[] { "approve_status",
-				"approve_comment", "approve_user", "approve_time" });
+	    if(corps != null && corps.length > 0){
+	        for (CorpVO corp : corps) {
+	            corp.setApprove_comment(null);
+	            corp.setApprove_time(null);
+	            corp.setApprove_user(null);
+	            corp.setApprove_status(0);
+	        }
+	        singleObjectBO.updateAry(corps, new String[] { "approve_status",
+	                "approve_comment", "approve_user", "approve_time" });
+	    }
 	}
 
 	@Override
@@ -73,7 +77,7 @@ public class ChannelCustomerApproveImpl implements IChannelCustomerApprove {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder whereSql = new StringBuilder();
 
-		sb.append(" select a.pk_corp, a.innercode,a.unitname,a.createdate,a.ischannel,")
+		sb.append(" select a.pk_corp, a.innercode,a.unitname,a.createdate,a.ischannel,a.ishasaccount,")
 		        .append(" a.approve_status,a.approve_comment,a.approve_user,a.approve_time,")
 		        .append(" u.user_name as approve_user_name,")
 				.append(" t.tradename as indusname, acc.unitname as foreignname from bd_corp a ")
