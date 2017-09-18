@@ -29,7 +29,7 @@ function initGrid(){
     			title : '业务类型',
     			width : 120,
     			halign : 'center',
-    			align : 'center',
+    			align : 'left',
     			formatter: function (value) {
     				var text = "";
     				if (value == 'FW0101')
@@ -80,8 +80,12 @@ function initGrid(){
     			field : 'nmsmny',
     			title : '月服务费',
     			width : 100,
-    			align : 'center',
+    			align : 'right',
     			halign : 'center',
+    			formatter : function(value,row,index){
+    				if(value == 0)return "0.00";
+    				return formatMny(value);
+    			},
     			editor: {
     				type: 'numberbox',
                     options: {
@@ -97,7 +101,7 @@ function initGrid(){
     			title : '收费周期(月)',
     			width : 100,
     			halign : 'center',
-    			align : 'center',
+    			align : 'right',
     			editor: {
     				type: 'combobox',
                     options: {
@@ -124,7 +128,7 @@ function initGrid(){
     			title : '合同期限(月)',
     			width : 100,
     			halign : 'center',
-    			align : 'center',
+    			align : 'right',
     			editor: {
     				type: 'numberbox',
                     options: {
@@ -139,7 +143,7 @@ function initGrid(){
     			title : '发布个数',
     			width : 100,
     			halign : 'center',
-    			align : 'center',
+    			align : 'right',
     			editor: {
     				type: 'numberbox',
                     options: {
@@ -178,7 +182,7 @@ function initGrid(){
     			title : '录入人',
     			width : 100,
     			halign : 'center',
-    			align : 'center',
+    			align : 'left',
 //    			editor: {
 //    				type: 'textbox',
 //                    options: {

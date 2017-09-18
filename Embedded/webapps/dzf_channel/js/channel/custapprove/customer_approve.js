@@ -256,7 +256,8 @@ $(function() {
                 {
                     field: 'cdate',
                     width: 100,
-                    title: '录入日期'
+                    title: '录入日期',
+                    align:'center'
                 },
                 {
                     field: 'fj',
@@ -285,6 +286,7 @@ $(function() {
                     field: 'approve_status',
                     width: 100,
                     title: '审批状态',
+                    align:'center',
                     formatter: function(val) {
                     	var display = null;
                     	if (val == 1) {
@@ -310,7 +312,8 @@ $(function() {
                 {
                     field: 'approve_time',
                     width: 150,
-                    title: '操作时间'
+                    title: '操作时间',
+                    align:'center'
                 }
             ]
         ],

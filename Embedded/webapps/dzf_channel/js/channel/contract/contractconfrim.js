@@ -65,7 +65,7 @@ function load(){
 			field : 'typemin',
 			hidden : true
 		}, {
-			width : '170',
+			width : '150',
 			title : '地区',
 			halign:'center',
 			field : 'area',
@@ -75,17 +75,17 @@ function load(){
 			halign:'center',
 			field : 'corpnm',
 		}, {
-			width : '140',
+			width : '260',
 			title : '客户名称',
 			halign:'center',
 			field : 'corpkna',
 		}, {
-			width : '140',
+			width : '120',
 			title : '纳税人性质',
 			halign:'center',
 			field : 'chname',
 		}, {
-			width : '200',
+			width : '100',
 			title : '合同类型',
             halign:'center',
 			field : 'typeminm',
@@ -95,7 +95,7 @@ function load(){
 			halign:'center',
 			field : 'vccode',
 		}, {
-			width : '120',
+			width : '110',
 			title : '合同总金额',
 			align:'right',
             halign:'center',
@@ -106,23 +106,27 @@ function load(){
 			}
 		}, {
 			width : '120',
-			title : '收款周期（月）',
+			title : '收款周期(月)',
 			halign:'center',
+			align:'right',
 			field : 'chgcycle',
 		}, {
 			width : '120',
 			title : '开始日期',
 			halign:'center',
+			align:'center',
 			field : 'bdate',
 		}, {
 			width : '120',
 			title : '结束日期',
 			halign:'center',
+			align:'center',
 			field : 'edate',
 		}, {
 			width : '120',
-			title : '合同周期（月）',
+			title : '合同周期(月)',
 			halign:'center',
+			align:'right',
 			field : 'contcycle',
 		}, {
 			width : '100',
@@ -144,11 +148,13 @@ function load(){
 			width : '100',
 			title : '扣费日期',
 			halign:'center',
+			align:'center',
 			field : 'dedate',
 		}, {
 			width : '100',
 			title : '扣款比例',
 			halign:'center',
+			align:'right',
 			field : 'propor',
 			formatter : function(value,row,index){
 				if(!isEmpty(value))
@@ -169,6 +175,7 @@ function load(){
 			title : '合同状态',
             halign:'center',
 			field : 'destatus',
+			align:'center',
 			formatter : function(value) {
 				if (value == '1')
 					return '待审核';
