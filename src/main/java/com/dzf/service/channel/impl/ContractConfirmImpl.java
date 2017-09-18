@@ -296,11 +296,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 		if(packvo != null){
-			if(!StringUtil.isEmptyWithTrim(packvo.getVmemo())){
-				Integer publishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-				Integer usenum = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
-				int num = publishnum - usenum;
-				retvo.setVsalespromot(packvo.getVmemo() + "    剩余名额" + num + "个");
+			if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+				if(!StringUtil.isEmptyWithTrim(packvo.getVmemo())){
+					Integer publishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+					Integer usenum = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+					int num = publishnum - usenum;
+					retvo.setVsalespromot(packvo.getVmemo() + "    剩余名额" + num + "个");
+				}
 			}
 		}
 		return retvo;
@@ -616,10 +618,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		// 3、套餐发布个数校验
 		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
 				confrimvo.getPk_packagedef());
-		Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
-		Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-		if (num.compareTo(pulishnum) == 0) {
-			return "套餐发布个数已经用完";
+		if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+			Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+			Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+			if (num.compareTo(pulishnum) == 0) {
+				return "套餐发布个数已经用完";
+			}
 		}
 
 		return "";
