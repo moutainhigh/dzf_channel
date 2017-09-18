@@ -7,7 +7,7 @@ img{border:none;}
 ::-ms-clear, ::-ms-reveal{display: none;}
 
 .zhongbu {width:1000px;overflow:hidden; margin:95px  auto 180px; overflow:hidden;}
-.zou {float:left;width:500px;}
+.zou {float:left;width:500px;padding-top:50px;}
 .ml90{margin-left:90px;margin-bottom:30px;}
 .denglu {position:relative;background:#fff; float:right;}
 

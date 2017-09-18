@@ -305,7 +305,7 @@ function savePsw(){
 <div class="datu">
 	<div class="zhongbu">
 		<div class="zou">
-			<img class="ml90" src="<%=request.getContextPath()%>/img/daizhang.png" />
+			<%-- <img class="ml90" src="<%=request.getContextPath()%>/img/daizhang.png" /> --%>
 			<img src="<%=request.getContextPath()%>/img/login_bg_dz.png" />
 		</div>
 		<form id="login" method="post">
