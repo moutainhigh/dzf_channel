@@ -45,7 +45,7 @@
 				
 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
-						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入渠道商名称,按Enter键 "/> 
+						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
 					</div>
 				</div>
 				<div class="right">
@@ -75,7 +75,7 @@
 				</div>
 				<div class="time_col time_colp11 " style="margin-top:10px;">
 					<div style="width:28%;display: inline-block;">
-						<label style="width:27%;text-align: right;">渠道商：</label>
+						<label style="width:27%;text-align: right;">加盟商：</label>
 						<input id="corpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" style="width:60%;height:28px;text-align:left; ">
 					</div>
 					<div style="width:20%;display: inline-block;">

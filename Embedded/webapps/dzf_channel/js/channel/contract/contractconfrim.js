@@ -51,7 +51,7 @@ function load(){
 			hidden : true
 		}, {
 			width : '100',
-			title : '渠道商主键',
+			title : '加盟商主键',
 			field : 'corpid',
 			hidden : true
 		}, {
@@ -71,7 +71,7 @@ function load(){
 			field : 'area',
 		},{
 			width : '140',
-			title : '渠道商',
+			title : '加盟商',
 			halign:'center',
 			field : 'corpnm',
 		}, {
