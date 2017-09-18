@@ -46,7 +46,7 @@ function viewattach(infoindex){
 	});
 	
 	$("#attachViewDlg").dialog({
-		width:$(window).width()-500,
+		width:$(window).width()-200,
 		height:$(window).height()-100,
 		closable:true,
 		title:'附件浏览',
@@ -95,7 +95,7 @@ function viewAttachCard(){
 	});
 	
 	$("#attachViewDlg").dialog({
-		width:$(window).width()-100,
+		width:$(window).width()-200,
 		height:$(window).height()-100,
 		closable:true,
 		title:'附件浏览',
@@ -173,8 +173,10 @@ function doubleImage(i){
 			title: '原图' ,
 //			width:$("#tpght").width() + 100,
 //			height:$("#tpght").height() + 100,
-			width:'1160',
-			height:'90%',
+//			width:'1160',
+//			height:'90%',
+			width:$(window).width()-200,
+			height:$(window).height()-100,
 //			left: offset.left,
 //			top: offset.top,
 			cache: false,
@@ -219,8 +221,10 @@ function doubleDocImage(i){
 //		var offset = $("#tpght").offset();
 		$("#filedoc").dialog({
 			title: '原图' ,
-			width:'1160',
-			height:'90%',
+//			width:'1160',
+//			height:'90%',
+			width:$(window).width()-200,
+			height:$(window).height()-100,
 //			left: offset.left,
 //			top: offset.top,
 			cache: false,
