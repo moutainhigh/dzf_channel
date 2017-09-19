@@ -62,11 +62,24 @@ public class PackageDefServiceImpl implements IPackageDefService {
                 }else{
                     throw new BusinessException("代理记账业务类型为空，保存失败");
                 }
+                if(insert.getIspromotion() != null && insert.getIspromotion().booleanValue()){
+                    if(insert.getIpublishnum() == null || insert.getIpublishnum() <=0 ){
+                        throw new BusinessException("发布个数不可以小于1，请重新填写");
+                    }
+                }
             }
             singleObjectBO.insertVOArr(pk_corp, insertData);
         }
-        if (updateData != null && updateData.length > 0)
+        if (updateData != null && updateData.length > 0){
+            for (PackageDefVO update : updateData) {
+                if(update.getIspromotion() != null && update.getIspromotion().booleanValue()){
+                    if(update.getIpublishnum() == null || update.getIpublishnum() <=0 ){
+                        throw new BusinessException("发布个数不可以小于1，请重新填写");
+                    }
+                }
+            }
             singleObjectBO.updateAry(updateData);
+        }
         if(delData != null && delData.length > 0){
             singleObjectBO.deleteVOArray(delData);
         }

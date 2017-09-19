@@ -239,6 +239,7 @@ function addType () {
 		row: {typecode:'FW0101'}
 	});
 	$('#grid').datagrid("beginEdit", 0);
+	editIndex = 0;
 }
 
 function save () {
@@ -254,6 +255,7 @@ function save () {
         		$("#grid").datagrid("reload");
                 Public.tips({content: rs.msg,type:0});
 			} else {
+				$("#grid").datagrid("beginEdit", editIndex);
 				 Public.tips({content: rs.msg,type:1});
 			}
         }
@@ -362,7 +364,7 @@ function reload() {
 	$('#grid').datagrid('reload');
 	showButtons("brows");
 }
-
+var editIndex = 0;
 function modify() {
 	var grid = $("#grid");
 	var rows = grid.datagrid("getChecked");
@@ -382,6 +384,7 @@ function modify() {
 		}
 		showButtons("edit");
 		var index = $("#grid").datagrid("getRowIndex", row);
+		editIndex=index;
 		grid.datagrid("beginEdit", index);
 	}else {
 		Public.tips({content: "请选择一条数据修改",type: 2});

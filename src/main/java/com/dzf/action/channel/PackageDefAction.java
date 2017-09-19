@@ -23,8 +23,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IPackageDefService;
 
 /**
- * 付款单确认
- * @author zy
+ * 服务套餐定义
  *
  */
 @ParentPackage("basePackage")
@@ -57,7 +56,6 @@ public class PackageDefAction extends BaseAction<PackageDefVO>{
 	}
 	
 	/**
-	 * 收款确认、取消确认
 	 */
 	public void save() {
         Map<String,String> bodymapping=FieldMapping.getFieldMapping(new PackageDefVO());
