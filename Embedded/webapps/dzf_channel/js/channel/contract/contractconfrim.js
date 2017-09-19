@@ -81,17 +81,17 @@ function load(){
 			field : 'corpkna',
 		}, {
 			width : '120',
-			title : '纳税人性质',
+			title : '纳税人资格',
 			halign:'center',
 			field : 'chname',
 		}, {
 			width : '100',
-			title : '合同类型',
+			title : '业务类型',
             halign:'center',
 			field : 'typeminm',
 		}, {
 			width : '140',
-			title : '合同号',
+			title : '合同编码',
 			halign:'center',
 			field : 'vccode',
 		}, {
@@ -104,6 +104,12 @@ function load(){
 				if(value == 0)return "0.00";
 				return formatMny(value);
 			}
+		}, {
+			width : '100',
+			title : '附件',
+			halign:'center',
+			field : 'contdoc',
+			formatter : formatDocLink
 		}, {
 			width : '120',
 			title : '收款周期(月)',
@@ -139,12 +145,6 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '100',
-			title : '附件',
-			halign:'center',
-			field : 'contdoc',
-			formatter : formatDocLink
-		},{
 			width : '100',
 			title : '扣费日期',
 			halign:'center',
