@@ -1,5 +1,8 @@
 
 .Marketing input{color:red;font-weight: bold;}
-.decan .textbox{border:none;background:#f4f4f4;}
-.decan .textbox .textbox-text{background:#f4f4f4;text-align: left;}
+.decan-top .textbox{background:#eff1f2 !important;}
+.decan-top .textbox .textbox-text{background:#eff1f2 !important;}
+.decan .textbox{border:none;background:#fff;}
+.decan .textbox .textbox-text{background:#fff;text-align: left;}
 .strong .textbox .textbox-text{font-weight: bold;}
+.decan .datebox .combo-arrow{background:none}

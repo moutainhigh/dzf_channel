@@ -61,25 +61,26 @@
 		</div>
 		
 		<!-- 单个审核  begin  -->
-		<div id="deduct_Dialog" class="easyui-dialog" style="width:1160px;height:90%;overflow: auto;    position: relative;" data-options="closed:true">
-			<div>
-				<div class="time_col time_colp11  Marketing" style="padding-top:20px;border-bottom:2px solid #4292c1;width:96%;margin:0 auto;padding-bottom:20px;">
-					<div class="decan" style="width:50%;display: inline-block;">
+		<div id="deduct_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
+		<div class="time_col time_colp11  Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
+					<div class="decan decan-top" style="width:50%;display: inline-block;margin-left: -14px;">
 						<label style="width:20%;text-align: right;color: red; font-weight: bold;">促销活动：</label>
 						<input id="salespromot" name="salespromot" class="easyui-textbox" data-options="readonly:true" style="width:68%;height:28px;text-align:left; ">
 					</div>
-					<div style="width:18%;display: inline-block;float: right;">
-						<a class="ui-btn ui-btn-xz" onclick="deductConfri()">确定</a>&emsp;
+					<div style="width:14%;display: inline-block;float: right;">
+						<a class="ui-btn ui-btn-xz" onclick="deductConfri()">确定</a>
 						<a class="ui-btn ui-btn-xz" onclick="deductCancel()">取消</a>
 					</div>
 				</div>
+			<div style="height:88%; overflow: auto;">
+				
 				<div class="time_col time_colp11 " style="margin-top:10px;">
-				<div class="decan strong" style="width:30%;display: inline-block;">
+				<div class="decan strong" style="width:22%;display: inline-block;">
 						<label style="width:40%;text-align: right;font-weight: bold;">预付款余额：</label>
 						<input id="balmny" name="balmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
 							 style="width:50%;height:28px;text-align:left; ">
 					</div>
-					<div class="decan strong" style="width:28%;display: inline-block;">
+					<div class="decan strong" style="width:30%;display: inline-block;">
 						<label style="width:27%;text-align: right;font-weight: bold;">加盟商：</label>
 						<input id="corpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" style="width:60%;height:28px;text-align:left; ">
 					</div>
@@ -95,7 +96,7 @@
 		
 			<form id = "deductfrom" method="post">
 				<div class="time_col time_colp11 ">
-					<label style="width: 100px;text-align:center;color:blue;">扣款</label>
+					<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">扣款</label>
 				</div>
 				<div class="time_col time_colp11 " style="margin-top:10px;">
 					<input id="contractid" name="contractid" type="hidden">
@@ -141,7 +142,7 @@
 					<label style="text-align: right;width:90px;">驳回原因：</label>
 					<textarea id="confreason" name="confreason" class="easyui-textbox"  
 						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
-						 style="height:28px; width:60%;border-radius: 5px;"></textarea>
+						 style="height:33px; width:60%;border-radius: 5px;"></textarea>
 				</div>
 		<!-- 		<div class="time_col time_colp11 ">
 					
@@ -150,7 +151,7 @@
 				<!-- 合同信息 begin -->
 				<div>
 					<div class="time_col time_colp11 ">
-						<label style="width: 100px;text-align:center;color:blue;">合同信息</label>
+						<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">合同信息</label>
 					</div>
 					<div class="time_col time_colp11 ">
 						<div class="decan" style="width:24%;display: inline-block;">
@@ -181,7 +182,7 @@
 								style="width:56%;height:28px;text-align:left;">
 						</div>
 						<div class="decan" style="width:24%;display: inline-block;">
-							<label style="width:40%;text-align: right;">代账费(元/月):</label>
+							<label style="width:40%;    text-indent: 15px;">代账费(元/月):</label>
 							<input id="nmsmny" name="nmsmny" class="easyui-numberbox"  data-options="readonly:true,precision:2,groupSeparator:','"
 								 style="width:56%;height:28px;text-align:left;">
 						</div>
