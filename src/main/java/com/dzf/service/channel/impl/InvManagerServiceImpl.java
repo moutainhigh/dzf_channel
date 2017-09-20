@@ -53,7 +53,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 			String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
 			sql.append(" and pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append(" and  rownum <= ?) where rn > ?");
+		sql.append(" and  rownum <= ? order by ts desc ) where rn > ?");
 		sp.addParam(page*size);
 		sp.addParam((page-1)*size);
 		List<ChInvoiceVO> list = (List<ChInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChInvoiceVO.class));
@@ -98,7 +98,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 			sql.append(" and apptime <= ?");
 			sp.addParam(vo.getEdate());
 		}
-		
+		sql.append(" order by ts desc ");
 		String total = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor()).toString();
 		return Integer.valueOf(total);
 	}
