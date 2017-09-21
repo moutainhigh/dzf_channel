@@ -301,7 +301,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					Integer publishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
 					Integer usenum = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 					int num = publishnum - usenum;
-					retvo.setVsalespromot(packvo.getVmemo() + "    剩余名额" + num + "个");
+					retvo.setVsalespromot("促销活动： "+packvo.getVmemo() + "    剩余名额" + num + "个");
 				}
 			}
 		}

@@ -63,9 +63,10 @@
 		<!-- 单个审核  begin  -->
 		<div id="deduct_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
 		<div class="time_col time_colp11  Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
-					<div class="decan decan-top" style="width:50%;display: inline-block;margin-left: -14px;">
-						<label style="width:20%;text-align: right;color: red; font-weight: bold;">促销活动：</label>
-						<input id="salespromot" name="salespromot" class="easyui-textbox" data-options="readonly:true" style="width:68%;height:28px;text-align:left; ">
+					<div class="decan decan-top" style="width:50%;display: inline-block;margin-left:16px;">
+						<!-- <label style="width:20%;text-align: right;color: red; font-weight: bold;">促销活动：</label> -->
+						<input id="salespromot" name="salespromot" class="easyui-textbox" data-options="readonly:true" 
+							style="width:68%;height:50px;text-align:left; ">
 					</div>
 					<div style="width:14%;display: inline-block;float: right;">
 						<a class="ui-btn ui-btn-xz" onclick="deductConfri()">确定</a>
