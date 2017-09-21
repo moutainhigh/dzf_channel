@@ -92,7 +92,6 @@
 					
 					
 				</div>
-		<!-- 	</div> -->
 		
 			<form id = "deductfrom" method="post">
 				<div class="time_col time_colp11 ">
@@ -144,9 +143,6 @@
 						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
 						 style="height:33px; width:60%;border-radius: 5px;"></textarea>
 				</div>
-		<!-- 		<div class="time_col time_colp11 ">
-					
-				</div>    -->   	               
 			
 				<!-- 合同信息 begin -->
 				<div>
@@ -219,7 +215,7 @@
 						</div>
 					</div>
 					<!-- 附件信息begin -->
-					<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+					<div id ="fileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
 						<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
 							<ul class="tu_block" id="filedocs"></ul>
 						</div>

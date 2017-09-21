@@ -360,7 +360,7 @@ function audit(){
 	}
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
 	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','合同审核');
-	
+	$("#fileshow").hide();
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件
 	initListener();//初始化扣款比例监听
@@ -427,16 +427,19 @@ function initFileDoc(row){
   		async : false,//异步传输
   		success : function(result) {
 			var rows = result.rows;
-			arrachrows = result.rows;
-			$("#filedocs").html('');
-			for(var i = 0;i<rows.length;i++){
-				var srcpath = rows[i].fpath.replace(/\\/g, "/");
-				var attachImgUrl = getAttachImgUrl(rows[i]);
-				$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-						'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
-						'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
-						'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-						'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
+			if(rows != null && rows.length > 0){
+				$("#fileshow").show();
+				arrachrows = result.rows;
+				$("#filedocs").html('');
+				for(var i = 0;i<rows.length;i++){
+					var srcpath = rows[i].fpath.replace(/\\/g, "/");
+					var attachImgUrl = getAttachImgUrl(rows[i]);
+					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
+							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
+				}
 			}
 		}
 	});
