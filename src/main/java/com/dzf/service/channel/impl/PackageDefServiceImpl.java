@@ -116,6 +116,9 @@ public class PackageDefServiceImpl implements IPackageDefService {
             }else if(vo.getVstatus() == 3){
                 throw new BusinessException("已下架的套餐不允许发布");
             }
+            if(vo.getIcontcycle() == null){
+                throw new BusinessException("合同周期不能为空");
+            }
             vo.setVstatus(2);
             vo.setDpublishdate(new DZFDate());
         }
