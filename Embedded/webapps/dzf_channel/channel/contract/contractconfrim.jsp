@@ -76,7 +76,7 @@
 			<div style="height:88%; overflow: auto;">
 				
 				<div class="time_col time_colp11 " style="margin-top:10px;">
-				<div class="decan strong" style="width:22%;display: inline-block;">
+				<div class="decan strong Marketing" style="width:22%;display: inline-block;">
 						<label style="width:40%;text-align: right;font-weight: bold;">预付款余额：</label>
 						<input id="balmny" name="balmny" class="easyui-numberbox" data-options="readonly:true,precision:2,groupSeparator:','"
 							 style="width:50%;height:28px;text-align:left; ">
