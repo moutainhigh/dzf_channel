@@ -3,7 +3,7 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="renderer" content="webkit|ie-stand|ie-comp">
-<title>选择渠道商</title>
+<title>选择加盟商</title>
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
 </head>
 <body>

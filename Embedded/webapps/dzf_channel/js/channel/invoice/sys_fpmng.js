@@ -107,7 +107,7 @@ function initDataGrid(){
 	});
 }
 
-//初始化渠道商
+//初始化加盟商
 function initChannel(){
     $('#channel_select').textbox({
         editable: false,
@@ -118,7 +118,7 @@ function initChannel(){
                     width: 600,
                     height: 480,
                     readonly: true,
-                    title: '选择渠道商',
+                    title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     buttons: '#kj_buttons'
