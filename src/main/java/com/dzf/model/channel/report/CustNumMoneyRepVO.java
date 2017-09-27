@@ -31,7 +31,7 @@ public class CustNumMoneyRepVO extends SuperVO {
 	
 	@FieldAlias("stockcustt")
 	private Integer istockcusttaxpay;//存量客户-一般纳税人
-
+	
 	@FieldAlias("stockconts")
 	private DZFDouble istockcontsmall;//存量客户合同-小规模
 	
@@ -62,17 +62,29 @@ public class CustNumMoneyRepVO extends SuperVO {
 	@FieldAlias("renewcontt")
 	private DZFDouble irenewconttaxpay;//续费客户合同-一般纳税人
 	
-	@FieldAlias("newcustrate")
-	private Integer inewcustrate;//新增客户增长率
+	@FieldAlias("newcustrates")
+	private DZFDouble inewcustratesmall;//新增客户增长率-小规模
 	
-	@FieldAlias("newcontrate")
-	private Integer inewcontrate;//新增合同增长率
+	@FieldAlias("newcustratet")
+	private DZFDouble inewcustratetaxpay;//新增客户增长率-一般纳税人
 	
-	@FieldAlias("renewcustrate")
-	private Integer irenewcustrate;//续费客户占比
+	@FieldAlias("newcontrates")
+	private DZFDouble inewcontratesmall;//新增合同增长率-小规模
 	
-	@FieldAlias("renewcontrate")
-	private Integer irenewcontrate;//续费合同占比
+	@FieldAlias("newcontratet")
+	private DZFDouble inewcontratetaxpay;//新增合同增长率-一般纳税人
+	
+	@FieldAlias("renewcustrates")
+	private DZFDouble irenewcustratesmall;//续费客户占比-小规模
+	
+	@FieldAlias("renewcustratet")
+	private DZFDouble irenewcustratetaxpay;//续费客户占比-一般纳税人
+	
+	@FieldAlias("renewcontrates")
+	private DZFDouble irenewcontratesmall;//续费合同占比-小规模
+	
+	@FieldAlias("renewcontratet")
+	private DZFDouble irenewcontratetaxpay;//续费合同占比-一般纳税人
 	
 	public String getVlargearea() {
 		return vlargearea;
@@ -136,22 +148,6 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	public DZFDouble getIrenewconttaxpay() {
 		return irenewconttaxpay;
-	}
-
-	public Integer getInewcustrate() {
-		return inewcustrate;
-	}
-
-	public Integer getInewcontrate() {
-		return inewcontrate;
-	}
-
-	public Integer getIrenewcustrate() {
-		return irenewcustrate;
-	}
-
-	public Integer getIrenewcontrate() {
-		return irenewcontrate;
 	}
 
 	public void setVlargearea(String vlargearea) {
@@ -218,20 +214,68 @@ public class CustNumMoneyRepVO extends SuperVO {
 		this.irenewconttaxpay = irenewconttaxpay;
 	}
 
-	public void setInewcustrate(Integer inewcustrate) {
-		this.inewcustrate = inewcustrate;
+	public DZFDouble getInewcontratesmall() {
+		return inewcontratesmall;
 	}
 
-	public void setInewcontrate(Integer inewcontrate) {
-		this.inewcontrate = inewcontrate;
+	public void setInewcontratesmall(DZFDouble inewcontratesmall) {
+		this.inewcontratesmall = inewcontratesmall;
 	}
 
-	public void setIrenewcustrate(Integer irenewcustrate) {
-		this.irenewcustrate = irenewcustrate;
+	public DZFDouble getInewcontratetaxpay() {
+		return inewcontratetaxpay;
 	}
 
-	public void setIrenewcontrate(Integer irenewcontrate) {
-		this.irenewcontrate = irenewcontrate;
+	public void setInewcontratetaxpay(DZFDouble inewcontratetaxpay) {
+		this.inewcontratetaxpay = inewcontratetaxpay;
+	}
+
+	public DZFDouble getIrenewcontratesmall() {
+		return irenewcontratesmall;
+	}
+
+	public void setIrenewcontratesmall(DZFDouble irenewcontratesmall) {
+		this.irenewcontratesmall = irenewcontratesmall;
+	}
+
+	public DZFDouble getIrenewcontratetaxpay() {
+		return irenewcontratetaxpay;
+	}
+
+	public void setIrenewcontratetaxpay(DZFDouble irenewcontratetaxpay) {
+		this.irenewcontratetaxpay = irenewcontratetaxpay;
+	}
+
+	public DZFDouble getInewcustratesmall() {
+		return inewcustratesmall;
+	}
+
+	public DZFDouble getInewcustratetaxpay() {
+		return inewcustratetaxpay;
+	}
+
+	public DZFDouble getIrenewcustratesmall() {
+		return irenewcustratesmall;
+	}
+
+	public DZFDouble getIrenewcustratetaxpay() {
+		return irenewcustratetaxpay;
+	}
+
+	public void setInewcustratesmall(DZFDouble inewcustratesmall) {
+		this.inewcustratesmall = inewcustratesmall;
+	}
+
+	public void setInewcustratetaxpay(DZFDouble inewcustratetaxpay) {
+		this.inewcustratetaxpay = inewcustratetaxpay;
+	}
+
+	public void setIrenewcustratesmall(DZFDouble irenewcustratesmall) {
+		this.irenewcustratesmall = irenewcustratesmall;
+	}
+
+	public void setIrenewcustratetaxpay(DZFDouble irenewcustratetaxpay) {
+		this.irenewcustratetaxpay = irenewcustratetaxpay;
 	}
 
 	@Override

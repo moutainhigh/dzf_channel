@@ -17,6 +17,8 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
@@ -28,127 +30,288 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
     @Autowired
     private SingleObjectBO singleObjectBO;
     
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, \n");
-		sql.append("	p.chargedeptname as chargedeptname, count(p.pk_corp) as num \n");
-		sql.append("  FROM bd_corp p\n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp\n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0\n");
-		sql.append("   AND nvl(t.dr, 0) = 0\n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n");
-		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
-		List<CustCountVO> stocklist = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-		List<CustNumMoneyRepVO> retlist = null;
-		List<String> corplist = new ArrayList<String>();
-		if(stocklist != null && stocklist.size() > 0){
-			retlist = queryStockCustList(stocklist, corplist);
-			queryStockContList(retlist, corplist);
-		}
-		return retlist;
-	}
-	
-	/**
-	 * 查询存量客户信息
-	 * @param stocklist
-	 * @param corplist
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private List<CustNumMoneyRepVO> queryStockCustList(List<CustCountVO> stocklist, List<String> corplist)
-			throws DZFWarpException {
 		List<CustNumMoneyRepVO> retlist = new ArrayList<CustNumMoneyRepVO>();
-		Map<String, CustNumMoneyRepVO> map = new HashMap<String, CustNumMoneyRepVO>();
+		List<String> corplist = new ArrayList<String>();
+		CustNumMoneyRepVO retvo = null;
 		CustNumMoneyRepVO countvo = null;
-		for (CustCountVO vo : stocklist) {
-			if (!map.containsKey(vo.getPk_corp())) {
-				countvo = new CustNumMoneyRepVO();
-				countvo.setPk_corp(vo.getPk_corp());
-				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-					countvo.setIstockcustsmall(vo.getNum());
-				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-					countvo.setIstockcusttaxpay(vo.getNum());
-				}
-				map.put(vo.getPk_corp(), countvo);
-			} else {
-				countvo = map.get(vo.getPk_corp());
-				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-					countvo.setIstockcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
-				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-					countvo.setIstockcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
-				}
-			}
-		}
-		if (map != null && !map.isEmpty()) {
+		//1、查询存量客户数量
+		List<CustCountVO> stocklist = queryCustNum(paramvo,1);
+		//2、计算存量客户分类：小规模、一般纳税人
+		Map<String, CustNumMoneyRepVO> stockmap = countCustNumByType(stocklist, 1, corplist);
+		//3、查询存量客户的合同数量
+		List<CustCountVO> stockcontlist = queryContNum(paramvo, corplist, 1);
+		//4、计算存量客户合同分类：小规模、一般纳税人
+		Map<String, CustNumMoneyRepVO> stockcontmap = countContNumByType(stockcontlist, 1, corplist);
+		
+		//5、查询新增客户数量
+		List<CustCountVO> newlist = queryCustNum(paramvo,2);
+		//6、计算新增客户分类：小规模、一般纳税人
+		Map<String, CustNumMoneyRepVO> newmap = countCustNumByType(newlist, 2, corplist);
+		//7、计算新增客户的合同数量
+		List<CustCountVO> newcontlist = queryContNum(paramvo, corplist, 2);
+		//8、计算新增客户分类：小规模、一般纳税人
+		Map<String, CustNumMoneyRepVO> newcontmap = countContNumByType(newcontlist, 2, corplist);
+		
+		
+		if(corplist != null && corplist.size() > 0){
 			CorpVO corpvo = null;
-			CustNumMoneyRepVO retvo = null;
-			for (String key : map.keySet()) {
-				retvo = map.get(key);
-				corpvo = CorpCache.getInstance().get(null, key);
+			for(String pk_corp : corplist){
+				retvo = new CustNumMoneyRepVO();
+				retvo.setPk_corp(pk_corp);
+				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if(corpvo != null){
 					retvo.setVcorpname(corpvo.getUnitname());
 					retvo.setVprovince(corpvo.getCitycounty());
 				}
+				//2.1存量客户数量
+				if(stockmap != null && !stockmap.isEmpty()){
+					countvo = stockmap.get(pk_corp);
+					if(countvo != null){
+						retvo.setIstockcustsmall(countvo.getIstockcustsmall());
+						retvo.setIstockcusttaxpay(countvo.getIstockcusttaxpay());
+					}
+				}
+				//2.2存量客户合同数量
+				if(stockcontmap != null && !stockcontmap.isEmpty()){
+					countvo = stockcontmap.get(pk_corp);
+					if(countvo != null){
+						retvo.setIstockcontsmall(countvo.getIstockcontsmall());
+						retvo.setIstockconttaxpay(countvo.getIstockconttaxpay());
+					}
+				}
+				//2.3新增客户数量
+				if(newmap != null && !newmap.isEmpty()){
+					countvo = newmap.get(pk_corp);
+					if(countvo != null){
+						retvo.setInewcustsmall(countvo.getInewcustsmall());
+						retvo.setInewcusttaxpay(countvo.getInewcusttaxpay());
+					}
+				}
+				//2.4新增客户合同数量
+				if(newcontmap != null && !newcontmap.isEmpty()){
+					countvo = newcontmap.get(pk_corp);
+					if(countvo != null){
+						retvo.setInewcontsmall(countvo.getInewcontsmall());
+						retvo.setInewconttaxpay(countvo.getInewconttaxpay());
+					}
+				}
+				//2.5续费客户数量
+				
+				//2.6续费客户合同数量
+				
+				//2.7新增客户增长率
+				retvo.setInewcustratesmall(getCustRate(retvo.getInewcustsmall(), retvo.getIstockcustsmall()));
+				retvo.setInewcustratetaxpay(getCustRate(retvo.getInewcusttaxpay(), retvo.getIstockcusttaxpay()));
+				
+				//2.8新增合同增长率
+				retvo.setInewcontratesmall(getContRate(retvo.getInewcontsmall(), retvo.getIstockcontsmall()));
+				retvo.setInewcontratetaxpay(getContRate(retvo.getInewconttaxpay(), retvo.getIstockconttaxpay()));
+				
 				retlist.add(retvo);
-				corplist.add(key);
 			}
 		}
 		return retlist;
 	}
 	
 	/**
-	 * 查询存量客户合同信息
+	 * 整数类型增长率计算方法
+	 * @param num1
+	 * @param num2
+	 * @return
+	 */
+	private DZFDouble getCustRate(Integer num1, Integer num2){
+		DZFDouble num3 = num1 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num1);
+		DZFDouble num4 = num2 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num2);
+		DZFDouble num = num4.sub(num3);
+		return num3.div(num).multiply(100);
+	}
+	
+	/**
+	 * DZFDouble类型增长率计算方法
+	 * @param num1
+	 * @param num2
+	 * @return
+	 */
+	private DZFDouble getContRate(DZFDouble num1, DZFDouble num2){
+		num1 = num1 == null ? DZFDouble.ZERO_DBL : num1;
+		num2 = num2 == null ? DZFDouble.ZERO_DBL : num2;
+		DZFDouble num = num2.sub(num1);
+		return num1.div(num).multiply(100);
+	}
+	
+	/**
+	 * 查询客户数量
+	 * @param paramvo
+	 * @param qrytype   1:存量客户查询；2：新增客户查询；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT p.fathercorp as pk_corp, \n");
+		sql.append("	p.chargedeptname as chargedeptname, count(p.pk_corp) as num \n");
+		sql.append("  FROM bd_corp p \n");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
+		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
+		if(qrytype == 1){
+			sql.append("   AND p.createdate <= ? \n");
+			spm.addParam(paramvo.getBegdate());
+		}else if(qrytype == 2){
+			sql.append("   AND p.createdate <= ? \n");
+			spm.addParam(paramvo.getBegdate());
+			sql.append("   AND p.createdate >= ? \n");
+			DZFDate date = new DZFDate();
+			spm.addParam(date.getYear() + "-" + date.getStrMonth() + "-01");
+		}
+		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
+		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustCountVO.class));
+	}
+	
+	/**
+	 * 计算客户分类信息
 	 * @param stocklist
 	 * @param corplist
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
-	private void queryStockContList(List<CustNumMoneyRepVO> retlist, List<String> corplist)
-			throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp as pk_corp, t.chargedeptname as chargedeptname, sum(t.ntotalmny) as sum \n") ;
-		sql.append("  FROM cn_contract t\n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0\n") ; 
-		String where = SqlUtil.buildSqlForIn("pk_corp", corplist.toArray(new String[0]));
-		sql.append(" AND ").append(where);
-		sql.append(" GROUP BY (t.pk_corp, t.chargedeptname)");
-		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-		if(list != null && list.size() > 0){
-			Map<String,CustNumMoneyRepVO> map = new HashMap<String,CustNumMoneyRepVO>();
-			CustNumMoneyRepVO custnumvo = null;
-			for(CustCountVO vo : list){
-				if(!map.containsKey(vo.getPk_corp())){
-					custnumvo = new CustNumMoneyRepVO();
-					custnumvo.setPk_corp(vo.getPk_corp());
-					if("小规模纳税人".equals(vo.getChargedeptname())){
-						custnumvo.setIstockcontsmall(vo.getSum());
-					}else if("一般纳税人".equals(vo.getChargedeptname())){
-						custnumvo.setIstockconttaxpay(vo.getSum());
+	private Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
+			List<String> corplist) throws DZFWarpException {
+		Map<String, CustNumMoneyRepVO> custmap = new HashMap<String, CustNumMoneyRepVO>();
+		CustNumMoneyRepVO countvo = null;
+		for (CustCountVO vo : custlist) {
+			if(!corplist.contains(vo.getPk_corp())){
+				corplist.add(vo.getPk_corp());
+			}
+			if (!custmap.containsKey(vo.getPk_corp())) {
+				countvo = new CustNumMoneyRepVO();
+				countvo.setPk_corp(vo.getPk_corp());
+				if ("小规模纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						countvo.setIstockcustsmall(vo.getNum());
+					} else if (qrytype == 2) {
+						countvo.setInewcustsmall(vo.getNum());
 					}
-					map.put(vo.getPk_corp(), custnumvo);
-				}else{
-					custnumvo = map.get(vo.getPk_corp());
-					if("小规模纳税人".equals(vo.getChargedeptname())){
-						custnumvo.setIstockcontsmall(SafeCompute.add(custnumvo.getIstockcontsmall(), vo.getSum()));
-					}else if("一般纳税人".equals(vo.getChargedeptname())){
-						custnumvo.setIstockconttaxpay(SafeCompute.add(custnumvo.getIstockconttaxpay(), vo.getSum()));
+				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						countvo.setIstockcusttaxpay(vo.getNum());
+					} else if (qrytype == 2) {
+						countvo.setInewcusttaxpay(vo.getNum());
+					}
+				}
+				custmap.put(vo.getPk_corp(), countvo);
+			} else {
+				countvo = custmap.get(vo.getPk_corp());
+				if ("小规模纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						countvo.setIstockcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
+					} else if (qrytype == 2) {
+						countvo.setInewcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
+					}
+				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						countvo.setIstockcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
+					} else if (qrytype == 2) {
+						countvo.setInewcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
 					}
 				}
 			}
-			CustNumMoneyRepVO countvo = null;
-			for(CustNumMoneyRepVO vo : retlist){
-				countvo = map.get(vo.getPk_corp());
-				vo.setIstockcontsmall(countvo.getIstockcontsmall());
-				vo.setIstockconttaxpay(countvo.getIstockconttaxpay());
+		}
+		return custmap;
+	}
+	
+	/**
+	 * 查询客户合同信息
+	 * @param paramvo
+	 * @param corplist
+	 * @param qrytype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustCountVO> queryContNum(QryParamVO paramvo, List<String> corplist, Integer qrytype)throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp as pk_corp, \n") ;
+		sql.append("       t.chargedeptname as chargedeptname, \n") ; 
+		sql.append("       sum(t.ntotalmny) as sum \n") ; 
+		sql.append("  FROM cn_contract t \n") ; 
+		sql.append("  LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(p.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(p.isseal, 'N') = 'N' \n") ; 
+		String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+		sql.append(" AND ").append(where);
+		if(qrytype == 1){
+			sql.append("   AND p.createdate <= ? \n");
+			spm.addParam(paramvo.getBegdate());
+		}else if(qrytype == 2){
+			sql.append("   AND p.createdate <= ? \n");
+			spm.addParam(paramvo.getBegdate());
+			sql.append("   AND p.createdate >= ? \n");
+			DZFDate date = new DZFDate();
+			spm.addParam(date.getYear() + "-" + date.getStrMonth() + "-01");
+		}
+		sql.append(" GROUP BY (t.pk_corp, t.chargedeptname)");
+		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,	new BeanListProcessor(CustCountVO.class));
+	}
+	
+	/**
+	 * 计算客户合同分类信息
+	 * @param contlist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String, CustNumMoneyRepVO> countContNumByType(List<CustCountVO> contlist, Integer qrytype, List<String> corplist)
+			throws DZFWarpException {
+		Map<String, CustNumMoneyRepVO> map = new HashMap<String, CustNumMoneyRepVO>();
+		CustNumMoneyRepVO custnumvo = null;
+		for (CustCountVO vo : contlist) {
+			if(!corplist.contains(vo.getPk_corp())){
+				corplist.add(vo.getPk_corp());
+			}
+			if (!map.containsKey(vo.getPk_corp())) {
+				custnumvo = new CustNumMoneyRepVO();
+				custnumvo.setPk_corp(vo.getPk_corp());
+				if ("小规模纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						custnumvo.setIstockcontsmall(vo.getSum());
+					} else if (qrytype == 2) {
+						custnumvo.setInewcontsmall(vo.getSum());
+					}
+				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						custnumvo.setIstockconttaxpay(vo.getSum());
+					} else if (qrytype == 2) {
+						custnumvo.setInewconttaxpay(vo.getSum());
+					}
+				}
+				map.put(vo.getPk_corp(), custnumvo);
+			} else {
+				custnumvo = map.get(vo.getPk_corp());
+				if ("小规模纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						custnumvo.setIstockcontsmall(SafeCompute.add(custnumvo.getIstockcontsmall(), vo.getSum()));
+					} else if (qrytype == 2) {
+						custnumvo.setInewcontsmall(SafeCompute.add(custnumvo.getIstockcontsmall(), vo.getSum()));
+					}
+				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
+					if (qrytype == 1) {
+						custnumvo.setIstockconttaxpay(SafeCompute.add(custnumvo.getIstockconttaxpay(), vo.getSum()));
+					} else if (qrytype == 2) {
+						custnumvo.setInewconttaxpay(SafeCompute.add(custnumvo.getIstockconttaxpay(), vo.getSum()));
+					}
+				}
 			}
 		}
+		return map;
 	}
 
 }
