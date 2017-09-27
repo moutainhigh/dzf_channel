@@ -60,4 +60,16 @@ public class ToolsUtil {
 		}
 		return 0;
 	}
+	
+	/**
+	 * 整数相加
+	 * @param num1
+	 * @param num2
+	 * @return
+	 */
+	public static Integer addInteger(Integer num1, Integer num2){
+		num1 = num1 == null ? 0 : num1;
+		num2 = num2 == null ? 0 : num2;
+		return num1 + num2;
+	}
 }
