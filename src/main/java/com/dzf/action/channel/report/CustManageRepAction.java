@@ -10,30 +10,32 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.report.CustNumMoneyRepVO;
+import com.dzf.model.channel.report.CustCountVO;
+import com.dzf.model.channel.report.CustManageRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.channel.report.ICustManageRep;
 
 /**
- * 加盟商客户数量金额统计
+ * 加盟商客户管理
  * @author zy
  *
  */
 @ParentPackage("basePackage")
 @Namespace("/report")
-@Action(value = "custnummoneyrep")
-public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
+@Action(value = "custmanagerep")
+public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 
-	private static final long serialVersionUID = 2245193927232918375L;
+	private static final long serialVersionUID = 2114395045979123542L;
 	
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private ICustNumMoneyRep custServ;
+	private ICustManageRep custServ;
 
 	/**
 	 * 查询
@@ -46,13 +48,14 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			List<CustNumMoneyRepVO> list = custServ.query(paramvo);
+			paramvo.setBegdate(new DZFDate());
+			List<CustManageRepVO> list = custServ.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo ==null ? 10000 : paramvo.getRows();
 		    int len = list == null ? 0 : list.size();
 		    if (len > 0) {
 				grid.setTotal((long) (len));
-				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustNumMoneyRepVO[0]), page, rows)));
+				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustManageRepVO[0]), page, rows)));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
 			}else{
@@ -66,4 +69,26 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * 行业查询
+	 */
+	public void queryIndustry(){
+		Grid grid = new Grid();
+		try {
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+				paramvo.setPk_corp(getLogincorppk());
+			}
+			List<CustCountVO> list = custServ.queryIndustry(paramvo);
+		    grid.setRows(list);
+			grid.setSuccess(true);
+			grid.setMsg("查询成功");
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+
 }

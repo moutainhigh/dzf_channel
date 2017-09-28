@@ -14,10 +14,30 @@ public class CustCountVO extends SuperVO {
 	
 	private String chargedeptname;//公司性质
 	
+	private String industry;//行业主键
+	
+	private String industryname;//行业主键
+	
 	private Integer num;
 
 	private DZFDouble sum;
 	
+	public String getIndustry() {
+		return industry;
+	}
+
+	public String getIndustryname() {
+		return industryname;
+	}
+
+	public void setIndustry(String industry) {
+		this.industry = industry;
+	}
+
+	public void setIndustryname(String industryname) {
+		this.industryname = industryname;
+	}
+
 	public DZFDouble getSum() {
 		return sum;
 	}

@@ -19,6 +19,11 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
 
+/**
+ * 财务处理情况反馈
+ * @author zy
+ *
+ */
 @ParentPackage("basePackage")
 @Namespace("/report")
 @Action(value = "financedealstaterep")

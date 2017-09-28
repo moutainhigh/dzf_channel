@@ -32,16 +32,16 @@
 		    <div class="mod-toolbar-top">
 		        <div class="mod-toolbar-content">
 			        <div class="left mod-crumb">
-						<div class="h30 h30-arrow" id="cxjs">
+						<%-- <div class="h30 h30-arrow" id="cxjs">
 							<label class="mr5">查询期间：</label>
 							<input id="qddate" name="ddate" type="text" class="easyui-datebox" 
 										style="width:137px;height:30px;" value="<%=today%>" />
 							<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;" class="ui-btn ui-btn-xz" onclick="reloadData()">查询</a> 
-						</div>
+						</div> --%>
 				    </div>
 				  	<div class="right">
-						<!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" onclick="reloadData(2)" id="">刷新</a> -->
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
+							data-options=" plain:true" onclick="reloadData()" id="">刷新</a>
 					</div>
 		        </div>
 		    </div>
