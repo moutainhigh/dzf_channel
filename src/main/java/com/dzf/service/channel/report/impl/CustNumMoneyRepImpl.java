@@ -51,7 +51,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		//6、计算新增客户分类：小规模、一般纳税人
 		Map<String, CustNumMoneyRepVO> newmap = countCustNumByType(newlist, 2, corplist, countcorplist);
 		//7、计算新增客户的合同数量
-		List<CustCountVO> newcontlist = queryContNum(paramvo, corplist, 2);
+		List<CustCountVO> newcontlist = queryContNum(paramvo, countcorplist, 2);
 		//8、计算新增客户分类：小规模、一般纳税人
 		Map<String, CustNumMoneyRepVO> newcontmap = countContNumByType(newcontlist, 2);
 		
@@ -122,7 +122,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @param num2
 	 * @return
 	 */
-	private DZFDouble getCustRate(Integer num1, Integer num2){
+	@Override
+	public DZFDouble getCustRate(Integer num1, Integer num2) throws DZFWarpException {
 		DZFDouble num3 = num1 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num1);
 		DZFDouble num4 = num2 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num2);
 		DZFDouble num = num4.sub(num3);
@@ -135,7 +136,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @param num2
 	 * @return
 	 */
-	private DZFDouble getContRate(DZFDouble num1, DZFDouble num2){
+	private DZFDouble getContRate(DZFDouble num1, DZFDouble num2) throws DZFWarpException {
 		num1 = num1 == null ? DZFDouble.ZERO_DBL : num1;
 		num2 = num2 == null ? DZFDouble.ZERO_DBL : num2;
 		DZFDouble num = num2.sub(num1);
@@ -150,7 +151,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
+	@Override
+	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT p.fathercorp as pk_corp, \n");
@@ -184,7 +186,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
+	@Override
+	public Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
 			List<String> corplist, List<String> countcorplist) throws DZFWarpException {
 		Map<String, CustNumMoneyRepVO> custmap = new HashMap<String, CustNumMoneyRepVO>();
 		CustNumMoneyRepVO countvo = null;
@@ -242,8 +245,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<CustCountVO> queryContNum(QryParamVO paramvo, List<String> corplist, Integer qrytype)throws DZFWarpException {
-		if(corplist == null || corplist.size() == 0){
+	private List<CustCountVO> queryContNum(QryParamVO paramvo, List<String> countcorplist, Integer qrytype)throws DZFWarpException {
+		if(countcorplist == null || countcorplist.size() == 0){
 			return new ArrayList<CustCountVO>();
 		}
 		StringBuffer sql = new StringBuffer();
@@ -256,7 +259,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(p.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(p.isseal, 'N') = 'N' \n") ; 
-		String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+		String where = SqlUtil.buildSqlForIn("t.pk_corp", countcorplist.toArray(new String[0]));
 		sql.append(" AND ").append(where);
 		if(qrytype == 1){
 			sql.append("   AND p.createdate <= ? \n");
