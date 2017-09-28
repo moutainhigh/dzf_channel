@@ -34,25 +34,26 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<CustNumMoneyRepVO> retlist = new ArrayList<CustNumMoneyRepVO>();
 		List<String> corplist = new ArrayList<String>();
+		List<String> countcorplist = new ArrayList<String>();
 		CustNumMoneyRepVO retvo = null;
 		CustNumMoneyRepVO countvo = null;
 		//1、查询存量客户数量
 		List<CustCountVO> stocklist = queryCustNum(paramvo,1);
 		//2、计算存量客户分类：小规模、一般纳税人
-		Map<String, CustNumMoneyRepVO> stockmap = countCustNumByType(stocklist, 1, corplist);
+		Map<String, CustNumMoneyRepVO> stockmap = countCustNumByType(stocklist, 1, corplist, countcorplist);
 		//3、查询存量客户的合同数量
-		List<CustCountVO> stockcontlist = queryContNum(paramvo, corplist, 1);
+		List<CustCountVO> stockcontlist = queryContNum(paramvo, countcorplist, 1);
 		//4、计算存量客户合同分类：小规模、一般纳税人
-		Map<String, CustNumMoneyRepVO> stockcontmap = countContNumByType(stockcontlist, 1, corplist);
+		Map<String, CustNumMoneyRepVO> stockcontmap = countContNumByType(stockcontlist, 1);
 		
 		//5、查询新增客户数量
 		List<CustCountVO> newlist = queryCustNum(paramvo,2);
 		//6、计算新增客户分类：小规模、一般纳税人
-		Map<String, CustNumMoneyRepVO> newmap = countCustNumByType(newlist, 2, corplist);
+		Map<String, CustNumMoneyRepVO> newmap = countCustNumByType(newlist, 2, corplist, countcorplist);
 		//7、计算新增客户的合同数量
 		List<CustCountVO> newcontlist = queryContNum(paramvo, corplist, 2);
 		//8、计算新增客户分类：小规模、一般纳税人
-		Map<String, CustNumMoneyRepVO> newcontmap = countContNumByType(newcontlist, 2, corplist);
+		Map<String, CustNumMoneyRepVO> newcontmap = countContNumByType(newcontlist, 2);
 		
 		
 		if(corplist != null && corplist.size() > 0){
@@ -155,10 +156,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("SELECT p.fathercorp as pk_corp, \n");
 		sql.append("	p.chargedeptname as chargedeptname, count(p.pk_corp) as num \n");
 		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
+		sql.append("  LEFT JOIN ynt_franchisee t ON p.fathercorp = t.pk_corp \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND nvl(t.isreport, 'N') = 'Y' \n");//授权会计公司
+//		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
 		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
 		if(qrytype == 1){
 			sql.append("   AND p.createdate <= ? \n");
@@ -183,12 +185,16 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @throws DZFWarpException
 	 */
 	private Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
-			List<String> corplist) throws DZFWarpException {
+			List<String> corplist, List<String> countcorplist) throws DZFWarpException {
 		Map<String, CustNumMoneyRepVO> custmap = new HashMap<String, CustNumMoneyRepVO>();
 		CustNumMoneyRepVO countvo = null;
+		countcorplist.clear();
 		for (CustCountVO vo : custlist) {
 			if(!corplist.contains(vo.getPk_corp())){
 				corplist.add(vo.getPk_corp());
+			}
+			if(!countcorplist.contains(vo.getPk_corp())){
+				countcorplist.add(vo.getPk_corp());
 			}
 			if (!custmap.containsKey(vo.getPk_corp())) {
 				countvo = new CustNumMoneyRepVO();
@@ -237,6 +243,9 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 */
 	@SuppressWarnings("unchecked")
 	private List<CustCountVO> queryContNum(QryParamVO paramvo, List<String> corplist, Integer qrytype)throws DZFWarpException {
+		if(corplist == null || corplist.size() == 0){
+			return new ArrayList<CustCountVO>();
+		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp as pk_corp, \n") ;
@@ -269,14 +278,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String, CustNumMoneyRepVO> countContNumByType(List<CustCountVO> contlist, Integer qrytype, List<String> corplist)
+	private Map<String, CustNumMoneyRepVO> countContNumByType(List<CustCountVO> contlist, Integer qrytype)
 			throws DZFWarpException {
 		Map<String, CustNumMoneyRepVO> map = new HashMap<String, CustNumMoneyRepVO>();
 		CustNumMoneyRepVO custnumvo = null;
 		for (CustCountVO vo : contlist) {
-			if(!corplist.contains(vo.getPk_corp())){
-				corplist.add(vo.getPk_corp());
-			}
 			if (!map.containsKey(vo.getPk_corp())) {
 				custnumvo = new CustNumMoneyRepVO();
 				custnumvo.setPk_corp(vo.getPk_corp());
