@@ -33,7 +33,7 @@ public class CommonUtil {
 	
 	/**
 	 * 
-	 * 功能描述:根据一个对象的值得到DZFDouble的值，如果为空，返回零 参数：Object value 对象值
+	 * 功能描述:根据一个对象的值得到Integer的值，如果为空，返回零 参数：Object value 对象值
 	 * 
 	 * @param value
 	 * @return
@@ -46,5 +46,17 @@ public class CommonUtil {
 		} else {
 			return Integer.valueOf(value.toString());
 		}
+	}
+	
+	/**
+	 * 整数相加
+	 * @param d1
+	 * @param d2
+	 * @return
+	 */
+	public static Integer addInteger(Integer d1, Integer d2) {
+		d1 = d1 != null ? d1 : 0;
+		d2 = d2 != null ? d2 : 0;
+		return d1 + d2;
 	}
 }

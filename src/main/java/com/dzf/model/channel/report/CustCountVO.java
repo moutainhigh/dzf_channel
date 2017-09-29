@@ -18,10 +18,20 @@ public class CustCountVO extends SuperVO {
 	
 	private String industryname;//行业主键
 	
+	private String key;//主键
+	
 	private Integer num;
 
 	private DZFDouble sum;
 	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public String getIndustry() {
 		return industry;
 	}

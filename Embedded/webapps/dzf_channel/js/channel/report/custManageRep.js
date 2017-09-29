@@ -39,7 +39,7 @@ function load(){
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
 //		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
 		                { field : 'provin',  title : '省份', width : 100,halign:'center',align:'left'}, 
-		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
+		                { field : 'pname', title : '加盟商名称', width:230,halign:'center',align:'left'},
 		]],
 		columns : columns,
 	});
@@ -63,14 +63,14 @@ function getArrayColumns(){
 				var column = {};
 				column["title"] = '客户纳税人类型分层';  
 				column["field"] = 'col';  
-				column["width"] = '220'; 
+				column["width"] = '230'; 
 				column["colspan"] = 2; 
 				columnsh.push(column); 
 				for(var i = 0; i < rows.length; i++){
 					var column = {};
-					column["title"] = rows[i].industryname;  
+					column["title"] = rows[i].industryname+"占比(%)";  
 					column["field"] = 'col';  
-					column["width"] = '220'; 
+					column["width"] = '230'; 
 					column["colspan"] = 2; 
 					columnsh.push(column); 
 				}
@@ -78,14 +78,14 @@ function getArrayColumns(){
 				var column1 = {};
 				column1["title"] = '小规模';  
 				column1["field"] = 'custsmall';  
-				column1["width"] = '110'; 
+				column1["width"] = '115'; 
 				column1["halign"] = 'center'; 
 				column1["align"] = 'center'; 
 				columnsb.push(column1); 
 				var column2 = {};
 				column2["title"] = '一般纳税人';  
 				column2["field"] = 'custtaxpay';  
-				column2["width"] = '110'; 
+				column2["width"] = '115'; 
 				column2["halign"] = 'center'; 
 				column2["align"] = 'center'; 
 				columnsb.push(column2); 
@@ -93,14 +93,14 @@ function getArrayColumns(){
 					var column1 = {};
 					column1["title"] = '小规模';  
 					column1["field"] = 'custs'+(i+1);  
-					column1["width"] = '110'; 
+					column1["width"] = '120'; 
 					column1["halign"] = 'center'; 
 					column1["align"] = 'center'; 
 					columnsb.push(column1); 
 					var column2 = {};
 					column2["title"] = '一般纳税人';  
 					column2["field"] = 'custt'+(i+1);  
-					column2["width"] = '110'; 
+					column2["width"] = '120'; 
 					column2["halign"] = 'center'; 
 					column2["align"] = 'center'; 
 					columnsb.push(column2); 
