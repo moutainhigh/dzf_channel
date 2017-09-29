@@ -22,6 +22,7 @@
 <title>发票管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/invoice/sys_fpmng.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .pos-background {
@@ -40,6 +41,18 @@
 						<span class="arrow-date"></span>
 					</div>
 				</div>
+				
+				<div class="left mod-crumb">
+					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryData(1)">待审核</a>
+					</div>
+				</div>
+				<div class="left mod-crumb">
+					<div class="h30 h30-arrow" id="filter">
+						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
+					</div>
+				</div>
+				
 				<div class=right>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">开票</a>
 				</div>

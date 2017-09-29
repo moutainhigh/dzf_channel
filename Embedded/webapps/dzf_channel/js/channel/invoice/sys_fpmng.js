@@ -1,3 +1,6 @@
+var isenter = false;//是否快速查询
+var loadrows = null;
+
 // 数据表格随窗口大小改变
 $(window).resize(function() {
 	$('#grid').datagrid('resize', {
@@ -10,6 +13,7 @@ $(function(){
 	initDataGrid();
 	initChannel();
 	reloadData();
+	fastQry();
 });
 
 //初始化监听
@@ -101,6 +105,10 @@ function initDataGrid(){
 			});
 		},
 		onLoadSuccess : function(data) {
+			if(!isenter){
+				loadrows = data.rows;
+			}
+			isenter = false;
 			$.messager.progress('close');
 			$("#qrydialog").hide();
 		}
@@ -214,5 +222,48 @@ function onBilling(){
 			
 		}
 	});
-	 
+}
+
+/**
+ * 快速查询
+ * @param type
+ */
+function qryData(type){
+	var url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
+	$('#grid').datagrid('options').url = url;
+	
+    $('#grid').datagrid('load', {
+    	corps : $("#pk_account").val(),
+        istatus : 1,
+    });
+    
+    $('#grid').datagrid('unselectAll');
+}
+
+/**
+ * 快速过滤
+ */
+function fastQry() {
+	$('#filter_value').textbox('textbox').keydown(function(e) {
+		if (e.keyCode == 13) {
+			var filtername = $("#filter_value").val();
+			if (filtername != "") {
+				var jsonStrArr = [];
+				if (loadrows) {
+					for (var i = 0; i < loadrows.length; i++) {
+						var row = loadrows[i];
+						if (row != null && !isEmpty(row["cname"])) {
+							if (row["cname"].indexOf(filtername) >= 0) {
+								jsonStrArr.push(row);
+							}
+						}
+					}
+					isenter = true;
+					$('#grid').datagrid('loadData', jsonStrArr);
+				}
+			} else {
+				$('#grid').datagrid('loadData', loadrows);
+			}
+		}
+	});
 }
