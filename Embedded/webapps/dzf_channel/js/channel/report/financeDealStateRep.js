@@ -17,8 +17,6 @@ $(function() {
 function load(){
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/financedealstaterep!query.action",
-//		queryParams:{
-//		},
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -56,12 +54,10 @@ function load(){
 	});
 }
 
+/**
+ * 查询
+ */
 function reloadData(){
-	
-//	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/financedealstaterep!query.action";
-//	queryParams.begdate = $('#qddate').datebox('getValue');
-//	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
-	
 }

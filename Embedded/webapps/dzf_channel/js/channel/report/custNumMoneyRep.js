@@ -81,12 +81,13 @@ function load(){
 	});
 }
 
+/**
+ * 查询
+ */
 function reloadData(){
-	
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/custnummoneyrep!query.action";
 	queryParams.begdate = $('#qddate').datebox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
-	
 }

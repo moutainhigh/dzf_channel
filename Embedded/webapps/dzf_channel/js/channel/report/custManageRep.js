@@ -54,9 +54,6 @@ function getArrayColumns(){
 		type : "post",
 		dataType : "json",
 		url : DZF.contextPath + "/report/custmanagerep!queryIndustry.action",
-		data : {
-//			corpkid : pkcpk1,
-		},
 		traditional : true,
 		async : false,
 		success : function(data) {
@@ -83,14 +80,14 @@ function getArrayColumns(){
 				column1["field"] = 'custsmall';  
 				column1["width"] = '115'; 
 				column1["halign"] = 'center'; 
-				column1["align"] = 'center'; 
+				column1["align"] = 'right'; 
 				columnsb.push(column1); 
 				var column2 = {};
 				column2["title"] = '一般纳税人';  
 				column2["field"] = 'custtaxpay';  
 				column2["width"] = '115'; 
 				column2["halign"] = 'center'; 
-				column2["align"] = 'center'; 
+				column2["align"] = 'right'; 
 				columnsb.push(column2); 
 				for(var i = 0; i < 6; i++){
 					var column1 = {};
@@ -98,7 +95,7 @@ function getArrayColumns(){
 					column1["field"] = 'rates'+(i+1);  
 					column1["width"] = '120'; 
 					column1["halign"] = 'center'; 
-					column1["align"] = 'center'; 
+					column1["align"] = 'right'; 
 					column1["formatter"] = formatMny;
 					columnsb.push(column1); 
 					var column2 = {};
@@ -106,7 +103,7 @@ function getArrayColumns(){
 					column2["field"] = 'ratet'+(i+1);  
 					column2["width"] = '120'; 
 					column2["halign"] = 'center'; 
-					column2["align"] = 'center'; 
+					column2["align"] = 'right'; 
 					column2["formatter"] = formatMny;
 					columnsb.push(column2); 
 				}
@@ -116,14 +113,4 @@ function getArrayColumns(){
 		},
 	});
 	return columns;
-}
-
-function reloadData(){
-	
-//	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url = DZF.contextPath + "/report/custmanagerep!query.action";
-//	queryParams.begdate = $('#qddate').datebox('getValue');
-//	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
-	
 }
