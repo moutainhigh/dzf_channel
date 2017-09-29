@@ -36,7 +36,7 @@ function load(){
 			title : '付款时间',
 			field : 'dpdate',
 		}, {
-			width : '260',
+			width : '160',
 			title : '单据号',
 			field : 'vcode',
 		}, {
@@ -73,7 +73,16 @@ function load(){
 				if (value == '3')
 					return '微信';
 			}
-		}, {
+		},
+		{
+			width : '100',
+			title : '附件',
+			field : 'fj',
+			align : 'center',
+			formatter : function(value, row, index) {
+				return '<a href="#" style="color:blue"  onclick="viewAttachCard(\''+row.billid+'\')">' + "附件"+ '</a>';
+			}
+		},{
 			width : '140',
 			title : '单据状态',
             halign:'center',
@@ -230,4 +239,112 @@ function operatData(postdata, rows){
 			}
 		},
 	});
+}
+
+
+/**
+ * 详细界面查看附件
+ */
+function viewAttachCard(billid){
+	var para = {};
+	para.billid = billid;
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/chnpay/chnpayconf!queryByID.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var row= result.rows;
+			arrachrow = result.rows;
+			$("#attachs").html('');
+			if(row.fpath){
+				var srcpath = row.fpath.replace(/\\/g, "/");
+				var attachImgUrl = getAttachImgUrl(row);
+				$('<li><a href="javascript:void(0)" onmouseover="showTips(' + 0 + ')"  onmouseout="hideTips(' + 0 + ')" '+
+				' ondblclick="doubleImage(\'' + 0 + '\');" > '+
+				' <span><img src="' +  attachImgUrl +  '" />' + 
+				'<div id="reUpload' + 0 +'" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">' + 
+				'<h4><span id="tips'+0+'"></span></h4></div></span>' +
+				'<input type="checkbox" id="delimg' + 0 + '" name="checkbox" style="position:absolute;top:1%;left:1%;width:20px;height:20px"/>' +
+				'<font>' + row.doc_name + '</font></a></li>').appendTo($("#attachs"));
+			}
+		}
+	});
+	$("#attachViewDlg").dialog({
+		width:$(window).width()-100,
+		height:$(window).height()-100,
+		closable:true,
+		title:'附件浏览',
+		modal:true
+	});	
+	$("#attachViewDlg").css("display","block");
+	$("#attachViewDlg").dialog("center");
+}
+
+//获取附件显示url
+function getAttachImgUrl(attach){
+	var ext = getFileExt(attach['doc_name']);
+	return DZF.contextPath + '/chnpay/chnpayconf!getAttachImage.action?billid=' + attach.billid+"&time="+Math.random();
+}
+
+//显示附件上的提示
+function showTips(i){
+	var div = "#reUpload"+i;
+	$(div).css("display","block");
+	var tips = getTipContents(i);
+	var tipkey = "#tips"+ i;
+	$(tipkey).html(tips);	
+}
+
+//隐藏提示
+function hideTips(i){
+	var div = "#reUpload"+i;
+	$(div).css("display","none");	
+}
+
+//获取提示内容
+function getTipContents(i){
+	var tips = "";
+	if(arrachrow){
+		var ext = getFileExt(arrachrow['doc_name']);
+		if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
+				||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+			tips = "双击查看原图";
+		}
+	}
+	return tips;
+}
+
+//双击附件
+function doubleImage(i){
+	var ext = getFileExt(arrachrow['doc_name']);
+	var src = DZF.contextPath + "/chnpay/chnpayconf!getAttachImage.action?billid=" + arrachrow.billid+"&time=" +Math.random();
+	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
+			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+		$("#tpfd").empty();
+		var offset = $("#tpght").offset();
+		$("#tpfd").dialog({
+			title: '原图' ,
+			width:$("#tpght").width(),
+			height:$("#tpght").height(),
+			left: offset.left,
+			top: offset.top,
+			cache: false,
+			resizable: true,
+			center : true,
+			align:"center",
+			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
+			onLoad:function(){}
+		});
+	}
+}
+
+//获取附件扩展
+function getFileExt(filename){
+	var index1=filename.lastIndexOf(".")+1;
+	var index2=filename.length;
+	var ext=filename.substring(index1,index2);
+	return ext;
 }

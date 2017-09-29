@@ -1,9 +1,15 @@
 package com.dzf.action.channel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -111,5 +117,70 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 查询单个数据
+	 */
+	public void queryByID(){
+		Json json = new Json();
+		try {
+			ChnPayBillVO chn = new ChnPayBillVO();
+			String pk_corp = getLogincorppk();
+			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
+			if(StringUtil.isEmpty(chn.getPk_paybill())){
+				throw new BusinessException("主键为空");
+			}
+			if (StringUtil.isEmpty(chn.getPk_corp())){
+				chn.setPk_corp(pk_corp);
+			}
+			ChnPayBillVO recust = payconfSer.queryByID(chn.getPk_paybill());
+			json.setSuccess(true);
+			json.setRows(recust);
+			json.setMsg("查询成功!");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 获取附件显示图片
+	 */
+	public void getAttachImage(){
+		InputStream is = null;
+		try {
+			ChnPayBillVO vo=new ChnPayBillVO();
+			vo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), vo);
+			if(StringUtil.isEmpty(vo.getPk_paybill())){
+				throw new BusinessException("主键为空");
+			}
+			vo = payconfSer.queryByID(vo.getPk_paybill());
+			boolean isexists = true;
+			if(vo==null){
+				isexists = false;
+			}
+			 String fpath = vo.getVfilepath();
+			 File afile = new File(fpath);
+			 if(!afile.exists()){
+				 isexists = false;
+			 }
+			 if(isexists){
+				 String path = getRequest().getSession().getServletContext().getRealPath("/");
+				 String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
+				 OutputStream os = getResponse().getOutputStream();
+				 is = new FileInputStream(afile);
+				 IOUtils.copy(is, os);
+			 }
+		} catch (Exception e) {
+			
+		}finally{
+			if(is!=null){
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 }

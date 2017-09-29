@@ -250,4 +250,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		}
 	}
 
+	@Override
+	public ChnPayBillVO queryByID(String cid) throws DZFWarpException {
+		return  (ChnPayBillVO)singleObjectBO.queryVOByID(cid, ChnPayBillVO.class);
+	}
+
 }

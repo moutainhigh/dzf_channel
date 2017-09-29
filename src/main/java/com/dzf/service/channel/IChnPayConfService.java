@@ -32,4 +32,12 @@ public interface IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 通过主键查询单个VO
+	 * @param cid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ChnPayBillVO queryByID(String cid) throws DZFWarpException;
 }
