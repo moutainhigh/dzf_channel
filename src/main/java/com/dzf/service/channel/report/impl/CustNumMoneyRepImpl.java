@@ -165,8 +165,10 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 //		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
 		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
 		if(qrytype == 1){
-			sql.append("   AND p.createdate <= ? \n");
-			spm.addParam(paramvo.getBegdate());
+			if(paramvo.getBegdate() != null){
+				sql.append("   AND p.createdate <= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
 		}else if(qrytype == 2){
 			sql.append("   AND p.createdate <= ? \n");
 			spm.addParam(paramvo.getBegdate());

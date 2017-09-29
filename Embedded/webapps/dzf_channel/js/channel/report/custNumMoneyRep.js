@@ -16,10 +16,10 @@ $(function() {
  */
 function load(){
 	$('#grid').datagrid({
-//		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
-//		queryParams:{
-//			'begdate' : $('#qddate').datebox('getValue'),//查询结束日期
-//		},
+		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
+		queryParams:{
+			'begdate' : $('#qddate').datebox('getValue'),//查询结束日期
+		},
 		striped : true,
 		title : '',
 		rownumbers : true,

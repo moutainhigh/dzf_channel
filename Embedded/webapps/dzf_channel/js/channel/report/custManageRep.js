@@ -17,10 +17,9 @@ $(function() {
 function load(){
 	var columns = getArrayColumns();
 	$('#grid').datagrid({
-//		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
-//		queryParams:{
-//			'endDate' : $("#endDate").datebox("getValue"),//查询结束日期
-//		},
+		url : DZF.contextPath + "/report/custmanagerep!query.action",
+		queryParams:{
+		},
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -35,7 +34,7 @@ function load(){
 		remoteSort:false,
 		//冻结在 左边的列 
 		frozenColumns:[[
-						{ field : 'ck',	checkbox : true },
+//						{ field : 'ck',	checkbox : true },
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
 //		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
 		                { field : 'provin',  title : '省份', width : 100,halign:'center',align:'left'}, 
@@ -45,6 +44,10 @@ function load(){
 	});
 }
 
+/**
+ * 获取展示列
+ * @returns {Array}
+ */
 function getArrayColumns(){
 	var columns = new Array(); 
 	$.ajax({
@@ -92,17 +95,19 @@ function getArrayColumns(){
 				for(var i = 0; i < 6; i++){
 					var column1 = {};
 					column1["title"] = '小规模';  
-					column1["field"] = 'custs'+(i+1);  
+					column1["field"] = 'rates'+(i+1);  
 					column1["width"] = '120'; 
 					column1["halign"] = 'center'; 
 					column1["align"] = 'center'; 
+					column1["formatter"] = formatMny;
 					columnsb.push(column1); 
 					var column2 = {};
 					column2["title"] = '一般纳税人';  
-					column2["field"] = 'custt'+(i+1);  
+					column2["field"] = 'ratet'+(i+1);  
 					column2["width"] = '120'; 
 					column2["halign"] = 'center'; 
 					column2["align"] = 'center'; 
+					column2["formatter"] = formatMny;
 					columnsb.push(column2); 
 				}
 				columns.push(columnsh);

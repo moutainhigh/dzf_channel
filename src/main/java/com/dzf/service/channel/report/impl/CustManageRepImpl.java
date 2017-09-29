@@ -46,7 +46,7 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<String> pklist = qryIndustryPk(paramvo);//排行前五行业主键
 		List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
 		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, pklist);
-		String[] industrys = new String[]{"一般纳税人","小规模纳税人"};
+		String[] industrys = new String[]{"小规模纳税人","一般纳税人"};
 		CustCountVO industryvo = null;
 		DZFDouble rate = DZFDouble.ZERO_DBL;
 		Integer countnum = null;

@@ -48,7 +48,7 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			paramvo.setBegdate(new DZFDate());
+//			paramvo.setBegdate(new DZFDate());
 			List<CustManageRepVO> list = custServ.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo ==null ? 10000 : paramvo.getRows();
