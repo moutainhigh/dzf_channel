@@ -225,14 +225,14 @@ public class CustManageRepImpl implements ICustManageRep {
 					vo.setIndustryname(trademap.get(vo.getIndustry()));
 					retlist.add(vo);
 					if(retlist != null && retlist.size() == 5){
+						CustCountVO countvo = new CustCountVO();
+						countvo.setIndustryname("其他类占比");
+						retlist.add(countvo);
 						break;
 					}
 				}
 			}
 		}
-		CustCountVO countvo = new CustCountVO();
-		countvo.setIndustryname("其他类占比");
-		retlist.add(countvo);
 		return retlist;
 	}
 	

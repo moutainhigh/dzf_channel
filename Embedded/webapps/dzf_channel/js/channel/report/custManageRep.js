@@ -59,56 +59,58 @@ function getArrayColumns(){
 		success : function(data) {
 			if (data.success) {
 				var rows = data.rows;
-				var columnsh = new Array(); 
-				var column = {};
-				column["title"] = '客户纳税人类型分层';  
-				column["field"] = 'col';  
-				column["width"] = '230'; 
-				column["colspan"] = 2; 
-				columnsh.push(column); 
-				for(var i = 0; i < rows.length; i++){
+				if(rows != null && rows.length > 0){
+					var columnsh = new Array(); 
 					var column = {};
-					column["title"] = rows[i].industryname+"占比(%)";  
+					column["title"] = '客户纳税人类型分层';  
 					column["field"] = 'col';  
 					column["width"] = '230'; 
 					column["colspan"] = 2; 
 					columnsh.push(column); 
-				}
-				var columnsb = new Array(); 
-				var column1 = {};
-				column1["title"] = '小规模';  
-				column1["field"] = 'custsmall';  
-				column1["width"] = '115'; 
-				column1["halign"] = 'center'; 
-				column1["align"] = 'right'; 
-				columnsb.push(column1); 
-				var column2 = {};
-				column2["title"] = '一般纳税人';  
-				column2["field"] = 'custtaxpay';  
-				column2["width"] = '115'; 
-				column2["halign"] = 'center'; 
-				column2["align"] = 'right'; 
-				columnsb.push(column2); 
-				for(var i = 0; i < 6; i++){
+					for(var i = 0; i < rows.length; i++){
+						var column = {};
+						column["title"] = rows[i].industryname+"占比(%)";  
+						column["field"] = 'col';  
+						column["width"] = '230'; 
+						column["colspan"] = 2; 
+						columnsh.push(column); 
+					}
+					var columnsb = new Array(); 
 					var column1 = {};
 					column1["title"] = '小规模';  
-					column1["field"] = 'rates'+(i+1);  
-					column1["width"] = '120'; 
+					column1["field"] = 'custsmall';  
+					column1["width"] = '115'; 
 					column1["halign"] = 'center'; 
 					column1["align"] = 'right'; 
-					column1["formatter"] = formatMny;
 					columnsb.push(column1); 
 					var column2 = {};
 					column2["title"] = '一般纳税人';  
-					column2["field"] = 'ratet'+(i+1);  
-					column2["width"] = '120'; 
+					column2["field"] = 'custtaxpay';  
+					column2["width"] = '115'; 
 					column2["halign"] = 'center'; 
 					column2["align"] = 'right'; 
-					column2["formatter"] = formatMny;
 					columnsb.push(column2); 
+					for(var i = 0; i < 6; i++){
+						var column1 = {};
+						column1["title"] = '小规模';  
+						column1["field"] = 'rates'+(i+1);  
+						column1["width"] = '120'; 
+						column1["halign"] = 'center'; 
+						column1["align"] = 'right'; 
+						column1["formatter"] = formatMny;
+						columnsb.push(column1); 
+						var column2 = {};
+						column2["title"] = '一般纳税人';  
+						column2["field"] = 'ratet'+(i+1);  
+						column2["width"] = '120'; 
+						column2["halign"] = 'center'; 
+						column2["align"] = 'right'; 
+						column2["formatter"] = formatMny;
+						columnsb.push(column2); 
+					}
+					columns.push(columnsh);
+					columns.push(columnsb);
 				}
-				columns.push(columnsh);
-				columns.push(columnsb);
 			} 
 		},
 	});
