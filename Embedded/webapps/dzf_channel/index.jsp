@@ -209,6 +209,47 @@ function showOpt(id, show){
 		<div class="main_cont" id="main">
 			<div class="mian_content" title="首页">
 			<div class="mian_content1">
+					<div clearfix row_customer style="height:100%;">
+					<div class="week_AA">
+						<div class="week">
+							<h1>本周业务发展情况</h1>
+							<p><samp></samp><span>本周新增加盟商：</span><font>20户</font></p>
+							<p><samp></samp><span>本周收到加盟费：</span><font>20户</font></p>
+							<p><samp></samp><span>本周新增客户：</span><font>20000户</font></p>
+							<p><samp></samp><span>本周新增合同金额：</span><font>20户</font></p>
+							<p><samp></samp><span>本周收到预付款：</span><font>20户</font></p>
+							<p><samp></samp><span>本周扣款金额：</span><font>20户</font></p>
+						</div>
+						
+					</div>
+					<div class="week_BB">
+						<div class="week" style="width: 40%;float: left;">
+							<div class="week_right">
+							<h1>本月业务发展情况</h1>
+							<p><samp></samp>&emsp;<span>现有加盟商：</span><font>20户</font></p>
+							<p><samp></samp><span>本月新增加盟商：</span><font>20户</font></p>
+							<p><samp></samp><span>本月累计已收加盟费：</span><font>20户</font></p>
+							<p><samp></samp><span>本月收到加盟费：</span><font>20户</font></p>
+							<p><samp></samp><span>现有客户数：</span><font>20户</font></p>
+							<p><samp></samp><span>本月新增客户：</span><font>20户</font></p>
+						    </div>
+							</div>
+						<div class="week" style="width: 40%;float:right;">
+							<div class="week_right">
+							<h1>&nbsp;</h1>
+							<p><samp></samp><span>本月新增合同金额：</span><font>20户</font></p>
+							<p><samp></samp><span>本年累计收到预付款：</span><font>20户</font></p>
+							<p><samp></samp><span>本年累计扣款金额：</span><font>20户</font></p>
+							<p><samp></samp><span>本月收到预付款：</span><font>20户</font></p>
+							<p><samp></samp><span>本月扣款金额：</span><font>20户</font></p>
+						
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				
+				
 				<div id="tabsMenu" class="easyui-menu" style="width:120px; display:none"> 
 		   			 <div name="close">关闭</div> 
 				     <div name="Other">关闭其他</div> 

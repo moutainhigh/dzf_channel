@@ -112,3 +112,51 @@
     margin: 30px 0 250px;
     font-size: 16px;
 }
+
+.week {
+	width: 76%;
+	margin: 0 auto;
+}
+
+.week h1 {
+	padding: 40px 0px 30px;
+	font-weight: bold;
+}
+
+.week p {
+	height: 60px;
+	line-height: 60px;
+}
+
+.week p font {
+	float: right;
+}
+
+.week_AA {
+	width: 30%;
+	float: left;
+	height: 100%;
+	background: #FFF;
+}
+
+.week_BB {
+	width: 69%;
+	float: right;
+	height: 100%;
+	background: #FFF;
+}
+
+.week_right {
+	width: 76%;
+	margin: 0 auto;
+}
+
+.week p samp {
+	border-radius: 6px;
+	border: 1px solid #0a72af;
+	width: 6px;
+	height: 6px;
+	margin-right: 16px;
+	display: inline-block;
+	background: #0a72af;
+}
