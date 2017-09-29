@@ -103,6 +103,9 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	@SuppressWarnings("unchecked")
 	private Map<String, Map<String, CustCountVO>> queryVoucher(List<String> countcorplist) throws DZFWarpException {
 		Map<String, Map<String, CustCountVO>> retmap = new HashMap<String, Map<String, CustCountVO>>();
+		if(countcorplist == null || countcorplist.size() == 0){
+			return retmap;
+		}
 		Map<String, CustCountVO> voumap = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();

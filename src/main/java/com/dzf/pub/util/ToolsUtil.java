@@ -1,7 +1,12 @@
 package com.dzf.pub.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dzf.pub.lang.DZFDate;
 
@@ -72,4 +77,32 @@ public class ToolsUtil {
 		num2 = num2 == null ? 0 : num2;
 		return num1 + num2;
 	}
+	
+    /** 
+     * 根据日期计算所在周的上下界 
+     *  
+     * @param time 
+     */  
+    public static Map<String, DZFDate> convertWeekByDate(Date time) {  
+        Map<String, DZFDate> map = new HashMap<String, DZFDate>();  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式  
+        Calendar cal = Calendar.getInstance();  
+        cal.setTime(time);  
+        // 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了  
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天  
+        if (1 == dayWeek) {  
+            cal.add(Calendar.DAY_OF_MONTH, -1);  
+        }  
+        cal.setFirstDayOfWeek(Calendar.MONDAY);// 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一  
+        int day = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天  
+        cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);// 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值  
+        String begin = sdf.format(cal.getTime());  
+        cal.add(Calendar.DATE, 6);  
+        String end = sdf.format(cal.getTime());  
+  
+        map.put("first", DZFDate.getDate(begin));  
+        map.put("last", DZFDate.getDate(end));  
+  
+        return map;  
+    }
 }
