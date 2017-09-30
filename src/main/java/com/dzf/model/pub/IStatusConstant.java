@@ -23,4 +23,9 @@ public interface IStatusConstant {
 	/** 合同明细单操作类型 (1:付款；2：扣款；) */
 	public static int IDETAILTYPE_1 = 1;
 	public static int IDETAILTYPE_2 = 2;
+	
+	/** 首页查询类型(1:周查询；2：月查询；3：年查询；)*/
+	public static int IINDEXQRYTYPE_1 = 1;
+	public static int IINDEXQRYTYPE_2 = 2;
+	public static int IINDEXQRYTYPE_3 = 3;
 }

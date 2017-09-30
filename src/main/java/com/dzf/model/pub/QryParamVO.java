@@ -45,7 +45,7 @@ public class QryParamVO extends SuperVO {
 	private String user_name;// 用户名称
 	
 	@FieldAlias("qtype")
-	private Integer qrytype;//查询状态
+	private Integer qrytype;//查询类型
 	
 	@FieldAlias("begdate")
 	private DZFDate begdate;// 开始日期

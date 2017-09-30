@@ -13,4 +13,12 @@ public interface IIndexRep {
 	 * @throws DZFWarpException
 	 */
 	public WeekBusimngVO queryThisWeek(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 查询本月业务情况
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public WeekBusimngVO queryThisMonth(QryParamVO paramvo) throws DZFWarpException;
 }
