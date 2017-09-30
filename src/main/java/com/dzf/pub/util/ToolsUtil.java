@@ -83,7 +83,7 @@ public class ToolsUtil {
      *  
      * @param time 
      */  
-    public static Map<String, DZFDate> convertWeekByDate(Date time) {  
+    public static Map<String, DZFDate> getWeekDate(Date time) {  
         Map<String, DZFDate> map = new HashMap<String, DZFDate>();  
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式  
         Calendar cal = Calendar.getInstance();  
@@ -100,8 +100,8 @@ public class ToolsUtil {
         cal.add(Calendar.DATE, 6);  
         String end = sdf.format(cal.getTime());  
   
-        map.put("first", DZFDate.getDate(begin));  
-        map.put("last", DZFDate.getDate(end));  
+        map.put("begin", DZFDate.getDate(begin));  
+        map.put("end", DZFDate.getDate(end));  
   
         return map;  
     }
