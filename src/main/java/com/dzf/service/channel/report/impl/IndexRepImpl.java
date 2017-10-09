@@ -77,7 +77,7 @@ public class IndexRepImpl implements IIndexRep {
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.begindate,1,7) <= ? \n") ; //初始化日期  <= 当前月份
+			sql.append(" AND SUBSTR(t.begindate,1,7) = ? \n") ; //初始化日期  = 当前月份
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
 			sql.append("  AND t.begindate <= ? ");
@@ -117,7 +117,7 @@ public class IndexRepImpl implements IIndexRep {
 				spm.addParam(paramvo.getEnddate() + " 23:59:59");
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(pay.dconfirmtime,1,7) <= ? \n") ; 
+			sql.append(" AND SUBSTR(pay.dconfirmtime,1,7) = ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
 			sql.append(" AND SUBSTR(pay.dconfirmtime,1,4) = ? \n") ; 
@@ -135,7 +135,7 @@ public class IndexRepImpl implements IIndexRep {
 	}
 	
 	/**
-	 * 查询新增客户数量：1、本周；2、本月；
+	 * 查询新增客户数量：1、本周；2、本月；3、现有；
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
@@ -161,7 +161,7 @@ public class IndexRepImpl implements IIndexRep {
 				spm.addParam(paramvo.getBegdate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(p.createdate,1,7) <= ? \n") ; 
+			sql.append(" AND SUBSTR(p.createdate,1,7) = ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
 			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
@@ -201,10 +201,10 @@ public class IndexRepImpl implements IIndexRep {
 				spm.addParam(paramvo.getBegdate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n") ; 
+			sql.append(" AND SUBSTR(t.deductdata,1,7) = ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.deductdata,1,4) <= ? \n") ; 
+			sql.append(" AND SUBSTR(t.deductdata,1,4) = ? \n") ; 
 			spm.addParam(date.getYear());
 		}
 		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(sql.toString(), spm,
