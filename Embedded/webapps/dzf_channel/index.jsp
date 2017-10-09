@@ -221,53 +221,136 @@ var SYSTEM = {
 	
 		<div class="main_cont" id="main">
 			<div class="mian_content" title="首页">
-			<div class="mian_content1">
+				<div class="mian_content1">
 					<div clearfix row_customer style="height:100%;">
-					<div class="week_AA">
-						<div class="week">
-							<h1>本周业务发展情况</h1>
-							<p><samp></samp><span>本周新增加盟商：</span><font>20户</font></p>
-							<p><samp></samp><span>本周收到加盟费：</span><font>20户</font></p>
-							<p><samp></samp><span>本周新增客户：</span><font>20000户</font></p>
-							<p><samp></samp><span>本周新增合同金额：</span><font>20户</font></p>
-							<p><samp></samp><span>本周收到预付款：</span><font>20户</font></p>
-							<p><samp></samp><span>本周扣款金额：</span><font>20户</font></p>
+						<div class="week_AA">
+							<form id = "tsweek">
+								<div class="week">
+									<h1>本周业务发展情况</h1>
+									<p><samp></samp><span>本周新增加盟商：</span>
+									<font>
+										<input id="tswkfranc" name="tswkfranc" class="easyui-numberbox" 
+											data-options="readonly:true," 
+											style="width:80px;height:28px;text-align:right">户
+									</font></p>
+									<p><samp></samp><span>本周收到加盟费：</span>
+									<font>
+										<input id="tswkinitfee" name="tswkinitfee" class="easyui-numberbox" 
+											data-options="readonly:true,precision:2,groupSeparator:','" 
+											style="width:80px;height:28px;text-align:right">元
+									</font></p>
+									<p><samp></samp><span>本周新增客户：</span>
+									<font>
+										<input id="tswkcust" name="tswkcust" class="easyui-numberbox" 
+											data-options="readonly:true," 
+											style="width:80px;height:28px;text-align:right">户
+									</font></p>
+									<p><samp></samp><span>本周新增合同金额：</span><font>
+										<input id="tswkcont" name="tswkcont" class="easyui-numberbox" 
+											data-options="readonly:true,precision:2,groupSeparator:','" 
+											style="width:80px;height:28px;text-align:right">元
+									</font></p>
+									<p><samp></samp><span>本周收到预付款：</span><font>
+										<input id="tswkcharge" name="tswkcharge" class="easyui-numberbox" 
+											data-options="readonly:true,precision:2,groupSeparator:','" 
+											style="width:80px;height:28px;text-align:right">元
+									</font></p>
+									<p><samp></samp><span>本周扣款金额：</span><font>
+										<input id="tswkamount" name="tswkamount" class="easyui-numberbox" 
+											data-options="readonly:true,precision:2,groupSeparator:','" 
+											style="width:80px;height:28px;text-align:right">元
+									</font></p>
+								</div>
+							</form>
 						</div>
-						
-					</div>
-					<div class="week_BB">
-						<div class="week" style="width: 40%;float: left;">
-							<div class="week_right">
-							<h1>本月业务发展情况</h1>
-							<p><samp></samp>&emsp;<span>现有加盟商：</span><font>20户</font></p>
-							<p><samp></samp><span>本月新增加盟商：</span><font>20户</font></p>
-							<p><samp></samp><span>本月累计已收加盟费：</span><font>20户</font></p>
-							<p><samp></samp><span>本月收到加盟费：</span><font>20户</font></p>
-							<p><samp></samp><span>现有客户数：</span><font>20户</font></p>
-							<p><samp></samp><span>本月新增客户：</span><font>20户</font></p>
-						    </div>
-							</div>
-						<div class="week" style="width: 40%;float:right;">
-							<div class="week_right">
-							<h1>&nbsp;</h1>
-							<p><samp></samp><span>本月新增合同金额：</span><font>20户</font></p>
-							<p><samp></samp><span>本年累计收到预付款：</span><font>20户</font></p>
-							<p><samp></samp><span>本年累计扣款金额：</span><font>20户</font></p>
-							<p><samp></samp><span>本月收到预付款：</span><font>20户</font></p>
-							<p><samp></samp><span>本月扣款金额：</span><font>20户</font></p>
-						
-							</div>
+						<div class="week_BB">
+							<form id = "tsmonth">
+								<div class="week" style="width: 40%;float: left;">
+								<div class="week_right">
+								<h1>本月业务发展情况</h1>
+								<p><samp></samp>&emsp;<span>现有加盟商：</span>
+								<font>
+									<input id="franch" name="franch" class="easyui-numberbox" 
+										data-options="readonly:true," 
+										style="width:80px;height:28px;text-align:right">户
+								</font></p>
+								<p><samp></samp><span>本月新增加盟商：</span>
+								<font>
+									<input id="tsmhfranch" name="tsmhfranch" class="easyui-numberbox" 
+										data-options="readonly:true," 
+										style="width:80px;height:28px;text-align:right">户
+								</font></p>
+								<p><samp></samp><span>本年累计已收加盟费：</span>
+								<font>
+									<input id="tsyrinitfee" name="tsyrinitfee" class="easyui-numberbox" 
+										data-options="readonly:true,precision:2,groupSeparator:','" 
+										style="width:80px;height:28px;text-align:right">元
+								</font></p>
+								<p><samp></samp><span>本月收到加盟费：</span>
+								<font>
+									<input id="tsmhinitfee" name="tsmhinitfee" class="easyui-numberbox" 
+										data-options="readonly:true,precision:2,groupSeparator:','" 
+										style="width:80px;height:28px;text-align:right">元
+								</font></p>
+								<p><samp></samp><span>现有客户数：</span>
+								<font>
+									<input id="cust" name="cust" class="easyui-numberbox" 
+										data-options="readonly:true," 
+										style="width:80px;height:28px;text-align:right">户
+								</font></p>
+								<p><samp></samp><span>本月新增客户：</span>
+								<font>
+									<input id="tsmhcust" name="tsmhcust" class="easyui-numberbox" 
+										data-options="readonly:true," 
+										style="width:80px;height:28px;text-align:right">户
+								</font></p>
+							    </div>
+								</div>
+								<div class="week" style="width: 40%;float:right;">
+									<div class="week_right">
+										<h1>&nbsp;</h1>
+										<p><samp></samp><span>本月新增合同金额：</span>
+										<font>
+											<input id="tsmhcont" name="tsmhcont" class="easyui-numberbox" 
+												data-options="readonly:true,precision:2,groupSeparator:','" 
+												style="width:80px;height:28px;text-align:right">元
+										</font></p>
+										<p><samp></samp><span>本年累计收到预付款：</span>
+										<font>
+											<input id="tsyrcharge" name="tsyrcharge" class="easyui-numberbox" 
+												data-options="readonly:true,precision:2,groupSeparator:','" 
+												style="width:80px;height:28px;text-align:right">元
+										</font></p>
+										<p><samp></samp><span>本年累计扣款金额：</span>
+										<font>
+											<input id="tsyramount" name="tsyramount" class="easyui-numberbox" 
+												data-options="readonly:true,precision:2,groupSeparator:','" 
+												style="width:80px;height:28px;text-align:right">元
+										</font></p>
+										<p><samp></samp><span>本月收到预付款：</span>
+										<font>
+											<input id="tsmhcharge" name="tsmhcharge" class="easyui-numberbox" 
+												data-options="readonly:true,precision:2,groupSeparator:','" 
+												style="width:80px;height:28px;text-align:right">元
+										</font></p>
+										<p><samp></samp><span>本月扣款金额：</span>
+										<font>
+										<input id="tsmhamount" name="tsmhamount" class="easyui-numberbox" 
+											data-options="readonly:true,precision:2,groupSeparator:','" 
+											style="width:80px;height:28px;text-align:right">元
+									</font></p>
+									</div>
+								</div>
+							</form>
 						</div>
-						
 					</div>
-				</div>
 				
-				<div id="tabsMenu" class="easyui-menu" style="width:120px; display:none"> 
-		   			 <div name="close">关闭</div> 
-				     <div name="Other">关闭其他</div> 
-				     <div name="All">关闭所有</div>
-		  		</div> 
-			</div>
+					<div id="tabsMenu" class="easyui-menu" style="width:120px; display:none"> 
+			   			 <div name="close">关闭</div> 
+					     <div name="Other">关闭其他</div> 
+					     <div name="All">关闭所有</div>
+			  		</div> 
+				</div>
 			</div>
 		</div>
 	</div>
