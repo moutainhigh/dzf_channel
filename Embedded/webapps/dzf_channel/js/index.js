@@ -16,8 +16,8 @@ $(window).resize(function() {
 });  
 
 $(function() {
-	initBusiData();
 	initListener();
+	initBusiData();
 });
 
 /**
@@ -223,12 +223,14 @@ function loginOut(){
  * 周、月业务数据初始化
  */
 function initBusiData(){
+	
 	$.ajax({
 		type: "post",
 		dataType: "json",
-		url: contextPath + '/report/indexrep!queryBusiByWeek.action',
-		traditional: true,
-		async: false,
+		url: DZF.contextPath + '/report/indexrep!queryBusiByWeek.action',
+		data : {
+			"cpid" : $("#login_corp_id").val(),
+		},
 		success: function(data, textStatus) {
 			if (!data.success) {
 				Public.tips({content:data.msg,type:1});
@@ -239,12 +241,14 @@ function initBusiData(){
 			}
 		},
 	});
+	
 	$.ajax({
 		type: "post",
 		dataType: "json",
-		url: contextPath + '/report/indexrep!queryBusiByMonth.action',
-		traditional: true,
-		async: false,
+		url: DZF.contextPath + '/report/indexrep!queryBusiByMonth.action',
+		data : {
+			"cpid" : $("#login_corp_id").val(),
+		},
 		success: function(data, textStatus) {
 			if (!data.success) {
 				Public.tips({content:data.msg,type:1});

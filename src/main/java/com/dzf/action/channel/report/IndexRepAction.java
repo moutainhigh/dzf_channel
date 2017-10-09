@@ -23,8 +23,7 @@ import com.dzf.service.channel.report.IIndexRep;
 @ParentPackage("basePackage")
 @Namespace("/report")
 @Action(value = "indexrep")
-@SuppressWarnings("rawtypes")
-public class IndexRepAction extends BaseAction {
+public class IndexRepAction extends BaseAction<QryParamVO> {
 	
 	private static final long serialVersionUID = 330196757687385517L;
 

@@ -87,19 +87,20 @@
 <style>
 </style> 
 
-<!-- <script type="text/javascript" src="./js/jsapi.js"></script>
+<script type="text/javascript" src="./js/jsapi.js"></script>
 <script type="text/javascript" src="./js/corechart.js"></script>		
 <script type="text/javascript" src="./js/jquery.gvChart-1.0.1.min.js"></script>
 <script type="text/javascript" src="./js/jquery.ba-resize.min.js"></script>
 <script type="text/javascript" src="./js/echarts.common.min.js"></script>
 
 <script src="layui/layui.js" charset="UTF-8" type="text/javascript"></script>
-<script type="text/javascript" src="layui/base64.min.js"></script> -->
+<script type="text/javascript" src="layui/base64.min.js"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"js/security.js");%> charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"js/index.js");%>></script>
 
 <script language=javaScript> 
-var contextPath = "<%=request.getContextPath() %>";
+var indexContextPath = "<%=request.getContextPath() %>";
+DZF.contextPath = indexContextPath;
 var islogin =  "<%=userVo.getIslogin() != null ? userVo.getIslogin() : "N"%>";
 
 var SYSTEM = {
