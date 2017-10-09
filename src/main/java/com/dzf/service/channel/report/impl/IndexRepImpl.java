@@ -164,7 +164,7 @@ public class IndexRepImpl implements IIndexRep {
 			sql.append(" AND SUBSTR(p.createdate,1,7) <= ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(p.createdate,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
 			spm.addParam(date.getYear());
 		}
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -221,30 +221,30 @@ public class IndexRepImpl implements IIndexRep {
 		MonthBusimngVO busivo = new MonthBusimngVO();
 		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_3);
 		//现有加盟商、现有客户数、本年累计已收加盟费、本年累计收到预付款、本年累计扣款金额
-		busivo.setIfranchisee(qryFranchiseeNum(paramvo));
-		busivo.setIcustomer(qryCustNum(paramvo));
+		busivo.setIfranchisee(qryFranchiseeNum(paramvo));//现有加盟商
+		busivo.setIcustomer(qryCustNum(paramvo));//现有客户数
 		Map<Integer, DZFDouble> yearfeemap = qryFranchiseeFee(paramvo);
 		if(yearfeemap != null){
-			busivo.setNtsyrinitialfee(yearfeemap.get(1));
-			busivo.setNtsyrcharge(yearfeemap.get(2));
+			busivo.setNtsyrinitialfee(yearfeemap.get(1));//本年累计已收加盟费
+			busivo.setNtsyrcharge(yearfeemap.get(2));//本年累计收到预付款
 		}
 		Map<String, DZFDouble> yearconmap = qryContractMny(paramvo);
 		if(yearconmap != null){
-			busivo.setNtsyramount(yearconmap.get("ndeductmny"));
+			busivo.setNtsyramount(yearconmap.get("ndeductmny"));//本年累计扣款金额
 		}
 		//本月新增加盟商、本月新增客户数、本月收到加盟费、本月收到预付款、本月扣款金额、本月新增合同金额
 		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_2);
-		busivo.setItsmhfranchisee(qryFranchiseeNum(paramvo));
-		busivo.setItsmhcustomer(qryCustNum(paramvo));
+		busivo.setItsmhfranchisee(qryFranchiseeNum(paramvo));//本月新增加盟商
+		busivo.setItsmhcustomer(qryCustNum(paramvo));//本月新增客户数
 		Map<Integer, DZFDouble> monthfeemap = qryFranchiseeFee(paramvo);
 		if(monthfeemap != null){
-			busivo.setNtsmhinitialfee(yearfeemap.get(1));
-			busivo.setNtsmhcharge(yearfeemap.get(2));
+			busivo.setNtsmhinitialfee(yearfeemap.get(1));//本月收到加盟费
+			busivo.setNtsmhcharge(yearfeemap.get(2));//本月收到预付款
 		}
 		Map<String, DZFDouble> monthconmap = qryContractMny(paramvo);
 		if(monthconmap != null){
-			busivo.setNtsmhcontamount(monthconmap.get("ntotalmny"));
-			busivo.setNtsmhamount(monthconmap.get("ndeductmny"));
+			busivo.setNtsmhcontamount(monthconmap.get("ntotalmny"));//本月扣款金额
+			busivo.setNtsmhamount(monthconmap.get("ndeductmny"));//本月新增合同金额
 		}
 		return busivo;
 	}

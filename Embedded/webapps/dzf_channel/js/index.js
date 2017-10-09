@@ -3,7 +3,6 @@ window.onload = function(){
 	$('#main').tabs('resize', {
 	   width: $("#main").parent().width(),
 	   height: (document.documentElement.clientHeight - 58)
-	 
  	});
 	
 }; 
@@ -17,6 +16,14 @@ $(window).resize(function() {
 });  
 
 $(function() {
+	initBusiData();
+	initListener();
+});
+
+/**
+ * 监听初始化
+ */
+function initListener(){
 	 $('#main').tabs({
 		 width: $("#main").parent().width(),
 		 height:(document.body.clientHeight-58),
@@ -104,8 +111,7 @@ $(function() {
 			CloseTab(this, item.name);
 		}
 	});
-	
-});
+}
 
 function showOpt(id, show){
 	if(!$('#' + id))
@@ -210,5 +216,43 @@ function loginOut(){
 		if (r) {
 			window.location.href=DZF.contextPath+'/sys/sm_user!logout.action'
 		}
+	});
+}
+
+/**
+ * 周、月业务数据初始化
+ */
+function initBusiData(){
+	$.ajax({
+		type: "post",
+		dataType: "json",
+		url: contextPath + '/report/indexrep!queryBusiByWeek.action',
+		traditional: true,
+		async: false,
+		success: function(data, textStatus) {
+			if (!data.success) {
+				Public.tips({content:data.msg,type:1});
+			} else {
+				var row = data.rows;
+				$('#tsweek').form('clear');
+				$('#tsweek').form('load', row);
+			}
+		},
+	});
+	$.ajax({
+		type: "post",
+		dataType: "json",
+		url: contextPath + '/report/indexrep!queryBusiByMonth.action',
+		traditional: true,
+		async: false,
+		success: function(data, textStatus) {
+			if (!data.success) {
+				Public.tips({content:data.msg,type:1});
+			} else {
+				var row = data.rows;
+				$('#tsmonth').form('clear');
+				$('#tsmonth').form('load', row);
+			}
+		},
 	});
 }

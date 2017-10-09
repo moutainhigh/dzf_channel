@@ -99,8 +99,7 @@
 <script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"js/index.js");%>></script>
 
 <script language=javaScript> 
-var indexContextPath = "<%=request.getContextPath() %>";
-DZF.contextPath = indexContextPath;
+var contextPath = "<%=request.getContextPath() %>";
 var islogin =  "<%=userVo.getIslogin() != null ? userVo.getIslogin() : "N"%>";
 
 var SYSTEM = {
@@ -268,7 +267,7 @@ var SYSTEM = {
 								<div class="week" style="width: 40%;float: left;">
 								<div class="week_right">
 								<h1>本月业务发展情况</h1>
-								<p><samp></samp>&emsp;<span>现有加盟商：</span>
+								<p><samp></samp><span>现有加盟商：</span>
 								<font>
 									<input id="franch" name="franch" class="easyui-numberbox" 
 										data-options="readonly:true," 
