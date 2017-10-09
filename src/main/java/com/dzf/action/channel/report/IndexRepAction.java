@@ -7,6 +7,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.report.MonthBusimngVO;
 import com.dzf.model.channel.report.WeekBusimngVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
@@ -33,9 +34,9 @@ public class IndexRepAction extends BaseAction {
 	private IIndexRep indexSer;
 
 	/**
-	 * 行业查询
+	 * 周业务情况查询
 	 */
-	public void queryIndustry(){
+	public void queryBusiByWeek(){
 		Json json = new Json();
 		try {
 			QryParamVO paramvo = new QryParamVO();
@@ -43,7 +44,28 @@ public class IndexRepAction extends BaseAction {
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			WeekBusimngVO busivo = indexSer.queryThisWeek(paramvo);
+			WeekBusimngVO busivo = indexSer.queryBusiByWeek(paramvo);
+			json.setRows(busivo);
+			json.setSuccess(true);
+			json.setMsg("查询成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 月业务情况查询
+	 */
+	public void queryBusiByMonth(){
+		Json json = new Json();
+		try {
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+				paramvo.setPk_corp(getLogincorppk());
+			}
+			MonthBusimngVO busivo = indexSer.queryBusiByMonth(paramvo);
 			json.setRows(busivo);
 			json.setSuccess(true);
 			json.setMsg("查询成功");

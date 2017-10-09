@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.channel.ContractConfrimVO;
+import com.dzf.model.channel.report.MonthBusimngVO;
 import com.dzf.model.channel.report.WeekBusimngVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
@@ -31,7 +32,7 @@ public class IndexRepImpl implements IIndexRep {
     private SingleObjectBO singleObjectBO;
 
 	@Override
-	public WeekBusimngVO queryThisWeek(QryParamVO paramvo) throws DZFWarpException {
+	public WeekBusimngVO queryBusiByWeek(QryParamVO paramvo) throws DZFWarpException {
 		Map<String,DZFDate> weekmap = ToolsUtil.getWeekDate(new Date());
 		if(weekmap != null){
 			paramvo.setBegdate(weekmap.get("begin"));
@@ -141,6 +142,7 @@ public class IndexRepImpl implements IIndexRep {
 	 */
 	@SuppressWarnings("unchecked")
 	private Integer qryCustNum(QryParamVO paramvo) throws DZFWarpException {
+		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT p.pk_corp \n");
@@ -159,9 +161,11 @@ public class IndexRepImpl implements IIndexRep {
 				spm.addParam(paramvo.getBegdate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			DZFDate date = new DZFDate();
 			sql.append(" AND SUBSTR(p.createdate,1,7) <= ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
+		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
+			sql.append(" AND SUBSTR(p.createdate,1,4) = ? \n") ; 
+			spm.addParam(date.getYear());
 		}
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpVO.class));
@@ -213,7 +217,35 @@ public class IndexRepImpl implements IIndexRep {
 	}
 
 	@Override
-	public WeekBusimngVO queryThisMonth(QryParamVO paramvo) throws DZFWarpException {
-		return null;
+	public MonthBusimngVO queryBusiByMonth(QryParamVO paramvo) throws DZFWarpException {
+		MonthBusimngVO busivo = new MonthBusimngVO();
+		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_3);
+		//现有加盟商、现有客户数、本年累计已收加盟费、本年累计收到预付款、本年累计扣款金额
+		busivo.setIfranchisee(qryFranchiseeNum(paramvo));
+		busivo.setIcustomer(qryCustNum(paramvo));
+		Map<Integer, DZFDouble> yearfeemap = qryFranchiseeFee(paramvo);
+		if(yearfeemap != null){
+			busivo.setNtsyrinitialfee(yearfeemap.get(1));
+			busivo.setNtsyrcharge(yearfeemap.get(2));
+		}
+		Map<String, DZFDouble> yearconmap = qryContractMny(paramvo);
+		if(yearconmap != null){
+			busivo.setNtsyramount(yearconmap.get("ndeductmny"));
+		}
+		//本月新增加盟商、本月新增客户数、本月收到加盟费、本月收到预付款、本月扣款金额、本月新增合同金额
+		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_2);
+		busivo.setItsmhfranchisee(qryFranchiseeNum(paramvo));
+		busivo.setItsmhcustomer(qryCustNum(paramvo));
+		Map<Integer, DZFDouble> monthfeemap = qryFranchiseeFee(paramvo);
+		if(monthfeemap != null){
+			busivo.setNtsmhinitialfee(yearfeemap.get(1));
+			busivo.setNtsmhcharge(yearfeemap.get(2));
+		}
+		Map<String, DZFDouble> monthconmap = qryContractMny(paramvo);
+		if(monthconmap != null){
+			busivo.setNtsmhcontamount(monthconmap.get("ntotalmny"));
+			busivo.setNtsmhamount(monthconmap.get("ndeductmny"));
+		}
+		return busivo;
 	}
 }
