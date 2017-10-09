@@ -18,37 +18,36 @@
 <%@page import="com.dzf.pub.StringUtil"%>
 
 <%
-	String datevalue = (String)session.getAttribute(IGlobalConstants.login_date);
-	String corp=(String) session.getAttribute(IGlobalConstants.login_corp);
-	String userid=(String) session.getAttribute(IGlobalConstants.login_user);
-	if(corp == null || userid == null){
+	String datevalue = (String) session.getAttribute(IGlobalConstants.login_date);
+	String corp = (String) session.getAttribute(IGlobalConstants.login_corp);
+	String userid = (String) session.getAttribute(IGlobalConstants.login_user);
+	if (corp == null || userid == null) {
 		session.setAttribute("errorMsg", "无权操作,请联系管理员!");
-		request.getRequestDispatcher("/error_kj.jsp").forward(request,response);
+		request.getRequestDispatcher("/error_kj.jsp").forward(request, response);
 		return;
 	}
 	UserVO userVo = UserCache.getInstance().get(userid, corp);//()(UserVO)session.getAttribute(IGlobalConstants.login_user);
-	String date = (String)session.getAttribute(IGlobalConstants.login_date);
-	CorpVO corpVo =CorpCache.getInstance().get(userVo.getPrimaryKey(), corp);
-	ServletContext servletContext = session.getServletContext();		
+	String date = (String) session.getAttribute(IGlobalConstants.login_date);
+	CorpVO corpVo = CorpCache.getInstance().get(userVo.getPrimaryKey(), corp);
+	ServletContext servletContext = session.getServletContext();
 	ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-	ISysFunnodeService sysFunnodeService = (ISysFunnodeService)ctx.getBean("sys_funnodeserv");
-	List<SysFunNodeVO> list = sysFunnodeService.querySysnodeByUserAndCorp(userVo,corpVo, "dzf_channel");
-//  首页的节点
-	Map<String,SysFunNodeVO> firstPageMap = new TreeMap<String,SysFunNodeVO>();
-	Map<String,List<SysFunNodeVO>> nodeMap = new TreeMap<String,List<SysFunNodeVO>>();
-	if(list!=null && list.size()>0){
-		for(SysFunNodeVO vo:list){
-			
-			DZFBoolean isshow = vo.getIshidenode()==null ?DZFBoolean.FALSE:vo.getIshidenode();
-			if(isshow.booleanValue()){
-				firstPageMap.put(vo.getFun_code(),vo);
-			}else{
+	ISysFunnodeService sysFunnodeService = (ISysFunnodeService) ctx.getBean("sys_funnodeserv");
+	List<SysFunNodeVO> list = sysFunnodeService.querySysnodeByUserAndCorp(userVo, corpVo, "dzf_channel");
+	//  首页的节点
+	Map<String, SysFunNodeVO> firstPageMap = new TreeMap<String, SysFunNodeVO>();
+	Map<String, List<SysFunNodeVO>> nodeMap = new TreeMap<String, List<SysFunNodeVO>>();
+	if (list != null && list.size() > 0) {
+		for (SysFunNodeVO vo : list) {
+			DZFBoolean isshow = vo.getIshidenode() == null ? DZFBoolean.FALSE : vo.getIshidenode();
+			if (isshow.booleanValue()) {
+				firstPageMap.put(vo.getFun_code(), vo);
+			} else {
 				String parentId = vo.getPk_parent();
-				if(parentId == null || parentId.trim().length()<1){
+				if (parentId == null || parentId.trim().length() < 1) {
 					parentId = "0";
 				}
-				if(nodeMap.get(parentId) == null){
-					nodeMap.put(parentId,new ArrayList<SysFunNodeVO>());
+				if (nodeMap.get(parentId) == null) {
+					nodeMap.put(parentId, new ArrayList<SysFunNodeVO>());
 				}
 				nodeMap.get(parentId).add(vo);
 			}
@@ -56,23 +55,22 @@
 	}
 	session.removeAttribute(IGlobalConstants.logout_msg);
 	//版本信息提示
-	ISysVersionTips sys_versionimpl =(ISysVersionTips)ctx.getBean("sys_versionimpl");
-	VersionTipsVO[] tipsvos = (VersionTipsVO[])sys_versionimpl.getVersionTips("1");
+	ISysVersionTips sys_versionimpl = (ISysVersionTips) ctx.getBean("sys_versionimpl");
+	VersionTipsVO[] tipsvos = (VersionTipsVO[]) sys_versionimpl.getVersionTips("1");
 
-	
-	String modulus =(String)session.getAttribute("MODULUS");
-	String exponent =(String)session.getAttribute("EXPONENT");
-	
-	String cuserid = CryptUtil.getInstance().encryptAES(userid+"###kjgs");
+	String modulus = (String) session.getAttribute("MODULUS");
+	String exponent = (String) session.getAttribute("EXPONENT");
+
+	String cuserid = CryptUtil.getInstance().encryptAES(userid + "###kjgs");
 	String username = userVo.getUser_name();
 	String chatserver = ChatCommon.readchatServer();
-	
+
 	String callUrl = request.getRequestURL().toString();
-	
+
 	//"3004753485", "3004754158", "3004770986"
-	String qqline = (String)session.getAttribute("QQLINE");
-	String path = request.getContextPath(); 
-	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	/* 	String qqline = (String)session.getAttribute("QQLINE");
+		String path = request.getContextPath(); 
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/"; */
 %>
 <!DOCTYPE html>
 <html><head>
@@ -89,15 +87,14 @@
 <style>
 </style> 
 
-<script type="text/javascript" src="./js/jsapi.js"></script>
+<!-- <script type="text/javascript" src="./js/jsapi.js"></script>
 <script type="text/javascript" src="./js/corechart.js"></script>		
 <script type="text/javascript" src="./js/jquery.gvChart-1.0.1.min.js"></script>
 <script type="text/javascript" src="./js/jquery.ba-resize.min.js"></script>
 <script type="text/javascript" src="./js/echarts.common.min.js"></script>
 
 <script src="layui/layui.js" charset="UTF-8" type="text/javascript"></script>
-<script type="text/javascript" src="layui/base64.min.js"></script>
-<script type="text/javascript" src="layui/dzfchat.js"></script>
+<script type="text/javascript" src="layui/base64.min.js"></script> -->
 <script src=<%UpdateGradeVersion.outversion(out,"js/security.js");%> charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"js/index.js");%>></script>
 
@@ -110,7 +107,7 @@ var SYSTEM = {
 	login_corp_id:"<%=corpVo.getPk_corp() %>",
 	login_corp_code:"<%=corpVo.getUnitcode()%>",
 	login_corp_name:"<%=corpVo.getUnitname()%>",
-	UserName:"<%=userVo != null ? userVo.getUser_name() : "" %>",// 当前登录用户名
+	UserName:"<%=userVo != null ? userVo.getUser_name() : "" %>",
 	LoginDate:"<%=date!=null?date:"" %>"
 };
 </script>
