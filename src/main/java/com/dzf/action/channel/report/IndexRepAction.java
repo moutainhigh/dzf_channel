@@ -43,7 +43,8 @@ public class IndexRepAction extends BaseAction<QryParamVO> {
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			WeekBusimngVO busivo = indexSer.queryBusiByWeek(paramvo);
+//			WeekBusimngVO busivo = indexSer.queryBusiByWeek(paramvo);
+			WeekBusimngVO busivo = new WeekBusimngVO();
 			json.setRows(busivo);
 			json.setSuccess(true);
 			json.setMsg("查询成功");
@@ -64,7 +65,8 @@ public class IndexRepAction extends BaseAction<QryParamVO> {
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			MonthBusimngVO busivo = indexSer.queryBusiByMonth(paramvo);
+//			MonthBusimngVO busivo = indexSer.queryBusiByMonth(paramvo);
+			MonthBusimngVO busivo = new MonthBusimngVO();
 			json.setRows(busivo);
 			json.setSuccess(true);
 			json.setMsg("查询成功");
