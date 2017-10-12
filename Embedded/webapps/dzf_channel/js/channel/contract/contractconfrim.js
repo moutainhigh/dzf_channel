@@ -479,13 +479,13 @@ function deductConfri(){
 			type : 2
 		});			
 		return;
-	}else if(propor == 0){
+	}/*else if(propor == 0){
 		Public.tips({
 			content : '扣款比例不能为0',
 			type : 2
 		});			
 		return;
-	}
+	}*/
 	
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#deductfrom')));
@@ -599,13 +599,13 @@ function bathconf(){
 			type : 2
 		});			
 		return;
-	}else if(propor == 0){
+	}/*else if(propor == 0){
 		Public.tips({
 			content : '扣款比例不能为0',
 			type : 2
 		});			
 		return;
-	}
+	}*/
 	
 	var contract = '';
 	if (rows != null && rows.length > 0) {
