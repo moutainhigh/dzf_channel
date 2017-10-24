@@ -100,6 +100,11 @@ function load(){
 			title : '备注',
             halign:'center',
 			field : 'memo',
+			formatter : function(value) {
+				if(value!=undefined){
+					return "<span title='" + value + "'>" + value + "</span>";
+				}
+			}
 		}, {
 			width : '140',
 			title : '收款确认时间',
