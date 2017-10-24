@@ -33,7 +33,7 @@
 		        <div class="mod-toolbar-content">
 			        <div class="left mod-crumb">
 						<div class="h30 h30-arrow" id="cxjs">
-							<label class="mr5">查询期间：</label>
+							<label class="mr5">查询日期：</label>
 							<input id="qddate" name="ddate" type="text" class="easyui-datebox" 
 										style="width:137px;height:30px;" value="<%=today%>" />
 							<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;" class="ui-btn ui-btn-xz" onclick="reloadData()">查询</a> 
