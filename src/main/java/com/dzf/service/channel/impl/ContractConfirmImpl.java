@@ -603,21 +603,23 @@ public class ContractConfirmImpl implements IContractConfirm {
 			return "合同数据错误";
 		}
 
-		// 2、预付款余额校验
-		ChnBalanceVO balvo = null;
-		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
-		SQLParameter yespm = new SQLParameter();
-		yespm.addParam(confrimvo.getPk_corp());
-		yespm.addParam(IStatusConstant.IPAYTYPE_2);
-		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
-		if (balVOs != null && balVOs.length > 0) {
-			balvo = balVOs[0];
-			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
-			if (balance.compareTo(confrimvo.getNdeductmny()) < 0) {
+		// 2、预付款余额校验（扣款比例不为0的情况进行校验）
+		if(confrimvo.getIdeductpropor() != 0){
+			ChnBalanceVO balvo = null;
+			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+			SQLParameter yespm = new SQLParameter();
+			yespm.addParam(confrimvo.getPk_corp());
+			yespm.addParam(IStatusConstant.IPAYTYPE_2);
+			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+			if (balVOs != null && balVOs.length > 0) {
+				balvo = balVOs[0];
+				DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+				if (balance.compareTo(confrimvo.getNdeductmny()) < 0) {
+					return "预付款余额不足";
+				}
+			} else {
 				return "预付款余额不足";
 			}
-		} else {
-			return "预付款余额不足";
 		}
 
 		// 3、套餐发布个数校验
