@@ -152,14 +152,14 @@ function load(){
 			field : 'dedate',
 		}, {
 			width : '100',
-			title : '扣款比例',
+			title : '扣款比例(%)',
 			halign:'center',
 			align:'right',
 			field : 'propor',
-			formatter : function(value,row,index){
-				if(!isEmpty(value))
-					return value+"%";
-			}
+//			formatter : function(value,row,index){
+//				if(!isEmpty(value))
+//					return value+"%";
+//			}
 		},{
 			width : '100',
 			title : '扣费金额',
@@ -167,7 +167,7 @@ function load(){
             halign:'center',
 			field : 'ndemny',
 			formatter : function(value,row,index){
-				if(value == 0)return "";
+//				if(value == 0)return "";
 				return formatMny(value);
 			}
 		}, {
