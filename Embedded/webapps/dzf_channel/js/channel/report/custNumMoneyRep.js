@@ -34,7 +34,7 @@ function load(){
 		remoteSort:false,
 		//冻结在 左边的列 
 		frozenColumns:[[
-						{ field : 'ck',	checkbox : true },
+//						{ field : 'ck',	checkbox : true },
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
 //		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
 		                { field : 'provin',  title : '省份', width : 100,halign:'center',align:'left'}, 
