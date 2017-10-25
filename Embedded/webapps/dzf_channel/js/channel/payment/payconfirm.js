@@ -72,6 +72,8 @@ function load(){
 					return '支付宝';
 				if (value == '3')
 					return '微信';
+				if (value == '4')
+					return '其他';
 			}
 		},
 		{
