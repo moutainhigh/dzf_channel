@@ -46,9 +46,9 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		Map<String, CustCountVO> voumap = null;
 		CustCountVO countvo = null;
 		if(corplist != null && corplist.size() > 0){
-			retvo = new FinanceDealStateRepVO();
 			CorpVO corpvo = null;
 			for(String pk_corp : corplist){
+				retvo = new FinanceDealStateRepVO();
 				retvo.setPk_corp(pk_corp);
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if(corpvo != null){
