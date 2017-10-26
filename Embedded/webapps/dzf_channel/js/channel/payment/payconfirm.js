@@ -46,7 +46,7 @@ function load(){
 			field : 'iptype',
 			formatter : function(value) {
 				if (value == '1')
-					return '加盟费';
+					return '保证金';
 				if (value == '2')
 					return '预付款';
 			}
@@ -75,8 +75,15 @@ function load(){
 				if (value == '4')
 					return '其他';
 			}
-		},
-		{
+		}, {
+			width : '160',
+			title : '付款银行',
+			field : 'vbname',
+		}, {
+			width : '160',
+			title : '付款账号',
+			field : 'vbcode',
+		}, {
 			width : '100',
 			title : '附件',
 			field : 'fj',
@@ -130,7 +137,7 @@ function load(){
 
 /**
  * 标签查询
- * @param type  1：全部；2：加盟费；3：预付款；
+ * @param type  -1：全部；2：待确认；3：已确认；
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
