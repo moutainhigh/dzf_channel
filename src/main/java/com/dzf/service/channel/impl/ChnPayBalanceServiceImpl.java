@@ -99,7 +99,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				if(vo.getIpaytype() != null){
 					switch (vo.getIpaytype()){
 					case 1:
-						vo.setVpaytypename("加盟费");
+						vo.setVpaytypename("保证金");
 						break;
 					case 2:
 						vo.setVpaytypename("预付款");

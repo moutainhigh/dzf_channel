@@ -36,7 +36,7 @@ function load(){
 			field : 'iptype',
 			formatter : function(value) {
 				if (value == '1')
-					return '加盟费';
+					return '保证金';
 				if (value == '2')
 					return '预付款';
 			}
@@ -84,7 +84,7 @@ function load(){
 
 /**
  * 标签查询
- * @param type  1：全部；2：加盟费；3：预付款；
+ * @param type  1：全部；2：保证金；3：预付款；
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');

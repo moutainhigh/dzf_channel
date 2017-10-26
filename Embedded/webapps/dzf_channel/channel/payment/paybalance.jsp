@@ -24,7 +24,7 @@
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(-1)">全部</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(2)">预付款</a>
 						<a href="javascript:void(0)"  
-							style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(1)">加盟费</a>
+							style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(1)">保证金</a>
 					</div>
 				</div>
 				
