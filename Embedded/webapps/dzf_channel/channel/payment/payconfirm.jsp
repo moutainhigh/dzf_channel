@@ -44,15 +44,8 @@
 			<table id="grid"></table>
 		</div>
 		<!-- 查看附件begin -->
-		<div id="attachViewDlg" style="display: none;">	
-		  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
-				<div class="entrance_block_tu" id="tpght" style="overflow-y:auto;height:85%">
-					<ul class="tu_block" id="attachs"></ul>
-				</div>
-			</div>
-		</div>
-		<!-- 查看附件end -->
 		<div id="tpfd"></div>
+		<!-- 查看附件end -->
 	</div>
 </body>
 

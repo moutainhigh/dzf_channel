@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -23,6 +26,7 @@ import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpDocVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
@@ -119,30 +123,30 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		writeJson(json);
 	}
 	
-	/**
-	 * 查询单个数据
-	 */
-	public void queryByID(){
-		Json json = new Json();
-		try {
-			ChnPayBillVO chn = new ChnPayBillVO();
-			String pk_corp = getLogincorppk();
-			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
-			if(StringUtil.isEmpty(chn.getPk_paybill())){
-				throw new BusinessException("主键为空");
-			}
-			if (StringUtil.isEmpty(chn.getPk_corp())){
-				chn.setPk_corp(pk_corp);
-			}
-			ChnPayBillVO recust = payconfSer.queryByID(chn.getPk_paybill());
-			json.setSuccess(true);
-			json.setRows(recust);
-			json.setMsg("查询成功!");
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "查询失败");
-		}
-		writeJson(json);
-	}
+//	/**
+//	 * 查询单个数据
+//	 */
+//	public void queryByID(){
+//		Json json = new Json();
+//		try {
+//			ChnPayBillVO chn = new ChnPayBillVO();
+//			String pk_corp = getLogincorppk();
+//			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
+//			if(StringUtil.isEmpty(chn.getPk_paybill())){
+//				throw new BusinessException("主键为空");
+//			}
+//			if (StringUtil.isEmpty(chn.getPk_corp())){
+//				chn.setPk_corp(pk_corp);
+//			}
+//			ChnPayBillVO recust = payconfSer.queryByID(chn.getPk_paybill());
+//			json.setSuccess(true);
+//			json.setRows(recust);
+//			json.setMsg("查询成功!");
+//		} catch (Exception e) {
+//			printErrorLog(json, log, e, "查询失败");
+//		}
+//		writeJson(json);
+//	}
 	
 	/**
 	 * 获取附件显示图片
@@ -150,7 +154,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	public void getAttachImage(){
 		InputStream is = null;
 		try {
-			ChnPayBillVO vo=new ChnPayBillVO();
+			ChnPayBillVO vo = new ChnPayBillVO();
 			vo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), vo);
 			if(StringUtil.isEmpty(vo.getPk_paybill())){
 				throw new BusinessException("主键为空");
@@ -179,6 +183,47 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				try {
 					is.close();
 				} catch (IOException e) {
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 文件下载
+	 */
+	public void downFile() {
+		FileInputStream fileis = null;
+		Json json = new Json();
+		try {
+			String billid = getRequest().getParameter("billid");
+			ChnPayBillVO vo = payconfSer.queryByID(billid);
+			fileis = new FileInputStream(vo.getVfilepath());
+			getResponse().setContentType("application/octet-stream");
+			//getResponse().addHeader("Content-Disposition", "attachment;filename=" + new String(docvo.getDocName().getBytes("UTF-8"), "ISO8859-1"));
+			String formattedName = URLEncoder.encode(vo.getDocName(), "UTF-8");
+			getResponse().addHeader("Content-Disposition", "attachment;filename=" + 
+					new String(vo.getDocName().getBytes("UTF-8"), "ISO8859-1") + ";filename*=UTF-8''" + formattedName);
+			ServletOutputStream out = getResponse().getOutputStream();
+			byte[] buf = new byte[4 * 1024]; // 4K buffer
+			int bytesRead;
+			while ((bytesRead = fileis.read(buf)) != -1) {
+				out.write(buf, 0, bytesRead);
+			}
+			out.flush();
+		} catch (Exception e) {
+			if (e instanceof BusinessException) {
+				json.setMsg(e.getMessage());
+			} else {
+				json.setMsg("文件下载失败");
+			}
+			log.error("文件下载失败", e);
+			json.setSuccess(false);
+		} finally {
+			if (fileis != null) {
+				try {
+					fileis.close();
+				} catch (IOException e) {
+					log.error("关闭流失败", e);
 				}
 			}
 		}
