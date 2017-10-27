@@ -2,6 +2,7 @@ package com.dzf.model.channel;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -139,6 +140,17 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("signdate")
     private DZFDate dsigndate;// 签订合同日期
     
+    @FieldAlias("isncust")
+    private DZFBoolean isncust;// 是否新增客户
+    
+	public DZFBoolean getIsncust() {
+		return isncust;
+	}
+
+	public void setIsncust(DZFBoolean isncust) {
+		this.isncust = isncust;
+	}
+
 	public DZFDate getDsigndate() {
 		return dsigndate;
 	}

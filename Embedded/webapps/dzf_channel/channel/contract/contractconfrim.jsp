@@ -112,6 +112,7 @@
 					<input id="corpnm" name="corpnm" type="hidden">
 					<input id="adviser" name="adviser" type="hidden">
 					<input id="submitime" name="submitime" type="hidden">
+					<input id="isncust" name="isncust" type="hidden">
 					<div style="width:24%;display: inline-block;">
 						<label style="width:35%;text-align: right;">扣款比例：</label>
 						<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"

@@ -80,6 +80,13 @@ function load(){
 			halign:'center',
 			field : 'corpkna',
 		}, {
+			width :'100',
+			title : '新增客户',
+			field : 'isncust',
+			align : 'center',
+			halign : 'center',
+			formatter:isnformat,
+		},{
 			width : '120',
 			title : '纳税人资格',
 			halign:'center',
@@ -113,8 +120,8 @@ function load(){
 		}, {
 			width : '120',
 			title : '收款周期(月)',
-			halign:'center',
-			align:'right',
+			align : 'center',
+			halign : 'center',
 			field : 'chgcycle',
 		}, {
 			width : '120',
@@ -131,8 +138,8 @@ function load(){
 		}, {
 			width : '120',
 			title : '合同周期(月)',
-			halign:'center',
-			align:'right',
+			align : 'center',
+			halign : 'center',
 			field : 'contcycle',
 		}, {
 			width : '100',
@@ -223,6 +230,19 @@ function load(){
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 存量客户格式化
+ * @param value
+ * @returns {String}
+ */
+function isnformat(value){
+	if(value&&(value=='Y'||value=="是")){
+		return "<input type=\"checkbox\" checked=\"checked\" onclick=\"return false;\" >";
+	}else{
+		return "<input type=\"checkbox\" onclick=\"return false;\" >";
+	}
 }
 
 /**
