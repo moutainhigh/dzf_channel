@@ -645,7 +645,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		confrimvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
 		confrimvo.setVoperator(paramvo.getVoperator());//经办人
 		confrimvo.setVconfreason(paramvo.getVconfreason());//驳回原因
-		DZFDouble ndeductmny = confrimvo.getNtotalmny().multiply(confrimvo.getIdeductpropor()).div(100);
+		DZFDouble countmny = SafeCompute.sub(confrimvo.getNtotalmny(), confrimvo.getNbookmny());
+		DZFDouble ndeductmny = countmny.multiply(confrimvo.getIdeductpropor()).div(100);
 		confrimvo.setNdeductmny(ndeductmny);
 	}
 

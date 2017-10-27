@@ -393,7 +393,9 @@ function initdeductData(row){
                 $('#deductfrom').form('load',row);
                 $('#confreason').textbox('setValue', null);//驳回原因
                 $('#propor').numberbox('setValue', 10);
-                var ndemny = getFloatValue(row.ntlmny).mul(parseFloat(10)).div(100);
+                //扣费标准修改为扣掉账本费的合同金额
+                var countmny = getFloatValue(row.ntlmny).sub(getFloatValue(row.nbmny));
+                var ndemny = getFloatValue(countmny).mul(parseFloat(10)).div(100);
                 $('#ndemny').numberbox('setValue', ndemny);
                 $("#dedate").datebox("setValue",Public.getLoginDate());
                 $('#vopernm').textbox('setValue',$("#unm").val());
