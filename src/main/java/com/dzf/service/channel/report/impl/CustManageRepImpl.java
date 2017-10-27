@@ -67,21 +67,26 @@ public class CustManageRepImpl implements ICustManageRep {
 					retvo.setIcusttaxpay(custnumvo.getIstockcusttaxpay());
 				}
 				//获取各个行业的值
+				Integer custsum = 0;
 				if(pklist != null && pklist.size() > 0){
 					for(int i = 0; i < pklist.size(); i++){
 						for(int j = 0; j <industrys.length; j++){
 							key = pk_corp + "" + pklist.get(i) + "" + industrys[j];
 							industryvo = industmap.get(key);
+							custsum = 0;
+							custsum = retvo.getIcustsmall() + retvo.getIcusttaxpay();
 							if(industryvo != null){
 								if(j == 0){
 									retvo.setAttributeValue("icustsmall"+(i+1), industryvo.getNum());
 									countnum = CommonUtil.getInteger(retvo.getAttributeValue("icustsmall"+(i+1)));
-									rate = getCustRate(countnum, retvo.getIcustsmall());
+									rate = getCustRate(countnum, custsum);
+//									rate = getCustRate(countnum, retvo.getIcustsmall());
 									retvo.setAttributeValue("icustratesmall"+(i+1), rate);
 								}else if(j == 1){
 									retvo.setAttributeValue("icusttaxpay"+(i+1), industryvo.getNum());
 									countnum = CommonUtil.getInteger(retvo.getAttributeValue("icusttaxpay"+(i+1)));
-									rate = getCustRate(countnum, retvo.getIcusttaxpay());
+									rate = getCustRate(countnum, custsum);
+//									rate = getCustRate(countnum, retvo.getIcusttaxpay());
 									retvo.setAttributeValue("icustratetaxpay"+(i+1), rate);
 								}
 							}
