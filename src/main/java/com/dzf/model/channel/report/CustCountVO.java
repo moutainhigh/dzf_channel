@@ -22,8 +22,16 @@ public class CustCountVO extends SuperVO {
 	
 	private Integer num;
 
-	private DZFDouble sum;
+	private DZFDouble summny;
 	
+	public DZFDouble getSummny() {
+		return summny;
+	}
+
+	public void setSummny(DZFDouble summny) {
+		this.summny = summny;
+	}
+
 	public String getKey() {
 		return key;
 	}
@@ -46,14 +54,6 @@ public class CustCountVO extends SuperVO {
 
 	public void setIndustryname(String industryname) {
 		this.industryname = industryname;
-	}
-
-	public DZFDouble getSum() {
-		return sum;
-	}
-
-	public void setSum(DZFDouble sum) {
-		this.sum = sum;
 	}
 
 	public String getPk_corp() {

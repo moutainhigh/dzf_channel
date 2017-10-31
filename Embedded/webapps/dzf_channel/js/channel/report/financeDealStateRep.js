@@ -8,6 +8,7 @@ $(window).resize(function(){
 });
 
 $(function() {
+	initQryPeroid();
 	load();
 });
 
@@ -17,6 +18,9 @@ $(function() {
 function load(){
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/financedealstaterep!query.action",
+		queryParams:{
+			'period' : $('#qryperiod').textbox('getValue'),//查询期间
+		},
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -31,9 +35,7 @@ function load(){
 		remoteSort:false,
 		//冻结在 左边的列 
 		frozenColumns:[[
-//						{ field : 'ck',	checkbox : true },
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
-//		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
 		                { field : 'provin',  title : '省份', width : 100,halign:'center',align:'left'}, 
 		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
 		]],
@@ -59,5 +61,26 @@ function load(){
  */
 function reloadData(){
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/financedealstaterep!query.action";
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	queryParams.period = $('#qryperiod').textbox('getValue');
+	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
+}
+
+/**
+ * 查询期间初始化
+ */
+function initQryPeroid(){
+	$('#qryperiod').textbox({
+		icons: [{
+			iconCls:'foxdate',
+			handler: function(e){
+				click_icon(50, 90, function(val){
+					if(!isEmpty(val)){
+						$('#qryperiod').textbox('setValue', val);
+					}
+				})
+			}
+		}]
+	});
 }

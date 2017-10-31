@@ -19,6 +19,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
@@ -38,8 +39,8 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
-		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1);
-		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
+//		List<CustCountVO> custlist = queryCustNum(paramvo, 1);
+//		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
 		CustNumMoneyRepVO custnumvo = null;
 		FinanceDealStateRepVO retvo = null;
 		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist);
@@ -55,11 +56,11 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 					retvo.setVcorpname(corpvo.getUnitname());
 					retvo.setVprovince(corpvo.getCitycounty());
 				}
-				custnumvo = custmap.get(pk_corp);
-				if(custnumvo != null){
-					retvo.setIcustsmall(custnumvo.getIstockcustsmall());
-					retvo.setIcusttaxpay(custnumvo.getIstockcusttaxpay());
-				}
+//				custnumvo = custmap.get(pk_corp);
+//				if(custnumvo != null){
+//					retvo.setIcustsmall(custnumvo.getIstockcustsmall());
+//					retvo.setIcusttaxpay(custnumvo.getIstockcusttaxpay());
+//				}
 				retvo.setIcustratesmall(getCustRate(retvo.getIcustsmall(), retvo.getIcusttaxpay()));
 				retvo.setIcustratetaxpay(getCustRate(retvo.getIcusttaxpay(), retvo.getIcustsmall()));
 				voumap =  retmap.get(pk_corp);
@@ -78,6 +79,43 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 			}
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 查询客户数量
+	 * @param paramvo
+	 * @param qrytype   1:存量客户查询；2：新增客户查询；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String,CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
+		Map<String,CustCountVO> map = new HashMap<String,CustCountVO>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT p.fathercorp as pk_corp, \n");
+		sql.append("	p.chargedeptname as chargedeptname, count(p.pk_corp) as num \n");
+		sql.append("  FROM bd_corp p \n");
+		sql.append("  LEFT JOIN ynt_franchisee t ON p.fathercorp = t.pk_corp \n");
+		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.isreport, 'N') = 'Y' \n");//授权会计公司
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//未封存
+		if(StringUtil.isEmpty(paramvo.getPeriod())){
+			sql.append("   AND SUBSTR(p.createdate, 1, 7) <= ? \n");
+			spm.addParam(paramvo.getBegdate());
+		}
+		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
+		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustCountVO.class));
+		if(list != null && list.size() > 0){
+			String key = "";
+			for(CustCountVO vo : list){
+				key = vo.getPk_corp() + "" + vo.getChargedeptname();
+				map.put(key, vo);
+			}
+		}
+		return map;
 	}
 	
 	/**

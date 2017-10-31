@@ -8,6 +8,7 @@ $(window).resize(function(){
 });
 
 $(function() {
+	initQryPeroid();
 	load();
 });
 
@@ -18,7 +19,7 @@ function load(){
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
 		queryParams:{
-			'begdate' : $('#qddate').datebox('getValue'),//查询结束日期
+			'period' : $('#qryperiod').textbox('getValue'),//查询期间
 		},
 		striped : true,
 		title : '',
@@ -85,9 +86,27 @@ function load(){
  * 查询
  */
 function reloadData(){
-	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/custnummoneyrep!query.action";
-	queryParams.begdate = $('#qddate').datebox('getValue');
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	queryParams.period = $('#qryperiod').textbox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
+}
+
+/**
+ * 查询期间初始化
+ */
+function initQryPeroid(){
+	$('#qryperiod').textbox({
+		icons: [{
+			iconCls:'foxdate',
+			handler: function(e){
+				click_icon(50, 90, function(val){
+					if(!isEmpty(val)){
+						$('#qryperiod').textbox('setValue', val);
+					}
+				})
+			}
+		}]
+	});
 }

@@ -86,6 +86,96 @@ public class CustNumMoneyRepVO extends SuperVO {
 	@FieldAlias("renewcontratet")
 	private DZFDouble irenewcontratetaxpay;//续费合同占比-一般纳税人
 	
+	//****************************上一月数据*******************************
+	
+	@FieldAlias("lastnewcusts")
+	private Integer ilastnewcustsmall;//新增客户-小规模
+	
+	@FieldAlias("lastnewcustt")
+	private Integer ilastnewcusttaxpay;//新增客户-一般纳税人
+
+	@FieldAlias("lastnewconts")
+	private DZFDouble ilastnewcontsmall;//新增客户合同-小规模
+	
+	@FieldAlias("lastnewcontt")
+	private DZFDouble ilastnewconttaxpay;//新增客户合同-一般纳税人
+	
+	@FieldAlias("lastrenewcusts")
+	private Integer ilastrenewcustsmall;//续费客户-小规模
+	
+	@FieldAlias("lastrenewcustt")
+	private Integer ilastrenewcusttaxpay;//续费客户-一般纳税人
+
+	@FieldAlias("lastrenewconts")
+	private DZFDouble ilastrenewcontsmall;//续费客户合同-小规模
+	
+	@FieldAlias("lastrenewcontt")
+	private DZFDouble ilastrenewconttaxpay;//续费客户合同-一般纳税人
+
+	public Integer getIlastnewcustsmall() {
+		return ilastnewcustsmall;
+	}
+
+	public void setIlastnewcustsmall(Integer ilastnewcustsmall) {
+		this.ilastnewcustsmall = ilastnewcustsmall;
+	}
+
+	public Integer getIlastnewcusttaxpay() {
+		return ilastnewcusttaxpay;
+	}
+
+	public void setIlastnewcusttaxpay(Integer ilastnewcusttaxpay) {
+		this.ilastnewcusttaxpay = ilastnewcusttaxpay;
+	}
+
+	public DZFDouble getIlastnewcontsmall() {
+		return ilastnewcontsmall;
+	}
+
+	public void setIlastnewcontsmall(DZFDouble ilastnewcontsmall) {
+		this.ilastnewcontsmall = ilastnewcontsmall;
+	}
+
+	public DZFDouble getIlastnewconttaxpay() {
+		return ilastnewconttaxpay;
+	}
+
+	public void setIlastnewconttaxpay(DZFDouble ilastnewconttaxpay) {
+		this.ilastnewconttaxpay = ilastnewconttaxpay;
+	}
+
+	public Integer getIlastrenewcustsmall() {
+		return ilastrenewcustsmall;
+	}
+
+	public void setIlastrenewcustsmall(Integer ilastrenewcustsmall) {
+		this.ilastrenewcustsmall = ilastrenewcustsmall;
+	}
+
+	public Integer getIlastrenewcusttaxpay() {
+		return ilastrenewcusttaxpay;
+	}
+
+	public void setIlastrenewcusttaxpay(Integer ilastrenewcusttaxpay) {
+		this.ilastrenewcusttaxpay = ilastrenewcusttaxpay;
+	}
+
+	public DZFDouble getIlastrenewcontsmall() {
+		return ilastrenewcontsmall;
+	}
+
+	public void setIlastrenewcontsmall(DZFDouble ilastrenewcontsmall) {
+		this.ilastrenewcontsmall = ilastrenewcontsmall;
+	}
+
+	public DZFDouble getIlastrenewconttaxpay() {
+		return ilastrenewconttaxpay;
+	}
+
+	public void setIlastrenewconttaxpay(DZFDouble ilastrenewconttaxpay) {
+		this.ilastrenewconttaxpay = ilastrenewconttaxpay;
+	}
+
 	public String getVlargearea() {
 		return vlargearea;
 	}

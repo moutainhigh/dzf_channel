@@ -53,6 +53,17 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("enddate")
 	private DZFDate enddate;// 结束日期
 	
+	@FieldAlias("period")
+	private String period;// 期间
+	
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+
 	public DZFDate getBegdate() {
 		return begdate;
 	}
