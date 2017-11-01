@@ -22,10 +22,12 @@ import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
@@ -70,13 +72,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 		
 		if (conflist != null && conflist.size() > 0) {
 			CorpVO corpvo = null;
+			AccountVO accvo = null;
 			Map<String, String> packmap = queryPackageMap();
 			Integer cyclenum = 0;
 			for (ContractConfrimVO vo : conflist) {
-				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-				if (corpvo != null) {
-					vo.setCorpname(corpvo.getUnitname());
-					vo.setVarea(corpvo.getCitycounty());
+//				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+//				if (corpvo != null) {
+//					vo.setCorpname(corpvo.getUnitname());
+//					vo.setVarea(corpvo.getCitycounty());
+//				}
+				accvo = queryAccountById(vo.getPk_corp());
+				if (accvo != null) {
+					vo.setCorpname(accvo.getUnitname());
+					vo.setVarea(accvo.getCitycounty());
 				}
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 				if (corpvo != null) {
@@ -108,6 +116,24 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		});
 		return retlist;
+	}
+	
+	/**
+	 * 查询会计公司信息
+	 * @param pk_corp
+	 * @return
+	 */
+	private AccountVO queryAccountById(String pk_corp) throws DZFWarpException {
+		AccountVO accvo =  (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, pk_corp);
+		if(accvo != null){
+			AccountVO[] accVOs = new AccountVO[]{accvo};
+			accVOs = (AccountVO[]) QueryDeCodeUtils.decKeyUtils(
+					new String[] { "legalbodycode", "phone1", "phone2", "unitname", "unitshortname" },
+					accVOs, 1);
+			return accVOs[0];
+		}else{
+			return null;
+		}
 	}
 	
 	/**
