@@ -76,14 +76,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if (corpvo != null) {
 					vo.setCorpname(corpvo.getUnitname());
+					vo.setVarea(corpvo.getCitycounty());
 				}
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 				if (corpvo != null) {
 					vo.setCorpkname(corpvo.getUnitname());
-				}
-				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-				if(corpvo != null){
-					vo.setVarea(corpvo.getCitycounty());
 				}
 				//从套餐取纳税人性质
 				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
