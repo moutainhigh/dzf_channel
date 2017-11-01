@@ -74,7 +74,7 @@ public class CustManageRepImpl implements ICustManageRep {
 							key = pk_corp + "" + pklist.get(i) + "" + industrys[j];
 							industryvo = industmap.get(key);
 							custsum = 0;
-							custsum = retvo.getIcustsmall() + retvo.getIcusttaxpay();
+							custsum = addInteger(retvo.getIcustsmall(),retvo.getIcusttaxpay());
 							if(industryvo != null){
 								if(j == 0){
 									retvo.setAttributeValue("icustsmall"+(i+1), industryvo.getNum());
@@ -110,6 +110,19 @@ public class CustManageRepImpl implements ICustManageRep {
 		DZFDouble num3 = num1 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num1);
 		DZFDouble num4 = num2 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num2);
 		return num3.div(num4).multiply(100);
+	}
+	
+	/**
+	 * 整数相加
+	 * @param num1
+	 * @param num2
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Integer addInteger(Integer num1, Integer num2) throws DZFWarpException {
+		num1 = num1 == null ? 0 : num1;
+		num2 = num2 == null ? 0 : num2;
+		return num1 + num2;
 	}
 	
 	/**
