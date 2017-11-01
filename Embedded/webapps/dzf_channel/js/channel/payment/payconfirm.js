@@ -300,7 +300,7 @@ function showImage(billid){
 		center : true,
 		align:"center",
 		content : '<div style="overflow:scroll;height:100%;" >'+
-		'<a href="javascript:void(0)" onclick="downFile(\''+billid+'\')"  onmouseover="showTips(' + 0 + ')" onmouseout="hideTips(' + 0 + ')"  > ' +
+		'<a href="javascript:void(0)"   onmouseover="showTips(' + 0 + ')" onmouseout="hideTips(' + 0 + ')"  > ' +
 			'<span><img alt="无法显示图片" src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">' + 
 				  '<div id="reUpload' + 0 +'" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 				  		'<h4><span id="tips'+0+'"></span></h4> '+
