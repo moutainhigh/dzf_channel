@@ -26,7 +26,6 @@ import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
-import com.dzf.model.sys.sys_power.CorpDocVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;

@@ -130,7 +130,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		if(detvo.getIpaytype() != null){
 			switch (detvo.getIpaytype()){
 			case 1:
-				detvo.setVmemo("加盟费");
+				detvo.setVmemo("保证金");
 				break;
 			case 2:
 				detvo.setVmemo("预付款");
