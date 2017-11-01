@@ -244,7 +244,7 @@ public class CustManageRepImpl implements ICustManageRep {
 					retlist.add(vo);
 					if(retlist != null && retlist.size() == 5){
 						CustCountVO countvo = new CustCountVO();
-						countvo.setIndustryname("其他类占比");
+						countvo.setIndustryname("其他类");
 						retlist.add(countvo);
 						break;
 					}
