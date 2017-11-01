@@ -141,7 +141,7 @@ public class ContractConfrimVO extends SuperVO {
     private DZFDate dsigndate;// 签订合同日期
     
     @FieldAlias("isncust")
-    private DZFBoolean isncust;// 是否新增客户
+    private DZFBoolean isncust;// 是否存量客户
     
 	public DZFBoolean getIsncust() {
 		return isncust;

@@ -81,7 +81,7 @@ function load(){
 			field : 'corpkna',
 		}, {
 			width :'100',
-			title : '新增客户',
+			title : '存量客户',
 			field : 'isncust',
 			align : 'center',
 			halign : 'center',
@@ -258,7 +258,7 @@ function formatDocLink(val,row,index){
 
 /**
  * 标签查询
- * @param type  1：全部；2：加盟费；3：预付款；
+ * @param type  1：待审核；2：存量待审；
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');

@@ -164,9 +164,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			if(paramvo.getQrytype() != 0){
-				sql.append("   AND vdeductstatus = ? \n");
-				spm.addParam(paramvo.getQrytype());
+			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
+				sql.append("   AND vdeductstatus = 1 \n");
+			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){
+				sql.append("   AND vdeductstatus = 1 AND nvl(isncust,'N') = 'Y' \n");
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
@@ -205,9 +206,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND con.vdeductstatus = 1 \n");//加盟商合同状态 = 待审核
 		sql.append("   AND con.icontracttype = 2 \n");//合同类型 = 加盟商合同
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			if(paramvo.getQrytype() != 0){
-				sql.append("   AND con.vdeductstatus = ? \n");
-				spm.addParam(paramvo.getQrytype());
+			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
+				sql.append("   AND vdeductstatus = 1 \n");
+			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){
+				sql.append("   AND vdeductstatus = 1 AND nvl(isncust,'N') = 'Y' \n");
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
