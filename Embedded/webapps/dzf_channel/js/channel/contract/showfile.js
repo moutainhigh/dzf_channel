@@ -161,6 +161,41 @@ function getTipContents(i) {
  * 双击附件
  * @param i
  */
+//function doubleImage(i){
+//	var ext = getFileExt(arrachrows[i]['doc_name']);
+//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
+//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
+//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+//		$("#tpfd").empty();
+//		var offset = $("#tpght").offset();
+//		$("#tpfd").dialog({
+//			title: '原图' ,
+////			width:$("#tpght").width() + 100,
+////			height:$("#tpght").height() + 100,
+////			width:'1160',
+////			height:'90%',
+//			width:$(window).width()-200,
+//			height:$(window).height()-100,
+////			left: offset.left,
+////			top: offset.top,
+//			cache: false,
+//			resizable: true,
+//			center : true,
+//			align:"center",
+//			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
+//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
+//			onLoad:function(){
+//				
+//			}
+//		});
+//	}else if("pdf"==ext.toLowerCase()){
+//		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
+//	}else{
+//		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
+//	}
+//}
+
 function doubleImage(i){
 	var ext = getFileExt(arrachrows[i]['doc_name']);
 	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
@@ -169,32 +204,10 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		$("#tpfd").dialog({
-			title: '原图' ,
-//			width:$("#tpght").width() + 100,
-//			height:$("#tpght").height() + 100,
-//			width:'1160',
-//			height:'90%',
-			width:$(window).width()-200,
-			height:$(window).height()-100,
-//			left: offset.left,
-//			top: offset.top,
-			cache: false,
-			resizable: true,
-			center : true,
-			align:"center",
-			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
-				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
-			onLoad:function(){
-				
-			}
-		});
-	}else if("pdf"==ext.toLowerCase()){
-		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
-	}else{
-		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
+		parent.openFullViewDlg('<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
+				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>','原图')
+		
 	}
-	
 }
 
 //获取附件扩展

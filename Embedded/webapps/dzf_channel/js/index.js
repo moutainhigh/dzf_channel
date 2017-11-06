@@ -260,3 +260,28 @@ function initBusiData(){
 		},
 	});
 }
+
+/**
+ * 展示最大化图片
+ * @param content
+ * @param title
+ */
+function openFullViewDlg (content,title) {
+	$("#fullViewContent").html(content);
+	$("#fullViewDlg").dialog({
+		width:$(window).width()-100,
+		height:$(window).height(),
+		closable:true,
+		title: title,
+		modal:true,
+		buttons: [{
+	        text: '关闭',
+//	        iconCls: 'icon-cancel',
+	        handler: function () {
+	            $('#fullViewDlg').dialog('close');
+	        }
+	    }],
+	});	
+	$("#fullViewDlg").css("display","block");
+	$("#fullViewDlg").dialog("center");
+}

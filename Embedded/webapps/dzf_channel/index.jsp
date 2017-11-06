@@ -85,6 +85,12 @@
 <link href="layui/css/layui.css" rel="stylesheet">
 <link href="layui/dzfchat.css" rel="stylesheet">
 <style>
+	 @media screen and (min-width: 1367px) and (max-width:1920px) {
+	 	.entrance_block_tu #fullViewContent{height:870px;}
+	 } 
+	 @media screen and (min-width:1025px) and (max-width:1366px) {
+	 .entrance_block_tu #fullViewContent{height:590px;}
+	}
 </style> 
 
 <script type="text/javascript" src="./js/jsapi.js"></script>
@@ -355,6 +361,16 @@ var SYSTEM = {
 		</div>
 	</div>
 </div>
+
+<!-- 打开图片展示窗口 begin -->
+<div id="fullViewDlg" style="display: none;">	
+  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+		<div class="entrance_block_tu" id="tpght" style="overflow-y:auto;height:85%">
+			<ul class="tu_block" id="fullViewContent"></ul>
+		</div>
+	</div>
+</div>
+<!-- 打开图片展示窗口 end -->
 
 </body>
 </html>
