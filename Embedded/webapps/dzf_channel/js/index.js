@@ -274,14 +274,15 @@ function openFullViewDlg (content,title) {
 		closable:true,
 		title: title,
 		modal:true,
-		buttons: [{
-	        text: '关闭',
-//	        iconCls: 'icon-cancel',
-	        handler: function () {
-	            $('#fullViewDlg').dialog('close');
-	        }
-	    }],
 	});	
 	$("#fullViewDlg").css("display","block");
 	$("#fullViewDlg").dialog("center");
 }
+
+/**
+ * 关闭图片展示框
+ */
+function closeFullViewDlg(){
+	 $('#fullViewDlg').dialog('close');
+}
+

@@ -257,3 +257,13 @@ function doubleDocImage(i){
 	}
 	
 }
+
+/**
+ * 设置快捷键
+ */
+$(document).keydown(function(e) {
+	//ESC 关闭附件预览框
+	if (e.keyCode == 27) {
+		parent.closeFullViewDlg();
+	}
+});
