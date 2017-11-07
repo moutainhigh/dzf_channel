@@ -343,7 +343,11 @@ function initListener(){
 				n = 0; 
 			}
 			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
-			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
+			var nbmny = $('#nbmny').numberbox('getValue');//账本费
+//			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
+			 //扣费标准修改为扣掉账本费的合同金额
+            var countmny = getFloatValue(ntlmny).sub(getFloatValue(nbmny));
+            var ndemny = getFloatValue(countmny).mul(parseFloat(n)).div(100);
 			$('#ndemny').numberbox('setValue', ndemny);
 		}
 	});
