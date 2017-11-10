@@ -24,6 +24,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayConfService;
@@ -119,56 +120,62 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateConfrimData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
-		if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
-			billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已确认】");
-			return billvo;
-		}
-		ChnDetailVO detvo = new ChnDetailVO();
-		detvo.setPk_corp(billvo.getPk_corp());
-		detvo.setNpaymny(billvo.getNpaymny());
-		detvo.setIpaytype(billvo.getIpaytype());
-		if(detvo.getIpaytype() != null){
-			switch (detvo.getIpaytype()){
-			case 1:
-				detvo.setVmemo("保证金");
-				break;
-			case 2:
-				detvo.setVmemo("预付款");
-				break;
+		try {
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
+			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
+				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已确认】");
+				return billvo;
 			}
+			ChnDetailVO detvo = new ChnDetailVO();
+			detvo.setPk_corp(billvo.getPk_corp());
+			detvo.setNpaymny(billvo.getNpaymny());
+			detvo.setIpaytype(billvo.getIpaytype());
+			if(detvo.getIpaytype() != null){
+				switch (detvo.getIpaytype()){
+				case 1:
+					detvo.setVmemo("保证金");
+					break;
+				case 2:
+					detvo.setVmemo("预付款");
+					break;
+				}
+			}
+			detvo.setPk_bill(billvo.getPk_paybill());
+			detvo.setCoperatorid(cuserid);
+			detvo.setDoperatedate(billvo.getDpaydate());
+			detvo.setDr(0);
+			detvo.setIopertype(IStatusConstant.IDETAILTYPE_1);
+			ChnBalanceVO balvo = null;
+			String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(billvo.getPk_corp());
+			spm.addParam(billvo.getIpaytype());
+			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
+			if(balVOs != null && balVOs.length > 0){
+				balvo = balVOs[0];
+				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), billvo.getNpaymny()));
+				singleObjectBO.update(balvo, new String[]{"npaymny"});
+			}else{
+				balvo = new ChnBalanceVO();
+				balvo.setPk_corp(billvo.getPk_corp());
+				balvo.setNpaymny(billvo.getNpaymny());
+				balvo.setIpaytype(billvo.getIpaytype());
+				balvo.setVmemo(billvo.getVmemo());
+				balvo.setCoperatorid(cuserid);
+				balvo.setDoperatedate(new DZFDate());
+				balvo.setDr(0);
+				singleObjectBO.saveObject("000001", balvo);
+			}
+			singleObjectBO.saveObject("000001", detvo);
+			billvo.setVstatus(opertype);
+			billvo.setCoperatorid(cuserid);
+			billvo.setDconfirmtime(new DZFDateTime());
+			billvo.setTstamp(new DZFDateTime());
+			singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
+		} finally {
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
 		}
-		detvo.setPk_bill(billvo.getPk_paybill());
-		detvo.setCoperatorid(cuserid);
-		detvo.setDoperatedate(billvo.getDpaydate());
-		detvo.setDr(0);
-		detvo.setIopertype(IStatusConstant.IDETAILTYPE_1);
-		ChnBalanceVO balvo = null;
-		String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(billvo.getPk_corp());
-		spm.addParam(billvo.getIpaytype());
-		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
-		if(balVOs != null && balVOs.length > 0){
-			balvo = balVOs[0];
-			balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), billvo.getNpaymny()));
-			singleObjectBO.update(balvo, new String[]{"npaymny"});
-		}else{
-			balvo = new ChnBalanceVO();
-			balvo.setPk_corp(billvo.getPk_corp());
-			balvo.setNpaymny(billvo.getNpaymny());
-			balvo.setIpaytype(billvo.getIpaytype());
-			balvo.setVmemo(billvo.getVmemo());
-			balvo.setCoperatorid(cuserid);
-			balvo.setDoperatedate(new DZFDate());
-			balvo.setDr(0);
-			singleObjectBO.saveObject("000001", balvo);
-		}
-		singleObjectBO.saveObject("000001", detvo);
-		billvo.setVstatus(opertype);
-		billvo.setCoperatorid(cuserid);
-		billvo.setDconfirmtime(new DZFDateTime());
-		billvo.setTstamp(new DZFDateTime());
-		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
+		
 		return billvo;
 	}
 	
@@ -181,42 +188,47 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateCancelData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
-		if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_2){
-			billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【待确认】");
-			return billvo;
-		}
-		ChnBalanceVO balvo = null;
-		String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(billvo.getPk_corp());
-		spm.addParam(billvo.getIpaytype());
-		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
-		if(balVOs != null && balVOs.length > 0){
-			balvo = balVOs[0];
-			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
-			if(balance.compareTo(billvo.getNpaymny()) < 0){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"余额不足");
+		try {
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
+			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_2){
+				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【待确认】");
 				return billvo;
-			}else{
-				DZFDouble npaymny = SafeCompute.sub(balvo.getNpaymny(), billvo.getNpaymny());
-				balvo.setNpaymny(npaymny);
-				if(npaymny.compareTo(DZFDouble.ZERO_DBL) == 0){
-					balvo.setDr(1);
-					singleObjectBO.update(balvo, new String[]{"npaymny","dr"});
-				}else{
-					singleObjectBO.update(balvo, new String[]{"npaymny"});
-				}
 			}
-			sql = " update cn_detail set dr = 1 where pk_bill = ? ";
-			spm = new SQLParameter();
-			spm.addParam(billvo.getPk_paybill());
-			singleObjectBO.executeUpdate(sql, spm);
+			ChnBalanceVO balvo = null;
+			String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(billvo.getPk_corp());
+			spm.addParam(billvo.getIpaytype());
+			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
+			if(balVOs != null && balVOs.length > 0){
+				balvo = balVOs[0];
+				DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+				if(balance.compareTo(billvo.getNpaymny()) < 0){
+					billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"余额不足");
+					return billvo;
+				}else{
+					DZFDouble npaymny = SafeCompute.sub(balvo.getNpaymny(), billvo.getNpaymny());
+					balvo.setNpaymny(npaymny);
+					if(npaymny.compareTo(DZFDouble.ZERO_DBL) == 0){
+						balvo.setDr(1);
+						singleObjectBO.update(balvo, new String[]{"npaymny","dr"});
+					}else{
+						singleObjectBO.update(balvo, new String[]{"npaymny"});
+					}
+				}
+				sql = " update cn_detail set dr = 1 where pk_bill = ? ";
+				spm = new SQLParameter();
+				spm.addParam(billvo.getPk_paybill());
+				singleObjectBO.executeUpdate(sql, spm);
+			}
+			billvo.setVstatus(opertype);
+			billvo.setCoperatorid(cuserid);
+			billvo.setDconfirmtime(null);
+			billvo.setTstamp(new DZFDateTime());
+			singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
+		} finally {
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
 		}
-		billvo.setVstatus(opertype);
-		billvo.setCoperatorid(cuserid);
-		billvo.setDconfirmtime(null);
-		billvo.setTstamp(new DZFDateTime());
-		singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
 		return billvo;
 	}
 	

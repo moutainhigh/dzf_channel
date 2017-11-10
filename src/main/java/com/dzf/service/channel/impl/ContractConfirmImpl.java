@@ -334,35 +334,40 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException {
-		String errmsg = "";
-		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
-			//审核前校验
-			errmsg = CheckBeforeAudit(paramvo);
-			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
+		try {
+			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(), 120);
+			String errmsg = "";
+			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+				//审核前校验
+				errmsg = CheckBeforeAudit(paramvo);
+				if(!StringUtil.isEmpty(errmsg)){
+					throw new BusinessException(errmsg);
+				}
+				//1、更新合同加盟合同状态、驳回原因
+				updateContract(paramvo, opertype);
+				//扣款比例如果为0，则不回写余额
+				if(paramvo.getIdeductpropor() != 0){
+					//2、回写付款余额
+					updateBalanceMny(paramvo, cuserid);
+				}
+				//3、生成合同审核数据
+				paramvo = saveContConfrim(paramvo, cuserid);
+				//4、回写套餐促销活动名额
+				updateSerPackage(paramvo);
+				//5、回写客户纳税人性质
+				Map<String, String> packmap = queryPackageMap();
+				updateCorp(paramvo, packmap);
+			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+				errmsg = checkBeforeReject(paramvo);
+				if(!StringUtil.isEmpty(errmsg)){
+					throw new BusinessException(errmsg);
+				}
+				updateContract(paramvo, opertype);
+				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
+				setNullValue(paramvo);
 			}
-			//1、更新合同加盟合同状态、驳回原因
-			updateContract(paramvo, opertype);
-			//扣款比例如果为0，则不回写余额
-			if(paramvo.getIdeductpropor() != 0){
-				//2、回写付款余额
-				updateBalanceMny(paramvo, cuserid);
-			}
-			//3、生成合同审核数据
-			paramvo = saveContConfrim(paramvo, cuserid);
-			//4、回写套餐促销活动名额
-			updateSerPackage(paramvo);
-			//5、回写客户纳税人性质
-			Map<String, String> packmap = queryPackageMap();
-			updateCorp(paramvo, packmap);
-		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-			errmsg = checkBeforeReject(paramvo);
-			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
-			}
-			updateContract(paramvo, opertype);
-			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
-			setNullValue(paramvo);
+		} finally {
+			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract());
 		}
 		
 		return paramvo;
@@ -562,44 +567,50 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 */
 	private ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
 			Integer opertype, String cuserid, Map<String, String> packmap) throws DZFWarpException {
-		String errmsg = "";
-		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
-			if(paramvo != null){
-				countDedMny(confrimvo, paramvo);
-			}else{
-				throw new BusinessException("审核信息获取错误");
-			}
-			errmsg = CheckBeforeAudit(confrimvo);
-			if(!StringUtil.isEmpty(errmsg)){
-				confrimvo.setVerrmsg(errmsg);
+		try {
+			LockUtil.getInstance().tryLockKey(confrimvo.getTableName(), confrimvo.getPk_contract(), 120);
+			String errmsg = "";
+			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+				if(paramvo != null){
+					countDedMny(confrimvo, paramvo);
+				}else{
+					throw new BusinessException("审核信息获取错误");
+				}
+				errmsg = CheckBeforeAudit(confrimvo);
+				if(!StringUtil.isEmpty(errmsg)){
+					confrimvo.setVerrmsg(errmsg);
+					setNullValue(confrimvo);
+					return confrimvo;
+				}
+				//1、更新合同加盟合同状态、驳回原因
+				updateContract(confrimvo, opertype);
+				//扣款比例如果为0，则不回写余额
+				if(paramvo.getIdeductpropor() != 0){
+					//2、回写付款余额
+					updateBalanceMny(confrimvo, cuserid);
+				}
+				//3、生成合同审核数据
+				confrimvo = saveContConfrim(confrimvo, cuserid);
+				//4、回写套餐促销活动名额
+				updateSerPackage(confrimvo);
+				//5、回写客户纳税人性质
+				updateCorp(paramvo, packmap);
+			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+				errmsg = checkBeforeReject(confrimvo);
+				if(!StringUtil.isEmpty(errmsg)){
+					confrimvo.setVerrmsg(errmsg);
+					setNullValue(confrimvo);
+					return confrimvo;
+				}
+				confrimvo.setVconfreason(paramvo.getVconfreason());
+				updateContract(confrimvo, opertype);
+				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
 				setNullValue(confrimvo);
-				return confrimvo;
 			}
-			//1、更新合同加盟合同状态、驳回原因
-			updateContract(confrimvo, opertype);
-			//扣款比例如果为0，则不回写余额
-			if(paramvo.getIdeductpropor() != 0){
-				//2、回写付款余额
-				updateBalanceMny(confrimvo, cuserid);
-			}
-			//3、生成合同审核数据
-			confrimvo = saveContConfrim(confrimvo, cuserid);
-			//4、回写套餐促销活动名额
-			updateSerPackage(confrimvo);
-			//5、回写客户纳税人性质
-			updateCorp(paramvo, packmap);
-		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-			errmsg = checkBeforeReject(confrimvo);
-			if(!StringUtil.isEmpty(errmsg)){
-				confrimvo.setVerrmsg(errmsg);
-				setNullValue(confrimvo);
-				return confrimvo;
-			}
-			confrimvo.setVconfreason(paramvo.getVconfreason());
-			updateContract(confrimvo, opertype);
-			confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
-			setNullValue(confrimvo);
+		} finally {
+			LockUtil.getInstance().unLock_Key(confrimvo.getTableName(), confrimvo.getPk_contract());
 		}
+
 		return confrimvo;
 	}
 	
