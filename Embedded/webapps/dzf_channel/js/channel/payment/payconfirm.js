@@ -192,10 +192,20 @@ function operate(type){
 			data = data + JSON.stringify(rows[i]);
 		}
 	}
-	var postdata = new Object();
-	postdata["data"] = data;
-	postdata["type"] = type;
-	operatData(postdata,rows);
+	var msg = "";
+	if(type == 3){
+		msg = "收款确认";
+	}else if(type == 2){
+		msg = "取消确认";
+	}
+	$.messager.confirm("提示", "你确定要"+msg+"吗?", function(r) {
+		if (r) {
+			var postdata = new Object();
+			postdata["data"] = data;
+			postdata["type"] = type;
+			operatData(postdata,rows);
+		}
+	});
 }
 
 /**
