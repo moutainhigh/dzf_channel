@@ -321,11 +321,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 		if(packvo != null){
 			if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+				Integer publishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+				Integer usenum = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+				int num = publishnum - usenum;
 				if(!StringUtil.isEmptyWithTrim(packvo.getVmemo())){
-					Integer publishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-					Integer usenum = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
-					int num = publishnum - usenum;
 					retvo.setVsalespromot("促销活动： "+packvo.getVmemo() + "    剩余名额" + num + "个");
+				}else{
+					retvo.setVsalespromot("剩余名额" + num + "个");
 				}
 			}
 		}
