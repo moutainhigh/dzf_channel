@@ -310,15 +310,20 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, \n");
-		sql.append("	p.chargedeptname as chargedeptname, count(p.pk_corp) as num \n");
-		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN ynt_franchisee t ON p.fathercorp = t.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.isreport, 'N') = 'Y' \n");//授权会计公司
-//		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
+		sql.append("SELECT p.fathercorp as pk_corp,\n") ;
+		sql.append("       p.chargedeptname as chargedeptname,\n") ; 
+		sql.append("       count(p.pk_corp) as num \n") ; 
+		sql.append("  FROM bd_corp p \n") ; 
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
+		sql.append(" WHERE nvl(p.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("   AND p.fathercorp NOT IN \n") ; 
+		sql.append("       (SELECT f.pk_corp \n") ; 
+		sql.append("          FROM ynt_franchisee f \n") ; 
+		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		if(qrytype == 1){
 			if(paramvo.getBegdate() != null){
 				sql.append("   AND p.createdate <= ? \n");

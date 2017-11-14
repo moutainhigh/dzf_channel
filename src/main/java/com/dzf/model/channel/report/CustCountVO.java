@@ -16,7 +16,9 @@ public class CustCountVO extends SuperVO {
 	
 	private String industry;//行业主键
 	
-	private String industryname;//行业主键
+	private String industryname;//行业名称
+	
+	private String industrycode;//行业编码
 	
 	private String key;//主键
 	
@@ -24,6 +26,14 @@ public class CustCountVO extends SuperVO {
 
 	private DZFDouble summny;
 	
+	public String getIndustrycode() {
+		return industrycode;
+	}
+
+	public void setIndustrycode(String industrycode) {
+		this.industrycode = industrycode;
+	}
+
 	public DZFDouble getSummny() {
 		return summny;
 	}

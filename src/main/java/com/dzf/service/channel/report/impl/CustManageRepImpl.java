@@ -39,13 +39,14 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<CustManageRepVO> retlist = new ArrayList<CustManageRepVO>();
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
-		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1);
+		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1);//查询客户数量
+		//计算客户分类信息
 		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
 		CustNumMoneyRepVO custnumvo = null;
 		CustManageRepVO retvo = null;
-		List<String> pklist = qryIndustryPk(paramvo);//排行前五行业主键
+		List<String> codelist = qryIndustryCode(paramvo);//排行前五行业主键
 		List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
-		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, pklist);
+		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
 		String[] industrys = new String[]{"小规模纳税人","一般纳税人"};
 		CustCountVO industryvo = null;
 		DZFDouble rate = DZFDouble.ZERO_DBL;
@@ -68,10 +69,10 @@ public class CustManageRepImpl implements ICustManageRep {
 				}
 				//获取各个行业的值
 				Integer custsum = 0;
-				if(pklist != null && pklist.size() > 0){
-					for(int i = 0; i < pklist.size(); i++){
+				if(codelist != null && codelist.size() > 0){
+					for(int i = 0; i < codelist.size(); i++){
 						for(int j = 0; j <industrys.length; j++){
-							key = pk_corp + "" + pklist.get(i) + "" + industrys[j];
+							key = pk_corp + "" + codelist.get(i) + "" + industrys[j];
 							industryvo = industmap.get(key);
 							custsum = 0;
 							custsum = addInteger(retvo.getIcustsmall(),retvo.getIcusttaxpay());
@@ -92,6 +93,9 @@ public class CustManageRepImpl implements ICustManageRep {
 							}
 						}
 					}
+				}
+				if(retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null){
+					continue;
 				}
 				retlist.add(retvo);
 			}
@@ -132,17 +136,17 @@ public class CustManageRepImpl implements ICustManageRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String, CustCountVO> qryIndustryMap(List<CustCountVO> custnumlist,	List<String> pklist) throws DZFWarpException {
+	private Map<String, CustCountVO> qryIndustryMap(List<CustCountVO> custnumlist,	List<String> codelist) throws DZFWarpException {
 		Map<String, CustCountVO> retmap = new HashMap<String, CustCountVO>();
 		if(custnumlist != null && custnumlist.size() > 0){
 			String key = "";
 			CustCountVO retvo = null;
 			for(CustCountVO vo : custnumlist){
-				if(StringUtil.isEmpty(vo.getPk_corp()) || StringUtil.isEmpty(vo.getIndustry()) || StringUtil.isEmpty(vo.getChargedeptname())){
+				if(StringUtil.isEmpty(vo.getPk_corp()) || StringUtil.isEmpty(vo.getIndustrycode()) || StringUtil.isEmpty(vo.getChargedeptname())){
 					continue;
 				}
-				if(pklist.contains(vo.getIndustry())){
-					key = vo.getPk_corp()+""+vo.getIndustry()+""+vo.getChargedeptname();
+				if(codelist.contains(vo.getIndustrycode())){
+					key = vo.getPk_corp()+""+vo.getIndustrycode()+""+vo.getChargedeptname();
 				}else{
 					key = vo.getPk_corp()+"others"+vo.getChargedeptname();
 				}
@@ -161,7 +165,7 @@ public class CustManageRepImpl implements ICustManageRep {
 	}
 	
 	/**
-	 * 行业按照会计工资主键、行业、纳税人资格进行分类汇总
+	 * 行业按照会计公司主键、行业（大类编码）、纳税人资格进行分类汇总
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
@@ -170,15 +174,35 @@ public class CustManageRepImpl implements ICustManageRep {
 	private List<CustCountVO> qryIndustryNum(QryParamVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, p.industry, p.chargedeptname, count(p.pk_corp) as num \n")  ;
-		sql.append("  FROM bd_corp p \n")  ; 
-		sql.append("  LEFT JOIN ynt_franchisee f ON p.fathercorp = f.pk_corp \n")  ; 
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n")  ; 
-		sql.append("   AND nvl(f.dr, 0) = 0 \n")  ; 
-		sql.append("   AND nvl(f.isreport, 'N') = 'Y' \n")  ; 
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
-		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname, p.industry) \n")  ; 
-		sql.append(" ORDER BY num DESC \n");
+		sql.append("SELECT fathercorp as pk_corp, \n") ;
+		sql.append("       chargedeptname, \n") ; 
+		sql.append("       industrycode,\n") ; 
+		sql.append("       count(pk_corp) as num \n") ; 
+		sql.append("  FROM (SELECT p.fathercorp,\n") ; 
+		sql.append("               p.pk_corp,\n") ; 
+		sql.append("               p.chargedeptname,\n") ; 
+		sql.append("               (case \n") ; 
+		sql.append("                 when length(trade.tradecode) = 4 then \n") ; 
+		sql.append("                  substr(trade.tradecode, 0, 2)\n") ; 
+		sql.append("                 else \n") ; 
+		sql.append("                  trade.tradecode \n") ; 
+		sql.append("               end) industrycode \n") ; 
+		sql.append("          FROM bd_corp p \n") ; 
+		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
+		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n") ; 
+		sql.append("         WHERE nvl(p.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
+		sql.append("           AND p.fathercorp NOT IN \n") ; 
+		sql.append("               (SELECT f.pk_corp \n") ; 
+		sql.append("                  FROM ynt_franchisee f \n") ; 
+		sql.append("                 WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y'))\n") ; 
+		sql.append(" WHERE industrycode IS NOT NULL \n") ; 
+		sql.append("   AND chargedeptname IS NOT NULL \n") ; 
+		sql.append(" GROUP BY fathercorp, chargedeptname, industrycode \n") ; 
+		sql.append(" ORDER BY num DESC");
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 	}
@@ -189,28 +213,14 @@ public class CustManageRepImpl implements ICustManageRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
-	private List<String> qryIndustryPk(QryParamVO paramvo) throws DZFWarpException {
+	private List<String> qryIndustryCode(QryParamVO paramvo) throws DZFWarpException {
 		List<String> retlist = new ArrayList<String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.industry, count(p.pk_corp) as num \n");
-		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN ynt_franchisee f ON p.fathercorp = f.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(f.dr, 0) = 0 \n");
-		sql.append("   AND nvl(f.isreport, 'N') = 'Y' \n");
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
-		sql.append(" GROUP BY p.industry \n");
-		sql.append(" ORDER BY num DESC \n");
-		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-		if(list != null && list.size() > 0){
-			for(CustCountVO vo : list){
-				if(!StringUtil.isEmpty(vo.getIndustry())){
-					retlist.add(vo.getIndustry());
+		List<CustCountVO> countlist = queryIndustry(paramvo);
+		if(countlist != null && countlist.size() > 0){
+			for(CustCountVO vo : countlist){
+				if(!StringUtil.isEmpty(vo.getIndustrycode())){
+					retlist.add(vo.getIndustrycode());
 					if(retlist != null && retlist.size() == 5){
-						retlist.add("others");
 						break;
 					}
 				}
@@ -225,22 +235,36 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<CustCountVO> retlist = new ArrayList<CustCountVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.industry, count(p.pk_corp) as num \n");
-		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN ynt_franchisee f ON p.fathercorp = f.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(f.dr, 0) = 0 \n");
-		sql.append("   AND nvl(f.isreport, 'N') = 'Y' \n");
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
-		sql.append(" GROUP BY p.industry \n");
+		sql.append("SELECT industrycode, count(pk_corp) as num \n") ;
+		sql.append("  FROM (SELECT p.pk_corp,\n") ; 
+		sql.append("               (case \n") ; 
+		sql.append("                 when length(trade.tradecode) = 4 then \n") ; 
+		sql.append("                  substr(trade.tradecode, 0, 2)\n") ; 
+		sql.append("                 else \n") ; 
+		sql.append("                  trade.tradecode \n") ; 
+		sql.append("               end) industrycode \n") ; 
+		sql.append("          FROM bd_corp p \n") ; 
+		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
+		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n") ; 
+		sql.append("         WHERE nvl(p.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
+		sql.append("           AND p.fathercorp NOT IN \n") ; 
+		sql.append("               (SELECT f.pk_corp \n") ; 
+		sql.append("                  FROM ynt_franchisee f \n") ; 
+		sql.append("                 WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y'))\n") ; 
+		sql.append(" WHERE industrycode IS NOT NULL \n") ; 
+		sql.append(" GROUP BY industrycode \n") ; 
 		sql.append(" ORDER BY num DESC \n");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 		if(list != null && list.size() > 0){
 			Map<String,String> trademap = queryTrade();
 			for(CustCountVO vo : list){
-				if(!StringUtil.isEmpty(vo.getIndustry())){
-					vo.setIndustryname(trademap.get(vo.getIndustry()));
+				if(!StringUtil.isEmpty(vo.getIndustrycode())){
+					vo.setIndustryname(trademap.get(vo.getIndustrycode()));
 					retlist.add(vo);
 					if(retlist != null && retlist.size() == 5){
 						CustCountVO countvo = new CustCountVO();
@@ -265,7 +289,15 @@ public class CustManageRepImpl implements ICustManageRep {
 		BDTradeVO[] tradeVOs = (BDTradeVO[]) singleObjectBO.queryByCondition(BDTradeVO.class, sql.toString(), null);
 		if(tradeVOs != null && tradeVOs.length > 0){
 			for(BDTradeVO vo : tradeVOs){
-				map.put(vo.getPk_trade(), vo.getTradename());
+				if(!StringUtil.isEmpty(vo.getTradecode()) ){
+					if(vo.getTradecode().indexOf("Z") != -1){
+						map.put(vo.getTradecode(), vo.getTradename());
+					}else{
+						if(vo.getTradecode().length() == 2){
+							map.put(vo.getTradecode(), vo.getTradename());
+						}
+					}
+				}
 			}
 		}
 		return map;

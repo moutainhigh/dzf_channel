@@ -90,7 +90,7 @@ function getArrayColumns(){
 					column2["halign"] = 'center'; 
 					column2["align"] = 'right'; 
 					columnsb.push(column2); 
-					for(var i = 0; i < 6; i++){
+					for(var i = 0; i < rows.length; i++){
 						var column1 = {};
 						column1["title"] = '小规模';  
 						column1["field"] = 'rates'+(i+1);  
