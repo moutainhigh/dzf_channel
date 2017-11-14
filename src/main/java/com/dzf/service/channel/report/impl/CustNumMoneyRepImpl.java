@@ -377,15 +377,15 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 				countvo.setPk_corp(vo.getPk_corp());
 				if ("小规模纳税人".equals(vo.getChargedeptname())) {
 					if (qrytype == 1) {
-						countvo.setIstockcustsmall(vo.getNum());
+						countvo.setIstockcustsmall(vo.getNum());//存量客户-小规模
 					} else if (qrytype == 2) {
-						countvo.setInewcustsmall(vo.getNum());
+						countvo.setInewcustsmall(vo.getNum());//新增客户-小规模
 					}
 				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
 					if (qrytype == 1) {
-						countvo.setIstockcusttaxpay(vo.getNum());
+						countvo.setIstockcusttaxpay(vo.getNum());//存量客户-一般纳税人
 					} else if (qrytype == 2) {
-						countvo.setInewcusttaxpay(vo.getNum());
+						countvo.setInewcusttaxpay(vo.getNum());//新增客户-一般纳税人
 					}
 				}
 				custmap.put(vo.getPk_corp(), countvo);
@@ -393,14 +393,18 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 				countvo = custmap.get(vo.getPk_corp());
 				if ("小规模纳税人".equals(vo.getChargedeptname())) {
 					if (qrytype == 1) {
+						//存量客户-小规模
 						countvo.setIstockcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
 					} else if (qrytype == 2) {
+						//新增客户-小规模
 						countvo.setInewcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
 					}
 				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
 					if (qrytype == 1) {
+						//存量客户-一般纳税人
 						countvo.setIstockcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
 					} else if (qrytype == 2) {
+						//新增客户-一般纳税人
 						countvo.setInewcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
 					}
 				}
