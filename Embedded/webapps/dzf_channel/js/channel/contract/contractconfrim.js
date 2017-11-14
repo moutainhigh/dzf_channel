@@ -66,10 +66,15 @@ function load(){
 			hidden : true
 		}, {
 			width : '150',
+			title : '提交时间',
+			halign:'center',
+			field : 'submitime',
+		}, {
+			width : '150',
 			title : '地区',
 			halign:'center',
 			field : 'area',
-		},{
+		}, {
 			width : '140',
 			title : '加盟商',
 			halign:'center',

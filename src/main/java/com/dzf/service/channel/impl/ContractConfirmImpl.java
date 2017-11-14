@@ -194,15 +194,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append("   AND dbegindate >= ? \n") ; 
-				spm.addParam(paramvo.getBegdate());
+				sql.append("   AND dsubmitime >= ? \n") ; 
+				spm.addParam(paramvo.getBegdate() + " 00:00:00");
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append("   AND dbegindate <= ? \n") ; 
-				spm.addParam(paramvo.getEnddate());
+				sql.append("   AND dsubmitime <= ? \n") ; 
+				spm.addParam(paramvo.getEnddate() + " 23:59:59");
 			}
 		}
-		sql.append(" order by ts desc");
+		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -236,15 +236,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append("   AND con.dbegindate >= ? \n") ; 
-				spm.addParam(paramvo.getBegdate());
+				sql.append("   AND con.dsubmitime >= ? \n") ; 
+				spm.addParam(paramvo.getBegdate() + " 00:00:00");
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append("   AND con.dbegindate <= ? \n") ; 
-				spm.addParam(paramvo.getEnddate());
+				sql.append("   AND con.dsubmitime <= ? \n") ; 
+				spm.addParam(paramvo.getEnddate() + " 23:59:59");
 			}
 		}
-		sql.append(" order by con.ts desc");
+		sql.append(" order by con.dsubmitime desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
