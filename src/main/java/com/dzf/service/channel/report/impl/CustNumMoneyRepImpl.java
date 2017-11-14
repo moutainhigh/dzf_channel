@@ -22,7 +22,6 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
-import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
 
@@ -46,11 +45,9 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		String preperiod = getPreviousMonth(paramvo.getPeriod());
 		paramvo.setPeriod(preperiod);
 		
-		//1.4、查询上一个月存量客户数量、合同金额
-		Map<String,CustCountVO> laststockmap = queryStockNumMny(paramvo, corplist);
-		//1.5、查询上一个月新增客户数量、合同金额
+		//1.4、查询上一个月新增客户数量、合同金额
 		Map<String, CustCountVO> lastnewmap = queryNumMnyByType(paramvo, corplist, 1);
-		//1.6、查询上一个月续费客户数量、合同金额
+		//1.5、查询上一个月续费客户数量、合同金额
 		Map<String, CustCountVO> lastrenewmap = queryNumMnyByType(paramvo, corplist, 2);
 		
 		if(corplist != null && corplist.size() > 0){
@@ -186,8 +183,10 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("               t.pk_corpk AS pk_corpk, \n") ; 
 		sql.append("               t.ntotalmny AS ntotalmny \n") ; 
 		sql.append("          FROM ynt_contract t \n") ; 
-		sql.append("          LEFT JOIN ynt_franchisee f ON t.pk_corp = f.pk_corp \n") ; 
+		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n") ; 
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(acc.dr, 0) = 0 \n") ;
+		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'\n") ; 
 		sql.append("           AND (t.vbeginperiod = ? OR t.vendperiod = ? OR \n") ; 
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
@@ -196,6 +195,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		spm.addParam(paramvo.getPeriod());
 		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n") ; 
 		sql.append("           AND t.vdeductstatus = 1 \n") ; 
+		sql.append("   AND t.pk_corp NOT IN \n") ; 
+		sql.append("       (SELECT f.pk_corp \n") ; 
+		sql.append("          FROM ynt_franchisee f \n") ; 
+		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		sql.append("           AND NVL(t.isncust, 'N') = 'N') cu \n") ; 
 		sql.append(" GROUP BY pk_corp, chargedeptname");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(CustCountVO.class));
@@ -235,8 +239,15 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("               t.ntotalmny AS ntotalmny,\n");
 		sql.append("               t.pk_corpk AS pk_corpk\n");
 		sql.append("          FROM ynt_contract t\n");
-		sql.append("          LEFT JOIN ynt_franchisee f ON t.pk_corp = f.pk_corp\n");
+		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0\n");
+		sql.append("           AND nvl(acc.dr, 0) = 0\n");
+		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n") ; 
+		sql.append("   AND t.pk_corp NOT IN \n") ; 
+		sql.append("       (SELECT f.pk_corp \n") ; 
+		sql.append("          FROM ynt_franchisee f \n") ; 
+		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		sql.append("           AND SUBSTR(t.dsigndate, 1, 7) = ? \n");
 		spm.addParam(paramvo.getPeriod());
 		sql.append("           AND nvl(t.icontracttype, 1) = 2\n");
@@ -398,53 +409,4 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		return custmap;
 	}
 	
-	
-	/**
-	 * 计算客户合同分类信息
-	 * @param contlist
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private Map<String, CustNumMoneyRepVO> countContNumByType(List<CustCountVO> contlist, Integer qrytype)
-			throws DZFWarpException {
-		Map<String, CustNumMoneyRepVO> map = new HashMap<String, CustNumMoneyRepVO>();
-		CustNumMoneyRepVO custnumvo = null;
-		for (CustCountVO vo : contlist) {
-			if (!map.containsKey(vo.getPk_corp())) {
-				custnumvo = new CustNumMoneyRepVO();
-				custnumvo.setPk_corp(vo.getPk_corp());
-				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-					if (qrytype == 1) {
-						custnumvo.setIstockcontsmall(vo.getSummny());
-					} else if (qrytype == 2) {
-						custnumvo.setInewcontsmall(vo.getSummny());
-					}
-				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-					if (qrytype == 1) {
-						custnumvo.setIstockconttaxpay(vo.getSummny());
-					} else if (qrytype == 2) {
-						custnumvo.setInewconttaxpay(vo.getSummny());
-					}
-				}
-				map.put(vo.getPk_corp(), custnumvo);
-			} else {
-				custnumvo = map.get(vo.getPk_corp());
-				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-					if (qrytype == 1) {
-						custnumvo.setIstockcontsmall(SafeCompute.add(custnumvo.getIstockcontsmall(), vo.getSummny()));
-					} else if (qrytype == 2) {
-						custnumvo.setInewcontsmall(SafeCompute.add(custnumvo.getIstockcontsmall(), vo.getSummny()));
-					}
-				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-					if (qrytype == 1) {
-						custnumvo.setIstockconttaxpay(SafeCompute.add(custnumvo.getIstockconttaxpay(), vo.getSummny()));
-					} else if (qrytype == 2) {
-						custnumvo.setInewconttaxpay(SafeCompute.add(custnumvo.getIstockconttaxpay(), vo.getSummny()));
-					}
-				}
-			}
-		}
-		return map;
-	}
-
 }
