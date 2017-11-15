@@ -229,8 +229,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		sql.append("           AND SUBSTR(t.dsigndate, 1, 7) = ? \n");
 		spm.addParam(paramvo.getPeriod());
-		sql.append("           AND nvl(t.icontracttype, 1) = 2\n");
-		sql.append("           AND t.vdeductstatus = 1\n");
+		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n");
+		sql.append("           AND t.vdeductstatus = 2 \n");//合同状态 = 已审核
 		sql.append("           AND NVL(t.isncust, 'N') = 'N'\n");
 		if (qrytype == 1) {// 新增客户
 			sql.append("           AND t.pk_corpk NOT IN \n");
