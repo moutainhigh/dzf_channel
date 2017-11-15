@@ -193,6 +193,7 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n") ; 
 		sql.append("           AND nvl(t.dr, 0) = 0 \n") ; 
 		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(p.ishasaccount, 'N') = 'Y'\n") ; //已建账
 		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
 		sql.append("           AND p.fathercorp NOT IN \n") ; 
 		sql.append("               (SELECT f.pk_corp \n") ; 
@@ -249,6 +250,7 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n") ; 
 		sql.append("           AND nvl(t.dr, 0) = 0 \n") ; 
 		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(p.ishasaccount, 'N') = 'Y'\n") ;
 		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
 		sql.append("           AND p.fathercorp NOT IN \n") ; 
 		sql.append("               (SELECT f.pk_corp \n") ; 
