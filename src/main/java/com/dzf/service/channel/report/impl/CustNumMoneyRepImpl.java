@@ -42,7 +42,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		//1.3、查询续费客户数量、合同金额
 		Map<String, CustCountVO> renewmap = queryNumMnyByType(paramvo, corplist, 2);
 		
-		String preperiod = getPreviousMonth(paramvo.getPeriod());
+		String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
 		paramvo.setPeriod(preperiod);
 		
 		//1.4、查询上一个月新增客户数量、合同金额
@@ -146,24 +146,6 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 			}
 		}
 		return retlist;
-	}
-	
-	/**
-	 * 获取查询期间的上一个期间
-	 * @param period
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private String getPreviousMonth(String period) throws DZFWarpException {
-		Integer year = Integer.parseInt(period.substring(0, 4));
-		Integer month = Integer.parseInt(period.substring(5));
-		month = month - 1;
-		Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
-		ca.set(year, month, 01);// 月份是从0开始的，所以11表示12月
-		ca.add(Calendar.MONTH, -1); // 月份减1
-		Date lastMonth = ca.getTime(); // 结果
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM");
-		return String.valueOf(sf.format(lastMonth));
 	}
 	
 	/**

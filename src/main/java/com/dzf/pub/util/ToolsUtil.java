@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.lang.DZFDate;
 
 public class ToolsUtil {
@@ -120,5 +121,23 @@ public class ToolsUtil {
 		calendar.setTime(dateFormat.parse(date));
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return dateFormat.format(calendar.getTime());
+	}
+    
+	/**
+	 * 获取查询期间的上一个期间
+	 * @param period
+	 * @return
+	 * @throws DZFWarpException
+	 */
+    public static String getPreviousMonth(String period) throws DZFWarpException {
+		Integer year = Integer.parseInt(period.substring(0, 4));
+		Integer month = Integer.parseInt(period.substring(5));
+		month = month - 1;
+		Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
+		ca.set(year, month, 01);// 月份是从0开始的，所以11表示12月
+		ca.add(Calendar.MONTH, -1); // 月份减1
+		Date lastMonth = ca.getTime(); // 结果
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM");
+		return String.valueOf(sf.format(lastMonth));
 	}
 }
