@@ -179,7 +179,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM ynt_franchisee f \n") ; 
 		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("           AND NVL(t.isncust, 'N') = 'N') cu \n") ; 
+		sql.append("           AND NVL(t.isncust, 'N') = 'Y') cu \n") ; 
 		sql.append(" GROUP BY pk_corp, chargedeptname");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(CustCountVO.class));
 		if(list != null && list.size() > 0){
@@ -239,8 +239,15 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		}
 		sql.append("               (SELECT t.pk_corpk AS pk_corpk\n");
 		sql.append("                  FROM ynt_contract t\n");
-		sql.append("                  LEFT JOIN ynt_franchisee f ON t.pk_corp = f.pk_corp\n");
+		sql.append("                  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp\n");
 		sql.append("                 WHERE nvl(t.dr, 0) = 0\n");
+		sql.append("                   AND nvl(acc.dr, 0) = 0\n");
+		sql.append("                   AND nvl(acc.ischannel, 'N') = 'Y'\n") ;
+		sql.append("   AND t.pk_corp NOT IN \n") ; 
+		sql.append("       (SELECT f.pk_corp \n") ; 
+		sql.append("          FROM ynt_franchisee f \n") ; 
+		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		sql.append("                   AND SUBSTR(t.dsigndate, 1, 7) > ? \n");
 		spm.addParam(paramvo.getPeriod());
 		sql.append("                   AND nvl(t.icontracttype, 1) = 2\n");
