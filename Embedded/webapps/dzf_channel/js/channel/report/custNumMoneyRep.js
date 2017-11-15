@@ -69,17 +69,30 @@ function load(){
             { field : 'renewconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
             { field : 'renewcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
             
-            { field : 'newcustrates', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'newcustratet', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'newcontrates', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'newcontratet', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcustrates', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcustratet', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcontrates', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
+            { field : 'newcustrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'newcustratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'newcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'newcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcustrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcustratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
             
         ] ],
 	});
+}
+
+/**
+ * 金额数据格式化
+ * @param value
+ * @returns {String}
+ */
+function formatLocalMny(value){
+	if(value == "0.00000000"){
+		return "--";
+	}else{
+		formatMny(value);
+	}
 }
 
 /**
