@@ -173,7 +173,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n") ; 
-		sql.append("           AND t.vdeductstatus = 1 \n") ; 
+		sql.append("           AND t.vdeductstatus = 2 \n") ; //合同状态 = 已审核
 		sql.append("   AND t.pk_corp NOT IN \n") ; 
 		sql.append("       (SELECT f.pk_corp \n") ; 
 		sql.append("          FROM ynt_franchisee f \n") ; 
