@@ -111,6 +111,17 @@ public class CustNumMoneyRepVO extends SuperVO {
 	
 	@FieldAlias("lastrenewcontt")
 	private DZFDouble ilastrenewconttaxpay;//续费客户合同-一般纳税人
+	
+	@FieldAlias("custsum")
+	private Integer icustsum;//客户合计
+
+	public Integer getIcustsum() {
+		return icustsum;
+	}
+
+	public void setIcustsum(Integer icustsum) {
+		this.icustsum = icustsum;
+	}
 
 	public Integer getIlastnewcustsmall() {
 		return ilastnewcustsmall;

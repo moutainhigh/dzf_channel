@@ -1,5 +1,6 @@
 package com.dzf.pub.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -105,4 +106,19 @@ public class ToolsUtil {
   
         return map;  
     }
+    
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
+    /**
+     * 获取月末日期
+     * @param date
+     * @return
+     * @throws ParseException
+     */
+    public static String getMaxMonthDate(String date) throws ParseException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateFormat.parse(date));
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return dateFormat.format(calendar.getTime());
+	}
 }

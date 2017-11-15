@@ -328,8 +328,10 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
 		sql.append(" WHERE nvl(p.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(t.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n") ; 
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n") ; 
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n") ; //渠道客户
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n") ; //未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");//已建账
+		sql.append("   AND p.chargedeptname is not null \n");//纳税人性质不能为空
 		sql.append("   AND p.fathercorp NOT IN \n") ; 
 		sql.append("       (SELECT f.pk_corp \n") ; 
 		sql.append("          FROM ynt_franchisee f \n") ; 
@@ -388,6 +390,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 						countvo.setInewcusttaxpay(vo.getNum());//新增客户-一般纳税人
 					}
 				}
+				countvo.setIcustsum(vo.getNum());//客户合计
 				custmap.put(vo.getPk_corp(), countvo);
 			} else {
 				countvo = custmap.get(vo.getPk_corp());
@@ -408,6 +411,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 						countvo.setInewcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
 					}
 				}
+				countvo.setIcustsum(ToolsUtil.addInteger(countvo.getIcustsum(), vo.getNum()));//客户合计
 			}
 		}
 		return custmap;

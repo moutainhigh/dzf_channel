@@ -1,5 +1,6 @@
 package com.dzf.service.channel.report.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +17,14 @@ import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
+import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
 
@@ -38,7 +42,15 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
-		List<CustCountVO> custlist = (List<CustCountVO>) queryCustNum(paramvo);
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			try {
+				String begindate = ToolsUtil.getMaxMonthDate(paramvo.getPeriod()+"-01");
+				paramvo.setBegdate(new DZFDate(begindate));
+			} catch (ParseException e) {
+				throw new BusinessException("日期格式转换错误");
+			}
+		}
+		List<CustCountVO> custlist = (List<CustCountVO>) custServ.queryCustNum(paramvo,1);
 		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
 		CustNumMoneyRepVO custnumvo = null;
 		FinanceDealStateRepVO retvo = null;
@@ -86,33 +98,33 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
-	public List<CustCountVO> queryCustNum(QryParamVO paramvo) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, \n");
-		sql.append("	nvl(p.chargedeptname,'小规模纳税人') as chargedeptname,  \n");
-		sql.append("	count(p.pk_corp) as num \n");
-		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(acc.dr, 0) = 0 \n") ;
-		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n") ; 
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");//已建账
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//未封存
-		sql.append("   AND p.fathercorp NOT IN \n") ; 
-		sql.append("       (SELECT f.pk_corp \n") ; 
-		sql.append("          FROM ynt_franchisee f \n") ; 
-		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		if(StringUtil.isEmpty(paramvo.getPeriod())){
-			sql.append("   AND SUBSTR(p.createdate, 1, 7) <= ? \n");
-			spm.addParam(paramvo.getPeriod());
-		}
-		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
-		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-	}
+//	@SuppressWarnings("unchecked")
+//	public List<CustCountVO> queryCustNum(QryParamVO paramvo) throws DZFWarpException {
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter spm = new SQLParameter();
+//		sql.append("SELECT p.fathercorp as pk_corp, \n");
+//		sql.append("	nvl(p.chargedeptname,'小规模纳税人') as chargedeptname,  \n");
+//		sql.append("	count(p.pk_corp) as num \n");
+//		sql.append("  FROM bd_corp p \n");
+//		sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp \n");
+//		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
+//		sql.append("   AND nvl(acc.dr, 0) = 0 \n") ;
+//		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n") ; 
+//		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");//已建账
+//		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//未封存
+//		sql.append("   AND p.fathercorp NOT IN \n") ; 
+//		sql.append("       (SELECT f.pk_corp \n") ; 
+//		sql.append("          FROM ynt_franchisee f \n") ; 
+//		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
+//		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+//		if(StringUtil.isEmpty(paramvo.getPeriod())){
+//			sql.append("   AND SUBSTR(p.createdate, 1, 7) <= ? \n");
+//			spm.addParam(paramvo.getPeriod());
+//		}
+//		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
+//		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+//				new BeanListProcessor(CustCountVO.class));
+//	}
 	
 	/**
 	 * 客户占比计算
