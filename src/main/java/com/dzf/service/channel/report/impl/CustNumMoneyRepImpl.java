@@ -270,29 +270,35 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	
 	/**
 	 * 整数类型增长率计算方法
-	 * @param num1
-	 * @param num2
+	 * @param num1  本月数据
+	 * @param num2 上月数据
 	 * @return
 	 */
 	@Override
 	public DZFDouble getCustRate(Integer num1, Integer num2) throws DZFWarpException {
 		DZFDouble num3 = num1 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num1);
 		DZFDouble num4 = num2 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num2);
-		DZFDouble num = num4.sub(num3);
-		return num3.div(num).multiply(100);
+		if(DZFDouble.ZERO_DBL.compareTo(num4) == 0){
+			return DZFDouble.ZERO_DBL;
+		}
+		DZFDouble num = num3.sub(num4);
+		return num.div(num2).multiply(100);
 	}
 	
 	/**
 	 * DZFDouble类型增长率计算方法
-	 * @param num1
-	 * @param num2
+	 * @param num1  本月数据
+	 * @param num2 上月数据
 	 * @return
 	 */
 	private DZFDouble getContRate(DZFDouble num1, DZFDouble num2) throws DZFWarpException {
 		num1 = num1 == null ? DZFDouble.ZERO_DBL : num1;
 		num2 = num2 == null ? DZFDouble.ZERO_DBL : num2;
-		DZFDouble num = num2.sub(num1);
-		return num1.div(num).multiply(100);
+		if(DZFDouble.ZERO_DBL.compareTo(num2) == 0){
+			return DZFDouble.ZERO_DBL;
+		}
+		DZFDouble num = num1.sub(num2);
+		return num.div(num2).multiply(100);
 	}
 	
 	/**
