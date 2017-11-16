@@ -131,6 +131,12 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	public void bathconfrim(){
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			String contract = getRequest().getParameter("contract"); // 审核数据
 			if(StringUtil.isEmpty(contract)){
 				throw new BusinessException("数据不能为空");
