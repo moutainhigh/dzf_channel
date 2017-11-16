@@ -88,10 +88,19 @@ function load(){
  * @returns {String}
  */
 function formatLocalMny(value){
-	if(value == "0.00000000"){
+	console.info(value);
+	if(value == null){
+		return;
+	}
+	if(getFloatValue(value) == parseFloat(0)){
 		return "--";
 	}else{
-		formatMny(value);
+		if(isContains(value,"-")){
+		    var mid = value.substring(1);
+		    return "-"+formatMny(value);
+		}else{
+			return formatMny(value);
+		}
 	}
 }
 

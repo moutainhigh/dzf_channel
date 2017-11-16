@@ -461,3 +461,13 @@ function qryBusiType(row){
 	$('#ywlxDlg').dialog('close');
 	
 }
+
+/**
+ * 字符串是否包含某字符
+ * @param str
+ * @param substr
+ * @returns
+ */
+function isContains(str, substr) {
+    return new RegExp(substr).test(str);
+}

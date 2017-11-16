@@ -278,6 +278,9 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	public DZFDouble getCustRate(Integer num1, Integer num2) throws DZFWarpException {
 		DZFDouble num3 = num1 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num1);
 		DZFDouble num4 = num2 == null ? DZFDouble.ZERO_DBL : new DZFDouble(num2);
+		if(DZFDouble.ZERO_DBL.compareTo(num3) == 0){
+			return DZFDouble.ZERO_DBL;
+		}
 		if(DZFDouble.ZERO_DBL.compareTo(num4) == 0){
 			return DZFDouble.ZERO_DBL;
 		}
@@ -294,6 +297,9 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	private DZFDouble getContRate(DZFDouble num1, DZFDouble num2) throws DZFWarpException {
 		num1 = num1 == null ? DZFDouble.ZERO_DBL : num1;
 		num2 = num2 == null ? DZFDouble.ZERO_DBL : num2;
+		if(DZFDouble.ZERO_DBL.compareTo(num1) == 0){
+			return DZFDouble.ZERO_DBL;
+		}
 		if(DZFDouble.ZERO_DBL.compareTo(num2) == 0){
 			return DZFDouble.ZERO_DBL;
 		}
