@@ -26,6 +26,7 @@ import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
@@ -79,6 +80,12 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	public void operate() {
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			String data = getRequest().getParameter("data"); // 操作数据
 			if(StringUtil.isEmpty(data)){
 				throw new BusinessException("数据不能为空");
