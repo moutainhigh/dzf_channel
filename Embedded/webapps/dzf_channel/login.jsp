@@ -324,8 +324,7 @@ function savePsw(){
 						</p>
 					</div>
 					<div class="zidong">
-						<!-- <P><input type="checkbox" name="auto" value="1"><span>自动登录</span></P> -->
-						<P><a href="<%=request.getContextPath()%>/searchPsw.jsp"><span>忘记密码</span></a> </P>
+						<%-- <P><a href="<%=request.getContextPath()%>/searchPsw.jsp"><span>忘记密码</span></a> </P> --%>
 					</div>
 					<div class="jinru">
 						<button type="button" onclick="loginForm()">登录</button>

@@ -15,11 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.dzf.pub.IGlobalConstants;
-import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.NodeUrlConst;
 import com.dzf.pub.cache.ServletRequestCache;
 import com.dzf.pub.framework.rsa.RSACoderUtils;
-import com.dzf.pub.framework.rsa.XwwyAppRSACoderUtils;
 /**
  * @author   
  * 
@@ -88,93 +86,28 @@ public class UrlFilter implements Filter {
 	        	return;
 			}
 			//二维码
-			if ((url.endsWith(".eot")) || (url.endsWith(".svg"))
-			    		|| (url.endsWith(".ttf")) || (url.endsWith(".woff"))) {
-			        filterChain.doFilter(request, response);
-			        return;
-			 }
+//			if ((url.endsWith(".eot")) || (url.endsWith(".svg"))
+//			    		|| (url.endsWith(".ttf")) || (url.endsWith(".woff"))) {
+//			        filterChain.doFilter(request, response);
+//			        return;
+//			 }
 			 
 //			if(url.endsWith("qrcheck!doQRCodeCheck.action") || url.endsWith("qrcheck!doQRLogin.action")){
 //				filterChain.doFilter(request, response);
 //				return;
 //			}
-			//webservice hzp add
-			if(url.contains("/services/YscsService")){
-		        filterChain.doFilter(request, response);
-		        return;	
-			}
 			
-			if(url.contains("/hessian")){
-				filterChain.doFilter(request, response);
-	        	return;
-			}
-			// 小薇无忧
-	        if (url != null) {
-	            if (url.endsWith("/xwwy_app/busidata!dealData.action")) {
-	                String operate = request.getParameter("operate");
-	                if (StringUtil.isEmpty(operate)) {
-	                    session.setAttribute("errorMsg", "操作状态为空。");
-	                    return;
-	                }
-	                if (Integer.parseInt(operate) == 1 || Integer.parseInt(operate) == 7 ||Integer.parseInt(operate)==9) {
-	                    filterChain.doFilter(request, response);
-	                    return;
-	                } else {
-	                    String token = request.getParameter("token");
-	                    String xwwy_sesssionid = request.getParameter("xwwy_sessionid");
-	                    String userid = request.getParameter("userid");
-	                    String corp_id = request.getParameter("corp_id");
-	                    
-	                    session.setAttribute(IGlobalConstants.login_user, userid);
-	                    session.setAttribute(IGlobalConstants.login_corp, corp_id);
-	                    session.setAttribute("xwwy_sessionid", xwwy_sesssionid);
-	                    session.setAttribute(IGlobalConstants.login_token, token);
-	                    
-	                    if (StringUtil.isEmptyWithTrim(token) == false) {
-	                        try {
-	                            if (session != null) {
-	                                boolean b = XwwyAppRSACoderUtils.validateToken(session);
-	                                if (b) {
-	                                    filterChain.doFilter(request, response);
-	                                }else{
-	                                	response.getWriter().write("{\"sessiontimeout\":true}");
-	            	                    return;
-	                                }
-	                            }
-	                        } catch (Exception e) {
-	                            session.setAttribute("errorMsg", e.getMessage());
-	                            response.getWriter().write("{\"sessiontimeout\":true}");
-	                            return;
-	                        }
-	                    }
-	                }
-	            }else if(url.endsWith("/xwwy_app/upload!uploadFile.action")){
-	            	filterChain.doFilter(request, response);
-                    return;
-	            }
-	        }
+//			if(url.contains("/hessian")){
+//				filterChain.doFilter(request, response);
+//	        	return;
+//			}
 
 			String contextPath = req.getContextPath();
 			if(contextPath.equals("/")){
 				contextPath = "";
 			}
 		    if(!url.equals(contextPath+"/sys/sm_user!channelLogin.action") && !url.equals(contextPath+"/")  && !url.equals(contextPath+"/index.jsp") 
-		    		&& !url.equals(contextPath+"/bingtu.html")&& !url.equals(contextPath+"/sys/sm_user!logout.action")
-		    		&& !url.equals(contextPath+"/sys/sm_user!updatePsw.action") && !url.equals(contextPath+"/sys/sm_user!updatePwdLogin.action")
-		    		&& !url.equals(contextPath+"/help.html") && !url.equals(contextPath+"/files/manage-help.docx")
-		    		&& !url.endsWith("/searchPsw.jsp")
-		    		&& !url.equals(contextPath+"/st/searchPsw!getPswBack.action")
-		    		&& !url.equals(contextPath+"/st/searchPsw!sandYZcode.action")
-		    		&& !url.equals(contextPath+"/selcomp.jsp")
-		    		&& !url.equals(contextPath+"/sys/sm_user!gsQueryAdmin.action")
-		    		&& !url.equals(contextPath+"/sys/sm_user!gsSelectAdmin.action")
-		    		&& !url.equals(contextPath+"/ref/select_area.jsp")
-		    		&& !url.equals(contextPath+"/area/areasearch!query.action")
-		    		&& !url.equals(contextPath + "/sys/sys_corpskinact!modifyKsin.action")
-		    		&& !url.endsWith(contextPath + "/app/loginqr!getQRCode2.action")
-					&& !url.endsWith(contextPath + "/app/loginqr!longConnCheck2.action")
-//					&& !url.contains(contextPath + "/app/loginqr!photologin.action")
-//					&& !url.contains(contextPath + "/app/loginqr!doQRlogin.action")
+		    		&& !url.equals(contextPath+"/sys/sm_user!logout.action")
 		    		){
 		    	Set<String> powerMap = (Set<String>)session.getAttribute(IGlobalConstants.POWER_MAP);
 				boolean b=false;
