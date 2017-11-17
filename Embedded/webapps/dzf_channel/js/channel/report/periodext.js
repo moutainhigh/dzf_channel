@@ -3,12 +3,12 @@
  * 按钮点击事件
  * @param fun
  */
-function click_icon(top, left, fun){
+function click_icon(top, left, begperiod, year, month, fun){
 	if($('body').find("#livediv").length == 0){
-		showPanel(top, left);
+		showPanel(top, left, begperiod, year, month);
 	}else{
 		$("#livediv").remove();
-		showPanel(top, left);
+		showPanel(top, left, begperiod, year, month);
 	}
 	$(".add_price #cardPanel").scroll(function(){
 		$("#livediv").remove();
@@ -83,12 +83,13 @@ function stopPropagation(e) {
  * @param top
  * @param left
  */
-function showPanel(top,left){
+function showPanel(top, left, begperiod, year, month){
+	
 	$('body').append(
 			"<div id='livediv' data-options='modal:true' style='background:white;width:202px;height:190px;z-index:999999;position:absolute;top:"+top+"px;left:"+left+"px;border:1px solid #ccc;overflow:hidden;'>" +
 				"<div class='date_title' style='width:394px;height:18px;font-size:14px;padding:6px 5px;background: #e9edf3;'>" +
 					"<div style='float:left;'>" +
-						"<span style='margin:0 6px;'></span>"+"<input class='begin_date' style='width:70px;height:18px;border-radius:5px;' type='text' value='2017-01' readonly>"+
+						"<span style='margin:0 6px;'></span>"+"<input class='begin_date' style='width:70px;height:18px;border-radius:5px;' type='text' value='"+begperiod+"' readonly>"+
 					"</div>"+
 					"<div style='float:left;'>" +
 						"<p class='certain'>确定</p>"+"<p class='cancels'>取消</p>"+
@@ -97,7 +98,7 @@ function showPanel(top,left){
 				"<div class='date_impor' style='width:392px;height:156px;padding:0 5px 10px 5px;text-align:center;'>" +
 					"<div class='first_body' style='float:left;margin-right:8px;width:190px;border:1px solid #b7b7b7;'>" +
 						"<span class='first_left' style='width:32px;height:32px;background:#eaeaea;display:inline-block; line-height:32px;font-size:14px;color:#000'>&lt</span>" +
-						"<span class='first_year' style='width:126px;height:32px;display:inline-block;line-height:32px'>2017</span>"+
+						"<span class='first_year' style='width:126px;height:32px;display:inline-block;line-height:32px'>"+year+"</span>"+
 						"<span style='width:32px;height:32px;background:#eaeaea;display:inline-block;line-height:32px;font-size:14px;color:#000' class='first_right'>&gt</span>"+
 						"<div class='first_body_month'>" +
 							"<span class='blue'>01月</span>" +"<span>02月</span>" +"<span>03月</span>" +"<span>04月</span>" +
@@ -108,6 +109,8 @@ function showPanel(top,left){
 				"</div>"+
 			"</div>"+
 		"</div>"); 
+	$('.first_body_month span').removeClass("blue");
+	$('.first_body_month span').eq(month).addClass("blue");
 }
 
 /**

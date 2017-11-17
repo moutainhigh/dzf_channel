@@ -71,13 +71,28 @@ function reloadData(){
  * 查询期间初始化
  */
 function initQryPeroid(){
+	var begperiod = $('#qryperiod').textbox('getValue');
+	var year = "";
+	var month = "";
+	if(!isEmpty(begperiod)){
+		year = begperiod.substring(0,4);
+		month = begperiod.substring(5);
+		month = parseInt(month) - 1;
+	}
 	$('#qryperiod').textbox({
 		icons: [{
 			iconCls:'foxdate',
 			handler: function(e){
-				click_icon(50, 90, function(val){
+				click_icon(50, 90, begperiod, year, month, function(val){
 					if(!isEmpty(val)){
+						console.info(val);
 						$('#qryperiod').textbox('setValue', val);
+						begperiod = val;
+						if(!isEmpty(begperiod)){
+							year = begperiod.substring(0,4);
+							month = begperiod.substring(5);
+							month = parseInt(month) - 1;
+						}
 					}
 				})
 			}
