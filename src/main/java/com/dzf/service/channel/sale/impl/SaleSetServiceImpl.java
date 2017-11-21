@@ -33,8 +33,8 @@ public class SaleSetServiceImpl implements ISaleSetService{
 		sp.addParam(pk_corp);
 		SaleSetVO[] vos = (SaleSetVO[])singleObjectBO.queryByCondition(SaleSetVO.class, sql.toString(), sp);
 		if(vos!=null&&vos.length>0){
-			if(!StringUtil.isEmpty(vo.getLastmodifypsnid())){
-				UserVO uvo =  UserCache.getInstance().get(vo.getLastmodifypsnid(), null);
+			if(!StringUtil.isEmpty(vos[0].getLastmodifypsnid())){
+				UserVO uvo =  UserCache.getInstance().get(vos[0].getLastmodifypsnid(), null);
 				vos[0].setLastmodifypsn(uvo.getUser_name());
 			}
 			return vos[0];
