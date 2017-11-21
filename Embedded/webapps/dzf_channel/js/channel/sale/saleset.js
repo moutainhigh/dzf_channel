@@ -60,7 +60,7 @@ function history(){
 			url : DZF.contextPath + '/sale/saleset!history.action',
 			striped : true,
 			title : '',
-			width :'50%',
+			width :'100%',
 			fitColumns : true,
 			rownumbers : true,
 			singleSelect : true,
