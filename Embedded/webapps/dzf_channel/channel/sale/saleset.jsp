@@ -97,7 +97,7 @@
 				</div>
 			</form>
 		</div>
-		<div id="dialog" class="easyui-dialog" style="width:1100px;height:500px;" data-options="closed:true">
+		<div id="dialog" class="easyui-dialog" style="width:500px;height:500px;" data-options="closed:true">
 			<table id="grid" style="height:98%;"></table>
 		</div>
 	</div>

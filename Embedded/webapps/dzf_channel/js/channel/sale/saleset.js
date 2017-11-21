@@ -60,12 +60,12 @@ function history(){
 			url : DZF.contextPath + '/sale/saleset!history.action',
 			striped : true,
 			title : '',
-			width :'100%',
+			width :'50%',
 			fitColumns : true,
 			rownumbers : true,
 			singleSelect : true,
-			columns : [ [ {field : 'lsdate',title : '变更操作日期',width : 80,align : 'center'}, 
-			              {field : 'lmpsn',title : '变更人',width : 80,align : 'center'}, 
+			columns : [ [ {field : 'lsdate',title : '变更操作日期',width : 40,align : 'center'}, 
+			              {field : 'lmpsn',title : '变更人',width : 40,align : 'center'}, 
 			             ] ],
 		});
 }
