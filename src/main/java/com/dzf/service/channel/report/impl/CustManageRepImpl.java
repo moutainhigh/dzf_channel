@@ -47,6 +47,7 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<String> codelist = qryIndustryCode(paramvo);//排行前五行业主键
 		List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
 		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
+		codelist.add("others");
 		String[] industrys = new String[]{"小规模纳税人","一般纳税人"};
 		CustCountVO industryvo = null;
 		DZFDouble rate = DZFDouble.ZERO_DBL;
@@ -199,7 +200,9 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("               (SELECT f.pk_corp \n") ; 
 		sql.append("                  FROM ynt_franchisee f \n") ; 
 		sql.append("                 WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("                   AND nvl(f.isreport, 'N') = 'Y'))\n") ; 
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')\n") ; 
+		sql.append("           AND p.chargedeptname IS NOT NULL \n") ;
+		sql.append("           AND p.Industry IS NOT NULL )\n") ;
 		sql.append(" WHERE industrycode IS NOT NULL \n") ; 
 		sql.append("   AND chargedeptname IS NOT NULL \n") ; 
 		sql.append(" GROUP BY fathercorp, chargedeptname, industrycode \n") ; 
@@ -256,7 +259,9 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("               (SELECT f.pk_corp \n") ; 
 		sql.append("                  FROM ynt_franchisee f \n") ; 
 		sql.append("                 WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("                   AND nvl(f.isreport, 'N') = 'Y'))\n") ; 
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')\n") ; 
+		sql.append("           AND p.chargedeptname IS NOT NULL \n") ;
+		sql.append("           AND p.Industry IS NOT NULL )\n") ;
 		sql.append(" WHERE industrycode IS NOT NULL \n") ; 
 		sql.append(" GROUP BY industrycode \n") ; 
 		sql.append(" ORDER BY num DESC \n");
@@ -268,7 +273,7 @@ public class CustManageRepImpl implements ICustManageRep {
 				if(!StringUtil.isEmpty(vo.getIndustrycode())){
 					vo.setIndustryname(trademap.get(vo.getIndustrycode()));
 					retlist.add(vo);
-					if(retlist != null && retlist.size() == 5){
+					if(retlist != null && retlist.size() == 5 && list.size() > 5){
 						CustCountVO countvo = new CustCountVO();
 						countvo.setIndustryname("其他类");
 						retlist.add(countvo);
