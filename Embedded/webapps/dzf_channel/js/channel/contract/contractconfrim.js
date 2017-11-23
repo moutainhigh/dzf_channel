@@ -133,13 +133,13 @@ function load(){
 			title : '开始日期',
 			halign:'center',
 			align:'center',
-			field : 'bdate',
+			field : 'bperiod',
 		}, {
 			width : '120',
 			title : '结束日期',
 			halign:'center',
 			align:'center',
-			field : 'edate',
+			field : 'eperiod',
 		}, {
 			width : '120',
 			title : '合同周期(月)',
