@@ -12,14 +12,21 @@
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				 <div id="condtpn" class="left mod-crumb">
-	          <div class="h30 h30-arrow" id="cxjs"> 
-				<label class="mr5">公司名称：</label>
-					<input id="qcorp" class="ui-input ui-text" value="大账房" style="width:167px"/>
+	          <div class="h30 h30-arrow"> 
+				<label class="mr5">用户名称：</label>
+					<input id="quname" class="easyui-textbox" style="width:120px"/>
 					
+			  	<label style="width:70px;">锁定用户：</label>
+					<input id="qrylock" class="easyui-combobox" 
+							data-options="valueField: 'value',
+										textField: 'label',
+										panelHeight:'60',
+										data: [
+										{label: ' ',value: '',selected:true},
+										{label: '是',value: 'Y'},
+										{label: '否',value: 'N'}]" 
+						style="width:80px;height:27px" />
 			  </div>
-			  <div style="margin:4px 0px 0px 10px;float:left;font-size:14px;">
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryLockUser()">锁定用户</a>
-					</div>
 	        </div>
 				<div class="left">
 					<a class="ui-btn ui-btn-xz" onclick="add();" plain="true" href="javascript:void(0);">增加</a> 
@@ -37,7 +44,7 @@
 			</div>
 		</div>
 	<!-- </div> -->
-		<div id="cbDialog" class="easyui-dialog" style="width:620px;height:450px;padding:10px 20px;" data-options="closed:true,buttons:'#dlg-buttons'">
+		<div id="cbDialog" class="easyui-dialog" style="width:620px;height:350px;padding:10px 20px;" data-options="closed:true,buttons:'#dlg-buttons'">
 		<form id="bill" method="post">
 		<div id="tableDiv" style="height:400px;overflow-y: auto">
 			<table class="tableForm">

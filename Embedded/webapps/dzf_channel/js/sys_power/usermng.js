@@ -13,14 +13,14 @@ $(window).resize(function(){
 $(document).ready(function(){
 	$(document).on('keyup', 'input', function(e) {
 		 if(e.keyCode == 13 && e.target.type!== 'submit') {
-		   var inputs = $("#qrydialog").find(":input:visible"),
-		   idx = inputs.index(e.target);
-		       if (idx == inputs.length - 1) {
-		          inputs[0].select()
-		       } else {
-		          inputs[idx + 1].focus();
-		          inputs[idx + 1].select();
-		       }
+//		   var inputs = $("#qrydialog").find(":input:visible"),
+//		   idx = inputs.index(e.target);
+//		       if (idx == inputs.length - 1) {
+//		          inputs[0].select()
+//		       } else {
+//		          inputs[idx + 1].focus();
+//		          inputs[idx + 1].select();
+//		       }
 		 }
 		});
 });//enter 键代替tab键换行        end
@@ -132,6 +132,41 @@ $(function() {
 	}
 	checkUserCode();
 	checkUserPwd();
+	$('#qrylock').combobox({    
+		onSelect: function(rec){
+			var ilock = rec.value;
+			qryLockUser(ilock);
+        }
+	}); 
+	$('#quname').textbox('textbox').keydown(function (e) {
+        if (e.keyCode == 13) {
+ 		   var filtername = $("#quname").val(); 
+    		var rows = $('#grid').datagrid('getRows');
+    		if(rows != null && rows.length >0){
+    			var panel = $('#grid').datagrid('getPanel'); 
+		        var tr = panel.find('div.datagrid-body tr');
+		        var first_id = null;
+		        tr.each(function(){   
+		            var td_name = $(this).children('td[field="uname"]');   
+		            var value_name = td_name.children("div").text();
+	            	td_name.children("div").removeClass("search-rs");
+		            if(filtername && (value_name.indexOf(filtername) >= 0)){
+		            	if (first_id == null ){
+		            		var td_id = $(this).children('td[field="uid"]');   
+				            var value_id = td_id.children("div").text();
+				            first_id = value_id;
+		            	}
+		            	td_name.children("div").addClass("search-rs");
+		            }; 
+		        });  
+		        if (first_id != null ) {
+		        	var index = $('#grid').datagrid('getRowIndex',first_id);
+					$('#grid').datagrid('scrollTo',index);
+					$('#grid').datagrid('selectRow',index);
+		        }
+    		}
+        }
+    });
 });
 function cancel(){
 	$('#cbDialog').dialog('close');
@@ -139,7 +174,6 @@ function cancel(){
 	$("font").hide();
 }
 function checkUserCode(){
-//	console.log(status);
 	$("#ucode").blur(function(){
 		var value = $(this).val();
 		if(value != null && value != ""){
@@ -236,9 +270,9 @@ function load(){
 		}
 	});
 }
-function qryLockUser() {
+function qryLockUser(ilock) {
 	var queryParams = $('#grid').datagrid('options').queryParams; 
-    queryParams['ilock'] ='Y';
+    queryParams['ilock'] =ilock;
     $('#grid').datagrid('options').queryParams = queryParams;  
     $("#grid").datagrid('load'); 
     $('#grid').datagrid('clearSelections');
