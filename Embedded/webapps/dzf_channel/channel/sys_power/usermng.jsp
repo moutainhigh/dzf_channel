@@ -14,7 +14,7 @@
 				 <div id="condtpn" class="left mod-crumb">
 	          <div class="h30 h30-arrow"> 
 				<label class="mr5">用户名称：</label>
-					<input id="quname" class="easyui-textbox" style="width:120px"/>
+					<input id="quname" class="easyui-textbox" style="width:120px;height:27px"/>
 					
 			  	<label style="width:70px;">锁定用户：</label>
 					<input id="qrylock" class="easyui-combobox" 
