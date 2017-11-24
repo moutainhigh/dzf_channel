@@ -28,7 +28,7 @@
 						style="width:80px;height:27px" />
 			  </div>
 	        </div>
-				<div class="left">
+				<div class="right">
 					<a class="ui-btn ui-btn-xz" onclick="add();" plain="true" href="javascript:void(0);">增加</a> 
 					<a class="ui-btn ui-btn-xz" onclick="edit();" plain="true" href="javascript:void(0);">修改</a>
 					<!-- <a class="ui-btn ui-btn-xz" onclick="del();" plain="true" href="javascript:void(0);">删除</a> -->
