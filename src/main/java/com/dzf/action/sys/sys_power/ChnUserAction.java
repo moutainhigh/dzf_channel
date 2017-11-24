@@ -37,48 +37,40 @@ public class ChnUserAction extends BaseAction<UserVO>{
 	
 	private static final String UTYPE = "6";//加盟商系统登录用户
 	
-	private IUserService userService = null;
-	
-
-	public IUserService getUserService() {
-		return userService;
-	}
 	@Autowired
-	public void setUserService(IUserService userService) {
-		this.userService = userService;
-	}
+	private IUserService userService;
 	
 	public void save(){
 		Json json = new Json();
-		if (data != null) {
-			try{
+		try{
+    		if (data != null) {
 				UserVO vo = ((UserVO)data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
 				vo.setPk_creatcorp(loginCorp);//创建用户的公司
 				vo.setPk_corp(loginCorp);
+				data.setXsstyle(UTYPE);
 				if(vo.getPk_corp() == null)
 					throw new BusinessException("所属公司不能为空");
-				data.setXsstyle(UTYPE);
 				UserVO[] datas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{data}, 0);
 				userService.save(datas[0]);
 				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{datas[0]}, 1);
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("保存成功");
-			}catch(Exception e){
-				printErrorLog(json, log, e, "保存失败");
-			}
-		}else{
-			json.setSuccess(false);
-			json.setMsg("保存失败:数据为空。");
-		}
+    		}else{
+    			json.setSuccess(false);
+    			json.setMsg("保存失败:数据为空。");
+    		}
+		}catch(Exception e){
+            printErrorLog(json, log, e, "保存失败");
+        }
 		writeJson(json);
 	}
 	
 	public void update(){
 		Json json = new Json();
-		if (data != null) {
-			try{
+		try{
+    		if (data != null) {
 				UserVO vo = ((UserVO)data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
 				UserVO user = UserCache.getInstance().get(vo.getCuserid(), vo.getPk_corp());
@@ -94,13 +86,13 @@ public class ChnUserAction extends BaseAction<UserVO>{
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("更新成功");
-			}catch(Exception e){
-				printErrorLog(json, log, e, "更新失败");
-			}
-		}else{
-			json.setSuccess(false);
-			json.setMsg("更新失败:数据为空。");
-		}
+    		}else{
+    			json.setSuccess(false);
+    			json.setMsg("更新失败:数据为空。");
+    		}
+		}catch(Exception e){
+            printErrorLog(json, log, e, "更新失败");
+        }
 		writeJson(json);
 	}
 	
@@ -135,22 +127,4 @@ public class ChnUserAction extends BaseAction<UserVO>{
 		}
 		writeJson(grid);
 	}
-	
-	public void check(){
-		Json json = new Json();
-		json.setSuccess(true);
-		if (data != null) {
-			try{
-				boolean exist = userService.exist((UserVO)data);
-				if(exist){
-					json.setSuccess(false);
-					json.setMsg("已存在");
-				}
-			}catch(Exception e){
-				printErrorLog(json, log, e, "校验失败");
-			}
-		}
-		writeJson(json);
-	}
-	
 }
