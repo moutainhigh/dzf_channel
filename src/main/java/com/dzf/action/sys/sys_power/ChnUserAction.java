@@ -18,7 +18,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.service.sys.sys_power.IUserService;
 
 /**
@@ -105,10 +104,6 @@ public class ChnUserAction extends BaseAction<UserVO>{
 			qryVO.setCrtcorp_id(loginCorp);
 			qryVO.setUtype(UTYPE);
 			qryVO.setIlock(ilock);
-			if(qryVO !=null && qryVO.getUname() != null){
-				String uname = qryVO.getUname();
-				qryVO.setUname(CodeUtils1.enCode(uname));
-			}
 			List<UserVO> list = userService.query(loginCorp,qryVO);
 			UserVO[] array = list.toArray(new UserVO[0]);
 			array = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name"}, array,1);
