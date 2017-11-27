@@ -71,8 +71,8 @@
 				</div>
 				<div class="saleset">
 			
-					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;">延期规则：</label>
-					<label>点击延期，释放日期增加</label>
+					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;">保护规则：</label>
+					<label>点击保护，释放日期增加</label>
 					<input class="easyui-numberbox" id ="relnum" name="relnum" style="width:50px"> 
 					<label>个自然日</label>
 			
