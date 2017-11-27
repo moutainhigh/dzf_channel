@@ -130,7 +130,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			ChnAreaBVO[] bvos = queryBy1ID(pk, pk_corp);
 			if(bvos!=null&&bvos.length>0){
 				for (ChnAreaBVO chnAreaBVO : bvos) {
-					user = UserCache.getInstance().get(hvo.getUserid(), null);
+					user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
 					if(user != null){
 						chnAreaBVO.setUsername(user.getUser_name());
 					}

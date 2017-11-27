@@ -77,7 +77,7 @@ function add(){
     $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','付款单');
     status="add";
     setItemEdit(false);
-    $('#chn_add').form("clear");
+    $('#chnarea').form("clear");
     $('#cardGrid').datagrid('loadData', { total : 0, rows : [] });// 清楚缓存数据
     for(var i=0;i<5;i++){
     	$('#cardGrid').datagrid('appendRow', {});
@@ -178,9 +178,11 @@ function checkSave(){
 	}
 	endBodyEdit();
 	// 校验子表
-	var bodys=JSON.parse(JSON.stringify( $("#cardGrid").datagrid("getRows")))
+//	var bodys=JSON.parse(JSON.stringify( $("#cardGrid").datagrid("getRows")));
+	var bodys= $("#cardGrid").datagrid("getRows");
+	var length=JSON.parse(JSON.stringify(bodys.length));
 	var u=0;
-	for (var i = 0; i < bodys.length; i++) {
+	for (var i = 0; i <length; i++) {
 		if(!bodys[u].ovince&&!bodys[u].uid&&!bodys[u].vmemo){
 			$('#cardGrid').datagrid('deleteRow',u);
 			continue;

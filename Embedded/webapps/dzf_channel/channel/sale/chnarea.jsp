@@ -33,7 +33,7 @@
 			<form id="chnarea" method="post" style="height:400px;width:1000px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<label style="text-align:right">主键</label> 
-					<input id="task_id" name="task_id" class="easyui-textbox"> 
+					<input id="pk_area" name="pk_area" class="easyui-textbox"> 
 				</div>
 				<div class="time_col time_colp11">
 					<div style="width:19%;display: inline-block;">
