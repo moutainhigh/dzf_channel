@@ -49,6 +49,9 @@ public class SaleSetVO extends SuperVO {
     @FieldAlias("relnum")
     private Integer releasenum;//延期规则：释放日期增加多少个自然日
     
+    @FieldAlias("pronum")
+    private Integer protectNum;//最多可同时保护 多少 个客户
+    
     @FieldAlias("ficrla")
     private String classifyfir; // 客户分类1 first
     
@@ -120,6 +123,14 @@ public class SaleSetVO extends SuperVO {
 
 	public Integer getFirstnum() {
 		return firstnum;
+	}
+
+	public Integer getProtectNum() {
+		return protectNum;
+	}
+
+	public void setProtectNum(Integer protectNum) {
+		this.protectNum = protectNum;
 	}
 
 	public void setFirstnum(Integer firstnum) {

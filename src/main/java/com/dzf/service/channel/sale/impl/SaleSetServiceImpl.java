@@ -47,7 +47,7 @@ public class SaleSetServiceImpl implements ISaleSetService{
 		if(StringUtil.isEmpty(vo.getPk_saleset())){
 			singleObjectBO.saveObject(vo.getPk_corp(), vo);
 		}else{
-			singleObjectBO.update(vo, new String[]{"isfirecovery","firstnum","isserecovery",
+			singleObjectBO.update(vo, new String[]{"isfirecovery","firstnum","isserecovery","protectNum",
 					"secondnum","isthrecovery","thirdnum","isreceive","receivenum","releasenum","classifyfir",
 					"classifysec","classifythi","classifyfou","classifyfif","lastmodifypsnid","lastmodifydate"});
 		}

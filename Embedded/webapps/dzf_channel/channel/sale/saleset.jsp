@@ -61,21 +61,24 @@
 					<br/>
 				</div>
 			   <div class="saleset">
-			
 					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;margin-right:10px;">领取上限：</label>
 					<input class="box" type="checkbox" id="isreceive" name="isreceive" value="是"/>
 					<label for="isreceive">每个成员最多持有</label>
 					<input class="easyui-numberbox" id ="recnum" name="recnum" style="width:50px"> 
 					<label>未签约客户 </label>
-			
 				</div>
 				<div class="saleset">
-			
 					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;">保护规则：</label>
-					<label>点击保护，释放日期增加</label>
-					<input class="easyui-numberbox" id ="relnum" name="relnum" style="width:50px"> 
-					<label>个自然日</label>
-			
+					<span>
+						<label>点击保护，释放日期增加</label>
+						<input class="easyui-numberbox" id ="relnum" name="relnum" style="width:50px"> 
+						<label>个自然日</label><br/>
+					</span><br/>
+					<span style="margin-left:104px;">
+						<label>最多可同时保护</label>
+						<input class="easyui-numberbox" id ="pronum" name="pronum" style="width:50px"> 
+						<label>个客户
+					</span>
                 </div>
                 <div class="saleset">
 				<label style="width: 100px;display: inline-block; text-align:right;">客户分类：</label>

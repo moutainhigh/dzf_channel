@@ -151,6 +151,7 @@ function setItemReadonly(isedit) {
 	$('#thnum').textbox('readonly', isedit);
 	$('#recnum').textbox('readonly', isedit);
 	$('#relnum').textbox('readonly', isedit);
+	$('#pronum').textbox('readonly', isedit);
 	$('#ficrla').textbox('readonly', isedit);
 	$('#finum').textbox('readonly', isedit);
 	$('#seccla').textbox('readonly', isedit);
