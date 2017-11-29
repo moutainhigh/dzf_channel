@@ -39,7 +39,7 @@ public class ManagerServiceImpl implements IManagerService {
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid cuserid,b.userid,b.vprovname,b.vprovince ");
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and nvl(p.ischannel,'N')='Y' " );
@@ -181,7 +181,7 @@ public class ManagerServiceImpl implements IManagerService {
 		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
 		if(list!=null&&list.size()>0){
 			ManagerVO vo=list.get(0);
-			if(qvo.getCuserid().equals(vo.getCusername())||qvo.getCuserid().equals(vo.getCorpname())||qvo.getCuserid().equals(vo.getCusername())){
+			if(qvo.getUserid().equals(vo.getCusername())||qvo.getUserid().equals(vo.getCorpname())||qvo.getUserid().equals(vo.getUsername())){
 				return true;
 			}
 		}

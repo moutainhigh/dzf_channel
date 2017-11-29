@@ -190,6 +190,7 @@ function quickfiltet(){
            	$('#grid').datagrid('loadData',{ total:0, rows:[]});
            	$('#grid').datagrid('load', {
            		"corpnm" :filtername,
+           		"type":2
            	});
            }else{
         	   reloadData();

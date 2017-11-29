@@ -25,7 +25,7 @@ function load() {
 			title : '编码',
 			field : 'acode',
 		},{
-			width : '100',
+			width : '130',
 			title : '区域',
 			field : 'aname'
 		}, {
@@ -33,13 +33,21 @@ function load() {
 			title : '区域负责人',
 			field : 'uname'
 		},{
-			width : '270',
+			width : '260',
 			title : '所属省市',
 			field : 'provnames',
+			formatter : function(value) {
+	  			if(value!=undefined){
+	  				return "<span title='" + value + "'>" + value + "</span>";
+	  			}}
 		},{
 			width : '280',
 			title : '备注',
 			field : 'vmemo',
+	  		formatter : function(value) {
+	  			if(value!=undefined){
+	  				return "<span title='" + value + "'>" + value + "</span>";
+	  			}}
 		},{
 			width :'250',
 			title : '操作',
@@ -74,7 +82,7 @@ function add(){
     $('#cardDialog').dialog({
 		modal:true,
 	});
-    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','付款单');
+    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域划分');
     status="add";
     setItemEdit(false);
     $('#chnarea').form("clear");
@@ -115,6 +123,7 @@ function edit(id,style) {
     			}else{
     				setItemEdit(false);
     			}
+    			$('#chnarea').form("clear");
     			$('#chnarea').form('load', result.rows[0]);
     			var row =result.rows[0];
     			$("#cardGrid").datagrid("loadData",row.children);
@@ -232,20 +241,7 @@ function save() {
 					content : result.msg,
 					type : 0
 				});
-				var rowg=$("#cardGrid").datagrid('getSelected');
-				var rowsa=$('#cardGrid').datagrid('getRows');
-				var ia=$('#cardGrid').datagrid('getRowIndex',$('#cardGrid').datagrid('getSelected'));
-				var rowr=result.rows[0];
-				if(rowg&&rowg.billid==rowr.billid){//修改
-					$("#cardGrid").datagrid("loadData",{ "total":rowsa.length,rows:rowsa });
-					$('#cardGrid').datagrid('updateRow', {
-            			index : ia,
-            			row :rowr
-            		});
-				}else{//新增
-					$('#cardGrid').datagrid('insertRow',{index:0,row:rowr});
-					$("#cardGrid").datagrid("loadData",{ "total":rowsa.length,rows:rowsa });
-				}
+				load();
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -439,6 +435,7 @@ function initCard(){
                 	showItemIcon: true,
                 	valueField: "name",
                 	editable: false,
+                	required : true,
                 	textField: "name",
                 	data: areas,
                 	onSelect: function (rec) { 
@@ -455,7 +452,6 @@ function initCard(){
 				type : 'textbox',
 				options : {
 					height:31,
-					required : true,
 					editable:false,
 					icons: [{
 						iconCls:'icon-search',
@@ -473,8 +469,8 @@ function initCard(){
 				type : 'textbox',
 				options : {
 					height:31,
-					validType:['length[0,25]'],
-        			invalidMessage:"备注最大长度不能超过25",
+					validType:['length[0,20]'],
+        			invalidMessage:"备注最大长度不能超过20",
 				}
 			}
 		},{

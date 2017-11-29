@@ -36,15 +36,15 @@
 					<input id="pk_area" name="pk_area" class="easyui-textbox"> 
 				</div>
 				<div class="time_col time_colp11">
-					<div style="width:19%;display: inline-block;">
+					<div style="width:20%;display: inline-block;">
 						<label style="text-align:right;width:35%;">大区编码：</label> 
 						<input  id='acode' name="acode" class="easyui-textbox"  data-options="validType:'length[0,4]',required:true" style="width:60%;height:28px;text-align:left"></input>
 					</div>
-					<div style="width:19%;display: inline-block;">
+					<div style="width:30%;display: inline-block;">
 						<label style="text-align:right;width:35%;">大区名称：</label> 
 						<input id='aname'  name="aname" class="easyui-textbox"  data-options="validType:'length[0,10]',required:true"  style="width:60%;height:28px;text-align:left"></input>
 					</div>
-					<div  style="width:22%;display: inline-block;" >
+					<div  style="width:25%;display: inline-block;" >
 						<label style="text-align:right;width:35%;">大区总经理：</label> 
 						<input id="uname" name="uname" class="easyui-searchbox" data-options="required:true" style="width:60%;height:28px;text-align:left;"  > 
 						<input id="uid" name="uid" type="hidden"> 
@@ -52,7 +52,7 @@
 				</div>
 				<div class="time_col time_colp11">
 					<div style="width:100%;display: inline-block;">
-						<label style="text-align:right;width:7.7%;vertical-align: bottom;">备注：</label>
+						<label style="text-align:right;width:7%;vertical-align: bottom;">备注：</label>
 						<textarea id="vmemo" class="easyui-textbox" name="vmemo" data-options="multiline:true,validType:'length[0,50]'" style="width:90%;height:40px;"></textarea>
 					</div>
 				</div>
