@@ -174,7 +174,6 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
-	
 	}
 
 }

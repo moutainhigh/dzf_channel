@@ -36,13 +36,24 @@ public class ManagerServiceImpl implements IManagerService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ManagerVO> query(ManagerVO qvo) throws DZFWarpException {
+	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid cuserid,b.userid,b.vprovname,b.vprovince ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and nvl(p.ischannel,'N')='Y' " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and nvl(p.ischannel,'N')='Y' " );
+		if(type==1){//渠道经理
+			sql.append(" and b.userid=? ");
+			sp.addParam(qvo.getUserid());
+		}else if(type==2){//区域总经理
+			sql.append(" and a.userid=? ");
+			sp.addParam(qvo.getUserid());
+		}else{
+			if(!checkIsLeader(qvo)){
+				return null;
+			}
+		}
 		if(!StringUtil.isEmpty(qvo.getAreaname())){
 			sql.append(" and a.areaname=? " );   //大区
 			sp.addParam(qvo.getAreaname());
@@ -53,7 +64,7 @@ public class ManagerServiceImpl implements IManagerService {
 		}
 		if(!StringUtil.isEmpty(qvo.getCuserid())){
 			sql.append(" and b.userid=? ");//渠道经理
-			sp.addParam(qvo.getUserid());
+			sp.addParam(qvo.getCuserid());
 		}
 		sql.append(" order by p.innercode " );   
 		List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
@@ -74,6 +85,12 @@ public class ManagerServiceImpl implements IManagerService {
 			if(uvo!=null){
 				managerVO.setCusername(uvo.getUser_name());
 			}
+			managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
+			managerVO.setNum(0);
+			managerVO.setBondmny(DZFDouble.ZERO_DBL);
+			managerVO.setNtotalmny(DZFDouble.ZERO_DBL);
+			managerVO.setOutmny(DZFDouble.ZERO_DBL);
+			managerVO.setPredeposit(DZFDouble.ZERO_DBL);
 			if(!StringUtil.isEmpty(qvo.getCorpname())){
 				if(cvo.getUnitname().indexOf(qvo.getCorpname())>=0){
 					pk_corps.add(managerVO.getPk_corp());
@@ -98,7 +115,7 @@ public class ManagerServiceImpl implements IManagerService {
 			buf=new StringBuffer();//预存款
 			buf.append("  select  sum(d.npaymny) as predeposit,d.pk_corp from cn_detail d left join cn_paybill p on d.pk_bill=p.pk_paybill where p.vstatus=3  and");
 			buf.append(SqlUtil.buildSqlForIn("d.pk_corp ",pks));
-			buf.append("  and  p.dpaydate<=? and  p.dpaydate<=? ");
+			buf.append("  and  p.dpaydate>=? and  p.dpaydate<=? ");
 			buf.append("  group by d.pk_corp");
 			SQLParameter spm=new SQLParameter();
 			spm.addParam(qvo.getDbegindate());
@@ -107,14 +124,14 @@ public class ManagerServiceImpl implements IManagerService {
 			
 			buf=new StringBuffer();//提单量v 合同总金额
 			buf.append("  select count(1) as num,a.pk_corp,sum(a.ntotalmny)-sum(a.nbookmny)as ntotalmny from cn_contract a where ");
-			buf.append("  a.dsubmitime<=? and a.dsubmitime<=? and nvl(a.isncust,'N')='N' and a.vdeductstatus=2 and ");
+			buf.append("  a.dsubmitime>=? and a.dsubmitime<=? and nvl(a.isncust,'N')='N' and a.vdeductstatus=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("a.pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
 			buf=new StringBuffer();//扣款金额
 			buf.append("  select sum(ndeductmny) as ndeductmny ,pk_corp from cn_contract a where ");
-			buf.append("  a.dsubmitime<=? and a.dsubmitime<=? and a.vdeductstatus=2 and ");
+			buf.append("  a.dsubmitime>=? and a.dsubmitime<=? and a.vdeductstatus=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
@@ -159,6 +176,18 @@ public class ManagerServiceImpl implements IManagerService {
 		return list;
 	}
 	
+	private boolean checkIsLeader(ManagerVO qvo) {
+		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset ";
+		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
+		if(list!=null&&list.size()>0){
+			ManagerVO vo=list.get(0);
+			if(qvo.getCuserid().equals(vo.getCusername())||qvo.getCuserid().equals(vo.getCorpname())||qvo.getCuserid().equals(vo.getCusername())){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ComboBoxVO> queryManager(Integer type,String cuserid) throws DZFWarpException {
@@ -171,7 +200,7 @@ public class ManagerServiceImpl implements IManagerService {
 			list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ComboBoxVO.class));
 		}else{
 			buf=new StringBuffer();
-			buf.append(" select b.userid as id from cn_chnarea a right  join cn_chnarea_b b on a.pk_chnarea=b.pk_chnarea ");
+			buf.append(" select distinct b.userid as id from cn_chnarea a right  join cn_chnarea_b b on a.pk_chnarea=b.pk_chnarea ");
 			buf.append(" where nvl(b.dr,0)=0 and nvl(a.dr,0)=0 and a.userid=? ");
 			SQLParameter spm=new SQLParameter();
 			spm.addParam(cuserid);

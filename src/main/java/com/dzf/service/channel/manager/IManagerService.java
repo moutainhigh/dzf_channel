@@ -15,7 +15,7 @@ public interface IManagerService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ManagerVO> query(ManagerVO vo) throws DZFWarpException;
+	public List<ManagerVO> query(ManagerVO vo,Integer type) throws DZFWarpException;
 	
 	/**
 	 * 查询框上的渠道经理参照查询
