@@ -21,23 +21,23 @@ function load() {
 		singleSelect : true,
 		height : Public.setGrid().h,
 		columns : [ [ {
-			width : '160',
+			width : '80',
 			title : '编码',
 			field : 'acode',
 		},{
-			width : '200',
+			width : '100',
 			title : '区域',
 			field : 'aname'
 		}, {
-			width : '200',
+			width : '140',
 			title : '区域负责人',
 			field : 'uname'
 		},{
-			width : '250',
+			width : '270',
 			title : '所属省市',
 			field : 'provnames',
 		},{
-			width : '250',
+			width : '280',
 			title : '备注',
 			field : 'vmemo',
 		},{

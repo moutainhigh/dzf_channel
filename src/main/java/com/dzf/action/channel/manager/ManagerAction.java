@@ -56,8 +56,10 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		Grid grid = new Grid();
 		try {
 			ManagerVO qvo = new ManagerVO();
+			Integer type = Integer.parseInt(getRequest().getParameter("type"));
 			qvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), qvo);
-			List<ManagerVO> vos = manager.query(qvo);
+			qvo.setUserid(getLoginUserid());
+			List<ManagerVO> vos = manager.query(qvo,type);
 			if(vos==null||vos.size()==0){
 				grid.setRows(new ArrayList<ChnAreaVO>());
 				grid.setMsg("查询数据为空!");
