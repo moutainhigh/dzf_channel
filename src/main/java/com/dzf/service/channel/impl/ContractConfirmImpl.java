@@ -344,13 +344,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				//1、更新合同加盟合同状态、驳回原因
 				updateContract(paramvo, opertype);
+				//3、生成合同审核数据
+				paramvo = saveContConfrim(paramvo, cuserid);
 				//扣款比例如果为0，则不回写余额
 				if(paramvo.getIdeductpropor() != 0){
 					//2、回写付款余额
 					updateBalanceMny(paramvo, cuserid);
 				}
-				//3、生成合同审核数据
-				paramvo = saveContConfrim(paramvo, cuserid);
 				//4、回写套餐促销活动名额
 				updateSerPackage(paramvo);
 				//5、回写客户纳税人性质
@@ -583,13 +583,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				//1、更新合同加盟合同状态、驳回原因
 				updateContract(confrimvo, opertype);
+				//3、生成合同审核数据
+				confrimvo = saveContConfrim(confrimvo, cuserid);
 				//扣款比例如果为0，则不回写余额
 				if(paramvo.getIdeductpropor() != 0){
 					//2、回写付款余额
 					updateBalanceMny(confrimvo, cuserid);
 				}
-				//3、生成合同审核数据
-				confrimvo = saveContConfrim(confrimvo, cuserid);
 				//4、回写套餐促销活动名额
 				updateSerPackage(confrimvo);
 				//5、回写客户纳税人性质
