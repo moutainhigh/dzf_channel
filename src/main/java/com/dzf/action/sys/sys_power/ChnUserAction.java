@@ -101,10 +101,6 @@ public class ChnUserAction extends BaseAction<UserVO>{
 		try {
 			SysPowerConditVO qryVO = new SysPowerConditVO();
 			String ilock = getRequest().getParameter("ilock");
-			String ucode= getRequest().getParameter("ucode");
-			String uname= getRequest().getParameter("uname");
-			qryVO.setUcode(ucode);
-			qryVO.setUname(uname);
 			qryVO.setCrtcorp_id(loginCorp);
 			qryVO.setUtype(UTYPE);
 			qryVO.setIlock(ilock);
