@@ -1,4 +1,4 @@
-package com.dzf.service.channel.manager;
+package com.dzf.service.channel.report;
 
 import java.util.List;
 

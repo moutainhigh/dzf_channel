@@ -3,11 +3,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>加盟商管理-加盟商总经理</title>
+<title>加盟商管理-区域总经理  </title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/manager/franchiseeman.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/regionalman.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .panel-body{overflow:auto}
 </style>
@@ -35,7 +35,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
+			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -45,11 +45,6 @@
 					<input id="bdate" name="bdate"  class="easyui-datebox" data-options="width:137,height:28" />
 					<font>-</font> 
 					<input id="edate" name="edate"  class="easyui-datebox" data-options="width:137,height:28" />
-				</div>
-				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 70px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 295px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:80" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">省（市）：</label> 

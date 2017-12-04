@@ -1,4 +1,4 @@
-package com.dzf.action.channel.manager;
+package com.dzf.action.channel.report;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,7 +31,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.ExportExcel;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.service.channel.manager.IManagerService;
+import com.dzf.service.channel.report.IManagerService;
 import com.dzf.service.pub.report.PrintUtil;
 
 /**
@@ -40,7 +40,7 @@ import com.dzf.service.pub.report.PrintUtil;
  */
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
-@Namespace("/mana")
+@Namespace("/report")
 @Action(value = "manager")
 public class ManagerAction extends PrintUtil<ManagerVO>{
 

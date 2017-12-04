@@ -19,7 +19,6 @@ function initQry(){
 	$("#jqj").html(parent.SYSTEM.LoginDate.substring(0,7)+"-01"+" 至  "+parent.SYSTEM.LoginDate);
 	initProvince();
 	initManager();
-	initArea();
 }
 
 function initProvince(){
@@ -46,32 +45,15 @@ function initManager(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/mana/manager!queryManager.action',
+		url : DZF.contextPath + '/report/manager!queryManager.action',
 		data : {
-			type :3,
+			type : 2,
 		},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 			    $('#cuid').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
-		}
-	});
-}
-
-function initArea(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/mana/manager!queryArea.action',
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#aname').combobox('loadData',result.rows);
 			} else {
 				Public.tips({content : result.msg,type : 2});
 			}
@@ -86,17 +68,13 @@ function closeCx() {
 
 // 清空查询条件
 function clearCondition(){
-	$('#aname').combobox('select',null);
 	$('#ovince').combobox('select',null);
 	$('#cuid').combobox('select',null);
 }
+
 // 重新加载数据
 function reloadData() {
 	var queryParams =new Array();
-	var aname=$('#aname').combobox('getValue')
-	if(aname!=null&&aname!=""){
-		queryParams['aname'] = $('#aname').combobox('getValue');
-	}
 	var ovince=$('#ovince').combobox('getValue')
 	if(ovince!=null&&ovince!=""){
 		queryParams['ovince'] = $('#ovince').combobox('getValue');
@@ -107,9 +85,10 @@ function reloadData() {
 	}
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
-	queryParams['type'] = 3;
+	queryParams['type'] = 2;
+	
 	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('options').url = DZF.contextPath +'/mana/manager!query.action';
+	$('#grid').datagrid('options').url = DZF.contextPath +'/report/manager!query.action';
 	$("#grid").datagrid('reload');
 	$('#grid').datagrid('unselectAll');
 	$("#qrydialog").css("visibility", "hidden");
@@ -119,7 +98,7 @@ function reloadData() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/mana/manager!query.action',
+		url : DZF.contextPath + '/report/manager!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
@@ -128,7 +107,7 @@ function load() {
 		queryParams: {
 			bdate: $('#bdate').datebox('getValue'),
 			edate: $('#edate').datebox('getValue'),
-			"type":3
+			"type":2
 		},
 //		pageNumber : 1,
 //		pageSize : DZF.pageSize,
@@ -136,12 +115,10 @@ function load() {
 //		pagination : true,
 		showFooter:true,
 		columns : [ [ 
-		    {width : '140',title : '大区',field : 'aname',align:'left'}, 
-		    {width : '120',title : '区总',field : 'uname',align:'left'}, 
-		    {width : '140',title : '省（市）',field : 'provname',align:'left'}, 
-		 	{width : '120',title : '渠道经理',field : 'cuname',align:'left'}, 
+		    {width : '160',title : '省（市）',field : 'provname',align:'left'}, 
+		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left'}, 
-			{width : '100',title : '保证金',field : 'bondmny',align:'right',
+		  	{width : '100',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -208,12 +185,12 @@ function quickfiltet(){
 		 if (e.keyCode == 13) {
            var filtername = $("#filter_value").val(); 
            if (filtername != "") {
-           	var url = DZF.contextPath +'/mana/manager!query.action';
+           	var url = DZF.contextPath +'/report/manager!query.action';
            	$('#grid').datagrid('options').url = url;
            	$('#grid').datagrid('loadData',{ total:0, rows:[]});
            	$('#grid').datagrid('load', {
            		"corpnm" :filtername,
-           		"type":3
+           		"type":2
            	});
            }else{
         	   reloadData();
@@ -232,7 +209,7 @@ function doExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/mana/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':3}, true, true);
+	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':2}, true, true);
 }
 
 

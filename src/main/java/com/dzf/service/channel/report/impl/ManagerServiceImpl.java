@@ -1,4 +1,4 @@
-package com.dzf.service.channel.manager.impl;
+package com.dzf.service.channel.report.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
-import com.dzf.service.channel.manager.IManagerService;
+import com.dzf.service.channel.report.IManagerService;
 
 @Service("mana_manager")
 public class ManagerServiceImpl implements IManagerService {
