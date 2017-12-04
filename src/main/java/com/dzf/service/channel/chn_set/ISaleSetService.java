@@ -1,4 +1,4 @@
-package com.dzf.service.channel.sale;
+package com.dzf.service.channel.chn_set;
 
 import java.util.List;
 

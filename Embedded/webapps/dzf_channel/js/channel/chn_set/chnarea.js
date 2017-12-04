@@ -11,7 +11,7 @@ $(function() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/sale/chnarea!query.action',
+		url : DZF.contextPath + '/chn_set/chnarea!query.action',
 		idField : 'pk_chnarea',
 //		pageNumber : 1,
 //		pageSize : DZF.pageSize,
@@ -106,7 +106,7 @@ function edit(id,style) {
 		status='brows';
 	}
     jQuery.ajax({
-    	url : DZF.contextPath + '/sale/chnarea!queryByPrimaryKey.action',
+    	url : DZF.contextPath + '/chn_set/chnarea!queryByPrimaryKey.action',
     	data : {
     		'pk_area' : id,
     	},
@@ -143,7 +143,7 @@ function del(id){
 	$.messager.confirm("提示", "你是否确认要删除"+row.aname+"？", function(flag) {
 		if (flag) {
 			$.ajax({
-				url : DZF.contextPath + '/sale/chnarea!delete.action',
+				url : DZF.contextPath + '/chn_set/chnarea!delete.action',
 				data : {
 					'pk_area': id,
 				},
@@ -230,7 +230,7 @@ function save() {
 	postdata["body1d"] = childBody1d;
 	$.ajax({
 		type : 'POST',
-		url :DZF.contextPath + '/sale/chnarea!save.action',
+		url :DZF.contextPath + '/chn_set/chnarea!save.action',
 		data : postdata,
 		dataType : 'json',
 		success : function(result) {

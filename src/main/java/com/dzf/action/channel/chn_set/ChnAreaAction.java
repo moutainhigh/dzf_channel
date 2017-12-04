@@ -1,4 +1,4 @@
-package com.dzf.action.channel.sale;
+package com.dzf.action.channel.chn_set;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.service.channel.sale.IChnAreaService;
+import com.dzf.service.channel.chn_set.IChnAreaService;
 
 /**
  * 渠道区域划分
@@ -34,7 +34,7 @@ import com.dzf.service.channel.sale.IChnAreaService;
  */
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
-@Namespace("/sale")
+@Namespace("/chn_set")
 @Action(value = "chnarea")
 public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 

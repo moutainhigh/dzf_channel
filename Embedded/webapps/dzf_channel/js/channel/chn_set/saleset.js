@@ -7,7 +7,7 @@ $(function() {
 
 function load() {
 	$.ajax({
-		url : DZF.contextPath + '/sale/saleset!query.action',
+		url : DZF.contextPath + '/chn_set/saleset!query.action',
 		data : {
 			corpid : parent.SYSTEM.login_corp_id
 		},
@@ -30,7 +30,7 @@ function edit(){
 
 function save() {
 	$('#sale_set').form('submit', {
-		url : DZF.contextPath + '/sale/saleset!save.action',
+		url : DZF.contextPath + '/chn_set/saleset!save.action',
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
@@ -57,7 +57,7 @@ function history(){
 		});// 设置dig属性
 		$('#dialog').dialog('open').dialog('center').dialog('setTitle', '变更明细');
 		$('#grid').datagrid({
-			url : DZF.contextPath + '/sale/saleset!history.action',
+			url : DZF.contextPath + '/chn_set/saleset!history.action',
 			striped : true,
 			title : '',
 			width :'100%',

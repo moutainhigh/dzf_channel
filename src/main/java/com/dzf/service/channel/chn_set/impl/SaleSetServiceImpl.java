@@ -1,4 +1,4 @@
-package com.dzf.service.channel.sale.impl;
+package com.dzf.service.channel.chn_set.impl;
 
 import java.util.List;
 
@@ -13,7 +13,8 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.service.channel.sale.ISaleSetService;
+import com.dzf.service.channel.chn_set.ISaleSetService;
+import com.dzf.service.pub.LogRecordEnum;
 
 @Service("sale_set")
 public class SaleSetServiceImpl implements ISaleSetService{
@@ -59,7 +60,7 @@ public class SaleSetServiceImpl implements ISaleSetService{
 		SQLParameter sp = new SQLParameter();//l.iopetype,l.vopemsg,
 		sql.append(" select l.doperatedate lastmodifydate,l.cuserid lastmodifypsnid from ynt_logrecord l ");
 		sql.append(" where l.vopemsg=? and l.pk_corp=? and nvl(l.dr,0)=0 order by l.ts desc");
-		sp.addParam("销售管理规则设置");
+		sp.addParam(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName());
 		sp.addParam(vo.getPk_corp());
 		List<SaleSetVO> list = (List<SaleSetVO>) singleObjectBO.executeQuery(sql.toString(),sp,new BeanListProcessor(SaleSetVO.class));
 		UserVO uvo=null;

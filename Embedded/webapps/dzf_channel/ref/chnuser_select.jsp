@@ -25,7 +25,6 @@ $(function(){
 		idField:'uid',
 		rownumbers: true,
 		singleSelect: true,
-		pagination: true,
 		showFooter: true,
 		striped:true,
 	    columns:[[   
@@ -50,10 +49,13 @@ $(function(){
     $('#kjcode').bind('keypress',function(event){
         if(event.keyCode == "13") {//Enter 键事件
         	var filtername = $("#kjcode").val();
-      		var params = new Object();
-      		params["ucode"] = filtername;
-      		params["uname"] = filtername;
-      		$('#userTable').datagrid('reload',params); 
+      		var list = new Array();
+      		for(var i=0;i<userrows.length;i++){
+      			if(userrows[i].ucode.indexOf(filtername)>=0||userrows[i].uname.indexOf(filtername)>=0){
+      				list.push(userrows[i]);
+      			}
+      		}
+      		$('#userTable').datagrid('loadData',list); 
         }
     }); 
 });

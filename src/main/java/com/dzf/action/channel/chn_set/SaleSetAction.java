@@ -1,4 +1,4 @@
-package com.dzf.action.channel.sale;
+package com.dzf.action.channel.chn_set;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
-import com.dzf.service.channel.sale.ISaleSetService;
+import com.dzf.service.channel.chn_set.ISaleSetService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
@@ -29,7 +29,7 @@ import com.dzf.service.pub.LogRecordEnum;
  */
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
-@Namespace("/sale")
+@Namespace("/chn_set")
 @Action(value = "saleset")
 public class SaleSetAction extends BaseAction<SaleSetVO> {
 
@@ -83,8 +83,8 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 				json.setSuccess(true);
 				json.setMsg("保存成功");
 			}
-			//日志记录
-			writeLogRecord(LogRecordEnum.OPE_ADMIN_DXTXSZ.getValue(),"销售管理规则设置",ISysConstants.SYS_1);
+			//日志记录	销售管理规则设置
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getValue(),LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName(),ISysConstants.SYS_1);
 		}  catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}

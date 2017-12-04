@@ -1,4 +1,4 @@
-package com.dzf.service.channel.sale.impl;
+package com.dzf.service.channel.chn_set.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.service.channel.sale.IChnAreaService;
+import com.dzf.service.channel.chn_set.IChnAreaService;
 
 @Service("chn_area")
 public class ChnAreaServiceImpl implements IChnAreaService {

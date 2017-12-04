@@ -1,4 +1,4 @@
-package com.dzf.service.channel.sale;
+package com.dzf.service.channel.chn_set;
 
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.pub.DZFWarpException;
