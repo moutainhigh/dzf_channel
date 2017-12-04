@@ -44,7 +44,7 @@
 					<label style="width: 100px;display: inline-block;text-align:right;margin-left:-7px;">回收规则：</label>
 					<input name="isfirecovery" type="checkbox" id='isfirecovery' style="margin-left:7px;" value="是"/>
 					<label for="isfirecovery">领取后</label>
-					<input class="easyui-numberbox" id ="finum" name="finum" style="width:50px;    vertical-align: top;"> 
+					<input class="easyui-numberbox"  data-options="max:30" id ="finum" name="finum" style="width:50px;    vertical-align: top;"> 
 					<label>自然日未拜访，自动回收客户 </label>
 				</span><br/>
 				<div class="saleset" style="margin-left:124px;">

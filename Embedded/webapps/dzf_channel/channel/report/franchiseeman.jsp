@@ -49,12 +49,12 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 295px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:80" editable="false" />  
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:150" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">省（市）：</label> 
 					<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 295px; height: 28px;" 
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:80" editable="false" />  
+						data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:70px;">渠道经理：</label> 
