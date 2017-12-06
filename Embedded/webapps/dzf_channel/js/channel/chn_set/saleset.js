@@ -29,6 +29,34 @@ function edit(){
 }
 
 function save() {
+	if ($('#isfirecovery').prop("checked")) {
+		var num=$('#finum').textbox('getValue');
+		if(isEmpty(num)){
+			Public.tips({content:"必输信息为空或格式不正确",type:2});
+			return;
+		}
+	}
+	if ($('#isserecovery').prop("checked")) {
+		var num=$('#senum').textbox('getValue');
+		if(isEmpty(num)){
+			Public.tips({content:"必输信息为空或格式不正确",type:2});
+			return;
+		}
+	}
+	if ($('#isthrecovery').prop("checked")) {
+		var num=$('#thnum').textbox('getValue');
+		if(isEmpty(num)){
+			Public.tips({content:"必输信息为空或格式不正确",type:2});
+			return;
+		}
+	}
+	if ($('#isreceive').prop("checked")) {
+		var num=$('#recnum').textbox('getValue');
+		if(isEmpty(num)){
+			Public.tips({content:"必输信息为空或格式不正确",type:2});
+			return;
+		}
+	}
 	$('#sale_set').form('submit', {
 		url : DZF.contextPath + '/chn_set/saleset!save.action',
 		success : function(result) {
