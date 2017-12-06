@@ -44,19 +44,19 @@
 					<label style="width: 100px;display: inline-block;text-align:right;margin-left:-7px;">回收规则：</label>
 					<input name="isfirecovery" type="checkbox" id='isfirecovery' style="margin-left:7px;" value="是"/>
 					<label for="isfirecovery">领取后</label>
-					<input class="easyui-numberbox"  data-options="max:30" id ="finum" name="finum" style="width:50px;    vertical-align: top;"> 
+					<input class="easyui-numberbox"  data-options="min:1,max:30" id ="finum" name="finum" style="width:50px; vertical-align: top;"> 
 					<label>自然日未拜访，自动回收客户 </label>
 				</span><br/>
 				<div class="saleset" style="margin-left:124px;">
 					<input name="isserecovery" type="checkbox" id="isserecovery"  value="是"/>
 					<label for="isserecovery">销售持有客户30个自然日未拜访</label>
-					<input class="easyui-numberbox" id ="senum" name="senum" style="width:50px"> 
+					<input class="easyui-numberbox" id ="senum" name="senum" style="width:50px" data-options="min:1"> 
 					<label>次以上，自动回收客户</label>
 					<br/>
 				</div>
 				<div class="saleset" style="margin-left:124px;">
 					<input name="isthrecovery" type="checkbox" id="isthrecovery"  value="是"/>
-					<input class="easyui-numberbox" id ="thnum" name="thnum" style="width:50px"> 
+					<input class="easyui-numberbox" id ="thnum" name="thnum" style="width:50px" data-options="min:30"> 
 					<label>个自然日未签约，自动回收客户</label>
 					<br/>
 				</div>
@@ -64,14 +64,14 @@
 					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;margin-right:10px;">领取上限：</label>
 					<input class="box" type="checkbox" id="isreceive" name="isreceive" value="是"/>
 					<label for="isreceive">每个成员最多持有</label>
-					<input class="easyui-numberbox" id ="recnum" name="recnum" style="width:50px"> 
+					<input class="easyui-numberbox" id ="recnum" name="recnum" style="width:50px" data-options="min:0"> 
 					<label>未签约客户 </label>
 				</div>
 				<div class="saleset">
 					<label for="pwdstrategy" style="width: 100px;display: inline-block;text-align:right;">保护规则：</label>
 					<span>
 						<label>点击保护，释放日期增加</label>
-						<input class="easyui-numberbox" id ="relnum" name="relnum" style="width:50px"> 
+						<input class="easyui-numberbox" id ="relnum" name="relnum" style="width:50px" data-options="min:1"> 
 						<label>个自然日</label><br/>
 					</span><br/>
 					<span style="margin-left:104px;">
