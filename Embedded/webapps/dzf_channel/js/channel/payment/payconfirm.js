@@ -79,7 +79,6 @@ function selectCorps(){
 
 
 function reloadData(){
-	
 	var bdate = $('#bdate').datebox('getValue'); //开始日期
 	var edate = $('#edate').datebox('getValue'); //结束日期
 	var queryParams = $('#grid').datagrid('options').queryParams;
@@ -93,20 +92,9 @@ function reloadData(){
 	
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
-	
 	$('#querydate').html(bdate + ' 至 ' + edate);
-	
-//    $('#grid').datagrid('load', {
-//    	corps : $("#pk_account").val(),
-//        bdate: bdate,
-//        edate: edate,
-//        istatus : $('#status').combobox('getValue')
-//    });
-    
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
-    
-	
 }
 
 /**
