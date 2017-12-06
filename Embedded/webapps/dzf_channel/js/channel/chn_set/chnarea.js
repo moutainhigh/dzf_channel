@@ -361,7 +361,7 @@ function initManger(){
 	    			handler : function() {
 	    				var row = $('#userTable').datagrid('getSelected');
 	    				if(row){
-	    					selectUser(row);
+	    					selectManager(row);
 	    				}else{
 	    					Public.tips({
 	    						content : "请选择一行数据",
