@@ -76,6 +76,24 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			sql.append(" AND vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}
+		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
+		    sql.append(" AND ipaytype = ? \n");
+            spm.addParam(paramvo.getIpaytype());
+		}
+		if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
+            sql.append(" AND ipaymode = ? \n");
+            spm.addParam(paramvo.getIpaymode());
+        }
+		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
+		    sql.append(" AND (dpaydate >= ? and dpaydate <= ? )\n");
+            spm.addParam(paramvo.getBegdate());
+            spm.addParam(paramvo.getEnddate());
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+		    String[] strs = paramvo.getPk_corp().split(",");
+		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+		    sql.append(" AND pk_corp in (").append(inSql).append(")");
+		}
 		sql.append(" AND vstatus != 1");
 		sql.append(" order by dpaydate desc");
 		qryvo.setSql(sql.toString());

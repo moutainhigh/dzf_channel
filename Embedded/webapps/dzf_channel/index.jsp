@@ -16,6 +16,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@page import="com.dzf.pub.StringUtil"%>
+<%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 
 <%
 	String datevalue = (String) session.getAttribute(IGlobalConstants.login_date);
@@ -27,7 +28,10 @@
 		return;
 	}
 	UserVO userVo = UserCache.getInstance().get(userid, corp);//()(UserVO)session.getAttribute(IGlobalConstants.login_user);
-	String date = (String) session.getAttribute(IGlobalConstants.login_date);
+	//String date = (String) session.getAttribute(IGlobalConstants.login_date);
+	String date = AdminDateUtil.getServerDate();
+	String preDate = AdminDateUtil.getPreviousDate();
+	String preYear = AdminDateUtil.getPreviousYear();
 	CorpVO corpVo = CorpCache.getInstance().get(userVo.getPrimaryKey(), corp);
 	ServletContext servletContext = session.getServletContext();
 	ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -108,7 +112,9 @@ var SYSTEM = {
 	login_corp_code:"<%=corpVo.getUnitcode()%>",
 	login_corp_name:"<%=corpVo.getUnitname()%>",
 	UserName:"<%=userVo != null ? userVo.getUser_name() : "" %>",
-	LoginDate:"<%=date!=null?date:"" %>"
+	LoginDate:"<%=date!=null?date:"" %>",
+	PreDate:"<%=preDate!= null ? preDate:"" %>",
+	PreYear:"<%=preYear!= null ? preYear:"" %>",
 };
 </script>
 

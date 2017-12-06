@@ -6,7 +6,108 @@ var isenter = false;//是否快速查询
 $(function() {
 	load();
 	fastQry();
+	initListener();
 });
+
+function initListener(){
+	$("#querydate").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+	initChannel();
+}
+
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+//初始化加盟商
+function initChannel(){
+    $('#channel_select').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#chnDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    buttons: '#chnBtn'
+                });
+            }
+        }]
+    });
+}
+//双击选择公司
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	 $("#chnDlg").dialog('close');
+}
+
+function clearParams(){
+	$("#pk_account").val(null);
+	$("#channel_select").textbox("setValue",null);
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+
+function reloadData(){
+	
+	var bdate = $('#bdate').datebox('getValue'); //开始日期
+	var edate = $('#edate').datebox('getValue'); //结束日期
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+	queryParams.qtype = $('#status').combobox('getValue');
+	queryParams.begdate = bdate;
+	queryParams.enddate = edate;
+	queryParams.iptype = $('#iptype').combobox('getValue');
+	queryParams.ipmode = $('#ipmode').combobox('getValue');
+	queryParams.cpid = $("#pk_account").val(),
+	
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
+	
+	$('#querydate').html(bdate + ' 至 ' + edate);
+	
+//    $('#grid').datagrid('load', {
+//    	corps : $("#pk_account").val(),
+//        bdate: bdate,
+//        edate: edate,
+//        istatus : $('#status').combobox('getValue')
+//    });
+    
+    $('#qrydialog').hide();
+    $('#grid').datagrid('unselectAll');
+    
+	
+}
 
 /**
  * 列表grid初始化

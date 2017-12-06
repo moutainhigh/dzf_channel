@@ -56,7 +56,28 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("period")
 	private String period;// 期间
 	
-	public String getPeriod() {
+	@FieldAlias("ipmode")
+	private Integer ipaymode;// 1:银行转账；2:支付宝；3：微信
+	@FieldAlias("iptype")
+	private Integer ipaytype;// 1:加盟费；2：预付款
+	
+	public Integer getIpaymode() {
+        return ipaymode;
+    }
+
+    public void setIpaymode(Integer ipaymode) {
+        this.ipaymode = ipaymode;
+    }
+
+    public Integer getIpaytype() {
+        return ipaytype;
+    }
+
+    public void setIpaytype(Integer ipaytype) {
+        this.ipaytype = ipaytype;
+    }
+
+    public String getPeriod() {
 		return period;
 	}
 
