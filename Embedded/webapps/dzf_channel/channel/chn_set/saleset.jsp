@@ -76,7 +76,7 @@
 					</span><br/>
 					<span style="margin-left:104px;">
 						<label>最多可同时保护</label>
-						<input class="easyui-numberbox" id ="pronum" name="pronum" style="width:50px"> 
+						<input class="easyui-numberbox" id ="pronum" name="pronum" style="width:50px" data-options="min:0"> 
 						<label>个客户
 					</span>
                 </div>
