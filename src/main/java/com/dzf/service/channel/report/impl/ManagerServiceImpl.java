@@ -110,15 +110,11 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append(" select npaymny as bondmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=1 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			List<ManagerVO> list1 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
-//		    buf=new StringBuffer();//预存款余额
-//			buf.append(" select (npaymny-nusedmny) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
-//			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
-//			List<ManagerVO> list2 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
 			
 			buf=new StringBuffer();//预存款
 			buf.append("  select  sum(d.npaymny) as predeposit,d.pk_corp from cn_detail d left join cn_paybill p on d.pk_bill=p.pk_paybill where p.vstatus=3  and");
 			buf.append(SqlUtil.buildSqlForIn("d.pk_corp ",pks));
-			buf.append("  and  p.dpaydate>=? and  p.dpaydate<=? ");
+			buf.append("  and  p.dpaydate>=? and  p.dpaydate<=?  and nvl(d.dr,0)=0 and nvl(p.dr,0)=0 and p.ipaytype=2");
 			buf.append("  group by d.pk_corp");
 			SQLParameter spm=new SQLParameter();
 			spm.addParam(qvo.getDbegindate());
@@ -127,17 +123,23 @@ public class ManagerServiceImpl implements IManagerService {
 			
 			buf=new StringBuffer();//提单量v 合同总金额
 			buf.append("  select count(1) as num,a.pk_corp,sum(a.ntotalmny)-sum(a.nbookmny)as ntotalmny from cn_contract a where ");
-			buf.append("  a.dsubmitime>=? and a.dsubmitime<=? and nvl(a.isncust,'N')='N' and a.vdeductstatus=2 and ");
+			buf.append("  substr(a.dsubmitime,0,10)>=? and substr(a.dsubmitime,0,10)<=? and nvl(a.isncust,'N')='N' and a.vdeductstatus=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("a.pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
 			buf=new StringBuffer();//扣款金额
 			buf.append("  select sum(ndeductmny) as ndeductmny ,pk_corp from cn_contract a where ");
-			buf.append("  a.dsubmitime>=? and a.dsubmitime<=? and a.vdeductstatus=2 and ");
+			buf.append("  substr(a.dsubmitime,0,10)>=? and substr(a.dsubmitime,0,10)<=? and a.vdeductstatus=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
+			
+		    buf=new StringBuffer();//预存款余额
+			buf.append(" select (npaymny-nusedmny) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
+			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
+			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
+			
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -165,13 +167,15 @@ public class ManagerServiceImpl implements IManagerService {
 		    	 for (ManagerVO managerVO : list4) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
 						vo.setNdeductmny(managerVO.getNdeductmny());
-						DZFDouble dou=vo.getOutmny();
-						if(vo.getOutmny()==null){
-							dou=new DZFDouble(0);
-						}
-						vo.setOutmny(dou.add(-managerVO.getNdeductmny().toDouble())); //预存款余额金额
 						map.put(managerVO.getPk_corp(),vo);
 					}
+		     }
+		     if(list5!=null&&list5.size()>0){//预存款余额
+		    	 for (ManagerVO managerVO : list5) {
+					ManagerVO vo = map.get(managerVO.getPk_corp());
+					vo.setOutmny(managerVO.getOutmny());
+					map.put(managerVO.getPk_corp(),vo);
+				}
 		     }
 		}
 		 Collection<ManagerVO> manas = map.values();
