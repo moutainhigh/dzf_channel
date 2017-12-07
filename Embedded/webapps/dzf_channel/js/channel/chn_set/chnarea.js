@@ -415,7 +415,7 @@ function initCard(){
 		striped : true,
 		rownumbers : true,
 		idField : 'pk_areab',
-		height : 200,
+		height : 220,
 		singleSelect : true,
 		columns : [ [ 
         {
