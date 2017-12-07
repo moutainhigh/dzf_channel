@@ -39,4 +39,12 @@ public interface IChnAreaService {
 	 */
 	public ChnAreaVO[] query(ChnAreaVO vo) throws DZFWarpException;
 	
+	/**
+	 * 查询加盟商总经理
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String queryManager(String pk_corp) throws DZFWarpException;
+	
 }

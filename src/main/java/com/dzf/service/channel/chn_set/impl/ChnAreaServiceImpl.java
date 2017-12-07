@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.manager.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -172,6 +174,22 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		}else{
 			throw new BusinessException("删除失败");
 		}
+	}
+
+	@Override
+	public String queryManager(String pk_corp) throws DZFWarpException {
+		String sql="select vdeptuserid userid from cn_leaderset where nvl(dr,0)=0 and pk_corp=? ";
+		SQLParameter sp = new SQLParameter();
+		sp.addParam(pk_corp);
+		ChnAreaBVO vo =(ChnAreaBVO) singleObjectBO.executeQuery(sql, sp, new BeanProcessor(ChnAreaBVO.class));
+		String username=null;
+		if(vo!=null&&!StringUtil.isEmpty(vo.getUserid())){
+			UserVO uvo=UserCache.getInstance().get(vo.getUserid(), null);
+			if(uvo!=null){
+				username=uvo.getUser_name();
+			}
+		}
+		return username;
 	}
 	
 }

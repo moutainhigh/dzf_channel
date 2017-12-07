@@ -17,6 +17,9 @@
 		<div id="listPanel" class="wrapper" style="width: 100%;overflow:hidden; height: 100%;">
 			<div class="mod-toolbar-top">
 				<div class="mod-toolbar-content">
+					<div class="left mod-crumb">
+						<div style="float:right"><span id = "manager" style="float:right;margin-right:5px;font-weight: bold; margin-top: 8px;">加盟商总经理</span></div>
+					</div>
 					<div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="add()">新增</a> 
 					</div>

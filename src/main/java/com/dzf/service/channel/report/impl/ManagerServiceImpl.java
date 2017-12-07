@@ -184,7 +184,7 @@ public class ManagerServiceImpl implements IManagerService {
 	}
 	
 	private boolean checkIsLeader(ManagerVO qvo) {
-		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset ";
+		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset where nvl(dr,0)=0";
 		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
 		if(list!=null&&list.size()>0){
 			ManagerVO vo=list.get(0);

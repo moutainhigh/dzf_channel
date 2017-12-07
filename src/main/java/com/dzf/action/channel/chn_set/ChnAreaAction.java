@@ -175,5 +175,23 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * 查询加盟商总经理
+	 */
+	public  void queryManager(){
+		Json json = new Json();
+		try {
+			String pk_corp = getLoginCorpInfo().getPk_corp();
+			String username= chnarea.queryManager(pk_corp);
+			json.setRows(username);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			json.setSuccess(false);
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
 
 }

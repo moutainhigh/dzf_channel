@@ -3,6 +3,7 @@ var status="brows";
 var editIndex = undefined;
 
 $(function() {
+	loadManager();
 	load();
 	initCard();
 	initManger();
@@ -74,6 +75,21 @@ function load() {
 			parent.$.messager.progress('close');
 			$('#grid').datagrid("selectRow", 0);  	
 		}
+	});
+}
+
+function loadManager(){
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/chn_set/chnarea!queryManager.action',
+		traditional : true,
+		async : false,
+		success : function(data, textStatus) {
+			if (data.success) {
+				$("#manager").text("加盟商总经理: "+data.rows);
+			} 
+		},
 	});
 }
 
