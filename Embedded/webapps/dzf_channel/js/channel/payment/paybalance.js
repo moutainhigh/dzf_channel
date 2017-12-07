@@ -77,9 +77,32 @@ function load(){
 				loadrows = data.rows;
 			}
 			isenter = false;
+			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var npmny = 0;	
+    var usemny = 0;	
+    var balmny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	npmny += parseFloat(rows[i].npmny==undefined?0:rows[i].npmny);
+    	usemny += parseFloat(rows[i].usemny==undefined?0:rows[i].usemny);
+    	balmny += parseFloat(rows[i].balmny==undefined?0:rows[i].balmny);
+    }
+    footerData['npmny'] = npmny;
+    footerData['usemny'] = usemny;
+    footerData['balmny'] = balmny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**

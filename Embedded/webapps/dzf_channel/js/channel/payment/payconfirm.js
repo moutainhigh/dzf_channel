@@ -109,6 +109,7 @@ function load(){
 		height : Public.setGrid().h,
 		singleSelect : false,
 		pagination : true,// 分页工具栏显示
+		showFooter:true,
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
@@ -178,7 +179,9 @@ function load(){
 			field : 'fj',
 			align : 'center',
 			formatter : function(value, row, index) {
-				return '<a href="#" style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
+				if(!isEmpty(row.billid)){
+					return '<a href="#" style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
+				}
 			}
 		},{
 			width : '140',
@@ -219,9 +222,26 @@ function load(){
 				loadrows = data.rows;
 			}
 			isenter = false;
+			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var npmny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	npmny += parseFloat(rows[i].npmny);
+    }
+    footerData['npmny'] = npmny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**

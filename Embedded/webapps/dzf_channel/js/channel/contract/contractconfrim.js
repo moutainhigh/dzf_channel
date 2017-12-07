@@ -232,21 +232,47 @@ function load(){
 				loadrows = data.rows;
 			}
 			isenter = false;
+			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
 }
 
 /**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var ntlmny = 0;	
+    var nmsmny = 0;	
+    var ndemny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	ntlmny += parseFloat(rows[i].ntlmny);
+    	nmsmny += parseFloat(rows[i].nmsmny);
+    	ndemny += parseFloat(rows[i].ndemny==undefined?0:rows[i].ndemny);
+    }
+    footerData['ntlmny'] = ntlmny;
+    footerData['nmsmny'] = nmsmny;
+    footerData['ndemny'] = ndemny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
+
+/**
  * 存量客户格式化
  * @param value
  * @returns {String}
  */
-function isnformat(value){
-	if(value&&(value=='Y'||value=="是")){
-		return "<input type=\"checkbox\" checked=\"checked\" onclick=\"return false;\" >";
-	}else{
-		return "<input type=\"checkbox\" onclick=\"return false;\" >";
+function isnformat(value,row){
+	if(!isEmpty(row.contractid)){
+		if(value&&(value=='Y'||value=="是")){
+			return "<input type=\"checkbox\" checked=\"checked\" onclick=\"return false;\" >";
+		}else{
+			return "<input type=\"checkbox\" onclick=\"return false;\" >";
+		}
 	}
 }
 
@@ -258,7 +284,9 @@ function isnformat(value){
  * @returns {String}
  */
 function formatDocLink(val,row,index){  
-    return '<a href="#" style="color:blue" onclick="viewattach('+index+')">合同附件</a>';  
+	if(!isEmpty(row.contractid)){
+		return '<a href="#" style="color:blue" onclick="viewattach('+index+')">合同附件</a>';  
+	}
 }
 
 /**
