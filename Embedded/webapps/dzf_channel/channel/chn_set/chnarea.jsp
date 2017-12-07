@@ -30,7 +30,7 @@
 		</div>
 	<!--卡片界面开始-->
 		<div id="cardDialog">
-			<form id="chnarea" method="post" style="height:400px;width:1000px;overflow:hidden;padding-top:18px;">
+			<form id="chnarea" method="post" style="height:340px;width:1000px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<label style="text-align:right">主键</label> 
 					<input id="pk_area" name="pk_area" class="easyui-textbox"> 
@@ -52,14 +52,14 @@
 				</div>
 				<div class="time_col time_colp11">
 					<div style="width:100%;display: inline-block;">
-						<label style="text-align:right;width:7%;vertical-align: bottom;">备注：</label>
+						<label style="text-align:right;width:7%;vertical-align:middle;">备注：</label>
 						<textarea id="vmemo" class="easyui-textbox" name="vmemo" data-options="multiline:true,validType:'length[0,50]'" style="width:90%;height:40px;"></textarea>
 					</div>
 				</div>
 				<div id="dataGrid" class="grid-wrap" >
 					<table id="cardGrid" ></table>
 				</div> 
-				<div style="float:right;margin-top:40px;margin-right:76px;">
+				<div style="float:right;margin-top:20px;margin-right:20px;">
 				    <a href="javascript:void(0)" id="save" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="checkSave()">保存</a> 
 					<a href="javascript:void(0)" id="cancel" class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="cancel()">取消</a>
 				</div>

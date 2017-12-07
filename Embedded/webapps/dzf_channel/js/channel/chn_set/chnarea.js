@@ -424,7 +424,7 @@ function initCard(){
 			title : '操作',
         	formatter : coperatorLink
 		}, {
-			width : '180',
+			width : '200',
 			field : 'provname', 
 			title : '负责地区',
 			editor : {
@@ -462,7 +462,7 @@ function initCard(){
 				}
 			}
 		},{
-			width : '400',
+			width : '450',
 			field : 'vmemo',
 			title : '备注',
 			editor : {
