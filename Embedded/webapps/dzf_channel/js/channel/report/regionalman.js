@@ -115,7 +115,7 @@ function load() {
 //		pagination : true,
 		showFooter:true,
 		columns : [ [ 
-		    {width : '160',title : '省（市）',field : 'provname',align:'left'}, 
+		    {width : '140',title : '省（市）',field : 'provname',align:'left'}, 
 		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left'}, 
 		  	{width : '100',title : '保证金',field : 'bondmny',align:'right',
