@@ -34,4 +34,19 @@ public interface InvManagerService {
 	 * 开票
 	 */
 	int onBilling(String[] pk_invoices, String userid) throws DZFWarpException;
+	
+	/**
+	 * 删除开票
+	 */
+	public void delete(ChInvoiceVO vo) throws DZFWarpException;
+
+        /**
+     * 获取可开票金额
+     * @return
+     * @throws DZFWarpException
+     */
+    ChInvoiceVO queryTotalPrice(String pk_corp, int ipaytype, String invprice) throws DZFWarpException;
+
+    void save(ChInvoiceVO data) throws DZFWarpException;
+    
 }

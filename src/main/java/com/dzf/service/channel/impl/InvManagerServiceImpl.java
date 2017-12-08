@@ -18,6 +18,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.InvManagerService;
 
@@ -207,4 +208,108 @@ public class InvManagerServiceImpl implements InvManagerService{
 		}
 		singleObjectBO.updateAry(vos, new String[]{"invtime","invperson","invstatus"});
 	}
+
+    @Override
+    public void delete(ChInvoiceVO vo) throws DZFWarpException {
+        ChInvoiceVO chvo = (ChInvoiceVO)singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
+        if(chvo != null){
+            if( chvo.getInvcorp() != 2){
+                throw new BusinessException("只有大账房主动发的开票才能删除！");
+            }
+            if(chvo.getInvstatus() != 1 ){
+                throw new BusinessException("只有发票状态为【待提交】的才能删除！");
+            }
+            singleObjectBO.deleteObject(vo);
+        }
+    }
+
+    @Override
+    public ChInvoiceVO queryTotalPrice(String pk_corp, int ipaytype, String invprice) throws DZFWarpException {
+        ChInvoiceVO returnVo = new ChInvoiceVO();
+        DZFDouble addPrice = queryAddPrice(pk_corp, ipaytype, invprice);
+        DZFDouble ticketPrice = queryTicketPrice(pk_corp, ipaytype);
+        DZFDouble nticketmny = ticketPrice.sub(addPrice);
+        
+        returnVo.setNticketmny(String.valueOf(nticketmny));
+        return returnVo;
+    }
+    
+    /**
+     * 查询已添加的开票金额总额
+     */
+    private DZFDouble queryAddPrice(String pk_corp, int ipaytype, String invprice){
+
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append("select nvl(sum(nvl(invprice,0)),0) price from cn_invoice where nvl(dr,0) = 0 and pk_corp = ? and invstatus ！= 2 and ipaytype = ?");
+        sp.addParam(pk_corp);
+        sp.addParam(ipaytype);
+        String price = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("price")).toString();
+        DZFDouble nprice = new DZFDouble(price);
+        if(!StringUtil.isEmpty(invprice)){
+            nprice = nprice.sub(new DZFDouble(invprice));
+        }
+        return nprice;
+    }
+    
+    private DZFDouble queryTicketPrice(String pk_corp, int ipaytype){
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append("select nvl(sum(nvl(nusedmny,0))-sum(nvl(nticketmny,0)),0) as nticketmny from cn_balance ");
+        sql.append("where nvl(dr,0)=0 and pk_corp = ? and ipaytype = ?");
+        sp.addParam(pk_corp);
+        if(ipaytype == 0){
+            ipaytype = 2;
+        }
+        sp.addParam(ipaytype);
+        String nticketmny = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("nticketmny")).toString();
+        DZFDouble price = new DZFDouble(nticketmny);
+        return price;
+    }
+
+    @Override
+    public void save(ChInvoiceVO vo) throws DZFWarpException {
+        checkTaxnum(vo.getTaxnum(), vo.getPk_invoice());
+        checkInvPrice(vo);
+        String[] fieldNames = new String[]{"taxnum","invprice","invtype","corpaddr","invphone","bankname","bankcode","email"};
+        singleObjectBO.update(vo, fieldNames);
+    }
+    
+    /**
+     * 校验开票金额（>0 && <=可开票金额）
+     */
+    private void checkInvPrice(ChInvoiceVO vo){
+        if(new DZFDouble(vo.getInvprice()).sub(new DZFDouble(0)).doubleValue() <= 0){
+            throw new BusinessException("开票金额小于0！");
+        }
+        DZFDouble addPrice = queryAddPrice(vo.getPk_corp(), vo.getIpaytype(), vo.getTempPrice());
+        DZFDouble ticketPrice = queryTicketPrice(vo.getPk_corp(), vo.getIpaytype());
+        DZFDouble invPrice = new DZFDouble(vo.getInvprice());
+        DZFDouble nticketmny = ticketPrice.sub(addPrice).sub(invPrice);
+        if(nticketmny.doubleValue() < 0){
+            throw new BusinessException("开票金额不可以大于可开票金额，请重新填写");
+        }
+    }
+    
+    /**
+     * 校验税号不能重复
+     * @param taxNum
+     */
+    private void checkTaxnum(String taxNum, String pk){
+        StringBuffer condition = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        condition.append("nvl(dr,0) = 0");
+        if(!StringUtil.isEmpty(pk)){
+            condition.append(" and pk_invoice != ?");
+            sp.addParam(pk);
+        }
+        ChInvoiceVO[] voArry = (ChInvoiceVO[])singleObjectBO.queryByCondition(ChInvoiceVO.class, condition.toString(), sp);
+        if(voArry != null && voArry.length > 0){
+            for(ChInvoiceVO vo : voArry){
+                if(vo.getTaxnum().equals(taxNum)){
+                    throw new BusinessException("税号不能重复！");
+                }
+            }
+        }
+    }
 }

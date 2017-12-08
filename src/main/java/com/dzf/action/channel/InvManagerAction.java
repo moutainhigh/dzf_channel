@@ -1,6 +1,7 @@
 package com.dzf.action.channel;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -15,7 +16,11 @@ import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
 
 /**
@@ -116,4 +121,74 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		}
 		return null;
 	}
+	
+	public void save(){
+        Json json = new Json();
+        try {
+            invManagerService.save(data);
+            json.setSuccess(true);
+            json.setMsg("保存成功!");
+        } catch (Exception e) {
+            printErrorLog(json, log, e, "保存失败");
+        }
+        writeJson(json);
+    }
+	
+	public void delete(){
+        Json json = new Json();
+        try{
+            String invoices = getRequest().getParameter("invoices");
+            if(!StringUtil.isEmpty(invoices)){
+                invoices = invoices.replace("}{", "},{");
+                invoices = "[" + invoices + "]";
+                JSONArray array = (JSONArray)JSON.parseArray(invoices);
+                Map<String,String> map = FieldMapping.getFieldMapping(new ChInvoiceVO());
+                ChInvoiceVO[] vos = DzfTypeUtils.cast(array,map, ChInvoiceVO[].class,JSONConvtoJAVA.getParserConfig());
+                int len = 0;
+                int length = vos.length;
+                if(vos != null && length > 0){
+                    for(ChInvoiceVO cvo : vos){
+                        try{
+                            invManagerService.delete(cvo);
+                            len++;
+                        } catch (BusinessException e) {
+//                            msg.append("合同号：").append(cvo.getVcontcode()).append(",失败原因：").append(e.getMessage()).append("<br>");
+                        } catch (Exception e) {
+                            log.error("审批失败",e);    
+                        }
+                    }
+                }
+                json.setMsg("成功删除"+len+"张单据，失败"+(length - len) +"张单据  ");
+                json.setSuccess(true);
+            }else{
+                json.setSuccess(false);
+                json.setRows(0);
+                json.setMsg("请选择审批数据");
+            }
+        } catch (Exception e){
+            printErrorLog(json, log, e, "删除失败");
+        }
+        writeJson(json);
+    }
+	
+	/**
+	 * 获取可开票金额
+	 */
+	public void queryTotalPrice(){
+	    Json json = new Json();
+	    try {
+	        String pk_corp = getRequest().getParameter("corpid");
+	        String ipaytype = getRequest().getParameter("ipaytype");
+	        String invprice = StringUtil.isEmpty(getRequest().getParameter("invprice")) ? "" : getRequest().getParameter("invprice");
+	        ChInvoiceVO vo = invManagerService.queryTotalPrice(pk_corp, Integer.valueOf(ipaytype), invprice);
+	        json.setSuccess(true);
+	        json.setMsg("获取可开票金额成功!");
+	        json.setRows(vo);
+	    }catch (Exception e) {
+	        printErrorLog(json, log, e, "获取可开票金额失败");
+	    }
+	    writeJson(json);
+	}
+
+
 }

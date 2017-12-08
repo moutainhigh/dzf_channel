@@ -52,14 +52,14 @@ function initDataGrid(){
 								return '加盟费';
 							} 
 		            }},
-		            {width : '80',title : '发票性质',field : 'nature',align:'left',
+		            /*{width : '80',title : '发票性质',field : 'nature',align:'left',
 						formatter: function(value,row,index){
 			          		if (value == 0){
 								return '公司';
 							} else if(value ==1){
 								return '个人';
 							} 
-		            }},
+		            }},*/
 		            {width : '180',title : '单位名称',field : 'cname',align:'left'},
 		            {width : '150',title : '税号',field : 'taxnum',align:'left'},
 		            {width : '80',title : '开票金额',field : 'iprice',align:'right',
@@ -98,6 +98,7 @@ function initDataGrid(){
 							}
 		            }},
 		            {width : '100',title : '备注',field : 'vmome',align:'center'},
+		            {width : '100',title : '',field : 'corpid',hidden:true},
 		          ]],
 		onBeforeLoad : function(param) {
 			$.messager.progress({
@@ -266,4 +267,110 @@ function fastQry() {
 			}
 		}
 	});
+}
+
+function onDelete(){
+	var rows = $('#grid').datagrid("getSelections");
+	if(rows == null || rows.length == 0){
+		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		return;
+	}
+	
+	var invoices = '';
+	for(var i=0; i<rows.length;i++){
+		invoices = invoices + JSON.stringify(rows[i]);
+	}
+	var postdata = new Object();
+	postdata["invoices"] = invoices;
+	
+	$.messager.confirm('提示','您是否确定删除？',
+		function(conf){
+			if(conf){
+				$.ajax({
+					type : 'post',
+					url : DZF.contextPath + '/sys/sys_inv_manager!delete.action',
+					data : postdata,
+					dataType : 'json',
+					success: function(result){
+						if(result.success){
+							reloadData();
+							Public.tips({content : result.msg ,type:0});
+						}else{
+							Public.tips({content : result.msg ,type:2});
+						}
+					}
+				});
+			}
+	});
+}
+
+//保存
+function save(){
+	$('#fp_form').form('submit', {
+		url : DZF.contextPath + '/sys/sys_inv_manager!save.action',
+		onSubmit : function() {
+			//再次进行表单字段验证
+			return $(this).form('validate');
+		},
+		success : function(data, textStatus) {
+			var result = JSON.parse(data);
+			if (result.success) {
+				Public.tips({ content : result.msg,type : 0});
+				$('#fp_dialog').dialog('close');
+				reloadData();
+			} else {
+				Public.tips({ content : result.msg, type : 1});
+			}
+			
+		}
+	});
+}
+
+function onEdit(){
+	var row = $("#grid").datagrid("getSelected");
+	if (!row) {
+		Public.tips({content : "请选择需要处理的数据",type : 2});
+		return;
+	}
+	
+	$('#fp_dialog').dialog('open');
+	$('#fp_form').form('clear');
+//	$('#ipaytype').combobox('setValue',row.paytype);
+//	$('#tempPrice').val(row.iprice);
+	$('#fp_form').form('load', row);
+	getTotalPrice(row.iprice,row.corpid);
+}
+
+//可开票金额
+var totPrice = 0;
+function getTotalPrice(invprice,corpid){
+	var ipaytype = $('#itype').combobox('getValue');
+	var postData = {};
+	postData.ipaytype = ipaytype;
+	postData.corpid = corpid;
+	if(invprice){
+		postData.invprice = invprice;
+	}
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + '/sys/sys_inv_manager!queryTotalPrice.action',
+		async : false,
+		data : postData,
+		dataType : 'json',
+		success : function(result) {
+			if (result.success) {
+				totPrice = result.rows.tprice;
+				setTotalPrice(totPrice);
+			}
+		}
+	});
+}
+
+function setTotalPrice(totalPrice){
+	var _price = totalPrice;
+	if (_price == 0) {
+		_price =  "0.00";
+	}
+	_price = formatMny(_price);
+	$("#tprice").numberbox('setValue',_price);
 }

@@ -55,6 +55,9 @@
 				
 				<div class=right>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">开票</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDelete()">删除</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExp()">导出</a>
 				</div>
 			</div>
 		</div>
@@ -95,6 +98,80 @@
 				<table id="grid"></table>
 			</div>
 		</div>
+		<div id="fp_dialog" class="easyui-dialog" title="发票申请" 	data-options="modal:true,closed:true" style="width:900px;height:450px;">
+			<div class="card_table" style="height:100%;min-width:890px;">
+				<div data-options="region:'north'" style="padding-top:20px;">
+					<form id="fp_form" method="post">
+						<input type='hidden' id="id" name="id"/>
+						<input type='hidden' id="corpid" name="corpid"/>
+						<input id="tempPrice" type='hidden' name="tempPrice"/>
+						<div class="time_col time_colp11">
+							<div style="width: 32%;display: inline-block">
+								<label style="text-align:right;width:34%;">付款类型：</label>
+								<select id="paytype" name="paytype" class="easyui-combobox" data-options="editable:false,readonly:true,panelHeight:50" style="width:62%;height:28px;text-align:left">
+									<option value="0">预付款</option>
+									<option value="1">加盟费</option>
+								</select>
+							</div>
+							<div style="width: 32%;display: inline-block">
+								<label style="text-align:right;width:34%;">可开票金额：</label>
+								<input id="tprice" name="tprice" class="easyui-numberbox" data-options="required:true,min:0,precision:2,readonly:true,groupSeparator:','" style="width:62%;height:28px;text-align:left">
+							</div>
+								<div style="width:32%;display: inline-block">
+								<label style="text-align:right;width:34%;">开票金额：</label>
+								<input id="iprice" name="iprice" class="easyui-numberbox" data-options="required:true,min:0,max:9999999999,precision:2,groupSeparator:','" style="width:62%;height:28px;text-align:left">
+							</div>
+						</div>
+						<div class="time_col time_colp11">
+								<div style="width: 32%;display: inline-block">
+									<label style="text-align:right;width:34%;">发票类型：</label>
+									<select id="itype" name="itype" class="easyui-combobox" data-options="editable:false,panelHeight:75" style="width:62%;height:28px;text-align:left">
+										<option value="0">专用发票</option>
+										<option value="1">普通发票</option>
+										<option value="2">电子普通发票</option>
+									</select>
+								</div>
+						</div>	
+						<div class="time_col time_colp11">
+							<label style="text-align:right;width:10.8%;">单位名称：</label>
+							<input id="cname" name="cname" class="easyui-textbox" data-options="required:true,readonly:true" style="width:36%;height:28px;text-align:left">
+				
+							<label style="text-align:right;width:10.8%;">税号：</label>
+							<input id="taxnum" name="taxnum" class="easyui-textbox" data-options="required:true" style="width:37%;height:28px;text-align:left">
+						</div>
+					
+						<div class="time_col time_colp11">
+							<label style="text-align:right;width:10.8%;">公司地址：</label>
+							<input id="caddr" name="caddr" class="easyui-textbox" data-options="required:true" style="width:85%;height:28px;text-align:left">
+						</div>
+						<div class="time_col time_colp11">
+							<label style="text-align:right;width:10.8%;">开户行：</label>
+							<input id="bname" name="bname" class="easyui-textbox" data-options="required:true" style="width:36%;height:28px;text-align:left">
+							<label style="text-align:right;width:10.8%;">开户账号：</label>
+							<input id="bcode" name="bcode" class="easyui-numberbox" data-options="required:true,min:0" style="width:37%;height:28px;text-align:left">
+						</div>
+						<div class="time_col time_colp11">
+							<div style="width:32%;display: inline-block">
+								<label style="text-align:right;width:33.8%;">邮箱：</label>
+								<input id="email" name="email" class="easyui-validatebox easyui-textbox" data-options="required:true,validType:'email'" style="width:62%;height:28px;text-align:left">
+							</div>
+							<div style="width: 32%;display: inline-block">
+								<label style="text-align:right;width:34%;">开票电话：</label>
+								<input id="phone" name="phone" class="easyui-validatebox easyui-textbox" data-options="required:true,validType:'phoneNum'" style="width:62%;height:28px;text-align:left">
+							</div>
+						</div>
+						<div class="time_col time_colp11">
+							<label style="text-align:right;width:10.8%;">备注：</label>
+							<input id="vmome" name="vmome" class="easyui-textbox" data-options="multiline:true" style="width:85%;height:56px;text-align:left">
+						</div>
+				 </form>
+			</div>
+			<div data-options="region:'center',title:'center title'" style="padding:20px 20px 20px 0px; float:right;">
+				<a id="collectsave" href="javascript:void(0)" class="ui-btn" onclick="save()">保存</a>
+				<a id="cancelBtn" 	href="javascript:void(0)" class="ui-btn" onclick="$('#fp_dialog').dialog('close');">取消</a>
+			</div>
+		</div>
+	</div>
 		
 		<div id="kj_dialog"></div>
 		<div id="kj_buttons" style="display:none;">
