@@ -130,7 +130,7 @@ public class ManagerServiceImpl implements IManagerService {
 			
 			buf=new StringBuffer();//扣款金额
 			buf.append("  select sum(ndeductmny) as ndeductmny ,pk_corp from cn_contract a where ");
-			buf.append("  substr(a.dsubmitime,0,10)>=? and substr(a.dsubmitime,0,10)<=? and a.vdeductstatus=2 and ");
+			buf.append("  substr(a.dsubmitime,0,10)>=? and substr(a.dsubmitime,0,10)<=? and nvl(a.isncust,'N')='N' and a.vdeductstatus=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
