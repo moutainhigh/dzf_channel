@@ -28,7 +28,7 @@
 			  </div>
 	        </div>
 				<div class="right">
-					<a class="ui-btn ui-btn-xz" onclick="add();" plain="true" href="javascript:void(0);">增加</a> 
+					<a class="ui-btn ui-btn-xz" onclick="add();" plain="true" href="javascript:void(0);">新增</a> 
 					<a class="ui-btn ui-btn-xz" onclick="edit();" plain="true" href="javascript:void(0);">修改</a>
 					<!-- <a class="ui-btn ui-btn-xz" onclick="del();" plain="true" href="javascript:void(0);">删除</a> -->
 					<a class="ui-btn ui-btn-xz" onclick="load();" plain="true" href="javascript:void(0);">刷新</a>
@@ -49,18 +49,18 @@
 			<table class="tableForm">
 				<tr>
 					<td><label style="width:70px;">用户编码</label></td>
-					<td colspan=2><input id="ucode" name="ucode" class="easyui-validatebox" style="width:260px" data-options="required:true"/>
+					<td colspan=2><input id="ucode" name="ucode" class="easyui-textbox" style="width:260px" data-options="required:true"/>
 					</td>
 					<td><div id="ckcode" style="display:none;"></div></td>
 				</tr>
 				<tr>
 					<td><label  style="width:70px;">用户名称</label></td>
-					<td  colspan=2><input id="uname" name="uname" class="easyui-validatebox" style="width:260px" data-options="required:true"></td>
+					<td  colspan=2><input id="uname" name="uname" class="easyui-textbox" style="width:260px" data-options="required:true"></td>
 					<td><div id="ckname" style="display:none;"></div></td>
 				</tr>
 				<tr>
 					<td><label>密码</label></td>
-					<td colspan=2><input id="u_pwd" name="u_pwd" class="easyui-validatebox" 
+					<td colspan=2><input id="u_pwd" name="u_pwd" class="easyui-textbox" 
 						type="password"  style="width:260px" 
 						data-options="required:true,validType:['minLength[8]','pwdrule']"/> 
 					</td>
@@ -68,7 +68,7 @@
 				</tr>
 				<tr>
 					<td><label>确认密码</label></td>
-					<td colspan=2><input id="uc_pwd" name="uc_pwd" class="easyui-validatebox"  
+					<td colspan=2><input id="uc_pwd" name="uc_pwd" class="easyui-textbox"  
 							type="password" style="width:260px" 
 							data-options="required:true,validType:['equals[\'#u_pwd\']','minLength[6]']"></td>
 					<td><div id="uc_pwd_ck" style="display:none;"></div></td>
