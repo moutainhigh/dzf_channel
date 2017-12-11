@@ -28,6 +28,10 @@
 .pos-background {
 	background-color: yellow;
 }
+.search-rs {
+	background: #2c9dd8;
+	color: #fff;
+}
 </style>
 </head>
 <body>
@@ -37,13 +41,13 @@
 				<div class="left mod-crumb">
 					<div id="cxjs" class="h30 h30-arrow">
 						<label class="mr5">查询：</label>
-						<strong id="querydate"><%=sdf.format(beforeDate)%></strong>
+						<strong id="querydate"></strong>
 						<span class="arrow-date"></span>
 					</div>
 				</div>
 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
-						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
+						<input style="height:28px;width:220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称或编码回车定位 "/> 
 					</div>
 				</div>
 				
@@ -61,7 +65,7 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">截止日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:219,height:27,editable:true" value="<%=sdf.format(beforeDate)%>" /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:219,height:27,readonly:true"  /></font>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>

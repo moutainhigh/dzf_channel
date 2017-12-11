@@ -32,6 +32,7 @@ import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.ExportExcel;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
@@ -63,6 +64,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		try {
 		    BillingInvoiceVO paramvo = new BillingInvoiceVO();
 			paramvo = (BillingInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			paramvo.setBdate(new DZFDate().toString());
 			List<BillingInvoiceVO> rows = billingQueryServiceImpl.query(paramvo);
 			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setMsg("查询成功！");

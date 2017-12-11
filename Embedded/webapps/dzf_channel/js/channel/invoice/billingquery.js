@@ -17,17 +17,38 @@ $(function(){
 
 //初始化监听
 function initListener(){
+	$('#bdate').datebox("setValue",parent.SYSTEM.LoginDate);
+	$("#querydate").html(parent.SYSTEM.LoginDate);
 	// 查询框鼠标经过
 	$("#querydate").on("mouseover", function() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	
+	$('#quname').textbox('textbox').keydown(function (e) {
+        if (e.keyCode == 13) {
+ 		   var filtername = $("#quname").val(); 
+		   if (filtername) {
+				var jsonStrArr = [];
+				if(loadrows){
+					for(var i=0;i<loadrows.length;i++){
+						var row = loadrows[i];
+						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
+							jsonStrArr.push(row);
+						} 
+					}
+					$('#grid').datagrid('loadData',jsonStrArr);   
+				}
+			}else{
+				$('#grid').datagrid('loadData',loadrows);
+			} 
+        }
+    });
 }
 
 function closeCx(){
 	$("#qrydialog").hide();
 }
-
 function initDataGrid(){
 	$('#grid').datagrid({
 		//url : contextPath + '/order/orderact!query.action',
@@ -73,10 +94,9 @@ function initDataGrid(){
 			});
 		},
 		onLoadSuccess : function(data) {
-			if(!isenter){
+			if(data.rows && loadrows == null){
 				loadrows = data.rows;
 			}
-			isenter = false;
 			$.messager.progress('close');
 			$("#qrydialog").hide();
 		}
@@ -105,15 +125,13 @@ function initChannel(){
 }
 
 function reloadData(){
+	loadrows = null;
 	$('#grid').datagrid('options').url = DZF.contextPath + '/invoice/billingquery!query.action';
-	
 	var bdate = $('#bdate').datebox('getValue'); //开始日期
-	
     $('#grid').datagrid('load', {
     	corps : $("#pk_account").val(),
         bdate: bdate,
     });
-    
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
 }
@@ -197,6 +215,5 @@ function onBilling(){
 				});
 			}
 	});
-
 }
 

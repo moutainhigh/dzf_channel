@@ -103,24 +103,12 @@ function initGrid(){
     			halign : 'center',
     			align : 'right',
     			editor: {
-    				type: 'combobox',
+    				type: 'numberbox',
                     options: {
                     	height: 35,
-                    	panelHeight: 80,
-                    	showItemIcon: true,
-                    	valueField: "value",
-                    	editable: false,
-                    	textField: "text",
-                    	data: [{
-                    		value: 6,
-                    		text: '6'
-                    	},{
-                    		value: 12,
-                    		text: '12'
-                    	},{
-                    		value: 24,
-                    		text: '24'
-                    	}]
+                    	precision: 0,
+                    	min:0,
+                    	validType:'length[1,2]',
                     }
                 }
     		}, {
