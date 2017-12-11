@@ -22,9 +22,8 @@
 										textField: 'label',
 										panelHeight:'60',
 										data: [
-										{label: ' ',value: '',selected:true},
 										{label: '是',value: 'Y'},
-										{label: '否',value: 'N'}]" 
+										{label: '否',value: 'N',selected:true}]" 
 						style="width:80px;height:27px" />
 			  </div>
 	        </div>
