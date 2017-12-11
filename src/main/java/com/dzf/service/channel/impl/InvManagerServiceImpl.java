@@ -213,11 +213,11 @@ public class InvManagerServiceImpl implements InvManagerService{
     public void delete(ChInvoiceVO vo) throws DZFWarpException {
         ChInvoiceVO chvo = (ChInvoiceVO)singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
         if(chvo != null){
-            if( chvo.getInvcorp() != 2){
-                throw new BusinessException("只有大账房主动发的开票才能删除！");
+            if(chvo.getInvcorp() != 2){
+                throw new BusinessException("加盟商提交的开票申请不能删除。");
             }
-            if(chvo.getInvstatus() != 1 ){
-                throw new BusinessException("只有发票状态为【待提交】的才能删除！");
+            if(chvo.getInvstatus() == 2 ){
+                throw new BusinessException("发票状态为【已开票】，不能删除！");
             }
             singleObjectBO.deleteObject(vo);
         }

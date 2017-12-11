@@ -57,7 +57,7 @@
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">开票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDelete()">删除</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExp()">导出</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExport()">导出</a>
 				</div>
 			</div>
 		</div>

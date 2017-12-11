@@ -1,7 +1,17 @@
-package com.dzf.action.channel;
+package com.dzf.action.channel.invoice;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -20,6 +30,8 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.excel.ExportArrayExcel;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
 
@@ -189,6 +201,107 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	    }
 	    writeJson(json);
 	}
+	
+	public void onExport(){
+        String strlist =getRequest().getParameter("strlist");
+        if(StringUtil.isEmpty(strlist)){
+            throw new BusinessException("导出数据不能为空!");
+        }   
+        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+        Map<String, String> mapping = FieldMapping.getFieldMapping(new ChInvoiceVO());
+        ChInvoiceVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ChInvoiceVO[].class, JSONConvtoJAVA.getParserConfig());
+        ArrayList<ChInvoiceVO> explist = new ArrayList<ChInvoiceVO>();
+        for(ChInvoiceVO vo : expVOs){
+            explist.add(vo);
+        }
+        HttpServletResponse response = getResponse();
+        ExportArrayExcel<ChInvoiceVO> ex = new ExportArrayExcel<ChInvoiceVO>();
+        Map<String, String> map = getExpFieldMap();
+        String[] enFields = new String[map.size()];
+        String[] cnFields = new String[map.size()];
+         //填充普通字段数组
+        int count = 0;
+        for (Entry<String, String> entry : map.entrySet()) {
+            enFields[count] = entry.getKey();
+            cnFields[count] = entry.getValue();
+            count++;
+        }
+        Map<String,String[]> arrayMap = getExpArrayMap();
+        List<String> arrayList = new ArrayList<String>();
+        if(arrayMap != null && !arrayMap.isEmpty()){
+            for(String key : arrayMap.keySet()){
+                arrayList.add(key);
+            }
+        }
+        ServletOutputStream servletOutputStream = null;
+        OutputStream toClient = null;
+        try {
+            response.reset();
+            // 设置response的Header
+            String date = DateUtils.getDate(new Date());
+            response.addHeader("Content-Disposition", "attachment;filename="+ new String(date+".xls"));
+            servletOutputStream = response.getOutputStream();
+             toClient = new BufferedOutputStream(servletOutputStream);
+            response.setContentType("applicationnd.ms-excel;charset=gb2312");
+            byte[] length = ex.exportExcel("发票管理",cnFields,enFields ,explist, toClient,arrayList, arrayMap);
+            String srt2=new String(length,"UTF-8");
+            response.addHeader("Content-Length", srt2);
+        } catch (Exception e) {
+            log.error("导出失败",e);
+        }  finally {
+            if(toClient != null){
+                try {
+                    toClient.flush();
+                    toClient.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+            if(servletOutputStream != null){
+                try {
+                    servletOutputStream.flush();
+                    servletOutputStream.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+        }
+	}
+	
+	/**
+     * 获取导出列
+     * @return
+     */
+    public Map<String, String> getExpFieldMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("corpname", "加盟商");
+        map.put("ipaytype", "付款类型");
+        map.put("taxnum", "税号");
+        map.put("invprice", "开盘金额");
+        map.put("invtype", "发票类型");
+        map.put("corpaddr", "公司地址");
+        map.put("invphone", "开票电话");
+        map.put("bankname", "开户行");
+        map.put("bankcode", "开户帐号");
+        map.put("email", "邮箱");
+        map.put("apptime", "申请时间");
+        map.put("invtime", "开票日期");
+        map.put("iperson", "经手人");
+        map.put("invstatus", "发票状态");
+        map.put("vmome", "备注");
+        return map;
+    }
 
+    /**
+     * 获取下拉字段的下拉值
+     * @return
+     */
+    private Map<String,String[]> getExpArrayMap(){
+        Map<String, String[]> map = new LinkedHashMap<String, String[]>();
+        map.put("ipaytype", new String[]{"预付款","加盟费"});
+        map.put("invtype", new String[]{"专用发票","普通发票","电子发票"});
+        map.put("invstatus", new String[]{"待提交","待开票","已开票"});
+        return map;
+    }
 
 }

@@ -60,7 +60,6 @@ function initDataGrid(){
 								return '个人';
 							} 
 		            }},*/
-		            {width : '180',title : '单位名称',field : 'cname',align:'left'},
 		            {width : '150',title : '税号',field : 'taxnum',align:'left'},
 		            {width : '80',title : '开票金额',field : 'iprice',align:'right',
 		            	formatter: function(value,row,index){
@@ -283,7 +282,7 @@ function onDelete(){
 	var postdata = new Object();
 	postdata["invoices"] = invoices;
 	
-	$.messager.confirm('提示','您是否确定删除？',
+	$.messager.confirm('提示','确认删除这些加盟商的开票申请吗？',
 		function(conf){
 			if(conf){
 				$.ajax({
@@ -374,3 +373,17 @@ function setTotalPrice(totalPrice){
 	_price = formatMny(_price);
 	$("#tprice").numberbox('setValue',_price);
 }
+
+/**
+ * 导出
+ */
+function onExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'请选择需导出的数据',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',{'strlist':JSON.stringify(datarows)}, true, true);
+}
+
