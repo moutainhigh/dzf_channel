@@ -279,7 +279,6 @@ public class InvManagerServiceImpl implements InvManagerService{
         if(ovo.getInvstatus() == 2){
             throw new BusinessException("已开票，不允许修改。");
         }
-        checkTaxnum(vo.getTaxnum(), vo.getPk_invoice());
         checkInvPrice(vo);
         String[] fieldNames = new String[]{"taxnum","invprice","invtype","corpaddr","invphone","bankname","bankcode","email","vmome"};
         singleObjectBO.update(vo, fieldNames);
@@ -301,25 +300,4 @@ public class InvManagerServiceImpl implements InvManagerService{
         }
     }
     
-    /**
-     * 校验税号不能重复
-     * @param taxNum
-     */
-    private void checkTaxnum(String taxNum, String pk){
-        StringBuffer condition = new StringBuffer();
-        SQLParameter sp = new SQLParameter();
-        condition.append("nvl(dr,0) = 0");
-        if(!StringUtil.isEmpty(pk)){
-            condition.append(" and pk_invoice != ?");
-            sp.addParam(pk);
-        }
-        ChInvoiceVO[] voArry = (ChInvoiceVO[])singleObjectBO.queryByCondition(ChInvoiceVO.class, condition.toString(), sp);
-        if(voArry != null && voArry.length > 0){
-            for(ChInvoiceVO vo : voArry){
-                if(vo.getTaxnum().equals(taxNum)){
-                    throw new BusinessException("税号不能重复！");
-                }
-            }
-        }
-    }
 }
