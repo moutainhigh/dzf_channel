@@ -277,7 +277,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
         map.put("corpname", "加盟商");
         map.put("ipaytype", "付款类型");
         map.put("taxnum", "税号");
-        map.put("invprice", "开盘金额");
+        map.put("invprice", "开票金额");
         map.put("invtype", "发票类型");
         map.put("corpaddr", "公司地址");
         map.put("invphone", "开票电话");
