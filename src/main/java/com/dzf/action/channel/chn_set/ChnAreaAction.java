@@ -111,7 +111,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 	public void delete() {
 		Json json = new Json();
 		try {
-			String pk_area = getRequest().getParameter("pk_area");//办理步骤ID
+			String pk_area = getRequest().getParameter("pk_area");
 			if(StringUtil.isEmpty(pk_area)){
 				throw new BusinessException("主键为空");
 			}
@@ -160,7 +160,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 	public void queryByPrimaryKey(){
 		Grid grid = new Grid();
 		try {
-			String pk_area = getRequest().getParameter("pk_area");//办理步骤ID
+			String pk_area = getRequest().getParameter("pk_area");
 			if(StringUtil.isEmpty(pk_area)){
 				throw new BusinessException("主键为空");
 			}
@@ -192,6 +192,28 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 查询省市，过滤掉那些已经使用的
+	 */
+	public void queryComboxArea(){
+		Grid grid = new Grid();
+		try {
+			String pk_area = getRequest().getParameter("pk_area");
+			ArrayList list = chnarea.queryComboxArea(pk_area);
+			if(list==null||list.size()==0){
+				grid.setRows(null);
+				grid.setMsg("查询数据为空!");
+			}else{
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功!");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
 	}
 
 }
