@@ -1,5 +1,6 @@
 package com.dzf.service.channel.chn_set.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,9 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.manager.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -89,7 +90,36 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		vo=(ChnAreaVO) multBodyObjectBO.saveMultBObject(vo.getPk_corp(), vo);
 		SuperVO[] bvos = (SuperVO[])vo.getTableVO("cn_chnarea_b");
 		vo.setChildren(bvos);
+		for (SuperVO superVO : bvos) {
+			if(!checkAreaIsOnly((ChnAreaBVO)superVO)){
+				throw new BusinessException("省市地区重复,请重新输入");
+			};
+		}
 		return vo;
+	}
+	
+	/**
+	 * 校验省市是否重复
+	 * @param vo
+	 * @return
+	 */
+	private boolean checkAreaIsOnly(ChnAreaBVO vo) {
+		boolean ret = false;
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select count(1) as count from cn_chnarea_b ");
+		sql.append(" where pk_corp=? and nvl(dr,0) = 0 and vprovince=?");
+		sp.addParam(vo.getPk_corp());
+		sp.addParam(vo.getVprovince());
+		if(!StringUtil.isEmpty(vo.getPk_chnarea())){
+			sql.append(" and pk_chnarea_b != ?");
+			sp.addParam(vo.getPk_chnarea_b());
+		}
+		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
+		int num = Integer.valueOf(res);
+		if(num <= 0)
+			ret = true;
+		return ret;
 	}
 	
 	/**
@@ -190,6 +220,24 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			}
 		}
 		return username;
+	}
+	
+	@Override
+	public ArrayList queryComboxArea(String pk_area) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select region_id as id, region_name as name\n");
+		sql.append("  from ynt_area\n");
+		sql.append(" where nvl(dr, 0) = 0\n");
+		sql.append("   and parenter_id = 1 and region_id not in  ");
+		sql.append("    (select vprovince from cn_chnarea_b where nvl(dr,0)=0 ");
+		if(!StringUtil.isEmpty(pk_area)){
+			sql.append(" and pk_chnarea != ?");
+			sp.addParam(pk_area);
+		}
+		sql.append("   ) order by region_id asc ");
+		ArrayList list = (ArrayList) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ComboBoxVO.class));
+		return list;
 	}
 	
 }

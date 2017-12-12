@@ -5,7 +5,6 @@ var editIndex = undefined;
 $(function() {
 	loadManager();
 	load();
-	initCard();
 	initManger();
 });
 
@@ -95,6 +94,7 @@ function loadManager(){
 
 
 function add(){
+	initCard();
     $('#cardDialog').dialog({
 		modal:true,
 	});
@@ -116,6 +116,7 @@ function add(){
  * 编辑
  */
 function edit(id,style) {
+	initCard(id);
 	if(style==0){//修改
 		status='edit';
 	}else{//查看
@@ -406,15 +407,15 @@ function selectManager(row){
 /**
  * 卡片grid初始化
  */
-function initCard(){
+function initCard(id){
 	var areas;
 	//地区初始化
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/sys/sys_area!queryComboxArea.action',
+		url : DZF.contextPath + '/chn_set/chnarea!queryComboxArea.action',
 		data : {
-			parenter_id : 1,
+			"pk_area" : id,
 		},
 		dataTye : 'json',
 		success : function(result) {

@@ -1,5 +1,7 @@
 package com.dzf.service.channel.chn_set;
 
+import java.util.ArrayList;
+
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -46,5 +48,12 @@ public interface IChnAreaService {
 	 * @throws DZFWarpException
 	 */
 	public String queryManager(String pk_corp) throws DZFWarpException;
+	
+	/**
+	 * 查询没有使用过的省市
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ArrayList queryComboxArea(String pk_area) throws DZFWarpException;
 	
 }
