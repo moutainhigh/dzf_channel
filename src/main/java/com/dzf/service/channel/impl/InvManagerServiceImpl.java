@@ -269,9 +269,16 @@ public class InvManagerServiceImpl implements InvManagerService{
 
     @Override
     public void save(ChInvoiceVO vo) throws DZFWarpException {
+        if(StringUtil.isEmpty(vo.getPk_corp())){
+            ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
+            if(ovo == null){
+                throw new BusinessException("数据已被删除，请刷新重新操作。");
+            }
+            vo.setPk_corp(ovo.getPk_corp());
+        }
         checkTaxnum(vo.getTaxnum(), vo.getPk_invoice());
         checkInvPrice(vo);
-        String[] fieldNames = new String[]{"taxnum","invprice","invtype","corpaddr","invphone","bankname","bankcode","email"};
+        String[] fieldNames = new String[]{"taxnum","invprice","invtype","corpaddr","invphone","bankname","bankcode","email","vmome"};
         singleObjectBO.update(vo, fieldNames);
     }
     
@@ -282,7 +289,7 @@ public class InvManagerServiceImpl implements InvManagerService{
         if(new DZFDouble(vo.getInvprice()).sub(new DZFDouble(0)).doubleValue() <= 0){
             throw new BusinessException("开票金额小于0！");
         }
-        DZFDouble addPrice = queryAddPrice(vo.getPk_corp(), vo.getIpaytype(), vo.getTempPrice());
+        DZFDouble addPrice = queryAddPrice(vo.getPk_corp(), vo.getIpaytype(), vo.getTempprice());
         DZFDouble ticketPrice = queryTicketPrice(vo.getPk_corp(), vo.getIpaytype());
         DZFDouble invPrice = new DZFDouble(vo.getInvprice());
         DZFDouble nticketmny = ticketPrice.sub(addPrice).sub(invPrice);

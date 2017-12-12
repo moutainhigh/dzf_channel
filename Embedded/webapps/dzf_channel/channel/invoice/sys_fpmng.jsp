@@ -104,7 +104,7 @@
 					<form id="fp_form" method="post">
 						<input type='hidden' id="id" name="id"/>
 						<input type='hidden' id="corpid" name="corpid"/>
-						<input id="tempPrice" type='hidden' name="tempPrice"/>
+						<input id="tempprice" type='hidden' name="tempprice"/>
 						<div class="time_col time_colp11">
 							<div style="width: 32%;display: inline-block">
 								<label style="text-align:right;width:34%;">付款类型：</label>

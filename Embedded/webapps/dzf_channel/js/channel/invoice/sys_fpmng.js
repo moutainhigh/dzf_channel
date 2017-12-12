@@ -335,15 +335,15 @@ function onEdit(){
 	$('#fp_dialog').dialog('open');
 	$('#fp_form').form('clear');
 //	$('#ipaytype').combobox('setValue',row.paytype);
-//	$('#tempPrice').val(row.iprice);
 	$('#fp_form').form('load', row);
+	$('#tempprice').val(row.iprice);
 	getTotalPrice(row.iprice,row.corpid);
 }
 
 //可开票金额
 var totPrice = 0;
 function getTotalPrice(invprice,corpid){
-	var ipaytype = $('#itype').combobox('getValue');
+	var ipaytype = $('#paytype').combobox('getValue');
 	var postData = {};
 	postData.ipaytype = ipaytype;
 	postData.corpid = corpid;
