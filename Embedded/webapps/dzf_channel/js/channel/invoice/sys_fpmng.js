@@ -331,7 +331,10 @@ function onEdit(){
 		Public.tips({content : "请选择需要处理的数据",type : 2});
 		return;
 	}
-	
+	if(row.istatus == 2){
+		Public.tips({content : "已开票，不允许修改",type : 2});
+		return;
+	}
 	$('#fp_dialog').dialog('open');
 	$('#fp_form').form('clear');
 //	$('#ipaytype').combobox('setValue',row.paytype);

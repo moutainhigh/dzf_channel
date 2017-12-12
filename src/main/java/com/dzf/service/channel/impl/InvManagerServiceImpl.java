@@ -269,12 +269,15 @@ public class InvManagerServiceImpl implements InvManagerService{
 
     @Override
     public void save(ChInvoiceVO vo) throws DZFWarpException {
+        ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
         if(StringUtil.isEmpty(vo.getPk_corp())){
-            ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
             if(ovo == null){
                 throw new BusinessException("数据已被删除，请刷新重新操作。");
             }
             vo.setPk_corp(ovo.getPk_corp());
+        }
+        if(ovo.getInvstatus() == 2){
+            throw new BusinessException("已开票，不允许修改。");
         }
         checkTaxnum(vo.getTaxnum(), vo.getPk_invoice());
         checkInvPrice(vo);
