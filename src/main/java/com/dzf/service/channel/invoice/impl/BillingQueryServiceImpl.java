@@ -1,5 +1,6 @@
 package com.dzf.service.channel.invoice.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,31 +33,64 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,");
-		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny,sum(nvl(invoice.invprice,0)) as billtotalmny ");
+		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
 		sql.append(" from bd_account a");
         sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2");
         if(!StringUtil.isEmpty(vo.getBdate())){
             sql.append(" and detail.doperatedate <= ?"); 
             sp.addParam(vo.getBdate());
         }
-        sql.append(" left join cn_invoice invoice on invoice.pk_corp = a.pk_corp and (invoice.invstatus = 2 or invoice.invstatus = 1)");
-        if(!StringUtil.isEmpty(vo.getBdate())){
-            sql.append(" and invoice.invtime <= ?"); 
-            sp.addParam(vo.getBdate());
-        }
-        sql.append(" where a.ischannel = 'Y' and nvl(detail.dr,0) = 0 and nvl(invoice.dr,0) = 0");
+        
+        sql.append(" where a.ischannel = 'Y' and nvl(detail.dr,0) = 0 ");
         if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
         sql.append(" group by a.pk_corp,a.innercode ,a.unitname");
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(BillingInvoiceVO.class));
+		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(vo);
 		if(list != null && list.size() > 0){
 		    for(BillingInvoiceVO bvo : list){
-		        bvo.setNoticketmny(CommonUtil.getDZFDouble(bvo.getDebittotalmny()).sub(CommonUtil.getDZFDouble(bvo.getBilltotalmny())));
+		        BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
+		        if(binvo != null){
+		            bvo.setBilltotalmny(CommonUtil.getDZFDouble(binvo.getBilltotalmny()));
+		            bvo.setNoticketmny(CommonUtil.getDZFDouble(bvo.getDebittotalmny()).sub(CommonUtil.getDZFDouble(bvo.getBilltotalmny())));
+		        }
 		    }
 		}
 		return list;
+	}
+	
+	/**
+	 * 查询已开票金额
+	 * @param vo
+	 */
+	private HashMap<String, BillingInvoiceVO> queryInvoiceMny(BillingInvoiceVO vo){
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append(" select a.pk_corp,");
+        sql.append(" sum(nvl(invoice.invprice,0)) as billtotalmny ");
+        sql.append(" from bd_account a");
+        sql.append(" left join cn_invoice invoice on invoice.pk_corp = a.pk_corp and (invoice.invstatus = 2 or invoice.invstatus = 1)");
+        if(!StringUtil.isEmpty(vo.getBdate())){
+            sql.append(" and invoice.apptime <= ?"); 
+            sp.addParam(vo.getBdate());
+        }
+        sql.append(" where a.ischannel = 'Y' and nvl(invoice.dr,0) = 0");
+        if( null != vo.getCorps() && vo.getCorps().length > 0){
+            String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
+            sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+        }
+        sql.append(" group by a.pk_corp ");
+        List<BillingInvoiceVO> list = (List<BillingInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(BillingInvoiceVO.class));
+        HashMap<String, BillingInvoiceVO> map = new HashMap<>();
+        if(list != null && list.size() > 0){
+            for(BillingInvoiceVO bvo : list){
+                map.put(bvo.getPk_corp(), bvo);
+            }
+        }
+        return map;
+    
 	}
 
     @Override

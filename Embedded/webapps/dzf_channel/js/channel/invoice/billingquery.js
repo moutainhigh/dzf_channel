@@ -27,6 +27,7 @@ function initListener(){
 	
 	$('#quname').textbox('textbox').keydown(function (e) {
         if (e.keyCode == 13) {
+        	$('#grid').datagrid('unselectAll');
  		   var filtername = $("#quname").val(); 
 		   if (filtername) {
 				var jsonStrArr = [];

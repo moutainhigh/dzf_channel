@@ -188,7 +188,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
      */
     public Map<String, String> getExpFieldMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("corpcode", "加盟商名称");
+        map.put("corpcode", "加盟商编码");
         map.put("corpname", "加盟商名称");
         map.put("debittotalmny", "累计扣款金额");
         map.put("billtotalmny", "累计开票金额");
