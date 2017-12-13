@@ -237,9 +237,11 @@ function save() {
 		childBody1 = childBody1 + JSON.stringify(rows[i]);
 	}
 	var childBody1d="";
-	var rows = $("#cardGrid").datagrid('getChanges','deleted');
-	for (var i = 0; i< rows.length; i++) {
-		childBody1d = childBody1d + JSON.stringify(rows[i]);
+	if(status!="add"){
+		var rows = $("#cardGrid").datagrid('getChanges','deleted');
+		for (var i = 0; i< rows.length; i++) {
+			childBody1d = childBody1d + JSON.stringify(rows[i]);
+		}
 	}
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#chnarea')));
