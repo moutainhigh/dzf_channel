@@ -60,6 +60,7 @@ function initDataGrid(){
 		singleSelect : false,
 		height : Public.setGrid().h,
 		idField : 'corpid',
+		showFooter:true,
 //		pagination : true,
 //		pageSize : 20,
 //		pageList : [ 20, 50, 100, 200 ],
@@ -100,9 +101,34 @@ function initDataGrid(){
 			}
 			$.messager.progress('close');
 			$("#qrydialog").hide();
+			calFooter();
 		}
 	});
 }
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var dtotalmny = 0;	
+    var btotalmny = 0;	
+    var noticketmny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	dtotalmny += parseFloat(rows[i].dtotalmny == undefined ? 0 : rows[i].dtotalmny);
+    	btotalmny += parseFloat(rows[i].btotalmny == undefined ? 0 : rows[i].btotalmny);
+    	noticketmny += parseFloat(rows[i].noticketmny==undefined ? 0 : rows[i].noticketmny);
+    }
+    footerData['ccode'] = '合计';
+    footerData['dtotalmny'] = dtotalmny;
+    footerData['btotalmny'] = btotalmny;
+    footerData['noticketmny'] = noticketmny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
 
 //初始化加盟商
 function initChannel(){
