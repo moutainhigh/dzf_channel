@@ -94,6 +94,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND pk_corp in (").append(inSql).append(")");
 		}
+		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
+			sql.append(" AND pk_paybill = ? \n");
+            spm.addParam(paramvo.getPk_bill());
+		}
 		sql.append(" AND vstatus != 1");
 		sql.append(" order by dpaydate desc");
 		qryvo.setSql(sql.toString());

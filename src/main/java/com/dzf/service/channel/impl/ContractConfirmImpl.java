@@ -70,41 +70,39 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> conflist = (List<ContractConfrimVO>) singleObjectBO.executeQuery(contqryvo.getSql(),
 				contqryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		
-		if (conflist != null && conflist.size() > 0) {
-			CorpVO corpvo = null;
-			AccountVO accvo = null;
-			Map<String, String> packmap = queryPackageMap();
-			Integer cyclenum = 0;
-			for (ContractConfrimVO vo : conflist) {
-//				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-//				if (corpvo != null) {
-//					vo.setCorpname(corpvo.getUnitname());
-//					vo.setVarea(corpvo.getCitycounty());
-//				}
-				accvo = queryAccountById(vo.getPk_corp());
-				if (accvo != null) {
-					vo.setCorpname(accvo.getUnitname());
-					vo.setVarea(accvo.getCitycounty());
-				}
-				corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
-				if (corpvo != null) {
-					vo.setCorpkname(corpvo.getUnitname());
-				}
-				//从套餐取纳税人性质
-				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
-					if(packmap != null && !packmap.isEmpty()){
-						vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+		//查询主键如果不为空，则为别的界面联查到合同审核界面，只查询审核通过合同即可
+		if(StringUtil.isEmpty(paramvo.getPk_bill())){
+			if (conflist != null && conflist.size() > 0) {
+				CorpVO corpvo = null;
+				AccountVO accvo = null;
+				Map<String, String> packmap = queryPackageMap();
+				Integer cyclenum = 0;
+				for (ContractConfrimVO vo : conflist) {
+					accvo = queryAccountById(vo.getPk_corp());
+					if (accvo != null) {
+						vo.setCorpname(accvo.getUnitname());
+						vo.setVarea(accvo.getCitycounty());
 					}
-				}
-				cyclenum = 0;
-				if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
-					cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
-					vo.setVchargecycle(String.valueOf(cyclenum));//收款周期
-				}else{
-					vo.setVchargecycle(null);//收款周期
-				}
-				if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
-					retlist.add(vo);
+					corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
+					if (corpvo != null) {
+						vo.setCorpkname(corpvo.getUnitname());
+					}
+					//从套餐取纳税人性质
+					if(!StringUtil.isEmpty(vo.getPk_packagedef())){
+						if(packmap != null && !packmap.isEmpty()){
+							vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+						}
+					}
+					cyclenum = 0;
+					if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
+						cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
+						vo.setVchargecycle(String.valueOf(cyclenum));//收款周期
+					}else{
+						vo.setVchargecycle(null);//收款周期
+					}
+					if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
+						retlist.add(vo);
+					}
 				}
 			}
 		}
@@ -200,6 +198,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(paramvo.getEnddate() != null){
 				sql.append("   AND dsubmitime <= ? \n") ; 
 				spm.addParam(paramvo.getEnddate() + " 23:59:59");
+			}
+			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
+				sql.append("   AND pk_confrim = ? \n") ; //合同主键
+				spm.addParam(paramvo.getPk_bill());
 			}
 		}
 		sql.append(" order by dsubmitime desc");

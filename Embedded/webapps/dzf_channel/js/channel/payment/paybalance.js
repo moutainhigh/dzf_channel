@@ -1,12 +1,11 @@
 var contextPath = DZF.contextPath;
 var grid,gridh;
-var loadrows = null;
-var isenter = false;//是否快速查询
 
 $(function() {
 	load();
-	fastQry();
 	initDetailGrid();
+	initQryPeroid();
+	initQryLitener();
 });
 
 /**
@@ -32,17 +31,22 @@ function load(){
 		}, {
 			width : '140',
 			title : '付款类型',
+			align:'center',
             halign:'center',
-			field : 'iptype',
-			formatter : function(value) {
-				if (value == '1')
-					return '保证金';
-				if (value == '2')
-					return '预付款';
-			}
-		}, {
+			field : 'ptypenm',
+		},{
 			width : '140',
-			title : '付款金额',
+			title : '期初余额',
+			align:'right',
+            halign:'center',
+			field : 'initbal',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '140',
+			title : '本期付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
@@ -50,9 +54,9 @@ function load(){
 				if(value == 0)return "0.00";
 				return formatMny(value);
 			}
-		},{
+		}, {
 			width : '140',
-			title : '已用金额',
+			title : '本期已用金额',
 			align:'right',
             halign:'center',
 			field : 'usemny',
@@ -62,7 +66,7 @@ function load(){
 			}
 		},{
 			width : '140',
-			title : '余额',
+			title : '期末余额',
 			align:'right',
             halign:'center',
 			field : 'balmny',
@@ -73,10 +77,6 @@ function load(){
 		},] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
-            if(!isenter){
-				loadrows = data.rows;
-			}
-			isenter = false;
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
@@ -89,14 +89,17 @@ function load(){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
+	var initbal = 0;
     var npmny = 0;	
     var usemny = 0;	
     var balmny = 0;	
     for (var i = 0; i < rows.length; i++) {
-    	npmny += parseFloat(rows[i].npmny==undefined?0:rows[i].npmny);
-    	usemny += parseFloat(rows[i].usemny==undefined?0:rows[i].usemny);
-    	balmny += parseFloat(rows[i].balmny==undefined?0:rows[i].balmny);
+    	initbal += getFloatValue(rows[i].initbal);
+    	npmny += getFloatValue(rows[i].npmny);
+    	usemny += getFloatValue(rows[i].usemny);
+    	balmny += getFloatValue(rows[i].balmny); 
     }
+    footerData['initbal'] = initbal;
     footerData['npmny'] = npmny;
     footerData['usemny'] = usemny;
     footerData['balmny'] = balmny;
@@ -106,50 +109,32 @@ function calFooter(){
 }
 
 /**
- * 标签查询
- * @param type  1：全部；2：保证金；3：预付款；
- */
-function qryData(type){
-	$('#grid').datagrid('unselectAll');
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpaybalance!query.action';
-	queryParams.qtype = type;
-	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
-}
-
-/**
- * 快速过滤
- */
-function fastQry(){
-	$('#filter_value').textbox('textbox').keydown(function (e) {
-		 if (e.keyCode == 13) {
-            var filtername = $("#filter_value").val(); 
-            if (filtername != "") {
-           	 var jsonStrArr = [];
-           	 if(loadrows){
-           		 for(var i=0;i<loadrows.length;i++){
-           			 var row = loadrows[i];
-           			 if(row != null && !isEmpty(row["corpnm"])){
-           				 if(row["corpnm"].indexOf(filtername) >= 0){
-           					 jsonStrArr.push(row);
-           				 } 
-           			 }
-           		 }
-           		 isenter = true;
-           		 $('#grid').datagrid('loadData',jsonStrArr);  
-           	 }
-            }else{
-           	 $('#grid').datagrid('loadData',loadrows);
-            } 
-         }
-   });
-}
-
-/**
  * 明细查询
  */
 function qryDetail(){
+	
+	var begdate = null;
+	var enddate = null;
+	var bperiod = null;
+	var eperiod = null;
+	var period = null;
+	var ischeck = $('#da').is(':checked');
+	var qrydate = null;
+	if(ischeck){
+		begdate = $("#begdate").datebox("getValue");
+		enddate = $("#enddate").datebox("getValue");
+		bperiod = null;
+		eperiod = null;
+		period = null;
+		qrydate = begdate + "至" + enddate;
+	}else{
+		bperiod = $("#begperiod").val();
+		eperiod = $("#endperiod").val();
+		begdate = null;
+		enddate = null;
+		period = 'period';
+		qrydate = bperiod + "至" + eperiod;
+	}
 	var row = $('#grid').datagrid('getSelected');
 	if (row == null) {
 		Public.tips({
@@ -165,6 +150,11 @@ function qryDetail(){
 		data : {
 			"cpid" : row.corpid,
 			"qtype" : row.iptype,
+			"bperiod" : bperiod,
+			"eperiod" : eperiod,
+			"begdate" : begdate,
+			"enddate" : enddate,
+			"period" : period,
 		},
 		traditional : true,
 		async : false,
@@ -184,8 +174,9 @@ function qryDetail(){
 					});
 					return;
 				}
-				$('#corpnm').textbox('setValue',res[0].corpnm);
-				$('#ptypenm').textbox('setValue',res[0].ptypenm);
+				$('#corpnm').html(res[0].corpnm);
+				$('#ptypenm').html(res[0].ptypenm);
+				$('#qrydate').html(qrydate);
 				$('#detail_dialog').dialog('open');
 				$('#gridh').datagrid('loadData',res);
 			}
@@ -210,12 +201,13 @@ function initDetailGrid(){
 //		pageList : DZF.pageList_min,
 		showFooter:true,
 		columns : [ [ {
-			width : '140',
+			width : '110',
 			title : '日期',
+			align:'center',
 			halign:'center',
 			field : 'ddate',
 		}, {
-			width : '180',
+			width : '200',
 			title : '摘要',
             halign:'center',
 			field : 'memo',
@@ -225,23 +217,17 @@ function initDetailGrid(){
 			align:'right',
             halign:'center',
 			field : 'npmny',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			}
+			formatter : npFormat
 		},{
 			width : '140',
-			title : '已用金额',
+			title : '扣款金额',
 			align:'right',
             halign:'center',
 			field : 'usemny',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			}
+			formatter : useFormat
 		},{
 			width : '140',
-			title : '余额',
+			title : '期末余额',
 			align:'right',
             halign:'center',
 			field : 'balmny',
@@ -275,3 +261,235 @@ function initDetailGrid(){
 		},
 	});
 }
+
+/**
+ * 付款金额格式化
+ * @param value
+ * @param row
+ * @param index
+ * @returns
+ */
+function npFormat(value,row,index){
+	if(value == 0){
+		return "0.00";
+	}else{
+		if(row.ddate != "合计"){
+			var url = 'channel/payment/payconfirm.jsp?operate=topayc&pk_billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('付款单确认','"+url+"');\">"+formatMny(value)+"</a>";
+			return ss ;
+		}else{
+			return formatMny(value);
+		}
+	}
+}
+
+/**
+ * 扣款金额格式化
+ * @param value
+ * @param row
+ * @param index
+ * @returns
+ */
+function useFormat(value,row,index){
+	if(value == 0){
+		return "0.00";
+	}else{
+		if(row.ddate != "合计"){
+			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+			return ss ;
+		}else{
+			return formatMny(value);
+		}
+	}
+}
+
+/**
+ * 查询期间初始化
+ */
+function initQryPeroid(){
+	var begperiod = $('#begperiod').textbox('getValue');
+	var year = "";
+	var month = "";
+	if(!isEmpty(begperiod)){
+		year = begperiod.substring(0,4);
+		month = begperiod.substring(5);
+		month = parseInt(month) - 1;
+	}
+	$('#begperiod').textbox({
+		icons: [{
+			iconCls:'foxdate',
+			handler: function(e){
+				click_icon(205, 135, begperiod, year, month, function(val){
+					if(!isEmpty(val)){
+						$('#begperiod').textbox('setValue', val);
+						begperiod = val;
+						if(!isEmpty(begperiod)){
+							year = begperiod.substring(0,4);
+							month = begperiod.substring(5);
+							month = parseInt(month) - 1;
+						}
+					}
+				})
+			}
+		}]
+	});
+	
+	var endperiod = $('#endperiod').textbox('getValue');
+	var eyear = "";
+	var emonth = "";
+	if(!isEmpty(endperiod)){
+		eyear = endperiod.substring(0,4);
+		emonth = endperiod.substring(5);
+		emonth = parseInt(emonth) - 1;
+	}
+	$('#endperiod').textbox({
+		icons: [{
+			iconCls:'foxdate',
+			handler: function(e){
+				click_icon(205, 296, endperiod, eyear, emonth, function(val){
+					if(!isEmpty(val)){
+						$('#endperiod').textbox('setValue', val);
+						endperiod = val;
+						if(!isEmpty(endperiod)){
+							eyear = endperiod.substring(0,4);
+							emonth = endperiod.substring(5);
+							emonth = parseInt(emonth) - 1;
+						}
+					}
+				})
+			}
+		}]
+	});
+}
+
+/**
+ * 查询框监听事件
+ */
+function initQryLitener(){
+	$("#begdate").datebox("readonly", false);
+	$("#enddate").datebox("readonly", false);
+	$('#begperiod').textbox({"readonly" : true});
+	$('#endperiod').textbox({"readonly" : true});
+	$(".foxdate").hide();
+    $('input:radio[name="seledate"]').change( function(){  
+		var ischeck = $('#da').is(':checked');
+		if(ischeck){
+			var sdv = $('#begdate').datebox('getValue');
+			var edv = $('#enddate').datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", false);
+			$("#enddate").datebox("readonly", false);
+			$('#begperiod').textbox({"readonly" : true});
+			$('#endperiod').textbox({"readonly" : true});
+			$(".foxdate").hide();
+		}else{
+			var sdv = $("#begperiod").val();
+			var edv = $("#endperiod").val();
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", true);
+			$("#enddate").datebox("readonly", true);
+			$('#begperiod').textbox({"readonly" : false});
+			$('#endperiod').textbox({"readonly" : false});
+			$(".foxdate").show();
+		}
+	});
+}
+
+/**
+ * 查询-确定
+ */
+function reloadData(){
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').url = contextPath + '/chnpay/chnpaybalance!query.action';
+	var ischeck = $('#da').is(':checked');
+	if(ischeck){
+		queryParams['begdate'] = $("#begdate").datebox("getValue");
+		queryParams['enddate'] = $("#enddate").datebox("getValue");
+		queryParams['bperiod'] = null;
+		queryParams['eperiod'] = null;
+		queryParams['period'] = null;
+	}else{
+		queryParams['bperiod'] = $("#begperiod").val();
+		queryParams['eperiod'] = $("#endperiod").val();
+		queryParams['begdate'] = null;
+		queryParams['enddate'] = null;
+		queryParams['period'] = 'period';
+	}
+	var qtype = $("input[name='seletype']:checked").val();
+	queryParams['qtype'] = qtype;
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
+	$('#grid').datagrid('unselectAll');
+	$("#qrydialog").css("visibility", "hidden");
+}
+
+/**
+ * 查询-取消
+ */
+function closeCx(){
+	$("#qrydialog").css("visibility", "hidden");
+}
+
+/**
+ * 导出
+ */
+function onExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'请选择需导出的数据',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	Business.getFile(DZF.contextPath+ '/chnpay/chnpaybalance!onExport.action',{'strlist':JSON.stringify(datarows)}, true, true);
+}
+
+/**
+ * 打印
+ */
+function onPrint(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	Business.getFile(contextPath+ '/chnpay/chnpaybalance!print.action',{'strlist':JSON.stringify(datarows),
+		'columns':JSON.stringify(columns)}, true, true);
+}
+
+/**
+ * 明细打印
+ */
+function onDetPrint(){
+		var datarows = $('#gridh').datagrid("getRows");
+ 		if( datarows == null||datarows.length == 0){
+ 			Public.tips({content:'明细数据为空',type:2});
+ 			return;
+ 		}
+ 		var columns = $('#gridh').datagrid("options").columns[0];
+ 		var qrydate = $("#qrydate").text();
+ 		var corpnm = $("#corpnm").text();
+ 		var ptypenm = $("#ptypenm").text();
+ 		
+ 		Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetPrint.action',{'strlist':JSON.stringify(datarows),
+ 			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+}
+
+/**
+ * 明细导出
+ */
+function onDetExport(){
+	var datarows = $('#gridh').datagrid("getRows");
+	if( datarows == null||datarows.length == 0){
+			Public.tips({content:'明细数据为空',type:2});
+			return;
+		}
+		var columns = $('#gridh').datagrid("options").columns[0];
+ 		var qrydate = $("#qrydate").text();
+ 		var corpnm = $("#corpnm").text();
+ 		var ptypenm = $("#ptypenm").text();
+	Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetExport.action',{'strlist':JSON.stringify(datarows),
+		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+}
+	

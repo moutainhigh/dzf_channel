@@ -7,8 +7,37 @@ $(function() {
 	load();
 	fastQry();
 	initListener();
+	loadJumpData();
 });
 
+/**
+ * 由别的界面（付款单余额明细）跳转待合同审核界面
+ */
+function loadJumpData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	if(operate == "topayc"){
+		var id = obj.pk_billid;
+		
+		$('#grid').datagrid('unselectAll');
+		var queryParams = $('#grid').datagrid('options').queryParams;
+		$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+		queryParams.qtype = $('#status').combobox('getValue');
+		queryParams.begdate = null;
+		queryParams.enddate = null;
+		queryParams.iptype = -1;
+		queryParams.ipmode = -1;
+		queryParams.cpid = null;
+		queryParams.id = id;
+		
+		$('#grid').datagrid('options').queryParams = queryParams;
+		$('#grid').datagrid('reload');
+	}
+}
+
+/**
+ * 监听事件
+ */
 function initListener(){
 	$("#querydate").on("mouseover", function() {
 		$("#qrydialog").show();
@@ -88,7 +117,7 @@ function reloadData(){
 	queryParams.enddate = edate;
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
-	queryParams.cpid = $("#pk_account").val(),
+	queryParams.cpid = $("#pk_account").val();
 	
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');

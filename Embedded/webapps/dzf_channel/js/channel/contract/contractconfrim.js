@@ -8,7 +8,29 @@ $(function() {
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
+	loadJumpData();
 });
+
+/**
+ * 由别的界面（付款单余额明细）跳转待合同审核界面
+ */
+function loadJumpData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	if(operate == "tocont"){
+		var id = obj.pk_billid;
+		
+		$('#grid').datagrid('unselectAll');
+		var queryParams = $('#grid').datagrid('options').queryParams;
+		$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+		queryParams.begdate = null;
+		queryParams.enddate = null;
+		queryParams.qtype = -1;
+		queryParams.id = id;
+		$('#grid').datagrid('options').queryParams = queryParams;
+		$('#grid').datagrid('reload');
+	}
+}
 
 /**
  * 查询日期初始化
