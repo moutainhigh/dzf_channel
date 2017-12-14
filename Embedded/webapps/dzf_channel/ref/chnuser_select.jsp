@@ -27,6 +27,7 @@ $(function(){
 		singleSelect: true,
 		showFooter: true,
 		striped:true,
+		queryParams: { "invalid": "N" },
 	    columns:[[   
 	     		  {field:'ucode',title:'用户编码',width:200},  
 	              {field:'uname',title:'用户名称',width:400}, 

@@ -18,6 +18,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.sys.sys_power.IUserService;
 
 /**
@@ -101,17 +102,28 @@ public class ChnUserAction extends BaseAction<UserVO>{
 		try {
 			SysPowerConditVO qryVO = new SysPowerConditVO();
 			String ilock = getRequest().getParameter("ilock");
+			String invalid = getRequest().getParameter("invalid");//失效
 			qryVO.setCrtcorp_id(loginCorp);
 			qryVO.setUtype(UTYPE);
 			qryVO.setIlock(ilock);
 			List<UserVO> list = userService.query(loginCorp,qryVO);
-			UserVO[] array = list.toArray(new UserVO[0]);
+			List<UserVO> alist=new ArrayList<>();
+			if(invalid!=null&&invalid.equals("N")){//查询没有失效的用户
+				for (UserVO userVO : list) {
+					if(userVO.getDisable_time()==null||new DZFDate().before(userVO.getDisable_time())){
+						alist.add(userVO);
+					}
+				}
+			}else{
+				alist=list;
+			}
+			UserVO[] array = alist.toArray(new UserVO[0]);
 			array = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name"}, array,1);
 			if(list != null && list.size()>0){
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
-				grid.setTotal((long)list.size());
-				grid.setRows(list);
+				grid.setTotal((long)alist.size());
+				grid.setRows(alist);
 			}else{
 				grid.setRows(new ArrayList<UserVO>());
 				grid.setSuccess(false);
