@@ -1,4 +1,4 @@
-package com.dzf.model.channel.manager;
+package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;

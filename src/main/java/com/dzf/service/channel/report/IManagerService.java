@@ -2,7 +2,7 @@ package com.dzf.service.channel.report;
 
 import java.util.List;
 
-import com.dzf.model.channel.manager.ManagerVO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.pub.DZFWarpException;
 

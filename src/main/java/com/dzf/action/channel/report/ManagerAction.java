@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.model.channel.manager.ManagerVO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;

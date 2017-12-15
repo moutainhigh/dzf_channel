@@ -13,7 +13,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.manager.ManagerVO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
