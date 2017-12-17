@@ -199,6 +199,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				sql.append(" AND doperatedate >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
+			if(paramvo.getEnddate() != null){
+				sql.append(" AND doperatedate <= ? \n");
+				spm.addParam(paramvo.getEnddate());
+			}
 		}
 		sql.append(" GROUP BY pk_corp, ipaytype \n");
 		sql.append(" ORDER BY pk_corp \n");
@@ -324,10 +328,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 \n");
-//		sql.append(" AND ipaytype = ? \n");
-//		spm.addParam(paramvo.getQrytype());
-//		sql.append(" AND pk_corp = ? \n");
-//		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
