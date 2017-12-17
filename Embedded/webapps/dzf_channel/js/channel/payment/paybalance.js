@@ -375,6 +375,7 @@ function initQryLitener(){
     $('input:radio[name="seledate"]').change( function(){  
 		var ischeck = $('#da').is(':checked');
 		if(ischeck){
+			queryBoxChange('#begdate','#enddate');
 			var sdv = $('#begdate').datebox('getValue');
 			var edv = $('#enddate').datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
@@ -384,6 +385,7 @@ function initQryLitener(){
 			$('#endperiod').textbox({"readonly" : true});
 			$(".foxdate").hide();
 		}else{
+			queryBoxChange1('#begperiod','#endperiod');
 			var sdv = $("#begperiod").val();
 			var edv = $("#endperiod").val();
 			$('#jqj').html(sdv + ' 至 ' + edv);
@@ -392,6 +394,26 @@ function initQryLitener(){
 			$('#begperiod').textbox({"readonly" : false});
 			$('#endperiod').textbox({"readonly" : false});
 			$(".foxdate").show();
+		}
+	});
+}
+
+/**
+ * 查询框时间改变事件(为期间年月)
+ * @param start
+ * @param end
+ */
+function queryBoxChange1(start,end){
+	$(start).textbox({
+		onChange: function(newValue, oldValue){
+			var edv = $(end).textbox('getValue');
+			$('#jqj').text(newValue + ' 至 ' + edv);
+		}
+	});
+	$(end).textbox({
+		onChange: function(newValue, oldValue){
+			var sdv = $(start).textbox('getValue');
+			$('#jqj').text(sdv + ' 至 ' + newValue);
 		}
 	});
 }
