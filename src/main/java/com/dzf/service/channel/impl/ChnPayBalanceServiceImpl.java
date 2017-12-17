@@ -327,7 +327,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 \n");
+		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 and pk_corp=? \n");
+		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
