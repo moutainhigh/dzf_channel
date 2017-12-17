@@ -2,6 +2,7 @@ package com.dzf.model.pub;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 
 /**
@@ -68,6 +69,12 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("eperiod")
 	private String endperiod;// 结束期间
 	
+	@FieldAlias("isncust")
+	private DZFBoolean isncust;// 是否存量客户
+	   
+	@FieldAlias("destatus")
+	private Integer vdeductstatus;//加盟商合同状态  1：待审核；2：已审核；3：已驳回；4：服务到期；
+	
 	public String getBeginperiod() {
 		return beginperiod;
 	}
@@ -106,6 +113,22 @@ public class QryParamVO extends SuperVO {
 
 	public void setPeriod(String period) {
 		this.period = period;
+	}
+
+	public DZFBoolean getIsncust() {
+		return isncust;
+	}
+
+	public void setIsncust(DZFBoolean isncust) {
+		this.isncust = isncust;
+	}
+
+	public Integer getVdeductstatus() {
+		return vdeductstatus;
+	}
+
+	public void setVdeductstatus(Integer vdeductstatus) {
+		this.vdeductstatus = vdeductstatus;
 	}
 
 	public DZFDate getBegdate() {
