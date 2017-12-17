@@ -53,7 +53,7 @@
 					<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="width: 80px;text-align:right">日期：</label>
+					<label style="width: 80px;text-align:right">付款日期：</label>
 					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
 					<font>-</font>
 					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
@@ -84,11 +84,12 @@
 						<option value="1">银行转账</option>
 						<option value="2">支付宝</option>
 						<option value="3">微信</option>
+						<option value="4">其他</option>
 					</select>
 				</div>
 			</form>
 			<p>
-				<a class="ui-btn save_input" onclick="clearParams()">清空</a>
+				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
 				<a class="ui-btn save_input" onclick="reloadData()">确定</a>
 				<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 			</p>
