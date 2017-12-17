@@ -5,6 +5,9 @@ var isenter = false;//是否快速查询
 
 $(function() {
 	initQueryData();
+	initChannel();
+	initCorpk();
+	$('#corpkna_ae').combobox('readonly',true);
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
@@ -33,14 +36,175 @@ function loadJumpData(){
 }
 
 /**
- * 查询日期初始化
+ * 监听查询
  */
-function initQueryData() {
-	var ldate = new Date(Public.getLoginDate());
-    ldate.setMonth(ldate.getMonth()-1);
-    ldate = ldate.Format('yyyy-MM-dd');
-	$("#begdate").datebox("setValue", ldate);
-	$("#enddate").datebox("setValue",Public.getLoginDate());
+function initQueryData(){
+	$("#querydate").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+}
+
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+//初始化加盟商
+function initChannel(){
+    $('#channel_select').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#chnDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    buttons: '#chnBtn'
+                });
+            }
+        }]
+    });
+}
+//双击选择公司
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#corpkid_ae").val(null);
+		$("#corpkna_ae").textbox("setValue",null);
+		if(!isEmpty(rowTable.length)&&rowTable.length==1){
+			$('#corpkna_ae').combobox('readonly',false);
+		}else{
+			$('#corpkna_ae').combobox('readonly',true);
+		}
+		
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	 $("#chnDlg").dialog('close');
+}
+
+function clearParams(){
+	$('#corpkna_ae').combobox('readonly',true);
+	$("#pk_account").val(null);
+	$("#channel_select").textbox("setValue",null);
+	$("#corpkid_ae").val(null);
+	$("#corpkna_ae").textbox("setValue",null);
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+//卡片客户参照
+function initCorpk(){
+	$('#corpkna_ae').searchbox({
+		editable:false,
+		prompt:'选择客户',
+	    searcher:function(){
+	    	$('#gs_dialog').dialog({
+	    		width : 520,
+	    		height : 490,
+	    		readonly : true,
+	    		close:true,
+	    		title : '选择客户',
+	    		modal : true,
+	    		href : DZF.contextPath+'/ref/qykh_select.jsp',
+	    		queryParams:{
+	    			dblClickRowCallback : 'selectCorpk',
+	    			corpid:$("#pk_account").val(),
+	    		},
+	    		buttons : [ {
+	    			text : '确认',
+	    			handler : function() {
+	    				var row = $('#khTable').datagrid('getSelected');
+	    				if(row){
+	    					selectCorpk(row);
+	    				}else{
+	    					Public.tips({
+	    						content : '请选择需要处理的数据',
+	    						type : 2
+	    					});
+	    				}
+	    			}
+	    		}, {
+	    			text : '取消',
+	    			handler : function() {
+	    				$('#gs_dialog').dialog('close');
+	    			}
+	    		}]
+	    	});
+	    }
+	});
+}
+
+function selectCorpk(row){
+	$('#corpkna_ae').textbox('setValue',row.uname);
+	$('#corpkid_ae').val(row.pk_gs);
+	$('#gs_dialog').dialog('close');
+}
+
+function reloadData(){
+	var bdate = $('#bdate').datebox('getValue'); //开始日期
+	var edate = $('#edate').datebox('getValue'); //结束日期
+	if(isEmpty(bdate)){
+		Public.tips({
+			content : '查询开始日期不能为空',
+			type : 2
+		});
+		return;
+	}
+	if(isEmpty(edate)){
+		Public.tips({
+			content : '查询结束日期不能为空',
+			type : 2
+		});
+		return;
+	}
+	if(!isEmpty(bdate) && !isEmpty(edate)){
+		if(!checkdate1("bdate","edate")){
+			return;
+		}		
+	}
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+	queryParams.begdate = bdate;
+	queryParams.enddate = edate;
+	queryParams.qtype = -1;
+	queryParams.destatus = $('#destatus').combobox('getValue');
+	var isncust=$('#isncust').combobox('getValue');
+	if(!isEmpty(isncust)){
+		queryParams.isncust =isncust;
+	}else{
+		 delete queryParams.isncust;
+	}
+	queryParams.cpid = $("#pk_account").val();
+	queryParams.cpkid = $("#corpkid_ae").val();
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
+	$('#querydate').html(bdate + ' 至 ' + edate);
+    $('#qrydialog').hide();
+    $('#grid').datagrid('unselectAll');
 }
 
 /**
@@ -350,42 +514,6 @@ function fastQry(){
             } 
          }
    });
-}
-
-/**
- * 查询
- */
-function query(){
-	var begdate = $("#begdate").datebox('textbox').val();
-	var enddate = $("#enddate").datebox('textbox').val();
-	if(isEmpty(begdate)){
-		Public.tips({
-			content : '查询开始日期不能为空',
-			type : 2
-		});
-		return;
-	}
-	if(isEmpty(enddate)){
-		Public.tips({
-			content : '查询结束日期不能为空',
-			type : 2
-		});
-		return;
-	}
-	if(!isEmpty(begdate) && !isEmpty(enddate)){
-		if(!checkdate1("begdate","enddate")){
-			return;
-		}		
-	}
-	
-	$('#grid').datagrid('unselectAll');
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
-	queryParams.begdate = begdate;
-	queryParams.enddate = enddate;
-	queryParams.qtype = -1;
-	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
 }
 
 /**

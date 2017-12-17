@@ -27,17 +27,15 @@
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
+					<div id="cxjs" class="h30 h30-arrow">
+						<label class="mr5">查询：</label>
+						<strong id="querydate"></strong>
+						<span class="arrow-date"></span>
+					</div>
+				</div>
+				<div class="left mod-crumb">
 					<span class="cur"></span>
 				</div>
-				
-				<div class="left mod-crumb">
-				
-					<input id="begdate" name="begdate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
-					--
-					<input id="enddate" name="enddate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" data-options="plain:true" onclick="query()">查询</a>
-				</div>
-				
 				<div class="left mod-crumb">
 					<div style="margin:4px 0px 0px 10px;float:left;font-size:14px;">
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryData(1)">待审核</a>
@@ -58,7 +56,51 @@
 				</div>
 			</div>
 		</div>
-
+		
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 230px">
+			<s class="s" style="left: 25px;"><i class="i"></i> </s>
+			<form id="query_form">
+				<h3>
+					<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
+				</h3>
+				<div class="time_col time_colp10">
+					<label style="width: 80px;text-align:right">日期：</label>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+					<font>-</font>
+					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">合同状态：</label>
+					<select id="destatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">未审核</option>
+						<option value="2">已审核</option>
+					</select>
+					<label style="width:80px;text-align:right">客户类型：</label>
+					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
+						<option value="">全部</option>
+						<option value="N">非存量客户</option>
+						<option value="Y">存量客户</option>
+					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">加盟商：</label>
+					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="pk_account" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">客户：</label>
+					<input id="corpkna_ae" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="corpkid_ae" name="corpkid" type="hidden"> 
+				</div>
+			</form>
+			<p>
+				<a class="ui-btn save_input" onclick="clearParams()">清空</a>
+				<a class="ui-btn save_input" onclick="reloadData()">确定</a>
+				<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
+			</p>
+		</div>
+		
 		<div id="dataGrid" class="grid-wrap">
 			<table id="grid"></table>
 		</div>
@@ -246,6 +288,16 @@
 		<div id="tpfd"></div>
 		<!-- 查看附件end -->
 		
+		<!-- 查看加盟商 -->
+		<div id="chnDlg"></div>
+		<!-- 公司列表 -->
+		<div id="gs_dialog"></div>
+		<!-- 批量审核  end-->
+		<div id="chnBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		
 		<!-- 批量审核  begin-->
 		<div id="bdeduct_Dialog" class="easyui-dialog" style="width:900px;height:360px;overflow: auto;" data-options="closed:true">
 			<div>
@@ -290,7 +342,6 @@
 				</div>  
 			</form>
 		</div>
-		<!-- 批量审核  end-->
 	</div>
 </body>
 </html>

@@ -1,8 +1,10 @@
 package com.dzf.service.channel.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IContractConfirm;
 
 @Service("contractconfser")
@@ -199,6 +202,23 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append("   AND dsubmitime <= ? \n") ; 
 				spm.addParam(paramvo.getEnddate() + " 23:59:59");
 			}
+			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+			    String[] strs = paramvo.getPk_corp().split(",");
+			    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			    sql.append(" AND pk_corp in (").append(inSql).append(")");
+			}
+			if(paramvo.getIsncust()!=null){
+				sql.append(" AND nvl(isncust,'N') =? \n") ; 
+				spm.addParam(paramvo.getIsncust());
+			}
+			if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
+				sql.append(" AND pk_corpk=? \n") ; 
+				spm.addParam(paramvo.getPk_corpk());
+			}
+			if(paramvo.getVdeductstatus()!=null&&paramvo.getVdeductstatus()!=-1){
+				sql.append(" AND vdeductstatus = ? \n") ;
+				spm.addParam(paramvo.getVdeductstatus());
+			}
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 				sql.append("   AND pk_confrim = ? \n") ; //合同主键
 				spm.addParam(paramvo.getPk_bill());
@@ -244,6 +264,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(paramvo.getEnddate() != null){
 				sql.append("   AND con.dsubmitime <= ? \n") ; 
 				spm.addParam(paramvo.getEnddate() + " 23:59:59");
+			}
+			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+			    String[] strs = paramvo.getPk_corp().split(",");
+			    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			    sql.append(" AND con.pk_corp in (").append(inSql).append(")");
+			}
+			if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
+				sql.append(" AND con.pk_corpk=? \n") ; 
+				spm.addParam(paramvo.getPk_corpk());
+			}
+			if(paramvo.getIsncust()!=null){
+				sql.append(" AND nvl(isncust,'N') =? \n") ; 
+				spm.addParam(paramvo.getIsncust());
 			}
 		}
 		sql.append(" order by con.dsubmitime desc");
