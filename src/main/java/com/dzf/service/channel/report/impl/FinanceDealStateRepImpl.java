@@ -54,7 +54,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
 		CustNumMoneyRepVO custnumvo = null;
 		FinanceDealStateRepVO retvo = null;
-		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist);
+		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist,paramvo.getPeriod());
 		Map<String, CustCountVO> voumap = null;
 		CustCountVO countvo = null;
 		if(corplist != null && corplist.size() > 0){
@@ -147,7 +147,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Map<String, CustCountVO>> queryVoucher(List<String> countcorplist) throws DZFWarpException {
+	private Map<String, Map<String, CustCountVO>> queryVoucher(List<String> countcorplist,String period) throws DZFWarpException {
 		Map<String, Map<String, CustCountVO>> retmap = new HashMap<String, Map<String, CustCountVO>>();
 		if(countcorplist == null || countcorplist.size() == 0){
 			return retmap;
@@ -158,12 +158,13 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		sql.append("SELECT p.fathercorp as pk_corp, p.chargedeptname, count(DISTINCT h.pk_tzpz_h) as num \n");
 		sql.append("  FROM ynt_tzpz_h h \n");
 		sql.append("  LEFT JOIN bd_corp p ON h.pk_corp = p.pk_corp \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0 \n");
+		sql.append(" WHERE nvl(h.dr, 0) = 0 and h.period = ? \n");
 		sql.append("   AND nvl(p.dr, 0) = 0 \n");
 		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", countcorplist.toArray(new String[0]));
 		sql.append(" AND ").append(where);
 		sql.append(" GROUP BY (p.chargedeptname, p.fathercorp)");
+		spm.addParam(period);
 		List<CustCountVO> vouchlist = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 		if(vouchlist != null && vouchlist.size() > 0){
