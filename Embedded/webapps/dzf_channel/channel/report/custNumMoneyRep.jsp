@@ -15,10 +15,10 @@
 	href=<%UpdateGradeVersion.outversion(out, "../../css/periodext.css");%>
 	rel="stylesheet">
 <script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%>
+	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <script
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/periodext.js");%>

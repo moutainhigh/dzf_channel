@@ -88,7 +88,6 @@ function load(){
  * @returns {String}
  */
 function formatLocalMny(value){
-	console.info(value);
 	if(value == null){
 		return;
 	}
@@ -96,8 +95,8 @@ function formatLocalMny(value){
 		return "--";
 	}else{
 		if(isContains(value,"-")){
-		    var mid = value.substring(1);
-		    return "-"+formatMny(value);
+		    var mid = accMul(value, -1);
+		    return "-"+formatMny(mid);
 		}else{
 			return formatMny(value);
 		}
