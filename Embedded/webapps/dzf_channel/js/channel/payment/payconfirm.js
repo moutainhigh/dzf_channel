@@ -99,6 +99,9 @@ function dClickCompany(rowTable){
 function clearParams(){
 	$("#pk_account").val(null);
 	$("#channel_select").textbox("setValue",null);
+	$('#status').combobox('setValue', '-1');
+	$('#iptype').combobox('setValue', '-1');
+	$('#ipmode').combobox('setValue', '-1');
 }
 
 function selectCorps(){
