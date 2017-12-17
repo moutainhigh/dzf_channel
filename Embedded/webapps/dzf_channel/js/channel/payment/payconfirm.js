@@ -285,10 +285,14 @@ function qryData(type){
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
 	queryParams.qtype = type;
+	queryParams.begdate = '';
+	queryParams.enddate = '';
+	queryParams.iptype = -1;
+	queryParams.ipmode = -1;
+	queryParams.cpid = "";
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }
-
 /**
  * 快速过滤
  */
