@@ -58,7 +58,7 @@
 				<div class="sel_time">
 					<div class="time_col">
 						<input id="qj" type="radio" name="seledate" checked="true" value="qj"/>
-						<label style="width:70px;">期间：</label> 
+						<label style="width:45px;">期间：</label> 
 						<font> 
 							<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28"  />
 						</font> 
@@ -70,17 +70,17 @@
 				</div>
 				<div class="time_col time_colp10">
 					<input id="rq" type="radio"  name="seledate" value="rq"/>
-					<label style="width:70px;">日期：</label> 
+					<label style="width:45px;">日期：</label> 
 					<font>
-						<input id="bdate" name="bdate"  class="easyui-datebox" data-options="width:137,height:28" value=<%=last%>/>
+						<input id="bdate" name="bdate"  class="easyui-datebox" data-options="required:true,width:137,height:28" value=<%=last%>/>
 					</font>
 					<font>-</font>
 					<font>
-						<input id="edate" name="edate"  class="easyui-datebox" data-options="width:137,height:28" value=<%=now%>/>
+						<input id="edate" name="edate"  class="easyui-datebox" data-options="required:true,width:137,height:28" value=<%=now%>/>
 					</font>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:70px;text-align:right">加盟商：</label>
+					<label style="width:60px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">	
 				</div>

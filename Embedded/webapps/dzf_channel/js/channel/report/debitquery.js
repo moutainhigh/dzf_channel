@@ -46,6 +46,7 @@ function changeRadio(){
 			$("#bdate").combobox('readonly',true);
 			$("#edate").combobox('readonly',true);
 		}else{
+			queryBoxChange('#bdate','#edate');
 			var sdv = $('#bdate').datebox('getValue');
 			var edv = $('#edate').datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
@@ -334,12 +335,12 @@ function initDate(){
 						type : 2
 					});
 					$('#bdate').datebox('setValue',null);
-				}else if(Math.floor(time / 86400000) > 15){
+				}else if(Math.floor(time / 86400000) > 14){
 					Public.tips({
 						content : "起始时间与结束时间间隔最大为15天",
 						type : 2
 					});
-					$('#bdate').datebox('setValue',null);
+					$('#bdate').datebox('setValue',"");
 				}else{
 					$('#bdate').datebox('setValue',date);
 				}
@@ -353,8 +354,8 @@ function initDate(){
 						content : "起始时间不能大于结束时间",
 						type : 2
 					});
-					$('#edate').datebox('setValue',null);
-				}else if(Math.floor(time / 86400000) > 15){
+					$('#edate').datebox('setValue',"");
+				}else if(Math.floor(time / 86400000) > 14){
 					Public.tips({
 						content : "起始时间与结束时间间隔最大为15天",
 						type : 2
