@@ -132,6 +132,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 		}
 		sql.append(" and rownum <= ?)");
 		sql.append(" where rn > ?");
+		 sql.append(" order by innercode ");
 		sp.addParam(page*size);
 		sp.addParam((page-1)*size);
 		List<CorpVO> list = (List<CorpVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(CorpVO.class));

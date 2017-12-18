@@ -88,6 +88,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.begindate,balance.npaymny,balance.nusedmny");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());
+        sql.append(" order by a.innercode ");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		HashMap<String, List<DebitQueryVO>> map = queryDetail(vo);
 		if(list != null && list.size() > 0){
