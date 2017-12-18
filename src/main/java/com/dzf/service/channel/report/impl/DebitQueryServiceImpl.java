@@ -74,7 +74,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		List<DebitQueryVO> headers = queryHeader(vo);
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.begindate as chndate ,");
+		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate ,");
 		sql.append(" sum(contract.ndeductmny)as ndeductmny,(balance.npaymny-balance.nusedmny) as outmny");
 		sql.append(" from bd_account a");
         sql.append(" left join cn_balance balance on a.pk_corp = balance.pk_corp and balance.ipaytype = 2");
@@ -85,7 +85,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
         sql.append(" and substr(contract.deductdata,0,"+length+")>=? and substr(contract.deductdata,0,"+length+")<=?");
-        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.begindate,balance.npaymny,balance.nusedmny");
+        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,balance.npaymny,balance.nusedmny");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());
         sql.append(" order by a.innercode ");
