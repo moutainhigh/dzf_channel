@@ -42,6 +42,7 @@ function initDataGrid(){
 		pagination : true,
 		pageSize : 20,
 		pageList : [ 20, 50, 100, 200 ],
+		showFooter:true,
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
 		            {width : '150',title : '加盟商',field : 'cname',align:'left'},
 		            {width : '80',title : '付款类型',field : 'paytype',align:'left',
@@ -111,9 +112,25 @@ function initDataGrid(){
 			isenter = false;
 			$.messager.progress('close');
 			$("#qrydialog").hide();
+			calFooter();
 		}
 	});
 }
+
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var iprice = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	iprice += parseFloat(rows[i].iprice == undefined ? 0 : rows[i].iprice);
+    }
+    footerData['cname'] = '合计';
+    footerData['iprice'] = iprice;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
 
 //初始化加盟商
 function initChannel(){
