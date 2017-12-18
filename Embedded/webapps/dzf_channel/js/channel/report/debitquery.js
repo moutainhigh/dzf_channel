@@ -9,16 +9,21 @@ $(function() {
 	load();//加载列表
 	initChannel();//初始化加盟商
 	quickfiltet();
+	queryBoxChange2();
 });
 
 
 //初始化
 function initQry(){
-	initDate();
 	// 下拉按钮的事件
 	$("#jqj").on("mouseover", function() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
+	});
+	$(".mod-inner,.mod-toolbar-top").on("click",function(){
+		$("#qrydialog").hide();
+		$("#livediv").remove();
+    	$("#qrydialog").css("visibility","hidden");
 	});
 	var beginShow=parent.SYSTEM.LoginDate.substring(0,4)+"-01";
 	var endShow=parent.SYSTEM.LoginDate.substring(0,7);
@@ -28,7 +33,8 @@ function initQry(){
 	queryBoxChange1('#begperiod','#endperiod');
 	$("#begperiod").textbox({"readonly" : false});
 	$("#endperiod").textbox({"readonly" : false});
-	$("#bdate,#edate").combobox('readonly',true);
+	$("#bdate").datebox('readonly',true);
+	$("#edate").datebox('readonly',true);
 	initQryPeroid();
 	changeRadio();
 }
@@ -43,17 +49,17 @@ function changeRadio(){
 			$('#jqj').html(sdv + ' 至 ' + edv);
 			$("#begperiod").textbox({"readonly" : false});
 			$("#endperiod").textbox({"readonly" : false});
-			$("#bdate").combobox('readonly',true);
-			$("#edate").combobox('readonly',true);
+			$("#bdate").datebox('readonly',true);
+			$("#edate").datebox('readonly',true);
 		}else{
-			queryBoxChange('#bdate','#edate');
+//			queryBoxChange2('#bdate','#edate');
 			var sdv = $('#bdate').datebox('getValue');
 			var edv = $('#edate').datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
 			$("#begperiod").textbox({"readonly" : true});
 			$("#endperiod").textbox({"readonly" : true});
-			$("#bdate").combobox('readonly',false);
-			$("#edate").combobox('readonly',false);
+			$("#bdate").datebox('readonly',false);
+			$("#edate").datebox('readonly',false);
 		}
 	});
 }
@@ -74,6 +80,66 @@ function queryBoxChange1(start,end){
 		onChange: function(newValue, oldValue){
 			var sdv = $(start).textbox('getValue');
 			$('#jqj').text(sdv + ' 至 ' + newValue);
+		}
+	});
+}
+
+/**
+ * 查询框时间改变事件(为日期年月日)
+ * @param start
+ * @param end
+ */
+function queryBoxChange2(){
+	$('#bdate').datebox({
+		onChange: function(newValue, oldValue){
+			var edv = $('#edate').datebox('getValue');
+			var start=new Date(newValue).getTime();
+			var end=new Date(edv).getTime();
+			var time=end-start;
+			if(time<0){
+				Public.tips({
+					content : "起始时间不能大于结束时间",
+					type : 2
+				});
+				$('#bdate').datebox('setValue',oldValue);
+				$('#jqj').text(oldValue + ' 至 ' + edv);
+			}else if(Math.floor(time / 86400000) > 14){
+				Public.tips({
+					content : "起始时间与结束时间间隔最大为15天",
+					type : 2
+				});
+				$('#bdate').datebox('setValue',oldValue);
+				$('#jqj').text(oldValue + ' 至 ' + edv);
+			}else{
+				$('#bdate').datebox('setValue',newValue);
+				$('#jqj').text(newValue + ' 至 ' + edv);
+			}
+		}
+	});
+	$('#edate').datebox({
+		onChange: function(newValue, oldValue){
+			var sdv = $('#bdate').datebox('getValue');
+			var start=new Date(sdv).getTime();
+			var end=new Date(newValue).getTime();
+			var time=end-start;
+			if(time<0){
+				Public.tips({
+					content : "起始时间不能大于结束时间",
+					type : 2
+				});
+				$('#edate').datebox('setValue',oldValue);
+				$('#jqj').text(sdv + ' 至 ' + oldValue);
+			}else if(Math.floor(time / 86400000) > 14){
+				Public.tips({
+					content : "起始时间与结束时间间隔最大为15天",
+					type : 2
+				});
+				$('#edate').datebox('setValue',oldValue);
+				$('#jqj').text(sdv + ' 至 ' + oldValue);
+			}else{
+				$('#edate').datebox('setValue',newValue);
+				$('#jqj').text(sdv + ' 至 ' + newValue);
+			}
 		}
 	});
 }
@@ -317,56 +383,6 @@ function doExport(){
 	var columns = $('#grid').datagrid("options").columns[0];
 	Business.getFile(DZF.contextPath+ '/report/debitquery!exportExcel.action',
 			{'strlist':JSON.stringify(datarows),'columns':printHead}, true, true);
-}
-
-function initDate(){
-	$('#bdate,#edate').datebox({
-		onSelect: function(date){
-			var id = $(this).attr("id");
-			var bdate=$('#bdate').datebox('getValue');
-			var edate=$('#edate').datebox('getValue');
-			if(id=="bdate" && !isEmpty(bdate)){
-				var start=date.getTime();
-				var end=new Date(edate).getTime();
-				var time=end-start;
-				if(time<0){
-					Public.tips({
-						content : "起始时间不能大于结束时间",
-						type : 2
-					});
-					$('#bdate').datebox('setValue',null);
-				}else if(Math.floor(time / 86400000) > 14){
-					Public.tips({
-						content : "起始时间与结束时间间隔最大为15天",
-						type : 2
-					});
-					$('#bdate').datebox('setValue',"");
-				}else{
-					$('#bdate').datebox('setValue',date);
-				}
-			}
-			if(id=="edate" && !isEmpty(edate)){
-				var start=new Date(bdate).getTime();
-				var end=date.getTime();
-				var time=end-start;
-				if(time<0){
-					Public.tips({
-						content : "起始时间不能大于结束时间",
-						type : 2
-					});
-					$('#edate').datebox('setValue',"");
-				}else if(Math.floor(time / 86400000) > 14){
-					Public.tips({
-						content : "起始时间与结束时间间隔最大为15天",
-						type : 2
-					});
-					$('#edate').datebox('setValue',null);
-				}else{
-					$('#edate').datebox('setValue',date);
-				}
-			}
-		}
-	}); 
 }
 
 /**
