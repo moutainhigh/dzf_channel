@@ -155,7 +155,9 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		Map<String, CustCountVO> voumap = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, nvl(p.chargedeptname,'小规模纳税人'), count(DISTINCT h.pk_tzpz_h) as num \n");
+		sql.append("SELECT p.fathercorp as pk_corp, \n");
+		sql.append("  nvl(p.chargedeptname,'小规模纳税人') AS chargedeptname,  \n");
+		sql.append("  count(DISTINCT h.pk_tzpz_h) as num \n");
 		sql.append("  FROM ynt_tzpz_h h \n");
 		sql.append("  LEFT JOIN bd_corp p ON h.pk_corp = p.pk_corp \n");
 		sql.append(" WHERE nvl(h.dr, 0) = 0 and h.period = ? \n");
