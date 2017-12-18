@@ -450,6 +450,7 @@ function reloadData(){
  * 查询-取消
  */
 function closeCx(){
+	$("#livediv").remove();
 	$("#qrydialog").css("visibility", "hidden");
 }
 
