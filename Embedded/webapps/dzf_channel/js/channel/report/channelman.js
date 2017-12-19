@@ -72,6 +72,7 @@ function load() {
             	ndeductmny += parseFloat(rows[i].ndeductmny);
             	outmny += parseFloat(rows[i].outmny);
             }
+            footerData['corpnm'] = '合计';
             footerData['bondmny'] = bondmny;
             footerData['predeposit'] = predeposit;
             footerData['num'] = num;

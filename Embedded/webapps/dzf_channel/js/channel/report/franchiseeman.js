@@ -136,33 +136,33 @@ function load() {
 //		pagination : true,
 		showFooter:true,
 		columns : [ [ 
-		    {width : '140',title : '大区',field : 'aname',align:'left'}, 
-		    {width : '120',title : '区总',field : 'uname',align:'left'}, 
-		    {width : '140',title : '省（市）',field : 'provname',align:'left'}, 
-		 	{width : '120',title : '渠道经理',field : 'cuname',align:'left'}, 
+		    {width : '130',title : '大区',field : 'aname',align:'left'}, 
+		    {width : '90',title : '区总',field : 'uname',align:'left'}, 
+		    {width : '110',title : '省（市）',field : 'provname',align:'left'}, 
+		 	{width : '90',title : '渠道经理',field : 'cuname',align:'left'}, 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left'}, 
-			{width : '100',title : '保证金',field : 'bondmny',align:'right',
+			{width : '80',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},  
-	  	  	{width : '100',title : '预存款',field : 'predeposit',align:'right',
+	  	  	{width : '80',title : '预存款',field : 'predeposit',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		  	{width : '100',title : '提单量',field : 'num',align:'right'}, 
-		  	{width : '100',title : '合同总金额',field : 'ntlmny',align:'right',
+		  	{width : '60',title : '提单量',field : 'num',align:'right'}, 
+		  	{width : '80',title : '合同总金额',field : 'ntlmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		    {width : '100',title : '扣款金额',field : 'ndeductmny',align:'right',
+		    {width : '80',title : '扣款金额',field : 'ndeductmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
+			{width : '80',title : '预存款余额',field : 'outmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -185,6 +185,7 @@ function load() {
             	ndeductmny += parseFloat(rows[i].ndeductmny);
             	outmny += parseFloat(rows[i].outmny);
             }
+            footerData['corpnm'] = '合计';
             footerData['bondmny'] = bondmny;
             footerData['predeposit'] = predeposit;
             footerData['num'] = num;
