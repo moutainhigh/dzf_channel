@@ -292,9 +292,9 @@ function load() {
 	      singleSelect : false,
 	      showFooter:true,
 	      frozenColumns:[[
-							{width : '160',title : '加盟商编码',field : 'ccode',align:'left'},
-							{width : '180',title : '加盟商名称',field : 'cname',align:'left'},
-							{width : '80',title : '加盟商日期',field : 'chndate',align:'left'},
+							{width : '110',title : '加盟商编码',field : 'ccode',align:'left'},
+							{width : '200',title : '加盟商名称',field : 'cname',align:'left'},
+							{width : '100',title : '加盟日期',field : 'chndate',align:'left'},
 							{width : '80',title : '预付款余额',field : 'outmny',align:'right',formatter: fny},
 							{width : '80',title : '扣款合计',field : 'ndeductmny',align:'right',formatter: fny},
 			       		]],
