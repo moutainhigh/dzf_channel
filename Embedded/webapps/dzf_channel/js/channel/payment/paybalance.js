@@ -372,6 +372,7 @@ function initQryLitener(){
 	$('#begperiod').textbox({"readonly" : true});
 	$('#endperiod').textbox({"readonly" : true});
 	$(".foxdate").hide();
+	queryBoxChange('#begdate','#enddate');
     $('input:radio[name="seledate"]').change( function(){  
 		var ischeck = $('#da').is(':checked');
 		if(ischeck){
