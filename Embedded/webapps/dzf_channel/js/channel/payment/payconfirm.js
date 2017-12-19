@@ -121,7 +121,7 @@ function reloadData(){
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
-	
+	queryParams.id = '';
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);

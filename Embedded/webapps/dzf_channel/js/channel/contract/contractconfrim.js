@@ -200,6 +200,7 @@ function reloadData(){
 	}
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.cpkid = $("#corpkid_ae").val();
+	queryParams.id = '';
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);

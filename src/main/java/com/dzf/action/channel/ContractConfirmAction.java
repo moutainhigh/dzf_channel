@@ -57,7 +57,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	public void query() {
 		Grid grid = new Grid();
 		try {
-			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+		    QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			List<ContractConfrimVO> clist = contractconfser.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
