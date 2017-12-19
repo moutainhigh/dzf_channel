@@ -439,6 +439,7 @@ function calFooter(){
     	nmsmny += parseFloat(rows[i].nmsmny);
     	ndemny += parseFloat(rows[i].ndemny==undefined?0:rows[i].ndemny);
     }
+    footerData['corpnm'] = '合计';
     footerData['ntlmny'] = ntlmny;
     footerData['nmsmny'] = nmsmny;
     footerData['ndemny'] = ndemny;
