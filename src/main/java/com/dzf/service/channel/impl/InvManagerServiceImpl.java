@@ -228,7 +228,7 @@ public class InvManagerServiceImpl implements InvManagerService{
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
         sql.append(" select sum(nvl(invprice,0)) as billtotalmny ");
-        sql.append(" from cn_invoice  where (invstatus = 2 or invstatus = 1)");
+        sql.append(" from cn_invoice  where invstatus = 2 ");
         sql.append(" and apptime <= ? and pk_corp = ?"); 
         sql.append(" and nvl(dr,0) = 0");
         sp.addParam(new DZFDate());
