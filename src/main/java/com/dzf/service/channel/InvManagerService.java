@@ -33,7 +33,7 @@ public interface InvManagerService {
 	/**
 	 * 开票
 	 */
-	int onBilling(String[] pk_invoices, String userid) throws DZFWarpException;
+	List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException;
 	
 	/**
 	 * 删除开票

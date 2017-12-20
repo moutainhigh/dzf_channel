@@ -106,15 +106,19 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String uid = getLoginUserid();
 			String pk_invoices = getRequest().getParameter("pk_invoices");
 			String[] pkArry = pkinvoicesToArray(pk_invoices);
-			int success = invManagerService.onBilling(pkArry,uid);
-			int erroNum = pkArry.length - success;
-			String msg = "成功" + success +  "条";
-			if (erroNum > 0) {
-				msg += "，失败" + erroNum  + "条";
+			List<ChInvoiceVO> listError = invManagerService.onBilling(pkArry,uid);
+			int errorNum = listError.size();
+			int success = pkArry.length - errorNum;
+			StringBuffer msg = new StringBuffer();
+			msg.append("成功").append(success).append("条");
+			if (listError != null && errorNum > 0) {
+			    msg.append("，失败").append(errorNum).append("条<br>");
+			    for(ChInvoiceVO vo : listError){
+			        msg.append("加盟商：").append(vo.getCorpname()).append(",失败原因：").append(vo.getMsg()).append("<br>");
+			    }
 			}
-			json.setMsg(msg);
+			json.setMsg(msg.toString());
 			json.setSuccess(true);
-			
 		} catch (Exception e){
 			printErrorLog(json, log, e, "开票失败");
 		}

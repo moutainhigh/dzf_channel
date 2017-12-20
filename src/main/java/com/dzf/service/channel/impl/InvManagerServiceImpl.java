@@ -1,6 +1,7 @@
 package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChInvoiceVO;
+import com.dzf.model.channel.invoice.BillingInvoiceVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -151,27 +154,91 @@ public class InvManagerServiceImpl implements InvManagerService{
 	}
 
 	@Override
-	public int onBilling(String[] pk_invoices, String userid) throws DZFWarpException {
+	public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException {
 		//
 		if(pk_invoices == null || pk_invoices.length == 0){
 			throw new BusinessException("请选择发票！");
 		}
 		List<ChInvoiceVO> lists = new ArrayList<ChInvoiceVO>(); 
+		List<ChInvoiceVO> listError = new ArrayList<ChInvoiceVO>(); 
+		HashMap<String, DZFDouble> mapUse = queryUsedMny();
 		for(String pk_invoice : pk_invoices){
 			ChInvoiceVO vo = queryByPk(pk_invoice);
+			DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(pk_invoice));
+			DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());;
 			if(vo.getInvstatus() != 1){
+			    vo.setMsg("要确认开票的单据不是待开票状态");
+			    listError.add(vo);
 				continue;
 			}
+			DZFDouble invprice = new DZFDouble(vo.getInvprice());
+            if(invprice.compareTo(umny.sub(invmny)) > 0){
+                StringBuffer msg = new StringBuffer();
+                msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP))
+                    .append("元大于可开票金额").append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
+                vo.setMsg(msg.toString());
+                listError.add(vo);
+                continue;
+            }
 			lists.add(vo);
-		}
-		int success = lists.size();
-		for(ChInvoiceVO vo : lists){
 			vo.setInvperson(userid);
 			updateTicketPrice(vo);
+			updateInvoice(vo);
 		}
-		updateInvoice(lists.toArray(new ChInvoiceVO[0]));
-		return success;
+//		int success = lists.size();
+//		for(ChInvoiceVO vo : lists){
+//		    vo.setInvperson(userid);
+//            updateTicketPrice(vo);
+//		}
+//		updateInvoice(lists.toArray(new ChInvoiceVO[0]));
+		return listError;
 	}
+	
+	/**
+	 * 查询累计扣款
+	 * @param pk_invoices
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public HashMap<String, DZFDouble> queryUsedMny() throws DZFWarpException {
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append(" select a.pk_corp,");
+        sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
+        sql.append(" from bd_account a");
+        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2 and detail.doperatedate <= ?");
+        sp.addParam(new DZFDate());
+        sql.append(" where a.ischannel = 'Y' and nvl(detail.dr,0) = 0 ");
+        sql.append(" group by a.pk_corp");
+        List<BillingInvoiceVO> list = (List<BillingInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(BillingInvoiceVO.class));
+        HashMap<String, DZFDouble> map = new HashMap<>();
+        if(list != null && list.size() > 0){
+            for(BillingInvoiceVO bvo : list){
+                map.put(bvo.getPk_corp(), bvo.getDebittotalmny() == null ? DZFDouble.ZERO_DBL : bvo.getDebittotalmny());
+            }
+        }
+        return map;
+    }
+	
+	/**
+     * 查询已开票金额
+     * @param vo
+     */
+    private DZFDouble queryInvoiceMny(String pk_corp){
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append(" select sum(nvl(invprice,0)) as billtotalmny ");
+        sql.append(" from cn_invoice  where (invstatus = 2 or invstatus = 1)");
+        sql.append(" and apptime <= ? and pk_corp = ?"); 
+        sql.append(" and nvl(dr,0) = 0");
+        sp.addParam(new DZFDate());
+        sp.addParam(pk_corp);
+        sql.append(" group by pk_corp ");
+        Object obj = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor());
+        return obj == null ? DZFDouble.ZERO_DBL : new DZFDouble(obj.toString());
+    }
+
+
 	
 	/**
 	 * 根据主键查询
@@ -209,6 +276,14 @@ public class InvManagerServiceImpl implements InvManagerService{
 		}
 		singleObjectBO.updateAry(vos, new String[]{"invtime","invperson","invstatus"});
 	}
+	
+	private void updateInvoice(ChInvoiceVO vo){
+        DZFDate time = new DZFDate();
+        vo.setInvtime(time.toString());
+        vo.setInvstatus(2);
+        singleObjectBO.update(vo, new String[]{"invtime","invperson","invstatus"});
+    }
+
 
     @Override
     public void delete(ChInvoiceVO vo) throws DZFWarpException {
