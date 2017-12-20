@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
@@ -98,6 +99,15 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         if(vo.getNoticketmny().compareTo(DZFDouble.ZERO_DBL) <= 0){
             throw new BusinessException("未开票金额必须大于0");
         }
+        DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
+        DZFDouble umny = CommonUtil.getDZFDouble(vo.getDebittotalmny());
+        DZFDouble invprice = new DZFDouble(vo.getNoticketmny());
+        if(invprice.compareTo(umny.sub(invmny)) > 0){
+            StringBuffer msg = new StringBuffer();
+            msg.append("你本次要开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP))
+                .append("元大于可开票金额").append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请刷新数据。");
+            throw new BusinessException(msg.toString());
+        }
         AccountVO avo = (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, vo.getPk_corp());
         if(StringUtil.isEmpty(avo.getTaxcode())){
             throw new BusinessException("开票信息【税号】为空。");
@@ -120,4 +130,23 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         cvo.setInvcorp(2);
         singleObjectBO.saveObject(vo.getPk_corp(), cvo);
     }
+    
+    /**
+     * 查询已开票金额
+     * @param vo
+     */
+    private DZFDouble queryInvoiceMny(String pk_corp){
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sql.append(" select sum(nvl(invprice,0)) as billtotalmny ");
+        sql.append(" from cn_invoice  where invstatus = 2 ");
+        sql.append(" and apptime <= ? and pk_corp = ?"); 
+        sql.append(" and nvl(dr,0) = 0");
+        sp.addParam(new DZFDate());
+        sp.addParam(pk_corp);
+        sql.append(" group by pk_corp ");
+        Object obj = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor());
+        return obj == null ? DZFDouble.ZERO_DBL : new DZFDouble(obj.toString());
+    }
+
 }
