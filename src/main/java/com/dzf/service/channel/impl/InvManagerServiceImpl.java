@@ -164,7 +164,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 		HashMap<String, DZFDouble> mapUse = queryUsedMny();
 		for(String pk_invoice : pk_invoices){
 			ChInvoiceVO vo = queryByPk(pk_invoice);
-			DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(pk_invoice));
+			DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
 			DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());;
 			if(vo.getInvstatus() != 1){
 			    vo.setMsg("要确认开票的单据不是待开票状态");
