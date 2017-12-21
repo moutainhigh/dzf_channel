@@ -72,12 +72,12 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         sql.append(" select a.pk_corp,");
         sql.append(" sum(nvl(invoice.invprice,0)) as billtotalmny ");
         sql.append(" from bd_account a");
-        sql.append(" left join cn_invoice invoice on invoice.pk_corp = a.pk_corp and (invoice.invstatus = 2 or invoice.invstatus = 1)");
+        sql.append(" left join cn_invoice invoice on invoice.pk_corp = a.pk_corp and nvl(invoice.dr,0) = 0 and (invoice.invstatus = 2 or invoice.invstatus = 1)");
         if(!StringUtil.isEmpty(vo.getBdate())){
             sql.append(" and invoice.apptime <= ?"); 
             sp.addParam(vo.getBdate());
         }
-        sql.append(" where a.ischannel = 'Y' and nvl(invoice.dr,0) = 0");
+        sql.append(" where a.ischannel = 'Y' ");
         if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
