@@ -41,6 +41,28 @@ function load(){
 		                { field : 'pname', title : '加盟商名称', width:230,halign:'center',align:'left'},
 		]],
 		columns : columns,
+		onLoadSuccess : function(data) {
+			var rows = $('#grid').datagrid('getRows');
+			var footerData = new Object();
+			var custsmall = 0;	// 
+			var custtaxpay = 0;	// 
+
+			for (var i = 0; i < rows.length; i++) {
+				if(rows[i].custsmall != undefined && rows[i].custsmall != null){
+					custsmall += parseFloat(rows[i].custsmall);
+				}
+				if(rows[i].custtaxpay != undefined && rows[i].custtaxpay != null){
+					custtaxpay += parseFloat(rows[i].custtaxpay);
+				}
+			}
+			footerData['pname'] = '合计';
+			footerData['custsmall'] = custsmall;
+			footerData['custtaxpay'] = custtaxpay;
+
+			var fs=new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter',fs);
+		},
 	});
 }
 

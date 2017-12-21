@@ -53,6 +53,38 @@ function load(){
             { field : 'vouchernums', title : '小规模', width : 150, halign:'center',align:'right'}, 
             { field : 'vouchernumt', title : '一般纳税人', width : 150, halign:'center',align:'right'}, 
         ] ],
+		onLoadSuccess : function(data) {
+			var rows = $('#grid').datagrid('getRows');
+			var footerData = new Object();
+			var custsmall = 0;	// 
+			var custtaxpay = 0;	// 
+			var vouchernums = 0;	// 
+			var vouchernumt = 0;	// 
+
+			for (var i = 0; i < rows.length; i++) {
+				if(rows[i].custsmall != undefined && rows[i].custsmall != null){
+					custsmall += parseFloat(rows[i].custsmall);
+				}
+				if(rows[i].custtaxpay != undefined && rows[i].custtaxpay != null){
+					custtaxpay += parseFloat(rows[i].custtaxpay);
+				}
+				if(rows[i].vouchernums != undefined && rows[i].vouchernums != null){
+					vouchernums += parseFloat(rows[i].vouchernums);
+				}
+				if(rows[i].vouchernumt != undefined && rows[i].vouchernumt != null){
+					vouchernumt += parseFloat(rows[i].vouchernumt);
+				}
+			}
+			footerData['pname'] = '合计';
+			footerData['custsmall'] = custsmall;
+			footerData['custtaxpay'] = custtaxpay;
+			footerData['vouchernums'] = vouchernums;
+			footerData['vouchernumt'] = vouchernumt;
+
+			var fs=new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter',fs);
+		},
 	});
 }
 
