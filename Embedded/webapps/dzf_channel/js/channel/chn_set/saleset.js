@@ -79,6 +79,20 @@ function save() {
 	});
 }
 
+/**
+ * 取消
+ */
+function cancel() {
+	$.messager.confirm("提示", "确定取消吗？", function(flag) {
+		if (flag) {
+			status="brows"
+			load();
+		} else {
+			return null;
+		}
+	});
+}
+
 function history(){
 		$('#dialog').dialog({
 			modal : true
@@ -173,7 +187,6 @@ function setItemReadonly(isedit) {
 	$('#isserecovery').prop("disabled", isedit);
 	$('#isthrecovery').prop("disabled", isedit);
 	$('#isreceive').prop("disabled", isedit);
-	
 	$('#finum').textbox('readonly', isedit);
 	$('#senum').textbox('readonly', isedit);
 	$('#thnum').textbox('readonly', isedit);
@@ -196,9 +209,11 @@ function updateBtnState(){
 		$('#history').hide();
 		$('#edit').hide();
 		$('#save').show();
+		$('#cancel').show();
 	}else if("brows"==status){
 		$('#history').show();
 		$('#edit').show();  
 		$('#save').hide();
+		$('#cancel').hide();
 	}
 }

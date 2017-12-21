@@ -31,6 +31,7 @@
 					<a id='edit' class="ui-btn ui-btn-xz" onclick="edit();" href="javascript:void(0);">修改</a> 
 					<a id='history'class="ui-btn ui-btn-xz" onclick="history();" href="javascript:void(0);">变更明细</a> 
 					<a id='save' class="ui-btn ui-btn-xz" onclick="save();" href="javascript:void(0);">保存</a> 
+					<a id='cancel' class="ui-btn ui-btn-xz" onclick="cancel();" href="javascript:void(0);">取消</a> 
 				</div>
 			</div>
 		</div>
