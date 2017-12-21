@@ -206,9 +206,9 @@ public class InvManagerServiceImpl implements InvManagerService{
         sql.append(" select a.pk_corp,");
         sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
         sql.append(" from bd_account a");
-        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2 and detail.doperatedate <= ?");
+        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2 and nvl(detail.dr,0) = 0 and detail.doperatedate <= ?");
         sp.addParam(new DZFDate());
-        sql.append(" where a.ischannel = 'Y' and nvl(detail.dr,0) = 0 ");
+        sql.append(" where a.ischannel = 'Y'  ");
         sql.append(" group by a.pk_corp");
         List<BillingInvoiceVO> list = (List<BillingInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(BillingInvoiceVO.class));
         HashMap<String, DZFDouble> map = new HashMap<>();
