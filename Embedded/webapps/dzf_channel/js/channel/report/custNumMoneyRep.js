@@ -79,6 +79,84 @@ function load(){
             { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
             
         ] ],
+        onLoadSuccess : function(data) {
+        	var rows = $('#grid').datagrid('getRows');
+        	var footerData = new Object();
+        	var stockcusts = 0;	//
+        	var stockcustt = 0;	//
+        	var stockconts = 0;	//
+        	var stockcontt = 0;	//
+        	
+        	var newcusts = 0;	//
+        	var newcustt = 0;	//
+        	var newconts = 0;	//
+        	var newcontt = 0;	//
+        	
+        	var renewcusts = 0;	//
+        	var renewcustt = 0;	//
+        	var renewconts = 0;	//
+        	var renewcontt = 0;	//
+        	for (var i = 0; i < rows.length; i++) {
+        		if(rows[i].stockcusts != undefined && rows[i].stockcusts != null){
+        			stockcusts += parseFloat(rows[i].stockcusts);
+        		}
+        		if(rows[i].stockcustt != undefined && rows[i].stockcustt != null){
+        			stockcustt += parseFloat(rows[i].stockcustt);
+        		}
+        		if(rows[i].stockconts != undefined && rows[i].stockconts != null){
+        			stockconts += parseFloat(rows[i].stockconts);
+        		}
+        		if(rows[i].stockcontt != undefined && rows[i].stockcontt != null){
+        			stockcontt += parseFloat(rows[i].stockcontt);
+        		}
+        		
+        		if(rows[i].newcusts != undefined && rows[i].newcusts != null){
+        			newcusts += parseFloat(rows[i].newcusts);
+        		}
+        		if(rows[i].newcustt != undefined && rows[i].newcustt != null){
+        			newcustt += parseFloat(rows[i].newcustt);
+        		}
+        		if(rows[i].newconts != undefined && rows[i].newconts != null){
+        			newconts += parseFloat(rows[i].newconts);
+        		}
+        		if(rows[i].newcontt != undefined && rows[i].newcontt != null){
+        			newcontt += parseFloat(rows[i].newcontt);
+        		}
+        		
+        		if(rows[i].renewcusts != undefined && rows[i].renewcusts != null){
+        			renewcusts += parseFloat(rows[i].renewcusts);
+        		}
+        		if(rows[i].renewcustt != undefined && rows[i].renewcustt != null){
+        			renewcustt += parseFloat(rows[i].renewcustt);
+        		}
+        		if(rows[i].renewconts != undefined && rows[i].renewconts != null){
+        			renewconts += parseFloat(rows[i].renewconts);
+        		}
+        		if(rows[i].renewcontt != undefined && rows[i].renewcontt != null){
+        			renewcontt += parseFloat(rows[i].renewcontt);
+        		}
+
+        	}
+        	footerData['pname'] = '合计';
+        	footerData['stockcusts'] = stockcusts;
+        	footerData['stockcustt'] = stockcustt;
+        	footerData['stockconts'] = stockconts;
+        	footerData['stockcontt'] = stockcontt;
+        	
+        	footerData['newcusts'] = newcusts;
+        	footerData['newcustt'] = newcustt;
+        	footerData['newconts'] = newconts;
+        	footerData['newcontt'] = newcontt;
+        	
+        	footerData['renewcusts'] = renewcusts;
+        	footerData['renewcustt'] = renewcustt;
+        	footerData['renewconts'] = renewconts;
+        	footerData['renewcontt'] = renewcontt;
+        	
+        	var fs=new Array(1);
+        	fs[0] = footerData;
+        	$('#grid').datagrid('reloadFooter',fs);
+        },
 	});
 }
 
