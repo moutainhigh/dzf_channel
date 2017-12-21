@@ -36,13 +36,13 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,");
 		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
 		sql.append(" from bd_account a");
-        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2");
+        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and nvl(detail.dr,0) = 0 and detail.iopertype = 2");
         if(!StringUtil.isEmpty(vo.getBdate())){
             sql.append(" and detail.doperatedate <= ?"); 
             sp.addParam(vo.getBdate());
         }
         
-        sql.append(" where a.ischannel = 'Y' and nvl(detail.dr,0) = 0 ");
+        sql.append(" where a.ischannel = 'Y'  ");
         if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
@@ -139,7 +139,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
         sql.append(" select sum(nvl(invprice,0)) as billtotalmny ");
-        sql.append(" from cn_invoice  where invstatus = 2 ");
+        sql.append(" from cn_invoice  where (invstatus = 2 or invstatus = 1) ");
         sql.append(" and apptime <= ? and pk_corp = ?"); 
         sql.append(" and nvl(dr,0) = 0");
         sp.addParam(new DZFDate());
