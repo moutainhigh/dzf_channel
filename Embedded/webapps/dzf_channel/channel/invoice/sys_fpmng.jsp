@@ -128,7 +128,7 @@
 									<select id="itype" name="itype" class="easyui-combobox" data-options="editable:false,panelHeight:75" style="width:62%;height:28px;text-align:left">
 										<option value="0">专用发票</option>
 										<option value="1">普通发票</option>
-										<option value="2">电子普通发票</option>
+										<option value="2">电子发票</option>
 									</select>
 								</div>
 						</div>	

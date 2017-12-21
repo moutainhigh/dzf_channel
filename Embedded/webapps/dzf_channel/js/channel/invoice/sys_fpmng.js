@@ -76,7 +76,7 @@ function initDataGrid(){
 							} else if(value ==1){
 								return '普通发票';
 							} else if(value ==2){
-								return '电子普通发票';
+								return '电子发票';
 							}
 		            }},
 		            {width : '180',title : '公司地址',field : 'caddr',align:'left'},
