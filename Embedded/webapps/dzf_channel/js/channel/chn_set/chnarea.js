@@ -85,9 +85,11 @@ function loadManager(){
 		traditional : true,
 		async : false,
 		success : function(data, textStatus) {
-			if (data.success) {
+			if (data.success&& !isEmpty(data.rows)) {
 				$("#manager").text("加盟商总经理: "+data.rows);
-			} 
+			}else{
+				$("#manager").text("加盟商总经理");
+			}
 		},
 	});
 }
