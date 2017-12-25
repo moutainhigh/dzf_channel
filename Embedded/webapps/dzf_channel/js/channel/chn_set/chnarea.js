@@ -12,7 +12,7 @@ function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
 		url : DZF.contextPath + '/chn_set/chnarea!query.action',
-		idField : 'pk_chnarea',
+		idField : 'pk_area',
 //		pageNumber : 1,
 //		pageSize : DZF.pageSize,
 //		pageList : DZF.pageList,
@@ -157,7 +157,7 @@ function edit(id,style) {
 //删除
 function del(id){
 	var rows = $('#grid').datagrid('getRows');
-	var index=$('#grid').datagrid('getRowIndex');
+	var index=$('#grid').datagrid('getRowIndex',id);
 	var row=rows[index];
 	$.messager.confirm("提示", "你是否确认要删除"+row.aname+"？", function(flag) {
 		if (flag) {
