@@ -278,6 +278,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append(" AND nvl(isncust,'N') =? \n") ; 
 				spm.addParam(paramvo.getIsncust());
 			}
+			if(paramvo.getVdeductstatus()!=null&&paramvo.getVdeductstatus()!=-1){
+				sql.append(" AND vdeductstatus = ? \n") ;
+				spm.addParam(paramvo.getVdeductstatus());
+			}
 		}
 		sql.append(" order by con.dsubmitime desc");
 		qryvo.setSql(sql.toString());
