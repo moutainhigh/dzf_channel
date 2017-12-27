@@ -1,9 +1,5 @@
 <%@page language="java" pageEncoding="UTF-8"%>
-<%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
-<%
-	int num=AdminDateUtil.getNowWeek();
-%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -19,7 +15,6 @@
 </style>
 </head> 
 <body>
-	<input type="hidden" id="num" value="<%=num%>"/>
 	<div id="listPanel" class="wrapper" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
@@ -31,17 +26,14 @@
 						<label style="text-align:right;width: 70px;">省（市）：</label> 
 						<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 150px; height: 28px;" 
 							data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
-						<label style="text-align:right;width: 70px;">月：</label>
-						<input type="text" id="period" class="easyui-textbox" data-options="editable:false,required:true" 
-										style="width:100px; height: 28px; display: none;" name='period' >
-						<font>--</font>
-							<select id="numweek"  class="easyui-combobox" data-options="editable:false,width:80,height:30,panelHeight:130">
-								<option value="1">第一周</option>
-								<option value="2">第二周</option>
-								<option value="3">第三周</option>
-								<option value="4">第四周</option>
-								<option value="5">第五周</option>
-							</select> 
+						<label style="text-align:right;width: 70px;">期间：</label>
+						<font> 
+							<input id="bdate" type="text" class="easyui-datebox" style="width:110px;height:30px;" />
+						</font> 
+						<font>-</font> 
+						<font> 
+							<input id="edate" type="text"  class="easyui-datebox" style="width:110px;height:30px;" />
+						</font>
 						<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;" class="ui-btn ui-btn-xz" onclick="load()">查询</a>
 						<input style="height: 28px; width: 220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称，按Enter过滤" />
 					</div>	 
@@ -57,7 +49,5 @@
 			</div>
 		</div>
 	</div>
-	<div id="gs_dialog"></div>
-	<div id="userdialog"></div> 
  	</body>
 </html>
