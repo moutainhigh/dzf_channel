@@ -196,9 +196,9 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 					contmap.put(vo.getPk_corp(), vo);
 				}else{
 					oldvo = contmap.get(vo.getPk_corp());
-					if(oldvo.getIcontractype() == 1){
+					if(vo.getIcontractype() == 1){
 						oldvo.setIagentnum(vo.getInum());
-					}else if(oldvo.getIcontractype() == 2){
+					}else if(vo.getIcontractype() == 2){
 						oldvo.setIincrenum(vo.getInum());
 					}
 					contmap.put(vo.getPk_corp(), oldvo);
