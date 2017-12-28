@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.DebitQueryVO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
@@ -139,7 +138,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			throw new BusinessException("导出数据不能为空!");
 		}	
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new ManagerVO());
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new DebitQueryVO());
 		DebitQueryVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
 		ArrayList<DebitQueryVO> explist = new ArrayList<DebitQueryVO>();
 		for(DebitQueryVO vo : expVOs){

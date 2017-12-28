@@ -258,6 +258,7 @@ function load() {
 		};
 	var columns=new Array();
 	var columns1=new Array();
+	printHead="";
 	$.ajax({
 		type : "post",
 		dataType : "json",
