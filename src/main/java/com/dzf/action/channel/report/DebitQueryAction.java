@@ -142,8 +142,6 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new DebitQueryVO());
 		DebitQueryVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
-		String[] str={"one","two","three","four","five","six","seven",
-			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
 		for (DebitQueryVO debitQueryVO : expVOs) {
 			if(debitQueryVO.getNdeductmny() != null ){
 				debitQueryVO.setNdeductmny(debitQueryVO.getNdeductmny().setScale(2, DZFDouble.ROUND_HALF_UP));
