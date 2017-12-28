@@ -31,6 +31,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.ExportExcel;
 import com.dzf.pub.lang.DZFBoolean;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IDebitQueryService;
@@ -141,6 +142,61 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new DebitQueryVO());
 		DebitQueryVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
+		String[] str={"one","two","three","four","five","six","seven",
+			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
+		for (DebitQueryVO debitQueryVO : expVOs) {
+			if(debitQueryVO.getNdeductmny() != null ){
+				debitQueryVO.setNdeductmny(debitQueryVO.getNdeductmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getOutmny() != null ){
+				debitQueryVO.setOutmny(debitQueryVO.getOutmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getOne() != null){
+				debitQueryVO.setOne(debitQueryVO.getOne().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getTwo() != null){
+				debitQueryVO.setTwo(debitQueryVO.getTwo().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getThree() != null){
+				debitQueryVO.setThree(debitQueryVO.getThree().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getFour() != null){
+				debitQueryVO.setFour(debitQueryVO.getFour().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getFive() != null){
+				debitQueryVO.setFive(debitQueryVO.getFive().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getSix() != null){
+				debitQueryVO.setSix(debitQueryVO.getSix().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getSeven() != null){
+				debitQueryVO.setSeven(debitQueryVO.getSeven().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getEight() != null){
+				debitQueryVO.setEight(debitQueryVO.getEight().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getNine() != null){
+				debitQueryVO.setNine(debitQueryVO.getNine().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getTen() != null){
+				debitQueryVO.setTen(debitQueryVO.getTen().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getEleven() != null){
+				debitQueryVO.setEleven(debitQueryVO.getEleven().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getTwelve() != null){
+				debitQueryVO.setTwelve(debitQueryVO.getTwelve().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getThirteen() != null){
+				debitQueryVO.setThirteen(debitQueryVO.getThirteen().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getFourteen() != null){
+				debitQueryVO.setFourteen(debitQueryVO.getFourteen().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(debitQueryVO.getFifteen() != null){
+				debitQueryVO.setFifteen(debitQueryVO.getFifteen().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+		}
 		HttpServletResponse response = getResponse();
 		ExportExcel<DebitQueryVO> ex = new ExportExcel<DebitQueryVO>();
 		Map<String, String> map = getExpFieldMap(split);
