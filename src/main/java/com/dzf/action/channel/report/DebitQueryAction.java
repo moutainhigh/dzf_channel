@@ -3,6 +3,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -140,10 +141,6 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new DebitQueryVO());
 		DebitQueryVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
-		ArrayList<DebitQueryVO> explist = new ArrayList<DebitQueryVO>();
-		for(DebitQueryVO vo : expVOs){
-			explist.add(vo);
-		}
 		HttpServletResponse response = getResponse();
 		ExportExcel<DebitQueryVO> ex = new ExportExcel<DebitQueryVO>();
 		Map<String, String> map = getExpFieldMap(split);
@@ -166,7 +163,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			servletOutputStream = response.getOutputStream();
 			 toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportExcel("加盟商扣款查询",cnFields,enFields ,explist, toClient);
+			byte[] length = ex.exportExcel("加盟商扣款查询",cnFields,enFields ,Arrays.asList(expVOs), toClient);
 			String srt2=new String(length,"UTF-8");
 			response.addHeader("Content-Length", srt2);
 		} catch (Exception e) {

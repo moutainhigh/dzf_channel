@@ -3,7 +3,7 @@ var isenter = false;//是否快速查询
 var loadrows = null;
 var hstr=["one","two","three","four","five","six","seven",
         "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
-var printHead="";
+var printHead;
 $(function() {
 	initQry();//初始化查询框
 	load();//加载列表
