@@ -100,11 +100,13 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,SaleAnalyseVO> nummap = new HashMap<String,SaleAnalyseVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count(y.pk_flowhistory) ivisitnum, \n");
-		sql.append("  count(distinct y.pk_customno) iviscustnum, \n");
+		sql.append("SELECT t.pk_corp,sum(t.iv1) ivisitnum,sum(t.iv2)iviscustnum from ( \n");
+		sql.append("SELECT count(y.pk_flowhistory) iv1, \n");
+		sql.append("  count(distinct y.pk_customno) iv2, \n");
 		sql.append("  y.pk_corp \n");
 		sql.append("  FROM ynt_porflwhistory y \n");
-		sql.append(" WHERE nvl(y.dr, 0) = 0 \n");
+		sql.append("  LEFT JOIN ynt_potcus s ON y.pk_customno = s.pk_customno \n");
+		sql.append(" WHERE nvl(y.dr, 0) = 0 AND nvl(s.dr, 0) = 0 AND s.ibusitype = 1 \n");
 		if(qvo.getDbegindate() != null){
 			sql.append("   AND y.realfollowdate >= ? \n");
 			spm.addParam(qvo.getDbegindate());
@@ -113,7 +115,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			sql.append("   AND y.realfollowdate <= ? \n");
 			spm.addParam(qvo.getDenddate());
 		}
-		sql.append("  GROUP BY y.pk_corp \n");
+		sql.append("  GROUP BY y.pk_corp,y.followuser )t group by t.pk_corp \n");
 		List<SaleAnalyseVO> list = (List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(SaleAnalyseVO.class));
 		if(list != null && list.size() > 0){

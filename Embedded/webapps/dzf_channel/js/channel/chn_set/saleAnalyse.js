@@ -25,7 +25,11 @@ function initArea(){
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
-			    $('#aname').combobox('loadData',result.rows);
+				var rows=result.rows;
+				var all={'id':'全部','name':'全部'};
+				rows.unshift(all);
+			    $('#aname').combobox('loadData',rows);
+			    $('#aname').combobox('select','全部');
 			} else {
 				Public.tips({content : result.msg,type : 2});
 			}
@@ -66,7 +70,8 @@ function load() {
 			"edate" : edate,
 		};
 	var aname=$("#aname").combobox('getValue');
-	if(!isEmpty(aname)){
+	var aid=$("#aname").combobox('getText');
+	if(!isEmpty(aname)&&!isEmpty(aid)&&aid!='全部'){
 		queryData['aname']=aname;
 	}
 	var ovince=$("#ovince").combobox('getValue');
@@ -97,14 +102,13 @@ function load() {
 			            { field : 'increnum', title : '增值合同数',width :'80',halign: 'center',align:'center',sortable:true} ,
 			            { field : 'contmny', title : '合同金额',width :'110',halign: 'center',align:'right',
 			            	  sortable:true,formatter : formatMny} ,
-			            { field : 'pricemny', title : '客单件',width :'100',halign: 'center',align:'right',
+			            { field : 'pricemny', title : '客单价',width :'100',halign: 'center',align:'right',
 			            	  sortable:true,formatter : formatMny}, 
 		          ] ],
 		onLoadSuccess : function(data) {
 			if(data.rows && loadrows == null){
 				loadrows = data.rows;
 			}
-			$.messager.progress('close');
 			calFooter();
 		}
 	});
@@ -149,6 +153,7 @@ function calFooter(){
 	}
 	footerData['corpnm'] = '合计';
 	footerData['visnum'] = visnum;
+	footerData['viscustnum'] = viscustnum;
 	footerData['signum'] = signum;
 	footerData['agentnum'] = agentnum;
 	footerData['increnum'] = increnum;
