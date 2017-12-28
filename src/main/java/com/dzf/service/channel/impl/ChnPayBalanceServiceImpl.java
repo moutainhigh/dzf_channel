@@ -347,6 +347,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				sql.append(" AND doperatedate >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
+			if(paramvo.getEnddate() != null){
+				sql.append(" AND doperatedate <= ? \n");
+				spm.addParam(paramvo.getEnddate());
+			}
 		}
 		sql.append(" order by ts asc");
 		qryvo.setSql(sql.toString());
