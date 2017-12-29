@@ -232,7 +232,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
 		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
 		sql.append("   AND t.icosttype IN (0, 1)\n") ; 
-		sql.append("   AND (t.vstatus = 1 OR vdeductstatus = 2 )\n") ; 
+		sql.append("   AND (t.vstatus = 1 OR vdeductstatus = 1 )\n") ; 
 		if(qvo.getDbegindate() != null){
 			sql.append("   AND t.dbegindate >= ? \n");
 			spm.addParam(qvo.getDbegindate());
