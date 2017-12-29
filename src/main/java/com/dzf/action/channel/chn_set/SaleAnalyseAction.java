@@ -137,7 +137,7 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 		map.put("iagentnum", "代账合同数");
 		map.put("iincrenum", "增值合同数");
 		map.put("contractmny", "合同金额");
-		map.put("pricemny", "客单件");
+		map.put("pricemny", "客单价");
 		return map;
 	}
 
