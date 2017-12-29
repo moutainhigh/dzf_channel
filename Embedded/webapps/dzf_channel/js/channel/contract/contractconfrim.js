@@ -376,13 +376,13 @@ function load(){
 			field : 'destatus',
 			align:'center',
 			formatter : function(value) {
-				if (value == '1')
+				if (value == '5')
 					return '待审核';
-				if (value == '2')
+				if (value == '1')
 					return '已审核';
-				if (value == '3')
+				if (value == '7')
 					return '拒绝审核';
-				if (value == '4')
+				if (value == '8')
 					return '服务到期';
 			}
 		}, {
@@ -560,7 +560,7 @@ function audit(){
 		});			
 		return;
 	}
-	if(rows[0].destatus != 1){
+	if(rows[0].destatus != 5){
 		Public.tips({
 			content : '合同状态不为待审核',
 			type : 2
@@ -668,7 +668,7 @@ function deductConfri(){
 		});			
 		return;
 	}
-	if(row.destatus != 1){
+	if(row.destatus != 5){
 		Public.tips({
 			content : '合同状态不为待审核',
 			type : 2

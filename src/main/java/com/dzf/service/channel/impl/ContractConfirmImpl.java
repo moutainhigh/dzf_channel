@@ -1,10 +1,8 @@
 package com.dzf.service.channel.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,11 +185,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//标签查询 1：待审核
 			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
-				sql.append("   AND vdeductstatus = 1 \n");
-			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){
-				sql.append("   AND vdeductstatus = 1 AND nvl(isncust,'N') = 'Y' \n");
+				sql.append("   AND vdeductstatus = 5 \n");
+			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){//标签查询 2：存量待审
+				sql.append("   AND vdeductstatus = 5 AND nvl(isncust,'N') = 'Y' \n");
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
@@ -248,13 +246,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(con.isflag, 'N') = 'Y' \n") ; 
 		sql.append("   AND nvl(acc.ischannel,'N') = 'Y' \n");
 		sql.append("   AND nvl(con.icosttype, 0) = 0 \n") ; 
-		sql.append("   AND con.vdeductstatus = 1 \n");//加盟商合同状态 = 待审核
+//		sql.append("   AND con.vdeductstatus = 1 \n");//加盟商合同状态 = 待审核
 		sql.append("   AND con.icontracttype = 2 \n");//合同类型 = 加盟商合同
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//标签查询 1：待审核
 			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
-				sql.append("   AND vdeductstatus = 1 \n");
-			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){
-				sql.append("   AND vdeductstatus = 1 AND nvl(isncust,'N') = 'Y' \n");
+				sql.append("   AND vdeductstatus = 5 \n");
+			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){//标签查询 2：存量待审
+				sql.append("   AND vdeductstatus = 5 AND nvl(isncust,'N') = 'Y' \n");
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
@@ -278,7 +276,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append(" AND nvl(isncust,'N') =? \n") ; 
 				spm.addParam(paramvo.getIsncust());
 			}
-			if(paramvo.getVdeductstatus()!=null&&paramvo.getVdeductstatus()!=-1){
+			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 				sql.append(" AND vdeductstatus = ? \n") ;
 				spm.addParam(paramvo.getVdeductstatus());
 			}
@@ -401,7 +399,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					throw new BusinessException(errmsg);
 				}
 				updateContract(paramvo, opertype);
-				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
+				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(paramvo);
 			}
 		} finally {
@@ -474,7 +472,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @return
 	 */
 	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException{
-		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_2);
+		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		paramvo.setTstamp(new DZFDateTime());
 		paramvo.setDeductdata(new DZFDate());
 		paramvo.setDeductime(new DZFDateTime());
@@ -498,9 +496,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vconfreason = ? ,");
 		sql.append(" tstamp = ? WHERE nvl(dr,0) = 0 AND pk_corp = ? AND pk_contract = ? ");
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_2);
-		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 		}
 		if(StringUtil.isEmpty(paramvo.getVconfreason())){
 			spm.addParam("");
@@ -533,7 +531,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0){
 				return "合同号："+confrimvo.getVcontcode()+"数据发生变化，请刷新界面后，再次尝试";
 			}
-			if(IStatusConstant.IDEDUCTSTATUS_1 != Integer.parseInt(String.valueOf(obj[1]))){
+			if(IStatusConstant.IDEDUCTSTATUS_5 != Integer.parseInt(String.valueOf(obj[1]))){
 				return "合同状态不为待审核";
 			}
 		}else{
@@ -642,7 +640,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				confrimvo.setVconfreason(paramvo.getVconfreason());
 				updateContract(confrimvo, opertype);
-				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);//已驳回
+				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(confrimvo);
 			}
 		} finally {
@@ -670,7 +668,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0) {
 				return "合同号：" + confrimvo.getVcontcode() + "数据发生变化，请刷新界面后，再次尝试";
 			}
-			if (IStatusConstant.IDEDUCTSTATUS_1 != Integer.parseInt(String.valueOf(obj[1]))) {
+			if (IStatusConstant.IDEDUCTSTATUS_5 != Integer.parseInt(String.valueOf(obj[1]))) {
 				return "合同状态不为待审核";
 			}
 		} else {

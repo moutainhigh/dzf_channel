@@ -73,8 +73,8 @@
 					<label style="width:80px;text-align:right">合同状态：</label>
 					<select id="destatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
-						<option value="1">待审核</option>
-						<option value="2">已审核</option>
+						<option value="5">待审核</option>
+						<option value="1">已审核</option>
 					</select>
 					<label style="width:80px;text-align:right">客户类型：</label>
 					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
