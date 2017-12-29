@@ -56,10 +56,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 				confqryvo.getSql(), confqryvo.getSpm());
 		if(confVOs != null && confVOs.length > 0){
 			UserVO uservo = null;
+			CorpVO corpvo = null;
 			for(ContractConfrimVO confvo : confVOs){
 				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 				if(uservo != null){
 					confvo.setVopername(uservo.getUser_name());
+				}
+				corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
+				if (corpvo != null) {
+					confvo.setVarea(corpvo.getCitycounty());
 				}
 				retlist.add(confvo);
 				pklist.add(confvo.getPk_contract()+""+confvo.getVcontcode());
@@ -75,14 +80,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(StringUtil.isEmpty(paramvo.getPk_bill())){
 			if (conflist != null && conflist.size() > 0) {
 				CorpVO corpvo = null;
-				AccountVO accvo = null;
+//				AccountVO accvo = null;
 				Map<String, String> packmap = queryPackageMap();
 				Integer cyclenum = 0;
 				for (ContractConfrimVO vo : conflist) {
-					accvo = queryAccountById(vo.getPk_corp());
-					if (accvo != null) {
-						vo.setCorpname(accvo.getUnitname());
-						vo.setVarea(accvo.getCitycounty());
+//					accvo = queryAccountById(vo.getPk_corp());
+					corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+					if (corpvo != null) {
+						vo.setCorpname(corpvo.getUnitname());
+						vo.setVarea(corpvo.getCitycounty());
 					}
 					corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 					if (corpvo != null) {
