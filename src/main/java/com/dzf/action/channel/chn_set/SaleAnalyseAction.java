@@ -28,6 +28,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.ExportExcel;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.ISaleAnalyseService;
@@ -76,6 +77,14 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new SaleAnalyseVO());
 		SaleAnalyseVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,SaleAnalyseVO[].class, JSONConvtoJAVA.getParserConfig());
+		for (SaleAnalyseVO saleAnalyseVO : expVOs) {
+			if(saleAnalyseVO.getPricemny()!=null){
+				saleAnalyseVO.setPricemny(saleAnalyseVO.getPricemny().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+			if(saleAnalyseVO.getContractmny()!=null){
+				saleAnalyseVO.setContractmny(saleAnalyseVO.getContractmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+			}
+		}
 		HttpServletResponse response = getResponse();
 		ExportExcel<SaleAnalyseVO> ex = new ExportExcel<SaleAnalyseVO>();
 		Map<String, String> map = getExpFieldMap();
