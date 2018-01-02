@@ -108,7 +108,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 						vo.setVchargecycle(null);//收款周期
 					}
 					if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
-						retlist.add(vo);
+						if(!StringUtil.isEmpty(paramvo.getCorpname())){
+							if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+								retlist.add(vo);
+							}
+						}else{
+							retlist.add(vo);
+						}
 					}
 				}
 			}
@@ -226,6 +232,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 				sql.append("   AND pk_confrim = ? \n") ; //合同主键
 				spm.addParam(paramvo.getPk_bill());
+			}
+			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+				sql.append(" AND corpname like ? \n") ; 
+				spm.addParam(paramvo.getCorpname()+"%");
 			}
 		}
 		sql.append(" order by dsubmitime desc");

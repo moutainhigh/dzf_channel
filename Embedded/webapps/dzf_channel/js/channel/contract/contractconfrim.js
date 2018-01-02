@@ -1,7 +1,7 @@
 var contextPath = DZF.contextPath;
 var grid,gridh;
 var loadrows = null;
-var isenter = false;//是否快速查询
+//var isenter = false;//是否快速查询
 
 $(function() {
 	initQueryData();
@@ -194,7 +194,7 @@ function reloadData(){
 	queryParams.destatus = $('#destatus').combobox('getValue');
 	var isncust=$('#isncust').combobox('getValue');
 	if(!isEmpty(isncust)){
-		queryParams.isncust =isncust;
+		queryParams.isncust = isncust;
 	}else{
 		 delete queryParams.isncust;
 	}
@@ -415,10 +415,10 @@ function load(){
 		},] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
-            if(!isenter){
-				loadrows = data.rows;
-			}
-			isenter = false;
+//            if(!isenter){
+//				loadrows = data.rows;
+//			}
+//			isenter = false;
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
@@ -497,23 +497,28 @@ function fastQry(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		 if (e.keyCode == 13) {
             var filtername = $("#filter_value").val(); 
-            if (filtername != "") {
-           	 var jsonStrArr = [];
-           	 if(loadrows){
-           		 for(var i=0;i<loadrows.length;i++){
-           			 var row = loadrows[i];
-           			 if(row != null && !isEmpty(row["corpnm"])){
-           				 if(row["corpnm"].indexOf(filtername) >= 0){
-           					 jsonStrArr.push(row);
-           				 } 
-           			 }
-           		 }
-           		 isenter = true;
-           		 $('#grid').datagrid('loadData',jsonStrArr);  
-           	 }
-            }else{
-           	 $('#grid').datagrid('loadData',loadrows);
-            } 
+            if(!isEmpty(filtername)){
+            	var params = new Object();
+          		params["cpname"] = filtername;
+          		grid.datagrid('reload',params); 
+            }
+//            if (filtername != "") {
+//           	 var jsonStrArr = [];
+//           	 if(loadrows){
+//           		 for(var i=0;i<loadrows.length;i++){
+//           			 var row = loadrows[i];
+//           			 if(row != null && !isEmpty(row["corpnm"])){
+//           				 if(row["corpnm"].indexOf(filtername) >= 0){
+//           					 jsonStrArr.push(row);
+//           				 } 
+//           			 }
+//           		 }
+////           		 isenter = true;
+//           		 $('#grid').datagrid('loadData',jsonStrArr);  
+//           	 }
+//            }else{
+//           	 $('#grid').datagrid('loadData',loadrows);
+//            } 
          }
    });
 }
