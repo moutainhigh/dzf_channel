@@ -58,75 +58,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//2、待审核合同数据
 			qryContractData(paramvo, pklist, retlist);
 		}
-		//1、已审核合同数据
-//		QrySqlSpmVO confqryvo = getConfrimQry(paramvo);
-//		ContractConfrimVO[] confVOs = (ContractConfrimVO[]) singleObjectBO.queryByCondition(ContractConfrimVO.class,
-//				confqryvo.getSql(), confqryvo.getSpm());
-//		if(confVOs != null && confVOs.length > 0){
-//			UserVO uservo = null;
-//			CorpVO corpvo = null;
-//			for(ContractConfrimVO confvo : confVOs){
-//				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
-//				if(uservo != null){
-//					confvo.setVopername(uservo.getUser_name());
-//				}
-//				corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
-//				if (corpvo != null) {
-//					confvo.setVarea(corpvo.getCitycounty());
-//				}
-//				retlist.add(confvo);
-//				pklist.add(confvo.getPk_contract()+""+confvo.getVcontcode());
-//			}
-//		}
-		
-		//2、待审核合同数据
-		
-		//查询主键如果不为空，则为别的界面（付款单余额）联查到合同审核界面，只查询审核通过合同即可
-//		if(StringUtil.isEmpty(paramvo.getPk_bill())){
-//			QrySqlSpmVO contqryvo = getContractQry(paramvo);
-//			List<ContractConfrimVO> conflist = (List<ContractConfrimVO>) singleObjectBO.executeQuery(contqryvo.getSql(),
-//					contqryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
-//			if (conflist != null && conflist.size() > 0) {
-//				CorpVO corpvo = null;
-////				AccountVO accvo = null;
-//				Map<String, String> packmap = queryPackageMap();
-//				Integer cyclenum = 0;
-//				for (ContractConfrimVO vo : conflist) {
-////					accvo = queryAccountById(vo.getPk_corp());
-//					corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-//					if (corpvo != null) {
-//						vo.setCorpname(corpvo.getUnitname());
-//						vo.setVarea(corpvo.getCitycounty());
-//					}
-//					corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
-//					if (corpvo != null) {
-//						vo.setCorpkname(corpvo.getUnitname());
-//					}
-//					//从套餐取纳税人性质
-//					if(!StringUtil.isEmpty(vo.getPk_packagedef())){
-//						if(packmap != null && !packmap.isEmpty()){
-//							vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
-//						}
-//					}
-//					cyclenum = 0;
-//					if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
-//						cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
-//						vo.setVchargecycle(String.valueOf(cyclenum));//收款周期
-//					}else{
-//						vo.setVchargecycle(null);//收款周期
-//					}
-//					if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
-//						if(!StringUtil.isEmpty(paramvo.getCorpname())){
-//							if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
-//								retlist.add(vo);
-//							}
-//						}else{
-//							retlist.add(vo);
-//						}
-//					}
-//				}
-//			}
-//		}
 		//3、按照时间戳排序
 		Collections.sort(retlist, new Comparator<ContractConfrimVO>() {
 			@Override
@@ -179,11 +110,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 				contqryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
 			CorpVO corpvo = null;
-//			AccountVO accvo = null;
 			Map<String, String> packmap = queryPackageMap();
 			Integer cyclenum = 0;
 			for (ContractConfrimVO vo : conflist) {
-//				accvo = queryAccountById(vo.getPk_corp());
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if (corpvo != null) {
 					vo.setCorpname(corpvo.getUnitname());
@@ -219,24 +148,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 	}
 	
-//	/**
-//	 * 查询会计公司信息
-//	 * @param pk_corp
-//	 * @return
-//	 */
-//	private AccountVO queryAccountById(String pk_corp) throws DZFWarpException {
-//		AccountVO accvo =  (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, pk_corp);
-//		if(accvo != null){
-//			AccountVO[] accVOs = new AccountVO[]{accvo};
-//			accVOs = (AccountVO[]) QueryDeCodeUtils.decKeyUtils(
-//					new String[] { "legalbodycode", "phone1", "phone2", "unitname", "unitshortname" },
-//					accVOs, 1);
-//			return accVOs[0];
-//		}else{
-//			return null;
-//		}
-//	}
-	
 	/**
 	 * 查询套餐属性
 	 * @return
@@ -253,30 +164,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return map;
 	}
 	
-//	/**
-//	 * 查询区域的值
-//	 * @return
-//	 * @throws DZFWarpException
-//	 */
-//	@SuppressWarnings("unchecked")
-//	private Map<Integer, String> queryAreaMap() throws DZFWarpException {
-//		Map<Integer, String> areamap = new HashMap<Integer, String>();
-//		StringBuffer sql = new StringBuffer();
-//		SQLParameter sp = new SQLParameter();
-//		sql.append("select region_id, region_name\n");
-//		sql.append("  from ynt_area\n");
-//		sql.append(" where nvl(dr, 0) = 0\n");
-//		sql.append("   order by region_id asc ");
-//		ArrayList<ResponAreaVO> list = (ArrayList<ResponAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,
-//				new BeanListProcessor(ResponAreaVO.class));
-//		if(list != null && list.size() > 0){
-//			for(ResponAreaVO vo: list){
-//				areamap.put(vo.getRegion_id(), vo.getRegion_name());
-//			}
-//		}
-//		return areamap;
-//	}
-	
 	/**
 	 * 获取确认数据查询条件
 	 * @param paramvo
@@ -287,48 +174,36 @@ public class ContractConfirmImpl implements IContractConfirm {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
-//		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//标签查询 1：待审核
-//			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
-//				sql.append("   AND vdeductstatus = 5 \n");
-//			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){//标签查询 2：存量待审
-//				sql.append("   AND vdeductstatus = 5 AND nvl(isncust,'N') = 'Y' \n");
-//			}
-//		}else{
-			sql.append(" AND vdeductstatus = 1 \n") ;
-			if(paramvo.getBegdate() != null){
-				sql.append("   AND dsubmitime >= ? \n") ; 
-				spm.addParam(paramvo.getBegdate() + " 00:00:00");
-			}
-			if(paramvo.getEnddate() != null){
-				sql.append("   AND dsubmitime <= ? \n") ; 
-				spm.addParam(paramvo.getEnddate() + " 23:59:59");
-			}
-			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-			    String[] strs = paramvo.getPk_corp().split(",");
-			    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-			    sql.append(" AND pk_corp in (").append(inSql).append(")");
-			}
-			if(paramvo.getIsncust()!=null){
-				sql.append(" AND nvl(isncust,'N') =? \n") ; 
-				spm.addParam(paramvo.getIsncust());
-			}
-			if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
-				sql.append(" AND pk_corpk=? \n") ; 
-				spm.addParam(paramvo.getPk_corpk());
-			}
-//			if(paramvo.getVdeductstatus() !=null && paramvo.getVdeductstatus() != -1){
-//				sql.append(" AND vdeductstatus = ? \n") ;
-//				spm.addParam(paramvo.getVdeductstatus());
-//			}
-			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-				sql.append("   AND pk_confrim = ? \n") ; //合同主键
-				spm.addParam(paramvo.getPk_bill());
-			}
-			if(!StringUtil.isEmpty(paramvo.getCorpname())){
-				sql.append(" AND corpname like ? \n") ; 
-				spm.addParam(paramvo.getCorpname()+"%");
-			}
-//		}
+		sql.append(" AND vdeductstatus = 1 \n") ;
+		if(paramvo.getBegdate() != null){
+			sql.append("   AND dsubmitime >= ? \n") ; 
+			spm.addParam(paramvo.getBegdate() + " 00:00:00");
+		}
+		if(paramvo.getEnddate() != null){
+			sql.append("   AND dsubmitime <= ? \n") ; 
+			spm.addParam(paramvo.getEnddate() + " 23:59:59");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+		    String[] strs = paramvo.getPk_corp().split(",");
+		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+		    sql.append(" AND pk_corp in (").append(inSql).append(")");
+		}
+		if(paramvo.getIsncust() != null){
+			sql.append(" AND nvl(isncust,'N') =? \n") ; 
+			spm.addParam(paramvo.getIsncust());
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
+			sql.append(" AND pk_corpk=? \n") ; 
+			spm.addParam(paramvo.getPk_corpk());
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
+			sql.append("   AND pk_confrim = ? \n") ; //合同主键
+			spm.addParam(paramvo.getPk_bill());
+		}
+		if(!StringUtil.isEmpty(paramvo.getCorpname())){
+			sql.append(" AND corpname like ? \n") ; 
+			spm.addParam(paramvo.getCorpname()+"%");
+		}
 		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

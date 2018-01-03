@@ -187,6 +187,7 @@ function reloadData(){
 		}		
 	}
 	var queryParams = $('#grid').datagrid('options').queryParams;
+	clearQryParam(queryParams);
 	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
@@ -206,6 +207,22 @@ function reloadData(){
 	$('#querydate').html(bdate + ' 至 ' + edate);
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
+}
+
+/**
+ * 清除查询传递查询条件
+ * @param queryParams
+ */
+function clearQryParam(queryParams){
+	queryParams.begdate = null;
+	queryParams.enddate = null;
+	queryParams.qtype = -1;
+	queryParams.destatus = -1;
+	delete queryParams.isncust;
+	queryParams.cpid = null;
+	queryParams.cpkid = null;
+	queryParams.id = null;
+	queryParams.cpname = null;
 }
 
 /**
@@ -415,10 +432,6 @@ function load(){
 		},] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
-//            if(!isenter){
-//				loadrows = data.rows;
-//			}
-//			isenter = false;
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
@@ -483,18 +496,15 @@ function formatDocLink(val,row,index){
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
-//	var queryParams = $('#grid').datagrid('options').queryParams;
-//	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
-//	queryParams.qtype = type;
-//	$('#grid').datagrid('options').queryParams = queryParams;
-//	$('#grid').datagrid('reload');
-	var params = new Object();
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	clearQryParam(queryParams);
 	if(type == 2){
-		params["isncust"] = "Y";
+		queryParams.isncust = "Y";
 	}
-	params["destatus"] = 5;
+	queryParams.destatus = 5;
 	grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
-	grid.datagrid('reload',params); 
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
 }
 
 /**
@@ -505,28 +515,13 @@ function fastQry(){
 		 if (e.keyCode == 13) {
             var filtername = $("#filter_value").val(); 
             if(!isEmpty(filtername)){
-            	var params = new Object();
-          		params["cpname"] = filtername;
+            	var queryParams = $('#grid').datagrid('options').queryParams;
+            	clearQryParam(queryParams);
+            	queryParams.cpname = filtername;
           		grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
-          		grid.datagrid('reload',params); 
+          		$('#grid').datagrid('options').queryParams = queryParams;
+          		$('#grid').datagrid('reload');
             }
-//            if (filtername != "") {
-//           	 var jsonStrArr = [];
-//           	 if(loadrows){
-//           		 for(var i=0;i<loadrows.length;i++){
-//           			 var row = loadrows[i];
-//           			 if(row != null && !isEmpty(row["corpnm"])){
-//           				 if(row["corpnm"].indexOf(filtername) >= 0){
-//           					 jsonStrArr.push(row);
-//           				 } 
-//           			 }
-//           		 }
-////           		 isenter = true;
-//           		 $('#grid').datagrid('loadData',jsonStrArr);  
-//           	 }
-//            }else{
-//           	 $('#grid').datagrid('loadData',loadrows);
-//            } 
          }
    });
 }
