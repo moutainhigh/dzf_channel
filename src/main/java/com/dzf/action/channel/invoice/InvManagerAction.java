@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -81,18 +82,36 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		try {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			paramvo.setPage(getPage());
-			paramvo.setRows(getRows());
-			List<CorpVO> rows = invManagerService.queryChannel(paramvo);
-			grid.setTotal((long)invManagerService.queryChTotalRow(paramvo));
-			grid.setMsg("查询成功！");
-			grid.setSuccess(true);
-			grid.setRows(rows);
+//			paramvo.setPage(getPage());
+//			paramvo.setRows(getRows());
+			int page = paramvo == null ? 1: paramvo.getPage();
+            int rows = paramvo ==null ? 100000: paramvo.getRows();
+			List<CorpVO> list = invManagerService.queryChannel(paramvo);
+			if(list != null && list.size() > 0){
+			    CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]),page,rows);
+			    grid.setRows(Arrays.asList(corpvos));
+			}else{
+			    grid.setRows(list);
+			}
+			grid.setTotal((long)(list.size()));
+            grid.setMsg("查询成功！");
+            grid.setSuccess(true);
+//			grid.setRows(rows);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
 	}
+	
+	private CorpVO[] getPagedVOs(CorpVO[] cvos,int page,int rows){
+        int beginIndex = rows * (page-1);
+        int endIndex = rows*page;
+        if(endIndex>=cvos.length){//防止endIndex数组越界
+            endIndex=cvos.length;
+        }
+        cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+        return cvos;
+    } 
 	
 	/**
 	 * 开票

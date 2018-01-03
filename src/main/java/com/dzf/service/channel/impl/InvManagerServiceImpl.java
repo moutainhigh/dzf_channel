@@ -1,6 +1,7 @@
 package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -125,25 +126,42 @@ public class InvManagerServiceImpl implements InvManagerService{
 	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		int page = vo.getPage();
-		int size = vo.getRows();
-		sql.append("select pk_corp,unitname,innercode from (select pk_corp,unitname,innercode,rownum rn from bd_corp ");
-		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
-		if(!StringUtil.isEmpty(vo.getCorpcode())){
-			sql.append(" and instr(innercode,?) > 0");
-			sp.addParam(vo.getCorpcode());
-		}
-		sql.append(" and rownum <= ?)");
-		sql.append(" where rn > ?");
-		 sql.append(" order by innercode ");
-		sp.addParam(page*size);
-		sp.addParam((page-1)*size);
+//		int page = vo.getPage();
+//		int size = vo.getRows();
+//		sql.append("select pk_corp,unitname,innercode from (select pk_corp,unitname,innercode,rownum rn from bd_corp ");
+//		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
+//		if(!StringUtil.isEmpty(vo.getCorpcode())){
+//			sql.append(" and instr(innercode,?) > 0");
+//			sp.addParam(vo.getCorpcode());
+//		}
+//		sql.append(" and rownum <= ?)");
+//		sql.append(" where rn > ?");
+//		sql.append(" order by innercode ");
+		sql.append("select pk_corp,unitname,innercode from bd_corp ");
+        sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
+        sql.append(" and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
+//        if(!StringUtil.isEmpty(vo.getCorpcode())){
+//            sql.append(" and instr(innercode,?) > 0");
+//            sp.addParam(vo.getCorpcode());
+//        }
+        sql.append(" order by innercode ");
+//		sp.addParam(page*size);
+//		sp.addParam((page-1)*size);
 		List<CorpVO> list = (List<CorpVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(CorpVO.class));
-		if(list == null || list.size() == 0){
-			return list;
-		}else{
-			return encodeCorpVO(list);
+		
+		if(list != null && list.size() > 0){
+		    encodeCorpVO(list);
+		    List<CorpVO> rList = new ArrayList<>();
+		    if(!StringUtil.isEmpty(vo.getCorpcode())){
+		        for(CorpVO cvo : list){
+		            if(cvo.getUnitname().contains(vo.getCorpcode()) || cvo.getInnercode().contains(vo.getCorpcode())){
+		                rList.add(cvo);
+		            }
+		        }
+		        return rList;
+		    }
 		}
+		return list;
 	}
 	
 	private List<CorpVO> encodeCorpVO(List<CorpVO> vos){
@@ -152,7 +170,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 		}
 		return vos;
 	}
-
+	
 	@Override
 	public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException {
 		//

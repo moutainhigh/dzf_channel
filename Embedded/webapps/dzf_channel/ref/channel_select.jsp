@@ -57,7 +57,8 @@ var JPlaceHolder = {
 	};
 var rows = null;
 $(function(){
-	$('#gsTable').datagrid({
+	var params = new Object();
+	grid = $('#gsTable').datagrid({
 	    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
 	    method: 'post',
 		fitColumns: true,
@@ -65,8 +66,8 @@ $(function(){
 		rownumbers : true,
 		singleSelect : false,
 		pagination : true,
-		pageSize:200,
-	    pageList:[200,300,400,500],
+		pageSize:10,
+	    pageList:[10,20,30,40,50],
 		showFooter : true,
 		height:330,
 		striped:true,
@@ -97,7 +98,7 @@ $(function(){
 	      		var params = new Object();
 	      		//params["corpname"] = filtername;
 	      		params["corpcode"] = filtername;
-	      		$('#gsTable').datagrid('reload',params); 
+	      		grid.datagrid('load',params); 
 	       }
 	   });
 	JPlaceHolder.init(); 
@@ -107,7 +108,7 @@ $(function(){
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-corp">
-					<input id="unitcode" placeholder="请输入编码查询" />
+					<input id="unitcode" placeholder="请输入编码或名称查询" />
 				</div>
 			</div>
 		</div>

@@ -52,7 +52,7 @@
 				</div>
 				
 				<div class=right>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">生成开票申请</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">开票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExport()">导出</a>
 				</div>
 			</div>
