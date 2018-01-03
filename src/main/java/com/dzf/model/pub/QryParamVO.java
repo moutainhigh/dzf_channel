@@ -73,7 +73,7 @@ public class QryParamVO extends SuperVO {
 	private DZFBoolean isncust;// 是否存量客户
 	   
 	@FieldAlias("destatus")
-	private Integer vdeductstatus;//加盟商合同状态  1：待审核；2：已审核；3：已驳回；4：服务到期；
+	private Integer vdeductstatus;//最新合同状态：      5:待审批： 1：审核通过； 7：已驳回；8：服务到期；；
 	
 	public String getBeginperiod() {
 		return beginperiod;
