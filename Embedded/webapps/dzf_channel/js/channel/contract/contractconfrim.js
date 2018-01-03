@@ -483,11 +483,18 @@ function formatDocLink(val,row,index){
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
-	queryParams.qtype = type;
-	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
+//	var queryParams = $('#grid').datagrid('options').queryParams;
+//	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+//	queryParams.qtype = type;
+//	$('#grid').datagrid('options').queryParams = queryParams;
+//	$('#grid').datagrid('reload');
+	var params = new Object();
+	if(type == 2){
+		params["isncust"] = "Y";
+	}
+	params["destatus"] = 5;
+	grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+	grid.datagrid('reload',params); 
 }
 
 /**
@@ -500,6 +507,7 @@ function fastQry(){
             if(!isEmpty(filtername)){
             	var params = new Object();
           		params["cpname"] = filtername;
+          		grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
           		grid.datagrid('reload',params); 
             }
 //            if (filtername != "") {
