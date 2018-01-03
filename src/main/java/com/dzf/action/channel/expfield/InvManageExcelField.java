@@ -28,6 +28,7 @@ public class InvManageExcelField implements IExceport<ChInvoiceVO>{
 			new Fieldelement("corpname", "加盟商",false,0,false),
 			new Fieldelement("ipaytype", "付款类型",false,0,false,new String[]{"预付款","加盟费"}),
 			new Fieldelement("taxnum", "税号",false,0,false),
+			new Fieldelement("invprice", "开票金额",true,2,false),
 			new Fieldelement("invtype", "发票类型",false,0,false,new String[]{"专用发票","普通发票","电子发票"}),
 			new Fieldelement("corpaddr", "公司地址",false,0,false),
 			new Fieldelement("invphone", "开票电话",false,0,false),
@@ -40,25 +41,24 @@ public class InvManageExcelField implements IExceport<ChInvoiceVO>{
 			new Fieldelement("invstatus", "发票状态",false,0,false,new String[]{"待提交","待开票","已开票"}),
 			new Fieldelement("vmome", "备注",false,0,false),
 	};
-	
 	@Override
 	public String getExcelport2007Name() {
-		return "付款余额查询" + now + ".xlsx";
+		return "发票管理" + now + ".xlsx";
 	}
 	
 	@Override
 	public String getExcelport2003Name() {
-		return "付款余额查询" + now + ".xls";
+		return "发票管理" + now + ".xls";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "付款余额查询";
+		return "发票管理";
 	}
 
 	@Override
 	public String getSheetName() {
-		return "付款余额查询";
+		return "发票管理";
 	}
 
 	@Override

@@ -117,7 +117,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         cvo.setCorpname(vo.getCorpname());
         cvo.setInvnature(0);//发票性质
         cvo.setTaxnum(avo.getTaxcode());//税号
-        cvo.setInvprice(vo.getNoticketmny().toString());//开票金额
+        cvo.setInvprice(vo.getNoticketmny());//开票金额
         cvo.setInvtype(avo.getInvtype() == null ? 2 : avo.getInvtype());//发票类型
         cvo.setCorpaddr(avo.getPostaddr());//公司地址
         cvo.setInvphone(CodeUtils1.deCode(avo.getPhone1()));
