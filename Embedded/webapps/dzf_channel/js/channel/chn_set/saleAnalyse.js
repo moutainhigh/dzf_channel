@@ -197,5 +197,6 @@ function doExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(contextPath+ '/chn_set/saleAnalyse!exportExcel.action',{'strlist':JSON.stringify(datarows)}, true, true);
+	var qj = $('#bdate').datebox('getValue') + "至" +  $('#edate').datebox('getValue') ;
+	Business.getFile(contextPath+ '/chn_set/saleAnalyse!exportExcel.action',{'strlist':JSON.stringify(datarows),'qj':qj}, true, true);
 }

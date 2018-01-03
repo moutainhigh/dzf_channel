@@ -3,12 +3,10 @@ package com.dzf.action.channel.invoice;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.BillingExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
@@ -31,10 +30,8 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.ExportExcel;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDouble;
-import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 
@@ -122,6 +119,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 	 */
 	public void onExport(){
         String strlist =getRequest().getParameter("strlist");
+        String bdate = getRequest().getParameter("bdate");
         if(StringUtil.isEmpty(strlist)){
             throw new BusinessException("导出数据不能为空!");
         }   
@@ -130,36 +128,29 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
         BillingInvoiceVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,BillingInvoiceVO[].class, JSONConvtoJAVA.getParserConfig());
         ArrayList<BillingInvoiceVO> explist = new ArrayList<BillingInvoiceVO>();
         for(BillingInvoiceVO vo : expVOs){
-            vo.setDebittotalmny(vo.getDebittotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
-            vo.setBilltotalmny(vo.getBilltotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
-            vo.setNoticketmny(vo.getNoticketmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+//            vo.setDebittotalmny(vo.getDebittotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+//            vo.setBilltotalmny(vo.getBilltotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
+//            vo.setNoticketmny(vo.getNoticketmny().setScale(2, DZFDouble.ROUND_HALF_UP));
             explist.add(vo);
         }
         HttpServletResponse response = getResponse();
-        ExportExcel<BillingInvoiceVO> ex = new ExportExcel<BillingInvoiceVO>();
-        Map<String, String> map = getExpFieldMap();
-        String[] enFields = new String[map.size()];
-        String[] cnFields = new String[map.size()];
-         //填充普通字段数组
-        int count = 0;
-        for (Entry<String, String> entry : map.entrySet()) {
-            enFields[count] = entry.getKey();
-            cnFields[count] = entry.getValue();
-            count++;
-        }
+        Excelexport2003<BillingInvoiceVO> ex = new Excelexport2003<BillingInvoiceVO>();
+        BillingExcelField fields = new BillingExcelField();
+        fields.setVos(explist.toArray(new BillingInvoiceVO[0]));;
+        fields.setQj(bdate);
         ServletOutputStream servletOutputStream = null;
         OutputStream toClient = null;
         try {
             response.reset();
             // 设置response的Header
-            String date = DateUtils.getDate(new Date());
-            response.addHeader("Content-Disposition", "attachment;filename="+ new String(date+".xls"));
+            String filename = fields.getExcelport2003Name();
+            String formattedName = URLEncoder.encode(filename, "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+            
             servletOutputStream = response.getOutputStream();
             toClient = new BufferedOutputStream(servletOutputStream);
             response.setContentType("applicationnd.ms-excel;charset=gb2312");
-            byte[] length = ex.exportExcel("加盟商开票查询",cnFields,enFields ,explist, toClient);
-            String srt2=new String(length,"UTF-8");
-            response.addHeader("Content-Length", srt2);
+            ex.exportExcel(fields, toClient);
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
@@ -181,18 +172,4 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
             }
         }
 	}
-    
-	/**
-     * 获取导出列
-     * @return
-     */
-    public Map<String, String> getExpFieldMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("corpcode", "加盟商编码");
-        map.put("corpname", "加盟商名称");
-        map.put("debittotalmny", "累计扣款金额");
-        map.put("billtotalmny", "累计开票金额");
-        map.put("noticketmny", "未开票金额");
-        return map;
-    }
 }

@@ -3,14 +3,13 @@ package com.dzf.action.channel;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.ChnPayBalExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
@@ -35,7 +35,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.ExportArrayExcel;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
@@ -110,6 +110,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 	 */
 	public void onExport(){
         String strlist =getRequest().getParameter("strlist");
+        String qj = getRequest().getParameter("qj");
         if(StringUtil.isEmpty(strlist)){
             throw new BusinessException("导出数据不能为空!");
         }   
@@ -121,30 +122,23 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
             explist.add(vo);
         }
         HttpServletResponse response = getResponse();
-        ExportArrayExcel<ChnBalanceRepVO> ex = new ExportArrayExcel<ChnBalanceRepVO>();
-        Map<String, String> map = getExpFieldMap();
-        String[] enFields = new String[map.size()];
-        String[] cnFields = new String[map.size()];
-         //填充普通字段数组
-        int count = 0;
-        for (Entry<String, String> entry : map.entrySet()) {
-            enFields[count] = entry.getKey();
-            cnFields[count] = entry.getValue();
-            count++;
-        }
+//        ExportArrayExcel<ChnBalanceRepVO> ex = new ExportArrayExcel<ChnBalanceRepVO>();
+        Excelexport2003<ChnBalanceRepVO> ex = new Excelexport2003<ChnBalanceRepVO>();
+        ChnPayBalExcelField fields = new ChnPayBalExcelField();
+        fields.setVos(explist.toArray(new ChnBalanceRepVO[0]));;
+        fields.setQj(qj);
         ServletOutputStream servletOutputStream = null;
         OutputStream toClient = null;
         try {
             response.reset();
             // 设置response的Header
-            String date = DateUtils.getDate(new Date());
-            response.addHeader("Content-Disposition", "attachment;filename="+ new String(date+".xls"));
+            String filename = fields.getExcelport2003Name();
+            String formattedName = URLEncoder.encode(filename, "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
             servletOutputStream = response.getOutputStream();
-             toClient = new BufferedOutputStream(servletOutputStream);
+            toClient = new BufferedOutputStream(servletOutputStream);
             response.setContentType("applicationnd.ms-excel;charset=gb2312");
-            byte[] length = ex.exportExcel("付款单余额",cnFields,enFields ,explist, toClient,null, null);
-            String srt2=new String(length,"UTF-8");
-            response.addHeader("Content-Length", srt2);
+            ex.exportExcel(fields, toClient);
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
@@ -166,21 +160,6 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
             }
         }
 	}
-	
-	/**
-     * 获取导出列
-     * @return
-     */
-    public Map<String, String> getExpFieldMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("corpname", "加盟商");
-        map.put("vpaytypename", "付款类型");
-        map.put("initbalance", "期初余额");
-        map.put("npaymny", "本期付款金额");
-        map.put("nusedmny", "本期已用金额");
-        map.put("nbalance", "期末余额");
-        return map;
-    }
     
 	/**
 	 * 打印

@@ -465,7 +465,8 @@ function onExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/chnpay/chnpaybalance!onExport.action',{'strlist':JSON.stringify(datarows)}, true, true);
+	Business.getFile(DZF.contextPath+ '/chnpay/chnpaybalance!onExport.action',{
+		'strlist':JSON.stringify(datarows),'qj' : $('#jqj').html(),}, true, true);
 }
 
 /**
@@ -486,18 +487,18 @@ function onPrint(){
  * 明细打印
  */
 function onDetPrint(){
-		var datarows = $('#gridh').datagrid("getRows");
- 		if( datarows == null||datarows.length == 0){
- 			Public.tips({content:'明细数据为空',type:2});
- 			return;
- 		}
- 		var columns = $('#gridh').datagrid("options").columns[0];
- 		var qrydate = $("#qrydate").text();
- 		var corpnm = $("#corpnm").text();
- 		var ptypenm = $("#ptypenm").text();
- 		
- 		Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetPrint.action',{'strlist':JSON.stringify(datarows),
- 			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+	var datarows = $('#gridh').datagrid("getRows");
+	if( datarows == null||datarows.length == 0){
+		Public.tips({content:'明细数据为空',type:2});
+		return;
+	}
+	var columns = $('#gridh').datagrid("options").columns[0];
+	var qrydate = $("#qrydate").text();
+	var corpnm = $("#corpnm").text();
+	var ptypenm = $("#ptypenm").text();
+	
+	Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetPrint.action',{'strlist':JSON.stringify(datarows),
+		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
 }
 
 /**

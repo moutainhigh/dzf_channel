@@ -2,12 +2,10 @@ package com.dzf.action.channel.chn_set;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.SaleAnalyseExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.sale.SaleAnalyseVO;
 import com.dzf.model.pub.Grid;
@@ -27,7 +26,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.ExportExcel;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
@@ -71,6 +70,7 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 	 */
 	public void exportExcel(){
 		String strlist =getRequest().getParameter("strlist");
+		String qj = getRequest().getParameter("qj");
 		if(StringUtil.isEmpty(strlist)){
 			throw new BusinessException("导出数据不能为空!");
 		}	
@@ -86,17 +86,21 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			}
 		}
 		HttpServletResponse response = getResponse();
-		ExportExcel<SaleAnalyseVO> ex = new ExportExcel<SaleAnalyseVO>();
-		Map<String, String> map = getExpFieldMap();
-		String[] enFields = new String[map.size()];
-		String[] cnFields = new String[map.size()];
-		 //填充普通字段数组
-		int count = 0;
-		for (Entry<String, String> entry : map.entrySet()) {
-			enFields[count] = entry.getKey();
-			cnFields[count] = entry.getValue();
-			count++;
-		}
+//		ExportExcel<SaleAnalyseVO> ex = new ExportExcel<SaleAnalyseVO>();
+		Excelexport2003<SaleAnalyseVO> ex = new Excelexport2003<>();
+		SaleAnalyseExcelField fields = new SaleAnalyseExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
+//		Map<String, String> map = getExpFieldMap();
+//		String[] enFields = new String[map.size()];
+//		String[] cnFields = new String[map.size()];
+//		 //填充普通字段数组
+//		int count = 0;
+//		for (Entry<String, String> entry : map.entrySet()) {
+//			enFields[count] = entry.getKey();
+//			cnFields[count] = entry.getValue();
+//			count++;
+//		}
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
@@ -107,9 +111,7 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			servletOutputStream = response.getOutputStream();
 			 toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportExcel("销售数据分析表",cnFields,enFields ,Arrays.asList(expVOs), toClient);
-			String srt2=new String(length,"UTF-8");
-			response.addHeader("Content-Length", srt2);
+			ex.exportExcel(fields, toClient);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {

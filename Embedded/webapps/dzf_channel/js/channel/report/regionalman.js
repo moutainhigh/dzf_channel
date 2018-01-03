@@ -210,7 +210,7 @@ function doExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':2}, true, true);
+	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':2,'qj':$('#jqj').html()}, true, true);
 }
 
 

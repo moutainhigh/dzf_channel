@@ -206,7 +206,8 @@ function onExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/invoice/billingquery!onExport.action',{'strlist':JSON.stringify(datarows)}, true, true);
+	var bdate = $('#bdate').datebox('getValue'); //开始日期
+	Business.getFile(DZF.contextPath+ '/invoice/billingquery!onExport.action',{'strlist':JSON.stringify(datarows),'bdate':bdate}, true, true);
 }
 
 function onBilling(){

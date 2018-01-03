@@ -404,6 +404,6 @@ function onExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',{'strlist':JSON.stringify(datarows)}, true, true);
+	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',{'strlist':JSON.stringify(datarows),'qj':$('#querydate').html()}, true, true);
 }
 

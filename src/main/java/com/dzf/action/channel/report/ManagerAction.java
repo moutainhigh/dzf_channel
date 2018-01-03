@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.ManagerExcelField;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -28,7 +28,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.ExportExcel;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IManagerService;
@@ -125,6 +125,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 	public void exportExcel(){
 		Integer type = Integer.parseInt(getRequest().getParameter("type"));
 		String strlist =getRequest().getParameter("strlist");
+		String qj = getRequest().getParameter("qj");
 		if(StringUtil.isEmpty(strlist)){
 			throw new BusinessException("导出数据不能为空!");
 		}	
@@ -136,17 +137,21 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			explist.add(vo);
 		}
 		HttpServletResponse response = getResponse();
-		ExportExcel<ManagerVO> ex = new ExportExcel<ManagerVO>();
-		Map<String, String> map = getExpFieldMap(type);
-		String[] enFields = new String[map.size()];
-		String[] cnFields = new String[map.size()];
-		 //填充普通字段数组
-		int count = 0;
-		for (Entry<String, String> entry : map.entrySet()) {
-			enFields[count] = entry.getKey();
-			cnFields[count] = entry.getValue();
-			count++;
-		}
+//		ExportExcel<ManagerVO> ex = new ExportExcel<ManagerVO>();
+		Excelexport2003<ManagerVO> ex = new Excelexport2003<>();
+		ManagerExcelField fields = new ManagerExcelField(type);
+		fields.setVos(explist.toArray(new ManagerVO[0]));
+		fields.setQj(qj);
+//		Map<String, String> map = getExpFieldMap(type);
+//		String[] enFields = new String[map.size()];
+//		String[] cnFields = new String[map.size()];
+//		 //填充普通字段数组
+//		int count = 0;
+//		for (Entry<String, String> entry : map.entrySet()) {
+//			enFields[count] = entry.getKey();
+//			cnFields[count] = entry.getValue();
+//			count++;
+//		}
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
@@ -157,16 +162,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			servletOutputStream = response.getOutputStream();
 			 toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			byte[] length=null;
-			if(type==1){
-				length = ex.exportExcel("渠道经理表",cnFields,enFields ,explist, toClient);
-			}else if (type==2){
-				length = ex.exportExcel("区域总经理表",cnFields,enFields ,explist, toClient);
-			}else{
-				length = ex.exportExcel("加盟商总经理表",cnFields,enFields ,explist, toClient);
-			}
-			String srt2=new String(length,"UTF-8");
-			response.addHeader("Content-Length", srt2);
+			ex.exportExcel(fields, toClient);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
