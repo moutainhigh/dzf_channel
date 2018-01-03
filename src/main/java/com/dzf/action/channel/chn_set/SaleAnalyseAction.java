@@ -3,7 +3,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,21 +85,10 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			}
 		}
 		HttpServletResponse response = getResponse();
-//		ExportExcel<SaleAnalyseVO> ex = new ExportExcel<SaleAnalyseVO>();
 		Excelexport2003<SaleAnalyseVO> ex = new Excelexport2003<>();
 		SaleAnalyseExcelField fields = new SaleAnalyseExcelField();
 		fields.setVos(expVOs);
 		fields.setQj(qj);
-//		Map<String, String> map = getExpFieldMap();
-//		String[] enFields = new String[map.size()];
-//		String[] cnFields = new String[map.size()];
-//		 //填充普通字段数组
-//		int count = 0;
-//		for (Entry<String, String> entry : map.entrySet()) {
-//			enFields[count] = entry.getKey();
-//			cnFields[count] = entry.getValue();
-//			count++;
-//		}
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
@@ -133,23 +121,4 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			}
 		}
 	}
-	
-	/**
-	 * 获取导出列
-	 * @return
-	 */
-	public Map<String, String> getExpFieldMap(){
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("areaname", "大区");
-		map.put("vprovname", "省（市）");
-		map.put("corpname", "加盟商");
-		map.put("iviscustnum", "拜访客户数");
-		map.put("isignnum", "签约客户数");
-		map.put("iagentnum", "代账合同数");
-		map.put("iincrenum", "增值合同数");
-		map.put("contractmny", "合同金额");
-		map.put("pricemny", "客单价");
-		return map;
-	}
-
 }
