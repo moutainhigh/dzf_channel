@@ -252,7 +252,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("corpcode", "加盟商编码");
 		map.put("corpname", "加盟商名称");
-		map.put("chndate", "加盟商日期");
+		map.put("chndate", "加盟日期");
 		map.put("outmny", "预付款余额");
 		map.put("ndeductmny", "扣款合计");
 		for(int i=0;i<split.length;i++){

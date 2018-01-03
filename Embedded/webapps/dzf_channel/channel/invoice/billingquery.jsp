@@ -57,7 +57,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 210px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 160px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>

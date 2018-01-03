@@ -69,44 +69,44 @@ public class ManagerExcelField implements IExceport<ManagerVO>{
     @Override
 	public String getExcelport2007Name() {
         if(type==1){
-            return "渠道经理表" + now + ".xls";
+            return "省数据分析" + now + ".xls";
         }else if (type==2){
-            return "区域总经理表" + now + ".xls";
+            return "大区数据统计" + now + ".xls";
         }else{
-            return "加盟商总经理表" + now + ".xls";
+            return "渠道总数据分析" + now + ".xls";
         }
 	}
 	
 	@Override
 	public String getExcelport2003Name() {
 	    if(type==1){
-            return "渠道经理表" + now + ".xls";
+            return "省数据分析" + now + ".xls";
         }else if (type==2){
-            return "区域总经理表" + now + ".xls";
+            return "大区数据统计" + now + ".xls";
         }else{
-            return "加盟商总经理表" + now + ".xls";
+            return "渠道总数据分析" + now + ".xls";
         }
 	}
 
 	@Override
 	public String getExceportHeadName() {
 	    if(type==1){
-            return "渠道经理表";
+            return "省数据分析";
         }else if (type==2){
-            return "区域总经理表";
+            return "大区数据统计";
         }else{
-            return "加盟商总经理表";
+            return "渠道总数据分析";
         }
 	}
 
 	@Override
 	public String getSheetName() {
 	    if(type==1){
-	        return "渠道经理表";
+	        return "省数据分析";
         }else if (type==2){
-            return "区域总经理表";
+            return "大区数据统计";
         }else{
-            return "加盟商总经理表";
+            return "渠道总数据分析";
         }
 	}
 

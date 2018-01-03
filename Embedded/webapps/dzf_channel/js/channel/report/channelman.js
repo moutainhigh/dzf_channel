@@ -130,5 +130,6 @@ function doExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':1,'qj':$('#jqj').html()}, true, true);
+	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');
+	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':1,'qj':qj}, true, true);
 }

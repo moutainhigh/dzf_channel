@@ -2,7 +2,6 @@ package com.dzf.action.channel.expfield;
 
 import java.util.Date;
 
-import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.sale.SaleAnalyseVO;
 import com.dzf.pub.Fieldelement;
 import com.dzf.pub.IExceport;
@@ -29,6 +28,7 @@ public class SaleAnalyseExcelField implements IExceport<SaleAnalyseVO>{
 			new Fieldelement("areaname", "大区",false,0,false),
 			new Fieldelement("vprovname", "省（市）",false,0,false),
 			new Fieldelement("corpname", "加盟商",false,0,false),
+			new Fieldelement("ivisitnum", "拜访数",false,0,false),
 			new Fieldelement("iviscustnum", "拜访客户数",false,0,false),
 			new Fieldelement("isignnum", "签约客户数",false,0,false),
 			new Fieldelement("iagentnum", "代账合同数",false,0,false),
