@@ -1,6 +1,6 @@
 var contextPath = DZF.contextPath;
 var grid,gridh;
-var loadrows = null;
+//var loadrows = null;
 //var isenter = false;//是否快速查询
 
 $(function() {
@@ -191,7 +191,6 @@ function reloadData(){
 	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
-	queryParams.qtype = -1;
 	queryParams.destatus = $('#destatus').combobox('getValue');
 	var isncust=$('#isncust').combobox('getValue');
 	if(!isEmpty(isncust)){
@@ -201,7 +200,6 @@ function reloadData(){
 	}
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.cpkid = $("#corpkid_ae").val();
-	queryParams.id = '';
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
@@ -516,9 +514,22 @@ function fastQry(){
             var filtername = $("#filter_value").val(); 
             if(!isEmpty(filtername)){
             	var queryParams = $('#grid').datagrid('options').queryParams;
+            	var rows = $('#grid').datagrid('getRows');
             	clearQryParam(queryParams);
+            	if(rows != null && rows.length > 0){
+            		//做过查询
+            		queryParams.destatus = $('#destatus').combobox('getValue');
+            		var isncust=$('#isncust').combobox('getValue');
+            		if(!isEmpty(isncust)){
+            			queryParams.isncust = isncust;
+            		}
+            		queryParams.cpid = $("#pk_account").val();
+            		queryParams.cpkid = $("#corpkid_ae").val();
+            	}
+            	queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
+            	queryParams.enddate = $('#edate').datebox('getValue'); //结束日期
             	queryParams.cpname = filtername;
-          		grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+          		grid.datagrid('options').url = contextPath + '/contract/contractconf!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
           		$('#grid').datagrid('reload');
             }

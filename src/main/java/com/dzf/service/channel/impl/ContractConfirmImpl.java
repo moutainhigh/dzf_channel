@@ -202,7 +202,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		if(!StringUtil.isEmpty(paramvo.getCorpname())){
 			sql.append(" AND corpname like ? \n") ; 
-			spm.addParam(paramvo.getCorpname()+"%");
+			spm.addParam("%"+paramvo.getCorpname()+"%");
 		}
 		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
