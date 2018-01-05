@@ -51,12 +51,21 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
+			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
+					if(!StringUtil.isEmpty(paramvo.getCorpname())){
+						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+							retlist.add(vo);
+						}
+					}
 				}
+			}
+			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+				return retlist;
 			}
 		}
 		return list;

@@ -22,10 +22,10 @@ public class QryParamVO extends SuperVO {
 	private String pk_corp;// 会计机构
 	
 	@FieldAlias("cpcode")
-	private String corpcode;// 会计编码
+	private String corpcode;// 会计公司编码
 	
 	@FieldAlias("cpname")
-	private String corpname;// 会计名称
+	private String corpname;// 会计公司名称
 
 	@FieldAlias("cpkid")
 	private String pk_corpk;// 客户

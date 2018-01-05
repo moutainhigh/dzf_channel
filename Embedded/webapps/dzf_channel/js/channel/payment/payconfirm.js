@@ -1,7 +1,7 @@
 var contextPath = DZF.contextPath;
 var grid;
-var loadrows = null;
-var isenter = false;//是否快速查询
+//var loadrows = null;
+//var isenter = false;//是否快速查询
 
 $(function() {
 	load();
@@ -49,11 +49,16 @@ function initListener(){
 	initChannel();
 }
 
+/**
+ * 关闭查询框
+ */
 function closeCx(){
 	$("#qrydialog").hide();
 }
 
-//初始化加盟商
+/**
+ * 加盟商参照初始化
+ */
 function initChannel(){
     $('#channel_select').textbox({
         editable: false,
@@ -73,7 +78,11 @@ function initChannel(){
         }]
     });
 }
-//双击选择公司
+
+/**
+ * 双击选择公司
+ * @param rowTable
+ */
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
@@ -96,6 +105,17 @@ function dClickCompany(rowTable){
 	 $("#chnDlg").dialog('close');
 }
 
+/**
+ * 选择公司
+ */
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+/**
+ * 清除查询框
+ */
 function clearParams(){
 	$("#pk_account").val(null);
 	$("#channel_select").textbox("setValue",null);
@@ -104,12 +124,9 @@ function clearParams(){
 	$('#ipmode').combobox('setValue', '-1');
 }
 
-function selectCorps(){
-	var rows = $('#gsTable').datagrid('getSelections');
-	dClickCompany(rows);
-}
-
-
+/**
+ * 查询
+ */
 function reloadData(){
 	var bdate = $('#bdate').datebox('getValue'); //开始日期
 	var edate = $('#edate').datebox('getValue'); //结束日期
@@ -121,7 +138,8 @@ function reloadData(){
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
-	queryParams.id = '';
+	queryParams.id = null;
+	queryParams.cpname = null;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
@@ -250,10 +268,10 @@ function load(){
 		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
-            if(!isenter){
-				loadrows = data.rows;
-			}
-			isenter = false;
+//            if(!isenter){
+//				loadrows = data.rows;
+//			}
+//			isenter = false;
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
@@ -290,6 +308,8 @@ function qryData(type){
 	queryParams.iptype = -1;
 	queryParams.ipmode = -1;
 	queryParams.cpid = "";
+	queryParams.id = null;
+	queryParams.cpname = null;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }
@@ -300,23 +320,40 @@ function fastQry(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		 if (e.keyCode == 13) {
             var filtername = $("#filter_value").val(); 
-            if (filtername != "") {
-           	 var jsonStrArr = [];
-           	 if(loadrows){
-           		 for(var i=0;i<loadrows.length;i++){
-           			 var row = loadrows[i];
-           			 if(row != null && !isEmpty(row["corpnm"])){
-           				 if(row["corpnm"].indexOf(filtername) >= 0){
-           					 jsonStrArr.push(row);
-           				 } 
-           			 }
-           		 }
-           		 isenter = true;
-           		 $('#grid').datagrid('loadData',jsonStrArr);  
-           	 }
-            }else{
-           	 $('#grid').datagrid('loadData',loadrows);
-            } 
+            if(filtername != ""){
+            	var queryParams = $('#grid').datagrid('options').queryParams;
+            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+            	var rows = $('#grid').datagrid('getRows');
+            	if(rows != null && rows.length > 0){
+            		queryParams.qtype = $('#status').combobox('getValue');
+            		queryParams.iptype = $('#iptype').combobox('getValue');
+            		queryParams.ipmode = $('#ipmode').combobox('getValue');
+            		queryParams.cpid = $("#pk_account").val();
+            		queryParams.id = null;
+            	}
+            	queryParams.begdate = $('#bdate').datebox('getValue');
+            	queryParams.enddate = $('#edate').datebox('getValue');
+            	queryParams.cpname = filtername;
+            	$('#grid').datagrid('options').queryParams = queryParams;
+            	$('#grid').datagrid('reload');
+            }
+//            if (filtername != "") {
+//           	 var jsonStrArr = [];
+//           	 if(loadrows){
+//           		 for(var i=0;i<loadrows.length;i++){
+//           			 var row = loadrows[i];
+//           			 if(row != null && !isEmpty(row["corpnm"])){
+//           				 if(row["corpnm"].indexOf(filtername) >= 0){
+//           					 jsonStrArr.push(row);
+//           				 } 
+//           			 }
+//           		 }
+//           		 isenter = true;
+//           		 $('#grid').datagrid('loadData',jsonStrArr);  
+//           	 }
+//            }else{
+//           	 $('#grid').datagrid('loadData',loadrows);
+//            } 
          }
    });
 }
