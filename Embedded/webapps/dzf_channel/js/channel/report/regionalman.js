@@ -184,18 +184,33 @@ function load() {
 function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		 if (e.keyCode == 13) {
-           var filtername = $("#filter_value").val(); 
-           if (filtername != "") {
-           	var url = DZF.contextPath +'/report/manager!query.action';
-           	$('#grid').datagrid('options').url = url;
-           	$('#grid').datagrid('loadData',{ total:0, rows:[]});
-           	$('#grid').datagrid('load', {
-           		"corpnm" :filtername,
-           		"type":2
-           	});
-           }else{
-        	   reloadData();
-           } 
+	           var filtername = $("#filter_value").val(); 
+	           if (filtername != "") {
+		           	var url = DZF.contextPath +'/report/manager!query.action';
+		           	$('#grid').datagrid('options').url = url;
+	        		var ovince = isEmpty($('#ovince').combobox('getValue')) ? -1 : $('#ovince').combobox('getValue');
+	        		var cuid = isEmpty($('#cuid').combobox('getValue')) ? null : $('#cuid').combobox('getValue');
+		           	var rows = $('#grid').datagrid('getRows');
+		           	if(rows != null && rows.length > 0){
+		           		$('#grid').datagrid('load', {
+		           			"corpnm": filtername,
+		           			"type": 2,
+		           			"bdate": $('#bdate').datebox('getValue'),
+		           			"edate": $('#edate').datebox('getValue'),
+		           			"ovince": ovince,
+		           			"cuid": cuid,
+		           		});
+		           	}else{
+		           		$('#grid').datagrid('load', {
+		           			"corpnm": filtername,
+		           			"type": 2,
+		           			"bdate": $('#bdate').datebox('getValue'),
+		           			"edate": $('#edate').datebox('getValue'),
+		           		});
+		           	}
+	           }else{
+	        	   reloadData();
+	           } 
         }
   });
 }

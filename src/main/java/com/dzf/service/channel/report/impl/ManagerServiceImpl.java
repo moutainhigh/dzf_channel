@@ -61,7 +61,7 @@ public class ManagerServiceImpl implements IManagerService {
 			sql.append(" and a.areaname=? " );   //大区
 			sp.addParam(qvo.getAreaname());
 		}
-		if(qvo.getVprovince()!=null){
+		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
 			sql.append(" and b.vprovince=? ");//省市
 			sp.addParam(qvo.getVprovince());
 		}
