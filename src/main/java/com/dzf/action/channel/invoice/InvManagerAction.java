@@ -61,13 +61,18 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		try {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			paramvo.setPage(getPage());
-			paramvo.setRows(getRows());
-			List<ChInvoiceVO> rows = invManagerService.query(paramvo);
-			grid.setTotal((long)invManagerService.queryTotalRow(paramvo));
-			grid.setMsg("查询成功！");
+//			paramvo.setPage(getPage());
+//			paramvo.setRows(getRows());
+			int total = invManagerService.queryTotalRow(paramvo);
+			if(total > 0){
+				List<ChInvoiceVO> rows = invManagerService.query(paramvo);
+				grid.setRows(rows);
+			}else{
+				grid.setRows(new ArrayList<ChInvoiceVO>());
+			}
+			grid.setTotal((long)total);
+			grid.setMsg("查询成功");
 			grid.setSuccess(true);
-			grid.setRows(rows);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}

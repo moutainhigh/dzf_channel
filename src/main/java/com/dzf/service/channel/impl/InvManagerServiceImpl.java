@@ -1,7 +1,6 @@
 package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,14 +11,17 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
+import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
+import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
@@ -32,80 +34,138 @@ public class InvManagerServiceImpl implements InvManagerService{
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
+	@Autowired
+	private MultBodyObjectBO multBodyObjectBO;
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ChInvoiceVO> query(ChInvoiceVO vo) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		int page = vo.getPage();
-		int size = vo.getRows();
-		sql.append("select * from (select rownum rn,ci.* from cn_invoice ci");
-		sql.append(" where nvl(dr,0) = 0 ");
-		if(vo.getInvstatus() == -1){
-			sql.append(" and invstatus in (1,2)");
-		}else{
-			sql.append(" and invstatus = ?");
-			sp.addParam(vo.getInvstatus());
-		}
-		if(!StringUtil.isEmpty(vo.getBdate())){
-			sql.append(" and apptime >= ?");
-			sp.addParam(vo.getBdate());
-		}
-		if(!StringUtil.isEmpty(vo.getEdate())){
-			sql.append(" and apptime <= ?");
-			sp.addParam(vo.getEdate());
-		}
-		if( null != vo.getCorps() && vo.getCorps().length > 0){
-			String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
-			sql.append(" and pk_corp  in (" + corpIdS + ")");
-		}
-		sql.append(" and  rownum <= ? order by ts desc ) where rn > ?");
-		sp.addParam(page*size);
-		sp.addParam((page-1)*size);
-		List<ChInvoiceVO> list = (List<ChInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChInvoiceVO.class));
-		
-		if(list == null || list.size() == 0){
-			return list;
-		}else{
-			for(ChInvoiceVO cvo :list){
-				if(!StringUtil.isEmpty(cvo.getInvperson())){
-					cvo.setIperson(queryUserName(cvo.getInvperson()));
+	public List<ChInvoiceVO> query(ChInvoiceVO paramvo) throws DZFWarpException {
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter sp = new SQLParameter();
+//		int page = vo.getPage();
+//		int size = vo.getRows();
+//		sql.append("select * from (select rownum rn,ci.* from cn_invoice ci");
+//		sql.append(" where nvl(dr,0) = 0 ");
+//		if (vo.getInvstatus() == -1) {
+//			sql.append(" and invstatus in (1,2)");
+//		} else {
+//			sql.append(" and invstatus = ?");
+//			sp.addParam(vo.getInvstatus());
+//		}
+//		if (!StringUtil.isEmpty(vo.getBdate())) {
+//			sql.append(" and apptime >= ?");
+//			sp.addParam(vo.getBdate());
+//		}
+//		if (!StringUtil.isEmpty(vo.getEdate())) {
+//			sql.append(" and apptime <= ?");
+//			sp.addParam(vo.getEdate());
+//		}
+//		if (null != vo.getCorps() && vo.getCorps().length > 0) {
+//			String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
+//			sql.append(" and pk_corp  in (" + corpIdS + ")");
+//		}
+//		sql.append(" and  rownum <= ? order by ts desc ) where rn > ?");
+//		sp.addParam(page * size);
+//		sp.addParam((page - 1) * size);
+//		List<ChInvoiceVO> list = (List<ChInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+//				new BeanListProcessor(ChInvoiceVO.class));
+//
+//		if (list == null || list.size() == 0) {
+//			return list;
+//		} else {
+//			for (ChInvoiceVO cvo : list) {
+//				if (!StringUtil.isEmpty(cvo.getInvperson())) {
+//					cvo.setIperson(queryUserName(cvo.getInvperson()));
+//				}
+//			}
+//			return list;
+//		}
+		QrySqlSpmVO qryvo = getQrySql(paramvo);
+		List<ChInvoiceVO> retlist = (List<ChInvoiceVO>) multBodyObjectBO.queryDataPage(ChInvoiceVO.class,
+				qryvo.getSql(), qryvo.getSpm(), paramvo.getPage(), paramvo.getRows(), "ts");
+		if (retlist != null && retlist.size() > 0) {
+			UserVO uservo = null;
+			for(ChInvoiceVO vo : retlist){
+				uservo = UserCache.getInstance().get(vo.getInvperson(), null);
+				if(uservo != null){
+					vo.setIperson(uservo.getUser_name());
 				}
 			}
-			return list;
 		}
+		return retlist;
 	}
 	
-	private String queryUserName(String userid){
-		UserVO uvo = (UserVO)singleObjectBO.queryVOByID(userid, UserVO.class);
-		return CodeUtils1.deCode(uvo.getUser_name());
-	}
+//	private String queryUserName(String userid){
+//		UserVO uvo = (UserVO)singleObjectBO.queryVOByID(userid, UserVO.class);
+//		return CodeUtils1.deCode(uvo.getUser_name());
+//	}
 	
 	@Override
-	public Integer queryTotalRow(ChInvoiceVO vo) throws DZFWarpException {
+	public Integer queryTotalRow(ChInvoiceVO paramvo) throws DZFWarpException {
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter sp = new SQLParameter();
+//		sql.append("select count(1) from cn_invoice where nvl(dr,0) = 0 ");
+//		if(vo.getCorps() != null && vo.getCorps().length > 0){
+//			String corps = SqlUtil.buildSqlConditionForIn(vo.getCorps());
+//			sql.append(" and pk_corp in (" +corps+ ")");
+//		}
+//		if(vo.getInvstatus() == -1){
+//			sql.append(" and invstatus in (1,2)");
+//		}else{
+//			sql.append(" and invstatus = ?");
+//			sp.addParam(vo.getInvstatus());
+//		}
+//		if(!StringUtil.isEmpty(vo.getBdate())){
+//			sql.append(" and apptime >= ?");
+//			sp.addParam(vo.getBdate());
+//		}
+//		if(!StringUtil.isEmpty(vo.getEdate())){
+//			sql.append(" and apptime <= ?");
+//			sp.addParam(vo.getEdate());
+//		}
+//		sql.append(" order by ts desc ");
+//		String total = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor()).toString();
+//		return Integer.valueOf(total);
+		QrySqlSpmVO qryvo = getQrySql(paramvo);
+		return multBodyObjectBO.queryDataTotal(ChInvoiceVO.class, qryvo.getSql(), qryvo.getSpm());
+	}
+	
+	/**
+	 * 获取查询条件
+	 * @param paramvo
+	 * @return
+	 */
+	private QrySqlSpmVO getQrySql(ChInvoiceVO paramvo){
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select count(1) from cn_invoice where nvl(dr,0) = 0 ");
-		if(vo.getCorps() != null && vo.getCorps().length > 0){
-			String corps = SqlUtil.buildSqlConditionForIn(vo.getCorps());
-			sql.append(" and pk_corp in (" +corps+ ")");
-		}
-		if(vo.getInvstatus() == -1){
-			sql.append(" and invstatus in (1,2)");
-		}else{
+		SQLParameter spm = new SQLParameter();
+		sql.append("select * from cn_invoice ");
+		sql.append(" where nvl(dr,0) = 0 ");
+		if(paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1){
 			sql.append(" and invstatus = ?");
-			sp.addParam(vo.getInvstatus());
+			spm.addParam(paramvo.getInvstatus());
+		}else{
+			sql.append(" and invstatus in (1,2)");
 		}
-		if(!StringUtil.isEmpty(vo.getBdate())){
+		if(!StringUtil.isEmpty(paramvo.getBdate())){
 			sql.append(" and apptime >= ?");
-			sp.addParam(vo.getBdate());
+			spm.addParam(paramvo.getBdate());
 		}
-		if(!StringUtil.isEmpty(vo.getEdate())){
+		if(!StringUtil.isEmpty(paramvo.getEdate())){
 			sql.append(" and apptime <= ?");
-			sp.addParam(vo.getEdate());
+			spm.addParam(paramvo.getEdate());
 		}
-		sql.append(" order by ts desc ");
-		String total = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor()).toString();
-		return Integer.valueOf(total);
+		if(paramvo.getCorps() != null && paramvo.getCorps().length > 0){
+			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+			sql.append(" and pk_corp  in (" + corpIdS + ")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getCorpname())){
+			sql.append(" and corpname like ?");
+			spm.addParam("%" + paramvo.getCorpname() + "%");
+		}
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
 	}
 
 	@Override

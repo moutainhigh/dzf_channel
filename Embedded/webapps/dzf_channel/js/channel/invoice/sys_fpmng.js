@@ -264,23 +264,45 @@ function fastQry() {
 	$('#filter_value').textbox('textbox').keydown(function(e) {
 		if (e.keyCode == 13) {
 			var filtername = $("#filter_value").val();
-			if (filtername != "") {
-				var jsonStrArr = [];
-				if (loadrows) {
-					for (var i = 0; i < loadrows.length; i++) {
-						var row = loadrows[i];
-						if (row != null && !isEmpty(row["cname"])) {
-							if (row["cname"].indexOf(filtername) >= 0) {
-								jsonStrArr.push(row);
-							}
-						}
-					}
-					isenter = true;
-					$('#grid').datagrid('loadData', jsonStrArr);
+			if(filtername != ""){
+				var url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
+				$('#grid').datagrid('options').url = url;
+				var bdate = $('#bdate').datebox('getValue'); //开始日期
+				var edate = $('#edate').datebox('getValue'); //结束日期
+				var rows = $('#grid').datagrid('getRows');
+				if(rows != null && rows.length > 0){
+					$('#grid').datagrid('load', {
+						bdate: bdate,
+						edate: edate,
+						corps : $("#pk_account").val(),
+						istatus : $('#istatus').combobox('getValue'),
+						cname: filtername,
+					});
+				}else{
+					$('#grid').datagrid('load', {
+						bdate: bdate,
+						edate: edate,
+						cname: filtername,
+					});
 				}
-			} else {
-				$('#grid').datagrid('loadData', loadrows);
 			}
+//			if (filtername != "") {
+//				var jsonStrArr = [];
+//				if (loadrows) {
+//					for (var i = 0; i < loadrows.length; i++) {
+//						var row = loadrows[i];
+//						if (row != null && !isEmpty(row["cname"])) {
+//							if (row["cname"].indexOf(filtername) >= 0) {
+//								jsonStrArr.push(row);
+//							}
+//						}
+//					}
+//					isenter = true;
+//					$('#grid').datagrid('loadData', jsonStrArr);
+//				}
+//			} else {
+//				$('#grid').datagrid('loadData', loadrows);
+//			}
 		}
 	});
 }
