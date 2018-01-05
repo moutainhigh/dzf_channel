@@ -170,16 +170,43 @@ function quickfiltet(){
         	$('#grid').datagrid('unselectAll');
  		   var filtername = $("#quname").val(); 
 		   if (filtername) {
-				var jsonStrArr = [];
-				if(loadrows){
-					for(var i=0;i<loadrows.length;i++){
-						var row = loadrows[i];
-						if(row.corpnm.indexOf(filtername) >= 0){
-							jsonStrArr.push(row);
-						} 
-					}
-					$('#grid').datagrid('loadData',jsonStrArr);   
-				}
+			   var rows = $('#grid').datagrid('getRows');
+			   var bdate = $("#bdate").datebox('getValue');
+			   var edate = $("#edate").datebox('getValue');
+			   if(rows != null && rows.length > 0){
+				   var aname = null;
+				   var aid = $("#aname").combobox('getText');
+				   if(!isEmpty(aname)&&!isEmpty(aid)&&aid!='全部'){
+					   aname = $("#aname").combobox('getValue');
+				   }
+				   var ovince = $("#ovince").combobox('getValue');
+				   if(isEmpty(ovince)){
+					   ovince = -1;
+				   }
+					$('#grid').datagrid('load', {
+				    	"bdate" : bdate,
+						"edate" : edate,
+						"corpnm" : filtername,
+						"aname" : aname,
+						"ovince" : ovince,
+				    });
+			   }else{
+					$('#grid').datagrid('load', {
+				    	"bdate" : bdate,
+						"edate" : edate,
+						"corpnm" : filtername,
+				    });
+			   }
+//				var jsonStrArr = [];
+//				if(loadrows){
+//					for(var i=0;i<loadrows.length;i++){
+//						var row = loadrows[i];
+//						if(row.corpnm.indexOf(filtername) >= 0){
+//							jsonStrArr.push(row);
+//						} 
+//					}
+//					$('#grid').datagrid('loadData',jsonStrArr);   
+//				}
 			}else{
 				load();
 			} 

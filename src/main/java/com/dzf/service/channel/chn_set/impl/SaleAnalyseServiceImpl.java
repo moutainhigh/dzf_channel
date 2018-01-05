@@ -39,7 +39,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			sql.append(" and c.areaname=? " );   //大区
 			sp.addParam(qvo.getAreaname());
 		}
-		if(qvo.getVprovince()!=null){
+		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
 			sql.append(" and b.vprovince=? ");//省市
 			sp.addParam(qvo.getVprovince());
 		}
@@ -55,36 +55,41 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		SaleAnalyseVO visitvo = null;
 		SaleAnalyseVO numvo = null;
 		CorpVO cvo = null;
-		for (SaleAnalyseVO saleAnalyseVO : list) {
-			String pk_corp=saleAnalyseVO.getPk_corp();
+		for (SaleAnalyseVO salevo : list) {
+			String pk_corp = salevo.getPk_corp();
 			cvo = CorpCache.getInstance().get(null,pk_corp);
 			if(cvo!=null){
-				saleAnalyseVO.setCorpname(cvo.getUnitname());
+				salevo.setCorpname(cvo.getUnitname());
+				if(!StringUtil.isEmpty(qvo.getCorpname())){
+					if(salevo.getCorpname().indexOf(qvo.getCorpname()) == -1){
+						continue;
+					}
+				}
 			}
 			if(visitmap != null && !visitmap.isEmpty()){
 				visitvo=visitmap.get(pk_corp);
 				if(visitvo!=null){
-					saleAnalyseVO.setIvisitnum(visitvo.getIvisitnum());
-					saleAnalyseVO.setIviscustnum(visitvo.getIviscustnum());
+					salevo.setIvisitnum(visitvo.getIvisitnum());
+					salevo.setIviscustnum(visitvo.getIviscustnum());
 				}
 			}
 			if(signmap != null && !signmap.isEmpty()){
-				saleAnalyseVO.setIsignnum(signmap.get(pk_corp));
+				salevo.setIsignnum(signmap.get(pk_corp));
 			}
 			if(nummap != null && !nummap.isEmpty()){
 				numvo = nummap.get(pk_corp);
 				if(visitvo!=null){
-					saleAnalyseVO.setIagentnum(numvo.getIagentnum());
-					saleAnalyseVO.setIincrenum(numvo.getIincrenum());
+					salevo.setIagentnum(numvo.getIagentnum());
+					salevo.setIincrenum(numvo.getIincrenum());
 				}
 			}
 			if(mnymap != null && !mnymap.isEmpty()){
-				saleAnalyseVO.setContractmny(mnymap.get(pk_corp));
+				salevo.setContractmny(mnymap.get(pk_corp));
 			}
-			if(saleAnalyseVO.getIsignnum() != null && saleAnalyseVO.getContractmny() != null){
-				saleAnalyseVO.setPricemny(saleAnalyseVO.getContractmny().div(new DZFDouble(saleAnalyseVO.getIsignnum())));
+			if(salevo.getIsignnum() != null && salevo.getContractmny() != null){
+				salevo.setPricemny(salevo.getContractmny().div(new DZFDouble(salevo.getIsignnum())));
 			}
-			retlist.add(saleAnalyseVO);
+			retlist.add(salevo);
 		}
 		return retlist;
 	}
