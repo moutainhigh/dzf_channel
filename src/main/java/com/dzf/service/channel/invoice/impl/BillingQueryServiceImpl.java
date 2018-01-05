@@ -1,5 +1,6 @@
 package com.dzf.service.channel.invoice.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,10 +17,12 @@ import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 
@@ -29,35 +32,50 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<BillingInvoiceVO> query(BillingInvoiceVO vo) throws DZFWarpException {
+	public List<BillingInvoiceVO> query(BillingInvoiceVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,");
 		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
 		sql.append(" from bd_account a");
-        sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp and nvl(detail.dr,0) = 0 and detail.iopertype = 2");
-        if(!StringUtil.isEmpty(vo.getBdate())){
-            sql.append(" and detail.doperatedate <= ?"); 
-            sp.addParam(vo.getBdate());
-        }
-        
-        sql.append(" where a.ischannel = 'Y'  ");
-        if( null != vo.getCorps() && vo.getCorps().length > 0){
-            String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
-            sql.append(" and a.pk_corp  in (" + corpIdS + ")");
-        }
-        sql.append(" group by a.pk_corp,a.innercode ,a.unitname");
-		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(BillingInvoiceVO.class));
-		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(vo);
-		if(list != null && list.size() > 0){
-		    for(BillingInvoiceVO bvo : list){
-		        BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
-		        if(binvo != null){
-		            bvo.setBilltotalmny(CommonUtil.getDZFDouble(binvo.getBilltotalmny()));
-		            bvo.setNoticketmny(CommonUtil.getDZFDouble(bvo.getDebittotalmny()).sub(CommonUtil.getDZFDouble(bvo.getBilltotalmny())));
-		        }
-		    }
+		sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp ");
+		sql.append(" and nvl(detail.dr,0) = 0 and detail.iopertype = 2 ");
+		if (!StringUtil.isEmpty(paramvo.getBdate())) {
+			sql.append(" and detail.doperatedate <= ?");
+			sp.addParam(paramvo.getBdate());
+		}
+		sql.append(" where a.ischannel = 'Y'  ");
+		if (null != paramvo.getCorps() && paramvo.getCorps().length > 0) {
+			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+			sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+		}
+		sql.append(" group by a.pk_corp,a.innercode ,a.unitname");
+		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(BillingInvoiceVO.class));
+		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(paramvo);
+		if (list != null && list.size() > 0) {
+			List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
+			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 2);
+			for (BillingInvoiceVO bvo : list) {
+				BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
+				if (binvo != null) {
+					bvo.setBilltotalmny(CommonUtil.getDZFDouble(binvo.getBilltotalmny()));
+//					bvo.setNoticketmny(CommonUtil.getDZFDouble(bvo.getDebittotalmny())
+//							.sub(CommonUtil.getDZFDouble(bvo.getBilltotalmny())));
+					bvo.setNoticketmny(SafeCompute.sub(bvo.getDebittotalmny(), bvo.getBilltotalmny()));
+				}
+				if(!StringUtil.isEmpty(paramvo.getCorpname())){
+					if(bvo.getCorpcode().indexOf(paramvo.getCorpname()) != -1 
+							|| bvo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+						retlist.add(bvo);
+					}
+				}
+			}
+			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+				return retlist;
+			}
 		}
 		return list;
 	}

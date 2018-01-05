@@ -1,5 +1,5 @@
-var isenter = false;//是否快速查询
-var loadrows = null;
+//var isenter = false;//是否快速查询
+//var loadrows = null;
 
 // 数据表格随窗口大小改变
 $(window).resize(function() {
@@ -24,25 +24,49 @@ function initListener(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
-	
+	fastQry();
+}
+
+/**
+ * 快速查询
+ */
+function fastQry(){
 	$('#quname').textbox('textbox').keydown(function (e) {
         if (e.keyCode == 13) {
         	$('#grid').datagrid('unselectAll');
- 		   var filtername = $("#quname").val(); 
-		   if (filtername) {
-				var jsonStrArr = [];
-				if(loadrows){
-					for(var i=0;i<loadrows.length;i++){
-						var row = loadrows[i];
-						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
-							jsonStrArr.push(row);
-						} 
-					}
-					$('#grid').datagrid('loadData',jsonStrArr);   
-				}
-			}else{
-				$('#grid').datagrid('loadData',loadrows);
-			} 
+        	var url = DZF.contextPath + '/invoice/billingquery!query.action';
+        	$('#grid').datagrid('options').url = url;
+        	var bdate = $('#bdate').datebox('getValue'); //开始日期
+        	var rows = $('#grid').datagrid('getRows');
+ 		    var filtername = $("#quname").val(); 
+ 		    if (filtername) {
+ 		    	if(rows != null && rows.length > 0){
+ 		    	    $('#grid').datagrid('load', {
+ 		    	        bdate: bdate,
+ 		    	        cname: filtername,
+ 		    	    });
+ 		    	}else{
+ 		    	    $('#grid').datagrid('load', {
+ 		    	    	corps : $("#pk_account").val(),
+ 		    	        bdate: bdate,
+ 		    	        cname: filtername,
+ 		    	    });
+ 		    	}
+ 		    }
+//		   if (filtername) {
+//				var jsonStrArr = [];
+//				if(loadrows){
+//					for(var i=0;i<loadrows.length;i++){
+//						var row = loadrows[i];
+//						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
+//							jsonStrArr.push(row);
+//						} 
+//					}
+//					$('#grid').datagrid('loadData',jsonStrArr);   
+//				}
+//			}else{
+//				$('#grid').datagrid('loadData',loadrows);
+//			} 
         }
     });
 }
@@ -96,9 +120,9 @@ function initDataGrid(){
 			});
 		},
 		onLoadSuccess : function(data) {
-			if(data.rows && loadrows == null){
-				loadrows = data.rows;
-			}
+//			if(data.rows && loadrows == null){
+//				loadrows = data.rows;
+//			}
 			$.messager.progress('close');
 			$("#qrydialog").hide();
 			calFooter();

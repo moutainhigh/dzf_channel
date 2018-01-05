@@ -47,7 +47,7 @@
 				</div>
 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
-						<input style="height:28px;width:220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称或编码回车定位 "/> 
+						<input style="height:28px;width:220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称或编码回车 "/> 
 					</div>
 				</div>
 				
