@@ -54,7 +54,7 @@
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
-				
+				<form id = "qryfrom">
 				<div class="sel_time">
 					<div class="time_col">
 						<input id="qj" type="radio" name="seledate" checked="true" value="qj"/>
@@ -84,6 +84,7 @@
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">	
 				</div>
+				</form>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 
 					<a class="ui-btn save_input" onclick="reloadData()">确定</a>

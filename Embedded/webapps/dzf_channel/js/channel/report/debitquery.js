@@ -1,12 +1,20 @@
 var contextPath = DZF.contextPath;
 var isenter = false;//是否快速查询
-var loadrows = null;
+//var loadrows = null;
 var hstr=["one","two","three","four","five","six","seven",
         "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
 var printHead;
 $(function() {
 	initQry();//初始化查询框
-	load();//加载列表
+	var queryData = getQueryData();
+	if(isEmpty(queryData)){
+		Public.tips({
+			content : '必输信息为空或格式不正确',
+			type : 2
+		});
+		return;
+	}
+	load(queryData);//加载列表
 	initChannel();//初始化加盟商
 	quickfiltet();
 });
@@ -182,26 +190,76 @@ function quickfiltet(){
         	$('#grid').datagrid('unselectAll');
  		   var filtername = $("#quname").val(); 
 		   if (filtername) {
-				var jsonStrArr = [];
-				if(loadrows){
-					for(var i=0;i<loadrows.length;i++){
-						var row = loadrows[i];
-						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
-							jsonStrArr.push(row);
-						} 
+//				var jsonStrArr = [];
+//				if(loadrows){
+//					for(var i=0;i<loadrows.length;i++){
+//						var row = loadrows[i];
+//						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
+//							jsonStrArr.push(row);
+//						} 
+//					}
+//					$('#grid').datagrid('loadData',jsonStrArr);   
+//				}
+				var bdate;
+				var edate;
+				if($('#qj').is(':checked')){
+					bdate=$("#begperiod").textbox('getValue');
+					edate=$("#endperiod").textbox('getValue')
+				}else{
+					bdate=$("#bdate").datebox('getValue');
+					edate=$("#edate").datebox('getValue');
+					var flag = $('#qryfrom').form('validate');
+					if(!flag){
+						Public.tips({
+							content : '查询时间不能为空，请填全',
+							type : 2
+						});
+						return;
 					}
-					$('#grid').datagrid('loadData',jsonStrArr);   
 				}
+				var rows = $('#grid').datagrid('getRows');
+				var queryData = null;
+				if(rows != null && rows.length > 0){
+					queryData = {
+						"bdate" : bdate,
+						"edate" : edate,
+						"corps" : $("#pk_account").val(),
+						"cname" : filtername,
+					};
+				}else{
+					queryData = {
+						"bdate" : bdate,
+						"edate" : edate,
+						"cname" : filtername,
+					};
+				}
+				load(queryData);
 			}else{
-				load();
+				var queryData = getQueryData();
+				if(isEmpty(queryData)){
+					Public.tips({
+						content : '必输信息为空或格式不正确',
+						type : 2
+					});
+					return;
+				}
+				load(queryData);
 			} 
         }
     });
 }
 
 function reloadData(){
-	loadrows = null;
-	load();
+//	loadrows = null;
+	var queryData = getQueryData();
+	if(isEmpty(queryData)){
+		Public.tips({
+			content : '必输信息为空或格式不正确',
+			type : 2
+		});
+		return;
+	}
+	load(queryData);
 	$('#grid').datagrid('unselectAll');
 }
 
@@ -234,7 +292,7 @@ function selectCorps(){
 	dClickCompany(rows);
 }
 
-function load() {
+function getQueryData(){
 	var bdate;
 	var edate;
 	if($('#qj').is(':checked')){
@@ -243,19 +301,52 @@ function load() {
 	}else{
 		bdate=$("#bdate").datebox('getValue');
 		edate=$("#edate").datebox('getValue');
+		var flag = $('#qryfrom').form('validate');
+		if(!flag){
+			Public.tips({
+				content : '查询时间不能为空，请填全',
+				type : 2
+			});
+			return;
+		}
 	}
-	if(isEmpty(bdate)||isEmpty(edate)){
-		Public.tips({
-			content :  "查询时间不能为空，请填全",
-			type : 2
-		});	
-		return;
-	}
-	var queryData={
-			"bdate" : bdate,
-			"edate" : edate,
-			"corps" : $("#pk_account").val(),
-		};
+//	if(isEmpty(bdate)||isEmpty(edate)){
+//		Public.tips({
+//			content :  "查询时间不能为空，请填全",
+//			type : 2
+//		});	
+//		return;
+//	}
+	var queryData = {
+		"bdate" : bdate,
+		"edate" : edate,
+		"corps" : $("#pk_account").val(),
+	};
+	return queryData;
+}
+
+function load(queryData) {
+//	var bdate;
+//	var edate;
+//	if($('#qj').is(':checked')){
+//		bdate=$("#begperiod").textbox('getValue');
+//		edate=$("#endperiod").textbox('getValue')
+//	}else{
+//		bdate=$("#bdate").datebox('getValue');
+//		edate=$("#edate").datebox('getValue');
+//	}
+//	if(isEmpty(bdate)||isEmpty(edate)){
+//		Public.tips({
+//			content :  "查询时间不能为空，请填全",
+//			type : 2
+//		});	
+//		return;
+//	}
+//	var queryData={
+//		"bdate" : bdate,
+//		"edate" : edate,
+//		"corps" : $("#pk_account").val(),
+//	};
 	var columns=new Array();
 	var columns1=new Array();
 	printHead="";
@@ -301,9 +392,9 @@ function load() {
 			       		]],
 	      columns : columns1,
 	      onLoadSuccess : function(data) {
-				if(data.rows && loadrows == null){
-					loadrows = data.rows;
-				}
+//				if(data.rows && loadrows == null){
+//					loadrows = data.rows;
+//				}
 				$.messager.progress('close');
 				$("#qrydialog").hide();
 				calFooter();

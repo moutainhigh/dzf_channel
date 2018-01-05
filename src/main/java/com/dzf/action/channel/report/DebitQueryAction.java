@@ -79,7 +79,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			DebitQueryVO qvo = new DebitQueryVO();
 			qvo = (DebitQueryVO) DzfTypeUtils.cast(getRequest(), qvo);
 			List<DebitQueryVO> rows = debitquery.query(qvo);
-			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
+//			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setRows(rows);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功!");
