@@ -48,11 +48,16 @@ function initQueryData(){
 	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
 }
 
+/**
+ * 管理查询对话框
+ */
 function closeCx(){
 	$("#qrydialog").hide();
 }
 
-//初始化加盟商
+/**
+ * 加盟商参照初始化
+ */
 function initChannel(){
     $('#channel_select').textbox({
         editable: false,
@@ -72,7 +77,11 @@ function initChannel(){
         }]
     });
 }
-//双击选择公司
+
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
@@ -103,6 +112,14 @@ function dClickCompany(rowTable){
 	 $("#chnDlg").dialog('close');
 }
 
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+/**
+ * 查询框-清除
+ */
 function clearParams(){
 	$('#corpkna_ae').combobox('readonly',true);
 	$("#pk_account").val(null);
@@ -111,12 +128,9 @@ function clearParams(){
 	$("#corpkna_ae").textbox("setValue",null);
 }
 
-function selectCorps(){
-	var rows = $('#gsTable').datagrid('getSelections');
-	dClickCompany(rows);
-}
-
-//卡片客户参照
+/**
+ * 客户参照初始化
+ */
 function initCorpk(){
 	$('#corpkna_ae').searchbox({
 		editable:false,
@@ -158,12 +172,19 @@ function initCorpk(){
 	});
 }
 
+/**
+ * 客户选择事件
+ * @param row
+ */
 function selectCorpk(row){
 	$('#corpkna_ae').textbox('setValue',row.uname);
 	$('#corpkid_ae').val(row.pk_gs);
 	$('#gs_dialog').dialog('close');
 }
 
+/**
+ * 查询
+ */
 function reloadData(){
 	var bdate = $('#bdate').datebox('getValue'); //开始日期
 	var edate = $('#edate').datebox('getValue'); //结束日期
