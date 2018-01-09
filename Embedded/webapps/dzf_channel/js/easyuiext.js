@@ -471,3 +471,15 @@ function qryBusiType(row){
 function isContains(str, substr) {
     return new RegExp(substr).test(str);
 }
+
+/**
+ * 数值类型排序
+ * @param a
+ * @param b
+ * @returns
+ */
+function orderfun(a,b){
+	a = getFloatValue(a);  
+	b = getFloatValue(b);  
+	return (a>b?1:-1);
+}
