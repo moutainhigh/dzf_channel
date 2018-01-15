@@ -407,7 +407,7 @@ function certain(){
 	}
 	$('#hlDialog').dialog({ modal:true });//设置dig属性
     $('#hlDialog').dialog('open').dialog('center').dialog('setTitle','收款确认');
-    $('input[name="seletype"]:eq(0)').attr("checked",'checked');
+    $("#confirm").prop("checked",true);
     $("#vreason").textbox('readonly',true);
     $('input:radio[name="seletype"]').change( function(){  
 		var ischeck = $('#confirm').is(':checked');
@@ -427,6 +427,15 @@ function confirm(){
 	var ischeck = $('#reject').is(':checked');
 	if(ischeck && isEmpty($('#vreason').textbox('getValue'))){
 		Public.tips({content:'请填写驳回说明',type:2});
+		return;
+	}
+	var formValid = $("#commit").form('validate');
+	if(!formValid){
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return;
 	}
 	var rows = $("#grid").datagrid("getChecked");
 	var data = '';
@@ -444,14 +453,16 @@ function confirm(){
 		postdata["type"] = 3;
 	}
 	operatData(postdata,rows);
-	 $('#hlDialog').dialog('close');
+	$("#commit").form('clear');
+	$('#hlDialog').dialog('close');
 }
 
 /**
  * 收款确认(取消按钮)
  */
 function canConfirm(){
-	 $('#hlDialog').dialog('close');
+	$("#commit").form('clear');
+	$('#hlDialog').dialog('close');
 }
 
 /**
