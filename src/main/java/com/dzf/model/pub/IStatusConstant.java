@@ -2,9 +2,10 @@ package com.dzf.model.pub;
 
 public interface IStatusConstant {
 
-	/** 渠道付款单操作类型 (2-取消确认；3-收款确认) */
+	/** 渠道付款单操作类型 (2-取消确认；3-收款确认；4-收款驳回) */
 	public static int ICHNOPRATETYPE_2 = 2;
 	public static int ICHNOPRATETYPE_3 = 3; 
+	public static int ICHNOPRATETYPE_4 = 4; 
 	
 //	/** 合同扣款状态(1：待审核；2：已审核；3：已驳回；4：服务到期；) */
 	/** 合同扣款状态(5：待审核；1：已审核；7：已驳回；8：服务到期；) */

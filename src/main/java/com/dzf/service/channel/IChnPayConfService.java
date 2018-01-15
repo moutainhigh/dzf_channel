@@ -31,7 +31,7 @@ public interface IChnPayConfService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid) throws DZFWarpException;
+	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid,String vreason) throws DZFWarpException;
 	
 	/**
 	 * 通过主键查询单个VO

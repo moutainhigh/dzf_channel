@@ -41,7 +41,7 @@
 					</div>
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(3)" >收款确认</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="certain()" >收款确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(2)" >取消确认</a>
 				</div>
 			</div>
@@ -64,6 +64,7 @@
 						<option value="-1">全部</option>
 						<option value="2">待确认</option>
 						<option value="3">已确认</option>
+						<option value="4">已驳回</option>
 					</select>
 					<label style="width:80px;text-align:right">付款类型：</label>
 					<select id="iptype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
@@ -96,6 +97,24 @@
 		</div>
 		<div id="dataGrid" class="grid-wrap">
 			<table id="grid"></table>
+		</div>
+		<div id="hlDialog" class="easyui-dialog" style="width:500px;height:300px;padding:10px 20px;" data-options="closed:true">
+			<div class="time_col time_colp10">
+				 <font size="3"><label style="text-align:left;width:30%">你确定要收款确认吗?</label></font> 
+			 	 <input type="radio" style="margin-top: 6px;width:10%" name="seletype" id="confirm" value>
+			 	<label style="text-align:left;width:20%">确认</label>
+				 <input type="radio" style="margin-top: 6px;width:10%" name="seletype" id="reject">
+				 <label style="text-align:left;width:20%">驳回</label>
+			 </div>
+			 <div class="time_col time_colp10">
+			   	<label style="text-align:left;width:30%;">驳回说明：</label>
+				<textarea id="vreason" name="vreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,50]'" 
+					style="width:65%;height:50px;"></textarea>
+			  </div>
+			 <p style="margin-top:60px;">
+				<a id="ok" href="#" class="ui-btn" onclick="confirm()" style="margin-right:10%;margin-left:60%;">确定</a> 
+				<a id="cancel" href="#" class="ui-btn" onclick="canConfirm()">取消</a>
+			 </p>
 		</div>
 		<!-- 查看附件begin -->
 		<div id="tpfd"></div>

@@ -91,6 +91,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				throw new BusinessException("数据不能为空");
 			}
 			String type = getRequest().getParameter("type"); // 操作类型
+			String vreason = getRequest().getParameter("vreason"); // 操作类型
 			Integer opertype = Integer.valueOf(type);
 			data = data.replace("}{", "},{");
 			data = "[" + data + "]";
@@ -98,7 +99,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ChnPayBillVO());
 			ChnPayBillVO[] billVOs = DzfTypeUtils.cast(arrayJson, headmaping, ChnPayBillVO[].class,
 					JSONConvtoJAVA.getParserConfig()); 
-			ChnPayBillVO[] retVOs = payconfSer.operate(billVOs, opertype, getLoginUserid());
+			ChnPayBillVO[] retVOs = payconfSer.operate(billVOs, opertype, getLoginUserid(),vreason);
 			if(retVOs != null && retVOs.length > 0){
 				int rignum = 0;
 				int errnum = 0;

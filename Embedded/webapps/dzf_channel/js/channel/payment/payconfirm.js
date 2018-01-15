@@ -167,12 +167,12 @@ function load(){
 			field : 'ck',
 			checkbox : true
 		}, {
-			width : '140',
+			width : '240',
 			title : '加盟商',
 			halign:'center',
 			field : 'corpnm',
 		}, {
-			width : '150',
+			width : '80',
 			title : '付款时间',
 			field : 'dpdate',
 		}, {
@@ -180,7 +180,7 @@ function load(){
 			title : '单据号',
 			field : 'vcode',
 		}, {
-			width : '140',
+			width : '70',
 			title : '付款类型',
             halign:'center',
 			field : 'iptype',
@@ -191,7 +191,7 @@ function load(){
 					return '预付款';
 			}
 		}, {
-			width : '140',
+			width : '100',
 			title : '付款金额',
 			align:'right',
             halign:'center',
@@ -201,7 +201,7 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '140',
+			width : '80',
 			title : '支付方式',
             halign:'center',
 			field : 'ipmode',
@@ -224,7 +224,7 @@ function load(){
 			title : '付款账号',
 			field : 'vbcode',
 		}, {
-			width : '100',
+			width : '40',
 			title : '附件',
 			field : 'fj',
 			align : 'center',
@@ -234,7 +234,7 @@ function load(){
 				}
 			}
 		},{
-			width : '140',
+			width : '70',
 			title : '单据状态',
             halign:'center',
 			field : 'status',
@@ -245,6 +245,8 @@ function load(){
 					return '待确认';
 				if (value == '3')
 					return '已确认';
+				if (value == '4')
+					return '已驳回';
 			}
 		}, {
 			width : '140',
@@ -261,6 +263,16 @@ function load(){
 			title : '收款确认时间',
             halign:'center',
 			field : 'dctime',
+		}, {
+			width : '140',
+			title : '驳回说明',
+            halign:'center',
+			field : 'vreason',
+			formatter : function(value) {
+				if(value!=undefined){
+					return "<span title='" + value + "'>" + value + "</span>";
+				}
+			}
 		}, {
 			field : 'billid',
 			title : '主键',
@@ -360,7 +372,7 @@ function fastQry(){
 
 /**
  * 操作
- * @param type 2：取消收款；3：收款确认；
+ * @param type 2：取消收款；
  */
 function operate(type){
 	var rows = $("#grid").datagrid("getChecked");
@@ -374,13 +386,7 @@ function operate(type){
 			data = data + JSON.stringify(rows[i]);
 		}
 	}
-	var msg = "";
-	if(type == 3){
-		msg = "收款确认";
-	}else if(type == 2){
-		msg = "取消确认";
-	}
-	$.messager.confirm("提示", "你确定要"+msg+"吗?", function(r) {
+	$.messager.confirm("提示", "你确定要取消确认吗?", function(r) {
 		if (r) {
 			var postdata = new Object();
 			postdata["data"] = data;
@@ -388,6 +394,64 @@ function operate(type){
 			operatData(postdata,rows);
 		}
 	});
+}
+
+/**
+ * 收款确认(跳转页面按钮)
+ */
+function certain(){
+	var rows = $("#grid").datagrid("getChecked");
+	if(rows == null || rows.length == 0){
+		Public.tips({content:'请选择需要处理的数据',type:2});
+        return;
+	}
+	$('#hlDialog').dialog({ modal:true });//设置dig属性
+    $('#hlDialog').dialog('open').dialog('center').dialog('setTitle','收款确认');
+    $('input[name="seletype"]:eq(0)').attr("checked",'checked');
+    $("#vreason").textbox('readonly',true);
+    $('input:radio[name="seletype"]').change( function(){  
+		var ischeck = $('#confirm').is(':checked');
+		if(ischeck){
+			$("#vreason").textbox('setValue',"");
+			$("#vreason").textbox('readonly',true);
+		}else{
+			$("#vreason").textbox('readonly',false);
+		}
+	});
+}
+
+/**
+ * 收款确认(确认按钮)
+ */
+function confirm(){
+	var ischeck = $('#reject').is(':checked');
+	if(ischeck && isEmpty($('#vreason').textbox('getValue'))){
+		Public.tips({content:'请填写驳回说明',type:2});
+	}
+	var rows = $("#grid").datagrid("getChecked");
+	var data = '';
+	if (rows != null && rows.length > 0) {
+		for (var i = 0; i < rows.length; i++) {
+			data = data + JSON.stringify(rows[i]);
+		}
+	}
+	var postdata = new Object();
+	postdata["data"] = data;
+	if($('#reject').is(':checked')){
+		postdata["type"] = 4;
+		postdata["vreason"] = $('#vreason').textbox('getValue');
+	}else{
+		postdata["type"] = 3;
+	}
+	operatData(postdata,rows);
+	 $('#hlDialog').dialog('close');
+}
+
+/**
+ * 收款确认(取消按钮)
+ */
+function canConfirm(){
+	 $('#hlDialog').dialog('close');
 }
 
 /**
