@@ -75,12 +75,22 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("destatus")
 	private Integer vdeductstatus;//最新合同状态：      5:待审批： 1：审核通过； 7：已驳回；8：服务到期；；
 	
+	private String[] corps;//渠道商ids
+	
 	public String getBeginperiod() {
 		return beginperiod;
 	}
 
 	public String getEndperiod() {
 		return endperiod;
+	}
+
+	public String[] getCorps() {
+		return corps;
+	}
+
+	public void setCorps(String[] corps) {
+		this.corps = corps;
 	}
 
 	public void setBeginperiod(String beginperiod) {

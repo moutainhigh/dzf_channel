@@ -43,8 +43,12 @@
 						<span class="arrow-date"></span>
 					</div>
 				</div>
+					<div class="left mod-crumb">
+					<div class="h30 h30-arrow" id="filter">
+						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
+					</div>
+				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="qryDetail()">查询明细</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onPrint()">打印</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExport()">导出</a>
 				</div>
@@ -52,7 +56,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="width:450px; height:240px;" data-options="closed:true">
+		<div class="qijian_box" id="qrydialog" style="width:450px; height:280px;" data-options="closed:true">
 			<s class="s"><i class="i"></i> </s>
 			<h3> 
 				<span>查询</span>
@@ -95,7 +99,13 @@
 				<input id="all" type="radio"  name="seletype" value="-1"/>
 				<label style="width:70px;">全部</label> 
 			</div>
+			<div class="time_col time_colp10">
+				<label style="width:70px;text-align:right">加盟商：</label>
+				<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
+				<input id="pk_account" type="hidden">
+			</div>
 			<p style="border: none;margin-top: 5px">
+				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
 				<a class="ui-btn save_input" onclick="reloadData()">确定</a> 
 				<a class="ui-btn " onclick="closeCx()">取消</a>
 			</p>
@@ -105,6 +115,12 @@
 			<div id="dataGrid" class="grid-wrap">
 				<table id="grid"></table>
 			</div>
+		</div>
+		
+		<div id="kj_dialog"></div>
+		<div id="kj_buttons" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 		</div>
 		
 		<div id="detail_dialog" class="easyui-dialog" title="付款单余额明细" data-options="modal:true,closed:true" style="width:880px;height:500px;">

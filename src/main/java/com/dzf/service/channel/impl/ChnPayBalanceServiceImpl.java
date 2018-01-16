@@ -24,6 +24,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
 
 @Service("chnpaybalanceser")
@@ -51,15 +52,22 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				pk_corp = pk.substring(0, pk.indexOf(","));
 				repvo.setPk_corp(pk_corp);
 				accvo = CorpCache.getInstance().get(null, pk_corp);
+				if(accvo != null){
+					repvo.setCorpname(accvo.getUnitname());
+					repvo.setInnercode(accvo.getInnercode());
+				}
+				if (!StringUtil.isEmpty(paramvo.getCorpname())) {
+					if (repvo.getInnercode().indexOf(paramvo.getCorpname())== -1
+							&& repvo.getCorpname().indexOf(paramvo.getCorpname()) == -1) {
+						continue;
+					}
+				}
 				paytype = Integer.parseInt(ipaytype);
 				repvo.setIpaytype(paytype);
 				if(paytype == 1){
 					repvo.setVpaytypename("保证金");
 				}else if(paytype == 2){
 					repvo.setVpaytypename("预付款");
-				}
-				if(accvo != null){
-					repvo.setCorpname(accvo.getUnitname());
 				}
 				if(initmap != null && !initmap.isEmpty()){
 					vo = initmap.get(pk);
@@ -139,6 +147,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(decode(ipaytype, 2, nusedmny, 0)) AS charge \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+	        sql.append(" and pk_corp  in (" + corpIdS + ")");
+	    }
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
@@ -181,6 +193,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(decode(ipaytype, 2, nusedmny, 0)) AS nusedmny \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+	        sql.append(" and  pk_corp  in (" + corpIdS + ")");
+	    }
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());

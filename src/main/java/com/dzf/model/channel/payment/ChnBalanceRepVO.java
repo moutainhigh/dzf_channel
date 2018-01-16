@@ -20,6 +20,9 @@ public class ChnBalanceRepVO extends SuperVO{
 	@FieldAlias("corpnm")
 	private String corpname;// 机构名称
 	
+	@FieldAlias("incode")
+	private String innercode;//机构编码
+	
 	@FieldAlias("usemny")
 	private DZFDouble nusedmny;//已用金额
 	
@@ -78,6 +81,14 @@ public class ChnBalanceRepVO extends SuperVO{
 
 	public DZFDouble getInitbalance() {
 		return initbalance;
+	}
+
+	public String getInnercode() {
+		return innercode;
+	}
+
+	public void setInnercode(String innercode) {
+		this.innercode = innercode;
 	}
 
 	public DZFDouble getBail() {

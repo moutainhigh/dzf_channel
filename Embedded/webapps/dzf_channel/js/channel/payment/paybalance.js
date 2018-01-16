@@ -6,6 +6,8 @@ $(function() {
 	initDetailGrid();
 	initQryPeroid();
 	initQryLitener();
+	initChannel();//初始化加盟商
+	quickfiltet();
 });
 
 /**
@@ -25,9 +27,21 @@ function load(){
 		showFooter:true,
 		columns : [ [ {
 			width : '140',
-			title : '加盟商',
+			title : '加盟商编码',
+			align:'center',
+            halign:'center',
+			field : 'incode',
+		},{
+			width : '220',
+			title : '加盟商名称',
 			halign:'center',
 			field : 'corpnm',
+			formatter : 
+				function(value, row, index) {
+					if(value == undefined)
+						return;
+	  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+	  			}
 		}, {
 			width : '140',
 			title : '付款类型',
@@ -84,6 +98,63 @@ function load(){
 }
 
 /**
+ * 查询框-清除
+ */
+function clearParams(){
+	$("#pk_account").val(null);
+	$("#channel_select").textbox("setValue",null);
+}
+
+//初始化加盟商
+function initChannel(){
+  $('#channel_select').textbox({
+      editable: false,
+      icons: [{
+          iconCls: 'icon-search',
+          handler: function(e) {
+              $("#kj_dialog").dialog({
+                  width: 600,
+                  height: 480,
+                  readonly: true,
+                  title: '选择加盟商',
+                  modal: true,
+                  href: DZF.contextPath + '/ref/channel_select.jsp',
+                  buttons: '#kj_buttons'
+              });
+          }
+      }]
+  });
+}
+
+//双击选择公司
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	 $("#kj_dialog").dialog('close');
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+/**
  * 计算合计
  */
 function calFooter(){
@@ -99,6 +170,7 @@ function calFooter(){
     	usemny += getFloatValue(rows[i].usemny);
     	balmny += getFloatValue(rows[i].balmny); 
     }
+    footerData['incode'] = '合计';
     footerData['initbal'] = initbal;
     footerData['npmny'] = npmny;
     footerData['usemny'] = usemny;
@@ -111,8 +183,7 @@ function calFooter(){
 /**
  * 明细查询
  */
-function qryDetail(){
-	
+function qryDetail(index){
 	var begdate = null;
 	var enddate = null;
 	var bperiod = null;
@@ -135,14 +206,8 @@ function qryDetail(){
 		period = 'period';
 		qrydate = bperiod + "至" + eperiod;
 	}
-	var row = $('#grid').datagrid('getSelected');
-	if (row == null) {
-		Public.tips({
-			content : "请选择需要处理的数据",
-			type : 2
-		});
-		return;
-	}
+	var rows = $('#grid').datagrid('getRows');
+	var row= rows[index];
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -422,29 +487,65 @@ function queryBoxChange1(start,end){
 /**
  * 查询-确定
  */
-function reloadData(){
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url = contextPath + '/chnpay/chnpaybalance!query.action';
-	var ischeck = $('#da').is(':checked');
-	if(ischeck){
-		queryParams['begdate'] = $("#begdate").datebox("getValue");
-		queryParams['enddate'] = $("#enddate").datebox("getValue");
-		queryParams['bperiod'] = null;
-		queryParams['eperiod'] = null;
-		queryParams['period'] = null;
+function reloadData(queryData){
+	if(isEmpty(queryData)){
+		$('#grid').datagrid('options').queryParams = getQueryData();
 	}else{
-		queryParams['bperiod'] = $("#begperiod").val();
-		queryParams['eperiod'] = $("#endperiod").val();
-		queryParams['begdate'] = null;
-		queryParams['enddate'] = null;
-		queryParams['period'] = 'period';
+		$('#grid').datagrid('options').queryParams =queryData;
 	}
-	var qtype = $("input[name='seletype']:checked").val();
-	queryParams['qtype'] = qtype;
-	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('options').url = contextPath + '/chnpay/chnpaybalance!query.action';
 	$('#grid').datagrid('reload');
 	$('#grid').datagrid('unselectAll');
 	$("#qrydialog").css("visibility", "hidden");
+}
+
+function getQueryData(cpname){
+	var begdate= null;
+	var enddate= null;
+	var bperiod= null;
+	var eperiod= null;
+	var period= null;
+	var cpname;
+	var ischeck = $('#da').is(':checked');
+	if(ischeck){
+		begdate=$("#begperiod").textbox('getValue');
+		enddate=$("#endperiod").textbox('getValue')
+	}else{
+		bperiod=$("#begperiod").val();
+		eperiod=$("#endperiod").val();
+		period='period';
+	}
+	if(!isEmpty(cpname)){
+		cpname=cpname;
+	}else{
+		cpname= null
+	}
+	var qtype = $("input[name='seletype']:checked").val();
+	var queryData = {
+		"bperiod" : bperiod,
+		"eperiod" : eperiod,
+		"begdate" : begdate,
+		"enddate" : enddate,
+		'qtype' : qtype,
+		'cpname' : cpname,
+		"corps" : $("#pk_account").val(),
+	};
+	return queryData;
+}
+
+function quickfiltet(){
+	$('#filter_value').textbox('textbox').keydown(function (e) {
+		debugger
+        if (e.keyCode == 13) {
+        	$('#grid').datagrid('unselectAll');
+ 		   var filtername = $("#filter_value").val(); 
+		   if (filtername) {
+				reloadData(getQueryData(filtername));
+			}else{
+				reloadData();
+			} 
+        }
+    });
 }
 
 /**
