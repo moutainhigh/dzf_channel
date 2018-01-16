@@ -508,8 +508,8 @@ function getQueryData(cpname){
 	var cpname;
 	var ischeck = $('#da').is(':checked');
 	if(ischeck){
-		begdate=$("#begperiod").textbox('getValue');
-		enddate=$("#endperiod").textbox('getValue')
+		begdate=$("#begdate").textbox('getValue');
+		enddate=$("#enddate").textbox('getValue')
 	}else{
 		bperiod=$("#begperiod").val();
 		eperiod=$("#endperiod").val();
@@ -528,6 +528,7 @@ function getQueryData(cpname){
 		"enddate" : enddate,
 		'qtype' : qtype,
 		'cpname' : cpname,
+		'period' : period,
 		"corps" : $("#pk_account").val(),
 	};
 	return queryData;
