@@ -11,7 +11,7 @@
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/contractconfrim.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<%-- <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script> --%>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/contractconfrim.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/showfile.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
@@ -38,16 +38,19 @@
 				</div>
 				<div class="left mod-crumb">
 					<div style="margin:4px 0px 0px 10px;float:left;font-size:14px;">
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryData(1)">待审核</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
+							onclick="qryData(1)">待审核</a>
 					</div>
 					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" onclick="qryData(2)">存量待审</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
+							onclick="qryData(2)">存量待审</a>
 					</div>
 				</div>
 				
 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
-						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
+						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" 
+							prompt="请输入加盟商名称,按Enter键 "/> 
 					</div>
 				</div>
 				<div class="right">
@@ -67,19 +70,23 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">提单日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 					<font>-</font>
-					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+					<font><input name="edate" type="text" id="edate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">合同状态：</label>
-					<select id="destatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
+					<select id="destatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:100px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="5">待审核</option>
 						<option value="1">已审核</option>
 					</select>
 					<label style="width:80px;text-align:right">客户类型：</label>
-					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
+					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:100px;height:28px;">
 						<option value="">全部</option>
 						<option value="N">非存量客户</option>
 						<option value="Y">存量客户</option>
@@ -87,12 +94,12 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;"/>
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">客户：</label>
-					<input id="corpkna_ae" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="corpkna_ae" class="easyui-textbox" style="width:290px;height:28px;"/>
 					<input id="corpkid_ae" name="corpkid" type="hidden"> 
 				</div>
 			</form>
@@ -375,11 +382,9 @@
 				<form id = "changefrom" method="post">
 					<div class="time_col time_colp11 " style="margin-top: 10px;">
 						<div style="width: 34%; display: inline-block">
-							<label
-								style="width: 100px; text-align:right;">变更原因：</label>
-							<input id=""  type=radio
-								value=checkbox style="width: 30px"> <label
-								style="text-align:left; width:60%;">C端客户终止，变更合同</label>
+							<label style="width: 100px; text-align:right;">变更原因：</label>
+							<input id=""  type=radio value=checkbox style="width: 30px">
+							<label style="text-align:left; width:60%;">C端客户终止，变更合同</label>
 						</div>
 						<div style="width:20%; display: inline-block">
 							<input id=""  type=radio value=checkbox style="width: 30px">
@@ -388,18 +393,14 @@
 						</div>
 						<div style="width: 44%; display: inline-block">
 							<label style="text-align: right; width: 30%;">备注：</label>
-							 <input id=""  class="easyui-textbox"
-								data-options="readonly:true"
-								style="width: 60%; height: 28px; text-align: left">
-
+							 <input id=""  class="easyui-textbox" style="width:60%;height:28px;text-align:left">
 						</div>
 					</div>
 					<div class="time_col time_colp11">
 						<div style="width: 25%; display: inline-block">
-							<label style="text-align: right; width: 35%;">建账日期：</label> <input
-								id="" class="easyui-datebox"
-								data-options="readonly:true,editable:false"
-								style="width: 60%; height: 28px; text-align: left">
+							<label style="text-align: right; width: 35%;">终止期间：</label> 
+							<input id="cperiod" name="cperiod" class="easyui-datebox" data-options="editable:false"
+								style="width:60%;height:28px;text-align:left">
 						</div>
 						<div style="width: 20%; display: inline-block">
 							<label style="text-align: right; width: 35%;">退款回扣：</label> <input

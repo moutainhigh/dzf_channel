@@ -4,6 +4,7 @@ var grid,gridh;
 //var isenter = false;//是否快速查询
 
 $(function() {
+	initQryDlg();
 	initQueryData();
 	initChannel();
 	initCorpk();
@@ -948,6 +949,7 @@ function change(){
 		});			
 		return;
 	}
+	initPeriod("#cperiod");
 	$('#change_Dialog').dialog({ modal:true });//设置dig属性
 	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
 	$("#sfileshow").hide();
@@ -956,3 +958,95 @@ function change(){
 	initListener();//初始化扣款比例监听
 }
 
+/**
+ * 查询期间初始化
+ * @param code
+ */
+function initPeriod(code){
+    $(code).datebox({
+        onShowPanel: function() { //显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层
+            span.trigger('click'); //触发click事件弹出月份层
+            if (!tds) setTimeout(function() { //延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔
+                tds = p.find('div.calendar-menu-month-inner td');
+                tds.click(function(e) {
+                    e.stopPropagation(); //禁止冒泡执行easyui给月份绑定的事件
+                    var year = /\d{4}/.exec(span.html())[0], //得到年份
+                    month = parseInt($(this).attr('abbr'), 10); //月份，这里不需要+1
+                    $(code).datebox('hidePanel') //隐藏日期对象
+                    .datebox('setValue', year + '-' + month); //设置日期的值
+                });
+            },
+            0);
+            yearIpt.unbind(); //解绑年份输入框中任何事件
+        },
+        parser: function(s) {
+            if (!s) return new Date();
+            var arr = s.split('-');
+            return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);
+        },
+        formatter: function(d) {
+            var a = parseInt(d.getMonth()) < parseInt('9') ? '0' + parseInt(d.getMonth() + 1) : d.getMonth() + 1;
+            return d.getFullYear() + '-' + a;
+        }
+    });
+    var p = $(code).datebox('panel'),
+    //日期选择对象
+    tds = false,
+    //日期选择对象中月份
+    yearIpt = p.find('input.calendar-menu-year'),
+    //年份输入框
+    span = p.find('span.calendar-text'); //显示月份层的触发控件
+}
+
+/**
+ * 判断值是否为空
+ * @param code
+ * @returns {Boolean}
+ */
+function isEmpty(code){
+	if(code != "" && code != null && code != undefined && code != "undefined" && typeof(code) != 'undefined'){
+		return false;
+	}else{
+		return true;
+	}
+}
+
+/**
+ * 隐藏显示查询框
+ */
+function initQryDlg(){
+	$("#cxjs").on("mouseover",function(){ 
+    	$("#qrydialog").show();
+    	$("#qrydialog").css("visibility","visible");
+    });
+	
+	$(".mod-inner,.mod-toolbar-top").on("click",function(){
+		$("#qrydialog").hide();
+    	$("#qrydialog").css("visibility","hidden");
+	});
+}
+
+/** 日历支持手工输入 begin */
+$.extend($.fn.validatebox.defaults.rules, {
+	checkdate : {
+		validator : function(value) {
+			return isDateType(value);
+		},
+		message : '日期无效或格式不正确.'
+	},
+});
+
+/**
+ * 校验是否如期格式
+ * @param value
+ * @returns {Boolean}
+ */
+function isDateType(value) {
+	if (value != "" && !value.match(/^((?:19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)) {
+		return false;
+	} else if(value != "" && new Date(value) == 'Invalid Date'){
+		return false;
+	}else {
+		return true;
+	}
+}
