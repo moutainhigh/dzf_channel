@@ -1,3 +1,22 @@
+$(function(){
+	initQryDlg();
+})
+
+/**
+ * 隐藏显示查询框
+ */
+function initQryDlg(){
+	$("#cxjs").on("mouseover",function(){ 
+    	$("#qrydialog").show();
+    	$("#qrydialog").css("visibility","visible");
+    });
+	
+	$(".mod-inner,.mod-toolbar-top").on("click",function(){
+		$("#qrydialog").hide();
+    	$("#qrydialog").css("visibility","hidden");
+	});
+}
+
 /** 日历支持手工输入 begin */
 $.extend($.fn.validatebox.defaults.rules, {
 	date : {
@@ -13,6 +32,7 @@ $.extend($.fn.validatebox.defaults.rules, {
 		message : '不是有效的手机号.'
 	}
 });
+
 $.fn.datebox.defaults = $.extend({}, $.fn.datebox.defaults, {
 	validType : 'date',
 	parser : function(s) {
@@ -24,6 +44,7 @@ $.fn.datebox.defaults = $.extend({}, $.fn.datebox.defaults, {
 		}
 	}
 });
+
 function isDateType(value) {
 	if (value != "" && !value.match(/^((?:19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)) {
 		return false;
@@ -54,18 +75,6 @@ function datecheck(dateid){
 	}
 }
 
-function initQryDlg(){
-	$("#cxjs").on("mouseover",function(){ 
-    	$("#qrydialog").show();
-    	$("#qrydialog").css("visibility","visible");
-    });
-	
-	$(".mod-inner,.mod-toolbar-top").on("click",function(){
-		$("#qrydialog").hide();
-    	$("#qrydialog").css("visibility","hidden");
-	});
-}
-
 /**
  * 初始化会计公司
  */
@@ -76,12 +85,6 @@ function initQryAccount(name_id,corp_id){
 	$('#'+corp_id).val(login_corpid);
 }
 
-
-
-$(function(){
-	initQryDlg();
-})
-
 /**
  * 获取输入字符的长度
  * @param val
@@ -91,7 +94,12 @@ function getByteLeng(str) {
 	return str.replace(/[^\x00-\xff]/g,"**").length;
 }
 
-//禁用表单
+/**
+ * 禁用表单
+ * @param from
+ * @param exclude
+ * @param isReadOnly
+ */
 function showFormAs(from,exclude,isReadOnly){
 	var eles = $(from).find('[class^="easyui-"]').not(exclude);
 	for(var e=0;e<eles.length;e++){
@@ -107,7 +115,6 @@ function showFormAs(from,exclude,isReadOnly){
 		}
 	}
 }
-
 
 /**
  * 初始化会计人员
@@ -165,8 +172,6 @@ function selectkj(id){
 				$("#taxercode").textbox('setValue', row.ucode);
 			}
 		}
-		
-//		$("#" + id + "id").val(row.uid);
 	} else {
 		Public.tips({
 			content : "请选择一行数据",
@@ -417,6 +422,7 @@ function ArrayList(){
         return this.indexOf(obj)!=-1;  
     }  
 }; 
+
 function qryData(){
 	$('#ywlxDlg').dialog({
 		width : 500,
@@ -447,6 +453,7 @@ function qryData(){
 		} ]
 	});
 }
+
 function qryBusiType(row){
 	if(row.isleaf == '否'){
 		Public.tips({
@@ -459,7 +466,6 @@ function qryBusiType(row){
    	$("#qryywdlid").val(row.pid);
    	$("#qrySeries").textbox('setValue', row.text);
 	$('#ywlxDlg').dialog('close');
-	
 }
 
 /**
