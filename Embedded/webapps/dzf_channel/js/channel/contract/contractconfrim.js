@@ -929,3 +929,30 @@ function bathcanc(){
 	$('#bdeduct_Dialog').dialog('close');
 }
 
+/**
+ * 合同变更
+ */
+function change(){
+	var rows = $('#grid').datagrid('getSelections');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	if(rows[0].destatus != 1){
+		Public.tips({
+			content : '合同状态不为审核通过',
+			type : 2
+		});			
+		return;
+	}
+	$('#change_Dialog').dialog({ modal:true });//设置dig属性
+	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
+	$("#sfileshow").hide();
+	initdeductData(rows[0]);//初始化扣款数据
+	initFileDoc(rows[0]);//初始化附件
+	initListener();//初始化扣款比例监听
+}
+
