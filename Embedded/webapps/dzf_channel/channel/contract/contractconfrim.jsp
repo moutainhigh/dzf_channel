@@ -373,8 +373,52 @@
 					</div>
 				</div> -->
 				<form id = "changefrom" method="post">
-					<div class="time_col time_colp11 " style="margin-top:10px;">
+					<div class="time_col time_colp11 " style="margin-top: 10px;">
+						<div style="width: 34%; display: inline-block">
+							<label
+								style="width: 100px; text-align:right;">变更原因：</label>
+							<input id=""  type=radio
+								value=checkbox style="width: 30px"> <label
+								style="text-align:left; width:60%;">C端客户终止，变更合同</label>
+						</div>
+						<div style="width:20%; display: inline-block">
+							<input id=""  type=radio value=checkbox style="width: 30px">
+							<label style="text-align:left; width: 60%;">提重了，合同作废</label> 
 						
+						</div>
+						<div style="width: 44%; display: inline-block">
+							<label style="text-align: right; width: 30%;">备注：</label>
+							 <input id=""  class="easyui-textbox"
+								data-options="readonly:true"
+								style="width: 60%; height: 28px; text-align: left">
+
+						</div>
+					</div>
+					<div class="time_col time_colp11">
+						<div style="width: 25%; display: inline-block">
+							<label style="text-align: right; width: 35%;">建账日期：</label> <input
+								id="" class="easyui-datebox"
+								data-options="readonly:true,editable:false"
+								style="width: 60%; height: 28px; text-align: left">
+						</div>
+						<div style="width: 20%; display: inline-block">
+							<label style="text-align: right; width: 35%;">退款回扣：</label> <input
+								id="" class="easyui-textbox"
+								data-options="readonly:true,editable:false"
+								style="width: 40%; height: 28px; text-align: left">
+						</div>
+						<div style="width: 20%; display: inline-block">
+							<label style="text-align: right; width: 50%;">变更后合同金额：</label> <input
+								id="" class="easyui-textbox"
+								data-options="readonly:true,editable:false"
+								style="width: 40%; height: 28px; text-align: left">
+						</div>
+						<div style="width: 20%; display: inline-block">
+							<label style="text-align: right; width: 50%;">变更后扣款金额：</label> <input
+								id="" class="easyui-textbox"
+								style="width: 40%; height: 28px; text-align: left"> <input
+								id="" type="hidden">
+						</div>
 					</div>
 					<div class="time_col time_colp11 ">
 						<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">扣款</label>
