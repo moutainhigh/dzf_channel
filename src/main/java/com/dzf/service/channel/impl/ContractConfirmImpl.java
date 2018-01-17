@@ -415,7 +415,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateCorp(ContractConfrimVO confvo, Map<String, String> packmap) throws DZFWarpException{
 		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质
 		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
-		if(confvo.getPatchstatus() == 2){//补单合同
+		if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 2){//补单合同
 			if(corpvo != null){
 				corpvo.setChargedeptname(confvo.getChargedeptname());
 				singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
@@ -433,19 +433,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 			}
 		}
-		
-//		//从套餐取纳税人性质
-//		if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
-//			if(packmap != null && !packmap.isEmpty()){
-//				if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
-//					CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
-//					if(corpvo != null){
-//						corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
-//						singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	/**
@@ -787,13 +774,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
 			paramvo.setVchangeraeson("提重了，合同作废");
 		}
+		paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
 		paramvo.setVchanger(cuserid);
 		paramvo.setDchangetime(new DZFDateTime());
 		// 1、更新合同历史数据
 		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "ichangetype", "vchangeraeson", "vchangememo",
-				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime" });
+				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus" });
 		// 2、更新原合同数据
-		String sql = " update ynt_contract set vdeductstatus = ? where nvl(dr,0) = 0 and pk_corp = ? and pk_contract = ? ";
+		String sql = " update ynt_contract set vdeductstatus = ?, patchstatus = 3 where nvl(dr,0) = 0 and pk_corp = ? and pk_contract = ? ";
 		SQLParameter spm = new SQLParameter();
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -813,6 +801,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			vmemo = "合同变更：提重了，合同作废";
 		}
 		updateChangeBalMny(paramvo, cuserid, vmemo);
+		CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corpk());
+		if(corpvo != null){
+			paramvo.setCorpkname(corpvo.getUnitname());
+		}
 		return paramvo;
 	}
 	
@@ -827,16 +819,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(oldvo == null){
 			throw new BusinessException("变更合同信息错误");
 		}
-		if(oldvo.getVdeductstatus() != IStatusConstant.IDEDUCTSTATUS_1){
+		if(oldvo.getVdeductstatus() != null && oldvo.getVdeductstatus() != IStatusConstant.IDEDUCTSTATUS_1){
 			throw new BusinessException("合同状态不为审核通过");
 		}
-		if(oldvo.getPatchstatus() == 1){
+		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 1){
 			throw new BusinessException("该合同已被补提单，不允许变更");
 		}
-		if(oldvo.getPatchstatus() == 2){
+		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 2){
 			throw new BusinessException("该合同为补提单，不允许变更");
 		}
-		if(oldvo.getPatchstatus() == 3){
+		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 3){
 			throw new BusinessException("该合同已变更，不允许再次变更");
 		}
 	}
