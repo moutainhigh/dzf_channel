@@ -98,23 +98,23 @@
 		<div id="dataGrid" class="grid-wrap">
 			<table id="grid"></table>
 		</div>
-		<div id="hlDialog" class="easyui-dialog" style="width:500px;height:300px;padding:10px 20px;" data-options="closed:true">
+		<div id="hlDialog" class="easyui-dialog" style="width:500px;height:300px;padding:20px 20px 10px;" data-options="closed:true">
 			<form id="commit">
 				<div class="time_col time_colp10">
-					 <font size="3"><label style="text-align:left;width:30%">你确定要收款确认吗?</label></font> 
-				 	 <input type="radio" style="margin-top: 6px;width:10%" name="seletype" id="confirm" value>
-				 	<label style="text-align:left;width:20%">确认</label>
-					 <input type="radio" style="margin-top: 6px;width:10%" name="seletype" id="reject">
-					 <label style="text-align:left;width:20%">驳回</label>
+					 <font size="3"><label style="text-align:left;width:40%">你确定要收款确认吗?</label></font> 
+				 	 <input type="radio" style="margin-top: 6px;width:8%" name="seletype" id="confirm" value>
+				 	<label style="text-align:left;width:12%">确认</label>
+					 <input type="radio" style="margin-top: 6px;width:6%" name="seletype" id="reject">
+					 <label style="text-align:left;width:12%">驳回</label>
 				 </div>
-				 <div class="time_col time_colp10">
-				   	<label style="text-align:left;width:30%;">驳回说明：</label>
+				 <div class="time_col time_colp10" style="margin-top:20px;">
+				   	<label style="text-align:left;width:18%;    vertical-align: top;">驳回说明：</label>
 					<textarea id="vreason" name="vreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,50]'" 
-						style="width:65%;height:50px;"></textarea>
+						style="width:74%;height:50px;"></textarea>
 				  </div>
 			</form>
-			 <p style="margin-top:60px;">
-				<a id="ok" href="#" class="ui-btn" onclick="confirm()" style="margin-right:10%;margin-left:60%;">确定</a> 
+			 <p style="margin-top:90px; text-align: right;">
+				<a id="ok" href="#" class="ui-btn" onclick="confirm()">确定</a> 
 				<a id="cancel" href="#" class="ui-btn" onclick="canConfirm()">取消</a>
 			 </p>
 		</div>
