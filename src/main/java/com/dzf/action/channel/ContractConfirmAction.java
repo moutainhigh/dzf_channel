@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
@@ -274,6 +275,32 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 变更保存
+	 */
+	public void saveChange() {
+		Json json = new Json();
+		if (data != null) {
+			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
+			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
+			try {
+				if(files == null || files.length == 0){
+					throw new BusinessException("变更附件不能为空");
+				}
+				ContractConfrimVO retvo = contractconfser.saveChange(data, getLoginUserid(), files, filenames);
+				json.setRows(retvo);
+				json.setSuccess(true);	
+				json.setMsg("变更成功");
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "变更失败");
+			}
+		}else{
+			json.setSuccess(false);
+			json.setMsg("变更失败");
+		}
+		writeJson(json);
 	}
 
 }

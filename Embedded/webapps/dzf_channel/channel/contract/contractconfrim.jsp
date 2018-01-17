@@ -3,6 +3,7 @@
 <%@ page import="com.dzf.pub.IGlobalConstants"%>
 <%@page import="com.dzf.model.sys.sys_power.UserVO"%>
 <%@ page import="com.dzf.pub.cache.UserCache"%>
+<%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
@@ -11,7 +12,7 @@
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/contractconfrim.css");%> rel="stylesheet">
-<%-- <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script> --%>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/contractconfrim.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/showfile.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
@@ -19,10 +20,12 @@
 	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);
 	String login_user = (String) session.getAttribute(IGlobalConstants.login_user);
 	UserVO userVo = UserCache.getInstance().get(login_user, logincorp);
+	String period = AdminDateUtil.getPeriod();
 %>
 <body>
 	<input id="unm" name="unm" type="hidden" value=<%= userVo.getUser_name() %>> 
 	<input id="uid" name="uid" type="hidden" value=<%= userVo.getCuserid() %>> 
+	<input id="period" name="period" type="hidden" value=<%= period %>> 
 	<div id="List_panel" class="wrapper" data-options="closed:false">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
@@ -352,79 +355,60 @@
 		<!-- 合同变更 begin  -->
 		<div id="change_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
 			<div class="time_col time_colp11 Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
-				<!-- <div class="decan decan-top" style="width:50%;display: inline-block;margin-left:16px;">
-					<input id="salespromot" name="salespromot" class="easyui-textbox" data-options="readonly:true" 
-						style="width:68%;height:50px;text-align:left; ">
-				</div> -->
 				<div style="width:14%;display: inline-block;float: right;">
-					<a class="ui-btn ui-btn-xz" onclick="deductConfri()">确定</a>
-					<a class="ui-btn ui-btn-xz" onclick="deductCancel()">取消</a>
+					<a class="ui-btn ui-btn-xz" onclick="changeConfri()">确定</a>
+					<a class="ui-btn ui-btn-xz" onclick="changeCancel()">取消</a>
 				</div>
 			</div>
-			<div style="height:88%; overflow: auto;">
-				<!-- <div class="time_col time_colp11 " style="margin-top:10px;">
-					<div class="decan strong Marketing" style="width:22%;display: inline-block;">
-						<label style="width:40%;text-align: right;font-weight: bold;">预付款余额：</label>
-						<input id="sbalmny" name="balmny" class="easyui-numberbox" style="width:50%;height:28px;text-align:left;"
-							data-options="readonly:true,precision:2,groupSeparator:','" >
-					</div>
-					<div class="decan strong" style="width:30%;display: inline-block;">
-						<label style="width:27%;text-align: right;font-weight: bold;">加盟商：</label>
-						<input id="scorpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" 
-							style="width:60%;height:28px;text-align:left; ">
-					</div>
-					<div class="decan strong" style="width:20%;display: inline-block;">
-						<label style="width:32%;text-align: right;font-weight: bold;">合同金额：</label>
-						<input id="shntlmny" name="hntlmny" class="easyui-numberbox" style="width:58%;height:28px;text-align:left;"
-							data-options="readonly:true,precision:2,groupSeparator:','" >
-					</div>
-				</div> -->
-				<form id = "changefrom" method="post">
-					<div class="time_col time_colp11 " style="margin-top: 10px;">
-						<div style="width: 34%; display: inline-block">
-							<label style="width: 100px; text-align:right;">变更原因：</label>
-							<input id=""  type=radio value=checkbox style="width: 30px">
-							<label style="text-align:left; width:60%;">C端客户终止，变更合同</label>
+			<div style="height:92%; overflow: auto;">
+				<form id = "changefrom" method="post" enctype="multipart/form-data">
+					<div class="time_col time_colp11 " style="margin-top:10px;">
+						<div class="time_col time_colp11 " style="margin-top: 10px;">
+							<div style="width: 34%; display: inline-block">
+								<label style="width: 100px; text-align:right;">变更原因：</label>
+								<input id="end"  type="radio" name="chtype" value="1" style="width:30px">
+								<label style="text-align:left; width:60%;">C端客户终止，变更合同</label>
+							</div>
+							<div style="width:20%; display: inline-block">
+								<input id="nullify"  type=radio name="chtype" value="2" style="width:30px">
+								<label style="text-align:left; width: 60%;">提重了，合同作废</label> 
+								<input id="changetype" name="changetype" type="hidden">
+							</div>
+							<div style="width: 44%; display: inline-block">
+								<label style="text-align: right; width: 30%;">备注：</label>
+								<input id="changememo" name="changememo" class="easyui-textbox" style="width:40%;height:28px;text-align:left">
+							</div>
 						</div>
-						<div style="width:20%; display: inline-block">
-							<input id=""  type=radio value=checkbox style="width: 30px">
-							<label style="text-align:left; width: 60%;">提重了，合同作废</label> 
-						
-						</div>
-						<div style="width: 44%; display: inline-block">
-							<label style="text-align: right; width: 30%;">备注：</label>
-							 <input id=""  class="easyui-textbox" style="width:60%;height:28px;text-align:left">
-						</div>
-					</div>
-					<div class="time_col time_colp11">
-						<div style="width: 25%; display: inline-block">
-							<label style="text-align: right; width: 35%;">终止期间：</label> 
-							<input id="cperiod" name="cperiod" class="easyui-datebox" data-options="editable:false"
-								style="width:60%;height:28px;text-align:left">
-						</div>
-						<div style="width: 20%; display: inline-block">
-							<label style="text-align: right; width: 35%;">退款回扣：</label> <input
-								id="" class="easyui-textbox"
-								data-options="readonly:true,editable:false"
-								style="width: 40%; height: 28px; text-align: left">
-						</div>
-						<div style="width: 20%; display: inline-block">
-							<label style="text-align: right; width: 50%;">变更后合同金额：</label> <input
-								id="" class="easyui-textbox"
-								data-options="readonly:true,editable:false"
-								style="width: 40%; height: 28px; text-align: left">
-						</div>
-						<div style="width: 20%; display: inline-block">
-							<label style="text-align: right; width: 50%;">变更后扣款金额：</label> <input
-								id="" class="easyui-textbox"
-								style="width: 40%; height: 28px; text-align: left"> <input
-								id="" type="hidden">
+						<div class="time_col time_colp11">
+							<div id = "addclass">
+								<div style="width:25%; display:inline-block">
+									<label style="text-align: right; width: 35%;">终止期间：</label> 
+									<input id="stperiod" name="stperiod" class="easyui-datebox" data-options="editable:false"
+										style="width:60%;height:28px;text-align:left">
+								</div>
+								<div style="width:20%; display:inline-block">
+									<label style="text-align: right; width: 35%;">退回扣款：</label> 
+									<input id="remny" name="remny" class="easyui-numberbox" 
+										style="width:40%;height:28px;text-align:left">
+								</div>
+								<div style="width:20%; display:inline-block">
+									<label style="text-align: right; width: 50%;">变更后合同金额：</label> 
+									<input id="nchtlmny" name="nchtlmny" class="easyui-numberbox" 
+										style="width: 40%; height: 28px; text-align: left">
+								</div>
+								<div style="width:20%; display:inline-block">
+									<label style="text-align: right; width: 50%;">变更后扣款金额：</label> 
+									<input id="nchdemny" name="nchdemny" class="easyui-numberbox" 
+										style="width:40%;height:28px;text-align:left"> 
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="time_col time_colp11 ">
 						<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">扣款</label>
 					</div>
 					<div class="time_col time_colp11 " style="margin-top:10px;">
+						<input id="id" name="id" type="hidden">
 						<input id="scontractid" name="contractid" type="hidden">
 						<input id="ststp" name="tstp" type="hidden">
 						<input id="sarea" name="area" type="hidden">
@@ -442,7 +426,7 @@
 						<div class="decan" style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="spropor" name="propor" class="easyui-numberbox" data-options="readonly:true"
-								style="width:50%;height:28px;text-align:left; ">%
+								style="width:50%;height:28px;text-align:right; ">%
 						</div>
 						<div class="decan" style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款金额：</label>
@@ -461,16 +445,6 @@
 							<input id="svoper" name="voper" type="hidden">
 						</div>
 					</div>
-					<!-- <div class="time_col time_colp11 ">
-						&emsp;&emsp;<input id="debit" name="opertype" type="radio" value="1" checked />
-						<label>扣款</label>
-						<input name="opertype" type="radio" value="2" />
-						<label>驳回</label>
-						<label style="text-align: right;width:90px;">驳回原因：</label>
-						<textarea id="confreason" name="confreason" class="easyui-textbox"  
-							data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
-							 style="height:33px; width:60%;border-radius: 5px;"></textarea>
-					</div> -->
 				
 					<!-- 合同信息 begin -->
 					<div>
@@ -549,6 +523,16 @@
 							</div>
 						</div>
 						<!-- 附件信息end -->
+						<!-- 变更附件 begin -->
+						<div style="margin:20px;">
+						<label style="text-align:right;width:8.52%; display: inline-block;   vertical-align: top;">变更附件：</label>
+						<div style="display: inline-block;white-space: nowrap;">
+							 <div class="uploadImg"  style="display: inline-block;">
+								<div style="overflow: auto;" id="image1"></div> 
+							</div>
+						</div>
+						</div>
+						<!-- 变更附件 end -->
 					</div>
 				</form>
 				<div id="sfiledoc"></div>

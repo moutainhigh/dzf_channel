@@ -949,104 +949,324 @@ function change(){
 		});			
 		return;
 	}
-	initPeriod("#cperiod");
+//	if(rows[0].destatus == 9){
+//		Public.tips({
+//			content : '合同状态为已终止',
+//			type : 2
+//		});			
+//		return;
+//	}
+//	if(rows[0].destatus == 10){
+//		Public.tips({
+//			content : '合同状态为已作废',
+//			type : 2
+//		});			
+//		return;
+//	}
+	if(rows[0].pstatus == 1){
+		Public.tips({
+			content : '该合同已被补提单，不允许变更',
+			type : 2
+		});			
+		return;
+	}
+	if(rows[0].pstatus == 2){
+		Public.tips({
+			content : '该合同为补提单，不允许变更',
+			type : 2
+		});			
+		return;
+	}
+	if(rows[0].pstatus == 3){
+		Public.tips({
+			content : '该合同已变更，不允许再次变更',
+			type : 2
+		});			
+		return;
+	}
+	initPeriod("#stperiod");//变更期间初始化
 	$('#change_Dialog').dialog({ modal:true });//设置dig属性
 	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
 	$("#sfileshow").hide();
-	initdeductData(rows[0]);//初始化扣款数据
-	initFileDoc(rows[0]);//初始化附件
-	initListener();//初始化扣款比例监听
+	$('#changefrom').form('load',rows[0]);
+//	initdeductData(rows[0]);//初始化扣款数据
+	initChangeFileDoc(rows[0]);//初始化变更合同附件
+	initFileEvent();
+//	initListener();//初始化扣款比例监听
+	initChangeListener()
+	document.getElementById("end").checked="true";
+	setChangeMny(1);
+	$("#changetype").val(1);
 }
 
 /**
- * 查询期间初始化
- * @param code
+ * 变更原因改变事件
  */
-function initPeriod(code){
-    $(code).datebox({
-        onShowPanel: function() { //显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层
-            span.trigger('click'); //触发click事件弹出月份层
-            if (!tds) setTimeout(function() { //延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔
-                tds = p.find('div.calendar-menu-month-inner td');
-                tds.click(function(e) {
-                    e.stopPropagation(); //禁止冒泡执行easyui给月份绑定的事件
-                    var year = /\d{4}/.exec(span.html())[0], //得到年份
-                    month = parseInt($(this).attr('abbr'), 10); //月份，这里不需要+1
-                    $(code).datebox('hidePanel') //隐藏日期对象
-                    .datebox('setValue', year + '-' + month); //设置日期的值
-                });
-            },
-            0);
-            yearIpt.unbind(); //解绑年份输入框中任何事件
-        },
-        parser: function(s) {
-            if (!s) return new Date();
-            var arr = s.split('-');
-            return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);
-        },
-        formatter: function(d) {
-            var a = parseInt(d.getMonth()) < parseInt('9') ? '0' + parseInt(d.getMonth() + 1) : d.getMonth() + 1;
-            return d.getFullYear() + '-' + a;
-        }
-    });
-    var p = $(code).datebox('panel'),
-    //日期选择对象
-    tds = false,
-    //日期选择对象中月份
-    yearIpt = p.find('input.calendar-menu-year'),
-    //年份输入框
-    span = p.find('span.calendar-text'); //显示月份层的触发控件
-}
-
-/**
- * 判断值是否为空
- * @param code
- * @returns {Boolean}
- */
-function isEmpty(code){
-	if(code != "" && code != null && code != undefined && code != "undefined" && typeof(code) != 'undefined'){
-		return false;
-	}else{
-		return true;
-	}
-}
-
-/**
- * 隐藏显示查询框
- */
-function initQryDlg(){
-	$("#cxjs").on("mouseover",function(){ 
-    	$("#qrydialog").show();
-    	$("#qrydialog").css("visibility","visible");
-    });
+function initChangeListener(){
+	//变更原因监听事件
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="chtype"]:checked').val();
+		setChangeMny(opertype);
+		if(opertype == 1){
+			$("#addclass").removeClass("decan");
+			$("#stperiod").datebox("readonly", false);
+			$("#remny").numberbox("readonly", false);
+			$("#nchtlmny").numberbox("readonly", false);
+			$("#nchdemny").numberbox("readonly", false);
+			$("#changetype").val(1);
+		}else if(opertype == 2){
+			$("#addclass").attr("class", "decan");
+			$("#stperiod").datebox("readonly", true);
+			$("#remny").numberbox("readonly", true);
+			$("#nchtlmny").numberbox("readonly", true);
+			$("#nchdemny").numberbox("readonly", true);
+			$("#changetype").val(2);
+		}
+	});
 	
-	$(".mod-inner,.mod-toolbar-top").on("click",function(){
-		$("#qrydialog").hide();
-    	$("#qrydialog").css("visibility","hidden");
+	//终止期间监听事件
+	$("#stperiod").datebox({
+		onChange : function(n, o) {
+			if(o == "" || o == null){
+				return;
+			}
+			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
+			var sbperiod = $("#sbperiod").val();//开始期间
+			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
+			var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
+			var remny = sndemny.div(schgcycle).mul(cnum);
+			$('#remny').numberbox('setValue', remny);//退回扣款
+			var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
+			var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
+			var nchtlmny = snmsmny.mul(cnum).add(snbmny);
+			$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额
+			var nchdemny = sndemny.sub(remny);
+			$('#nchdemny').numberbox('setValue', nchdemny);
+		}
 	});
 }
 
-/** 日历支持手工输入 begin */
-$.extend($.fn.validatebox.defaults.rules, {
-	checkdate : {
-		validator : function(value) {
-			return isDateType(value);
-		},
-		message : '日期无效或格式不正确.'
-	},
-});
-
 /**
- * 校验是否如期格式
- * @param value
- * @returns {Boolean}
+ * 设置变更金额
+ * @param opertype
  */
-function isDateType(value) {
-	if (value != "" && !value.match(/^((?:19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/)) {
-		return false;
-	} else if(value != "" && new Date(value) == 'Invalid Date'){
-		return false;
-	}else {
-		return true;
+function setChangeMny(opertype){
+	$('#stperiod').textbox('setValue', $("#period").val());
+	var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
+	if(opertype == 1){//终止
+		//退回扣款 = （原扣款金额/原收款期间）*（原开始期间到终止期间的期数）
+		//变更后合同金额 = 原月代账费 *（原开始期间到终止期间的期数）+ 账本费
+		//变更后扣款金额 = 原扣款金额-退回扣款
+		var sbperiod = $("#sbperiod").val();//开始期间
+		var stperiod = $("#stperiod").datebox('getValue');//变更期间
+		var cnum = getMonthNum(stperiod, sbperiod)+1;//变更期数
+		var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
+		var remny = sndemny.div(schgcycle).mul(cnum);
+		$('#remny').numberbox('setValue', remny);//退回扣款
+		var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
+		var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
+		var nchtlmny = snmsmny.mul(cnum).add(snbmny);
+		$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额
+		var nchdemny = sndemny.sub(remny);
+		$('#nchdemny').numberbox('setValue', nchdemny);
+	}else if(opertype == 2){//作废
+		//退回扣款 = 原扣款金额
+		//变更后合同金额 = 0
+		//变更后扣款金额 = 0
+		$('#remny').numberbox('setValue', sndemny);
+		$('#nchtlmny').numberbox('setValue', 0);
+		$('#nchdemny').numberbox('setValue', 0);
 	}
 }
+
+/**
+ * 计算期间月份差的函数，通用  
+ * @param begperiod  ****-**
+ * @param endperiod  ****-**
+ * @returns
+ */
+function getMonthNum(endperiod, begperiod){    
+	begperiod = begperiod.split('-');
+	// 得到月数
+	begperiod = parseInt(begperiod[0]) * 12 + parseInt(begperiod[1]);
+	// 拆分年月
+	endperiod = endperiod.split('-');
+	// 得到月数
+	endperiod = parseInt(endperiod[0]) * 12 + parseInt(endperiod[1]);
+	var m = Math.abs(endperiod - begperiod);
+    return  m;  
+}
+
+/**
+ * 初始化变更合同附件
+ * @param row
+ */
+function initChangeFileDoc(row){
+	var para = {};
+	para.corp_id = row.corpid;
+	para.c_id = row.contractid;
+	
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/contract/contractconf!getAttaches.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			if(rows != null && rows.length > 0){
+				$("#sfileshow").show();
+				arrachrows = result.rows;
+				$("#sfiledocs").html('');
+				for(var i = 0;i<rows.length;i++){
+					var srcpath = rows[i].fpath.replace(/\\/g, "/");
+					var attachImgUrl = getAttachImgUrl(rows[i]);
+					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
+							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#sfiledocs"));
+				}
+			}
+		}
+	});
+}
+
+/**
+ * 上传变更附件初始化
+ */
+function initFileEvent(){
+	
+	//上传附件
+	$("#image1").html('');
+	var htmlImg = '<div class="imgbox">'+
+					'<div class="imgnum">'+
+						'<input type="file" class="filepath1" name="imageFile" multiple="multiple" '+
+						' accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+						'<span class="close1"><img src="../../images/Dustbin.png"/></span>'+
+						'<img src="../../images/wer_03.png" class="img1" /> ' +
+						'<img src="" class="img2" />'+
+					'</div>'+
+				  '</div>';
+	$("#image1").html(htmlImg);
+	
+	//改变上传附件
+	$(".uploadImg").on("change",".filepath1",function(){
+		if(this.files.length <= 0){
+			return;
+		}
+		var fname = this.files[0].name;
+		var imageExt=fname.substr(fname.lastIndexOf(".")).toLowerCase();//获得文件后缀名
+	    if(imageExt !='.jpg' && imageExt !='.png' && imageExt !='.jpeg'){
+	        Public.tips({ content : "请上传后缀名为jpg、png、jpeg的图片", type : 2 });
+	        return;
+	    }
+		var srcs = getObjectURL(this.files[0]);   //获取路径
+		var imgsrc = $(this).nextAll(".img2").attr("src"); 
+	    //this指的是input
+	    $(this).nextAll(".img1").hide();   //this指的是input
+	    $(this).nextAll(".img2").show();  //fireBUg查看第二次换图片不起做用
+	    $(this).nextAll('.close1').show();   //this指的是input
+	    $(this).nextAll(".img2").attr("src",srcs);    //this指的是input
+	    if(imgsrc == null || imgsrc == ""){
+	    	 var htmlImg='<div class="imgbox">'+
+				     		'<div class="imgnum">'+
+				     			'<input type="file" class="filepath1" name="imageFile" multiple="multiple" '+
+				     			' accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+				     			'<span class="close1"><img height="26" src="../../images/Dustbin.png"/></span>'+
+						            '<img src="../../images/wer_03.png" class="img1" />'+
+						            '<img src="" class="img2" />'+
+						        '</div>'+
+				         '</div>';
+	    	 $(this).parent().parent().after(htmlImg);
+	    }
+	    initClick();
+	});
+	
+}
+
+/**
+ * 获取上传附件路径
+ * @param file
+ * @returns
+ */
+function getObjectURL(file) {
+    var url = null;
+	if (window.createObjectURL != undefined) {
+		url = window.createObjectURL(file)
+	} else if (window.URL != undefined) {
+		url = window.URL.createObjectURL(file)
+	} else if (window.webkitURL != undefined) {
+		url = window.webkitURL.createObjectURL(file)
+	}
+    return url
+};
+
+/**
+ * 删除点击事件
+ */
+function initClick(){
+	$(".close1").on("click",function() {
+    	if($(this).nextAll(".img2").attr("src")){
+    		$(this).hide();     //this指的是span
+    		$(this).nextAll(".img2").hide();
+    		$(this).nextAll(".img1").show();
+    		if($('.imgbox').length>1){
+    			$(this).parent().parent().remove();
+    		}
+    	}
+    })
+}
+
+/**
+ * 变更保存
+ */
+function changeConfri(){
+	var rows = $('#grid').datagrid('getSelections');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	parent.$.messager.progress({
+		text : '变更中....'
+	});
+	$('#changefrom').form('submit', {
+		url : contextPath + '/contract/contractconf!saveChange.action',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+//				reloadData();
+				$('#change_Dialog').dialog('close');
+				var rerow = result.rows;
+				var index = $("#grid").datagrid("getRowIndex",rows[0]);
+				$('#grid').datagrid('updateRow',{
+					index: index,
+					row : rerow
+				});
+				$("#grid").datagrid('uncheckAll');
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+			parent.$.messager.progress('close');
+		}
+	});
+}
+
+/**
+ * 变更取消
+ */
+function changeCancel(){
+	$('#change_Dialog').dialog('close');
+}
+

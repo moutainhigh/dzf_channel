@@ -1,5 +1,11 @@
 package com.dzf.service.channel.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +36,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.image.ImageCommonPath;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -555,6 +563,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			detvo.setDoperatedate(new DZFDate());
 			detvo.setDr(0);
 			detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);
+			detvo.setNtotalmny(paramvo.getNtotalmny());//合同金额
+			detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
 			singleObjectBO.saveObject("000001", detvo);
 			
 		}else{
@@ -714,11 +724,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throw new BusinessException("获取附件参数有误");
 		}
 		StringBuffer condition = new StringBuffer();
-		condition.append(" nvl(dr,0)=0 and pk_corp=?");
+		condition.append(" nvl(dr,0) = 0 and pk_corp = ?");
 		SQLParameter params = new SQLParameter();
 		params.addParam(qvo.getPk_corp());
 		if (!StringUtil.isEmpty(qvo.getPk_contract())) {
-			condition.append(" and  pk_contract=? ");
+			condition.append(" and  pk_contract = ? ");
 			params.addParam(qvo.getPk_contract());
 		}
 		if (!StringUtil.isEmpty(qvo.getPk_contract_doc())) {
@@ -733,5 +743,176 @@ public class ContractConfirmImpl implements IContractConfirm {
 			return resvos.toArray(new ContractDocVO[0]);
 		}
 		return null;
+	}
+
+	@Override
+	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
+			throws DZFWarpException {
+		checkBeforeChange(paramvo);
+		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
+			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_1);
+			paramvo.setVchangeraeson("C端客户终止，变更合同");
+		} else if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
+			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_10);
+			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
+			paramvo.setVchangeraeson("提重了，合同作废");
+		}
+		paramvo.setVchanger(cuserid);
+		paramvo.setDchangetime(new DZFDateTime());
+		// 1、更新合同历史数据
+		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "ichangetype", "vchangeraeson", "vchangememo",
+				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime" });
+		// 2、更新原合同数据
+		String sql = " update ynt_contract set vdeductstatus = ? where nvl(dr,0) = 0 and pk_corp = ? and pk_contract = ? ";
+		SQLParameter spm = new SQLParameter();
+		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+		}
+		spm.addParam(paramvo.getPk_corp());
+		spm.addParam(paramvo.getPk_contract());
+		singleObjectBO.executeUpdate(sql, spm);
+		// 3、上传变更合同附件
+		saveContDocVO(paramvo, files, filenames, cuserid);
+		//4、更新合同变更后余额及余额明细表
+		String vmemo = "";
+		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+			vmemo = "合同变更：C端客户终止，变更合同";
+		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+			vmemo = "合同变更：提重了，合同作废";
+		}
+		updateChangeBalMny(paramvo, cuserid, vmemo);
+		return paramvo;
+	}
+	
+	/**
+	 * 合同变更前校验
+	 * @param paramvo
+	 * @throws DZFWarpException
+	 */
+	private void checkBeforeChange(ContractConfrimVO paramvo) throws DZFWarpException {
+		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class,
+				paramvo.getPk_confrim());
+		if(oldvo == null){
+			throw new BusinessException("变更合同信息错误");
+		}
+		if(oldvo.getVdeductstatus() != IStatusConstant.IDEDUCTSTATUS_1){
+			throw new BusinessException("合同状态不为审核通过");
+		}
+		if(oldvo.getPatchstatus() == 1){
+			throw new BusinessException("该合同已被补提单，不允许变更");
+		}
+		if(oldvo.getPatchstatus() == 2){
+			throw new BusinessException("该合同为补提单，不允许变更");
+		}
+		if(oldvo.getPatchstatus() == 3){
+			throw new BusinessException("该合同已变更，不允许再次变更");
+		}
+	}
+	
+	/**
+	 * 上传变更合同附件
+	 * @param vo
+	 * @param files
+	 * @param filenames
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveContDocVO(ContractConfrimVO vo, File[] files, String[] filenames, String cuserid)
+			throws DZFWarpException {
+		CorpVO corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+		if (corpvo == null) {
+			throw new BusinessException("会计公司信息错误");
+		}
+		if (files != null && files.length > 0) {
+			String uploadPath = ImageCommonPath.getContractFilePath(corpvo.getInnercode(), vo.getPk_contract(), null);
+			ArrayList<ContractDocVO> list = new ArrayList<>();
+			ContractDocVO docvo = null;
+			for (int i = 0; i < files.length; i++) {
+				String fname = System.nanoTime() + filenames[i].substring(filenames[i].indexOf("."));
+				String filepath = uploadPath + File.separator + fname;
+				docvo = new ContractDocVO();
+				docvo.setPk_corp(vo.getPk_corp());
+				docvo.setPk_contract(vo.getPk_contract());
+				docvo.setCoperatorid(cuserid);
+				docvo.setDoperatedate(new DZFDate());
+				docvo.setDocOwner(cuserid);
+				docvo.setDocTime(new DZFDateTime());
+				docvo.setDocName(filenames[i]);
+				docvo.setDocTemp(fname);
+				docvo.setVfilepath(filepath);
+				docvo.setDr(0);
+				docvo.setIdoctype(3);
+				list.add(docvo);
+				InputStream is = null;
+				OutputStream os = null;
+				try {
+					File ff = new File(filepath);
+					if (!ff.getParentFile().exists()) {
+						ff.getParentFile().mkdirs();
+					}
+					is = new FileInputStream(files[i]);
+					os = new FileOutputStream(filepath);
+					IOUtils.copy(is, os);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (is != null) {
+						try {
+							is.close();
+						} catch (IOException e) {
+						}
+					}
+					if (os != null) {
+						try {
+							os.close();
+						} catch (IOException e) {
+						}
+					}
+				}
+			}
+			singleObjectBO.insertVOArr(vo.getPk_corp(), list.toArray(new ContractDocVO[0]));
+		}
+	}
+	
+	/**
+	 * 更新合同变更后余额信息
+	 * @param paramvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void updateChangeBalMny(ContractConfrimVO paramvo, String cuserid, String vmemo) throws DZFWarpException {
+		ChnBalanceVO balvo = null;
+		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+		SQLParameter yespm = new SQLParameter();
+		yespm.addParam(paramvo.getPk_corp());
+		yespm.addParam(IStatusConstant.IPAYTYPE_2);
+		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+		if(balVOs != null && balVOs.length > 0){
+			balvo = balVOs[0];
+			//余额增加退回扣款
+			balvo.setNusedmny(SafeCompute.sub(balvo.getNusedmny(), paramvo.getNreturnmny()));
+			singleObjectBO.update(balvo, new String[]{"nusedmny"});
+			
+			ChnDetailVO detvo = new ChnDetailVO();
+			detvo.setPk_corp(paramvo.getPk_corp());
+			//退回扣款 显示负值
+			detvo.setNusedmny(SafeCompute.multiply(paramvo.getNreturnmny(), new DZFDouble(-1)));
+			detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);
+			detvo.setPk_bill(paramvo.getPk_confrim());
+			detvo.setVmemo(vmemo);
+			detvo.setCoperatorid(cuserid);
+			detvo.setDoperatedate(new DZFDate());
+			detvo.setDr(0);
+			detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);
+			detvo.setNtotalmny(paramvo.getNchangetotalmny());//合同金额
+			detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+			singleObjectBO.saveObject("000001", detvo);
+			
+		}else{
+			throw new BusinessException("预付款余额不足");
+		}
 	}
 }

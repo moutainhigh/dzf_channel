@@ -1,5 +1,6 @@
 package com.dzf.service.channel;
 
+import java.io.File;
 import java.util.List;
 
 import com.dzf.model.channel.ContractConfrimVO;
@@ -58,4 +59,16 @@ public interface IContractConfirm {
 	 */
 	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, ContractConfrimVO paramvo,
 			Integer opertype, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 变更
+	 * @param paramvo
+	 * @param cuserid
+	 * @param files
+	 * @param filenames
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
+			throws DZFWarpException;
 }

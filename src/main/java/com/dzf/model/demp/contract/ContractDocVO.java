@@ -2,6 +2,7 @@ package com.dzf.model.demp.contract;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
@@ -42,8 +43,16 @@ public class ContractDocVO extends SuperVO {
 
 	private String coperatorid;
 	
-	private String doperatedate;
+	private DZFDate doperatedate;
 	
+	public DZFDate getDoperatedate() {
+		return doperatedate;
+	}
+
+	public void setDoperatedate(DZFDate doperatedate) {
+		this.doperatedate = doperatedate;
+	}
+
 	@FieldAlias("doctype")
 	private Integer idoctype;//附件类型  1或空：附件；   2:执照；
 	
@@ -77,14 +86,6 @@ public class ContractDocVO extends SuperVO {
 
 	public void setCoperatorid(String coperatorid) {
 		this.coperatorid = coperatorid;
-	}
-
-	public String getDoperatedate() {
-		return doperatedate;
-	}
-
-	public void setDoperatedate(String doperatedate) {
-		this.doperatedate = doperatedate;
 	}
 
 	public String getDocTemp() {

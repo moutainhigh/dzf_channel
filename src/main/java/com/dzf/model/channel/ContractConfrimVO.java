@@ -70,7 +70,7 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("destatus")
     private Integer vdeductstatus;//加盟商合同状态：  1：待审核；2：已审核；3：已驳回；4：服务到期；
-                                  //最新合同状态：      5:待审批： 1：审核通过； 7：已驳回；8：服务到期；
+                                  //最新合同状态：      5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
     
     @FieldAlias("confreason")
     private String vconfreason;// 驳回原因
@@ -85,7 +85,7 @@ public class ContractConfrimVO extends SuperVO {
     private DZFDateTime ts; // 时间戳
     
     @FieldAlias("conmemo")
-    private String vconmemo; // 备注
+    private String vconmemo; // 审核备注
     
     @FieldAlias("voper")
     private String voperator; // 经办人
@@ -144,8 +144,143 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("isncust")
     private DZFBoolean isncust;// 是否存量客户
     
+    //补单字段begin：
+    @FieldAlias("cperiod")
+    private String vchangeperiod;//补提交的变更期间
+    
+    @FieldAlias("sourid")
+    private String pk_source;//补提交的合同来源主键
+    
+    @FieldAlias("pstatus")
+    private Integer patchstatus;// 加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
+    //补单字段end
+    
+    //变更合同字段begin：
+    @FieldAlias("changetype")
+    private Integer ichangetype;//变更类型1：C端客户终止，变更合同；2：提重了，合同作废；
+    
+    @FieldAlias("changereason")
+    private String vchangeraeson;//变更原因
+    
+    @FieldAlias("changememo")
+    private String vchangememo;//变更备注
+    
+    @FieldAlias("stperiod")
+    private String vstopperiod;//终止期间
+    
+    @FieldAlias("remny")
+    private DZFDouble nreturnmny;//退回扣款
+    
+    @FieldAlias("nchtlmny")
+    private DZFDouble nchangetotalmny; //变更后合同金额
+	
+	@FieldAlias("nchdemny")
+    private DZFDouble nchangededutmny;//变更后扣款金额
+	
+    @FieldAlias("changer")
+    private String vchanger; //变更人
+    
+    private DZFDateTime dchangetime;//变更时间
+    //变更合同字段end
+    
 	public DZFBoolean getIsncust() {
 		return isncust;
+	}
+
+	public String getVchangememo() {
+		return vchangememo;
+	}
+
+	public void setVchangememo(String vchangememo) {
+		this.vchangememo = vchangememo;
+	}
+
+	public DZFDateTime getDchangetime() {
+		return dchangetime;
+	}
+
+	public void setDchangetime(DZFDateTime dchangetime) {
+		this.dchangetime = dchangetime;
+	}
+
+	public String getVchangeraeson() {
+		return vchangeraeson;
+	}
+
+	public void setVchangeraeson(String vchangeraeson) {
+		this.vchangeraeson = vchangeraeson;
+	}
+
+	public String getVchanger() {
+		return vchanger;
+	}
+
+	public void setVchanger(String vchanger) {
+		this.vchanger = vchanger;
+	}
+
+	public String getVchangeperiod() {
+		return vchangeperiod;
+	}
+
+	public String getPk_source() {
+		return pk_source;
+	}
+
+	public Integer getPatchstatus() {
+		return patchstatus;
+	}
+
+	public Integer getIchangetype() {
+		return ichangetype;
+	}
+
+	public String getVstopperiod() {
+		return vstopperiod;
+	}
+
+	public DZFDouble getNreturnmny() {
+		return nreturnmny;
+	}
+
+	public DZFDouble getNchangetotalmny() {
+		return nchangetotalmny;
+	}
+
+	public DZFDouble getNchangededutmny() {
+		return nchangededutmny;
+	}
+
+	public void setVchangeperiod(String vchangeperiod) {
+		this.vchangeperiod = vchangeperiod;
+	}
+
+	public void setPk_source(String pk_source) {
+		this.pk_source = pk_source;
+	}
+
+	public void setPatchstatus(Integer patchstatus) {
+		this.patchstatus = patchstatus;
+	}
+
+	public void setIchangetype(Integer ichangetype) {
+		this.ichangetype = ichangetype;
+	}
+
+	public void setVstopperiod(String vstopperiod) {
+		this.vstopperiod = vstopperiod;
+	}
+
+	public void setNreturnmny(DZFDouble nreturnmny) {
+		this.nreturnmny = nreturnmny;
+	}
+
+	public void setNchangetotalmny(DZFDouble nchangetotalmny) {
+		this.nchangetotalmny = nchangetotalmny;
+	}
+
+	public void setNchangededutmny(DZFDouble nchangededutmny) {
+		this.nchangededutmny = nchangededutmny;
 	}
 
 	public void setIsncust(DZFBoolean isncust) {

@@ -144,14 +144,14 @@ function getTipContents(i) {
 	if (arrachrows && arrachrows[i]) {
 		var ext = getFileExt(arrachrows[i]['doc_name']);
 		if ("png" == ext.toLowerCase() || "jpg" == ext.toLowerCase()
-				|| "jpeg" == ext.toLowerCase() || "bmp" == ext.toLowerCase()) {
-
+				|| "jpeg" == ext.toLowerCase() || "bmp" == ext.toLowerCase()
+				|| "gif" == ext.toLowerCase()) {
 			tips = "双击查看原图";
 		} else if ("pdf" == ext.toLowerCase()) {
 			tips = "双击预览";
-		} else {
+		} /*else {
 			tips = "双击下载";
-		}
+		}*/
 	}
 
 	return tips;
