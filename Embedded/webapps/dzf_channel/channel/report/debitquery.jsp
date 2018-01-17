@@ -72,11 +72,13 @@
 					<input id="rq" type="radio"  name="seledate" value="rq"/>
 					<label style="width:45px;">日期：</label> 
 					<font>
-						<input id="bdate" name="bdate"  class="easyui-datebox" data-options="required:true,width:137,height:28" value=<%=last%>/>
+						<input id="bdate" name="bdate"  class="easyui-datebox" 
+							data-options="required:true,width:137,height:28,validType:'checkdate'" value=<%=last%>/>
 					</font>
 					<font>-</font>
 					<font>
-						<input id="edate" name="edate"  class="easyui-datebox" data-options="required:true,width:137,height:28" value=<%=now%>/>
+						<input id="edate" name="edate"  class="easyui-datebox" 
+							data-options="required:true,width:137,height:28,validType:'checkdate'" value=<%=now%>/>
 					</font>
 				</div>
 				<div class="time_col time_colp10">

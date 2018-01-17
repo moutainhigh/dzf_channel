@@ -17,8 +17,8 @@
 					<div class="left mod-crumb">
 						<div class="h30 h30-arrow" id="cxjs">
 							<label class="mr5">查询期间：</label>
-							<input id="bdate" name="bdate"  class="easyui-datebox" style="width:137px;height:30px;" />
-							<input id="edate"  name="edate"  class="easyui-datebox" style="width:137px;height:30px;"/>
+							<input id="bdate" name="bdate"  class="easyui-datebox" style="width:137px;height:30px;" data-options="validType:'checkdate'"/>
+							<input id="edate"  name="edate"  class="easyui-datebox" style="width:137px;height:30px;" data-options="validType:'checkdate'"/>
 							<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;" class="ui-btn ui-btn-xz" onclick="reloadData()">查询</a> 
 						</div>
 						<div class="h30 h30-arrow" id="kshu">

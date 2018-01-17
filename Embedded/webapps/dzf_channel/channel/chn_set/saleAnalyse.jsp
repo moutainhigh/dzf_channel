@@ -28,11 +28,13 @@
 							data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
 						<label style="text-align:right;width: 70px;">期间：</label>
 						<font> 
-							<input id="bdate" type="text" class="easyui-datebox" style="width:110px;height:30px;" />
+							<input id="bdate" type="text" class="easyui-datebox" style="width:110px;height:30px;" 
+								data-options="validType:'checkdate'"/>
 						</font> 
 						<font>-</font> 
 						<font> 
-							<input id="edate" type="text"  class="easyui-datebox" style="width:110px;height:30px;" />
+							<input id="edate" type="text"  class="easyui-datebox" style="width:110px;height:30px;" 
+								data-options="validType:'checkdate'"/>
 						</font>
 						<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;" class="ui-btn ui-btn-xz" onclick="load()">查询</a>
 						<input style="height: 28px; width: 220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称，按Enter过滤" />

@@ -54,9 +54,11 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">付款日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"  /></font>
 					<font>-</font>
-					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  /></font>
+					<font><input name="edate" type="text" id="edate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"  /></font>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">单据状态：</label>

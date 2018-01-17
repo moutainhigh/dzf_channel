@@ -67,12 +67,12 @@
 					<input id="da" type="radio" name="seledate" checked value="da"/>
 					<label>日期：</label> 
 					<font> 
-						<input id="begdate" type="text" class="easyui-datebox" 
+						<input id="begdate" type="text" class="easyui-datebox" data-options="validType:'checkdate'"
 							style="width:137px;height:30px;" value="<%=lastDate%>" />
 					</font> 
 					<font>-</font> 
 					<font> 
-						<input id="enddate" type="text"  class="easyui-datebox" 
+						<input id="enddate" type="text"  class="easyui-datebox" data-options="validType:'checkdate'"
 							style="width:137px;height:30px;" value="<%=nowDate%>"/>
 					</font>
 				</div>

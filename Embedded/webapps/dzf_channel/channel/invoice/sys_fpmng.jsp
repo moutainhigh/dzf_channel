@@ -69,9 +69,11 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:130,height:27,editable:true" value="<%=sdf.format(beforeDate)%>" /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'" value="<%=sdf.format(beforeDate)%>" /></font>
 					<font>-</font>
-					<font><input name="edate" type="text" id="edate" class="easyui-datebox" data-options="width:130,height:27,editable:true"  value="<%=sdf.format(nowDate)%>" /></font>
+					<font><input name="edate" type="text" id="edate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"  value="<%=sdf.format(nowDate)%>" /></font>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>

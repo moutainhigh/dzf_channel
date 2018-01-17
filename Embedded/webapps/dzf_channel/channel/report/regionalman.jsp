@@ -42,9 +42,9 @@
 				</h3>
 				<div class="sel_time time_col">
 					<label style="text-align:right">查询期间：</label> 
-					<input id="bdate" name="bdate"  class="easyui-datebox" data-options="width:137,height:28" />
+					<input id="bdate" name="bdate"  class="easyui-datebox" data-options="width:137,height:28,validType:'checkdate'" />
 					<font>-</font> 
-					<input id="edate" name="edate"  class="easyui-datebox" data-options="width:137,height:28" />
+					<input id="edate" name="edate"  class="easyui-datebox" data-options="width:137,height:28,validType:'checkdate'" />
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">省（市）：</label> 
