@@ -86,6 +86,8 @@
 						<option value="-1">全部</option>
 						<option value="5">待审核</option>
 						<option value="1">已审核</option>
+						<option value="9">已终止</option>
+						<option value="10">已作废</option>
 					</select>
 					<label style="width:80px;text-align:right">客户类型：</label>
 					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 

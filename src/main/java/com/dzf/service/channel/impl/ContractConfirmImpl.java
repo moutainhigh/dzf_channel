@@ -55,7 +55,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<String> pklist = new ArrayList<String>();
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
-		if((paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == 1) || 
+		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == 1 || 
+				paramvo.getVdeductstatus() == 9 || paramvo.getVdeductstatus() == 10 )) || 
 				!StringUtil.isEmpty(paramvo.getPk_bill())){//查询审核通过数据 （1、合同状态为已审核；2、或别的界面<付款单余额>联查到此界面）
 			qryContractConData(paramvo, pklist, retlist);
 		}else if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == 5){//查询待审核合同数据（合同状态为待审核）
@@ -182,7 +183,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
-		sql.append(" AND vdeductstatus = 1 \n") ;
+		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
+			sql.append(" AND vdeductstatus = ? \n") ;
+			spm.addParam(paramvo.getVdeductstatus());
+		}else{
+			sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
+		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND dsubmitime >= ? \n") ; 
 			spm.addParam(paramvo.getBegdate() + " 00:00:00");

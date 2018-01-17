@@ -421,6 +421,10 @@ function load(){
 					return '拒绝审核';
 				if (value == '8')
 					return '服务到期';
+				if (value == '9')
+					return '已终止';
+				if (value == '10')
+					return '已作废';
 			}
 		}, {
 			width : '100',
