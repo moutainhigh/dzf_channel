@@ -6,6 +6,7 @@
 <title>服务套餐定义</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>  rel="stylesheet">
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/packagedef/packagedef.js");%>  charset="UTF-8" type="text/javascript"> </script>
 </head>
 <body>
@@ -15,10 +16,13 @@
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
 					<label>查询期间：</label> 
-					<input id="begdate" name="begdate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
+					<input id="begdate" name="begdate" class="easyui-datebox" 
+						style="width:110px;height:28px;text-align:left" data-options="validType:'checkdate'">
 					--
-					<input id="enddate" name="enddate" class="easyui-datebox" style="width:110px;height:28px;text-align:left">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" data-options="plain:true" onclick="reload()">查询</a>
+					<input id="enddate" name="enddate" class="easyui-datebox" 
+						style="width:110px;height:28px;text-align:left" data-options="validType:'checkdate'">
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" 
+						data-options="plain:true" onclick="reload()">查询</a>
 				</div>
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="addType()">新增</a>
