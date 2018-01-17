@@ -169,6 +169,8 @@
 						<input id="adviser" name="adviser" type="hidden">
 						<input id="submitime" name="submitime" type="hidden">
 						<input id="isncust" name="isncust" type="hidden">
+						<input id="sourid" name="sourid" type="hidden">
+						<input id="pstatus" name="pstatus" type="hidden">
 						<div style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
@@ -262,7 +264,7 @@
 								<input id="chgcycle" name="chgcycle" class="easyui-textbox" data-options="readonly:true" 
 									style="width: 56%; height: 28px; text-align:left;">
 							</div>
-							<div class="decan" style="width: 48%;display:inline-block;">
+							<div class="decan" style="width:24%;display:inline-block;">
 								<div class="time_col">
 									<label style="width: 109px;text-align: right;">服务期限：</label> 
 									<input type="text" id="bperiod" name="bperiod" class="easyui-textbox" data-options="readonly:true"
@@ -270,6 +272,11 @@
 									<input type="text" id="eperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
 									 	style="width:70px; height: 28px;">
 								</div>
+							</div>
+							<div id="issupple" class="decan" style="width:24%;display:inline-block;font-weight:bold;">
+								<label style="width:40%;text-align: right;">变更日期：</label>
+								<input id="cperiod" name="cperiod" class="easyui-textbox" data-options="readonly:true" 
+									style="width: 56%; height: 28px; text-align:left;">
 							</div>
 						</div>
 						<!-- 附件信息begin -->

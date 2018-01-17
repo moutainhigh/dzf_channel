@@ -413,18 +413,39 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	private void updateCorp(ContractConfrimVO confvo, Map<String, String> packmap) throws DZFWarpException{
-		//从套餐取纳税人性质
-		if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
-			if(packmap != null && !packmap.isEmpty()){
-				if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
-					CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
-					if(corpvo != null){
-						corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
-						singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质
+		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+		if(confvo.getPatchstatus() == 2){//补单合同
+			if(corpvo != null){
+				corpvo.setChargedeptname(confvo.getChargedeptname());
+				singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+			}
+		}else{
+			if(corpvo != null && StringUtil.isEmpty(corpvo.getChargedeptname())){
+				//从套餐取纳税人性质
+				if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
+					if(packmap != null && !packmap.isEmpty()){
+						if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
+							corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
+							singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+						}
 					}
 				}
 			}
 		}
+		
+//		//从套餐取纳税人性质
+//		if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
+//			if(packmap != null && !packmap.isEmpty()){
+//				if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
+//					CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+//					if(corpvo != null){
+//						corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
+//						singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	/**
@@ -444,22 +465,24 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 */
 	private void updateSerPackage(ContractConfrimVO paramvo) throws DZFWarpException{
-		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
-		try {
-			if(packvo != null){
-				LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 60);
-				Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
-				Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-				if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
-					if(num.compareTo(pulishnum) == 0){
-						throw new BusinessException("套餐发布个数已经用完");
+		if(paramvo.getPatchstatus() != null && paramvo.getPatchstatus() != 2){
+			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
+			try {
+				if(packvo != null){
+					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 60);
+					Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+					Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+					if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+						if(num.compareTo(pulishnum) == 0){
+							throw new BusinessException("套餐发布个数已经用完");
+						}
 					}
+					packvo.setIusenum(num + 1);
+					singleObjectBO.update(packvo, new String[]{"iusenum"});
 				}
-				packvo.setIusenum(num + 1);
-				singleObjectBO.update(packvo, new String[]{"iusenum"});
+			} finally {
+				LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef());
 			}
-		} finally {
-			LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef());
 		}
 	}
 	

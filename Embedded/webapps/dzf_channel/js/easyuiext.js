@@ -11,7 +11,7 @@ function initQryDlg(){
     	$("#qrydialog").css("visibility","visible");
     });
 	
-	$(".mod-inner,.mod-toolbar-top").on("click",function(){
+	$(".mod-inner,.mod-toolbar-top,.grid-wrap").on("click",function(){
 		$("#qrydialog").hide();
     	$("#qrydialog").css("visibility","hidden");
 	});

@@ -660,6 +660,11 @@ function initdeductData(row){
                 $('#contractid').val(row.contractid);//合同主键
                 $('#salespromot').textbox('setValue', row.salespromot);//促销活动
                 document.getElementById("debit").checked="true";
+                if($('#pstatus').val() == 2){
+                	$("#issupple").show();
+                }else{
+                	$("#issupple").hide();
+                }
             }
         },
     });
@@ -1034,8 +1039,18 @@ function initChangeListener(){
 			if(o == "" || o == null){
 				return;
 			}
-			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 			var sbperiod = $("#sbperiod").val();//开始期间
+			var seperiod = $("#seperiod").val();//结束期间
+			if(n < sbperiod || n > seperiod){
+				$('#stperiod').textbox('setValue', o);
+				Public.tips({
+					content : '终止期间不能在服务期间之外',
+					type : 2
+				});			
+				return;
+			}
+			
+			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
 			var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
 			var remny = sndemny.div(schgcycle).mul(cnum);
