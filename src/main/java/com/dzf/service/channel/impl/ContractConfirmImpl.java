@@ -260,44 +260,41 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(con.icosttype, 0) = 0 \n") ; 
 //		sql.append("   AND con.vdeductstatus = 1 \n");//加盟商合同状态 = 待审核
 		sql.append("   AND con.icontracttype = 2 \n");//合同类型 = 加盟商合同
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//标签查询 1：待审核
-			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
-				sql.append("   AND vdeductstatus = 5 \n");
-			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){//标签查询 2：存量待审
-				sql.append("   AND vdeductstatus = 5 AND nvl(isncust,'N') = 'Y' \n");
-			}
-		}else{
-			sql.append("   AND con.vdeductstatus = 5 \n");//加盟商合同状态 = 待审核
-			if(paramvo.getBegdate() != null){
-				sql.append("   AND con.dsubmitime >= ? \n") ; 
-				spm.addParam(paramvo.getBegdate() + " 00:00:00");
-			}
-			if(paramvo.getEnddate() != null){
-				sql.append("   AND con.dsubmitime <= ? \n") ; 
-				spm.addParam(paramvo.getEnddate() + " 23:59:59");
-			}
-			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-			    String[] strs = paramvo.getPk_corp().split(",");
-			    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-			    sql.append(" AND con.pk_corp in (").append(inSql).append(")");
-			}
-			if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
-				sql.append(" AND con.pk_corpk=? \n") ; 
-				spm.addParam(paramvo.getPk_corpk());
-			}
-			if(paramvo.getIsncust()!=null){
-				sql.append(" AND nvl(isncust,'N') =? \n") ; 
-				spm.addParam(paramvo.getIsncust());
-			}
-			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-				sql.append(" AND nvl(patchstatus, 0) != 2 \n") ;
-			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-				sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
-			}
-//			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-//				sql.append(" AND vdeductstatus = ? \n") ;
-//				spm.addParam(paramvo.getVdeductstatus());
+//		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//标签查询 1：待审核
+//			if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 1){
+//				sql.append("   AND vdeductstatus = 5 \n");
+//			}else if(paramvo.getQrytype() != 0 && paramvo.getQrytype() == 2){//标签查询 2：存量待审
+//				sql.append("   AND vdeductstatus = 5 AND nvl(isncust,'N') = 'Y' \n");
 //			}
+//		}else{
+//	
+//		}
+		sql.append("   AND con.vdeductstatus = 5 \n");//加盟商合同状态 = 待审核
+		if(paramvo.getBegdate() != null){
+			sql.append("   AND con.dsubmitime >= ? \n") ; 
+			spm.addParam(paramvo.getBegdate() + " 00:00:00");
+		}
+		if(paramvo.getEnddate() != null){
+			sql.append("   AND con.dsubmitime <= ? \n") ; 
+			spm.addParam(paramvo.getEnddate() + " 23:59:59");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+		    String[] strs = paramvo.getPk_corp().split(",");
+		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+		    sql.append(" AND con.pk_corp in (").append(inSql).append(")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
+			sql.append(" AND con.pk_corpk=? \n") ; 
+			spm.addParam(paramvo.getPk_corpk());
+		}
+		if(paramvo.getIsncust()!=null){
+			sql.append(" AND nvl(isncust,'N') =? \n") ; 
+			spm.addParam(paramvo.getIsncust());
+		}
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+			sql.append(" AND nvl(patchstatus, 0) != 2 \n") ;
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+			sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
 		}
 		sql.append(" order by con.dsubmitime desc");
 		qryvo.setSql(sql.toString());
