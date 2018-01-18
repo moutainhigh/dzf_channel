@@ -536,7 +536,6 @@ function getQueryData(cpname){
 
 function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
-		debugger
         if (e.keyCode == 13) {
         	$('#grid').datagrid('unselectAll');
  		   var filtername = $("#filter_value").val(); 
