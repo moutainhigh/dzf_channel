@@ -78,7 +78,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			}
 			if(nummap != null && !nummap.isEmpty()){
 				numvo = nummap.get(pk_corp);
-				if(visitvo!=null){
+				if(numvo!=null){
 					salevo.setIagentnum(numvo.getIagentnum());
 					salevo.setIincrenum(numvo.getIincrenum());
 				}

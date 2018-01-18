@@ -197,16 +197,6 @@ function quickfiltet(){
 						"corpnm" : filtername,
 				    });
 			   }
-//				var jsonStrArr = [];
-//				if(loadrows){
-//					for(var i=0;i<loadrows.length;i++){
-//						var row = loadrows[i];
-//						if(row.corpnm.indexOf(filtername) >= 0){
-//							jsonStrArr.push(row);
-//						} 
-//					}
-//					$('#grid').datagrid('loadData',jsonStrArr);   
-//				}
 			}else{
 				load();
 			} 
