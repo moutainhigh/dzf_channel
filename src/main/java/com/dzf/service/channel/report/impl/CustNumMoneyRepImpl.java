@@ -164,6 +164,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM ynt_contract t \n") ; 
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n") ; 
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(t.patchstatus, 0) != 1 \n") ;//补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0 \n") ;
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'\n") ; 
 		sql.append("           AND (t.vbeginperiod = ? OR t.vendperiod = ? OR \n") ; 
@@ -220,6 +221,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM ynt_contract t\n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0\n");
+		sql.append("           AND nvl(t.patchstatus, 0) != 1 \n") ;//补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0\n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n") ; 
 		sql.append("   AND t.pk_corp NOT IN \n") ; 

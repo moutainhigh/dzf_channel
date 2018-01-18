@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>加盟商客户数量金额统计</title>
+<title>单量业绩统计</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
