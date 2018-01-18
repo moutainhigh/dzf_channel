@@ -56,7 +56,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<String> pklist = new ArrayList<String>();
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
 		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == 1 || 
-				paramvo.getVdeductstatus() == 9 || paramvo.getVdeductstatus() == 10 )) || 
+				paramvo.getVdeductstatus() == 9 || paramvo.getVdeductstatus() == 10 
+				|| paramvo.getVdeductstatus() == -2 )) || 
 				!StringUtil.isEmpty(paramvo.getPk_bill())){//查询审核通过数据 （1、合同状态为已审核；2、或别的界面<付款单余额>联查到此界面）
 			qryContractConData(paramvo, pklist, retlist);
 		}else if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == 5){//查询待审核合同数据（合同状态为待审核）
@@ -91,6 +92,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			UserVO uservo = null;
 			CorpVO corpvo = null;
 			for(ContractConfrimVO confvo : confVOs){
+				if(confvo.getDenddate().compareTo(new DZFDate()) < 0){
+					confvo.setVdeductstatus(-2);//服务到期
+				}
 				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 				if(uservo != null){
 					confvo.setVopername(uservo.getUser_name());
@@ -184,8 +188,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-			sql.append(" AND vdeductstatus = ? \n") ;
-			spm.addParam(paramvo.getVdeductstatus());
+			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == -2){
+				sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
+				sql.append(" AND vendperiod < ? ");
+				DZFDate date = new DZFDate();
+				spm.addParam(date.getYear()+"-"+date.getStrMonth());
+			}else{
+				sql.append(" AND vdeductstatus = ? \n") ;
+				spm.addParam(paramvo.getVdeductstatus());
+			}
 		}else{
 			sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
 		}
@@ -217,6 +228,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!StringUtil.isEmpty(paramvo.getCorpname())){
 			sql.append(" AND corpname like ? \n") ; 
 			spm.addParam("%"+paramvo.getCorpname()+"%");
+		}
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+			sql.append(" AND nvl(patchstatus, 0) != 2 \n") ;
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+			sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
 		}
 		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
@@ -272,6 +288,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(paramvo.getIsncust()!=null){
 				sql.append(" AND nvl(isncust,'N') =? \n") ; 
 				spm.addParam(paramvo.getIsncust());
+			}
+			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+				sql.append(" AND nvl(patchstatus, 0) != 2 \n") ;
+			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+				sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
 			}
 //			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 //				sql.append(" AND vdeductstatus = ? \n") ;
