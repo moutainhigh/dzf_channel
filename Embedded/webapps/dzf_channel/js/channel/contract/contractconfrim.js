@@ -563,6 +563,16 @@ function fastQry(){
             		}
             		queryParams.cpid = $("#pk_account").val();
             		queryParams.cpkid = $("#corpkid_ae").val();
+            		if ($("#normal").is(':checked') && !$("#supple").is(':checked')) {
+            			queryParams.qtype = 1;
+            		} else if(!$("#normal").is(':checked') && $("#supple").is(':checked')) {
+            			queryParams.qtype = 2;
+            		} else if(!$("#normal").is(':checked') && !$("#supple").is(':checked')) {
+            			$('#grid').datagrid('loadData',{ total:0, rows:[]});
+            		    $('#qrydialog').hide();
+            		    $('#grid').datagrid('unselectAll');
+            			return;
+            		}
             	}
             	queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
             	queryParams.enddate = $('#edate').datebox('getValue'); //结束日期

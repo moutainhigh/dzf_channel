@@ -123,7 +123,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				contqryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
 			CorpVO corpvo = null;
-			Map<String, String> packmap = queryPackageMap();
+//			Map<String, String> packmap = queryPackageMap();
 			Integer cyclenum = 0;
 			for (ContractConfrimVO vo : conflist) {
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
@@ -136,11 +136,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 					vo.setCorpkname(corpvo.getUnitname());
 				}
 				//从套餐取纳税人性质
-				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
-					if(packmap != null && !packmap.isEmpty()){
-						vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
-					}
-				}
+//				if(!StringUtil.isEmpty(vo.getPk_packagedef())){
+//					if(packmap != null && !packmap.isEmpty()){
+//						vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+//					}
+//				}
 				cyclenum = 0;
 				if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
 					cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
