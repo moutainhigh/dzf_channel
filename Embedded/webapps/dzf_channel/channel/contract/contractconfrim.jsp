@@ -65,7 +65,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 250px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 260px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -80,12 +80,13 @@
 						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 				</div>
 				<div class="time_col time_colp10">
+					<label style="width: 80px;text-align:right">合同类型：</label>
 					<input id="normal" name="normal" type="checkbox" checked 
-						style="width:20px;height:28px;text-align:left;margin-left:20px;"/>
-					<label style="width:126px;text-align:left">正常提单</label> 
+						style="width:20px;height:28px;text-align:left;margin-left:2px;"/>
+					<label style="width:100px;text-align:left">正常提单</label> 
 					<input id="supple" name="supple" type="checkbox" checked 
 						style="width:20px;height:28px;text-align:left;margin-left:20px;"/>
-					<label style="width:126px;text-align:left">补单</label> 
+					<label style="width:100px;text-align:left">补提单</label> 
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">合同状态：</label>
