@@ -1080,7 +1080,7 @@ function initChangeListener(){
 			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
 			var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
-			var remny = sndemny.div(schgcycle).mul(cnum);
+			var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
 			$('#remny').numberbox('setValue', remny);//退回扣款
 			var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
 			var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
