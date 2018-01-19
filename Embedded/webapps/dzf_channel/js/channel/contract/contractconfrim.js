@@ -1102,7 +1102,8 @@ function setChangeMny(opertype){
 		var stperiod = $("#stperiod").datebox('getValue');//变更期间
 		var cnum = getMonthNum(stperiod, sbperiod)+1;//变更期数
 		var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
-		var remny = sndemny.div(schgcycle).mul(cnum);
+		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
+		var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
 		$('#remny').numberbox('setValue', remny);//退回扣款
 		var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
 		var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
