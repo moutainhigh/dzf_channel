@@ -586,36 +586,6 @@ function fastQry(){
 }
 
 /**
- * 初始化监听
- */
-function initListener(){
-	$("#propor").numberbox({
-		onChange : function(n, o) {
-			if (n == ""){
-				n = 0; 
-			}
-			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
-			var nbmny = $('#nbmny').numberbox('getValue');//账本费
-//			var ndemny = parseFloat(ntlmny).mul(parseFloat(n)).div(100);
-			 //扣费标准修改为扣掉账本费的合同金额
-            var countmny = getFloatValue(ntlmny).sub(getFloatValue(nbmny));
-            var ndemny = getFloatValue(countmny).mul(parseFloat(n)).div(100);
-			$('#ndemny').numberbox('setValue', ndemny);
-		}
-	});
-	
-	$(":radio").click( function(){
-		var opertype = $('input:radio[name="opertype"]:checked').val();
-		if(opertype == 1){
-			$("#confreason").textbox('readonly',true);
-			$("#confreason").textbox('setValue',null);
-		}else if(opertype == 2){
-			$("#confreason").textbox('readonly',false);
-		}
-	});
-}
-
-/**
  * 单条审核
  */
 function audit(){
@@ -637,17 +607,50 @@ function audit(){
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
 	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','合同审核');
 	$("#fileshow").hide();
+	initListener();//初始化扣款比例监听
+	$('#deductfrom').form('clear');
+	if(rows[0].pstatus == 2){
+    	$("#issupple").show();
+    }else{
+    	$("#issupple").hide();
+    }
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件
-	initListener();//初始化扣款比例监听
+}
+
+/**
+ * 初始化监听
+ */
+function initListener(){
+	$("#propor").numberbox({
+		onChange : function(n, o) {
+			if (isEmpty(n)){
+				n = 0; 
+			}
+			var ntlmny = $('#ntlmny').numberbox('getValue');//合同金额
+			var nbmny = $('#nbmny').numberbox('getValue');//账本费
+			 //扣费标准修改为扣掉账本费的合同金额
+            var countmny = getFloatValue(ntlmny).sub(getFloatValue(nbmny));
+            var ndemny = getFloatValue(countmny).mul(parseFloat(n)).div(100);
+			$('#ndemny').numberbox('setValue', ndemny);
+		}
+	});
 	
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="opertype"]:checked').val();
+		if(opertype == 1){
+			$("#confreason").textbox('readonly',true);
+			$("#confreason").textbox('setValue',null);
+		}else if(opertype == 2){
+			$("#confreason").textbox('readonly',false);
+		}
+	});
 }
 
 /**
  * 初始化扣款数据
  */
 function initdeductData(row){
-	$('#deductfrom').form('clear');
 	$.ajax({
         type: "post",
         dataType: "json",
@@ -681,12 +684,8 @@ function initdeductData(row){
                 $('#hntlmny').numberbox('setValue', row.ntlmny);//合同金额
                 $('#contractid').val(row.contractid);//合同主键
                 $('#salespromot').textbox('setValue', row.salespromot);//促销活动
+                $('#scperiod').textbox('setValue', row.cperiod);//变更日期
                 document.getElementById("debit").checked="true";
-                if($('#pstatus').val() == 2){
-                	$("#issupple").show();
-                }else{
-                	$("#issupple").hide();
-                }
             }
         },
     });

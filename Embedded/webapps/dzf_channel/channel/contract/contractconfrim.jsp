@@ -159,6 +159,11 @@
 						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" style="width:58%;height:28px;text-align:left;"
 							data-options="readonly:true,precision:2,groupSeparator:','" >
 					</div>
+					<div id="issupple" class="decan strong" style="width:24%;display:inline-block;font-weight:bold;">
+						<label style="width:40%;text-align: right;">变更日期：</label>
+						<input id="scperiod" name="cperiod" class="easyui-textbox" data-options="readonly:true" 
+							style="width: 56%; height: 28px; text-align:left;">
+					</div>
 				</div>
 				<form id = "deductfrom" method="post">
 					<div class="time_col time_colp11 ">
@@ -181,6 +186,7 @@
 						<input id="isncust" name="isncust" type="hidden">
 						<input id="sourid" name="sourid" type="hidden">
 						<input id="pstatus" name="pstatus" type="hidden">
+						<input id="cperiod" name="cperiod" type="hidden">
 						<div style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
@@ -282,11 +288,6 @@
 									<input type="text" id="eperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
 									 	style="width:70px; height: 28px;">
 								</div>
-							</div>
-							<div id="issupple" class="decan" style="width:24%;display:inline-block;font-weight:bold;">
-								<label style="width:40%;text-align: right;">变更日期：</label>
-								<input id="cperiod" name="cperiod" class="easyui-textbox" data-options="readonly:true" 
-									style="width: 56%; height: 28px; text-align:left;">
 							</div>
 						</div>
 						<!-- 附件信息begin -->
@@ -412,12 +413,12 @@
 								</div>
 								<div style="width:20%; display:inline-block">
 									<label style="text-align: right; width: 50%;">变更后合同金额：</label> 
-									<input id="nchtlmny" name="nchtlmny" class="easyui-numberbox" 
+									<input id="nchtlmny" name="nchtlmny" class="easyui-numberbox" data-options="readonly:true"
 										style="width: 40%; height: 28px; text-align: left">
 								</div>
 								<div style="width:20%; display:inline-block">
 									<label style="text-align: right; width: 50%;">变更后扣款金额：</label> 
-									<input id="nchdemny" name="nchdemny" class="easyui-numberbox" 
+									<input id="nchdemny" name="nchdemny" class="easyui-numberbox" data-options="readonly:true"
 										style="width:40%;height:28px;text-align:left"> 
 								</div>
 							</div>
