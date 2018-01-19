@@ -604,8 +604,14 @@ function audit(){
 		});			
 		return;
 	}
+	var title = "";
+	if(rows[0].pstatus == 2){
+		title = "合同审核-纳税人变更";
+    }else{
+    	title = "合同审核";
+    }
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
-	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle','合同审核');
+	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle',title);
 	$("#fileshow").hide();
 	initListener();//初始化扣款比例监听
 	$('#deductfrom').form('clear');
