@@ -439,7 +439,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
 			}
 		}else{
-			if(corpvo != null && StringUtil.isEmpty(corpvo.getChargedeptname())){
+//			if(corpvo != null && StringUtil.isEmpty(corpvo.getChargedeptname())){
+			if(corpvo != null){
 				//从套餐取纳税人性质
 				if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
 					if(packmap != null && !packmap.isEmpty()){
