@@ -342,12 +342,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				vo.setVarea(corpvo.getCitycounty());
 			}
 			Map<String, String> packmap = queryPackageMap();
-			//从套餐取纳税人性质
-			if(!StringUtil.isEmpty(vo.getPk_packagedef())){
-				if(packmap != null && !packmap.isEmpty()){
-					vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
-				}
-			}
+//			//从套餐取纳税人性质
+//			if(!StringUtil.isEmpty(vo.getPk_packagedef())){
+//				if(packmap != null && !packmap.isEmpty()){
+//					vo.setChargedeptname(packmap.get(vo.getPk_packagedef()));
+//				}
+//			}
 			Integer cyclenum = 0;
 			if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
 				cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
