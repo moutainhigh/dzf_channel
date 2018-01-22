@@ -44,6 +44,16 @@ function load(){
 	  			}
 		}, {
 			width : '140',
+			title : '扣款比率(%)',
+			align:'center',
+            halign:'center',
+			field : 'propor',
+//			formatter : function(value,row,index){
+//				if(!isEmpty(value))
+//					return value+"%";
+//			}
+		},{
+			width : '140',
 			title : '付款类型',
 			align:'center',
             halign:'center',
@@ -277,14 +287,24 @@ function initDetailGrid(){
             halign:'center',
 			field : 'memo',
 		}, {
-			width : '140',
+			width : '100',
+			title : '扣款比率(%)',
+			align:'center',
+            halign:'center',
+			field : 'propor',
+//			formatter : function(value,row,index){
+//				if(!isEmpty(value))
+//					return value+"%";
+//			}
+		},{
+			width : '120',
 			title : '付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
 			formatter : npFormat
 		},{
-			width : '140',
+			width : '120',
 			title : '扣款金额',
 			align:'right',
             halign:'center',

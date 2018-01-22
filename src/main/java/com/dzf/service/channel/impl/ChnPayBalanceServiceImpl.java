@@ -87,6 +87,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						}else if(paytype == 2){
 							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
+							repvo.setIdeductpropor(vo.getIdeductpropor());
 						}
 					}
 				}
@@ -190,7 +191,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       ipaytype, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 1, npaymny, 0)) AS bail, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 2, npaymny, 0)) AS npaymny, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nusedmny, 0)) AS nusedmny \n") ; 
+		sql.append("       SUM(decode(ipaytype, 2, nusedmny, 0)) AS nusedmny, \n") ; 
+		sql.append("       MIN(ideductpropor) AS ideductpropor \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){

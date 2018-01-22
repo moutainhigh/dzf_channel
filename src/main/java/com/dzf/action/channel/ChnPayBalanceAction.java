@@ -190,8 +190,10 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			
 			//字符类型字段(取界面元素id)
 			List<String> list = new ArrayList<String>();
+			list.add("incode");
 			list.add("corpnm");
 			list.add("ptypenm");
+			list.add("propor");
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
 			util.setIscross(DZFBoolean.TRUE);
 			util.printMultiColumn(array, "付款单余额", heads, fields, widths, 20, list, null);		
@@ -235,6 +237,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			List<String> list = new ArrayList<String>();
 			list.add("ddate");
 			list.add("memo");
+			list.add("propor");
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
 			util.setIscross(DZFBoolean.TRUE);
@@ -270,6 +273,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		List<String> stringlist = new ArrayList<String>();
 		stringlist.add("ddate");
 		stringlist.add("memo");
+		stringlist.add("propor");
 		Map<String, String> name = null;
 		if(strlist == null){
 			return;

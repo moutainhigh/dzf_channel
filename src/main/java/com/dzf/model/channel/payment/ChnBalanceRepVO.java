@@ -47,6 +47,17 @@ public class ChnBalanceRepVO extends SuperVO{
     @FieldAlias("charge")
     private DZFDouble charge;//预付款
     
+    @FieldAlias("propor")
+    private Integer ideductpropor;//扣款比例
+    
+	public Integer getIdeductpropor() {
+		return ideductpropor;
+	}
+
+	public void setIdeductpropor(Integer ideductpropor) {
+		this.ideductpropor = ideductpropor;
+	}
+
 	public String getVpaytypename() {
 		return vpaytypename;
 	}

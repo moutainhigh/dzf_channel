@@ -123,8 +123,9 @@
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 		</div>
 		
-		<div id="detail_dialog" class="easyui-dialog" title="付款单余额明细" data-options="modal:true,closed:true" style="width:880px;height:500px;">
-			<div class="time_col" style="padding-top: 10px;width:90%;margin:0 auto;">
+		<div id="detail_dialog" class="easyui-dialog" title="付款单余额明细" 
+			data-options="modal:true,closed:true" style="width:940px;height:500px;">
+			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
 				<label style="text-align:right">查询：</label> 
 				<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
 				<label style="text-align:right">加盟商：</label> 
