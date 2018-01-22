@@ -470,7 +470,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 */
 	private void updateSerPackage(ContractConfrimVO paramvo) throws DZFWarpException{
-		if(paramvo.getPatchstatus() != null && paramvo.getPatchstatus() != 2){
+		if(paramvo.getPatchstatus() == null || (paramvo.getPatchstatus() != null && paramvo.getPatchstatus() != 2)){
 			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 			try {
 				if(packvo != null){
@@ -657,7 +657,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//4、回写套餐促销活动名额
 				updateSerPackage(confrimvo);
 				//5、回写客户纳税人性质
-				updateCorp(paramvo, packmap);
+				updateCorp(confrimvo, packmap);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(confrimvo);
 				if(!StringUtil.isEmpty(errmsg)){

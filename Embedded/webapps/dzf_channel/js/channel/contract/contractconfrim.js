@@ -465,6 +465,11 @@ function load(){
 			title : '套餐主键',
 			field : 'pid',
 			hidden : true
+		},{
+			width : '100',
+			title : '加盟商合同类型',
+			field : 'pstatus',
+			hidden : true
 		},] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
