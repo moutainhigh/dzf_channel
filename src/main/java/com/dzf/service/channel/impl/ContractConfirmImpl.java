@@ -907,13 +907,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			//变更后扣款金额 = 原扣款金额 - 退回扣款金额
 			DZFDouble nchangededutmny = SafeCompute.sub(ndeductmny, nreturnmny);
-			if(nreturnmny.compareTo(paramvo.getNreturnmny()) != 0){
+			if(nreturnmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNreturnmny()) != 0){
 				throw new BusinessException("退回扣款金额计算错误");
 			}
-			if(nchangetotalmny.compareTo(paramvo.getNchangetotalmny()) != 0){
+			if(nchangetotalmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNchangetotalmny()) != 0){
 				throw new BusinessException("变更后合同金额计算错误");
 			}
-			if(nchangededutmny.compareTo(paramvo.getNchangededutmny()) != 0){
+			if(nchangededutmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNchangededutmny()) != 0){
 				throw new BusinessException("变更后扣款金额计算错误");
 			}
 		}
