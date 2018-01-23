@@ -310,10 +310,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
 			sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
 		}
-		if(paramvo.getCorptype() == 1){
+		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
             sql.append(" AND con.chargedeptname = ? \n") ; 
             spm.addParam("小规模纳税人");
-        }else if(paramvo.getCorptype() == 2){
+        }else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
             sql.append(" AND con.chargedeptname = ? \n") ; 
             spm.addParam("一般纳税人");
         }
@@ -817,9 +817,18 @@ public class ContractConfirmImpl implements IContractConfirm {
 		paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
 		paramvo.setVchanger(cuserid);
 		paramvo.setDchangetime(new DZFDateTime());
+		//变更差额数据处理
+		//变更后合同总金额差额  = 原合同总金额 - 变更后合同金额
+		DZFDouble nsubtotalmny = SafeCompute.sub(paramvo.getNtotalmny(), paramvo.getNchangetotalmny());
+		//变更后合同扣款差额 = 原扣款金额 - 变更后扣款金额
+		DZFDouble nsubdeductmny = SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNchangededutmny());
+		paramvo.setNsubtotalmny(CommonUtil.getDZFDouble(nsubtotalmny).multiply(-1));
+		paramvo.setNsubdeductmny(CommonUtil.getDZFDouble(nsubdeductmny).multiply(-1));
+		
 		// 1、更新合同历史数据
 		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "ichangetype", "vchangeraeson", "vchangememo",
-				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus" });
+				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus",
+				"nsubtotalmny","nsubdeductmny" });
 		// 2、更新原合同数据
 		String sql = " update ynt_contract set vdeductstatus = ?, patchstatus = 3 where nvl(dr,0) = 0 and pk_corp = ? and pk_contract = ? ";
 		SQLParameter spm = new SQLParameter();

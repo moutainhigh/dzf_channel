@@ -180,11 +180,34 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("changer")
     private String vchanger; //变更人
     
+    @FieldAlias("changetime")
     private DZFDateTime dchangetime;//变更时间
+    
+    @FieldAlias("subtotalmny")
+    private DZFDouble nsubtotalmny;//变更后合同总金额差额
+    
+    @FieldAlias("subdeductmny")
+    private DZFDouble nsubdeductmny;//变更后合同扣款差额
     //变更合同字段end
     
 	public DZFBoolean getIsncust() {
 		return isncust;
+	}
+
+	public DZFDouble getNsubtotalmny() {
+		return nsubtotalmny;
+	}
+
+	public DZFDouble getNsubdeductmny() {
+		return nsubdeductmny;
+	}
+
+	public void setNsubtotalmny(DZFDouble nsubtotalmny) {
+		this.nsubtotalmny = nsubtotalmny;
+	}
+
+	public void setNsubdeductmny(DZFDouble nsubdeductmny) {
+		this.nsubdeductmny = nsubdeductmny;
 	}
 
 	public String getVchangememo() {
