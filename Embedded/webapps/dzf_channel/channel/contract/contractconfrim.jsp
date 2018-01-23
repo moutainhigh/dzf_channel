@@ -59,7 +59,7 @@
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">合同审核</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="bathAudit()">批量审核</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="change()">合同变更</a>
+					<!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="change()">合同变更</a> -->
 				</div>
 			</div>
 		</div>
