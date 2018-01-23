@@ -77,10 +77,10 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate ,");
-		sql.append(" sum(contract.ndeductmny)as ndeductmny,(balance.npaymny-balance.nusedmny) as outmny");
+		sql.append(" sum(nvl(contract.ndeductmny,0) - nvl(contract.nreturnmny,0)) as ndeductmny,(balance.npaymny-balance.nusedmny) as outmny");
 		sql.append(" from bd_account a");
         sql.append(" left join cn_balance balance on a.pk_corp = balance.pk_corp and balance.ipaytype = 2");
-        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and contract.vdeductstatus=1 ");
+        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9) ");
         sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0 and nvl(balance.dr, 0) = 0 and nvl(contract.dr, 0) = 0 ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
