@@ -131,8 +131,8 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		int length= vo.getDbegindate().length();
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        sql.append(" select a.pk_corp,sum(a.ndeductmny)as ndeductmny ,substr(a.deductdata,0,"+length+") as head");
-        sql.append(" from cn_contract a where a.vdeductstatus=1 and nvl(a.dr,0)=0 ");
+        sql.append(" select a.pk_corp,sum(nvl(a.ndeductmny,0) - nvl(a.nreturnmny,0)) as ndeductmny ,substr(a.deductdata,0,"+length+") as head");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
         sql.append(" and substr(a.deductdata,0,"+length+")>=? and substr(a.deductdata,0,"+length+")<=?  ");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());
