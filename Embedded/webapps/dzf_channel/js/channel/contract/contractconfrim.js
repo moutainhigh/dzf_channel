@@ -1031,6 +1031,7 @@ function change(){
 	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
 	$("#sfileshow").hide();
 	$('#changefrom').form('load',rows[0]);
+	$('#changememo').textbox('setValue',null);
 //	initdeductData(rows[0]);//初始化扣款数据
 	initChangeFileDoc(rows[0]);//初始化变更合同附件
 	initFileEvent();
@@ -1041,10 +1042,13 @@ function change(){
 	$("#changetype").val(1);
 }
 
+
+
 /**
  * 变更原因改变事件
  */
 function initChangeListener(){
+	$("#addclass").removeClass("decan");
 	//变更原因监听事件
 	$(":radio").click( function(){
 		var opertype = $('input:radio[name="chtype"]:checked').val();
