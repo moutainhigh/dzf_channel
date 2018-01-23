@@ -95,6 +95,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(confvo.getDenddate().compareTo(new DZFDate()) < 0){
 					confvo.setVdeductstatus(-2);//服务到期
 				}
+				if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3){
+					confvo.setNtotalmny(confvo.getNchangetotalmny());
+					confvo.setVendperiod(confvo.getVstopperiod());
+					confvo.setNdeductmny(confvo.getNchangededutmny());
+				}
 				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 				if(uservo != null){
 					confvo.setVopername(uservo.getUser_name());
