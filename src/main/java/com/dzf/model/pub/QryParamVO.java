@@ -77,7 +77,17 @@ public class QryParamVO extends SuperVO {
 	
 	private String[] corps;//渠道商ids
 	
-	public String getBeginperiod() {
+	private Integer corptype;
+	
+	public Integer getCorptype() {
+        return corptype;
+    }
+
+    public void setCorptype(Integer corptype) {
+        this.corptype = corptype;
+    }
+
+    public String getBeginperiod() {
 		return beginperiod;
 	}
 
