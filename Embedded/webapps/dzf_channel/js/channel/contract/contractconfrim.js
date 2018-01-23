@@ -1082,18 +1082,25 @@ function initChangeListener(){
 				});			
 				return;
 			}
-			
+			var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
 			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
 			var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
 			var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
+			if(getFloatValue(remny) < getFloatValue(0)){
+				remny = getFloatValue(0);
+			}
 			$('#remny').numberbox('setValue', remny);//退回扣款
 			var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
 			var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
 			var nchtlmny = snmsmny.mul(cnum).add(snbmny);
-			$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额
+			if(getFloatValue(remny) == getFloatValue(0)){
+				$('#nchtlmny').numberbox('setValue', sntlmny);//变更后合同金额 = 原合同金额
+			}else{
+				$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
+			}
 			var nchdemny = sndemny.sub(remny);
-			$('#nchdemny').numberbox('setValue', nchdemny);
+			$('#nchdemny').numberbox('setValue', nchdemny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
 		}
 	});
 }
@@ -1106,6 +1113,7 @@ function setChangeMny(opertype){
 	$('#stperiod').textbox('setValue', $("#period").val());
 	var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 	if(opertype == 1){//终止
+		var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
 		//退回扣款 = （原扣款金额/原收款期间）*（原开始期间到终止期间的期数）
 		//变更后合同金额 = 原月代账费 *（原开始期间到终止期间的期数）+ 账本费
 		//变更后扣款金额 = 原扣款金额-退回扣款
@@ -1115,13 +1123,20 @@ function setChangeMny(opertype){
 		var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
 		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
 		var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
+		if(getFloatValue(remny) < getFloatValue(0)){
+			remny = getFloatValue(0);
+		}
 		$('#remny').numberbox('setValue', remny);//退回扣款
 		var snmsmny = getFloatValue($('#snmsmny').numberbox('getValue'));//原月代账费
 		var snbmny = getFloatValue($('#snbmny').numberbox('getValue'));//账本费
 		var nchtlmny = snmsmny.mul(cnum).add(snbmny);
-		$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额
+		if(getFloatValue(remny) == getFloatValue(0)){
+			$('#nchtlmny').numberbox('setValue', sntlmny);//变更后合同金额 = 原合同金额
+		}else{
+			$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
+		}
 		var nchdemny = sndemny.sub(remny);
-		$('#nchdemny').numberbox('setValue', nchdemny);
+		$('#nchdemny').numberbox('setValue', nchdemny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
 	}else if(opertype == 2){//作废
 		//退回扣款 = 原扣款金额
 		//变更后合同金额 = 0

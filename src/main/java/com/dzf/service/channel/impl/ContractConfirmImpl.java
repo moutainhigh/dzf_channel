@@ -26,6 +26,7 @@ import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.demp.contract.ContractDocVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -43,6 +44,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
+import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IContractConfirm;
 
 @Service("contractconfser")
@@ -868,6 +870,43 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 3){
 			throw new BusinessException("该合同已变更，不允许再次变更");
+		}
+		if(paramvo.getIchangetype() == 1){
+			//再次计算退回扣款相关金额并进行校验
+			DZFDouble ntotalmny = oldvo.getNtotalmny();// 原合同总金额
+			String vbeginperiod = oldvo.getVbeginperiod();//合同开始期间
+			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
+			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
+			Integer vchargecycle = Integer.parseInt(oldvo.getVchargecycle());//原收款周期
+			DZFDouble ndeductmny = oldvo.getNdeductmny();//原扣款金额
+			//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
+			DZFDouble midmny = CommonUtil.getDZFDouble(ndeductmny).div(
+					CommonUtil.getDZFDouble(vchargecycle)).multiply(CommonUtil.getDZFDouble(changenum));
+			DZFDouble nreturnmny = SafeCompute.sub(ndeductmny, midmny);//退回扣款金额
+			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) < 0){
+				nreturnmny = DZFDouble.ZERO_DBL;
+			}
+			//变更后合同金额 = 原月代账费  *（原开始期间到终止期间的期数）+ 账本费
+			DZFDouble nmservicemny = oldvo.getNmservicemny(); // 每月服务费
+			DZFDouble nbookmny = oldvo.getNbookmny(); // 账本费
+			DZFDouble nchangetotalmny = DZFDouble.ZERO_DBL;
+			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) == 0){
+				nchangetotalmny = ntotalmny;
+			}else{
+				nchangetotalmny = SafeCompute.multiply(nmservicemny, 
+						CommonUtil.getDZFDouble(changenum)).add(CommonUtil.getDZFDouble(nbookmny));
+			}
+			//变更后扣款金额 = 原扣款金额 - 退回扣款金额
+			DZFDouble nchangededutmny = SafeCompute.sub(ndeductmny, nreturnmny);
+			if(nreturnmny.compareTo(paramvo.getNreturnmny()) != 0){
+				throw new BusinessException("退回扣款金额计算错误");
+			}
+			if(nchangetotalmny.compareTo(paramvo.getNchangetotalmny()) != 0){
+				throw new BusinessException("变更后合同金额计算错误");
+			}
+			if(nchangededutmny.compareTo(paramvo.getNchangededutmny()) != 0){
+				throw new BusinessException("变更后扣款金额计算错误");
+			}
 		}
 	}
 	
