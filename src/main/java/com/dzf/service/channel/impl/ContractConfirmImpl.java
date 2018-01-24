@@ -768,7 +768,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		confrimvo.setVconfreason(paramvo.getVconfreason());//驳回原因
 		DZFDouble countmny = SafeCompute.sub(confrimvo.getNtotalmny(), confrimvo.getNbookmny());
 		DZFDouble ndeductmny = countmny.multiply(confrimvo.getIdeductpropor()).div(100);
-		confrimvo.setNdeductmny(ndeductmny);
+		confrimvo.setNdeductmny(ndeductmny.setScale(2, DZFDouble.ROUND_HALF_UP));//批量审核扣款金额精度控制，直接四舍五入保留两位小数
 	}
 
 	@Override
