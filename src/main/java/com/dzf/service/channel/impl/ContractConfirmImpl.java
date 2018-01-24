@@ -832,16 +832,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus",
 				"nsubtotalmny","nsubdeductmny" });
 		// 2、更新原合同数据
-		String sql = " update ynt_contract set vdeductstatus = ?, patchstatus = 3 where nvl(dr,0) = 0 and pk_corp = ? and pk_contract = ? ";
+		StringBuffer sql = new StringBuffer();
+		sql.append("update ynt_contract \n") ;
+		sql.append("   set vdeductstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
+		sql.append(" where nvl(dr, 0) = 0 \n") ; 
+		sql.append("   and pk_corp = ? \n") ; 
+		sql.append("   and pk_contract = ? \n");
 		SQLParameter spm = new SQLParameter();
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
+		spm.addParam(new DZFDateTime());
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
-		singleObjectBO.executeUpdate(sql, spm);
+		singleObjectBO.executeUpdate(sql.toString(), spm);
 		// 3、上传变更合同附件
 		saveContDocVO(paramvo, files, filenames, cuserid);
 		//4、更新合同变更后余额及余额明细表
