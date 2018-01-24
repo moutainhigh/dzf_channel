@@ -241,12 +241,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
 			sql.append(" AND nvl(patchstatus, 0) = 2 \n") ;
 		}
-		if(paramvo.getCorptype() == 1){
-		    sql.append(" AND chargedeptname = ? \n") ; 
-            spm.addParam("小规模纳税人");
-		}else if(paramvo.getCorptype() == 2){
-		    sql.append(" AND chargedeptname = ? \n") ; 
-            spm.addParam("一般纳税人");
+		if(paramvo.getCorptype()!=null){
+			if(paramvo.getCorptype() == 1){
+			    sql.append(" AND chargedeptname = ? \n") ; 
+	            spm.addParam("小规模纳税人");
+			}else if(paramvo.getCorptype() == 2){
+			    sql.append(" AND chargedeptname = ? \n") ; 
+	            spm.addParam("一般纳税人");
+			}
 		}
 		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
