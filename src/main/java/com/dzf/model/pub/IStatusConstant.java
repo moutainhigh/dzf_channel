@@ -8,12 +8,12 @@ public interface IStatusConstant {
 	public static int ICHNOPRATETYPE_4 = 4; 
 	
 //	/** 合同扣款状态(1：待审核；2：已审核；3：已驳回；4：服务到期；) */
-	/** 合同扣款状态(5：待审核；1：已审核；7：已驳回；8：服务到期；9：已终止；10：已作废；) */
+	/** 合同扣款状态(5：待审核；1：已审核；7：已驳回；8：服务到期；3：已终止；10：已作废；) */
 	public static int IDEDUCTSTATUS_5 = 5;
 	public static int IDEDUCTSTATUS_1 = 1;
 	public static int IDEDUCTSTATUS_7 = 7;
 	public static int IDEDUCTSTATUS_8 = 8;
-	public static int IDEDUCTSTATUS_9 = 9;
+	public static int IDEDUCTSTATUS_3 = 3;
 	public static int IDEDUCTSTATUS_10 = 10;
 
 	/** 合同扣款确认/取消扣款操作 (1：扣款；2：驳回；) */

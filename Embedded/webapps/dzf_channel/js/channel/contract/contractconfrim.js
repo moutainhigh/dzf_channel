@@ -432,7 +432,7 @@ function load(){
 					return '拒绝审核';
 				if (value == '8')
 					return '服务到期';
-				if (value == '9')
+				if (value == '3')
 					return '已终止';
 				if (value == '10')
 					return '已作废';
@@ -991,7 +991,7 @@ function change(){
 		});			
 		return;
 	}
-//	if(rows[0].destatus == 9){
+//	if(rows[0].destatus == 3){
 //		Public.tips({
 //			content : '合同状态为已终止',
 //			type : 2

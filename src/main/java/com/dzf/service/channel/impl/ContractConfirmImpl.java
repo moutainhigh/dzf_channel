@@ -542,11 +542,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateContract(ContractConfrimVO paramvo, Integer opertype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vconfreason = ? ,");
+		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vstatus = ?, vconfreason = ? ,");
 		sql.append(" tstamp = ? WHERE nvl(dr,0) = 0 AND pk_corp = ? AND pk_contract = ? ");
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 		}
 		if(StringUtil.isEmpty(paramvo.getVconfreason())){
@@ -808,7 +810,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throws DZFWarpException {
 		checkBeforeChange(paramvo);
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
+			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_1);
 			paramvo.setVchangeraeson("C端客户终止，变更合同");
 		} else if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
@@ -834,14 +836,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		// 2、更新原合同数据
 		StringBuffer sql = new StringBuffer();
 		sql.append("update ynt_contract \n") ;
-		sql.append("   set vdeductstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
+		sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
 		sql.append(" where nvl(dr, 0) = 0 \n") ; 
 		sql.append("   and pk_corp = ? \n") ; 
 		sql.append("   and pk_contract = ? \n");
 		SQLParameter spm = new SQLParameter();
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
 		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
 		spm.addParam(new DZFDateTime());
