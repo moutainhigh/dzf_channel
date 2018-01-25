@@ -204,10 +204,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			}
 			singleObjectBO.saveObject("000001", detvo);
 			billvo.setVstatus(opertype);
-			billvo.setCoperatorid(cuserid);
+//			billvo.setCoperatorid(cuserid);
+			billvo.setVconfirmid(cuserid);
 			billvo.setDconfirmtime(new DZFDateTime());
 			billvo.setTstamp(new DZFDateTime());
-			singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
+			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
 		}
@@ -261,10 +262,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				singleObjectBO.executeUpdate(sql, spm);
 			}
 			billvo.setVstatus(opertype);
-			billvo.setCoperatorid(cuserid);
+//			billvo.setCoperatorid(cuserid);
+			billvo.setVconfirmid(null);
 			billvo.setDconfirmtime(null);
 			billvo.setTstamp(new DZFDateTime());
-			singleObjectBO.update(billvo, new String[]{"vstatus","coperatorid", "dconfirmtime", "tstamp"});
+			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
 		}
