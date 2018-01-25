@@ -58,7 +58,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<String> pklist = new ArrayList<String>();
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
 		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == 1 || 
-				paramvo.getVdeductstatus() == 9 || paramvo.getVdeductstatus() == 10 
+				paramvo.getVdeductstatus() == 3 || paramvo.getVdeductstatus() == 10 
 				|| paramvo.getVdeductstatus() == -2 )) || 
 				!StringUtil.isEmpty(paramvo.getPk_bill())){//查询审核通过数据 （1、合同状态为已审核；2、或别的界面<付款单余额>联查到此界面）
 			qryContractConData(paramvo, pklist, retlist);
@@ -196,7 +196,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append(" nvl(dr,0) = 0 ");
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == -2){
-				sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
+				sql.append(" AND vdeductstatus in (1, 3, 10) \n") ;
 				sql.append(" AND vendperiod < ? ");
 				DZFDate date = new DZFDate();
 				spm.addParam(date.getYear()+"-"+date.getStrMonth());
@@ -205,7 +205,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm.addParam(paramvo.getVdeductstatus());
 			}
 		}else{
-			sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
+			sql.append(" AND vdeductstatus in (1, 3, 10) \n") ;
 		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND dsubmitime >= ? \n") ; 
