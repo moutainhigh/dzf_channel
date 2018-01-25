@@ -80,7 +80,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append(" sum(nvl(contract.ndeductmny,0) - nvl(contract.nreturnmny,0)) as ndeductmny,(balance.npaymny-balance.nusedmny) as outmny");
 		sql.append(" from bd_account a");
         sql.append(" left join cn_balance balance on a.pk_corp = balance.pk_corp and balance.ipaytype = 2");
-        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9) ");
+        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 3) ");
         sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0 and nvl(balance.dr, 0) = 0 and nvl(contract.dr, 0) = 0 ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
@@ -132,7 +132,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
         sql.append(" select a.pk_corp,sum(nvl(a.ndeductmny,0) - nvl(a.nreturnmny,0)) as ndeductmny ,substr(a.deductdata,0,"+length+") as head");
-        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 3) and nvl(a.dr,0)=0 ");
         sql.append(" and substr(a.deductdata,0,"+length+")>=? and substr(a.deductdata,0,"+length+")<=?  ");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());
