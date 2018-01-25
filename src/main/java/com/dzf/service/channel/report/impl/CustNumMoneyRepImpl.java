@@ -160,7 +160,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname, \n") ; 
 		sql.append("               t.pk_corp AS pk_corp, \n") ; 
 		sql.append("               t.pk_corpk AS pk_corpk, \n") ; 
-		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny \n") ;
+		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 3 THEN t.nchangetotalmny END AS ntotalmny \n") ;
 //		sql.append("               t.ntotalmny AS ntotalmny \n") ; 
 //		sql.append("          FROM ynt_contract t \n") ; 
 		sql.append("          FROM cn_contract t \n") ; 
@@ -218,7 +218,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("       SUM(ntotalmny) AS summny\n");
 		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
 		sql.append("               t.pk_corp AS pk_corp,\n");
-		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny, \n") ;
+		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 3 THEN t.nchangetotalmny END AS ntotalmny, \n") ;
 //		sql.append("               t.ntotalmny AS ntotalmny,\n");
 		sql.append("               t.pk_corpk AS pk_corpk\n");
 		sql.append("          FROM cn_contract t\n");
