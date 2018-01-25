@@ -7,6 +7,7 @@
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
 </head>
 <body>
+
 <style>
 	.mod-corp{ width: 90%;margin: 4px auto;text-align:center;}
 	.mod-corp input{ border: 1px #ddd solid; width: 87%; height: 30px;  padding: 0px 5px; color: #666;border-radius: 5px; background-color: #fff; text-align: center;outline: none;}
@@ -23,7 +24,7 @@ $(document).ready(function(){
 		 }
 		});
 });//enter 键代替tab键换行        end
-var JPlaceHolder = {
+ var JPlaceHolder = {
 	    //检测
 	    _check : function(){
 	        return 'placeholder' in document.createElement('input');
@@ -54,7 +55,7 @@ var JPlaceHolder = {
 	            });
 	        });
 	    }
-	};
+	}; 
 var rows = null;
 $(function(){
 	var params = new Object();
@@ -75,7 +76,7 @@ $(function(){
 	     		  {field:'incode',title:'公司编码',width:500},
 	              {field:'uname',title:'公司名称',width:500}
 	   	 ]],
-		onDblClickRow(rowIndex, rowData){
+		onDblClickRow:function(rowIndex, rowData){
 			var rowTable = $('#gsTable').datagrid('getSelections');
 			if(rowTable && rowTable[rowTable.length-1] == rowData){
 				//如果最后选择的数据和双击的数据一样，则不重复
@@ -92,7 +93,7 @@ $(function(){
 		}
 	});
 
-	   $('#unitcode').bind('keypress',function(event){
+	 $('#unitcode').bind('keypress',function(event){
 	       if(event.keyCode == "13") {//Enter 键事件
 	    	   var filtername = $("#unitcode").val(); ; 
 	      		var params = new Object();
@@ -100,15 +101,17 @@ $(function(){
 	      		params["corpcode"] = filtername;
 	      		grid.datagrid('load',params); 
 	       }
-	   });
-	JPlaceHolder.init(); 
+	   }); 
+	//JPlaceHolder.init(); 
 });
 </script>
 	<div  id="cardList">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-corp">
-					<input id="unitcode" placeholder="请输入编码或名称查询" />
+					<input id="unitcode" value="请输入编码或名称" 
+						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
+						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
 				</div>
 			</div>
 		</div>

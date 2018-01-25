@@ -8,7 +8,7 @@ $(function() {
 	initQueryData();
 	initChannel();
 	initCorpk();
-	$('#corpkna_ae').combobox('readonly',true);
+	$('#corpkna_ae').textbox('readonly',true);
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
@@ -102,9 +102,9 @@ function dClickCompany(rowTable){
 		$("#corpkid_ae").val(null);
 		$("#corpkna_ae").textbox("setValue",null);
 		if(!isEmpty(rowTable.length)&&rowTable.length==1){
-			$('#corpkna_ae').combobox('readonly',false);
+			$('#corpkna_ae').textbox('readonly',false);
 		}else{
-			$('#corpkna_ae').combobox('readonly',true);
+			$('#corpkna_ae').textbox('readonly',true);
 		}
 		
 		$("#channel_select").textbox("setValue",str);
