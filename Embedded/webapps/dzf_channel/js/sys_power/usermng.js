@@ -248,8 +248,8 @@ function load(){
 		idField : 'uid',
 		striped:true,
 		height : Public.setGrid(0,'dataGrid').h,
-		columns : [ [{ width : '100', title : '用户编码', field : 'ucode' },
-		             { width : '100', title : '用户名称', field : 'uname' },
+		columns : [ [{ width : '150', title : '用户编码', field : 'ucode' },
+		             { width : '150', title : '用户名称', field : 'uname' },
 		             { width : '100', title : '生效时间', field : 'en_time' },
 		             { width : '100', title : '失效时间', field : 'dis_time'},
 		             { width : '100',title : '锁定标志', field : 'lock_flag',align:'center' },//, formatter:formatCheckBox
