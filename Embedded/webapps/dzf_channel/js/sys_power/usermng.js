@@ -93,7 +93,7 @@ function edit() {
    	   $('#editOne').show();
 	   $('#addNew').hide();
 	   status="edit";
-	   $('#ucode').textbox({'readonly': true});
+//	   $('#ucode').textbox({'readonly': true});
 }
 
 function onSave(cls) {
