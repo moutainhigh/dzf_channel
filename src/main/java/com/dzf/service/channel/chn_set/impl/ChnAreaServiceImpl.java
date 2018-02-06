@@ -91,7 +91,8 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		SuperVO[] bvos = (SuperVO[])vo.getTableVO("cn_chnarea_b");
 		vo.setChildren(bvos);
 		for (SuperVO superVO : bvos) {
-			if(!checkAreaIsOnly((ChnAreaBVO)superVO)){
+			ChnAreaBVO chn=(ChnAreaBVO)superVO;
+			if(chn.getDr()==0&&!checkAreaIsOnly(chn)){
 				throw new BusinessException("省市地区重复,请重新输入");
 			};
 		}

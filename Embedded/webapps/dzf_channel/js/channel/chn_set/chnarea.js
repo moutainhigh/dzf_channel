@@ -239,10 +239,10 @@ function save() {
 		childBody1 = childBody1 + JSON.stringify(rows[i]);
 	}
 	var childBody1d="";
-	if(status!="add"){
-		var rows = $("#cardGrid").datagrid('getChanges','deleted');
-		for (var i = 0; i< rows.length; i++) {
-			childBody1d = childBody1d + JSON.stringify(rows[i]);
+	var d_rows = $("#cardGrid").datagrid('getChanges','deleted');
+	if(!isEmpty(d_rows)){
+		for (var i = 0; i< d_rows.length; i++) {
+			childBody1d = childBody1d + JSON.stringify(d_rows[i]);
 		}
 	}
 	var postdata = new Object();
