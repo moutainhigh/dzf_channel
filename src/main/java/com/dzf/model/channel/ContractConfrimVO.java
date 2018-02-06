@@ -97,7 +97,7 @@ public class ContractConfrimVO extends SuperVO {
 	private DZFDouble nbalance;//余额
 	
     @FieldAlias("operatorid")
-    private String coperatorid; // 制单人
+    private String coperatorid; // 制单人（审核人）
     
     @FieldAlias("contcycle")
     private Integer icontractcycle;//合同周期
