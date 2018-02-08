@@ -57,12 +57,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<String> pklist = new ArrayList<String>();
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
-		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == 1 || 
-				paramvo.getVdeductstatus() == 3 || paramvo.getVdeductstatus() == 10 
-				|| paramvo.getVdeductstatus() == -2 )) || 
+		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_1 || 
+				paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_9 
+				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_10 
+				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8 )) || 
 				!StringUtil.isEmpty(paramvo.getPk_bill())){//查询审核通过数据 （1、合同状态为已审核；2、或别的界面<付款单余额>联查到此界面）
 			qryContractConData(paramvo, pklist, retlist);
-		}else if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == 5){//查询待审核合同数据（合同状态为待审核）
+		}else if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_5){//查询待审核合同数据（合同状态为待审核）
 			qryContractData(paramvo, pklist, retlist);
 		}else{
 			//1、已审核合同数据
@@ -95,7 +96,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			CorpVO corpvo = null;
 			for(ContractConfrimVO confvo : confVOs){
 				if(confvo.getDenddate().compareTo(new DZFDate()) < 0){
-					confvo.setVdeductstatus(-2);//服务到期
+					confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);//服务到期
+					confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);//服务到期
 				}
 				if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3){
 					confvo.setNtotalmny(confvo.getNchangetotalmny());
@@ -195,8 +197,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		SQLParameter spm = new SQLParameter();
 		sql.append(" nvl(dr,0) = 0 ");
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == -2){
-				sql.append(" AND vdeductstatus in (1, 3, 10) \n") ;
+			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8){
+				sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
 				sql.append(" AND vendperiod < ? ");
 				DZFDate date = new DZFDate();
 				spm.addParam(date.getYear()+"-"+date.getStrMonth());
@@ -205,7 +207,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm.addParam(paramvo.getVdeductstatus());
 			}
 		}else{
-			sql.append(" AND vdeductstatus in (1, 3, 10) \n") ;
+			sql.append(" AND vdeductstatus in (1, 9, 10) \n") ;
 		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND dsubmitime >= ? \n") ; 
@@ -221,11 +223,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		    sql.append(" AND pk_corp in (").append(inSql).append(")");
 		}
 		if(paramvo.getIsncust() != null){
-			sql.append(" AND nvl(isncust,'N') =? \n") ; 
+			sql.append(" AND nvl(isncust,'N') = ? \n") ; 
 			spm.addParam(paramvo.getIsncust());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
-			sql.append(" AND pk_corpk=? \n") ; 
+			sql.append(" AND pk_corpk = ? \n") ; 
 			spm.addParam(paramvo.getPk_corpk());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
@@ -285,7 +287,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 //		}else{
 //	
 //		}
-		sql.append("   AND con.vdeductstatus = 5 \n");//加盟商合同状态 = 待审核
+		sql.append("   AND con.vdeductstatus = ? \n");//加盟商合同状态 = 待审核
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_5);
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND con.dsubmitime >= ? \n") ; 
 			spm.addParam(paramvo.getBegdate() + " 00:00:00");
@@ -438,6 +441,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				updateContract(paramvo, opertype);
 				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+				paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(paramvo);
 			}
 		} finally {
@@ -498,7 +502,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 			try {
 				if(packvo != null){
-					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 60);
+					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 30);
 					Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 					Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
 					if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
@@ -522,6 +526,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 */
 	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException{
 		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
+		paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		paramvo.setTstamp(new DZFDateTime());
 		paramvo.setDeductdata(new DZFDate());
 		paramvo.setDeductime(new DZFDateTime());
@@ -694,6 +699,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				confrimvo.setVconfreason(paramvo.getVconfreason());
 				updateContract(confrimvo, opertype);
 				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+				confrimvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(confrimvo);
 			}
 		} finally {
@@ -810,11 +816,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throws DZFWarpException {
 		checkBeforeChange(paramvo);
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_3);
+			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
+			paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_9);
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_1);
 			paramvo.setVchangeraeson("C端客户终止，变更合同");
 		} else if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_10);
+			paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_10);
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
 			paramvo.setVchangeraeson("提重了，合同作废");
 		}
@@ -842,8 +850,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   and pk_contract = ? \n");
 		SQLParameter spm = new SQLParameter();
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_3);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);

@@ -436,7 +436,7 @@ function load(){
 					return '已终止';
 				if (value == '10')
 					return '已作废';
-				if (value == '-2')
+				if (value == '8')
 					return '服务到期';
 			}
 		}, {
