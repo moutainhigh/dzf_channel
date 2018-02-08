@@ -109,7 +109,7 @@ public class UrlFilter implements Filter {
 		    if(!url.equals(contextPath+"/sys/sm_user!channelLogin.action") && !url.equals(contextPath+"/")  && !url.equals(contextPath+"/index.jsp") 
 		    		&& !url.equals(contextPath+"/sys/sm_user!logout.action")
 		    		){
-		    	Set<String> powerMap = (Set<String>)session.getAttribute(IGlobalConstants.POWER_MAP);
+		    	Set<Integer> powerMap = (Set<Integer>)session.getAttribute(IGlobalConstants.POWER_MAP);
 				boolean b=false;
 				if(powerMap != null && (isHavePower(powerMap, url.replace(contextPath, "")))){
 					try{
@@ -161,9 +161,9 @@ public class UrlFilter implements Filter {
 	 * @param url
 	 * @return
 	 */
-	private boolean isHavePower(Set<String> powerMap,String url){
+	private boolean isHavePower(Set<Integer> powerMap,String url){
 		boolean returnBoolean =false;
-		Iterator<String> iterator=powerMap.iterator();
+		Iterator<Integer> iterator=powerMap.iterator();
 		while(iterator.hasNext()){
 			String powerUrl=NodeUrlConst.getInstance().getUrlMap().get(iterator.next());
 			if(powerUrl!=null){
