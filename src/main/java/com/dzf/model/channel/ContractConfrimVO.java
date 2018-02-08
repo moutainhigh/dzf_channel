@@ -97,7 +97,7 @@ public class ContractConfrimVO extends SuperVO {
 	private DZFDouble nbalance;//余额
 	
     @FieldAlias("operatorid")
-    private String coperatorid; // 制单人（审核人）
+    private String coperatorid; // 审核人
     
     @FieldAlias("contcycle")
     private Integer icontractcycle;//合同周期
@@ -152,7 +152,7 @@ public class ContractConfrimVO extends SuperVO {
     private String pk_source;//补提交的合同来源主键
     
     @FieldAlias("pstatus")
-    private Integer patchstatus;// 加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
+    private Integer patchstatus;// 加盟合同类型（null正常合同；1：被补提交的合同；2：补提交的合同；3：变更合同）
     //补单字段end
     
     //变更合同字段begin：
