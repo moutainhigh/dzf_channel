@@ -158,35 +158,38 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	/**
 	 * 获取附件显示图片
 	 */
-	public void getAttachImage(){
+	public void getAttachImage() {
 		InputStream is = null;
 		try {
 			ChnPayBillVO vo = new ChnPayBillVO();
 			vo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), vo);
-			if(StringUtil.isEmpty(vo.getPk_paybill())){
+			if (StringUtil.isEmpty(vo.getPk_paybill())) {
 				throw new BusinessException("主键为空");
 			}
 			vo = payconfSer.queryByID(vo.getPk_paybill());
 			boolean isexists = true;
-			if(vo==null){
+			if (vo == null) {
 				isexists = false;
 			}
-			 String fpath = vo.getVfilepath();
-			 File afile = new File(fpath);
-			 if(!afile.exists()){
-				 isexists = false;
-			 }
-			 if(isexists){
-				 String path = getRequest().getSession().getServletContext().getRealPath("/");
-				 String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
-				 OutputStream os = getResponse().getOutputStream();
-				 is = new FileInputStream(afile);
-				 IOUtils.copy(is, os);
-			 }
+			String fpath = "";
+			if(vo != null){
+				fpath = vo.getVfilepath();
+			}
+			File afile = new File(fpath);
+			if (!afile.exists()) {
+				isexists = false;
+			}
+			if (isexists) {
+				String path = getRequest().getSession().getServletContext().getRealPath("/");
+				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
+				OutputStream os = getResponse().getOutputStream();
+				is = new FileInputStream(afile);
+				IOUtils.copy(is, os);
+			}
 		} catch (Exception e) {
-			
-		}finally{
-			if(is!=null){
+
+		} finally {
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
