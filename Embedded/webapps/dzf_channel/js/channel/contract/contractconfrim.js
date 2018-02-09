@@ -432,12 +432,10 @@ function load(){
 					return '拒绝审核';
 				if (value == '8')
 					return '服务到期';
-				if (value == '3')
+				if (value == '9')
 					return '已终止';
 				if (value == '10')
 					return '已作废';
-				if (value == '8')
-					return '服务到期';
 			}
 		}, {
 			width : '100',
@@ -1081,7 +1079,7 @@ function initChangeListener(){
 			if(n < sbperiod || n > seperiod){
 				$('#stperiod').textbox('setValue', o);
 				Public.tips({
-					content : '终止期间不能在服务期间之外',
+					content : '终止期间不能在服务期间之外，请重新选择终止期间',
 					type : 2
 				});			
 				return;
