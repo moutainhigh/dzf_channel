@@ -152,10 +152,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 //				}
 				cyclenum = 0;
 				if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
-					cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
-					vo.setVchargecycle(String.valueOf(cyclenum));//收款周期
+					cyclenum = vo.getIcyclenum() * CommonUtil.getInteger(vo.getIreceivcycle());
+					vo.setIreceivcycle(cyclenum);//收款周期
 				}else{
-					vo.setVchargecycle(null);//收款周期
+					vo.setIreceivcycle(null);//收款周期
 				}
 				if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
 					if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -376,10 +376,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 //			}
 			Integer cyclenum = 0;
 			if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
-				cyclenum = vo.getIcyclenum() * (Integer.parseInt(vo.getVchargecycle()));
-				vo.setVchargecycle(String.valueOf(cyclenum));//收款周期
+				cyclenum = vo.getIcyclenum() * CommonUtil.getInteger(vo.getIreceivcycle());
+				vo.setIreceivcycle(cyclenum);//收款周期
 			}else{
-				vo.setVchargecycle(null);//收款周期
+				vo.setIreceivcycle(null);//收款周期
 			}
 			return vo;
 		}
@@ -500,8 +500,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateSerPackage(ContractConfrimVO paramvo) throws DZFWarpException{
 		if(paramvo.getPatchstatus() == null || (paramvo.getPatchstatus() != null && paramvo.getPatchstatus() != 2)){
 			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
-			try {
-				if(packvo != null){
+			if(packvo != null){
+				try {
 					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 30);
 					Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 					Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
@@ -512,9 +512,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 					}
 					packvo.setIusenum(num + 1);
 					singleObjectBO.update(packvo, new String[]{"iusenum"});
+				} finally {
+					LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef());
 				}
-			} finally {
-				LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef());
 			}
 		}
 	}
@@ -829,6 +829,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
 		paramvo.setVchanger(cuserid);
 		paramvo.setDchangetime(new DZFDateTime());
+		paramvo.setTstamp(new DZFDateTime());
 		//变更差额数据处理
 		//变更后合同总金额差额  = 原合同总金额 - 变更后合同金额
 		DZFDouble nsubtotalmny = SafeCompute.sub(paramvo.getNtotalmny(), paramvo.getNchangetotalmny());
@@ -838,9 +839,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		paramvo.setNsubdeductmny(CommonUtil.getDZFDouble(nsubdeductmny).multiply(-1));
 		
 		// 1、更新合同历史数据
-		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "ichangetype", "vchangeraeson", "vchangememo",
+		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "vstatus","ichangetype", "vchangeraeson", "vchangememo",
 				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus",
-				"nsubtotalmny","nsubdeductmny" });
+				"nsubtotalmny","nsubdeductmny","tstamp" });
 		// 2、更新原合同数据
 		StringBuffer sql = new StringBuffer();
 		sql.append("update ynt_contract \n") ;
@@ -906,11 +907,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			String vbeginperiod = oldvo.getVbeginperiod();//合同开始期间
 			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
 			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
-			Integer vchargecycle = Integer.parseInt(oldvo.getVchargecycle());//原收款周期
+			Integer ireceivcycle = CommonUtil.getInteger(oldvo.getIreceivcycle());//原收款周期
 			DZFDouble ndeductmny = oldvo.getNdeductmny();//原扣款金额
 			//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
 			DZFDouble midmny = CommonUtil.getDZFDouble(ndeductmny).div(
-					CommonUtil.getDZFDouble(vchargecycle)).multiply(CommonUtil.getDZFDouble(changenum));
+					CommonUtil.getDZFDouble(ireceivcycle)).multiply(CommonUtil.getDZFDouble(changenum));
 			DZFDouble nreturnmny = SafeCompute.sub(ndeductmny, midmny);//退回扣款金额
 			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) < 0){
 				nreturnmny = DZFDouble.ZERO_DBL;

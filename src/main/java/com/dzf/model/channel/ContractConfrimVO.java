@@ -106,7 +106,7 @@ public class ContractConfrimVO extends SuperVO {
     private Integer icontractcycle;//合同周期
     
     @FieldAlias("chgcycle")
-    private String vchargecycle; // 收款周期
+    private String vchargecycle; // 收款周期 （此字段已废弃）
     
     @FieldAlias("adviser")
     private String vadviser;//销售顾问
@@ -193,6 +193,17 @@ public class ContractConfrimVO extends SuperVO {
     private DZFDouble nsubdeductmny;//变更后合同扣款差额
     //变更合同字段end
     
+    @FieldAlias("recycle")
+    private Integer ireceivcycle;//加盟商收款周期
+    
+	public Integer getIreceivcycle() {
+		return ireceivcycle;
+	}
+
+	public void setIreceivcycle(Integer ireceivcycle) {
+		this.ireceivcycle = ireceivcycle;
+	}
+
 	public DZFBoolean getIsncust() {
 		return isncust;
 	}

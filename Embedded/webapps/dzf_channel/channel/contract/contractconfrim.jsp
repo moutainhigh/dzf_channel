@@ -289,7 +289,7 @@
 							</div>
 							<div class="decan" style="width:24%;display:inline-block;">
 								<label style="width:40%;text-align: right;">收款周期(月)：</label>
-								<input id="chgcycle" name="chgcycle" class="easyui-textbox" data-options="readonly:true" 
+								<input id="recycle" name="recycle" class="easyui-textbox" data-options="readonly:true" 
 									style="width: 56%; height: 28px; text-align:left;">
 							</div>
 							<div class="decan" style="width:24%;display:inline-block;">
@@ -538,7 +538,7 @@
 							</div>
 							<div class="decan" style="width:24%;display:inline-block;">
 								<label style="width:40%;text-align: right;">收款周期(月)：</label>
-								<input id="schgcycle" name="chgcycle" class="easyui-textbox" data-options="readonly:true" 
+								<input id="srecycle" name="recycle" class="easyui-textbox" data-options="readonly:true" 
 									style="width: 56%; height: 28px; text-align:left;">
 							</div>
 							<div class="decan" style="width: 48%;display:inline-block;">

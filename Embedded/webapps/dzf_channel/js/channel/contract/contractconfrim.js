@@ -362,7 +362,7 @@ function load(){
 			title : '收款周期(月)',
 			align : 'center',
 			halign : 'center',
-			field : 'chgcycle',
+			field : 'recycle',
 		}, {
 			width : '120',
 			title : '开始日期',
@@ -1089,8 +1089,8 @@ function initChangeListener(){
 			var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
 			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
-			var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
-			var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
+			var srecycle = getFloatValue($("#srecycle").val());//原收款周期
+			var remny = sndemny.sub(sndemny.div(srecycle).mul(cnum));
 			if(getFloatValue(remny) < getFloatValue(0)){
 				remny = getFloatValue(0);
 			}
@@ -1124,9 +1124,9 @@ function setChangeMny(opertype){
 		var sbperiod = $("#sbperiod").val();//开始期间
 		var stperiod = $("#stperiod").datebox('getValue');//变更期间
 		var cnum = getMonthNum(stperiod, sbperiod)+1;//变更期数
-		var schgcycle = getFloatValue($("#schgcycle").val());//原收款周期
+		var srecycle = getFloatValue($("#srecycle").val());//原收款周期
 		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
-		var remny = sndemny.sub(sndemny.div(schgcycle).mul(cnum));
+		var remny = sndemny.sub(sndemny.div(srecycle).mul(cnum));
 		if(getFloatValue(remny) < getFloatValue(0)){
 			remny = getFloatValue(0);
 		}
