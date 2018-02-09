@@ -220,43 +220,43 @@ function getFileExt(filename){
 	return ext;
 }
 
-/**
- * 合同信息双击事件
- * @param i
- */
-function doubleDocImage(i){
-	var ext = getFileExt(arrachrows[i]['doc_name']);
-	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
-		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
-	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-		$("#filedoc").empty();
-//		var offset = $("#tpght").offset();
-		$("#filedoc").dialog({
-			title: '原图' ,
-//			width:'1160',
-//			height:'90%',
-			width:$(window).width()-200,
-			height:$(window).height()-100,
-//			left: offset.left,
-//			top: offset.top,
-			cache: false,
-			resizable: true,
-			center : true,
-			align:"center",
-			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
-				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
-			onLoad:function(){
-				
-			}
-		});
-	}else if("pdf"==ext.toLowerCase()){
-		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
-	}else{
-		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
-	}
-	
-}
+///**
+// * 合同信息双击事件
+// * @param i
+// */
+//function doubleDocImage(i){
+//	var ext = getFileExt(arrachrows[i]['doc_name']);
+//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
+//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
+//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+//		$("#filedoc").empty();
+////		var offset = $("#tpght").offset();
+//		$("#filedoc").dialog({
+//			title: '原图' ,
+////			width:'1160',
+////			height:'90%',
+//			width:$(window).width()-200,
+//			height:$(window).height()-100,
+////			left: offset.left,
+////			top: offset.top,
+//			cache: false,
+//			resizable: true,
+//			center : true,
+//			align:"center",
+//			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
+//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
+//			onLoad:function(){
+//				
+//			}
+//		});
+//	}else if("pdf"==ext.toLowerCase()){
+//		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
+//	}else{
+//		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
+//	}
+//	
+//}
 
 /**
  * 设置快捷键

@@ -727,7 +727,7 @@ function initFileDoc(row){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
 					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
 							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
@@ -735,6 +735,7 @@ function initFileDoc(row){
 			}
 		}
 	});
+	
 }
 
 /**
@@ -1193,7 +1194,7 @@ function initChangeFileDoc(row){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
 					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleDocImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
 							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#sfiledocs"));
