@@ -134,7 +134,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 	public void exportExcel(){
 		String strlist =getRequest().getParameter("strlist");
 		String columns =getRequest().getParameter("columns");
-		columns.substring(0, columns.length()-1);
+		columns = columns.substring(0, columns.length()-1);
 		String[] split = columns.split(",");
 		if(StringUtil.isEmpty(strlist)){
 			throw new BusinessException("导出数据不能为空!");
