@@ -176,6 +176,168 @@
 	  	</div>
 	</div>
 	<!-- 卡片界面end -->
+<!-- 新增返点编辑对话框 -->
+<div id="addCorpDlg" class="easyui-dialog" style="width:1000px;height:360px;padding:20px 20px;" data-options="resizable:true,closed:true">
+	<form id="addCorpForm" method="post" style="margin-top:0px;">
+		<div id="tableDiv" style="height:280px;overflow-y: auto;">
+			  <div class="time_col time_colp11">
+	          	<div style="width:30%;display: inline-block">
+					<label style="width:100px;text-align: right;">&emsp;返点单号: </label>
+					<input  class="easyui-textbox" style="width:160px;height:26px;"
+						data-options="validType:'length[0,30]'" />
+			 	</div>
+			<div style="width:30%;display: inline-block">
+				<label style="text-align:right;width:102px;">期间：</label> 
+				<select  class="easyui-combobox" data-options="editable:false" style="width:70px;height:27px;">
+			     <option>2018</option>
+			     <option>2017</option>
+				</select>
+				<select  class="easyui-combobox"  data-options="editable:false" style="width:94px;height:27px;">
+		         <option>第一季度</option>
+			     <option>第二季度</option>
+				</select>
+			</span>
+			</div>
+			 	<div style="display: inline-block;width:38%;">
+					<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
+				    <input class="easyui-searchbox" style="width:220px;height:26px;"
+						data-options="required:true,validType:'length[0,100]'" />
+				</div>
+			</div>
+		 	<div class="time_col time_colp11">
+			  	<div style="width:29%;display: inline-block">
+					<label style="width:100px;text-align: right;">扣款金额:</label>
+					<input  class="easyui-textbox" style="width:160px;height:26px;" 
+						data-options="validType:'length[0,12]'"/>
+				</div>				
+				<div style="width:31%;display: inline-block">
+					<label style="width:112px;text-align: right;">返点基数:</label>
+					<input  class="easyui-textbox" style="width:130px;height:26px;" />
+				</div>	
+				<div style="width:38%;display: inline-block">
+					<label style="width:100px;text-align: right;">返点金额:</label>
+					<input class="easyui-textbox" style="width:150px;height:26px;" />
+				</div>
+			</div>
+			<div class="time_col time_colp11">
+				<div style="display: inline-block; margin-top: 5px;">
+					<label style="width:100px;text-align: right;vertical-align: top;">备注:</label>
+					<textarea class="easyui-textbox" data-options="multiline:true" style="width:804px;height:100px;"></textarea>
+				</div>
+			</div>
+		<div style="text-align: center;margin-top:30px;">
+		    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="">保存并新增</a> 
+	         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="">保存</a> 
+	         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addCorpDlg').dialog('close');">取消</a>
+        </div>
+	 </div>
+   </form>
+</div>
+<!-- 新增返点编辑对话框 -->
+<!--卡片返点查看对话框 -->
+	<div id="addDlg" class="easyui-dialog" style="width:1100px;height:430px;padding:10px 20px;" data-options="resizable:true,closed:true">
+		<form id="addForm" method="post" style="margin-top:0px;">
+			<div id="tableDiv" style="height:370px;overflow-y: auto;">
+	       <div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
+				<div class="time_col time_colp11">
+				 	<div style="width:34%;display: inline-block">
+						<label style="width:100px;text-align: right;">审批状态：</label>
+						<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+					</div>	
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">审批人：</label>
+						<input class="easyui-numberbox"  style="width:140px;height:26px;text-align:left"></input>
+					</div>
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">确认时间：</label>
+						<input class="easyui-numberbox"  style="width:140px;height:26px;text-align:left"></input>
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+				 	<div style="width:100%;display: inline-block">
+						<label style="width:100px;text-align: right;">说明：</label>
+						<input class="easyui-numberbox" style="width:806px;height:26px;text-align:left"></input> 
+					</div>	
+		         </div>	
+					
+		</div>
+		 <div style="border-bottom: 1px solid; padding: 10px 0px 10px;">
+					<div class="time_col time_colp11">
+				 	<div style="width:34%;display: inline-block">
+						<label style="width:100px;text-align: right;">确认状态：</label>
+						<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+					</div>	
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">确认人：</label>
+						<input class="easyui-numberbox"  style="width:140px;height:26px;text-align:left"></input>
+					</div>
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">确认时间：</label>
+						<input class="easyui-numberbox"  style="width:140px;height:26px;text-align:left"></input>
+					</div>
+				</div>
+
+				<div class="time_col time_colp11">
+				 	<div style="width:100%;display: inline-block">
+						<label style="width:100px;text-align: right;">说明：</label>
+						<input class="easyui-numberbox" style="width:806px;height:26px;text-align:left"></input> 
+					</div>	
+				</div>
+			</div>		
+				
+					<div class="time_col time_colp11" style="padding-top:10px">
+				 	<div style="width:40%;display: inline-block">
+						<label style="width:100px;text-align: right;">返点单号：</label>
+						<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+					</div>	
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">返点所属季度：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">加盟商名称：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+				 	<div style="width:40%;display: inline-block">
+						<label style="width:100px;text-align: right;">扣款金额：</label>
+						<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+					</div>	
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">返点基数：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">返点金额：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+				</div>
+
+				<div class="time_col time_colp11">
+				 	<div style="width:100%;display: inline-block">
+						<label style="width:100px;text-align: right;">备注：</label>
+						<input class="easyui-numberbox" style="width:910px;height:26px;text-align:left"></input> 
+					</div>		
+				</div>
+				<div class="time_col time_colp11">
+				 	<div style="width:40%;display: inline-block">
+						<label style="width:100px;text-align: right;">单据状态：</label>
+						<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+					</div>	
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">录入人：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+					<div style="width:28%;display: inline-block">
+						<label style="width:100px;text-align: right;">录入时间：</label>
+						<input class="easyui-numberbox"  style="width:180px;height:26px;text-align:left"></input>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+<!--卡片返点查看对话框 -->
 </body>
 
 </html>

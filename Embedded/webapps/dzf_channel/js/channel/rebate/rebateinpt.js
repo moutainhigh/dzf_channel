@@ -9,6 +9,10 @@ $(function(){
  * 新增
  */
 function onAdd(){
+	$('#addCorpDlg').dialog({
+		modal:true
+	});//设置dig属性
+	$('#addCorpDlg').dialog('open').dialog('center').dialog('setTitle','返点单编辑');
 	
 }
 
@@ -16,6 +20,10 @@ function onAdd(){
  * 修改
  */
 function onEdit(){
+	$('#addDlg').dialog({
+		modal:true
+	});//设置dig属性
+	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
 	
 }
 
