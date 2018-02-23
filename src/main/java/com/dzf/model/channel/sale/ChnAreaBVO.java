@@ -3,7 +3,6 @@ package com.dzf.model.channel.sale;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDateTime;
-import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 渠道区域划分从表VO(渠道经理)
