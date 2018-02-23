@@ -9,22 +9,37 @@
 <body>
 
 <style>
-	.mod-corp{ width: 90%;margin: 4px auto;text-align:center;}
-	.mod-corp input{ border: 1px #ddd solid; width: 87%; height: 30px;  padding: 0px 5px; color: #666;border-radius: 5px; background-color: #fff; text-align: center;outline: none;}
-</style>
-<script>
+.mod-corp {
+	width: 90%;
+	margin: 4px auto;
+	text-align: center;
+}
 
-$(document).ready(function(){
-	$(document).on('keypress', function(e) {
-		 if(e.keyCode == 13 && e.target.type!== 'submit'&&e.target.type!=='text') {
-			var rowindex= $("#gsTable").datagrid('getRowIndex',$("#gsTable").datagrid('getSelected'));
-			$('#gsTable').datagrid('unselectRow',rowindex);
-			$('#gsTable').datagrid('selectRow',rowindex+1);
-			 //$('#leftGrid').datagrid('selectRow',2);
-		 }
-		});
-});//enter 键代替tab键换行        end
- var JPlaceHolder = {
+.mod-corp input {
+	border: 1px #ddd solid;
+	width: 87%;
+	height: 30px;
+	padding: 0px 5px;
+	color: #666;
+	border-radius: 5px;
+	background-color: #fff;
+	text-align: center;
+	outline: none;
+}
+</style>
+
+<script>
+	$(document).ready(function(){
+		$(document).on('keypress', function(e) {
+			 if(e.keyCode == 13 && e.target.type!== 'submit'&&e.target.type!=='text') {
+				var rowindex= $("#gsTable").datagrid('getRowIndex',$("#gsTable").datagrid('getSelected'));
+				$('#gsTable').datagrid('unselectRow',rowindex);
+				$('#gsTable').datagrid('selectRow',rowindex+1);
+				 //$('#leftGrid').datagrid('selectRow',2);
+			 }
+			});
+	});//enter 键代替tab键换行        end
+ 	var JPlaceHolder = {
 	    //检测
 	    _check : function(){
 	        return 'placeholder' in document.createElement('input');
@@ -39,9 +54,11 @@ $(document).ready(function(){
 	    fix : function(){
 	        jQuery(':input[placeholder]').each(function(index, element) {
 	            var self = $(this), txt = self.attr('placeholder');
-	            self.wrap($('<div></div>').css({position:'relative', zoom:'1', border:'none', background:'none', padding:'none', margin:'none'}));
+	            self.wrap($('<div></div>').css({position:'relative', zoom:'1', border:'none', 
+	            	background:'none', padding:'none', margin:'none'}));
 	            var pos = self.position(), h = self.outerHeight(true), paddingleft = self.css('padding-left');
-	            var holder = $('<span></span>').text(txt).css({position:'absolute', left:150, top:4, height:h, color:'#333'}).appendTo(self.parent());
+	            var holder = $('<span></span>').text(txt).css({position:'absolute', left:150, top:4, 
+	            	height:h, color:'#333'}).appendTo(self.parent());
 	            self.focusin(function(e) {
 	                holder.hide();
 	            }).focusout(function(e) {
@@ -56,54 +73,56 @@ $(document).ready(function(){
 	        });
 	    }
 	}; 
-var rows = null;
-$(function(){
-	var params = new Object();
-	grid = $('#gsTable').datagrid({
-	    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
-	    method: 'post',
-		fitColumns: true,
-		idField:'pk_gs',
-		rownumbers : true,
-		singleSelect : false,
-		pagination : true,
-		pageSize:10,
-	    pageList:[10,20,30,40,50],
-		showFooter : true,
-		height:330,
-		striped:true,
-	    columns:[[{field:'pk_gs', title:'主键id',checkbox:true},
-	     		  {field:'incode',title:'公司编码',width:500},
-	              {field:'uname',title:'公司名称',width:500}
-	   	 ]],
-		onDblClickRow:function(rowIndex, rowData){
-			var rowTable = $('#gsTable').datagrid('getSelections');
-			if(rowTable && rowTable[rowTable.length-1] == rowData){
-				//如果最后选择的数据和双击的数据一样，则不重复
-			}else{
-				rowTable.push(rowData);
+	
+	var rows = null;
+	$(function(){
+		var params = new Object();
+		grid = $('#gsTable').datagrid({
+		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
+		    method: 'post',
+			fitColumns: true,
+			idField:'pk_gs',
+			rownumbers : true,
+			singleSelect : false,
+			pagination : true,
+			pageSize:10,
+		    pageList:[10,20,30,40,50],
+			showFooter : true,
+			height:330,
+			striped:true,
+		    columns:[[ { field:'ck', checkbox:true },
+		               {field:'pk_gs', title:'主键id', hidden:true},
+		     		   {field:'incode',title:'公司编码',width:500},
+		               {field:'uname',title:'公司名称',width:500}
+		   	 ]],
+			onDblClickRow:function(rowIndex, rowData){
+				var rowTable = $('#gsTable').datagrid('getSelections');
+				if(rowTable && rowTable[rowTable.length-1] == rowData){
+					//如果最后选择的数据和双击的数据一样，则不重复
+				}else{
+					rowTable.push(rowData);
+				}
+				dClickCompany(rowTable);
+				rowTable = $('#gsTable').datagrid('clearSelections');
+			},
+			onLoadSuccess: function (data) {
+		   		if(!data.rows && data.rows.length>0){
+			   		rows = data.rows;
+		   		}
 			}
-			dClickCompany(rowTable);
-			rowTable = $('#gsTable').datagrid('clearSelections');
-		},
-		onLoadSuccess: function (data) {
-	   		if(!data.rows && data.rows.length>0){
-		   		rows = data.rows;
-	   		}
-		}
+		});
+	
+		 $('#unitcode').bind('keypress',function(event){
+		       if(event.keyCode == "13") {//Enter 键事件
+		    	   var filtername = $("#unitcode").val(); ; 
+		      		var params = new Object();
+		      		//params["corpname"] = filtername;
+		      		params["corpcode"] = filtername;
+		      		grid.datagrid('load',params); 
+		       }
+		   }); 
+		//JPlaceHolder.init(); 
 	});
-
-	 $('#unitcode').bind('keypress',function(event){
-	       if(event.keyCode == "13") {//Enter 键事件
-	    	   var filtername = $("#unitcode").val(); ; 
-	      		var params = new Object();
-	      		//params["corpname"] = filtername;
-	      		params["corpcode"] = filtername;
-	      		grid.datagrid('load',params); 
-	       }
-	   }); 
-	//JPlaceHolder.init(); 
-});
 </script>
 	<div  id="cardList">
 		<div class="mod-toolbar-top">
