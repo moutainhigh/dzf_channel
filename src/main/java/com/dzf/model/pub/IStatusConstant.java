@@ -35,4 +35,12 @@ public interface IStatusConstant {
 	/** 合同变更类型(1：终止；2：作废)*/
 	public static int ICONCHANGETYPE_1 = 1;//终止
 	public static int ICONCHANGETYPE_2 = 2;//作废
+	
+	/** 返点单状态(0：待提交；1：待确认；2：待审批；3：审批通过；4：待确认驳回；5：待审批驳回；)*/
+	public static int irebatestatus_0 = 0;//待提交
+	public static int irebatestatus_1 = 1;//待确认
+	public static int irebatestatus_2 = 2;//待审批
+	public static int irebatestatus_3 = 3;//审批通过
+	public static int irebatestatus_4 = 4;//待确认驳回
+	public static int irebatestatus_5 = 5;//待审批驳回
 }
