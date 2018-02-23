@@ -13,6 +13,7 @@ import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -21,6 +22,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInptService;
 
 @Service("rebateinptser")
@@ -28,6 +30,67 @@ public class RebateInptServiceImol implements IRebateInptService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException {
+		QrySqlSpmVO qryvo = getQrySql(paramvo);
+		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
+				new BeanListProcessor(RebateVO.class));
+		return list;
+	}
+	
+	/**
+	 * 获取查询条件及参数
+	 * @param paramvo
+	 * @return
+	 */
+	private QrySqlSpmVO getQrySql(QryParamVO paramvo){
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT * \n") ;
+		sql.append("  FROM cn_rebate \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
+			
+		}else{
+			if(!StringUtil.isEmpty(paramvo.getVyear())){
+				sql.append("   AND vyear = ? \n") ; 
+				spm.addParam(paramvo.getVyear());
+			}
+			if(paramvo.getIseason() != null){
+				sql.append("   AND iseason = ? \n") ; 
+				spm.addParam(paramvo.getIseason());
+			}
+			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
+				sql.append("   AND istatus = ? \n") ; 
+				spm.addParam(paramvo.getVdeductstatus());
+			}
+			if(!StringUtil.isEmpty(paramvo.getCuserid())){
+				sql.append("SELECT t.pk_corp \n") ;
+				sql.append("  FROM bd_account t \n") ; 
+				sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
+				sql.append("   AND t.vprovince IN (SELECT b.vprovince \n") ; 
+				sql.append("                         FROM cn_chnarea_b b \n") ; 
+				sql.append("                        WHERE nvl(b.dr, 0) = 0 \n") ; 
+				String[] users = paramvo.getCuserid().split(",");
+				String where = SqlUtil.buildSqlForIn("b.userid", users);
+				if(!StringUtil.isEmpty(where)){
+					sql.append(" AND ").append(where);
+				}
+				sql.append("                                 )");
+			}
+			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+				String[] corps = paramvo.getPk_corp().split(",");
+				String where = SqlUtil.buildSqlForIn("pk_corp", corps);
+				sql.append(" AND ").append(where);
+			}
+		}
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
+	}
 
 	@Override
 	public RebateVO save(RebateVO data, String pk_corp) throws DZFWarpException {
@@ -46,7 +109,9 @@ public class RebateInptServiceImol implements IRebateInptService {
 	 * @throws DZFWarpException
 	 */
 	private void chcekBeforeSave(RebateVO data) throws DZFWarpException{
-		checkCodeOnly(data);//返点单单号唯一性校验
+		if(!StringUtil.isEmpty(data.getVbillcode())){
+			checkCodeOnly(data);//返点单单号唯一性校验
+		}
 		checkDataOnly(data);//返点信息年-季度唯一性校验
 	}
 	
@@ -59,12 +124,9 @@ public class RebateInptServiceImol implements IRebateInptService {
 	public void checkCodeOnly(RebateVO vo) throws DZFWarpException {
 		SQLParameter spm = new SQLParameter();
 		StringBuffer sql = new StringBuffer();
-		if (!StringUtil.isEmptyWithTrim(vo.getVbillcode())) {
-			sql.append(" and vbillcode = ? ");
-			spm.addParam(vo.getVbillcode());
-		} else {
-			throw new BusinessException("返点单号不能为空");
-		}
+		sql.append("select vbillcode from cn_rebate where nvl(dr,0) = 0 ");
+		sql.append(" and vbillcode = ? ");
+		spm.addParam(vo.getVbillcode());
 		if (!StringUtil.isEmpty(vo.getPk_rebate())) {
 			sql.append(" and pk_rebate != ? ");
 			spm.addParam(vo.getPk_rebate());

@@ -79,6 +79,28 @@ public class QryParamVO extends SuperVO {
 	
 	private Integer corptype;
 	
+	@FieldAlias("year")
+	private String vyear;//所属季度-年
+	
+	@FieldAlias("season")
+	private Integer iseason;//所属季度-季度
+	
+	public String getVyear() {
+		return vyear;
+	}
+
+	public Integer getIseason() {
+		return iseason;
+	}
+
+	public void setVyear(String vyear) {
+		this.vyear = vyear;
+	}
+
+	public void setIseason(Integer iseason) {
+		this.iseason = iseason;
+	}
+
 	public Integer getCorptype() {
         return corptype;
     }

@@ -20,6 +20,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.QueryUtil;
@@ -41,6 +42,33 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	
 	@Autowired
 	private IRebateInptService rebateser;
+	
+	/**
+	 * 查询
+	 */
+	public void query(){
+		Grid grid = new Grid();
+		try {
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			int page = paramvo == null ? 1: paramvo.getPage();
+            int rows = paramvo == null ? 100000: paramvo.getRows();
+            List<RebateVO> list = rebateser.query(paramvo);
+			if(list != null && list.size() > 0){
+				RebateVO[] rebatVOs = (RebateVO[]) QueryUtil.getPagedVOs(list.toArray(new RebateVO[0]), page, rows);
+				grid.setRows(Arrays.asList(rebatVOs));
+				grid.setTotal((long)(list.size()));
+			}else{
+			    grid.setRows(list);
+			    grid.setTotal(0L);
+			}
+            grid.setMsg("查询成功");
+            grid.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
 
 	/**
 	 * 保存
@@ -55,9 +83,8 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
-				data.setFathercorp(getLogincorppk());
-				data = rebateser.save(data, getLogincorppk());
 				setDefaultValue(data);
+				data = rebateser.save(data, getLogincorppk());
 				json.setRows(data);
 				json.setSuccess(true);	
 				json.setMsg("保存成功");
@@ -76,12 +103,65 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	 * @throws DZFWarpException
 	 */
 	private void setDefaultValue(RebateVO data) throws DZFWarpException{
-		data.setVapproveid(getLoginUserid());
+		data.setFathercorp(getLogincorppk());
+		data.setCoperatorid(getLoginUserid());
 		data.setDoperatedate(new DZFDate());
 		data.setTstamp(new DZFDateTime());
 		data.setTs(new DZFDateTime());
 		data.setDr(0);
 		data.setIstatus(IStatusConstant.irebatestatus_0);//待提交
+		if(!StringUtil.isEmpty(data.getVbillcode())){
+			data.setVbillcode(data.getVbillcode().trim());
+		}
+		data.setVsperiod(getPeriod(data, true));
+		data.setVeperiod(getPeriod(data, false));
+	}
+	
+	/**
+	 * 获取季度的起止期间
+	 * @param data
+	 * @param ptype
+	 * @return
+	 */
+	private String getPeriod(RebateVO data, boolean isbegin){
+		if(StringUtil.isEmpty(data.getVyear())){
+			throw new BusinessException("所属年不能为空");
+		}
+		if(data.getIseason() == null){
+			throw new BusinessException("所属季度不能为空");
+		}
+		String month = "";
+		switch(data.getIseason()){
+			case 1:
+				if(isbegin){
+					month = "-01";
+				}else{
+					month = "-03";
+				}
+				break;
+			case 2:
+				if(isbegin){
+					month = "-04";
+				}else{
+					month = "-06";
+				}
+				break;
+			case 3:
+				if(isbegin){
+					month = "-07";
+				}else{
+					month = "-09";
+				}
+				break;
+			case 4:
+				if(isbegin){
+					month = "-10";
+				}else{
+					month = "-12";
+				}
+				break;
+		}
+		return data.getVyear()+month;
 	}
 	
 	/**

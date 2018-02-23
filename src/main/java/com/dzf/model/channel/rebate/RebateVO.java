@@ -20,13 +20,13 @@ public class RebateVO extends SuperVO {
 	private String pk_rebate;//主键
 	
 	@FieldAlias("corpid")
-	private String pk_corp;//代账公司主键
+	private String pk_corp;//代账公司(加盟商)主键
 	
 	@FieldAlias("corpcode")
-	private String corpcode;//代账公司编码
+	private String corpcode;//代账公司(加盟商)编码
 	
-	@FieldAlias("corpnm")
-	private String corpname;//代账公司名称
+	@FieldAlias("corp")
+	private String corpname;//代账公司(加盟商)名称
 	
 	@FieldAlias("corpfid")
 	private String fathercorp;//上级机构主键

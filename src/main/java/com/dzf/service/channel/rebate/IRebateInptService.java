@@ -8,6 +8,14 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IRebateInptService {
+	
+	/**
+	 * 查询
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException;
 
 	/**
 	 * 返点单录入保存

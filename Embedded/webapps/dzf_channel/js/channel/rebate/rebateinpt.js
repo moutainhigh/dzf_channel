@@ -1,10 +1,21 @@
 var contextPath = DZF.contextPath;
 var grid;
+var refid;
 
 $(function(){
 	load();
 	initRef();
+	initQryData();
 });
+
+/**
+ * 查询框初始化
+ */
+function initQryData(){
+	var qyear = $("#qyear").combobox("getValue");
+	var qjd = $("#qjd").combobox("getText");
+	$("#jqj").html(qyear+"-"+qjd);
+}
 
 /**
  * 参照格式化
@@ -29,8 +40,11 @@ function initRef(){
         }]
     });
 	
-	//加盟商参照初始化
-	$('#channel_select').textbox({
+	//查询-加盟商参照初始化
+	$('#qcorp').textbox({
+		onClickIcon : function() {
+			refid = $(this).attr("id");
+		},
         editable: false,
         icons: [{
             iconCls: 'icon-search',
@@ -42,6 +56,34 @@ function initRef(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					issingle : "false"
+    				},
+                    buttons: '#chnBtn'
+                });
+            }
+        }]
+    });
+	
+	//新增-加盟商参照初始化
+	$('#corp').textbox({
+		onClickIcon : function() {
+			refid = $(this).attr("id");
+		},
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#chnDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					issingle : "true"
+    				},
                     buttons: '#chnBtn'
                 });
             }
@@ -119,8 +161,10 @@ function dClickCompany(rowTable){
 			}
 			corpIds.push(rowTable[i].pk_gs);
 		}
-		$("#channel_select").textbox("setValue",str);
-		$("#pk_account").val(corpIds);
+//		$("#qcorp").textbox("setValue",str);
+//		$("#qcorpid").val(corpIds);
+		$("#" + refid).textbox("setValue",str);
+		$("#" + refid + "id").val(corpIds);
 	}
 	$("#chnDlg").dialog('close');
 }
@@ -140,7 +184,7 @@ function load(){
 		pageList : DZF.pageList,
 		singleSelect : false,
 		idField : 'rebid',
-		frozenColumns :[[{ field : 'ck', checkbox : true },
+		frozenColumns :[[ { field : 'ck', checkbox : true },
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ 
@@ -178,13 +222,119 @@ function opermatter(val, row, index) {
 }
 
 /**
+ * 查询框-清空
+ */
+function clearParams(){
+	$('#manager').textbox("setValue",null);
+	$('#managerid').val(null);
+	$('#qcorp').textbox("setValue",null);
+	$('#qcorpid').val(null);
+}
+
+/**
+ * 查询框-确认
+ */
+function reloadData(){
+	url = contextPath + '/rebate/rebateinpt!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'year' : $("#qyear").combobox("getValue"),
+		'season' : $("#qjd").combobox("getValue"),
+		'destatus' : $("#qstatus").combobox("getValue"),
+		'uid' : $("#managerid").val(),
+		'cpid' : $("#qcorpid").val(),
+	});
+	var qyear = $("#qyear").combobox("getValue");
+	var qjd = $("#qjd").combobox("getText");
+	$("#jqj").html(qyear+"-"+qjd);
+	$("#qrydialog").hide();
+}
+
+/**
+ * 查询框-取消
+ */
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+/**
  * 新增
  */
 function onAdd(){
 	$('#addDlg').dialog({
 		modal:true
 	});//设置dig属性
-	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单编辑');
+	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单新增');
+	$('#addForm').form('clear');
+}
+
+/**
+ * 保存并新增
+ */
+function saveAdd(){
+	var postdata = new Object();
+	if($("#addForm").form('validate')){
+		postdata["data"] = JSON.stringify(serializeObject($('#addForm')));
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+	saveSubmit(true, postdata);
+}
+
+/**
+ * 保存
+ */
+function save(){
+	var postdata = new Object();
+	if($("#addForm").form('validate')){
+		postdata["data"] = JSON.stringify(serializeObject($('#addForm')));
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+	saveSubmit(false, postdata);
+}
+
+/**
+ * 保存提交
+ */
+function saveSubmit(isadd, postdata) {
+	$.messager.progress({
+		text : '数据保存中，请稍后.....'
+	});
+	$('#addForm').form('submit', {
+		url : contextPath + '/rebate/rebateinpt!save.action',
+		queryParams : postdata,
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			$.messager.progress('close');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				})
+				var row = result.rows;
+				if(isadd){
+					$('#addForm').form('clear');
+				}else{
+					$('#addDlg').dialog('close');
+				}
+				$('#grid').datagrid('appendRow',row);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				})
+			}
+		}
+	});
 }
 
 /**
