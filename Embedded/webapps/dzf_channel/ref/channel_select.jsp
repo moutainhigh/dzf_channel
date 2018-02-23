@@ -6,8 +6,10 @@
 <title>选择加盟商</title>
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
 </head>
+<%
+	String issingle = request.getParameter("issingle");
+%>
 <body>
-
 <style>
 .mod-corp {
 	width: 90%;
@@ -76,6 +78,23 @@
 	
 	var rows = null;
 	$(function(){
+		var issingle = '<%=issingle%>';
+		console.info(issingle);
+		var columns;
+		if(issingle == "true"){
+			issingle = true;
+			columns = [[   {field:'pk_gs', title:'主键id', hidden:true},
+			     		   {field:'incode',title:'公司编码',width:500},
+			               {field:'uname',title:'公司名称',width:500}
+			   	 ]];
+		}else{
+			issingle = false;
+			columns = [[   {field:'ck', checkbox:true },
+			               {field:'pk_gs', title:'主键id', hidden:true},
+			     		   {field:'incode',title:'公司编码',width:500},
+			               {field:'uname',title:'公司名称',width:500}
+			   	 ]];
+		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
 		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
@@ -83,18 +102,14 @@
 			fitColumns: true,
 			idField:'pk_gs',
 			rownumbers : true,
-			singleSelect : false,
+			singleSelect : issingle,
 			pagination : true,
 			pageSize:10,
 		    pageList:[10,20,30,40,50],
 			showFooter : true,
 			height:330,
 			striped:true,
-		    columns:[[ { field:'ck', checkbox:true },
-		               {field:'pk_gs', title:'主键id', hidden:true},
-		     		   {field:'incode',title:'公司编码',width:500},
-		               {field:'uname',title:'公司名称',width:500}
-		   	 ]],
+		    columns: columns,
 			onDblClickRow:function(rowIndex, rowData){
 				var rowTable = $('#gsTable').datagrid('getSelections');
 				if(rowTable && rowTable[rowTable.length-1] == rowData){
