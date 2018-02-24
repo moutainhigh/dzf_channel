@@ -79,7 +79,6 @@
 	var rows = null;
 	$(function(){
 		var issingle = '<%=issingle%>';
-		console.info(issingle);
 		var columns;
 		if(issingle == "true"){
 			issingle = true;
