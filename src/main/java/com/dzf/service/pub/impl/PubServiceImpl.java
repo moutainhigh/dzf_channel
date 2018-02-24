@@ -1,5 +1,6 @@
 package com.dzf.service.pub.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
 
@@ -94,6 +97,48 @@ public class PubServiceImpl implements IPubService {
 			}
 		}
 		return lareamap;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String queryCode(String tablename) throws DZFWarpException {
+		DZFDate date = new DZFDate();
+		String year = String.valueOf(date.getYear());
+		String str = year + date.getStrMonth() + date.getStrDay();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append(" SELECT MAX(vbillcode) FROM \n");
+		sql.append(tablename);
+		sql.append("  WHERE nvl(dr,0) = 0 \n");
+		sql.append(" AND vbillcode LIKE ? ");
+		spm.addParam(str + "____");
+		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ArrayListProcessor());
+		String code = "";
+		if (result != null && !result.isEmpty()) {
+			for (int i = 0; i < result.size(); i++) {
+				Object[] obj = (Object[]) result.get(i);
+				code = String.valueOf(obj[0]);
+			}
+		}
+		if (StringUtil.isEmpty(code)) {
+			return str + "0001";
+		}
+		int num = Integer.parseInt(code.substring(6));
+		num = num + 1;
+		String nums = String.valueOf(num);
+		switch (nums.length()) {
+		case 1:
+			nums = "000" + nums;
+			break;
+		case 2:
+			nums = "00" + nums;
+			break;
+		case 3:
+			nums = "0" + nums;
+			break;
+		}
+		return str + nums;
 	}
 
 }

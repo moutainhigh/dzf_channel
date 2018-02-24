@@ -22,4 +22,12 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public Map<String,ChnAreaVO> queryLargeArea() throws DZFWarpException;
+	
+	/**
+	 * 获取单号，年月日+4位流水号
+	 * @param tablename
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String queryCode(String tablename) throws DZFWarpException;
 }

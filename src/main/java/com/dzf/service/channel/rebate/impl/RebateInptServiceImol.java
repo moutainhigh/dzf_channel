@@ -203,6 +203,10 @@ public class RebateInptServiceImol implements IRebateInptService {
 	public RebateVO save(RebateVO data, String pk_corp) throws DZFWarpException {
 		try {
 			chcekBeforeSave(data);
+			if(StringUtil.isEmpty(data.getVbillcode())){
+				String vbillcode = pubser.queryCode("cn_rebate");
+				data.setVbillcode(vbillcode);
+			}
 			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(), 10);
 			RebateVO retvo =  (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if(retvo != null){
