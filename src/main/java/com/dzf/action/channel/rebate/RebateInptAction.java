@@ -203,6 +203,9 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 		writeJson(grid);
 	}
 	
+	/**
+	 * 删除
+	 */
 	public void delete() {
 		Json json = new Json();
 		if (data != null) {
@@ -215,6 +218,33 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 				}
 				rebateser.delete(data);
 				json.setSuccess(true);
+				json.setMsg("操作成功");
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "操作失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 查询返点相关金额
+	 */
+	public void queryDebateMny() {
+		Json json = new Json();
+		if (data != null) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+					throw new BusinessException("登陆用户错误");
+				}else if(uservo == null){
+					throw new BusinessException("登陆用户错误");
+				}
+				RebateVO batevo = rebateser.queryDebateMny(data);
+				json.setSuccess(true);
+				json.setRows(batevo);
 				json.setMsg("操作成功");
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "操作失败");

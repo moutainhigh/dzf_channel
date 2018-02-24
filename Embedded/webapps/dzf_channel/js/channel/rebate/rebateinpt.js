@@ -108,8 +108,11 @@ function dClickMans(rowTable){
 	var unames = "";
 	var uids = [];
 	if(rowTable){
-		if(rowTable.length>300){
-			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个客户!",
+				type : 2
+			});
 			return;
 		}
 		for(var i=0;i<rowTable.length;i++){
@@ -150,8 +153,11 @@ function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
 	if(rowTable){
-		if(rowTable.length>300){
-			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个客户!",
+				type : 2
+			});
 			return;
 		}
 		for(var i=0;i<rowTable.length;i++){
@@ -162,12 +168,82 @@ function dClickCompany(rowTable){
 			}
 			corpIds.push(rowTable[i].pk_gs);
 		}
-//		$("#qcorp").textbox("setValue",str);
-//		$("#qcorpid").val(corpIds);
 		$("#" + refid).textbox("setValue",str);
 		$("#" + refid + "id").val(corpIds);
+		if(refid == "corp"){
+			getDebateMny(corpIds[0]);
+		}
 	}
 	$("#chnDlg").dialog('close');
+}
+
+/**
+ * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
+ */
+function getDebateMny(cpid){
+	var year = $("#year").combobox("getValue");
+	var season = $("#season").combobox("getValue");
+	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
+		return;
+	}
+	$.ajax({
+		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
+		dataType : 'json',
+		data : {
+			'year' : year,
+			'season' : season,
+			'corpid' : cpid,
+		},
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				$("#debitmny").numberbox("setValue",row['debitmny']);
+				$("#basemny").numberbox("setValue",row['basemny']);
+			} 
+		},
+	});
+}
+
+/**
+ * 监听事件
+ */
+function initListener(){
+	$("#year").combobox({
+		onChange : function(n, o) {
+			getDebateMny($("#corpid").val());
+		}
+	});
+	$("#season").combobox({
+		onChange : function(n, o) {
+			getDebateMny($("#corpid").val());
+		}
+	});
+	$("#basemny").numberbox({
+		onChange : function(n, o) {
+			var debitmny = getFloatValue($("#debitmny").numberbox("getValue"));
+			if(getFloatValue(n) > debitmny){
+				Public.tips({
+					content : "返点基数不能大于扣款金额",
+					type : 2
+				});
+				$("#basemny").numberbox("setValue",debitmny);
+				return; 
+			}
+		}
+	});
+	$("#rebatemny").numberbox({
+		onChange : function(n, o) {
+			var basemny = getFloatValue($("#basemny").numberbox("getValue"));
+			if(getFloatValue(n) > basemny){
+				Public.tips({
+					content : "返点金额不能大于返点基数",
+					type : 2
+				});
+				$("#rebatemny").numberbox("setValue",basemny);
+				return; 
+			}
+		}
+	});
 }
 
 /**
@@ -341,6 +417,7 @@ function onAdd(){
 	});//设置dig属性
 	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单新增');
 	$('#addForm').form('clear');
+	initListener();
 }
 
 /**
@@ -405,7 +482,7 @@ function saveSubmit(isadd, postdata) {
 			} else {
 				Public.tips({
 					content : result.msg,
-					type : 2
+					type : 1
 				})
 			}
 		}
@@ -453,7 +530,7 @@ function onDelete(index){
 					} else {
 						Public.tips({
 							content : rs.msg,
-							type : 2
+							type : 1
 						});
 					}
 				},

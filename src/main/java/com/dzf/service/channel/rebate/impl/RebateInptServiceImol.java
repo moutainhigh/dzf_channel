@@ -26,6 +26,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInptService;
@@ -364,6 +365,75 @@ public class RebateInptServiceImol implements IRebateInptService {
 			errmsg = "操作数据错误";
 		}
 		return errmsg;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public RebateVO queryDebateMny(RebateVO data) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
+		sql.append("  SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS nbasemny \n");
+		sql.append("  FROM cn_contract t \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
+		sql.append("   AND t.vdeductstatus in (?, ?) \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		sql.append("   AND t.pk_corp = ? \n");
+		spm.addParam(data.getPk_corp());
+		List<String> pliat = getDebatePeriod(data);
+		if (pliat != null && pliat.size() > 0) {
+			String where = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata,1,7)", pliat.toArray(new String[0]));
+			sql.append(" AND ").append(where);
+		} else {
+			throw new BusinessException("返点单所属年、所属季度不能为空");
+		}
+		sql.append("   GROUP BY t.pk_corp \n");
+		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(RebateVO.class));
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}else{
+			RebateVO retvo = new RebateVO();
+			retvo.setNdebitmny(DZFDouble.ZERO_DBL);
+			retvo.setNbasemny(DZFDouble.ZERO_DBL);
+			return retvo;
+		}
+	}
+	
+	/**
+	 * 获取查询期间
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<String> getDebatePeriod(RebateVO data) throws DZFWarpException {
+		List<String> pliat = new ArrayList<String>();
+		String year = data.getVyear();
+		switch(data.getIseason()){
+			case 1:
+				pliat.add(year+"-01");
+				pliat.add(year+"-02");
+				pliat.add(year+"-03");
+				break;
+			case 2:
+				pliat.add(year+"-04");
+				pliat.add(year+"-05");
+				pliat.add(year+"-06");
+				break;
+			case 3:
+				pliat.add(year+"-07");
+				pliat.add(year+"-08");
+				pliat.add(year+"-09");
+				break;
+			case 4:
+				pliat.add(year+"-10");
+				pliat.add(year+"-11");
+				pliat.add(year+"-12");
+				break;
+		}
+		return pliat;
 	}
 
 }

@@ -40,4 +40,12 @@ public interface IRebateInptService {
 	 * @throws DZFWarpException
 	 */
 	public void delete(RebateVO data) throws DZFWarpException;
+	
+	/**
+	 * 通过加盟商主键、所属年、所属季度查询返点相关金额
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public RebateVO queryDebateMny(RebateVO data) throws DZFWarpException;
 }

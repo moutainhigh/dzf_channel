@@ -101,7 +101,7 @@
 					  	<div style="width:29%;display: inline-block">
 							<label style="width:100px;text-align: right;">扣款金额:</label>
 							<input id="debitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
-								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>				
 						<div style="width:31%;display: inline-block">
 							<label style="width:112px;text-align: right;">返点基数:</label>
