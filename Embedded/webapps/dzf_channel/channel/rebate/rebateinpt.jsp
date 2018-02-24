@@ -36,9 +36,9 @@
 				<div class="left mod-crumb">
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
 						<a href="javascript:void(0)" style="font-size:14;color:blue;margin-left:15px;" 
-							onclick="qryData(2)">待提交</a>
+							onclick="qryData(0)">待提交</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px;" 
-							onclick="qryData(3)">已驳回</a>
+							onclick="qryData(4)">已驳回</a>
 					</div>
 				</div>
 				

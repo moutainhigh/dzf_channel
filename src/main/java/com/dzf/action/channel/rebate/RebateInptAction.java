@@ -49,6 +49,12 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	public void query(){
 		Grid grid = new Grid();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
 			int page = paramvo == null ? 1: paramvo.getPage();
@@ -170,6 +176,12 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	public void queryManager(){
 		Grid grid = new Grid();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
 			int page = paramvo == null ? 1: paramvo.getPage();
@@ -189,5 +201,28 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
+	}
+	
+	public void delete() {
+		Json json = new Json();
+		if (data != null) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+					throw new BusinessException("登陆用户错误");
+				}else if(uservo == null){
+					throw new BusinessException("登陆用户错误");
+				}
+				rebateser.delete(data);
+				json.setSuccess(true);
+				json.setMsg("操作成功");
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "操作失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
 	}
 }

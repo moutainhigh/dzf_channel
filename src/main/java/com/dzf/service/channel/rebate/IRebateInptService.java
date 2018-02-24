@@ -33,4 +33,11 @@ public interface IRebateInptService {
 	 * @throws DZFWarpException
 	 */
 	public List<ManagerRefVO> queryManagerRef(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 删除
+	 * @param data
+	 * @throws DZFWarpException
+	 */
+	public void delete(RebateVO data) throws DZFWarpException;
 }

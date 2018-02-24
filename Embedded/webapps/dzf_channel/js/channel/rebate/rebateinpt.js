@@ -6,6 +6,7 @@ $(function(){
 	load();
 	initRef();
 	initQryData();
+	fastQry();
 });
 
 /**
@@ -194,19 +195,40 @@ function load(){
 		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
-		              { field : 'corpnm', title : '加盟商名称',width :'160',halign: 'center',align:'left'}, 
+		              { field : 'corp', title : '加盟商名称',width :'160',halign: 'center',align:'left'}, 
 		              { field : 'period', title : '返点所属期间',width :'115',halign: 'center',align:'center'} ,
 		              { field : 'debitmny', title : '扣款金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
-		              { field : 'status', title : '状态',width :'100',halign: 'center',align:'center'} ,
+		              { field : 'status', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
 		              { field : 'memo', title : '说明',width :'180',halign: 'center',align:'left'} ,
-				      { field : 'rebid', title : '主键', hidden:true}
+				      { field : 'rebid', title : '主键', hidden:true},
+				      { field : 'tstp', title : '时间戳', hidden:true},
 		] ],
 		onLoadSuccess : function(data) {
 			$('#grid').datagrid("scrollTo",0);
 		}
 	});
+}
+
+/**
+ * 状态格式化
+ * @param val
+ * @param row
+ * @param index
+ */
+function formatSta(val, row, index){
+	//状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
+	if(val == 0)
+		return "待提交";
+	if(val == 1)
+		return "待确认";
+	if(val == 2)
+		return "待审批";
+	if(val == 3)
+		return "审批通过";
+	if(val == 4)
+		return "已驳回";
 }
 
 /**
@@ -217,8 +239,8 @@ function load(){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="nsignVisit(' + index + ')">修改</a>|'
-	     +' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="caneclProtect(' + index + ')">删除</a>';
+	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>|'
+	     +' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(' + index + ')">删除</a>';
 }
 
 /**
@@ -248,6 +270,59 @@ function reloadData(){
 	var qjd = $("#qjd").combobox("getText");
 	$("#jqj").html(qyear+"-"+qjd);
 	$("#qrydialog").hide();
+}
+
+/**
+ * 快捷查询
+ * @param type
+ */
+function qryData(type){
+	url = contextPath + '/rebate/rebateinpt!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'qtype' : type,
+	});
+}
+
+/**
+ * 快速过滤
+ */
+function fastQry(){
+	$('#filter_value').textbox('textbox').keydown(function (e) {
+		 if (e.keyCode == 13) {
+            var filtername = $("#filter_value").val(); 
+            if(!isEmpty(filtername)){
+            	var queryParams = $('#grid').datagrid('options').queryParams;
+            	var rows = $('#grid').datagrid('getRows');
+            	clearQryParam(queryParams);
+            	if(rows != null && rows.length > 0){
+            		//做过查询
+            		queryParams.destatus = $("#qstatus").combobox("getValue");
+            		queryParams.cpid = $("#managerid").val();
+            		queryParams.uid = $("#qcorpid").val();
+            	}
+            	queryParams.year = $("#qyear").combobox("getValue");
+        		queryParams.season = $("#qjd").combobox("getValue");
+            	queryParams.cpname = filtername;
+          		grid.datagrid('options').url = contextPath + '/rebate/rebateinpt!query.action';
+          		$('#grid').datagrid('options').queryParams = queryParams;
+          		$('#grid').datagrid('reload');
+            }
+         }
+   });
+}
+
+/**
+ * 清除查询传递查询条件
+ * @param queryParams
+ */
+function clearQryParam(queryParams){
+	queryParams.year = null;
+	queryParams.season = null;
+	queryParams.qtype = -1;
+	queryParams.destatus = -1;
+	queryParams.cpid = null;
+	queryParams.uid = null;
 }
 
 /**
@@ -340,12 +415,51 @@ function saveSubmit(isadd, postdata) {
 /**
  * 修改
  */
-function onEdit(){
+function onEdit(index){
+	var row = $('#grid').datagrid('getData').rows[index];
 	$('#addDlg').dialog({
 		modal:true
 	});//设置dig属性
 	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
 	
+}
+
+/**
+ * 删除
+ */
+function onDelete(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	if (row.status != 0) {
+		Public.tips({
+			content : '该记录不是待提交状态，不允许删除',
+			type : 2
+		});
+		return;
+	}
+	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
+		if (r) {
+			$.ajax({
+				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
+				dataType : 'json',
+				data : row,
+				success : function(rs) {
+					if (rs.success) {
+						$('#grid').datagrid('deleteRow', index); 
+						$("#grid").datagrid('unselectAll');
+						Public.tips({
+							content : rs.msg,
+							type : 0
+						});
+					} else {
+						Public.tips({
+							content : rs.msg,
+							type : 2
+						});
+					}
+				},
+			});
+		}
+	});
 }
 
 /**
@@ -355,12 +469,6 @@ function onCommit(){
 	
 }
 
-/**
- * 删除
- */
-function onDelete(){
-	
-}
 
 /**
  * 导入

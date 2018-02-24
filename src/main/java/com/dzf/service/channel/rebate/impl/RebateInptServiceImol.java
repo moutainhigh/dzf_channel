@@ -2,6 +2,7 @@ package com.dzf.service.channel.rebate.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
+import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -21,23 +24,125 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInptService;
+import com.dzf.service.pub.IPubService;
 
 @Service("rebateinptser")
 public class RebateInptServiceImol implements IRebateInptService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-
+	
+	@Autowired
+	private IPubService pubser;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySql(paramvo);
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(RebateVO.class));
+		if(list != null && list.size() > 0){
+			setShowInfo(list);
+		}
 		return list;
+	}
+	
+	/**
+	 * 设置返点相关展示信息
+	 * @param list
+	 * @throws DZFWarpException
+	 */
+	private void setShowInfo(List<RebateVO> list) throws DZFWarpException{
+		Map<Integer, String> areamap = pubser.queryAreaMap("1");
+		Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
+		for(RebateVO vo : list){
+			setShowData(vo, areamap, lareamap);
+		}
+	}
+	
+	/**
+	 * 设置单个返点单展示信息
+	 * @throws DZFWarpException
+	 */
+	private void setShowData(RebateVO vo, Map<Integer, String> areamap, Map<String, ChnAreaVO> lareamap)
+			throws DZFWarpException {
+		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
+		if (corpvo != null) {
+			if (corpvo.getVprovince() != null) {
+				if (areamap != null && !areamap.isEmpty()) {
+					vo.setVprovname(areamap.get(corpvo.getVprovince()));
+				}
+				if (lareamap != null && !lareamap.isEmpty()) {
+					ChnAreaVO lareavo = lareamap.get(String.valueOf(corpvo.getVprovince()));
+					if (lareavo != null) {
+						vo.setVareaname(lareavo.getAreaname());
+						if (!StringUtil.isEmpty(lareavo.getUserid())) {
+							UserVO uservo = UserCache.getInstance().get(lareavo.getUserid(), null);
+							if (uservo != null) {
+								vo.setVmanagername(uservo.getUser_name());
+							}
+						}
+					}
+				}
+			}
+			vo.setCorpcode(corpvo.getInnercode());
+			vo.setCorpname(corpvo.getUnitname());
+		}
+		String period = "";
+		if(!StringUtil.isEmpty(vo.getVyear())){
+			period = vo.getVyear()+"-";
+		}
+		if(vo.getIseason() != null){
+			period = period + getSeasonName(vo.getIseason());
+		}
+		vo.setVperiod(period);
+	}
+	
+	/**
+	 * 获取季度名称
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getSeasonName(Integer season) throws DZFWarpException {
+		String name = "";
+		switch (season) {
+			case 1:
+				name = "第一季度";
+				break;
+			case 2:
+				name = "第一季度";
+				break;
+			case 3:
+				name = "第一季度";
+				break;
+			case 4:
+				name = "第一季度";
+				break;
+		}
+		return name;
+	}
+	
+	/**
+	 * 查询会计公司信息
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private CorpVO qryCorpInfo(String pk_corp) throws DZFWarpException {
+		CorpVO corpvo = (CorpVO) singleObjectBO.queryByPrimaryKey(CorpVO.class, pk_corp);
+		if(corpvo != null){
+			corpvo.setLegalbodycode(CodeUtils1.deCode(corpvo.getLegalbodycode()));
+			corpvo.setPhone1(CodeUtils1.deCode(corpvo.getPhone1()));
+			corpvo.setPhone2(CodeUtils1.deCode(corpvo.getPhone2()));
+			corpvo.setUnitname(CodeUtils1.deCode(corpvo.getUnitname()));
+			corpvo.setUnitshortname(CodeUtils1.deCode(corpvo.getUnitshortname()));
+		}
+		return corpvo;
 	}
 	
 	/**
@@ -53,7 +158,8 @@ public class RebateInptServiceImol implements IRebateInptService {
 		sql.append("  FROM cn_rebate \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			
+			sql.append("   AND istatus = ? \n") ; 
+			spm.addParam(paramvo.getQrytype());
 		}else{
 			if(!StringUtil.isEmpty(paramvo.getVyear())){
 				sql.append("   AND vyear = ? \n") ; 
@@ -97,7 +203,13 @@ public class RebateInptServiceImol implements IRebateInptService {
 		try {
 			chcekBeforeSave(data);
 			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(), 10);
-			return (RebateVO) singleObjectBO.saveObject(pk_corp, data);
+			RebateVO retvo =  (RebateVO) singleObjectBO.saveObject(pk_corp, data);
+			if(retvo != null){
+				Map<Integer, String> areamap = pubser.queryAreaMap("1");
+				Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
+				setShowData(retvo, areamap, lareamap);
+			}
+			return retvo;
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason());
 		}
@@ -212,6 +324,46 @@ public class RebateInptServiceImol implements IRebateInptService {
 			}
 		}
 		return retlist;
+	}
+
+	@Override
+	public void delete(RebateVO data) throws DZFWarpException {
+		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.irebatestatus_0){
+			throw new BusinessException("返点单："+data.getVbillcode()+"状态不为待提交，不能删除");
+		}
+		String errmsg = checkData(data);
+		if(!StringUtil.isEmpty(errmsg)){
+			throw new BusinessException(errmsg);
+		}
+		String sql = " UPDATE cn_rebate SET dr = 1, tstamp = ? WHERE nvl(dr,0) = 0 AND pk_rebate = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(new DZFDateTime());
+		spm.addParam(data.getPk_rebate());
+		singleObjectBO.executeUpdate(sql, spm);
+	}
+	
+	/**
+	 * 数据校验
+	 * @param data
+	 * @throws DZFWarpException
+	 */
+	private String checkData(RebateVO data) throws DZFWarpException {
+		String errmsg = "";
+		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
+		if(oldvo != null){
+			if(oldvo.getDr() != null && oldvo.getDr() == 1){
+				errmsg = "该数据已经被删除";
+			}
+			if(data.getTstamp() == null || oldvo.getTstamp() == null){
+				errmsg = "操作数据错误";
+			}
+			if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+				errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+			}
+		}else{
+			errmsg = "操作数据错误";
+		}
+		return errmsg;
 	}
 
 }

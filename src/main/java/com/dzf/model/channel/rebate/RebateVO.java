@@ -59,7 +59,7 @@ public class RebateVO extends SuperVO {
 	private DZFDouble nrebatemny;//返点金额
 	
 	@FieldAlias("status")
-	private Integer istatus;//状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：待确认驳回；5：待审批驳回；
+	private Integer istatus;//状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
 
 	@FieldAlias("memo")
 	private String vmemo;//备注
@@ -98,13 +98,21 @@ public class RebateVO extends SuperVO {
     private DZFDateTime tstamp;// 时间戳 （数据发生变化时，使用）
     
 	@FieldAlias("aname")
-    private String areaname;// 大区
+    private String vareaname;// 大区
 	
 	@FieldAlias("provname")
 	public String vprovname;// 省（市）
 	
     @FieldAlias("mname")
     private String vmanagername; // 渠道经理
+
+	public String getVareaname() {
+		return vareaname;
+	}
+
+	public void setVareaname(String vareaname) {
+		this.vareaname = vareaname;
+	}
 
 	public String getVperiod() {
 		return vperiod;
@@ -138,16 +146,8 @@ public class RebateVO extends SuperVO {
 		this.vmanagername = vmanagername;
 	}
 
-	public String getAreaname() {
-		return areaname;
-	}
-
 	public String getVprovname() {
 		return vprovname;
-	}
-
-	public void setAreaname(String areaname) {
-		this.areaname = areaname;
 	}
 
 	public void setVprovname(String vprovname) {
