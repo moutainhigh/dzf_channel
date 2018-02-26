@@ -30,9 +30,9 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	public List<SaleAnalyseVO> query(SaleAnalyseVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select a.pk_corp ,c.areaname,b.vprovname,b.vprovince ");
+		sql.append("select distinct a.pk_corp ,c.areaname,b.vprovname,b.vprovince ");
 		sql.append(" from bd_account a  " );   
-		sql.append(" right join cn_chnarea_b b on  a.vprovince=b.vprovince  " );   
+		sql.append(" inner join cn_chnarea_b b on  a.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea c on b.pk_chnarea=c.pk_chnarea " );   
 		sql.append(" where nvl(a.dr,0)=0 and nvl(b.dr,0)=0 and nvl(c.dr,0)=0 and nvl(a.ischannel,'N')='Y' " );
 		if(!StringUtil.isEmpty(qvo.getAreaname())){
@@ -43,7 +43,6 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			sql.append(" and b.vprovince=? ");//省市
 			sp.addParam(qvo.getVprovince());
 		}
-		sql.append(" order by a.innercode " );   
 		List<SaleAnalyseVO> list =(List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(SaleAnalyseVO.class));
 		
 		Map<String,SaleAnalyseVO> visitmap = qryVisitNum(qvo);//1、查询拜访数和拜访客户数
