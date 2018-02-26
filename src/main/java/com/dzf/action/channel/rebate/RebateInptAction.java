@@ -30,7 +30,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
-import com.dzf.service.channel.rebate.IRebateInptService;
+import com.dzf.service.channel.rebate.IRebateInputService;
 
 /**
  * 返点单录入
@@ -47,7 +47,7 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private IRebateInptService rebateser;
+	private IRebateInputService rebateser;
 	
 	/**
 	 * 查询
@@ -263,7 +263,7 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 	}
 	
 	/**
-	 * 保存提交
+	 * 提交
 	 */
 	public void saveCommit() {
 		Json json = new Json();

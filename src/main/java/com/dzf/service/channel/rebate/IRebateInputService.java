@@ -7,7 +7,7 @@ import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
-public interface IRebateInptService {
+public interface IRebateInputService {
 	
 	/**
 	 * 查询

@@ -29,11 +29,11 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
-import com.dzf.service.channel.rebate.IRebateInptService;
+import com.dzf.service.channel.rebate.IRebateInputService;
 import com.dzf.service.pub.IPubService;
 
 @Service("rebateinptser")
-public class RebateInptServiceImol implements IRebateInptService {
+public class RebateInputServiceImol implements IRebateInputService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
