@@ -1,8 +1,6 @@
 package com.dzf.service.channel.chn_set.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,17 +28,23 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	@SuppressWarnings({ "unchecked", "null", "rawtypes" })
 	@Override
 	public List<SaleAnalyseVO> query(SaleAnalyseVO qvo) throws DZFWarpException {
-		List<SaleAnalyseVO> list = qryByProvince(qvo);
-		List<SaleAnalyseVO> qryNotCharge =qryByCorp(qvo);
-		if(qryNotCharge!=null && qryNotCharge.size()>0){
-			list.addAll(qryNotCharge);
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select distinct a.pk_corp ,c.areaname,b.vprovname,b.vprovince ");
+		sql.append(" from bd_account a  " );   
+		sql.append(" inner join cn_chnarea_b b on  a.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea c on b.pk_chnarea=c.pk_chnarea " );   
+		sql.append(" where nvl(a.dr,0)=0 and nvl(b.dr,0)=0 and nvl(c.dr,0)=0 and nvl(a.ischannel,'N')='Y' " );
+		if(!StringUtil.isEmpty(qvo.getAreaname())){
+			sql.append(" and c.areaname=? " );   //大区
+			sp.addParam(qvo.getAreaname());
 		}
-		Collections.sort(list, new Comparator<SaleAnalyseVO>() {
-			@Override
-			public int compare(SaleAnalyseVO o1, SaleAnalyseVO o2) {
-				return -o1.getInnercode().compareTo(o2.getInnercode());
-			}
-		});
+		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
+			sql.append(" and b.vprovince=? ");//省市
+			sp.addParam(qvo.getVprovince());
+		}
+		List<SaleAnalyseVO> list =(List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(SaleAnalyseVO.class));
+		
 		Map<String,SaleAnalyseVO> visitmap = qryVisitNum(qvo);//1、查询拜访数和拜访客户数
 		Map<String,Integer> signmap = qrySignNum(qvo);//2、查询签约客户数
 		Map<String,SaleAnalyseVO> nummap = qryContNum(qvo);//3、查询合同数
@@ -87,52 +91,6 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			retlist.add(salevo);
 		}
 		return retlist;
-	}
-
-	private List<SaleAnalyseVO> qryByProvince(SaleAnalyseVO qvo) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select a.pk_corp ,c.areaname,b.vprovname,b.vprovince,a.innercode ");
-		sql.append(" from bd_account a  " );   
-		sql.append(" right join cn_chnarea_b b on  a.vprovince=b.vprovince  " );   
-		sql.append(" left join cn_chnarea c on b.pk_chnarea=c.pk_chnarea " );   
-		sql.append(" where nvl(a.dr,0)=0 and nvl(b.dr,0)=0 and nvl(c.dr,0)=0 and nvl(a.ischannel,'N')='Y' " );
-		sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
-		sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
-		sql.append("  group by vprovince having count(1)=0 )" );
-		if(!StringUtil.isEmpty(qvo.getAreaname())){
-			sql.append(" and c.areaname=? " );   //大区
-			sp.addParam(qvo.getAreaname());
-		}
-		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
-			sql.append(" and b.vprovince=? ");//省市
-			sp.addParam(qvo.getVprovince());
-		}
-		sql.append(" order by a.innercode " );   
-		List<SaleAnalyseVO> list =(List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(SaleAnalyseVO.class));
-		return list;
-	}
-	
-	private List<SaleAnalyseVO> qryByCorp(SaleAnalyseVO qvo) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select a.pk_corp ,c.areaname,b.vprovname,b.vprovince,a.innercode ");
-		sql.append(" from bd_account a  " );   
-		sql.append(" right join cn_chnarea_b b  on  a.pk_corp=b.pk_corp " );   
-		sql.append(" left join cn_chnarea c on b.pk_chnarea=c.pk_chnarea " );   
-		sql.append(" where nvl(a.dr,0)=0 and nvl(b.dr,0)=0 and nvl(c.dr,0)=0 and nvl(a.ischannel,'N')='Y' " );
-		sql.append(" and b.pk_corp is not null " );
-		if(!StringUtil.isEmpty(qvo.getAreaname())){
-			sql.append(" and c.areaname=? " );   //大区
-			sp.addParam(qvo.getAreaname());
-		}
-		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
-			sql.append(" and b.vprovince=? ");//省市
-			sp.addParam(qvo.getVprovince());
-		}
-		sql.append(" order by a.innercode " );   
-		List<SaleAnalyseVO> list =(List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(SaleAnalyseVO.class));
-		return list;
 	}
 	
 	/**

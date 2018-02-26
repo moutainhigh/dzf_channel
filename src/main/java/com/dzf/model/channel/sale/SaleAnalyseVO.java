@@ -59,8 +59,6 @@ public class SaleAnalyseVO extends SuperVO {
 	
 	@FieldAlias("num")
 	private Integer inum;//合同数
-	
-	private String innercode;//排序用的编码
 
 	@Override
 	public String getPKFieldName() {
@@ -85,14 +83,6 @@ public class SaleAnalyseVO extends SuperVO {
 
 	public String getAreaname() {
 		return areaname;
-	}
-
-	public String getInnercode() {
-		return innercode;
-	}
-
-	public void setInnercode(String innercode) {
-		this.innercode = innercode;
 	}
 
 	public void setAreaname(String areaname) {
