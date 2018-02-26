@@ -65,7 +65,7 @@
 			<table id="grid"></table>
 		</div>
 		
-		<!-- 新增/编辑对话框 begin -->
+		<!-- 新增对话框 begin -->
 		<div id="addDlg" class="easyui-dialog" style="width:1000px;height:360px;padding:20px 20px;" 
 			data-options="resizable:true,closed:true">
 			<form id="addForm" method="post" style="margin-top:0px;">
@@ -132,15 +132,20 @@
 		<!-- 新增/编辑对话框 end -->
 		
 		<!--卡片返点查看对话框 -->
-		<div id="infoDlg" class="easyui-dialog" style="width:1100px;height:430px;padding:10px 20px;" 
+		<div id="editDlg" class="easyui-dialog" style="width:1100px;height:430px;padding:10px 20px;" 
 			data-options="resizable:true,closed:true">
-			<form id="infoForm" method="post" style="margin-top:0px;">
+			<form id="editForm" method="post" style="margin-top:0px;">
 				<div id="tableDiv" style="height:370px;overflow-y: auto;">
 			   		<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
 						<div class="time_col time_colp11">
 						 	<div style="width:34%;display: inline-block">
 								<label style="width:100px;text-align: right;">审批状态：</label>
-								<input class="easyui-numberbox" style="width:240px;height:26px;text-align:left"></input>
+								<input type = radio id="isincre" name="isincre" checked value='Y' 
+									style="margin:0px 0px 0px 2px;text-align: left;">
+								<label style="text-align:left;width:80px;">驳回修改</label>
+								<input type = radio id="isincre" name="isincre" checked value='Y' 
+									style="margin:0px 0px 0px 2px;text-align: left;">
+								<label style="text-align:left;width:80px;">审批通过</label>
 							</div>	
 							<div style="width:28%;display: inline-block">
 								<label style="width:100px;text-align: right;">审批人：</label>

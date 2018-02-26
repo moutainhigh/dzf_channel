@@ -105,6 +105,17 @@ public class RebateVO extends SuperVO {
 	
     @FieldAlias("mname")
     private String vmanagername; // 渠道经理
+    
+    @FieldAlias("errmsg")
+    private String verrmsg;//错误信息
+
+	public String getVerrmsg() {
+		return verrmsg;
+	}
+
+	public void setVerrmsg(String verrmsg) {
+		this.verrmsg = verrmsg;
+	}
 
 	public String getVareaname() {
 		return vareaname;

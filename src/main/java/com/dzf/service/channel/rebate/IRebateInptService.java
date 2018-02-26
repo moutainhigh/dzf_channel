@@ -48,4 +48,12 @@ public interface IRebateInptService {
 	 * @throws DZFWarpException
 	 */
 	public RebateVO queryDebateMny(RebateVO data) throws DZFWarpException;
+	
+	/**
+	 * 提交
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public RebateVO[] saveCommit(RebateVO[] bateVOs) throws DZFWarpException;
 }

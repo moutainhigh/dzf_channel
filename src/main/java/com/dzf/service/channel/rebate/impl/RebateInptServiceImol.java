@@ -357,16 +357,16 @@ public class RebateInptServiceImol implements IRebateInptService {
 		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
 		if(oldvo != null){
 			if(oldvo.getDr() != null && oldvo.getDr() == 1){
-				errmsg = "该数据已经被删除";
+				errmsg = "返点单："+data.getVbillcode()+"已经被删除";
 			}
 			if(data.getTstamp() == null || oldvo.getTstamp() == null){
-				errmsg = "操作数据错误";
+				errmsg = "返点单："+data.getVbillcode()+"数据错误";
 			}
 			if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
 				errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
 			}
 		}else{
-			errmsg = "操作数据错误";
+			errmsg = "返点单："+data.getVbillcode()+"数据错误";
 		}
 		return errmsg;
 	}
@@ -438,6 +438,32 @@ public class RebateInptServiceImol implements IRebateInptService {
 				break;
 		}
 		return pliat;
+	}
+
+	@Override
+	public RebateVO[] saveCommit(RebateVO[] bateVOs) throws DZFWarpException {
+		List<RebateVO> uplist = new ArrayList<RebateVO>();
+		if(bateVOs != null && bateVOs.length > 0){
+			String errmsg = "";
+			for(RebateVO vo : bateVOs){
+				if(!vo.getIstatus().equals(IStatusConstant.irebatestatus_0)){
+					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交");
+					continue;
+				}
+				errmsg = checkData(vo);
+				if(!StringUtil.isEmpty(errmsg)){
+					vo.setVerrmsg(errmsg);
+					continue;
+				}
+				vo.setIstatus(IStatusConstant.irebatestatus_1);
+				vo.setTstamp(new DZFDateTime());
+				uplist.add(vo);
+			}
+		}
+		if(uplist != null && uplist.size() > 0){
+			singleObjectBO.updateAry(uplist.toArray(new RebateVO[0]), new String[]{"istatus","tstamp"});
+		}
+		return bateVOs;
 	}
 
 }

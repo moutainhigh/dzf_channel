@@ -455,7 +455,7 @@ function save(){
 }
 
 /**
- * 保存提交
+ * 保存-公用方法
  */
 function saveSubmit(isadd, postdata) {
 	$.messager.progress({
@@ -494,10 +494,10 @@ function saveSubmit(isadd, postdata) {
  */
 function onEdit(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	$('#addDlg').dialog({
+	$('#editDlg').dialog({
 		modal:true
 	});//设置dig属性
-	$('#addDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
 	
 }
 
@@ -543,7 +543,67 @@ function onDelete(index){
  * 提交
  */
 function onCommit(){
-	
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length == 0) {
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});
+		return;
+	}
+	var postdata = new Object();
+	var data = "";
+	for(var i = 0; i < rows.length; i++){
+		data = data + JSON.stringify(rows[i]);
+	}
+	postdata["data"] = data;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/rebate/rebateinpt!saveCommit.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(result) {
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				});
+			} else {
+				if(result.status == -1){
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+					});
+				}
+				$('#allotDialog').dialog('close');
+				var rerows = result.rows;
+				if(rerows != null && rerows.length > 0){
+					var map = new HashMap(); 
+					for(var i = 0; i < rerows.length; i++){
+						map.put(rerows[i].pkcustno,rerows[i]);
+					}
+					var index;
+					var indexes = new Array();
+					for(var i = 0; i < rows.length; i++){
+						if(map.containsKey(rows[i].pkcustno)){
+							index = $('#grid').datagrid('getRowIndex', rows[i]);
+							indexes.push(index);
+						}
+					}
+					for(var i in indexes){
+						$('#grid').datagrid('deleteRow', index); 
+					}
+				}
+				$("#grid").datagrid('uncheckAll');
+			}
+		},
+	});
 }
 
 

@@ -1,7 +1,9 @@
 package com.dzf.action.channel.rebate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -9,6 +11,8 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
@@ -21,8 +25,10 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.rebate.IRebateInptService;
 
@@ -252,6 +258,53 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 		} else {
 			json.setSuccess(false);
 			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 保存提交
+	 */
+	public void saveCommit() {
+		Json json = new Json();
+		try {
+			String data = getRequest().getParameter("data");
+			if (StringUtil.isEmpty(data)) {
+				throw new BusinessException("数据不能为空");
+			}
+			data = data.replace("}{", "},{");
+			data = "[" + data + "]";
+			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
+			Map<String, String> custmaping = FieldMapping.getFieldMapping(new RebateVO());
+			RebateVO[] custVOs = DzfTypeUtils.cast(arrayJson, custmaping, RebateVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			custVOs = rebateser.saveCommit(custVOs);
+			List<RebateVO> retlist = new ArrayList<RebateVO>();
+			StringBuffer errmsg = new StringBuffer();
+			if (custVOs != null && custVOs.length > 0) {
+				for (RebateVO vo : custVOs) {
+					if (StringUtil.isEmpty(vo.getVerrmsg())) {
+						retlist.add(vo);
+					} else {
+						errmsg.append(vo.getVerrmsg()).append("<br>");
+					}
+				}
+			}
+			json.setRows(retlist);
+			json.setSuccess(true);
+			if (retlist != null && retlist.size() > 0) {
+				if(errmsg != null && errmsg.length() > 0){
+					json.setMsg("成功提交" + retlist.size() + "条数据，失败" + (custVOs.length - retlist.size()) + "条数据，失败原因："
+							+ errmsg.toString());
+				}else{
+					json.setMsg("成功提交"+ retlist.size() +"条数据");
+				}
+			} else {
+				json.setStatus(-1);
+				json.setMsg("成功提交0条数据，失败原因："+ errmsg.toString());
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "提交失败");
 		}
 		writeJson(json);
 	}
