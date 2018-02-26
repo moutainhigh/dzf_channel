@@ -29,7 +29,7 @@ public interface IChnAreaService {
 	 * @return
 	 * @throws DZFWarpException	
 	 */
-	public ChnAreaVO queryByPrimaryKey(String pk,String pk_corp) throws DZFWarpException;
+	public ChnAreaVO queryByPrimaryKey(String pk) throws DZFWarpException;
 	
 	
 	/**

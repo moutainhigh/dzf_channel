@@ -2,7 +2,8 @@ package com.dzf.model.channel.sale;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFBoolean;
+import com.dzf.pub.lang.DZFDateTime;		
 
 /**
  * 渠道区域划分从表VO(渠道经理)
@@ -18,13 +19,21 @@ public class ChnAreaBVO extends SuperVO {
 	private String pk_chnarea_b;// 主键
 	
 	@FieldAlias("corpid")
-	private String pk_corp;// 所属分部
+	private String pk_corp;// 负责加盟商主键
+	
+    @FieldAlias("corpnm")
+    private String corpname; // 负责渠道商名称
 	
 	@FieldAlias("ovince")
 	public Integer vprovince;// 地区
 	    
 	@FieldAlias("provname")
 	public String vprovname;// 地区名称
+	
+	@FieldAlias("isCharge")
+	public DZFBoolean isCharge;//是否省/市负责人
+	
+	public Integer stytle;//1:渠道经理；2：培训师
 	
     @FieldAlias("uid")
     private String userid; // 用户主键（渠道经理）
@@ -65,8 +74,24 @@ public class ChnAreaBVO extends SuperVO {
 		return username;
 	}
 
+	public DZFBoolean getIsCharge() {
+		return isCharge;
+	}
+
+	public void setIsCharge(DZFBoolean isCharge) {
+		this.isCharge = isCharge;
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getCorpname() {
+		return corpname;
+	}
+
+	public void setCorpname(String corpname) {
+		this.corpname = corpname;
 	}
 
 	public void setPk_chnarea_b(String pk_chnarea_b) {

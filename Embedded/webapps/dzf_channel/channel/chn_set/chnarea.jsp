@@ -59,7 +59,7 @@
 				</div>
 			</div>
 			<div id="dataGrid" class="grid-wrap" >
-				<table id="cardGrid" ></table>
+				<table id="cardGrid"></table>
 			</div> 
 			<div style="float:right;margin-top:20px;margin-right:20px;">
 			    <a href="javascript:void(0)" id="save" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="checkSave()">保存</a> 
@@ -68,6 +68,11 @@
 		</form>
 	</div>
 	<div id="gs_dialog"></div>
-	<div id="userdialog"></div> 
+	<div id="userdialog"></div>
+	<div id="chnDlg"></div>
+	<div id="chnBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
  	</body>
 </html>

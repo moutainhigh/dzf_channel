@@ -8,6 +8,7 @@
 </head>
 <%
 	String issingle = request.getParameter("issingle");
+	String ovince = request.getParameter("ovince");
 %>
 <body>
 <style>
@@ -94,6 +95,10 @@
 			               {field:'uname',title:'公司名称',width:500}
 			   	 ]];
 		}
+		var ovince = <%=ovince%>;
+		if(isEmpty(ovince)){
+			ovince=-1;
+		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
 		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
@@ -108,6 +113,7 @@
 			showFooter : true,
 			height:330,
 			striped:true,
+			queryParams: {'dr':ovince},
 		    columns: columns,
 			onDblClickRow:function(rowIndex, rowData){
 				var rowTable = $('#gsTable').datagrid('getSelections');

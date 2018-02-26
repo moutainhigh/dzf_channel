@@ -1,6 +1,7 @@
 package com.dzf.service.channel.chn_set.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,13 @@ import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.service.channel.chn_set.IChnAreaService;
 
@@ -43,7 +46,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		sql.append(" and pk_corp=? order by areacode " );   
 		sp.addParam(qvo.getPk_corp());
 		List<ChnAreaVO> vos =(List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ChnAreaVO.class));
-		ChnAreaBVO[] bvos = queryBy1ID(null, qvo.getPk_corp());
+		ChnAreaBVO[] bvos = queryBy1ID(null);
 		Map<String, StringBuffer> map = new HashMap<String, StringBuffer>();
 		if(bvos!=null&&bvos.length>0){
 			for (ChnAreaBVO chnAreaBVO : bvos) {
@@ -86,37 +89,33 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			vo.setDoperatedate(oldvo.getDoperatedate());
 			vo.setCoperatorid(oldvo.getCoperatorid());
 			vo.setTs(oldvo.getTs());
+			SQLParameter sp = new SQLParameter();
+			StringBuffer sql = new StringBuffer();
+			sp.addParam(vo.getPk_chnarea());
+			sql.append("update cn_chnarea_b set dr = 1 where pk_chnarea=? and nvl(dr,0)=0  ");
+			singleObjectBO.executeUpdate(sql.toString(), sp);
 		}
 		vo=(ChnAreaVO) multBodyObjectBO.saveMultBObject(vo.getPk_corp(), vo);
+		if(!checkCorpIsOnly() ){
+			throw new BusinessException("加盟商重复,请重新输入");
+		}
 		SuperVO[] bvos = (SuperVO[])vo.getTableVO("cn_chnarea_b");
 		vo.setChildren(bvos);
-		for (SuperVO superVO : bvos) {
-			ChnAreaBVO chn=(ChnAreaBVO)superVO;
-			if(chn.getDr()==0&&!checkAreaIsOnly(chn)){
-				throw new BusinessException("省市地区重复,请重新输入");
-			};
-		}
 		return vo;
 	}
 	
 	/**
-	 * 校验省市是否重复
+	 * 校验(负责地区+渠道经理)是否重复
 	 * @param vo
 	 * @return
 	 */
-	private boolean checkAreaIsOnly(ChnAreaBVO vo) {
+	private boolean checkCorpIsOnly() {
 		boolean ret = false;
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select count(1) as count from cn_chnarea_b ");
-		sql.append(" where pk_corp=? and nvl(dr,0) = 0 and vprovince=?");
-		sp.addParam(vo.getPk_corp());
-		sp.addParam(vo.getVprovince());
-		if(!StringUtil.isEmpty(vo.getPk_chnarea())){
-			sql.append(" and pk_chnarea_b != ?");
-			sp.addParam(vo.getPk_chnarea_b());
-		}
-		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
+		sql.append(" select count(1) as count from ( ");
+		sql.append(" select count(1)  from cn_chnarea_b where pk_corp!=null ");
+		sql.append(" group by pk_corp having count(1)>1) ");
+		String res = singleObjectBO.executeQuery(sql.toString(), null, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
 		if(num <= 0)
 			ret = true;
@@ -153,55 +152,80 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	 * 通过主表主键查询主从表数据
 	 */
 	@Override
-	public ChnAreaVO queryByPrimaryKey(String pk,String pk_corp) throws DZFWarpException {
+	public ChnAreaVO queryByPrimaryKey(String pk) throws DZFWarpException {
 		ChnAreaVO hvo = (ChnAreaVO)singleObjectBO.queryVOByID(pk, ChnAreaVO.class);
 		UserVO user = UserCache.getInstance().get(hvo.getUserid(), null);
 		if(user != null){
 			hvo.setUsername(user.getUser_name());
 		}
 		if(hvo != null){
-			ChnAreaBVO[] bvos = queryBy1ID(pk, pk_corp);
-			if(bvos!=null&&bvos.length>0){
-				for (ChnAreaBVO chnAreaBVO : bvos) {
-					user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
-					if(user != null){
-						chnAreaBVO.setUsername(user.getUser_name());
-					}
-				}
-			}
+			ChnAreaBVO[] bvos = queryBy1ID(pk);
 			hvo.setChildren(bvos); 
 		}
 		return hvo;
 	}
 	
-	private ChnAreaBVO[] queryBy1ID(String pk,String pk_corp) throws DZFWarpException {
+	private ChnAreaBVO[] queryBy1ID(String pk) throws DZFWarpException {
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		corpsql.append("SELECT * FROM cn_chnarea_b where nvl(dr,0)= 0");
+		corpsql.append("SELECT pk_chnarea,pk_corp,vprovince,vprovname,ischarge,userid,vmemo,ts");
+		corpsql.append(" FROM cn_chnarea_b where nvl(dr,0)= 0");
 		if(pk!=null){
 			corpsql.append(" and pk_chnarea = ? ");
 			sp.addParam(pk);
 		}
-		corpsql.append(" and pk_corp = ?");
-		sp.addParam(pk_corp);
-		corpsql.append(" order by ts asc");
+		corpsql.append(" order by ts desc");
+		Map<String, ChnAreaBVO > map = new HashMap<String,ChnAreaBVO>();
 		List<ChnAreaBVO> b1vos = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(ChnAreaBVO.class));
-		return b1vos.toArray(new ChnAreaBVO[0]);
+		int i=0;
+		CorpVO cvo =null;
+		UserVO user =null;
+		for (ChnAreaBVO chnAreaBVO : b1vos) {
+			user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
+			if(user != null){
+				chnAreaBVO.setUsername(user.getUser_name());
+			}
+			cvo=CorpCache.getInstance().get(null, chnAreaBVO.getPk_corp());
+			if(!StringUtil.isEmpty(chnAreaBVO.getUserid())){
+				String id=chnAreaBVO.getVprovince()+chnAreaBVO.getUserid();
+				if(map.containsKey(id)){
+					ChnAreaBVO vo = map.get(id);
+					if(!StringUtil.isEmpty(chnAreaBVO.getPk_corp())){
+						vo.setPk_corp(vo.getPk_corp()+","+chnAreaBVO.getPk_corp());
+						vo.setCorpname(vo.getCorpname()+","+cvo.getUnitname());
+					}
+					map.put(id,vo);
+				}else{
+					if(cvo!=null){
+						chnAreaBVO.setCorpname(cvo.getUnitname());
+					}
+					map.put(id,chnAreaBVO);
+				}
+			}else{
+				if(cvo!=null){
+					chnAreaBVO.setCorpname(cvo.getUnitname());
+				}
+				map.put(i+"",chnAreaBVO);
+				i++;
+			}
+		}
+		Collection<ChnAreaBVO> vos = map.values();
+		List<ChnAreaBVO> list= new ArrayList<ChnAreaBVO>(vos);
+		return list.toArray(new ChnAreaBVO[0]);
 	}
 	
 	@Override
 	public void delete(String pk,String pk_corp) throws DZFWarpException {
 		if (!StringUtil.isEmpty(pk)) {
 			SQLParameter sp = new SQLParameter();
-			StringBuffer sql = new StringBuffer();
-			StringBuffer sql1 = new StringBuffer();
-			StringBuffer sql2 = new StringBuffer();
+			StringBuffer main_sql = new StringBuffer();
+			StringBuffer depe_sql = new StringBuffer();
 			sp.addParam(pk);
+			depe_sql.append("update cn_chnarea_b set dr = 1 where pk_chnarea= ? and nvl(dr,0)=0");
+			singleObjectBO.executeUpdate(depe_sql.toString(), sp);
 			sp.addParam(pk_corp);
-			sql.append("update cn_chnarea set dr = 1 where pk_chnarea = ? and pk_corp =? and nvl(dr,0)=0");
-			sql1.append("update cn_chnarea_b set dr = 1 where pk_chnarea= ? and pk_corp =? and nvl(dr,0)=0");
-			singleObjectBO.executeUpdate(sql.toString(), sp);
-			singleObjectBO.executeUpdate(sql1.toString(), sp);
+			main_sql.append("update cn_chnarea set dr = 1 where pk_chnarea = ? and pk_corp =? and nvl(dr,0)=0");
+			singleObjectBO.executeUpdate(main_sql.toString(), sp);
 		}else{
 			throw new BusinessException("删除失败");
 		}

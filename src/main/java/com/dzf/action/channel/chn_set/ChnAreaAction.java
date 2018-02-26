@@ -1,6 +1,7 @@
 package com.dzf.action.channel.chn_set;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.IChnAreaService;
+import com.sun.xml.internal.ws.wsdl.writer.UsingAddressing;
 
 /**
  * 渠道区域划分
@@ -63,17 +65,13 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 	
 	private ChnAreaVO requestDealStep(HttpServletRequest request) {
 		String head = request.getParameter("head");
-		String body1 = request.getParameter("body1"); // 第一个子表
-		String body1d = request.getParameter("body1d");
-		body1 = body1.replace("}{", "},{");
-		body1 = "[" + body1 + "]";
-		body1d = body1d.replace("}{", "},{");
-		body1d = "[" + body1d + "]";
+		String body = request.getParameter("body"); //子表
+		body = body.replace("}{", "},{");
+		body = "[" + body + "]";
 		JSON headjs = (JSON) JSON.parse(head);
-		JSONArray array1 = (JSONArray) JSON.parseArray(body1);
-		JSONArray array1d = (JSONArray) JSON.parseArray(body1d);
+		JSONArray array = (JSONArray) JSON.parseArray(body);
 		Map<String, String> headmaping = FieldMapping.getFieldMapping(new ChnAreaVO());
-		Map<String, String> body1mapping = FieldMapping.getFieldMapping(new ChnAreaBVO());
+		Map<String, String> bodymapping = FieldMapping.getFieldMapping(new ChnAreaBVO());
 		
 		ChnAreaVO headvo = DzfTypeUtils.cast(headjs, headmaping, ChnAreaVO.class, JSONConvtoJAVA.getParserConfig());
 		String pk_corp = headvo.getPk_corp();
@@ -86,22 +84,41 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			headvo.setCoperatorid(getLoginUserInfo().getCuserid());
 			headvo.setTs(new DZFDateTime());
 		}
-		ChnAreaBVO[] bodyvos1 = DzfTypeUtils.cast(array1, body1mapping, ChnAreaBVO[].class,
+		ChnAreaBVO[] bodyvos= DzfTypeUtils.cast(array, bodymapping, ChnAreaBVO[].class,
 				JSONConvtoJAVA.getParserConfig());
-		ChnAreaBVO[] bodyvos1d = DzfTypeUtils.cast(array1d, body1mapping, ChnAreaBVO[].class,
-				JSONConvtoJAVA.getParserConfig());
-		List<ChnAreaBVO> list1 = new ArrayList<ChnAreaBVO>();
-		for (ChnAreaBVO dealstepB1VO : bodyvos1) {
-			dealstepB1VO.setDr(0);
-			dealstepB1VO.setPk_corp(pk_corp);
-			list1.add(dealstepB1VO);
+		HashMap<String, String> map1=new HashMap<>();
+		HashMap<String, String> map2=new HashMap<>();
+		List<ChnAreaBVO> list = new ArrayList<ChnAreaBVO>();
+		for (ChnAreaBVO chnAreaBVO : bodyvos) {
+			if(!chnAreaBVO.getIsCharge().booleanValue() && StringUtil.isEmpty(chnAreaBVO.getPk_corp())){
+				throw new BusinessException("省市负责人为否时，加盟商为必输项");
+			}
+			if(!StringUtil.isEmpty(chnAreaBVO.getUserid())){
+				String id1=chnAreaBVO.getVprovince()+chnAreaBVO.getUserid();
+				if(map1.containsKey(id1)){
+					throw new BusinessException("负责地区+渠道经理重复,请重新输入");
+				}else{
+					map1.put(id1,"value");
+				}
+			}
+			String id2=chnAreaBVO.getVprovince()+chnAreaBVO.getIsCharge().toString();
+			if(map2.containsKey(id2)){
+				throw new BusinessException("一个地区只能有一个负责人");
+			}else{
+				map2.put(id2,"value");
+			}
+			if(StringUtil.isEmpty(chnAreaBVO.getPk_corp()) || !chnAreaBVO.getPk_corp().contains(",")){
+				list.add(chnAreaBVO);
+			}else{
+				String[] corps = chnAreaBVO.getPk_corp().split(",");
+				for (String corp : corps) {
+					ChnAreaBVO clone = (ChnAreaBVO)chnAreaBVO.clone();
+					clone.setPk_corp(corp);
+					list.add(clone);
+				}
+			}
 		}
-		for (ChnAreaBVO dealstepB1VO : bodyvos1d) {
-			dealstepB1VO.setDr(1);
-			dealstepB1VO.setPk_corp(pk_corp);
-			list1.add(dealstepB1VO);
-		}
-		headvo.setTableVO("cn_chnarea_b", list1.toArray(new ChnAreaBVO[0]));
+		headvo.setTableVO("cn_chnarea_b", list.toArray(new ChnAreaBVO[0]));
 		return headvo;
 	}
 
@@ -164,7 +181,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			if(StringUtil.isEmpty(pk_area)){
 				throw new BusinessException("主键为空");
 			}
-			ChnAreaVO vo = chnarea.queryByPrimaryKey(pk_area,getLogincorppk());
+			ChnAreaVO vo = chnarea.queryByPrimaryKey(pk_area);
 			if (vo != null) {
 				grid.setRows(Arrays.asList(vo));
 			}

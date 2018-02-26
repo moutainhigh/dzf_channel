@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var status="brows";
 var editIndex = undefined;
+var chargeData=[{value:"否",text:"否"},{value:"是",text:"是"}];
 
 $(function() {
 	loadManager();
@@ -106,7 +107,7 @@ function add(){
     $('#chnarea').form("clear");
     $('#cardGrid').datagrid('loadData', { total : 0, rows : [] });// 清楚缓存数据
     for(var i=0;i<5;i++){
-    	$('#cardGrid').datagrid('appendRow', {});
+    	$('#cardGrid').datagrid('appendRow',{isCharge:chargeData[0].value})
     }
 //	editIndex = $('#cardGrid').datagrid('getRows').length - 1;
 	editIndex =0;
@@ -233,22 +234,15 @@ function checkSave(){
  *  保存（新增和修改）
  */
 function save() {
-	var childBody1 = "";
+	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
 	for (var i = 0; i < rows.length; i++) {
-		childBody1 = childBody1 + JSON.stringify(rows[i]);
-	}
-	var childBody1d="";
-	var d_rows = $("#cardGrid").datagrid('getChanges','deleted');
-	if(!isEmpty(d_rows)){
-		for (var i = 0; i< d_rows.length; i++) {
-			childBody1d = childBody1d + JSON.stringify(d_rows[i]);
-		}
+		childBody = childBody + JSON.stringify(rows[i]);
+		$("#cardGrid").datagrid('endEdit', i);
 	}
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#chnarea')));
-	postdata["body1"] = childBody1;
-	postdata["body1d"] = childBody1d;
+	postdata["body"] = childBody;
 	$.ajax({
 		type : 'POST',
 		url :DZF.contextPath + '/chn_set/chnarea!save.action',
@@ -311,7 +305,62 @@ function updateBtnState(){
 		$('#cancel').hide();
 	}	
 }
+/**
+ * 加盟商参照初始化
+ */
+function initChnCorp(){
+	var ovince = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'ovince'});
+	var tar_ovince=$(ovince.target).textbox('getValue');
+	if(isEmpty(tar_ovince)){
+		Public.tips({
+			content : "请先选择负责地区",
+			type :2
+		});
+		return;
+	}
+	$("#chnDlg").dialog({
+		width: 600,
+	    height: 480,
+		readonly: true,
+		title: '选择加盟商',
+		modal: true,
+		href: DZF.contextPath + '/ref/channel_select.jsp',
+		queryParams:{
+			ovince : tar_ovince,
+		},
+		buttons: '#chnBtn'
+	});
+}
 
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
+function dClickCompany(rowTable) {
+	var str = "";
+	var corpIds = "";
+	if (rowTable) {
+		for (var i = 0; i < rowTable.length; i++) {
+			if (i == rowTable.length - 1) {
+				str += rowTable[i].uname;
+				corpIds += rowTable[i].pk_gs;
+			} else {
+				str += rowTable[i].uname + ",";
+				corpIds += rowTable[i].pk_gs + ",";
+			}
+		}
+		var corpid = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpid'});
+		var corpnm = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpnm'});
+		$(corpid.target).textbox('setValue', corpIds);
+		$(corpnm.target).textbox('setValue', str);
+	}
+	$("#chnDlg").dialog('close');
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
 
 function initChnUser(){
 	$("#userdialog").dialog({
@@ -330,7 +379,8 @@ function initChnUser(){
 			handler : function() {
 				var row = $('#userTable').datagrid('getSelected');
 				if(row){
-					selectChnUser(row);
+					dClickCompany(row);
+//					selectChnUser(row);
 				}else{
 					Public.tips({
 						content : "请选择需要处理的数据",
@@ -440,12 +490,12 @@ function initCard(id){
 		singleSelect : true,
 		columns : [ [ 
         {
-        	width : '80',
+        	width : '60',
 			field : 'button',
 			title : '操作',
         	formatter : coperatorLink
 		}, {
-			width : '200',
+			width : '150',
 			field : 'provname', 
 			title : '负责地区',
 			editor : {
@@ -462,11 +512,15 @@ function initCard(id){
                 	onSelect: function (rec) { 
                 		var ovince = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'ovince'});
                 		$(ovince.target).textbox('setValue', rec.id);
+                		var corpnm = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpnm'});
+                		$(corpnm.target).textbox('setValue', null);
+                		var corpid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpid'});
+                		$(corpid.target).textbox('setValue', null);
                 	}
                 }
             }
 		}, {
-			width : '200',
+			width : '150',
 			field : 'uname',
 			title : '渠道经理',
 			editor : {
@@ -483,7 +537,47 @@ function initCard(id){
 				}
 			}
 		},{
-			width : '450',
+			width : '220',
+			field : 'corpnm',
+			title : '加盟商',
+			editor : {
+				type : 'textbox',
+				options : {
+					height:31,
+					editable:false,
+					icons: [{
+						iconCls:'icon-search',
+						handler: function(){
+							initChnCorp();
+						}
+					}]
+				}
+			}
+		},{
+			width : '95',
+			field : 'isCharge',
+			title : '省/市负责人',
+			formatter: function (value) {
+				var text = "";
+				if (value == '是')
+					text = "是";
+				if (value == '否')
+					text = "否";
+				return text;
+			},
+			editor : { 
+				   type: 'combobox',
+	               options: {
+	            	   height:31,
+	                   data: chargeData,
+	                   panelHeight: 80,
+                   	   showItemIcon: true,
+	                   valueField: "value",
+	                   textField: "text",
+	                   editable: false
+	               }},
+		},{
+			width : '280',
 			field : 'vmemo',
 			title : '备注',
 			editor : {
@@ -511,6 +605,14 @@ function initCard(id){
 			width : '100',
 			field : 'ovince',
 			title : '地区',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		},{
+			width : '100',
+			field : 'corpid',
+			title : '加盟商主键',
 			hidden : true,
 			editor : {
 				type : 'textbox',
@@ -552,7 +654,7 @@ function addRow(){
 		return ;
 	}
 	if(isCanAdd()){
-		$('#cardGrid').datagrid('appendRow',{});
+		$('#cardGrid').datagrid('appendRow',{isCharge:chargeData[0].value});
 		editIndex = $('#cardGrid').datagrid('getRows').length - 1;
 		$('#cardGrid').datagrid('beginEdit',editIndex);
 	}else{
