@@ -33,7 +33,7 @@ import com.dzf.service.channel.rebate.IRebateInputService;
 import com.dzf.service.pub.IPubService;
 
 @Service("rebateinptser")
-public class RebateInputServiceImol implements IRebateInputService {
+public class RebateInputServiceImpl implements IRebateInputService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
