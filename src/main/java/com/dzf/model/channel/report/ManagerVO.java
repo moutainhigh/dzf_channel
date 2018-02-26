@@ -64,6 +64,16 @@ public class ManagerVO extends SuperVO {
 
 	@FieldAlias("num")
 	private Integer num;// 提单量
+	
+	private String innercode;//排序用的编码
+
+	public String getInnercode() {
+		return innercode;
+	}
+
+	public void setInnercode(String innercode) {
+		this.innercode = innercode;
+	}
 
 	public DZFDate getDbegindate() {
 		return dbegindate;

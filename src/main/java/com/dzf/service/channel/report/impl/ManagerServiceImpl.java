@@ -2,6 +2,8 @@ package com.dzf.service.channel.report.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -32,45 +33,133 @@ public class ManagerServiceImpl implements IManagerService {
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
 	
-	@Autowired
-	private MultBodyObjectBO multBodyObjectBO = null;
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince ");
-		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ?" );
-	    sp.addParam(IDefaultValue.DefaultGroup);
-		if(type==1){//渠道经理
-			sql.append(" and b.userid=? ");
-			sp.addParam(qvo.getUserid());
-		}else if(type==2){//区域总经理
-			sql.append(" and a.userid=? ");
-			sp.addParam(qvo.getUserid());
-		}else{
+		List<ManagerVO> vos=new ArrayList<>();
+		if(type==3){//渠道经理
 			if(!checkIsLeader(qvo)){
 				return null;
 			}
 		}
-		if(!StringUtil.isEmpty(qvo.getAreaname())){
-			sql.append(" and a.areaname=? " );   //大区
+		if(type==1){
+			vos = qryCharge(qvo.getUserid());//查询  是  省/市负责人相关的数据
+			List<ManagerVO> qryNotCharge = qryNotCharge(qvo.getUserid());//查询  非  省/市负责人相关的数据
+			if(qryNotCharge!=null && qryNotCharge.size()>0){
+				vos.addAll(qryNotCharge);
+			}
+		}else{
+			vos = qryByProvince(qvo,type);
+			List<ManagerVO> qryNotCharge =qryByCorp(qvo,type);
+			if(qryNotCharge!=null && qryNotCharge.size()>0){
+				vos.addAll(qryNotCharge);
+			}
+		}
+		Collections.sort(vos, new Comparator<ManagerVO>() {
+			@Override
+			public int compare(ManagerVO o1, ManagerVO o2) {
+				return -o1.getInnercode().compareTo(o2.getInnercode());
+			}
+		});
+		if(vos!=null && vos.size()>0){
+			vos=queryCommon(qvo,vos);
+		}
+		return vos;
+	}
+	
+	private List<ManagerVO> qryCharge(String userid) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.userid=? " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+	    sp.addParam(userid);
+	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
+	    return list;
+	}
+
+	private List<ManagerVO> qryNotCharge(String userid) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='N' and b.userid=? " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+		sp.addParam(userid);
+	    List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
+		return vos;
+	}
+
+	private List<ManagerVO> qryByProvince(ManagerVO qvo,Integer type) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
+	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
+	    sql.append("  group by vprovince having count(1)=0 )" );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+		if (type == 2) {// 区域总经理
+			sql.append(" and a.userid=? ");
+			sp.addParam(qvo.getUserid());
+		}
+		if (!StringUtil.isEmpty(qvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
 			sp.addParam(qvo.getAreaname());
 		}
-		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
-			sql.append(" and b.vprovince=? ");//省市
+		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
 			sp.addParam(qvo.getVprovince());
 		}
-		if(!StringUtil.isEmpty(qvo.getCuserid())){
-			sql.append(" and b.userid=? ");//渠道经理
+		if (!StringUtil.isEmpty(qvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
 			sp.addParam(qvo.getCuserid());
 		}
-		sql.append(" order by p.innercode " );   
-		List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
+	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
+	    return list;
+	}
+	
+	private List<ManagerVO> qryByCorp(ManagerVO qvo,Integer type) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and b.pk_corp is not null " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+	    if (type == 2) {// 区域总经理
+			sql.append(" and a.userid=? ");
+			sp.addParam(qvo.getUserid());
+		}
+		if (!StringUtil.isEmpty(qvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(qvo.getAreaname());
+		}
+		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(qvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(qvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(qvo.getCuserid());
+		}
+	    List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
+		return vos;
+	}
+	
+	private ArrayList<ManagerVO> queryCommon(ManagerVO qvo,List<ManagerVO> vos) {
 		CorpVO cvo = null;
 		UserVO uvo = null;
 		Map<String, ManagerVO> map = new HashMap<String, ManagerVO>();
