@@ -17,6 +17,7 @@ import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.pub.WorkflowVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -465,6 +466,36 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			singleObjectBO.updateAry(uplist.toArray(new RebateVO[0]), new String[]{"istatus","tstamp"});
 		}
 		return bateVOs;
+	}
+
+	@Override
+	public RebateVO queryById(RebateVO data) throws DZFWarpException {
+		String errmsg = "";
+		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
+		if(oldvo != null){
+			if(oldvo.getDr() != null && oldvo.getDr() == 1){
+				errmsg = "返点单："+data.getVbillcode()+"已经被删除";
+			}
+			if(data.getTstamp() == null || oldvo.getTstamp() == null){
+				errmsg = "返点单："+data.getVbillcode()+"数据错误";
+			}
+			if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+				errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+			}
+		}else{
+			errmsg = "返点单："+data.getVbillcode()+"数据错误";
+		}
+		if(!StringUtil.isEmpty(errmsg)){
+			throw new BusinessException(errmsg);
+		}
+		String sql = " nvl(dr,0) = 0 AND pk_bill = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(oldvo.getPk_rebate());
+		WorkflowVO[] flowVOs = (WorkflowVO[]) singleObjectBO.queryByCondition(WorkflowVO.class, sql, spm);
+		if(flowVOs != null && flowVOs.length > 0){
+			oldvo.setChildren(flowVOs);
+		}
+		return oldvo;
 	}
 
 }

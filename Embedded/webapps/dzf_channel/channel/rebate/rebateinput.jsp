@@ -208,7 +208,6 @@
 						</div>
 					</div>
 					<div style="text-align: center;margin-top:10px;">
-					    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveAdd()">保存并新增</a> 
 				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="save()">保存</a> 
 				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addDlg').dialog('close');">取消</a>
 			        </div>
@@ -217,52 +216,54 @@
 		   <!-- 审批历史begin -->
 		   <p class="slideA">
 				<a href="javascript:;" style="color:#FFF;font-size: 14px;" class="btn-slideA active">审批历史</a>
-			</p>
-			<div style="" id="panelA">
-				<div class="tall" style=" margin-top: 16px;">
-					<div  class="Aroundly">
-						<img src="../../images/tbpng_03.png" style="position: absolute; left: 90px;"/>
-						 <img src="../../images/pngg_03.png" style="position: absolute; left: 96px; top: 14px;"/>
-					</div>
-					<div class="state">
-						<div>
-							<font>2017-08-07</font> &emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+		    </p>
+			<div style="height:230px;overflow:auto;">
+				<div style="" id="panelA">
+					<div class="tall" style=" margin-top: 16px;">
+						<div  class="Aroundly">
+							<img src="../../images/tbpng_03.png" style="position: absolute; left: 90px;"/>
+							<img src="../../images/pngg_03.png" style="position: absolute; left: 96px; top: 14px;"/>
 						</div>
-						<div>说明：没问题，通过</div>
-					</div>
-				</div>
-				<div style="display: none;" id="panela">
-					<div style="width:auto;">
-						<div class="tall">
-							<div  class="Aroundly">
-								<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
-								<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
+						<div class="state">
+							<div>
+								<font>2017-08-07</font> &emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
 							</div>
-							<div class="state">
-								<div>
-									<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+							<div>说明：没问题，通过</div>
+						</div>
+					</div>
+					<div style="display: none;" id="panela">
+						<div style="width:auto;">
+							<div class="tall">
+								<div  class="Aroundly">
+									<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
+									<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
 								</div>
-								<div>说明：没问题，通过</div>
-							</div>
-						</div>
-						<div class="tall">
-							<div class="Aroundly">
-								<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
-								<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
-							</div>
-							<div class="state">
-								<div>
-									<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+								<div class="state">
+									<div>
+										<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+									</div>
+									<div>说明：没问题，通过</div>
 								</div>
-								<div>说明：没问题，通过</div>
+							</div>
+							<div class="tall">
+								<div class="Aroundly">
+									<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
+									<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
+								</div>
+								<div class="state">
+									<div>
+										<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+									</div>
+									<div>说明：没问题，通过</div>
+								</div>
 							</div>
 						</div>
 					</div>
+					<p class="slide">
+						<a href="javascript:;" rel="external nofollow"
+							class="btn-slide active"></a>
+					</p>
 				</div>
-				<p class="slide">
-					<a href="javascript:;" rel="external nofollow"
-						class="btn-slide active"></a>
-				</p>
 			</div>
 			<!-- 审批历史end -->
 		</div>

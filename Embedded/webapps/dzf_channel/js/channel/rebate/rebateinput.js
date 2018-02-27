@@ -75,7 +75,7 @@ function initRef(){
     });
 	
 	//新增-加盟商参照初始化
-	$('#corp').textbox({
+	$('#corp,#ecorp').textbox({
 		onClickIcon : function() {
 			refid = $(this).attr("id");
 		},
@@ -506,7 +506,23 @@ function onEdit(index){
 		modal:true
 	});//设置dig属性
 	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
-	
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinpt!queryById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				$('#editForm').form('clear');
+				$('#editForm').form('load', row);
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
 }
 
 /**

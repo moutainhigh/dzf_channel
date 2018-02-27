@@ -64,4 +64,12 @@ public interface IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	public String checkData(RebateVO data) throws DZFWarpException;
+	
+	/**
+	 * 通过主键查询返点单信息
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public RebateVO queryById(RebateVO data)throws DZFWarpException;
 }
