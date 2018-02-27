@@ -116,6 +116,8 @@ var SYSTEM = {
 	PreDate:"<%=preDate!= null ? preDate:"" %>",
 	PreYear:"<%=preYear!= null ? preYear:"" %>",
 };
+var modulus = "<%=modulus%>";
+var exponent = "<%=exponent%>";
 </script>
 
 </head>
@@ -218,6 +220,7 @@ var SYSTEM = {
 							<i class="user-arrow"></i>
 						</span>
 						<div class="drop_down" id="set_sub1" style="display: none;">
+							<p onclick="javascript:updatePsw()"><a href="#"><span class="circle-icon"></span>用户信息</a></p>
 							<p onclick="javascript:loginOut()"><a href="#"><span class="circle-icon"></span>安全退出</a></p>
 						</div>
 					</li>
@@ -361,7 +364,41 @@ var SYSTEM = {
 		</div>
 	</div>
 </div>
-
+<form id="form" method="post">
+<div id="upsw" style="display:none;padding:10px 20px;">
+	<!-- <p style="margin-top:5px;">
+	是否补充密码信息
+	<input id="isEditInfo" name="isEditInfo" type="checkbox"/>
+	</p> -->
+	<p style="margin-top:10px;">
+	输入初始密码：
+	<input id="user_password" name="data.user_password" type="password" class="easyui-textbox" style="width:210px;height:30px;border-color:#ffa8a8" data-options="required:true" />
+	</p>
+	<p style="margin-top:10px;">
+	请输入新密码：
+	<input id="psw2" name="psw2" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+	</p>
+	<p style="margin-top:10px;">
+	再次输入密码：
+	<input id="psw3" name="psw3" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+	<input name="data.user_name" id="user_name" type="hidden" value="<%=userVo.getUser_name()%>"/>
+	</p>
+	<!-- <div id="editInof" style="display:none">
+		<p style="margin-top:10px;">
+		请输入手机号：
+		<input id="phone" name="phone" type="text" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+		</p>
+		<p style="margin-top:10px;">
+		请输入邮箱&nbsp;&nbsp;&nbsp;：
+		<input id="uEmail" name="uEmail" type="text" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+		</p>
+	</div> -->
+</div>
+</form>
+<div id="pwd_buttons" style="display:none" >
+<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="savePsw();" >确认</a> 
+<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
+</div>
 <!-- 打开图片展示窗口 begin -->
 <div id="fullViewDlg" style="display: none;">	
   	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">

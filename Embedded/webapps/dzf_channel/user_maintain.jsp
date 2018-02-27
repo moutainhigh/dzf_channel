@@ -30,7 +30,6 @@ exponent = '<%=exponent%>';
 		<div id="slot-machine-tabs">
 			<ul class="tabs machine">
 				<li><a href="#" onclick = "choose(1)">我的资料</a></li>
-				<li><a href="#" onclick = "choose(2)">头像</a></li>
 				<li><a href="#" onclick = "choose(3)">密码</a></li>
 			</ul>
 			<div class="box-wrapper">
@@ -65,23 +64,12 @@ exponent = '<%=exponent%>';
 					</p>
 					<!-- </div> -->
 					</div>
-					<div id="div2" class="content-box" style="display: none;text-align:center;padding-top:50px;">
-						<!-- <div class="col-one col">
-							 <div class="layui-form-item">
-								<div class="avatar-add">
-									<p>建议尺寸168*168，支持jpg、png、gif，最大不能超过30KB</p>
-									<div class="upload-img">
-										<input type="file" name="file" id="LAY-file" lay-title="上传头像">
-									</div>
-									<img src=""><span class="loading"></span>
-								</div>
-							</div> 
-						</div> -->
+					<!-- <div id="div2" class="content-box" style="display: none;text-align:center;padding-top:50px;">
 						<img id="upimg" name="upimg" onclick="$('#picFile').click()" src="images/website/logo/account.png" style="width:200px;height:200px; border-radius: 200px;">
 				        <div class="site-demo-upbar">
 				        	<div class="layui-box layui-upload-button">
 						        <form id="pic_fm" method="post" enctype="multipart/form-data">
-							       <!--  <div id="upbutton" class="change-avatar-text" onclick="$('#picFile').click()">修改LOGO</div> -->
+							        <div id="upbutton" class="change-avatar-text" onclick="$('#picFile').click()">修改LOGO</div>
 							        <input id="picFile" name="picFile" type="file" hidden accept="image/jpg,image/jpeg,image/png" onchange="uploadPic()">
 							        <input type="hidden" name="id_user_e" id="id_user_e" />
 						        </form>
@@ -90,7 +78,7 @@ exponent = '<%=exponent%>';
 						        </span>
 				        	</div>
 				        </div>
-					</div>
+					</div> -->
 					<div id="div3" class="content-box" style="display: none;">
 						<!-- <div class="col-one col"> -->
 						<form id="pwd_fm" method="post">

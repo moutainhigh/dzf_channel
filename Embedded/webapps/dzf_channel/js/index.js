@@ -111,6 +111,20 @@ function initListener(){
 			CloseTab(this, item.name);
 		}
 	});
+	//判断是否要修改手机及邮箱信息
+//	$("#isEditInfo").change(function(){
+//		if($("#isEditInfo").prop("checked")){
+//			$("#upsw").dialog({
+//				height:350
+//			});	
+//			$("#editInof").show();
+//		}else{
+//			$("#upsw").dialog({
+//				height:270
+//			});		
+//			$("#editInof").hide();
+//		}
+//	});
 }
 
 function showOpt(id, show){
@@ -286,3 +300,102 @@ function closeFullViewDlg(){
 	 $('#fullViewDlg').dialog('close');
 }
 
+function updatePsw(){
+//	$("#isEditInfo").removeAttr("checked");
+	$("#user_password").val("");
+	$("#psw2").val("");
+	$("#psw3").val("");
+	$("#upsw").show();
+//	$("#editInof").hide();
+	
+	$("#upsw").dialog({
+		modal:true,
+		title: '用户信息维护',
+		width:380,
+		height:270,
+		buttons : '#pwd_buttons'
+	});
+}
+function checkUserPwd(){
+	$("#psw2,#psw3").blur(function(){
+		var value = $(this).val();
+		if(value != null && value != ""){
+			//字母和数字组成
+//			var strExp=/.*([0-9]+.*[A-Za-z]+|[A-Za-z]+.*[0-9]+).*/;
+			var strExp = /.*([0-9].*([a-zA-Z].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[a-zA-Z])|[a-zA-Z].*([0-9].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[0-9])|[~!@#$%^&*()<>?+=].*([0-9].*[a-zA-Z]|[a-zA-Z].*[0-9])).*/;
+			if(strExp.test(value)){
+				$("#"+$(this).attr("id")+"_ck").hide(); 
+				delete ckmap[$(this).attr("id")+"_ck"];
+			}else{
+				Public.tips({content:"提示：密码必须包含数字、字母、特殊字符！",type:1});
+				//$("#"+$(this).attr("id")+"_ck").html("<font size=2 color='red'>*密码必须包含数字、字母、特殊字符</font>").show();
+				//ckmap[$(this).attr("id")+"_ck"]="密码必须包含数字、字母、特殊字符";
+				return;
+			}
+		}else{
+			//$("#"+$(this).attr("id")+"_ck").html("<font size=2 color='red'>*请输入密码</font>").show();
+		}
+	});
+}
+function savePsw(){
+	checkUserPwd();
+	if($("#psw2").val().length<8){
+		Public.tips({content:"提示：密码必须大于8位！",type:1});
+		return;
+	}
+	if($("#psw3").val().length<8){
+		Public.tips({content:"提示：密码必须大于8位！",type:1});
+		return;
+	}
+	if($("#psw3").val() != $("#psw2").val()){
+		Public.tips({content:"提示：两次密码不一致！",type:1});
+		return;
+	}
+	if(!$("#form").form('validate')){
+		return;
+	}
+	
+	//验证手机号码是否正确
+//	if($("#isEditInfo").prop("checked")){
+//		var value = $("#phone").val();
+//		//手机号码正则表达式
+//		var telReg = !!value.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
+//		if(telReg ==  false){
+//			Public.tips({content: "请输入正确的手机号码！",type:2});
+//			return ;
+//		}
+//		//邮箱正则表达式
+//		var mailValue = $("#uEmail").val();
+//		var mailReg = !!mailValue.match(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
+//		if(mailReg == false){
+//			Public.tips({content: "请输入正确的邮箱！",type:2});
+//			return ;
+//		}
+//	}
+	
+	var publicKey = RSAUtils.getKeyPair(exponent, '', modulus);
+	var dcpassword=RSAUtils.encryptedString(publicKey, $("#user_password").val());
+    var psw2=RSAUtils.encryptedString(publicKey, $("#psw2").val());
+    var psw3=RSAUtils.encryptedString(publicKey, $("#psw3").val());
+    var url = DZF.contextPath + '/sys/sm_user!updatePsw.action';
+	
+	$.post(url, 
+			{
+				'data.user_name':$('#user_name').val(),
+				'data.user_password':dcpassword,
+				'psw2' : psw2,
+				'psw3' : psw3,
+//				'phonenum' : $("#phone").val(),
+//				'mail' : $("#uEmail").val()
+			},
+			   function(data){
+					if(data.success){
+						$('#upsw').dialog('close');
+						Public.tips({content:data.msg,type:0});
+						setTimeout('window.location.href= DZF.contextPath + "/login.jsp"', 2000 );
+					}else{
+						Public.tips({content:data.msg,type:1});
+						return;
+					}
+	}, "json");
+}
