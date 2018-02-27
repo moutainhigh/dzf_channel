@@ -59,7 +59,6 @@
 			<table id="grid"></table>
 		</div>
 		
-		
 	</div>
 	<!-- 列表界面end -->
 	

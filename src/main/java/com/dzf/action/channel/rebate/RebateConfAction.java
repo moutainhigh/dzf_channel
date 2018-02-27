@@ -10,6 +10,8 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.service.channel.rebate.IRebateConfService;
 
+import cn.emay.mina.filter.reqres.Request;
+
 /**
  * 返点单确认
  * @author zy
@@ -25,7 +27,7 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 	private IRebateConfService confser;
 	
 	/**
-	 * 保存
+	 * 确认/驳回/取消确认
 	 */
 	public void updateConf() {
 		Json json = new Json();
@@ -37,8 +39,13 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
+				String opertype = getRequest().getParameter("opertype");
+				Integer iopertype = null;
+				if(opertype != null){
+					iopertype = Integer.parseInt(opertype);
+				}
 				data.setVconfirmid(getLoginUserid());
-				data = confser.updateConf(data);
+				data = confser.updateConf(data, getLogincorppk(), iopertype);
 				json.setRows(data);
 				json.setSuccess(true);	
 				json.setMsg("保存成功");
