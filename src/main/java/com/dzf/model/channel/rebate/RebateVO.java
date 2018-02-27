@@ -108,6 +108,28 @@ public class RebateVO extends SuperVO {
     
     @FieldAlias("errmsg")
     private String verrmsg;//错误信息
+    
+	@FieldAlias("statusname")
+	private String vstatusname;//状态名称
+	
+	@FieldAlias("opername")
+	private String voperatorname;//录入人名称
+
+	public String getVoperatorname() {
+		return voperatorname;
+	}
+
+	public void setVoperatorname(String voperatorname) {
+		this.voperatorname = voperatorname;
+	}
+
+	public String getVstatusname() {
+		return vstatusname;
+	}
+
+	public void setVstatusname(String vstatusname) {
+		this.vstatusname = vstatusname;
+	}
 
 	public String getVerrmsg() {
 		return verrmsg;
