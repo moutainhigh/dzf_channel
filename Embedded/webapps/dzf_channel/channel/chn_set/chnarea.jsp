@@ -36,6 +36,7 @@
 			<div class="time_col time_colp11" style="display:none">
 				<label style="text-align:right">主键</label> 
 				<input id="pk_area" name="pk_area" class="easyui-textbox"> 
+				<input id="type" name="type" class="easyui-textbox"> 
 			</div>
 			<div class="time_col time_colp11">
 				<div style="width:32%;display: inline-block;">
