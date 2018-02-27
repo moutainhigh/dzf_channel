@@ -121,7 +121,7 @@ public class RebateInptAction extends BaseAction<RebateVO> {
 		data.setTstamp(new DZFDateTime());
 		data.setTs(new DZFDateTime());
 		data.setDr(0);
-		data.setIstatus(IStatusConstant.irebatestatus_0);//待提交
+		data.setIstatus(IStatusConstant.IREBATESTATUS_0);//待提交
 		if(!StringUtil.isEmpty(data.getVbillcode())){
 			data.setVbillcode(data.getVbillcode().trim());
 		}

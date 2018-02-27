@@ -56,4 +56,12 @@ public interface IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	public RebateVO[] saveCommit(RebateVO[] bateVOs) throws DZFWarpException;
+	
+	/**
+	 * 数据时间校验
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String checkData(RebateVO data) throws DZFWarpException;
 }

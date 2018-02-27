@@ -333,7 +333,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 
 	@Override
 	public void delete(RebateVO data) throws DZFWarpException {
-		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.irebatestatus_0){
+		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.IREBATESTATUS_0){
 			throw new BusinessException("返点单："+data.getVbillcode()+"状态不为待提交，不能删除");
 		}
 		String errmsg = checkData(data);
@@ -352,7 +352,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @param data
 	 * @throws DZFWarpException
 	 */
-	private String checkData(RebateVO data) throws DZFWarpException {
+	@Override
+	public String checkData(RebateVO data) throws DZFWarpException {
 		String errmsg = "";
 		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
 		if(oldvo != null){
@@ -446,7 +447,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(bateVOs != null && bateVOs.length > 0){
 			String errmsg = "";
 			for(RebateVO vo : bateVOs){
-				if(!vo.getIstatus().equals(IStatusConstant.irebatestatus_0)){
+				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0)){
 					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交");
 					continue;
 				}
@@ -455,7 +456,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 					vo.setVerrmsg(errmsg);
 					continue;
 				}
-				vo.setIstatus(IStatusConstant.irebatestatus_1);
+				vo.setIstatus(IStatusConstant.IREBATESTATUS_1);
 				vo.setTstamp(new DZFDateTime());
 				uplist.add(vo);
 			}
