@@ -54,6 +54,6 @@ public interface IChnAreaService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ArrayList queryComboxArea(String pk_area) throws DZFWarpException;
+	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException;
 	
 }

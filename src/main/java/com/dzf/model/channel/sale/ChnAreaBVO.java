@@ -33,8 +33,6 @@ public class ChnAreaBVO extends SuperVO {
 	@FieldAlias("isCharge")
 	public DZFBoolean isCharge;//是否省/市负责人
 	
-	public Integer stytle;//1:渠道经理；2：培训师
-	
     @FieldAlias("uid")
     private String userid; // 用户主键（渠道经理）
     
@@ -43,6 +41,9 @@ public class ChnAreaBVO extends SuperVO {
 	
 	@FieldAlias("vmemo")
 	private String vmemo;// 备注
+	
+	@FieldAlias("type")
+	public Integer type;//1:渠道经理；2：培训师
 	
 	@FieldAlias("dr")
 	private Integer dr;// 删除标记
@@ -88,6 +89,14 @@ public class ChnAreaBVO extends SuperVO {
 
 	public String getCorpname() {
 		return corpname;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	public void setCorpname(String corpname) {

@@ -45,6 +45,9 @@ public class ChnAreaVO extends MultSuperVO {
 	@FieldAlias("ddate")
 	private DZFDate doperatedate;// 创建日期
 	
+	@FieldAlias("type")
+	public Integer type;//1:渠道经理；2：培训师
+	
 	@FieldAlias("dr")
 	private Integer dr;// 删除标记
 	
@@ -82,6 +85,14 @@ public class ChnAreaVO extends MultSuperVO {
 
 	public String getCorpname() {
 		return corpname;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	public void setCorpname(String corpname) {

@@ -42,19 +42,29 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	public ChnAreaVO[] query(ChnAreaVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
+		StringBuffer sf=  new StringBuffer();
 		sql.append("select * from cn_chnarea where nvl(dr,0) = 0");
-		sql.append(" and pk_corp=? order by areacode " );   
+		sql.append(" and pk_corp=? and type=?  order by areacode " );   
 		sp.addParam(qvo.getPk_corp());
+		sp.addParam(qvo.getType());
 		List<ChnAreaVO> vos =(List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ChnAreaVO.class));
-		ChnAreaBVO[] bvos = queryBy1ID(null);
+		sql = new StringBuffer();
+		sp = new SQLParameter();
+		sql.append("SELECT pk_chnarea,vprovname,type FROM cn_chnarea_b");
+		sql.append(" where nvl(dr,0)= 0 and type=? order by ts desc");
+		sp.addParam(qvo.getType());
+		List<ChnAreaBVO> bvos = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(),sp,new BeanListProcessor(ChnAreaBVO.class));
 		Map<String, StringBuffer> map = new HashMap<String, StringBuffer>();
-		if(bvos!=null&&bvos.length>0){
+		if(bvos!=null&&bvos.size()>0){
 			for (ChnAreaBVO chnAreaBVO : bvos) {
 				if(map.containsKey(chnAreaBVO.getPk_chnarea())){
-					StringBuffer sf=map.get(chnAreaBVO.getPk_chnarea()).append(chnAreaBVO.getVprovname()).append(",");
-					map.put(chnAreaBVO.getPk_chnarea(), sf);
+					sf=map.get(chnAreaBVO.getPk_chnarea());
+					if(!sf.toString().contains(chnAreaBVO.getVprovname())){
+						sf=sf.append(chnAreaBVO.getVprovname()).append(",");
+						map.put(chnAreaBVO.getPk_chnarea(), sf);
+					}
 				}else{
-					StringBuffer sf=new StringBuffer();
+					sf=new StringBuffer();
 					sf.append(chnAreaBVO.getVprovname()).append(",");
 					map.put(chnAreaBVO.getPk_chnarea(), sf);
 				}
@@ -170,11 +180,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT pk_chnarea,pk_corp,vprovince,vprovname,ischarge,userid,vmemo,ts");
 		corpsql.append(" FROM cn_chnarea_b where nvl(dr,0)= 0");
-		if(pk!=null){
-			corpsql.append(" and pk_chnarea = ? ");
-			sp.addParam(pk);
-		}
+		corpsql.append(" and pk_chnarea = ? ");
 		corpsql.append(" order by ts desc");
+		sp.addParam(pk);
 		Map<String, ChnAreaBVO > map = new HashMap<String,ChnAreaBVO>();
 		List<ChnAreaBVO> b1vos = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(ChnAreaBVO.class));
 		int i=0;
@@ -248,7 +256,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	}
 	
 	@Override
-	public ArrayList queryComboxArea(String pk_area) throws DZFWarpException {
+	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select region_id as id, region_name as name\n");
@@ -256,6 +264,8 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		sql.append(" where nvl(dr, 0) = 0\n");
 		sql.append("   and parenter_id = 1 and region_id not in  ");
 		sql.append("    (select vprovince from cn_chnarea_b where nvl(dr,0)=0 ");
+		sql.append(" and type = ? ");
+		sp.addParam(type);
 		if(!StringUtil.isEmpty(pk_area)){
 			sql.append(" and pk_chnarea != ?");
 			sp.addParam(pk_area);

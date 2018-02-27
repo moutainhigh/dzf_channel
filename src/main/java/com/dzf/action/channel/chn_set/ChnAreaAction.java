@@ -28,7 +28,6 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.IChnAreaService;
-import com.sun.xml.internal.ws.wsdl.writer.UsingAddressing;
 
 /**
  * 渠道区域划分
@@ -107,6 +106,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}else{
 				map2.put(id2,"value");
 			}
+			chnAreaBVO.setType(headvo.getType());
 			if(StringUtil.isEmpty(chnAreaBVO.getPk_corp()) || !chnAreaBVO.getPk_corp().contains(",")){
 				list.add(chnAreaBVO);
 			}else{
@@ -218,7 +218,8 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		Grid grid = new Grid();
 		try {
 			String pk_area = getRequest().getParameter("pk_area");
-			ArrayList list = chnarea.queryComboxArea(pk_area);
+			String type = getRequest().getParameter("type");
+			ArrayList list = chnarea.queryComboxArea(pk_area,type);
 			if(list==null||list.size()==0){
 				grid.setRows(null);
 				grid.setMsg("查询数据为空!");

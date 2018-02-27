@@ -20,7 +20,7 @@ function load() {
 //		pagination : true,
 		rownumbers : true,
 		singleSelect : true,
-		queryParams : {'type' :1},
+		queryParams : {'type' :2},
 		height : Public.setGrid().h,
 		columns : [ [ {
 			width : '80',
@@ -102,7 +102,7 @@ function add(){
     $('#cardDialog').dialog({
 		modal:true,
 	});
-    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域划分');
+    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训渠道区域划分');
     status="add";
     setItemEdit(false);
     $('#chnarea').form("clear");
@@ -130,7 +130,6 @@ function edit(id,style) {
     	url : DZF.contextPath + '/chn_set/chnarea!queryByPrimaryKey.action',
     	data : {
     		'pk_area' : id,
-//    		'type' : 1,
     	},
     	type : 'post',
     	dataType : 'json',
@@ -139,7 +138,7 @@ function edit(id,style) {
     			$('#cardDialog').dialog({
     				modal:true,
     			});
-    			$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域');
+    			$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训区域');
     			if(status=="brows"){
     				setItemEdit(true);
     			}else{
@@ -242,7 +241,7 @@ function save() {
 		childBody = childBody + JSON.stringify(rows[i]);
 		$("#cardGrid").datagrid('endEdit', i);
 	}
-	$("#type").textbox('setValue',1);
+	$("#type").textbox('setValue', 2);
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#chnarea')));
 	postdata["body"] = childBody;
@@ -473,7 +472,7 @@ function initCard(id){
 		url : DZF.contextPath + '/chn_set/chnarea!queryComboxArea.action',
 		data : {
 			"pk_area" : id,
-			'type' : 1,
+			'type' : 2,
 		},
 		dataTye : 'json',
 		success : function(result) {
