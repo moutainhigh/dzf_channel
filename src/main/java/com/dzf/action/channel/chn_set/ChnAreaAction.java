@@ -233,5 +233,24 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		}
 		writeJson(grid);
 	}
+	
+	public void queryProvince(){
+		Grid grid = new Grid();
+		try {
+			String name = getRequest().getParameter("name");
+			ArrayList list = chnarea.queryProvince(name);
+			if(list==null||list.size()==0){
+				grid.setRows(null);
+				grid.setMsg("查询数据为空!");
+			}else{
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功!");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
 
 }

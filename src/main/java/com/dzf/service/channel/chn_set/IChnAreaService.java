@@ -56,4 +56,11 @@ public interface IChnAreaService {
 	 */
 	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException;
 	
+	/**
+	 * 根据大区进行查询其下面的省市(目前只适用于渠道)
+	 * @param name
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ArrayList queryProvince(String name) throws DZFWarpException;
 }

@@ -316,7 +316,7 @@ public class ManagerServiceImpl implements IManagerService {
 	public List<ComboBoxVO> queryArea() throws DZFWarpException {
 		List<ComboBoxVO> list=null;
 		StringBuffer buf=new StringBuffer();
-		buf.append(" select areaname as name,areacode as id from cn_chnarea where nvl(dr,0)=0 ");
+		buf.append(" select areaname as name,areacode as id from cn_chnarea where nvl(dr,0)=0 and type=1");
 		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ComboBoxVO.class));
 		return list;
 	}

@@ -32,7 +32,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		SQLParameter sp = new SQLParameter();
 		sql.append("select distinct a.pk_corp ,c.areaname,b.vprovname,b.vprovince ");
 		sql.append(" from bd_account a  " );   
-		sql.append(" inner join cn_chnarea_b b on  a.vprovince=b.vprovince  " );   
+		sql.append(" inner join cn_chnarea_b b on  a.vprovince=b.vprovince and b.type=1" );   
 		sql.append(" left join cn_chnarea c on b.pk_chnarea=c.pk_chnarea " );   
 		sql.append(" where nvl(a.dr,0)=0 and nvl(b.dr,0)=0 and nvl(c.dr,0)=0 and nvl(a.ischannel,'N')='Y' " );
 		if(!StringUtil.isEmpty(qvo.getAreaname())){

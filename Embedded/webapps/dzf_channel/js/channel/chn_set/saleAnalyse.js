@@ -9,6 +9,7 @@ $(window).resize(function(){
 });
 
 $(function() {
+	changeArea();
 	initArea();
 	initProvince();
 	initDate();
@@ -37,15 +38,13 @@ function initArea(){
 	});
 }
 
-function initProvince(){
+function initProvince(queryData){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/sys/sys_area!queryComboxArea.action',
-		data : {
-			parenter_id : 1,
-		},
+		url : DZF.contextPath + '/chn_set/chnarea!queryProvince.action',
 		dataTye : 'json',
+		data : queryData,
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
@@ -53,6 +52,19 @@ function initProvince(){
 			} else {
 				Public.tips({content : result.msg,type : 2});
 			}
+		}
+	});
+}
+
+function changeArea(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData=[];
+			if(n!='全部'){
+				queryData={'name' : n};
+				$('#ovince').combobox('setValue',null);
+			}
+			initProvince(queryData);
 		}
 	});
 }

@@ -151,6 +151,8 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			sql.append(" and pk_chnarea != ?");
 			sp.addParam(vo.getPk_chnarea());
 		}
+		sql.append(" and type = ?");
+		sp.addParam(vo.getType());
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
 		if(num <= 0)
@@ -271,6 +273,24 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			sp.addParam(pk_area);
 		}
 		sql.append("   ) order by region_id asc ");
+		ArrayList list = (ArrayList) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ComboBoxVO.class));
+		return list;
+	}
+	
+	@Override
+	public ArrayList queryProvince(String name) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select region_id as id, region_name as name");
+		sql.append("  from ynt_area ");
+		sql.append(" where nvl(dr, 0) = 0 and parenter_id = 1 ");
+		if(!StringUtil.isEmpty(name)){
+			sql.append(" and region_id in (select vprovince from cn_chnarea_b where nvl(dr,0)=0");
+			sql.append(" and pk_chnarea= (select pk_chnarea from cn_chnarea where nvl(dr,0)=0");
+			sql.append(" and areaname=? )) ");
+			sp.addParam(name);
+		}
+		sql.append(" order by region_id asc ");
 		ArrayList list = (ArrayList) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ComboBoxVO.class));
 		return list;
 	}
