@@ -322,7 +322,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
-				RebateVO batevo = rebateser.queryById(data);
+				RebateVO batevo = rebateser.queryById(data,1);
 				json.setSuccess(true);
 				json.setRows(batevo);
 			} catch (Exception e) {

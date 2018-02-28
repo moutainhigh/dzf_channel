@@ -203,7 +203,7 @@
 						</div>	
 						<div style="width:38%;display: inline-block">
 							<label style="width:100px;text-align: right;">录入时间:</label>
-							<input id="eoperdate" name="operdate" class="easyui-datebox" style="width:150px;height:26px;" 
+							<input id="eoperdate" name="operdate" class="easyui-textbox" style="width:150px;height:26px;" 
 								data-options="readonly:true"/>
 						</div>
 					</div>
@@ -214,7 +214,9 @@
 			 	</div>
 		   </form>
 		   <!-- 审批历史begin -->
-		   <p class="slideA">
+		   <div id = "history"></div>
+		   
+<!-- 		   <p class="slideA">
 				<a href="javascript:;" style="color:#FFF;font-size: 14px;" class="btn-slideA active">审批历史</a>
 		    </p>
 			<div style="height:230px;overflow:auto;">
@@ -226,7 +228,7 @@
 						</div>
 						<div class="state">
 							<div>
-								<font>2017-08-07</font> &emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+								<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
 							</div>
 							<div>说明：没问题，通过</div>
 						</div>
@@ -240,7 +242,7 @@
 								</div>
 								<div class="state">
 									<div>
-										<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+										<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
 									</div>
 									<div>说明：没问题，通过</div>
 								</div>
@@ -252,7 +254,7 @@
 								</div>
 								<div class="state">
 									<div>
-										<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>康总驳回修改</span>
+										<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
 									</div>
 									<div>说明：没问题，通过</div>
 								</div>
@@ -264,7 +266,7 @@
 							class="btn-slide active"></a>
 					</p>
 				</div>
-			</div>
+			</div> -->
 			<!-- 审批历史end -->
 		</div>
 		<!-- 修改对话框end -->

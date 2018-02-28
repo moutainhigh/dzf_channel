@@ -469,7 +469,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	}
 
 	@Override
-	public RebateVO queryById(RebateVO data) throws DZFWarpException {
+	public RebateVO queryById(RebateVO data, Integer opertype) throws DZFWarpException {
 		String errmsg = "";
 		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
 		if(oldvo != null){
@@ -479,8 +479,13 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			if(data.getTstamp() == null || oldvo.getTstamp() == null){
 				errmsg = "返点单："+data.getVbillcode()+"数据错误";
 			}
-			if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
-				errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+			if(opertype == 1){
+				if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+					errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+				}
+				if(oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0){
+					errmsg = "返点单："+data.getVbillcode()+"状态不为待提交状态，不能修改";
+				}
 			}
 		}else{
 			errmsg = "返点单："+data.getVbillcode()+"数据错误";
@@ -495,6 +500,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(flowVOs != null && flowVOs.length > 0){
 			oldvo.setChildren(flowVOs);
 		}
+		CorpVO corpvo = CorpCache.getInstance().get(null, oldvo.getPk_corp());
+		if(corpvo != null){
+			oldvo.setCorpname(corpvo.getUnitname());
+		}
+		UserVO uservo = null;
 		return oldvo;
 	}
 

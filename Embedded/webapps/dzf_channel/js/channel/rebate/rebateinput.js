@@ -2,13 +2,13 @@ var contextPath = DZF.contextPath;
 var grid;
 var refid;
 
-$(document).ready(function() {
-	$(".btn-slide").click(function() {
-		$("#panela").slideToggle("slow");
-		$(this).toggleClass("active");
-		return false;
-	})
-})
+//$(document).ready(function() {
+//	$(".btn-slide").click(function() {
+//		$("#panela").slideToggle("slow");
+//		$(this).toggleClass("active");
+//		return false;
+//	})
+//})
 
 $(function(){
 	load();
@@ -515,6 +515,58 @@ function onEdit(index){
 				var row = rs.rows;
 				$('#editForm').form('clear');
 				$('#editForm').form('load', row);
+				$("#history").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length == 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
+					}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#history").append(info);
+					historyListen();
+                }
+				
 			} else {
 				Public.tips({
 					content : rs.msg,
@@ -523,6 +575,17 @@ function onEdit(index){
 			}
 		},
 	});
+}
+
+/**
+ * 审批历史
+ */
+function historyListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**

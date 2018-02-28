@@ -68,8 +68,9 @@ public interface IRebateInputService {
 	/**
 	 * 通过主键查询返点单信息
 	 * @param data
+	 * @param opertype 1：修改；2：查看详情；
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public RebateVO queryById(RebateVO data)throws DZFWarpException;
+	public RebateVO queryById(RebateVO data, Integer opertype) throws DZFWarpException;
 }
