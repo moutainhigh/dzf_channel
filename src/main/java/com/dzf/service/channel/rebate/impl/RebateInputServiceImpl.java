@@ -49,6 +49,21 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(RebateVO.class));
 		if(list != null && list.size() > 0){
+			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+				List<RebateVO> retlist = new ArrayList<RebateVO>();
+				CorpVO corpvo = null;
+				for(RebateVO vo : list){
+					corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+					if(corpvo != null && !StringUtil.isEmpty(corpvo.getUnitname()) 
+							&& corpvo.getUnitname().indexOf(paramvo.getCorpname()) != -1){
+						retlist.add(vo);
+					}
+				}
+				if(retlist != null && retlist.size() > 0){
+					setShowInfo(retlist);
+				}
+				return retlist;
+			}
 			setShowInfo(list);
 		}
 		return list;

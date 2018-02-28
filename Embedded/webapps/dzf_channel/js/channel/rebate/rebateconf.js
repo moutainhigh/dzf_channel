@@ -154,7 +154,7 @@ function dClickCompany(rowTable){
  * 列表表格初始化
  */
 function load(){
-	$('#grid').datagrid({
+	grid = $('#grid').datagrid({
 		striped : true,
 		title : '',
 		fitColumns:false,
