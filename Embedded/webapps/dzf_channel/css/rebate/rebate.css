@@ -1,0 +1,39 @@
+.slideA {
+	width: 80px;
+	background: #4297d9;
+	height: 26px;
+	line-height: 26px;
+	text-align: center;
+	border-radius: 6px;
+}
+
+.btn-slide {
+	background: url(../../images/tbpng_11.png) no-repeat 89px 4px;
+	text-align: center;
+	height: 30px;
+	padding: 10px 10px 0 0;
+	margin: 0 auto;
+	display: block;
+	text-decoration: none;
+}
+
+.active {
+	background: url(../../images/tbpng_07.png) no-repeat 89px 10px;
+}
+
+.state {
+	height: 70px;
+	width: 88%;
+	float: left;
+}
+
+.Aroundly {
+	height: 70px;
+	width: 12%;
+	float: left;
+	position: relative;
+}
+
+.tall {
+	height: 70px;
+}
