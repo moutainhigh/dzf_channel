@@ -125,8 +125,8 @@
 						</div>
 					</div>
 					<div style="text-align: center;margin-top:30px;">
-					    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveAdd()">保存并新增</a> 
-				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="save()">保存</a> 
+					    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onSaveAdd()">保存并新增</a> 
+				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onSave()">保存</a> 
 				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addDlg').dialog('close');">取消</a>
 			        </div>
 			 	</div>
@@ -138,6 +138,7 @@
 		<div id="editDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;" 
 			data-options="resizable:true,closed:true">
 			<form id="editForm" method="post" style="margin-top:0px;">
+				<input type="hidden" id="erebid" name="rebid" />
 				<div id="tableDiv" style="overflow-y: auto;">
 				  	<div class="time_col time_colp11">
 			          	<div style="width:30%;display: inline-block">
@@ -208,68 +209,98 @@
 						</div>
 					</div>
 					<div style="text-align: center;margin-top:10px;">
-				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="save()">保存</a> 
-				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addDlg').dialog('close');">取消</a>
+				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onEditSave()">保存</a> 
+				        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#editDlg').dialog('close');">取消</a>
 			        </div>
 			 	</div>
 		   </form>
 		   <!-- 审批历史begin -->
 		   <div id = "history"></div>
-		   
-<!-- 		   <p class="slideA">
-				<a href="javascript:;" style="color:#FFF;font-size: 14px;" class="btn-slideA active">审批历史</a>
-		    </p>
-			<div style="height:230px;overflow:auto;">
-				<div style="" id="panelA">
-					<div class="tall" style=" margin-top: 16px;">
-						<div  class="Aroundly">
-							<img src="../../images/tbpng_03.png" style="position: absolute; left: 90px;"/>
-							<img src="../../images/pngg_03.png" style="position: absolute; left: 96px; top: 14px;"/>
-						</div>
-						<div class="state">
-							<div>
-								<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
-							</div>
-							<div>说明：没问题，通过</div>
-						</div>
-					</div>
-					<div style="display: none;" id="panela">
-						<div style="width:auto;">
-							<div class="tall">
-								<div  class="Aroundly">
-									<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
-									<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
-								</div>
-								<div class="state">
-									<div>
-										<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
-									</div>
-									<div>说明：没问题，通过</div>
-								</div>
-							</div>
-							<div class="tall">
-								<div class="Aroundly">
-									<img style="position: absolute; left: 92px;" src="../../images/xial_03.png" /> 
-									<img style="position: absolute; left: 96px; top: 8px;" src="../../images/pngg_03.png" />
-								</div>
-								<div class="state">
-									<div>
-										<font>2017-08-07 09:32:47</font>&emsp;<span>康总驳回修改</span>
-									</div>
-									<div>说明：没问题，通过</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<p class="slide">
-						<a href="javascript:;" rel="external nofollow"
-							class="btn-slide active"></a>
-					</p>
-				</div>
-			</div> -->
 			<!-- 审批历史end -->
 		</div>
 		<!-- 修改对话框end -->
+		
+		<!-- 查看对话框 begin -->
+		<div id="showDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;" 
+			data-options="resizable:true,closed:true">
+			<form id="showForm" method="post" style="margin-top:0px;">
+				<input type="hidden" id="srebid" name="rebid" />
+				<div id="tableDiv" style="overflow-y: auto;">
+				  	<div class="time_col time_colp11">
+			          	<div style="width:30%;display: inline-block">
+							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>
+							<input id="svcode" name="vcode" class="easyui-textbox" style="width:160px;height:26px;"
+								data-options="validType:'length[0,30]'" />
+					 	</div>
+						<div style="width:30%;display: inline-block">
+							<label style="text-align:right;width:102px;">期间：</label> 
+							<select id="syear" name="year" class="easyui-combobox" 
+								data-options="required:true,editable:false" style="width:70px;height:27px;">
+						    	<% DzfUtil.WriteYearOption(out);%>
+							</select>
+							<select id="sseason" name="season" class="easyui-combobox"  
+								data-options="required:true,editable:false" style="width:94px;height:27px;">
+			         			<option value="1">第一季度</option>
+								<option value="2">第二季度</option>
+								<option value="3">第三季度</option>
+								<option value="4">第四季度</option>
+							</select>
+						</div>
+					 	<div style="display: inline-block;width:38%;">
+							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
+						    <input id="scorp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
+								data-options="required:true,validType:'length[0,100]'" />
+							<input id="scorpid" name="corpid" type="hidden">
+						</div>
+					</div>
+				 	<div class="time_col time_colp11">
+					  	<div style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">扣款金额:</label>
+							<input id="sdebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>				
+						<div style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">返点基数:</label>
+							<input id="sbasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+						</div>	
+						<div style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">返点金额:</label>
+							<input id="srebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>
+					</div>
+					<div class="time_col time_colp11">
+						<div style="display: inline-block; margin-top: 5px;">
+							<label style="width:100px;text-align: right;vertical-align: top;">备注:</label>
+							<textarea id="smemo" name="memo" class="easyui-textbox" style="width:804px;height:60px;"
+								data-options="validType:'length[0,50]',multiline:true" ></textarea>
+						</div>
+					</div>
+				 	<div class="time_col time_colp11">
+					  	<div style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">单据状态:</label>
+							<input id="sstatusname" name="statusname" class="easyui-textbox" style="width:160px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>				
+						<div style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">录入人:</label>
+							<input id="sopername" name="opername" class="easyui-textbox" style="width:130px;height:26px;"
+								data-options="readonly:true" />
+						</div>	
+						<div style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">录入时间:</label>
+							<input id="soperdate" name="operdate" class="easyui-textbox" style="width:150px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>
+					</div>
+			 	</div>
+		   </form>
+		   <!-- 审批历史begin -->
+		   <div id = "shistory"></div>
+			<!-- 审批历史end -->
+		</div>
+		<!-- 查看对话框end -->
 		
 	</div>
 	<!-- 列表界面end -->

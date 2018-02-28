@@ -231,6 +231,35 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			checkCodeOnly(data);//返点单单号唯一性校验
 		}
 		checkDataOnly(data);//返点信息年-季度唯一性校验
+		checkRebateMny(data);//返点金额校验
+	}
+	
+	/**
+	 * 校验返点相关金额是否正确
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	public void checkRebateMny(RebateVO vo) throws DZFWarpException {
+		String errmsg = "";
+		RebateVO mnyvo = queryDebateMny(vo);
+		if(mnyvo != null){
+			if(vo.getNdebitmny() != null && vo.getNdebitmny().compareTo(mnyvo.getNdebitmny()) != 0){
+				errmsg = "扣款金额计算错误";
+			}
+			if(vo.getNdebitmny() != null && vo.getNbasemny() != null 
+					&& vo.getNbasemny().compareTo(vo.getNdebitmny()) > 0){
+				errmsg = "返点基数不能大于扣款金额";
+			}
+			if(vo.getNbasemny() != null && vo.getNrebatemny() != null
+					&& vo.getNrebatemny().compareTo(vo.getNbasemny()) > 0){
+				errmsg = "返点金额不能大于返点基数";
+			}
+		}else{
+			errmsg = "扣款金额计算错误";
+		}
+		if(!StringUtil.isEmpty(errmsg)){
+			throw new BusinessException(errmsg);
+		}
 	}
 	
 	/**
@@ -480,11 +509,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				errmsg = "返点单："+data.getVbillcode()+"数据错误";
 			}
 			if(opertype == 1){
-				if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
-					errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
-				}
+//				if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+//					errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+//				}
 				if(oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0){
-					errmsg = "返点单："+data.getVbillcode()+"状态不为待提交状态，不能修改";
+					errmsg = "返点单："+data.getVbillcode()+"状态不为待提交状态，不能修改，请重新查询后再次尝试";
 				}
 			}
 		}else{
@@ -500,11 +529,37 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(flowVOs != null && flowVOs.length > 0){
 			oldvo.setChildren(flowVOs);
 		}
+		//展示赋值
 		CorpVO corpvo = CorpCache.getInstance().get(null, oldvo.getPk_corp());
 		if(corpvo != null){
 			oldvo.setCorpname(corpvo.getUnitname());
 		}
-		UserVO uservo = null;
+		UserVO uservo = UserCache.getInstance().get(oldvo.getCoperatorid(), null);
+		if(uservo != null){
+			oldvo.setVoperatorname(uservo.getUser_name());
+		}
+		if(oldvo.getIstatus() != null){
+			String vstatusname = "";
+			//0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
+			switch(oldvo.getIstatus()){
+				case 0:
+					vstatusname = "待提交";
+					break;
+				case 1:
+					vstatusname = "待确认";
+					break;
+				case 2:
+					vstatusname = "待审批";
+					break;
+				case 3:
+					vstatusname = "审批通过";
+					break;
+				case 4:
+					vstatusname = "已驳回";
+					break;
+			}
+			oldvo.setVstatusname(vstatusname);
+		}
 		return oldvo;
 	}
 

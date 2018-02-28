@@ -1,14 +1,6 @@
 var contextPath = DZF.contextPath;
 var grid;
-var refid;
-
-//$(document).ready(function() {
-//	$(".btn-slide").click(function() {
-//		$("#panela").slideToggle("slow");
-//		$(this).toggleClass("active");
-//		return false;
-//	})
-//})
+var editIndex;
 
 $(function(){
 	load();
@@ -213,7 +205,7 @@ function getDebateMny(cpid){
 }
 
 /**
- * 监听事件
+ * 新增监听事件
  */
 function initListener(){
 	$("#year").combobox({
@@ -274,7 +266,7 @@ function load(){
 		               ]],
 		columns : [ [ 
 		              { field : 'operdate', title : '录入日期',width :'110',halign: 'center',align:'center' }, 
-		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left' },
+		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left', formatter:codeLink },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
 		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
@@ -293,6 +285,16 @@ function load(){
 			$('#grid').datagrid("scrollTo",0);
 		}
 	});
+}
+
+/**
+ * 单号格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	
 }
 
 /**
@@ -431,7 +433,7 @@ function onAdd(){
 /**
  * 保存并新增
  */
-function saveAdd(){
+function onSaveAdd(){
 	var postdata = new Object();
 	if($("#addForm").form('validate')){
 		postdata["data"] = JSON.stringify(serializeObject($('#addForm')));
@@ -448,7 +450,7 @@ function saveAdd(){
 /**
  * 保存
  */
-function save(){
+function onSave(){
 	var postdata = new Object();
 	if($("#addForm").form('validate')){
 		postdata["data"] = JSON.stringify(serializeObject($('#addForm')));
@@ -502,16 +504,17 @@ function saveSubmit(isadd, postdata) {
  */
 function onEdit(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	$('#editDlg').dialog({
-		modal:true
-	});//设置dig属性
-	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
 	$.ajax({
 		url : DZF.contextPath + "/rebate/rebateinpt!queryById.action",
 		dataType : 'json',
 		data : row,
 		success : function(rs) {
 			if (rs.success) {
+				editIndex = index;
+				$('#editDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
 				var row = rs.rows;
 				$('#editForm').form('clear');
 				$('#editForm').form('load', row);
@@ -565,6 +568,7 @@ function onEdit(index){
 					"</div>";
 					$("#history").append(info);
 					historyListen();
+					initEditListener();
                 }
 				
 			} else {
@@ -578,7 +582,76 @@ function onEdit(index){
 }
 
 /**
- * 审批历史
+ * 修改监听事件
+ */
+function initEditListener(){
+	$("#eyear").combobox({
+		onChange : function(n, o) {
+			getEditDebateMny($("#ecorpid").val());
+		}
+	});
+	$("#eseason").combobox({
+		onChange : function(n, o) {
+			getEditDebateMny($("#ecorpid").val());
+		}
+	});
+	$("#ebasemny").numberbox({
+		onChange : function(n, o) {
+			var debitmny = getFloatValue($("#edebitmny").numberbox("getValue"));
+			if(getFloatValue(n) > debitmny){
+				Public.tips({
+					content : "返点基数不能大于扣款金额",
+					type : 2
+				});
+				$("#ebasemny").numberbox("setValue",debitmny);
+				return; 
+			}
+		}
+	});
+	$("#erebatemny").numberbox({
+		onChange : function(n, o) {
+			var basemny = getFloatValue($("#ebasemny").numberbox("getValue"));
+			if(getFloatValue(n) > basemny){
+				Public.tips({
+					content : "返点金额不能大于返点基数",
+					type : 2
+				});
+				$("#erebatemny").numberbox("setValue",basemny);
+				return; 
+			}
+		}
+	});
+}
+
+/**
+ * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
+ */
+function getEditDebateMny(cpid){
+	var year = $("#eyear").combobox("getValue");
+	var season = $("#eseason").combobox("getValue");
+	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
+		return;
+	}
+	$.ajax({
+		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
+		dataType : 'json',
+		data : {
+			'year' : year,
+			'season' : season,
+			'corpid' : cpid,
+		},
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				$("#edebitmny").numberbox("setValue",row['debitmny']);
+				$("#ebasemny").numberbox("setValue",row['basemny']);
+			} 
+		},
+	});
+}
+
+/**
+ * 审批历史按钮点击监听事件
  */
 function historyListen(){
 	$(".btn-slide").click(function() {
@@ -586,6 +659,50 @@ function historyListen(){
 		$(this).toggleClass("active");
 		return false;
 	})
+}
+
+/**
+ * 修改保存
+ */
+function onEditSave(){
+	var postdata = new Object();
+	if($("#editForm").form('validate')){
+		postdata["data"] = JSON.stringify(serializeObject($('#editForm')));
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+	$.messager.progress({
+		text : '数据保存中，请稍后.....'
+	});
+	$('#editForm').form('submit', {
+		url : contextPath + '/rebate/rebateinpt!save.action',
+		queryParams : postdata,
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			$.messager.progress('close');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				})
+				var row = result.rows;
+				$('#editDlg').dialog('close');
+				$('#grid').datagrid('updateRow', {
+					index : editIndex,
+					row : row
+				});
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				})
+			}
+		}
+	});
 }
 
 /**
