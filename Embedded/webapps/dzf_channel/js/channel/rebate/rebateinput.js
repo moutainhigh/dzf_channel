@@ -294,7 +294,90 @@ function load(){
  * @param index
  */
 function codeLink(value,row,index){
-	
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 返点单查看
+ * @param index
+ */
+function showInfo(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinpt!queryById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				editIndex = index;
+				$('#showDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#showDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				var row = rs.rows;
+				$('#showForm').form('clear');
+//				setFormValue(row);
+				$('#showForm').form('load', row);
+				$("#shistory").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length == 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
+					}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#shistory").append(info);
+					initEditListener();
+                }
+				
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
 }
 
 /**
@@ -517,7 +600,8 @@ function onEdit(index){
 				$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
 				var row = rs.rows;
 				$('#editForm').form('clear');
-				$('#editForm').form('load', row);
+				setFormValue(row);
+//				$('#editForm').form('load', row);
 				$("#history").empty();
 				if(row.children != null && row.children.length > 0){
 					var history = null;
@@ -582,21 +666,44 @@ function onEdit(index){
 }
 
 /**
+ * 修改设置表单的值
+ * @param row
+ */
+function setFormValue(row){
+	$('#erebid').val(row.rebid);
+	$('#evcode').textbox('setValue',row.vcode);
+	$('#eyear').combobox('setValue', row.year);
+	$('#eseason').combobox('setValue', row.season);
+	$('#ecorp').textbox('setValue',row.corp);
+	$('#ecorpid').val(row.corpid);
+	$('#edebitmny').numberbox('setValue', row.debitmny);
+	$('#ebasemny').numberbox('setValue', row.basemny);
+	$('#erebatemny').numberbox('setValue', row.rebatemny);
+	$('#ememo').textbox('setValue',row.memo);
+	$('#estatusname').textbox('setValue',row.statusname);
+	$('#eopername').textbox('setValue',row.opername);
+	$('#eoperdate').textbox('setValue',row.operdate);
+}
+
+/**
  * 修改监听事件
  */
 function initEditListener(){
 	$("#eyear").combobox({
 		onChange : function(n, o) {
+			console.info("111111");
 			getEditDebateMny($("#ecorpid").val());
 		}
 	});
 	$("#eseason").combobox({
 		onChange : function(n, o) {
+			console.info("2222222");
 			getEditDebateMny($("#ecorpid").val());
 		}
 	});
 	$("#ebasemny").numberbox({
 		onChange : function(n, o) {
+			console.info("33333333");
 			var debitmny = getFloatValue($("#edebitmny").numberbox("getValue"));
 			if(getFloatValue(n) > debitmny){
 				Public.tips({
@@ -610,6 +717,7 @@ function initEditListener(){
 	});
 	$("#erebatemny").numberbox({
 		onChange : function(n, o) {
+			console.info("44444444");
 			var basemny = getFloatValue($("#ebasemny").numberbox("getValue"));
 			if(getFloatValue(n) > basemny){
 				Public.tips({

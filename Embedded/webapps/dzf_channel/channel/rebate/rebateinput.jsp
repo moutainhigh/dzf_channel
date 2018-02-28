@@ -230,16 +230,16 @@
 			          	<div style="width:30%;display: inline-block">
 							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>
 							<input id="svcode" name="vcode" class="easyui-textbox" style="width:160px;height:26px;"
-								data-options="validType:'length[0,30]'" />
+								data-options="readonly:true" />
 					 	</div>
 						<div style="width:30%;display: inline-block">
 							<label style="text-align:right;width:102px;">期间：</label> 
 							<select id="syear" name="year" class="easyui-combobox" 
-								data-options="required:true,editable:false" style="width:70px;height:27px;">
+								data-options="readonly:true,editable:false" style="width:70px;height:27px;">
 						    	<% DzfUtil.WriteYearOption(out);%>
 							</select>
 							<select id="sseason" name="season" class="easyui-combobox"  
-								data-options="required:true,editable:false" style="width:94px;height:27px;">
+								data-options="readonly:true,editable:false" style="width:94px;height:27px;">
 			         			<option value="1">第一季度</option>
 								<option value="2">第二季度</option>
 								<option value="3">第三季度</option>
@@ -249,7 +249,7 @@
 					 	<div style="display: inline-block;width:38%;">
 							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
 						    <input id="scorp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
-								data-options="required:true,validType:'length[0,100]'" />
+								data-options="readonly:true,validType:'length[0,100]'" />
 							<input id="scorpid" name="corpid" type="hidden">
 						</div>
 					</div>
@@ -262,19 +262,19 @@
 						<div style="width:31%;display: inline-block">
 							<label style="width:112px;text-align: right;">返点基数:</label>
 							<input id="sbasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
-								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
 						<div style="width:38%;display: inline-block">
 							<label style="width:100px;text-align: right;">返点金额:</label>
 							<input id="srebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
-								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>
 					<div class="time_col time_colp11">
 						<div style="display: inline-block; margin-top: 5px;">
 							<label style="width:100px;text-align: right;vertical-align: top;">备注:</label>
 							<textarea id="smemo" name="memo" class="easyui-textbox" style="width:804px;height:60px;"
-								data-options="validType:'length[0,50]',multiline:true" ></textarea>
+								data-options="readonly:true,multiline:true" ></textarea>
 						</div>
 					</div>
 				 	<div class="time_col time_colp11">
