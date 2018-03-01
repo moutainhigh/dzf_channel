@@ -150,11 +150,10 @@
 								data-options="readonly:true,validType:'length[0,30]'" />
 					 	</div>
 						<div class="decan" style="width:30%;display: inline-block">
-							<label style="text-align:right;width:102px;">返点所属季度：</label> 
-							<input id="eyear" name="year" class="easyui-textbox" style="width:70px;height:27px;"
+							<label style="text-align:right;width:112px;">返点所属季度:</label> 
+							<input id="eshowdate" name="showdate" class="easyui-textbox" style="width:94px;height:27px;"
 								data-options="readonly:true" />
-							<input id="eseasonname" name="seasonname" class="easyui-textbox" style="width:94px;height:27px;"
-								data-options="readonly:true" />
+							<input type="hidden" id="eyear" name="year" />
 							<input type="hidden" id="eseason" name="season" />		
 						</div>
 					 	<div class="decan" style="display: inline-block;width:38%;">
@@ -230,12 +229,11 @@
 								data-options="readonly:true" />
 					 	</div>
 						<div class="decan" style="width:30%;display: inline-block">
-							<label style="text-align:right;width:102px;">返点所属季度：</label> 
-							<input id="syear" name="year" class="easyui-textbox" style="width:70px;height:27px;"
+							<label style="text-align:right;width:112px;">返点所属季度:</label> 
+							<input id="sshowdate" name="showdate" class="easyui-textbox" style="width:94px;height:27px;"
 								data-options="readonly:true" />
-							<input id="sseasonname" name="seasonname" class="easyui-textbox" style="width:94px;height:27px;"
-								data-options="readonly:true" />
-							<input type="hidden" id="sseason" name="season" />		
+							<input type="hidden" id="syear" name="year" />
+							<input type="hidden" id="sseason" name="season" />	
 						</div>
 					 	<div class="decan" style="display: inline-block;width:38%;">
 							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>

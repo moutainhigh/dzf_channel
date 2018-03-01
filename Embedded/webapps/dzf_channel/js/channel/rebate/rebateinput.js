@@ -260,6 +260,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		singleSelect : false,
+		checkOnSelect : false,
 		idField : 'rebid',
 		frozenColumns :[[ { field : 'ck', checkbox : true },
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
@@ -673,8 +674,8 @@ function onEdit(index){
 function setFormValue(row){
 	$('#erebid').val(row.rebid);
 	$('#evcode').textbox('setValue',row.vcode);
-	$('#eyear').textbox('setValue', row.year);
-	$('#eseasonname').textbox('setValue', row.seasonname);
+	$('#eshowdate').textbox('setValue', row.showdate);
+	$('#eyear').val(row.year);
 	$('#eseason').val(row.season);
 	$('#ecorp').textbox('setValue',row.corp);
 	$('#ecorpid').val(row.corpid);

@@ -115,15 +115,15 @@ public class RebateVO extends SuperVO {
 	@FieldAlias("opername")
 	private String voperatorname;//录入人名称
 	
-	@FieldAlias("seasonname")
-	private String vseasonname;//所属季度-季度名称
+	@FieldAlias("showdate")
+	private String vshowdate;//所属季度-展示名称
 
-	public String getVseasonname() {
-		return vseasonname;
+	public String getVshowdate() {
+		return vshowdate;
 	}
 
-	public void setVseasonname(String vseasonname) {
-		this.vseasonname = vseasonname;
+	public void setVshowdate(String vshowdate) {
+		this.vshowdate = vshowdate;
 	}
 
 	public String getVoperatorname() {

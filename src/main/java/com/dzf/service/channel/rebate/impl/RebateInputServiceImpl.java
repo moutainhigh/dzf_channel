@@ -575,24 +575,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			}
 			oldvo.setVstatusname(vstatusname);
 		}
-		if(oldvo.getIseason() != null){
-			String vseasonname = "";
-			switch(oldvo.getIseason()){
-				case 1:
-					vseasonname = "第一季度";
-					break;
-				case 2:
-					vseasonname = "第二季度";
-					break;
-				case 3:
-					vseasonname = "第三季度";
-					break;
-				case 4:
-					vseasonname = "第四季度";
-					break;
-			}
-			oldvo.setVseasonname(vseasonname);
-		}
+		oldvo.setVshowdate(oldvo.getVyear()+"-0"+oldvo.getIseason());
 		return oldvo;
 	}
 
