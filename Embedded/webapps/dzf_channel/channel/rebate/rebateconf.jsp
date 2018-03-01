@@ -10,6 +10,12 @@
 <link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
 	rel="stylesheet">
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/rebate/rebate.css");%>
+	rel="stylesheet">
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/rebate/public.css");%>
+	rel="stylesheet">
 <script
 	src=<%UpdateGradeVersion.outversion(out, request.getContextPath() + "/js/easyuiext.js");%>
 	charset="UTF-8" type="text/javascript"></script>
@@ -58,6 +64,112 @@
 		<div id="dataGrid" class="grid-wrap">
 			<table id="grid"></table>
 		</div>
+		
+		<!-- 审批对话框 begin -->
+		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
+			data-options="resizable:true,closed:true">
+	       	<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
+		        <div style="text-align:right;margin-top:-10px;margin-right:40px;">
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onConfirm()">确认</a> 
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addDlg').dialog('close');">取消</a>
+		        </div>
+		        <!-- 确认提交表单 begin -->
+		        <form id="commitForm" method="post" style="margin-top:10px;" >
+		        	<input type="hidden" id="crebid" name="rebid" />
+		        	<input type="hidden" id="ctstp" name="tstp" />
+		        	<input type="hidden" id="cistatus" name="istatus" />
+			      	<div class="time_col time_colp11">
+					 	<div style="width:60%;display: inline-block">
+							<label style="width:100px;text-align: right;">确认状态：</label>
+							<input id ="conf" name ="confstatus" type = radio value = "1" checked 
+								style="margin:0px 0px 0px 2px;text-align:left;">
+							<label style="text-align:left;width:80px;">驳回修改</label>
+							<input id ="reje" name ="confstatus" type = radio value = "2" 
+								style="margin:0px 0px 0px 2px;text-align:left;">
+							<label style="text-align:left;width:80px;">确认通过</label>
+						</div>	
+					</div>
+					<div class="time_col time_colp11">
+					 	<div style="width:100%;display: inline-block">
+							<label style="width:100px;text-align:right; vertical-align:top;">说明：</label>
+							<textarea id="confnote" name="confnote" class="easyui-textbox" style="width:804px;height:60px;" 
+								data-options="validType:'length[0,50]',multiline:true" ></textarea>
+						</div>	
+			        </div>	  
+		        </form>
+		        <!-- 确认提交表单 end -->
+	        </div>
+			<form id="auditForm" method="post" style="margin-top:10px;">
+				<input type="hidden" id="arebid" name="rebid" />
+				<div id="tableDiv" style="overflow-y: auto;">
+				  	<div class="time_col time_colp11">
+			          	<div class="decan" style="width:30%;display: inline-block">
+							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>
+							<input id="avcode" name="vcode" class="easyui-textbox" style="width:160px;height:26px;"
+								data-options="readonly:true" />
+					 	</div>
+						<div class="decan" style="width:30%;display: inline-block">
+							<label style="text-align:right;width:112px;">返点所属季度:</label> 
+							<input id="ashowdate" name="showdate" class="easyui-textbox" style="width:94px;height:27px;"
+								data-options="readonly:true" />
+							<input type="hidden" id="syear" name="year" />
+							<input type="hidden" id="sseason" name="season" />	
+						</div>
+					 	<div class="decan" style="display: inline-block;width:38%;">
+							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
+						    <input id="acorp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
+								data-options="readonly:true,validType:'length[0,100]'" />
+							<input id="acorpid" name="corpid" type="hidden">
+						</div>
+					</div>
+				 	<div class="time_col time_colp11">
+					  	<div class="decan" style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">扣款金额:</label>
+							<input id="adebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>				
+						<div class="decan" style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">返点基数:</label>
+							<input id="abasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+						</div>	
+						<div class="decan" style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">返点金额:</label>
+							<input id="arebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>
+					</div>
+					<div class="time_col time_colp11">
+						<div class="decan" style="display: inline-block; margin-top: 5px;">
+							<label style="width:100px;text-align: right;vertical-align: top;">备注:</label>
+							<textarea id="amemo" name="memo" class="easyui-textbox" style="width:804px;height:60px;"
+								data-options="readonly:true,multiline:true" ></textarea>
+						</div>
+					</div>
+				 	<div  class="time_col time_colp11">
+					  	<div class="decan" style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">单据状态:</label>
+							<input id="astatusname" name="statusname" class="easyui-textbox" style="width:160px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>				
+						<div class="decan" style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">录入人:</label>
+							<input id="aopername" name="opername" class="easyui-textbox" style="width:130px;height:26px;"
+								data-options="readonly:true" />
+						</div>	
+						<div class="decan" style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">录入时间:</label>
+							<input id="aoperdate" name="operdate" class="easyui-textbox" style="width:150px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>
+					</div>
+			 	</div>
+		   </form>
+		   <!-- 审批历史begin -->
+		   <div id = "ahistory"></div>
+			<!-- 审批历史end -->
+		</div>
+		<!-- 审批对话框end -->	
 		
 	</div>
 	<!-- 列表界面end -->

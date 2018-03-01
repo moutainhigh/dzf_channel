@@ -164,6 +164,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		singleSelect : false,
+		checkOnSelect : false,
 		idField : 'rebid',
 		frozenColumns :[[ { field : 'ck', checkbox : true },
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
@@ -237,7 +238,7 @@ function clearParams(){
  * 查询框-确认
  */
 function reloadData(){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'year' : $("#qyear").combobox("getValue"),
@@ -257,7 +258,7 @@ function reloadData(){
  * @param type
  */
 function qryData(type){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'qtype' : type,
@@ -284,7 +285,7 @@ function fastQry(){
             	queryParams.year = $("#qyear").combobox("getValue");
         		queryParams.season = $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
-          		grid.datagrid('options').url = contextPath + '/rebate/rebateinpt!query.action';
+          		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
           		$('#grid').datagrid('reload');
             }
@@ -325,10 +326,11 @@ function onConf(index){
 		});
 		return;
 	}
+	showAuditDlg(row);
 //	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
 //		if (r) {
 //			$.ajax({
-//				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
+//				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
 //				dataType : 'json',
 //				data : row,
 //				success : function(rs) {
@@ -352,10 +354,165 @@ function onConf(index){
 }
 
 /**
+ * 展示确认对话框
+ * @param row
+ */
+function showAuditDlg(row){
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinput!queryInfoById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				$('#auditDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				var row = rs.rows;
+				$('#auditForm').form('clear');
+				$('#auditForm').form('load', row);
+				$('#commitForm').form('clear');
+				$('#crebid').val(row.rebid);
+				$('#ctstp').val(row.tstp);
+				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
+				$("#ahistory").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length == 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
+					}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#ahistory").append(info);
+					historyListen();
+                }
+				
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
+}
+
+/**
+ * 审批历史按钮点击监听事件
+ */
+function historyListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
+}
+
+/**
  * 确认-提交
  */
 function onConfirm(){
 	
+	var confstatus = $('input:radio[name="confstatus"]:checked').val();
+	if(isEmpty(confstatus)){
+		Public.tips({
+			content : '请先选择操作方式',
+			type : 2
+		});			
+		return;
+	}else{
+		if(confstatus == "1"){
+			if(isEmpty($("#confnote").val())){
+				Public.tips({
+					content : '驳回修改说明不能为空',
+					type : 2
+				});			
+				return;
+			}
+		}
+		$("#cistatus").val(confstatus)
+	}
+	
+	var postdata = new Object();
+	if($("#commitForm").form('validate')){
+		postdata["data"] = JSON.stringify(serializeObject($('#commitForm')));
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+	
+	$.messager.progress({
+		text : '数据保存中，请稍后.....'
+	});
+	$('#commitForm').form('submit', {
+		url : contextPath + '/rebate/rebateconf!updateConf.action',
+		queryParams : postdata,
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			$.messager.progress('close');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				})
+				var row = result.rows;
+				if(isadd){
+					$('#addForm').form('clear');
+				}else{
+					$('#addDlg').dialog('close');
+				}
+				$('#grid').datagrid('appendRow',row);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				})
+			}
+		}
+	});
 }
 
 /**

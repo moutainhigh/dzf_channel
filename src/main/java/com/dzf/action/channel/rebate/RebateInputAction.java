@@ -39,7 +39,7 @@ import com.dzf.service.channel.rebate.IRebateInputService;
  */
 @ParentPackage("basePackage")
 @Namespace("/rebate")
-@Action(value = "rebateinpt")
+@Action(value = "rebateinput")
 public class RebateInputAction extends BaseAction<RebateVO> {
 
 	private static final long serialVersionUID = 9155544110565105231L;
@@ -310,7 +310,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 	}
 	
 	/**
-	 * 通过主键查询返点单和审批历史信息
+	 * 通过主键查询返点单和审批历史信息（修改使用）
 	 */
 	public void queryById() {
 		Json json = new Json();
@@ -323,6 +323,32 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 					throw new BusinessException("登陆用户错误");
 				}
 				RebateVO batevo = rebateser.queryById(data,1);
+				json.setSuccess(true);
+				json.setRows(batevo);
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "操作失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 通过主键查询返点单和审批历史信息（查看使用）
+	 */
+	public void queryInfoById() {
+		Json json = new Json();
+		if (data != null) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+					throw new BusinessException("登陆用户错误");
+				}else if(uservo == null){
+					throw new BusinessException("登陆用户错误");
+				}
+				RebateVO batevo = rebateser.queryById(data,2);
 				json.setSuccess(true);
 				json.setRows(batevo);
 			} catch (Exception e) {

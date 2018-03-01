@@ -237,7 +237,7 @@ function clearParams(){
  * 查询框-确认
  */
 function reloadData(){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'year' : $("#qyear").combobox("getValue"),
@@ -257,7 +257,7 @@ function reloadData(){
  * @param type
  */
 function qryData(type){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'qtype' : type,
@@ -284,7 +284,7 @@ function fastQry(){
             	queryParams.year = $("#qyear").combobox("getValue");
         		queryParams.season = $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
-          		grid.datagrid('options').url = contextPath + '/rebate/rebateinpt!query.action';
+          		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
           		$('#grid').datagrid('reload');
             }
@@ -328,7 +328,7 @@ function onConf(index){
 	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
 		if (r) {
 			$.ajax({
-				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
+				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
 				dataType : 'json',
 				data : row,
 				success : function(rs) {

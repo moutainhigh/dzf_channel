@@ -1,6 +1,9 @@
 package com.dzf.action.channel.rebate;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
@@ -15,6 +18,9 @@ import com.dzf.service.channel.rebate.IRebateConfService;
  * @author zy
  *
  */
+@ParentPackage("basePackage")
+@Namespace("/rebate")
+@Action(value = "rebateconf")
 public class RebateConfAction extends BaseAction<RebateVO> {
 
 	private static final long serialVersionUID = 5761681623723616215L;

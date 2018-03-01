@@ -187,7 +187,7 @@ function getDebateMny(cpid){
 		return;
 	}
 	$.ajax({
-		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
+		url : contextPath + '/rebate/rebateinput!queryDebateMny.action',
 		dataType : 'json',
 		data : {
 			'year' : year,
@@ -305,12 +305,11 @@ function codeLink(value,row,index){
 function showInfo(index){
 	var row = $('#grid').datagrid('getData').rows[index];
 	$.ajax({
-		url : DZF.contextPath + "/rebate/rebateinpt!queryById.action",
+		url : DZF.contextPath + "/rebate/rebateinput!queryInfoById.action",
 		dataType : 'json',
 		data : row,
 		success : function(rs) {
 			if (rs.success) {
-				editIndex = index;
 				$('#showDlg').dialog({
 					modal:true
 				});//设置dig属性
@@ -368,7 +367,6 @@ function showInfo(index){
 					"</div>"+
 					"</div>";
 					$("#shistory").append(info);
-					initEditListener();
 					historyListen();
                 }
 				
@@ -428,7 +426,7 @@ function clearParams(){
  * 查询框-确认
  */
 function reloadData(){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'year' : $("#qyear").combobox("getValue"),
@@ -448,7 +446,7 @@ function reloadData(){
  * @param type
  */
 function qryData(type){
-	url = contextPath + '/rebate/rebateinpt!query.action';
+	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'qtype' : type,
@@ -475,7 +473,7 @@ function fastQry(){
             	queryParams.year = $("#qyear").combobox("getValue");
         		queryParams.season = $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
-          		grid.datagrid('options').url = contextPath + '/rebate/rebateinpt!query.action';
+          		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
           		$('#grid').datagrid('reload');
             }
@@ -557,7 +555,7 @@ function saveSubmit(isadd, postdata) {
 		text : '数据保存中，请稍后.....'
 	});
 	$('#addForm').form('submit', {
-		url : contextPath + '/rebate/rebateinpt!save.action',
+		url : contextPath + '/rebate/rebateinput!save.action',
 		queryParams : postdata,
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -590,7 +588,7 @@ function saveSubmit(isadd, postdata) {
 function onEdit(index){
 	var row = $('#grid').datagrid('getData').rows[index];
 	$.ajax({
-		url : DZF.contextPath + "/rebate/rebateinpt!queryById.action",
+		url : DZF.contextPath + "/rebate/rebateinput!queryById.action",
 		dataType : 'json',
 		data : row,
 		success : function(rs) {
@@ -740,7 +738,7 @@ function initEditListener(){
 //		return;
 //	}
 //	$.ajax({
-//		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
+//		url : contextPath + '/rebate/rebateinput!queryDebateMny.action',
 //		dataType : 'json',
 //		data : {
 //			'year' : year,
@@ -786,7 +784,7 @@ function onEditSave(){
 		text : '数据保存中，请稍后.....'
 	});
 	$('#editForm').form('submit', {
-		url : contextPath + '/rebate/rebateinpt!save.action',
+		url : contextPath + '/rebate/rebateinput!save.action',
 		queryParams : postdata,
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -827,7 +825,7 @@ function onDelete(index){
 	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
 		if (r) {
 			$.ajax({
-				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
+				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
 				dataType : 'json',
 				data : row,
 				success : function(rs) {
@@ -871,7 +869,7 @@ function onCommit(){
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/rebate/rebateinpt!saveCommit.action',
+		url : contextPath + '/rebate/rebateinput!saveCommit.action',
 		data : postdata,
 		traditional : true,
 		async : false,

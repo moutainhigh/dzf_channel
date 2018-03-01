@@ -13,7 +13,7 @@
 <link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/rebate/rebate.css");%>
 	rel="stylesheet">
-	<link
+<link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/rebate/public.css");%>
 	rel="stylesheet">
 <script
