@@ -9,8 +9,116 @@ $(window).resize(function(){
 
 $(function() {
 	initQryPeroid();
+	initQry();
 	load();
 });
+
+//初始化
+function initQry(){
+	// 下拉按钮的事件
+	$("#jqj").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	changeArea();
+	changeProvince();
+	initArea();
+	initProvince();
+	initManager();
+}
+
+function changeArea(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData=[];
+			if(!isEmpty(n)){
+				queryData={'aname' : n};
+				$('#ovince').combobox('setValue',null);
+				$('#uid').combobox('setValue',null);
+			}
+			initProvince(queryData);
+			initManager(queryData);
+		}
+	});
+}
+
+function changeProvince(){
+	 $("#ovince").combobox({
+		onChange : function(n, o) {
+			var queryData=[];
+			if(!isEmpty(n)){
+				queryData={'aname' : $("#aname").combobox('getValue'),'ovince':n};
+				$('#uid').combobox('setValue',null);
+			}
+			initManager(queryData);
+		}
+	});
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+function initProvince(queryData){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryProvince.action',
+		data : queryData,
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#ovince').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+function initManager(queryData){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
+		data : queryData,
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#uid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+//查询框关闭事件
+function closeCx() {
+	$("#qrydialog").css("visibility", "hidden");
+}
+
+// 清空查询条件
+function clearCondition(){
+	$('#aname').combobox('select',null);
+	$('#ovince').combobox('select',null);
+	$('#uid').combobox('select',null);
+}
 
 /**
  * 数据表格初始化
