@@ -171,6 +171,81 @@
 		</div>
 		<!-- 审批对话框end -->	
 		
+		<!-- 查看对话框 begin -->
+		<div id="showDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
+			data-options="resizable:true,closed:true">
+			<form id="showForm" method="post" style="margin-top:0px;">
+				<input type="hidden" id="srebid" name="rebid" />
+				<div id="tableDiv" style="overflow-y: auto;">
+				  	<div class="time_col time_colp11">
+			          	<div class="decan" style="width:30%;display: inline-block">
+							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>
+							<input id="svcode" name="vcode" class="easyui-textbox" style="width:160px;height:26px;"
+								data-options="readonly:true" />
+					 	</div>
+						<div class="decan" style="width:30%;display: inline-block">
+							<label style="text-align:right;width:112px;">返点所属季度:</label> 
+							<input id="sshowdate" name="showdate" class="easyui-textbox" style="width:94px;height:27px;"
+								data-options="readonly:true" />
+							<input type="hidden" id="syear" name="year" />
+							<input type="hidden" id="sseason" name="season" />	
+						</div>
+					 	<div class="decan" style="display: inline-block;width:38%;">
+							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
+						    <input id="scorp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
+								data-options="readonly:true,validType:'length[0,100]'" />
+							<input id="scorpid" name="corpid" type="hidden">
+						</div>
+					</div>
+				 	<div class="time_col time_colp11">
+					  	<div class="decan" style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">扣款金额:</label>
+							<input id="sdebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>				
+						<div class="decan" style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">返点基数:</label>
+							<input id="sbasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+						</div>	
+						<div class="decan" style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">返点金额:</label>
+							<input id="srebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>
+					</div>
+					<div class="time_col time_colp11">
+						<div class="decan" style="display: inline-block; margin-top: 5px;">
+							<label style="width:100px;text-align: right;vertical-align: top;">备注:</label>
+							<textarea id="smemo" name="memo" class="easyui-textbox" style="width:804px;height:60px;"
+								data-options="readonly:true,multiline:true" ></textarea>
+						</div>
+					</div>
+				 	<div  class="time_col time_colp11">
+					  	<div class="decan" style="width:29%;display: inline-block">
+							<label style="width:100px;text-align: right;">单据状态:</label>
+							<input id="sstatusname" name="statusname" class="easyui-textbox" style="width:160px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>				
+						<div class="decan" style="width:31%;display: inline-block">
+							<label style="width:112px;text-align: right;">录入人:</label>
+							<input id="sopername" name="opername" class="easyui-textbox" style="width:130px;height:26px;"
+								data-options="readonly:true" />
+						</div>	
+						<div class="decan" style="width:38%;display: inline-block">
+							<label style="width:100px;text-align: right;">录入时间:</label>
+							<input id="soperdate" name="operdate" class="easyui-textbox" style="width:150px;height:26px;" 
+								data-options="readonly:true"/>
+						</div>
+					</div>
+			 	</div>
+		   </form>
+		   <!-- 审批历史begin -->
+		   <div id = "shistory"></div>
+			<!-- 审批历史end -->
+		</div>
+		<!-- 查看对话框end -->
+		
 	</div>
 	<!-- 列表界面end -->
 	

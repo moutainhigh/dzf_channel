@@ -230,7 +230,7 @@ function showInfo(index){
 					"</p>"+
 					"<div style='height:230px;overflow:auto;'>"+
 					"<div style='' id='panelA'>";
-					if(row.children.length == 1){
+					if(row.children.length >= 1){
 						history = row.children[0];
 						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
 						"<div  class='Aroundly'>"+
@@ -248,7 +248,7 @@ function showInfo(index){
 					if(row.children.length > 1){
 						info = info + "<div style='display: none;' id='panela'>"+
 						"<div style='width:auto;'>";
-						for(var i = 1; i < row.children; i++){
+						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
 							info = info +"<div class='tall'>"+
 							"<div  class='Aroundly'>"+
@@ -323,8 +323,11 @@ function formatSta(val, row, index){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onConf(' + index + ')">确认</a>|'
-	     +' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onCanc(' + index + ')">取消确认</a>';
+	if(row.istatus == 1){//待确认
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onConf(' + index + ')">确认</a>'
+	}else if(row.istatus == 2){//待审核
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onCanc(' + index + ')">取消确认</a>';
+	}
 }
 
 /**
@@ -451,6 +454,7 @@ function showAuditDlg(row){
 				var row = rs.rows;
 				$('#auditForm').form('clear');
 				$('#auditForm').form('load', row);
+				$('#confnote').textbox('setValue',null);
 				$('#commitForm').form('clear');
 				$('#crebid').val(row.rebid);
 				$('#ctstp').val(row.tstp);
@@ -464,7 +468,7 @@ function showAuditDlg(row){
 					"</p>"+
 					"<div style='height:230px;overflow:auto;'>"+
 					"<div style='' id='panelA'>";
-					if(row.children.length == 1){
+					if(row.children.length >= 1){
 						history = row.children[0];
 						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
 						"<div  class='Aroundly'>"+
@@ -482,7 +486,7 @@ function showAuditDlg(row){
 					if(row.children.length > 1){
 						info = info + "<div style='display: none;' id='panela'>"+
 						"<div style='width:auto;'>";
-						for(var i = 1; i < row.children; i++){
+						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
 							info = info +"<div class='tall'>"+
 							"<div  class='Aroundly'>"+
@@ -522,7 +526,6 @@ function showAuditDlg(row){
  * 确认-提交
  */
 function onConfirm(){
-	
 	var confstatus = $('input:radio[name="confstatus"]:checked').val();
 	if(isEmpty(confstatus)){
 		Public.tips({
@@ -589,5 +592,39 @@ function onConfirm(){
  * @param index
  */
 function onCanc(index){
-	
+	var row = $('#grid').datagrid('getData').rows[index];
+	if (row.istatus != 2) {
+		Public.tips({
+			content : '该记录不是待审批状态，不允许取消确认',
+			type : 2
+		});
+		return;
+	}
+	var postdata = new Object();
+	postdata["data"] = JSON.stringify(row);
+	postdata["opertype"] = 3;
+	$.ajax({
+		url : DZF.contextPath + '/rebate/rebateconf!updateCanc.action',
+		dataType : 'json',
+		data : postdata,
+		success : function(rs) {
+			if (rs.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				})
+				var row = rs.rows;
+				$('#grid').datagrid('updateRow', {
+					index : confIndex,
+					row : row
+				});
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
 }
+

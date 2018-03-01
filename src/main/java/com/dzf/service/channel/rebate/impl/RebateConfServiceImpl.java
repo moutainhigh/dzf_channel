@@ -35,18 +35,26 @@ public class RebateConfServiceImpl implements IRebateConfService{
 		if (!StringUtil.isEmpty(errmsg)) {
 			throw new BusinessException(errmsg);
 		}
-		if (data.getIstatus() != null && 
-				data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
-			throw new BusinessException("返点单号" + data.getVbillcode() + "不为待确认态");
-		}
 		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
+			if (data.getIstatus() != null && 
+					data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
+				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待确认态");
+			}
 			if (StringUtil.isEmpty(data.getVconfirmnote())) {
 				throw new BusinessException("驳回说明不能为空");
 			}
-			data.setIstatus(IStatusConstant.IREBATESTATUS_0);
+			data.setIstatus(IStatusConstant.IREBATESTATUS_4);
 		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_2){
+			if (data.getIstatus() != null && 
+					data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
+				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待确认态");
+			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_2);
 		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_3){
+			if (data.getIstatus() != null && 
+					data.getIstatus() != IStatusConstant.IREBATESTATUS_2) {
+				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待批核态");
+			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_1);
 		}
 		data.setTconfirmtime(new DZFDateTime());

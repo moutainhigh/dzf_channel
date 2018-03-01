@@ -326,7 +326,7 @@ function showInfo(index){
 					"</p>"+
 					"<div style='height:230px;overflow:auto;'>"+
 					"<div style='' id='panelA'>";
-					if(row.children.length == 1){
+					if(row.children.length >= 1){
 						history = row.children[0];
 						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
 						"<div  class='Aroundly'>"+
@@ -344,7 +344,7 @@ function showInfo(index){
 					if(row.children.length > 1){
 						info = info + "<div style='display: none;' id='panela'>"+
 						"<div style='width:auto;'>";
-						for(var i = 1; i < row.children; i++){
+						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
 							info = info +"<div class='tall'>"+
 							"<div  class='Aroundly'>"+
@@ -408,8 +408,10 @@ function formatSta(val, row, index){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>|'
-	     +' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(' + index + ')">删除</a>';
+	if(row.istatus == 0 || row.istatus == 4){//待提交或已驳回
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>|'
+		+' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(' + index + ')">删除</a>';
+	}
 }
 
 /**
@@ -610,7 +612,7 @@ function onEdit(index){
 					"</p>"+
 					"<div style='height:230px;overflow:auto;'>"+
 					"<div style='' id='panelA'>";
-					if(row.children.length == 1){
+					if(row.children.length >= 1){
 						history = row.children[0];
 						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
 						"<div  class='Aroundly'>"+
@@ -628,7 +630,7 @@ function onEdit(index){
 					if(row.children.length > 1){
 						info = info + "<div style='display: none;' id='panela'>"+
 						"<div style='width:auto;'>";
-						for(var i = 1; i < row.children; i++){
+						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
 							info = info +"<div class='tall'>"+
 							"<div  class='Aroundly'>"+
