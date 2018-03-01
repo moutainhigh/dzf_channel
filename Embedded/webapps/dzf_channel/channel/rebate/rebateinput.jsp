@@ -157,10 +157,10 @@
 								data-options="readonly:true" />
 							<input type="hidden" id="eseason" name="season" />		
 						</div>
-					 	<div style="display: inline-block;width:38%;">
+					 	<div class="decan" style="display: inline-block;width:38%;">
 							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
 						    <input id="ecorp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
-								data-options="required:true,validType:'length[0,100]'" />
+								data-options="readonly:true,validType:'length[0,100]'" />
 							<input id="ecorpid" name="corpid" type="hidden">
 						</div>
 					</div>
