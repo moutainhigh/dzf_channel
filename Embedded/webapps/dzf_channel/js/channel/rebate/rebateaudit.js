@@ -170,7 +170,7 @@ function load(){
 		               ]],
 		columns : [ [ 
 		              { field : 'operdate', title : '录入日期',width :'110',halign: 'center',align:'center' }, 
-		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left' },
+		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left', formatter:codeLink },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
 		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
@@ -180,7 +180,7 @@ function load(){
 		              { field : 'debitmny', title : '扣款金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
-		              { field : 'status', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
+		              { field : 'istatus', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
 		              { field : 'memo', title : '说明',width :'180',halign: 'center',align:'left'} ,
 				      { field : 'rebid', title : '主键', hidden:true},
 				      { field : 'tstp', title : '时间戳', hidden:true},
@@ -189,6 +189,108 @@ function load(){
 			$('#grid').datagrid("scrollTo",0);
 		}
 	});
+}
+
+/**
+ * 单号格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 返点单查看
+ * @param index
+ */
+function showInfo(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinput!queryInfoById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				$('#showDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#showDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				var row = rs.rows;
+				$('#showForm').form('clear');
+				$('#showForm').form('load', row);
+				$("#shistory").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length >= 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
+					}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children.length; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#shistory").append(info);
+					historyListen();
+                }
+				
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
+}
+
+/**
+ * 审批历史按钮点击监听事件
+ */
+function historyListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**
@@ -219,8 +321,9 @@ function formatSta(val, row, index){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onConf(' + index + ')">确认</a>|'
-	     +' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onCanc(' + index + ')">取消确认</a>';
+	if(row.istatus == 2){
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="audit(' + index + ')">确认</a>';
+	}
 }
 
 /**
@@ -313,55 +416,111 @@ function closeCx(){
 }
 
 /**
- * 确认
+ * 审核
  * @param index
  */
-function onConf(index){
+function audit(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.status != 1) {
+	if (row.istatus != 2) {
 		Public.tips({
-			content : '该记录不是待确认状态，不允许删除',
+			content : '该记录不是待审批状态，不允许审批',
 			type : 2
 		});
 		return;
 	}
-	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
-		if (r) {
-			$.ajax({
-				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
-				dataType : 'json',
-				data : row,
-				success : function(rs) {
-					if (rs.success) {
-						$('#grid').datagrid('deleteRow', index); 
-						$("#grid").datagrid('unselectAll');
-						Public.tips({
-							content : rs.msg,
-							type : 0
-						});
-					} else {
-						Public.tips({
-							content : rs.msg,
-							type : 1
-						});
+	showAuditDlg(row);
+}
+
+/**
+ * 展示审核对话框
+ * @param row
+ */
+function showAuditDlg(row){
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinput!queryInfoById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				$('#auditDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				var row = rs.rows;
+				$('#auditForm').form('clear');
+				$('#auditForm').form('load', row);
+				$('#confnote').textbox('setValue',null);
+				$('#commitForm').form('clear');
+				$('#crebid').val(row.rebid);
+				$('#ctstp').val(row.tstp);
+				$('#cistatus').val(row.istatus);
+				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
+				$("#ahistory").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length >= 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
 					}
-				},
-			});
-		}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children.length; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#ahistory").append(info);
+					historyListen();
+                }
+				
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
 	});
 }
 
 /**
- * 确认-提交
+ * 审核-提交
  */
-function onConfirm(){
+function onAudit(){
 	
 }
 
-/**
- * 取消确认
- * @param index
- */
-function onCanc(index){
-	
-}

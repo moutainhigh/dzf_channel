@@ -65,7 +65,7 @@
 			<table id="grid"></table>
 		</div>
 		
-		<!-- 审批对话框 begin -->
+		<!-- 确认对话框 begin -->
 		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
 			data-options="resizable:true,closed:true">
 	       	<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
@@ -169,7 +169,7 @@
 		   <div id = "ahistory"></div>
 			<!-- 审批历史end -->
 		</div>
-		<!-- 审批对话框end -->	
+		<!-- 确认对话框end -->	
 		
 		<!-- 查看对话框 begin -->
 		<div id="showDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
