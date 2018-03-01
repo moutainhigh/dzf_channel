@@ -12,6 +12,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.sale.SaleAnalyseVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
@@ -254,6 +255,24 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			}
 		}
 		return mnymap;
+	}
+	
+	@Override
+	public ArrayList queryProvince(String name) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select region_id as id, region_name as name");
+		sql.append("  from ynt_area ");
+		sql.append(" where nvl(dr, 0) = 0 and parenter_id = 1 ");
+		if(!StringUtil.isEmpty(name)){
+			sql.append(" and region_id in (select vprovince from cn_chnarea_b where nvl(dr,0)=0");
+			sql.append(" and pk_chnarea= (select pk_chnarea from cn_chnarea where nvl(dr,0)=0");
+			sql.append(" and areaname=? )) ");
+			sp.addParam(name);
+		}
+		sql.append(" order by region_id asc ");
+		ArrayList list = (ArrayList) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ComboBoxVO.class));
+		return list;
 	}
 	
 }

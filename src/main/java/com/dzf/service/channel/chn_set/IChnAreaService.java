@@ -1,8 +1,11 @@
 package com.dzf.service.channel.chn_set;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IChnAreaService {
@@ -31,7 +34,6 @@ public interface IChnAreaService {
 	 */
 	public ChnAreaVO queryByPrimaryKey(String pk) throws DZFWarpException;
 	
-	
 	/**
 	 * 列表查询
 	 * @param vo
@@ -57,10 +59,27 @@ public interface IChnAreaService {
 	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException;
 	
 	/**
-	 * 根据大区进行查询其下面的省市(目前只适用于渠道)
-	 * @param name
+	 * 大区参照（数据运营管理用的）
+	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ArrayList queryProvince(String name) throws DZFWarpException;
+	public List<ComboBoxVO> queryArea(QryParamVO paramvo) throws DZFWarpException ;
+	
+	/**
+	 * 省（市）参照（数据运营管理用的）
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryProvince(QryParamVO paramvo) throws DZFWarpException ;
+	
+	/**
+	 * 培训师参照（数据运营管理用的）
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryTrainer(QryParamVO paramvo) throws DZFWarpException ;
+	
 }

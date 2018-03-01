@@ -85,6 +85,12 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("season")
 	private Integer iseason;//所属季度-季度
 	
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+	
+	@FieldAlias("ovince")
+	public Integer vprovince;// 地区
+	
 	public String getVyear() {
 		return vyear;
 	}
@@ -99,6 +105,22 @@ public class QryParamVO extends SuperVO {
 
 	public void setIseason(Integer iseason) {
 		this.iseason = iseason;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
 	}
 
 	public Integer getCorptype() {

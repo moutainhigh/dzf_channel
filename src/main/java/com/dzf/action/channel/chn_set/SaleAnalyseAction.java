@@ -2,6 +2,7 @@ package com.dzf.action.channel.chn_set;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,25 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			grid.setRows(rows);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功!");
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	public void queryProvince(){
+		Grid grid = new Grid();
+		try {
+			String name = getRequest().getParameter("name");
+			ArrayList list = saleAnalyse.queryProvince(name);
+			if(list==null||list.size()==0){
+				grid.setRows(null);
+				grid.setMsg("查询数据为空!");
+			}else{
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功!");
+			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}

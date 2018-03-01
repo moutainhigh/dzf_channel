@@ -15,9 +15,11 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -278,21 +280,85 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	}
 	
 	@Override
-	public ArrayList queryProvince(String name) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select region_id as id, region_name as name");
-		sql.append("  from ynt_area ");
-		sql.append(" where nvl(dr, 0) = 0 and parenter_id = 1 ");
-		if(!StringUtil.isEmpty(name)){
-			sql.append(" and region_id in (select vprovince from cn_chnarea_b where nvl(dr,0)=0");
-			sql.append(" and pk_chnarea= (select pk_chnarea from cn_chnarea where nvl(dr,0)=0");
-			sql.append(" and areaname=? )) ");
-			sp.addParam(name);
+    public List<ComboBoxVO> queryArea(QryParamVO paramvo) throws DZFWarpException {
+		List<ComboBoxVO> list=null;
+		StringBuffer buf=new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		buf.append(" select distinct a.areaname as name, a.areacode as id ");
+		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=2");
+		if(!checkIsLeader(paramvo)){
+			buf.append("  and (b.userid=? or a.userid=?)");
+			spm.addParam(paramvo.getCuserid());
+			spm.addParam(paramvo.getCuserid());
 		}
-		sql.append(" order by region_id asc ");
-		ArrayList list = (ArrayList) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ComboBoxVO.class));
+		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
 		return list;
+	}
+    
+	@Override
+	public List<ComboBoxVO> queryProvince(QryParamVO paramvo) throws DZFWarpException {
+		List<ComboBoxVO> list=null;
+		StringBuffer buf=new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		buf.append(" select distinct b.vprovname as name, b.vprovince as id");
+		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=2");
+		if(!checkIsLeader(paramvo)){
+			buf.append("  and (b.userid=? or a.userid=?)");
+			spm.addParam(paramvo.getCuserid());
+			spm.addParam(paramvo.getCuserid());
+		}
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			buf.append("  and a.areaname=? ");
+			spm.addParam(paramvo.getAreaname());
+		}
+		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
+		return list;
+	}
+	
+	@Override
+	public List<ComboBoxVO> queryTrainer(QryParamVO paramvo) throws DZFWarpException {
+		List<ComboBoxVO> list=null;
+		UserVO uvo=null;
+		StringBuffer buf=new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		buf.append(" select distinct b.userid as id ");
+		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=2");
+		if(!checkIsLeader(paramvo)){
+			buf.append("  and (b.userid=? or a.userid=?)");
+			spm.addParam(paramvo.getCuserid());
+			spm.addParam(paramvo.getCuserid());
+		}
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			buf.append("  and a.areaname=? ");
+			spm.addParam(paramvo.getAreaname());
+		}
+		if(paramvo.getVprovince()!=null){
+			buf.append("  and b.vprovince=? ");
+			spm.addParam(paramvo.getVprovince());
+		}
+		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
+		for (ComboBoxVO comboBoxVO : list) {
+			uvo = UserCache.getInstance().get(comboBoxVO.getId(), null);
+			if(uvo!=null){
+				comboBoxVO.setName(uvo.getUser_name());
+			}
+		}
+		return list;
+	}
+	
+	private boolean checkIsLeader(QryParamVO paramvo) {
+		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset where nvl(dr,0)=0";
+		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
+		if(list!=null&&list.size()>0){
+			ManagerVO vo=list.get(0);
+			if(paramvo.getCuserid().equals(vo.getCusername())||paramvo.getCuserid().equals(vo.getCorpname())||paramvo.getCuserid().equals(vo.getUsername())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

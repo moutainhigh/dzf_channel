@@ -18,8 +18,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
@@ -234,16 +236,21 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		writeJson(grid);
 	}
 	
-	public void queryProvince(){
+	/**
+	 * 查询大区（下拉选项）
+	 */
+	public void queryArea() {
 		Grid grid = new Grid();
 		try {
-			String name = getRequest().getParameter("name");
-			ArrayList list = chnarea.queryProvince(name);
-			if(list==null||list.size()==0){
-				grid.setRows(null);
+			QryParamVO qvo = new QryParamVO();
+			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
+			qvo.setCuserid(getLoginUserid());
+			List<ComboBoxVO> vos = chnarea.queryArea(qvo);
+			if(vos==null||vos.size()==0){
+				grid.setRows(new ArrayList<ChnAreaVO>());
 				grid.setMsg("查询数据为空!");
 			}else{
-				grid.setRows(list);
+				grid.setRows(vos);
 				grid.setSuccess(true);
 				grid.setMsg("查询成功!");
 			}
@@ -252,5 +259,53 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		}
 		writeJson(grid);
 	}
-
+	
+	/**
+	 * 查询省（市）（下拉选项）
+	 */
+	public void queryProvince() {
+		Grid grid = new Grid();
+		try {
+			QryParamVO qvo = new QryParamVO();
+			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
+			qvo.setCuserid(getLoginUserid());
+			List<ComboBoxVO> vos = chnarea.queryProvince(qvo);
+			if(vos==null||vos.size()==0){
+				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setMsg("查询数据为空!");
+			}else{
+				grid.setRows(vos);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功!");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 查询培训师（下拉选项）
+	 */
+	public void queryTrainer() {
+		Grid grid = new Grid();
+		try {
+			QryParamVO qvo = new QryParamVO();
+			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
+			qvo.setCuserid(getLoginUserid());
+			List<ComboBoxVO> vos = chnarea.queryTrainer(qvo);
+			if(vos==null||vos.size()==0){
+				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setMsg("查询数据为空!");
+			}else{
+				grid.setRows(vos);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功!");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
 }
