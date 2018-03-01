@@ -1,0 +1,13 @@
+
+.decan .textbox {
+	border: none;
+	background: #fff;
+}
+
+.decan .textbox .textbox-text {
+	background: #fff;
+	text-align: left;
+}
+.decan .datebox .combo-arrow {
+	background: none
+}
