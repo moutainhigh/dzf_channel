@@ -180,7 +180,7 @@ function load(){
 		              { field : 'debitmny', title : '扣款金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
-		              { field : 'status', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
+		              { field : 'istatus', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
 		              { field : 'memo', title : '说明',width :'180',halign: 'center',align:'left'} ,
 				      { field : 'rebid', title : '主键', hidden:true},
 				      { field : 'tstp', title : '时间戳', hidden:true},
@@ -318,37 +318,37 @@ function closeCx(){
  */
 function onConf(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.status != 1) {
+	if (row.istatus != 1) {
 		Public.tips({
-			content : '该记录不是待确认状态，不允许删除',
+			content : '该记录不是待确认状态，不允许确认',
 			type : 2
 		});
 		return;
 	}
-	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
-		if (r) {
-			$.ajax({
-				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
-				dataType : 'json',
-				data : row,
-				success : function(rs) {
-					if (rs.success) {
-						$('#grid').datagrid('deleteRow', index); 
-						$("#grid").datagrid('unselectAll');
-						Public.tips({
-							content : rs.msg,
-							type : 0
-						});
-					} else {
-						Public.tips({
-							content : rs.msg,
-							type : 1
-						});
-					}
-				},
-			});
-		}
-	});
+//	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
+//		if (r) {
+//			$.ajax({
+//				url : DZF.contextPath + "/rebate/rebateinpt!delete.action",
+//				dataType : 'json',
+//				data : row,
+//				success : function(rs) {
+//					if (rs.success) {
+//						$('#grid').datagrid('deleteRow', index); 
+//						$("#grid").datagrid('unselectAll');
+//						Public.tips({
+//							content : rs.msg,
+//							type : 0
+//						});
+//					} else {
+//						Public.tips({
+//							content : rs.msg,
+//							type : 1
+//						});
+//					}
+//				},
+//			});
+//		}
+//	});
 }
 
 /**

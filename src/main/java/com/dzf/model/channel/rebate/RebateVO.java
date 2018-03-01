@@ -58,7 +58,7 @@ public class RebateVO extends SuperVO {
 	@FieldAlias("rebatemny")
 	private DZFDouble nrebatemny;//返点金额
 	
-	@FieldAlias("status")
+	@FieldAlias("istatus")
 	private Integer istatus;//状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
 
 	@FieldAlias("memo")

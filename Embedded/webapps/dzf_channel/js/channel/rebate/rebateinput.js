@@ -276,7 +276,7 @@ function load(){
 		              { field : 'debitmny', title : '扣款金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
-		              { field : 'status', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
+		              { field : 'istatus', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
 		              { field : 'memo', title : '说明',width :'180',halign: 'center',align:'left'} ,
 				      { field : 'rebid', title : '主键', hidden:true},
 				      { field : 'tstp', title : '时间戳', hidden:true},
@@ -816,7 +816,7 @@ function onEditSave(){
  */
 function onDelete(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.status != 0) {
+	if (row.istatus != 0) {
 		Public.tips({
 			content : '该记录不是待提交状态，不允许删除',
 			type : 2
@@ -881,7 +881,7 @@ function onCommit(){
 					type : 1
 				});
 			} else {
-				if(result.status == -1){
+				if(result.istatus == -1){
 					Public.tips({
 						content : result.msg,
 						type : 2
