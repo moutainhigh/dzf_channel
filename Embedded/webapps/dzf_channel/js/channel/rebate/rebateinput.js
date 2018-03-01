@@ -67,7 +67,7 @@ function initRef(){
     });
 	
 	//新增-加盟商参照初始化
-	$('#corp,#ecorp').textbox({
+	$('#corp').textbox({
 		onClickIcon : function() {
 			refid = $(this).attr("id");
 		},
@@ -368,6 +368,7 @@ function showInfo(index){
 					"</div>";
 					$("#shistory").append(info);
 					initEditListener();
+					historyListen();
                 }
 				
 			} else {
@@ -672,8 +673,9 @@ function onEdit(index){
 function setFormValue(row){
 	$('#erebid').val(row.rebid);
 	$('#evcode').textbox('setValue',row.vcode);
-	$('#eyear').combobox('setValue', row.year);
-	$('#eseason').combobox('setValue', row.season);
+	$('#eyear').textbox('setValue', row.year);
+	$('#eseasonname').textbox('setValue', row.seasonname);
+	$('#eseason').val(row.season);
 	$('#ecorp').textbox('setValue',row.corp);
 	$('#ecorpid').val(row.corpid);
 	$('#edebitmny').numberbox('setValue', row.debitmny);
@@ -689,21 +691,18 @@ function setFormValue(row){
  * 修改监听事件
  */
 function initEditListener(){
-	$("#eyear").combobox({
-		onChange : function(n, o) {
-			console.info("111111");
-			getEditDebateMny($("#ecorpid").val());
-		}
-	});
-	$("#eseason").combobox({
-		onChange : function(n, o) {
-			console.info("2222222");
-			getEditDebateMny($("#ecorpid").val());
-		}
-	});
+//	$("#eyear").combobox({
+//		onChange : function(n, o) {
+//			getEditDebateMny($("#ecorpid").val());
+//		}
+//	});
+//	$("#eseason").combobox({
+//		onChange : function(n, o) {
+//			getEditDebateMny($("#ecorpid").val());
+//		}
+//	});
 	$("#ebasemny").numberbox({
 		onChange : function(n, o) {
-			console.info("33333333");
 			var debitmny = getFloatValue($("#edebitmny").numberbox("getValue"));
 			if(getFloatValue(n) > debitmny){
 				Public.tips({
@@ -717,7 +716,6 @@ function initEditListener(){
 	});
 	$("#erebatemny").numberbox({
 		onChange : function(n, o) {
-			console.info("44444444");
 			var basemny = getFloatValue($("#ebasemny").numberbox("getValue"));
 			if(getFloatValue(n) > basemny){
 				Public.tips({
@@ -731,32 +729,32 @@ function initEditListener(){
 	});
 }
 
-/**
- * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
- */
-function getEditDebateMny(cpid){
-	var year = $("#eyear").combobox("getValue");
-	var season = $("#eseason").combobox("getValue");
-	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
-		return;
-	}
-	$.ajax({
-		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
-		dataType : 'json',
-		data : {
-			'year' : year,
-			'season' : season,
-			'corpid' : cpid,
-		},
-		success : function(rs) {
-			if (rs.success) {
-				var row = rs.rows;
-				$("#edebitmny").numberbox("setValue",row['debitmny']);
-				$("#ebasemny").numberbox("setValue",row['basemny']);
-			} 
-		},
-	});
-}
+///**
+// * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
+// */
+//function getEditDebateMny(cpid){
+//	var year = $("#eyear").combobox("getValue");
+//	var season = $("#eseason").combobox("getValue");
+//	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
+//		return;
+//	}
+//	$.ajax({
+//		url : contextPath + '/rebate/rebateinpt!queryDebateMny.action',
+//		dataType : 'json',
+//		data : {
+//			'year' : year,
+//			'season' : season,
+//			'corpid' : cpid,
+//		},
+//		success : function(rs) {
+//			if (rs.success) {
+//				var row = rs.rows;
+//				$("#edebitmny").numberbox("setValue",row['debitmny']);
+//				$("#ebasemny").numberbox("setValue",row['basemny']);
+//			} 
+//		},
+//	});
+//}
 
 /**
  * 审批历史按钮点击监听事件

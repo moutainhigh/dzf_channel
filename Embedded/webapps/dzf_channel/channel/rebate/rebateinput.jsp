@@ -144,21 +144,15 @@
 			          	<div style="width:30%;display: inline-block">
 							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>
 							<input id="evcode" name="vcode" class="easyui-textbox" style="width:160px;height:26px;"
-								data-options="validType:'length[0,30]'" />
+								data-options="readonly:true,validType:'length[0,30]'" />
 					 	</div>
 						<div style="width:30%;display: inline-block">
 							<label style="text-align:right;width:102px;">期间：</label> 
-							<select id="eyear" name="year" class="easyui-combobox" 
-								data-options="required:true,editable:false" style="width:70px;height:27px;">
-						    	<% DzfUtil.WriteYearOption(out);%>
-							</select>
-							<select id="eseason" name="season" class="easyui-combobox"  
-								data-options="required:true,editable:false" style="width:94px;height:27px;">
-			         			<option value="1">第一季度</option>
-								<option value="2">第二季度</option>
-								<option value="3">第三季度</option>
-								<option value="4">第四季度</option>
-							</select>
+							<input id="eyear" name="year" class="easyui-textbox" style="width:70px;height:27px;"
+								data-options="readonly:true" />
+							<input id="eseasonname" name="seasonname" class="easyui-textbox" style="width:94px;height:27px;"
+								data-options="readonly:true" />
+							<input type="hidden" id="eseason" name="season" />		
 						</div>
 					 	<div style="display: inline-block;width:38%;">
 							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
@@ -234,17 +228,11 @@
 					 	</div>
 						<div style="width:30%;display: inline-block">
 							<label style="text-align:right;width:102px;">期间：</label> 
-							<select id="syear" name="year" class="easyui-combobox" 
-								data-options="readonly:true,editable:false" style="width:70px;height:27px;">
-						    	<% DzfUtil.WriteYearOption(out);%>
-							</select>
-							<select id="sseason" name="season" class="easyui-combobox"  
-								data-options="readonly:true,editable:false" style="width:94px;height:27px;">
-			         			<option value="1">第一季度</option>
-								<option value="2">第二季度</option>
-								<option value="3">第三季度</option>
-								<option value="4">第四季度</option>
-							</select>
+							<input id="syear" name="year" class="easyui-textbox" style="width:70px;height:27px;"
+								data-options="readonly:true" />
+							<input id="sseasonname" name="seasonname" class="easyui-textbox" style="width:94px;height:27px;"
+								data-options="readonly:true" />
+							<input type="hidden" id="sseason" name="season" />		
 						</div>
 					 	<div style="display: inline-block;width:38%;">
 							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
