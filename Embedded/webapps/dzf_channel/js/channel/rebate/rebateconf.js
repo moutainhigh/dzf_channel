@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var grid;
 var refid;
+var confIndex;
 
 $(function(){
 	load();
@@ -171,7 +172,7 @@ function load(){
 		               ]],
 		columns : [ [ 
 		              { field : 'operdate', title : '录入日期',width :'110',halign: 'center',align:'center' }, 
-		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left' },
+		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left', formatter:codeLink },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
 		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
@@ -190,6 +191,108 @@ function load(){
 			$('#grid').datagrid("scrollTo",0);
 		}
 	});
+}
+
+/**
+ * 单号格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 返点单查看
+ * @param index
+ */
+function showInfo(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+		url : DZF.contextPath + "/rebate/rebateinput!queryInfoById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				$('#showDlg').dialog({
+					modal:true
+				});//设置dig属性
+				$('#showDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				var row = rs.rows;
+				$('#showForm').form('clear');
+				$('#showForm').form('load', row);
+				$("#shistory").empty();
+				if(row.children != null && row.children.length > 0){
+					var history = null;
+					var info = "<p class='slideA'>"+
+					"<a href='javascript:;' style='color:#FFF;font-size: 14px;' class='btn-slideA active'>审批历史</a>"+
+					"</p>"+
+					"<div style='height:230px;overflow:auto;'>"+
+					"<div style='' id='panelA'>";
+					if(row.children.length == 1){
+						history = row.children[0];
+						info = info + "<div class='tall' style=' margin-top: 16px;'>"+
+						"<div  class='Aroundly'>"+
+						"<img src='../../images/tbpng_03.png' style='position: absolute; left: 90px;'/>"+
+						"<img src='../../images/pngg_03.png' style='position: absolute; left: 96px; top: 14px;'/>"+
+						"</div>"+
+						"<div class='state'>"+
+						"<div>"+
+						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+						"</div>"+
+						"<div>"+history.pronote+"</div>"+
+						"</div>"+
+						"</div>";
+					}
+					if(row.children.length > 1){
+						info = info + "<div style='display: none;' id='panela'>"+
+						"<div style='width:auto;'>";
+						for(var i = 1; i < row.children; i++){
+							history = row.children[i];
+							info = info +"<div class='tall'>"+
+							"<div  class='Aroundly'>"+
+							"<img style='position: absolute; left: 92px;' src='../../images/xial_03.png' /> "+
+							"<img style='position: absolute; left: 96px; top: 8px;' src='../../images/pngg_03.png' />"+
+							"</div>"+
+							"<div class='state'>"+
+							"<div>"+
+							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
+							"</div>"+
+							"<div>"+history.pronote+"</div>"+
+							"</div>"+
+							"</div>";
+						}
+						info = info +"</div>"+"</div>";
+					}
+					info = info +"<p class='slide'>"+
+					"<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>"+
+					"</p>"+
+					"</div>"+
+					"</div>";
+					$("#shistory").append(info);
+					historyListen();
+                }
+				
+			} else {
+				Public.tips({
+					content : rs.msg,
+					type : 1
+				});
+			}
+		},
+	});
+}
+
+/**
+ * 审批历史按钮点击监听事件
+ */
+function historyListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**
@@ -326,31 +429,8 @@ function onConf(index){
 		});
 		return;
 	}
+	confIndex = index;
 	showAuditDlg(row);
-//	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
-//		if (r) {
-//			$.ajax({
-//				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
-//				dataType : 'json',
-//				data : row,
-//				success : function(rs) {
-//					if (rs.success) {
-//						$('#grid').datagrid('deleteRow', index); 
-//						$("#grid").datagrid('unselectAll');
-//						Public.tips({
-//							content : rs.msg,
-//							type : 0
-//						});
-//					} else {
-//						Public.tips({
-//							content : rs.msg,
-//							type : 1
-//						});
-//					}
-//				},
-//			});
-//		}
-//	});
 }
 
 /**
@@ -374,6 +454,7 @@ function showAuditDlg(row){
 				$('#commitForm').form('clear');
 				$('#crebid').val(row.rebid);
 				$('#ctstp').val(row.tstp);
+				$('#cistatus').val(row.istatus);
 				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
 				$("#ahistory").empty();
 				if(row.children != null && row.children.length > 0){
@@ -438,17 +519,6 @@ function showAuditDlg(row){
 }
 
 /**
- * 审批历史按钮点击监听事件
- */
-function historyListen(){
-	$(".btn-slide").click(function() {
-		$("#panela").slideToggle("slow");
-		$(this).toggleClass("active");
-		return false;
-	})
-}
-
-/**
  * 确认-提交
  */
 function onConfirm(){
@@ -470,12 +540,12 @@ function onConfirm(){
 				return;
 			}
 		}
-		$("#cistatus").val(confstatus)
 	}
 	
 	var postdata = new Object();
 	if($("#commitForm").form('validate')){
 		postdata["data"] = JSON.stringify(serializeObject($('#commitForm')));
+		postdata["opertype"] = confstatus;
 	} else {
 		Public.tips({
 			content : "必输信息为空或格式不正确",
@@ -499,12 +569,11 @@ function onConfirm(){
 					type : 0
 				})
 				var row = result.rows;
-				if(isadd){
-					$('#addForm').form('clear');
-				}else{
-					$('#addDlg').dialog('close');
-				}
-				$('#grid').datagrid('appendRow',row);
+				$('#auditDlg').dialog('close');
+				$('#grid').datagrid('updateRow', {
+					index : confIndex,
+					row : row
+				});
 			} else {
 				Public.tips({
 					content : result.msg,

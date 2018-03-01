@@ -71,7 +71,7 @@
 	       	<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
 		        <div style="text-align:right;margin-top:-10px;margin-right:40px;">
 			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onConfirm()">确认</a> 
-			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addDlg').dialog('close');">取消</a>
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#auditDlg').dialog('close');">取消</a>
 		        </div>
 		        <!-- 确认提交表单 begin -->
 		        <form id="commitForm" method="post" style="margin-top:10px;" >

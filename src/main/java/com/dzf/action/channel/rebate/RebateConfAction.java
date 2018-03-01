@@ -52,13 +52,13 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 				data = confser.updateConf(data, getLogincorppk(), iopertype);
 				json.setRows(data);
 				json.setSuccess(true);	
-				json.setMsg("保存成功");
+				json.setMsg("确认成功");
 			} catch (Exception e) {
-				printErrorLog(json, log, e, "保存失败");
+				printErrorLog(json, log, e, "确认失败");
 			}
 		}else {
 			json.setSuccess(false);
-			json.setMsg("保存失败");
+			json.setMsg("确认失败");
 		}
 		writeJson(json);
 	}

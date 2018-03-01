@@ -47,8 +47,8 @@ public interface IStatusConstant {
 	public static String IBILLTYPE_FD01 = "FD01";//返点单确认
 	public static String IBILLTYPE_FD02 = "FD02";//返点单审核
 	
-	/** 返点单操作类型(1：确认操作；4：驳回操作；5：取消确认)*/
-	public static int IREBATEOPERTYPE_1 = 1;//确认操作
-	public static int IREBATEOPERTYPE_5 = 5;//取消确认
-	public static int IREBATEOPERTYPE_4 = 4;//驳回操作
+	/** 返点单操作类型(1：驳回修改；2：确认通过；3：取消确认)*/
+	public static int IREBATEOPERTYPE_1 = 1;//驳回修改
+	public static int IREBATEOPERTYPE_2 = 2;//确认通过
+	public static int IREBATEOPERTYPE_3 = 3;//取消确认
 }

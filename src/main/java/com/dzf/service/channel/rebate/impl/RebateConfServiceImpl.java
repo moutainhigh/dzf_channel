@@ -32,16 +32,22 @@ public class RebateConfServiceImpl implements IRebateConfService{
 	public RebateVO updateConf(RebateVO data, String pk_corp, Integer opertype) throws DZFWarpException {
 		// 时间校验
 		String errmsg = rebateser.checkData(data);
-		if (StringUtil.isEmpty(errmsg)) {
+		if (!StringUtil.isEmpty(errmsg)) {
 			throw new BusinessException(errmsg);
 		}
-		if (data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
+		if (data.getIstatus() != null && 
+				data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
 			throw new BusinessException("返点单号" + data.getVbillcode() + "不为待确认态");
 		}
-		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_4) {
+		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
 			if (StringUtil.isEmpty(data.getVconfirmnote())) {
 				throw new BusinessException("驳回说明不能为空");
 			}
+			data.setIstatus(IStatusConstant.IREBATESTATUS_0);
+		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_2){
+			data.setIstatus(IStatusConstant.IREBATESTATUS_2);
+		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_3){
+			data.setIstatus(IStatusConstant.IREBATESTATUS_1);
 		}
 		data.setTconfirmtime(new DZFDateTime());
 		data.setTstamp(new DZFDateTime());
@@ -95,13 +101,13 @@ public class RebateConfServiceImpl implements IRebateConfService{
 		flowvo.setVbilltype(IStatusConstant.IBILLTYPE_FD01);//返点单确认
 		flowvo.setVapprovenote(data.getVconfirmnote());//确认说明or驳回说明
 		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
-			flowvo.setVstatusnote("确认通过");
-		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_4){
 			flowvo.setVstatusnote("驳回修改");
-		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_5){
+		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_2){
+			flowvo.setVstatusnote("确认通过");
+		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_3){
 			flowvo.setVstatusnote("取消确认");
 		}
-		return null;
+		return flowvo;
 	}
 
 }
