@@ -8,28 +8,15 @@
 <head>
 <title>业绩统计</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
-<link
-	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
-	rel="stylesheet">
-<link
-	href=<%UpdateGradeVersion.outversion(out, "../../css/periodext.css");%>
-	rel="stylesheet">
-<script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
-	charset="UTF-8" type="text/javascript"></script>
-<script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%>
-	charset="UTF-8" type="text/javascript"></script>
-<script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/periodext.js");%>
-	charset="UTF-8" type="text/javascript"></script>
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 <%
 	//获取当前月期间
 	Calendar e = Calendar.getInstance();
 	String ym = new SimpleDateFormat("yyyy-MM").format(e.getTime());
 %>
-
 <body>
 	<div class="wrapper">
 		<div id="List_panel" class="wrapper" style="width: 100%;/* overflow:hidden; */ height: 100%;" data-options="closed:false">

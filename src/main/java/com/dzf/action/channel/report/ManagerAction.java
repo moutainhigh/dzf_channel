@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +72,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		}
 		writeJson(grid);
 	}
-	
 
 	/**
 	 * 查询渠道经理（下拉选项）  2为区域总经理 3为加盟商总经理
@@ -96,7 +94,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		}
 		writeJson(grid);
 	}
-	
 
 	/**
 	 * 查询大区（下拉选项）
@@ -132,26 +129,11 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new ManagerVO());
 		ManagerVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ManagerVO[].class, JSONConvtoJAVA.getParserConfig());
-		ArrayList<ManagerVO> explist = new ArrayList<ManagerVO>();
-		for(ManagerVO vo : expVOs){
-			explist.add(vo);
-		}
 		HttpServletResponse response = getResponse();
-//		ExportExcel<ManagerVO> ex = new ExportExcel<ManagerVO>();
 		Excelexport2003<ManagerVO> ex = new Excelexport2003<>();
 		ManagerExcelField fields = new ManagerExcelField(type);
-		fields.setVos(explist.toArray(new ManagerVO[0]));
+		fields.setVos(expVOs);
 		fields.setQj(qj);
-//		Map<String, String> map = getExpFieldMap(type);
-//		String[] enFields = new String[map.size()];
-//		String[] cnFields = new String[map.size()];
-//		 //填充普通字段数组
-//		int count = 0;
-//		for (Entry<String, String> entry : map.entrySet()) {
-//			enFields[count] = entry.getKey();
-//			cnFields[count] = entry.getValue();
-//			count++;
-//		}
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
@@ -183,30 +165,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 				}
 			}
 		}
-	}
-	
-	/**
-	 * 获取导出列
-	 * @return
-	 */
-	private Map<String, String> getExpFieldMap(Integer type){
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		if(type==3){
-			map.put("areaname", "大区");
-			map.put("username", "区总");
-		}
-		if(type==3||type==2){
-			map.put("vprovname", "省（市）");
-			map.put("cusername", "渠道经理");
-		}
-		map.put("corpname", "加盟商");
-		map.put("bondmny", "保证金");
-		map.put("predeposit", "预存款");
-		map.put("num", "提单量");
-		map.put("ntotalmny", "合同总金额");
-		map.put("ndeductmny", "扣款金额");
-		map.put("outmny", "预存款余额");
-		return map;
 	}
 
 }
