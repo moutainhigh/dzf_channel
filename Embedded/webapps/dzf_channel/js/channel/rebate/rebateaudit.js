@@ -238,9 +238,11 @@ function showInfo(index){
 						"<div class='state'>"+
 						"<div>"+
 						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-						"</div>"+
-						"<div>"+history.pronote+"</div>"+
-						"</div>"+
+						"</div>";
+						if(!isEmpty(history.pronote)){
+							info = info +"<div>"+history.pronote+"</div>";
+						}
+						info = info + "</div>"+
 						"</div>";
 					}
 					if(row.children.length > 1){
@@ -256,9 +258,11 @@ function showInfo(index){
 							"<div class='state'>"+
 							"<div>"+
 							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-							"</div>"+
-							"<div>"+history.pronote+"</div>"+
-							"</div>"+
+							"</div>";
+							if(!isEmpty(history.pronote)){
+								info = info +"<div>"+history.pronote+"</div>";
+							}
+							info = info + "</div>"+
 							"</div>";
 						}
 						info = info +"</div>"+"</div>";
@@ -322,7 +326,7 @@ function formatSta(val, row, index){
  */
 function opermatter(val, row, index) {
 	if(row.istatus == 2){
-		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="audit(' + index + ')">确认</a>';
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="audit(' + index + ')">审批</a>';
 	}
 }
 
@@ -454,6 +458,11 @@ function showAuditDlg(row){
 				$('#crebid').val(row.rebid);
 				$('#ctstp').val(row.tstp);
 				$('#cistatus').val(row.istatus);
+				$('#cvcode').val(row.vcode);
+				$('#ccorpid').val(row.corpid);
+				$('#cdebitmny').val(row.debitmny);
+				$('#cdebitmny').val(row.debitmny);
+				$('#cdebitmny').val(row.debitmny);
 				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
 				$("#ahistory").empty();
 				if(row.children != null && row.children.length > 0){
@@ -473,9 +482,11 @@ function showAuditDlg(row){
 						"<div class='state'>"+
 						"<div>"+
 						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-						"</div>"+
-						"<div>"+history.pronote+"</div>"+
-						"</div>"+
+						"</div>";
+						if(!isEmpty(history.pronote)){
+							info = info +"<div>"+history.pronote+"</div>";
+						}
+						info = info + "</div>"+
 						"</div>";
 					}
 					if(row.children.length > 1){
@@ -491,9 +502,11 @@ function showAuditDlg(row){
 							"<div class='state'>"+
 							"<div>"+
 							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-							"</div>"+
-							"<div>"+history.pronote+"</div>"+
-							"</div>"+
+							"</div>";
+							if(!isEmpty(history.pronote)){
+								info = info +"<div>"+history.pronote+"</div>";
+							}
+							info = info + "</div>"+
 							"</div>";
 						}
 						info = info +"</div>"+"</div>";
@@ -521,6 +534,64 @@ function showAuditDlg(row){
  * 审核-提交
  */
 function onAudit(){
+	var confstatus = $('input:radio[name="confstatus"]:checked').val();
+	if(isEmpty(confstatus)){
+		Public.tips({
+			content : '请先选择操作方式',
+			type : 2
+		});			
+		return;
+	}else{
+		if(confstatus == "1"){
+			if(isEmpty($("#confnote").val())){
+				Public.tips({
+					content : '驳回修改说明不能为空',
+					type : 2
+				});			
+				return;
+			}
+		}
+	}
 	
+	var postdata = new Object();
+	if($("#commitForm").form('validate')){
+		postdata["data"] = JSON.stringify(serializeObject($('#commitForm')));
+		postdata["opertype"] = confstatus;
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+	
+	$.messager.progress({
+		text : '数据保存中，请稍后.....'
+	});
+	$('#commitForm').form('submit', {
+		url : contextPath + '/rebate/rebateconf!updateConf.action',
+		queryParams : postdata,
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			$.messager.progress('close');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				})
+				var row = result.rows;
+				$('#auditDlg').dialog('close');
+				$('#grid').datagrid('updateRow', {
+					index : confIndex,
+					row : row
+				});
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				})
+			}
+		}
+	});
 }
 

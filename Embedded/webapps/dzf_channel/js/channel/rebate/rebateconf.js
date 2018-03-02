@@ -240,9 +240,11 @@ function showInfo(index){
 						"<div class='state'>"+
 						"<div>"+
 						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-						"</div>"+
-						"<div>"+history.pronote+"</div>"+
-						"</div>"+
+						"</div>";
+						if(!isEmpty(history.pronote)){
+							info = info +"<div>"+history.pronote+"</div>";
+						}
+						info = info + "</div>"+
 						"</div>";
 					}
 					if(row.children.length > 1){
@@ -258,9 +260,11 @@ function showInfo(index){
 							"<div class='state'>"+
 							"<div>"+
 							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-							"</div>"+
-							"<div>"+history.pronote+"</div>"+
-							"</div>"+
+							"</div>";
+							if(!isEmpty(history.pronote)){
+								info = info +"<div>"+history.pronote+"</div>";
+							}
+							info = info + "</div>"+
 							"</div>";
 						}
 						info = info +"</div>"+"</div>";
@@ -459,6 +463,8 @@ function showAuditDlg(row){
 				$('#crebid').val(row.rebid);
 				$('#ctstp').val(row.tstp);
 				$('#cistatus').val(row.istatus);
+				$('#cvcode').val(row.vcode);
+				$('#ccorpid').val(row.corpid);
 				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
 				$("#ahistory").empty();
 				if(row.children != null && row.children.length > 0){
@@ -478,9 +484,11 @@ function showAuditDlg(row){
 						"<div class='state'>"+
 						"<div>"+
 						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-						"</div>"+
-						"<div>"+history.pronote+"</div>"+
-						"</div>"+
+						"</div>";
+						if(!isEmpty(history.pronote)){
+							info = info +"<div>"+history.pronote+"</div>";
+						}
+						info = info + "</div>"+
 						"</div>";
 					}
 					if(row.children.length > 1){
@@ -496,9 +504,11 @@ function showAuditDlg(row){
 							"<div class='state'>"+
 							"<div>"+
 							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-							"</div>"+
-							"<div>"+history.pronote+"</div>"+
-							"</div>"+
+							"</div>";
+							if(!isEmpty(history.pronote)){
+								info = info +"<div>"+history.pronote+"</div>";
+							}
+							info = info + "</div>"+
 							"</div>";
 						}
 						info = info +"</div>"+"</div>";
@@ -610,7 +620,7 @@ function onCanc(index){
 		success : function(rs) {
 			if (rs.success) {
 				Public.tips({
-					content : result.msg,
+					content : rs.msg,
 					type : 0
 				})
 				var row = rs.rows;

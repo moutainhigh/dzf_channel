@@ -336,9 +336,11 @@ function showInfo(index){
 						"<div class='state'>"+
 						"<div>"+
 						"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-						"</div>"+
-						"<div>"+history.pronote+"</div>"+
-						"</div>"+
+						"</div>";
+						if(!isEmpty(history.pronote)){
+							info = info +"<div>"+history.pronote+"</div>";
+						}
+						info = info + "</div>"+
 						"</div>";
 					}
 					if(row.children.length > 1){
@@ -354,9 +356,11 @@ function showInfo(index){
 							"<div class='state'>"+
 							"<div>"+
 							"<font>"+history.sendtime+"</font>&emsp;<span>"+history.dealname+"</span>&emsp;<span>"+history.vsnote+"</span>"+
-							"</div>"+
-							"<div>"+history.pronote+"</div>"+
-							"</div>"+
+							"</div>";
+							if(!isEmpty(history.pronote)){
+								info = info +"<div>"+history.pronote+"</div>";
+							}
+							info = info + "</div>"+
 							"</div>";
 						}
 						info = info +"</div>"+"</div>";

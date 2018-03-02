@@ -66,7 +66,7 @@
 		</div>
 		
 		<!-- 确认对话框 begin -->
-		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
+		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;overflow:auto;" 
 			data-options="resizable:true,closed:true">
 	       	<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
 		        <div style="text-align:right;margin-top:-10px;margin-right:40px;">
@@ -78,6 +78,8 @@
 		        	<input type="hidden" id="crebid" name="rebid" />
 		        	<input type="hidden" id="ctstp" name="tstp" />
 		        	<input type="hidden" id="cistatus" name="istatus" />
+		        	<input type="hidden" id="cvcode" name="vcode" />
+		        	<input type="hidden" id="ccorpid" name="corpid" />
 			      	<div class="time_col time_colp11">
 					 	<div style="width:60%;display: inline-block">
 							<label style="width:100px;text-align: right;">确认状态：</label>
@@ -101,7 +103,7 @@
 	        </div>
 			<form id="auditForm" method="post" style="margin-top:10px;">
 				<input type="hidden" id="arebid" name="rebid" />
-				<div id="tableDiv" style="overflow-y: auto;">
+				<div id="tableDiv">
 				  	<div class="time_col time_colp11">
 			          	<div class="decan" style="width:30%;display: inline-block">
 							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>

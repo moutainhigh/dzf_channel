@@ -6,10 +6,10 @@ import com.dzf.pub.DZFWarpException;
 public interface IRebateConfService {
 
 	/**
-	 * 确认更新
+	 * 确认/驳回更新
 	 * @param data
 	 * @param pk_corp
-	 * @param opertype  操作类型：1：确认通过；4：驳回修改；-1:
+	 * @param opertype  操作类型：1：驳回修改；2：确认通过；3：取消确认；
 	 * @return
 	 * @throws DZFWarpException
 	 */

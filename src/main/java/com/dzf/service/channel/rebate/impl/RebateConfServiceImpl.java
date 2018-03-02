@@ -62,8 +62,14 @@ public class RebateConfServiceImpl implements IRebateConfService{
 		try {
 			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rebate(), 15);
 			//1、更新相关确认信息
-			singleObjectBO.update(data,
-					new String[] { "istatus", "vconfirmnote", "vconfirmid", "tconfirmtime", "tstamp" });
+			String[] upstrs = null;
+			if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_3){
+				//取消确认不更新审核批语
+				upstrs = new String[] { "istatus", "vconfirmid", "tconfirmtime", "tstamp" };
+			}else{
+				upstrs = new String[] { "istatus", "vconfirmnote", "vconfirmid", "tconfirmtime", "tstamp" };
+			}
+			singleObjectBO.update(data, upstrs);
 			//2、记录审批历史
 			WorkflowVO flowvo = getFlowInfo(data, pk_corp, opertype);
 			if(flowvo != null){
@@ -107,7 +113,9 @@ public class RebateConfServiceImpl implements IRebateConfService{
 		flowvo.setDoperatedate(new DZFDate());
 		flowvo.setDr(0);
 		flowvo.setVbilltype(IStatusConstant.IBILLTYPE_FD01);//返点单确认
-		flowvo.setVapprovenote(data.getVconfirmnote());//确认说明or驳回说明
+		if(opertype != null && opertype != IStatusConstant.IREBATEOPERTYPE_3){
+			flowvo.setVapprovenote(data.getVconfirmnote());//确认说明or驳回说明
+		}
 		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
 			flowvo.setVstatusnote("驳回修改");
 		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_2){

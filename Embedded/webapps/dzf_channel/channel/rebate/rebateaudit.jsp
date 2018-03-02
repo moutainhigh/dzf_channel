@@ -70,12 +70,12 @@
 			<table id="grid"></table>
 		</div>
 		
-				<!-- 审批对话框 begin -->
-		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;" 
+		<!-- 审批对话框 begin -->
+		<div id="auditDlg" class="easyui-dialog" style="width:1000px;height:530px;padding:20px 20px;background:#FFF;overflow:auto;" 
 			data-options="resizable:true,closed:true">
 	       	<div style="border-bottom: 1px solid;padding: 10px 0px 10px;">
 		        <div style="text-align:right;margin-top:-10px;margin-right:40px;">
-			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onConfirm()">确认</a> 
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onAudit()">确认</a> 
 			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#auditDlg').dialog('close');">取消</a>
 		        </div>
 		        <!-- 确认提交表单 begin -->
@@ -83,13 +83,18 @@
 		        	<input type="hidden" id="crebid" name="rebid" />
 		        	<input type="hidden" id="ctstp" name="tstp" />
 		        	<input type="hidden" id="cistatus" name="istatus" />
+		        	<input type="hidden" id="cvcode" name="vcode" />
+		        	<input type="hidden" id="ccorpid" name="corpid" />
+		        	<input type="hidden" id="cdebitmny" name="debitmny"/>
+					<input type="hidden" id="cbasemny" name="basemny" />
+					<input type="hidden" id="crebatemny" name="rebatemny" />
 			      	<div class="time_col time_colp11">
 					 	<div style="width:60%;display: inline-block">
 							<label style="width:100px;text-align: right;">确认状态：</label>
 							<input id ="conf" name ="confstatus" type = radio value = "1" checked 
 								style="margin:0px 0px 0px 2px;text-align:left;">
 							<label style="text-align:left;width:80px;">驳回修改</label>
-							<input id ="reje" name ="confstatus" type = radio value = "2" 
+							<input id ="reje" name ="confstatus" type = radio value = "4" 
 								style="margin:0px 0px 0px 2px;text-align:left;">
 							<label style="text-align:left;width:80px;">审批通过</label>
 						</div>	
@@ -106,7 +111,7 @@
 	        </div>
 			<form id="auditForm" method="post" style="margin-top:10px;">
 				<input type="hidden" id="arebid" name="rebid" />
-				<div id="tableDiv" style="overflow-y: auto;">
+				<div id="tableDiv">
 				  	<div class="time_col time_colp11">
 			          	<div class="decan" style="width:30%;display: inline-block">
 							<label style="width:100px;text-align:right;">&emsp;返点单号: </label>

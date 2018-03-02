@@ -19,13 +19,16 @@ public interface IStatusConstant {
 	public static int IDEDUCTYPE_1 = 1;
 	public static int IDEDUCTYPE_2 = 2;
 	
-	/** 付款类型 (1:加盟费；2：预付款；) */
+	/** 付款类型 (1:加盟费；2：预付款；3：返点) */
 	public static int IPAYTYPE_1 = 1;
 	public static int IPAYTYPE_2 = 2;
+	public static int IPAYTYPE_3 = 3;
 	
-	/** 合同明细单操作类型 (1:付款；2：扣款；) */
+	/** 合同明细单操作类型 (1:预付款付款；2：合同扣款；3：返点录入；4：返点单扣款) */
 	public static int IDETAILTYPE_1 = 1;
 	public static int IDETAILTYPE_2 = 2;
+	public static int IDETAILTYPE_3 = 3;
+	public static int IDETAILTYPE_4 = 4;
 	
 	/** 首页查询类型(1:周查询；2：月查询；3：年查询；)*/
 	public static int IINDEXQRYTYPE_1 = 1;
@@ -47,8 +50,9 @@ public interface IStatusConstant {
 	public static String IBILLTYPE_FD01 = "FD01";//返点单确认
 	public static String IBILLTYPE_FD02 = "FD02";//返点单审核
 	
-	/** 返点单操作类型(1：驳回修改；2：确认通过；3：取消确认)*/
+	/** 返点单操作类型(1：驳回修改；2：确认通过；3：取消确认；4：审核通过)*/
 	public static int IREBATEOPERTYPE_1 = 1;//驳回修改
 	public static int IREBATEOPERTYPE_2 = 2;//确认通过
 	public static int IREBATEOPERTYPE_3 = 3;//取消确认
+	public static int IREBATEOPERTYPE_4 = 4;//审核通过
 }

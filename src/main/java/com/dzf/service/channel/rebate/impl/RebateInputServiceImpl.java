@@ -538,7 +538,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(!StringUtil.isEmpty(errmsg)){
 			throw new BusinessException(errmsg);
 		}
-		String sql = " nvl(dr,0) = 0 AND pk_bill = ? ";
+		String sql = " nvl(dr,0) = 0 AND pk_bill = ? ORDER BY TS DESC ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(oldvo.getPk_rebate());
 		WorkflowVO[] flowVOs = (WorkflowVO[]) singleObjectBO.queryByCondition(WorkflowVO.class, sql, spm);

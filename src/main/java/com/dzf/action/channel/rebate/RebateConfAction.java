@@ -40,7 +40,7 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 	private IRebateConfService confser;
 	
 	/**
-	 * 确认/驳回/取消确认
+	 * 确认/驳回
 	 */
 	public void updateConf() {
 		Json json = new Json();
