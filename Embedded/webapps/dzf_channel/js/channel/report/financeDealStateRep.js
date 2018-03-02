@@ -8,7 +8,7 @@ $(window).resize(function(){
 });
 
 $(function() {
-	initQryPeroid();
+	initPeriod("#qryperiod");
 	initQry();
 	load();
 });
@@ -127,7 +127,7 @@ function load(){
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/financedealstaterep!query.action",
 		queryParams:{
-			'period' : $('#qryperiod').textbox('getValue'),//查询期间
+			'period' : $('#qryperiod').datebox('getValue'),//查询期间
 		},
 		striped : true,
 		title : '',
@@ -202,40 +202,7 @@ function load(){
 function reloadData(){
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/financedealstaterep!query.action";
 	var queryParams = $('#grid').datagrid('options').queryParams;
-	queryParams.period = $('#qryperiod').textbox('getValue');
+	queryParams.period = $('#qryperiod').datebox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
-}
-
-/**
- * 查询期间初始化
- */
-function initQryPeroid(){
-	var begperiod = $('#qryperiod').textbox('getValue');
-	var year = "";
-	var month = "";
-	if(!isEmpty(begperiod)){
-		year = begperiod.substring(0,4);
-		month = begperiod.substring(5);
-		month = parseInt(month) - 1;
-	}
-	$('#qryperiod').textbox({
-		icons: [{
-			iconCls:'foxdate',
-			handler: function(e){
-				click_icon(50, 90, begperiod, year, month, function(val){
-					if(!isEmpty(val)){
-						console.info(val);
-						$('#qryperiod').textbox('setValue', val);
-						begperiod = val;
-						if(!isEmpty(begperiod)){
-							year = begperiod.substring(0,4);
-							month = begperiod.substring(5);
-							month = parseInt(month) - 1;
-						}
-					}
-				})
-			}
-		}]
-	});
 }
