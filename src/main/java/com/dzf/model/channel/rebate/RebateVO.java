@@ -97,6 +97,11 @@ public class RebateVO extends SuperVO {
     @FieldAlias("tstp")
     private DZFDateTime tstamp;// 时间戳 （数据发生变化时，使用）
     
+    @FieldAlias("contnum")
+    private Integer icontractnum;//合同数量
+    
+    //只展示，不存库字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    
 	@FieldAlias("aname")
     private String vareaname;// 大区
 	
@@ -117,9 +122,19 @@ public class RebateVO extends SuperVO {
 	
 	@FieldAlias("showdate")
 	private String vshowdate;//所属季度-展示名称
+	
+	//只展示，不存库字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 	public String getVshowdate() {
 		return vshowdate;
+	}
+
+	public Integer getIcontractnum() {
+		return icontractnum;
+	}
+
+	public void setIcontractnum(Integer icontractnum) {
+		this.icontractnum = icontractnum;
 	}
 
 	public void setVshowdate(String vshowdate) {
