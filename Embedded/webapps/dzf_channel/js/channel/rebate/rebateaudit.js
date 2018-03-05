@@ -432,6 +432,7 @@ function audit(index){
 		});
 		return;
 	}
+	confIndex = index;
 	showAuditDlg(row);
 }
 
@@ -461,8 +462,10 @@ function showAuditDlg(row){
 				$('#cvcode').val(row.vcode);
 				$('#ccorpid').val(row.corpid);
 				$('#cdebitmny').val(row.debitmny);
-				$('#cdebitmny').val(row.debitmny);
-				$('#cdebitmny').val(row.debitmny);
+				$('#cbasemny').val(row.basemny);
+				$('#crebatemny').val(row.rebatemny);
+				$('#cyear').val(row.year);
+				$('#cseason').val(row.season);
 				$(":radio[name='confstatus'][value='" + 1 + "']").prop("checked", "checked");
 				$("#ahistory").empty();
 				if(row.children != null && row.children.length > 0){
@@ -534,25 +537,34 @@ function showAuditDlg(row){
  * 审核-提交
  */
 function onAudit(){
-	var confstatus = $('input:radio[name="confstatus"]:checked').val();
-	if(isEmpty(confstatus)){
-		Public.tips({
-			content : '请先选择操作方式',
-			type : 2
-		});			
-		return;
-	}else{
-		if(confstatus == "1"){
-			if(isEmpty($("#confnote").val())){
-				Public.tips({
-					content : '驳回修改说明不能为空',
-					type : 2
-				});			
-				return;
+	$.messager.confirm("提示", "确认后，返点金额即冲入加盟商的可用余额中，且不能反审批，请谨慎操作！", function(r) {
+		var confstatus = $('input:radio[name="confstatus"]:checked').val();
+		if(isEmpty(confstatus)){
+			Public.tips({
+				content : '请先选择操作方式',
+				type : 2
+			});			
+			return;
+		}else{
+			if(confstatus == "1"){
+				if(isEmpty($("#confnote").val())){
+					Public.tips({
+						content : '驳回修改说明不能为空',
+						type : 2
+					});			
+					return;
+				}
 			}
 		}
-	}
+		onAuditCommit(confstatus);
+	});
 	
+}
+
+/**
+ * 审核-提交数据
+ */
+function onAuditCommit(confstatus){
 	var postdata = new Object();
 	if($("#commitForm").form('validate')){
 		postdata["data"] = JSON.stringify(serializeObject($('#commitForm')));
@@ -564,12 +576,11 @@ function onAudit(){
 		});
 		return; 
 	}
-	
 	$.messager.progress({
 		text : '数据保存中，请稍后.....'
 	});
 	$('#commitForm').form('submit', {
-		url : contextPath + '/rebate/rebateaudit!updateConf.action',
+		url : contextPath + '/rebate/rebateaudit!updateAudit.action',
 		queryParams : postdata,
 		success : function(result) {
 			var result = eval('(' + result + ')');

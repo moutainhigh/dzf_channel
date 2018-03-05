@@ -39,7 +39,7 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 		if (!StringUtil.isEmpty(errmsg)) {
 			throw new BusinessException(errmsg);
 		}
-		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
+		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {//驳回修改
 			if (data.getIstatus() != null && 
 					data.getIstatus() != IStatusConstant.IREBATESTATUS_2) {
 				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待审批态");
@@ -48,10 +48,10 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 				throw new BusinessException("驳回说明不能为空");
 			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_4);
-		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_2){
+		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_4){//审核通过
 			if (data.getIstatus() != null && 
-					data.getIstatus() != IStatusConstant.IREBATESTATUS_1) {
-				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待确认态");
+					data.getIstatus() != IStatusConstant.IREBATESTATUS_2) {
+				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待审批态");
 			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_3);
 		}
@@ -61,7 +61,7 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rebate(), 15);
 			//1、更新相关确认信息
 			singleObjectBO.update(data,
-					new String[] { "istatus", "vconfirmnote", "vconfirmid", "tconfirmtime", "tstamp" });
+					new String[] { "istatus", "vapprovenote", "vapproveid", "tapprovetime", "tstamp" });
 			//2、记录审批历史
 			WorkflowVO flowvo = getFlowInfo(data, pk_corp, opertype);
 			if(flowvo != null){
@@ -106,8 +106,8 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 		flowvo.setCoperatorid(userid);
 		flowvo.setDoperatedate(new DZFDate());
 		flowvo.setDr(0);
-		flowvo.setVbilltype(IStatusConstant.IBILLTYPE_FD01);//返点单确认
-		flowvo.setVapprovenote(data.getVconfirmnote());//确认说明or驳回说明
+		flowvo.setVbilltype(IStatusConstant.IBILLTYPE_FD02);//返点单审批
+		flowvo.setVapprovenote(data.getVapprovenote());//审批说明or驳回说明
 		if (opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_1) {
 			flowvo.setVstatusnote("驳回修改");
 		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_4){
@@ -123,6 +123,9 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 	 * @throws DZFWarpException
 	 */
 	private void saveRebateMny(RebateVO data, String pk_corp) throws DZFWarpException {
+		if(data.getNrebatemny() == null){
+			throw new BusinessException("返点金额不能为空");
+		}
 		ChnDetailVO detvo = new ChnDetailVO();
 		detvo.setPk_corp(data.getPk_corp());
 		detvo.setNpaymny(data.getNrebatemny());//返点金额

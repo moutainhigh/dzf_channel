@@ -20,9 +20,6 @@
 	src=<%UpdateGradeVersion.outversion(out, request.getContextPath() + "/js/easyuiext.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/rebate/rebatepub.js");%>
-	charset="UTF-8" type="text/javascript"></script>
-<script
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/rebate/rebateaudit.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 </head>
@@ -88,6 +85,10 @@
 		        	<input type="hidden" id="cdebitmny" name="debitmny"/>
 					<input type="hidden" id="cbasemny" name="basemny" />
 					<input type="hidden" id="crebatemny" name="rebatemny" />
+					
+					<input type="hidden" id="cyear" name="year" />
+					<input type="hidden" id="cseason" name="season" />
+					
 			      	<div class="time_col time_colp11">
 					 	<div style="width:60%;display: inline-block">
 							<label style="width:100px;text-align: right;">确认状态：</label>
@@ -102,7 +103,7 @@
 					<div class="time_col time_colp11">
 					 	<div style="width:100%;display: inline-block">
 							<label style="width:100px;text-align:right; vertical-align:top;">说明：</label>
-							<textarea id="confnote" name="confnote" class="easyui-textbox" style="width:804px;height:60px;" 
+							<textarea id="apprnote" name="apprnote" class="easyui-textbox" style="width:804px;height:60px;" 
 								data-options="validType:'length[0,50]',multiline:true" ></textarea>
 						</div>	
 			        </div>	  
