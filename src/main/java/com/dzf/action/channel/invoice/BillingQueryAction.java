@@ -27,7 +27,6 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
@@ -87,7 +86,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
                 Map<String,String> map = FieldMapping.getFieldMapping(new BillingInvoiceVO());
                 BillingInvoiceVO[] vos = DzfTypeUtils.cast(array,map, BillingInvoiceVO[].class,JSONConvtoJAVA.getParserConfig());
                 int len = 0;
-                int length = vos.length;
+                int length = vos == null ? 0 : vos.length;
                 StringBuffer msg = new StringBuffer();
                 if(vos != null && length > 0){
                     for(BillingInvoiceVO cvo : vos){

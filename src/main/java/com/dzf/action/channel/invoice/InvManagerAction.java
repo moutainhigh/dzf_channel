@@ -95,10 +95,11 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			if(list != null && list.size() > 0){
 			    CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]),page,rows);
 			    grid.setRows(Arrays.asList(corpvos));
+			    grid.setTotal((long)(list.size()));
 			}else{
 			    grid.setRows(list);
+			    grid.setTotal(0L);
 			}
-			grid.setTotal((long)(list.size()));
             grid.setMsg("查询成功！");
             grid.setSuccess(true);
 //			grid.setRows(rows);
@@ -130,7 +131,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String pk_invoices = getRequest().getParameter("pk_invoices");
 			String[] pkArry = pkinvoicesToArray(pk_invoices);
 			List<ChInvoiceVO> listError = invManagerService.onBilling(pkArry,uid);
-			int errorNum = listError.size();
+			int errorNum = listError == null ? 0 :listError.size();
 			int success = pkArry.length - errorNum;
 			StringBuffer msg = new StringBuffer();
 			msg.append("成功").append(success).append("条");
@@ -184,7 +185,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
                 Map<String,String> map = FieldMapping.getFieldMapping(new ChInvoiceVO());
                 ChInvoiceVO[] vos = DzfTypeUtils.cast(array,map, ChInvoiceVO[].class,JSONConvtoJAVA.getParserConfig());
                 int len = 0;
-                int length = vos.length;
+                int length = vos== null ? 0 :vos.length;
                 if(vos != null && length > 0){
                     for(ChInvoiceVO cvo : vos){
                         try{
@@ -284,41 +285,4 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             }
         }
 	}
-	
-	/**
-     * 获取导出列
-     * @return
-     */
-//    public Map<String, String> getExpFieldMap() {
-//        Map<String, String> map = new LinkedHashMap<String, String>();
-//        map.put("corpname", "加盟商");
-//        map.put("ipaytype", "付款类型");
-//        map.put("taxnum", "税号");
-//        map.put("invprice", "开票金额");
-//        map.put("invtype", "发票类型");
-//        map.put("corpaddr", "公司地址");
-//        map.put("invphone", "开票电话");
-//        map.put("bankname", "开户行");
-//        map.put("bankcode", "开户帐号");
-//        map.put("email", "邮箱");
-//        map.put("apptime", "申请时间");
-//        map.put("invtime", "开票日期");
-//        map.put("iperson", "经手人");
-//        map.put("invstatus", "发票状态");
-//        map.put("vmome", "备注");
-//        return map;
-//    }
-
-    /**
-     * 获取下拉字段的下拉值
-     * @return
-     */
-//    private Map<String,String[]> getExpArrayMap(){
-//        Map<String, String[]> map = new LinkedHashMap<String, String[]>();
-//        map.put("ipaytype", new String[]{"预付款","加盟费"});
-//        map.put("invtype", new String[]{"专用发票","普通发票","电子发票"});
-//        map.put("invstatus", new String[]{"待提交","待开票","已开票"});
-//        return map;
-//    }
-
 }
