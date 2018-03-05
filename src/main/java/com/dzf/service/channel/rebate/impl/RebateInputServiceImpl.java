@@ -132,13 +132,13 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				name = "第一季度";
 				break;
 			case 2:
-				name = "第一季度";
+				name = "第二季度";
 				break;
 			case 3:
-				name = "第一季度";
+				name = "第三季度";
 				break;
 			case 4:
-				name = "第一季度";
+				name = "第四季度";
 				break;
 		}
 		return name;
@@ -492,8 +492,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(bateVOs != null && bateVOs.length > 0){
 			String errmsg = "";
 			for(RebateVO vo : bateVOs){
-				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0)){
-					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交");
+				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0) 
+						&& !vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_4)){
+					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交或已驳回");
 					continue;
 				}
 				errmsg = checkData(vo);
