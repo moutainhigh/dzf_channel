@@ -610,6 +610,7 @@ function onCanc(index){
 		});
 		return;
 	}
+	confIndex = index;
 	var postdata = new Object();
 	postdata["data"] = JSON.stringify(row);
 	postdata["opertype"] = 3;

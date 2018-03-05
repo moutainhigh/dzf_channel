@@ -10,7 +10,6 @@ import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.rebate.IRebateAuditService;
 
 /**
@@ -32,7 +31,7 @@ public class RebateAuditAction extends BaseAction<RebateVO> {
 	/**
 	 * 审批/驳回
 	 */
-	public void updateConf() {
+	public void updateAudit() {
 		Json json = new Json();
 		if (data != null) {
 			try {

@@ -569,7 +569,7 @@ function onAudit(){
 		text : '数据保存中，请稍后.....'
 	});
 	$('#commitForm').form('submit', {
-		url : contextPath + '/rebate/rebateconf!updateConf.action',
+		url : contextPath + '/rebate/rebateaudit!updateConf.action',
 		queryParams : postdata,
 		success : function(result) {
 			var result = eval('(' + result + ')');
