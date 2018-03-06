@@ -613,40 +613,44 @@ function onConfirm(){
  * @param index
  */
 function onCanc(index){
-	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.istatus != 2) {
-		Public.tips({
-			content : '该记录不是待审批状态，不允许取消确认',
-			type : 2
-		});
-		return;
-	}
-	confIndex = index;
-	var postdata = new Object();
-	postdata["data"] = JSON.stringify(row);
-	postdata["opertype"] = 3;
-	$.ajax({
-		url : DZF.contextPath + '/rebate/rebateconf!updateCanc.action',
-		dataType : 'json',
-		data : postdata,
-		success : function(rs) {
-			if (rs.success) {
+	$.messager.confirm("提示", "是否确定取消确认？", function(r) {
+		if (r) {
+			var row = $('#grid').datagrid('getData').rows[index];
+			if (row.istatus != 2) {
 				Public.tips({
-					content : rs.msg,
-					type : 0
-				})
-				var row = rs.rows;
-				$('#grid').datagrid('updateRow', {
-					index : confIndex,
-					row : row
+					content : '该记录不是待审批状态，不允许取消确认',
+					type : 2
 				});
-			} else {
-				Public.tips({
-					content : rs.msg,
-					type : 1
-				});
+				return;
 			}
-		},
-	});
+			confIndex = index;
+			var postdata = new Object();
+			postdata["data"] = JSON.stringify(row);
+			postdata["opertype"] = 3;
+			$.ajax({
+				url : DZF.contextPath + '/rebate/rebateconf!updateCanc.action',
+				dataType : 'json',
+				data : postdata,
+				success : function(rs) {
+					if (rs.success) {
+						Public.tips({
+							content : rs.msg,
+							type : 0
+						})
+						var row = rs.rows;
+						$('#grid').datagrid('updateRow', {
+							index : confIndex,
+							row : row
+						});
+					} else {
+						Public.tips({
+							content : rs.msg,
+							type : 1
+						});
+					}
+				},
+			});
+		}
+	}
 }
 
