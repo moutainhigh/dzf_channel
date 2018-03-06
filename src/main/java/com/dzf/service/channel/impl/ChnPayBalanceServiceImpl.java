@@ -93,7 +93,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
 						}else if(paytype == 3){
-							repvo.setNpaymny(vo.getRebate());
+							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
 						}
