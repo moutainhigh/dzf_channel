@@ -167,7 +167,7 @@ function load(){
 		singleSelect : false,
 		checkOnSelect : false,
 		idField : 'rebid',
-		frozenColumns :[[ 
+		frozenColumns :[[ { field : 'ck', checkbox : true },
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ 
@@ -248,7 +248,7 @@ function showInfo(index){
 						"</div>";
 					}
 					if(row.children.length > 1){
-						info = info + "<div style='display: none;' id='panela'>"+
+						info = info + "<div style='display: none;' id='panela2'>"+
 						"<div style='width:auto;'>";
 						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
@@ -275,7 +275,7 @@ function showInfo(index){
 					"</div>"+
 					"</div>";
 					$("#shistory").append(info);
-					historyListen();
+					historyListenB();
                 }
 				
 			} else {
@@ -298,7 +298,13 @@ function historyListen(){
 		return false;
 	})
 }
-
+function historyListenB(){
+	$(".btn-slide").click(function() {
+		$("#panela2").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
+}
 /**
  * 状态格式化
  * @param val
@@ -391,9 +397,9 @@ function fastQry(){
             		queryParams.destatus = $("#qstatus").combobox("getValue");
             		queryParams.cpid = $("#managerid").val();
             		queryParams.uid = $("#qcorpid").val();
-            		queryParams.year = $("#qyear").combobox("getValue");
-            		queryParams.season = $("#qjd").combobox("getValue");
             	}
+            	queryParams.year = $("#qyear").combobox("getValue");
+        		queryParams.season = $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
           		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
@@ -454,7 +460,7 @@ function showAuditDlg(row){
 				$('#auditDlg').dialog({
 					modal:true
 				});//设置dig属性
-				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单确认');
+				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
 				var row = rs.rows;
 				$('#auditForm').form('clear');
 				$('#auditForm').form('load', row);
