@@ -15,6 +15,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -342,7 +343,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 
 				@Override
 				public int compare(ChnDetailVO o1, ChnDetailVO o2) {
-					return o1.getIopertype().compareTo(o2.getIopertype());
+					if(o1.getIpaytype() == IStatusConstant.IPAYTYPE_3){
+						return -o1.getIopertype().compareTo(o2.getIopertype());
+					}else{
+						return o1.getIopertype().compareTo(o2.getIopertype());
+					}
 				}
 				
 			});
