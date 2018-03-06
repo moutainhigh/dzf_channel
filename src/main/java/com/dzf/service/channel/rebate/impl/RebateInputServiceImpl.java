@@ -529,8 +529,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 //				if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
 //					errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
 //				}
-				if(oldvo.getIstatus() != null && (oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0
-						|| oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_4)){
+				if(oldvo.getIstatus() != null && oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0
+						&& oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_4){
 					errmsg = "返点单："+data.getVbillcode()+"状态不为待提交或已驳回状态，不能修改，请重新查询后再次尝试";
 				}
 			}
