@@ -2,6 +2,7 @@ package com.dzf.service.channel;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import com.dzf.model.channel.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
@@ -52,15 +53,6 @@ public interface IContractConfirm {
 	public ContractDocVO[] getAttatches(ContractDocVO qvo) throws DZFWarpException;
 	
 	/**
-	 * 批量审核
-	 * @param confrimVOs
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public List<ContractConfrimVO> bathconfrim(ContractConfrimVO[] confrimVOs, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid) throws DZFWarpException;
-	
-	/**
 	 * 变更
 	 * @param paramvo
 	 * @param cuserid
@@ -71,4 +63,24 @@ public interface IContractConfirm {
 	 */
 	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
 			throws DZFWarpException;
+	
+	/**
+	 * 查询套餐属性
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<String, String> queryPackageMap() throws DZFWarpException;
+	
+	/**
+	 * 批量审核-审核单个数据
+	 * @param confrimvo
+	 * @param paramvo
+	 * @param opertype
+	 * @param cuserid
+	 * @param packmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
+			Integer opertype, String cuserid, Map<String, String> packmap) throws DZFWarpException;
 }

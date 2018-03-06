@@ -157,32 +157,60 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, paramvo, opertype, getLoginUserid());
-			if(relist != null && relist.size() > 0){
-				int rignum = 0;
-				int errnum = 0;
-				List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
-				for(ContractConfrimVO vo : relist){
-					if(StringUtil.isEmpty(vo.getVerrmsg() )){
-						rignum++;
-						rightlist.add(vo);
-					}else{
-						errnum++;
-					}
-				}
-				json.setSuccess(true);
-				if(rignum > 0 && rignum == relist.size()){
-					json.setRows(relist);
-					json.setMsg("成功"+rignum+"条");
-				}else if(errnum > 0){
-					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
-					json.setStatus(-1);
-					if(rignum > 0){
-						json.setRows(rightlist);
-					}
+			int rignum = 0;
+			int errnum = 0;
+			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
+			Map<String, String> packmap = contractconfser.queryPackageMap();
+			StringBuffer errmsg = new StringBuffer();
+			for(ContractConfrimVO confvo : confrimVOs){
+				confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap);
+				if(!StringUtil.isEmpty(confvo.getVerrmsg() )){
+					errnum++;
+					errmsg.append(confvo.getVerrmsg()).append("<br>");
+				}else{
+					rignum++;
+					rightlist.add(confvo);
 				}
 			}
 			json.setSuccess(true);
+			
+			if(rignum > 0 && rignum == confrimVOs.length){
+				json.setRows(Arrays.asList(confrimVOs));
+				json.setMsg("成功"+rignum+"条");
+			}else if(errnum > 0){
+				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setStatus(-1);
+				if(rignum > 0){
+					json.setRows(rightlist);
+				}
+			}
+			
+//			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, paramvo, opertype, getLoginUserid());
+//			if(relist != null && relist.size() > 0){
+//				int rignum = 0;
+//				int errnum = 0;
+//				List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
+//				for(ContractConfrimVO vo : relist){
+//					if(StringUtil.isEmpty(vo.getVerrmsg() )){
+//						rignum++;
+//						rightlist.add(vo);
+//					}else{
+//						errnum++;
+//					}
+//				}
+//				json.setSuccess(true);
+//				if(rignum > 0 && rignum == relist.size()){
+//					json.setRows(relist);
+//					json.setMsg("成功"+rignum+"条");
+//				}else if(errnum > 0){
+//					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
+//					json.setStatus(-1);
+//					if(rignum > 0){
+//						json.setRows(rightlist);
+//					}
+//				}
+//			}
+//			json.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}

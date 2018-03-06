@@ -930,12 +930,19 @@ function bathconfrim(postdata, rows){
 			if (!result.success) {
 				Public.tips({
 					content : result.msg,
-					type : 2
+					type : 1
 				});
 			} else {
-				Public.tips({
-					content : result.msg,
-				});
+				if(result.status == -1){
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+					});
+				}
 				$('#bdeduct_Dialog').dialog('close');
 				var rerows = result.rows;
 				if(rerows != null && rerows.length > 0){
