@@ -651,6 +651,6 @@ function onCanc(index){
 				},
 			});
 		}
-	}
+	});
 }
 
