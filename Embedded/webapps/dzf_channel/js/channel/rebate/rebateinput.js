@@ -888,7 +888,7 @@ function onCommit(){
 					type : 1
 				});
 			} else {
-				if(result.istatus == -1){
+				if(result.status == -1){
 					Public.tips({
 						content : result.msg,
 						type : 2
