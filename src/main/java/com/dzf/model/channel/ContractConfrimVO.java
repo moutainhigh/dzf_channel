@@ -62,8 +62,14 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("nmsmny")
     private DZFDouble nmservicemny; // 每月服务费
     
+    @FieldAlias("ndesummny")
+    private DZFDouble ndedsummny;//扣款总金额
+    
     @FieldAlias("ndemny")
-    private DZFDouble ndeductmny;//扣款金额
+    private DZFDouble ndeductmny;//扣款金额-预付款
+    
+    @FieldAlias("nderebmny")
+    private DZFDouble ndedrebamny;//扣款金额-返点款
     
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
@@ -97,7 +103,10 @@ public class ContractConfrimVO extends SuperVO {
     private String vopername; // 经办人姓名
     
 	@FieldAlias("balmny")
-	private DZFDouble nbalance;//余额
+	private DZFDouble nbalance;//预付款余额
+	
+	@FieldAlias("rebbalmny")
+	private DZFDouble nrebatebalance;//返点余额
 	
     @FieldAlias("operatorid")
     private String coperatorid; // 审核人
@@ -112,7 +121,7 @@ public class ContractConfrimVO extends SuperVO {
     private String vadviser;//销售顾问
     
     @FieldAlias("cylnum")
-    private Integer icyclenum; // 周期数（查询使用，不存库）
+    private Integer icyclenum; // 周期数
     
     @FieldAlias("nbmny")
     private DZFDouble nbookmny; // 账本费
@@ -172,13 +181,25 @@ public class ContractConfrimVO extends SuperVO {
     private String vstopperiod;//终止期间
     
     @FieldAlias("remny")
-    private DZFDouble nreturnmny;//退回扣款
+    private DZFDouble nreturnmny;//退回扣款总金额
+    
+    @FieldAlias("rededmny")
+    private DZFDouble nretdedmny;//退回预付款金额
+    
+    @FieldAlias("rerebmny")
+    private DZFDouble nretrebmny;//退回返点款金额
     
     @FieldAlias("nchtlmny")
     private DZFDouble nchangetotalmny; //变更后合同金额
 	
+    @FieldAlias("nchsumny")
+    private DZFDouble nchangesummny;//变更后扣款总金额
+    
 	@FieldAlias("nchdemny")
-    private DZFDouble nchangededutmny;//变更后扣款金额
+    private DZFDouble nchangededutmny;//变更后预付款扣款金额
+	
+	@FieldAlias("nchremny")
+    private DZFDouble nchangerebatmny;//变更后返点款扣款金额
 	
     @FieldAlias("changer")
     private String vchanger; //变更人
@@ -189,13 +210,92 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("subtotalmny")
     private DZFDouble nsubtotalmny;//变更后合同总金额差额
     
+    @FieldAlias("subdesummny")
+    private DZFDouble nsubdedsummny;//变更后扣款总金额差额
+    
     @FieldAlias("subdeductmny")
-    private DZFDouble nsubdeductmny;//变更后合同扣款差额
+    private DZFDouble nsubdeductmny;//变更后预付款扣款差额
+    
+    @FieldAlias("subderebmny")
+    private DZFDouble nsubdedrebamny;//变更后返点款扣款差额
+    
     //变更合同字段end
     
     @FieldAlias("recycle")
     private Integer ireceivcycle;//加盟商收款周期
     
+	public DZFDouble getNretdedmny() {
+		return nretdedmny;
+	}
+
+	public void setNretdedmny(DZFDouble nretdedmny) {
+		this.nretdedmny = nretdedmny;
+	}
+
+	public DZFDouble getNretrebmny() {
+		return nretrebmny;
+	}
+
+	public void setNretrebmny(DZFDouble nretrebmny) {
+		this.nretrebmny = nretrebmny;
+	}
+
+	public DZFDouble getNchangesummny() {
+		return nchangesummny;
+	}
+
+	public void setNchangesummny(DZFDouble nchangesummny) {
+		this.nchangesummny = nchangesummny;
+	}
+
+	public DZFDouble getNchangerebatmny() {
+		return nchangerebatmny;
+	}
+
+	public void setNchangerebatmny(DZFDouble nchangerebatmny) {
+		this.nchangerebatmny = nchangerebatmny;
+	}
+
+	public DZFDouble getNdedsummny() {
+		return ndedsummny;
+	}
+
+	public void setNdedsummny(DZFDouble ndedsummny) {
+		this.ndedsummny = ndedsummny;
+	}
+
+	public DZFDouble getNdedrebamny() {
+		return ndedrebamny;
+	}
+
+	public void setNdedrebamny(DZFDouble ndedrebamny) {
+		this.ndedrebamny = ndedrebamny;
+	}
+
+	public DZFDouble getNrebatebalance() {
+		return nrebatebalance;
+	}
+
+	public void setNrebatebalance(DZFDouble nrebatebalance) {
+		this.nrebatebalance = nrebatebalance;
+	}
+
+	public DZFDouble getNsubdedsummny() {
+		return nsubdedsummny;
+	}
+
+	public void setNsubdedsummny(DZFDouble nsubdedsummny) {
+		this.nsubdedsummny = nsubdedsummny;
+	}
+
+	public DZFDouble getNsubdedrebamny() {
+		return nsubdedrebamny;
+	}
+
+	public void setNsubdedrebamny(DZFDouble nsubdedrebamny) {
+		this.nsubdedrebamny = nsubdedrebamny;
+	}
+
 	public Integer getIreceivcycle() {
 		return ireceivcycle;
 	}

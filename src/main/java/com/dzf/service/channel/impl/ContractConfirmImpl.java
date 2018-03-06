@@ -389,12 +389,20 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException {
 		ContractConfrimVO retvo = queryContractById(paramvo.getPk_contract());
-		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND ipaytype = 2";//只查询预付款
 		SQLParameter spm = new SQLParameter();
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND ipaytype in (?,?) ";//只查询预付款和返点款
 		spm.addParam(paramvo.getPk_corp());
+		spm.addParam(IStatusConstant.IPAYTYPE_2);
+		spm.addParam(IStatusConstant.IPAYTYPE_3);
 		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
 		if(balVOs != null && balVOs.length > 0){
-			retvo.setNbalance(SafeCompute.sub(balVOs[0].getNpaymny(), balVOs[0].getNusedmny()));
+			for(ChnBalanceVO balvo : balVOs){
+				if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
+					retvo.setNbalance(SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny()));
+				}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
+					retvo.setNrebatebalance(SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny()));
+				}
+			}
 		}
 		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 		if(packvo != null){
@@ -420,14 +428,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(!StringUtil.isEmpty(errmsg)){
 					throw new BusinessException(errmsg);
 				}
-				//1、更新合同加盟合同状态、驳回原因
+				//1、更新原合同加盟合同状态、驳回原因
 				updateContract(paramvo, opertype);
 				//3、生成合同审核数据
-				paramvo = saveContConfrim(paramvo, cuserid);
+				ChnBalanceVO[] balVOs = queryBalance(paramvo.getPk_corp());
+				paramvo = saveContConfrim(paramvo, cuserid, balVOs);
 				//扣款比例如果为0，则不回写余额
 				if(paramvo.getIdeductpropor() != 0){
 					//2、回写付款余额
-					updateBalanceMny(paramvo, cuserid);
+					updateBalanceMny(paramvo, cuserid, balVOs);
 				}
 				//4、回写套餐促销活动名额
 				updateSerPackage(paramvo);
@@ -449,6 +458,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		
 		return paramvo;
+	}
+	
+	/**
+	 * 查询余额表信息（预付款余额、返点余额）
+	 * @param pk_corp
+	 * @return
+	 * @throws BusinessException
+	 */
+	private ChnBalanceVO[] queryBalance(String pk_corp) throws BusinessException {
+		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype in (?,?) ";
+		SQLParameter yespm = new SQLParameter();
+		yespm.addParam(pk_corp);
+		yespm.addParam(IStatusConstant.IPAYTYPE_2);
+		yespm.addParam(IStatusConstant.IPAYTYPE_3);
+		return (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
 	}
 	
 	/**
@@ -522,24 +546,91 @@ public class ContractConfirmImpl implements IContractConfirm {
 	/**
 	 * 保存合同审核信息
 	 * @param paramvo
+	 * @param cuserid
+	 * @param balVOs
 	 * @return
+	 * @throws DZFWarpException
 	 */
-	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException{
+	private ContractConfrimVO saveContConfrim(ContractConfrimVO paramvo, String cuserid, ChnBalanceVO[] balVOs)
+			throws DZFWarpException {
+		countNdeductmny(paramvo, balVOs);
 		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_1);
-		paramvo.setTstamp(new DZFDateTime());
-		paramvo.setDeductdata(new DZFDate());
-		paramvo.setDeductime(new DZFDateTime());
+		paramvo.setTstamp(new DZFDateTime());// 时间戳
+		paramvo.setDeductdata(new DZFDate());// 扣款日期
+		paramvo.setDeductime(new DZFDateTime());// 扣款时间
 		paramvo.setCoperatorid(cuserid);
 		paramvo.setDr(0);
 		UserVO uservo = UserCache.getInstance().get(paramvo.getVoperator(), null);
-		if(uservo != null){
+		if (uservo != null) {
 			paramvo.setVopername(uservo.getUser_name());
 		}
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", paramvo);
 	}
+	
 	/**
-	 * 更新合同信息
+	 * 计算扣款相关金额：扣款总金额、预付款-扣款金额、返点款-扣款金额
+	 * @param paramvo
+	 * @throws DZFWarpException
+	 */
+	private void countNdeductmny(ContractConfrimVO confrimvo,ChnBalanceVO[] balVOs) throws DZFWarpException {
+		if(confrimvo.getIdeductpropor() != 0){
+			//合同扣款基数 = 合同总金额 - 账本费
+			DZFDouble countmny = SafeCompute.sub(confrimvo.getNtotalmny(), confrimvo.getNbookmny());
+			DZFDouble ndedsummny = countmny.multiply(confrimvo.getIdeductpropor()).div(100);
+			ndedsummny = ndedsummny.setScale(2, DZFDouble.ROUND_HALF_UP);//预付款扣款金额精度控制，直接四舍五入保留两位小数
+			if(ndedsummny.compareTo(confrimvo.getNdedsummny()) != 0){
+				throw new BusinessException("扣款金额计算错误");
+			}
+			//计算扣款金额
+//			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype in (?,?) ";
+//			SQLParameter yespm = new SQLParameter();
+//			yespm.addParam(confrimvo.getPk_corp());
+//			yespm.addParam(IStatusConstant.IPAYTYPE_2);
+//			yespm.addParam(IStatusConstant.IPAYTYPE_3);
+//			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+			if (balVOs != null && balVOs.length > 0) {
+				DZFDouble balance = DZFDouble.ZERO_DBL;
+				DZFDouble balasum = DZFDouble.ZERO_DBL;
+				DZFDouble paybalance = DZFDouble.ZERO_DBL;//预付款余额
+				DZFDouble rebbalance = DZFDouble.ZERO_DBL;//返点款余额
+				for(ChnBalanceVO balvo : balVOs){
+					balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+					balasum = SafeCompute.add(balasum, balance);
+					if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
+						paybalance = balance;
+					}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
+						rebbalance = balance;
+					}
+				}
+				if (balasum.compareTo(confrimvo.getNdedsummny()) < 0) {
+					throw new BusinessException("扣款金额大于预付款余额与返点金额之和");
+				}
+				//1、预付款余额>=扣款金额，全扣预付款
+				if(paybalance.compareTo(ndedsummny) >= 0){
+					confrimvo.setNdeductmny(ndedsummny);//预付款扣款金额
+					confrimvo.setNdedrebamny(DZFDouble.ZERO_DBL);//返点单扣款金额
+				}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) > 0 
+						&& paybalance.compareTo(ndedsummny) < 0){
+					//2、0<预付款余额<扣款金额，先扣预付款，再扣返点余额
+					confrimvo.setNdeductmny(paybalance);//预付款扣款金额
+					confrimvo.setNdedrebamny(SafeCompute.sub(ndedsummny, paybalance));//返点款扣款金额
+				}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) == 0 
+						&& rebbalance.compareTo(ndedsummny) > 0){
+					//3、预付款余额=0，则全扣返点金额
+					confrimvo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
+					confrimvo.setNdedrebamny(ndedsummny);//返点款扣款金额
+				}else{
+					throw new BusinessException("扣款金额大于预付款余额与返点金额之和");
+				}
+			} else {
+				throw new BusinessException("扣款金额大于预付款余额与返点金额之和");
+			}
+		}
+	}
+	
+	/**
+	 * 更新原合同信息
 	 * @param contvo
 	 * @param paramvo
 	 * @throws DZFWarpException
@@ -602,39 +693,106 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param cuserid
 	 * @throws DZFWarpException
 	 */
-	private void updateBalanceMny(ContractConfrimVO paramvo, String cuserid) throws DZFWarpException {
-		ChnBalanceVO balvo = null;
-		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
-		SQLParameter yespm = new SQLParameter();
-		yespm.addParam(paramvo.getPk_corp());
-		yespm.addParam(IStatusConstant.IPAYTYPE_2);
-		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+	private void updateBalanceMny(ContractConfrimVO paramvo, String cuserid, ChnBalanceVO[] balVOs) throws DZFWarpException {
+//		ChnBalanceVO balvo = null;
+//		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+//		SQLParameter yespm = new SQLParameter();
+//		yespm.addParam(paramvo.getPk_corp());
+//		yespm.addParam(IStatusConstant.IPAYTYPE_2);
+//		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+//		if(balVOs != null && balVOs.length > 0){
+//			balvo = balVOs[0];
+//			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+//			if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+//				throw new BusinessException("预付款余额不足");
+//			}
+//			balvo.setNusedmny(SafeCompute.add(balvo.getNusedmny(), paramvo.getNdeductmny()));
+//			singleObjectBO.update(balvo, new String[]{"nusedmny"});
+//			
+//			ChnDetailVO detvo = new ChnDetailVO();
+//			detvo.setPk_corp(paramvo.getPk_corp());
+//			detvo.setNusedmny(paramvo.getNdeductmny());
+//			detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);
+//			detvo.setPk_bill(paramvo.getPk_confrim());
+//			detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+//			detvo.setCoperatorid(cuserid);
+//			detvo.setDoperatedate(new DZFDate());
+//			detvo.setDr(0);
+//			detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);
+//			detvo.setNtotalmny(paramvo.getNtotalmny());//合同金额
+//			detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+//			singleObjectBO.saveObject("000001", detvo);
+//			
+//		}else{
+//			throw new BusinessException("预付款余额不足");
+//		}
+		
 		if(balVOs != null && balVOs.length > 0){
-			balvo = balVOs[0];
-			DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
-			if(balance.compareTo(paramvo.getNdeductmny()) < 0){
-				throw new BusinessException("预付款余额不足");
+			Map<String,ChnBalanceVO> map = new HashMap<String,ChnBalanceVO>();
+			for(ChnBalanceVO balvo : balVOs){
+				if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
+					map.put("pay", balvo);
+				}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
+					map.put("reb", balvo);
+				}
 			}
-			balvo.setNusedmny(SafeCompute.add(balvo.getNusedmny(), paramvo.getNdeductmny()));
-			singleObjectBO.update(balvo, new String[]{"nusedmny"});
-			
-			ChnDetailVO detvo = new ChnDetailVO();
-			detvo.setPk_corp(paramvo.getPk_corp());
-			detvo.setNusedmny(paramvo.getNdeductmny());
-			detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);
-			detvo.setPk_bill(paramvo.getPk_confrim());
-			detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
-			detvo.setCoperatorid(cuserid);
-			detvo.setDoperatedate(new DZFDate());
-			detvo.setDr(0);
-			detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);
-			detvo.setNtotalmny(paramvo.getNtotalmny());//合同金额
-			detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
-			singleObjectBO.saveObject("000001", detvo);
-			
+			ChnBalanceVO balancevo = null;
+			if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
+				balancevo = map.get("pay");
+				if(balancevo == null){
+					throw new BusinessException("余额表信息不能为空");
+				}
+				DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
+				if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+					throw new BusinessException("预付款余额不足");
+				}
+				balancevo.setNusedmny(SafeCompute.add(balancevo.getNusedmny(), paramvo.getNdeductmny()));
+				singleObjectBO.update(balancevo, new String[]{"nusedmny"});
+				
+				ChnDetailVO detvo = new ChnDetailVO();
+				detvo.setPk_corp(paramvo.getPk_corp());
+				detvo.setNusedmny(paramvo.getNdeductmny());
+				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
+				detvo.setPk_bill(paramvo.getPk_confrim());
+				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				detvo.setCoperatorid(cuserid);
+				detvo.setDoperatedate(new DZFDate());
+				detvo.setDr(0);
+				detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);//合同扣款
+				detvo.setNtotalmny(paramvo.getNtotalmny());//合同金额
+				detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+				singleObjectBO.saveObject("000001", detvo);
+			}
+			if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){//返点款扣款
+				balancevo = map.get("reb");
+				if(balancevo == null){
+					throw new BusinessException("余额表信息不能为空");
+				}
+				DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
+				if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+					throw new BusinessException("返点余额不足");
+				}
+				balancevo.setNusedmny(SafeCompute.add(balancevo.getNusedmny(), paramvo.getNdedrebamny()));
+				singleObjectBO.update(balancevo, new String[]{"nusedmny"});
+				
+				ChnDetailVO detvo = new ChnDetailVO();
+				detvo.setPk_corp(paramvo.getPk_corp());
+				detvo.setNusedmny(paramvo.getNdedrebamny());
+				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
+				detvo.setPk_bill(paramvo.getPk_confrim());
+				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				detvo.setCoperatorid(cuserid);
+				detvo.setDoperatedate(new DZFDate());
+				detvo.setDr(0);
+				detvo.setIopertype(IStatusConstant.IDETAILTYPE_2);//合同扣款
+				detvo.setNtotalmny(paramvo.getNtotalmny());//合同金额
+				detvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+				singleObjectBO.saveObject("000001", detvo);
+			}
 		}else{
-			throw new BusinessException("预付款余额不足");
+			throw new BusinessException("扣款金额大于预付款余额与返点金额之和");
 		}
+		
 	}
 
 	@Override
@@ -679,11 +837,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//1、更新合同加盟合同状态、驳回原因
 				updateContract(confrimvo, opertype);
 				//3、生成合同审核数据
-				confrimvo = saveContConfrim(confrimvo, cuserid);
+				ChnBalanceVO[] balVOs = queryBalance(paramvo.getPk_corp());
+				confrimvo = saveContConfrim(confrimvo, cuserid, balVOs);
 				//扣款比例如果为0，则不回写余额
 				if(paramvo.getIdeductpropor() != 0){
 					//2、回写付款余额
-					updateBalanceMny(confrimvo, cuserid);
+					updateBalanceMny(confrimvo, cuserid, balVOs);
 				}
 				//4、回写套餐促销活动名额
 				updateSerPackage(confrimvo);
@@ -736,21 +895,41 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 		// 2、预付款余额校验（扣款比例不为0的情况进行校验）
 		if(confrimvo.getIdeductpropor() != 0){
-			ChnBalanceVO balvo = null;
-			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+			//2.1、扣款金额 <= 预付款余额 + 返点余额
+			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype in (?,?) ";
 			SQLParameter yespm = new SQLParameter();
 			yespm.addParam(confrimvo.getPk_corp());
 			yespm.addParam(IStatusConstant.IPAYTYPE_2);
+			yespm.addParam(IStatusConstant.IPAYTYPE_3);
 			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
 			if (balVOs != null && balVOs.length > 0) {
-				balvo = balVOs[0];
-				DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
-				if (balance.compareTo(confrimvo.getNdeductmny()) < 0) {
-					return "预付款余额不足";
+				DZFDouble balance = DZFDouble.ZERO_DBL;
+				DZFDouble balasum = DZFDouble.ZERO_DBL;
+				for(ChnBalanceVO balvo : balVOs){
+					balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+					balasum = SafeCompute.add(balasum, balance);
+				}
+				if (balasum.compareTo(confrimvo.getNdedsummny()) < 0) {//与扣款总结做比较
+					return "扣款金额大于预付款余额与返点金额之和";
 				}
 			} else {
-				return "预付款余额不足";
+				return "扣款金额大于预付款余额与返点金额之和";
 			}
+//			ChnBalanceVO balvo = null;
+//			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
+//			SQLParameter yespm = new SQLParameter();
+//			yespm.addParam(confrimvo.getPk_corp());
+//			yespm.addParam(IStatusConstant.IPAYTYPE_2);
+//			ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
+//			if (balVOs != null && balVOs.length > 0) {
+//				balvo = balVOs[0];
+//				DZFDouble balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
+//				if (balance.compareTo(confrimvo.getNdeductmny()) < 0) {
+//					return "预付款余额不足";
+//				}
+//			} else {
+//				return "预付款余额不足";
+//			}
 		}
 
 		// 3、套餐发布个数校验
@@ -781,6 +960,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		confrimvo.setNdeductmny(ndeductmny.setScale(2, DZFDouble.ROUND_HALF_UP));//批量审核扣款金额精度控制，直接四舍五入保留两位小数
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ContractDocVO[] getAttatches(ContractDocVO qvo) throws DZFWarpException {
 		if (qvo == null) {
@@ -802,7 +982,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			params.addParam(qvo.getPk_contract_doc());
 		}
 		String orderBy = " ts desc ";
-		@SuppressWarnings("unchecked")
 		List<ContractDocVO> resvos = (List<ContractDocVO>) singleObjectBO.retrieveByClause(ContractDocVO.class,
 				condition.toString(), orderBy, params);
 		if (resvos != null) {
@@ -814,7 +993,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
 			throws DZFWarpException {
+		//1、变更前校验：
 		checkBeforeChange(paramvo);
+		//2、相关字段赋值：
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
 			paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_9);
@@ -824,25 +1005,59 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_10);
 			paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_10);
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
-			paramvo.setVchangeraeson("提重了，合同作废");
+			paramvo.setVchangeraeson("合同作废");
 		}
 		paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
 		paramvo.setVchanger(cuserid);
 		paramvo.setDchangetime(new DZFDateTime());
 		paramvo.setTstamp(new DZFDateTime());
-		//变更差额数据处理
-		//变更后合同总金额差额  = 原合同总金额 - 变更后合同金额
+		//3、退款（预付款退款、返点款退款）相关字段计算：
+		if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(DZFDouble.ZERO_DBL) > 0){
+			if(CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0){//返点扣款>0
+				if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(paramvo.getNreturnmny()) <= 0){
+					//3.1、0<退款总金额<=返点扣款，全部退返点
+					paramvo.setNretrebmny(paramvo.getNreturnmny());//返点退款
+					paramvo.setNretdedmny(DZFDouble.ZERO_DBL);//预付款退款
+				}else if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(paramvo.getNreturnmny()) > 0){
+					//3.2、0<返点扣款<退款总金额，先退返点，再退预付款
+					paramvo.setNretrebmny(paramvo.getNdedrebamny());//返点退款 = 返点扣款
+					paramvo.setNretdedmny(SafeCompute.sub(paramvo.getNreturnmny(), paramvo.getNretrebmny()));//预付款退款 = 退款总金额 - 返点退款
+				}
+			}else if(CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) == 0){//返点扣款=0
+				//3.3、返点扣款=0，全部退预付款
+				paramvo.setNretrebmny(DZFDouble.ZERO_DBL);//返点退款
+				paramvo.setNretdedmny(paramvo.getNreturnmny());//预付款退款 = 退款总金额
+			}
+		}
+		//4、变更后扣款（变更后预付款扣款、变更后返点扣款）相关字段计算：
+		paramvo.setNchangededutmny(SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNretdedmny()));//变更后预付款扣款 = 预付款扣款 - 预付款退款
+		paramvo.setNchangerebatmny(SafeCompute.sub(paramvo.getNdedrebamny(), paramvo.getNretrebmny()));//变更后返点扣款 = 返点扣款 - 返点退款
+		
+		//5、变更差额数据处理：
+		//5.1、变更后合同总金额差额  = 原合同总金额 - 变更后合同金额
 		DZFDouble nsubtotalmny = SafeCompute.sub(paramvo.getNtotalmny(), paramvo.getNchangetotalmny());
-		//变更后合同扣款差额 = 原扣款金额 - 变更后扣款金额
-		DZFDouble nsubdeductmny = SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNchangededutmny());
 		paramvo.setNsubtotalmny(CommonUtil.getDZFDouble(nsubtotalmny).multiply(-1));
+		
+		//5.2、变更后扣款总金额差额 = 原扣款总金额 - 变更后扣款总金额
+		DZFDouble nsubdedsummny = SafeCompute.sub(paramvo.getNdedsummny(), paramvo.getNchangesummny());
+		paramvo.setNsubdedsummny(CommonUtil.getDZFDouble(nsubdedsummny).multiply(-1));
+		
+		//5.3、变更后预付款扣款差额 = 原预付款扣款金额 - 变更后预付款扣款金额
+		DZFDouble nsubdeductmny = SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNchangededutmny());
 		paramvo.setNsubdeductmny(CommonUtil.getDZFDouble(nsubdeductmny).multiply(-1));
 		
-		// 1、更新合同历史数据
-		singleObjectBO.update(paramvo, new String[] { "vdeductstatus", "vstatus","ichangetype", "vchangeraeson", "vchangememo",
-				"vstopperiod", "nreturnmny", "nchangetotalmny", "nchangededutmny","vchanger","dchangetime","patchstatus",
-				"nsubtotalmny","nsubdeductmny","tstamp" });
-		// 2、更新原合同数据
+		//5.4、变更后返点款扣款差额 = 原返点扣款金额 - 变更后返点扣款金额
+		DZFDouble nsubdedrebamny = SafeCompute.sub(paramvo.getNdedrebamny(), paramvo.getNchangerebatmny());
+		paramvo.setNsubdedrebamny(CommonUtil.getDZFDouble(nsubdedrebamny).multiply(-1));
+		
+		// 6、更新合同历史数据
+		String[] str = new String[] { "vdeductstatus", "vstatus","ichangetype", "vchangeraeson", "vchangememo",
+				"vstopperiod", "vchanger","dchangetime","patchstatus","tstamp",
+				"nreturnmny", "nretrebmny", "nretdedmny", 
+				"nchangetotalmny", "nchangesummny", "nchangededutmny", "nchangerebatmny",
+				"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny" };
+		singleObjectBO.update(paramvo, str);
+		// 7、更新原合同数据
 		StringBuffer sql = new StringBuffer();
 		sql.append("update ynt_contract \n") ;
 		sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
@@ -861,14 +1076,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
-		// 3、上传变更合同附件
+		//8、上传变更合同附件
 		saveContDocVO(paramvo, files, filenames, cuserid);
-		//4、更新合同变更后余额及余额明细表
+		//9、更新合同变更后余额及余额明细表
 		String vmemo = "";
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			vmemo = "合同变更：C端客户终止，变更合同";
 		}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
-			vmemo = "合同变更：提重了，合同作废";
+			vmemo = "合同变更：合同作废";
 		}
 		updateChangeBalMny(paramvo, cuserid, vmemo);
 		CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corpk());
@@ -908,11 +1123,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
 			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
 			Integer ireceivcycle = CommonUtil.getInteger(oldvo.getIreceivcycle());//原收款周期
-			DZFDouble ndeductmny = oldvo.getNdeductmny();//原扣款金额
-			//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
-			DZFDouble midmny = CommonUtil.getDZFDouble(ndeductmny).div(
+			DZFDouble ndedsummny = oldvo.getNdedsummny();//原扣款总金额
+			//退回扣款总金额算法：原扣款总金额-{（原扣款总金额/原收款期间）*（原开始期间到终止期间的期数）}
+			DZFDouble midmny = CommonUtil.getDZFDouble(ndedsummny).div(
 					CommonUtil.getDZFDouble(ireceivcycle)).multiply(CommonUtil.getDZFDouble(changenum));
-			DZFDouble nreturnmny = SafeCompute.sub(ndeductmny, midmny);//退回扣款金额
+			DZFDouble nreturnmny = SafeCompute.sub(ndedsummny, midmny);//退回扣款总金额
 			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) < 0){
 				nreturnmny = DZFDouble.ZERO_DBL;
 			}
@@ -926,15 +1141,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 				nchangetotalmny = SafeCompute.multiply(nmservicemny, 
 						CommonUtil.getDZFDouble(changenum)).add(CommonUtil.getDZFDouble(nbookmny));
 			}
-			//变更后扣款金额 = 原扣款金额 - 退回扣款金额
-			DZFDouble nchangededutmny = SafeCompute.sub(ndeductmny, nreturnmny);
+			//变更后扣款总金额 = 原扣款总金额 - 退回扣款总金额
+			DZFDouble nchangesummny = SafeCompute.sub(ndedsummny, nreturnmny);
+			
 			if(nreturnmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNreturnmny()) != 0){
 				throw new BusinessException("退回扣款金额计算错误");
 			}
 			if(nchangetotalmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNchangetotalmny()) != 0){
 				throw new BusinessException("变更后合同金额计算错误");
 			}
-			if(nchangededutmny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNchangededutmny()) != 0){
+			if(nchangesummny.setScale(2, DZFDouble.ROUND_HALF_UP).compareTo(paramvo.getNchangesummny()) != 0){
 				throw new BusinessException("变更后扣款金额计算错误");
 			}
 		}

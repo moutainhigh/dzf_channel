@@ -412,7 +412,7 @@ function load(){
 			title : '扣费金额',
 			align:'right',
             halign:'center',
-			field : 'ndemny',
+			field : 'ndesummny',
 			formatter : function(value,row,index){
 //				if(value == 0)return "";
 				return formatMny(value);
@@ -486,16 +486,16 @@ function calFooter(){
 	var footerData = new Object();
     var ntlmny = 0;	
     var nmsmny = 0;	
-    var ndemny = 0;	
+    var ndesummny = 0;	
     for (var i = 0; i < rows.length; i++) {
     	ntlmny += parseFloat(rows[i].ntlmny);
     	nmsmny += parseFloat(rows[i].nmsmny);
-    	ndemny += parseFloat(rows[i].ndemny==undefined?0:rows[i].ndemny);
+    	ndesummny += parseFloat(rows[i].ndesummny==undefined?0:rows[i].ndesummny);
     }
     footerData['corpnm'] = '合计';
     footerData['ntlmny'] = ntlmny;
     footerData['nmsmny'] = nmsmny;
-    footerData['ndemny'] = ndemny;
+    footerData['ndesummny'] = ndesummny;
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
@@ -641,8 +641,8 @@ function initListener(){
 			var nbmny = $('#nbmny').numberbox('getValue');//账本费
 			 //扣费标准修改为扣掉账本费的合同金额
             var countmny = getFloatValue(ntlmny).sub(getFloatValue(nbmny));
-            var ndemny = getFloatValue(countmny).mul(parseFloat(n)).div(100);
-			$('#ndemny').numberbox('setValue', ndemny);
+            var ndesummny = getFloatValue(countmny).mul(parseFloat(n)).div(100);
+			$('#ndesummny').numberbox('setValue', ndesummny);
 		}
 	});
 	
@@ -684,12 +684,13 @@ function initdeductData(row){
                 $('#propor').numberbox('setValue', 10);
                 //扣费标准修改为扣掉账本费的合同金额
                 var countmny = getFloatValue(row.ntlmny).sub(getFloatValue(row.nbmny));
-                var ndemny = getFloatValue(countmny).mul(parseFloat(10)).div(100);
-                $('#ndemny').numberbox('setValue', ndemny);
+                var ndesummny = getFloatValue(countmny).mul(parseFloat(10)).div(100);
+                $('#ndesummny').numberbox('setValue', ndesummny);
                 $("#dedate").datebox("setValue",Public.getLoginDate());
                 $('#vopernm').textbox('setValue',$("#unm").val());
                 $('#voper').val($("#uid").val());
                 $('#balmny').numberbox('setValue', row.balmny);//预付款余额
+                $('#rebbalmny').numberbox('setValue', row.rebbalmny);//返点余额
                 $('#corpnm').textbox('setValue', row.corpnm);//渠道商
                 $('#hntlmny').numberbox('setValue', row.ntlmny);//合同金额
                 $('#contractid').val(row.contractid);//合同主键
@@ -1057,14 +1058,14 @@ function initChangeListener(){
 			$("#stperiod").datebox("readonly", false);
 			$("#remny").numberbox("readonly", false);
 			$("#nchtlmny").numberbox("readonly", false);
-			$("#nchdemny").numberbox("readonly", false);
+			$("#nchsumny").numberbox("readonly", false);
 			$("#changetype").val(1);
 		}else if(opertype == 2){
 			$("#addclass").attr("class", "decan");
 			$("#stperiod").datebox("readonly", true);
 			$("#remny").numberbox("readonly", true);
 			$("#nchtlmny").numberbox("readonly", true);
-			$("#nchdemny").numberbox("readonly", true);
+			$("#nchsumny").numberbox("readonly", true);
 			$("#changetype").val(2);
 		}
 	});
@@ -1086,10 +1087,10 @@ function initChangeListener(){
 				return;
 			}
 			var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
-			var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
+			var sndesummny = getFloatValue($('#sndesummny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
 			var srecycle = getFloatValue($("#srecycle").val());//原收款周期
-			var remny = sndemny.sub(sndemny.div(srecycle).mul(cnum));
+			var remny = sndesummny.sub(sndesummny.div(srecycle).mul(cnum));
 			if(getFloatValue(remny) < getFloatValue(0)){
 				remny = getFloatValue(0);
 			}
@@ -1102,8 +1103,8 @@ function initChangeListener(){
 			}else{
 				$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
 			}
-			var nchdemny = sndemny.sub(remny);
-			$('#nchdemny').numberbox('setValue', nchdemny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
+			var nchsumny = sndesummny.sub(remny);
+			$('#nchsumny').numberbox('setValue', nchsumny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
 		}
 	});
 }
@@ -1114,7 +1115,7 @@ function initChangeListener(){
  */
 function setChangeMny(opertype){
 	$('#stperiod').textbox('setValue', $("#period").val());
-	var sndemny = getFloatValue($('#sndemny').numberbox('getValue'));//原扣款金额
+	var sndesummny = getFloatValue($('#sndesummny').numberbox('getValue'));//原扣款金额
 	if(opertype == 1){//终止
 		var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
 		//退回扣款 = （原扣款金额/原收款期间）*（原开始期间到终止期间的期数）
@@ -1125,7 +1126,7 @@ function setChangeMny(opertype){
 		var cnum = getMonthNum(stperiod, sbperiod)+1;//变更期数
 		var srecycle = getFloatValue($("#srecycle").val());//原收款周期
 		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
-		var remny = sndemny.sub(sndemny.div(srecycle).mul(cnum));
+		var remny = sndesummny.sub(sndesummny.div(srecycle).mul(cnum));
 		if(getFloatValue(remny) < getFloatValue(0)){
 			remny = getFloatValue(0);
 		}
@@ -1138,15 +1139,15 @@ function setChangeMny(opertype){
 		}else{
 			$('#nchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
 		}
-		var nchdemny = sndemny.sub(remny);
-		$('#nchdemny').numberbox('setValue', nchdemny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
+		var nchsumny = sndesummny.sub(remny);
+		$('#nchsumny').numberbox('setValue', nchsumny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
 	}else if(opertype == 2){//作废
 		//退回扣款 = 原扣款金额
 		//变更后合同金额 = 0
 		//变更后扣款金额 = 0
-		$('#remny').numberbox('setValue', sndemny);
+		$('#remny').numberbox('setValue', sndesummny);
 		$('#nchtlmny').numberbox('setValue', 0);
-		$('#nchdemny').numberbox('setValue', 0);
+		$('#nchsumny').numberbox('setValue', 0);
 	}
 }
 

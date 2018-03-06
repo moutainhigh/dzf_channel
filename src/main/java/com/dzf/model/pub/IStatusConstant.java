@@ -24,11 +24,10 @@ public interface IStatusConstant {
 	public static int IPAYTYPE_2 = 2;
 	public static int IPAYTYPE_3 = 3;
 	
-	/** 合同明细单操作类型 (1:预付款付款；2：合同扣款；3：返点录入；4：返点单扣款) */
+	/** 合同明细单操作类型 (1:预付款付款；2：合同扣款；3：返点录入；) */
 	public static int IDETAILTYPE_1 = 1;
 	public static int IDETAILTYPE_2 = 2;
 	public static int IDETAILTYPE_3 = 3;
-	public static int IDETAILTYPE_4 = 4;
 	
 	/** 首页查询类型(1:周查询；2：月查询；3：年查询；)*/
 	public static int IINDEXQRYTYPE_1 = 1;

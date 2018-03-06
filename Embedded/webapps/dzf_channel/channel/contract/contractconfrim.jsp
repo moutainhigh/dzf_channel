@@ -158,6 +158,11 @@
 						<input id="balmny" name="balmny" class="easyui-numberbox" style="width:50%;height:28px;text-align:left;"
 							data-options="readonly:true,precision:2,groupSeparator:','" >
 					</div>
+					<div class="decan strong Marketing" style="width:22%;display: inline-block;">
+						<label style="width:40%;text-align: right;font-weight: bold;">返点余额：</label>
+						<input id="rebbalmny" name="rebbalmny" class="easyui-numberbox" style="width:50%;height:28px;text-align:left;"
+							data-options="readonly:true,precision:2,groupSeparator:','" >
+					</div>
 					<div class="decan strong" style="width:30%;display: inline-block;">
 						<label style="width:27%;text-align: right;font-weight: bold;">加盟商：</label>
 						<input id="corpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" 
@@ -203,7 +208,7 @@
 						</div>
 						<div  style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款金额：</label>
-							<input id="ndemny" name="ndemny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
+							<input id="ndesummny" name="ndesummny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
 								data-options="readonly:true,precision:2,groupSeparator:','" >
 						</div>
 						<div style="width:24%;display: inline-block;">
@@ -403,7 +408,7 @@
 							</div>
 							<div style="width:20%; display: inline-block">
 								<input id="nullify"  type=radio name="chtype" value="2" style="width:30px">
-								<label style="text-align:left; width: 60%;">提重了，合同作废</label> 
+								<label style="text-align:left; width: 60%;">合同作废</label> 
 								<input id="changetype" name="changetype" type="hidden">
 							</div>
 							<div style="width: 44%; display: inline-block">
@@ -432,7 +437,7 @@
 								</div>
 								<div style="width:20%; display:inline-block">
 									<label style="text-align: right; width: 50%;">变更后扣款金额：</label> 
-									<input id="nchdemny" name="nchdemny" class="easyui-numberbox" 
+									<input id="nchsumny" name="nchsumny" class="easyui-numberbox" 
 										data-options="readonly:true,precision:2,groupSeparator:','"
 										style="width:40%;height:28px;text-align:left"> 
 								</div>
@@ -458,6 +463,9 @@
 						<input id="sadviser" name="adviser" type="hidden">
 						<input id="ssubmitime" name="submitime" type="hidden">
 						<input id="sisncust" name="isncust" type="hidden">
+						
+						<input id="sndemny" name="ndemny" type="hidden"><!-- 预付款扣款金额 -->
+						<input id="snderebmny" name="nderebmny" type="hidden"><!-- 返点款扣款金额 -->
 						<div class="decan" style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="spropor" name="propor" class="easyui-numberbox" data-options="readonly:true"
@@ -465,7 +473,7 @@
 						</div>
 						<div class="decan" style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款金额：</label>
-							<input id="sndemny" name="ndemny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
+							<input id="sndesummny" name="ndesummny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
 								data-options="readonly:true,precision:2,groupSeparator:','" >
 						</div>
 						<div class="decan" style="width:24%;display: inline-block;">
