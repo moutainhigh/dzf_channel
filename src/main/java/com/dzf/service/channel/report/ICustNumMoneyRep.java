@@ -27,7 +27,7 @@ public interface ICustNumMoneyRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException;
+	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype, List<String> corplist) throws DZFWarpException;
 	
 	/**
 	 * 客户计算

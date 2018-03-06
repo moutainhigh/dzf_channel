@@ -17,10 +17,13 @@ import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.BDTradeVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.service.channel.report.ICustManageRep;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
@@ -39,7 +42,9 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<CustManageRepVO> retlist = new ArrayList<CustManageRepVO>();
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
-		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1);//查询客户数量
+		HashMap<String, CustManageRepVO> map = queryCorps(paramvo, corplist);
+		
+		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1,corplist);//查询客户数量
 		//计算客户分类信息
 		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
 		CustNumMoneyRepVO custnumvo = null;
@@ -54,14 +59,19 @@ public class CustManageRepImpl implements ICustManageRep {
 		Integer countnum = null;
 		if(corplist != null && corplist.size() > 0){
 			CorpVO corpvo = null;
+			UserVO uservo = null;
 			String key = "";
 			for(String pk_corp : corplist){
-				retvo = new CustManageRepVO();
+				retvo = map.get(pk_corp);
 				retvo.setPk_corp(pk_corp);
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if(corpvo != null){
 					retvo.setVcorpname(corpvo.getUnitname());
 					retvo.setVprovince(corpvo.getCitycounty());
+				}
+				uservo=UserCache.getInstance().get(retvo.getUserid(), pk_corp);
+				if(uservo!=null){
+					retvo.setUsername(uservo.getUser_name());
 				}
 				custnumvo = custmap.get(pk_corp);
 				if(custnumvo != null){
@@ -308,6 +318,102 @@ public class CustManageRepImpl implements ICustManageRep {
 			}
 		}
 		return map;
+	}
+	
+	public HashMap<String,CustManageRepVO> queryCorps(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
+		Boolean flg=checkIsLeader(paramvo);
+		List<CustManageRepVO> vos=new ArrayList<>();
+		List<CustManageRepVO> other=new ArrayList<>();
+		vos = qryMost(paramvo,flg);
+		if(!flg){
+			other =qryOther(paramvo);
+		}
+		if(other!=null && other.size()>0){
+			vos.addAll(other);
+		}else{
+			vos=other;
+		}
+		HashMap<String,CustManageRepVO> map=new HashMap<>();
+		for (CustManageRepVO custManageRepVO : other) {
+			if(!map.containsKey(custManageRepVO.getPk_corp())){
+				map.put(custManageRepVO.getPk_corp(), custManageRepVO);
+				corplist.add(custManageRepVO.getPk_corp());
+			}
+		}
+		return map;
+	}
+	
+	//查询出，三个顶级用户（全部数据进行筛选）或者是大区总经理或者是培训经理非负责人
+	private List<CustManageRepVO> qryMost(QryParamVO paramvo,Boolean flg) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2 " );
+	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+	    if(!flg){
+			sql.append("  and (a.userid=? or (b.userid=? and nvl(b.ischarge,'N')='N'))");
+			sp.addParam(paramvo.getUser_name());
+			sp.addParam(paramvo.getUser_name());
+		}
+		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(paramvo.getAreaname());
+		}
+		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(paramvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(paramvo.getCuserid());
+		}
+	    List<CustManageRepVO> vos =(List<CustManageRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustManageRepVO.class));
+		return vos;
+	}
+	//查询  负责公司为空的培训负责人，且该地区没有其它培训师负责
+	private List<CustManageRepVO> qryOther(QryParamVO paramvo) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
+	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
+	    sql.append("  group by vprovince having count(1)=0 )" );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+		sql.append("  and b.userid=? ");
+		sp.addParam(paramvo.getUser_name());
+		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(paramvo.getAreaname());
+		}
+		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(paramvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(paramvo.getCuserid());
+		}
+	    List<CustManageRepVO> list =(List<CustManageRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustManageRepVO.class));
+	    return list;
+	}
+	
+	private boolean checkIsLeader(QryParamVO paramvo) {
+		String sql="select vdeptuserid corpcode,vcomuserid corpname,vgroupuserid pk_corpk from cn_leaderset where nvl(dr,0)=0";
+		List<QryParamVO> list =(List<QryParamVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(QryParamVO.class));
+		if(list!=null&&list.size()>0){
+			QryParamVO vo=list.get(0);
+			if(paramvo.getUser_name().equals(vo.getCorpcode())||paramvo.getUser_name().equals(vo.getCorpname())||paramvo.getUser_name().equals(vo.getPk_corpk())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -15,10 +15,15 @@ import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
 
@@ -32,32 +37,37 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<CustNumMoneyRepVO> retlist = new ArrayList<CustNumMoneyRepVO>();
 		List<String> corplist = new ArrayList<String>();
-		//1.1、查询存量客户数量、合同金额
-		Map<String,CustCountVO> stockmap = queryStockNumMny(paramvo, corplist);
-		//1.2、查询新增客户数量、合同金额
-		Map<String, CustCountVO> newmap = queryNumMnyByType(paramvo, corplist, 1);
-		//1.3、查询续费客户数量、合同金额
-		Map<String, CustCountVO> renewmap = queryNumMnyByType(paramvo, corplist, 2);
-		
-		String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
-		paramvo.setPeriod(preperiod);
-		
-		//1.4、查询上一个月新增客户数量、合同金额
-		Map<String, CustCountVO> lastnewmap = queryNumMnyByType(paramvo, corplist, 1);
-		//1.5、查询上一个月续费客户数量、合同金额
-		Map<String, CustCountVO> lastrenewmap = queryNumMnyByType(paramvo, corplist, 2);
+		HashMap<String, CustNumMoneyRepVO> map = queryCorps(paramvo, corplist);
 		
 		if(corplist != null && corplist.size() > 0){
+			//1.1、查询存量客户数量、合同金额
+			Map<String,CustCountVO> stockmap = queryStockNumMny(paramvo, corplist);
+			//1.2、查询新增客户数量、合同金额
+			Map<String, CustCountVO> newmap = queryNumMnyByType(paramvo, corplist, 1);
+			//1.3、查询续费客户数量、合同金额
+			Map<String, CustCountVO> renewmap = queryNumMnyByType(paramvo, corplist, 2);
+			String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
+			paramvo.setPeriod(preperiod);
+			//1.4、查询上一个月新增客户数量、合同金额
+			Map<String, CustCountVO> lastnewmap = queryNumMnyByType(paramvo, corplist, 1);
+			//1.5、查询上一个月续费客户数量、合同金额
+			Map<String, CustCountVO> lastrenewmap = queryNumMnyByType(paramvo, corplist, 2);
+			
 			CorpVO corpvo = null;
+			UserVO uservo = null;
 			CustCountVO custvo = null;
 			CustNumMoneyRepVO retvo = null;
+			
 			for(String pk_corp : corplist){
-				retvo = new CustNumMoneyRepVO();
-				retvo.setPk_corp(pk_corp);
+				retvo = map.get(pk_corp);
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if(corpvo != null){
 					retvo.setVcorpname(corpvo.getUnitname());
 					retvo.setVprovince(corpvo.getCitycounty());
+				}
+				uservo=UserCache.getInstance().get(retvo.getUserid(), pk_corp);
+				if(uservo!=null){
+					retvo.setUsername(uservo.getUser_name());
 				}
 				//2.1 存量客户数量、合同金额赋值：
 				if(stockmap != null && !stockmap.isEmpty()){
@@ -125,20 +135,16 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 						retvo.setIlastrenewcontsmall(custvo.getSummny());//续费客户合同金额
 					}
 				}
-				
-				
 				//4.1新增客户、合同增长率
 				retvo.setInewcustratesmall(getCustRate(retvo.getInewcustsmall(), retvo.getIlastnewcustsmall()));
 				retvo.setInewcustratetaxpay(getCustRate(retvo.getInewcusttaxpay(), retvo.getIlastnewcusttaxpay()));
 				retvo.setInewcontratesmall(getContRate(retvo.getInewcontsmall(), retvo.getIlastnewcontsmall()));
 				retvo.setInewcontratetaxpay(getContRate(retvo.getInewconttaxpay(), retvo.getIlastnewconttaxpay()));
-				
 				//4.2续费客户、合同增长率
 				retvo.setIrenewcustratesmall(getCustRate(retvo.getIrenewcustsmall(), retvo.getIlastrenewcustsmall()));
 				retvo.setIrenewcustratetaxpay(getCustRate(retvo.getIrenewcusttaxpay(), retvo.getIlastrenewcusttaxpay()));
 				retvo.setIrenewcontratesmall(getContRate(retvo.getIrenewcontsmall(), retvo.getIlastrenewcontsmall()));
 				retvo.setIrenewcontratetaxpay(getContRate(retvo.getIrenewconttaxpay(), retvo.getIlastrenewconttaxpay()));
-				
 				retlist.add(retvo);
 			}
 		}
@@ -166,6 +172,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM cn_contract t \n") ; 
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n") ; 
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n") ; 
+		if(corplist!=null && corplist.size()>0){
+			String condition = SqlUtil.buildSqlForIn("t.pk_corp",corplist.toArray(new String[corplist.size()]));
+			sql.append(" and ");
+			sql.append(condition);
+		}
 		sql.append("           AND nvl(t.patchstatus, 0) != 2 \n") ;//补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0 \n") ;
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'\n") ; 
@@ -188,9 +199,6 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		if(list != null && list.size() > 0){
 			String key = "";
 			for(CustCountVO vo : list){
-				if(!corplist.contains(vo.getPk_corp())){
-					corplist.add(vo.getPk_corp());
-				}
 				key = vo.getPk_corp() + "" + vo.getChargedeptname();
 				stockmap.put(key, vo);
 			}
@@ -225,6 +233,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 //		sql.append("          FROM ynt_contract t\n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0\n");
+		if(corplist!=null && corplist.size()>0){
+			String condition = SqlUtil.buildSqlForIn("t.pk_corp",corplist.toArray(new String[corplist.size()]));
+			sql.append(" and ");
+			sql.append(condition);
+		}
 		sql.append("           AND nvl(t.patchstatus, 0) != 2 \n") ;//补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0\n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n") ; 
@@ -265,9 +278,6 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		if (list != null && list.size() > 0) {
 			String key = "";
 			for (CustCountVO vo : list) {
-				if (!corplist.contains(vo.getPk_corp())) {
-					corplist.add(vo.getPk_corp());
-				}
 				key = vo.getPk_corp() + "" + vo.getChargedeptname();
 				map.put(key, vo);
 			}
@@ -323,7 +333,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
+	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT p.fathercorp as pk_corp,\n") ;
@@ -332,6 +342,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("  FROM bd_corp p \n") ; 
 		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
 		sql.append(" WHERE nvl(p.dr, 0) = 0 \n") ; 
+		if(corplist!=null && corplist.size()>0){
+			String condition = SqlUtil.buildSqlForIn("t.pk_corp",corplist.toArray(new String[corplist.size()]));
+			sql.append(" and ");
+			sql.append(condition);
+		}
 		sql.append("   AND nvl(t.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n") ; //渠道客户
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n") ; //未封存
@@ -420,6 +435,102 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 			}
 		}
 		return custmap;
+	}
+	
+	public HashMap<String,CustNumMoneyRepVO> queryCorps(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
+		Boolean flg=checkIsLeader(paramvo);
+		List<CustNumMoneyRepVO> vos=new ArrayList<>();
+		List<CustNumMoneyRepVO> other=new ArrayList<>();
+		vos = qryMost(paramvo,flg);
+		if(!flg){
+			other =qryOther(paramvo);
+		}
+		if(other!=null && other.size()>0){
+			vos.addAll(other);
+		}else{
+			vos=other;
+		}
+		HashMap<String,CustNumMoneyRepVO> map=new HashMap<>();
+		for (CustNumMoneyRepVO custNumMoneyRepVO : vos) {
+			if(!map.containsKey(custNumMoneyRepVO.getPk_corp())){
+				map.put(custNumMoneyRepVO.getPk_corp(), custNumMoneyRepVO);
+				corplist.add(custNumMoneyRepVO.getPk_corp());
+			}
+		}
+		return map;
+	}
+	
+	//查询出，三个顶级用户（全部数据进行筛选）或者是大区总经理或者是培训经理非负责人
+	private List<CustNumMoneyRepVO> qryMost(QryParamVO paramvo,Boolean flg) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2 " );
+	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+	    if(!flg){
+			sql.append("  and (a.userid=? or (b.userid=? and nvl(b.ischarge,'N')='N'))");
+			sp.addParam(paramvo.getUser_name());
+			sp.addParam(paramvo.getUser_name());
+		}
+		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(paramvo.getAreaname());
+		}
+		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(paramvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(paramvo.getCuserid());
+		}
+	    List<CustNumMoneyRepVO> vos =(List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustNumMoneyRepVO.class));
+		return vos;
+	}
+	//查询  负责公司为空的培训负责人，且该地区没有其它培训师负责
+	private List<CustNumMoneyRepVO> qryOther(QryParamVO paramvo) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
+	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
+	    sql.append("  group by vprovince having count(1)=0 )" );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+		sql.append("  and b.userid=? ");
+		sp.addParam(paramvo.getUser_name());
+		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(paramvo.getAreaname());
+		}
+		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(paramvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(paramvo.getCuserid());
+		}
+	    List<CustNumMoneyRepVO> list =(List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustNumMoneyRepVO.class));
+	    return list;
+	}
+	
+	private boolean checkIsLeader(QryParamVO paramvo) {
+		String sql="select vdeptuserid corpcode,vcomuserid corpname,vgroupuserid pk_corpk from cn_leaderset where nvl(dr,0)=0";
+		List<QryParamVO> list =(List<QryParamVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(QryParamVO.class));
+		if(list!=null&&list.size()>0){
+			QryParamVO vo=list.get(0);
+			if(paramvo.getUser_name().equals(vo.getCorpcode())||paramvo.getUser_name().equals(vo.getCorpname())||paramvo.getUser_name().equals(vo.getPk_corpk())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

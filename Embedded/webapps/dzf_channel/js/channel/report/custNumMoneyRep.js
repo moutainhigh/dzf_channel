@@ -124,10 +124,17 @@ function clearCondition(){
  * 数据表格初始化
  */
 function load(){
+	var vince=$('#ovince').combobox('getValue');
+	if(isEmpty(vince)){
+		vince=-1;
+	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
 		queryParams:{
 			'period' : $('#qryperiod').datebox('getValue'),//查询期间
+			'aname' : $('#aname').combobox('getValue'),
+			'ovince' : vince,
+			'uid' : $('#uid').combobox('getValue')
 		},
 		striped : true,
 		title : '',
@@ -145,8 +152,10 @@ function load(){
 		frozenColumns:[[
 //						{ field : 'ck',	checkbox : true },
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
-//		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
+		                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left'},
+		                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left'},
 		                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
+		                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'}, 
 		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
 		]],
 		columns : [ 
@@ -296,6 +305,13 @@ function reloadData(){
 	$('#grid').datagrid('options').url = DZF.contextPath + "/report/custnummoneyrep!query.action";
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	queryParams.period = $('#qryperiod').datebox('getValue');
+	queryParams.aname = $('#aname').combobox('getValue');
+	var vince=$('#ovince').combobox('getValue');
+	if(isEmpty(vince)){
+		vince=-1;
+	}
+	queryParams.ovince = vince;
+	queryParams.uid = $('#uid').combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }

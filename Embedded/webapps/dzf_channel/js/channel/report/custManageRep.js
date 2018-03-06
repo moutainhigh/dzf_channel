@@ -124,9 +124,16 @@ function clearCondition(){
  */
 function load(){
 	var columns = getArrayColumns();
+	var vince=$('#ovince').combobox('getValue');
+	if(isEmpty(vince)){
+		vince=-1;
+	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custmanagerep!query.action",
 		queryParams:{
+			'aname' : $('#aname').combobox('getValue'),
+			'ovince' :vince,
+			'uid' : $('#uid').combobox('getValue')
 		},
 		striped : true,
 		title : '',
@@ -144,8 +151,10 @@ function load(){
 		frozenColumns:[[
 //						{ field : 'ck',	checkbox : true },
 						{ field : 'pid',    title : '会计公司主键', hidden : true},
-//		                { field : 'larea',  title : '大区', width : 100,halign:'center',align:'left'},
-		                { field : 'provin',  title : '省份', width : 100,halign:'center',align:'left'}, 
+		                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left'},
+		                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left'},
+		                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
+		                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'},
 		                { field : 'pname', title : '加盟商名称', width:230,halign:'center',align:'left'},
 		]],
 		columns : columns,

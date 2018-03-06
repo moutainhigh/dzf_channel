@@ -14,11 +14,23 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	private static final long serialVersionUID = 7914020685684503615L;
 	
-	@FieldAlias("larea")
-	private String vlargearea;//大区
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+	
+	@FieldAlias("uid")
+    private String userid; // 用户主键（大区总经理）
+    
+    @FieldAlias("uname")
+    private String username; // 用户名称（大区总经理）
+    
+    @FieldAlias("incode")
+    private String innercode;//加盟商编码
 	 
 	@FieldAlias("provin")
 	private String vprovince;//省份
+	
+	@FieldAlias("cuid")
+    private String cuserid; // 用户主键（渠道经理）
 	
 	@FieldAlias("pid")
 	private String pk_corp;//会计公司主键
@@ -159,6 +171,14 @@ public class CustNumMoneyRepVO extends SuperVO {
 		return ilastrenewcustsmall;
 	}
 
+	public String getCuserid() {
+		return cuserid;
+	}
+
+	public void setCuserid(String cuserid) {
+		this.cuserid = cuserid;
+	}
+
 	public void setIlastrenewcustsmall(Integer ilastrenewcustsmall) {
 		this.ilastrenewcustsmall = ilastrenewcustsmall;
 	}
@@ -169,6 +189,38 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	public void setIlastrenewcusttaxpay(Integer ilastrenewcusttaxpay) {
 		this.ilastrenewcusttaxpay = ilastrenewcusttaxpay;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getUserid() {
+		return userid;
+	}
+
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getInnercode() {
+		return innercode;
+	}
+
+	public void setInnercode(String innercode) {
+		this.innercode = innercode;
 	}
 
 	public DZFDouble getIlastrenewcontsmall() {
@@ -185,10 +237,6 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	public void setIlastrenewconttaxpay(DZFDouble ilastrenewconttaxpay) {
 		this.ilastrenewconttaxpay = ilastrenewconttaxpay;
-	}
-
-	public String getVlargearea() {
-		return vlargearea;
 	}
 
 	public String getVprovince() {
@@ -249,10 +297,6 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	public DZFDouble getIrenewconttaxpay() {
 		return irenewconttaxpay;
-	}
-
-	public void setVlargearea(String vlargearea) {
-		this.vlargearea = vlargearea;
 	}
 
 	public void setVprovince(String vprovince) {
