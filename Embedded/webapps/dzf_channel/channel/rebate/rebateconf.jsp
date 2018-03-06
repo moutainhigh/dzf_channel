@@ -125,19 +125,24 @@
 						</div>
 					</div>
 				 	<div class="time_col time_colp11">
-					  	<div class="decan" style="width:29%;display: inline-block">
-							<label style="width:100px;text-align: right;">扣款金额:</label>
-							<input id="adebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+				 		<div class="decan" style="/* width:24%; */display: inline-block">
+							<label style="width:100px;text-align: right;">合同数量:</label>
+							<input id="acontnum" name="contnum" class="easyui-numberbox" style="width:120px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,groupSeparator:','"/>
+						</div>
+					  	<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">扣款金额:</label>
+							<input id="adebitmny" name="debitmny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>				
-						<div class="decan" style="width:31%;display: inline-block">
-							<label style="width:112px;text-align: right;">返点基数:</label>
-							<input id="abasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+						<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点基数:</label>
+							<input id="abasemny" name="basemny" class="easyui-numberbox" style="width:120px;height:26px;"
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
-						<div class="decan" style="width:38%;display: inline-block">
-							<label style="width:100px;text-align: right;">返点金额:</label>
-							<input id="arebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+						<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点金额:</label>
+							<input id="arebatemny" name="rebatemny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>
@@ -200,19 +205,24 @@
 						</div>
 					</div>
 				 	<div class="time_col time_colp11">
-					  	<div class="decan" style="width:29%;display: inline-block">
-							<label style="width:100px;text-align: right;">扣款金额:</label>
-							<input id="sdebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+				 		<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:100px;text-align: right;">合同数量:</label>
+							<input id="scontnum" name="contnum" class="easyui-numberbox" style="width:120px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,groupSeparator:','"/>
+						</div>
+					  	<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">扣款金额:</label>
+							<input id="sdebitmny" name="debitmny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>				
-						<div class="decan" style="width:31%;display: inline-block">
-							<label style="width:112px;text-align: right;">返点基数:</label>
-							<input id="sbasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+						<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点基数:</label>
+							<input id="sbasemny" name="basemny" class="easyui-numberbox" style="width:120px;height:26px;"
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
-						<div class="decan" style="width:38%;display: inline-block">
-							<label style="width:100px;text-align: right;">返点金额:</label>
-							<input id="srebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+						<div class="decan" style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点金额:</label>
+							<input id="srebatemny" name="rebatemny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>

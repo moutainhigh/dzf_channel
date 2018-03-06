@@ -424,7 +424,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
 		sql.append("  SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS nbasemny, \n");
-		sql.append("  SUM(pk_confrim)  AS icontractnum \n");
+		sql.append("  COUNT(t.pk_confrim)  AS icontractnum \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
@@ -449,6 +449,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			RebateVO retvo = new RebateVO();
 			retvo.setNdebitmny(DZFDouble.ZERO_DBL);
 			retvo.setNbasemny(DZFDouble.ZERO_DBL);
+			retvo.setIcontractnum(0);
 			return retvo;
 		}
 	}

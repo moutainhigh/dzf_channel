@@ -199,6 +199,7 @@ function getDebateMny(cpid){
 				var row = rs.rows;
 				$("#debitmny").numberbox("setValue",row['debitmny']);
 				$("#basemny").numberbox("setValue",row['basemny']);
+				$("#contnum").numberbox("setValue",row['contnum']);
 			} 
 		},
 	});
@@ -475,9 +476,9 @@ function fastQry(){
             		queryParams.destatus = $("#qstatus").combobox("getValue");
             		queryParams.cpid = $("#managerid").val();
             		queryParams.uid = $("#qcorpid").val();
+            		queryParams.year = $("#qyear").combobox("getValue");
+            		queryParams.season = $("#qjd").combobox("getValue");
             	}
-            	queryParams.year = $("#qyear").combobox("getValue");
-        		queryParams.season = $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
           		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
@@ -683,6 +684,7 @@ function setFormValue(row){
 	$('#eseason').val(row.season);
 	$('#ecorp').textbox('setValue',row.corp);
 	$('#ecorpid').val(row.corpid);
+	$('#econtnum').numberbox('setValue', row.contnum);
 	$('#edebitmny').numberbox('setValue', row.debitmny);
 	$('#ebasemny').numberbox('setValue', row.basemny);
 	$('#erebatemny').numberbox('setValue', row.rebatemny);
@@ -912,7 +914,10 @@ function onCommit(){
 						}
 					}
 					for(var i in indexes){
-						$('#grid').datagrid('deleteRow', index); 
+						$('#grid').datagrid('updateRow', {
+							index : indexes[i],
+							row : rerows[i]
+						});
 					}
 				}
 				$("#grid").datagrid('uncheckAll');
