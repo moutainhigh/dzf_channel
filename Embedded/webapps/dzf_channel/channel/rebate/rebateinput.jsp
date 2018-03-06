@@ -169,19 +169,24 @@
 						</div>
 					</div>
 				 	<div class="time_col time_colp11">
-					  	<div style="width:29%;display: inline-block">
-							<label style="width:100px;text-align: right;">扣款金额:</label>
-							<input id="edebitmny" name="debitmny" class="easyui-numberbox" style="width:160px;height:26px;" 
+				 	<div style="width:24%;display: inline-block">
+							<label style="width:100px;text-align: right;">合同数量:</label>
+							<input class="easyui-numberbox" style="width:120px;height:26px;" 
+								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+						</div>	
+					  	<div style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">扣款金额:</label>
+							<input id="edebitmny" name="debitmny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>				
-						<div style="width:31%;display: inline-block">
-							<label style="width:112px;text-align: right;">返点基数:</label>
-							<input id="ebasemny" name="basemny" class="easyui-numberbox" style="width:130px;height:26px;"
+						<div style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点基数:</label>
+							<input id="ebasemny" name="basemny" class="easyui-numberbox" style="width:120px;height:26px;"
 								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
-						<div style="width:38%;display: inline-block">
-							<label style="width:100px;text-align: right;">返点金额:</label>
-							<input id="erebatemny" name="rebatemny" class="easyui-numberbox" style="width:150px;height:26px;" 
+						<div style="width:24%;display: inline-block">
+							<label style="width:80px;text-align: right;">返点金额:</label>
+							<input id="erebatemny" name="rebatemny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>
