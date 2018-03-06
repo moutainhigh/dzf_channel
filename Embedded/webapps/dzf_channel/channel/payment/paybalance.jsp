@@ -93,11 +93,13 @@
 			<div class="time_col time_colp10">
 				<label style="width:70px;">付款类型：</label> 
 				<input id="yfk" type="radio"  name="seletype" checked value="2"/>
-				<label style="width:70px;">预付款</label> 
+				<label style="width:60px;" for='yfk'>预付款</label> 
+				<input id="fd" type="radio"  name="seletype" value="3"/>
+				<label style="width:45px;" for='fd'>返点</label> 
 				<input id="bzj" type="radio"  name="seletype" value="1"/>
-				<label style="width:70px;">保证金</label> 
+				<label style="width:60px;" for='bzj'>保证金</label> 
 				<input id="all" type="radio"  name="seletype" value="-1"/>
-				<label style="width:70px;">全部</label> 
+				<label style="width:60px;" for='all'>全部</label> 
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">加盟商：</label>

@@ -68,6 +68,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					repvo.setVpaytypename("保证金");
 				}else if(paytype == 2){
 					repvo.setVpaytypename("预付款");
+				}else if(paytype == 3){
+					repvo.setVpaytypename("返点");
 				}
 				if(initmap != null && !initmap.isEmpty()){
 					vo = initmap.get(pk);
@@ -76,6 +78,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 							repvo.setInitbalance(vo.getBail());
 						}else if(paytype == 2){
 							repvo.setInitbalance(vo.getCharge());
+						}else if(paytype == 3){
+							repvo.setInitbalance(vo.getRebate());
 						}
 					}
 				}
@@ -86,6 +90,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 							repvo.setNpaymny(vo.getBail());
 						}else if(paytype == 2){
 							repvo.setNpaymny(vo.getNpaymny());
+							repvo.setNusedmny(vo.getNusedmny());
+							repvo.setIdeductpropor(vo.getIdeductpropor());
+						}else if(paytype == 3){
+							repvo.setNpaymny(vo.getRebate());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
 						}
@@ -145,7 +153,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       ipaytype, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 1, nvl(npaymny,0), 0)) AS bail, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0), 0)) AS charge \n") ; 
+		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0), 0)) AS charge, \n") ; 
+		sql.append("       SUM(decode(ipaytype, 3, nvl(npaymny,0), 0)) - \n") ; 
+		sql.append("       SUM(decode(ipaytype, 3, nvl(nusedmny,0), 0)) AS rebate \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
@@ -190,8 +200,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("SELECT pk_corp, \n") ;
 		sql.append("       ipaytype, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 1, nvl(npaymny,0), 0)) AS bail, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0), 0)) AS npaymny, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0), 0)) AS nusedmny, \n") ; 
+		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0) ,3 , nvl(npaymny,0),0)) AS npaymny, \n") ; 
+		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0),3 , nvl(nusedmny,0),0)) AS nusedmny, \n") ; 
 		sql.append("       MIN(ideductpropor) AS ideductpropor \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
@@ -259,6 +269,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					initvo.setNbalance(repvo.getCharge());
 					coutbal = repvo.getCharge();
 					initvo.setVpaytypename("预付款");
+				}else if(paramvo.getQrytype() == 3){
+					initvo.setNbalance(repvo.getRebate());
+					coutbal = repvo.getRebate();
+					initvo.setVpaytypename("返点");
 				}
 				retlist.add(initvo);
 			}
@@ -283,6 +297,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						break;
 					case 2:
 						vo.setVpaytypename("预付款");
+						break;
+					case 3:
+						vo.setVpaytypename("返点");
 						break;
 					}
 				}

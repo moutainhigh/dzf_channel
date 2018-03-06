@@ -30,7 +30,7 @@ public class ChnBalanceRepVO extends SuperVO{
 	private DZFDouble npaymny;//付款金额
 	
 	@FieldAlias("iptype")
-	private Integer ipaytype;//付款类型   1:加盟费；2：预付款
+	private Integer ipaytype;//付款类型   1:加盟费；2：预付款；3：返点
 	
 	@FieldAlias("ptypenm")
 	private String vpaytypename;//付款类型名称 
@@ -46,6 +46,9 @@ public class ChnBalanceRepVO extends SuperVO{
     
     @FieldAlias("charge")
     private DZFDouble charge;//预付款
+    
+    @FieldAlias("rebate")
+    private DZFDouble rebate;//返点
     
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
@@ -84,6 +87,14 @@ public class ChnBalanceRepVO extends SuperVO{
 
 	public Integer getIpaytype() {
 		return ipaytype;
+	}
+
+	public DZFDouble getRebate() {
+		return rebate;
+	}
+
+	public void setRebate(DZFDouble rebate) {
+		this.rebate = rebate;
 	}
 
 	public DZFDouble getNbalance() {
