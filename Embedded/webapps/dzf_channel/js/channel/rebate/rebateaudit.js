@@ -246,7 +246,7 @@ function showInfo(index){
 						"</div>";
 					}
 					if(row.children.length > 1){
-						info = info + "<div style='display: none;' id='panela'>"+
+						info = info + "<div style='display: none;' id='panela2'>"+
 						"<div style='width:auto;'>";
 						for(var i = 1; i < row.children.length; i++){
 							history = row.children[i];
@@ -273,7 +273,7 @@ function showInfo(index){
 					"</div>"+
 					"</div>";
 					$("#shistory").append(info);
-					historyListen();
+					historyListenB();
                 }
 				
 			} else {
@@ -284,6 +284,17 @@ function showInfo(index){
 			}
 		},
 	});
+}
+
+/**
+ * 查看-审批历史按钮点击监听事件
+ */
+function historyListenB(){
+	$(".btn-slide").click(function() {
+		$("#panela2").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**

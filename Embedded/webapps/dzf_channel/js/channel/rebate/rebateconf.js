@@ -167,7 +167,7 @@ function load(){
 		singleSelect : false,
 		checkOnSelect : false,
 		idField : 'rebid',
-		frozenColumns :[[ { field : 'ck', checkbox : true },
+		frozenColumns :[[ 
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ 
@@ -298,6 +298,10 @@ function historyListen(){
 		return false;
 	})
 }
+
+/**
+ * 查看-审批历史按钮点击监听事件
+ */
 function historyListenB(){
 	$(".btn-slide").click(function() {
 		$("#panela2").slideToggle("slow");
@@ -305,6 +309,7 @@ function historyListenB(){
 		return false;
 	})
 }
+
 /**
  * 状态格式化
  * @param val
