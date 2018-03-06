@@ -167,7 +167,7 @@ function load(){
 		singleSelect : false,
 		checkOnSelect : false,
 		idField : 'rebid',
-		frozenColumns :[[ { field : 'ck', checkbox : true },
+		frozenColumns :[[ 
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ 
