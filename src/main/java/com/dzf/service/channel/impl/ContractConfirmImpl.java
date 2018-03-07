@@ -614,7 +614,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					}
 				}
 				if (balasum.compareTo(confrimvo.getNdedsummny()) < 0) {
-					return "扣款金额大于预付款余额与返点金额之和";
+					return "扣款金额大于预付款余额与返点余额之和";
 				}
 				//1、预付款余额>=扣款金额，全扣预付款
 				if(paybalance.compareTo(ndedsummny) >= 0){
@@ -627,14 +627,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confrimvo.setNdedrebamny(SafeCompute.sub(ndedsummny, paybalance));//返点款扣款金额
 				}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) == 0 
 						&& rebbalance.compareTo(ndedsummny) > 0){
-					//3、预付款余额=0，则全扣返点金额
+					//3、预付款余额=0，则全扣返点余额
 					confrimvo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
 					confrimvo.setNdedrebamny(ndedsummny);//返点款扣款金额
 				}else{
-					return "扣款金额大于预付款余额与返点金额之和";
+					return "扣款金额大于预付款余额与返点余额之和";
 				}
 			} else {
-				return "扣款金额大于预付款余额与返点金额之和";
+				return "扣款金额大于预付款余额与返点余额之和";
 			}
 		}
 		return "";
@@ -800,7 +800,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				singleObjectBO.saveObject("000001", detvo);
 			}
 		}else{
-			return "扣款金额大于预付款余额与返点金额之和";
+			return "扣款金额大于预付款余额与返点余额之和";
 		}
 		return "";
 	}
@@ -915,10 +915,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 					balasum = SafeCompute.add(balasum, balance);
 				}
 				if (balasum.compareTo(confrimvo.getNdedsummny()) < 0) {//与扣款总结做比较
-					return "扣款金额大于预付款余额与返点金额之和";
+					return "扣款金额大于预付款余额与返点余额之和";
 				}
 			} else {
-				return "扣款金额大于预付款余额与返点金额之和";
+				return "扣款金额大于预付款余额与返点余额之和";
 			}
 //			ChnBalanceVO balvo = null;
 //			String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
