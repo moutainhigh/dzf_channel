@@ -926,14 +926,6 @@ function onCommit(){
 	});
 }
 
-
-/**
- * 导入
- */
-function onImport(){
-	
-}
-
 /**
  * 导出
  */

@@ -62,8 +62,6 @@
 						data-options="plain:true" onclick="onAdd()">新增</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" 
 						data-options="plain:true" onclick="onExport()">导出</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" 
-						data-options="plain:true" onclick="onImport()">导入</a>
 				</div>
 			</div>
 		</div>
