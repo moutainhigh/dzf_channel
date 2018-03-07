@@ -173,7 +173,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				}
 			}
 			json.setSuccess(true);
-			
 			if(rignum > 0 && rignum == confrimVOs.length){
 				json.setRows(Arrays.asList(confrimVOs));
 				json.setMsg("成功"+rignum+"条");
@@ -184,33 +183,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 					json.setRows(rightlist);
 				}
 			}
-			
-//			List<ContractConfrimVO> relist = contractconfser.bathconfrim(confrimVOs, paramvo, opertype, getLoginUserid());
-//			if(relist != null && relist.size() > 0){
-//				int rignum = 0;
-//				int errnum = 0;
-//				List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
-//				for(ContractConfrimVO vo : relist){
-//					if(StringUtil.isEmpty(vo.getVerrmsg() )){
-//						rignum++;
-//						rightlist.add(vo);
-//					}else{
-//						errnum++;
-//					}
-//				}
-//				json.setSuccess(true);
-//				if(rignum > 0 && rignum == relist.size()){
-//					json.setRows(relist);
-//					json.setMsg("成功"+rignum+"条");
-//				}else if(errnum > 0){
-//					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
-//					json.setStatus(-1);
-//					if(rignum > 0){
-//						json.setRows(rightlist);
-//					}
-//				}
-//			}
-//			json.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
@@ -331,4 +303,29 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		writeJson(json);
 	}
 
+	/**
+	 * 查询加盟商合同详情信息
+	 */
+	public void queryInfoById() {
+		Json json = new Json();
+		if (data != null) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+					throw new BusinessException("登陆用户错误");
+				}else if(uservo == null){
+					throw new BusinessException("登陆用户错误");
+				}
+				ContractConfrimVO retvo = contractconfser.queryInfoById(data);
+				json.setSuccess(true);
+				json.setRows(retvo);
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "操作失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
+	}
 }

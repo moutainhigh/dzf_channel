@@ -341,6 +341,7 @@ function load(){
 			title : '合同编码',
 			halign:'center',
 			field : 'vccode',
+			formatter:codeLink,
 		}, {
 			width : '110',
 			title : '合同总金额',
@@ -998,20 +999,6 @@ function change(){
 		});			
 		return;
 	}
-//	if(rows[0].destatus == 3){
-//		Public.tips({
-//			content : '合同状态为已终止',
-//			type : 2
-//		});			
-//		return;
-//	}
-//	if(rows[0].destatus == 10){
-//		Public.tips({
-//			content : '合同状态为已作废',
-//			type : 2
-//		});			
-//		return;
-//	}
 	if(rows[0].pstatus == 1){
 		Public.tips({
 			content : '该合同已被补提单，不允许变更',
@@ -1039,10 +1026,8 @@ function change(){
 	$("#sfileshow").hide();
 	$('#changefrom').form('load',rows[0]);
 	$('#changememo').textbox('setValue',null);
-//	initdeductData(rows[0]);//初始化扣款数据
 	initChangeFileDoc(rows[0]);//初始化变更合同附件
 	initFileEvent();
-//	initListener();//初始化扣款比例监听
 	initChangeListener()
 	document.getElementById("end").checked="true";
 	setChangeMny(1);
@@ -1349,3 +1334,72 @@ function changeCancel(){
 	$('#change_Dialog').dialog('close');
 }
 
+/**
+ * 合同编码格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 合同明细查看
+ * @param index
+ */
+function showInfo(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+		url : DZF.contextPath + "/contract/contractconf!queryInfoById.action",
+		dataType : 'json',
+		data : row,
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				
+				$('#info_Dialog').dialog({ modal:true });//设置dig属性
+				$('#info_Dialog').dialog('open').dialog('center').dialog('setTitle','合同详情');
+				$('#infofrom').form('load',row);
+				initInfoFileDoc(row);
+			}
+		}
+		
+	});
+}
+
+/**
+ * 初始化变更合同附件
+ * @param row
+ */
+function initInfoFileDoc(row){
+	var para = {};
+	para.corp_id = row.corpid;
+	para.c_id = row.contractid;
+	
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/contract/contractconf!getAttaches.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			if(rows != null && rows.length > 0){
+				$("#ifileshow").show();
+				arrachrows = result.rows;
+				$("#ifiledocs").html('');
+				for(var i = 0;i<rows.length;i++){
+					var srcpath = rows[i].fpath.replace(/\\/g, "/");
+					var attachImgUrl = getAttachImgUrl(rows[i]);
+					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
+							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#ifiledocs"));
+				}
+			}
+		}
+	});
+}

@@ -224,6 +224,17 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("recycle")
     private Integer ireceivcycle;//加盟商收款周期
     
+    @FieldAlias("statusname")
+    private Integer vstatusname;//状态名称
+    
+	public Integer getVstatusname() {
+		return vstatusname;
+	}
+
+	public void setVstatusname(Integer vstatusname) {
+		this.vstatusname = vstatusname;
+	}
+
 	public DZFDouble getNretdedmny() {
 		return nretdedmny;
 	}
