@@ -86,7 +86,7 @@ function dClickMans(rowTable){
 	if(rowTable){
 		if (rowTable.length > 300) {
 			Public.tips({
-				content : "一次最多只能选择300个客户!",
+				content : "一次最多只能选择300个经理",
 				type : 2
 			});
 			return;
@@ -131,7 +131,7 @@ function dClickCompany(rowTable){
 	if(rowTable){
 		if (rowTable.length > 300) {
 			Public.tips({
-				content : "一次最多只能选择300个客户!",
+				content : "一次最多只能选择300个客户",
 				type : 2
 			});
 			return;
@@ -177,6 +177,7 @@ function load(){
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corp', title : '加盟商名称',width :'160',halign: 'center',align:'left'}, 
 		              { field : 'period', title : '返点所属期间',width :'115',halign: 'center',align:'center'} ,
+		              { field : 'contnum', title : '合同数量',width :'100',halign: 'center',align:'right'} ,
 		              { field : 'debitmny', title : '扣款金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
@@ -617,5 +618,19 @@ function onAuditCommit(confstatus){
 			}
 		}
 	});
+}
+
+/**
+ * 导出
+ */
+function onExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'请选择需导出的数据',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	Business.getFile(DZF.contextPath+ '/rebate/rebateinput!onExport.action',{
+		'strlist':JSON.stringify(datarows),/*'qj' : $('#jqj').html(),*/}, true, true);
 }
 

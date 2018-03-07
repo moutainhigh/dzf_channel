@@ -32,7 +32,7 @@ public class RebateVO extends SuperVO {
 	private String fathercorp;//上级机构主键
 	
 	@FieldAlias("vcode")
-	private String vbillcode;//返点编码
+	private String vbillcode;//返点单号
 	
 	@FieldAlias("year")
 	private String vyear;//所属季度-年
