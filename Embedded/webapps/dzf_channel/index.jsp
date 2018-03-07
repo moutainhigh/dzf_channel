@@ -408,10 +408,12 @@ function tranImg(trun){
 </div>
 <!-- 打开图片展示窗口 begin -->
 <div id="fullViewDlg" style="display: none;">	
-	<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a>
-	<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>
+	<div  style="text-align: center;">
+	<a class="ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranImg(-90)">左转</a>
+	<a class="ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranImg(90)">右转</a>
+	</div>
   	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
-		<div class="entrance_block_tu" id="tpght" style="overflow-y:auto;height:95%">
+		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
 	</div>

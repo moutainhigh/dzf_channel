@@ -204,7 +204,7 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		parent.openFullViewDlg('<div style="overflow:scroll;height:100%"><img id="conturnid" alt="无法显示图片" src="' + src 
+		parent.openFullViewDlg('<div style="overflow:scroll;height:92%"><img id="conturnid" alt="无法显示图片" src="' + src 
 				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>','原图')
 		
 	}
