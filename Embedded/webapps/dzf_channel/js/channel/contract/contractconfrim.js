@@ -1341,7 +1341,9 @@ function changeCancel(){
  * @param index
  */
 function codeLink(value,row,index){
-	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+	if(!isEmpty(row.contractid)){
+		return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+	}
 }
 
 /**
@@ -1357,9 +1359,31 @@ function showInfo(index){
 		success : function(rs) {
 			if (rs.success) {
 				var row = rs.rows;
+				var changeshow = false;
+				var dedshow = false;
+				if(row.destatus == 9 || row.destatus == 10){
+					changeshow = true;
+					dedshow = true;
+				}
+				if(row.destatus == 1){
+					dedshow = true;
+				}
+				if(changeshow){
+					$('#changeinfo').css('height','auto');
+					$('#changeinfo').css('display','block');
+				}else{
+					$('#changeinfo').css('display','none');
+				}
+				if(dedshow){
+					$('#dedinfo').css('height','auto');
+					$('#dedinfo').css('display','block');
+				}else{
+					$('#dedinfo').css('display','none');
+				}
 				
 				$('#info_Dialog').dialog({ modal:true });//设置dig属性
 				$('#info_Dialog').dialog('open').dialog('center').dialog('setTitle','合同详情');
+				$('#infofrom').form('clear');
 				$('#infofrom').form('load',row);
 				initInfoFileDoc(row);
 			}
