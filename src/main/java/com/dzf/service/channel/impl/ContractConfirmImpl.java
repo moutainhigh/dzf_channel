@@ -982,6 +982,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_10);
 			paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
 			paramvo.setVchangeraeson("合同作废");
+			paramvo.setIdeductpropor(0);
 		}
 		paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
 		paramvo.setVchanger(cuserid);
@@ -1031,7 +1032,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				"vstopperiod", "vchanger","dchangetime","patchstatus","tstamp",
 				"nreturnmny", "nretrebmny", "nretdedmny", 
 				"nchangetotalmny", "nchangesummny", "nchangededutmny", "nchangerebatmny",
-				"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny" };
+				"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny", "ideductpropor" };
 		singleObjectBO.update(paramvo, str);
 		// 7、更新原合同数据
 		StringBuffer sql = new StringBuffer();
