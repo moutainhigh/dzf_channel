@@ -601,10 +601,10 @@
 						</div>
 						<div class="time_col time_colp11 " style="margin-top:10px;">
 							<div class="decan" style="margin-top: 10px;">
-								<div style="width: 34%; display: inline-block">
-									<label style="width: 100px; text-align:right;">变更原因：</label>
+								<div style="width: 30%; display: inline-block">
+									<label style="width:32%; text-align:right;">变更原因：</label>
 									<input id="ichangereason" name="changereason" class="easyui-textbox" data-options="readonly:true"
-										style="width:40%;height:28px;text-align:left">
+										style="width:60%;height:28px;text-align:left">
 								</div>
 								<div style="width: 44%; display: inline-block">
 									<label style="text-align: right; width: 30%;">备注：</label>
@@ -614,25 +614,25 @@
 							</div>
 							<div class="time_col time_colp11">
 								<div id = "addclass" class="decan">
-									<div style="width:25%; display:inline-block">
-										<label style="text-align: right; width: 35%;">终止期间：</label> 
+									<div style="width:24%; display:inline-block">
+										<label style="text-align: right; width: 40%;">终止期间：</label> 
 										<input id="istperiod" name="stperiod" class="easyui-textbox" data-options="readonly:true"
-											style="width:60%;height:28px;text-align:left">
+											style="width:56%;height:28px;text-align:left">
 									</div>
-									<div style="width:20%; display:inline-block">
-										<label style="text-align: right; width: 35%;">退回扣款：</label> 
+									<div style="width:24%; display:inline-block">
+										<label style="text-align: right; width: 40%;">退回扣款：</label> 
 										<input id="iremny" name="remny" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','"
 											style="width:40%;height:28px;text-align:left">
 									</div>
-									<div style="width:20%; display:inline-block">
-										<label style="text-align: right; width: 50%;">变更后合同金额：</label> 
+									<div style="width:24%; display:inline-block">
+										<label style="text-align: right; width: 40%;white-space: nowrap;">变更后合同金额：</label> 
 										<input id="inchtlmny" name="nchtlmny" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','"
 											style="width: 40%; height: 28px; text-align: left">
 									</div>
-									<div style="width:20%; display:inline-block">
-										<label style="text-align: right; width: 50%;">变更后扣款金额：</label> 
+									<div style="width:24%; display:inline-block">
+										<label style="text-align: right; width: 40%;white-space: nowrap;">变更后扣款金额：</label> 
 										<input id="inchsumny" name="nchsumny" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','"
 											style="width:40%;height:28px;text-align:left"> 
@@ -668,25 +668,25 @@
 							<input id="indemny" name="ndemny" type="hidden"><!-- 预付款扣款金额 -->
 							<input id="inderebmny" name="nderebmny" type="hidden"><!-- 返点款扣款金额 -->
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:35%;text-align: right;">扣款比例：</label>
+								<label style="width:40%;text-align: right;">扣款比例：</label>
 								<input id="ipropor" name="propor" class="easyui-numberbox" data-options="readonly:true"
 									style="width:20%;height:28px;text-align:right; ">%
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:35%;text-align: right;">扣款金额：</label>
+								<label style="width:40%;text-align: right;">扣款金额：</label>
 								<input id="indesummny" name="ndesummny" class="easyui-numberbox" 
-									style="width:60%;height:28px;text-align:left;"
+									style="width:56%;height:28px;text-align:left;"
 									data-options="readonly:true,precision:2,groupSeparator:','" >
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:35%;text-align: right;">扣费日期：</label>
+								<label style="width:40%;text-align: right;">扣费日期：</label>
 								<input id="idedate" name="dedate" class="easyui-textbox"  data-options="readonly:true" 
-									style="width:60%;height:28px;text-align:left"></input>
+									style="width:56%;height:28px;text-align:left"></input>
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:35%;text-align: right;">经办人：</label>
+								<label style="width:40%;text-align: right;">经办人：</label>
 								<input id="ivopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
-									style="width:60%;height:28px;text-align:left; ">
+									style="width:56%;height:28px;text-align:left; ">
 								<input id="ivoper" name="voper" type="hidden">
 							</div>
 						</div>
