@@ -46,4 +46,12 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public String[] getManagerCorp(String userids) throws DZFWarpException;
+	
+	/**
+	 * 通过加盟商获取渠道经理名称
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getManagerName(String pk_corp) throws DZFWarpException;
 }

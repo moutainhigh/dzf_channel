@@ -225,6 +225,17 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("statusname")
     private String vstatusname;//状态名称
+    
+    @FieldAlias("mname")
+    private String vmanagername; // 渠道经理
+
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
+	}
 
 	public String getVstatusname() {
 		return vstatusname;

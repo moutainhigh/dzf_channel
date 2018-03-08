@@ -375,6 +375,11 @@ function load(){
 			halign:'center',
 			field : 'area',
 		}, {
+			width : '120',
+			title : '渠道经理',
+			halign:'center',
+			field : 'mname',
+		}, {
 			width : '140',
 			title : '加盟商',
 			halign:'center',
@@ -469,10 +474,6 @@ function load(){
 			halign:'center',
 			align:'right',
 			field : 'propor',
-//			formatter : function(value,row,index){
-//				if(!isEmpty(value))
-//					return value+"%";
-//			}
 		},{
 			width : '100',
 			title : '扣费金额',
@@ -480,7 +481,6 @@ function load(){
             halign:'center',
 			field : 'ndesummny',
 			formatter : function(value,row,index){
-//				if(value == 0)return "";
 				return formatMny(value);
 			}
 		}, {

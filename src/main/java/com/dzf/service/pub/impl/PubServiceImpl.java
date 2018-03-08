@@ -15,11 +15,13 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.AccountVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
@@ -222,6 +224,49 @@ public class PubServiceImpl implements IPubService {
 		}
 		if(retlist != null && retlist.size() > 0){
 			return retlist.toArray(new String[0]);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getManagerName(String pk_corp) throws DZFWarpException {
+		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pk_corp);
+		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
+		if (bVOs != null && bVOs.length > 0) {
+			String userid = bVOs[0].getUserid();
+			if (!StringUtil.isEmpty(userid)) {
+				UserVO uservo = UserCache.getInstance().get(userid, null);
+				if (uservo != null) {
+					return uservo.getUser_name();
+				}
+			}
+		} else {
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT * \n");
+			sql.append("  FROM cn_chnarea_b \n");
+			sql.append(" WHERE vprovince = (SELECT vprovince \n");
+			sql.append("                      FROM bd_account \n");
+			sql.append("                     WHERE nvl(dr, 0) = 0 \n");
+			sql.append("                       AND nvl(ischannel, 'N') = 'Y' \n");
+			sql.append("                       AND nvl(isaccountcorp, 'N') = 'Y' \n");
+			sql.append("                       AND pk_corp = ? ) \n");
+			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
+			spm = new SQLParameter();
+			spm.addParam(pk_corp);
+			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+					new BeanListProcessor(ChnAreaBVO.class));
+			if(blist != null && blist.size() > 0){
+				String userid = blist.get(0).getUserid();
+				if (!StringUtil.isEmpty(userid)) {
+					UserVO uservo = UserCache.getInstance().get(userid, null);
+					if (uservo != null) {
+						return uservo.getUser_name();
+					}
+				}
+			}
 		}
 		return null;
 	}

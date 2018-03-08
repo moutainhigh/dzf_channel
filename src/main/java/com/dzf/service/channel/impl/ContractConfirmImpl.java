@@ -117,8 +117,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if (corpvo != null) {
 					confvo.setVarea(corpvo.getCitycounty());
 				}
-				retlist.add(confvo);
-				pklist.add(confvo.getPk_contract() + "" + confvo.getVcontcode());
+				String managername = pubser.getManagerName(confvo.getPk_corp());
+				confvo.setVmanagername(managername);
+//				retlist.add(confvo);
+//				pklist.add(confvo.getPk_contract() + "" + confvo.getVcontcode());
+				if(!pklist.contains(confvo.getPk_contract()+""+confvo.getVcontcode())){
+					if(!StringUtil.isEmpty(paramvo.getCorpname())){
+						if(confvo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+							retlist.add(confvo);
+							pklist.add(confvo.getPk_contract() + "" + confvo.getVcontcode());
+						}
+					}else{
+						retlist.add(confvo);
+						pklist.add(confvo.getPk_contract() + "" + confvo.getVcontcode());
+					}
+				}
 			}
 		}
 	}
@@ -155,13 +168,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}else{
 					vo.setIreceivcycle(null);//收款周期
 				}
+				String managername = pubser.getManagerName(vo.getPk_corp());
+				vo.setVmanagername(managername);
 				if(!pklist.contains(vo.getPk_contract()+""+vo.getVcontcode())){
 					if(!StringUtil.isEmpty(paramvo.getCorpname())){
 						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
 							retlist.add(vo);
+							pklist.add(vo.getPk_contract() + "" + vo.getVcontcode());
 						}
 					}else{
 						retlist.add(vo);
+						pklist.add(vo.getPk_contract() + "" + vo.getVcontcode());
 					}
 				}
 			}
