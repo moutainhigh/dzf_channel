@@ -7,7 +7,24 @@ $(function(){
 	initRef();
 	initQryData();
 	fastQry();
+	loadJumpData();
 });
+
+/**
+ * 由别的界面（付款单余额明细）跳转至
+ */
+function loadJumpData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	if(operate == "topayc"){
+		var id = obj.pk_billid;
+		url = contextPath + '/rebate/rebateinput!query.action';
+		$('#grid').datagrid('options').url = url;
+		$('#grid').datagrid('load', {
+			'id' : id,
+		});
+	}
+}
 
 /**
  * 查询框初始化

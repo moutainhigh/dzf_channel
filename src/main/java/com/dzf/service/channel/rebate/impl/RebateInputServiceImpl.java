@@ -202,6 +202,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				String where = SqlUtil.buildSqlForIn("pk_corp", corps);
 				sql.append(" AND ").append(where);
 			}
+			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
+				sql.append("   AND pk_rebate = ? \n") ; 
+				spm.addParam(paramvo.getPk_bill());
+			}
 		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

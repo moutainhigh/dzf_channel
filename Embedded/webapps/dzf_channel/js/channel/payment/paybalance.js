@@ -359,9 +359,17 @@ function npFormat(value,row,index){
 		return "0.00";
 	}else{
 		if(row.ddate != "合计"){
-			var url = 'channel/payment/payconfirm.jsp?operate=topayc&pk_billid='+row.billid;
-			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('付款单确认','"+url+"');\">"+formatMny(value)+"</a>";
-			return ss ;
+			if(row.iptype == 3){
+				var url = 'channel/rebate/rebateinput.jsp?operate=topayc&pk_billid='+row.billid;
+				var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('返点单录入','"+url+"');\">"
+				+formatMny(value)+"</a>";
+				return ss ;
+			}else{
+				var url = 'channel/payment/payconfirm.jsp?operate=topayc&pk_billid='+row.billid;
+				var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('付款单确认','"+url+"');\">"
+				+formatMny(value)+"</a>";
+				return ss ;
+			}
 		}else{
 			return formatMny(value);
 		}
