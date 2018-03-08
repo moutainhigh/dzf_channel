@@ -75,11 +75,10 @@ public class ContractConfrimVO extends SuperVO {
     private Integer ideductpropor;//扣款比例
     
     @FieldAlias("destatus")
-    private Integer vdeductstatus;//加盟商合同合同状态：5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
+    private Integer vdeductstatus;//加盟商合同合同状态：0：待提交；5:待审核： 1：已审核； 7：拒绝审核；8：服务到期；9：已终止；10：已作废；
     
     @FieldAlias("status")
-    private Integer vstatus; // 合同状态 0：待提交；1：审核通过；3：终止； 4：结束；5:待审批；6:审批中；7：已驳回；8：服务到期；
-    						 //9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+    private Integer vstatus; // 合同状态 0：待提交；5:待审批；1：审核通过；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
     
     @FieldAlias("confreason")
     private String vconfreason;// 驳回原因
@@ -225,13 +224,13 @@ public class ContractConfrimVO extends SuperVO {
     private Integer ireceivcycle;//加盟商收款周期
     
     @FieldAlias("statusname")
-    private Integer vstatusname;//状态名称
-    
-	public Integer getVstatusname() {
+    private String vstatusname;//状态名称
+
+	public String getVstatusname() {
 		return vstatusname;
 	}
 
-	public void setVstatusname(Integer vstatusname) {
+	public void setVstatusname(String vstatusname) {
 		this.vstatusname = vstatusname;
 	}
 

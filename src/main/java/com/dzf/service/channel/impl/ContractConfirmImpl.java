@@ -1263,7 +1263,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (confVOs != null && confVOs.length > 0) {
 			confvo = confVOs[0];
 			if (confvo.getDenddate().compareTo(new DZFDate()) < 0) {
-				confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
+//				confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
 				confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
 			}
 			if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
@@ -1279,6 +1279,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (corpvo != null) {
 				confvo.setVarea(corpvo.getCitycounty());
 			}
+			setStatusName(confvo);
 		}else{
 			StringBuffer sql = new StringBuffer();
 			spm = new SQLParameter();
@@ -1313,9 +1314,44 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}else{
 					confvo.setIreceivcycle(null);//收款周期
 				}
+				setStatusName(confvo);
 			}
 		}
 		return confvo;
+	}
+	
+	/**
+	 * 设置合同状态显示名称
+	 * @param confvo
+	 * @throws DZFWarpException
+	 */
+	private void setStatusName(ContractConfrimVO confvo) throws DZFWarpException {
+		//0：待提交；5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
+		String statusname = "";
+		switch(confvo.getVdeductstatus()){
+			case 0:
+				statusname = "待提交";
+				break;
+			case 5:
+				statusname = "待审核";
+				break;
+			case 1:
+				statusname = "已审核";
+				break;
+			case 7:
+				statusname = "拒绝审核";
+				break;
+			case 8:
+				statusname = "服务到期";
+				break;
+			case 9:
+				statusname = "已终止";
+				break;
+			case 10:
+				statusname = "已作废";
+				break;
+		}
+		confvo.setVstatusname(statusname);
 	}
 	
 	
