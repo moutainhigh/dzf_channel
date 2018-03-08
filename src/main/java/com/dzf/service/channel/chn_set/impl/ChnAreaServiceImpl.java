@@ -125,7 +125,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		boolean ret = false;
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select count(1) as count from ( ");
-		sql.append(" select count(1)  from cn_chnarea_b where pk_corp!=null ");
+		sql.append(" select count(1)  from cn_chnarea_b where pk_corp is not null ");
 		sql.append(" group by pk_corp having count(1)>1) ");
 		String res = singleObjectBO.executeQuery(sql.toString(), null, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
