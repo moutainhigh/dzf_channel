@@ -102,11 +102,13 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 					map1.put(id1,"value");
 				}
 			}
-			String id2=chnAreaBVO.getVprovince()+chnAreaBVO.getIsCharge().toString();
-			if(map2.containsKey(id2)){
-				throw new BusinessException("一个地区只能有一个负责人");
-			}else{
-				map2.put(id2,"value");
+			if(chnAreaBVO.getIsCharge().booleanValue()){
+				String id2=chnAreaBVO.getVprovince()+chnAreaBVO.getIsCharge().toString();
+				if(map2.containsKey(id2)){
+					throw new BusinessException("一个地区只能有一个负责人");
+				}else{
+					map2.put(id2,"value");
+				}
 			}
 			chnAreaBVO.setType(headvo.getType());
 			if(StringUtil.isEmpty(chnAreaBVO.getPk_corp()) || !chnAreaBVO.getPk_corp().contains(",")){

@@ -108,7 +108,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			singleObjectBO.executeUpdate(sql.toString(), sp);
 		}
 		vo=(ChnAreaVO) multBodyObjectBO.saveMultBObject(vo.getPk_corp(), vo);
-		if(!checkCorpIsOnly() ){
+		if(!checkCorpIsOnly(vo.getType()) ){
 			throw new BusinessException("加盟商重复,请重新输入");
 		}
 		SuperVO[] bvos = (SuperVO[])vo.getTableVO("cn_chnarea_b");
@@ -117,17 +117,20 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	}
 	
 	/**
-	 * 校验(负责地区+渠道经理)是否重复
+	 * 校验加盟商是否重复
 	 * @param vo
 	 * @return
 	 */
-	private boolean checkCorpIsOnly() {
+	private boolean checkCorpIsOnly(Integer type) {
 		boolean ret = false;
 		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sp.addParam(type);
 		sql.append(" select count(1) as count from ( ");
-		sql.append(" select count(1)  from cn_chnarea_b where pk_corp is not null ");
+		sql.append(" select count(1)  from cn_chnarea_b  ");
+		sql.append(" where pk_corp is not null and nvl(dr,0)=0 and type=? ");
 		sql.append(" group by pk_corp having count(1)>1) ");
-		String res = singleObjectBO.executeQuery(sql.toString(), null, new ColumnProcessor("count")).toString();
+		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
 		if(num <= 0)
 			ret = true;
