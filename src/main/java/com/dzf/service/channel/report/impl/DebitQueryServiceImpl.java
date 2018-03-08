@@ -77,17 +77,22 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate ,");
-		sql.append(" sum(nvl(contract.ndeductmny,0) - nvl(contract.nreturnmny,0)) as ndeductmny,(balance.npaymny-balance.nusedmny) as outmny");
+		sql.append(" sum(nvl(contract.ndeductmny,0) - nvl(contract.nretdedmny,0)) as ndeductmny,");
+		sql.append(" sum(nvl(contract.ndedrebamny,0) - nvl(contract.nretrebmny,0)) as ndedrebamny,");
+		sql.append(" balance.outymny, balance.outfmny");
 		sql.append(" from bd_account a");
-        sql.append(" left join cn_balance balance on a.pk_corp = balance.pk_corp and balance.ipaytype = 2");
-        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 3) ");
-        sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0 and nvl(balance.dr, 0) = 0 and nvl(contract.dr, 0) = 0 ");
+        sql.append(" left join (select pk_corp,sum(decode(ipaytype,2,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outymny,");
+        sql.append("   			 sum(decode(ipaytype,3,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outfmny");
+        sql.append("   			from cn_balance where ipaytype!=1 and nvl(dr,0)=0 group by pk_corp) balance ");
+        sql.append(" 	on a.pk_corp = balance.pk_corp");
+        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9) ");
+        sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0  and nvl(contract.dr, 0) = 0 ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
         sql.append(" and substr(contract.deductdata,0,"+length+")>=? and substr(contract.deductdata,0,"+length+")<=?");
-        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,balance.npaymny,balance.nusedmny");
+        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,balance.outymny,balance.outfmny");
         sp.addParam(paramvo.getDbegindate());
         sp.addParam(paramvo.getDenddate());
         sql.append(" order by a.innercode ");
@@ -106,7 +111,8 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 				}
 		        for(int i=0;i<headers.size();i++){
 		        	if(map1.containsKey(headers.get(i).getHead())){
-		        		bvo.setAttributeValue(str[i], map1.get(headers.get(i).getHead()).getNdeductmny());
+		        		bvo.setAttributeValue(str[i]+"1", map1.get(headers.get(i).getHead()).getNdeductmny());
+		        		bvo.setAttributeValue(str[i]+"2", map1.get(headers.get(i).getHead()).getNdedrebamny());
 		        	}
 		        }
 		        if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -131,8 +137,10 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		int length= vo.getDbegindate().length();
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        sql.append(" select a.pk_corp,sum(nvl(a.ndeductmny,0) - nvl(a.nreturnmny,0)) as ndeductmny ,substr(a.deductdata,0,"+length+") as head");
-        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 3) and nvl(a.dr,0)=0 ");
+        sql.append(" select sum(nvl(a.ndeductmny,0) - nvl(a.nretdedmny,0)) as ndeductmny, ");
+        sql.append(" sum(nvl(a.ndedrebamny,0) - nvl(a.nretrebmny,0)) as ndedrebamny, ");
+        sql.append(" a.pk_corp,substr(a.deductdata,0,"+length+") as head");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
         sql.append(" and substr(a.deductdata,0,"+length+")>=? and substr(a.deductdata,0,"+length+")<=?  ");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());

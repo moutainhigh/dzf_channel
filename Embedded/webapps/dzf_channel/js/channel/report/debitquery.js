@@ -1,6 +1,5 @@
 var contextPath = DZF.contextPath;
 var isenter = false;//是否快速查询
-//var loadrows = null;
 var hstr=["one","two","three","four","five","six","seven",
         "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
 var printHead;
@@ -190,16 +189,6 @@ function quickfiltet(){
         	$('#grid').datagrid('unselectAll');
  		   var filtername = $("#quname").val(); 
 		   if (filtername) {
-//				var jsonStrArr = [];
-//				if(loadrows){
-//					for(var i=0;i<loadrows.length;i++){
-//						var row = loadrows[i];
-//						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
-//							jsonStrArr.push(row);
-//						} 
-//					}
-//					$('#grid').datagrid('loadData',jsonStrArr);   
-//				}
 				var bdate;
 				var edate;
 				if($('#qj').is(':checked')){
@@ -250,7 +239,6 @@ function quickfiltet(){
 }
 
 function reloadData(){
-//	loadrows = null;
 	var queryData = getQueryData();
 	if(isEmpty(queryData)){
 		Public.tips({
@@ -310,13 +298,6 @@ function getQueryData(){
 			return;
 		}
 	}
-//	if(isEmpty(bdate)||isEmpty(edate)){
-//		Public.tips({
-//			content :  "查询时间不能为空，请填全",
-//			type : 2
-//		});	
-//		return;
-//	}
 	var queryData = {
 		"bdate" : bdate,
 		"edate" : edate,
@@ -326,30 +307,20 @@ function getQueryData(){
 }
 
 function load(queryData) {
-//	var bdate;
-//	var edate;
-//	if($('#qj').is(':checked')){
-//		bdate=$("#begperiod").textbox('getValue');
-//		edate=$("#endperiod").textbox('getValue')
-//	}else{
-//		bdate=$("#bdate").datebox('getValue');
-//		edate=$("#edate").datebox('getValue');
-//	}
-//	if(isEmpty(bdate)||isEmpty(edate)){
-//		Public.tips({
-//			content :  "查询时间不能为空，请填全",
-//			type : 2
-//		});	
-//		return;
-//	}
-//	var queryData={
-//		"bdate" : bdate,
-//		"edate" : edate,
-//		"corps" : $("#pk_account").val(),
-//	};
 	var columns=new Array();
 	var columns1=new Array();
+	var columns2=new Array();
 	printHead="";
+	columns1[0]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
+	columns1[1]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
+	columns1[2]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
+	columns1[3]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
+	columns1[4]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
+	
+	columns2[0]={width : '100',title : '预付款',field : 'outymny',align:'right',formatter: fny},
+	columns2[1]={width : '100',title : '返点',field : 'outfmny',align:'right',formatter: fny},
+	columns2[2]={width : '100',title : '预付款',field : 'ndemny',align:'right',formatter: fny},
+	columns2[3]={width : '100',title : '返点',field : 'nderebmny',align:'right',formatter: fny},
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -366,10 +337,18 @@ function load(queryData) {
 			} else {
 				var rows=data.rows;
 				for(var i=0;i<rows[0].num;i++){
-					columns[i]={width : "100",title :rows[i].head,field : hstr[i],align:"right",formatter: fny}
+					columns1[5+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
 					printHead+=rows[i].head+",";
 				}
-				columns1[0]=columns;
+				var j=4;
+				for(var i=0;i<rows[0].num;i++){
+					columns2[j]={width : "100",title : "预付款",field : hstr[i]+"1",align:"right",formatter: fny}
+					j++;
+					columns2[j]={width : "100",title : "返点",field : hstr[i]+"2",align:"right",formatter: fny}
+					j++;
+				}
+				columns[0]=columns1;
+				columns[1]=columns2;
 			}
 		}
 	});
@@ -383,18 +362,8 @@ function load(queryData) {
 	      width:'100%',
 	      singleSelect : false,
 	      showFooter:true,
-	      frozenColumns:[[
-							{width : '110',title : '加盟商编码',field : 'ccode',align:'left'},
-							{width : '200',title : '加盟商名称',field : 'cname',align:'left'},
-							{width : '100',title : '加盟日期',field : 'chndate',align:'left'},
-							{width : '80',title : '预付款余额',field : 'outmny',align:'right',formatter: fny},
-							{width : '80',title : '扣款合计',field : 'ndeductmny',align:'right',formatter: fny},
-			       		]],
-	      columns : columns1,
+	      columns : columns,
 	      onLoadSuccess : function(data) {
-//				if(data.rows && loadrows == null){
-//					loadrows = data.rows;
-//				}
 				$.messager.progress('close');
 				$("#qrydialog").hide();
 				calFooter();
@@ -416,28 +385,42 @@ function fny(value,row,index){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
-    var outmny = 0;	
-    var ndeductmny = 0;	
+    var outymny = 0;	
+    var outfmny = 0;	
+    var ndemny = 0;	
+    var nderebmny = 0;	
     var custsum = {};
-    for(var i = 0; i <15; i++){
-		custsum['custsum'+i] = 0;
-	}
+    for(var i = 0; i <30; i++){
+    	custsum['custsum'+i] = 0;
+    }
     for (var i = 0; i < rows.length; i++) {
-    	outmny += parseFloat(rows[i].outmny == undefined ? 0 : rows[i].outmny);
-    	ndeductmny += parseFloat(rows[i].ndeductmny == undefined ? 0 : rows[i].ndeductmny);
+    	outymny += parseFloat(rows[i].outymny == undefined ? 0 : rows[i].outymny);
+    	outfmny += parseFloat(rows[i].outfmny == undefined ? 0 : rows[i].outfmny);
+    	ndemny += parseFloat(rows[i].ndemny == undefined ? 0 : rows[i].ndemny);
+    	nderebmny += parseFloat(rows[i].nderebmny == undefined ? 0 : rows[i].nderebmny);
+    	var w=0;
     	for(var j = 0; j <15; j++){
-    		var num=hstr[j];
-    		if(!isEmpty(rows[i][num])){
-    			custsum['custsum'+j]+= parseFloat(rows[i][num] == undefined ? 0 : rows[i][num]);
-    		}
+    		var num1=hstr[j]+"1";
+    		var num2=hstr[j]+"2";
+    		custsum['custsum'+w]+= parseFloat(rows[i][num1] == undefined ? 0 : rows[i][num1]);
+    		w++;
+    		custsum['custsum'+w]+= parseFloat(rows[i][num2] == undefined ? 0 : rows[i][num2]);
+    		w++;
     	}
     }
     footerData['cname'] = '合计';
-    footerData['outmny'] = outmny;
-    footerData['ndeductmny'] = ndeductmny;
+    footerData['outymny'] = outymny;
+    footerData['outfmny'] = outfmny;
+    footerData['ndemny'] = ndemny;
+    footerData['nderebmny'] = nderebmny;
+    var w=0;
     for(var i = 0; i <15; i++){
-    	var num=hstr[i];
- 		footerData[num] = custsum['custsum'+i];
+    	var num1=hstr[i]+"1";
+		var num2=hstr[i]+"2";
+ 		footerData[num1] = custsum['custsum'+w];
+ 		w++;
+ 		footerData[num2] = custsum['custsum'+w];
+ 		w++;
      }
     var fs=new Array(1);
     fs[0] = footerData;
@@ -454,11 +437,7 @@ function doPrint(){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").frozenColumns[0].slice(0,4);
-	var array=$('#grid').datagrid("options").columns[0];
-	for(var i=0;i<array.length;i++){
-		columns.push(array[i]);
-	}
+	var columns=$('#grid').datagrid("options").columns[0];
 	Business.getFile(contextPath+ '/report/debitquery!print.action',{'strlist':JSON.stringify(datarows),
 		'columns':JSON.stringify(columns)}, true, true);
 }
