@@ -56,8 +56,11 @@ public class ManagerVO extends SuperVO {
 	@FieldAlias("predeposit")
 	private DZFDouble predeposit; //预存款
 	
-	@FieldAlias("ndeductmny")
-	private DZFDouble ndeductmny; // 折扣金额 扣款金额
+	@FieldAlias("ndemny")
+	private DZFDouble ndeductmny; // 扣款金额-预付款
+	
+	@FieldAlias("nderebmny")
+	private DZFDouble ndedrebamny;//扣款金额-返点款
 	
 	@FieldAlias("outmny")
 	private DZFDouble outmny; // 预存款余额金额
@@ -105,6 +108,14 @@ public class ManagerVO extends SuperVO {
 
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
+	}
+
+	public DZFDouble getNdedrebamny() {
+		return ndedrebamny;
+	}
+
+	public void setNdedrebamny(DZFDouble ndedrebamny) {
+		this.ndedrebamny = ndedrebamny;
 	}
 
 	public Integer getVprovince() {

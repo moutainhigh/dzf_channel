@@ -32,7 +32,8 @@ public class ManagerExcelField implements IExceport<ManagerVO>{
 			new Fieldelement("predeposit", "预存款",true,2,false),
 			new Fieldelement("num", "提单量",false,0,false),
 			new Fieldelement("ntotalmny", "合同总金额",true,2,false),
-			new Fieldelement("ndeductmny", "扣款金额",true,2,false),
+			new Fieldelement("ndeductmny", "预付款扣款",true,2,false),
+	        new Fieldelement("ndedrebamny", "返点扣款",true,2,false),
 			new Fieldelement("outmny", "预存款余额",true,2,false),
 	};
 	
@@ -44,7 +45,8 @@ public class ManagerExcelField implements IExceport<ManagerVO>{
             new Fieldelement("predeposit", "预存款",true,2,false),
             new Fieldelement("num", "提单量",false,0,false),
             new Fieldelement("ntotalmny", "合同总金额",true,2,false),
-            new Fieldelement("ndeductmny", "扣款金额",true,2,false),
+            new Fieldelement("ndeductmny", "预付款扣款",true,2,false),
+            new Fieldelement("ndedrebamny", "返点扣款",true,2,false),
             new Fieldelement("outmny", "预存款余额",true,2,false),
     };
 	
@@ -58,7 +60,8 @@ public class ManagerExcelField implements IExceport<ManagerVO>{
             new Fieldelement("predeposit", "预存款",true,2,false),
             new Fieldelement("num", "提单量",false,0,false),
             new Fieldelement("ntotalmny", "合同总金额",true,2,false),
-            new Fieldelement("ndeductmny", "扣款金额",true,2,false),
+            new Fieldelement("ndeductmny", "预付款扣款",true,2,false),
+            new Fieldelement("ndedrebamny", "返点扣款",true,2,false),
             new Fieldelement("outmny", "预存款余额",true,2,false),
     };
 	

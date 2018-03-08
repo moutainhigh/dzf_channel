@@ -178,6 +178,7 @@ public class ManagerServiceImpl implements IManagerService {
 				managerVO.setCusername(uvo.getUser_name());
 			}
 			managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
+			managerVO.setNdedrebamny(DZFDouble.ZERO_DBL);
 			managerVO.setNum(0);
 			managerVO.setBondmny(DZFDouble.ZERO_DBL);
 			managerVO.setNtotalmny(DZFDouble.ZERO_DBL);
@@ -210,18 +211,44 @@ public class ManagerServiceImpl implements IManagerService {
 			spm.addParam(qvo.getDenddate());
 			List<ManagerVO> list2 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
-			buf=new StringBuffer();//提单量v 合同总金额
-			buf.append("  select count(1) as num,a.pk_corp,sum(a.ntotalmny)-sum(a.nbookmny)as ntotalmny from cn_contract a where ");
-			buf.append("  a.deductdata>=? and a.deductdata<=? and nvl(a.isncust,'N')='N' and nvl(a.dr,0) = 0 and a.vdeductstatus=1 and ");
+			buf=new StringBuffer();//提单量
+			buf.append("  select count(1) as num,a.pk_corp from cn_contract a where a.deductdata>=? and a.deductdata<=?");
+			buf.append("  and nvl(a.isncust,'N')='N' and nvl(a.dr,0) = 0 and (a.vdeductstatus=1 or a.vdeductstatus=9 ) and ");
 			buf.append(SqlUtil.buildSqlForIn("a.pk_corp ",pks));
 			buf.append("  group by a.pk_corp");
 			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
-			buf=new StringBuffer();//扣款金额
-			buf.append("  select sum(ndeductmny) as ndeductmny ,pk_corp from cn_contract a where ");
-			buf.append("  a.deductdata>=? and a.deductdata<=? and nvl(a.isncust,'N')='N' and nvl(a.dr,0) = 0 and a.vdeductstatus=1 and ");
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			
+			buf=new StringBuffer();//合同总金额,扣款金额(预付款,返点款)
+			buf.append("  select pk_corp,");
+			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");
+			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)))as ntotalmny,");
+			
+			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndeductmny,0)))+");
+			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdeductmny,0)))as ndeductmny,");
+			
+			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndedrebamny,0)))+");
+			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdedrebamny,0)))as ndedrebamny");
+			
+			buf.append("  from cn_contract where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9 ) and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
-			buf.append("  group by a.pk_corp");
+			buf.append("  group by pk_corp");
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
 		    buf=new StringBuffer();//预存款余额
@@ -244,18 +271,19 @@ public class ManagerServiceImpl implements IManagerService {
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     } 
-		     if(list3!=null&&list3.size()>0){//提单量 合同总金额
+		     if(list3!=null&&list3.size()>0){//提单量
 		    	 for (ManagerVO managerVO : list3) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
 						vo.setNum(managerVO.getNum());
-						vo.setNtotalmny(managerVO.getNtotalmny());
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     }		  
-		     if(list4!=null&&list4.size()>0){//扣款金额
+		     if(list4!=null&&list4.size()>0){// 合同总金额,扣款金额(预付款,返点款)
 		    	 for (ManagerVO managerVO : list4) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
+						vo.setNtotalmny(managerVO.getNtotalmny());
 						vo.setNdeductmny(managerVO.getNdeductmny());
+						vo.setNdedrebamny(managerVO.getNdedrebamny());
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     }
