@@ -191,18 +191,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				spm.addParam(paramvo.getVdeductstatus());
 			}
 			if(!StringUtil.isEmpty(paramvo.getCuserid())){
-				sql.append("SELECT t.pk_corp \n") ;
-				sql.append("  FROM bd_account t \n") ; 
-				sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
-				sql.append("   AND t.vprovince IN (SELECT b.vprovince \n") ; 
-				sql.append("                         FROM cn_chnarea_b b \n") ; 
-				sql.append("                        WHERE nvl(b.dr, 0) = 0 \n") ; 
-				String[] users = paramvo.getCuserid().split(",");
-				String where = SqlUtil.buildSqlForIn("b.userid", users);
-				if(!StringUtil.isEmpty(where)){
+				String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
+				if(corps != null && corps.length > 0){
+					String where = SqlUtil.buildSqlForIn("pk_corp", corps);
 					sql.append(" AND ").append(where);
 				}
-				sql.append("                                 )");
 			}
 			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 				String[] corps = paramvo.getPk_corp().split(",");
@@ -214,7 +207,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
-
+	
 	@Override
 	public RebateVO save(RebateVO data, String pk_corp) throws DZFWarpException {
 		try {
@@ -341,15 +334,16 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ManagerRefVO> queryManagerRef(QryParamVO paramvo) throws DZFWarpException {
 		List<ManagerRefVO> retlist = new ArrayList<ManagerRefVO>();
-		ChnAreaBVO[] areaVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, " nvl(dr,0) = 0 ",
-				null);
-		if (areaVOs != null && areaVOs.length > 0) {
+		String sql = " SELECT DISTINCT userid FROM cn_chnarea_b WHERE nvl(dr,0) = 0";
+		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ChnAreaBVO.class));
+		if (list != null && list.size() > 0) {
 			UserVO uservo = null;
 			ManagerRefVO refvo = null;
-			for (ChnAreaBVO vo : areaVOs) {
+			for (ChnAreaBVO vo : list) {
 				if (!StringUtil.isEmpty(vo.getUserid())) {
 					refvo = new ManagerRefVO();
 					refvo.setCuserid(vo.getUserid());

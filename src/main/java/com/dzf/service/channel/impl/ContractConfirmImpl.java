@@ -46,12 +46,16 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IContractConfirm;
+import com.dzf.service.pub.IPubService;
 
 @Service("contractconfser")
 public class ContractConfirmImpl implements IContractConfirm {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private IPubService pubser;
 
 	@Override
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException {
@@ -247,11 +251,25 @@ public class ContractConfirmImpl implements IContractConfirm {
 	            spm.addParam("一般纳税人");
 			}
 		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+		    String[] strs = paramvo.getPk_corp().split(",");
+		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+		    sql.append(" AND pk_corp in (").append(inSql).append(")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getCuserid())){
+			String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
+			if(corps != null && corps.length > 0){
+				String where = SqlUtil.buildSqlForIn(" pk_corp", corps);
+				sql.append(" AND ").append(where);
+			}
+		}
 		sql.append(" order by dsubmitime desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
+	
+
 	
 	/**
 	 * 获取合同数据查询条件
@@ -307,6 +325,13 @@ public class ContractConfirmImpl implements IContractConfirm {
             sql.append(" AND con.chargedeptname = ? \n") ; 
             spm.addParam("一般纳税人");
         }
+		if(!StringUtil.isEmpty(paramvo.getCuserid())){
+			String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
+			if(corps != null && corps.length > 0){
+				String where = SqlUtil.buildSqlForIn("con.pk_corp", corps);
+				sql.append(" AND ").append(where);
+			}
+		}
 		sql.append(" order by con.dsubmitime desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

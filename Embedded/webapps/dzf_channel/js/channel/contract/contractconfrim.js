@@ -9,11 +9,72 @@ $(function() {
 	initChannel();
 	initCorpk();
 	$('#corpkna_ae').textbox('readonly',true);
+	initManagerRef();
 	load();
 	fastQry();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
 	loadJumpData();
 });
+
+/**
+ * 渠道经理参照初始化
+ */
+function initManagerRef(){
+	$('#manager').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#manDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道经理',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/manager_select.jsp',
+                    buttons: '#manBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道经理选择事件
+ */
+function selectMans(){
+	var rows = $('#mgrid').datagrid('getSelections');
+	dClickMans(rows);
+}
+
+/**
+ * 双击选择渠道经理
+ * @param rowTable
+ */
+function dClickMans(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个经理",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#manager").textbox("setValue",unames);
+		$("#managerid").val(uids);
+	}
+	 $("#manDlg").dialog('close');
+}
 
 /**
  * 由别的界面（付款单余额明细）跳转待合同审核界面
@@ -127,6 +188,8 @@ function clearParams(){
 	$("#channel_select").textbox("setValue",null);
 	$("#corpkid_ae").val(null);
 	$("#corpkna_ae").textbox("setValue",null);
+	$("#manager").textbox("setValue",null);
+	$("#managerid").val(null);
 }
 
 /**
@@ -232,6 +295,7 @@ function reloadData(){
 	}
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.cpkid = $("#corpkid_ae").val();
+	queryParams.uid = $("#managerid").val();
 	queryParams.corptype = $('#corptype').combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
@@ -254,6 +318,7 @@ function clearQryParam(queryParams){
 	queryParams.cpkid = null;
 	queryParams.id = null;
 	queryParams.cpname = null;
+	queryParams.uid = null;
 }
 
 /**

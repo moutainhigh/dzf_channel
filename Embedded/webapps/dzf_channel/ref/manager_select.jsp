@@ -76,7 +76,7 @@
 		$(function(){
 			var params = new Object();
 			grid = $('#mgrid').datagrid({
-			    url: DZF.contextPath + '/rebate/rebateinpt!queryManager.action',
+			    url: DZF.contextPath + '/rebate/rebateinput!queryManager.action',
 			    method: 'post',
 				fitColumns: true,
 				idField:'uid',

@@ -12,12 +12,16 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_set.YntArea;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
 
@@ -141,4 +145,84 @@ public class PubServiceImpl implements IPubService {
 		return str + nums;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<Integer, List<String>> getProviceCorp() throws DZFWarpException {
+		Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT t.pk_corp, t.vprovince \n");
+		sql.append("  FROM bd_account t \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND nvl(t.isaccountcorp, 'N') = 'Y' \n");
+		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(AccountVO.class));
+		if(list != null && list.size() > 0){
+			List<String> newlist = null;
+			List<String> oldlist = null;
+			for(AccountVO avo : list){
+				if(!map.containsKey(avo.getVprovince())){
+					newlist = new ArrayList<String>();
+					newlist.add(avo.getPk_corp());
+					map.put(avo.getVprovince(), newlist);
+				}else{
+					oldlist = map.get(avo.getVprovince());
+					oldlist.add(avo.getPk_corp());
+					map.put(avo.getVprovince(), oldlist);
+				}
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * 获取区域经理所负责客户
+	 * @param userids 以‘,’隔开
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@Override
+	public String[] getManagerCorp(String userids) throws DZFWarpException {
+		if(StringUtil.isEmpty(userids)){
+			throw new BusinessException("区域经理信息不能为空");
+		}
+		List<String> retlist = new ArrayList<String>();
+		List<String> onlylist = new ArrayList<String>();
+		StringBuffer sql = new StringBuffer();
+		String[] users = userids.split(",");
+		String where = SqlUtil.buildSqlForIn("userid", users);
+		if(!StringUtil.isEmpty(where)){
+			sql.append(" nvl(dr,0) = 0 AND ").append(where);
+		}
+		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), null);
+		if(bVOs != null && bVOs.length > 0){
+			Map<Integer,List<String>> map = getProviceCorp();
+			List<String> corplist = null;
+			for(ChnAreaBVO bvo : bVOs){
+				if(bvo.getIsCharge() != null && bvo.getIsCharge().booleanValue()){
+					if(!onlylist.contains(bvo.getUserid()+""+bvo.getVprovince())){
+						if(map != null && !map.isEmpty()){
+							corplist = map.get(bvo.getVprovince());
+							if(corplist != null && corplist.size() > 0){
+								for(String corpk : corplist){
+									if(!retlist.contains(corpk)){
+										retlist.add(corpk);
+									}
+								}
+								onlylist.add(bvo.getUserid()+""+bvo.getVprovince());
+							}
+						}
+					}
+				}else{
+					if(!retlist.contains(bvo.getPk_corp())){
+						retlist.add(bvo.getPk_corp());
+					}
+				}
+			}
+		}
+		if(retlist != null && retlist.size() > 0){
+			return retlist.toArray(new String[0]);
+		}
+		return null;
+	}
 }

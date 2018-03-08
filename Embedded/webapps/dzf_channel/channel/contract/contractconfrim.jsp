@@ -65,7 +65,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 290px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 320px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -116,6 +116,11 @@
 					<label style="width:85px;text-align:right">客户：</label>
 					<input id="corpkna_ae" class="easyui-textbox" style="width:290px;height:28px;"/>
 					<input id="corpkid_ae" name="corpkid" type="hidden"> 
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:85px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="managerid" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">纳税人资格：</label>
@@ -780,6 +785,15 @@
 			</div>
 		</div>
 		<!-- 合同变更  end  -->
+		
+		<!-- 渠道经理参照对话框及按钮 begin -->
+		<div id="manDlg"></div>
+		<div id="manBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道经理参照对话框及按钮 end -->
 		
 	</div>
 	

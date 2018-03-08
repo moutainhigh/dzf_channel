@@ -1,6 +1,7 @@
 package com.dzf.service.pub;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.dzf.model.channel.sale.ChnAreaVO;
@@ -30,4 +31,19 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public String queryCode(String tablename) throws DZFWarpException;
+	
+	/**
+	 * 获取各个省（直辖市）对应的加盟商
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<Integer,List<String>> getProviceCorp() throws DZFWarpException;
+	
+	/**
+	 * 获取区域经理所负责客户
+	 * @param userids
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String[] getManagerCorp(String userids) throws DZFWarpException;
 }
