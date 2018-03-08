@@ -359,7 +359,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" select 1 as num,pk_confrim as pk_corp ,deductdata as denddate, ");
 		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as ntotalmny, " );   
 		sql.append(" nvl(ndeductmny,0) as ndeductmny,nvl(ndedrebamny,0) as ndedrebamny from cn_contract " );   
-		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and vdeductstatus=1 and " );
+		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9) and " );
 		sql.append(" deductdata>=? and deductdata<=? and pk_corp=? " );
 		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
