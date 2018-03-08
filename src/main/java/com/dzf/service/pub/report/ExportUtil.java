@@ -96,14 +96,16 @@ public class ExportUtil<T> {
 
 			// 合并期间、公司行
 			if(submap != null && !submap.isEmpty()){
-				if (title.equals("付款单余额明细")) {
+				if (title.equals("付款单余额明细") || title.equals("合同金额明细") ) {
 					HSSFRow rowtitle1 = sheet.createRow(3);
 					HSSFCell celltitle1 = rowtitle1.createCell(0);
 					HSSFCell celltitle2 = rowtitle1.createCell(2);
 					HSSFCell celltitle3 = rowtitle1.createCell(4);
 					celltitle1.setCellValue("查询：" + submap.get("查询"));
 					celltitle2.setCellValue("加盟商：" + submap.get("加盟商"));
-					celltitle3.setCellValue("付款类型：" + submap.get("付款类型"));
+					if(title.equals("付款单余额明细") ){
+						celltitle3.setCellValue("付款类型：" + submap.get("付款类型"));
+					}
 					
 					HSSFCellStyle style3 = workbook.createCellStyle();
 					style3.setFont(font);

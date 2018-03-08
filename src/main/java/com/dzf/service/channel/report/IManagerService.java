@@ -32,4 +32,12 @@ public interface IManagerService {
 	 */
 	public List<ComboBoxVO> queryArea()throws DZFWarpException;
 	
+	/**
+	 * 明细查询
+	 * @param vo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ManagerVO> queryDetail(ManagerVO vo) throws DZFWarpException;
+	
 }

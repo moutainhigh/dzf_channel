@@ -5,6 +5,7 @@ $(function() {
 	$("#edate").datebox("setValue",parent.SYSTEM.LoginDate);
 	load();
 	quickfiltet();
+	initDetailGrid();
 });
 
 function load() {
@@ -23,7 +24,12 @@ function load() {
 		},
 		showFooter:true,
 		columns : [ [ 
-			{width : '250',title : '加盟商',field : 'corpnm',align:'left'}, 
+			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
+				formatter : function(value, row, index) {
+						if(value == undefined)
+							return;
+		  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+			}}, 
 			{width : '100',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";

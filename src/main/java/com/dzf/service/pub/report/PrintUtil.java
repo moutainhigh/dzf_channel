@@ -116,7 +116,10 @@ public class PrintUtil<T> extends BaseAction<T> {
 						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
 						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
 						head.add(new Chunk(getSpace(3) + "付款类型：" + pmap.get("ptypenm") + getSpace(6), tableHeadFounts));
-					} 
+					}else if(titlename.equals("合同金额明细")){
+						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
+						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
+					}
 					head.setAlignment(Element.ALIGN_LEFT);
 					document.add(head);
 				}

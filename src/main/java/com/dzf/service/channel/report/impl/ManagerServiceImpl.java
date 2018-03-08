@@ -349,4 +349,42 @@ public class ManagerServiceImpl implements IManagerService {
 		return list;
 	}
 	
+	@Override
+	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sp.addParam(qvo.getDbegindate());
+		sp.addParam(qvo.getDenddate());
+		sp.addParam(qvo.getPk_corp());
+		sql.append(" select 1 as num,pk_confrim as pk_corp ,deductdata as denddate, ");
+		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as ntotalmny, " );   
+		sql.append(" nvl(ndeductmny,0) as ndeductmny,nvl(ndedrebamny,0) as ndedrebamny from cn_contract " );   
+		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and vdeductstatus=1 and " );
+		sql.append(" deductdata>=? and deductdata<=? and pk_corp=? " );
+		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		
+	    sql = new StringBuffer();
+	    sql.append(" select 0 as num,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
+		sql.append(" nvl(nsubtotalmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
+		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and vdeductstatus=9 and" );
+		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
+		
+		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		ArrayList<ManagerVO> vos=new ArrayList<>();
+		if(qryYSH!=null && qryYSH.size()>0){
+			vos.addAll(qryYSH);
+		}
+		if(qryYZZ!=null && qryYZZ.size()>0){
+			vos.addAll(qryYZZ);
+		}
+		Collections.sort(vos, new Comparator<ManagerVO>() {
+			@Override
+			public int compare(ManagerVO o1, ManagerVO o2) {
+				return o1.getDenddate().compareTo(o2.getDenddate());
+			}
+		});
+		return vos;
+	}
+	
 }

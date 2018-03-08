@@ -8,6 +8,7 @@
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/franchiseeman.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/mancommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .panel-body{overflow:auto}
 </style>
@@ -71,7 +72,22 @@
 				<div id="dataGrid" class="grid-wrap">
 					<table id="grid"></table>
 				</div>
-			</div> 
+			</div>
+			<div id="detail_dialog" class="easyui-dialog" title="合同金额明细" data-options="modal:true,closed:true" style="width:730px;height:500px;">
+				<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+					<label style="text-align:right">查询：</label> 
+					<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
+					<label style="text-align:right">加盟商：</label> 
+					<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
+					<div class="right" style="float: right;display: inline-block;"> 
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDetPrint()">打印</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDetExport()">导出</a>
+				 	</div>
+				</div>	
+				<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+					 <table id="gridh"></table>	
+				</div>
+			</div>
 	 	</div>	
 	</div>
 </body>

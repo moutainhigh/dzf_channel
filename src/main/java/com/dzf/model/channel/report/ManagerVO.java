@@ -18,10 +18,10 @@ public class ManagerVO extends SuperVO {
 	private DZFDate dbegindate; // 开始日期
 
 	@FieldAlias("edate")
-	private DZFDate denddate; // 结束日期
+	private DZFDate denddate; // 结束日期--明细里的日期
 
 	@FieldAlias("corpid")
-	private String pk_corp; // 渠道商主键
+	private String pk_corp; // 渠道商主键---明细里的合同主键
 
 	@FieldAlias("corpnm")
 	private String corpname; // 渠道商名称
