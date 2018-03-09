@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1045,14 +1046,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				"nchangetotalmny", "nchangesummny", "nchangededutmny", "nchangerebatmny",
 				"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny", "ideductpropor" };
 		singleObjectBO.update(paramvo, str);
-		// 7、更新原合同数据
+		
+		// 7.1、更新原合同主表数据
 		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
 		sql.append("update ynt_contract \n") ;
 		sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
-		sql.append(" where nvl(dr, 0) = 0 \n") ; 
-		sql.append("   and pk_corp = ? \n") ; 
-		sql.append("   and pk_contract = ? \n");
-		SQLParameter spm = new SQLParameter();
 		if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1061,9 +1060,51 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
 		spm.addParam(new DZFDateTime());
+		if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
+			String vbeginperiod = paramvo.getVbeginperiod();//合同开始期间
+			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
+			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
+			sql.append(" , icontractcycle = ? , ntotalmny = ? \n") ;
+			spm.addParam(changenum);
+			spm.addParam(paramvo.getNchangetotalmny());
+			DZFDate denddate = null;
+			String vendperiod = "";
+			try {
+				String venddate = ToolsUtil.getDateAfterNum(paramvo.getDenddate(), changenum);
+				if(!StringUtil.isEmpty(venddate)){
+					denddate = new DZFDate(venddate);
+					vendperiod = denddate.getYear() + "" + denddate.getStrMonth();
+					sql.append(" , denddate = ? , vendperiod = ? \n") ;
+					spm.addParam(denddate);
+					spm.addParam(vendperiod);
+				}
+			} catch (ParseException e) {
+				throw new BusinessException("获取变更后结束日期失败");
+			};
+		}
+		sql.append(" where nvl(dr, 0) = 0 \n") ; 
+		sql.append("   and pk_corp = ? \n") ; 
+		sql.append("   and pk_contract = ? \n");
+
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
+		//7.2、如果是合同终止，更新合同子表“代理记账”的应收金额
+		if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
+			sql = new StringBuffer();
+			spm = new SQLParameter();
+			sql.append("UPDATE ynt_contract_b \n") ;
+			sql.append("   SET nreceivemny = ? \n") ; 
+			sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+			sql.append("   AND pk_corp = ? \n") ; 
+			sql.append("   AND pk_contract = ? \n") ; 
+			sql.append("   AND icosttype = 1 \n");
+			spm.addParam(SafeCompute.sub(paramvo.getNchangetotalmny(), paramvo.getNbookmny()));
+			spm.addParam(paramvo.getPk_corp());
+			spm.addParam(paramvo.getPk_contract());
+			singleObjectBO.executeUpdate(sql.toString(), spm);
+		}
+		
 		//8、上传变更合同附件
 		saveContDocVO(paramvo, files, filenames, cuserid);
 		//9、更新合同变更后余额及余额明细表
