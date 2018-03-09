@@ -334,7 +334,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			if(corpvo != null){
 				corpname = corpvo.getUnitname();
 			}
-			throw new BusinessException("加盟商："+corpname+vo.getVyear()+"年"+vo.getIseason()+"季度返点单，已经在系统中存在");
+			throw new BusinessException("加盟商："+corpname+vo.getVyear()+"年第"+vo.getIseason()+"季度返点单，已经在系统中存在");
 		}
 	}
 
