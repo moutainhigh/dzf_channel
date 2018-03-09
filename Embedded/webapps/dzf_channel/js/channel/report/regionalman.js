@@ -18,46 +18,20 @@ function initQry(){
 	$("#bdate").datebox("setValue", parent.SYSTEM.LoginDate.substring(0,7)+"-01");
 	$("#edate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.LoginDate.substring(0,7)+"-01"+" 至  "+parent.SYSTEM.LoginDate);
-	initProvince();
-	initManager();
+	changeProvince();
+	initProvince({"qtype" :1});
+	initManager({"qtype" :1});
 }
 
-function initProvince(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/sys/sys_area!queryComboxArea.action',
-		data : {
-			parenter_id : 1,
-		},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#ovince').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
+function changeProvince(){
+	 $("#ovince").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :1};
+			if(!isEmpty(n)){
+				queryData={'ovince':n,"qtype" :1};
+				$('#cuid').combobox('setValue',null);
 			}
-		}
-	});
-}
-
-function initManager(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/report/manager!queryManager.action',
-		data : {
-			type : 2,
-		},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#cuid').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
+			initManager(queryData);
 		}
 	});
 }

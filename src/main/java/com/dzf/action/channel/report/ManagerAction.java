@@ -24,7 +24,6 @@ import com.dzf.action.channel.ChnPayBalanceAction;
 import com.dzf.action.channel.expfield.ManagerExcelField;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
-import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
@@ -97,49 +96,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		writeJson(grid);
 	}
 
-	/**
-	 * 查询渠道经理（下拉选项）  2为区域总经理 3为加盟商总经理
-	 */
-	public void queryManager() {
-		Grid grid = new Grid();
-		try {
-			Integer type = Integer.parseInt(getRequest().getParameter("type"));
-			List<ComboBoxVO> vos = manager.queryManager(type,getLoginUserid());
-			if(vos==null||vos.size()==0){
-				grid.setRows(new ArrayList<ChnAreaVO>());
-				grid.setMsg("查询数据为空!");
-			}else{
-				grid.setRows(vos);
-				grid.setSuccess(true);
-				grid.setMsg("查询成功!");
-			}
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "查询失败");
-		}
-		writeJson(grid);
-	}
-
-	/**
-	 * 查询大区（下拉选项）
-	 */
-	public void queryArea() {
-		Grid grid = new Grid();
-		try {
-			List<ComboBoxVO> vos = manager.queryArea();
-			if(vos==null||vos.size()==0){
-				grid.setRows(new ArrayList<ChnAreaVO>());
-				grid.setMsg("查询数据为空!");
-			}else{
-				grid.setRows(vos);
-				grid.setSuccess(true);
-				grid.setMsg("查询成功!");
-			}
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "查询失败");
-		}
-		writeJson(grid);
-	}
-	
 	/**
 	 * Excel导出方法  1渠道；2区域；3总
 	 */

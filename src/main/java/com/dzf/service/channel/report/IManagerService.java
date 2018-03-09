@@ -3,7 +3,6 @@ package com.dzf.service.channel.report;
 import java.util.List;
 
 import com.dzf.model.channel.report.ManagerVO;
-import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IManagerService {
@@ -16,21 +15,6 @@ public interface IManagerService {
 	 * @throws DZFWarpException
 	 */
 	public List<ManagerVO> query(ManagerVO vo,Integer type) throws DZFWarpException;
-	
-	/**
-	 * 查询框上的渠道经理参照查询
-	 * @param vo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public List<ComboBoxVO> queryManager(Integer type,String cuserid)throws DZFWarpException;
-	
-	/**
-	 * 查询框上的大区参照查询
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public List<ComboBoxVO> queryArea()throws DZFWarpException;
 	
 	/**
 	 * 明细查询

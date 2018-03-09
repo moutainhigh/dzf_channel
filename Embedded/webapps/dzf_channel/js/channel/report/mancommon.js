@@ -170,3 +170,40 @@ function onDetExport(){
 	Business.getFile(contextPath+ '/report/manager!onDetExport.action',{'strlist':JSON.stringify(datarows),
 		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm}, true, true);
 }
+
+
+function initProvince(queryData){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryProvince.action',
+		data : queryData,
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#ovince').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+function initManager(queryData){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
+		data : queryData,
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#cuid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}

@@ -18,56 +18,19 @@ function initQry(){
 	$("#bdate").datebox("setValue", parent.SYSTEM.LoginDate.substring(0,7)+"-01");
 	$("#edate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.LoginDate.substring(0,7)+"-01"+" 至  "+parent.SYSTEM.LoginDate);
-	initProvince();
-	initManager();
-	initArea();
+	changeArea();
+	changeProvince();
+	initArea({"qtype" :1});
+	initProvince({"qtype" :1});
+	initManager({"qtype" :1});
 }
 
-function initProvince(){
+function initArea(queryData){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/sys/sys_area!queryComboxArea.action',
-		data : {
-			parenter_id : 1,
-		},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#ovince').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
-		}
-	});
-}
-
-function initManager(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/report/manager!queryManager.action',
-		data : {
-			type :3,
-		},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#cuid').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
-		}
-	});
-}
-
-function initArea(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/report/manager!queryArea.action',
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : queryData,
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -76,6 +39,34 @@ function initArea(){
 			} else {
 				Public.tips({content : result.msg,type : 2});
 			}
+		}
+	});
+}
+
+function changeArea(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :1};
+			if(!isEmpty(n)){
+				queryData={'aname' : n,"qtype" :1};
+				$('#ovince').combobox('setValue',null);
+				$('#cuid').combobox('setValue',null);
+			}
+			initProvince(queryData);
+			initManager(queryData);
+		}
+	});
+}
+
+function changeProvince(){
+	 $("#ovince").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :1};
+			if(!isEmpty(n)){
+				queryData={'aname' : $("#aname").combobox('getValue'),'ovince':n,"qtype" :1};
+				$('#cuid').combobox('setValue',null);
+			}
+			initManager(queryData);
 		}
 	});
 }

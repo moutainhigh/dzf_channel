@@ -15,7 +15,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
-import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
@@ -312,43 +311,6 @@ public class ManagerServiceImpl implements IManagerService {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ComboBoxVO> queryManager(Integer type,String cuserid) throws DZFWarpException {
-		StringBuffer buf=null;
-		List<ComboBoxVO> list=null;
-		UserVO uvo=null;
-		if(type==3){//查询全部
-		    buf=new StringBuffer();
-			buf.append(" select  distinct b.userid as id from cn_chnarea_b b where nvl(b.dr,0)=0 ");
-			list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ComboBoxVO.class));
-		}else{
-			buf=new StringBuffer();
-			buf.append(" select distinct b.userid as id from cn_chnarea a right  join cn_chnarea_b b on a.pk_chnarea=b.pk_chnarea ");
-			buf.append(" where nvl(b.dr,0)=0 and nvl(a.dr,0)=0 and a.userid=? ");
-			SQLParameter spm=new SQLParameter();
-			spm.addParam(cuserid);
-			list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
-		}
-		for (ComboBoxVO comboBoxVO : list) {
-			uvo = UserCache.getInstance().get(comboBoxVO.getId(), null);
-			if(uvo!=null){
-				comboBoxVO.setName(uvo.getUser_name());
-			}
-		}
-		return list;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ComboBoxVO> queryArea() throws DZFWarpException {
-		List<ComboBoxVO> list=null;
-		StringBuffer buf=new StringBuffer();
-		buf.append(" select areaname as name,areacode as id from cn_chnarea where nvl(dr,0)=0 and type=1");
-		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ComboBoxVO.class));
-		return list;
-	}
-	
 	@Override
 	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
