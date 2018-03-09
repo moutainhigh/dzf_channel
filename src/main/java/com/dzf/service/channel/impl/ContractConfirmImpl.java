@@ -1073,7 +1073,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				String venddate = ToolsUtil.getDateAfterNum(paramvo.getDenddate(), changenum);
 				if(!StringUtil.isEmpty(venddate)){
 					denddate = new DZFDate(venddate);
-					vendperiod = denddate.getYear() + "" + denddate.getStrMonth();
+					vendperiod = denddate.getYear() + "-" + denddate.getStrMonth();
 					sql.append(" , denddate = ? , vendperiod = ? \n") ;
 					spm.addParam(denddate);
 					spm.addParam(vendperiod);
