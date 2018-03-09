@@ -59,7 +59,7 @@ public interface IChnAreaService {
 	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException;
 	
 	/**
-	 * 大区参照（数据运营管理用的）
+	 * 大区参照（下拉框查询用的）
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
@@ -67,7 +67,7 @@ public interface IChnAreaService {
 	public List<ComboBoxVO> queryArea(QryParamVO paramvo) throws DZFWarpException ;
 	
 	/**
-	 * 省（市）参照（数据运营管理用的）
+	 * 省（市）参照（下拉框查询用的）
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
@@ -75,7 +75,7 @@ public interface IChnAreaService {
 	public List<ComboBoxVO> queryProvince(QryParamVO paramvo) throws DZFWarpException ;
 	
 	/**
-	 * 培训师参照（数据运营管理用的）
+	 * 培训师参照（下拉框查询用的）
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException

@@ -32,7 +32,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.IChnAreaService;
 
 /**
- * 渠道区域划分
+ * 渠道区域划分或培训区域划分
  * 
  */
 @SuppressWarnings("serial")
@@ -97,7 +97,11 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			if(!StringUtil.isEmpty(chnAreaBVO.getUserid())){
 				String id1=chnAreaBVO.getVprovince()+chnAreaBVO.getUserid();
 				if(map1.containsKey(id1)){
-					throw new BusinessException("负责地区+渠道经理重复,请重新输入");
+					if(headvo.getType()==1){
+						throw new BusinessException("负责地区+渠道经理重复,请重新输入");
+					}else{
+						throw new BusinessException("负责地区+培训师重复,请重新输入");
+					}
 				}else{
 					map1.put(id1,"value");
 				}
