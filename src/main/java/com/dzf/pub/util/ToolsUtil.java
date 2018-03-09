@@ -169,4 +169,19 @@ public class ToolsUtil {
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM");
 		return String.valueOf(sf.format(lastMonth));
 	}
+    
+    /**
+     * 获取制定日期后几个月的日期
+     * @param date
+     * @param num
+     * @return
+     * @throws ParseException
+     */
+    public static String getDateAfterNum(DZFDate date, Integer num) throws ParseException{
+		Calendar c = Calendar.getInstance();
+		c.setTime(date.toDate());
+		c.add(Calendar.MONTH, num - 1);
+    	return dateFormat.format(c.getTime());
+    }
+    
 }
