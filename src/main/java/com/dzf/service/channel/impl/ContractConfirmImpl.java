@@ -99,11 +99,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (confVOs != null && confVOs.length > 0) {
 			UserVO uservo = null;
 			CorpVO corpvo = null;
+//			DZFDate date = new DZFDate();
 			for (ContractConfrimVO confvo : confVOs) {
-				if (confvo.getDenddate().compareTo(new DZFDate()) < 0) {
-					confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-					confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-				}
+//				if (confvo.getVendperiod().compareTo(date.getYear()+"-"+date.getStrMonth()) < 0) {
+//					confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
+//					confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
+//				}
 				if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
 					confvo.setNtotalmny(confvo.getNchangetotalmny());
 					confvo.setVendperiod(confvo.getVstopperiod());
@@ -307,8 +308,18 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(acc.ischannel,'N') = 'Y' \n");
 		sql.append("   AND nvl(con.icosttype, 0) = 0 \n") ; 
 		sql.append("   AND con.icontracttype = 2 \n");//合同类型 = 加盟商合同
-		sql.append("   AND con.vdeductstatus = ? \n");//加盟商合同状态 = 待审核
-		spm.addParam(IStatusConstant.IDEDUCTSTATUS_5);
+//		sql.append("   AND con.vdeductstatus = ? \n");//加盟商合同状态 = 待审核
+//		spm.addParam(IStatusConstant.IDEDUCTSTATUS_5);
+		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8){
+			sql.append(" AND vdeductstatus = ? \n") ;
+			sql.append(" AND vendperiod < ? ");
+			spm.addParam(paramvo.getVdeductstatus());
+			DZFDate date = new DZFDate();
+			spm.addParam(date.getYear()+"-"+date.getStrMonth());
+		}else{
+			sql.append(" AND vdeductstatus = ? \n") ;
+			spm.addParam(paramvo.getVdeductstatus());
+		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND con.dsubmitime >= ? \n") ; 
 			spm.addParam(paramvo.getBegdate() + " 00:00:00");

@@ -95,7 +95,7 @@
 						<option value="-1">全部</option>
 						<option value="5">待审核</option>
 						<option value="1">已审核</option>
-						<option value="3">已终止</option>
+						<option value="9">已终止</option>
 						<option value="10">已作废</option>
 						<option value="8">服务到期</option>
 					</select>
