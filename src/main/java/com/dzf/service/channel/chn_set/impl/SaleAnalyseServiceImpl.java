@@ -12,7 +12,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.sale.SaleAnalyseVO;
-import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
@@ -49,7 +48,8 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,SaleAnalyseVO> visitmap = qryVisitNum(qvo);//1、查询拜访数和拜访客户数
 		Map<String,Integer> signmap = qrySignNum(qvo);//2、查询签约客户数
 		Map<String,SaleAnalyseVO> nummap = qryContNum(qvo);//3、查询合同数
-		Map<String,DZFDouble> mnymap = qryContMny(qvo);//4、查询合同金额
+		Map<String,DZFDouble> chnmap = qryChnContMny(qvo);//4、查询加盟商合同金额
+		Map<String,DZFDouble> incmap = qryIncContMny(qvo);//5、查询增值服务合同金额
 		
 		List<SaleAnalyseVO> retlist = new ArrayList<SaleAnalyseVO>();
 		SaleAnalyseVO visitvo = null;
@@ -83,8 +83,15 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 					salevo.setIincrenum(numvo.getIincrenum());
 				}
 			}
-			if(mnymap != null && !mnymap.isEmpty()){
-				salevo.setContractmny(mnymap.get(pk_corp));
+			if(chnmap != null && !chnmap.isEmpty()){
+				salevo.setContractmny(chnmap.get(pk_corp));
+			}
+			if(incmap != null && !incmap.isEmpty()){
+				if(salevo.getContractmny()!=null){
+					salevo.setContractmny(salevo.getContractmny().add(chnmap.get(pk_corp)));
+				}else{
+					salevo.setContractmny(chnmap.get(pk_corp));
+				}
 			}
 			if(salevo.getIsignnum() != null && salevo.getContractmny() != null){
 				salevo.setPricemny(salevo.getContractmny().div(new DZFDouble(salevo.getIsignnum())));
@@ -216,7 +223,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	}
 	
 	/**
-	 * 查询合同金额
+	 * 查询加盟商合同金额
 	 * @param qvo
 	 * @param userid
 	 * @param deptcodelist
@@ -225,8 +232,50 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String,DZFDouble> qryContMny(SaleAnalyseVO qvo) throws DZFWarpException {
-		Map<String,DZFDouble> mnymap = new HashMap<String,DZFDouble>();
+	private Map<String,DZFDouble> qryChnContMny(SaleAnalyseVO qvo) throws DZFWarpException {
+		Map<String,DZFDouble> chnmap = new HashMap<String,DZFDouble>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT cn.pk_corp, \n") ;
+		sql.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		sql.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)))+");
+		sql.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		sql.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)))as contractmny");
+		sql.append("  FROM cn_contract cn \n") ; 
+		sql.append("  LEFT JOIN ynt_potcus s ON cn.pk_corpk = s.pk_corpk \n") ; 
+		sql.append(" WHERE nvl(cn.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
+		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
+		sql.append("   AND (cn.vdeductstatus=1 or cn.vdeductstatus=9) \n") ; 
+		sql.append(" GROUP BY t.pk_corp");
+		spm.addParam(qvo.getDenddate());
+		spm.addParam(qvo.getDbegindate());
+		spm.addParam(qvo.getDenddate());
+		spm.addParam(qvo.getDbegindate());
+		spm.addParam(qvo.getDenddate());
+		List<SaleAnalyseVO> list = (List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(SaleAnalyseVO.class));
+		if(list != null && list.size() > 0){
+			for(SaleAnalyseVO vo : list){
+				chnmap.put(vo.getPk_corp(), vo.getContractmny());
+			}
+		}
+		return chnmap;
+	}
+	
+	/**
+	 * 查询增值服务合同金额
+	 * @param qvo
+	 * @param userid
+	 * @param deptcodelist
+	 * @param userlist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String,DZFDouble> qryIncContMny(SaleAnalyseVO qvo) throws DZFWarpException {
+		Map<String,DZFDouble> incmap = new HashMap<String,DZFDouble>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT sum(t.ntotalmny) contractmny,t.pk_corp \n") ;
@@ -236,8 +285,8 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		sql.append("   AND nvl(s.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
 		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
-		sql.append("   AND t.icosttype IN (0, 1)\n") ; 
-		sql.append("   AND ( (t.vstatus = 1 AND nvl(t.icontracttype,1) = 1 ) OR ( t.vdeductstatus = 1 AND nvl(t.icontracttype,1) = 2))\n") ; 
+		sql.append("   AND t.icosttype=1 AND t.isflag = 'Y' \n") ; 
+		sql.append("   AND t.vstatus = 1 AND nvl(t.icontracttype,1) = 1 \n") ; 
 		if(qvo.getDbegindate() != null){
 			sql.append("   AND t.dbegindate >= ? \n");
 			spm.addParam(qvo.getDbegindate());
@@ -251,10 +300,10 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 				new BeanListProcessor(SaleAnalyseVO.class));
 		if(list != null && list.size() > 0){
 			for(SaleAnalyseVO vo : list){
-				mnymap.put(vo.getPk_corp(), vo.getContractmny());
+				incmap.put(vo.getPk_corp(), vo.getContractmny());
 			}
 		}
-		return mnymap;
+		return incmap;
 	}
 	
 }
