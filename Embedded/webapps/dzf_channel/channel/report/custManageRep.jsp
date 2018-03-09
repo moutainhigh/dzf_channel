@@ -10,6 +10,7 @@
 	<jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 	<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/custManageRep.js");%> charset="UTF-8" type="text/javascript"></script>
+	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .datagrid-header .datagrid-cell span {
