@@ -130,7 +130,7 @@ public class PubServiceImpl implements IPubService {
 		if (StringUtil.isEmpty(code)) {
 			return str + "0001";
 		}
-		int num = Integer.parseInt(code.substring(6));
+		int num = Integer.parseInt(code.substring(8));
 		num = num + 1;
 		String nums = String.valueOf(num);
 		switch (nums.length()) {
