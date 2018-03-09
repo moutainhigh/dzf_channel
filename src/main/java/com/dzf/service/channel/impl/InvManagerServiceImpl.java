@@ -200,7 +200,7 @@ public class InvManagerServiceImpl implements InvManagerService{
 		sql.append("select pk_corp,unitname,innercode from bd_corp ");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
         sql.append(" and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
-        if(vo.getDr()!=-1){//给渠道区域划分（省市过滤）用的
+        if(vo.getDr() != null && vo.getDr() != -1){//给渠道区域划分（省市过滤）用的
         	 sql.append(" and vprovince=? ");
         	 sp.addParam(vo.getDr());
         }
