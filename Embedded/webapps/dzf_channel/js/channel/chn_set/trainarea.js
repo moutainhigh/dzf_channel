@@ -525,7 +525,7 @@ function initCard(id){
 		}, {
 			width : '150',
 			field : 'uname',
-			title : '渠道经理',
+			title : '培训师',
 			editor : {
 				type : 'textbox',
 				options : {
