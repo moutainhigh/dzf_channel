@@ -90,9 +90,13 @@ function load() {
 		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
 				formatter : function(value, row, index) {
-						if(value == undefined)
+						if(value == undefined){
 							return;
-		  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+						}else if(value=="合计"){
+							return "合计";
+						}else{
+							return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+						}
 			}}, 
 		  	{width : '100',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){

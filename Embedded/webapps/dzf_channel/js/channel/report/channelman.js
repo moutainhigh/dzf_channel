@@ -26,9 +26,13 @@ function load() {
 		columns : [ [ 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
 				formatter : function(value, row, index) {
-						if(value == undefined)
-							return;
-		  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+					if(value == undefined){
+						return;
+					}else if(value=="合计"){
+						return "合计";
+					}else{
+						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+					}
 			}}, 
 			{width : '100',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){
