@@ -10,19 +10,20 @@ $(window).resize(function(){
 
 $(function() {
 	changeArea();
-	initArea();
-	initProvince();
+	initArea({"qtype" :3});
+	initProvince({"qtype" :3});
 	initDate();
 	load();
 	quickfiltet();
 });
 
-function initArea(){
+function initArea(queryData){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/report/manager!queryArea.action',
+		url : DZF.contextPath +  '/chn_set/chnarea!queryArea.action',
 		dataTye : 'json',
+		data : queryData,
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
@@ -59,9 +60,9 @@ function initProvince(queryData){
 function changeArea(){
 	 $("#aname").combobox({
 		onChange : function(n, o) {
-			var queryData=[];
+			var queryData={"qtype" :3};
 			if(n!='全部'){
-				queryData={'name' : n};
+				queryData={'aname' : n,"qtype" :3};
 				$('#ovince').combobox('setValue',null);
 			}
 			initProvince(queryData);
@@ -77,10 +78,7 @@ function initDate(){
 function load() {
 	var bdate=$("#bdate").datebox('getValue');
 	var edate=$("#edate").datebox('getValue')
-	var queryData={
-			"bdate" : bdate,
-			"edate" : edate,
-		};
+	var queryData={"bdate" : bdate,"edate" : edate,};
 	var aname=$("#aname").combobox('getValue');
 	var aid=$("#aname").combobox('getText');
 	if(!isEmpty(aname)&&!isEmpty(aid)&&aid!='全部'){
