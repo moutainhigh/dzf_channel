@@ -565,7 +565,7 @@ function onAudit(){
 					if(isEmpty($("#apprnote").val())){
 						Public.tips({
 							content : '驳回修改说明不能为空',
-							type : 2
+							type : 1
 						});			
 						return;
 					}

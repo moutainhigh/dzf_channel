@@ -44,7 +44,7 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 					data.getIstatus() != IStatusConstant.IREBATESTATUS_2) {
 				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待审批态");
 			}
-			if (StringUtil.isEmpty(data.getVconfirmnote())) {
+			if (StringUtil.isEmpty(data.getVapprovenote())) {
 				throw new BusinessException("驳回说明不能为空");
 			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_4);
