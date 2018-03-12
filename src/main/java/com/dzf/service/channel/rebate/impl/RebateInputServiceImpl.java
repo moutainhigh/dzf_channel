@@ -377,8 +377,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 
 	@Override
 	public void delete(RebateVO data) throws DZFWarpException {
-		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.IREBATESTATUS_0){
-			throw new BusinessException("返点单："+data.getVbillcode()+"状态不为待提交，不能删除");
+		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.IREBATESTATUS_0
+				&& data.getIstatus() != IStatusConstant.IREBATESTATUS_4){
+			throw new BusinessException("返点单："+data.getVbillcode()+"状态不为待提交或已驳回，不能删除");
 		}
 		String errmsg = checkData(data);
 		if(!StringUtil.isEmpty(errmsg)){

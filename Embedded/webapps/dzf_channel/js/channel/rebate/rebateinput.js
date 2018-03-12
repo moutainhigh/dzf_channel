@@ -841,9 +841,9 @@ function onEditSave(){
  */
 function onDelete(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.istatus != 0) {
+	if (row.istatus != 0 && row.istatus != 4) {
 		Public.tips({
-			content : '该记录不是待提交状态，不允许删除',
+			content : '该记录状态不为待提交或已驳回，不允许删除',
 			type : 2
 		});
 		return;
