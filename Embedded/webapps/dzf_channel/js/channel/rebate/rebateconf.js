@@ -466,7 +466,7 @@ function showAuditDlg(row){
 				$('#auditDlg').dialog({
 					modal:true
 				});//设置dig属性
-				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单查看');
+				$('#auditDlg').dialog('open').dialog('center').dialog('setTitle','返点单确认');
 				var row = rs.rows;
 				$('#auditForm').form('clear');
 				$('#auditForm').form('load', row);
