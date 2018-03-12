@@ -17,6 +17,7 @@ function initQryData(){
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
 	$("#jqj").html(qyear+"-"+qjd);
+	$("#qjd").combobox("setValue", null);
 }
 
 /**
@@ -362,9 +363,10 @@ function clearParams(){
 function reloadData(){
 	url = contextPath + '/rebate/rebateinput!query.action';
 	$('#grid').datagrid('options').url = url;
+	var season =  isEmpty($("#qjd").combobox("getValue")) ? -1 : $("#qjd").combobox("getValue");
 	$('#grid').datagrid('load', {
 		'year' : $("#qyear").combobox("getValue"),
-		'season' : $("#qjd").combobox("getValue"),
+		'season' : season,
 		'destatus' : $("#qstatus").combobox("getValue"),
 		'uid' : $("#managerid").val(),
 		'cpid' : $("#qcorpid").val(),

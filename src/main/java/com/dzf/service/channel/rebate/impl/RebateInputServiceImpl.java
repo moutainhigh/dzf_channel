@@ -183,7 +183,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				sql.append("   AND vyear = ? \n") ; 
 				spm.addParam(paramvo.getVyear());
 			}
-			if(paramvo.getIseason() != null){
+			if(paramvo.getIseason() != null && paramvo.getIseason() != -1){
 				sql.append("   AND iseason = ? \n") ; 
 				spm.addParam(paramvo.getIseason());
 			}
