@@ -251,7 +251,7 @@ public class ManagerServiceImpl implements IManagerService {
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
 		    buf=new StringBuffer();//预存款余额
-			buf.append(" select (npaymny-nusedmny) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
+			buf.append(" select (nvl(npaymny,0)-nvl(nusedmny,0)) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
 			

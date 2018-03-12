@@ -39,7 +39,7 @@ public class ManagerVO extends SuperVO {
     private String cuserid; // 用户主键（渠道经理）
     
     @FieldAlias("cuname")
-    private String cusername; // 用户名称（渠道总经理）
+    private String cusername; // 用户名称（渠道经理）
     
 	@FieldAlias("provname")
 	public String vprovname;// 地区名称
