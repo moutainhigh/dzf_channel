@@ -1285,7 +1285,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				detvo.setNusedmny(SafeCompute.multiply(paramvo.getNretdedmny(),new DZFDouble(-1)));
 				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
 				detvo.setPk_bill(paramvo.getPk_confrim());
-				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				detvo.setVmemo(vmemo);
 				detvo.setCoperatorid(cuserid);
 				detvo.setDoperatedate(new DZFDate());
 				detvo.setDr(0);
@@ -1307,7 +1307,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				detvo.setNusedmny(SafeCompute.multiply(paramvo.getNretrebmny(),new DZFDouble(-1)));
 				detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);//返点款
 				detvo.setPk_bill(paramvo.getPk_confrim());
-				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				detvo.setVmemo(vmemo);
 				detvo.setCoperatorid(cuserid);
 				detvo.setDoperatedate(new DZFDate());
 				detvo.setDr(0);
