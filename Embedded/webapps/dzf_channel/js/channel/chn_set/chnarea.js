@@ -382,8 +382,7 @@ function initChnUser(){
 			handler : function() {
 				var row = $('#userTable').datagrid('getSelected');
 				if(row){
-					dClickCompany(row);
-//					selectChnUser(row);
+					selectChnUser(row);
 				}else{
 					Public.tips({
 						content : "请选择需要处理的数据",
