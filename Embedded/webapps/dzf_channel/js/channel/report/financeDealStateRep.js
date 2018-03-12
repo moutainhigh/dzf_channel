@@ -71,6 +71,7 @@ function load(){
 			            { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
 			            { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'},
 		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
+		                { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left'}, 
 		]],
 		columns : [ 
 		            [ 

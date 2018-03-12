@@ -25,7 +25,10 @@ public class CustManageRepVO extends SuperVO{
 	private String vprovince;//省份
 	
 	@FieldAlias("cuid")
-    private String cuserid; // 用户主键（渠道经理）
+    private String cuserid; // 用户主键（培训师）
+	
+    @FieldAlias("cuname")
+    private String cusername; // 用户名称（培训师）
 	
 	@FieldAlias("pid")
 	private String pk_corp;//会计公司主键
@@ -201,6 +204,14 @@ public class CustManageRepVO extends SuperVO{
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getCusername() {
+		return cusername;
+	}
+
+	public void setCusername(String cusername) {
+		this.cusername = cusername;
 	}
 
 	public String getInnercode() {
