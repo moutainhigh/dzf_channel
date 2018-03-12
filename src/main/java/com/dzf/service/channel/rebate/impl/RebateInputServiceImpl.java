@@ -188,8 +188,19 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				spm.addParam(paramvo.getIseason());
 			}
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-				sql.append("   AND istatus = ? \n") ; 
-				spm.addParam(paramvo.getVdeductstatus());
+				if(paramvo.getVdeductstatus() == -2){
+					sql.append("   AND istatus in (?,?,?) \n") ;
+					spm.addParam(IStatusConstant.IREBATESTATUS_1);
+					spm.addParam(IStatusConstant.IREBATESTATUS_2);
+					spm.addParam(IStatusConstant.IREBATESTATUS_3);
+				}else if(paramvo.getVdeductstatus() == -3){
+					sql.append("   AND istatus in (?,?) \n") ;
+					spm.addParam(IStatusConstant.IREBATESTATUS_2);
+					spm.addParam(IStatusConstant.IREBATESTATUS_3);
+				}else{
+					sql.append("   AND istatus = ? \n") ; 
+					spm.addParam(paramvo.getVdeductstatus());
+				}
 			}
 			if(!StringUtil.isEmpty(paramvo.getCuserid())){
 				String[] corps = pubser.getManagerCorp(paramvo.getCuserid());

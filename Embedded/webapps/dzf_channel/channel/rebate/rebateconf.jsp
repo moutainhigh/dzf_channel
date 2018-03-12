@@ -292,6 +292,7 @@
 				<!-- 状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：待确认驳回；5：待审批驳回； -->
 				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					style="width:100px;height:28px;">
+					<option value="-2">全部</option>
 					<option value="1">待确认</option>
 					<option value="2">待审批</option>
 					<option value="3">审批通过</option>
