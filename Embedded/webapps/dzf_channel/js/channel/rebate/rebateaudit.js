@@ -466,7 +466,7 @@ function showAuditDlg(row){
 				var row = rs.rows;
 				$('#auditForm').form('clear');
 				$('#auditForm').form('load', row);
-				$('#confnote').textbox('setValue',null);
+				$('#apprnote').textbox('setValue',null);
 				$('#commitForm').form('clear');
 				$('#crebid').val(row.rebid);
 				$('#ctstp').val(row.tstp);
@@ -560,7 +560,7 @@ function onAudit(){
 				return;
 			}else{
 				if(confstatus == "1"){
-					if(isEmpty($("#confnote").val())){
+					if(isEmpty($("#apprnote").val())){
 						Public.tips({
 							content : '驳回修改说明不能为空',
 							type : 2
