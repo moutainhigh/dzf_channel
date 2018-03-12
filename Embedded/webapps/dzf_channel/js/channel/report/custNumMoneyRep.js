@@ -72,11 +72,12 @@ function load(){
 		                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
 		                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'}, 
 		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
+		                { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left'}, 
 		]],
 		columns : [ 
 		            [ 
-		             { field : 'stockcust', title : '存量客户数量', halign:'center',align:'center',colspan:2},
-		             { field : 'stockcont', title : '存量客户合同金额', halign:'center',align:'center',colspan:2},
+		             { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
+		             { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
 		             { field : 'newcust', title : '新增客户数量', halign:'center',align:'center',colspan:2},
 		             { field : 'newcont', title : '新增客户合同金额', halign:'center',align:'center',colspan:2},
 		             { field : 'renewcust', title : '续费客户数量', halign:'center',align:'center',colspan:2},

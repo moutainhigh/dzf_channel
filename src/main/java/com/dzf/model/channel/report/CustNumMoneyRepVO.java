@@ -30,7 +30,10 @@ public class CustNumMoneyRepVO extends SuperVO {
 	private String vprovince;//省份
 	
 	@FieldAlias("cuid")
-    private String cuserid; // 用户主键（渠道经理）
+    private String cuserid; // 用户主键（培训师）
+	
+    @FieldAlias("cuname")
+    private String cusername; // 用户名称（培训师）
 	
 	@FieldAlias("pid")
 	private String pk_corp;//会计公司主键
@@ -39,16 +42,16 @@ public class CustNumMoneyRepVO extends SuperVO {
 	private String vcorpname;//加盟商名称
 	
 	@FieldAlias("stockcusts")
-	private Integer istockcustsmall;//存量客户-小规模
+	private Integer istockcustsmall;//客户-小规模
 	
 	@FieldAlias("stockcustt")
-	private Integer istockcusttaxpay;//存量客户-一般纳税人
+	private Integer istockcusttaxpay;//客户-一般纳税人
 	
 	@FieldAlias("stockconts")
-	private DZFDouble istockcontsmall;//存量客户合同-小规模
+	private DZFDouble istockcontsmall;//客户合同-小规模
 	
 	@FieldAlias("stockcontt")
-	private DZFDouble istockconttaxpay;//存量客户合同-一般纳税人
+	private DZFDouble istockconttaxpay;//客户合同-一般纳税人
 	
 	@FieldAlias("newcusts")
 	private Integer inewcustsmall;//新增客户-小规模
@@ -161,6 +164,14 @@ public class CustNumMoneyRepVO extends SuperVO {
 
 	public DZFDouble getIlastnewconttaxpay() {
 		return ilastnewconttaxpay;
+	}
+
+	public String getCusername() {
+		return cusername;
+	}
+
+	public void setCusername(String cusername) {
+		this.cusername = cusername;
 	}
 
 	public void setIlastnewconttaxpay(DZFDouble ilastnewconttaxpay) {

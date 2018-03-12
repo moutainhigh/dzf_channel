@@ -40,7 +40,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		HashMap<String, CustNumMoneyRepVO> map = queryCorps(paramvo, corplist);
 		
 		if(corplist != null && corplist.size() > 0){
-			//1.1、查询存量客户数量、合同金额
+			//1.1、查询客户数量、合同金额
 			Map<String,CustCountVO> stockmap = queryStockNumMny(paramvo, corplist);
 			//1.2、查询新增客户数量、合同金额
 			Map<String, CustCountVO> newmap = queryNumMnyByType(paramvo, corplist, 1);
@@ -192,8 +192,9 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("       (SELECT f.pk_corp \n") ; 
 		sql.append("          FROM ynt_franchisee f \n") ; 
 		sql.append("         WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("           AND NVL(t.isncust, 'N') = 'Y') cu \n") ; 
+//		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+//		sql.append("           AND NVL(t.isncust, 'N') = 'Y') cu \n") ; 
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y')) cu \n");
 		sql.append(" GROUP BY pk_corp, chargedeptname");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(CustCountVO.class));
 		if(list != null && list.size() > 0){
@@ -250,7 +251,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		spm.addParam(paramvo.getPeriod());
 //		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n");
 		sql.append("           AND t.vdeductstatus in ( 1 , 3) \n");//合同状态 = 已审核 或已终止
-		sql.append("           AND NVL(t.isncust, 'N') = 'N'\n");
+//		sql.append("           AND NVL(t.isncust, 'N') = 'N'\n");
 		if (qrytype == 1) {// 新增客户
 			sql.append("           AND t.pk_corpk NOT IN \n");
 		} else if (qrytype == 2) {// 续费客户
