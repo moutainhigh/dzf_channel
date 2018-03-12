@@ -284,7 +284,7 @@ function openFullViewDlg (content,title) {
 	$("#fullViewContent").html(content);
 	$("#fullViewDlg").dialog({
 		width:$(window).width()-100,
-		height:$(window).height(),
+		height:$(window).height()-50,
 		closable:true,
 		title: title,
 		modal:true,
