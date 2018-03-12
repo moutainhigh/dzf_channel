@@ -469,6 +469,7 @@
 						<input id="ssubmitime" name="submitime" type="hidden">
 						<input id="sisncust" name="isncust" type="hidden">
 						<input id="sedate" name="edate" type="hidden">
+						<input id="sbdate" name="bdate" type="hidden">
 						
 						<input id="sndemny" name="ndemny" type="hidden"><!-- 预付款扣款金额 -->
 						<input id="snderebmny" name="nderebmny" type="hidden"><!-- 返点款扣款金额 -->

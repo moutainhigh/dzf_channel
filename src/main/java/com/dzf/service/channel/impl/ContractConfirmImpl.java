@@ -1047,7 +1047,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny", "ideductpropor" };
 		singleObjectBO.update(paramvo, str);
 		
-		// 7.1、更新原合同主表数据
+		// 7.1、更新原合同主表数据的合同结束日期、合同结束期间、合同周期、合同总金额
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("update ynt_contract \n") ;
@@ -1070,13 +1070,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 			DZFDate denddate = null;
 			String vendperiod = "";
 			try {
-				String venddate = ToolsUtil.getDateAfterNum(paramvo.getDenddate(), changenum);
+				String venddate = ToolsUtil.getDateAfterNum(paramvo.getDbegindate(), changenum);
 				if(!StringUtil.isEmpty(venddate)){
 					denddate = new DZFDate(venddate);
 					vendperiod = denddate.getYear() + "-" + denddate.getStrMonth();
 					sql.append(" , denddate = ? , vendperiod = ? \n") ;
 					spm.addParam(denddate);
 					spm.addParam(vendperiod);
+					paramvo.setDenddate(denddate);
+					paramvo.setVendperiod(vendperiod);
 				}
 			} catch (ParseException e) {
 				throw new BusinessException("获取变更后结束日期失败");
@@ -1089,17 +1091,34 @@ public class ContractConfirmImpl implements IContractConfirm {
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
-		//7.2、如果是合同终止，更新合同子表“代理记账”的应收金额
+		//7.2、如果是合同终止，更新合同子表“代理记账费”的应收金额、未收金额、应收期间；更新合同子表“ 账本费”的应收期间
 		if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
+			//7.2.1 代理记账费
+			String vreceivmonth = paramvo.getVbeginperiod() + "至" + paramvo.getVendperiod();
 			sql = new StringBuffer();
 			spm = new SQLParameter();
 			sql.append("UPDATE ynt_contract_b \n") ;
-			sql.append("   SET nreceivemny = ? \n") ; 
+			sql.append("   SET nreceivemny = ? , wsreceivemny = ? , vreceivmonth = ? \n") ; 
 			sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
 			sql.append("   AND pk_corp = ? \n") ; 
 			sql.append("   AND pk_contract = ? \n") ; 
 			sql.append("   AND icosttype = 1 \n");
 			spm.addParam(SafeCompute.sub(paramvo.getNchangetotalmny(), paramvo.getNbookmny()));
+			spm.addParam(SafeCompute.sub(paramvo.getNchangetotalmny(), paramvo.getNbookmny()));
+			spm.addParam(vreceivmonth);
+			spm.addParam(paramvo.getPk_corp());
+			spm.addParam(paramvo.getPk_contract());
+			singleObjectBO.executeUpdate(sql.toString(), spm);
+			//7.2.1 账本费
+			sql = new StringBuffer();
+			spm = new SQLParameter();
+			sql.append("UPDATE ynt_contract_b \n") ;
+			sql.append("   SET vreceivmonth = ? \n") ; 
+			sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+			sql.append("   AND pk_corp = ? \n") ; 
+			sql.append("   AND pk_contract = ? \n") ; 
+			sql.append("   AND icosttype = 0 \n");
+			spm.addParam(vreceivmonth);
 			spm.addParam(paramvo.getPk_corp());
 			spm.addParam(paramvo.getPk_contract());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
