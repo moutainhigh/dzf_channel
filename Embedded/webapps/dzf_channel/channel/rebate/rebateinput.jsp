@@ -115,12 +115,12 @@
 						<div style="width:24%;display: inline-block">
 							<label style="width:80px;text-align: right;">返点基数:</label>
 							<input id="basemny" name="basemny" class="easyui-numberbox" style="width:120px;height:26px;"
-								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
 						<div style="width:24%;display: inline-block">
 							<label style="width:80px;text-align: right;">返点金额:</label>
 							<input id="rebatemny" name="rebatemny" class="easyui-numberbox" style="width:120px;height:26px;" 
-								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>
 					<div class="time_col time_colp11">

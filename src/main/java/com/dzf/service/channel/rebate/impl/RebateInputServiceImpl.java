@@ -14,6 +14,7 @@ import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -253,25 +254,27 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	public void checkRebateMny(RebateVO vo) throws DZFWarpException {
-		String errmsg = "";
+		if(CommonUtil.getDZFDouble(vo.getNbasemny()).compareTo(DZFDouble.ZERO_DBL) == 0){
+			throw new BusinessException("返点基数必须大于0");
+		}
+		if(CommonUtil.getDZFDouble(vo.getNrebatemny()).compareTo(DZFDouble.ZERO_DBL) == 0){
+			throw new BusinessException("返点金额必须大于0");
+		}
 		RebateVO mnyvo = queryDebateMny(vo);
 		if(mnyvo != null){
 			if(vo.getNdebitmny() != null && vo.getNdebitmny().compareTo(mnyvo.getNdebitmny()) != 0){
-				errmsg = "扣款金额计算错误";
+				throw new BusinessException("扣款金额计算错误");
 			}
 			if(vo.getNdebitmny() != null && vo.getNbasemny() != null 
 					&& vo.getNbasemny().compareTo(vo.getNdebitmny()) > 0){
-				errmsg = "返点基数不能大于扣款金额";
+				throw new BusinessException("返点基数不能大于扣款金额");
 			}
 			if(vo.getNbasemny() != null && vo.getNrebatemny() != null
 					&& vo.getNrebatemny().compareTo(vo.getNbasemny()) > 0){
-				errmsg = "返点金额不能大于返点基数";
+				throw new BusinessException("返点金额不能大于返点基数");
 			}
 		}else{
-			errmsg = "扣款金额计算错误";
-		}
-		if(!StringUtil.isEmpty(errmsg)){
-			throw new BusinessException(errmsg);
+			throw new BusinessException("扣款金额计算错误");
 		}
 	}
 	
