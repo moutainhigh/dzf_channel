@@ -138,6 +138,7 @@
 		      		var params = new Object();
 		      		//params["corpname"] = filtername;
 		      		params["corpcode"] = filtername;
+		      		params["dr"] = ovince;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 
