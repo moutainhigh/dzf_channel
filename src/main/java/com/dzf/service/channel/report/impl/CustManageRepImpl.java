@@ -197,10 +197,10 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("               p.pk_corp,\n") ; 
 		sql.append("               p.chargedeptname,\n") ; 
 		sql.append("               (case \n") ; 
-		sql.append("                 when length(trade.tradecode) = 4 then \n") ; 
-		sql.append("                  substr(trade.tradecode, 0, 2)\n") ; 
-		sql.append("                 else \n") ; 
+		sql.append("                 when instr(trade.tradecode, 'Z') > 0 then \n") ; 
 		sql.append("                  trade.tradecode \n") ; 
+		sql.append("                 else \n") ; 
+		sql.append("                  substr(trade.tradecode, 0, 2) \n") ; 
 		sql.append("               end) industrycode \n") ; 
 		sql.append("          FROM bd_corp p \n") ; 
 		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 
@@ -256,10 +256,10 @@ public class CustManageRepImpl implements ICustManageRep {
 		sql.append("SELECT industrycode, count(pk_corp) as num \n") ;
 		sql.append("  FROM (SELECT p.pk_corp,\n") ; 
 		sql.append("               (case \n") ; 
-		sql.append("                 when length(trade.tradecode) = 4 then \n") ; 
-		sql.append("                  substr(trade.tradecode, 0, 2)\n") ; 
-		sql.append("                 else \n") ; 
+		sql.append("                 when instr(trade.tradecode, 'Z') > 0  then \n") ; 
 		sql.append("                  trade.tradecode \n") ; 
+		sql.append("                 else \n") ; 
+		sql.append("                  substr(trade.tradecode, 0, 2)  \n") ; 
 		sql.append("               end) industrycode \n") ; 
 		sql.append("          FROM bd_corp p \n") ; 
 		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n") ; 

@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>客户行业分析</title>
+	<title>行业分析</title>
 	<jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 	<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/custManageRep.js");%> charset="UTF-8" type="text/javascript"></script>
