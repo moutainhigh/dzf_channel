@@ -42,14 +42,14 @@ public class ManagerServiceImpl implements IManagerService {
 			}
 		}
 		if(type==1){
-			vos = qryCharge(qvo.getUserid());//查询  是  省/市负责人相关的数据
+			vos = qryCharge(qvo.getUserid());							 //查询  是  省/市负责人相关的数据
 			List<ManagerVO> qryNotCharge = qryNotCharge(qvo.getUserid());//查询  非  省/市负责人相关的数据
 			if(qryNotCharge!=null && qryNotCharge.size()>0){
 				vos.addAll(qryNotCharge);
 			}
 		}else{
-			vos = qryByProvince(qvo,type);
-			List<ManagerVO> qryNotCharge =qryByCorp(qvo,type);
+			vos = qryByProvince(qvo,type);					  //查询 没有选中加盟商    且是  省/市负责人
+			List<ManagerVO> qryNotCharge =qryByCorp(qvo,type);//查询 选中加盟商的渠道经理
 			if(qryNotCharge!=null && qryNotCharge.size()>0){
 				vos.addAll(qryNotCharge);
 			}
@@ -72,7 +72,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
 	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.userid=? " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
@@ -87,7 +87,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
 	    sql.append(" and nvl(b.ischarge,'N')='N' and b.userid=? " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
@@ -102,11 +102,10 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
-	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
-	    sql.append("  group by vprovince having count(1)=0 )" );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince not in (" );
+	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' and type=1 )" );
 	    sp.addParam(IDefaultValue.DefaultGroup);
 		if (type == 2) {// 区域总经理
 			sql.append(" and a.userid=? ");
@@ -134,7 +133,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
 	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
 	    sql.append(" and b.pk_corp is not null " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
