@@ -280,6 +280,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(corps != null && corps.length > 0){
 				String where = SqlUtil.buildSqlForIn(" pk_corp", corps);
 				sql.append(" AND ").append(where);
+			}else{
+				sql.append(" AND pk_corp is null \n") ; 
 			}
 		}
 		sql.append(" order by dsubmitime desc");
@@ -359,6 +361,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(corps != null && corps.length > 0){
 				String where = SqlUtil.buildSqlForIn("con.pk_corp", corps);
 				sql.append(" AND ").append(where);
+			}else{
+				sql.append(" AND con.pk_corp is null \n") ; 
 			}
 		}
 		sql.append(" order by con.dsubmitime desc");
