@@ -16,7 +16,7 @@ $(function(){
 function initQryData(){
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
-	$("#jqj").html(qyear+"-"+qjd);
+	$("#jqj").html(qyear+"年");
 	$("#qjd").combobox("setValue", null);
 }
 
@@ -373,7 +373,7 @@ function reloadData(){
 	});
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
-	$("#jqj").html(qyear+"-"+qjd);
+	$("#jqj").html(qyear+"年-"+qjd);
 	$("#qrydialog").hide();
 }
 
@@ -407,7 +407,7 @@ function fastQry(){
             		queryParams.uid = $("#qcorpid").val();
             	}
             	queryParams.year = $("#qyear").combobox("getValue");
-        		queryParams.season = $("#qjd").combobox("getValue");
+        		queryParams.season = isEmpty($("#qjd").combobox("getValue")) ? -1 : $("#qjd").combobox("getValue");
             	queryParams.cpname = filtername;
           		grid.datagrid('options').url = contextPath + '/rebate/rebateinput!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;
@@ -423,9 +423,9 @@ function fastQry(){
  */
 function clearQryParam(queryParams){
 	queryParams.year = null;
-	queryParams.season = null;
+	queryParams.season = -1;
 	queryParams.qtype = -1;
-	queryParams.destatus = -1;
+	queryParams.destatus = -2;
 	queryParams.cpid = null;
 	queryParams.uid = null;
 }
