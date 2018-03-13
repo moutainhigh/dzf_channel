@@ -248,8 +248,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
 		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
 		sql.append("   AND (cn.vdeductstatus=1 or cn.vdeductstatus=9) \n") ; 
-		sql.append(" GROUP BY t.pk_corp");
-		spm.addParam(qvo.getDenddate());
+		sql.append(" GROUP BY cn.pk_corp");
 		spm.addParam(qvo.getDbegindate());
 		spm.addParam(qvo.getDenddate());
 		spm.addParam(qvo.getDbegindate());
