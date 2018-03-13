@@ -293,8 +293,6 @@ function initDetailGrid(){
             halign:'center',
 			field : 'propor',
 			formatter : function(value,row,index){
-				console.info(value);
-				console.info(value == 0);
 				if(value == 0){
 					return null;
 				}else{
