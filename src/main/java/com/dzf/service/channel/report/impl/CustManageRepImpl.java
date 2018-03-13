@@ -332,7 +332,7 @@ public class CustManageRepImpl implements ICustManageRep {
 		if(!flg){
 			other =qryOther(paramvo);
 		}
-		if(other!=null && other.size()>0){
+		if(vos!=null && vos.size()>0){
 			vos.addAll(other);
 		}else{
 			vos=other;
