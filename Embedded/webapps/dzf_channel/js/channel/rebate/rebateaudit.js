@@ -369,7 +369,11 @@ function reloadData(){
 	});
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
-	$("#jqj").html(qyear+"年-"+qjd);
+	if(!isEmpty(qjd)){
+		$("#jqj").html(qyear+"年-"+qjd);
+	}else{
+		$("#jqj").html(qyear+"年");
+	}
 	$("#qrydialog").hide();
 }
 

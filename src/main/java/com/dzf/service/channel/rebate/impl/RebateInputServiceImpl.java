@@ -207,6 +207,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				if(corps != null && corps.length > 0){
 					String where = SqlUtil.buildSqlForIn("pk_corp", corps);
 					sql.append(" AND ").append(where);
+				}else{
+					sql.append("   AND pk_corp is null \n") ;
 				}
 			}
 			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
