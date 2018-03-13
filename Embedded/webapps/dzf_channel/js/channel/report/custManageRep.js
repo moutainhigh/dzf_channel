@@ -62,17 +62,6 @@ function load(){
 		showFooter : true,
 		border : true,
 		remoteSort:false,
-		//冻结在 左边的列 
-		frozenColumns:[[
-//						{ field : 'ck',	checkbox : true },
-						{ field : 'pid',    title : '会计公司主键', hidden : true},
-		                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left'},
-		                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left'},
-		                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
-		                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'},
-		                { field : 'pname', title : '加盟商名称', width:230,halign:'center',align:'left'},
-		                { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left'}, 
-		]],
 		columns : columns,
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
@@ -115,7 +104,13 @@ function getArrayColumns(){
 			if (data.success) {
 				var rows = data.rows;
 				if(rows != null && rows.length > 0){
-					var columnsh = new Array(); 
+					var columnsh =[{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
+	                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',rowspan:2},
+	                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',rowspan:2},
+	                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left',rowspan:2}, 
+	                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left',rowspan:2},
+	                { field : 'pname', title : '加盟商名称', width:230,halign:'center',align:'left',rowspan:2},
+	                { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left',rowspan:2}]; 
 					var column = {};
 					column["title"] = '客户纳税人类型分层';  
 					column["field"] = 'col';  
