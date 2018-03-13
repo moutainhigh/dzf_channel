@@ -292,10 +292,15 @@ function initDetailGrid(){
 			align:'center',
             halign:'center',
 			field : 'propor',
-//			formatter : function(value,row,index){
-//				if(!isEmpty(value))
-//					return value+"%";
-//			}
+			formatter : function(value,row,index){
+				console.info(value);
+				console.info(value == 0);
+				if(value == 0){
+					return null;
+				}else{
+					return value;
+				}
+			}
 		},{
 			width : '120',
 			title : '付款金额',

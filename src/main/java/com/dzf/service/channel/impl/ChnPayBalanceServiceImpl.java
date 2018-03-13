@@ -203,7 +203,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(decode(ipaytype, 1, nvl(npaymny,0), 0)) AS bail, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0) ,3 , nvl(npaymny,0),0)) AS npaymny, \n") ; 
 		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0),3 , nvl(nusedmny,0),0)) AS nusedmny, \n") ; 
-		sql.append("       MIN(ideductpropor) AS ideductpropor \n") ; 
+		sql.append("       MIN(CASE ideductpropor WHEN 0 THEN NULL ELSE ideductpropor END) AS ideductpropor \n") ; 
 		sql.append("  FROM cn_detail \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
