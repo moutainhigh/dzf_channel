@@ -139,10 +139,11 @@ function edit(id,style) {
     			$('#cardDialog').dialog({
     				modal:true,
     			});
-    			$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域');
     			if(status=="brows"){
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域');
     				setItemEdit(true);
     			}else{
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域修改');
     				setItemEdit(false);
     			}
     			$('#chnarea').form("clear");

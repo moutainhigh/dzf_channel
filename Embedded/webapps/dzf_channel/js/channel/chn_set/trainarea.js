@@ -102,7 +102,7 @@ function add(){
     $('#cardDialog').dialog({
 		modal:true,
 	});
-    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训渠道区域划分');
+    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训区域划分');
     status="add";
     setItemEdit(false);
     $('#chnarea').form("clear");
@@ -138,10 +138,11 @@ function edit(id,style) {
     			$('#cardDialog').dialog({
     				modal:true,
     			});
-    			$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训区域');
     			if(status=="brows"){
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训区域');
     				setItemEdit(true);
     			}else{
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','培训区域修改');
     				setItemEdit(false);
     			}
     			$('#chnarea').form("clear");
@@ -381,8 +382,7 @@ function initChnUser(){
 			handler : function() {
 				var row = $('#userTable').datagrid('getSelected');
 				if(row){
-					dClickCompany(row);
-//					selectChnUser(row);
+					selectChnUser(row);
 				}else{
 					Public.tips({
 						content : "请选择需要处理的数据",
