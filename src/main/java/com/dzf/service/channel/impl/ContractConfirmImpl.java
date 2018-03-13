@@ -1355,10 +1355,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				qsql, spm);
 		if (confVOs != null && confVOs.length > 0) {
 			confvo = confVOs[0];
-			if (confvo.getDenddate().compareTo(new DZFDate()) < 0) {
-//				confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-				confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-			}
+//			if (confvo.getDenddate().compareTo(new DZFDate()) < 0) {
+////				confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
+//				confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
+//			}
 			if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
 				confvo.setNtotalmny(confvo.getNchangetotalmny());
 				confvo.setVendperiod(confvo.getVstopperiod());
