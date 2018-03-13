@@ -63,19 +63,15 @@ function load(){
 		showFooter : true,
 		border : true,
 		remoteSort:false,
-		//冻结在 左边的列 
-		frozenColumns:[[
-//						{ field : 'ck',	checkbox : true },
-						{ field : 'pid',    title : '会计公司主键', hidden : true},
-		                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left'},
-		                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left'},
-		                { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left'}, 
-		                { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left'}, 
-		                { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left'},
-		                { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left'}, 
-		]],
 		columns : [ 
 		            [ 
+					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
+		            { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',rowspan:2},
+		            { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',rowspan:2},
+		            { field : 'provin',  title : '省份', width : 160,halign:'center',align:'left',rowspan:2}, 
+		            { field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left',rowspan:2},
+		            { field : 'pname', title : '加盟商名称', width:260,halign:'center',align:'left',rowspan:2},
+		            { field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left',rowspan:2},
 		             { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
 		             { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
 		             { field : 'newcust', title : '新增客户数量', halign:'center',align:'center',colspan:2},

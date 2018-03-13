@@ -69,6 +69,10 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 				if(uservo!=null){
 					retvo.setUsername(uservo.getUser_name());
 				}
+				uservo=UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
+				if(uservo!=null){
+					retvo.setCusername(uservo.getUser_name());
+				}
 				//2.1 存量客户数量、合同金额赋值：
 				if(stockmap != null && !stockmap.isEmpty()){
 					custvo = stockmap.get(pk_corp+"一般纳税人");
@@ -491,7 +495,8 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 	    List<CustNumMoneyRepVO> vos =(List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustNumMoneyRepVO.class));
 		return vos;
 	}
-	//查询  负责公司为空的培训负责人，且该地区没有其它培训师负责
+	
+	//查询 培训负责人
 	private List<CustNumMoneyRepVO> qryOther(QryParamVO paramvo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
@@ -499,12 +504,11 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince in (" );
-	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' " );
-	    sql.append("  group by vprovince having count(1)=0 )" );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and b.type=2 " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
-		sql.append("  and b.userid=? ");
+	    sql.append("  and (a.userid=? or b.userid=?)");
+		sp.addParam(paramvo.getUser_name());
 		sp.addParam(paramvo.getUser_name());
 		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区

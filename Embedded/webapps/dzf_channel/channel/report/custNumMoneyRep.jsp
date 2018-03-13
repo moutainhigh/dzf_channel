@@ -62,7 +62,7 @@
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width:70px;">渠道经理：</label> 
+					<label style="text-align:right;width:70px;">培训师：</label> 
 					<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:80" editable="false" />  
 				</div>
