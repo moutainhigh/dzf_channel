@@ -11,7 +11,6 @@ import com.dzf.action.sys.sys_set.PinyinUtil;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -46,14 +45,14 @@ public class CorpQueryServiceImpl implements ICorpQueryService {
 			if (vos != null && vos.size() > 0) {
 				CorpVO[] cvos = vos.toArray(new CorpVO[0]);
 				List<CorpVO> list = new ArrayList<>();
-				String enf_name = null;
+//				String enf_name = null;
 				String en_name = null;
 				String unitname = null;
 				for (CorpVO cvo : cvos) {
 					unitname = cvo.getUnitname();
 					if (!StringUtil.isEmpty(unitname)) {
 						en_name = PinyinUtil.getFullSpell(unitname);
-						enf_name = PinyinUtil.getFirstSpell(unitname);
+//						enf_name = PinyinUtil.getFirstSpell(unitname);
 					}
 //					if (unitname.contains(corpname) || en_name.contains(corpname) || enf_name.contains(corpname)) {
 //						list.add(cvo);
@@ -165,159 +164,15 @@ public class CorpQueryServiceImpl implements ICorpQueryService {
 	private String getQuerySql(QueryParamVO queryvo, UserVO uservo) {
 		// 根据查询条件查询公司的信息
 		StringBuffer corpsql = new StringBuffer();
-		corpsql.append("select ");
-		corpsql.append(" a.begindate        ,");
-		corpsql.append(" a.briefintro       ,");
-		corpsql.append(" a.busibegindate    ,");
-		corpsql.append(" a.busienddate      ,");
-		corpsql.append(" a.chargedeptcode   ,");
-		corpsql.append(" a.chargedeptname   ,");
-		corpsql.append(" a.citycounty       ,");
-		corpsql.append(" a.corptype         ,");
-		corpsql.append(" a.countryarea      ,");
-		corpsql.append(" a.createdate       ,");
-		corpsql.append(" a.def10,a.def11,a.def12,a.def13,");
-		corpsql.append(" a.def14, a.def15, a.def16 ,a.def17,");
-		corpsql.append(" a.def18, a.def19,a.def20, ");
-		corpsql.append(" a.def4, a.def5, a.def6, a.def7, a.def8, a.def9,");
-		corpsql.append(" a.dr               ,");
-		corpsql.append(" a.ecotype          ,");
-		corpsql.append(" a.email1, a.email2,a.email3,");
-		corpsql.append(" a.enddate          ,");
-		corpsql.append(" a.fathercorp       ,");
-		corpsql.append(" a.fax1             ,");
-		corpsql.append(" a.fax2             ,");
-		corpsql.append(" a.holdflag         ,");
-		corpsql.append(" a.idnumber         ,");
-		corpsql.append(" a.industry         ,");
-		corpsql.append(" a.innercode        ,");
-		corpsql.append(" a.ishasaccount     ,");
-		corpsql.append(" a.isseal           ,");
-		corpsql.append(" a.isuseretail      ,");
-		corpsql.append(" a.isworkingunit    ,");
-		corpsql.append(" a.legalbodycode    ,");
-		corpsql.append(" a.linkman1, a.linkman2, a.linkman3,");
-		corpsql.append(" a.maxinnercode     ,");
-		corpsql.append(" a.memo             ,");
-		corpsql.append(" a.ownersharerate   ,");
-		corpsql.append(" a.phone1, a.phone2, a.phone3,");
-		corpsql.append(" a.pk_corp          ,");
-		corpsql.append(" a.pk_corpkind      ,");
-		corpsql.append(" a.pk_currency      ,");
-		corpsql.append(" a.postaddr         ,");
-		corpsql.append(" a.province         ,");
-		corpsql.append(" a.regcapital       ,");
-		corpsql.append(" a.region           ,");
-		corpsql.append(" a.saleaddr         ,");
-		corpsql.append(" a.sealeddate       ,");
-		corpsql.append(" a.showorder        ,");
-		corpsql.append(" a.taxcode          ,");
-		corpsql.append(" a.taxpayertype     ,");
-		corpsql.append(" a.unitcode         ,");
-		corpsql.append(" a.unitdistinction  ,");
-		corpsql.append(" a.unitname         ,");
-		corpsql.append(" a.unitshortname    ,");
-		corpsql.append(" a.url              ,");
-		corpsql.append(" a.zipcode          ,");
-		corpsql.append(" a.isaccountcorp    ,");
-		corpsql.append(" a.isdatacorp       ,");
-		corpsql.append(" a.bbuildic         ,");
-		corpsql.append(" a.icostforwardstyle,");
-		corpsql.append(" a.iscurr           ,");
-		corpsql.append(" a.icbegindate      ,");
-		corpsql.append(" a.ts               ,");
-		corpsql.append(" a.vcorporationid	,");
-		corpsql.append(" a.ispersonal		,");
-		corpsql.append(" a.vorgcode			,");
-		corpsql.append(" a.vbusilicode		,");
-		corpsql.append(" a.dlicexpdate		,");
-		corpsql.append(" a.vaccountopen		,");
-		corpsql.append(" a.vcompcode		,");
-		corpsql.append(" a.dcompdate		,");
-		corpsql.append(" a.vsoccrecode		,");
-		corpsql.append(" a.vbankname		,");
-		corpsql.append(" a.vbankcode		,");
-		corpsql.append(" a.vbankaddr		,");
-		corpsql.append(" a.vbankpos			,");
-		corpsql.append(" a.vbusitype		,");
-		corpsql.append(" a.vfilecode		,");
-		corpsql.append(" a.vprovince		,");
-		corpsql.append(" a.vcity			,");
-		corpsql.append(" a.varea			,");
-		corpsql.append(" a.vcustsource		,");
-		corpsql.append(" a.vsourcenote		,");
-		corpsql.append(" a.vcustmainbusi	,");
-		corpsql.append(" a.vrespaccount		,");
-		corpsql.append(" a.vresptel			,");
-		corpsql.append(" a.vcustothertel	,");
-		corpsql.append(" a.vstatetaxplace	,");
-		corpsql.append(" a.vstatetaxaddr	,");
-		corpsql.append(" a.vstatetaxper		,");
-		corpsql.append(" a.vstatetaxpertel	,");
-		corpsql.append(" a.vstatetaxpwd		,");
-		corpsql.append(" a.dstatetaxdate	,");
-		corpsql.append(" a.vlocaltaxcode	,");
-		corpsql.append(" a.vlocaltaxplace	,");
-		corpsql.append(" a.vlocaltaxper		,");
-		corpsql.append(" a.vlocaltaxpertel	,");
-		corpsql.append(" a.vlocaltaxaddr	,");
-		corpsql.append(" a.vlocaltaxpwd		,");
-
-		corpsql.append(" a.vcorporatetax	,");
-		corpsql.append(" a.vtaxtype			,");
-		corpsql.append(" a.vtaxcode			,");
-		// 个税密码
-		corpsql.append(" a.vpersonalpwd	    ,");
-		// UKEY到期日
-		corpsql.append(" a.dukeydate	    ,");
-
-		// WJX 申报方式、征收方式、金税盘编号、税收优惠额度
-		corpsql.append(" a.taxreporttype	    ,");
-		corpsql.append(" a.taxlevytype	    ,");
-		corpsql.append(" a.golddiskno	    ,");
-		corpsql.append(" a.taxfeeamount	    ,");
-
-		corpsql.append(" a.vgenvohtype		,");
-		corpsql.append(" a.vsuperaccount	,");
-		corpsql.append(" a.vwqaccount		,");
-		corpsql.append(" a.destablishdate	,");
-		corpsql.append(" a.isukey			,");
-		corpsql.append(" a.pk_source		,");
-		corpsql.append(" a.iskwxjr  		,");
-		corpsql.append(" a.lastmodifytime   ,");
-		corpsql.append(" a.industrycode   ,");// 行业代码
-		corpsql.append(" a.taxcontrmachtype   ,");// 税控器具类型
-
-		corpsql.append(" a.isdkfp   ,");// 代开发票
-		corpsql.append(" a.isdbbx   ,");// 代办保险
-		corpsql.append(" a.isxrq   ,");// 一般纳税人生效日期
-		corpsql.append(" a.drdsj   ,");// 认定时间
-		corpsql.append(" a.isywskp   ,");// 有无税控盘
-		corpsql.append(" a.ifwgs   ,");// 房屋归属
-		corpsql.append(" a.isdsbsjg   ,");// 所得税报送机关
-		corpsql.append(" a.ikjzc   ,");// 会计政策
-		corpsql.append(" a.drzsj   ,");// 认证时间
-		corpsql.append(" a.vschlnd   ,");// 首次获利年度
-		corpsql.append(" a.vyhzc   ,");// 公司可享受的优惠政策
-		corpsql.append(" a.rembday		,"); // 提醒开始日期
-		corpsql.append(" a.remeday		,"); // 提醒截止日期
-		corpsql.append(" a.isformal        ,");// 是否正式客户
-		// corpsql.append(" b.unitname as
-		// def1,b.def3,b.def2,b.foreignname,y.accname as ctypename,t.tradename
-		// as indusname from bd_corp a ");
+		corpsql.append("select a.*, ");
 		corpsql.append(" b.unitname as def1 ,");
 		corpsql.append(" b.def3      		,");
 		corpsql.append(" b.def2     		,");
-		corpsql.append(" a.foreignname		,");
-		corpsql.append(" a.citybuildtax		,");// 撑建税
-		corpsql.append(" a.def16		,"); // 登录方式
-		corpsql.append(" a.ismaintainedtax		,"); // 是否已维护税率信息
 		corpsql.append(" y.accname as ctypename      ,");
 		corpsql.append(" t.tradename as indusname    ,");
 		corpsql.append(" u.user_name as pcountname   ,");//
 		corpsql.append(" us.user_name as wqcountname  ");//
 		corpsql.append(" from bd_corp a");
-
 		corpsql.append(" left join bd_account b on a.fathercorp = b.pk_corp");
 		corpsql.append(" left join ynt_tdaccschema y on a.corptype = y.pk_trade_accountschema");// 查询科目方案的名称
 		corpsql.append(" left join ynt_bd_trade t on a.industry = t.pk_trade");
