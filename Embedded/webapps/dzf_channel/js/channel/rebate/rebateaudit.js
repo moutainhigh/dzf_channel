@@ -551,29 +551,31 @@ function showAuditDlg(row){
  * 审核-提交
  */
 function onAudit(){
-	$.messager.confirm("提示", "确认后，返点金额即冲入加盟商的可用余额中，且不能反审批，请谨慎操作！", function(r) {
-		if (r) {
-			var confstatus = $('input:radio[name="confstatus"]:checked').val();
-			if(isEmpty(confstatus)){
-				Public.tips({
-					content : '请先选择操作方式',
-					type : 2
-				});			
-				return;
-			}else{
-				if(confstatus == "1"){
-					if(isEmpty($("#apprnote").val())){
-						Public.tips({
-							content : '驳回修改说明不能为空',
-							type : 1
-						});			
-						return;
-					}
-				}
-			}
-			onAuditCommit(confstatus);
+	var confstatus = $('input:radio[name="confstatus"]:checked').val();
+	if(isEmpty(confstatus)){
+		Public.tips({
+			content : '请先选择操作方式',
+			type : 2
+		});			
+		return;
+	}
+	if(confstatus == "1"){
+		if(isEmpty($("#apprnote").val())){
+			Public.tips({
+				content : '驳回修改说明不能为空',
+				type : 1
+			});			
+			return;
 		}
-	});
+		onAuditCommit(confstatus);
+	}else{
+		$.messager.confirm("提示", "确认后，返点金额即冲入加盟商的可用余额中，且不能反审批，请谨慎操作！", function(r) {
+			if (r) {
+				onAuditCommit(confstatus);
+			}
+		});
+	}
+	
 	
 }
 
