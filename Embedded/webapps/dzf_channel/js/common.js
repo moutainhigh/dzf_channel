@@ -3,11 +3,9 @@ var DZF = DZF || {};
 var Business = Business || {};	//业务对象
 Public.isIE6 = !window.XMLHttpRequest;
 var cur_corp_Id = '109X';
-DZF.contextPath = parent ? parent.indexContextPath : "/dzf_admin";
+DZF.contextPath = parent ? parent.indexContextPath : "/dzf_channel";
 DZF.loginCorpId="000001";
 DZF.loginCorpName="大账房";
-//管理端标志
-var sys_side = "admin_kj";
 
 DZF.pageSize_min = 20;
 DZF.pageList_min = [10, 20, 30, 40,50];
@@ -23,31 +21,6 @@ $(document).ready(function (){
 	    });
 	}
 });
-function setSkin(){
-	var title = document.title;
-	if(title == "大账房会计管理登陆页"){
-		return;
-	}
-	if( parent.SYS_SKIN == undefined){
-		return;
-	}
-	var skin = parent.SYS_SKIN.skincode;
-	var hrefStr = DZF.contextPath + '/css/' + skin + '_skin.css';
-	if($("#parent-skin").length > 0){
-		$("#parent-skin").attr("href",hrefStr);
-        $("body").addClass("dzf-skin");
-	}else{
-		if($("#child-skin").length > 0){
-			$("#child-skin").attr("href",hrefStr);
-		}else{
-			$("head").append('<link id="child-skin" rel="stylesheet" href="' + hrefStr + '">');
-			$("body").addClass('dzf-skin');
-			 if(skin == "keji"){
-		        $("body").addClass("child-iframe");
-		     }
-		}
-	}
-}
 // 设置表格宽高
 Public.setGrid = function(adjust,objId) {
 	var adjust = adjust || 0;
@@ -178,107 +151,6 @@ Public.getAjax = function(url, params, callback) {
 		}
 	});
 };
-
-// Public.corpAccount = {};
-// Public.getCorpAccount = function() {
-// $.jStorage.deleteKey("corpAccount");
-// if(!Public.corpAccount || Public.corpAccount.length == 0){
-// //Public.corpAccount = $.jStorage.get("corpAccount");
-// if (!Public.corpAccount) {
-// Public.corpAccount = Public.loadCorpAccountFromServer();
-// //$.jStorage.set("corpAccount", Public.corpAccount,{TTL: 86400000});
-// }
-// }
-// return Public.corpAccount;
-// };
-
-DZF.KMList = function() {
-	var temp = getCorpAccount();
-	return temp ? temp.rows : {};
-}
-
-var my_ca = [];
-function getCorpAccount(id) {
-	//if (!my_ca)
-		//my_ca = $.jStorage.get("corpAccount");
-	if (!my_ca || !my_ca[0]) {
-		my_ca[0] = Public.loadCorpAccountFromServer();
-		
-		/*for(var i=0;i<6;i++){
-			my_ca[i + 1] = Public.loadCorpAccountFromServer(i);
-		}*/
-		//SUBJECT_DATA? SUBJECT_DATA[0] = my_ca[0] : "";
-			//JSON.stringify(Public.loadCorpAccountFromServer());
-		//var temp = JSON.stringify(my_ca[0]);
-		/*if (my_ca[0]) {
-			for (var kmType = 0; kmType < 7; kmType++) {
-				var data =JSON.parse(temp);
-				var size = data.rows.length;
-				for (var i = size - 1; i >= 0; i--) {
-					var row = data.rows[i];
-					if (row.kmlx != kmType) {
-						data.rows.splice(i, 1);
-					}
-				}
-				my_ca[kmType+1] = data;*/
-				//SUBJECT_DATA? SUBJECT_DATA[kmType+1] = data : "";
-				/*$.jStorage.set("corpAccount" + kmType, JSON.stringify(data), {
-					TTL : 86400000
-				});*/
-			//}
-		//}
-		/*$.jStorage.set("corpAccount", my_ca, {
-			TTL : 86400000
-		});*/
-	}
-	if (!id) {
-		return /*JSON.parse(my_ca);*/ my_ca[0];
-	} else {
-		return /*JSON.parse($.jStorage.get("corpAccount" + id));*/ my_ca[id];
-	}
-}
-
-var my_curr;
-function getBdCurrency(){
-	//从缓存取一次
-//	if(!my_curr){
-//		my_curr = $.jStorage.get("currency");
-//	}
-	//如果没有再次从action取
-	if(!my_curr){
-		my_curr = Public.loadBdCurrency();
-	}
-	
-//	$.jStorage.set("currency",my_curr,{TTl:0});//币种信息更改
-	
-	return my_curr;
-}
-
-DZF.xjllKm = {km1001:true,km1002:true,km1009:true,km1012:true};
-Public.loadCorpAccountFromServer = function(accindex) {
-	var tempVal = {},url=DZF.contextPath + '/gl/gl_cpacckmact!queryByPz.action';
-	if(!isNaN(accindex)){
-		url = url + "?accindex=" + accindex;
-	}
-	$.ajax({
-		type : 'POST',
-		url : url,
-		dataType : "json",
-		data : {
-			corp_Id : cur_corp_Id,
-			sort : 'kmbm'
-		},
-		async : false,
-		success : function(result) {
-			if (result.success) {
-				tempVal = result;
-			}
-		}
-	});
-	return tempVal;
-};
-
-
 //jQuery Cookie plugin
 $.cookie = function (key, value, options) {
     // set cookie...
@@ -310,11 +182,6 @@ $.cookie = function (key, value, options) {
     var result, decode = options.raw ? function (s) { return s; } : decodeURIComponent;
     return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
 };
-
-Public.KMList=function(){
-	var temp =  getCorpAccount();//JSON.parse(parent.input_pz_km);
-	return temp.rows;
-}
 
 /*获取URL参数值*/
 Public.getRequest = function() {
@@ -383,26 +250,6 @@ function formatForDecimal(cellvalue) {
 	valueStr = valueStr.replace(/[\r\n]/g, ""); 	//IE下去除换行符
 	return valueStr == "" ? "&nbsp;" : valueStr;
 };
-
-
-
-
-Public.loadBdCurrency = function(){
-	var tempVal={};
-	$.ajax({
-		type:'POST',
-		url:DZF.contextPath +'/sys/sys_currentact!queryCurrency.action',
-		dataTye:'json',
-		data:'',
-		async:false,
-		success:function(result){
-			if(result){
-				tempVal = result;
-			}
-		}
-	})
-	return tempVal;
-}
 
 function formatMny(value) {
 	//value = value.replace(/,/g, "");
@@ -741,37 +588,6 @@ Public.getYestoday = function(date){
 	return date;
   }
 
-/*
- * subCode:当前编码，curLev：获取代码级别
- * 返回值[上级编码,本级编码] 
- */
-function getNumberArray(subCode, curLev) {
-    var d, e = "",f = "";
-    return 1 == curLev ? f = subCode: curLev >= 2 && (d = ruleLenArray[1 * curLev - 2], f = subCode.slice(d), e = subCode.slice(0, d)), [e, f];
-}
-
-/*
- * a:编码规则，如"4/2/2/2"
- * 返回值[4，6，8，10]
- */
-function getRuleLenArr(a) {
-    for (var b = a.split("/"), c = [], d = 0, e = 0; e < b.length; e++) d += parseInt(b[e], 10),
-    c.push(d);
-    return c;
-}
-/*
- * subCode:需要验证的编码
- * 返回值：如果编码符合规则，返回编码级别（级别从1开始），如果不符合返回false
- */
-function checkRule(subCode){
-	for (codeLen = subCode.length, i = 0; i < ruleLenArray.length; i++){
-		if (level = i + 1, codeLen == ruleLenArray[i]) {
-        	return (i + 1);
-   		}
-	}
-	return !1;
-}
-
 /**
  * 根据标签名调用其他标签页面的方法
  * @param title 标签名
@@ -861,15 +677,6 @@ function reDatagridWidth (t) {
 		datagridview.find('.datagrid-view2 table').width(datagridview.find('.datagrid-view2').width());
 	}
 	
-//	if(datagridview.find('#reW').length == 0){
-//		var tableStyle = '<style id="reW" type="text/css">.datagrid-view2 table{width:' + datagridview.find('.datagrid-view2').width() + 'px;}</style>';
-//		datagridview.append(tableStyle);
-//	}
-//	
-//	$.each(datagridview.find('.datagrid-view2 .datagrid-body table tbody tr'), function (idx, itme) {
-//		
-//	});
-	
 	setTimeout(function () {
 		resizeWidth();
 	},50);
@@ -893,11 +700,6 @@ function parseMny(obj){
         return serializeObj;  
     };  
 })(jQuery);  
-
-function linkKhbm (value, row) {
-	var url = DZF.contextPath +　'/sys/sys_set/sys_corp.jsp?opt=edit&khcode=' + value;
-	return '<a href="javascript:void(0)" onclick="parent.addTab(\'我的客户\',\'' + url + '\')" style="color:blue;">' + value + '</a>';
-}
 
 /**
  * 绑定查询区的事件
