@@ -321,7 +321,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else{
 			sql.append(" AND vdeductstatus = ? \n") ;
-			spm.addParam(paramvo.getVdeductstatus());
+			spm.addParam(IStatusConstant.IDEDUCTSTATUS_5);
 		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND con.dsubmitime >= ? \n") ; 
