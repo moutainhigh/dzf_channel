@@ -58,7 +58,7 @@ public class ManagerServiceImpl implements IManagerService {
 		if(vos!=null && vos.size()>0){
 			for (ManagerVO managerVO : vos) {
 				if(map.containsKey(managerVO.getPk_corp())){
-					if(StringUtil.isEmpty(managerVO.getCuserid())){
+					if(!StringUtil.isEmpty(managerVO.getCuserid())){
 						map.put(managerVO.getPk_corp(),managerVO);
 					}
 				}else{
@@ -75,7 +75,7 @@ public class ManagerServiceImpl implements IManagerService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid ,b.vprovname,b.vprovince,p.innercode,");
-		sql.append(" (case when b.pk_corp is null then null  else b.userid end) cuserid ");
+		sql.append(" (case when b.pk_corp is null then null when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );

@@ -219,7 +219,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
 				corplist.add(financeDealStateRepVO.getPk_corp());
 			}else{
-				if(StringUtil.isEmpty(financeDealStateRepVO.getCuserid())){
+				if(!StringUtil.isEmpty(financeDealStateRepVO.getCuserid())){
 					map.put(financeDealStateRepVO.getPk_corp(),financeDealStateRepVO);
 				}
 			}
@@ -231,7 +231,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.vprovname,b.vprovince,p.innercode,");
-		sql.append(" (case when b.pk_corp is null then null  else b.userid end) cuserid ");
+		sql.append(" (case when b.pk_corp is null then null when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );

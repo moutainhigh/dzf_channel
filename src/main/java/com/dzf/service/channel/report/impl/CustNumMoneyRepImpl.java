@@ -459,7 +459,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 				map.put(custNumMoneyRepVO.getPk_corp(), custNumMoneyRepVO);
 				corplist.add(custNumMoneyRepVO.getPk_corp());
 			}else{
-				if(StringUtil.isEmpty(custNumMoneyRepVO.getCuserid())){
+				if(!StringUtil.isEmpty(custNumMoneyRepVO.getCuserid())){
 					map.put(custNumMoneyRepVO.getPk_corp(),custNumMoneyRepVO);
 				}
 			}
@@ -472,7 +472,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.vprovname,b.vprovince,p.innercode,");
-		sql.append(" (case when b.pk_corp is null then null  else b.userid end) cuserid ");
+		sql.append(" (case when b.pk_corp is null then null when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
