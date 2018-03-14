@@ -14,7 +14,6 @@ DZF.pageSize = 100;
 DZF.pageList = [100, 200, 300, 400,500];
 //皮肤设置
 $(document).ready(function (){
-	setSkin();
 	if (parent != self) {
 		$(document).on('click', function () {
 			parent.$(parent.document).trigger("click");
