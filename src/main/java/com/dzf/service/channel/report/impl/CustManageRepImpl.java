@@ -326,39 +326,73 @@ public class CustManageRepImpl implements ICustManageRep {
 	
 	public HashMap<String,CustManageRepVO> queryCorps(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		Boolean flg=checkIsLeader(paramvo);
-		List<CustManageRepVO> vos=new ArrayList<>();
-		List<CustManageRepVO> other=new ArrayList<>();
-		vos = qryMost(paramvo,flg);
-		if(!flg){
-			other =qryOther(paramvo);
-		}
-		if(vos!=null && vos.size()>0){
-			vos.addAll(other);
+		List<CustManageRepVO> qryCharge=new ArrayList<>();
+		List<CustManageRepVO> qryNotCharge=new ArrayList<>();
+		qryCharge = qryCharge(paramvo,flg);
+		qryNotCharge =qryNotCharge(paramvo,flg);
+		if(qryCharge!=null && qryCharge.size()>0){
+			qryCharge.addAll(qryNotCharge);
 		}else{
-			vos=other;
+			qryCharge=qryNotCharge;
 		}
 		HashMap<String,CustManageRepVO> map=new HashMap<>();
-		for (CustManageRepVO custManageRepVO : other) {
+		for (CustManageRepVO custManageRepVO : qryCharge) {
 			if(!map.containsKey(custManageRepVO.getPk_corp())){
 				map.put(custManageRepVO.getPk_corp(), custManageRepVO);
 				corplist.add(custManageRepVO.getPk_corp());
+			}else{
+				if(StringUtil.isEmpty(custManageRepVO.getCuserid())){
+					map.put(custManageRepVO.getPk_corp(),custManageRepVO);
+				}
 			}
 		}
 		return map;
 	}
 	
-	//查询出，三个顶级用户（全部数据进行筛选）或者是大区总经理或者是培训经理非负责人
-	private List<CustManageRepVO> qryMost(QryParamVO paramvo,Boolean flg) {
+	//查询 培训负责人
+	private List<CustManageRepVO> qryCharge(QryParamVO paramvo,Boolean flg) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.vprovname,b.vprovince,p.innercode,");
+		sql.append(" (case when b.pk_corp is null then null  else b.userid end) cuserid ");
+		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
+		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and b.type=2 " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
+	    sp.addParam(IDefaultValue.DefaultGroup);
+	    if(!flg){
+			sql.append("  and (a.userid=? or b.userid=? )");
+			sp.addParam(paramvo.getUser_name());
+			sp.addParam(paramvo.getUser_name());
+		}
+		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(paramvo.getAreaname());
+		}
+		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(paramvo.getVprovince());
+		}
+		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
+			sql.append(" and b.userid=? ");// 渠道经理
+			sp.addParam(paramvo.getCuserid());
+		}
+	    List<CustManageRepVO> list =(List<CustManageRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustManageRepVO.class));
+	    return list;
+	}
+	
+	private List<CustManageRepVO> qryNotCharge(QryParamVO paramvo,Boolean flg) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2 " );
-	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and nvl(b.ischarge,'N')='N'" );
 	    sp.addParam(IDefaultValue.DefaultGroup);
 	    if(!flg){
-			sql.append("  and (a.userid=? or (b.userid=? and nvl(b.ischarge,'N')='N'))");
+			sql.append("  and (a.userid=? or b.userid=? )");
 			sp.addParam(paramvo.getUser_name());
 			sp.addParam(paramvo.getUser_name());
 		}
@@ -376,36 +410,6 @@ public class CustManageRepImpl implements ICustManageRep {
 		}
 	    List<CustManageRepVO> vos =(List<CustManageRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustManageRepVO.class));
 		return vos;
-	}
-	
-	//查询 培训负责人
-	private List<CustManageRepVO> qryOther(QryParamVO paramvo) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
-		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 " );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and b.type=2 " );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
-	    sp.addParam(IDefaultValue.DefaultGroup);
-	    sql.append("  and (a.userid=? or b.userid=?)");
-		sp.addParam(paramvo.getUser_name());
-		sp.addParam(paramvo.getUser_name());
-		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
-			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(paramvo.getAreaname());
-		}
-		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
-			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(paramvo.getVprovince());
-		}
-		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
-			sql.append(" and b.userid=? ");// 渠道经理
-			sp.addParam(paramvo.getCuserid());
-		}
-	    List<CustManageRepVO> list =(List<CustManageRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(CustManageRepVO.class));
-	    return list;
 	}
 	
 	private boolean checkIsLeader(QryParamVO paramvo) {

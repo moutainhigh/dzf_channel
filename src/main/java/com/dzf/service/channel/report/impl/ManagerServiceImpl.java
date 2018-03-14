@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,18 +42,10 @@ public class ManagerServiceImpl implements IManagerService {
 				return null;
 			}
 		}
-		if(type==1){
-			vos = qryCharge(qvo.getUserid());							 //查询  是  省/市负责人相关的数据
-			List<ManagerVO> qryNotCharge = qryNotCharge(qvo.getUserid());//查询  非  省/市负责人相关的数据
-			if(qryNotCharge!=null && qryNotCharge.size()>0){
-				vos.addAll(qryNotCharge);
-			}
-		}else{
-			vos = qryByProvince(qvo,type);					  //查询 没有选中加盟商    且是  省/市负责人
-			List<ManagerVO> qryNotCharge =qryByCorp(qvo,type);//查询 选中加盟商的渠道经理
-			if(qryNotCharge!=null && qryNotCharge.size()>0){
-				vos.addAll(qryNotCharge);
-			}
+		vos = qryCharge(qvo,type);							 //查询  是  省/市负责人相关的数据
+		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,type);//查询  非  省/市负责人相关的数据
+		if(qryNotCharge!=null && qryNotCharge.size()>0){
+			vos.addAll(qryNotCharge);
 		}
 		Collections.sort(vos, new Comparator<ManagerVO>() {
 			@Override
@@ -60,54 +53,40 @@ public class ManagerServiceImpl implements IManagerService {
 				return -o1.getInnercode().compareTo(o2.getInnercode());
 			}
 		});
+		LinkedHashMap<String, ManagerVO> map=new LinkedHashMap<>();
+		ArrayList<ManagerVO> list=null;
 		if(vos!=null && vos.size()>0){
-			vos=queryCommon(qvo,vos);
+			for (ManagerVO managerVO : vos) {
+				if(map.containsKey(managerVO.getPk_corp())){
+					if(StringUtil.isEmpty(managerVO.getCuserid())){
+						map.put(managerVO.getPk_corp(),managerVO);
+					}
+				}else{
+					map.put(managerVO.getPk_corp(),managerVO);
+				}
+			}
+			list= new ArrayList<ManagerVO>(map.values());
+			list=queryCommon(qvo,list);
 		}
-		return vos;
+		return list;
 	}
 	
-	private List<ManagerVO> qryCharge(String userid) {
+	private List<ManagerVO> qryCharge(ManagerVO qvo,Integer type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append("select p.pk_corp ,a.areaname,a.userid ,b.vprovname,b.vprovince,p.innercode,");
+		sql.append(" (case when b.pk_corp is null then null  else b.userid end) cuserid ");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.userid=? " );
+	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
-	    sp.addParam(userid);
-	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-	    return list;
-	}
-
-	private List<ManagerVO> qryNotCharge(String userid) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp=new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
-		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and nvl(b.ischarge,'N')='N' and b.userid=? " );
-	    sp.addParam(IDefaultValue.DefaultGroup);
-		sp.addParam(userid);
-	    List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-		return vos;
-	}
-
-	private List<ManagerVO> qryByProvince(ManagerVO qvo,Integer type) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
-		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' and b.pk_corp is null and b.vprovince not in (" );
-	    sql.append(" select vprovince  from cn_chnarea_b  where nvl(dr,0)=0 and nvl(ischarge,'N')='N' and type=1 )" );
-	    sp.addParam(IDefaultValue.DefaultGroup);
-		if (type == 2) {// 区域总经理
+	    if(type==1){
+	    	sql.append("  and b.userid=? ");
+	    	sp.addParam(qvo.getUserid());
+	    }
+	    if (type == 2) {// 区域总经理
 			sql.append(" and a.userid=? ");
 			sp.addParam(qvo.getUserid());
 		}
@@ -126,17 +105,21 @@ public class ManagerServiceImpl implements IManagerService {
 	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
 	    return list;
 	}
-	
-	private List<ManagerVO> qryByCorp(ManagerVO qvo,Integer type) {
+
+	private List<ManagerVO> qryNotCharge(ManagerVO qvo,Integer type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode");
 		sql.append(" from bd_corp p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
-	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
-	    sql.append(" and b.pk_corp is not null " );
+	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? " );
+	    sql.append(" and nvl(b.ischarge,'N')='N' " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
+	    if(type==1){
+	    	sql.append("  and b.userid=? ");
+	    	sp.addParam(qvo.getUserid());
+	    }
 	    if (type == 2) {// 区域总经理
 			sql.append(" and a.userid=? ");
 			sp.addParam(qvo.getUserid());
@@ -156,7 +139,7 @@ public class ManagerServiceImpl implements IManagerService {
 	    List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
 		return vos;
 	}
-	
+
 	private ArrayList<ManagerVO> queryCommon(ManagerVO qvo,List<ManagerVO> vos) {
 		CorpVO cvo = null;
 		UserVO uvo = null;
@@ -171,9 +154,11 @@ public class ManagerServiceImpl implements IManagerService {
 			if(uvo!=null){
 				managerVO.setUsername(uvo.getUser_name());
 			}
-			uvo = UserCache.getInstance().get(managerVO.getCuserid(), null);
-			if(uvo!=null){
-				managerVO.setCusername(uvo.getUser_name());
+			if(!StringUtil.isEmpty(managerVO.getCuserid())){
+				uvo = UserCache.getInstance().get(managerVO.getCuserid(), null);
+				if(uvo!=null){
+					managerVO.setCusername(uvo.getUser_name());
+				}
 			}
 			managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
 			managerVO.setNdedrebamny(DZFDouble.ZERO_DBL);
