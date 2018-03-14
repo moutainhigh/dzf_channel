@@ -170,7 +170,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname, \n") ; 
 		sql.append("               t.pk_corp AS pk_corp, \n") ; 
 		sql.append("               t.pk_corpk AS pk_corpk, \n") ; 
-		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 3 THEN t.nchangetotalmny END AS ntotalmny \n") ;
+		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny \n") ;
 //		sql.append("               t.ntotalmny AS ntotalmny \n") ; 
 //		sql.append("          FROM ynt_contract t \n") ; 
 		sql.append("          FROM cn_contract t \n") ; 
@@ -191,7 +191,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 //		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n") ; 
-		sql.append("           AND t.vdeductstatus in ( 1 , 3) \n") ; //合同状态 = 已审核 或 已终止
+		sql.append("           AND t.vdeductstatus in ( 1 , 9) \n") ; //合同状态 = 已审核 或 已终止
 		sql.append("   AND t.pk_corp NOT IN \n") ; 
 		sql.append("       (SELECT f.pk_corp \n") ; 
 		sql.append("          FROM ynt_franchisee f \n") ; 
@@ -231,7 +231,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("       SUM(ntotalmny) AS summny\n");
 		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
 		sql.append("               t.pk_corp AS pk_corp,\n");
-		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 3 THEN t.nchangetotalmny END AS ntotalmny, \n") ;
+		sql.append("               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny, \n") ;
 //		sql.append("               t.ntotalmny AS ntotalmny,\n");
 		sql.append("               t.pk_corpk AS pk_corpk\n");
 		sql.append("          FROM cn_contract t\n");
@@ -254,7 +254,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("           AND SUBSTR(t.dsigndate, 1, 7) = ? \n");
 		spm.addParam(paramvo.getPeriod());
 //		sql.append("           AND nvl(t.icontracttype, 1) = 2 \n");
-		sql.append("           AND t.vdeductstatus in ( 1 , 3) \n");//合同状态 = 已审核 或已终止
+		sql.append("           AND t.vdeductstatus in ( 1 , 9) \n");//合同状态 = 已审核 或已终止
 //		sql.append("           AND NVL(t.isncust, 'N') = 'N'\n");
 		if (qrytype == 1) {// 新增客户
 			sql.append("           AND t.pk_corpk NOT IN \n");
@@ -276,7 +276,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("                   AND SUBSTR(t.dsigndate, 1, 7) < ? \n");
 		spm.addParam(paramvo.getPeriod());
 //		sql.append("                   AND nvl(t.icontracttype, 1) = 2\n");
-		sql.append("                   AND t.vdeductstatus in ( 1 , 3))) cu\n");//合同状态 = 已审核 或已终止
+		sql.append("                   AND t.vdeductstatus in ( 1 , 9))) cu\n");//合同状态 = 已审核 或已终止
 		sql.append(" GROUP BY pk_corp, chargedeptname");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
