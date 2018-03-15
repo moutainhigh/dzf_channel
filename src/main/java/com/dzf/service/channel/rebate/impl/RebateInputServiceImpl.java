@@ -30,6 +30,7 @@ import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
 import com.dzf.service.pub.IPubService;
@@ -433,13 +434,17 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		return errmsg;
 	}
 
+	/**
+	 * 获取查询期间最终预付款金额 = 扣款日期在所属期间的预付款扣款 - 变更日期在所属期间的预付款退款
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public RebateVO queryDebateMny(RebateVO data) throws DZFWarpException {
+		RebateVO retvo = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
-		sql.append("  SUM(nvl(t.ndeductmny,0) + nvl(t.nsubdeductmny,0)) AS nbasemny, \n");
+		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny, \n");
+		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny, \n");
 		sql.append("  COUNT(t.pk_confrim)  AS icontractnum \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
@@ -452,6 +457,52 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata,1,7)", pliat.toArray(new String[0]));
+			sql.append(" AND ").append(where);
+		} else {
+			throw new BusinessException("返点单所属年、所属季度不能为空");
+		}
+		sql.append("   GROUP BY t.pk_corp \n");
+		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(RebateVO.class));
+		if(list != null && list.size() > 0){
+			retvo = list.get(0);
+		}else{
+			retvo = new RebateVO();
+			retvo.setNdebitmny(DZFDouble.ZERO_DBL);
+			retvo.setNbasemny(DZFDouble.ZERO_DBL);
+			retvo.setIcontractnum(0);
+		}
+		RebateVO backvo = queryRetMny(data);
+		if(backvo != null){
+			retvo.setNdebitmny(SafeCompute.add(retvo.getNdebitmny(), backvo.getNdebitmny()));
+			retvo.setNbasemny(SafeCompute.add(retvo.getNbasemny(), backvo.getNbasemny()));
+		}
+		return retvo;
+	}
+	
+	/**
+	 * 获取查询期间终止合同退款基恩
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private RebateVO queryRetMny(RebateVO data) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT SUM(nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
+		sql.append("  SUM(nvl(t.nsubdeductmny,0)) AS nbasemny \n");
+		sql.append("  FROM cn_contract t \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
+		sql.append("   AND t.vdeductstatus in (?, ?) \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		sql.append("   AND t.pk_corp = ? \n");
+		spm.addParam(data.getPk_corp());
+		List<String> pliat = getDebatePeriod(data);
+		if (pliat != null && pliat.size() > 0) {
+			String where = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime,1,7)", pliat.toArray(new String[0]));
 			sql.append(" AND ").append(where);
 		} else {
 			throw new BusinessException("返点单所属年、所属季度不能为空");
