@@ -25,6 +25,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.ICustManageRep;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
 
@@ -326,18 +327,29 @@ public class CustManageRepImpl implements ICustManageRep {
 	
 	public HashMap<String,CustManageRepVO> queryCorps(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		Boolean flg=checkIsLeader(paramvo);
-		List<CustManageRepVO> qryCharge=new ArrayList<>();
-		List<CustManageRepVO> qryNotCharge=new ArrayList<>();
-		qryCharge = qryCharge(paramvo,flg);
-		qryNotCharge =qryNotCharge(paramvo,flg);
-		if(qryCharge!=null && qryCharge.size()>0){
-			qryCharge.addAll(qryNotCharge);
-		}else{
-			qryCharge=qryNotCharge;
-		}
 		HashMap<String,CustManageRepVO> map=new HashMap<>();
+		List<String> vprovinces=new ArrayList<>();
+		List<CustManageRepVO> qryCharge=qryCharge(paramvo,flg);
 		for (CustManageRepVO custManageRepVO : qryCharge) {
-			if(!map.containsKey(custManageRepVO.getPk_corp())){
+			Boolean flag=false;//判断查询框的培训经理的过滤
+			if(StringUtil.isEmpty(paramvo.getCuserid()) || paramvo.getCuserid().equals(custManageRepVO.getCuserid())){
+				flag=true;
+			}
+			if(!map.containsKey(custManageRepVO.getPk_corp())&& flag){
+				map.put(custManageRepVO.getPk_corp(), custManageRepVO);
+				corplist.add(custManageRepVO.getPk_corp());
+			}
+			if(!vprovinces.contains(custManageRepVO.getVprovince())){
+				vprovinces.add(custManageRepVO.getVprovince());
+			}
+		}
+		List<CustManageRepVO> qryNotCharge=qryNotCharge(paramvo,flg,vprovinces);
+		for (CustManageRepVO custManageRepVO : qryNotCharge) {
+			Boolean flag=false;//判断查询框的培训经理的过滤
+			if(StringUtil.isEmpty(paramvo.getCuserid()) || paramvo.getCuserid().equals(custManageRepVO.getCuserid())){
+				flag=true;
+			}
+			if(!map.containsKey(custManageRepVO.getPk_corp())&& flag){
 				map.put(custManageRepVO.getPk_corp(), custManageRepVO);
 				corplist.add(custManageRepVO.getPk_corp());
 			}else{
@@ -382,7 +394,7 @@ public class CustManageRepImpl implements ICustManageRep {
 	    return list;
 	}
 	
-	private List<CustManageRepVO> qryNotCharge(QryParamVO paramvo,Boolean flg) {
+	private List<CustManageRepVO> qryNotCharge(QryParamVO paramvo,Boolean flg,List<String> vprovinces) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
@@ -392,7 +404,13 @@ public class CustManageRepImpl implements ICustManageRep {
 	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and nvl(b.ischarge,'N')='N'" );
 	    sp.addParam(IDefaultValue.DefaultGroup);
 	    if(!flg){
-			sql.append("  and (a.userid=? or b.userid=? )");
+			if(vprovinces!=null && vprovinces.size()>0){
+				sql.append("  and ((a.userid=? or b.userid=? ) or ");
+				sql.append(SqlUtil.buildSqlForIn("b.vprovince",vprovinces.toArray(new String[vprovinces.size()])));
+				sql.append(" )");
+			}else{
+				sql.append("  and (a.userid=? or b.userid=? )");
+			}
 			sp.addParam(paramvo.getUser_name());
 			sp.addParam(paramvo.getUser_name());
 		}

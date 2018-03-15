@@ -204,18 +204,29 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	
 	public HashMap<String,FinanceDealStateRepVO> queryCorps(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		Boolean flg=checkIsLeader(paramvo);
-		List<FinanceDealStateRepVO> qryCharge=new ArrayList<>();
-		List<FinanceDealStateRepVO> qryNotCharge=new ArrayList<>();
-		qryCharge = qryCharge(paramvo,flg);
-		qryNotCharge =qryNotCharge(paramvo,flg);
-		if(qryCharge!=null && qryCharge.size()>0){
-			qryCharge.addAll(qryNotCharge);
-		}else{
-			qryCharge=qryNotCharge;
-		}
 		HashMap<String,FinanceDealStateRepVO> map=new HashMap<>();
+		List<String> vprovinces=new ArrayList<>();
+		List<FinanceDealStateRepVO>  qryCharge = qryCharge(paramvo,flg);
 		for (FinanceDealStateRepVO financeDealStateRepVO : qryCharge) {
-			if(!map.containsKey(financeDealStateRepVO.getPk_corp())){
+			Boolean flag=false;//判断查询框的培训经理的过滤
+			if(StringUtil.isEmpty(paramvo.getCuserid()) || paramvo.getCuserid().equals(financeDealStateRepVO.getCuserid())){
+				flag=true;
+			}
+			if(!map.containsKey(financeDealStateRepVO.getPk_corp()) && flag){
+				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
+				corplist.add(financeDealStateRepVO.getPk_corp());
+			}
+			if(!vprovinces.contains(financeDealStateRepVO.getVprovince())){
+				vprovinces.add(financeDealStateRepVO.getVprovince());
+			}
+		}
+		List<FinanceDealStateRepVO>  qryNotCharge =qryNotCharge(paramvo,flg,vprovinces);
+		for (FinanceDealStateRepVO financeDealStateRepVO : qryNotCharge) {
+			Boolean flag=false;//判断查询框的培训经理的过滤
+			if(StringUtil.isEmpty(paramvo.getCuserid()) || paramvo.getCuserid().equals(financeDealStateRepVO.getCuserid())){
+				flag=true;
+			}
+			if(!map.containsKey(financeDealStateRepVO.getPk_corp())&& flag){
 				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
 				corplist.add(financeDealStateRepVO.getPk_corp());
 			}else{
@@ -226,7 +237,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		}
 		return map;
 	}
-	
+
 	private List<FinanceDealStateRepVO> qryCharge(QryParamVO paramvo,Boolean flg) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
@@ -259,7 +270,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	    return list;
 	}
 	
-	private List<FinanceDealStateRepVO> qryNotCharge(QryParamVO paramvo,Boolean flg) {
+	private List<FinanceDealStateRepVO> qryNotCharge(QryParamVO paramvo,Boolean flg,List<String> vprovinces) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode ");
@@ -269,7 +280,13 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 	    sql.append(" and nvl(p.isaccountcorp,'N') = 'Y' and p.fathercorp = ? and nvl(b.ischarge,'N')='N'" );
 	    sp.addParam(IDefaultValue.DefaultGroup);
 	    if(!flg){
-			sql.append("  and (a.userid=? or b.userid=? )");
+			if(vprovinces!=null && vprovinces.size()>0){
+				sql.append("  and ((a.userid=? or b.userid=? ) or ");
+				sql.append(SqlUtil.buildSqlForIn("b.vprovince",vprovinces.toArray(new String[vprovinces.size()])));
+				sql.append(" )");
+			}else{
+				sql.append("  and (a.userid=? or b.userid=? )");
+			}
 			sp.addParam(paramvo.getUser_name());
 			sp.addParam(paramvo.getUser_name());
 		}

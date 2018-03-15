@@ -57,11 +57,15 @@ public class ManagerServiceImpl implements IManagerService {
 		ArrayList<ManagerVO> list=null;
 		if(vos!=null && vos.size()>0){
 			for (ManagerVO managerVO : vos) {
+				Boolean flg=false;//判断查询框的渠道经理的过滤
+				if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
+					flg=true;
+				}
 				if(map.containsKey(managerVO.getPk_corp())){
-					if(!StringUtil.isEmpty(managerVO.getCuserid())){
+					if(!StringUtil.isEmpty(managerVO.getCuserid()) && flg){
 						map.put(managerVO.getPk_corp(),managerVO);
 					}
-				}else{
+				}else if(flg){
 					map.put(managerVO.getPk_corp(),managerVO);
 				}
 			}
