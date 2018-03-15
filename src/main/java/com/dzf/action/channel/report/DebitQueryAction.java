@@ -5,7 +5,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +15,6 @@ import java.util.Map.Entry;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -23,19 +24,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.DebitQueryVO;
+import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.ExportExcel;
 import com.dzf.pub.lang.DZFBoolean;
-import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IDebitQueryService;
 import com.dzf.service.pub.report.PrintUtil;
+import com.itextpdf.text.DocumentException;
 
 /**
  * 加盟商扣款查询
@@ -89,45 +91,77 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		writeJson(grid);
 	}
 	
+	
 	/**
 	 * 打印
 	 */
 	@SuppressWarnings("unchecked")
 	public void print() {
-		try{
-			String strlist =getRequest().getParameter("strlist");
-			if(strlist==null){
-				throw new BusinessException("打印数据不能为空!");
-			}
-			String columns =getRequest().getParameter("columns");
+		try {
+			String strlist = getRequest().getParameter("strlist");
+			String qj = getRequest().getParameter("qj");
 			JSONArray array = (JSONArray) JSON.parseArray(strlist);
+			String columns =getRequest().getParameter("columns");
 			JSONArray headlist = (JSONArray) JSON.parseArray(columns);
 			List<String> heads = new ArrayList<String>();
-			List<String> fieldslist = new ArrayList<String>();
-			setIscross(DZFBoolean.TRUE);
-			Map<String, String> name = null;
-			int[] widths =new  int[]{};
+			List<String> columnames = new ArrayList<String>();
+			List<String> columnkeys = new ArrayList<String>();
 			int len=headlist.size();
-			for (int i = 0 ; i< len; i ++) {
+			Map<String, String> name = null;
+			columnames.add("加盟商编码");
+			columnkeys.add("corpcode");
+			columnames.add("加盟商名称");
+			columnkeys.add("corpname");
+			columnames.add("加盟日期");
+			columnkeys.add("chndate");
+			for (int i = 3 ; i< len; i ++) {
 				 name=(Map<String, String>) headlist.get(i);
-				 heads.add(name.get("title"));
-				 fieldslist.add(name.get("field"));
-				 widths =ArrayUtils.addAll(widths, new int[] {3}); 
+				 columnames.add(name.get("title"));
 			}
-			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);		
-			
-			//字符类型字段(取界面元素id)
-			List<String> list = new ArrayList<String>();
-			list.add("ccode");
-			list.add("cname");
-			list.add("chndate");
-			printMultiColumn(array, "加盟商扣款查询", heads, fields, widths, 20, list,null);		
-		}catch(Exception e){
-			log.error("打印失败",e);		
-		}		
+			columnames.add("预付款");
+			columnkeys.add("outymny");
+			columnames.add("返点");
+			columnkeys.add("outfmny");
+			columnames.add("预付款");
+			columnkeys.add("ndeductmny");
+			columnames.add("返点");
+			columnkeys.add("ndedrebamny");
+			String[] str={"one","two","three","four","five","six","seven",
+			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
+			for(int i = 0 ; i< len-5; i ++){
+				columnames.add("预付款");
+				columnkeys.add(str[i]+"1");
+				columnames.add("返点");
+				columnkeys.add(str[i]+"2");
+			}
+			Map<String,String> bodymapping=FieldMapping.getFieldMapping(new DebitQueryVO());
+			DebitQueryVO[] bodyvos =DzfTypeUtils.cast(array,bodymapping, DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
+			setIscross(DZFBoolean.TRUE);//是否横向
+			LinkedList<ColumnCellAttr> columnlist = new LinkedList<>();
+			int[] size=new int[columnkeys.size()];
+ 			for(int i=0;i<columnames.size();i++){
+				ColumnCellAttr attr = new ColumnCellAttr();
+				attr.setColumname(columnames.get(i));
+				if(i<3){
+					attr.setRowspan(2);
+					size[i]=3;
+				}else if(i<len){
+					attr.setColspan(2);
+					size[i]=1;
+				}else if(i<columnkeys.size()){
+					size[i]=1;
+				}
+				columnlist.add(attr);
+			}
+ 			bodyvos[0].setDbegindate(qj);
+			printGroup(new HashMap<String, List<SuperVO>>(),bodyvos, "加盟商扣款查询", columnlist, columnkeys.toArray(new String[columnkeys.size()]),size,70);
+		} catch (DocumentException e) {
+			log.error(e);
+		} catch (IOException e) {
+			log.error(e);
+		}
 	}
 	
-
 	/**
 	 * Excel导出方法
 	 */

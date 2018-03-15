@@ -438,8 +438,9 @@ function doPrint(){
 		return;
 	}
 	var columns=$('#grid').datagrid("options").columns[0];
+	var qj =$('#jqj').html();
 	Business.getFile(contextPath+ '/report/debitquery!print.action',{'strlist':JSON.stringify(datarows),
-		'columns':JSON.stringify(columns)}, true, true);
+		'columns':JSON.stringify(columns),'qj':qj}, true, true);
 }
 
 /**

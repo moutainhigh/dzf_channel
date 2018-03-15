@@ -39,7 +39,7 @@ public class DebitQueryVO extends SuperVO {
 	private DZFDouble ndedrebamny;//扣款金额-返点款
 	
 	@FieldAlias("outymny")
-	private DZFDouble outymny; // 金额-预付款
+	private DZFDouble outymny; // 余额-预付款
 	
 	@FieldAlias("outfmny")
 	private DZFDouble outfmny; // 余额-返点款
