@@ -434,7 +434,7 @@ function formatSta(val, row, index){
 function opermatter(val, row, index) {
 	if(row.istatus == 0 || row.istatus == 4){//待提交或已驳回
 		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>|'
-		+' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(' + index + ')">删除</a>';
+		+' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
 	}
 }
 
@@ -845,8 +845,10 @@ function onEditSave(){
 /**
  * 删除
  */
-function onDelete(index){
-	var row = $('#grid').datagrid('getData').rows[index];
+function onDelete(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+//	var row = $('#grid').datagrid('getData').rows[index];
+	var row = $('#grid').datagrid('getData').rows[tindex];
 	if (row.istatus != 0 && row.istatus != 4) {
 		Public.tips({
 			content : '该记录状态不为待提交或已驳回，不允许删除',
@@ -862,7 +864,7 @@ function onDelete(index){
 				data : row,
 				success : function(rs) {
 					if (rs.success) {
-						$('#grid').datagrid('deleteRow', index); 
+						$('#grid').datagrid('deleteRow', Number(tindex)); 
 						$("#grid").datagrid('unselectAll');
 						Public.tips({
 							content : rs.msg,
