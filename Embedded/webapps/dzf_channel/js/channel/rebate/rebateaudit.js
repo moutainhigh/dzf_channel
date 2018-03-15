@@ -573,7 +573,9 @@ function onAudit(){
 		}
 		onAuditCommit(confstatus);
 	}else{
-		$.messager.confirm("提示", "确认后，返点金额即冲入加盟商的可用余额中，且不能反审批，请谨慎操作！", function(r) {
+		$.messager.confirm("提示", "&emsp;&emsp;确认后，返点金额即冲入加</br>" +
+				"盟商的可用余额中，且不能反审</br>" +
+				"&emsp;&emsp;&nbsp;&nbsp;批，请谨慎操作！", function(r) {
 			if (r) {
 				onAuditCommit(confstatus);
 			}
