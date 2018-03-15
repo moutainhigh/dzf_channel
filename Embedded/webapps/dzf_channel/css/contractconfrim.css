@@ -28,7 +28,7 @@
 .decan .datebox .combo-arrow {
 	background: none
 }
-
+.imgbox{white-space: normal;}
 .imgbox, .imgbox1 {
 	float: left;
 	margin-right: 20px;
