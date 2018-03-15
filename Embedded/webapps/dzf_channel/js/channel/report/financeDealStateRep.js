@@ -15,12 +15,22 @@ $(function() {
 
 //初始化
 function initQry(){
+	$("#jqj").html($("#qryperiod").datebox('getValue'));
 	// 下拉按钮的事件
 	$("#jqj").on("mouseover", function() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
 	initQryCommbox();
+	changeDate();
+}
+
+function changeDate(){
+	$("#qryperiod").datebox({
+		onChange : function(n, o) {
+			$("#jqj").html(n);
+		}
+	});
 }
 
 //查询框关闭事件
