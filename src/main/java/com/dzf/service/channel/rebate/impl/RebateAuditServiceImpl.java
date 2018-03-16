@@ -67,8 +67,10 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 			if(flowvo != null){
 				singleObjectBO.saveObject(pk_corp, flowvo);
 			}
-			//存储返点单金额
-			saveRebateMny(data, pk_corp);
+			if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_4){
+				//3、只有审核通过才记录存储返点单金额
+				saveRebateMny(data, pk_corp);
+			}
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rebate());
 		}
