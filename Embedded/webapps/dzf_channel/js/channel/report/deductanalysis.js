@@ -96,19 +96,11 @@ function initRadioListen(){
 	$('input:radio[name="seledate"]').change( function(){  
 		var ischeck = $('#qj').is(':checked');
 		if(ischeck){
-//			queryBoxChange1('#begperiod','#endperiod');
-//			var sdv = $('#begperiod').textbox('getValue');
-//			var edv = $('#endperiod').textbox('getValue');
-//			$('#jqj').html(sdv + ' 至 ' + edv);
 			$("#begperiod").datebox('readonly',false);
 			$("#endperiod").datebox('readonly',false);
 			$("#bdate").datebox('readonly',true);
 			$("#edate").datebox('readonly',true);
 		}else{
-//			queryBoxChange2('#bdate','#edate');
-//			var sdv = $('#bdate').datebox('getValue');
-//			var edv = $('#edate').datebox('getValue');
-//			$('#jqj').html(sdv + ' 至 ' + edv);
 			$("#begperiod").datebox('readonly',true);
 			$("#endperiod").datebox('readonly',true);
 			$("#bdate").datebox('readonly',false);
@@ -122,9 +114,6 @@ function initRadioListen(){
  * @param type  0：初始化界面加载；1；查询；2；刷新；
  */
 function load(type){
-	parent.$.messager.progress({
-		text : '数据加载中....'
-	});
 	var columns = new Array(); 
 	var columnsh = new Array();//列及合并列名称
 	var columnsb = new Array();//子列表名称集合
@@ -191,11 +180,31 @@ function load(type){
 	if($('#qj').is(':checked')){
 		bperiod = $("#begperiod").datebox('getValue');
 		eperiod = $("#endperiod").datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : "开始期间不能为空",
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : "结束期间不能为空",
+				type : 2
+			});
+			return;
+		}
+		
+		$('#jqj').html(bperiod + ' 至 ' + eperiod);
 	}else{
 		begdate = $("#bdate").datebox('getValue');
 		enddate = $("#edate").datebox('getValue');
+		$('#jqj').html(begdate + ' 至 ' + enddate);
 	}
 	
+	parent.$.messager.progress({
+		text : '数据加载中....'
+	});
 	var datarray =  new Array();
 	$.ajax({
 		type : "post",
@@ -301,7 +310,7 @@ function load(type){
 	});
 	
 	$('#grid').datagrid({
-//		url : DZF.contextPath + "/report/custmanagerep!query.action",
+//		url : DZF.contextPath + "",
 //		queryParams:{
 //		},
 		striped : true,
@@ -332,6 +341,8 @@ function load(type){
 	
 	if(datarray != null && datarray.length > 0){
 		$('#grid').datagrid('loadData', datarray);
+	}else{
+		$('#grid').datagrid('loadData',{ total:0, rows:[]});
 	}
 	
 	$("#qrydialog").hide();
