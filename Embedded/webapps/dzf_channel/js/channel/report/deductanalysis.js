@@ -3,6 +3,9 @@ $(function(){
 	load();
 });
 
+/**
+ * 表格初始化
+ */
 function load(){
 	var columns = new Array(); 
 	var columnsh = new Array();//列及合并列名称
@@ -10,6 +13,58 @@ function load(){
 	
 	var onlycol =  new ArrayList();//金额展示集合
 	var onlymap = new HashMap();//金额对应列数
+	
+	//退回扣款
+	var columnh1 = {};
+	columnh1["title"] = '退回扣款';  
+	columnh1["field"] = 'ret';  
+	columnh1["width"] = '180'; 
+	columnh1["colspan"] = 2; 
+	columnsh.push(columnh1);
+	
+	var columnb1 = {};
+	columnb1["title"] = '户数';  
+	columnb1["field"] = 'retnum';  
+	columnb1["width"] = '90'; 
+	columnb1["halign"] = 'center'; 
+	columnb1["align"] = 'right'; 
+//	columnb1["formatter"] = formatMny;
+	columnsb.push(columnb1); 
+	
+	var columnb2 = {};
+	columnb2["title"] = '总额';  
+	columnb2["field"] = 'retmny';  
+	columnb2["width"] = '90'; 
+	columnb2["halign"] = 'center'; 
+	columnb2["align"] = 'right'; 
+	columnb2["formatter"] = formatMny;
+	columnsb.push(columnb2); 
+	
+	//存量
+	var columnh2 = {};
+	columnh2["title"] = '存量';  
+	columnh2["field"] = 'stock';  
+	columnh2["width"] = '180'; 
+	columnh2["colspan"] = 2; 
+	columnsh.push(columnh2);
+	
+	var columnb3 = {};
+	columnb3["title"] = '户数';  
+	columnb3["field"] = 'stocknum';  
+	columnb3["width"] = '90'; 
+	columnb3["halign"] = 'center'; 
+	columnb3["align"] = 'right'; 
+//	columnb3["formatter"] = formatMny;
+	columnsb.push(columnb3); 
+	
+	var columnb4 = {};
+	columnb4["title"] = '总额';  
+	columnb4["field"] = 'stockmny';  
+	columnb4["width"] = '90'; 
+	columnb4["halign"] = 'center'; 
+	columnb4["align"] = 'right'; 
+	columnb4["formatter"] = formatMny;
+	columnsb.push(columnb4); 
 	
 	var datarray =  new Array();
 	$.ajax({
@@ -130,8 +185,8 @@ function load(){
 						{ field : 'corpid',    title : '会计公司主键', hidden : true},
 		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpname',  title : '加盟商名称', width : 160, halign:'center',align:'left'},
-		                { field : 'num',  title : '户数', width : 100, halign:'center',align:'right'}, 
-		                { field : 'mny',  title : '总额', width : 100, halign:'center',align:'right',formatter:formatMny},
+		                { field : 'num',  title : '总户数', width : 100, halign:'center',align:'right'}, 
+		                { field : 'mny',  title : '总扣款', width : 100, halign:'center',align:'right',formatter:formatMny},
 		]],
 		columns : columns,
 		onLoadSuccess : function(data) {
@@ -142,4 +197,57 @@ function load(){
 	if(datarray != null && datarray.length > 0){
 		$('#grid').datagrid('loadData', datarray);
 	}
+}
+
+/**
+ * 打印
+ */
+function onPrint(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
+	
+	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
+	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+
+	console.info(hblcols);
+	console.info(cols);
+	console.info(hbhcols);
+	
+	//
+	Business.getFile(contextPath+ '/report/deductanalysis!print.action',{'strlist':JSON.stringify(datarows),
+		'hblcols':JSON.stringify(hblcols), 'cols':JSON.stringify(cols),
+		'hbhcols':JSON.stringify(hbhcols)}, true, true);
+}
+
+/**
+* 导出
+*/
+function onExport() {
+	var datarows = $('#grid').datagrid("getRows");
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content: '当前界面数据为空',
+			type: 2
+		});
+		return;
+	}
+	
+	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
+	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
+	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+	
+	console.info(hblcols);
+	console.info(cols);
+	console.info(hbhcols);
+	
+	Business.getFile(DZF.contextPath + "/report/deductanalysis!export.action", {
+		"strlist": JSON.stringify(datarows),
+		'hblcols':JSON.stringify(hblcols), //合并列信息
+		'cols':JSON.stringify(cols),//除冻结列之外，导出字段编码
+		'hbhcols':JSON.stringify(hbhcols)//冻结列编码
+	}, true, true);
 }

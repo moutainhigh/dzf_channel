@@ -35,6 +35,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND t.vstatus IN (?, ?) \n");
+		sql.append("   AND nvl(t.isncust,'N') = 'N' \n");
 //		sql.append("   AND t.pk_corp = 'mx9cKz' \n");
 		sql.append(" GROUP BY ndeductmny, t.pk_corp \n");
 		sql.append(" ORDER BY t.pk_corp \n");

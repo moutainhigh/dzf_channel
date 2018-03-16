@@ -34,6 +34,50 @@ public class DeductAnalysisVO extends SuperVO {
 	
 	@FieldAlias("summny")
 	private DZFDouble ndeductmny_sum;//扣款总总额
+	
+	@FieldAlias("retnum")
+	private Integer iretnum;//退回客户数
+	
+	@FieldAlias("retmny")
+	private DZFDouble nretmny;//退回金额
+	
+	@FieldAlias("stocknum")
+	private Integer istocknum;//退回客户数
+	
+	@FieldAlias("stockmny")
+	private DZFDouble nstockmny;//退回金额
+
+	public Integer getIretnum() {
+		return iretnum;
+	}
+
+	public void setIretnum(Integer iretnum) {
+		this.iretnum = iretnum;
+	}
+
+	public DZFDouble getNretmny() {
+		return nretmny;
+	}
+
+	public void setNretmny(DZFDouble nretmny) {
+		this.nretmny = nretmny;
+	}
+
+	public Integer getIstocknum() {
+		return istocknum;
+	}
+
+	public void setIstocknum(Integer istocknum) {
+		this.istocknum = istocknum;
+	}
+
+	public DZFDouble getNstockmny() {
+		return nstockmny;
+	}
+
+	public void setNstockmny(DZFDouble nstockmny) {
+		this.nstockmny = nstockmny;
+	}
 
 	public Integer getIcorpnums() {
 		return icorpnums;
