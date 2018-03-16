@@ -606,6 +606,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setVerrmsg(errmsg);
 			return paramvo;
 		}
+		if(paramvo.getIdeductpropor() != 0){
+			errmsg = checkBalance(paramvo, cuserid, balVOs);
+			if(!StringUtil.isEmpty(errmsg)){
+				paramvo.setVerrmsg(errmsg);
+				return paramvo;
+			}
+		}
 		paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		paramvo.setTstamp(new DZFDateTime());// 时间戳
@@ -618,6 +625,47 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setVopername(uservo.getUser_name());
 		}
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", paramvo);
+	}
+	
+	/**
+	 * 预付款余额、返点余额生成前校验
+	 * @param paramvo
+	 * @param cuserid
+	 * @param balVOs
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String checkBalance(ContractConfrimVO paramvo, String cuserid, ChnBalanceVO[] balVOs) throws DZFWarpException{
+		//先校验，再进行数据存储，否则会造成数据存储错误
+		Map<String,ChnBalanceVO> map = new HashMap<String,ChnBalanceVO>();
+		for(ChnBalanceVO balvo : balVOs){
+			if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
+				map.put("pay", balvo);
+			}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
+				map.put("reb", balvo);
+			}
+		}
+		if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){//返点款扣款
+			ChnBalanceVO balancevo = map.get("reb");
+			if(balancevo == null){
+				return "余额表信息不能为空";
+			}
+			DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
+			if(balance.compareTo(paramvo.getNdedrebamny()) < 0){
+				return "返点余额不足";
+			}
+		}
+		if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
+			ChnBalanceVO balancevo = map.get("pay");
+			if(balancevo == null){
+				return "余额表信息不能为空";
+			}
+			DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
+			if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+				return "预付款余额不足";
+			}
+		}
+		return "";
 	}
 	
 	/**
