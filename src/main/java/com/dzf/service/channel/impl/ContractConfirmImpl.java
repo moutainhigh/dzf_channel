@@ -781,7 +781,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return "余额表信息不能为空";
 				}
 				DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
-				if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+				if(balance.compareTo(paramvo.getNdedrebamny()) < 0){
 					return "返点余额不足";
 				}
 				balancevo.setNusedmny(SafeCompute.add(balancevo.getNusedmny(), paramvo.getNdedrebamny()));
