@@ -7,12 +7,8 @@
 <%@ page import="java.util.Date"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%
-	String now=AdminDateUtil.getServerDate();
-	DZFDate nowDate=new DZFDate(now);
-	Calendar cal = Calendar.getInstance();
-	cal.setTime(nowDate.toDate());
-	cal.add(Calendar.DATE, -14);
-	String last = new DZFDate(cal.getTime()).toString();
+	String now = AdminDateUtil.getServerDate();
+    String last = AdminDateUtil.getPreviousDate();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
