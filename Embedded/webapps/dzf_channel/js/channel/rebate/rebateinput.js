@@ -218,6 +218,7 @@ function getDebateMny(cpid){
 				$("#debitmny").numberbox("setValue",row['debitmny']);
 				$("#basemny").numberbox("setValue",row['basemny']);
 				$("#contnum").numberbox("setValue",row['contnum']);
+				$("#rebatemny").numberbox("setValue", null);
 			} 
 		},
 	});
