@@ -116,7 +116,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
-			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			ContractConfrimVO paramvo = new ContractConfrimVO();
+			paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
 			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid());
 			json.setRows(retvo);
 			json.setSuccess(true);
