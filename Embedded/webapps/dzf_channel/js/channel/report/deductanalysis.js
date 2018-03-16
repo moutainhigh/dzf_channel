@@ -199,29 +199,29 @@ function load(){
 	}
 }
 
-/**
- * 打印
- */
-function onPrint(){
-	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
-		return;
-	}
-	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
-	
-	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
-	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
-
-	console.info(hblcols);
-	console.info(cols);
-	console.info(hbhcols);
-	
-	//
-	Business.getFile(contextPath+ '/report/deductanalysis!print.action',{'strlist':JSON.stringify(datarows),
-		'hblcols':JSON.stringify(hblcols), 'cols':JSON.stringify(cols),
-		'hbhcols':JSON.stringify(hbhcols)}, true, true);
-}
+///**
+// * 打印
+// */
+//function onPrint(){
+//	var datarows = $('#grid').datagrid("getRows");
+//	if(datarows == null || datarows.length == 0){
+//		Public.tips({content:'当前界面数据为空',type:2});
+//		return;
+//	}
+//	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
+//	
+//	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
+//	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+//
+//	console.info(hblcols);
+//	console.info(cols);
+//	console.info(hbhcols);
+//	
+//	//
+//	Business.getFile(contextPath+ '/report/deductanalysis!print.action',{'strlist':JSON.stringify(datarows),
+//		'hblcols':JSON.stringify(hblcols), 'cols':JSON.stringify(cols),
+//		'hbhcols':JSON.stringify(hbhcols)}, true, true);
+//}
 
 /**
 * 导出
@@ -239,10 +239,6 @@ function onExport() {
 	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
 	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
 	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
-	
-	console.info(hblcols);
-	console.info(cols);
-	console.info(hbhcols);
 	
 	Business.getFile(DZF.contextPath + "/report/deductanalysis!export.action", {
 		"strlist": JSON.stringify(datarows),

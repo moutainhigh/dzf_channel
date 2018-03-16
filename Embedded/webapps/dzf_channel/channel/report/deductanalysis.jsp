@@ -45,7 +45,7 @@
 					<div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="load()">刷新</a>
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onExport()">导出</a>
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onPrint()">打印</a>
+						<!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onPrint()">打印</a> -->
 					</div>
 				</div>
 			</div>
