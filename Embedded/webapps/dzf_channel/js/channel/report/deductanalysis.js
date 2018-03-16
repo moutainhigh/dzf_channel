@@ -4,7 +4,7 @@ $(function(){
 	initQueryDlg();
 	initRef();
 	initRadioListen();
-	load();
+	load(0);
 });
 
 /**
@@ -117,9 +117,9 @@ function initRadioListen(){
 	});
 }
 
-
 /**
  * 表格初始化
+ * @param type  0：初始化界面加载；1；查询；2；刷新；
  */
 function load(type){
 	parent.$.messager.progress({
