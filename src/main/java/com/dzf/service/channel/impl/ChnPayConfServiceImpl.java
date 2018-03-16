@@ -153,6 +153,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateConfrimData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
+		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
+			billvo.setVerrmsg("数据错误");
+			return billvo;
+		}
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
@@ -225,6 +229,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateCancelData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
+		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
+			billvo.setVerrmsg("数据错误");
+			return billvo;
+		}
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_2){
@@ -281,6 +289,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, Integer opertype,String vreason)throws DZFWarpException{
+		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
+			billvo.setVerrmsg("数据错误");
+			return billvo;
+		}
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
