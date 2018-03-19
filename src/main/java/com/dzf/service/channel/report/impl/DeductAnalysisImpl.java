@@ -39,7 +39,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
+//		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
 			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
@@ -105,7 +105,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
+//		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
 			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
