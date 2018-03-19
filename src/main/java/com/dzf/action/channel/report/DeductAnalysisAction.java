@@ -68,52 +68,6 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 	}
 	
 	/**
-	 * 打印
-	 */
-	@SuppressWarnings("unchecked")
-	public void print() {
-		try{
-			String strlist =getRequest().getParameter("strlist");
-			if(strlist==null){
-				throw new BusinessException("打印数据不能为空!");
-			}
-			JSONArray array = (JSONArray) JSON.parseArray(strlist);
-			
-			String hblcols =getRequest().getParameter("hblcols");
-			JSONArray headlist = (JSONArray) JSON.parseArray(hblcols);
-			
-			String cols =getRequest().getParameter("cols");
-			JSONArray colsarray = (JSONArray) JSON.parseArray(cols);
-			
-			
-			
-			List<String> heads = new ArrayList<String>();
-			List<String> fieldslist = new ArrayList<String>();
-			
-			Map<String, String> name = null;
-			int[] widths =new  int[]{};
-			int len = headlist.size();
-			for (int i = 0 ; i< len; i ++) {
-				 name=(Map<String, String>) headlist.get(i);
-				 heads.add(String.valueOf(name.get("title")));
-				 fieldslist.add(name.get("field"));
-				 widths =ArrayUtils.addAll(widths, new int[] {3}); 
-			}
-			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);		
-			
-			//字符类型字段(取界面元素id)
-			List<String> list = new ArrayList<String>();
-			list.add("corpcode");
-			list.add("corpname");
-			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
-			util.setIscross(DZFBoolean.TRUE);
-			util.printMultiColumn(array, "加盟商扣款分析", heads, fields, widths, 20, list, null);		
-		}catch(Exception e){
-			log.error("打印失败",e);		
-		}		
-	}
-	
-	/**
 	 * 导出excel
 	 */
 	@SuppressWarnings("unchecked")
