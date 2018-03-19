@@ -644,7 +644,7 @@ function initCard(id){
 }
 
 function coperatorLink(val,row,index){  
-	var add = '<div><a href="javascript:void(0)" id="addBut" onclick="addRow()"><img title="增行" style="margin:0px 20% 0px 20%;" src="../../images/add.png" /></a>';
+	var add = '<div><a href="javascript:void(0)" id="addBut" onclick="addRow(arguments[0])"><img title="增行" style="margin:0px 20% 0px 20%;" src="../../images/add.png" /></a>';
 	var del = '<a href="javascript:void(0)" id="delBut" onclick="delRow(this)"><img title="删行" src="../../images/del.png" /></a></div>';
     return add + del;  
 }
@@ -652,7 +652,8 @@ function coperatorLink(val,row,index){
 /**
  * 增行
  */
-function addRow(){
+function addRow(e){
+	e.stopPropagation();
 	endBodyEdit();
 	if(status == 'brows') {
 		return ;
