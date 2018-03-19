@@ -1147,6 +1147,7 @@ function initChangeListener(){
 			var sndesummny = getFloatValue($('#sndesummny').numberbox('getValue'));//原扣款金额
 			var cnum = getMonthNum(n, sbperiod)+1;//变更期数
 			var srecycle = getFloatValue($("#srecycle").val());//原收款周期
+			//退回总扣款 = 退回总扣款 - （退回总扣款/原收款周期*新收款周期）
 			var remny = sndesummny.sub(sndesummny.div(srecycle).mul(cnum));
 			if(getFloatValue(remny) < getFloatValue(0)){
 				remny = getFloatValue(0);
