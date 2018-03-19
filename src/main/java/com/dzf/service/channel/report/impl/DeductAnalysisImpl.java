@@ -31,39 +31,39 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	public List<DeductAnalysisVO> query(QryParamVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, \n");
-		sql.append("       SUM(nvl(t.ndedsummny, 0) + nvl(t.nsubdedsummny, 0)) AS ndeductmny, \n");
-		sql.append("       COUNT(t.pk_corpk) AS icorpnums \n");
-		sql.append("  FROM cn_contract t \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND t.vstatus IN (?, ?) \n");
+		sql.append("SELECT t.pk_corp, t.ndeducmny, COUNT(t.pk_corpk) AS icorpnums\n") ;
+		sql.append("  FROM (SELECT ct.*,\n") ; 
+		sql.append("               nvl(ct.ndedsummny, 0) + nvl(ct.nsubdedsummny, 0) AS ndeducmny\n") ; 
+		sql.append("          FROM cn_contract ct\n") ; 
+		sql.append("         WHERE nvl(ct.dr, 0) = 0\n") ; 
+		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-		sql.append("   AND nvl(t.isncust,'N') = 'N' \n");
-//		sql.append("   AND t.pk_corp = 'mx9cKz' \n");
+		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
+			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n");
+			sql.append(" AND SUBSTR(ct.deductdata,1,7) <= ? \n");
 			spm.addParam(paramvo.getEndperiod());
 		}
 		if(paramvo.getBegdate() != null){
-			sql.append(" AND t.deductdata >= ? \n");
+			sql.append(" AND ct.deductdata >= ? \n");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append(" AND t.deductdata <= ? \n");
+			sql.append(" AND ct.deductdata <= ? \n");
 			spm.addParam(paramvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 			String[] corps = paramvo.getPk_corp().split(",");
-			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+			String where = SqlUtil.buildSqlForIn(" ct.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-		sql.append(" GROUP BY ndeductmny, t.pk_corp \n");
-		sql.append(" ORDER BY t.pk_corp \n");
+		sql.append("                                           ) t\n") ; 
+		sql.append(" GROUP BY t.ndeducmny, t.pk_corp\n") ; 
+		sql.append(" ORDER BY t.pk_corp");
 		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(DeductAnalysisVO.class));
 		if(list != null && list.size() > 0){
@@ -97,37 +97,39 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		Map<String,DeductAnalysisVO> map = new HashMap<String,DeductAnalysisVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, \n") ;
-		sql.append("       SUM(nvl(t.ndedsummny, 0) + nvl(t.nsubdedsummny, 0)) AS ndeductmny_sum, \n") ; 
-		sql.append("       COUNT(t.pk_corpk) AS icorpnums_sum \n") ; 
-		sql.append("  FROM cn_contract t \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
-		sql.append("   AND t.vstatus IN (?, ?)\n") ; 
+		sql.append("SELECT t.pk_corp,  SUM(t.ndeducmny) AS ndeductmny_sum, COUNT(t.pk_corpk) AS icorpnums_sum\n") ;
+		sql.append("  FROM (SELECT ct.*,\n") ; 
+		sql.append("               nvl(ct.ndedsummny, 0) + nvl(ct.nsubdedsummny, 0) AS ndeducmny\n") ; 
+		sql.append("          FROM cn_contract ct\n") ; 
+		sql.append("         WHERE nvl(ct.dr, 0) = 0\n") ; 
+		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
+			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n");
+			sql.append(" AND SUBSTR(ct.deductdata,1,7) <= ? \n");
 			spm.addParam(paramvo.getEndperiod());
 		}
 		if(paramvo.getBegdate() != null){
-			sql.append(" AND t.deductdata >= ? \n");
+			sql.append(" AND ct.deductdata >= ? \n");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append(" AND t.deductdata <= ? \n");
+			sql.append(" AND ct.deductdata <= ? \n");
 			spm.addParam(paramvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 			String[] corps = paramvo.getPk_corp().split(",");
-			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+			String where = SqlUtil.buildSqlForIn(" ct.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-		sql.append(" GROUP BY t.pk_corp \n") ; 
-		sql.append(" ORDER BY t.pk_corp \n");
+		sql.append("                                           ) t\n") ; 
+		sql.append(" GROUP BY t.pk_corp\n") ; 
+		sql.append(" ORDER BY t.pk_corp");
 		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(DeductAnalysisVO.class));
 		if(list != null && list.size() > 0){

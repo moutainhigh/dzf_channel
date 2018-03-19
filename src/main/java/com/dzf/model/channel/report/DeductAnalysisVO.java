@@ -27,7 +27,7 @@ public class DeductAnalysisVO extends SuperVO {
 	private Integer icorpnums;//扣款户数
 	
 	@FieldAlias("dedmny")
-	private DZFDouble ndeductmny;//扣款金额
+	private DZFDouble ndeducmny;//扣款金额
 	
 	@FieldAlias("sumnum")
 	private Integer icorpnums_sum;//扣款总户数
@@ -127,12 +127,12 @@ public class DeductAnalysisVO extends SuperVO {
 		this.corpname = corpname;
 	}
 
-	public DZFDouble getNdeductmny() {
-		return ndeductmny;
+	public DZFDouble getNdeducmny() {
+		return ndeducmny;
 	}
 
-	public void setNdeductmny(DZFDouble ndeductmny) {
-		this.ndeductmny = ndeductmny;
+	public void setNdeducmny(DZFDouble ndeducmny) {
+		this.ndeducmny = ndeducmny;
 	}
 
 	@Override
