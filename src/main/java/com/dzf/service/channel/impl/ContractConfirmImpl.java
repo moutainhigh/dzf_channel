@@ -410,7 +410,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(corpvo != null){
 				vo.setVarea(corpvo.getCitycounty());
 			}
-			Map<String, String> packmap = queryPackageMap();
+//			Map<String, String> packmap = queryPackageMap();
 			Integer cyclenum = 0;
 			if(vo.getIcyclenum() != null && vo.getIcyclenum() != 0){
 				cyclenum = vo.getIcyclenum() * CommonUtil.getInteger(vo.getIreceivcycle());
