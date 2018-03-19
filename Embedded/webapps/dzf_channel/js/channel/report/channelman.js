@@ -23,7 +23,8 @@ function load() {
 			type:1
 		},
 		showFooter:true,
-		columns : [ [ 
+		columns : [ [
+		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
 			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
 				formatter : function(value, row, index) {
 					if(value == undefined){

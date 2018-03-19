@@ -36,40 +36,51 @@ public class ManagerServiceImpl implements IManagerService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
-		List<ManagerVO> vos=new ArrayList<>();
+		ArrayList<ManagerVO> list=new ArrayList<ManagerVO>();
 		if(type==3){//渠道经理
 			if(!checkIsLeader(qvo)){
 				return null;
 			}
 		}
-		vos = qryCharge(qvo,type);							 //查询  是  省/市负责人相关的数据
-		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,type);//查询  非  省/市负责人相关的数据
-		if(qryNotCharge!=null && qryNotCharge.size()>0){
-			vos.addAll(qryNotCharge);
-		}
-		Collections.sort(vos, new Comparator<ManagerVO>() {
-			@Override
-			public int compare(ManagerVO o1, ManagerVO o2) {
-				return -o1.getInnercode().compareTo(o2.getInnercode());
-			}
-		});
+		List<String> vprovinces=new ArrayList<>();
+		List<ManagerVO> qryCharge= qryCharge(qvo,type);			//查询  是  省/市负责人相关的数据
 		LinkedHashMap<String, ManagerVO> map=new LinkedHashMap<>();
-		ArrayList<ManagerVO> list=null;
-		if(vos!=null && vos.size()>0){
-			for (ManagerVO managerVO : vos) {
-				Boolean flg=false;//判断查询框的渠道经理的过滤
-				if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
-					flg=true;
-				}
-				if(map.containsKey(managerVO.getPk_corp())){
-					if(!StringUtil.isEmpty(managerVO.getCuserid()) && flg){
-						map.put(managerVO.getPk_corp(),managerVO);
-					}
-				}else if(flg){
+		for (ManagerVO managerVO : qryCharge) {
+			Boolean flg=false;//判断查询框的渠道经理的过滤
+			if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
+				flg=true;
+			}
+			if(!map.containsKey(managerVO.getPk_corp()) && flg){
+				map.put(managerVO.getPk_corp(), managerVO);
+			}
+			if(!vprovinces.contains(managerVO.getVprovince())){
+				vprovinces.add(managerVO.getVprovince().toString());
+			}
+		}
+		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,type,vprovinces);//查询  非  省/市负责人相关的数据
+		for (ManagerVO managerVO : qryNotCharge) {
+			Boolean flg=false;//判断查询框的渠道经理的过滤
+			if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
+				flg=true;
+			}
+			if(!map.containsKey(managerVO.getPk_corp()) && flg){
+				map.put(managerVO.getPk_corp(), managerVO);
+			}else{
+				if(!StringUtil.isEmpty(managerVO.getCuserid())){
 					map.put(managerVO.getPk_corp(),managerVO);
 				}
 			}
-			list= new ArrayList<ManagerVO>(map.values());
+		}
+		if(!map.isEmpty()){
+			list=new ArrayList<>(map.values());
+			Collections.sort(list, new Comparator<ManagerVO>() {
+				@Override
+				public int compare(ManagerVO o1, ManagerVO o2) {
+					return -o1.getInnercode().compareTo(o2.getInnercode());
+				}
+			});
+		}
+		if(list!=null && list.size()>0){
 			list=queryCommon(qvo,list);
 		}
 		return list;
@@ -110,7 +121,7 @@ public class ManagerServiceImpl implements IManagerService {
 	    return list;
 	}
 
-	private List<ManagerVO> qryNotCharge(ManagerVO qvo,Integer type) {
+	private List<ManagerVO> qryNotCharge(ManagerVO qvo,Integer type,List<String> vprovinces) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode");
@@ -121,11 +132,23 @@ public class ManagerServiceImpl implements IManagerService {
 	    sql.append(" and nvl(b.ischarge,'N')='N' " );
 	    sp.addParam(IDefaultValue.DefaultGroup);
 	    if(type==1){
-	    	sql.append("  and b.userid=? ");
+	    	if(vprovinces!=null && vprovinces.size()>0){
+				sql.append("  and (b.userid=? or ");
+				sql.append(SqlUtil.buildSqlForIn("b.vprovince",vprovinces.toArray(new String[vprovinces.size()])));
+				sql.append(" )");
+			}else{
+				sql.append("  and b.userid=? ");
+			}
 	    	sp.addParam(qvo.getUserid());
 	    }
 	    if (type == 2) {// 区域总经理
-			sql.append(" and a.userid=? ");
+	    	if(vprovinces!=null && vprovinces.size()>0){
+				sql.append("  and (a.userid=? or ");
+				sql.append(SqlUtil.buildSqlForIn("b.vprovince",vprovinces.toArray(new String[vprovinces.size()])));
+				sql.append(" )");
+			}else{
+				sql.append(" and a.userid=? ");
+			}
 			sp.addParam(qvo.getUserid());
 		}
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {

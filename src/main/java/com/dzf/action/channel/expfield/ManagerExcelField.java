@@ -27,6 +27,7 @@ public class ManagerExcelField implements IExceport<ManagerVO>{
 	private Integer type;
 	
 	private Fieldelement[] fields1 = new Fieldelement[]{
+			new Fieldelement("cusername", "渠道经理",false,0,false),
 			new Fieldelement("corpname", "加盟商",false,0,false),
 			new Fieldelement("bondmny", "保证金",true,2,false),
 			new Fieldelement("predeposit", "预存款",true,2,false),
