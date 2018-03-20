@@ -16,6 +16,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IDebitQueryService;
 
@@ -72,13 +73,20 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DebitQueryVO> query(DebitQueryVO paramvo) throws DZFWarpException {
-		int length= paramvo.getDbegindate().length();
 		List<DebitQueryVO> headers = queryHeader(paramvo);
+		int length= paramvo.getDbegindate().length();
+		if(length==7){
+			paramvo.setDbegindate(paramvo.getDbegindate()+"-01");
+			DZFDate date=new DZFDate(paramvo.getDenddate()+"-01");
+			Calendar cal=Calendar.getInstance();
+			cal.setTime(date.toDate());
+			cal.add(Calendar.MONTH, 1);
+			cal.add(Calendar.DATE, -1);
+			paramvo.setDenddate(new DZFDate(cal.getTime()).toString());
+		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate ,");
-		sql.append(" sum(nvl(contract.ndeductmny,0) - nvl(contract.nretdedmny,0)) as ndeductmny,");
-		sql.append(" sum(nvl(contract.ndedrebamny,0) - nvl(contract.nretrebmny,0)) as ndedrebamny,");
 		sql.append(" balance.outymny, balance.outfmny");
 		sql.append(" from bd_account a");
         sql.append(" left join (select pk_corp,sum(decode(ipaytype,2,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outymny,");
@@ -91,13 +99,11 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
-        sql.append(" and substr(contract.deductdata,0,"+length+")>=? and substr(contract.deductdata,0,"+length+")<=?");
         sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,balance.outymny,balance.outfmny");
-        sp.addParam(paramvo.getDbegindate());
-        sp.addParam(paramvo.getDenddate());
         sql.append(" order by a.innercode ");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
-		HashMap<String, List<DebitQueryVO>> map = queryDetail(paramvo);
+		HashMap<String, List<DebitQueryVO>> map = queryDetail(paramvo,length);
+		List<DebitQueryVO> shlist = new ArrayList<DebitQueryVO>();
 		if(list != null && list.size() > 0){
 			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 2);
 			String[] str={"one","two","three","four","five","six","seven",
@@ -105,8 +111,15 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 			List<DebitQueryVO> retlist = new ArrayList<DebitQueryVO>();
 		    for(DebitQueryVO bvo : list){
 		    	List<DebitQueryVO> vos = map.get(bvo.getPk_corp());
+		    	if(vos==null){
+		    		continue;
+		    	}
 		    	HashMap<String, DebitQueryVO> map1=new HashMap<>();
+		        DZFDouble umny=DZFDouble.ZERO_DBL;
+		        DZFDouble rmny=DZFDouble.ZERO_DBL;
 		        for (DebitQueryVO debitQueryVO : vos) {
+		        	umny=umny.add(debitQueryVO.getNdeductmny());
+		        	rmny=rmny.add(debitQueryVO.getNdedrebamny());
 					map1.put(debitQueryVO.getHead(), debitQueryVO);
 				}
 		        for(int i=0;i<headers.size();i++){
@@ -115,44 +128,78 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		        		bvo.setAttributeValue(str[i]+"2", map1.get(headers.get(i).getHead()).getNdedrebamny());
 		        	}
 		        }
+		        bvo.setNdeductmny(umny);
+	        	bvo.setNdedrebamny(rmny);
 		        if(!StringUtil.isEmpty(paramvo.getCorpname())){
 		        	if(bvo.getCorpcode().indexOf(paramvo.getCorpname()) != -1 
 		        			|| bvo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
 		        		retlist.add(bvo);
 		        	}
 		        }
+		        shlist.add(bvo);
 		    }
 		    if(!StringUtil.isEmpty(paramvo.getCorpname())){
 		    	return retlist;
 		    }
 		}
-		return list;
+		return shlist;
 	}
 	
 	/**
 	 * 查询期间，加盟商扣款已确认金额
 	 * @param vo
 	 */
-	private HashMap<String,List<DebitQueryVO>> queryDetail(DebitQueryVO vo){
-		int length= vo.getDbegindate().length();
+	private HashMap<String,List<DebitQueryVO>> queryDetail(DebitQueryVO vo,int length){
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        sql.append(" select sum(nvl(a.ndeductmny,0) - nvl(a.nretdedmny,0)) as ndeductmny, ");
-        sql.append(" sum(nvl(a.ndedrebamny,0) - nvl(a.nretrebmny,0)) as ndedrebamny, ");
-        sql.append(" a.pk_corp,substr(a.deductdata,0,"+length+") as head");
-        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
-        sql.append(" and substr(a.deductdata,0,"+length+")>=? and substr(a.deductdata,0,"+length+")<=?  ");
         sp.addParam(vo.getDbegindate());
         sp.addParam(vo.getDenddate());
-        if( null != vo.getCorps() && vo.getCorps().length > 0){
+        sql.append(" select sum(nvl(a.ndeductmny,0)) as ndeductmny, ");
+        sql.append(" sum(nvl(a.ndedrebamny,0)) as ndedrebamny, ");  
+        sql.append(" a.pk_corp,substr(a.deductdata,0,"+length+") as head");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
+		sql.append(" and substr(a.deductdata,0,10)>=? and substr(a.deductdata,0,10)<=?  ");
+	    if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
         sql.append(" group by a.pk_corp, substr(a.deductdata,0,"+length+")");
-        List<DebitQueryVO> list = (List<DebitQueryVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(DebitQueryVO.class));
-        HashMap<String, List<DebitQueryVO>> map = new HashMap<>();
-        List<DebitQueryVO> alist;
+		List<DebitQueryVO> qryNormal =(List<DebitQueryVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(DebitQueryVO.class));
+		sql = new StringBuffer();
+		sql.append(" select sum(nvl(a.nsubdeductmny,0)) as ndeductmny, ");
+        sql.append(" sum(nvl(a.nsubdedrebamny,0)) as ndedrebamny, ");  
+        sql.append(" a.pk_corp,substr(a.dchangetime,0,"+length+") as head");
+        sql.append(" from cn_contract a where a.vdeductstatus = 9 and nvl(a.dr,0)=0 ");
+		sql.append(" and substr(a.dchangetime,0,10)>=? and substr(a.dchangetime,0,10)<=?  ");
+	    if( null != vo.getCorps() && vo.getCorps().length > 0){
+            String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
+            sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+        }
+        sql.append(" group by a.pk_corp, substr(a.dchangetime,0,"+length+")");
+		List<DebitQueryVO> qryBian =(List<DebitQueryVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(DebitQueryVO.class));
+		
+		ArrayList<DebitQueryVO> list=new ArrayList<>();
+		if(qryNormal!=null && qryNormal.size()>0){
+			list.addAll(qryNormal);
+		}
+		if(qryBian!=null && qryBian.size()>0){
+			list.addAll(qryBian);
+		}
+        HashMap<String, List<DebitQueryVO>> map = new HashMap<>();//放pk_corp
+        HashMap<String, DebitQueryVO> map2 = new HashMap<>();//放pk_corp+time
+        List<DebitQueryVO> alist=new ArrayList<>();
         if(list != null && list.size() > 0){
+            for(DebitQueryVO bvo : list){
+            	if(map2.containsKey(bvo.getPk_corp()+bvo.getHead())){
+            		DebitQueryVO dvo=map2.get(bvo.getPk_corp()+bvo.getHead());
+        			bvo.setNdedrebamny(bvo.getNdedrebamny().add(dvo.getNdedrebamny()));
+        			bvo.setNdeductmny(bvo.getNdeductmny().add(dvo.getNdeductmny()));
+        			map2.put(bvo.getPk_corp()+bvo.getHead(), bvo);
+            	}else{
+            		map2.put(bvo.getPk_corp()+bvo.getHead(), bvo);
+            	}
+            }
+            list=new ArrayList<>(map2.values());
             for(DebitQueryVO bvo : list){
             	if(map.containsKey(bvo.getPk_corp())){
             		alist=map.get(bvo.getPk_corp());
@@ -167,5 +214,4 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         }
         return map;
 	}
-	
 }
