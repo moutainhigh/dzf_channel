@@ -268,10 +268,18 @@ function load(type){
 							colfield = 'mny'+colnm;
 							obj[colfield] = rows[i].dedmny;
 							
-							obj['num'] = rows[i].sumnum;
-							obj['mny'] = rows[i].summny;
-							obj['corpcode'] = rows[i].corpcode;
-							obj['corpname'] = rows[i].corpname;
+							obj['num'] = rows[i].sumnum;//总户数
+							obj['mny'] = rows[i].summny;//总扣款
+							obj['corpcode'] = rows[i].corpcode;//加盟商编码
+							obj['corpname'] = rows[i].corpname;//加盟商名称
+							if(i == rows.length - 1){//一行数据
+								colnm = onlymap.get(rows[i].dedmny);
+								colfield = 'num'+colnm;
+								obj[colfield] = rows[i].corpnum;
+								colfield = 'mny'+colnm;
+								obj[colfield] = rows[i].dedmny;
+								datarray.push(obj);
+							}
 						}else{
 							if(corpid == rows[i].corpid){
 								colnm = onlymap.get(rows[i].dedmny);
@@ -279,7 +287,7 @@ function load(type){
 								obj[colfield] = rows[i].corpnum;
 								colfield = 'mny'+colnm;
 								obj[colfield] = rows[i].dedmny;
-								if(i == rows.length - 1){
+								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);
 								}
 							}else if(corpid != rows[i].corpid){
@@ -296,6 +304,9 @@ function load(type){
 								obj['mny'] = rows[i].summny;
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
+								if(i == rows.length - 1){//最后一行数据
+									datarray.push(obj);
+								}
 							}
 						}
 					}

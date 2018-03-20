@@ -64,12 +64,12 @@
 						<label style="width:70px;text-align:right" for='rq'>扣款日期：</label> 
 						<font>
 							<input id="bdate" name="bdate"  class="easyui-datebox" 
-								data-options="required:true,width:130,height:28,validType:'checkdate'" value=<%=last%>/>
+								data-options="required:true,width:130,height:28,validType:'checkdate'" value="<%=last%>"/>
 						</font>
 						<font>-</font>
 						<font>
 							<input id="edate" name="edate"  class="easyui-datebox" 
-								data-options="required:true,width:130,height:28,validType:'checkdate'" value=<%=now%>/>
+								data-options="required:true,width:130,height:28,validType:'checkdate'" value="<%=now%>"/>
 						</font>
 					</div>
 				</div>
