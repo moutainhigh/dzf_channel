@@ -403,7 +403,7 @@ function tranImg(trun){
 </div>
 </form>
 <div id="pwd_buttons" style="display:none" >
-<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="savePsw();" >确认</a> 
+<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="savePsw();" >确认</a> 
 <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
 </div>
 <!-- 打开图片展示窗口 begin -->
