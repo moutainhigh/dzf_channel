@@ -266,7 +266,7 @@ function load(type){
 							colfield = 'num'+colnm;
 							obj[colfield] = rows[i].corpnum;
 							colfield = 'mny'+colnm;
-							obj[colfield] = rows[i].dedmny;
+							obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
 							
 							obj['num'] = rows[i].sumnum;//总户数
 							obj['mny'] = rows[i].summny;//总扣款
@@ -277,7 +277,7 @@ function load(type){
 								colfield = 'num'+colnm;
 								obj[colfield] = rows[i].corpnum;
 								colfield = 'mny'+colnm;
-								obj[colfield] = rows[i].dedmny;
+								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
 								datarray.push(obj);
 							}
 						}else{
@@ -286,7 +286,7 @@ function load(type){
 								colfield = 'num'+colnm;
 								obj[colfield] = rows[i].corpnum;
 								colfield = 'mny'+colnm;
-								obj[colfield] = rows[i].dedmny;
+								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
 								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);
 								}
@@ -298,7 +298,7 @@ function load(type){
 								colfield = 'num'+colnm;
 								obj[colfield] = rows[i].corpnum;
 								colfield = 'mny'+colnm;
-								obj[colfield] = rows[i].dedmny;
+								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
 								
 								obj['num'] = rows[i].sumnum;
 								obj['mny'] = rows[i].summny;
