@@ -126,6 +126,36 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		return billVOs;
 	}
 	
+	@Override
+	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid, String vreason)
+			throws DZFWarpException {
+		billvo = checkBillStatus(billvo);
+		if(!StringUtil.isEmpty(billvo.getVerrmsg())){
+			return billvo;
+		}
+		return updateData(billvo, opertype, cuserid, vreason);
+	}
+
+	/**
+	 * 校验数据状态
+	 * @param billVOs
+	 */
+	private ChnPayBillVO checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException {
+		ChnPayBillVO oldvo = (ChnPayBillVO) singleObjectBO.queryByPrimaryKey(ChnPayBillVO.class, billvo.getPk_paybill());
+		if(oldvo != null){
+			if(oldvo.getDr() != null && oldvo.getDr() == 1){
+				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"数据错误");
+			}else{
+				if(oldvo.getTstamp().compareTo(billvo.getTstamp()) != 0){
+					billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"发生变化");
+				}
+			}
+		}else{
+			billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"数据错误");
+		}
+		return billvo;
+	}
+	
 	/**
 	 * 收款确认、取消确认
 	 * @param billvo

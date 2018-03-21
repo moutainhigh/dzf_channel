@@ -40,4 +40,15 @@ public interface IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	public ChnPayBillVO queryByID(String cid) throws DZFWarpException;
+	
+	/**
+	 * 确认收款、取消确认单条数据操作
+	 * @param billvo
+	 * @param opertype
+	 * @param cuserid
+	 * @param vreason
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid,String vreason) throws DZFWarpException;
 }

@@ -99,31 +99,56 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ChnPayBillVO());
 			ChnPayBillVO[] billVOs = DzfTypeUtils.cast(arrayJson, headmaping, ChnPayBillVO[].class,
 					JSONConvtoJAVA.getParserConfig()); 
-			ChnPayBillVO[] retVOs = payconfSer.operate(billVOs, opertype, getLoginUserid(),vreason);
-			if(retVOs != null && retVOs.length > 0){
-				int rignum = 0;
-				int errnum = 0;
-				List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
-				for(ChnPayBillVO retvo : retVOs){
-					if(StringUtil.isEmpty(retvo.getVerrmsg() )){
-						rignum++;
-						rightlist.add(retvo);
-					}else{
-						errnum++;
-					}
-				}
-				json.setSuccess(true);
-				if(rignum > 0 && rignum == retVOs.length){
-					json.setRows(retVOs);
-					json.setMsg("成功"+rignum+"条");
-				}else if(errnum > 0){
-					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
-					json.setStatus(-1);
-					if(rignum > 0){
-						json.setRows(rightlist.toArray(new ChnPayBillVO[0]));
-					}
+			int rignum = 0;
+			int errnum = 0;
+			StringBuffer errmsg = new StringBuffer();
+			List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
+			for(ChnPayBillVO billvo : billVOs){
+				billvo = payconfSer.updateOperate(billvo, opertype, getLoginUserid(), vreason);
+				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
+					errnum ++;
+					errmsg.append(billvo.getVerrmsg()).append("<br>");
+				}else{
+					rignum ++;
+					rightlist.add(billvo);
 				}
 			}
+			json.setSuccess(true);
+			if(rignum > 0 && rignum == billVOs.length){
+				json.setRows(rightlist);
+				json.setMsg("成功"+rignum+"条");
+			}else if(errnum > 0){
+				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setStatus(-1);
+				if(rignum > 0){
+					json.setRows(rightlist);
+				}
+			}
+//			ChnPayBillVO[] retVOs = payconfSer.operate(billVOs, opertype, getLoginUserid(),vreason);
+//			if(retVOs != null && retVOs.length > 0){
+//				int rignum = 0;
+//				int errnum = 0;
+//				List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
+//				for(ChnPayBillVO retvo : retVOs){
+//					if(StringUtil.isEmpty(retvo.getVerrmsg() )){
+//						rignum++;
+//						rightlist.add(retvo);
+//					}else{
+//						errnum++;
+//					}
+//				}
+//				json.setSuccess(true);
+//				if(rignum > 0 && rignum == retVOs.length){
+//					json.setRows(retVOs);
+//					json.setMsg("成功"+rignum+"条");
+//				}else if(errnum > 0){
+//					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
+//					json.setStatus(-1);
+//					if(rignum > 0){
+//						json.setRows(rightlist.toArray(new ChnPayBillVO[0]));
+//					}
+//				}
+//			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
