@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -456,8 +457,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Override
 	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException {
+	    String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(), 120);
+			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(),uuid, 120);
 			String errmsg = "";
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				//审核前校验
@@ -501,7 +503,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				setNullValue(paramvo);
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract());
+			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract(),uuid);
 		}
 		
 		return paramvo;
@@ -573,8 +575,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(paramvo.getPatchstatus() == null || (paramvo.getPatchstatus() != null && paramvo.getPatchstatus() != 2)){
 			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, paramvo.getPk_packagedef());
 			if(packvo != null){
+			    String uuid = UUID.randomUUID().toString();
 				try {
-					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(), 30);
+					LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(),uuid, 30);
 					Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 					Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
 					if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
@@ -585,7 +588,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					packvo.setIusenum(num + 1);
 					singleObjectBO.update(packvo, new String[]{"iusenum"});
 				} finally {
-					LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef());
+					LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef(),uuid);
 				}
 			}
 		}
@@ -870,8 +873,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			confrimvo.setVerrmsg("数据错误");
 			return confrimvo;
 		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(confrimvo.getTableName(), confrimvo.getPk_contract(), 120);
+			LockUtil.getInstance().tryLockKey(confrimvo.getTableName(), confrimvo.getPk_contract(),uuid, 120);
 			String errmsg = "";
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				if(paramvo != null){
@@ -921,7 +925,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				setNullValue(confrimvo);
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(confrimvo.getTableName(), confrimvo.getPk_contract());
+			LockUtil.getInstance().unLock_Key(confrimvo.getTableName(), confrimvo.getPk_contract(),uuid);
 		}
 
 		return confrimvo;
@@ -1041,8 +1045,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			paramvo.setVerrmsg("数据错误");
 			return paramvo;
 		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(), 120);
+			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(),uuid, 120);
 			//1、变更前校验：
 			checkBeforeChange(paramvo);
 			//2、相关字段赋值：
@@ -1201,7 +1206,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				paramvo.setCorpkname(corpvo.getUnitname());
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract());
+			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract(),uuid);
 		}
 		return paramvo;
 	}

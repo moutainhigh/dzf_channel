@@ -1,5 +1,7 @@
 package com.dzf.service.channel.rebate.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +59,9 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 		}
 		data.setTapprovetime(new DZFDateTime());
 		data.setTstamp(new DZFDateTime());
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rebate(), 15);
+			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rebate(),uuid, 15);
 			//1、更新相关确认信息
 			singleObjectBO.update(data,
 					new String[] { "istatus", "vapprovenote", "vapproveid", "tapprovetime", "tstamp" });
@@ -72,7 +75,7 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 				saveRebateMny(data, pk_corp);
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rebate());
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rebate(),uuid);
 		}
 		return data;
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -187,8 +188,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setVerrmsg("数据错误");
 			return billvo;
 		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已确认】");
 				return billvo;
@@ -244,7 +246,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setTstamp(new DZFDateTime());
 			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
 		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}
@@ -263,8 +265,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setVerrmsg("数据错误");
 			return billvo;
 		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_2){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【待确认】");
 				return billvo;
@@ -306,7 +309,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setTstamp(new DZFDateTime());
 			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
 		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}
@@ -323,8 +326,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setVerrmsg("数据错误");
 			return billvo;
 		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), 120);
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已确认】");
 				return billvo;
@@ -337,7 +341,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setTstamp(new DZFDateTime());
 			singleObjectBO.update(billvo, new String[]{"vstatus","tstamp","vreason"});
 		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill());
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}

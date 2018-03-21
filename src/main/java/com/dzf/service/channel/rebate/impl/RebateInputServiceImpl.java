@@ -3,6 +3,7 @@ package com.dzf.service.channel.rebate.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -229,6 +230,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	
 	@Override
 	public RebateVO save(RebateVO data, String pk_corp) throws DZFWarpException {
+	    String uuid = UUID.randomUUID().toString();
 		try {
 			chcekBeforeSave(data);
 			if(StringUtil.isEmpty(data.getVbillcode())){
@@ -236,7 +238,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				data.setVbillcode(vbillcode);
 				checkCodeOnly(data);//返点单单号唯一性校验
 			}
-			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(), 10);
+			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(),uuid, 10);
 			RebateVO retvo =  (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if(retvo != null){
 				Map<Integer, String> areamap = pubser.queryAreaMap("1");
@@ -245,7 +247,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			}
 			return retvo;
 		} finally {
-			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason());
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(),uuid);
 		}
 	}
 	
