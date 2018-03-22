@@ -44,21 +44,20 @@ public class CustManageRepImpl implements ICustManageRep {
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
 		HashMap<String, CustManageRepVO> map = queryCorps(paramvo, corplist);
-		
-		List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1,corplist);//查询客户数量
-		//计算客户分类信息
-		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
-		CustNumMoneyRepVO custnumvo = null;
-		CustManageRepVO retvo = null;
-		List<String> codelist = qryIndustryCode(paramvo);//排行前五行业主键
-		List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
-		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
-		codelist.add("others");
-		String[] industrys = new String[]{"小规模纳税人","一般纳税人"};
-		CustCountVO industryvo = null;
-		DZFDouble rate = DZFDouble.ZERO_DBL;
-		Integer countnum = null;
 		if(corplist != null && corplist.size() > 0){
+			List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1,corplist);//查询客户数量
+			//计算客户分类信息
+			Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
+			CustNumMoneyRepVO custnumvo = null;
+			CustManageRepVO retvo = null;
+			List<String> codelist = qryIndustryCode(paramvo);//排行前五行业主键
+			List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
+			Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
+			codelist.add("others");
+			String[] industrys = new String[]{"小规模纳税人","一般纳税人"};
+			CustCountVO industryvo = null;
+			DZFDouble rate = DZFDouble.ZERO_DBL;
+			Integer countnum = null;
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			String key = "";

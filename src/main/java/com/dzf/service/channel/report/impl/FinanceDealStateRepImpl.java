@@ -54,14 +54,14 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
 		HashMap<String, FinanceDealStateRepVO> map = queryCorps(paramvo, corplist);
-		List<CustCountVO> custlist = (List<CustCountVO>) custServ.queryCustNum(paramvo,1,corplist);
-		Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
-		CustNumMoneyRepVO custnumvo = null;
-		FinanceDealStateRepVO retvo = null;
-		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist,paramvo.getPeriod());
-		Map<String, CustCountVO> voumap = null;
-		CustCountVO countvo = null;
 		if(corplist != null && corplist.size() > 0){
+			List<CustCountVO> custlist = (List<CustCountVO>) custServ.queryCustNum(paramvo,1,corplist);
+			Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
+			CustNumMoneyRepVO custnumvo = null;
+			FinanceDealStateRepVO retvo = null;
+			Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist,paramvo.getPeriod());
+			Map<String, CustCountVO> voumap = null;
+			CustCountVO countvo = null;
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			for(String pk_corp : corplist){

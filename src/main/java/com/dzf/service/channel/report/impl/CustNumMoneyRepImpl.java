@@ -38,6 +38,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		List<CustNumMoneyRepVO> retlist = new ArrayList<CustNumMoneyRepVO>();
 		List<String> corplist = new ArrayList<String>();
 		HashMap<String, CustNumMoneyRepVO> map = queryCorps(paramvo, corplist);
+//		HashMap<String, T> map11 = new HashMap<String, T>();
 		
 		if(corplist != null && corplist.size() > 0){
 			//1.1、查询客户数量、合同金额
