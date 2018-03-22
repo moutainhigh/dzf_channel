@@ -191,10 +191,11 @@ public class PubServiceImpl implements IPubService {
 		List<String> retlist = new ArrayList<String>();
 		List<String> onlylist = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
+		sql.append(" nvl(dr,0) = 0 AND nvl(type,0) = 1 ");
 		String[] users = userids.split(",");
 		String where = SqlUtil.buildSqlForIn("userid", users);
 		if(!StringUtil.isEmpty(where)){
-			sql.append(" nvl(dr,0) = 0 AND ").append(where);
+			sql.append(" AND ").append(where);
 		}
 		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), null);
 		if(bVOs != null && bVOs.length > 0){
@@ -231,7 +232,7 @@ public class PubServiceImpl implements IPubService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getManagerName(String pk_corp) throws DZFWarpException {
-		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? ";
+		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? AND nvl(type,0) = 1 ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_corp);
 		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
@@ -254,6 +255,7 @@ public class PubServiceImpl implements IPubService {
 			sql.append("                       AND nvl(isaccountcorp, 'N') = 'Y' \n");
 			sql.append("                       AND pk_corp = ? ) \n");
 			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
+			sql.append("   AND nvl(type,0) = 1 \n");
 			spm = new SQLParameter();
 			spm.addParam(pk_corp);
 			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
