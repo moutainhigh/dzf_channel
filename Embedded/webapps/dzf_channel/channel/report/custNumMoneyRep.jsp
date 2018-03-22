@@ -12,6 +12,9 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%> charset="UTF-8" type="text/javascript"></script>
+<style type="text/css">
+.panel-body{overflow:auto}
+</style>
 </head>
 <%
 	//获取当前月期间
@@ -48,23 +51,21 @@
 					<label style="text-align:right;width: 70px;">查询期间：</label>
 					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
 						style="width:137px;height:30px;" value=<%=ym%> />
-<!-- 							<a id="query" href="javascript:void(0)" style="margin-bottom: 0px;"  -->
-<!-- 								class="ui-btn ui-btn-xz" onclick="reloadData()">查询</a>  -->
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 295px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:150" editable="false" />  
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 70px;">省（市）：</label> 
 					<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 295px; height: 28px;" 
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
+						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:70px;">培训师：</label> 
 					<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:80" editable="false" />  
+						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 

@@ -13,6 +13,7 @@
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
+.panel-body{overflow:auto}
 .datagrid-header .datagrid-cell span {
     font-weight: bold;
     font-size: 12px;
@@ -41,13 +42,13 @@
 						<div class="h30 h30-arrow" id="kshu">
 							<label style="text-align:right;width: 70px;">大区：</label> 
 							<input id="aname"  name="aname" class="easyui-combobox" style="width: 180px; height: 28px;" 
-								data-options="required:false,valueField:'name',textField:'name',panelHeight:150" editable="false" />  
+								data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 							<label style="text-align:right;width: 70px;">省（市）：</label> 
 							<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 160px; height: 28px;" 
-								data-options="required:false,valueField:'id',textField:'name',panelHeight:150" editable="false" />  
+								data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 							<label style="text-align:right;width:70px;">培训师：</label> 
 							<input id="uid" name="uid" class="easyui-combobox" style="width:160px;height:28px;text-align:left"
-								data-options="required:false,valueField:'id',textField:'name',panelHeight:80" editable="false" />  
+								data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 						</div>
 					</div>
 				  	<div class="right">
