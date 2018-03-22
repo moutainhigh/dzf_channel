@@ -362,7 +362,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	@Override
 	public List<ManagerRefVO> queryManagerRef(QryParamVO paramvo) throws DZFWarpException {
 		List<ManagerRefVO> retlist = new ArrayList<ManagerRefVO>();
-		String sql = " SELECT DISTINCT userid FROM cn_chnarea_b WHERE nvl(dr,0) = 0";
+		//只查询区域经理
+		String sql = " SELECT DISTINCT userid FROM cn_chnarea_b WHERE nvl(dr,0) = 0 AND nvl(type,0) = 1 ";
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ChnAreaBVO.class));
 		if (list != null && list.size() > 0) {
 			UserVO uservo = null;
