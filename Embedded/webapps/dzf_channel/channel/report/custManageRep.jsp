@@ -49,12 +49,14 @@
 							<label style="text-align:right;width:70px;">培训师：</label> 
 							<input id="uid" name="uid" class="easyui-combobox" style="width:160px;height:28px;text-align:left"
 								data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
+							<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
+							data-options=" plain:true" style="margin-bottom:0px;" onclick="load()" id="">查询</a>
 						</div>
 					</div>
-				  	<div class="right">
+				  	<!-- <div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
 							data-options=" plain:true" onclick="load()" id="">刷新</a>
-					</div>
+					</div> -->
 		        </div>
 		    </div>
 		    <div class="mod-inner">
