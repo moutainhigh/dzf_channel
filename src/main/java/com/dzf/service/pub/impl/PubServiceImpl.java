@@ -256,6 +256,7 @@ public class PubServiceImpl implements IPubService {
 			sql.append("                       AND pk_corp = ? ) \n");
 			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
 			sql.append("   AND nvl(type,0) = 1 \n");
+			sql.append("   AND nvl(dr,0) = 0 \n");
 			spm = new SQLParameter();
 			spm.addParam(pk_corp);
 			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
