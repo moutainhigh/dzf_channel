@@ -30,6 +30,9 @@ public class DebitQueryVO extends SuperVO {
 	@FieldAlias("cname")
 	private String corpname;//单位名称
 	
+	@FieldAlias("chtype")
+	private String channeltype;//加盟商类型  1：普通；2：金牌
+	
     private String[] corps;//渠道商ids
     
 	@FieldAlias("ndemny")
@@ -118,6 +121,14 @@ public class DebitQueryVO extends SuperVO {
 
 	public void setHead(String head) {
 		this.head = head;
+	}
+
+	public String getChanneltype() {
+		return channeltype;
+	}
+
+	public void setChanneltype(String channeltype) {
+		this.channeltype = channeltype;
 	}
 
 	public DZFDate getChndate() {

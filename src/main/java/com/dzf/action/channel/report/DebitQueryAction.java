@@ -25,6 +25,7 @@ import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.lang.DZFBoolean;
@@ -108,9 +109,11 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			columnkeys.add("corpcode");
 			columnames.add("加盟商名称");
 			columnkeys.add("corpname");
+			columnames.add("加盟商类型");
+			columnkeys.add("channeltype");
 			columnames.add("加盟日期");
 			columnkeys.add("chndate");
-			for (int i = 3 ; i< len; i ++) {
+			for (int i = 4 ; i< len; i ++) {
 				 name=(Map<String, String>) headlist.get(i);
 				 columnames.add(name.get("title"));
 			}
@@ -124,7 +127,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			columnkeys.add("ndedrebamny");
 			String[] str={"one","two","three","four","five","six","seven",
 			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
-			for(int i = 0 ; i< len-5; i ++){
+			for(int i = 0 ; i< len-6; i ++){
 				columnames.add("预付款");
 				columnkeys.add(str[i]+"1");
 				columnames.add("返点");
@@ -132,13 +135,22 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			}
 			Map<String,String> bodymapping=FieldMapping.getFieldMapping(new DebitQueryVO());
 			DebitQueryVO[] bodyvos =DzfTypeUtils.cast(array,bodymapping, DebitQueryVO[].class, JSONConvtoJAVA.getParserConfig());
+			for (DebitQueryVO debitQueryVO : bodyvos) {
+				if(!StringUtil.isEmpty(debitQueryVO.getChanneltype())){
+					if(debitQueryVO.getChanneltype().equals("1")){
+						debitQueryVO.setChanneltype("普通加盟商");
+					}else{
+						debitQueryVO.setChanneltype("金牌加盟商");
+					}
+				}
+			}
 			setIscross(DZFBoolean.TRUE);//是否横向
 			LinkedList<ColumnCellAttr> columnlist = new LinkedList<>();
 			int[] size=new int[columnkeys.size()];
  			for(int i=0;i<columnames.size();i++){
 				ColumnCellAttr attr = new ColumnCellAttr();
 				attr.setColumname(columnames.get(i));
-				if(i<3){
+				if(i<4){
 					attr.setRowspan(2);
 					size[i]=3;
 				}else if(i<len){
@@ -178,7 +190,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		}
 		for (int i = 0 ; i< headlist1.size(); i ++) {
 			 name=(Map<String, String>) headlist1.get(i);
-			 if(i<3){
+			 if(i<4){
 				 fieldslist.add(name.get("field"));
 				 heads.add(name.get("title"));
 			 }else{
@@ -205,6 +217,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			List<String> fieldlist = new ArrayList<String>();
 			fieldlist.add("ccode");
 			fieldlist.add("cname");
+			fieldlist.add("chtype");
 			fieldlist.add("chndate");
 			byte[] length = ex.exportDebitExcel("加盟商扣款查询",heads,heads1,fieldslist ,array,toClient,"",fieldlist);
 			String srt2=new String(length,"UTF-8");

@@ -2,7 +2,6 @@ var contextPath = DZF.contextPath;
 var isenter = false;//是否快速查询
 var hstr=["one","two","three","four","five","six","seven",
         "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
-var printHead;
 $(function() {
 	initQry();//初始化查询框
 	var queryData = getQueryData();
@@ -310,12 +309,12 @@ function load(queryData) {
 	var columns=new Array();
 	var columns1=new Array();
 	var columns2=new Array();
-	printHead="";
 	columns1[0]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
 	columns1[1]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
-	columns1[2]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
-	columns1[3]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
-	columns1[4]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
+	columns1[2]={width : '100',title : '加盟商类型',field : 'chtype',align:'left', rowspan:2,formatter :ftype};
+	columns1[3]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
+	columns1[4]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
+	columns1[5]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
 	
 	columns2[0]={width : '100',title : '预付款',field : 'outymny',align:'right',formatter: fny},
 	columns2[1]={width : '100',title : '返点',field : 'outfmny',align:'right',formatter: fny},
@@ -337,8 +336,7 @@ function load(queryData) {
 			} else {
 				var rows=data.rows;
 				for(var i=0;i<rows[0].num;i++){
-					columns1[5+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
-					printHead+=rows[i].head+",";
+					columns1[6+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
 				}
 				var j=4;
 				for(var i=0;i<rows[0].num;i++){
@@ -369,6 +367,14 @@ function load(queryData) {
 				calFooter();
 			}
 	  });
+}
+
+function ftype(value,row,index){
+	if (value == 1) {
+		return '普通加盟商';
+	}
+	if (value == 2)
+		return '金牌加盟商';
 }
 
 function fny(value,row,index){

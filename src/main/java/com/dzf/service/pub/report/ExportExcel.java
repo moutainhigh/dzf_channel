@@ -524,25 +524,28 @@ public class ExportExcel<T> {
 				HSSFCell celltitle1m = rowtitle1m.createCell(i);
 				celltitle1m.setCellStyle(style);
 			}
-			for (int i = 0; i * 2 < fieldlength - 3; i++) {
-				HSSFCell celltitle1m = rowtitle1m.createCell(i * 2 + 3);
+			for (int i = 0; i * 2 < fieldlength - 4; i++) {
+				HSSFCell celltitle1m = rowtitle1m.createCell(i * 2 + 4);
 				celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
 				celltitle1m.setCellStyle(style); //居中
-				sheet.addMergedRegion(new CellRangeAddress(3, 3, (i * 2 + 3), (i * 2 + 4)));
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, (i * 2 + 4), (i * 2 + 5)));
 			}
 			
 			HSSFCell celltitle1m = rowtitle1m.createCell(0);
 			HSSFCell celltitle2m = rowtitle1m.createCell(1);
 			HSSFCell celltitle3m = rowtitle1m.createCell(2);
+			HSSFCell celltitle4m = rowtitle1m.createCell(3);
 			celltitle1m.setCellValue(new HSSFRichTextString(headers.get(0)));
 			celltitle2m.setCellValue(new HSSFRichTextString(headers.get(1)));
 			celltitle3m.setCellValue(new HSSFRichTextString(headers.get(2)));
+			celltitle4m.setCellValue(new HSSFRichTextString(headers.get(3)));
 			HSSFCellStyle stylegsm = workbook.createCellStyle();//表头样式
 			stylegsm.cloneStyleFrom(style);
 			stylegsm.setAlignment(HSSFCellStyle.ALIGN_LEFT);
 			celltitle1m.setCellStyle(stylegsm);
 			celltitle2m.setCellStyle(stylegsm);
 			celltitle3m.setCellStyle(stylegsm);
+			celltitle4m.setCellStyle(stylegsm);
 
 			if (headerlength != fieldlength) {
 				index++;
@@ -558,6 +561,7 @@ public class ExportExcel<T> {
 		   sheet.addMergedRegion(new CellRangeAddress(3, 4, 0, 0));
 		   sheet.addMergedRegion(new CellRangeAddress(3, 4, 1, 1));
 		   sheet.addMergedRegion(new CellRangeAddress(3, 4, 2, 2));
+		   sheet.addMergedRegion(new CellRangeAddress(3, 4, 3, 3));
 
 			for (int i = 0; i < array.size(); i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
@@ -573,7 +577,17 @@ public class ExportExcel<T> {
 								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(doublevalue.toString());
 							} else {
-								richString = new HSSFRichTextString(map.get(key).toString());
+								String value=map.get(key).toString();
+								if(key.equals("chtype")){
+									if(!StringUtil.isEmpty(value)){
+										if(value.equals("1")){
+											value="普通加盟商";
+										}else{
+											value="金牌加盟商";
+										}
+									}
+								}
+								richString = new HSSFRichTextString(value);
 								cell.setCellValue(richString);
 							}
 						} else {

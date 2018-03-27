@@ -86,7 +86,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate ,");
+		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate,a.channeltype,");
 		sql.append(" balance.outymny, balance.outfmny");
 		sql.append(" from bd_account a");
         sql.append(" left join (select pk_corp,sum(decode(ipaytype,2,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outymny,");
@@ -99,7 +99,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
-        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,balance.outymny,balance.outfmny");
+        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,a.channeltype,balance.outymny,balance.outfmny");
         sql.append(" order by a.innercode ");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		HashMap<String, List<DebitQueryVO>> map = queryDetail(paramvo,length);
