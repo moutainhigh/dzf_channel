@@ -168,20 +168,27 @@
 						<input id="rebbalmny" name="rebbalmny" class="easyui-numberbox" style="width:50%;height:28px;text-align:left;"
 							data-options="readonly:true,precision:2,groupSeparator:','" >
 					</div>
-					<div class="decan strong" style="width:30%;display: inline-block;">
+					<div class="decan strong" style="width:28%;display: inline-block;">
 						<label style="width:27%;text-align: right;font-weight: bold;">加盟商：</label>
 						<input id="corpnm" name="corpnm" class="easyui-textbox" data-options="readonly:true" 
 							style="width:60%;height:28px;text-align:left; ">
 					</div>
-					<div class="decan strong" style="width:20%;display: inline-block;">
-						<label style="width:32%;text-align: right;font-weight: bold;">合同金额：</label>
-						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" style="width:58%;height:28px;text-align:left;"
+					<div class="decan strong" style="width:25%;display: inline-block;">
+						<label style="width:35%;text-align: right;font-weight: bold;">加盟商类型：</label>
+						<input id="corptp" name="corptp" class="easyui-textbox" data-options="readonly:true" 
+							style="width:60%;height:28px;text-align:left; ">
+					</div>
+				</div>
+				<div class="time_col time_colp11 " style="margin-top:10px;">
+					<div class="decan strong" style="width:22%;display: inline-block;">
+						<label style="width:40%;text-align: right;font-weight: bold;">合同金额：</label>
+						<input id="hntlmny" name="hntlmny" class="easyui-numberbox" style="width:50%;height:28px;text-align:left;"
 							data-options="readonly:true,precision:2,groupSeparator:','" >
 					</div>
-					<div id="issupple" class="decan strong" style="width:24%;display:inline-block;font-weight:bold;">
+					<div id="issupple" class="decan strong" style="width:22%;display:inline-block;font-weight:bold;">
 						<label style="width:40%;text-align: right;">变更日期：</label>
 						<input id="scperiod" name="cperiod" class="easyui-textbox" data-options="readonly:true" 
-							style="width: 56%; height: 28px; text-align:left;">
+							style="width:56%; height:28px; text-align:left;">
 					</div>
 				</div>
 				<form id = "deductfrom" method="post">

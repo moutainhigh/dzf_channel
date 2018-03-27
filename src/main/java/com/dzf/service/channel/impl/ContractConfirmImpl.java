@@ -382,7 +382,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private ContractConfrimVO queryContractById(String pk_contract) throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT  con.*,busi.vbusitypename as vbusitypename \n") ;
+		sql.append("SELECT  con.*,busi.vbusitypename as vbusitypename, acc.channeltype \n") ;
 		sql.append("  FROM ynt_contract con \n") ; 
 		sql.append("  LEFT JOIN bd_account acc ON con.pk_corp = acc.pk_corp \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype busi ON con.busitypemin = busi.pk_busitype");
@@ -398,6 +398,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm, new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
 			ContractConfrimVO vo = conflist.get(0);
+			if(vo.getChanneltype() != null && vo.getChanneltype() == 1){
+				vo.setCorptype("普通加盟商");
+				vo.setIdeductpropor(10);
+			}else if(vo.getChanneltype() != null && vo.getChanneltype() == 2){
+				vo.setCorptype("金牌加盟商");
+				vo.setIdeductpropor(50);
+			}else{
+				vo.setIdeductpropor(10);
+			}
 			CorpVO corpvo = null;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 			if (corpvo != null) {

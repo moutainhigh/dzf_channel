@@ -747,7 +747,7 @@ function initdeductData(row){
                 var row = data.rows;
                 $('#deductfrom').form('load',row);
                 $('#confreason').textbox('setValue', null);//驳回原因
-                $('#propor').numberbox('setValue', 10);
+                $('#propor').numberbox('setValue', row.propor);
                 //扣费标准修改为扣掉账本费的合同金额
                 var countmny = getFloatValue(row.ntlmny).sub(getFloatValue(row.nbmny));
                 var ndesummny = getFloatValue(countmny).mul(parseFloat(10)).div(100);
@@ -762,6 +762,7 @@ function initdeductData(row){
                 $('#contractid').val(row.contractid);//合同主键
                 $('#salespromot').textbox('setValue', row.salespromot);//促销活动
                 $('#scperiod').textbox('setValue', row.cperiod);//变更日期
+                $('#corptp').textbox('setValue', row.corptp);//加盟商类型
                 document.getElementById("debit").checked="true";
             }
         },

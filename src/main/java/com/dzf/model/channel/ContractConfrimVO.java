@@ -228,6 +228,28 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("mname")
     private String vmanagername; // 渠道经理
+    
+    @FieldAlias("chtype")
+    private Integer channeltype;//加盟商类型 1-普通加盟商；2-金牌加盟商；
+
+    @FieldAlias("corptp")
+    private String corptype; // 加盟商类型
+
+	public Integer getChanneltype() {
+		return channeltype;
+	}
+
+	public String getCorptype() {
+		return corptype;
+	}
+
+	public void setChanneltype(Integer channeltype) {
+		this.channeltype = channeltype;
+	}
+
+	public void setCorptype(String corptype) {
+		this.corptype = corptype;
+	}
 
 	public String getVmanagername() {
 		return vmanagername;
