@@ -118,6 +118,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO paramvo = new ContractConfrimVO();
 			paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			if(paramvo == null){
+				log.info("单个审核-获取审核数据为空");
+			}
 			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid());
 			json.setRows(retvo);
 			json.setSuccess(true);
@@ -164,7 +167,11 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
 			for(ContractConfrimVO confvo : confrimVOs){
-				confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap);
+				if(confvo == null){
+					log.info("批量审核-获取审核数据为空");
+				}else{
+					confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap);
+				}
 				if(!StringUtil.isEmpty(confvo.getVerrmsg() )){
 					errnum++;
 					errmsg.append(confvo.getVerrmsg()).append("<br>");

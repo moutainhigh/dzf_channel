@@ -104,6 +104,9 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			StringBuffer errmsg = new StringBuffer();
 			List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
 			for(ChnPayBillVO billvo : billVOs){
+				if(billvo == null){
+					log.info("付款单-获取操作数据为空");
+				}
 				billvo = payconfSer.updateOperate(billvo, opertype, getLoginUserid(), vreason);
 				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
 					errnum ++;
