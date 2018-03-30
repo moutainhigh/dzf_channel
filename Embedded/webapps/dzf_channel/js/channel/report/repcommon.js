@@ -21,6 +21,13 @@ function changeArea(){
 	});
 }
 
+//清空查询条件
+function clearCondition(){
+	$('#aname').combobox('select',null);
+	$('#ovince').combobox('select',null);
+	$('#uid').combobox('select',null);
+}
+
 function changeProvince(){
 	 $("#ovince").combobox({
 		onChange : function(n, o) {

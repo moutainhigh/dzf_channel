@@ -38,13 +38,6 @@ function closeCx() {
 	$("#qrydialog").css("visibility", "hidden");
 }
 
-// 清空查询条件
-function clearCondition(){
-	$('#aname').combobox('select',null);
-	$('#ovince').combobox('select',null);
-	$('#uid').combobox('select',null);
-}
-
 /**
  * 数据表格初始化
  */
