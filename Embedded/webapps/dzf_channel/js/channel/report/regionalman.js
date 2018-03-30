@@ -103,13 +103,18 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},  
-	  	  	{width : '100',title : '预付款',field : 'predeposit',align:'right',
+			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		  	{width : '100',title : '提单量',field : 'num',align:'right'}, 
-		  	{width : '100',title : '合同总金额',field : 'ntlmny',align:'right',
+	  	  	{width : '100',title : '本期预付款',field : 'predeposit',align:'right',
+		    	formatter : function(value,row,index){
+		    		if(value == 0)return "0.00";
+		    		return formatMny(value);
+			}},
+		  	{width : '60',title : '提单量',field : 'num',align:'right'}, 
+		  	{width : '100',title : '合同代账费',field : 'ntlmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -120,11 +125,6 @@ function load() {
 		    		return formatMny(value);
 			}},
 			{width : '100',title : '返点扣款',field : 'nderebmny',align:'right',
-		    	formatter : function(value,row,index){
-		    		if(value == 0)return "0.00";
-		    		return formatMny(value);
-			}},
-			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);

@@ -24,8 +24,8 @@ function load() {
 		},
 		showFooter:true,
 		columns : [ [
-		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
-			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
+		    {width : '160',title : '渠道经理',field : 'cuname',align:'left'}, 
+			{width : '260',title : '加盟商',field : 'corpnm',align:'left',
 				formatter : function(value, row, index) {
 					if(value == undefined){
 						return;
@@ -40,13 +40,18 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},  
-	  	  	{width : '100',title : '预存款',field : 'predeposit',align:'right',
+			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		  	{width : '100',title : '提单量',field : 'num',align:'right'}, 
-		  	{width : '100',title : '合同总金额',field : 'ntlmny',align:'right',
+	  	  	{width : '100',title : '本期预存款',field : 'predeposit',align:'right',
+		    	formatter : function(value,row,index){
+		    		if(value == 0)return "0.00";
+		    		return formatMny(value);
+			}},
+		  	{width : '80',title : '提单量',field : 'num',align:'right'}, 
+		  	{width : '100',title : '合同代账费',field : 'ntlmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -57,11 +62,6 @@ function load() {
 		    		return formatMny(value);
 			}},
 			{width : '100',title : '返点扣款',field : 'nderebmny',align:'right',
-		    	formatter : function(value,row,index){
-		    		if(value == 0)return "0.00";
-		    		return formatMny(value);
-			}},
-			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
