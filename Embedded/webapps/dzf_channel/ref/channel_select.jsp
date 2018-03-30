@@ -9,6 +9,7 @@
 <%
 	String issingle = request.getParameter("issingle");
 	String ovince = request.getParameter("ovince");
+	String corpids = request.getParameter("corpids");
 %>
 <body>
 <style>
@@ -96,6 +97,7 @@
 			   	 ]];
 		}
 		var ovince = <%=ovince%>;
+		var corpids = '<%=corpids%>';
 		if(isEmpty(ovince)){
 			ovince=-1;
 		}
@@ -113,7 +115,7 @@
 			showFooter : true,
 			height:330,
 			striped:true,
-			queryParams: {'dr':ovince},
+			queryParams: {'dr':ovince,'vmome':corpids},
 		    columns: columns,
 			onDblClickRow:function(rowIndex, rowData){
 				var rowTable = $('#gsTable').datagrid('getSelections');

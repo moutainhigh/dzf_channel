@@ -322,6 +322,19 @@ function initChnCorp(){
 		});
 		return;
 	}
+	var rows= $('#cardGrid').datagrid('getRows');
+	var corpids="";
+	for(var i=0;i<rows.length;i++){
+		if(i==editIndex ){
+			continue;
+		}
+		if(!isEmpty(rows[i].corpid)){
+			corpids=corpids+","+rows[i].corpid;
+		}
+	}
+	if(!isEmpty(corpids)){
+		corpids=corpids.substring(1);
+	}
 	$("#chnDlg").dialog({
 		width: 600,
 	    height: 480,
@@ -330,7 +343,8 @@ function initChnCorp(){
 		modal: true,
 		href: DZF.contextPath + '/ref/channel_select.jsp',
 		queryParams:{
-			ovince : tar_ovince,
+			'ovince' : tar_ovince,
+			'corpids' : corpids
 		},
 		buttons: '#chnBtn'
 	});
