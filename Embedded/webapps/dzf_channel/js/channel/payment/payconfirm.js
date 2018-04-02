@@ -585,3 +585,17 @@ function downFile(billid){
 	Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
 }
 
+/**
+ * 导出
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');
+	Business.getFile(DZF.contextPath+ '/chnpay/chnpayconf!exportExcel.action',{'strlist':JSON.stringify(datarows),'qj':qj}, true, true);
+}
+

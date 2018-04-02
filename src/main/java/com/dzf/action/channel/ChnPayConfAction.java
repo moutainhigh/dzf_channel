@@ -1,5 +1,6 @@
 package com.dzf.action.channel;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.ChnPayBillExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
@@ -31,6 +34,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayConfService;
 
@@ -262,6 +266,56 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 					fileis.close();
 				} catch (IOException e) {
 					log.error("关闭流失败", e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Excel导出方法  1渠道；2区域；3总
+	 */
+	public void exportExcel(){
+		String strlist =getRequest().getParameter("strlist");
+		String qj = getRequest().getParameter("qj");
+		if(StringUtil.isEmpty(strlist)){
+			throw new BusinessException("导出数据不能为空!");
+		}	
+		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new ChnPayBillVO());
+		ChnPayBillVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ChnPayBillVO[].class, JSONConvtoJAVA.getParserConfig());
+		HttpServletResponse response = getResponse();
+		Excelexport2003<ChnPayBillVO> ex = new Excelexport2003<>();
+		ChnPayBillExcelField fields= new ChnPayBillExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+	        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+		} catch (Exception e) {
+			log.error("导出失败",e);
+		}  finally {
+			if(toClient != null){
+				try {
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
+				}
+			}
+			if(servletOutputStream != null){
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
 				}
 			}
 		}
