@@ -18,6 +18,10 @@ $(window).resize(function() {
 $(function() {
 	initListener();
 	initBusiData();
+	
+	downFile();
+	showTips();
+	hideTips();
 });
 
 /**
@@ -111,6 +115,9 @@ function initListener(){
 			CloseTab(this, item.name);
 		}
 	});
+	
+	
+	
 	//判断是否要修改手机及邮箱信息
 //	$("#isEditInfo").change(function(){
 //		if($("#isEditInfo").prop("checked")){
@@ -398,4 +405,30 @@ function savePsw(){
 						return;
 					}
 	}, "json");
+}
+
+/**
+ * 显示提示(为了付款单确认)
+ * @param i
+ */
+function showTips(){
+	$("#reUpload").css("display","block");
+	$("#reUpload").html("单击下载");	
+}
+
+/**
+ * 隐藏提示(为了付款单确认)
+ * @param i
+ */
+function hideTips(){
+	$("#reUpload").css("display","none");	
+}
+
+
+/**
+ * 附件下载(为了付款单确认)
+ * @param billid
+ */
+function downFile(billid){
+	Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
 }

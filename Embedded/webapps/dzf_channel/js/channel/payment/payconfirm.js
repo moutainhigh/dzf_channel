@@ -522,41 +522,15 @@ function operatData(postdata, rows){
 	});
 }
 
-
-/**
- * 显示提示
- * @param i
- */
-function showTips(i){
-	var div = "#reUpload"+i;
-	$(div).css("display","block");
-	var tips = "单击下载";
-	var tipkey = "#tips"+ i;
-	$(tipkey).html(tips);	
-}
-
-/**
- * 隐藏提示
- * @param i
- */
-function hideTips(i){
-	var div = "#reUpload"+i;
-	$(div).css("display","none");	
-}
-
-/**
- * 查看原图
- * @param i
- */
 function showImage(billid){
-//	var ext = getFileExt(arrachrow['doc_name']);
 	var src = DZF.contextPath + "/chnpay/chnpayconf!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
-//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-//	}
 	$("#tpfd").empty();
-//	var offset = $("#tpght").offset();
-	$("#tpfd").dialog({
+	parent.openFullViewDlg('<div style="overflow:scroll;height:80%"  >'
+			+'<a  onclick="downFile(\'' +billid + '\')"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
+			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
+			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
+	  		+'</a></div>','原图');
+/*	$("#tpfd").dialog({
 		title: '附件浏览' ,
 		width:$(window).width()-100,
 		height:$(window).height()-100,
@@ -572,18 +546,21 @@ function showImage(billid){
 				  '<div id="reUpload' + 0 +'" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 				  		'<h4><span id="tips'+0+'"></span></h4> '+
 				  '</div>  </span>' +
-       '</a> </div>',
+	   '</a> </div>',
 		onLoad:function(){}
-	});
+});*/
 }
 
 /**
- * 附件下载
- * @param billid
+ * 设置快捷键
  */
-function downFile(billid){
-	Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
-}
+$(document).keydown(function(e) {
+	//ESC 关闭附件预览框
+	if (e.keyCode == 27) {
+		parent.closeFullViewDlg();
+	}
+});
+
 
 /**
  * 导出
