@@ -93,7 +93,8 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         sql.append("   			 sum(decode(ipaytype,3,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outfmny");
         sql.append("   			from cn_balance where ipaytype!=1 and nvl(dr,0)=0 group by pk_corp) balance ");
         sql.append(" 	on a.pk_corp = balance.pk_corp");
-        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9) ");
+        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp ");
+        sql.append(" and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9 or contract.vdeductstatus = 10) ");//
         sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0  and nvl(contract.dr, 0) = 0 ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
@@ -157,7 +158,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         sql.append(" select sum(nvl(a.ndeductmny,0)) as ndeductmny, ");
         sql.append(" sum(nvl(a.ndedrebamny,0)) as ndedrebamny, ");  
         sql.append(" a.pk_corp,substr(a.deductdata,0,"+length+") as head");
-        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9) and nvl(a.dr,0)=0 ");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 1 or a.vdeductstatus = 9 or a.vdeductstatus = 10) and nvl(a.dr,0)=0 ");
 		sql.append(" and substr(a.deductdata,0,10)>=? and substr(a.deductdata,0,10)<=?  ");
 	    if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
@@ -169,7 +170,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append(" select sum(nvl(a.nsubdeductmny,0)) as ndeductmny, ");
         sql.append(" sum(nvl(a.nsubdedrebamny,0)) as ndedrebamny, ");  
         sql.append(" a.pk_corp,substr(a.dchangetime,0,"+length+") as head");
-        sql.append(" from cn_contract a where a.vdeductstatus = 9 and nvl(a.dr,0)=0 ");
+        sql.append(" from cn_contract a where (a.vdeductstatus = 9 or a.vdeductstatus = 10) and nvl(a.dr,0)=0 ");
 		sql.append(" and substr(a.dchangetime,0,10)>=? and substr(a.dchangetime,0,10)<=?  ");
 	    if( null != vo.getCorps() && vo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
