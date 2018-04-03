@@ -222,7 +222,7 @@ function quickfiltet(){
 	        		$('#grid').datagrid('load', {
 	        			"corpnm": filtername,
 	        			"bdate": $('#bdate').datebox('getValue'),
-	        			"edate": $('#bdate').datebox('getValue'),
+	        			"edate": $('#edate').datebox('getValue'),
 	        			"type":3,
 	        			"aname": aname,
 	        			"ovince": ovince,
