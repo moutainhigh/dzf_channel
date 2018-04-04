@@ -235,18 +235,30 @@ public class ManagerServiceImpl implements IManagerService {
 			spm.addParam(qvo.getDenddate());
 			spm.addParam(qvo.getDbegindate());
 			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
+			spm.addParam(qvo.getDbegindate());
+			spm.addParam(qvo.getDenddate());
 			
 			buf=new StringBuffer();//提单量,合同总金额,扣款金额(预付款,返点款)
 			buf.append("  select pk_corp,");
 			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))+");
-			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1))as num,");
+			buf.append("  sum(decode(vdeductstatus,10," );
+			buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
+			buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
+			buf.append("  ))as num,");
 			
 			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");
-			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)))as ntotalmny,");
+			buf.append("  sum(decode(vdeductstatus,10," );
+			buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)+nvl(nbookmny,0)),");
+			buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0))");
+			buf.append("  ))as ntotalmny,");
 			
 			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndeductmny,0)))+");
@@ -342,7 +354,7 @@ public class ManagerServiceImpl implements IManagerService {
 		
 		sql = new StringBuffer();
 	    sql.append(" select -1 as num,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
-		sql.append(" nvl(nsubtotalmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0  and vdeductstatus=10 and" );
 		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
