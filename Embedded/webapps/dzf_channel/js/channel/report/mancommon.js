@@ -70,7 +70,7 @@ function initDetailGrid(){
 			field : 'num',
 		},{
 			width : '120',
-			title : '合同金额',
+			title : '合同代账费',
 			align:'right',
             halign:'center',
 			field : 'ntlmny',
