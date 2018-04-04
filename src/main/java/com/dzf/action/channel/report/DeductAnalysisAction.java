@@ -47,12 +47,33 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 	@Autowired
 	private IDeductAnalysis analyser;
 
+	/**
+	 * 查询金额数据
+	 */
 	public void query() {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			List<DeductAnalysisVO> vos = analyser.query(paramvo);
+			grid.setRows(vos);
+			grid.setSuccess(true);
+			grid.setMsg("查询成功");
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 查询金额排序数据
+	 */
+	public void queryMnyOrder() {
+		Grid grid = new Grid();
+		try {
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			List<DeductAnalysisVO> vos = analyser.queryMnyOrder(paramvo);
 			grid.setRows(vos);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功");

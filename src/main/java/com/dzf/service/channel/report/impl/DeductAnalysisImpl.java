@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DeductAnalysisVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
@@ -29,6 +30,38 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DeductAnalysisVO> query(QryParamVO paramvo) throws DZFWarpException {
+		QrySqlSpmVO qryvo = getQrySqlSpm(paramvo, 1);
+		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
+				qryvo.getSpm(), new BeanListProcessor(DeductAnalysisVO.class));
+		if (list != null && list.size() > 0) {
+			Map<String, DeductAnalysisVO> map = queryTotal(paramvo);
+			DeductAnalysisVO totalvo = null;
+			CorpVO corpvo = null;
+			for (DeductAnalysisVO vo : list) {
+				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+				if (corpvo != null) {
+					vo.setCorpcode(corpvo.getInnercode());
+					vo.setCorpname(corpvo.getUnitname());
+				}
+				totalvo = map.get(vo.getPk_corp());
+				if (totalvo != null) {
+					vo.setIcorpnums_sum(totalvo.getIcorpnums_sum());
+					vo.setNdeductmny_sum(totalvo.getNdeductmny_sum());
+				}
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * 获取金额汇总查询语句
+	 * @param paramvo
+	 * @param qrytype  1：金额汇总查询；2：金额排序查询；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO paramvo, Integer qrytype) throws DZFWarpException {
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp, t.ndeducmny, COUNT(t.pk_corpk) AS icorpnums\n") ;
@@ -39,7 +72,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-//		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
 			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
@@ -63,27 +96,15 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		}
 		sql.append("                                           ) t\n") ; 
 		sql.append(" GROUP BY t.ndeducmny, t.pk_corp\n") ; 
-		sql.append(" ORDER BY t.pk_corp");
-		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(DeductAnalysisVO.class));
-		if(list != null && list.size() > 0){
-			Map<String,DeductAnalysisVO> map = queryTotal(paramvo);
-			DeductAnalysisVO totalvo = null;
-			CorpVO corpvo = null;
-			for(DeductAnalysisVO vo : list){
-				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-				if(corpvo != null){
-					vo.setCorpcode(corpvo.getInnercode());
-					vo.setCorpname(corpvo.getUnitname());
-				}
-				totalvo = map.get(vo.getPk_corp());
-				if(totalvo != null){
-					vo.setIcorpnums_sum(totalvo.getIcorpnums_sum());
-					vo.setNdeductmny_sum(totalvo.getNdeductmny_sum());
-				}
-			}
+		sql.append(" ORDER BY ");
+		if(qrytype == 1){
+			sql.append(" t.pk_corp");
+		}else if(qrytype == 2){
+			sql.append(" t.ndeducmny DESC");
 		}
-		return list;
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
 	}
 	
 	/**
@@ -105,7 +126,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("           AND ct.vstatus IN (?, ?)\n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-//		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
+		sql.append("           AND nvl(ct.isncust, 'N') = 'N'\n") ; 
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
 			sql.append(" AND SUBSTR(ct.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
@@ -138,6 +159,14 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			}
 		}
 		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException {
+		QrySqlSpmVO qryvo = getQrySqlSpm(paramvo, 2);
+		return(List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
+				qryvo.getSpm(), new BeanListProcessor(DeductAnalysisVO.class));
 	}
 
 }

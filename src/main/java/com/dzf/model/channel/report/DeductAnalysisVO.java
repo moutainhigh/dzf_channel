@@ -42,10 +42,7 @@ public class DeductAnalysisVO extends SuperVO {
 	private DZFDouble nretmny;//退回金额
 	
 	@FieldAlias("stocknum")
-	private Integer istocknum;//退回客户数
-	
-	@FieldAlias("stockmny")
-	private DZFDouble nstockmny;//退回金额
+	private Integer istocknum;//存量客户数
 
 	public Integer getIretnum() {
 		return iretnum;
@@ -69,14 +66,6 @@ public class DeductAnalysisVO extends SuperVO {
 
 	public void setIstocknum(Integer istocknum) {
 		this.istocknum = istocknum;
-	}
-
-	public DZFDouble getNstockmny() {
-		return nstockmny;
-	}
-
-	public void setNstockmny(DZFDouble nstockmny) {
-		this.nstockmny = nstockmny;
 	}
 
 	public Integer getIcorpnums() {
