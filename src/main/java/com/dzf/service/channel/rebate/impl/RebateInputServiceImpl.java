@@ -507,9 +507,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
-		sql.append("   AND t.vdeductstatus in (?, ?) \n");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		sql.append("   AND t.pk_corp = ? \n");
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
@@ -554,8 +555,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
 		sql.append("   AND t.vdeductstatus in (?, ?) \n");
-		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		sql.append("   AND t.pk_corp = ? \n");
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
