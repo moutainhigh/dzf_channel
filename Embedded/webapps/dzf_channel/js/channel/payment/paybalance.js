@@ -196,17 +196,23 @@ function selectCorps(){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
+	var nbmny = 0;
+	var namny = 0;
 	var initbal = 0;
     var npmny = 0;	
     var usemny = 0;	
     var balmny = 0;	
     for (var i = 0; i < rows.length; i++) {
+    	nbmny += getFloatValue(rows[i].nbmny);
+    	namny += getFloatValue(rows[i].namny);
     	initbal += getFloatValue(rows[i].initbal);
     	npmny += getFloatValue(rows[i].npmny);
     	usemny += getFloatValue(rows[i].usemny);
     	balmny += getFloatValue(rows[i].balmny); 
     }
     footerData['incode'] = '合计';
+    footerData['nbmny'] = nbmny;
+    footerData['namny'] = namny;
     footerData['initbal'] = initbal;
     footerData['npmny'] = npmny;
     footerData['usemny'] = usemny;
@@ -302,13 +308,13 @@ function initDetailGrid(){
 //		pageList : DZF.pageList_min,
 		showFooter:true,
 		columns : [ [ {
-			width : '100',
+			width : '80',
 			title : '日期',
 			align:'center',
 			halign:'center',
 			field : 'ddate',
 		}, {
-			width : '200',
+			width : '160',
 			title : '摘要',
             halign:'center',
 			field : 'memo',
@@ -328,7 +334,7 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		},{
-			width : '100',
+			width : '80',
 			title : '账本费',
 			align:'right',
             halign:'center',
@@ -338,7 +344,7 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		}, {
-			width : '100',
+			width : '90',
 			title : '扣款比率(%)',
 			align:'center',
             halign:'center',
@@ -351,14 +357,14 @@ function initDetailGrid(){
 				}
 			}
 		},{
-			width : '100',
+			width : '90',
 			title : '付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
 			formatter : npFormat
 		},{
-			width : '100',
+			width : '90',
 			title : '扣款金额',
 			align:'right',
             halign:'center',
