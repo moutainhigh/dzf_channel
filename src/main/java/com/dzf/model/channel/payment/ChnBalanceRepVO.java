@@ -53,6 +53,15 @@ public class ChnBalanceRepVO extends SuperVO{
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
     
+    @FieldAlias("num")
+    private Integer num;//合同数(展示数据)
+    
+    @FieldAlias("nbmny")
+    private DZFDouble nbookmny; // 账本费(展示数据)
+    
+    @FieldAlias("namny")
+    private DZFDouble naccountmny; // 代账费(展示数据)
+    
 	public Integer getIdeductpropor() {
 		return ideductpropor;
 	}
@@ -83,6 +92,30 @@ public class ChnBalanceRepVO extends SuperVO{
 
 	public DZFDouble getNpaymny() {
 		return npaymny;
+	}
+
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
+	public DZFDouble getNbookmny() {
+		return nbookmny;
+	}
+
+	public void setNbookmny(DZFDouble nbookmny) {
+		this.nbookmny = nbookmny;
+	}
+
+	public DZFDouble getNaccountmny() {
+		return naccountmny;
+	}
+
+	public void setNaccountmny(DZFDouble naccountmny) {
+		this.naccountmny = naccountmny;
 	}
 
 	public Integer getIpaytype() {

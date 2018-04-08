@@ -1,8 +1,10 @@
 package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -22,6 +25,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.constant.AdminDateUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
@@ -40,7 +44,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<String> pklist = new ArrayList<String>();
 		Map<String,ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);
 		Map<String,ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);
+		HashMap<String, ChnBalanceRepVO> map =new HashMap<>();
 		if(pklist != null && pklist.size() > 0){
+			if(paramvo.getQrytype()!=null && (paramvo.getQrytype()==-1 || paramvo.getQrytype()==2)){
+				map=queryConList(paramvo);
+			}
 			ChnBalanceRepVO repvo = null;
 			ChnBalanceRepVO vo = null;
 			String pk_corp = "";
@@ -71,6 +79,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					repvo.setVpaytypename("预付款");
 				}else if(paytype == 3){
 					repvo.setVpaytypename("返点");
+				}
+				if(map!=null && !map.isEmpty() && paytype == 2 && map.containsKey(repvo.getPk_corp())){
+					ChnBalanceRepVO balanvo=map.get(repvo.getPk_corp());
+					repvo.setNum(balanvo.getNum());
+					repvo.setNaccountmny(balanvo.getNaccountmny());
+					repvo.setNbookmny(balanvo.getNbookmny());
 				}
 				if(initmap != null && !initmap.isEmpty()){
 					vo = initmap.get(pk);
@@ -105,6 +119,77 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 查询付款单余额列表上的合同相关数据
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private HashMap<String,ChnBalanceRepVO> queryConList(QryParamVO paramvo) throws DZFWarpException {
+		SQLParameter spm=new SQLParameter();
+		StringBuffer buf=new StringBuffer();
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			DZFDate start=new DZFDate(paramvo.getBeginperiod()+"-01");
+			DZFDate end=new DZFDate(paramvo.getEndperiod()+"-01");
+			Calendar cal =Calendar.getInstance();
+			cal.setTime(new Date(end.getMillis()));
+			cal.add(Calendar.MONTH, 1);
+			cal.add(Calendar.DATE, -1);
+			end=new DZFDate(cal.getTime());
+			for(int i=0;i<3*3;i++){
+				spm.addParam(start);
+				spm.addParam(end);
+			}
+		}else{
+			for(int i=0;i<3*3;i++){
+				spm.addParam(paramvo.getBegdate());
+				spm.addParam(paramvo.getEnddate());
+			}
+		}
+		
+		buf=new StringBuffer();//提单量,合同代账费,账本费
+		buf.append("  select pk_corp,");
+		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))+");
+		buf.append("  sum(decode(vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
+		buf.append("  ))as num,");
+		
+		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");
+		buf.append("  sum(decode(vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)+nvl(nbookmny,0)),");
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0))");
+		buf.append("  ))as naccountmny,");
+		
+		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nbookmny,0)))+");
+		buf.append("  sum(decode(vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-nvl(nbookmny,0)),");
+		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
+		buf.append("  ))as nbookmny");
+		
+		buf.append("  from cn_contract where nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9 or vdeductstatus=10) ");
+		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+	        buf.append(" and  pk_corp  in (" + corpIdS + ")");
+	    }
+		buf.append("  group by pk_corp");
+		List<ChnBalanceRepVO> list =(List<ChnBalanceRepVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ChnBalanceRepVO.class));
+		HashMap<String, ChnBalanceRepVO> map =new HashMap<>();
+		for (ChnBalanceRepVO chnBalanceRepVO : list) {
+			map.put(chnBalanceRepVO.getPk_corp(),chnBalanceRepVO);
+		}
+		return map;
 	}
 	
 	/**
@@ -286,6 +371,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			List<ChnDetailVO> oederlist = getOrderList(list);
 			CorpVO accvo = null;
 			DZFDouble balance = DZFDouble.ZERO_DBL;
+			HashMap<String, ChnDetailVO> map =new HashMap<>();
+			if(paramvo.getQrytype()!=null && paramvo.getQrytype()==2){
+				map = queryConDetail(paramvo);
+			}
 			for(ChnDetailVO vo : oederlist){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
@@ -304,6 +393,17 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						break;
 					}
 				}
+				if(map!=null && !map.isEmpty() && vo.getNusedmny()!=null ){
+					String key="1"+vo.getPk_bill();
+					if(vo.getNusedmny().toDouble()<0){
+						key="-1"+vo.getPk_bill();
+					}
+					if(map.containsKey(key)){
+						ChnDetailVO chnDetailVO = map.get(key);
+						vo.setNaccountmny(chnDetailVO.getNaccountmny());
+						vo.setNbookmny(chnDetailVO.getNbookmny());
+					}
+				}
 				balance = SafeCompute.sub(vo.getNpaymny(), vo.getNusedmny());
 				vo.setNbalance(SafeCompute.add(coutbal, balance));
 				coutbal = vo.getNbalance();
@@ -315,6 +415,66 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	}
 	
 	/**
+	 * 查询付款单余额明细的合同相关数据
+	 * @param paramvo  
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private HashMap<String,ChnDetailVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			DZFDate start=new DZFDate(paramvo.getBeginperiod()+"-01");
+			DZFDate end=new DZFDate(paramvo.getEndperiod()+"-01");
+			Calendar cal =Calendar.getInstance();
+			cal.setTime(new Date(end.getMillis()));
+			cal.add(Calendar.MONTH, 1);
+			cal.add(Calendar.DATE, -1);
+			end=new DZFDate(cal.getTime());
+			sp.addParam(start);
+			sp.addParam(end);
+		}else{
+			sp.addParam(paramvo.getBegdate());
+			sp.addParam(paramvo.getEnddate());
+		}
+		sp.addParam(paramvo.getPk_corp());
+		sql.append(" select pk_confrim as pk_bill ,deductdata as doperatedate, ");
+		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as naccountmny,nvl(nbookmny,0) as nbookmny from cn_contract" );   
+		sql.append(" where nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9 or vdeductstatus=10) and " );
+		sql.append(" deductdata>=? and deductdata<=? and pk_corp=? " );
+		List<ChnDetailVO> qryYSH =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));
+		
+	    sql = new StringBuffer();
+	    sql.append(" select pk_confrim as pk_bill,substr(dchangetime,0,10)as doperatedate, ");
+		sql.append(" nvl(nsubtotalmny,0) as naccountmny,0 as nbookmny  from cn_contract " );   
+		sql.append(" where nvl(dr,0) = 0 and vdeductstatus=9  and" );
+		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
+		List<ChnDetailVO> qryYZZ =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));
+		
+		sql = new StringBuffer();
+	    sql.append(" select pk_confrim as pk_bill,substr(dchangetime,0,10)as doperatedate, ");
+		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as naccountmny,-nvl(nbookmny,0) as nbookmny from cn_contract " );   
+		sql.append(" where nvl(dr,0) = 0  and vdeductstatus=10 and" );
+		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
+		List<ChnDetailVO> qryYZF =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));	
+		HashMap<String,ChnDetailVO> map=new HashMap<>();
+		for (ChnDetailVO chnDetailVO : qryYSH) {
+			String key="1"+chnDetailVO.getPk_bill();
+			map.put(key, chnDetailVO);
+		}
+		for (ChnDetailVO chnDetailVO : qryYZZ) {
+			String key="-1"+chnDetailVO.getPk_bill();
+			map.put(key, chnDetailVO);
+		}
+		for (ChnDetailVO chnDetailVO : qryYZF) {
+			String key="-1"+chnDetailVO.getPk_bill();
+			map.put(key, chnDetailVO);
+		}
+		return map;
+	}
+	
+	
+	/**	
 	 * 同一天的数据，按照收款在前，付款在后排列
 	 * @param list
 	 * @return

@@ -26,10 +26,10 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		columns : [ [ {
-			width : '140',
+			width : '130',
 			title : '加盟商编码',
-			align:'center',
             halign:'center',
+            align:'left',
 			field : 'incode',
 		},{
 			width : '220',
@@ -42,8 +42,34 @@ function load(){
 						return;
 	  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 	  			}
+		},{
+			width : '60',
+			title : '合同数',
+			align:'center',
+            halign:'center',
+			field : 'num',
+		},{
+			width : '100',
+			title : '合同代账费',
+			align:'right',
+            halign:'center',
+			field : 'namny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '70',
+			title : '账本费',
+			align:'right',
+            halign:'center',
+			field : 'nbmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
 		}, {
-			width : '140',
+			width : '90',
 			title : '扣款比率(%)',
 			align:'center',
             halign:'center',
@@ -53,13 +79,13 @@ function load(){
 //					return value+"%";
 //			}
 		},{
-			width : '140',
+			width : '70',
 			title : '付款类型',
 			align:'center',
             halign:'center',
 			field : 'ptypenm',
 		},{
-			width : '140',
+			width : '100',
 			title : '期初余额',
 			align:'right',
             halign:'center',
@@ -69,7 +95,7 @@ function load(){
 				return formatMny(value);
 			}
 		},{
-			width : '140',
+			width : '100',
 			title : '本期付款金额',
 			align:'right',
             halign:'center',
@@ -79,7 +105,7 @@ function load(){
 				return formatMny(value);
 			}
 		}, {
-			width : '140',
+			width : '100',
 			title : '本期已用金额',
 			align:'right',
             halign:'center',
@@ -89,7 +115,7 @@ function load(){
 				return formatMny(value);
 			}
 		},{
-			width : '140',
+			width : '100',
 			title : '期末余额',
 			align:'right',
             halign:'center',
@@ -276,7 +302,7 @@ function initDetailGrid(){
 //		pageList : DZF.pageList_min,
 		showFooter:true,
 		columns : [ [ {
-			width : '110',
+			width : '100',
 			title : '日期',
 			align:'center',
 			halign:'center',
@@ -286,6 +312,31 @@ function initDetailGrid(){
 			title : '摘要',
             halign:'center',
 			field : 'memo',
+			formatter : function(value) {
+	    		if(value!=undefined){
+	    			return "<span title='" + value + "'>" + value + "</span>";
+	    		}
+			}
+		},{
+			width : '100',
+			title : '合同代账费',
+			align:'right',
+            halign:'center',
+			field : 'namny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '100',
+			title : '账本费',
+			align:'right',
+            halign:'center',
+			field : 'nbmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
 		}, {
 			width : '100',
 			title : '扣款比率(%)',
@@ -300,21 +351,21 @@ function initDetailGrid(){
 				}
 			}
 		},{
-			width : '120',
+			width : '100',
 			title : '付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
 			formatter : npFormat
 		},{
-			width : '120',
+			width : '100',
 			title : '扣款金额',
 			align:'right',
             halign:'center',
 			field : 'usemny',
 			formatter : useFormat
 		},{
-			width : '140',
+			width : '100',
 			title : '期末余额',
 			align:'right',
             halign:'center',
@@ -325,13 +376,16 @@ function initDetailGrid(){
 			}
 		},] ],
 		onLoadSuccess : function(data) {
-			
 			var rows = $('#gridh').datagrid('getRows');
 			var footerData = new Object();
+			var nbmny = parseFloat(0);
+			var namny = parseFloat(0);
             var npmnysum = parseFloat(0);	// 付款金额
             var usemnysum = parseFloat(0);	// 已用金额
             var balmnysum = parseFloat(0);	// 余额
             for (var i = 0; i < rows.length; i++) {
+            	nbmny += getFloatValue(rows[i].nbmny);
+            	namny += getFloatValue(rows[i].namny);
             	npmnysum += getFloatValue(rows[i].npmny);
             	usemnysum += getFloatValue(rows[i].usemny);
             	if(i == rows.length - 1){
@@ -339,6 +393,8 @@ function initDetailGrid(){
             	}
             }
             footerData['ddate'] = '合计';
+            footerData['nbmny'] = nbmny;
+            footerData['namny'] = namny;
             footerData['npmny'] = npmnysum;
             footerData['usemny'] = usemnysum;
             footerData['balmny'] = balmnysum;

@@ -25,7 +25,11 @@ public class ChnPayBalExcelField implements IExceport<ChnBalanceRepVO>{
 	private String corpname = null;
 	
 	private Fieldelement[] fields = new Fieldelement[]{
-			new Fieldelement("corpname", "加盟商",false,0,false),
+			new Fieldelement("innercode", "加盟商编码",false,0,false),
+			new Fieldelement("corpname", "加盟商名称",false,0,false),
+			new Fieldelement("num", "合同数",false,0,false),
+			new Fieldelement("naccountmny", "合同代账费",true,2,false),
+			new Fieldelement("nbookmny","账本费",true,2,false),
 			new Fieldelement("ideductpropor", "扣款比率(%)",false,0,false),
 			new Fieldelement("vpaytypename", "付款类型",false,0,false),
 			new Fieldelement("initbalance", "期初余额",true,2,false),

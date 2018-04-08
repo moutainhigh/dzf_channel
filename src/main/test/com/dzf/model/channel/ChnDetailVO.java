@@ -68,6 +68,12 @@ public class ChnDetailVO extends SuperVO {
     @FieldAlias("propor")
     private Integer ideductpropor;//扣款比例
     
+    @FieldAlias("nbmny")
+    private DZFDouble nbookmny; // 账本费(展示数据)
+    
+    @FieldAlias("namny")
+    private DZFDouble naccountmny; // 代账费(展示数据)
+    
 	public DZFDouble getNtotalmny() {
 		return ntotalmny;
 	}
@@ -88,7 +94,23 @@ public class ChnDetailVO extends SuperVO {
         return iopertype;
     }
 
-    public void setIopertype(Integer iopertype) {
+    public DZFDouble getNbookmny() {
+		return nbookmny;
+	}
+
+	public void setNbookmny(DZFDouble nbookmny) {
+		this.nbookmny = nbookmny;
+	}
+
+	public DZFDouble getNaccountmny() {
+		return naccountmny;
+	}
+
+	public void setNaccountmny(DZFDouble naccountmny) {
+		this.naccountmny = naccountmny;
+	}
+
+	public void setIopertype(Integer iopertype) {
         this.iopertype = iopertype;
     }
 
