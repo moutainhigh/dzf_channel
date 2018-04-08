@@ -311,6 +311,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 	columnb1["width"] = '90'; 
 	columnb1["halign"] = 'center'; 
 	columnb1["align"] = 'right'; 
+//	columnb1["formatter"] = useFormat;
 	columnsb.push(columnb1); 
 	
 	var columnb2 = {};
@@ -361,6 +362,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 							column1["width"] = '90'; 
 							column1["halign"] = 'center'; 
 							column1["align"] = 'right'; 
+//							column1["formatter"] = useFormat;
 							columnsb.push(column1); 
 							
 							var column2 = {};
@@ -428,4 +430,15 @@ function clearParams(){
 	$('#qcorpid').val(null);
 }
 
-
+/**
+ * 扣款金额格式化
+ * @param value
+ * @param row
+ * @param index
+ * @returns
+ */
+function useFormat(value,row,index){
+	var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+	var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+	return ss ;
+}
