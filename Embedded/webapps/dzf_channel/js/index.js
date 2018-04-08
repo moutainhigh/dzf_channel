@@ -424,11 +424,12 @@ function hideTips(){
 	$("#reUpload").css("display","none");	
 }
 
-
 /**
  * 附件下载(为了付款单确认)
  * @param billid
  */
 function downFile(billid){
-	Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
+	if(billid && billid!=""){
+		Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
+	}
 }
