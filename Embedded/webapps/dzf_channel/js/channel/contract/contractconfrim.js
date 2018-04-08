@@ -365,6 +365,33 @@ function load(){
 			field : 'typemin',
 			hidden : true
 		}, {
+			width : '100',
+			title : '时间戳',
+			field : 'tstp',
+			hidden : true
+		}, {
+			width : '100',
+			title : '制单人',
+			field : 'operatorid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '套餐主键',
+			field : 'pid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '加盟商合同类型',
+			field : 'pstatus',
+			hidden : true
+		}, {
+			width :'100',
+			title : '存量客户',
+			field : 'isncust',
+			align : 'center',
+			halign : 'center',
+			formatter:isnformat,
+		}, {
 			width : '150',
 			title : '提交时间',
 			halign:'center',
@@ -380,88 +407,15 @@ function load(){
 			halign:'center',
 			field : 'mname',
 		}, {
-			width : '140',
+			width : '180',
 			title : '加盟商',
 			halign:'center',
 			field : 'corpnm',
 		}, {
-			width : '260',
+			width : '220',
 			title : '客户名称',
 			halign:'center',
 			field : 'corpkna',
-		}, {
-			width :'100',
-			title : '存量客户',
-			field : 'isncust',
-			align : 'center',
-			halign : 'center',
-			formatter:isnformat,
-		},{
-			width : '120',
-			title : '纳税人资格',
-			halign:'center',
-			field : 'chname',
-		}, {
-			width : '100',
-			title : '业务类型',
-            halign:'center',
-			field : 'typeminm',
-		}, {
-			width : '140',
-			title : '合同编码',
-			halign:'center',
-			field : 'vccode',
-			formatter:codeLink,
-		}, {
-			width : '110',
-			title : '合同总金额',
-			align:'right',
-            halign:'center',
-			field : 'ntlmny',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			}
-		}, {
-			width : '100',
-			title : '附件',
-			halign:'center',
-			field : 'contdoc',
-			formatter : formatDocLink
-		}, {
-			width : '120',
-			title : '收款周期(月)',
-			align : 'center',
-			halign : 'center',
-			field : 'recycle',
-		}, {
-			width : '120',
-			title : '开始日期',
-			halign:'center',
-			align:'center',
-			field : 'bperiod',
-		}, {
-			width : '120',
-			title : '结束日期',
-			halign:'center',
-			align:'center',
-			field : 'eperiod',
-		}, {
-			width : '120',
-			title : '合同周期(月)',
-			align : 'center',
-			halign : 'center',
-			field : 'contcycle',
-		}, {
-			width : '100',
-			title : '月服务费',
-			align:'right',
-            halign:'center',
-			field : 'nmsmny',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			}
 		}, {
 			width : '100',
 			title : '扣费日期',
@@ -504,16 +458,76 @@ function load(){
 					return '已作废';
 			}
 		}, {
-			width : '100',
-			title : '时间戳',
-			field : 'tstp',
-			hidden : true
+			width : '140',
+			title : '驳回原因',
+			field : 'confreason',
+		}, {
+			width : '140',
+			title : '合同编码',
+			halign:'center',
+			field : 'vccode',
+			formatter:codeLink,
+		}, {
+			width : '110',
+			title : '合同总金额',
+			align:'right',
+            halign:'center',
+			field : 'ntlmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
 		}, {
 			width : '100',
-			title : '制单人',
-			field : 'operatorid',
-			hidden : true
+			title : '附件',
+			halign:'center',
+			field : 'contdoc',
+			formatter : formatDocLink
+		},  {
+			width : '120',
+			title : '开始日期',
+			halign:'center',
+			align:'center',
+			field : 'bperiod',
 		}, {
+			width : '120',
+			title : '结束日期',
+			halign:'center',
+			align:'center',
+			field : 'eperiod',
+		}, {
+			width : '120',
+			title : '收款周期(月)',
+			align : 'center',
+			halign : 'center',
+			field : 'recycle',
+		}, {
+			width : '120',
+			title : '合同周期(月)',
+			align : 'center',
+			halign : 'center',
+			field : 'contcycle',
+		}, {
+			width : '120',
+			title : '纳税人资格',
+			halign:'center',
+			field : 'chname',
+		}, {
+			width : '100',
+			title : '月服务费',
+			align:'right',
+            halign:'center',
+			field : 'nmsmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		}, {
+			width : '100',
+			title : '业务类型',
+            halign:'center',
+			field : 'typeminm',
+		},     {
 			width : '100',
 			title : '销售顾问',
 			field : 'adviser',
@@ -521,21 +535,7 @@ function load(){
 			width : '100',
 			title : '经办人',
 			field : 'vopernm',
-		}, {
-			width : '140',
-			title : '驳回原因',
-			field : 'confreason',
-		}, {
-			width : '100',
-			title : '套餐主键',
-			field : 'pid',
-			hidden : true
-		},{
-			width : '100',
-			title : '加盟商合同类型',
-			field : 'pstatus',
-			hidden : true
-		},] ],
+		},  ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
 			calFooter();

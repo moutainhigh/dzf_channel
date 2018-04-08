@@ -8,7 +8,7 @@
 <html>
 
 <head>
-<title>合同确认</title>
+<title>合同审核</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/contractconfrim.css");%> rel="stylesheet">
