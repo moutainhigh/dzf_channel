@@ -121,6 +121,7 @@ function load(type){
 	var eperiod;
 	var begdate;
 	var enddate;
+	var qtype = $("input[name='seletype']:checked").val();
 	if($('#qj').is(':checked')){
 		bperiod = $("#begperiod").datebox('getValue');
 		eperiod = $("#endperiod").datebox('getValue');
@@ -151,7 +152,7 @@ function load(type){
 	});
 	
 	//获取标题列
-	var columns = getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate);
+	var columns = getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype);
 	
 	var datarray =  new Array();
 	$.ajax({
@@ -165,6 +166,7 @@ function load(type){
 			begdate : begdate,
 			enddate : enddate,
 			cpid : $("#qcorpid").val(),
+			qtype : qtype,
 		},
 		async : false,
 		success : function(data) {
@@ -186,6 +188,8 @@ function load(type){
 							
 							obj['num'] = rows[i].sumnum;//总合同数
 							obj['mny'] = rows[i].summny;//总扣款
+							obj['retnum'] = rows[i].retnum;//退回合同数
+							obj['retmny'] = rows[i].retmny;//退回金额
 							obj['corpcode'] = rows[i].corpcode;//加盟商编码
 							obj['corpname'] = rows[i].corpname;//加盟商名称
 							if(i == rows.length - 1){//一行数据
@@ -216,8 +220,10 @@ function load(type){
 								colfield = 'mny'+colnm;
 								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
 								
-								obj['num'] = rows[i].sumnum;
-								obj['mny'] = rows[i].summny;
+								obj['num'] = rows[i].sumnum;//总合同数
+								obj['mny'] = rows[i].summny;//总扣款
+								obj['retnum'] = rows[i].retnum;//退回合同数
+								obj['retmny'] = rows[i].retmny;//退回金额
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
 								if(i == rows.length - 1){//最后一行数据
@@ -292,7 +298,7 @@ function load(type){
  * 获取标题列
  * @param onlymap
  */
-function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate){
+function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 	var columns = new Array(); 
 	var columnsh = new Array();//列及合并列名称
 	var columnsb = new Array();//子列表名称集合
@@ -332,6 +338,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate){
 			eperiod : eperiod,
 			begdate : begdate,
 			enddate : enddate,
+			qtype : qtype,
 			cpid : $("#qcorpid").val(),
 		},
 		async : false,

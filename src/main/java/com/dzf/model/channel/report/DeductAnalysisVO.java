@@ -36,7 +36,7 @@ public class DeductAnalysisVO extends SuperVO {
 	private DZFDouble ndeductmny_sum;//扣款总总额
 	
 	@FieldAlias("retnum")
-	private Integer iretnum;//退回客户数
+	private Integer iretnum;//退回合同数
 	
 	@FieldAlias("retmny")
 	private DZFDouble nretmny;//退回金额
