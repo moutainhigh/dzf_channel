@@ -378,7 +378,7 @@ public class ExportExcel<T> {
 			//合并列 end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 			
 			//添加导出行信息
-			HSSFRow row2 =null;
+			HSSFRow row2 = null;
 			if (headerlength != fieldlength) {
 				index++;
 				row2 = sheet.createRow(index);
@@ -402,8 +402,7 @@ public class ExportExcel<T> {
 					try {
 						HSSFRichTextString richString;
 						HSSFCell cell = row1.createCell(count);
-						if(map.get(key) != null && !map.get(key).toString().equals("0") ){
-							//kcode,kname,pname,sfrq,dh,sfsm
+						if(map.get(key) != null /*&& !map.get(key).toString().equals("0")*/ ){
 							if(mnylist != null && mnylist.contains(key)){
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(),2);
 //								doublevalue = doublevalue.setScale(0, DZFDouble.ROUND_HALF_UP);//四舍五入

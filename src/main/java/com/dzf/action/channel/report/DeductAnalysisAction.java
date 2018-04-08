@@ -107,8 +107,9 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		//1、导出字段名称
 		List<String> exptitlist = new ArrayList<String>();
 		exptitlist.add("加盟商编码");
-		exptitlist.add("加盟商名称");
-		exptitlist.add("总户数");
+		exptitlist.add("加盟商");
+		exptitlist.add("存量客户");
+		exptitlist.add("总合同数");
 		exptitlist.add("总扣款");
 		
 		//2、导出字段编码
@@ -120,18 +121,20 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		//5、合并行字段名称
 		List<String> hbhtitlist = new ArrayList<String>();
 		hbhtitlist.add("加盟商编码");
-		hbhtitlist.add("加盟商名称");
-		hbhtitlist.add("总户数");
+		hbhtitlist.add("加盟商");
+		hbhtitlist.add("存量客户");
+		hbhtitlist.add("总合同数");
 		hbhtitlist.add("总扣款");
 		//6、合并行字段下标
-		Integer[] hbhindexs = new Integer[]{0,1,2,3};
+		Integer[] hbhindexs = new Integer[]{0,1,2,3,4};
 		//7、字符集合
 		List<String> strslist = new ArrayList<String>();
-		//7、金额集合
-		List<String> mnylist = new ArrayList<String>();
 		strslist.add("corpcode");
 		strslist.add("corpname");
+		strslist.add("stocknum");
 		strslist.add("num");
+		//8、金额集合
+		List<String> mnylist = new ArrayList<String>();
 		mnylist.add("mny");
 		
 		Map<String, String> field = null;
@@ -144,14 +147,13 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			expfieidlist.add(String.valueOf(colsarray.get(i)));
 			if(i % 2 == 0){
 				strslist.add(String.valueOf(colsarray.get(i)));
-				exptitlist.add("户数");
+				exptitlist.add("合同数");
 			}else{
 				mnylist.add(String.valueOf(colsarray.get(i)));
 				exptitlist.add("金额");
 			}
 		}
-		
-		int j = 4;
+		int j = 5;
 		for(int i = 0; i < hblcolsarray.size(); i++){
 			field = (Map<String, String>) hblcolsarray.get(i);
 			hbltitlist.add(String.valueOf(field.get("title")));

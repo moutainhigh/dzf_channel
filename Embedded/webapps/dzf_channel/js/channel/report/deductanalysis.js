@@ -192,6 +192,7 @@ function load(type){
 							obj['retmny'] = rows[i].retmny;//退回金额
 							obj['corpcode'] = rows[i].corpcode;//加盟商编码
 							obj['corpname'] = rows[i].corpname;//加盟商名称
+							obj['stocknum'] = rows[i].stocknum;//存量客户数
 							if(i == rows.length - 1){//一行数据
 								colnm = onlymap.get(rows[i].dedmny);
 								colfield = 'num'+colnm;
@@ -226,6 +227,7 @@ function load(type){
 								obj['retmny'] = rows[i].retmny;//退回金额
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
+								obj['stocknum'] = rows[i].stocknum;//存量客户数
 								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);
 								}
@@ -241,19 +243,11 @@ function load(type){
 	});
 	
 	$('#grid').datagrid({
-//		url : DZF.contextPath + "",
-//		queryParams:{
-//		},
 		striped : true,
 		title : '',
 		rownumbers : true,
 		height : Public.setGrid().h,
 		singleSelect : false,
-//		pagination : true, //显示分页
-//		pageSize : 20, //默认20行
-//		pageList : [ 20, 50, 100, 200 ],
-//		showRefresh : false,// 不显示分页的刷新按钮
-//		showFooter : true,
 		border : true,
 		remoteSort:false,
 		//冻结在 左边的列 
@@ -261,7 +255,7 @@ function load(type){
 						{ field : 'corpid',    title : '会计公司主键', hidden : true},
 		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
-		                { field : 'stocknum',  title : '存量客户数', width : 100, halign:'center',align:'left'},
+		                { field : 'stocknum',  title : '存量客户', width : 100, halign:'center',align:'right'},
 		                { field : 'num',  title : '总合同数', width : 100, halign:'center',align:'right'}, 
 		                { field : 'mny',  title : '总扣款', width : 100, halign:'center',align:'right',formatter:formatMny},
 		]],

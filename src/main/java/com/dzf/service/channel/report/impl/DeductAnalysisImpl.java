@@ -40,6 +40,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			DeductAnalysisVO dedvo = null;
 			DeductAnalysisVO retvo = null;
 			CorpVO corpvo = null;
+			 Map<String, Integer> custmap = queryCustNum(paramvo);
 			for (DeductAnalysisVO vo : list) {
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if (corpvo != null) {
@@ -59,6 +60,9 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 				if(dedvo != null){
 					vo.setIcorpnums_sum(dedvo.getIcorpnums());
 					vo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), vo.getNretmny()));
+				}
+				if(custmap != null && !custmap.isEmpty()){
+					vo.setIstocknum(custmap.get(vo.getPk_corp()));
 				}
 			}
 		}
@@ -270,6 +274,42 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		QrySqlSpmVO qryvo = getQrySqlSpm(paramvo, 2);
 		return(List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(DeductAnalysisVO.class));
+	}
+	
+	/**
+	 * 查询存量客户数量
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Integer> queryCustNum(QryParamVO paramvo) throws DZFWarpException {
+		Map<String, Integer> custmap = new HashMap<String, Integer>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT p.fathercorp as pk_corp,\n");
+		sql.append("       COUNT(DISTINCT p.pk_corp) AS istocknum \n");
+		sql.append("  FROM bd_corp p \n");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
+		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
+		if (!StringUtil.isEmpty(paramvo.getPk_corp())) {
+			String[] corps = paramvo.getPk_corp().split(",");
+			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+			sql.append(" AND ").append(where);
+		}
+		sql.append("   AND nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n"); // 渠道客户
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		// sql.append(" AND nvl(p.ishasaccount,'N') = 'Y' \n");//已建账
+		// sql.append(" AND p.chargedeptname is not null \n");//纳税人性质不能为空
+		sql.append(" GROUP BY p.fathercorp \n") ; 
+		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(DeductAnalysisVO.class));
+		if(list != null && list.size() > 0){
+			for(DeductAnalysisVO vo : list){
+				custmap.put(vo.getPk_corp(), vo.getIstocknum());
+			}
+		}
+		return custmap;
 	}
 
 }
