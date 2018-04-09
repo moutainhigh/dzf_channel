@@ -65,18 +65,28 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 320px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:350px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
 					<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="width: 85px;text-align:right">提单日期：</label>
+					<input id="tddate" type="radio" name="seledate" checked />
+					<label style="width: 70px;text-align:right">提单日期：</label>
 					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" 
 						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 					<font>-</font>
 					<font><input name="edate" type="text" id="edate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
+				</div>
+				<div class="time_col time_colp10">
+					<input id="kkdate" type="radio" name="seledate" />
+					<label style="width: 70px;text-align:right">扣款日期：</label>
+					<font><input name="bperiod" type="text" id="bperiod" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
+					<font>-</font>
+					<font><input name="eperiod" type="text" id="eperiod" class="easyui-datebox" 
 						data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 				</div>
 				<div class="time_col time_colp10">

@@ -6,6 +6,7 @@ var grid,gridh;
 $(function() {
 	initQryDlg();
 	initQueryData();
+	initQryLitener();
 	initChannel();
 	initCorpk();
 	$('#corpkna_ae').textbox('readonly',true);
@@ -15,6 +16,36 @@ $(function() {
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
 	loadJumpData();
 });
+
+/**
+ * 查询框监听事件
+ */
+function initQryLitener(){
+	$("#begdate").datebox("readonly", false);
+	$("#enddate").datebox("readonly", false);
+	$('#bperiod').textbox({"readonly" : true});
+	$('#eperiod').textbox({"readonly" : true});
+    $('input:radio[name="seledate"]').change( function(){  
+		var ischeck = $('#da').is(':checked');
+		if(ischeck){
+			var sdv = $('#begdate').datebox('getValue');
+			var edv = $('#enddate').datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", false);
+			$("#enddate").datebox("readonly", false);
+			$('#bperiod').textbox({"readonly" : true});
+			$('#eperiod').textbox({"readonly" : true});
+		}else{
+			var sdv = $("#bperiod").val();
+			var edv = $("#eperiod").val();
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", true);
+			$("#enddate").datebox("readonly", true);
+			$('#bperiod').textbox({"readonly" : false});
+			$('#eperiod').textbox({"readonly" : false});
+		}
+	});
+}
 
 /**
  * 渠道经理参照初始化
@@ -108,6 +139,9 @@ function initQueryData(){
 	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
 	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+	
+	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#eperiod").datebox("setValue", parent.SYSTEM.LoginDate);
 }
 
 /**
@@ -250,27 +284,57 @@ function selectCorpk(row){
  * 查询
  */
 function reloadData(){
-	var bdate = $('#bdate').datebox('getValue'); //开始日期
-	var edate = $('#edate').datebox('getValue'); //结束日期
-	if(isEmpty(bdate)){
-		Public.tips({
-			content : '查询开始日期不能为空',
-			type : 2
-		});
-		return;
-	}
-	if(isEmpty(edate)){
-		Public.tips({
-			content : '查询结束日期不能为空',
-			type : 2
-		});
-		return;
-	}
-	if(!isEmpty(bdate) && !isEmpty(edate)){
-		if(!checkdate1("bdate","edate")){
+	var bdate = null;//提单开始日期
+	var edate = null;//提单结束日期
+	var bperiod = null;//扣款开始日期
+	var eperiod = null;//扣款结束日期
+	var ischeck = $('#tddate').is(':checked');
+	if(ischeck){
+		bdate = $('#bdate').datebox('getValue'); 
+		edate = $('#edate').datebox('getValue'); 
+		if(isEmpty(bdate)){
+			Public.tips({
+				content : '提单开始日期不能为空',
+				type : 2
+			});
 			return;
-		}		
+		}
+		if(isEmpty(edate)){
+			Public.tips({
+				content : '提单结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bdate) && !isEmpty(edate)){
+			if(!checkdate1("bdate","edate")){
+				return;
+			}		
+		}
+	}else{
+		bperiod = $('#bperiod').datebox('getValue');
+		eperiod = $('#eperiod').datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : '扣款开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : '扣款结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bperiod) && !isEmpty(eperiod)){
+			if(!checkdate1("bperiod","eperiod")){
+				return;
+			}		
+		}
 	}
+	
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	clearQryParam(queryParams);
 	$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
@@ -286,8 +350,10 @@ function reloadData(){
 	}
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
+	queryParams.bperiod = bperiod;
+	queryParams.eperiod = eperiod;
 	queryParams.destatus = $('#destatus').combobox('getValue');
-	var isncust=$('#isncust').combobox('getValue');
+	var isncust = $('#isncust').combobox('getValue');
 	if(!isEmpty(isncust)){
 		queryParams.isncust = isncust;
 	}else{
@@ -299,7 +365,11 @@ function reloadData(){
 	queryParams.corptype = $('#corptype').combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
-	$('#querydate').html(bdate + ' 至 ' + edate);
+	if(ischeck){
+		$('#querydate').html(bdate + ' 至 ' + edate);
+	}else{
+		$('#querydate').html(bperiod + ' 至 ' + eperiod);
+	}
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
 }
@@ -309,8 +379,10 @@ function reloadData(){
  * @param queryParams
  */
 function clearQryParam(queryParams){
-	queryParams.begdate = null;
-	queryParams.enddate = null;
+	queryParams.begdate = null;//提单开始日期
+	queryParams.enddate = null;//提单结束日期
+	queryParams.bperiod = null;//扣款开始日期
+	queryParams.eperiod = null;//扣款结束日期
 	queryParams.qtype = -1;
 	queryParams.destatus = -1;
 	delete queryParams.isncust;
@@ -644,8 +716,14 @@ function fastQry(){
             			return;
             		}
             	}
-            	queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
-            	queryParams.enddate = $('#edate').datebox('getValue'); //结束日期
+            	var ischeck = $('#tddate').is(':checked');
+            	if(ischeck){
+            		queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
+            		queryParams.enddate = $('#edate').datebox('getValue'); //结束日期
+            	}else{
+            		queryParams.bperiod = $('#bperiod').datebox('getValue');
+            		queryParams.eperiod = $('#eperiod').datebox('getValue');
+            	}
             	queryParams.cpname = filtername;
           		grid.datagrid('options').url = contextPath + '/contract/contractconf!query.action';
           		$('#grid').datagrid('options').queryParams = queryParams;

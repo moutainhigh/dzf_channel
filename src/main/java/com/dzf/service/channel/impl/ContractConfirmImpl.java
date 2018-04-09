@@ -63,21 +63,24 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<String> pklist = new ArrayList<String>();
 		List<ContractConfrimVO> retlist = new ArrayList<ContractConfrimVO>();
-		if((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_1 || 
-				paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_9 
-				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_10 
-				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8 )) || 
-				!StringUtil.isEmpty(paramvo.getPk_bill())){//查询审核通过数据 （1、合同状态为已审核；2、或别的界面<付款单余额>联查到此界面）
+		if ((paramvo.getVdeductstatus() != null && (paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_1
+				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_9
+				|| paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_10))
+				|| !StringUtil.isEmpty(paramvo.getPk_bill())
+				|| (!StringUtil.isEmpty(paramvo.getBeginperiod()) && !StringUtil.isEmpty(paramvo.getEndperiod()))) {// 查询审核通过数据
+			// 1、合同状态为已审核、已终止、已作废；2、或别的界面<付款单余额>联查到此界面
+			// 3、根据扣款日期查询数据
 			qryContractConData(paramvo, pklist, retlist);
-		}else if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_5){//查询待审核合同数据（合同状态为待审核）
+		} else if (paramvo.getVdeductstatus() != null
+				&& paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_5) {// 查询待审核合同数据（合同状态为待审核）
 			qryContractData(paramvo, pklist, retlist);
-		}else{
-			//1、已审核合同数据
+		} else {
+			// 1、已审核合同数据
 			qryContractConData(paramvo, pklist, retlist);
-			//2、待审核合同数据
+			// 2、待审核合同数据
 			qryContractData(paramvo, pklist, retlist);
 		}
-		//3、按照时间戳排序
+		// 3、按照时间戳排序
 		Collections.sort(retlist, new Comparator<ContractConfrimVO>() {
 			@Override
 			public int compare(ContractConfrimVO o1, ContractConfrimVO o2) {
@@ -101,12 +104,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (confVOs != null && confVOs.length > 0) {
 			UserVO uservo = null;
 			CorpVO corpvo = null;
-//			DZFDate date = new DZFDate();
 			for (ContractConfrimVO confvo : confVOs) {
-//				if (confvo.getVendperiod().compareTo(date.getYear()+"-"+date.getStrMonth()) < 0) {
-//					confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-//					confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-//				}
 				if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
 					confvo.setNtotalmny(confvo.getNchangetotalmny());
 					confvo.setVendperiod(confvo.getVstopperiod());
@@ -122,8 +120,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				String managername = pubser.getManagerName(confvo.getPk_corp());
 				confvo.setVmanagername(managername);
-//				retlist.add(confvo);
-//				pklist.add(confvo.getPk_contract() + "" + confvo.getVcontcode());
 				if(!pklist.contains(confvo.getPk_contract()+""+confvo.getVcontcode())){
 					if(!StringUtil.isEmpty(paramvo.getCorpname())){
 						if(confvo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
@@ -236,10 +232,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("   AND dsubmitime <= ? \n") ; 
 			spm.addParam(paramvo.getEnddate() + " 23:59:59");
 		}
-		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-		    String[] strs = paramvo.getPk_corp().split(",");
-		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-		    sql.append(" AND pk_corp in (").append(inSql).append(")");
+		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+			sql.append("   AND deductdata >= ? \n") ; 
+			spm.addParam(paramvo.getBeginperiod());
+		}
+		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+			sql.append("   AND deductdata <= ? \n") ; 
+			spm.addParam(paramvo.getEndperiod());
 		}
 		if(paramvo.getIsncust() != null){
 			sql.append(" AND nvl(isncust,'N') = ? \n") ; 
@@ -542,7 +541,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateCorp(ContractConfrimVO confvo, Map<String, String> packmap) throws DZFWarpException{
 		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
 		//更新是否为存量客户
-		if(corpvo != null && confvo.getIsncust()!=null && confvo.getIsncust().booleanValue()){
+		if(corpvo != null && confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
 			corpvo.setIsncust(confvo.getIsncust());
 			singleObjectBO.update(corpvo, new String[]{"isncust"});
 		}
