@@ -95,9 +95,13 @@ function initDataGrid(){
 								return '待开票';
 							} else if(value ==2){
 								return '已开票';
+							} else if(value ==3){
+								return '开票失败';
 							}
 		            }},
 		            {width : '100',title : '备注',field : 'vmome',align:'center'},
+		            {width : '200',title : '二维码URL',field : 'qrcodepath',align:'center',formatter:codeLink,},
+		            
 		            {width : '100',title : '',field : 'corpid',hidden:true},
 		          ]],
 		onBeforeLoad : function(param) {
@@ -115,6 +119,12 @@ function initDataGrid(){
 			calFooter();
 		}
 	});
+}
+
+function codeLink(value,row,index){
+	if(!isEmpty(row.qrcodepath)){
+		return '<a href="'+value+'" style="color:blue" target="view_window" ">'+value+'</a>';
+	}
 }
 
 function calFooter(){
@@ -164,7 +174,8 @@ function reloadData(){
     	corps : $("#pk_account").val(),
         bdate: bdate,
         edate: edate,
-        istatus : $('#istatus').combobox('getValue')
+        istatus : $('#istatus').combobox('getValue'),
+        itype : $('#itype').combobox('getValue')
     });
     
     $('#qrydialog').hide();
@@ -214,7 +225,7 @@ function onBilling(){
 	
 	var pk_invoices = [];
 	
-	$.messager.confirm('提示','您是否确定开票？',
+	$.messager.confirm('提示','请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！',
 			function(conf){
 		if(conf){
 			for(var i = 0; i < rows.length; i++){
@@ -239,6 +250,44 @@ function onBilling(){
 			
 		}
 	});
+}
+
+function onAutoBill(){
+
+	var rows = $('#grid').datagrid("getSelections");
+	if(rows == null || rows.length == 0){
+		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		return;
+	}
+	
+	var pk_invoices = [];
+	
+	$.messager.confirm('提示','请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！',
+			function(conf){
+		if(conf){
+			for(var i = 0; i < rows.length; i++){
+				pk_invoices.push(rows[i].id);
+			}
+			$.ajax({
+				type : 'post',
+				url : DZF.contextPath + '/sys/sys_inv_manager!onAutoBill.action',
+				data : {
+					"pk_invoices" : JSON.stringify(pk_invoices)
+				},
+				dataType : 'json',
+				success: function(result){
+					if(result.success){
+						reloadData();
+						Public.tips({content : result.msg ,type:0});
+					}else{
+						Public.tips({content : result.msg ,type:2});
+					}
+				}
+			});
+			
+		}
+	});
+
 }
 
 /**

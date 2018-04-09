@@ -149,6 +149,32 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		writeJson(json);
 	}
 	
+	public void onAutoBill(){
+        Json json = new Json();
+        try{
+            ChInvoiceVO paramvo = new ChInvoiceVO();
+            paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
+            String pk_invoices = getRequest().getParameter("pk_invoices");
+            String[] pkArry = pkinvoicesToArray(pk_invoices);
+            List<ChInvoiceVO> listError = invManagerService.onAutoBill(pkArry,getLoginUserInfo());
+            int errorNum = listError == null ? 0 :listError.size();
+            int success = pkArry.length - errorNum;
+            StringBuffer msg = new StringBuffer();
+            msg.append("成功").append(success).append("条");
+            if (listError != null && errorNum > 0) {
+                msg.append("，失败").append(errorNum).append("条<br>");
+                for(ChInvoiceVO vo : listError){
+                    msg.append("加盟商：").append(vo.getCorpname()).append(",失败原因：").append(vo.getMsg()).append("<br>");
+                }
+            }
+            json.setMsg(msg.toString());
+            json.setSuccess(true);
+        } catch (Exception e){
+            printErrorLog(json, log, e, "开票失败");
+        }
+        writeJson(json);
+    }
+	
 	private String[] pkinvoicesToArray(String pk_invoices){
 		JSONArray array = JSON.parseArray(pk_invoices);
 		if (array != null && array.size() > 0) {

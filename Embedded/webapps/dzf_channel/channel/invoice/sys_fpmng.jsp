@@ -54,14 +54,15 @@
 				</div>
 				
 				<div class=right>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">确认开票</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onAutoBill()">电子票</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">纸质票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDelete()">删除</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExport()">导出</a>
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 210px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 230px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -86,6 +87,15 @@
 						<option value="-1">全部</option>
 						<option value="1">待开票</option>
 						<option value="2">已开票</option>
+					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">发票类型：</label>
+					<select id="itype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:219px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="0">专用发票</option>
+						<option value="1">普通发票</option>
+						<option value="2">电子发票</option>
 					</select>
 				</div>
 			</form>

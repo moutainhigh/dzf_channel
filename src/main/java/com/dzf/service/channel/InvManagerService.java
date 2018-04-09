@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface InvManagerService {
@@ -34,6 +35,8 @@ public interface InvManagerService {
 	 * 开票
 	 */
 	List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException;
+	
+	List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException;
 	
 	/**
 	 * 删除开票
