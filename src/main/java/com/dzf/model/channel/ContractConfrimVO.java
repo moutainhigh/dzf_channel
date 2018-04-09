@@ -53,6 +53,9 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("ntlmny")
     private DZFDouble ntotalmny; // 合同总金额
     
+    @FieldAlias("naccmny")
+    private DZFDouble naccountmny; // 合同代账费（只做界面展示）
+    
     @FieldAlias("bdate")
     private DZFDate dbegindate; // 开始日期
 
@@ -234,6 +237,14 @@ public class ContractConfrimVO extends SuperVO {
 
     @FieldAlias("corptp")
     private String corptype; // 加盟商类型
+
+	public DZFDouble getNaccountmny() {
+		return naccountmny;
+	}
+
+	public void setNaccountmny(DZFDouble naccountmny) {
+		this.naccountmny = naccountmny;
+	}
 
 	public Integer getChanneltype() {
 		return channeltype;

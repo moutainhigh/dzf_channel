@@ -105,10 +105,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 			UserVO uservo = null;
 			CorpVO corpvo = null;
 			for (ContractConfrimVO confvo : confVOs) {
-				if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
-					confvo.setNtotalmny(confvo.getNchangetotalmny());
-					confvo.setVendperiod(confvo.getVstopperiod());
-					confvo.setNdeductmny(confvo.getNchangededutmny());
+				if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_5){//已审核
+					//合同代账费 = 合同总金额 - 合同账本费
+					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
+				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
+					confvo.setNtotalmny(confvo.getNchangetotalmny());//合同总金额 = 变更后合同总金额
+					confvo.setNdedsummny(confvo.getNchangesummny());//扣款总金额 = 变更后扣款总金额
+					//合同代账费 = 变更后合同总金额 - 合同账本费
+					confvo.setNaccountmny(SafeCompute.sub(confvo.getNchangetotalmny(), confvo.getNbookmny()));
+				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
+					confvo.setNtotalmny(DZFDouble.ZERO_DBL);//合同总金额
+					confvo.setNdedsummny(DZFDouble.ZERO_DBL);//扣款总金额
+					confvo.setNbookmny(DZFDouble.ZERO_DBL);//合同账本费
+					confvo.setNaccountmny(DZFDouble.ZERO_DBL);//合同代账费
 				}
 				uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 				if (uservo != null) {
@@ -151,6 +160,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			CorpVO corpvo = null;
 			Integer cyclenum = 0;
 			for (ContractConfrimVO vo : conflist) {
+				//合同代账费 = 合同总金额 - 合同账本费
+				vo.setNaccountmny(SafeCompute.sub(vo.getNtotalmny(), vo.getNbookmny()));
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if (corpvo != null) {
 					vo.setCorpname(corpvo.getUnitname());
@@ -1425,7 +1436,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public ContractConfrimVO queryInfoById(ContractConfrimVO paramvo) throws DZFWarpException {
 		ContractConfrimVO confvo = null;
-		//1、先后审批历史查询；2、如果审批历史没有，再从加盟商合同中查询
+		//1、先从审批历史查询；2、如果审批历史没有，再从加盟商合同中查询
 		String qsql = " nvl(dr,0) = 0 AND pk_contract = ? AND pk_corp = ? ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(paramvo.getPk_contract());
@@ -1434,15 +1445,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				qsql, spm);
 		if (confVOs != null && confVOs.length > 0) {
 			confvo = confVOs[0];
-//			if (confvo.getDenddate().compareTo(new DZFDate()) < 0) {
-////				confvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-//				confvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_8);// 服务到期
-//			}
-			if (confvo.getPatchstatus() != null && confvo.getPatchstatus() == 3) {
-				confvo.setNtotalmny(confvo.getNchangetotalmny());
-				confvo.setVendperiod(confvo.getVstopperiod());
-				confvo.setNdeductmny(confvo.getNchangededutmny());
-			}
 			UserVO uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 			if (uservo != null) {
 				confvo.setVopername(uservo.getUser_name());

@@ -457,6 +457,17 @@ function load(){
 			field : 'pstatus',
 			hidden : true
 		}, {
+			width : '100',
+			title : '合同总金额',
+			align:'right',
+            halign:'center',
+			field : 'ntlmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			},
+			hidden : true
+		}, {
 			width :'100',
 			title : '存量客户',
 			field : 'isncust',
@@ -541,10 +552,20 @@ function load(){
 			formatter:codeLink,
 		}, {
 			width : '110',
-			title : '合同总金额',
+			title : '合同代账费',//合同代账费 = 合同总金额 - 合同账本费
 			align:'right',
             halign:'center',
-			field : 'ntlmny',
+			field : 'naccmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		}, {
+			width : '110',
+			title : '账本费',
+			align:'right',
+            halign:'center',
+			field : 'nbmny',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
