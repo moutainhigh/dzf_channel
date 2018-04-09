@@ -498,7 +498,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				updateContract(paramvo, opertype);
 				//4、回写套餐促销活动名额
 				updateSerPackage(paramvo);
-				//5、回写客户纳税人性质
+				//5、回写客户纳税人性质 //回写客户是否为存量客户
 				Map<String, String> packmap = queryPackageMap();
 				updateCorp(paramvo, packmap);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
@@ -534,14 +534,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 	
 	/**
-	 * 更新我的客户“纳税人性质”
+	 * 更新我的客户“纳税人性质”,是否为存量客户
 	 * @param paramvo
 	 * @param packmap
 	 * @throws DZFWarpException
 	 */
 	private void updateCorp(ContractConfrimVO confvo, Map<String, String> packmap) throws DZFWarpException{
-		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质
 		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+		//更新是否为存量客户
+		if(corpvo != null && confvo.getIsncust()!=null && confvo.getIsncust().booleanValue()){
+			corpvo.setIsncust(confvo.getIsncust());
+			singleObjectBO.update(corpvo, new String[]{"isncust"});
+		}
+		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质
 		if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 2){//补单合同
 			if(corpvo != null){
 				corpvo.setChargedeptname(confvo.getChargedeptname());
@@ -918,7 +923,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				updateContract(confrimvo, opertype);
 				//4、回写套餐促销活动名额
 				updateSerPackage(confrimvo);
-				//5、回写客户纳税人性质
+				//5、回写客户纳税人性质  //回写客户是否为存量客户
 				updateCorp(confrimvo, packmap);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(confrimvo);
