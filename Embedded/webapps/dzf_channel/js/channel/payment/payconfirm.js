@@ -230,7 +230,7 @@ function load(){
 			align : 'center',
 			formatter : function(value, row, index) {
 				if(!isEmpty(row.billid)){
-					return '<a href="#" style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
+					return '<a href="javascript:void(0)"  style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
 				}
 			}
 		},{
