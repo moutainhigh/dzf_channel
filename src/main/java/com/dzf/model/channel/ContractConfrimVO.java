@@ -237,6 +237,17 @@ public class ContractConfrimVO extends SuperVO {
 
     @FieldAlias("corptp")
     private String corptype; // 加盟商类型
+    
+    @FieldAlias("canedit")
+    private DZFBoolean iscanedit;//是否允许编辑
+
+	public DZFBoolean getIscanedit() {
+		return iscanedit;
+	}
+
+	public void setIscanedit(DZFBoolean iscanedit) {
+		this.iscanedit = iscanedit;
+	}
 
 	public DZFDouble getNaccountmny() {
 		return naccountmny;

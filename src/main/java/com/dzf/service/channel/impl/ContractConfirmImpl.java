@@ -40,6 +40,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -408,14 +409,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm, new BeanListProcessor(ContractConfrimVO.class));
 		if (conflist != null && conflist.size() > 0) {
 			ContractConfrimVO vo = conflist.get(0);
+			vo.setIscanedit(DZFBoolean.FALSE);
 			if(vo.getChanneltype() != null && vo.getChanneltype() == 1){
 				vo.setCorptype("普通加盟商");
-				vo.setIdeductpropor(10);
+				if(vo.getIsncust() != null && vo.getIsncust().booleanValue()){
+					vo.setIdeductpropor(0);
+				}else{
+					vo.setIdeductpropor(10);
+				}
 			}else if(vo.getChanneltype() != null && vo.getChanneltype() == 2){
 				vo.setCorptype("金牌加盟商");
-				vo.setIdeductpropor(50);
-			}else{
-				vo.setIdeductpropor(10);
+				if(vo.getIsncust() != null && vo.getIsncust().booleanValue()){
+					vo.setIdeductpropor(0);
+				}else{
+					vo.setIdeductpropor(5);
+					vo.setIscanedit(DZFBoolean.TRUE);
+				}
 			}
 			CorpVO corpvo = null;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
