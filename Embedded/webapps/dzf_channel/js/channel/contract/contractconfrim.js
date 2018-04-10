@@ -408,6 +408,9 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
+		remoteSort : false,//定义从服务器排序
+		sortName:"naccmny",//排序字段
+		sortOrder:"desc",//排序方式
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
@@ -505,12 +508,15 @@ function load(){
 			halign:'center',
 			align:'center',
 			field : 'dedate',
+			sortable:true,
 		}, {
 			width : '100',
 			title : '扣款比例(%)',
 			halign:'center',
 			align:'right',
 			field : 'propor',
+			sortable:true,
+			sorter:orderfun,
 		},{
 			width : '100',
 			title : '扣费金额',
@@ -519,7 +525,9 @@ function load(){
 			field : 'ndesummny',
 			formatter : function(value,row,index){
 				return formatMny(value);
-			}
+			},
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '100',
 			title : '合同状态',
@@ -559,7 +567,9 @@ function load(){
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
-			}
+			},
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '110',
 			title : '账本费',
@@ -582,24 +592,30 @@ function load(){
 			halign:'center',
 			align:'center',
 			field : 'bperiod',
+			sortable:true,
 		}, {
 			width : '120',
 			title : '结束日期',
 			halign:'center',
 			align:'center',
 			field : 'eperiod',
+			sortable:true,
 		}, {
 			width : '120',
 			title : '收款周期(月)',
 			align : 'center',
 			halign : 'center',
 			field : 'recycle',
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '120',
 			title : '合同周期(月)',
 			align : 'center',
 			halign : 'center',
 			field : 'contcycle',
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '120',
 			title : '纳税人资格',
@@ -614,7 +630,9 @@ function load(){
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
-			}
+			},
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '100',
 			title : '业务类型',

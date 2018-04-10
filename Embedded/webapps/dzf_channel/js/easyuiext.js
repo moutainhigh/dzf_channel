@@ -534,3 +534,15 @@ function initPeriod(code){
     //年份输入框
     span = p.find('span.calendar-text'); //显示月份层的触发控件
 }
+
+/**
+ * 数值类型排序
+ * @param a
+ * @param b
+ * @returns
+ */
+function orderfun(a,b){
+	a = getFloatValue(a);  
+	b = getFloatValue(b);  
+	return (a>b?1:-1);
+}

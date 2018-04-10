@@ -105,7 +105,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			UserVO uservo = null;
 			CorpVO corpvo = null;
 			for (ContractConfrimVO confvo : confVOs) {
-				if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_5){//已审核
+				if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_1){//已审核
 					//合同代账费 = 合同总金额 - 合同账本费
 					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
 				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
