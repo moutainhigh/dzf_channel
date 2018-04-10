@@ -893,9 +893,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	/**
 	 * 批量审核-审核单个数据
-	 * @param confrimvo
+	 * @param confrimvo 合同数据
+	 * @param paramvo  参数数据
 	 * @param opertype
 	 * @param cuserid
+	 * @param packmap
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -905,6 +907,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(StringUtil.isEmpty(confrimvo.getTableName()) || StringUtil.isEmpty(confrimvo.getPk_contract())){
 			confrimvo.setVerrmsg("数据错误");
 			return confrimvo;
+		}
+		if(confrimvo.getIsncust() != null && confrimvo.getIsncust().booleanValue()){
+			paramvo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
