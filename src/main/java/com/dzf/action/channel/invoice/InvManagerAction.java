@@ -154,7 +154,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
         try{
             ChInvoiceVO paramvo = new ChInvoiceVO();
             paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-            String pk_invoices = getRequest().getParameter("pk_invoices");
+            String pk_invoices = getRequest().getParameter("ids");
             String[] pkArry = pkinvoicesToArray(pk_invoices);
             List<ChInvoiceVO> listError = invManagerService.onAutoBill(pkArry,getLoginUserInfo());
             int errorNum = listError == null ? 0 :listError.size();

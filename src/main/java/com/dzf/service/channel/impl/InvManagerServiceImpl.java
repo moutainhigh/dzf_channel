@@ -1,20 +1,12 @@
 package com.dzf.service.channel.impl;
 
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
@@ -34,10 +26,8 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.pub.jm.Base64CodeUtils;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.InvManagerService;
@@ -53,11 +43,6 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Autowired
     private MultBodyObjectBO multBodyObjectBO;
-
-    private static String[] chars = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
-            "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
-            "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
-            "W", "X", "Y", "Z" };
 
     @SuppressWarnings("unchecked")
     @Override
@@ -84,31 +69,6 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Override
     public Integer queryTotalRow(ChInvoiceVO paramvo) throws DZFWarpException {
-        // StringBuffer sql = new StringBuffer();
-        // SQLParameter sp = new SQLParameter();
-        // sql.append("select count(1) from cn_invoice where nvl(dr,0) = 0 ");
-        // if(vo.getCorps() != null && vo.getCorps().length > 0){
-        // String corps = SqlUtil.buildSqlConditionForIn(vo.getCorps());
-        // sql.append(" and pk_corp in (" +corps+ ")");
-        // }
-        // if(vo.getInvstatus() == -1){
-        // sql.append(" and invstatus in (1,2)");
-        // }else{
-        // sql.append(" and invstatus = ?");
-        // sp.addParam(vo.getInvstatus());
-        // }
-        // if(!StringUtil.isEmpty(vo.getBdate())){
-        // sql.append(" and apptime >= ?");
-        // sp.addParam(vo.getBdate());
-        // }
-        // if(!StringUtil.isEmpty(vo.getEdate())){
-        // sql.append(" and apptime <= ?");
-        // sp.addParam(vo.getEdate());
-        // }
-        // sql.append(" order by ts desc ");
-        // String total = singleObjectBO.executeQuery(sql.toString(), sp, new
-        // ColumnProcessor()).toString();
-        // return Integer.valueOf(total);
         QrySqlSpmVO qryvo = getQrySql(paramvo);
         return multBodyObjectBO.queryDataTotal(ChInvoiceVO.class, qryvo.getSql(), qryvo.getSpm());
     }
@@ -129,7 +89,7 @@ public class InvManagerServiceImpl implements InvManagerService {
             sql.append(" and invstatus = ?");
             spm.addParam(paramvo.getInvstatus());
         } else {
-            sql.append(" and invstatus in (1,2)");
+            sql.append(" and invstatus in (1,2,3)");
         }
         if (paramvo.getInvtype() != null && paramvo.getInvtype() != -1) {
             sql.append(" and invtype = ?");
@@ -233,18 +193,16 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Override
     public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException {
-        //
         if (pk_invoices == null || pk_invoices.length == 0) {
             throw new BusinessException("请选择发票！");
         }
         List<ChInvoiceVO> lists = new ArrayList<ChInvoiceVO>();
         List<ChInvoiceVO> listError = new ArrayList<ChInvoiceVO>();
         HashMap<String, DZFDouble> mapUse = queryUsedMny();
-        for (String pk_invoice : pk_invoices) {
-            ChInvoiceVO vo = queryByPk(pk_invoice);
+        ChInvoiceVO[] cvos = queryByPks(pk_invoices);
+        for (ChInvoiceVO vo : cvos) {
             DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
             DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
-            ;
             if (vo.getInvstatus() != 1) {
                 vo.setMsg("要确认开票的单据不是待开票状态");
                 listError.add(vo);
@@ -264,12 +222,6 @@ public class InvManagerServiceImpl implements InvManagerService {
             updateTicketPrice(vo);
             updateInvoice(vo);
         }
-        // int success = lists.size();
-        // for(ChInvoiceVO vo : lists){
-        // vo.setInvperson(userid);
-        // updateTicketPrice(vo);
-        // }
-        // updateInvoice(lists.toArray(new ChInvoiceVO[0]));
         return listError;
     }
 
@@ -277,20 +229,28 @@ public class InvManagerServiceImpl implements InvManagerService {
     public List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException {
         //
         if (pk_invoices == null || pk_invoices.length == 0) {
-            throw new BusinessException("请选择发票！");
+            throw new BusinessException("请选择数据。");
         }
         
         if(uvo.getUser_name().length() > 8){
-            throw new BusinessException("操作用户名称长度不能大于8");
+            throw new BusinessException("操作用户名称长度不能大于8。");
         }
         List<ChInvoiceVO> lists = new ArrayList<ChInvoiceVO>();
         List<ChInvoiceVO> listError = new ArrayList<ChInvoiceVO>();
         HashMap<String, DZFDouble> mapUse = queryUsedMny();
-        for (String pk_invoice : pk_invoices) {
-            ChInvoiceVO vo = queryByPk(pk_invoice);
+        ChInvoiceVO[] cvos = queryByPks(pk_invoices);
+        if(cvos == null || cvos.length == 0){
+            throw new BusinessException("请选择数据。");
+        }
+        for (ChInvoiceVO vo : cvos) {
+            if(vo.getInvtype() != 2){
+                throw new BusinessException("您好！只有申请开具电子发票的开票申请才可提交电子发票自动开票接口，请知悉并重新选择数据。");
+            }
+        }
+        for (ChInvoiceVO vo : cvos) {
             DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
             DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
-            if (vo.getInvstatus() != 1) {
+            if (vo.getInvstatus() != 1 && vo.getInvstatus() != 3) {
                 vo.setMsg("要确认开票的单据不是待开票状态");
                 listError.add(vo);
                 continue;
@@ -306,22 +266,33 @@ public class InvManagerServiceImpl implements InvManagerService {
             }
             lists.add(vo);
             vo.setInvperson(uvo.getCuserid());
-            savePiaoTong(vo, uvo);
+            PiaoTongResVO resvo = savePiaoTong(vo, uvo);
+            if(resvo == null){
+                vo.setMsg("票通未返回接收数据结果。");
+                listError.add(vo);
+            }else if(!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())){
+                vo.setMsg(resvo.getMsg());
+                listError.add(vo);
+            }
         }
         return listError;
     }
+    
+    private ChInvoiceVO[] queryByPks(String[] pk_invoices){
+        String condition = SqlUtil.buildSqlForIn("pk_invoice", pk_invoices);
+        return (ChInvoiceVO[]) singleObjectBO.queryByCondition(ChInvoiceVO.class, condition, null);
+    }
 
-    private void savePiaoTong(ChInvoiceVO cvo, UserVO uvo) {
+    private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo) {
         PiaoTongInvVO hvo = new PiaoTongInvVO();
         // 销方信息
         // hvo.setTaxpayerNum("91110108397823696Y");//大账房
         // hvo.setSellerTaxpayerNum("91110108397823696Y");
         // hvo.setSellerEnterpriseName("北京大账房信息技术有限公司");
         // 测试
-        hvo.setTaxpayerNum("110101201702071");//
-        hvo.setSellerTaxpayerNum("110101201702071");
-        hvo.setSellerEnterpriseName("电子票测试新1");
-
+//        hvo.setTaxpayerNum("110101201702071");//
+//        hvo.setSellerTaxpayerNum("110101201702071");
+        hvo.setSellerEnterpriseName("北京大账房信息技术有限公司");
         hvo.setSellerAddress("北京海淀区万泉庄路15号5层501");
         hvo.setSellerTel("010-82552270");
         hvo.setSellerBankName("建行西直门北大街支行");
@@ -336,8 +307,8 @@ public class InvManagerServiceImpl implements InvManagerService {
         hvo.setBuyerBankName(cvo.getBankname());
         hvo.setBuyerBankAccount(cvo.getBankcode());
         hvo.setBuyerTel(cvo.getInvphone());
-//        hvo.setTakerEmail(cvo.getEmail());
-        hvo.setTakerEmail("gejingwei@dazhangfang.com");
+        hvo.setTakerEmail(cvo.getEmail());
+//        hvo.setTakerEmail("gejingwei@dazhangfang.com");
         hvo.setTakerName("");
         hvo.setTakerTel(cvo.getInvphone());
 
@@ -358,20 +329,22 @@ public class InvManagerServiceImpl implements InvManagerService {
         PiaoTongBill bill = new PiaoTongBill();
         PiaoTongResVO resvo = bill.sendBill(hvo);
         updateSendBack(resvo,cvo);
+        return resvo;
     }
 
     private void updateSendBack(PiaoTongResVO resvo,ChInvoiceVO cvo) {
         if(resvo != null && IPiaoTongConstant.SUCCESS.equals(resvo.getCode()) ){
             updatePtInvoice(resvo,cvo);
+            updateTicketPrice(cvo);
         }else if(resvo == null || StringUtil.isEmpty(resvo.getCode()) || StringUtil.isEmpty(resvo.getMsg())){
-            
+            updatePtNotInv(resvo,cvo);
         }else if(!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())){
-            
+            updatePtNotInv(resvo,cvo);
         }
     }
     
     /**
-     * 自动开票回写
+     * 开票成功：自动开票回写
      * @author gejw
      * @time 下午2:46:11
      * @param resvo
@@ -384,6 +357,18 @@ public class InvManagerServiceImpl implements InvManagerService {
         cvo.setInvtime(time.toString());
         cvo.setInvstatus(2);
         singleObjectBO.update(cvo, new String[] { "reqserialno", "qrcodepath","invtime", "invperson", "invstatus"});
+    }
+    
+    /**
+     * 开票失败：自动开票回写
+     * @author gejw
+     * @time 上午9:56:08
+     * @param cvo
+     */
+    private void updatePtNotInv(PiaoTongResVO resvo,ChInvoiceVO cvo) {
+        cvo.setErrcode(resvo.getCode());
+        cvo.setInvstatus(3);
+        singleObjectBO.update(cvo, new String[] {"errcode","invstatus"});
     }
 
 

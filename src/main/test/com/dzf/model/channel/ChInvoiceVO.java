@@ -47,7 +47,7 @@ public class ChInvoiceVO extends SuperVO{
 	private String apptime;//申请时间
 	
 	@FieldAlias("istatus")
-	private Integer invstatus;//发票状态  0：待提交 、1：待开票、2：已开票
+	private Integer invstatus;//发票状态  0：待提交 、1：待开票、2：已开票、3：开票失败
 	
 	private String invtime;//开票日期
 	

@@ -260,19 +260,19 @@ function onAutoBill(){
 		return;
 	}
 	
-	var pk_invoices = [];
+	var ids = [];
 	
-	$.messager.confirm('提示','请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！',
-			function(conf){
+	$.messager.confirm('提示','是否确认要为这些客户开具电子发票，传自动开票接口后不可取消，请慎重操作！',
+	  function(conf){
 		if(conf){
 			for(var i = 0; i < rows.length; i++){
-				pk_invoices.push(rows[i].id);
+				ids.push(rows[i].id);
 			}
 			$.ajax({
 				type : 'post',
 				url : DZF.contextPath + '/sys/sys_inv_manager!onAutoBill.action',
 				data : {
-					"pk_invoices" : JSON.stringify(pk_invoices)
+					"ids" : JSON.stringify(ids)
 				},
 				dataType : 'json',
 				success: function(result){
@@ -280,7 +280,8 @@ function onAutoBill(){
 						reloadData();
 						Public.tips({content : result.msg ,type:0});
 					}else{
-						Public.tips({content : result.msg ,type:2});
+//						Public.tips({content : result.msg ,type:2});
+						$.messager.alert('提示',result.msg); 
 					}
 				}
 			});
