@@ -26,13 +26,13 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		columns : [ [ {
-			width : '130',
+			width : '120',
 			title : '加盟商编码',
             halign:'center',
             align:'left',
 			field : 'incode',
 		},{
-			width : '220',
+			width : '210',
 			title : '加盟商名称',
 			halign:'center',
 			field : 'corpnm',
