@@ -171,6 +171,10 @@
 								<label style="text-align:right;width:34%;">开票电话：</label>
 								<input id="phone" name="phone" class="easyui-validatebox easyui-textbox" data-options="required:true,validType:'phoneNum'" style="width:62%;height:28px;text-align:left">
 							</div>
+							<div style="width: 32%;display: inline-block">
+								<label style="text-align:right;width:34%;">收票人：</label>
+								<input id="runame" name="runame" class="easyui-textbox" data-options="required:true" style="width:62%;height:28px;text-align:left">
+							</div>
 						</div>
 						<div class="time_col time_colp11">
 							<label style="text-align:right;width:10.8%;">备注：</label>

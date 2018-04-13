@@ -3,6 +3,8 @@ package com.dzf.service.channel.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -224,6 +226,16 @@ public class InvManagerServiceImpl implements InvManagerService {
         }
         return listError;
     }
+    
+    public boolean hasDigit(String content) {
+        boolean flag = false;
+        Pattern p = Pattern.compile(".*\\d+.*");
+        Matcher m = p.matcher(content);
+        if (m.matches()) {
+            flag = true;
+        }
+        return flag;
+    }
 
     @Override
     public List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException {
@@ -234,7 +246,12 @@ public class InvManagerServiceImpl implements InvManagerService {
         
         if(uvo.getUser_name().length() > 8){
             throw new BusinessException("操作用户名称长度不能大于8。");
+        }else if(hasDigit(uvo.getUser_name())){
+            throw new BusinessException("操作用户名称不能包含数字。");
         }
+        
+        
+       
         List<ChInvoiceVO> lists = new ArrayList<ChInvoiceVO>();
         List<ChInvoiceVO> listError = new ArrayList<ChInvoiceVO>();
         HashMap<String, DZFDouble> mapUse = queryUsedMny();
@@ -280,7 +297,10 @@ public class InvManagerServiceImpl implements InvManagerService {
     
     private ChInvoiceVO[] queryByPks(String[] pk_invoices){
         String condition = SqlUtil.buildSqlForIn("pk_invoice", pk_invoices);
-        return (ChInvoiceVO[]) singleObjectBO.queryByCondition(ChInvoiceVO.class, condition, null);
+        StringBuffer sql = new StringBuffer();
+        sql.append(" invstatus in (1,3)");
+        sql.append("and ").append(condition);
+        return (ChInvoiceVO[]) singleObjectBO.queryByCondition(ChInvoiceVO.class, sql.toString(), null);
     }
 
     private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo) {
@@ -309,7 +329,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         hvo.setBuyerTel(cvo.getInvphone());
         hvo.setTakerEmail(cvo.getEmail());
 //        hvo.setTakerEmail("gejingwei@dazhangfang.com");
-        hvo.setTakerName("");
+        hvo.setTakerName(cvo.getRusername());
         hvo.setTakerTel(cvo.getInvphone());
 
         // 开票项目信息
@@ -534,12 +554,15 @@ public class InvManagerServiceImpl implements InvManagerService {
             }
             vo.setPk_corp(ovo.getPk_corp());
         }
+        if(hasDigit(vo.getRusername())){
+            throw new BusinessException("收票人不能包含数字。");
+        }
         if (ovo.getInvstatus() == 2) {
             throw new BusinessException("已开票，不允许修改。");
         }
         checkInvPrice(vo);
         String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                "bankcode", "email", "vmome" };
+                "bankcode", "email", "vmome","rusername" };
         singleObjectBO.update(vo, fieldNames);
     }
 

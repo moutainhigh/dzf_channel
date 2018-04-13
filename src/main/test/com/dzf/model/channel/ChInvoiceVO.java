@@ -47,7 +47,7 @@ public class ChInvoiceVO extends SuperVO{
 	private String apptime;//申请时间
 	
 	@FieldAlias("istatus")
-	private Integer invstatus;//发票状态  0：待提交 、1：待开票、2：已开票、3：开票失败
+	private Integer invstatus;//发票状态  0：待提交 、1：待开票、2：已开票
 	
 	private String invtime;//开票日期
 	
@@ -90,8 +90,18 @@ public class ChInvoiceVO extends SuperVO{
 	private String reqserialno;//发票请求流水号
 	
 	private String qrcodepath;//二维码url
+	@FieldAlias("runame")
+	private String rusername;//收票人
 	
-	public String getInvcode() {
+	public String getRusername() {
+        return rusername;
+    }
+
+    public void setRusername(String rusername) {
+        this.rusername = rusername;
+    }
+
+    public String getInvcode() {
         return invcode;
     }
 
