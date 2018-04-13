@@ -630,11 +630,15 @@
 									<input id="ichangereason" name="changereason" class="easyui-textbox" data-options="readonly:true"
 										style="width:60%;height:28px;text-align:left">
 								</div>
-								<div style="width: 44%; display: inline-block">
-									<label style="text-align: right; width: 30%;">备注：</label>
+								<div style="width: 42%; display: inline-block">
+									<label style="text-align: right; width: 20%;">备注：</label>
 									<input id="ichangememo" name="changememo" class="easyui-textbox" data-options="readonly:true"
-										style="width:40%;height:28px;text-align:left">
+										style="width:70%;height:28px;text-align:left">
 								</div>
+								<div style="width:25.5%; display:inline-block">
+										<label style="text-align: right; width: 40%;white-space: nowrap;">变更日期：</label> 
+										<input  class="easyui-numberbox" style="width:40%;height:28px;text-align:left"> 
+									</div>
 							</div>
 							<div class="time_col time_colp11">
 								<div id = "addclass" class="decan">
