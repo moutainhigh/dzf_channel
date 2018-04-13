@@ -425,6 +425,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 					vo.setIdeductpropor(5);
 					vo.setIscanedit(DZFBoolean.TRUE);
 				}
+			}else{
+				if(vo.getIsncust() != null && vo.getIsncust().booleanValue()){
+					vo.setIdeductpropor(0);
+				}else{
+					vo.setIdeductpropor(10);
+				}
 			}
 			CorpVO corpvo = null;
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());

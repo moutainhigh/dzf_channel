@@ -864,8 +864,14 @@ function initdeductData(row){
             	Public.tips({content:data.msg,type:1});
             } else {
                 var row = data.rows;
+                $('#deductfrom').form('clear');
                 $('#deductfrom').form('load',row);
                 $('#confreason').textbox('setValue', null);//驳回原因
+                if(row.canedit == "Y" || row.canedit == "是"){
+                	$('#propor').numberbox({"readonly" : true});
+                }else{
+                	$('#propor').numberbox({"readonly" : false});
+                }
                 $('#propor').numberbox('setValue', row.propor);
                 //扣费标准修改为扣掉账本费的合同金额
                 var countmny = getFloatValue(row.ntlmny).sub(getFloatValue(row.nbmny));
@@ -883,10 +889,6 @@ function initdeductData(row){
                 $('#scperiod').textbox('setValue', row.cperiod);//变更日期
                 $('#corptp').textbox('setValue', row.corptp);//加盟商类型
                 document.getElementById("debit").checked="true";
-                $("#propor").numberbox("readonly",false);
-                if(row.canedit == "Y" || row.canedit == "是"){
-                	$("#propor").numberbox("readonly",true);
-                }
             }
         },
     });

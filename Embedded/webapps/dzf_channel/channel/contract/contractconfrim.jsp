@@ -225,7 +225,7 @@
 						<input id="cperiod" name="cperiod" type="hidden">
 						<div style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
-							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,"
+							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,readonly:false"
 								style="width:50%;height:28px;text-align:left; ">%
 						</div>
 						<div  style="width:24%;display: inline-block;">
