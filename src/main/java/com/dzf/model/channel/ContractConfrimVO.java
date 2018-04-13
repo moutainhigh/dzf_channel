@@ -209,6 +209,9 @@ public class ContractConfrimVO extends SuperVO {
     @FieldAlias("changetime")
     private DZFDateTime dchangetime;//变更时间
     
+    @FieldAlias("changedate")
+    private DZFDate dchangedate;//变更日期（不存库，只做展示）
+    
     @FieldAlias("subtotalmny")
     private DZFDouble nsubtotalmny;//变更后合同总金额差额
     
@@ -240,6 +243,14 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("canedit")
     private DZFBoolean iscanedit;//是否允许编辑
+
+	public DZFDate getDchangedate() {
+		return dchangedate;
+	}
+
+	public void setDchangedate(DZFDate dchangedate) {
+		this.dchangedate = dchangedate;
+	}
 
 	public DZFBoolean getIscanedit() {
 		return iscanedit;

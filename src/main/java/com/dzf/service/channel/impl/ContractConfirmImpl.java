@@ -1451,14 +1451,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public ContractConfrimVO queryInfoById(ContractConfrimVO paramvo) throws DZFWarpException {
 		ContractConfrimVO confvo = null;
 		//1、先从审批历史查询；2、如果审批历史没有，再从加盟商合同中查询
-		String qsql = " nvl(dr,0) = 0 AND pk_contract = ? AND pk_corp = ? ";
+		String qsql = " SELECT t.*,substr(dchangetime,0,10) AS dchangedate FROM cn_contract t WHERE nvl(t.dr,0) = 0 AND t.pk_contract = ? AND t.pk_corp = ? ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(paramvo.getPk_contract());
 		spm.addParam(paramvo.getPk_corp());
-		ContractConfrimVO[] confVOs = (ContractConfrimVO[]) singleObjectBO.queryByCondition(ContractConfrimVO.class,
-				qsql, spm);
-		if (confVOs != null && confVOs.length > 0) {
-			confvo = confVOs[0];
+		List<ContractConfrimVO> conlist = (List<ContractConfrimVO>) singleObjectBO.executeQuery(qsql, spm, new BeanListProcessor(ContractConfrimVO.class));
+		if (conlist != null && conlist.size() > 0) {
+			confvo = conlist.get(0);
 			UserVO uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
 			if (uservo != null) {
 				confvo.setVopername(uservo.getUser_name());
