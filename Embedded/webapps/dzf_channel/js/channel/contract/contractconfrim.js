@@ -500,7 +500,7 @@ function load(){
 			field : 'dedate',
 			sortable:true,
 		}, {
-			width : '100',
+			width : '120',
 			title : '扣款比例(%)',
 			halign:'center',
 			align:'right',
@@ -581,7 +581,9 @@ function load(){
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
-			}
+			},
+			sortable:true,
+			sorter:orderfun,
 		}, {
 			width : '100',
 			title : '附件',
