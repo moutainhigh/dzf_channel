@@ -17,7 +17,6 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -25,7 +24,6 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.constant.AdminDateUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
@@ -367,6 +365,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO sqpvo =  getDetailQry(paramvo);
 		List<ChnDetailVO> list = (List<ChnDetailVO>) singleObjectBO.executeQuery(sqpvo.getSql(), 
 				sqpvo.getSpm(), new BeanListProcessor(ChnDetailVO.class));
+		if(paramvo.getQrytype() == 2){
+			list=qryNoDeduction(list,paramvo);//查询扣费为0的数据
+		}
 		if(list != null && list.size() > 0){
 			List<ChnDetailVO> oederlist = getOrderList(list);
 			CorpVO accvo = null;
@@ -414,6 +415,52 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		return retlist;
 	}
 	
+	private List<ChnDetailVO> qryNoDeduction(List<ChnDetailVO> list, QryParamVO paramvo) {
+		StringBuffer ids=new StringBuffer();
+		for (ChnDetailVO chnDetailVO : list) {
+			ids.append("'"+chnDetailVO.getPk_bill()+"',");
+		}
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append(" select pk_confrim as pk_bill ,deductdata as doperatedate, 2 as ipaytype,2 as iopertype, ");
+		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as naccountmny,nvl(nbookmny,0) as nbookmny from cn_contract" );   
+		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 \n");
+		spm.addParam(paramvo.getPk_corp());
+		if(list!=null && list.size()>0){
+			sql.append(" and pk_confrim not in (");
+			sql.append(ids.toString().substring(0,ids.toString().length()-1));
+			sql.append(" )");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+				sql.append(" AND substr(deductdata,1,7) >= ? \n");
+				spm.addParam(paramvo.getBeginperiod());
+			}
+			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+				sql.append(" AND substr(deductdata,1,7) <= ? \n");
+				spm.addParam(paramvo.getEndperiod());
+			}
+		}else{
+			if(paramvo.getBegdate() != null){
+				sql.append(" AND deductdata >= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
+			if(paramvo.getEnddate() != null){
+				sql.append(" AND deductdata <= ? \n");
+				spm.addParam(paramvo.getEnddate());
+			}
+		}
+		sql.append(" order by deductdata \n");
+		List<ChnDetailVO> vos = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), 
+				spm, new BeanListProcessor(ChnDetailVO.class));
+		if(list!=null && list.size()>0){
+			list.addAll(vos);
+		}else if(vos!=null && vos.size()>0){
+			list=vos;
+		}
+		return list;
+	}
+
 	/**
 	 * 查询付款单余额明细的合同相关数据
 	 * @param paramvo  
