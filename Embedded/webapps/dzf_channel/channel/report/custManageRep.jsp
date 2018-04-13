@@ -52,7 +52,7 @@
 							<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
 							data-options=" plain:true" style="margin-bottom:0px;" onclick="load()" id="">查询</a>
 							<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" style="margin-bottom:0px;" onclick="clearCondition()" id="">清空</a>
+							data-options=" plain:true" style="margin-bottom:0px;" onclick="clearCondition()" id="">清除</a>
 						</div>
 					</div>
 		        </div>
