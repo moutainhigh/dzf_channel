@@ -157,8 +157,9 @@ public class InvManagerServiceImpl implements InvManagerService {
             sp.addParam(vo.getDr());
             if (!StringUtil.isEmpty(vo.getVmome())) {
                 String[] split = vo.getVmome().split(",");
-                sql.append(" and pk_corp not in ");
+                sql.append(" and pk_corp not in (");
                 sql.append(SqlUtil.buildSqlConditionForIn(split));
+                sql.append(" )");
             }
         }
         // if(!StringUtil.isEmpty(vo.getCorpcode())){
