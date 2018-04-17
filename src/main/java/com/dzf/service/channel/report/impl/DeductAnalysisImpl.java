@@ -80,13 +80,16 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,  \n") ;
+		sql.append("SELECT   \n") ;
+		if(qrytype == 1){
+			sql.append("   t.pk_corp,  \n") ;
+		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//预付款
-			sql.append(" t.ndeductmny AS ndeducmny, \n") ;
+			sql.append(" nvl(t.ndeductmny,0) AS ndeducmny, \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点
-			sql.append(" t.ndedrebamny AS ndeducmny, \n") ;
+			sql.append(" nvl(t.ndedrebamny,0) AS ndeducmny, \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部
-			sql.append(" t.ndedsummny AS ndeducmny, \n") ;
+			sql.append(" nvl(t.ndedsummny,0) AS ndeducmny, \n") ;
 		}
 		sql.append(" COUNT(t.pk_confrim) AS icorpnums  \n") ;
 		sql.append("  FROM cn_contract t  \n") ; 
@@ -126,23 +129,25 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 //		}
 		sql.append(" GROUP BY \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-			sql.append(" t.ndeductmny, ");
+			sql.append(" nvl(t.ndeductmny,0) ");
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-			sql.append(" t.ndedrebamny, ");
+			sql.append(" nvl(t.ndedrebamny,0) ");
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-			sql.append(" t.ndedsummny, ");
+			sql.append(" nvl(t.ndedsummny,0) ");
 		}
-		sql.append(" t.pk_corp  \n") ; 
+		if(qrytype == 1){
+			sql.append(" ,t.pk_corp  \n") ; 
+		}
 		sql.append(" ORDER BY ");
 		if(qrytype == 1){
 			sql.append(" t.pk_corp");
 		}else if(qrytype == 2){
 			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-				sql.append(" t.ndeductmny ");
+				sql.append(" nvl(t.ndeductmny,0) ");
 			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-				sql.append(" t.ndedrebamny ");
+				sql.append(" nvl(t.ndedrebamny,0) ");
 			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-				sql.append(" t.ndedsummny ");
+				sql.append(" nvl(t.ndedsummny,0) ");
 			}
 			sql.append(" DESC");
 		}
