@@ -265,6 +265,7 @@ function onAutoBill(){
 	$.messager.confirm('提示','是否确认要为这些客户开具电子发票，传自动开票接口后不可取消，请慎重操作！',
 	  function(conf){
 		if(conf){
+			$.messager.progress({text : '开票中，请稍后.....'});
 			for(var i = 0; i < rows.length; i++){
 				ids.push(rows[i].id);
 			}
@@ -279,9 +280,11 @@ function onAutoBill(){
 					if(result.success){
 						reloadData();
 						Public.tips({content : result.msg ,type:0});
+						$.messager.progress('close');
 					}else{
 //						Public.tips({content : result.msg ,type:2});
 						$.messager.alert('提示',result.msg); 
+						$.messager.progress('close');
 					}
 				}
 			});
