@@ -460,6 +460,19 @@ function load(){
 			field : 'pstatus',
 			hidden : true
 		}, {
+			width : '100',
+			title : '合同总金额',
+			align:'right',
+            halign:'center',
+			field : 'ntlmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			},
+//			sortable:true,
+//			sorter:orderfun,
+			hidden : true
+		}, {
 			width :'100',
 			title : '存量客户',
 			field : 'isncust',
@@ -548,18 +561,6 @@ function load(){
 			halign:'center',
 			field : 'vccode',
 			formatter:codeLink,
-		}, {
-			width : '100',
-			title : '合同总金额',
-			align:'right',
-            halign:'center',
-			field : 'ntlmny',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			},
-			sortable:true,
-			sorter:orderfun,
 		}, {
 			width : '110',
 			title : '合同代账费',//合同代账费 = 合同总金额 - 合同账本费
@@ -668,15 +669,21 @@ function calFooter(){
     var ntlmny = 0;	
     var nmsmny = 0;	
     var ndesummny = 0;	
+    var naccmny = 0;
+    var nbmny = 0;
     for (var i = 0; i < rows.length; i++) {
-    	ntlmny += parseFloat(rows[i].ntlmny);
-    	nmsmny += parseFloat(rows[i].nmsmny);
-    	ndesummny += parseFloat(rows[i].ndesummny==undefined?0:rows[i].ndesummny);
+    	ntlmny += getFloatValue(rows[i].ntlmny);
+    	nmsmny += getFloatValue(rows[i].nmsmny);
+    	ndesummny += getFloatValue(rows[i].ndesummny);
+    	naccmny += getFloatValue(rows[i].naccmny);
+    	nbmny += getFloatValue(rows[i].nbmny);
     }
     footerData['corpnm'] = '合计';
     footerData['ntlmny'] = ntlmny;
     footerData['nmsmny'] = nmsmny;
     footerData['ndesummny'] = ndesummny;
+    footerData['naccmny'] = naccmny;
+    footerData['nbmny'] = nbmny;
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
