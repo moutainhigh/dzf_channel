@@ -304,6 +304,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("   AND nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n"); // 渠道客户
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		sql.append("   AND nvl(p.isncust,'N') = 'Y' \n"); // 存量客户
 		// sql.append(" AND nvl(p.ishasaccount,'N') = 'Y' \n");//已建账
 		// sql.append(" AND p.chargedeptname is not null \n");//纳税人性质不能为空
 		sql.append(" GROUP BY p.fathercorp \n") ; 
