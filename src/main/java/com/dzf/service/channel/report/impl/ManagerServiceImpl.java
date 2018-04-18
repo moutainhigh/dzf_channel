@@ -33,7 +33,6 @@ public class ManagerServiceImpl implements IManagerService {
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
 		ArrayList<ManagerVO> list=new ArrayList<ManagerVO>();
@@ -53,7 +52,7 @@ public class ManagerServiceImpl implements IManagerService {
 			if(!map.containsKey(managerVO.getPk_corp()) && flg){
 				map.put(managerVO.getPk_corp(), managerVO);
 			}
-			if(!vprovinces.contains(managerVO.getVprovince())){
+			if(!vprovinces.contains(String.valueOf(managerVO.getVprovince()))){
 				vprovinces.add(managerVO.getVprovince().toString());
 			}
 		}
