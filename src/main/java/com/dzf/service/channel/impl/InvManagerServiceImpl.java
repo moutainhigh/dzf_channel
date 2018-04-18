@@ -299,7 +299,7 @@ public class InvManagerServiceImpl implements InvManagerService {
     private ChInvoiceVO[] queryByPks(String[] pk_invoices){
         String condition = SqlUtil.buildSqlForIn("pk_invoice", pk_invoices);
         StringBuffer sql = new StringBuffer();
-        sql.append(" invstatus in (1,3)");
+        sql.append(" invstatus in (1,2,3)");
         sql.append("and ").append(condition);
         return (ChInvoiceVO[]) singleObjectBO.queryByCondition(ChInvoiceVO.class, sql.toString(), null);
     }
