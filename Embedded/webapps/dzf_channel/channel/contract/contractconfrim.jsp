@@ -198,7 +198,7 @@
 					<div id="issupple" class="decan strong" style="width:22%;display:inline-block;font-weight:bold;">
 						<label style="width:40%;text-align: right;">变更日期：</label>
 						<input id="scperiod" name="cperiod" class="easyui-textbox" data-options="readonly:true" 
-							style="width:56%; height:28px; text-align:left;">
+							style="width:55%; height:28px; text-align:left;">
 					</div>
 				</div>
 				<form id = "deductfrom" method="post">
