@@ -189,7 +189,11 @@ function load(type){
 							obj['num'] = rows[i].sumnum;//总合同数
 							obj['mny'] = rows[i].summny;//总扣款
 							obj['retnum'] = rows[i].retnum;//退回合同数
-							obj['retmny'] = rows[i].retmny;//退回金额
+							if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+								obj['retmny'] = '-'+rows[i].retmny;//退回金额
+							}else{
+								obj['retmny'] = rows[i].retmny;//退回金额
+							}
 							obj['corpcode'] = rows[i].corpcode;//加盟商编码
 							obj['corpname'] = rows[i].corpname;//加盟商名称
 							obj['stocknum'] = rows[i].stocknum;//存量客户数
@@ -224,7 +228,11 @@ function load(type){
 								obj['num'] = rows[i].sumnum;//总合同数
 								obj['mny'] = rows[i].summny;//总扣款
 								obj['retnum'] = rows[i].retnum;//退回合同数
-								obj['retmny'] = rows[i].retmny;//退回金额
+								if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+									obj['retmny'] = '-'+rows[i].retmny;//退回金额
+								}else{
+									obj['retmny'] = rows[i].retmny;//退回金额
+								}
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
 								obj['stocknum'] = rows[i].stocknum;//存量客户数
