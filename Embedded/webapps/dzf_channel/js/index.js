@@ -19,9 +19,9 @@ $(function() {
 	initListener();
 	initBusiData();
 	
-	downFile();
-	showTips();
-	hideTips();
+//	downFile(billid, type);
+//	showTips();
+//	hideTips();
 });
 
 /**
@@ -408,7 +408,7 @@ function savePsw(){
 }
 
 /**
- * 显示提示(为了付款单确认)
+ * 显示提示
  * @param i
  */
 function showTips(){
@@ -417,7 +417,7 @@ function showTips(){
 }
 
 /**
- * 隐藏提示(为了付款单确认)
+ * 隐藏提示
  * @param i
  */
 function hideTips(){
@@ -425,11 +425,16 @@ function hideTips(){
 }
 
 /**
- * 附件下载(为了付款单确认)
+ * 附件下载
  * @param billid
+ * @param type 1:付款单确认；2：客户名称修改确认；
  */
-function downFile(billid){
-	if(billid && billid!=""){
-		Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
+function downFile(billid, type){
+	if(billid && billid != ""){
+		if(type == 1){
+			Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
+		}else if(type == 2){
+			Business.getFile(DZF.contextPath + '/corp/corpeditconf!downFile.action', {id : billid}, true, true);
+		}
 	}
 }

@@ -54,4 +54,11 @@ public interface IStatusConstant {
 	public static int IREBATEOPERTYPE_2 = 2;//确认通过
 	public static int IREBATEOPERTYPE_3 = 3;//取消确认
 	public static int IREBATEOPERTYPE_4 = 4;//审核通过
+	
+	/** 返点单操作类型(0：待提交；1：待审核；2：已审核；3：拒绝审核；)*/
+	public static int ICORPEDITSTATUS_0 = 0;//待提交
+	public static int ICORPEDITSTATUS_1 = 1;//待审核
+	public static int ICORPEDITSTATUS_2 = 2;//已审核
+	public static int ICORPEDITSTATUS_3 = 3;//拒绝审核
+	
 }

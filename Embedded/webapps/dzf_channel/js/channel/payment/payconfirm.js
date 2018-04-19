@@ -526,7 +526,7 @@ function showImage(billid){
 	var src = DZF.contextPath + "/chnpay/chnpayconf!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
 	$("#tpfd").empty();
 	parent.openFullViewDlg('<div style="overflow:scroll;height:80%"  >'
-			+'<a  onclick="downFile(\'' +billid + '\')"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
+			+'<a  onclick="downFile(\'' +billid + '\',1)"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
 			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 	  		+'</a></div>','原图');
