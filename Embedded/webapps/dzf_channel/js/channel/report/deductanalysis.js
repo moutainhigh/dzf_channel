@@ -356,7 +356,12 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 					for(var i = 0; i < rows.length; i++){
 						if(!onlycol.contains(rows[i].dedmny)){
 							var column = {};
-							column["title"] = rows[i].dedmny;  
+							var dedmny = rows[i].dedmny+"";
+							if(dedmny.indexOf(".") != -1 ){
+								column["title"] = dedmny;  
+							}else{
+								column["title"] = dedmny + ".00";  
+							}
 							column["field"] = 'col'+(i+1);  
 							column["width"] = '180'; 
 							column["colspan"] = 2; 

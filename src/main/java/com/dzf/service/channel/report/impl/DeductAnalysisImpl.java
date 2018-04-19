@@ -11,6 +11,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DeductAnalysisVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -18,6 +19,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IDeductAnalysis;
@@ -277,8 +279,14 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	@Override
 	public List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySqlSpm(paramvo, 2);
-		return(List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
+		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(DeductAnalysisVO.class));
+//		if(list != null && list.size() > 0){
+//			for(DeductAnalysisVO vo : list){
+//				vo.setNdeducmny(CommonUtil.getDZFDouble(vo.getNdeducmny()).setScale(2, DZFDouble.ROUND_HALF_UP));
+//			}
+//		}
+		return list;
 	}
 	
 	/**
