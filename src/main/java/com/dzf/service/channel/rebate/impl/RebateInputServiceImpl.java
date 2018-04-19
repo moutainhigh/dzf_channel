@@ -503,7 +503,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny, \n");
 		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny, \n");
-		sql.append("  COUNT(t.pk_confrim)  AS icontractnum \n");
+		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
@@ -535,6 +535,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(backvo != null){
 			retvo.setNdebitmny(SafeCompute.add(retvo.getNdebitmny(), backvo.getNdebitmny()));
 			retvo.setNbasemny(SafeCompute.add(retvo.getNbasemny(), backvo.getNbasemny()));
+			retvo.setIcontractnum(retvo.getIcontractnum() - backvo.getIcontractnum());
 		}
 		return retvo;
 	}
@@ -550,7 +551,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT SUM(nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
-		sql.append("  SUM(nvl(t.nsubdeductmny,0)) AS nbasemny \n");
+		sql.append("  SUM(nvl(t.nsubdeductmny,0)) AS nbasemny, \n");
+		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
