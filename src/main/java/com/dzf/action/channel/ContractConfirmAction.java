@@ -148,7 +148,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				throw new BusinessException("数据不能为空");
 			}
 			String type = getRequest().getParameter("opertype");
-			Integer opertype = Integer.parseInt(type);
+			int opertype = Integer.parseInt(type);//2：审核通过；3： 
 			
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
