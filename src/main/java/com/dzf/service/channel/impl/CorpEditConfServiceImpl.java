@@ -1,6 +1,7 @@
 package com.dzf.service.channel.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.ICorpEditConfService;
 
@@ -124,32 +126,38 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 	 */
 	private CorpNameEVO updateData(CorpNameEVO paramvo, UserVO uservo, int opertype, String vreason)
 			throws DZFWarpException {
-		CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corp());
-		if (corpvo != null) {
-			corpvo.setUnitname(CodeUtils1.enCode(paramvo.getVnewname()));
-			singleObjectBO.update(corpvo, new String[] { "unitname" });
-			CorpCache.getInstance().remove(paramvo.getPk_corp());
-			if(opertype == 2){
-				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_2);
-			}else if(opertype == 3){
-				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
-			}
-			paramvo.setUpdatets(new DZFDateTime());
-			if (opertype == 3) {
-				paramvo.setVapprovenote(vreason);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_corpnameedit(),uuid, 60);
+			CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corp());
+			if (corpvo != null) {
+				corpvo.setUnitname(CodeUtils1.enCode(paramvo.getVnewname()));
+				singleObjectBO.update(corpvo, new String[] { "unitname" });
+				CorpCache.getInstance().remove(paramvo.getPk_corp());
+				if (opertype == 2) {
+					paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_2);
+				} else if (opertype == 3) {
+					paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
+				}
+				paramvo.setUpdatets(new DZFDateTime());
+				if (opertype == 3) {
+					paramvo.setVapprovenote(vreason);
+				} else {
+					paramvo.setVapprovenote(null);
+				}
+				if (uservo != null) {
+					paramvo.setVapproveid(uservo.getCuserid());
+					paramvo.setVapprovename(uservo.getUser_name());
+				}
+				paramvo.setTapprovetime(new DZFDateTime());
+				singleObjectBO.update(paramvo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
+						"vapprovename", "tapprovetime" });
 			} else {
-				paramvo.setVapprovenote(null);
-			}
-			if (uservo != null) {
-				paramvo.setVapproveid(uservo.getCuserid());
-				paramvo.setVapprovename(uservo.getUser_name());
-			}
-			paramvo.setTapprovetime(new DZFDateTime());
-			singleObjectBO.update(paramvo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
-					"vapprovename", "tapprovetime" });
-		} else {
-			String errmsg = "原客户名称" + CodeUtils1.deCode(paramvo.getVoldname()) + "数据不为待审核";
-			paramvo.setVerrmsg(errmsg);
+				String errmsg = "原客户名称" + CodeUtils1.deCode(paramvo.getVoldname()) + "数据不为待审核";
+				paramvo.setVerrmsg(errmsg);
+			} 
+		} finally {
+			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_corpnameedit(),uuid);
 		}
 		return paramvo;
 	}
