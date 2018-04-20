@@ -380,7 +380,8 @@ function showImage(id){
 	var src = DZF.contextPath + "/corp/corpeditconf!getAttachImage.action?id=" + id +"&time=" +Math.random();
 	$("#tpfd").empty();
 	parent.openFullViewDlg('<div style="overflow:scroll;height:80%"  >'
-			+'<a  onclick="downFile(\'' +id + '\')"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
+			+'<a  onclick="downFile(\'' +id + '\', 2)"><img id="conturnid" alt="无法显示图片" '
+			+' onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
 			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 	  		+'</a></div>','原图');
