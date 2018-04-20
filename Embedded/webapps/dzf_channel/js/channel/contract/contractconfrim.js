@@ -840,6 +840,7 @@ function initListener(){
 		}
 	});
 	
+	$("#confreason").textbox('readonly',true);
 	$(":radio").click( function(){
 		var opertype = $('input:radio[name="opertype"]:checked').val();
 		if(opertype == 1){
