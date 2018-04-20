@@ -396,6 +396,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				}
 				if(map!=null && !map.isEmpty() && vo.getNusedmny()!=null ){
 					String key="1"+vo.getPk_bill();
+					if(vo.getNusedmny().equals(DZFDouble.ZERO_DBL) && vo.getDr()==-1){
+						key="-1"+vo.getPk_bill();
+					}
 					if(vo.getNusedmny().toDouble()<0){
 						key="-1"+vo.getPk_bill();
 					}
@@ -415,16 +418,113 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		return retlist;
 	}
 	
+	/**
+	 * 查询扣款比例为0的 cn_detail 没有统计在内
+	 * @param list
+	 * @param paramvo
+	 * @return
+	 */
 	private List<ChnDetailVO> qryNoDeduction(List<ChnDetailVO> list, QryParamVO paramvo) {
 		StringBuffer ids=new StringBuffer();
 		for (ChnDetailVO chnDetailVO : list) {
 			ids.append("'"+chnDetailVO.getPk_bill()+"',");
 		}
+		List<ChnDetailVO> vos1 = qryByDeduct(list, paramvo, ids);
+		CorpVO corpvo= null;
+		StringBuffer vmemo=null;
+		for (ChnDetailVO chnDetailVO : vos1) {
+			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
+			vmemo=new StringBuffer();
+			if(!StringUtil.isEmpty(chnDetailVO.getVmemo()) &&chnDetailVO.getVmemo().equals("Y")){
+				vmemo.append("存量客户,");
+			}
+			if(corpvo!=null){
+				vmemo.append(corpvo.getInnercode()).append(",").append(corpvo.getUnitname());
+			}
+			chnDetailVO.setVmemo(vmemo.toString());
+			chnDetailVO.setDr(1);
+			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);
+			list.add(chnDetailVO);
+		}
+		List<ChnDetailVO> vos2 = qryByChange(list, paramvo, ids);
+		for (ChnDetailVO chnDetailVO : vos2) {
+			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
+			vmemo=new StringBuffer();
+			if(chnDetailVO.getDr()==9){
+				vmemo.append("合同终止：");
+			}else{
+				vmemo.append("合同作废：");
+			}
+			if(corpvo!=null){
+				vmemo.append(corpvo.getInnercode()).append(",").append(corpvo.getUnitname());
+			}
+			chnDetailVO.setVmemo(vmemo.toString());
+			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);
+			chnDetailVO.setDr(-1);
+			list.add(chnDetailVO);
+		}
+		return list;
+	}
+	
+	/**
+	 * 根据变更日期，查询扣款比例为0的 cn_detail 没有统计在内
+	 * @param list
+	 * @param paramvo
+	 * @param ids
+	 * @return
+	 */
+	private List<ChnDetailVO> qryByChange(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
+		StringBuffer sql;
+		SQLParameter spm;
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append(" select pk_confrim as pk_bill,substr(dchangetime,1,10) as doperatedate,pk_corpk as pk_corp," );   
+		sql.append(" vstatus as dr,2 as ipaytype,2 as iopertype,isncust as vmemo from cn_contract" );   
+		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 and (vstatus=10 or vstatus=9) \n");
+		spm.addParam(paramvo.getPk_corp());
+		if(list!=null && list.size()>0){
+			sql.append(" and pk_confrim not in (");
+			sql.append(ids.toString().substring(0,ids.toString().length()-1));
+			sql.append(" )");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+				sql.append(" AND substr(dchangetime,1,7) >= ? \n");
+				spm.addParam(paramvo.getBeginperiod());
+			}
+			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+				sql.append(" AND substr(dchangetime,1,7) <= ? \n");
+				spm.addParam(paramvo.getEndperiod());
+			}
+		}else{
+			if(paramvo.getBegdate() != null){
+				sql.append(" AND substr(dchangetime,1,10) >= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
+			if(paramvo.getEnddate() != null){
+				sql.append(" AND substr(dchangetime,1,10) <= ? \n");
+				spm.addParam(paramvo.getEnddate());
+			}
+		}
+		sql.append(" order by dchangetime \n");
+		List<ChnDetailVO> vos2 = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnDetailVO.class));
+		return vos2;
+	}
+	
+	/**
+	 * 根据扣款日期，查询扣款比例为0的 cn_detail 没有统计在内
+	 * @param list
+	 * @param paramvo
+	 * @param ids
+	 * @return
+	 */
+	private List<ChnDetailVO> qryByDeduct(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" select pk_confrim as pk_bill ,deductdata as doperatedate, 2 as ipaytype,2 as iopertype, ");
-		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as naccountmny,nvl(nbookmny,0) as nbookmny from cn_contract" );   
-		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 \n");
+		sql.append(" select pk_confrim as pk_bill,deductdata as doperatedate,pk_corpk as pk_corp," );   
+		sql.append(" 2 as ipaytype,2 as iopertype,isncust as vmemo from cn_contract" );   
+		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0  \n");
+		sql.append(" and (vstatus=1 or vstatus=9 or vstatus=10) \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(list!=null && list.size()>0){
 			sql.append(" and pk_confrim not in (");
@@ -451,16 +551,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		sql.append(" order by deductdata \n");
-		List<ChnDetailVO> vos = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), 
-				spm, new BeanListProcessor(ChnDetailVO.class));
-		if(list!=null && list.size()>0){
-			list.addAll(vos);
-		}else if(vos!=null && vos.size()>0){
-			list=vos;
-		}
-		return list;
+		List<ChnDetailVO> vos1 = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnDetailVO.class));
+		return vos1;
 	}
-
 	/**
 	 * 查询付款单余额明细的合同相关数据
 	 * @param paramvo  
