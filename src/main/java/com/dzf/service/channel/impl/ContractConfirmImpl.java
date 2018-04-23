@@ -127,6 +127,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
 				if (corpvo != null) {
 					confvo.setVarea(corpvo.getCitycounty());
+					confvo.setCorpname(corpvo.getUnitname());
+				}
+				corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+				if(corpvo != null){
+					confvo.setCorpkname(corpvo.getUnitname());
 				}
 				String managername = pubser.getManagerName(confvo.getPk_corp());
 				confvo.setVmanagername(managername);
@@ -264,10 +269,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("   AND pk_confrim = ? \n") ; //合同主键
 			spm.addParam(paramvo.getPk_bill());
 		}
-		if(!StringUtil.isEmpty(paramvo.getCorpname())){
-			sql.append(" AND corpname like ? \n") ; 
-			spm.addParam("%"+paramvo.getCorpname()+"%");
-		}
+//		if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//			sql.append(" AND corpname like ? \n") ; 
+//			spm.addParam("%"+paramvo.getCorpname()+"%");
+//		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
 			sql.append(" AND nvl(patchstatus, 0) != 2 \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
@@ -666,6 +671,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (uservo != null) {
 			paramvo.setVopername(uservo.getUser_name());
 		}
+		//清空会计公司名称和客户名称
+		paramvo.setCorpname(null);
+		paramvo.setCorpkname(null);
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", paramvo);
 	}
 	
