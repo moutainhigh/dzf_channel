@@ -48,10 +48,10 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		if(list != null && list.size() > 0){
 			CorpVO corpvo = null;
 			for(CorpNameEVO vo : list){
-//				corpvo = CorpCache.getInstance().get(null, vo.getFathercorp());
-//				if(corpvo != null){
-//					vo.setFathername(corpvo.getUnitname());
-//				}
+				corpvo = CorpCache.getInstance().get(null, vo.getFathercorp());
+				if(corpvo != null){
+					vo.setFathername(corpvo.getUnitname());
+				}
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(corpvo != null){
 					vo.setInnercode(corpvo.getInnercode());

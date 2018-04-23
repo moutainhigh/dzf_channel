@@ -130,15 +130,15 @@ function load(){
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
-		}, /*{
+		}, {
 			width : '230',
 			title : '加盟商',
 			align : 'left',
             halign: 'center',
 			field : 'fatname',
-		},*/  {
+		},  {
 			width : '160',
-			title : '加盟商',
+			title : '客户编码',
 			align : 'left',
             halign: 'center',
 			field : 'incode',
