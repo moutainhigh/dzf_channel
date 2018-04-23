@@ -187,7 +187,7 @@ function load(){
 				if (value == '1')
 					return '待审核';
 				if (value == '2')
-					return '已确认';
+					return '已审核';
 				if (value == '3')
 					return '拒绝审核';
 			}
