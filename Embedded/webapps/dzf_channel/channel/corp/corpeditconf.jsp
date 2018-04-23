@@ -68,14 +68,14 @@
 		<div id="hlDialog" class="easyui-dialog" style="width:500px;height:300px;padding:20px 20px 10px;" data-options="closed:true">
 			<form id="commit">
 				<div class="time_col time_colp10">
-					 <font size="3"><label style="text-align:left;width:40%">你确定要名称修改确认吗?</label></font> 
-				 	 <input type="radio" style="margin-top: 6px;width:8%" name="seletype" id="confirm">
+					 <font size="3"><label style="text-align:left;width:17%">审核意见：</label></font> 
+				 	 <input type="radio" style="margin-top: 6px;width:6%" name="seletype" id="confirm">
 				 	<label style="text-align:left;width:12%">确认</label>
 					 <input type="radio" style="margin-top: 6px;width:6%" name="seletype" id="reject">
 					 <label style="text-align:left;width:12%">驳回</label>
 				 </div>
 				 <div class="time_col time_colp10" style="margin-top:20px;">
-				   	<label style="text-align:left;width:18%;    vertical-align: top;">驳回说明：</label>
+				   	<label style="text-align:left;width:18%; vertical-align: top;">驳回说明：</label>
 					<textarea id="vreason" name="vreason" class="easyui-textbox" data-options="multiline:true,validType:'length[0,50]'" 
 						style="width:74%;height:50px;"></textarea>
 				  </div>
