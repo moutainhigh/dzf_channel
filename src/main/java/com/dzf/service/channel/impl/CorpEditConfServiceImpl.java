@@ -140,8 +140,10 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 					paramvo.setVerrmsg(errmsg);
 				} 
 				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_2);
+				paramvo.setVapprovenote(null);
 			} else if (opertype == 3) {
 				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
+				paramvo.setVapprovenote(vreason);
 			}
 			paramvo.setUpdatets(new DZFDateTime());
 			if (uservo != null) {
