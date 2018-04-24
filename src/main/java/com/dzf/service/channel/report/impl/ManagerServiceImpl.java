@@ -54,6 +54,10 @@ public class ManagerServiceImpl implements IManagerService {
 			}
 			if(!vprovinces.contains(String.valueOf(managerVO.getVprovince()))){
 				vprovinces.add(managerVO.getVprovince().toString());
+			}else{
+				if(!StringUtil.isEmpty(managerVO.getCuserid())){
+					map.put(managerVO.getPk_corp(),managerVO);
+				}
 			}
 		}
 		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,type,vprovinces);//查询  非  省/市负责人相关的数据

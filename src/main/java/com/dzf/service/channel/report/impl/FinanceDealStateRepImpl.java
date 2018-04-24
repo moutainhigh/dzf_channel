@@ -215,6 +215,10 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep{
 			if(!map.containsKey(financeDealStateRepVO.getPk_corp()) && flag){
 				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
 				corplist.add(financeDealStateRepVO.getPk_corp());
+			}else{
+				if(!StringUtil.isEmpty(financeDealStateRepVO.getCuserid())){
+					map.put(financeDealStateRepVO.getPk_corp(),financeDealStateRepVO);
+				}
 			}
 			if(!vprovinces.contains(financeDealStateRepVO.getVprovince())){
 				vprovinces.add(financeDealStateRepVO.getVprovince());
