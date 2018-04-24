@@ -337,6 +337,10 @@ public class CustManageRepImpl implements ICustManageRep {
 			if(!map.containsKey(custManageRepVO.getPk_corp())&& flag){
 				map.put(custManageRepVO.getPk_corp(), custManageRepVO);
 				corplist.add(custManageRepVO.getPk_corp());
+			}else{
+				if(!StringUtil.isEmpty(custManageRepVO.getCuserid())){
+					map.put(custManageRepVO.getPk_corp(),custManageRepVO);
+				}
 			}
 			if(!vprovinces.contains(custManageRepVO.getVprovince())){
 				vprovinces.add(custManageRepVO.getVprovince());

@@ -456,6 +456,10 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 			if(!map.containsKey(custNumMoneyRepVO.getPk_corp())&& flag){
 				map.put(custNumMoneyRepVO.getPk_corp(), custNumMoneyRepVO);
 				corplist.add(custNumMoneyRepVO.getPk_corp());
+			}else{
+				if(!StringUtil.isEmpty(custNumMoneyRepVO.getCuserid())){
+					map.put(custNumMoneyRepVO.getPk_corp(),custNumMoneyRepVO);
+				}
 			}
 			if(!vprovinces.contains(custNumMoneyRepVO.getVprovince())){
 				vprovinces.add(custNumMoneyRepVO.getVprovince());
