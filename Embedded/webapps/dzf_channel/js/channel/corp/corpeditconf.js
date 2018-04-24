@@ -103,7 +103,7 @@ function reloadData(){
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
 	queryParams.qtype = -1;
-	queryParams.cpid = $('#edate').val();
+	queryParams.cpid = $('#pk_account').val();
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
