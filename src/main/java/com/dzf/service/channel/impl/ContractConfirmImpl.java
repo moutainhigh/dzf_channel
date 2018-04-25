@@ -1482,7 +1482,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
 			if (corpvo != null) {
+				confvo.setCorpname(corpvo.getUnitname());
 				confvo.setVarea(corpvo.getCitycounty());
+			}
+			corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+			if (corpvo != null) {
+				confvo.setCorpkname(corpvo.getUnitname());
 			}
 			setStatusName(confvo);
 		}else{
