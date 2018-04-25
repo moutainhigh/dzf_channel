@@ -868,7 +868,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				detvo.setNusedmny(paramvo.getNdeductmny());
 				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
 				detvo.setPk_bill(paramvo.getPk_confrim());
-				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				if(paramvo.getIsncust()!=null && paramvo.getIsncust().booleanValue()){
+					detvo.setVmemo("存量客户："+paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				}else{
+					detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				}
 				detvo.setCoperatorid(cuserid);
 				detvo.setDoperatedate(new DZFDate());
 				detvo.setDr(0);
@@ -894,7 +898,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				detvo.setNusedmny(paramvo.getNdedrebamny());
 				detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);//返点款
 				detvo.setPk_bill(paramvo.getPk_confrim());
-				detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				if(paramvo.getIsncust()!=null && paramvo.getIsncust().booleanValue()){
+					detvo.setVmemo("存量客户："+paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				}else{
+					detvo.setVmemo(paramvo.getCorpkname()+"、"+paramvo.getVcontcode());
+				}
 				detvo.setCoperatorid(cuserid);
 				detvo.setDoperatedate(new DZFDate());
 				detvo.setDr(0);
