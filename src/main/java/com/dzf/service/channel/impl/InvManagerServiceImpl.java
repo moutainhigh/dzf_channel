@@ -377,7 +377,8 @@ public class InvManagerServiceImpl implements InvManagerService {
         DZFDate time = new DZFDate();
         cvo.setInvtime(time.toString());
         cvo.setInvstatus(2);
-        singleObjectBO.update(cvo, new String[] { "reqserialno", "qrcodepath","invtime", "invperson", "invstatus"});
+        cvo.setBillway(1);
+        singleObjectBO.update(cvo, new String[] { "reqserialno", "qrcodepath","invtime", "invperson", "invstatus","billway"});
     }
     
     /**
@@ -389,7 +390,8 @@ public class InvManagerServiceImpl implements InvManagerService {
     private void updatePtNotInv(PiaoTongResVO resvo,ChInvoiceVO cvo) {
         cvo.setErrcode(resvo.getCode());
         cvo.setInvstatus(3);
-        singleObjectBO.update(cvo, new String[] {"errcode","invstatus"});
+        cvo.setBillway(1);
+        singleObjectBO.update(cvo, new String[] {"errcode","invstatus","billway"});
     }
 
 
@@ -483,7 +485,8 @@ public class InvManagerServiceImpl implements InvManagerService {
         DZFDate time = new DZFDate();
         vo.setInvtime(time.toString());
         vo.setInvstatus(2);
-        singleObjectBO.update(vo, new String[] { "invtime", "invperson", "invstatus" });
+        vo.setBillway(2);
+        singleObjectBO.update(vo, new String[] { "invtime", "invperson", "invstatus","billway" });
     }
 
     @Override
