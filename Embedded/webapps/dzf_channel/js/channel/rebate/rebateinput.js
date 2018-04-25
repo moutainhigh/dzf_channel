@@ -434,7 +434,7 @@ function formatSta(val, row, index){
  */
 function opermatter(val, row, index) {
 	if(row.istatus == 0 || row.istatus == 4){//待提交或已驳回
-		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>|'
+		return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>'
 		+' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
 	}
 }
