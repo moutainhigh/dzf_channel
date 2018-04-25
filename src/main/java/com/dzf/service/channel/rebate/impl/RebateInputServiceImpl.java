@@ -629,9 +629,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(bateVOs != null && bateVOs.length > 0){
 			String errmsg = "";
 			for(RebateVO vo : bateVOs){
-				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0) 
-						&& !vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_4)){
-					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交或已驳回");
+				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0)){
+					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交");
 					continue;
 				}
 				errmsg = checkData(vo);
