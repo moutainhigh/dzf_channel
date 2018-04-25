@@ -435,11 +435,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		for (ChnDetailVO chnDetailVO : vos1) {
 			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
 			vmemo=new StringBuffer();
-			if(!StringUtil.isEmpty(chnDetailVO.getVmemo()) &&chnDetailVO.getVmemo().equals("Y")){
-				vmemo.append("存量客户,");
-			}
-			if(corpvo!=null){
-				vmemo.append(corpvo.getInnercode()).append(",").append(corpvo.getUnitname());
+			if(!StringUtil.isEmpty(chnDetailVO.getVmemo()) &&chnDetailVO.getVmemo().contains("存量客户")&& corpvo!=null){
+				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo().substring(5));
+			}else if(corpvo!=null){
+				vmemo.append(corpvo.getUnitname()).append(chnDetailVO.getVmemo());
 			}
 			chnDetailVO.setVmemo(vmemo.toString());
 			chnDetailVO.setDr(1);
@@ -456,7 +455,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				vmemo.append("合同作废：");
 			}
 			if(corpvo!=null){
-				vmemo.append(corpvo.getInnercode()).append(",").append(corpvo.getUnitname());
+				vmemo.append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo());
 			}
 			chnDetailVO.setVmemo(vmemo.toString());
 			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);
@@ -479,7 +478,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append(" select pk_confrim as pk_bill,substr(dchangetime,1,10) as doperatedate,pk_corpk as pk_corp," );   
-		sql.append(" vstatus as dr,2 as ipaytype,2 as iopertype,isncust as vmemo from cn_contract" );   
+		sql.append(" vstatus as dr,2 as ipaytype,2 as iopertype,vcontcode as vmemo from cn_contract" );   
 		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 and (vstatus=10 or vstatus=9) \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(list!=null && list.size()>0){
@@ -522,7 +521,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" select pk_confrim as pk_bill,deductdata as doperatedate,pk_corpk as pk_corp," );   
-		sql.append(" 2 as ipaytype,2 as iopertype,isncust as vmemo from cn_contract" );   
+		sql.append(" 2 as ipaytype,2 as iopertype," );  
+		sql.append(" CONCAT(decode(nvl(isncust,'N'),'Y','存量客户:',''),vcontcode) as vmemo from cn_contract" );   
 		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0  \n");
 		sql.append(" and (vstatus=1 or vstatus=9 or vstatus=10) \n");
 		spm.addParam(paramvo.getPk_corp());
