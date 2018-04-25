@@ -299,7 +299,7 @@ function load(){
 		              { field : 'basemny', title : '返点基数',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'rebatemny', title : '返点金额',width :'115',halign: 'center',align:'right',formatter : formatMny,} ,
 		              { field : 'istatus', title : '状态',width :'100',halign: 'center',align:'center', formatter : formatSta} ,
-		              { field : 'memo', title : '说明',width :'180',halign: 'center',align:'left'} ,
+		              { field : 'memo', title : '备注',width :'180',halign: 'center',align:'left'} ,
 				      { field : 'rebid', title : '主键', hidden:true},
 				      { field : 'tstp', title : '时间戳', hidden:true},
 		] ],
