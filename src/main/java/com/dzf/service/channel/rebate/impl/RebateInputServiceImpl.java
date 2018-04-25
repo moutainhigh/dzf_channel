@@ -550,25 +550,32 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	private RebateVO queryRetMny(RebateVO data) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(t.nsubdeductmny,0)) AS ndebitmny, \n");
-		sql.append("  SUM(nvl(t.nsubdeductmny,0)) AS nbasemny, \n");
-		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
-		sql.append("  FROM cn_contract t \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
-		sql.append("   AND t.vdeductstatus in (?, ?) \n");
+		sql.append("SELECT SUM(nvl(t.nsubdeductmny, 0)) AS ndebitmny, \n") ;
+		sql.append("       SUM(nvl(t.nsubdeductmny, 0)) AS nbasemny, \n") ; 
+		sql.append("       SUM(nvl(t.zfnum, 0)) AS icontractnum \n") ; 
+		sql.append("  FROM (SELECT ct.*, \n") ; 
+		sql.append("               case ct.vstatus \n") ; 
+		sql.append("                 when 10 then \n") ; 
+		sql.append("                  1 \n") ; 
+		sql.append("                 else \n") ; 
+		sql.append("                  0 \n") ; 
+		sql.append("               end AS zfnum \n") ; 
+		sql.append("          FROM cn_contract ct \n") ; 
+		sql.append("         WHERE nvl(ct.dr, 0) = 0 \n") ; 
+		sql.append("           AND nvl(ct.isncust, 'N') = 'N' \n") ; 
+		sql.append("           AND ct.vdeductstatus in (?, ?) \n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		sql.append("   AND t.pk_corp = ? \n");
+		sql.append("           AND ct.pk_corp = ? \n") ; 
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
-			String where = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime,1,7)", pliat.toArray(new String[0]));
-			sql.append(" AND ").append(where);
+			String where = SqlUtil.buildSqlForIn("SUBSTR(ct.dchangetime,1,7)", pliat.toArray(new String[0]));
+			sql.append(" AND ").append(where).append(" \n");
 		} else {
 			throw new BusinessException("返点单所属年、所属季度不能为空");
 		}
-		sql.append("   GROUP BY t.pk_corp \n");
+		sql.append("  ) t \n");
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
 		if(list != null && list.size() > 0){
