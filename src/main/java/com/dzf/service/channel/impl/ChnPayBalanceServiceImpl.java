@@ -436,7 +436,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
 			vmemo=new StringBuffer();
 			if(!StringUtil.isEmpty(chnDetailVO.getVmemo()) &&chnDetailVO.getVmemo().contains("存量客户")&& corpvo!=null){
-				vmemo.append("存量客户:").append(corpvo.getUnitname()).append(",").append(chnDetailVO.getVmemo().substring(5));
+				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo().substring(5));
 			}else if(corpvo!=null){
 				vmemo.append(corpvo.getUnitname()).append(chnDetailVO.getVmemo());
 			}
@@ -455,7 +455,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				vmemo.append("合同作废：");
 			}
 			if(corpvo!=null){
-				vmemo.append(corpvo.getUnitname()).append(",").append(chnDetailVO.getVmemo());
+				vmemo.append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo());
 			}
 			chnDetailVO.setVmemo(vmemo.toString());
 			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);

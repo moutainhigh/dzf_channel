@@ -1254,13 +1254,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				vmemo.append("合同终止：");
 			}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
-				vmemo.append("合同作废：");
+				vmemo.append("合同终止：");
 
 			}
 			CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corpk());
 			if(corpvo != null){
 				paramvo.setCorpkname(corpvo.getUnitname());
-				vmemo.append(corpvo.getUnitname()).append(",");
+				vmemo.append(corpvo.getUnitname()).append("、");
 			}
 			vmemo.append(paramvo.getVcontcode());
 			updateChangeBalMny(paramvo, cuserid, vmemo.toString());
