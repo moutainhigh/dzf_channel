@@ -1250,17 +1250,20 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//8、上传变更合同附件
 			saveContDocVO(paramvo, files, filenames, cuserid);
 			//9、更新合同变更后余额及余额明细表
-			String vmemo = "";
+			StringBuffer vmemo = new StringBuffer();
 			if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-				vmemo = "合同变更：C端客户终止，变更合同";
+				vmemo.append("合同终止：");
 			}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
-				vmemo = "合同变更：合同作废";
+				vmemo.append("合同作废：");
+
 			}
-			updateChangeBalMny(paramvo, cuserid, vmemo);
 			CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corpk());
 			if(corpvo != null){
 				paramvo.setCorpkname(corpvo.getUnitname());
+				vmemo.append(corpvo.getUnitname()).append(",");
 			}
+			vmemo.append(paramvo.getVcontcode());
+			updateChangeBalMny(paramvo, cuserid, vmemo.toString());
 		} finally {
 			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract(),uuid);
 		}
