@@ -493,8 +493,10 @@ public class InvManagerServiceImpl implements InvManagerService {
     public void delete(ChInvoiceVO vo) throws DZFWarpException {
         ChInvoiceVO chvo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
         if (chvo != null) {
-            if (chvo.getInvcorp() != 2) {
-                throw new BusinessException("加盟商提交的开票申请不能删除。");
+            if (chvo.getInvstatus() != 3) {
+                if (chvo.getInvcorp() != 2) {
+                    throw new BusinessException("加盟商提交的开票申请不能删除。");
+                }
             }
             if (chvo.getInvstatus() == 2) {
                 throw new BusinessException("发票状态为【已开票】，不能删除！");
@@ -564,9 +566,14 @@ public class InvManagerServiceImpl implements InvManagerService {
         if (ovo.getInvstatus() == 2) {
             throw new BusinessException("已开票，不允许修改。");
         }
-        checkInvPrice(vo);
         String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
                 "bankcode", "email", "vmome","rusername" };
+        if(ovo.getInvstatus() == 3){
+            vo.setInvstatus(1);
+            fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
+                    "bankcode", "email", "vmome","rusername","invstatus" };
+        }
+        checkInvPrice(vo);
         singleObjectBO.update(vo, fieldNames);
     }
 
