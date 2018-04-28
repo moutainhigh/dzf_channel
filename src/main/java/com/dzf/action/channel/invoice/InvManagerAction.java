@@ -28,12 +28,14 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 渠道商--发票管理
@@ -223,6 +225,10 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
                             log.error("审批失败",e);    
                         }
                     }
+                    StringBuffer str = new StringBuffer();
+                    str.append(getLoginUserInfo().getUser_name());
+                    str.append("删除发票申请").append(vos.length).append("条");
+                    writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(),str.toString(),ISysConstants.SYS_3);
                 }
                 json.setMsg("成功删除"+len+"张单据，失败"+(length - len) +"张单据  ");
                 json.setSuccess(true);
