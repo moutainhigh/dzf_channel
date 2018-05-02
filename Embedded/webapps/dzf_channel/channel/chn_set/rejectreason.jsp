@@ -42,12 +42,13 @@
 						 	autocomplete="off" class="layui-textarea" style="width:350px;height:80px;">
 						</textarea>
 					</div>
+					<div style="text-align: center;margin-top:20px;">
+							<a class="ui-btn ui-btn-xz" href="javascript:void(0)" onclick="save()">保存</a>
+							<a class="ui-btn ui-btn-xz" style="margin-right: 0px;" href="javascript:void(0)" onclick="cancel()" >取消</a>
+						</div>
 				</div>
 			</form>
-			<div id="opinion_buttons" style="display:none" >
-				<a href="javascript:void(0)" class="ui-btn save_input"  onclick="saveOpinion();" >确认</a> 
-				<a href="javascript:void(0)" class="ui-btn save_input" onclick="javascript:$('#dlg').dialog('close');" >取消</a>
-			</div>
+			
 			<!-- 新增或修改对话框 end -->
 		</div>
     </div>
