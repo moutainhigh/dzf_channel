@@ -17,9 +17,8 @@
 				
 				</div>
 				<div class="right">
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="reloadData()">刷新</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="add()">新增</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="editBtn" onclick="edit()">修改</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="delBtn" onclick="del()">删除</a>
 				 </div> 
 			</div>
 	    </div>
@@ -28,27 +27,29 @@
 				<table id="grid" ></table>
 			</div>
 			<!-- 新增或修改对话框 begin -->
-			<form id="opinionForm" method="post">
-				<div id="dlg" style="padding:10px 20px;">
+			<div id="datadlg" style="padding:10px 20px;">
+				<form id="dataform" method="post">
 					<div style="margin-top:10px;vertical-align: top;">
 						<label style="display: inline-block;vertical-align: top;">驳回原因：</label>
-						<textarea name="usign" 
-						 	autocomplete="off" class="layui-textarea" style="width:350px;height:80px;">
+						<textarea class="layui-textarea" style="width:350px;height:80px;resize: none;" 
+						 	autocomplete="off" id="reason" name="reason">
 						</textarea>
 					</div>
 					<div style="margin-top:10px;vertical-align: top;">
-						<label style="display: inline-block;vertical-align: top;">修改建议：</label>
-						<textarea name="usign" 
-						 	autocomplete="off" class="layui-textarea" style="width:350px;height:80px;">
+						<label style="display:inline-block;vertical-align:top;">修改建议：</label>
+						<textarea class="layui-textarea" style="width:350px;height:80px;resize: none;" 
+						 	autocomplete="off" id="suggest" name="suggest">
 						</textarea>
 					</div>
-					<div style="text-align: center;margin-top:20px;">
-							<a class="ui-btn ui-btn-xz" href="javascript:void(0)" onclick="save()">保存</a>
-							<a class="ui-btn ui-btn-xz" style="margin-right: 0px;" href="javascript:void(0)" onclick="cancel()" >取消</a>
-						</div>
+					<input id="reid" name="reid" type="hidden">
+					<input id="updatets" name="updatets" type="hidden">
+				</form>
+				<div style="text-align: center;margin-top:20px;">
+					<a class="ui-btn ui-btn-xz" href="javascript:void(0)" onclick="save()">保存</a>
+					<a class="ui-btn ui-btn-xz" style="margin-right: 0px;" href="javascript:void(0)" 
+						onclick="cancel()" >取消</a>
 				</div>
-			</form>
-			
+			</div>
 			<!-- 新增或修改对话框 end -->
 		</div>
     </div>
