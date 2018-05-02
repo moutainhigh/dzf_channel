@@ -29,17 +29,19 @@
 			</div>
 			<!-- 新增或修改对话框 begin -->
 			<form id="opinionForm" method="post">
-				<div id="dlg" style="display:none;padding:10px 20px;height:300px;">
-					<p style="margin-top:10px;">
-						<label style="float:left">驳回原因：</label>
-						<textarea id="content" placeholder="请输入您要反馈问题或者改进建议" id="usign" name="usign" 
-						 	autocomplete="off" class="layui-textarea" style="width:350px;height:260px;resize: none;">
+				<div id="dlg" style="padding:10px 20px;">
+					<div style="margin-top:10px;vertical-align: top;">
+						<label style="display: inline-block;vertical-align: top;">驳回原因：</label>
+						<textarea name="usign" 
+						 	autocomplete="off" class="layui-textarea" style="width:350px;height:80px;">
 						</textarea>
-					</p>
-					<p style="margin-top:10px;">
-						修改意见：
-						<input id="contact" name="contact" style="width:343px;height:30px;" data-options="required:true" />
-					</p>
+					</div>
+					<div style="margin-top:10px;vertical-align: top;">
+						<label style="display: inline-block;vertical-align: top;">修改建议：</label>
+						<textarea name="usign" 
+						 	autocomplete="off" class="layui-textarea" style="width:350px;height:80px;">
+						</textarea>
+					</div>
 				</div>
 			</form>
 			<div id="opinion_buttons" style="display:none" >

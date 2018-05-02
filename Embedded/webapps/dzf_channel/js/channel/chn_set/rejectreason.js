@@ -45,7 +45,7 @@ function add(){
 	$("#dlg").dialog({
 		title: '新增驳回原因',
 		width:500,
-		height:450,
+		height:340,
 		modal: true,
 		buttons : '#opinion_buttons'
 	});
