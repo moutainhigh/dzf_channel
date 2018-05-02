@@ -31,13 +31,15 @@
 				<form id="dataform" method="post">
 					<div style="margin-top:10px;vertical-align: top;">
 						<label style="display: inline-block;vertical-align: top;">驳回原因：</label>
-						<textarea class="layui-textarea" style="width:350px;height:80px;resize: none;" 
+						<textarea class="easyui-textbox" style="width:350px;height:80px;resize: none;" 
+						    data-options="required:true,validType:['length[0,20]'],multiline:true" 
 						 	autocomplete="off" id="reason" name="reason">
 						</textarea>
 					</div>
 					<div style="margin-top:10px;vertical-align: top;">
 						<label style="display:inline-block;vertical-align:top;">修改建议：</label>
-						<textarea class="layui-textarea" style="width:350px;height:80px;resize: none;" 
+						<textarea class="easyui-textbox" style="width:350px;height:80px;resize: none;"
+							data-options="required:true,validType:['length[0,100]'],multiline:true" 
 						 	autocomplete="off" id="suggest" name="suggest">
 						</textarea>
 					</div>

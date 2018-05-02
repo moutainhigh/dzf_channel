@@ -1,11 +1,14 @@
 package com.dzf.service.channel.chn_set.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
+import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.sale.RejectreasonVO;
 import com.dzf.model.pub.QryParamVO;
@@ -15,6 +18,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lock.LockUtil;
 
 @Service("rejectreasonser")
 public class RejectreasonServiceImpl implements IRejectreasonService {
@@ -55,12 +59,20 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 
 	@Override
 	public RejectreasonVO save(RejectreasonVO data, String pk_corp) throws DZFWarpException {
-		if(StringUtil.isEmpty(data.getPk_rejectreason())){//新增操作
+		checkOnly(data);
+		if (StringUtil.isEmpty(data.getPk_rejectreason())) {// 新增操作
 			return (RejectreasonVO) singleObjectBO.saveObject(pk_corp, data);
-		}else{//更新操作
+		} else {// 更新操作
 			checkBeforeUpdate(data);
 			data.setUpdatets(new DZFDateTime());
-			singleObjectBO.update(data, new String[]{"vreason","vsuggest","lastmodifypsnid","lastmodifydate","updatets"});
+			String uuid = UUID.randomUUID().toString();
+			try {
+				LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 120);
+				singleObjectBO.update(data,
+						new String[] { "vreason", "vsuggest", "lastmodifypsnid", "lastmodifydate", "updatets" });
+			} finally {
+				LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
+			}
 		}
 		return data;
 	}
@@ -84,7 +96,13 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 	@Override
 	public void delete(RejectreasonVO data) throws DZFWarpException {
 		checkBeforeUpdate(data);
-		singleObjectBO.deleteObject(data);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 120);
+			singleObjectBO.deleteObject(data);
+		} finally {
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
+		}
 	}
 
 	@Override
@@ -98,4 +116,34 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 		}
 	}
 	
+	/**
+	 * 数据唯一性校验
+	 * @param data
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean checkOnly(RejectreasonVO data) throws DZFWarpException {
+		SQLParameter sp = new SQLParameter();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select vreason from cn_rejectreason where nvl(dr,0) = 0 ");
+		sql.append(" and pk_corp = ? ");
+		sp.addParam(data.getPk_corp());
+		if (!StringUtil.isEmptyWithTrim(data.getVreason())) {
+			sql.append(" and vreason = ? ");
+			sp.addParam(data.getVreason());
+		} else {
+			throw new BusinessException("驳回原因不能为空");
+		}
+		if (!StringUtil.isEmpty(data.getPk_rejectreason())) {
+			sql.append(" and pk_rejectreason != ? ");
+			sp.addParam(data.getPk_rejectreason());
+		}
+		List<RejectreasonVO> list = (List<RejectreasonVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(RejectreasonVO.class));
+		if (list != null && list.size() > 0) {
+			return false;
+		}
+		return true;
+	}
 }
