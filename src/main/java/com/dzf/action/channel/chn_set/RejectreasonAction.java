@@ -10,7 +10,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.RejectreasonVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
@@ -113,7 +112,6 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 			data.setDr(0);
 		}else{
 			data.setLastmodifypsnid(getLoginUserid());
-			data.setLastmodifydate(new DZFDate());
 		}
 	}
 	

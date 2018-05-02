@@ -38,12 +38,6 @@ public class RejectreasonVO extends SuperVO {
     
     @FieldAlias("lmpsnid")
     private String lastmodifypsnid; // 最后修改人
-
-    @FieldAlias("lmpsn")
-    private String lastmodifypsn; // 最后修改人名称
-
-    @FieldAlias("lsdate")
-    private DZFDate lastmodifydate; // 最后修改日期
     
     @FieldAlias("dr")
     private Integer dr; // 删除标记
@@ -81,14 +75,6 @@ public class RejectreasonVO extends SuperVO {
 
 	public String getLastmodifypsnid() {
 		return lastmodifypsnid;
-	}
-
-	public String getLastmodifypsn() {
-		return lastmodifypsn;
-	}
-
-	public DZFDate getLastmodifydate() {
-		return lastmodifydate;
 	}
 
 	public Integer getDr() {
@@ -129,14 +115,6 @@ public class RejectreasonVO extends SuperVO {
 
 	public void setLastmodifypsnid(String lastmodifypsnid) {
 		this.lastmodifypsnid = lastmodifypsnid;
-	}
-
-	public void setLastmodifypsn(String lastmodifypsn) {
-		this.lastmodifypsn = lastmodifypsn;
-	}
-
-	public void setLastmodifydate(DZFDate lastmodifydate) {
-		this.lastmodifydate = lastmodifydate;
 	}
 
 	public void setDr(Integer dr) {
