@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.ContractConfrimVO;
+import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;

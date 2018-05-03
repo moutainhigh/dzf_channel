@@ -52,7 +52,7 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 	 */
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO paramvo, UserVO uservo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
-		String sql = " SELECT * FROM cn_rejectreason n WHERE nvl(n.dr, 0) = 0 ";
+		String sql = " SELECT * FROM cn_rejectreason n WHERE nvl(n.dr, 0) = 0 ORDER BY ts DESC ";
 		qryvo.setSql(sql);
 		return qryvo;
 	}

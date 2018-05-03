@@ -1,4 +1,4 @@
-package com.dzf.model.channel;
+package com.dzf.model.channel.contract;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
@@ -85,6 +85,9 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("confreason")
     private String vconfreason;// 驳回原因
+    
+    @FieldAlias("confreasonid")
+    private String vconfreasonid;// 驳回原因主键
     
     @FieldAlias("tstp")
     private DZFDateTime tstamp;// 时间戳
@@ -243,6 +246,14 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("canedit")
     private DZFBoolean iscanedit;//是否允许编辑
+
+	public String getVconfreasonid() {
+		return vconfreasonid;
+	}
+
+	public void setVconfreasonid(String vconfreasonid) {
+		this.vconfreasonid = vconfreasonid;
+	}
 
 	public DZFDate getDchangedate() {
 		return dchangedate;

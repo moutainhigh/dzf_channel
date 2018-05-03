@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.dzf.model.channel.ContractConfrimVO;
+import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;

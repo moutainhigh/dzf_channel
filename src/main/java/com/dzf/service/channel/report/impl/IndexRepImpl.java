@@ -12,7 +12,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChnPayBillVO;
-import com.dzf.model.channel.ContractConfrimVO;
+import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.channel.report.MonthBusimngVO;
 import com.dzf.model.channel.report.WeekBusimngVO;
 import com.dzf.model.pub.IStatusConstant;
