@@ -15,7 +15,7 @@ public interface IStatusConstant {
 	public static int IDEDUCTSTATUS_9 = 9;
 	public static int IDEDUCTSTATUS_10 = 10;
 
-	/** 合同扣款确认/取消扣款操作 (1：扣款；2：驳回；) */
+	/** 合同扣款确认/驳回 (1：扣款；2：驳回；) */
 	public static int IDEDUCTYPE_1 = 1;
 	public static int IDEDUCTYPE_2 = 2;
 	

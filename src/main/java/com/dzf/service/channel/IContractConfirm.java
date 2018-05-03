@@ -39,11 +39,14 @@ public interface IContractConfirm {
 	 * 扣款/驳回
 	 * @param paramvo
 	 * @param opertype
+	 * @param cuserid
+	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException;
-	
+	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid,
+			String pk_corp) throws DZFWarpException;
+
 	/**
 	 * 获取附件列表
 	 * @param qvo
@@ -78,11 +81,12 @@ public interface IContractConfirm {
 	 * @param opertype
 	 * @param cuserid
 	 * @param packmap
+	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, Map<String, String> packmap) throws DZFWarpException;
+			Integer opertype, String cuserid, Map<String, String> packmap, String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 查询合同信息

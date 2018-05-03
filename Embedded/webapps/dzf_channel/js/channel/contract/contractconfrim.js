@@ -820,6 +820,7 @@ function audit(){
     }
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件
+	initRejectReason();
 }
 
 /**
@@ -846,6 +847,7 @@ function initListener(){
 		if(opertype == 1){
 			$("#confreason").textbox('readonly',true);
 			$("#confreason").textbox('setValue',null);
+			$("#confreasonid").val(null);
 		}else if(opertype == 2){
 			$("#confreason").textbox('readonly',false);
 		}
@@ -1049,6 +1051,7 @@ function bathAudit(){
 	$('#bvoper').val($("#uid").val());
 	document.getElementById("bdebit").checked="true";
 	initRedioListener();
+	initRejectReason();
 }
 
 /**
@@ -1060,6 +1063,7 @@ function initRedioListener(){
 		if(opertype == 1){
 			$("#bconfreason").textbox('readonly',true);
 			$("#bconfreason").textbox('setValue',null);
+			$("#bconfreasonid").val(null);
 		}else if(opertype == 2){
 			$("#bconfreason").textbox('readonly',false);
 		}
@@ -1628,4 +1632,72 @@ function initInfoFileDoc(row){
 			}
 		}
 	});
+}
+
+/**
+ * 驳回原因参照初始化
+ */
+var rejeid;
+function initRejectReason(){
+	$('#confreason,#bconfreason').textbox({
+		editable : false,
+		onClickIcon : function() {
+			rejeid = $(this).attr("id");
+		}
+	}).textbox({
+		icons : [ {
+			iconCls : 'icon-search',
+			handler : function(e) {
+				$("#manDlg").dialog('clear');
+				$("#rejeDlg").dialog({
+					width : 500,
+					height : 500,
+					readonly : true,
+					title : '选择原因',
+					modal : true,
+					href : contextPath+ '/ref/rejectreason_select.jsp',
+					buttons : [{text : '确认',
+								handler : function() {
+									var rows = $('#rgrid').datagrid('getSelections');
+									dClickReje(rows);
+								}
+								},
+							{text : '取消',
+								handler : function() {
+									$('#rejeDlg').dialog('close');
+								}
+								} ]
+				});
+			}
+		} ]
+});
+}
+
+/**
+ * 双击选择驳回原因
+ * @param rowTable
+ */
+function dClickReje(rowTable){
+	var reasons = "";
+	var rids = [];
+	if(rowTable){
+//		if (rowTable.length > 300) {
+//			Public.tips({
+//				content : "一次最多只能选择300个经理",
+//				type : 2
+//			});
+//			return;
+//		}
+		for(var i = 0; i<rowTable.length; i++){
+			if(i == rowTable.length - 1){
+				reasons += rowTable[i].reason;
+			}else{
+				reasons += rowTable[i].reason+"；";
+			}
+			rids.push(rowTable[i].reid);
+		}
+		$("#" + rejeid).textbox("setValue",reasons);
+		$("#" + rejeid + "id").val(rids);
+	}
+	$("#rejeDlg").dialog('close');
 }

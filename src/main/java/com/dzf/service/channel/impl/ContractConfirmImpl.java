@@ -27,6 +27,8 @@ import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.channel.contract.ContractConfrimVO;
+import com.dzf.model.channel.contract.RejectHistoryVO;
+import com.dzf.model.channel.sale.RejectreasonVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
@@ -495,7 +497,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 
 	@Override
-	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid) throws DZFWarpException {
+	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid, 
+			String pk_corp) throws DZFWarpException {
 	    String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(),uuid, 120);
@@ -525,7 +528,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					}
 				}
 				//3、更新原合同加盟合同状态、驳回原因
-				updateContract(paramvo, opertype);
+				updateContract(paramvo, opertype, cuserid, pk_corp);
 				//4、回写套餐促销活动名额
 				updateSerPackage(paramvo);
 				//5、回写客户纳税人性质 //回写客户是否为存量客户
@@ -536,7 +539,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(!StringUtil.isEmpty(errmsg)){
 					throw new BusinessException(errmsg);
 				}
-				updateContract(paramvo, opertype);
+				updateContract(paramvo, opertype, cuserid, pk_corp);
 				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(paramvo);
@@ -779,7 +782,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 * @throws DZFWarpException
 	 */
-	private void updateContract(ContractConfrimVO paramvo, Integer opertype) throws DZFWarpException {
+	private void updateContract(ContractConfrimVO paramvo, Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vstatus = ?, vconfreason = ? ,");
@@ -800,6 +803,61 @@ public class ContractConfirmImpl implements IContractConfirm {
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
+		if(IStatusConstant.IDEDUCTYPE_2 == opertype){
+			saveRejectHistory(paramvo, cuserid, pk_corp);
+		}
+	}
+	
+	/**
+	 * 保存驳回原因
+	 * @param paramvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveRejectHistory(ContractConfrimVO paramvo, String cuserid, String pk_corp) throws DZFWarpException {
+		String vconfreasonid = paramvo.getVconfreasonid();
+		String[] rejectids = vconfreasonid.split(",");
+		List<RejectHistoryVO> list = new ArrayList<RejectHistoryVO>();
+		RejectHistoryVO hisvo = null;
+		RejectreasonVO revo = null;
+		Map<String,RejectreasonVO> remap = qryRejectMap();
+		for(String id : rejectids){
+			if(remap != null && !remap.isEmpty()){
+				revo = remap.get(id);
+				if(revo != null){
+					hisvo = new RejectHistoryVO();
+					hisvo.setPk_source(revo.getPk_rejectreason());
+					hisvo.setPk_contract(paramvo.getPk_contract());
+					hisvo.setPk_corp(pk_corp);
+					hisvo.setVreason(revo.getVreason());
+					hisvo.setVsuggest(revo.getVsuggest());
+					hisvo.setDr(0);
+					hisvo.setCoperatorid(cuserid);
+					hisvo.setDoperatedate(new DZFDate());
+					list.add(hisvo);
+				}
+			}
+		}
+		if(list != null && list.size() > 0){
+			singleObjectBO.insertVOArr(pk_corp, list.toArray(new RejectHistoryVO[0]));
+		}
+	}
+	
+	/**
+	 * 获取驳回原因
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String,RejectreasonVO> qryRejectMap() throws DZFWarpException {
+		Map<String,RejectreasonVO> map = new HashMap<String,RejectreasonVO>();
+		String sql = " nvl(dr,0) = 0 ";
+		RejectreasonVO[] rejeVOs = (RejectreasonVO[]) singleObjectBO.queryByCondition(RejectreasonVO.class, sql, null);
+		if(rejeVOs != null && rejeVOs.length > 0){
+			for(RejectreasonVO rvo : rejeVOs){
+				map.put(rvo.getPk_rejectreason(), rvo);
+			}
+		}
+		return map;
 	}
 	
 	/**
@@ -929,7 +987,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 */
 	@Override
 	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, Map<String, String> packmap) throws DZFWarpException {
+			Integer opertype, String cuserid, Map<String, String> packmap, String pk_corp) throws DZFWarpException {
 		if(StringUtil.isEmpty(confrimvo.getTableName()) || StringUtil.isEmpty(confrimvo.getPk_contract())){
 			confrimvo.setVerrmsg("数据错误");
 			return confrimvo;
@@ -970,7 +1028,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					}
 				}
 				//3、更新合同加盟合同状态、驳回原因
-				updateContract(confrimvo, opertype);
+				updateContract(confrimvo, opertype, cuserid, pk_corp);
 				//4、回写套餐促销活动名额
 				updateSerPackage(confrimvo);
 				//5、回写客户纳税人性质  //回写客户是否为存量客户
@@ -983,7 +1041,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return confrimvo;
 				}
 				confrimvo.setVconfreason(paramvo.getVconfreason());
-				updateContract(confrimvo, opertype);
+				updateContract(confrimvo, opertype, cuserid, pk_corp);
 				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				confrimvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(confrimvo);

@@ -253,7 +253,9 @@
 						<label style="text-align: right;width:90px;">驳回原因：</label>
 						<textarea id="confreason" name="confreason" class="easyui-textbox"  
 							data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
-							 style="height:33px; width:60%;border-radius: 5px;"></textarea>
+							style="height:33px; width:60%;border-radius: 5px;">
+						</textarea>
+						<input id="confreasonid" name="confreasonid" type="hidden">
 					</div>
 				
 					<!-- 合同信息 begin -->
@@ -405,7 +407,9 @@
 					<label style="vertical-align: top;text-align: right;width:76px;">驳回原因：&nbsp;</label>
 					<textarea id="bconfreason" name="confreason" class="easyui-textbox"  
 						data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
-						 style="height:50px; width:84%;border-radius: 5px;"></textarea>
+						style="height:50px; width:84%;border-radius: 5px;">
+					</textarea>
+					<input id="bconfreasonid" name="confreasonid" type="hidden">
 				</div>  
 			</form>
 		</div>
@@ -823,6 +827,10 @@
 				onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
 		</div>
 		<!-- 渠道经理参照对话框及按钮 end -->
+		
+		<!-- 驳回原因参照初始化 begin -->
+		<div id="rejeDlg"></div>
+		<!-- 驳回原因参照初始化 end -->
 		
 	</div>
 	

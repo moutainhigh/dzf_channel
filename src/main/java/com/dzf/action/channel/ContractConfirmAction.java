@@ -24,6 +24,7 @@ import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -118,10 +119,17 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO paramvo = new ContractConfrimVO();
 			paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			
+			if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+				if(StringUtil.isEmpty(paramvo.getVconfreasonid())){
+					throw new BusinessException("驳回原因不能为空");
+				}
+			}
+			
 			if(paramvo == null){
 				log.info("单个审核-获取审核数据为空");
 			}
-			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid());
+			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid(), getLogincorppk());
 			json.setRows(retvo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
@@ -148,7 +156,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				throw new BusinessException("数据不能为空");
 			}
 			String type = getRequest().getParameter("opertype");
-			int opertype = Integer.parseInt(type);//2：审核通过；3： 
+			int opertype = Integer.parseInt(type);//1、扣款；2、驳回；
 			
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
@@ -161,6 +169,13 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
+			
+			if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+				if(StringUtil.isEmpty(paramvo.getVconfreasonid())){
+					throw new BusinessException("驳回原因不能为空");
+				}
+			}
+			
 			int rignum = 0;
 			int errnum = 0;
 			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
@@ -170,7 +185,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				if(confvo == null){
 					log.info("批量审核-获取审核数据为空");
 				}else{
-					confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap);
+					confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap, getLogincorppk());
 				}
 				if(!StringUtil.isEmpty(confvo.getVerrmsg() )){
 					errnum++;
