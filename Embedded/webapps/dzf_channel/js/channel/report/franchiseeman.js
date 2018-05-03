@@ -137,7 +137,9 @@ function load() {
 					}else{
 						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 					}
-		}}, 
+			}}, 
+			{width : '60',title : '小规模',field : 'xgmNum',align:'right'}, 
+			{width : '60',title : '一般人',field : 'ybrNum',align:'right'}, 
 			{width : '80',title : '保证金',field : 'bondmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
@@ -169,7 +171,7 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-			]],
+		]],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
 			var footerData = new Object();

@@ -25,6 +25,8 @@ function load() {
 		showFooter:true,
 		columns : [ [
 		    {width : '160',title : '渠道经理',field : 'cuname',align:'left'}, 
+			{width : '60',title : '小规模',field : 'xgmNum',align:'right'}, 
+			{width : '60',title : '一般人',field : 'ybrNum',align:'right'}, 
 			{width : '260',title : '加盟商',field : 'corpnm',align:'left',
 				formatter : function(value, row, index) {
 					if(value == undefined){

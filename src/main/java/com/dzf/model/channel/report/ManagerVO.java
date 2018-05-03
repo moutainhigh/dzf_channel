@@ -69,6 +69,10 @@ public class ManagerVO extends SuperVO {
 	private Integer num;// 提单量
 	
 	private String innercode;//排序用的编码
+	
+	private Integer xgmNum;//小规模数量
+	
+	private Integer ybrNum;//一般人数量
 
 	public String getInnercode() {
 		return innercode;
@@ -92,6 +96,22 @@ public class ManagerVO extends SuperVO {
 
 	public void setDenddate(DZFDate denddate) {
 		this.denddate = denddate;
+	}
+
+	public Integer getXgmNum() {
+		return xgmNum;
+	}
+
+	public void setXgmNum(Integer xgmNum) {
+		this.xgmNum = xgmNum;
+	}
+
+	public Integer getYbrNum() {
+		return ybrNum;
+	}
+
+	public void setYbrNum(Integer ybrNum) {
+		this.ybrNum = ybrNum;
 	}
 
 	public DZFDouble getNdeductmny() {

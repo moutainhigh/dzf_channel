@@ -283,6 +283,13 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
 			
+			buf=new StringBuffer();//小规模及一般纳税人的数量
+			buf.append(" select count(pk_corp) num,chargedeptname corpname, fathercorp pk_corp from bd_corp  ");
+			buf.append(" where nvl(dr,0)=0 and nvl(isseal,'N')='N' and nvl(isaccountcorp,'N')='N' and chargedeptname is not null and ");
+			buf.append(SqlUtil.buildSqlForIn("fathercorp ",pks));
+			buf.append(" group by fathercorp,chargedeptname  ");
+			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
+			
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -315,6 +322,17 @@ public class ManagerServiceImpl implements IManagerService {
 					map.put(managerVO.getPk_corp(),vo);
 				}
 		     }
+		     if(list5!=null&&list5.size()>0){//小规模及一般纳税人的数量
+		    	 for (ManagerVO managerVO : list5) {
+					ManagerVO vo = map.get(managerVO.getPk_corp());
+					if("小规模纳税人".equals(managerVO.getCorpname())){
+						vo.setXgmNum(managerVO.getNum());
+					}else{
+						vo.setYbrNum(managerVO.getNum());
+					}
+					map.put(managerVO.getPk_corp(),vo);
+				}
+		     }
 		}
 		 Collection<ManagerVO> manas = map.values();
 		 ArrayList<ManagerVO> list= new ArrayList<ManagerVO>(manas);
@@ -334,7 +352,7 @@ public class ManagerServiceImpl implements IManagerService {
 	}
 
 	@Override
-	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {
+	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {//补提单的合同
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sp.addParam(qvo.getDbegindate());
