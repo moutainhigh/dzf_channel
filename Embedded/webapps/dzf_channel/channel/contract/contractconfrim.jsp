@@ -210,9 +210,9 @@ return false;
 					</div>
 				</div>
 				<form id = "deductfrom" method="post">
-					<div class="time_col time_colp11 ">
-						<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">扣款</label>
-					</div>
+					<div class="time_col time_colp11 heading">
+							<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">扣款</label>
+						</div>
 					<div class="time_col time_colp11 " style="margin-top:10px;">
 						<input id="contractid" name="contractid" type="hidden">
 						<input id="tstp" name="tstp" type="hidden">
@@ -268,8 +268,8 @@ return false;
 				
 					<!-- 合同信息 begin -->
 					<div>
-						<div class="time_col time_colp11 ">
-							<label style="width: 100px;text-align:center;color:#1b8cf2;font-weight: bold;">合同信息</label>
+						<div class="time_col time_colp11 heading">
+							<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">合同信息</label>
 						</div>
 						<div class="time_col time_colp11 ">
 							<div class="decan" style="width:24%;display: inline-block;">
@@ -348,6 +348,9 @@ return false;
 						<!-- 附件信息end -->
 						
                         <!-- 驳回历史 -->
+                        <div class="time_col time_colp11 heading">
+							<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">驳回历史</label>
+						</div>
 						<div style="height: 50px; margin-top: 16px; width: 100%;">
 							<div
 								style="height: 50px; width: 100px; float: left; position: relative;">
