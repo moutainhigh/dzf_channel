@@ -6,7 +6,6 @@
 <%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-
 <head>
 <title>合同审核</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
@@ -21,7 +20,16 @@
 	String login_user = (String) session.getAttribute(IGlobalConstants.login_user);
 	UserVO userVo = UserCache.getInstance().get(login_user, logincorp);
 	String period = AdminDateUtil.getPeriod();
-%>
+%>					
+<script type="text/javascript"> 
+$(document).ready(function(){ 
+$(".btn-slide").click(function(){ 
+$("#panela").slideToggle("slow"); 
+$(this).toggleClass("active"); 
+return false; 
+}) 
+}) 
+</script>
 <body>
 	<input id="unm" name="unm" type="hidden" value=<%= userVo.getUser_name() %>> 
 	<input id="uid" name="uid" type="hidden" value=<%= userVo.getCuserid() %>> 
@@ -338,6 +346,98 @@
 							</div>
 						</div>
 						<!-- 附件信息end -->
+						
+                        <!-- 驳回历史 -->
+						<div style="height: 50px; margin-top: 16px; width: 100%;">
+							<div
+								style="height: 50px; width: 100px; float: left; position: relative;">
+								<img src="../../images/tbpng_03.png"
+									style="position: absolute; left: 69px;" /> <img
+									src="../../images/pngg_03.png"
+									style="position: absolute; left: 75px; top: 14px;height:50px;" />
+							</div>
+							<div style="height: 50px; width: 90%; float: left;">
+								<div  class="dot">
+									<font>2017-08-07</font> &emsp;<label>09:32:47</label>&emsp;<span>服务期限问题；纳税人资格问题
+										；</span>
+								</div>
+
+							</div>
+						</div>
+						<div style="display: none;" id="panela">
+							<div style="height: 330px; width: 100%;">
+								<div style="height: 50px;">
+									<div
+										style="height: 50px; width: 100px; float: left; position: relative;">
+										<img style="position: absolute; left: 71px;"
+											src="../../images/xial_03.png" /> <img
+											style="position: absolute; left: 75px; top: 8px;height:50px;"
+											src="../../images/pngg_03.png" />
+									</div>
+									<div style="height: 50px; width: 90%; float: left;">
+										<div  class="dot">
+											<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>服务期限问题；纳税人资格问题
+												；</span>
+										</div>
+
+									</div>
+								</div>
+								<div style="height: 50px;">
+									<div
+										style="height: 50px; width: 100px; float: left; position: relative;">
+										<img style="position: absolute; left: 71px;"
+											src="../../images/xial_03.png" /> <img
+											style="position: absolute; left: 75px; top: 8px;height:50px;"
+											src="../../images/pngg_03.png" />
+									</div>
+									<div style="height: 50px; width: 90%; float: left;">
+										<div  class="dot">
+											<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>服务期限问题；纳税人资格问题
+												；</span>
+										</div>
+
+									</div>
+								</div>
+								<div style="height: 50px;">
+									<div
+										style="height: 50px; width: 100px; float: left; position: relative;">
+										<img style="position: absolute; left: 71px;"
+											src="../../images/xial_03.png" /> <img
+											style="position: absolute; left: 75px; top: 8px;height:50px;"
+											src="../../images/pngg_03.png" />
+									</div>
+									<div style="height: 50px; width: 90%; float: left;">
+										<div class="dot" style=" margin-top: -4px;font-size: 14px;">
+											<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>服务期限问题；纳税人资格问题
+												；</span>
+										</div>
+
+									</div>
+								</div>
+								<div style="height: 50px;">
+									<div
+										style="height: 50px; width: 100px; float: left; position: relative;">
+										<img style="position: absolute; left: 71px;"
+											src="../../images/xial_03.png" /> <img
+											style="position: absolute; left: 75px; top: 8px;height:50px;"
+											src="../../images/pngg_03.png" />
+									</div>
+									<div style="height: 50px; width: 90%; float: left;">
+										<div  class="dot" style=" margin-top: -4px;font-size: 14px;">
+											<font>2017-08-07</font>&emsp;<label>09:32:47</label>&emsp;<span>服务期限问题；纳税人资格问题
+												；</span>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<p class="slide">
+							<a href="javascript:;" rel="external nofollow"
+								class="btn-slide active"></a>
+						</p>
+						
+						<!-- 驳回历史 -->
 					</div>
 				</form>
 				<div id="filedoc"></div>
