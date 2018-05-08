@@ -555,6 +555,7 @@ function load(){
 			width : '140',
 			title : '驳回原因',
 			field : 'confreason',
+			formatter:reaFormat,
 		}, {
 			width : '140',
 			title : '合同编码',
@@ -658,6 +659,16 @@ function load(){
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 驳回原因添加tips显示
+ * @param value
+ */
+function reaFormat(value){
+	if(value != undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
 }
 
 /**
@@ -824,6 +835,71 @@ function audit(){
 }
 
 /**
+ * 展示驳回原因
+ */
+function showRejectReason(row){
+	var rejesons = row.children;
+	$("#rejereson").empty();
+	if(rejesons != null && rejesons.length > 0){
+		var showinfo = "";
+		showinfo = showinfo + "<div class='time_col time_colp11 heading'>";
+		showinfo = showinfo + "		<label style='width: 68px;text-align:center;color:#FFF;font-weight: bold;'>驳回历史</label>";
+		showinfo = showinfo + "</div>";
+		
+		showinfo = showinfo + "<div style='height: 50px; margin-top: 16px; width: 100%;'>";
+		showinfo = showinfo + "  <div"; 
+		showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+		showinfo = showinfo + "    <img src='../../images/tbpng_03.png' style='position: absolute; left: 69px;' />"; 
+		showinfo = showinfo + "    <img src='../../images/pngg_03.png' style='position: absolute; left: 75px; top: 14px;height:50px;' />"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+		showinfo = showinfo + "    <div  class='dot'>"; 
+		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>"; 
+		showinfo = showinfo + "    </div>"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "</div>";
+		if(rejesons.length > 1){
+			showinfo = showinfo + "<div style='display: none;' id='panela'>";
+			showinfo = showinfo + "		<div style='width: 100%;'>";
+			showinfo = showinfo + "";
+			showinfo = showinfo + "";
+			for(var i = 1; i < rejesons.length; i++){
+				showinfo = showinfo + "<div style='height: 50px;'>";
+				showinfo = showinfo + "  <div"; 
+				showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 71px;' src='../../images/xial_03.png' />"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 75px; top: 8px;height:50px;' src='../../images/pngg_03.png' />"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+				showinfo = showinfo + "    <div  class='dot'>"; 
+				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>"; 
+				showinfo = showinfo + "    </div>"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "</div>";
+			}
+			showinfo = showinfo + "		</div>";
+			showinfo = showinfo + "</div>";
+		}
+		showinfo = showinfo + "<p class='slide'>";
+		showinfo = showinfo + "		<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>";
+		showinfo = showinfo + "</p>";
+		$("#rejereson").append(showinfo);
+		actionListen();
+	}
+}
+
+/**
+ * 监听
+ */
+function actionListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
+}
+
+/**
  * 初始化监听
  */
 function initListener(){
@@ -901,6 +977,11 @@ function initdeductData(row){
                 $('#scperiod').textbox('setValue', row.cperiod);//变更日期
                 $('#corptp').textbox('setValue', row.corptp);//加盟商类型
                 document.getElementById("debit").checked="true";
+                $('#rejereson').css('display','none');
+                if(!isEmpty(row.confreason)){
+                	$('#rejereson').css('display','block');
+                	showRejectReason(row);
+                }
             }
         },
     });
@@ -1592,10 +1673,80 @@ function showInfo(index){
 				$('#infofrom').form('clear');
 				$('#infofrom').form('load',row);
 				initInfoFileDoc(row);
+				$('#rejeson').css('display','none');
+				if(!isEmpty(row.confreason)){
+					$('#rejeson').css('display','block');
+					showRejReason(row);
+				}
 			}
 		}
 		
 	});
+}
+
+/**
+ * 展示驳回原因-详情界面
+ */
+function showRejReason(row){
+	var rejesons = row.children;
+	$("#rejeson").empty();
+	if(rejesons != null && rejesons.length > 0){
+		var showinfo = "";
+		showinfo = showinfo + "<div class='time_col time_colp11 heading'>";
+		showinfo = showinfo + "		<label style='width: 68px;text-align:center;color:#FFF;font-weight: bold;'>驳回历史</label>";
+		showinfo = showinfo + "</div>";
+		
+		showinfo = showinfo + "<div style='height: 50px; margin-top: 16px; width: 100%;'>";
+		showinfo = showinfo + "  <div"; 
+		showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+		showinfo = showinfo + "    <img src='../../images/tbpng_03.png' style='position: absolute; left: 69px;' />"; 
+		showinfo = showinfo + "    <img src='../../images/pngg_03.png' style='position: absolute; left: 75px; top: 14px;height:50px;' />"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+		showinfo = showinfo + "    <div  class='dot'>"; 
+		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>"; 
+		showinfo = showinfo + "    </div>"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "</div>";
+		if(rejesons.length > 1){
+			showinfo = showinfo + "<div style='display: none;' id='panel'>";
+			showinfo = showinfo + "		<div style='width: 100%;'>";
+			showinfo = showinfo + "";
+			showinfo = showinfo + "";
+			for(var i = 1; i < rejesons.length; i++){
+				showinfo = showinfo + "<div style='height: 50px;'>";
+				showinfo = showinfo + "  <div"; 
+				showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 71px;' src='../../images/xial_03.png' />"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 75px; top: 8px;height:50px;' src='../../images/pngg_03.png' />"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+				showinfo = showinfo + "    <div  class='dot'>"; 
+				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>"; 
+				showinfo = showinfo + "    </div>"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "</div>";
+			}
+			showinfo = showinfo + "		</div>";
+			showinfo = showinfo + "</div>";
+		}
+		showinfo = showinfo + "<p class='slide'>";
+		showinfo = showinfo + "		<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>";
+		showinfo = showinfo + "</p>";
+		$("#rejeson").append(showinfo);
+		actionListener();
+	}
+}
+
+/**
+ * 监听-详情
+ */
+function actionListener(){
+	$(".btn-slide").click(function() {
+		$("#panel").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**

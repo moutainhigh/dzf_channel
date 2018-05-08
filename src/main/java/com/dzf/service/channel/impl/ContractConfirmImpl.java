@@ -465,6 +465,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException {
 		ContractConfrimVO retvo = queryContractById(paramvo.getPk_contract());
@@ -493,7 +494,26 @@ public class ContractConfirmImpl implements IContractConfirm {
 				retvo.setVsalespromot("促销活动： "+ vmome + "    剩余名额" + num + "个");
 			}
 		}
+		if(!StringUtil.isEmpty(retvo.getVconfreason())){
+			RejectHistoryVO[] rejeVOs = qryRejectHistory(retvo.getPk_contract());
+			if(rejeVOs != null && rejeVOs.length > 0){
+				retvo.setChildren(rejeVOs);
+			}
+		}
 		return retvo;
+	}
+	
+	/**
+	 * 查询驳回历史
+	 * @param pk_contract
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private RejectHistoryVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_contract = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pk_contract);
+		return (RejectHistoryVO[]) singleObjectBO.queryByCondition(RejectHistoryVO.class, sql, spm);
 	}
 
 	@Override
@@ -1594,6 +1614,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIreceivcycle(null);//收款周期
 				}
 				setStatusName(confvo);
+			}
+		}
+		if(confvo != null && !StringUtil.isEmpty(confvo.getVconfreason())){
+			RejectHistoryVO[] rejeVOs = qryRejectHistory(confvo.getPk_contract());
+			if(rejeVOs != null && rejeVOs.length > 0){
+				confvo.setChildren(rejeVOs);
 			}
 		}
 		return confvo;
