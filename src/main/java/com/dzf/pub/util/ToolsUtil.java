@@ -109,6 +109,18 @@ public class ToolsUtil {
 		return num1 + num2;
 	}
 	
+	/**
+	 * 整数相jian
+	 * @param num1
+	 * @param num2
+	 * @return
+	 */
+	public static Integer subInteger(Integer num1, Integer num2){
+		num1 = num1 == null ? 0 : num1;
+		num2 = num2 == null ? 0 : num2;
+		return num1 - num2;
+	}
+	
     /** 
      * 根据日期计算所在周的上下界 
      *  

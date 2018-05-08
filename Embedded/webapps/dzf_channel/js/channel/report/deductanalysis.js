@@ -391,9 +391,9 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 						}
 					
 					}
-					columns.push(columnsh);
-					columns.push(columnsb);
 				}
+				columns.push(columnsh);
+				columns.push(columnsb);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
