@@ -535,13 +535,26 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(backvo != null){
 			retvo.setNdebitmny(SafeCompute.add(retvo.getNdebitmny(), backvo.getNdebitmny()));
 			retvo.setNbasemny(SafeCompute.add(retvo.getNbasemny(), backvo.getNbasemny()));
-			retvo.setIcontractnum(retvo.getIcontractnum() - backvo.getIcontractnum());
+			retvo.setIcontractnum(countConNum(retvo.getIcontractnum(), backvo.getIcontractnum()));
 		}
 		return retvo;
 	}
 	
 	/**
-	 * 获取查询期间终止合同退款基恩
+	 * 合同数量计算
+	 * @param num1
+	 * @param num2
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Integer countConNum(Integer num1, Integer num2) throws DZFWarpException {
+		num1 = num1 == null ? 0 : num1;
+		num2 = num2 == null ? 0 : num2;
+		return num1 - num2;
+	}
+	
+	/**
+	 * 获取查询期间终止合同退款金额
 	 * @param data
 	 * @return
 	 * @throws DZFWarpException

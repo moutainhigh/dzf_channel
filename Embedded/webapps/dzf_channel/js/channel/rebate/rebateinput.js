@@ -199,6 +199,10 @@ function dClickCompany(rowTable){
  * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
  */
 function getDebateMny(cpid){
+	$("#debitmny").numberbox("setValue",null);
+	$("#basemny").numberbox("setValue",null);
+	$("#contnum").numberbox("setValue",null);
+	$("#rebatemny").numberbox("setValue", null);
 	var year = $("#year").combobox("getValue");
 	var season = $("#season").combobox("getValue");
 	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
