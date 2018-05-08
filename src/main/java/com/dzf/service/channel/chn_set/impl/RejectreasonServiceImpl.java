@@ -64,12 +64,12 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 			return (RejectreasonVO) singleObjectBO.saveObject(pk_corp, data);
 		} else {// 更新操作
 			checkBeforeUpdate(data);
-			data.setUpdatets(new DZFDateTime());
+			data.setUpdatets(new DZFDateTime());//最后修改日期
 			String uuid = UUID.randomUUID().toString();
 			try {
-				LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 120);
+				LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 30);
 				singleObjectBO.update(data,
-						new String[] { "vreason", "vsuggest", "lastmodifypsnid", "lastmodifydate", "updatets" });
+						new String[] { "vreason", "vsuggest", "lastmodifypsnid", "updatets" });
 			} finally {
 				LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
 			}
@@ -98,7 +98,7 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 		checkBeforeUpdate(data);
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 120);
+			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 30);
 			singleObjectBO.deleteObject(data);
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
