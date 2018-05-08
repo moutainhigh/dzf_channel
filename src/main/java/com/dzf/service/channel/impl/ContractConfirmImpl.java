@@ -825,7 +825,28 @@ public class ContractConfirmImpl implements IContractConfirm {
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 		if(IStatusConstant.IDEDUCTYPE_2 == opertype){
 			saveRejectHistory(paramvo, cuserid, pk_corp);
+		}else if(IStatusConstant.IDEDUCTYPE_1 == opertype){
+			updateRejectHistory(paramvo, pk_corp);
 		}
+	}
+	
+	/**
+	 * 删除驳回历史
+	 * @param paramvo
+	 * @param pk_corp
+	 * @throws DZFWarpException
+	 */
+	private void updateRejectHistory(ContractConfrimVO paramvo, String pk_corp) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("UPDATE cn_rejecthistory  \n") ;
+		sql.append("   SET dr = 1  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_contract = ?  \n") ; 
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(paramvo.getPk_contract());
+		spm.addParam(pk_corp);
+		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	
 	/**
