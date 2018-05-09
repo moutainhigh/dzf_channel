@@ -115,6 +115,7 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
+			{width : '80',title : '提单量',field : 'num',align:'right',colspan:2}, 
 		    {width : '100',title : '合同代账费',field : 'ntlmny',align:'right',colspan:2},
 		 	{width : '100',title : '客单价',field : 'uprice',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
@@ -156,6 +157,7 @@ function load() {
             var anum = 0;	
             var rntlmny = 0;	
             var antlmny = 0;	
+            var uprice= 0;
             var ndemny = 0;	
             var nderebmny = 0;	
             var outmny = 0;	
@@ -168,18 +170,21 @@ function load() {
             	anum += parseFloat(rows[i].anum);
             	rntlmny += parseFloat(rows[i].rntlmny);
             	antlmny += parseFloat(rows[i].antlmny);
+            	uprice += parseFloat(rows[i].uprice);
             	ndemny += parseFloat(rows[i].ndemny);
             	nderebmny += parseFloat(rows[i].nderebmny);
             	outmny += parseFloat(rows[i].outmny);
             }
             footerData['corpnm'] = '合计';
             footerData['bondmny'] = bondmny;
+            footerData['predeposit'] = predeposit;
             footerData['xgmNum'] = xgmNum;
             footerData['ybrNum'] = ybrNum;
             footerData['rnum'] = rnum;
             footerData['anum'] = anum;
             footerData['rntlmny'] = rntlmny;
             footerData['antlmny'] = antlmny;
+            footerData['uprice'] = uprice;
             footerData['ndemny'] = ndemny;
             footerData['nderebmny'] = nderebmny;
             footerData['outmny'] = outmny;
