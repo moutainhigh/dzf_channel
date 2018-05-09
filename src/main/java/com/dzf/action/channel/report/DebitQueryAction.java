@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -243,24 +242,4 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			}
 		}
 	}
-	
-	/**
-	 * 获取导出列
-	 * @return
-	 */
-	private Map<String, String> getExpFieldMap(String[] split){
-		String[] str={"one","two","three","four","five","six","seven",
-			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("corpcode", "加盟商编码");
-		map.put("corpname", "加盟商名称");
-		map.put("chndate", "加盟日期");
-		map.put("outmny", "预付款余额");
-		map.put("ndeductmny", "扣款合计");
-		for(int i=0;i<split.length;i++){
-			map.put(str[i], split[i]);
-		}
-		return map;
-	}
-
 }
