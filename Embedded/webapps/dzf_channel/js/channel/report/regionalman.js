@@ -115,8 +115,8 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		  	{width : '60',title : '提单量',field : 'num',align:'right'}, 
-		  	{width : '100',title : '合同代账费',field : 'ntlmny',align:'right',
+		    {width : '100',title : '合同代账费',field : 'ntlmny',align:'right',colspan:2},
+		 	{width : '100',title : '客单价',field : 'uprice',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -130,32 +130,56 @@ function load() {
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
-			}},
-			]],
+				}}],[
+				 	{width : '60',title : '续费',field : 'rnum',align:'right'}, 
+				  	{width : '60',title : '新增',field : 'anum',align:'right'}, 
+				 	{width : '100',title : '续费',field : 'rntlmny',align:'right',
+				    	formatter : function(value,row,index){
+				    		if(value == 0)return "0.00";
+				    		return formatMny(value);
+					}},
+				 	{width : '100',title : '新增',field : 'antlmny',align:'right',
+				    	formatter : function(value,row,index){
+				    		if(value == 0)return "0.00";
+				    		return formatMny(value);
+					}},
+				    ]
+				],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
 			var footerData = new Object();
             var bondmny = 0;	
             var predeposit = 0;	
-            var num = 0;	
-            var ntlmny = 0;	
+            var xgmNum = 0;	
+            var ybrNum = 0;	
+            var rnum = 0;	
+            var anum = 0;	
+            var rntlmny = 0;	
+            var antlmny = 0;	
             var ndemny = 0;	
             var nderebmny = 0;	
             var outmny = 0;	
             for (var i = 0; i < rows.length; i++) {
             	bondmny += parseFloat(rows[i].bondmny);
             	predeposit += parseFloat(rows[i].predeposit);
-            	num += parseFloat(rows[i].num);
-            	ntlmny += parseFloat(rows[i].ntlmny);
+            	xgmNum += parseFloat(rows[i].xgmNum);
+            	ybrNum += parseFloat(rows[i].ybrNum);
+            	rnum += parseFloat(rows[i].rnum);
+            	anum += parseFloat(rows[i].anum);
+            	rntlmny += parseFloat(rows[i].rntlmny);
+            	antlmny += parseFloat(rows[i].antlmny);
             	ndemny += parseFloat(rows[i].ndemny);
             	nderebmny += parseFloat(rows[i].nderebmny);
             	outmny += parseFloat(rows[i].outmny);
             }
             footerData['corpnm'] = '合计';
             footerData['bondmny'] = bondmny;
-            footerData['predeposit'] = predeposit;
-            footerData['num'] = num;
-            footerData['ntlmny'] = ntlmny;
+            footerData['xgmNum'] = xgmNum;
+            footerData['ybrNum'] = ybrNum;
+            footerData['rnum'] = rnum;
+            footerData['anum'] = anum;
+            footerData['rntlmny'] = rntlmny;
+            footerData['antlmny'] = antlmny;
             footerData['ndemny'] = ndemny;
             footerData['nderebmny'] = nderebmny;
             footerData['outmny'] = outmny;
@@ -215,5 +239,3 @@ function doExport(){
 	var columns = $('#grid').datagrid("options").columns[0];
 	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':2,'qj':$('#jqj').html()}, true, true);
 }
-
-

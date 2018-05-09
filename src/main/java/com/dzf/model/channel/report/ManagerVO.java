@@ -2,9 +2,7 @@ package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
@@ -47,9 +45,6 @@ public class ManagerVO extends SuperVO {
 	@FieldAlias("ovince")
 	public Integer vprovince;// 地区
 
-	@FieldAlias("ntlmny")
-	private DZFDouble ntotalmny; // 合同总金额
-	
 	@FieldAlias("bondmny")
 	private DZFDouble bondmny; // 保证金
 	
@@ -64,9 +59,21 @@ public class ManagerVO extends SuperVO {
 	
 	@FieldAlias("outmny")
 	private DZFDouble outmny; // 预存款余额金额
+	
+	@FieldAlias("antlmny")
+	private DZFDouble antotalmny; // 合同代账费(新增)
+	
+	@FieldAlias("rntlmny")
+	private DZFDouble rntotalmny; // 合同代账费(续费)
 
-	@FieldAlias("num")
-	private Integer num;// 提单量
+	@FieldAlias("anum")
+	private Integer anum;// 提单量(新增)
+	
+	@FieldAlias("rnum")
+	private Integer rnum;// 提单量(续费)
+	
+	@FieldAlias("uprice")
+	private DZFDouble unitprice;//客单价
 	
 	private String innercode;//排序用的编码
 	
@@ -100,6 +107,14 @@ public class ManagerVO extends SuperVO {
 
 	public Integer getXgmNum() {
 		return xgmNum;
+	}
+
+	public DZFDouble getUnitprice() {
+		return unitprice;
+	}
+
+	public void setUnitprice(DZFDouble unitprice) {
+		this.unitprice = unitprice;
 	}
 
 	public void setXgmNum(Integer xgmNum) {
@@ -186,6 +201,38 @@ public class ManagerVO extends SuperVO {
 		this.cuserid = cuserid;
 	}
 
+	public DZFDouble getAntotalmny() {
+		return antotalmny;
+	}
+
+	public void setAntotalmny(DZFDouble antotalmny) {
+		this.antotalmny = antotalmny;
+	}
+
+	public DZFDouble getRntotalmny() {
+		return rntotalmny;
+	}
+
+	public void setRntotalmny(DZFDouble rntotalmny) {
+		this.rntotalmny = rntotalmny;
+	}
+
+	public Integer getAnum() {
+		return anum;
+	}
+
+	public void setAnum(Integer anum) {
+		this.anum = anum;
+	}
+
+	public Integer getRnum() {
+		return rnum;
+	}
+
+	public void setRnum(Integer rnum) {
+		this.rnum = rnum;
+	}
+
 	public String getCusername() {
 		return cusername;
 	}
@@ -204,14 +251,6 @@ public class ManagerVO extends SuperVO {
 
 	public void setCorpname(String corpname) {
 		this.corpname = corpname;
-	}
-
-	public DZFDouble getNtotalmny() {
-		return ntotalmny;
-	}
-
-	public void setNtotalmny(DZFDouble ntotalmny) {
-		this.ntotalmny = ntotalmny;
 	}
 
 	public DZFDouble getBondmny() {
@@ -236,14 +275,6 @@ public class ManagerVO extends SuperVO {
 
 	public void setOutmny(DZFDouble outmny) {
 		this.outmny = outmny;
-	}
-
-	public Integer getNum() {
-		return num;
-	}
-
-	public void setNum(Integer num) {
-		this.num = num;
 	}
 
 	@Override

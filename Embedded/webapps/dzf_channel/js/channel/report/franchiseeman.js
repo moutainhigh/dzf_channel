@@ -124,11 +124,11 @@ function load() {
 		},
 		showFooter:true,
 		columns : [ [ 
-		    {width : '130',title : '大区',field : 'aname',align:'left'}, 
-		    {width : '90',title : '区总',field : 'uname',align:'left'}, 
-		    {width : '110',title : '省（市）',field : 'provname',align:'left'}, 
-		 	{width : '90',title : '渠道经理',field : 'cuname',align:'left'}, 
-			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
+		    {width : '130',title : '大区',field : 'aname',align:'left',rowspan:2}, 
+		    {width : '90',title : '区总',field : 'uname',align:'left',rowspan:2}, 
+		    {width : '110',title : '省（市）',field : 'provname',align:'left',rowspan:2}, 
+		 	{width : '90',title : '渠道经理',field : 'cuname',align:'left',rowspan:2}, 
+			{width : '250',title : '加盟商',field : 'corpnm',align:'left',rowspan:2,
 				formatter : function(value, row, index) {
 					if(value == undefined){
 						return;
@@ -138,55 +138,79 @@ function load() {
 						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 					}
 			}}, 
-			{width : '60',title : '小规模',field : 'xgmNum',align:'right'}, 
-			{width : '60',title : '一般人',field : 'ybrNum',align:'right'}, 
-			{width : '80',title : '保证金',field : 'bondmny',align:'right',
+			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
+			{width : '60',title : '一般人',field : 'ybrNum',align:'right',rowspan:2}, 
+			{width : '80',title : '保证金',field : 'bondmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},  
-			{width : '80',title : '预存款余额',field : 'outmny',align:'right',
+			{width : '80',title : '预存款余额',field : 'outmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-	  	  	{width : '80',title : '本期预存款',field : 'predeposit',align:'right',
+	  	  	{width : '80',title : '本期预存款',field : 'predeposit',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		  	{width : '60',title : '提单量',field : 'num',align:'right'}, 
-		  	{width : '80',title : '合同代账费',field : 'ntlmny',align:'right',
+			{width : '60',title : '提单量',field : 'num',align:'right',colspan:2}, 
+		    {width : '100',title : '合同代账费',field : 'ntlmny',align:'right',colspan:2},
+		 	{width : '100',title : '客单价',field : 'uprice',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		    {width : '80',title : '预付款扣款',field : 'ndemny',align:'right',
+		    {width : '80',title : '预付款扣款',field : 'ndemny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-			{width : '80',title : '返点扣款',field : 'nderebmny',align:'right',
+			{width : '80',title : '返点扣款',field : 'nderebmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
-			}},
-		]],
+			}}],[
+			 	{width : '60',title : '续费',field : 'rnum',align:'right'}, 
+			  	{width : '60',title : '新增',field : 'anum',align:'right'}, 
+			 	{width : '100',title : '续费',field : 'rntlmny',align:'right',
+			    	formatter : function(value,row,index){
+			    		if(value == 0)return "0.00";
+			    		return formatMny(value);
+				}},
+			 	{width : '100',title : '新增',field : 'antlmny',align:'right',
+			    	formatter : function(value,row,index){
+			    		if(value == 0)return "0.00";
+			    		return formatMny(value);
+				}},
+			    ]
+			],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
 			var footerData = new Object();
             var bondmny = 0;	
             var predeposit = 0;	
-            var num = 0;	
-            var ntlmny = 0;	
+            var xgmNum = 0;	
+            var ybrNum = 0;	
+            var rnum = 0;	
+            var anum = 0;	
+            var rntlmny = 0;	
+            var antlmny = 0;	
+            var uprice= 0;
             var ndemny = 0;	
             var nderebmny = 0;	
             var outmny = 0;	
             for (var i = 0; i < rows.length; i++) {
             	bondmny += parseFloat(rows[i].bondmny);
             	predeposit += parseFloat(rows[i].predeposit);
-            	num += parseFloat(rows[i].num);
-            	ntlmny += parseFloat(rows[i].ntlmny);
+            	xgmNum += parseFloat(rows[i].xgmNum);
+            	ybrNum += parseFloat(rows[i].ybrNum);
+            	rnum += parseFloat(rows[i].rnum);
+            	anum += parseFloat(rows[i].anum);
+            	rntlmny += parseFloat(rows[i].rntlmny);
+            	antlmny += parseFloat(rows[i].antlmny);
+            	uprice += parseFloat(rows[i].uprice);
             	ndemny += parseFloat(rows[i].ndemny);
             	nderebmny += parseFloat(rows[i].nderebmny);
             	outmny += parseFloat(rows[i].outmny);
@@ -194,9 +218,14 @@ function load() {
             footerData['corpnm'] = '合计';
             footerData['bondmny'] = bondmny;
             footerData['predeposit'] = predeposit;
-            footerData['num'] = num;
-            footerData['ntlmny'] = ntlmny;
+            footerData['xgmNum'] = xgmNum;
+            footerData['ybrNum'] = ybrNum;
+            footerData['rnum'] = rnum;
+            footerData['anum'] = anum;
+            footerData['rntlmny'] = rntlmny;
+            footerData['antlmny'] = antlmny;
             footerData['ndemny'] = ndemny;
+            footerData['uprice'] = uprice;
             footerData['nderebmny'] = nderebmny;
             footerData['outmny'] = outmny;
             var fs=new Array(1);
