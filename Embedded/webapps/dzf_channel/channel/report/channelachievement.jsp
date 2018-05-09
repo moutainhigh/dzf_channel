@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div class="wrapper" style="overflow:auto;height:100%;">
-	<div style="margin-bottom:20px;border:1px solid #ccc">
+	<div style="margin-bottom:20px;border:1px solid #ccc;background:#FFF">
 	 <div class="sel_time">
 				<div class="time_col"> 
 			
@@ -32,20 +32,20 @@
 		
 					<label style="text-align: right;">期间：</label> 
 					<font> 
-						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:100,height:28" /> 
+						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
 					</font> 
 					<font>  
-						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:100,height:28" />
+						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
 					</font>
 			
 				
 					<font>-</font>
 					<font> 
-						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:100,height:28" /> 
+						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
 					</font> 
 				
 					<font>  
-						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:100,height:28" />
+						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
 					</font>
 					
 			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>查询</a>
@@ -60,7 +60,7 @@
         <div id="main" style="width: 100%;height:300px;"></div>
         </div>
         
-        <div style="margin-bottom:30px;border:1px solid #ccc">
+        <div style="margin-bottom:30px;border:1px solid #ccc;background:#FFF">
          <div class="sel_time">
         	<div class="time_col"> 
 			
@@ -74,20 +74,20 @@
 		
 					<label style="text-align: right;">期间：</label> 
 					<font> 
-						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:100,height:28" /> 
+						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
 					</font> 
 					<font>  
-						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:100,height:28" />
+						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
 					</font>
 			
 				
 					<font>-</font>
 					<font> 
-						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:100,height:28" /> 
+						<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
 					</font> 
 				
 					<font>  
-						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:100,height:28" />
+						<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
 					</font>
 					
 			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>查询</a>
