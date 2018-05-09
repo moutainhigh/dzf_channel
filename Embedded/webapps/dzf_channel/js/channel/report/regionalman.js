@@ -86,9 +86,9 @@ function load() {
 		},
 		showFooter:true,
 		columns : [ [ 
-		    {width : '140',title : '省（市）',field : 'provname',align:'left'}, 
-		    {width : '130',title : '渠道经理',field : 'cuname',align:'left'}, 
-			{width : '250',title : '加盟商',field : 'corpnm',align:'left',
+		    {width : '140',title : '省（市）',field : 'provname',align:'left',rowspan:2}, 
+		    {width : '130',title : '渠道经理',field : 'cuname',align:'left',rowspan:2}, 
+			{width : '250',title : '加盟商',field : 'corpnm',align:'left',rowspan:2,
 				formatter : function(value, row, index) {
 						if(value == undefined){
 							return;
@@ -98,19 +98,19 @@ function load() {
 							return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 						}
 			}}, 
-			{width : '60',title : '小规模',field : 'xgmNum',align:'right'}, 
-			{width : '60',title : '一般人',field : 'ybrNum',align:'right'}, 
-		  	{width : '100',title : '保证金',field : 'bondmny',align:'right',
+			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
+			{width : '60',title : '一般人',field : 'ybrNum',align:'right',rowspan:2}, 
+		  	{width : '100',title : '保证金',field : 'bondmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},  
-			{width : '100',title : '预存款余额',field : 'outmny',align:'right',
+			{width : '100',title : '预存款余额',field : 'outmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-	  	  	{width : '100',title : '本期预付款',field : 'predeposit',align:'right',
+	  	  	{width : '100',title : '本期预付款',field : 'predeposit',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
@@ -121,12 +121,12 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-		    {width : '100',title : '预付款扣款',field : 'ndemny',align:'right',
+		    {width : '100',title : '预付款扣款',field : 'ndemny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-			{width : '100',title : '返点扣款',field : 'nderebmny',align:'right',
+			{width : '100',title : '返点扣款',field : 'nderebmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
