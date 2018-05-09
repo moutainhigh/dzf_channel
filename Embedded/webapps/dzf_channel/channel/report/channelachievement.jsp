@@ -23,7 +23,7 @@
 				<div class="time_col"> 
 			
 				<label style="text-align:right;width: 80px;">维度：</label> 
-				<select id="qsgtype" name="qsgtype" class="easyui-combobox" data-options="editable:false,required:true,panelHeight:80" 
+				<select  class="easyui-combobox" data-options="editable:false,required:true,panelHeight:80" 
 					style="width: 100px; height: 28px;">
 					<option value="-1">1月</option>
 					<option value="0">2月</option>
@@ -65,7 +65,7 @@
         	<div class="time_col"> 
 			
 				<label style="text-align:right;width: 80px;">维度：</label> 
-				<select id="qsgtype" name="qsgtype" class="easyui-combobox" data-options="editable:false,required:true,panelHeight:80" 
+				<select class="easyui-combobox" data-options="editable:false,required:true,panelHeight:80" 
 					style="width: 100px; height: 28px;">
 					<option value="-1">1月</option>
 					<option value="0">2月</option>
@@ -98,6 +98,19 @@
 				</div>
 				</div>
 					</div>
+					<div style="background: #FFF;">
+			<div style="text-align:left;width:8%;font-size:14px;float:left;padding-left:6px; 
+				padding-top:4px;font-size: 18px;font-weight: bold;">业绩同比</div>
+			<div style="position:relative;padding-right:20px;padding-top:4px;">
+				<select class="easyui-combobox" 
+					data-options="valueField:'id', textField:'name', panelHeight:'auto',editable:false,"
+					style="width: 120px; height: 28px; text-align: left">
+					<option value="-1">扣款金额</option>
+					<option value="0">2月</option>
+					<option value="1">3月</option>
+				</select>
+			</div>
+		</div>
          <div id="man" style="width: 100%;height:300px;"></div>
          </div>
 	</div>
@@ -161,9 +174,7 @@
       var myChart = echarts.init(document.getElementById('man'));
         var option = {
         	color : [ '#5b9bd5', '#ed7d31'],
-        	  title: {
-        	        text: '业绩同比'
-        	    },
+        	  
     tooltip : {
         trigger: 'axis',
         axisPointer : {            // 坐标轴指示器，坐标轴触发有效
