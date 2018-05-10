@@ -12,14 +12,15 @@ function initLineChart(){
 	// 基于准备好的dom，初始化echarts实例
 	var myChart = echarts.init(document.getElementById('main'));
 	var option = {
+		color: ['#5b9bd5', '#ed7d31'],
 	    title: {
-	        text: '业绩环比'
+	        text: '业绩环比(%)'
 	    },
 	    tooltip: {
 	        trigger: 'axis'
 	    },
 	    legend: {
-	        data: ['扣款金额', '合同金额'],
+	        data: ['扣款金额增长率', '合同金额增长率'],
 	        right: '90',
 	    },
 	    grid: {
@@ -42,13 +43,13 @@ function initLineChart(){
 	        type: 'value'
 	    },
 	    series: [{
-	        name: '扣款金额',
+	        name: '扣款金额增长率',
 	        type: 'line',
 	        stack: '总量',
 	        data: [120, 132, 101, 134, 90, 230]
 	    },
 	    {
-	        name: '合同金额',
+	        name: '合同金额增长率',
 	        type: 'line',
 	        stack: '总量',
 	        data: [220, 182, 191, 234, 290, 330]
@@ -76,7 +77,7 @@ function initBarChart(){
 	        }
 	    },
 	    legend: {
-	        data: ['往期', '本期'],
+	        data: ['往期增长率', '本期增长率'],
 	        right: '90',
 	    },
 	    grid: {
@@ -98,12 +99,12 @@ function initBarChart(){
 	        type: 'value'
 	    }],
 	    series: [{
-	        name: '往期',
+	        name: '往期增长率',
 	        type: 'bar',
 	        data: [320, 332, 301, 334, 390, 330]
 	    },
 	    {
-	        name: '本期',
+	        name: '本期增长率',
 	        type: 'bar',
 	        stack: '广告',
 	        data: [120, 132, 101, 134, 90, 230]
