@@ -108,7 +108,7 @@ function initLineChart(){
 	    xAxis: {
 	        type: 'category',
 	        boundaryGap: false,
-	        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
+	        data: ['2018-01', '2018-02季度', '2018-03', '2018-04', '2018-05', '2018-06']
 	    },
 	    yAxis: {
 	        type: 'value'
@@ -117,16 +117,14 @@ function initLineChart(){
 	        name: '扣款金额增长率',
 	        type: 'line',
 	        stack: '总量',
-	        data: [120, 132, 101, 134, 90, 230]
+	        data: [120.03, 132, 101, 134, 90, 230.63]
 	    },
 	    {
 	        name: '合同金额增长率',
 	        type: 'line',
 	        stack: '总量',
 	        data: [220, 182, 191, 234, 290, 330]
-	    }
-
-	    ]
+	    }]
 	};
 	// 使用刚指定的配置项和数据显示图表。
 	myChart.setOption(option);
