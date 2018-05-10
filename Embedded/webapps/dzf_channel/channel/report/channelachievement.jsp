@@ -103,8 +103,18 @@
 					
 					<!-- 月度查询条件 begin -->
 					<div id = "tmonth" style="display:inline">
-						<input id="tbperiod" name="tbperiod" type="text"  class="easyui-datebox" 
-							data-options="width:100,height:28" />
+						<select id="tmyear" name="tmyear" class="easyui-combobox" data-options="editable:false"  
+							style="width:70px;height:28px;">
+							<% DzfUtil.WriteYearOption(out);%>
+						</select>
+						<select id="tbmonth" name="tbmonth" class="easyui-combobox"  data-options="editable:false" 
+							style="width:50px;height:27px;">
+							<% DzfUtil.WriteMonthOption(out);%>
+						</select> -
+						<select id="temonth" name="temonth" class="easyui-combobox"  data-options="editable:false" 
+							style="width:50px;height:27px;">
+							<% DzfUtil.WriteMonthOption(out);%>
+						</select>
 					</div>
 					<!-- 月度查询条件 begin -->
 					<!-- 季度查询条件 begin -->
@@ -114,6 +124,13 @@
 							<% DzfUtil.WriteYearOption(out);%>
 						</select> 
 						<select id="tbjd" name="tbjd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
+							style="width:100px;height:28px;text-align:left">
+							<option value="1">第一季度</option>
+							<option value="2">第二季度</option>
+							<option value="3">第三季度</option>
+							<option value="4">第四季度</option>	
+						</select> -
+						<select id="tejd" name="tejd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
 							<option value="1">第一季度</option>
 							<option value="2">第二季度</option>

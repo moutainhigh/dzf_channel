@@ -14,7 +14,6 @@ $(function() {
 function initQry(){
 	initPeriod("#bperiod");
 	initPeriod("#eperiod");
-	initPeriod("#tbperiod");
 }
 
 /**
