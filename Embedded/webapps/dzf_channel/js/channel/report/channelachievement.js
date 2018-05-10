@@ -14,12 +14,21 @@ $(function() {
 function initQry(){
 	initPeriod("#bperiod");
 	initPeriod("#eperiod");
+	initPeriod("#tbperiod");
 }
 
 /**
  * 监听事件初始化
  */
 function initListen(){
+	initLineListen();
+	initChartListen();
+}
+
+/**
+ * 线状图监听事件
+ */
+function initLineListen(){
 	$("#month").show();
 	$("#quarter").hide();
 	$("#qyear").hide();
@@ -37,6 +46,32 @@ function initListen(){
 				$("#quarter").show();
 			}else if(n == 3){
 				$("#qyear").show();
+			}
+		}
+	});
+}
+
+/**
+ * 柱状图监听事件
+ */
+function initChartListen(){
+	$("#tmonth").show();
+	$("#tquarter").hide();
+	$("#tqyear").hide();
+	$("#tqrytype").combobox({
+		onChange : function(n, o) {
+			if(o == "" || o == null){
+				return;
+			}
+			$("#tmonth").hide();
+			$("#tquarter").hide();
+			$("#tqyear").hide();
+			if(n == 1){
+				$("#tmonth").show();
+			}else if(n == 2){
+				$("#tquarter").show();
+			}else if(n == 3){
+				$("#tqyear").show();
 			}
 		}
 	});
@@ -94,7 +129,6 @@ function initLineChart(){
 
 	    ]
 	};
-
 	// 使用刚指定的配置项和数据显示图表。
 	myChart.setOption(option);
 }
