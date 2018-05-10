@@ -126,8 +126,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		fieldlist.add("corpnm");
 		fieldlist.add("xgmNum");
 		fieldlist.add("ybrNum");
-		fieldlist.add("ybrNum");
-		fieldlist.add("ybrNum");
+		fieldlist.add("anum");
+		fieldlist.add("rnum");
 		for (int i = 0 ; i< headlist.size(); i ++) {
 			 name=(Map<String, String>) headlist.get(i);
 			 if(i==num){
