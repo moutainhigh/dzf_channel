@@ -24,9 +24,8 @@ function load() {
 		},
 		showFooter:true,
 		columns : [ [
+		    {width : '110',title : '省（市）',field : 'provname',align:'left',rowspan:2}, 
 		    {width : '160',title : '渠道经理',field : 'cuname',align:'left',rowspan:2}, 
-			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
-			{width : '60',title : '一般人',field : 'ybrNum',align:'right',rowspan:2}, 
 			{width : '260',title : '加盟商',field : 'corpnm',align:'left',rowspan:2,
 				formatter : function(value, row, index) {
 					if(value == undefined){
@@ -37,6 +36,8 @@ function load() {
 						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 					}
 			}}, 
+			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
+			{width : '60',title : '一般人',field : 'ybrNum',align:'right',rowspan:2}, 
 			{width : '100',title : '保证金',field : 'bondmny',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
@@ -88,50 +89,8 @@ function load() {
 					    ]
 					],
 		onLoadSuccess : function(data) {
-			var rows = $('#grid').datagrid('getRows');
-			var footerData = new Object();
-            var bondmny = 0;	
-            var predeposit = 0;	
-            var xgmNum = 0;	
-            var ybrNum = 0;	
-            var rnum = 0;	
-            var anum = 0;	
-            var rntlmny = 0;	
-            var antlmny = 0;
-            var uprice= 0;
-            var ndemny = 0;	
-            var nderebmny = 0;	
-            var outmny = 0;	
-            for (var i = 0; i < rows.length; i++) {
-            	bondmny += parseFloat(rows[i].bondmny);
-            	predeposit += parseFloat(rows[i].predeposit);
-            	xgmNum += parseFloat(rows[i].xgmNum);
-            	ybrNum += parseFloat(rows[i].ybrNum);
-            	rnum += parseFloat(rows[i].rnum);
-            	anum += parseFloat(rows[i].anum);
-            	rntlmny += parseFloat(rows[i].rntlmny);
-            	antlmny += parseFloat(rows[i].antlmny);
-            	uprice += parseFloat(rows[i].uprice);
-            	ndemny += parseFloat(rows[i].ndemny);
-            	nderebmny += parseFloat(rows[i].nderebmny);
-            	outmny += parseFloat(rows[i].outmny);
-            }
-            footerData['corpnm'] = '合计';
-            footerData['bondmny'] = bondmny;
-            footerData['predeposit'] = predeposit;
-            footerData['xgmNum'] = xgmNum;
-            footerData['ybrNum'] = ybrNum;
-            footerData['rnum'] = rnum;
-            footerData['anum'] = anum;
-            footerData['rntlmny'] = rntlmny;
-            footerData['antlmny'] = antlmny;
-            footerData['uprice'] = uprice;
-            footerData['ndemny'] = ndemny;
-            footerData['nderebmny'] = nderebmny;
-            footerData['outmny'] = outmny;
-            var fs=new Array(1);
-            fs[0] = footerData;
-            $('#grid').datagrid('reloadFooter',fs);
+//			mergeCell(data,this);
+			setFooter();
 		}
 	});
 }
@@ -166,18 +125,4 @@ function quickfiltet(){
             } 
          }
    });
-}
-
-/**
- * 导出
- */
-function doExport(){
-	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
-		return;
-	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');
-	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',{'strlist':JSON.stringify(datarows),'type':1,'qj':qj}, true, true);
 }

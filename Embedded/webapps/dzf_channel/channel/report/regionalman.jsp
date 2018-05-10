@@ -32,7 +32,7 @@
 							<input style="height: 28px; width: 280px" class="easyui-textbox" id="filter_value" prompt="录入加盟商名称关键字回车可过滤" />
 					</div>
 					<div class="right">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport()">导出</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport(2)">导出</a>
 					</div>
 				</div>
 			</div>

@@ -207,3 +207,88 @@ function initManager(queryData){
 		}
 	});
 }
+
+/**
+ * 合计行
+ */
+function setFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var bondmny = 0;	
+    var predeposit = 0;	
+    var xgmNum = 0;	
+    var ybrNum = 0;	
+    var rnum = 0;	
+    var anum = 0;	
+    var rntlmny = 0;	
+    var antlmny = 0;
+    var uprice= 0;
+    var ndemny = 0;	
+    var nderebmny = 0;	
+    var outmny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	bondmny += parseFloat(rows[i].bondmny);
+    	predeposit += parseFloat(rows[i].predeposit);
+    	xgmNum += parseFloat(rows[i].xgmNum);
+    	ybrNum += parseFloat(rows[i].ybrNum);
+    	rnum += parseFloat(rows[i].rnum);
+    	anum += parseFloat(rows[i].anum);
+    	rntlmny += parseFloat(rows[i].rntlmny);
+    	antlmny += parseFloat(rows[i].antlmny);
+    	uprice += parseFloat(rows[i].uprice);
+    	ndemny += parseFloat(rows[i].ndemny);
+    	nderebmny += parseFloat(rows[i].nderebmny);
+    	outmny += parseFloat(rows[i].outmny);
+    }
+    footerData['corpnm'] = '合计';
+    footerData['bondmny'] = bondmny;
+    footerData['predeposit'] = predeposit;
+    footerData['xgmNum'] = xgmNum;
+    footerData['ybrNum'] = ybrNum;
+    footerData['rnum'] = rnum;
+    footerData['anum'] = anum;
+    footerData['rntlmny'] = rntlmny;
+    footerData['antlmny'] = antlmny;
+    footerData['uprice'] = uprice;
+    footerData['ndemny'] = ndemny;
+    footerData['nderebmny'] = nderebmny;
+    footerData['outmny'] = outmny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
+/**
+ * 合并单元格
+ * @returns
+ */
+function mergeCell(data,is){
+	var mark=1;                                              
+　　　for (var i=1; i <data.rows.length; i++) {    
+　　　　　　if (data.rows[i]['provname'] == data.rows[i-1]['provname']) {  
+　　　　　　　　mark += 1;                                            
+　　　　　　　　$(is).datagrid('mergeCells',{ 
+　　　　　　　　　　index: i+1-mark,                 
+　　　　　　　　　　field: 'uprice',              
+　　　　　　　　　　rowspan:mark                 
+　　　　　　　　}); 
+　　　　　　}else{
+　　　　　　　　mark=1;                                
+　　　　　　}
+　	}
+}
+
+/**
+ * 导出
+ */
+function doExport(type){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+//	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');,'qj':qj
+	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',
+			{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'type':type}, true, true);
+}

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.ChnPayBalanceAction;
-import com.dzf.action.channel.expfield.ManagerExcelField;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.Grid;
@@ -29,12 +28,10 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
-import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IManagerService;
+import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.ExportUtil;
 import com.dzf.service.pub.report.PrintUtil;
 import com.itextpdf.text.DocumentException;
@@ -105,35 +102,75 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		String qj = getRequest().getParameter("qj");
 		if(StringUtil.isEmpty(strlist)){
 			throw new BusinessException("导出数据不能为空!");
-		}	
+		}
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new ManagerVO());
-		ManagerVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ManagerVO[].class, JSONConvtoJAVA.getParserConfig());
-		HttpServletResponse response = getResponse();
-		Excelexport2003<ManagerVO> ex = new Excelexport2003<>();
-		ManagerExcelField fields = new ManagerExcelField(type);
-		fields.setVos(expVOs);
-		fields.setQj(qj);
+		String columns =getRequest().getParameter("columns");
+		JSONArray headlist = (JSONArray) JSON.parseArray(columns);
+		List<String> heads = new ArrayList<String>();
+		List<String> heads1 = new ArrayList<String>();
+		List<String> fieldslist = new ArrayList<String>();
+		Map<String, String> name = null;
+		List<String> fieldlist = new ArrayList<String>();
+		int num=8;
+		String title="省数据分析";
+		if(type==3){
+			num=10;
+			title="渠道总数据分析";
+			fieldlist.add("aname");
+			fieldlist.add("uname");
+		}else if(type==2){
+			title="大区数据分析";
+		}
+		fieldlist.add("provname");
+		fieldlist.add("cuname");
+		fieldlist.add("corpnm");
+		fieldlist.add("xgmNum");
+		fieldlist.add("ybrNum");
+		fieldlist.add("ybrNum");
+		fieldlist.add("ybrNum");
+		for (int i = 0 ; i< headlist.size(); i ++) {
+			 name=(Map<String, String>) headlist.get(i);
+			 if(i==num){
+				 fieldslist.add("rnum");
+				 fieldslist.add("anum");
+				 heads.add("续费");
+				 heads.add("新增");
+			 }else if(i==num+1){
+				 fieldslist.add("rntlmny");
+				 fieldslist.add("antlmny");
+				 heads.add("续费");
+				 heads.add("新增");
+			 }else{
+				 heads.add(name.get("title"));
+				 fieldslist.add(name.get("field"));
+			 }
+		}
+		heads1.add("提单量");
+		heads1.add("合同代账费");
+		ExportExcel<ManagerVO> ex =new ExportExcel();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
+			HttpServletResponse response = getResponse();
 			response.reset();
-			// 设置response的Header
 			String date = DateUtils.getDate(new Date());
-			response.addHeader("Content-Disposition", "attachment;filename="+ new String(date+".xls"));
+			response.addHeader("Content-Disposition", "attachment;filename="
+					+ new String(date+".xls"));
 			servletOutputStream = response.getOutputStream();
-			 toClient = new BufferedOutputStream(servletOutputStream);
-			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			ex.exportExcel(fields, toClient);
-		} catch (Exception e) {
-			log.error("导出失败",e);
-		}  finally {
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("application/vnd.ms-excel;charset=gb2312");
+			byte[] length = ex.exportManExcel(title,heads,heads1,fieldslist ,exparray,toClient,"",fieldlist,num);
+			String srt2=new String(length,"UTF-8");
+			response.addHeader("Content-Length", srt2);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} finally {
 			if(toClient != null){
 				try {
 					toClient.flush();
 					toClient.close();
 				} catch (IOException e) {
-					log.error("导出失败",e);
+					log.error(e);
 				}
 			}
 			if(servletOutputStream != null){
@@ -141,7 +178,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 					servletOutputStream.flush();
 					servletOutputStream.close();
 				} catch (IOException e) {
-					log.error("导出失败",e);
+					log.error(e);
 				}
 			}
 		}

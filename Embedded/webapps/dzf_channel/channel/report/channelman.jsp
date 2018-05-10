@@ -27,7 +27,7 @@
 						</div>
 					</div>
 					<div class="right">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport()">导出</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport(1)">导出</a>
 					</div>
 				</div>
 			</div>
