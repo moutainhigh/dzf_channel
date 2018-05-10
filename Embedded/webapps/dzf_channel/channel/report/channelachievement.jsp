@@ -1,5 +1,6 @@
 <%@page language="java" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
+<%@page import="com.dzf.pub.DzfUtil"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -23,20 +24,63 @@
 				<div class="time_col"> 
 					<label style="text-align:right;width:80px;">维度：</label> 
 					<select class="easyui-combobox" data-options="editable:false,required:true,panelHeight:'auto'" 
-						style="width:80px; height: 28px;" id="qrytype" name="qrytype">
-						<option value="1">月度</option>
+						style="width:70px; height: 28px;" id="qrytype" name="qrytype">
+						<option value="1" selected>月度</option>
 						<option value="2">季度</option>
-						<option value="3">半年度</option>
-						<option value="4">年度</option>
+						<option value="3">年度</option>
 					</select> 
 					<label style="text-align: right;">期间：</label> 
-					<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
-					<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
-					-
-					<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
-					<input name="enddate" type="text" id="enddate" class="easyui-datebox" data-options="width:110,height:28" />
-				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>查询</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>清除</a>
+					
+					<!-- 月度查询条件 begin -->
+					<div id = "month" style="display:inline">
+						<input id="bperiod" name="bperiod" type="text"  class="easyui-datebox" 
+							data-options="width:100,height:28" /> -
+						<input id="eperiod" name="eperiod" type="text" class="easyui-datebox" 
+							data-options="width:100,height:28" /> 
+					</div>
+					<!-- 月度查询条件 begin -->
+					<!-- 季度查询条件 begin -->
+					<div id = "quarter" style="display:inline">
+						<select id="byear" name="byear" class="easyui-combobox" data-options="editable:false"  
+							style="width:70px;height:28px;">
+							<% DzfUtil.WriteYearOption(out);%>
+						</select> 
+						<select id="bjd" name="bjd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
+							style="width:100px;height:28px;text-align:left">
+							<option value="1">第一季度</option>
+							<option value="2">第二季度</option>
+							<option value="3">第三季度</option>
+							<option value="4">第四季度</option>	
+						</select> - 
+						<select id="eyear" name="eyear" class="easyui-combobox" data-options="editable:false"  
+							style="width:70px;height:28px;">
+							<% DzfUtil.WriteYearOption(out);%>
+						</select> 
+						<select id="ejd" name="ejd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
+							style="width:100px;height:28px;text-align:left">
+							<option value="1">第一季度</option>
+							<option value="2">第二季度</option>
+							<option value="3">第三季度</option>
+							<option value="4">第四季度</option>	
+						</select>	
+					</div>
+					<!-- 季度查询条件 end -->
+					<!-- 年度查询条件 begin -->
+					<div id = "qyear" style="display:inline">
+						<select id="bqyear" name="bqyear" class="easyui-combobox" data-options="editable:false"  
+								style="width:70px;height:28px;">
+							<% DzfUtil.WriteYearOption(out);%>
+						</select> - 
+						<select id="eqyear" name="eqyear" class="easyui-combobox" data-options="editable:false"  
+								style="width:70px;height:28px;">
+							<% DzfUtil.WriteYearOption(out);%>
+						</select> 
+					</div>
+					<!-- 年度查询条件 end -->
+					<div style="margin-left:20px;display:inline">
+					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>查询</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick=''>清除</a>
+					</div>
 					<div style="float: right;">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">刷新</a>
 					</div>
@@ -51,11 +95,10 @@
 		       	<div class="time_col"> 
 					<label style="text-align:right;width: 80px;">维度：</label> 
 					<select class="easyui-combobox" data-options="editable:false,required:true,panelHeight:'auto'" 
-						style="width:80px; height: 28px;" >
+						style="width:80px; height: 28px;" id="tqrytype" name="tqrytype">
 						<option value="1">月度</option>
 						<option value="2">季度</option>
-						<option value="3">半年度</option>
-						<option value="4">年度</option>
+						<option value="3">年度</option>
 					</select> 
 					<label style="text-align: right;">期间：</label> 
 					<input name="begindate" type="text" id="begindate" class="easyui-datebox" data-options="width:110,height:28" /> 
@@ -76,11 +119,9 @@
 					padding-top:4px;font-size: 18px;font-weight: bold;">业绩同比(%)</div>
 					<div style="position:relative;padding-right:20px;padding-top:4px;">
 						<select class="easyui-combobox" data-options="editable:false,required:true,panelHeight:'auto'"
-							style="width:80px; height:28px; text-align:left" id="tqrytype" name="tqrytype">
-							<option value="1">月度</option>
-							<option value="2">季度</option>
-							<option value="3">半年度</option>
-							<option value="4">年度</option>
+							style="width:100px; height:28px; text-align:left" id="tqrytype" name="tqrytype">
+							<option value="1">扣款金额</option>
+							<option value="2">合同金额</option>
 						</select>
 					</div>
 			</div>

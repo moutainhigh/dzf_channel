@@ -1,9 +1,46 @@
 var contextPath = DZF.contextPath;
 
 $(function() {
+	initQry();
 	initLineChart();
 	initBarChart();
+	initListen();
+
 });
+
+/**
+ * 初始化
+ */
+function initQry(){
+	initPeriod("#bperiod");
+	initPeriod("#eperiod");
+}
+
+/**
+ * 监听事件初始化
+ */
+function initListen(){
+	$("#month").show();
+	$("#quarter").hide();
+	$("#qyear").hide();
+	$("#qrytype").combobox({
+		onChange : function(n, o) {
+			if(o == "" || o == null){
+				return;
+			}
+			$("#month").hide();
+			$("#quarter").hide();
+			$("#qyear").hide();
+			if(n == 1){
+				$("#month").show();
+			}else if(n == 2){
+				$("#quarter").show();
+			}else if(n == 3){
+				$("#qyear").show();
+			}
+		}
+	});
+}
 
 /**
  * 线状图初始化
