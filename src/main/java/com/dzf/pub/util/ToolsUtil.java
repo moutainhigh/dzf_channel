@@ -110,7 +110,7 @@ public class ToolsUtil {
 	}
 	
 	/**
-	 * 整数相jian
+	 * 整数相减
 	 * @param num1
 	 * @param num2
 	 * @return

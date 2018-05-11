@@ -33,6 +33,7 @@ public class AchievementAction extends BaseAction<AchievementVO> {
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			paramvo.setCuserid(getLoginUserid());//登陆人员id
 			AchievementVO linevo = achieveser.queryLine(paramvo);
 			json.setRows(linevo);
 			json.setSuccess(true);
@@ -51,6 +52,7 @@ public class AchievementAction extends BaseAction<AchievementVO> {
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+			paramvo.setCuserid(getLoginUserid());//登陆人员id
 			AchievementVO linevo = achieveser.queryChart(paramvo);
 			json.setRows(linevo);
 			json.setSuccess(true);
