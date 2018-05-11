@@ -87,7 +87,7 @@
 						    	<% DzfUtil.WriteYearOption(out);%>
 							</select>
 							<select id="season" name="season" class="easyui-combobox"  
-								data-options="required:true,editable:false" style="width:94px;height:27px;">
+								data-options="required:true,editable:false,panelHeight:'auto'" style="width:94px;height:27px;">
 			         			<option value="1">第一季度</option>
 								<option value="2">第二季度</option>
 								<option value="3">第三季度</option>
