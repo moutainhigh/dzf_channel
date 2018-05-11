@@ -1,6 +1,30 @@
 <%@page language="java" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@page import="com.dzf.pub.DzfUtil"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%
+	Calendar e = Calendar.getInstance();
+	String eym = new SimpleDateFormat("yyyy-MM").format(e.getTime());//当前年-月
+	String year = new SimpleDateFormat("yyyy").format(e.getTime());//当前年
+	String month = new SimpleDateFormat("MM").format(e.getTime());//当前月
+	
+	Integer imonth = Integer.parseInt(month);
+	Integer jd = 1;
+	if(1 <= imonth && imonth <= 3){
+		jd = 1;
+	}else if(4 <= imonth && imonth <= 6){
+		jd = 2;
+	}else if(7 <= imonth && imonth <= 9){
+		jd = 3;
+	}else if(10 <= imonth && imonth <= 12){
+		jd = 4;
+	}
+
+	e.add(Calendar.MONTH, -3);
+	String bym = new SimpleDateFormat("yyyy-MM").format(e.getTime());//当前日期（向前退3个月）年-月
+%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -16,9 +40,17 @@
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/channelachievement.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/echarts.common.min.js" ></script>
+<style type="text/css">
+.panel-body {
+	overflow: auto
+}
+</style>
 </head>
 <body>
 	<div class="wrapper" style="overflow:auto;height:100%;">
+		<input type="hidden" value="<%=year%>" id="year" >
+		<input type="hidden" value="<%=month%>" id="mth" >
+		<input type="hidden" value="<%=jd%>" id="jd" >
 		<div style="margin-bottom:20px;border:1px solid #ccc;background:#FFF">
 			<div class="sel_time">
 				<div class="time_col"> 
@@ -34,9 +66,9 @@
 					<!-- 月度查询条件 begin -->
 					<div id = "month" style="display:inline">
 						<input id="bperiod" name="bperiod" type="text"  class="easyui-datebox" 
-							data-options="width:100,height:28" /> -
+							data-options="editable:false" style="width:100px;height:28px;" value=<%=bym %> /> -
 						<input id="eperiod" name="eperiod" type="text" class="easyui-datebox" 
-							data-options="width:100,height:28" /> 
+							data-options="editable:false" style="width:100px;height:28px;" value=<%=eym %>/> 
 					</div>
 					<!-- 月度查询条件 begin -->
 					<!-- 季度查询条件 begin -->

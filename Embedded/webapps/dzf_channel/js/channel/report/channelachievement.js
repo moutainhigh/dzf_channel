@@ -14,6 +14,28 @@ $(function() {
 function initQry(){
 	initPeriod("#bperiod");
 	initPeriod("#eperiod");
+	//柱状图 月度查询条件初始化
+	$('#tmyear').combobox('setValue',$('#year').val());
+	$('#tbmonth').combobox('setValue',$('#mth').val());
+	$('#temonth').combobox('setValue',$('#mth').val());
+	
+	//线状图 季度查询条件初始化
+	$('#byear').combobox('setValue',$('#year').val());
+	$('#eyear').combobox('setValue',$('#year').val());
+	$('#bjd').combobox('setValue',$('#jd').val());
+	$('#ejd').combobox('setValue',$('#jd').val());
+	
+	//柱状图 季度查询条件初始化
+	$('#tbyear').combobox('setValue',$('#year').val());
+	$('#tbjd').combobox('setValue',$('#jd').val());
+	$('#tejd').combobox('setValue',$('#jd').val());
+	
+	//线状图 年度查询条件初始化
+	$('#bqyear').combobox('setValue',$('#year').val());
+	$('#eqyear').combobox('setValue',$('#year').val());
+	
+	//柱状图 年度查询条件初始化
+	$('#tbqyear').combobox('setValue',$('#year').val());
 }
 
 /**
