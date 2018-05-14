@@ -136,64 +136,62 @@ function lineQry(){
 function initLineChart(row){
 	// 基于准备好的dom，初始化echarts实例
 	var myChart = echarts.init(document.getElementById('main'));
-	var option = {
-		    color: ['#ed7d31','#5b9bd5'],
+	var	option = {
+			color: ['#5b9bd5', '#ed7d31'],
 		    title: {
-		        text: '业绩环比(%)',
-		        // subtext: '副标题'
+		    	   text: '业绩环比(%)'
+		       /* subtext: '纯属虚构'*/
 		    },
 		    tooltip: {
 		        trigger: 'axis'
 		    },
 		    legend: {
-		        data:['合同金额增长率','扣款金额增长率',]
+		    	  data: ['扣款金额增长率', '合同金额增长率'],
+		    	  right: '200',
 		    },
+		
 		    toolbox: {
 		        show: true,
 		        feature: {
+		            dataZoom: {
+		                yAxisIndex: 'none'
+		            },
+		           dataView: {readOnly: false},
+		           magicType: {type: ['line', 'bar']},
+		            restore: {},
 		            saveAsImage: {}
 		        }
 		    },
 		    xAxis:  {
 		        type: 'category',
 		        boundaryGap: false,
-//		        data: ['周一','周二','周三','周四','周五','周六','周日']
-		        data: row.sdate,
+		        data: ['2018-01','2018-02','2018-03','2018-04','2018-05','2018-06']
 		    },
 		    yAxis: {
 		        type: 'value',
-//		        axisLabel: {
-//		            formatter: '{value} %'
-//		        }
+		        axisLabel: {
+		            formatter: '{value} '
+		        }
 		    },
 		    series: [
 		        {
-		            name:'合同金额增长率',
+		        	 name: '扣款金额增长率',
 		            type:'line',
-//		            data:[11, 11, 15, 13, 12, 13, 10],
-		            data: row.fir,
-		            markPoint: {
-//		                data: [
-//		                    {type: 'max', name: '最大值'},
-//		                    {type: 'min', name: '最小值'}
-//		                ]
-		            },
+		            data:[11, 11, 15, 13, 12, 13],
+		       
+		         
 		        },
 		        {
-		            name:'扣款金额增长率',
+		        	  name: '合同金额增长率',
 		            type:'line',
-//		            data:[1, -2, 2, 5, 3, 2, 0],
-		            data: row.sec,
-		            markPoint: {
-		                data: [
-		                    // {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-//		                    {type: 'max', name: '最大值'},
-//		                    {type: 'min', name: '最小值'}
-		                ]
-		            },
+		            data:[11, 11, 2, 5, 3, 2],
+		        
+		          
 		        }
 		    ]
 		};
+	
+	
 	// 使用刚指定的配置项和数据显示图表。
 	myChart.setOption(option);
 }
