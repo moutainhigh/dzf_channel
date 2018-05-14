@@ -84,9 +84,10 @@ public class AchievementServiceImpl implements IAchievementService {
 			}
 			for(ContQryVO fvo : flist){
 				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
-				jemap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNaccountmny()));
+				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 			}
 			DZFDouble submny = DZFDouble.ZERO_DBL;
+			//如果当月金额为0，则增长率为0，如果当月金额不为0，且上月金额为0，则增长率为100
 			for(int i = 0; i < showdate.size(); i++){
 				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
 					first.add(DZFDouble.ZERO_DBL);
@@ -94,6 +95,9 @@ public class AchievementServiceImpl implements IAchievementService {
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(kkmap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 							first.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preperiod));
+							first.add(submny.div(kkmap.get(preperiod)).div(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -101,7 +105,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(kkmap.get(showdate.get(i-1))).multiply(100));
+							first.add(submny.div(kkmap.get(showdate.get(i-1))).div(100));
 						}
 					}
 				}
@@ -112,6 +116,9 @@ public class AchievementServiceImpl implements IAchievementService {
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(jemap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 							second.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preperiod));
+							second.add(submny.div(jemap.get(preperiod)).div(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -119,7 +126,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(jemap.get(showdate.get(i-1))).multiply(100));
+							second.add(submny.div(jemap.get(showdate.get(i-1))).div(100));
 						}
 					}
 				}
@@ -165,7 +172,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		if(StringUtil.isEmpty(qrysql)){
+		if(!StringUtil.isEmpty(qrysql)){
 			sql.append(" AND ").append(qrysql);
 		}
 		sql.append(" GROUP BY SUBSTR(t.deductdata, 1, 7) \n");
