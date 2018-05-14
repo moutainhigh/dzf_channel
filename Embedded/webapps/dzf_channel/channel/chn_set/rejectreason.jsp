@@ -17,7 +17,7 @@
 				
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="reloadData()">刷新</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="refBtn" onclick="reloadData()">刷新</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="add()">新增</a>
 				 </div> 
 			</div>
