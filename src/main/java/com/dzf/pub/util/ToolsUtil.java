@@ -42,6 +42,32 @@ public class ToolsUtil {
 	}
 	
 	/**
+	 * 获取两个期间的期间数
+	 * @param bperiod
+	 * @param eperiod
+	 * @return
+	 */
+	public static List<String> getPeriodsBp(String bperiod, String eperiod) {
+		DZFDate begindate = new DZFDate(bperiod+"-01");
+		DZFDate enddate = new DZFDate(eperiod+"-01");
+		List<String> vec_periods = new ArrayList<String>();
+		int nb = begindate.getYear() * 12 + begindate.getMonth();
+		int ne = enddate.getYear() * 12 + enddate.getMonth();
+		int year = 0;
+		int month = 0;
+		for (int i = nb; i <= ne; i++) {
+			month = i % 12;
+			year = i / 12;
+			if (month == 0) {
+				month = 12;
+				year -= 1;
+			}
+			vec_periods.add(year + "-" + (month < 10 ? "0" + month : month));
+		}
+		return vec_periods;
+	}
+	
+	/**
 	 * 获取两个日期之间相差的月数
 	 * @param begindate
 	 * @param enddate

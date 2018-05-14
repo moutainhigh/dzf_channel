@@ -99,9 +99,40 @@ function initChartListen(){
 }
 
 /**
+ * 线状图查询
+ */
+function lineQry(){
+	var qrytype = $('#qrytype').combobox('getValue');
+	var bperiod = $('#bperiod').combobox('getValue');
+	var eperiod = $('#eperiod').combobox('getValue');
+	$.ajax({
+		type : 'POST',
+		url : DZF.contextPath + '/report/achievementrep!queryLine.action',
+		dataType : "json",
+		data : {
+			qtype : qrytype,
+			bperiod : bperiod,
+			eperiod : eperiod,
+		},
+		async : false,
+		success : function(result){
+			if(result.success){
+				var row = result.rows;
+				initLineChart(row);
+			}else{
+				Public.tips({
+					content : result.msg,
+					type : 2,
+				});
+			}
+		}
+	});
+}
+
+/**
  * 线状图初始化
  */
-function initLineChart(){
+function initLineChart(row){
 	// 基于准备好的dom，初始化echarts实例
 	var myChart = echarts.init(document.getElementById('main'));
 	var option = {
@@ -130,7 +161,8 @@ function initLineChart(){
 	    xAxis: {
 	        type: 'category',
 	        boundaryGap: false,
-	        data: ['2018-01', '2018-02季度', '2018-03', '2018-04', '2018-05', '2018-06']
+//	        data: ['2018-01', '2018-02季度', '2018-03', '2018-04', '2018-05', '2018-06'],
+	        data: row.sdate,
 	    },
 	    yAxis: {
 	        type: 'value'
@@ -139,17 +171,26 @@ function initLineChart(){
 	        name: '扣款金额增长率',
 	        type: 'line',
 	        stack: '总量',
-	        data: [120.03, 132, 101, 134, 90, 230.63]
+//	        data: [120.03, 132, 101, 134, 90, 230.63],
+	        data: row.fir,
 	    },
 	    {
 	        name: '合同金额增长率',
 	        type: 'line',
 	        stack: '总量',
-	        data: [220, 182, 191, 234, 290, 330]
+//	        data: [220, 182, 191, 234, 290, 330],
+	        data: row.sec,
 	    }]
 	};
 	// 使用刚指定的配置项和数据显示图表。
 	myChart.setOption(option);
+}
+
+/**
+ * 柱状图查询
+ */
+function chartQry(){
+	
 }
 
 /**

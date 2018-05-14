@@ -1,13 +1,15 @@
 package com.dzf.action.channel.report;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.AchievementVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
-import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.service.channel.report.IAchievementService;
 
@@ -16,6 +18,9 @@ import com.dzf.service.channel.report.IAchievementService;
  * @author zy
  *
  */
+@ParentPackage("basePackage")
+@Namespace("/report")
+@Action(value = "achievementrep")
 public class AchievementAction extends BaseAction<AchievementVO> {
 
 	private static final long serialVersionUID = -1847049518952345198L;
