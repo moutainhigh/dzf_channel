@@ -58,6 +58,8 @@ function opermatter(val, row, index) {
 	return'';
 //	return '<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>'+
 //	'<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
+	return '<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>'
+	+' <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(' + index + ')">删除</a>';
 }
 
 /**
@@ -109,7 +111,7 @@ function save(){
 				if(isadd){
 					$('#grid').datagrid('appendRow',row);
 				}else{
-					$('#grid').datagrid('updateRow',{index: editIndex,row});
+					$('#grid').datagrid('updateRow',{index:editIndex,row});
 				}
 				isadd = false;
 			} else {
