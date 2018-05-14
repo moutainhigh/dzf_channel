@@ -55,8 +55,7 @@ function load(){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>'
-	+' <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
+	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a> <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
 }
 
 /**
