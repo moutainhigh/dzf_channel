@@ -55,9 +55,110 @@ public class AchievementServiceImpl implements IAchievementService {
 			return qryLineMonthData(paramvo, powmap);
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
 			return qryLineSeasonData(paramvo, powmap);
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//按照年度查询
+			return qryLineYearData(paramvo, powmap);
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 查询线状图-年度数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO qryLineYearData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		AchievementVO retvo = new AchievementVO();
+		List<DZFDouble> first = new ArrayList<DZFDouble>();
+		List<DZFDouble> second = new ArrayList<DZFDouble>();
+		Integer byear = Integer.parseInt(paramvo.getBeginperiod());
+		Integer eyear = Integer.parseInt(paramvo.getEndperiod());
+		if(byear - eyear > 0){
+			throw new BusinessException("开始年度不能大于结束年度");
+		}
+		List<String> showdate = new ArrayList<String>();
+		for(int i = byear; i <= eyear; i++){
+			showdate.add(String.valueOf(i));
+		}
+		if(showdate != null && showdate.size() > 0){
+			if(showdate.size() > 3){
+				throw new BusinessException("年度查询不能大于3年");
+			}
+		}else{
+			throw new BusinessException("年度查询条件不能为空");
+		}
+		List<String> qrylist = new ArrayList<String>();
+		qrylist.add(String.valueOf(byear-1));
+		qrylist.addAll(showdate);
+		if(qrylist != null && qrylist.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 4)", qrylist.toArray(new String[0]));
+			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 4)");//扣款金额
+			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 4)");//退款金额
+			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
+			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
+			for(ContQryVO zvo : zlist){
+				kkmap.put(zvo.getVperiod(), zvo.getNdedsummny());
+				jemap.put(zvo.getVperiod(), zvo.getNaccountmny());
+			}
+			for(ContQryVO fvo : flist){
+				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
+				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
+			}
+			DZFDouble submny = DZFDouble.ZERO_DBL;
+			String preyear = String.valueOf(byear - 1);
+			//如果当月金额为0，则增长率为0，如果当月金额不为0，且上月金额为0，则增长率为100
+			for(int i = 0; i < showdate.size(); i++){
+				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
+					first.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(i == 0){
+						if(CommonUtil.getDZFDouble(kkmap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
+							first.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preyear));
+							first.add(submny.div(kkmap.get(preyear)).div(100));
+						}
+					}else{
+						//(当月金额 - 上一月金额) / 上一月金额
+						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
+							first.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
+							first.add(submny.div(kkmap.get(showdate.get(i-1))).div(100));
+						}
+					}
+				}
+				
+				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
+					second.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(i == 0){
+						if(CommonUtil.getDZFDouble(jemap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
+							second.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preyear));
+							second.add(submny.div(jemap.get(preyear)).div(100));
+						}
+					}else{
+						//(当月金额 - 上一月金额) / 上一月金额
+						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
+							second.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
+							second.add(submny.div(jemap.get(showdate.get(i-1))).div(100));
+						}
+					}
+				}
+			}
+			retvo.setShowdate(showdate);
+			retvo.setFirst(first);
+			retvo.setSecond(second);
+		}else{
+			throw new BusinessException("年度查询条件不能为空");
+		}
+		return retvo;
 	}
 	
 	/**
@@ -71,14 +172,24 @@ public class AchievementServiceImpl implements IAchievementService {
 		AchievementVO retvo = new AchievementVO();
 		List<DZFDouble> first = new ArrayList<DZFDouble>();
 		List<DZFDouble> second = new ArrayList<DZFDouble>();
+		if(paramvo.getBeginperiod().compareTo(paramvo.getEndperiod()) > 0){
+			throw new BusinessException("开始季度不能大于结束季度");
+		}
 		List<String> showdate = ToolsUtil.getSeasonsBp(paramvo.getBeginperiod(), paramvo.getEndperiod());
+		if(showdate != null && showdate.size() > 0){
+			if(showdate.size() > 8){
+				throw new BusinessException("季度查询不能大于8季度");
+			}
+		}else{
+			throw new BusinessException("季度查询条件不能为空");
+		}
 		String strperiod = ToolsUtil.getPreNumsMonth(paramvo.getBeginperiod(), 3);
 		String preseason = ToolsUtil.getSeason(strperiod);
 		List<String> qrylist = ToolsUtil.getPeriodsBp(strperiod, paramvo.getEndperiod());
 		if(qrylist != null && qrylist.size() > 0){
 			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
-			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql);//扣款金额
-			List<ContQryVO> flist = qryNegativeData(powmap, qrysql);//退款金额
+			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
+			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
 			for(ContQryVO zvo : zlist){
@@ -154,15 +265,25 @@ public class AchievementServiceImpl implements IAchievementService {
 		AchievementVO retvo = new AchievementVO();
 		List<DZFDouble> first = new ArrayList<DZFDouble>();
 		List<DZFDouble> second = new ArrayList<DZFDouble>();
+		if(paramvo.getBeginperiod().compareTo(paramvo.getEndperiod()) > 0){
+			throw new BusinessException("开始月度不能大于结束季度");
+		}
 		List<String> showdate = ToolsUtil.getPeriodsBp(paramvo.getBeginperiod(), paramvo.getEndperiod());
+		if(showdate != null && showdate.size() > 0){
+			if(showdate.size() > 12){
+				throw new BusinessException("月度查询不能大于12个月");
+			}
+		}else{
+			throw new BusinessException("月度查询条件不能为空");
+		}
 		String preperiod = ToolsUtil.getPreviousMonth(paramvo.getBeginperiod());
 		List<String> qrylist = new ArrayList<String>();
 		qrylist.add(preperiod);
 		qrylist.addAll(showdate);
 		if(qrylist != null && qrylist.size() > 0){
 			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
-			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql);//扣款金额
-			List<ContQryVO> flist = qryNegativeData(powmap, qrysql);//退款金额
+			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
+			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
 			for(ContQryVO zvo : zlist){
@@ -235,10 +356,10 @@ public class AchievementServiceImpl implements IAchievementService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ContQryVO> qryPositiveData(Map<Integer, String> powmap, String qrysql) throws DZFWarpException {
+	private List<ContQryVO> qryPositiveData(Map<Integer, String> powmap, String qrysql, String qrtdate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUBSTR(t.deductdata, 1, 7) AS vperiod,  \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
 		sql.append("       SUM(nvl(t.ntotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
@@ -262,8 +383,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(!StringUtil.isEmpty(qrysql)){
 			sql.append(" AND ").append(qrysql);
 		}
-		sql.append(" GROUP BY SUBSTR(t.deductdata, 1, 7) \n");
-		sql.append(" ORDER BY SUBSTR(t.deductdata, 1, 7) \n");
+		sql.append(" GROUP BY ").append(qrtdate).append(" \n");
+		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}
@@ -276,10 +397,10 @@ public class AchievementServiceImpl implements IAchievementService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ContQryVO> qryNegativeData(Map<Integer, String> powmap, String qrysql) throws DZFWarpException {
+	private List<ContQryVO> qryNegativeData(Map<Integer, String> powmap, String qrysql, String qrtdate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUBSTR(t.dchangetime, 1, 7) AS vperiod,  \n") ;
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n") ;
 		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n") ; 
 		sql.append("       SUM(nvl(t.nsubtotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n") ; 
@@ -302,8 +423,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(StringUtil.isEmpty(qrysql)){
 			sql.append(" AND ").append(qrysql);
 		}
-		sql.append(" GROUP BY SUBSTR(t.dchangetime, 1, 7)  \n") ; 
-		sql.append(" ORDER BY SUBSTR(t.dchangetime, 1, 7) \n");
+		sql.append(" GROUP BY ").append(qrtdate).append("  \n") ; 
+		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}

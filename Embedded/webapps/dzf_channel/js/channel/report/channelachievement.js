@@ -115,7 +115,8 @@ function lineQry(){
 		bperiod = byear + "-" +$('#bjd').combobox('getValue');
 		eperiod = eyear + "-" +$('#ejd').combobox('getValue');
 	}else if(qrytype == 3){
-		
+		bperiod = $('#bqyear').combobox('getValue');
+		eperiod = $('#eqyear').combobox('getValue');
 	}
 	$.ajax({
 		type : 'POST',
