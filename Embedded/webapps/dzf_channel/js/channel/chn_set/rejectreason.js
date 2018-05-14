@@ -22,7 +22,7 @@ function load(){
 		singleSelect : false,
 		checkOnSelect : false,
 		idField : 'reid',
-		frozenColumns :[[ /*{ field : 'ck', checkbox : true },*/
+		frozenColumns :[[ 
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ {
@@ -55,7 +55,8 @@ function load(){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a> <a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
+	return '<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onEdit(' + index + ')">修改</a>'+
+	'<a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="onDelete(this)">删除</a>';
 }
 
 /**
