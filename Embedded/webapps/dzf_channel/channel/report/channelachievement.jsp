@@ -138,12 +138,13 @@
 					</select> 
 					<label style="text-align: right;">期间：</label> 
 					
+					<select id="tyear" name="tyear" class="easyui-combobox" data-options="editable:false"  
+						style="width:70px;height:28px;">
+						<% DzfUtil.WriteYearOption(out);%>
+					</select>
+					
 					<!-- 月度查询条件 begin -->
 					<div id = "tmonth" style="display:inline">
-						<select id="tmyear" name="tmyear" class="easyui-combobox" data-options="editable:false"  
-							style="width:70px;height:28px;">
-							<% DzfUtil.WriteYearOption(out);%>
-						</select>
 						<select id="tbmonth" name="tbmonth" class="easyui-combobox"  data-options="editable:false" 
 							style="width:50px;height:27px;">
 							<% DzfUtil.WriteMonthOption(out);%>
@@ -155,11 +156,7 @@
 					</div>
 					<!-- 月度查询条件 begin -->
 					<!-- 季度查询条件 begin -->
-					<div id = "tquarter" style="display:inline">
-						<select id="tbyear" name="tbyear" class="easyui-combobox" data-options="editable:false"  
-							style="width:70px;height:28px;">
-							<% DzfUtil.WriteYearOption(out);%>
-						</select> 
+					<div id = "tseason" style="display:inline">
 						<select id="tbjd" name="tbjd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
 							<option value="01">第一季度</option>
@@ -176,14 +173,6 @@
 						</select> 
 					</div>
 					<!-- 季度查询条件 end -->
-					<!-- 年度查询条件 begin -->
-					<div id = "tqyear" style="display:inline">
-						<select id="tbqyear" name="tbqyear" class="easyui-combobox" data-options="editable:false"  
-								style="width:70px;height:28px;">
-							<% DzfUtil.WriteYearOption(out);%>
-						</select> 
-					</div>
-					<!-- 年度查询条件 end -->
 					<div style="margin-left:20px;display:inline">
 					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick='chartQry()'>查询</a>
 					</div>

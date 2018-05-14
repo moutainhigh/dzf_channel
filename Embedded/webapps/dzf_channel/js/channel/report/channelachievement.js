@@ -2,9 +2,8 @@ var contextPath = DZF.contextPath;
 
 $(function() {
 	initQry();
-//	initLineChart();
-	lineQry();//线状图查询并初始化
-	initBarChart();
+	lineQry();//线状图初始化并查询数据
+	chartQry();//柱状图初始化并查询数据
 	initListen();
 
 });
@@ -16,7 +15,7 @@ function initQry(){
 	initPeriod("#bperiod");
 	initPeriod("#eperiod");
 	//柱状图 月度查询条件初始化
-	$('#tmyear').combobox('setValue',$('#year').val());
+	$('#tyear').combobox('setValue',$('#year').val());
 	$('#tbmonth').combobox('setValue',$('#mth').val());
 	$('#temonth').combobox('setValue',$('#mth').val());
 	
@@ -27,7 +26,6 @@ function initQry(){
 	$('#ejd').combobox('setValue',$('#ejdv').val());
 	
 	//柱状图 季度查询条件初始化
-	$('#tbyear').combobox('setValue',$('#year').val());
 	$('#tbjd').combobox('setValue',$('#bjdv').val());
 	$('#tejd').combobox('setValue',$('#ejdv').val());
 	
@@ -35,8 +33,6 @@ function initQry(){
 	$('#bqyear').combobox('setValue',$('#year').val());
 	$('#eqyear').combobox('setValue',$('#year').val());
 	
-	//柱状图 年度查询条件初始化
-	$('#tbqyear').combobox('setValue',$('#year').val());
 }
 
 /**
@@ -78,22 +74,18 @@ function initLineListen(){
  */
 function initChartListen(){
 	$("#tmonth").show();
-	$("#tquarter").hide();
-	$("#tqyear").hide();
+	$("#tseason").hide();
 	$("#tqrytype").combobox({
 		onChange : function(n, o) {
 			if(o == "" || o == null){
 				return;
 			}
 			$("#tmonth").hide();
-			$("#tquarter").hide();
-			$("#tqyear").hide();
+			$("#tseason").hide();
 			if(n == 1){
 				$("#tmonth").show();
 			}else if(n == 2){
-				$("#tquarter").show();
-			}else if(n == 3){
-				$("#tqyear").show();
+				$("#tseason").show();
 			}
 		}
 	});
@@ -202,13 +194,51 @@ function initLineChart(row){
  * 柱状图查询
  */
 function chartQry(){
-	
+	var qrytype = $('#tqrytype').combobox('getValue');
+	var bperiod = "";
+	var eperiod = "";
+	var year = "";
+	if(qrytype == 1){
+		year = $('#bperiod').combobox('getValue');
+		bperiod = $('#bperiod').combobox('getValue');
+		eperiod = $('#eperiod').combobox('getValue');
+	}else if(qrytype == 2){
+		var byear = $('#byear').combobox('getValue');
+		var eyear = $('#eyear').combobox('getValue');
+		bperiod = byear + "-" +$('#bjd').combobox('getValue');
+		eperiod = eyear + "-" +$('#ejd').combobox('getValue');
+	}else if(qrytype == 3){
+		bperiod = $('#bqyear').combobox('getValue');
+		eperiod = $('#eqyear').combobox('getValue');
+	}
+	$.ajax({
+		type : 'POST',
+		url : DZF.contextPath + '/report/achievementrep!queryChart.action',
+		dataType : "json",
+		data : {
+			qtype : qrytype,
+			bperiod : bperiod,
+			eperiod : eperiod,
+		},
+		async : false,
+		success : function(result){
+			if(result.success){
+				var row = result.rows;
+				initBarChart(row);
+			}else{
+				Public.tips({
+					content : result.msg,
+					type : 2,
+				});
+			}
+		}
+	});
 }
 
 /**
  * 柱状图初始化
  */
-function initBarChart(){
+function initBarChart(row){
 	var myChart = echarts.init(document.getElementById('man'));
 	var option = {
 	    color: ['#5b9bd5', '#ed7d31'],
@@ -237,6 +267,7 @@ function initBarChart(){
 	    xAxis: [{
 	        type: 'category',
 	        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
+//	        data: row.sdate,
 	    }],
 	    yAxis: [{
 	        type: 'value'
@@ -245,12 +276,14 @@ function initBarChart(){
 	        name: '往期增长率',
 	        type: 'bar',
 	        data: [320, 332, 301, 334, 390, 330]
+//	        data: row.fir,
 	    },
 	    {
 	        name: '本期增长率',
 	        type: 'bar',
 	        stack: '广告',
 	        data: [120, 132, 101, 134, 90, 230]
+//	        data: row.sec,
 	    }]
 	};
 	// 使用刚指定的配置项和数据显示图表。
