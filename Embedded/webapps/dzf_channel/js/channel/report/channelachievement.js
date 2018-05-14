@@ -197,19 +197,13 @@ function chartQry(){
 	var qrytype = $('#tqrytype').combobox('getValue');
 	var bperiod = "";
 	var eperiod = "";
-	var year = "";
+	var year = $('#tyear').combobox('getValue');
 	if(qrytype == 1){
-		year = $('#bperiod').combobox('getValue');
-		bperiod = $('#bperiod').combobox('getValue');
-		eperiod = $('#eperiod').combobox('getValue');
+		bperiod = year + "-" + $('#tbmonth').combobox('getValue');
+		eperiod = year + "-" + $('#temonth').combobox('getValue');
 	}else if(qrytype == 2){
-		var byear = $('#byear').combobox('getValue');
-		var eyear = $('#eyear').combobox('getValue');
-		bperiod = byear + "-" +$('#bjd').combobox('getValue');
-		eperiod = eyear + "-" +$('#ejd').combobox('getValue');
-	}else if(qrytype == 3){
-		bperiod = $('#bqyear').combobox('getValue');
-		eperiod = $('#eqyear').combobox('getValue');
+		bperiod = year + "-" + $('#tbjd').combobox('getValue');
+		eperiod = year + "-" + $('#tejd').combobox('getValue');
 	}
 	$.ajax({
 		type : 'POST',
@@ -219,6 +213,7 @@ function chartQry(){
 			qtype : qrytype,
 			bperiod : bperiod,
 			eperiod : eperiod,
+			year : year,
 		},
 		async : false,
 		success : function(result){

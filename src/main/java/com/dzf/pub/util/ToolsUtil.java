@@ -68,6 +68,38 @@ public class ToolsUtil {
 	}
 	
 	/**
+	 * 获取两个期间的季度数
+	 * @param bperiod
+	 * @param eperiod
+	 * @return
+	 */
+	public static List<String> getSeasonsBp(String bperiod, String eperiod) {
+		DZFDate begindate = new DZFDate(bperiod+"-01");
+		DZFDate enddate = new DZFDate(eperiod+"-01");
+		List<String> seasons = new ArrayList<String>();
+		int nb = begindate.getYear() * 12 + begindate.getMonth();
+		int ne = enddate.getYear() * 12 + enddate.getMonth();
+		int year = 0;
+		int month = 0;
+		String period = "";
+		String season = "";
+		for (int i = nb; i <= ne; i++) {
+			month = i % 12;
+			year = i / 12;
+			if (month == 0) {
+				month = 12;
+				year -= 1;
+			}
+			period = year + "-" + (month < 10 ? "0" + month : month);
+			season = getSeason(period);
+			if(!seasons.contains(season)){
+				seasons.add(season);
+			}
+		}
+		return seasons;
+	}
+	
+	/**
 	 * 获取两个日期之间相差的月数
 	 * @param begindate
 	 * @param enddate
@@ -209,17 +241,57 @@ public class ToolsUtil {
 	}
     
     /**
+     * 获取查询期间的上n个期间
+     * @param period
+     * @param num
+     * @return
+     * @throws DZFWarpException
+     */
+    public static String getPreNumsMonth(String period, Integer num) throws DZFWarpException {
+		Integer year = Integer.parseInt(period.substring(0, 4));
+		Integer month = Integer.parseInt(period.substring(5));
+		month = month - num;
+		Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
+		ca.set(year, month, 01);// 月份是从0开始的，所以11表示12月
+		ca.add(Calendar.MONTH, -1); // 月份减1
+		Date lastMonth = ca.getTime(); // 结果
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM");
+		return String.valueOf(sf.format(lastMonth));
+	}
+    
+    /**
      * 获取制定日期后几个月的日期
      * @param date
      * @param num
      * @return
      * @throws ParseException
      */
-    public static String getDateAfterNum(DZFDate date, Integer num) throws ParseException{
+    public static String getDateAfterNum(DZFDate date, Integer num) throws ParseException {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date.toDate());
 		c.add(Calendar.MONTH, num - 1);
     	return dateFormat.format(c.getTime());
     }
     
+    /**
+     * 获取月份所属季度
+     * @param period
+     * @return
+     * @throws DZFWarpException
+     */
+    public static String getSeason(String period) throws DZFWarpException {
+    	DZFDate date = new DZFDate(period+"-01");
+    	Integer year = date.getYear();
+    	Integer month = date.getMonth();
+    	if(month <= 3){
+    		return year+"-01";
+    	}else if(month <= 6){
+    		return year+"-02";
+    	}else if(month <= 9){
+    		return year+"-03";
+    	}else if(month <= 12){
+    		return year+"-04";
+    	}
+    	return "";
+    }
 }

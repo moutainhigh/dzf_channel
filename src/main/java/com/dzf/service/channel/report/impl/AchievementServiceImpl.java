@@ -431,6 +431,64 @@ public class AchievementServiceImpl implements IAchievementService {
 
 	@Override
 	public AchievementVO queryChart(QryParamVO paramvo) throws DZFWarpException {
+		Map<Integer, String> powmap = qryUserPower(paramvo);
+		if(powmap != null && !powmap.isEmpty() && !StringUtil.isEmpty(powmap.get(4))){
+			return null;
+		}
+		return queryChartDate(paramvo, powmap);
+	}
+	
+	/**
+	 * 查询柱状图数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO queryChartDate(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//按照月度查询
+			return qryChartMonthData(paramvo, powmap);
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
+			return qryChartSeasonData(paramvo, powmap);
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//按照年度查询
+			return qryChartYearData(paramvo, powmap);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 查询柱状图-年度数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO qryChartYearData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		
+		return null;
+	}
+	
+	/**
+	 * 查询柱状图-季度数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO qryChartSeasonData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		
+		return null;
+	}
+	
+	/**
+	 * 查询柱状图-月度数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO qryChartMonthData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
 		
 		return null;
 	}
