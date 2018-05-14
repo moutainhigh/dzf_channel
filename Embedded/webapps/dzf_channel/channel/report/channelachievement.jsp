@@ -22,7 +22,7 @@
 		jd = 4;
 	}
 
-	e.add(Calendar.MONTH, -3);
+	e.add(Calendar.MONTH, -2);
 	String bym = new SimpleDateFormat("yyyy-MM").format(e.getTime());//当前日期（向前退3个月）年-月
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

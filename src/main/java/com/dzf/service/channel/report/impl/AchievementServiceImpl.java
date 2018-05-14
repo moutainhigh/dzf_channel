@@ -144,7 +144,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	private List<ContQryVO> qryPositiveData(Map<Integer, String> powmap, String qrysql) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUBSTR(t.deductdata, 1, 7) AS period,  \n");
+		sql.append("SELECT SUBSTR(t.deductdata, 1, 7) AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
 		sql.append("       SUM(nvl(t.ntotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
@@ -185,7 +185,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	private List<ContQryVO> qryNegativeData(Map<Integer, String> powmap, String qrysql) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUBSTR(t.dchangetime, 1, 7) AS period,  \n") ;
+		sql.append("SELECT SUBSTR(t.dchangetime, 1, 7) AS vperiod,  \n") ;
 		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n") ; 
 		sql.append("       SUM(nvl(t.nsubtotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n") ; 
