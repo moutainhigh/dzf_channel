@@ -23,13 +23,13 @@ function initQry(){
 	//线状图 季度查询条件初始化
 	$('#byear').combobox('setValue',$('#year').val());
 	$('#eyear').combobox('setValue',$('#year').val());
-	$('#bjd').combobox('setValue',$('#jd').val());
-	$('#ejd').combobox('setValue',$('#jd').val());
+	$('#bjd').combobox('setValue',$('#bjdv').val());
+	$('#ejd').combobox('setValue',$('#ejdv').val());
 	
 	//柱状图 季度查询条件初始化
 	$('#tbyear').combobox('setValue',$('#year').val());
-	$('#tbjd').combobox('setValue',$('#jd').val());
-	$('#tejd').combobox('setValue',$('#jd').val());
+	$('#tbjd').combobox('setValue',$('#bjdv').val());
+	$('#tejd').combobox('setValue',$('#ejdv').val());
 	
 	//线状图 年度查询条件初始化
 	$('#bqyear').combobox('setValue',$('#year').val());
@@ -104,8 +104,19 @@ function initChartListen(){
  */
 function lineQry(){
 	var qrytype = $('#qrytype').combobox('getValue');
-	var bperiod = $('#bperiod').combobox('getValue');
-	var eperiod = $('#eperiod').combobox('getValue');
+	var bperiod = "";
+	var eperiod = "";
+	if(qrytype == 1){
+		bperiod = $('#bperiod').combobox('getValue');
+		eperiod = $('#eperiod').combobox('getValue');
+	}else if(qrytype == 2){
+		var byear = $('#byear').combobox('getValue');
+		var eyear = $('#eyear').combobox('getValue');
+		bperiod = byear + "-" +$('#bjd').combobox('getValue');
+		eperiod = eyear + "-" +$('#ejd').combobox('getValue');
+	}else if(qrytype == 3){
+		
+	}
 	$.ajax({
 		type : 'POST',
 		url : DZF.contextPath + '/report/achievementrep!queryLine.action',
@@ -136,36 +147,31 @@ function lineQry(){
 function initLineChart(row){
 	// 基于准备好的dom，初始化echarts实例
 	var myChart = echarts.init(document.getElementById('main'));
-	var	option = {
-			color: ['#5b9bd5', '#ed7d31'],
+	var option = {
+		    color: ['#5b9bd5', '#ed7d31'],
 		    title: {
-		    	   text: '业绩环比(%)'
-		       /* subtext: '纯属虚构'*/
+		        text: '业绩环比(%)'
+		        /* subtext: '副标题'*/
 		    },
 		    tooltip: {
 		        trigger: 'axis'
 		    },
 		    legend: {
-		    	  data: ['扣款金额增长率', '合同金额增长率'],
-		    	  right: '200',
+		        data: ['扣款金额增长率', '合同金额增长率'],
+		        right: '200',
 		    },
-		
+
 		    toolbox: {
 		        show: true,
 		        feature: {
-		            dataZoom: {
-		                yAxisIndex: 'none'
-		            },
-		           dataView: {readOnly: false},
-		           magicType: {type: ['line', 'bar']},
-		            restore: {},
 		            saveAsImage: {}
 		        }
 		    },
-		    xAxis:  {
+		    xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-		        data: ['2018-01','2018-02','2018-03','2018-04','2018-05','2018-06']
+//		        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
+		        data: row.sdate,
 		    },
 		    yAxis: {
 		        type: 'value',
@@ -173,24 +179,19 @@ function initLineChart(row){
 		            formatter: '{value} '
 		        }
 		    },
-		    series: [
-		        {
-		        	 name: '扣款金额增长率',
-		            type:'line',
-		            data:[11, 11, 15, 13, 12, 13],
-		       
-		         
-		        },
-		        {
-		        	  name: '合同金额增长率',
-		            type:'line',
-		            data:[11, 11, 2, 5, 3, 2],
-		        
-		          
-		        }
-		    ]
+		    series: [{
+		        name: '扣款金额增长率',
+		        type: 'line',
+//		        data: [11, 11, 15, 13, 12, 13],
+		        data: row.fir,
+		    },
+		    {
+		        name: '合同金额增长率',
+		        type: 'line',
+//		        data: [11, 11, 2, 5, 3, 2],
+		        data: row.sec,
+		    }]
 		};
-	
 	
 	// 使用刚指定的配置项和数据显示图表。
 	myChart.setOption(option);

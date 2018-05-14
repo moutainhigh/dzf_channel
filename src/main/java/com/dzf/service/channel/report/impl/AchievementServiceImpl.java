@@ -53,13 +53,100 @@ public class AchievementServiceImpl implements IAchievementService {
 	private AchievementVO queryLineDate(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//按照月度查询
 			return qryLineMonthData(paramvo, powmap);
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
+			return qryLineSeasonData(paramvo, powmap);
 		}
 		
 		return null;
 	}
 	
 	/**
-	 * 查询线状图-月数据
+	 * 查询线状图-季度数据
+	 * @param paramvo
+	 * @param powmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private AchievementVO qryLineSeasonData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		AchievementVO retvo = new AchievementVO();
+		List<DZFDouble> first = new ArrayList<DZFDouble>();
+		List<DZFDouble> second = new ArrayList<DZFDouble>();
+		List<String> showdate = ToolsUtil.getSeasonsBp(paramvo.getBeginperiod(), paramvo.getEndperiod());
+		String strperiod = ToolsUtil.getPreNumsMonth(paramvo.getBeginperiod(), 3);
+		String preseason = ToolsUtil.getSeason(strperiod);
+		List<String> qrylist = ToolsUtil.getPeriodsBp(strperiod, paramvo.getEndperiod());
+		if(qrylist != null && qrylist.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
+			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql);//扣款金额
+			List<ContQryVO> flist = qryNegativeData(powmap, qrysql);//退款金额
+			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
+			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
+			for(ContQryVO zvo : zlist){
+				kkmap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNdedsummny());
+				jemap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNaccountmny());
+			}
+			String season = "";
+			for(ContQryVO fvo : flist){
+				season = ToolsUtil.getSeason(fvo.getVperiod());
+				kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
+				jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+			}
+			DZFDouble submny = DZFDouble.ZERO_DBL;
+			//如果当季度金额为0，则增长率为0，如果当季度金额不为0，且上季度金额为0，则增长率为100
+			for(int i = 0; i < showdate.size(); i++){
+				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
+					first.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(i == 0){
+						if(CommonUtil.getDZFDouble(kkmap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
+							first.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preseason));
+							first.add(submny.div(kkmap.get(preseason)).div(100));
+						}
+					}else{
+						//(当季度金额 - 上一季度金额) / 上一季度金额
+						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
+							first.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
+							first.add(submny.div(kkmap.get(showdate.get(i-1))).div(100));
+						}
+					}
+				}
+				
+				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
+					second.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(i == 0){
+						if(CommonUtil.getDZFDouble(jemap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
+							second.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preseason));
+							second.add(submny.div(jemap.get(preseason)).div(100));
+						}
+					}else{
+						//(当月金额 - 上一月金额) / 上一月金额
+						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
+							second.add(new DZFDouble(100.00));
+						}else{
+							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
+							second.add(submny.div(jemap.get(showdate.get(i-1))).div(100));
+						}
+					}
+				}
+			}
+			retvo.setShowdate(showdate);
+			retvo.setFirst(first);
+			retvo.setSecond(second);
+		}else{
+			throw new BusinessException("季度查询条件不能为空");
+		}
+		return retvo;
+	}
+	
+	/**
+	 * 查询线状图-月度数据
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -141,7 +228,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	}
 	
 	/**
-	 * 查询正数据
+	 * 查询扣款数据
 	 * @param powmap
 	 * @param qrysql
 	 * @return
@@ -182,7 +269,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	}
 	
 	/**
-	 * 查询赋数据
+	 * 查询退款数据
 	 * @param powmap
 	 * @param qrylist
 	 * @return

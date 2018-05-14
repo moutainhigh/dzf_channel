@@ -11,15 +11,20 @@
 	String month = new SimpleDateFormat("MM").format(e.getTime());//当前月
 	
 	Integer imonth = Integer.parseInt(month);
-	Integer jd = 1;
-	if(1 <= imonth && imonth <= 3){
-		jd = 1;
-	}else if(4 <= imonth && imonth <= 6){
-		jd = 2;
-	}else if(7 <= imonth && imonth <= 9){
-		jd = 3;
-	}else if(10 <= imonth && imonth <= 12){
-		jd = 4;
+	String bjdv = "";
+	String ejdv = "";
+	if(imonth <= 3){
+		bjdv = "01";
+		ejdv = "03";
+	}else if(imonth <= 6){
+		bjdv = "04";
+		ejdv = "06";
+	}else if(imonth <= 9){
+		bjdv = "07";
+		ejdv = "09";
+	}else if(imonth <= 12){
+		bjdv = "10";
+		ejdv = "12";
 	}
 
 	e.add(Calendar.MONTH, -2);
@@ -50,7 +55,8 @@
 	<div class="wrapper" style="overflow:auto;height:100%;">
 		<input type="hidden" value="<%=year%>" id="year" >
 		<input type="hidden" value="<%=month%>" id="mth" >
-		<input type="hidden" value="<%=jd%>" id="jd" >
+		<input type="hidden" value="<%=bjdv%>" id="bjdv" >
+		<input type="hidden" value="<%=ejdv%>" id="ejdv" >
 		<div style="margin-bottom:20px;border:1px solid #ccc;background:#FFF">
 			<div class="sel_time">
 				<div class="time_col"> 
@@ -79,10 +85,10 @@
 						</select> 
 						<select id="bjd" name="bjd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
-							<option value="1">第一季度</option>
-							<option value="2">第二季度</option>
-							<option value="3">第三季度</option>
-							<option value="4">第四季度</option>	
+							<option value="01">第一季度</option>
+							<option value="04">第二季度</option>
+							<option value="07">第三季度</option>
+							<option value="10">第四季度</option>	
 						</select> - 
 						<select id="eyear" name="eyear" class="easyui-combobox" data-options="editable:false"  
 							style="width:70px;height:28px;">
@@ -90,10 +96,10 @@
 						</select> 
 						<select id="ejd" name="ejd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
-							<option value="1">第一季度</option>
-							<option value="2">第二季度</option>
-							<option value="3">第三季度</option>
-							<option value="4">第四季度</option>	
+							<option value="03">第一季度</option>
+							<option value="06">第二季度</option>
+							<option value="09">第三季度</option>
+							<option value="12">第四季度</option>	
 						</select>	
 					</div>
 					<!-- 季度查询条件 end -->
@@ -156,17 +162,17 @@
 						</select> 
 						<select id="tbjd" name="tbjd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
-							<option value="1">第一季度</option>
-							<option value="2">第二季度</option>
-							<option value="3">第三季度</option>
-							<option value="4">第四季度</option>	
+							<option value="01">第一季度</option>
+							<option value="04">第二季度</option>
+							<option value="07">第三季度</option>
+							<option value="10">第四季度</option>	
 						</select> -
 						<select id="tejd" name="tejd" class="easyui-combobox" data-options="editable:false,panelHeight:100" 
 							style="width:100px;height:28px;text-align:left">
-							<option value="1">第一季度</option>
-							<option value="2">第二季度</option>
-							<option value="3">第三季度</option>
-							<option value="4">第四季度</option>	
+							<option value="03">第一季度</option>
+							<option value="06">第二季度</option>
+							<option value="09">第三季度</option>
+							<option value="12">第四季度</option>	
 						</select> 
 					</div>
 					<!-- 季度查询条件 end -->
