@@ -42,7 +42,7 @@
 	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/channelachieve.js");%>
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/franchiseeachiev.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/echarts.common.min.js" ></script>
 <style type="text/css">

@@ -295,4 +295,18 @@ public class ToolsUtil {
     	}
     	return "";
     }
+    
+	/**
+	 * 获取查询期间的上几年的同一期间
+	 * @param period
+	 * @param nums
+	 * @return
+	 * @throws DZFWarpException
+	 */
+    public static String getPreNumsYear(String period, Integer nums) throws DZFWarpException {
+		Integer year = Integer.parseInt(period.substring(0, 4));
+		String month = period.substring(5);
+		Integer preyear = year - nums;
+		return preyear + "-" + month;
+	}
 }
