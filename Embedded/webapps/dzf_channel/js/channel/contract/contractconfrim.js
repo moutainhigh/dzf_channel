@@ -590,9 +590,17 @@ function load(){
 			width : '100',
 			title : '附件',
 			halign:'center',
+			align:'center',
 			field : 'contdoc',
 			formatter : formatDocLink
-		},  {
+		}, {
+			width : '100',
+			title : '未确定期限',
+			halign:'center',
+			align:'center',
+			field : 'isnconfirm',
+			formatter:isnformat,
+		}, {
 			width : '120',
 			title : '开始日期',
 			halign:'center',
@@ -982,6 +990,9 @@ function initdeductData(row){
                 	$('#rejereson').css('display','block');
                 	showRejectReason(row);
                 }
+                if(row.isnconfirm == "Y" || row.isnconfirm == "是"){
+                	$('#isnconfirm').prop('checked',true);
+                }
             }
         },
     });
@@ -1314,10 +1325,32 @@ function change(){
 	$('#changememo').textbox('setValue',null);
 	initChangeFileDoc(rows[0]);//初始化变更合同附件
 	initFileEvent();
-	initChangeListener()
-	document.getElementById("end").checked="true";
-	setChangeMny(1);
-	$("#changetype").val(1);
+	initChangeListener();
+	$("#end").prop({"disabled":false});
+	if(rows[0].isnconfirm == "Y" || rows[0].isnconfirm == "是"){
+		document.getElementById("nullify").checked="true";
+		$("#end").prop({"disabled":true});
+		$('#cisnconfirm').prop('checked',true);
+		setChangeMny(2);
+		
+		$("#addclass").attr("class", "decan");
+		$("#stperiod").datebox("readonly", true);
+		$("#remny").numberbox("readonly", true);
+		$("#nchtlmny").numberbox("readonly", true);
+		$("#nchsumny").numberbox("readonly", true);
+		$("#changetype").val(2);
+	}else{
+		document.getElementById("end").checked="true";
+		$('#cisnconfirm').prop('checked',false);
+		setChangeMny(1);
+		
+		$("#addclass").removeClass("decan");
+		$("#stperiod").datebox("readonly", false);
+		$("#remny").numberbox("readonly", false);
+		$("#nchtlmny").numberbox("readonly", false);
+		$("#nchsumny").numberbox("readonly", false);
+		$("#changetype").val(1);
+	}
 }
 
 

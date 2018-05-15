@@ -246,6 +246,16 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("canedit")
     private DZFBoolean iscanedit;//是否允许编辑
+    
+    private DZFBoolean isnconfirm;// 是否  未确定服务期限（Y是未确定）
+
+	public DZFBoolean getIsnconfirm() {
+		return isnconfirm;
+	}
+
+	public void setIsnconfirm(DZFBoolean isnconfirm) {
+		this.isnconfirm = isnconfirm;
+	}
 
 	public String getVconfreasonid() {
 		return vconfreasonid;

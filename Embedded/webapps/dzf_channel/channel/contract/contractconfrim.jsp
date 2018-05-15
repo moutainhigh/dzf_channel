@@ -329,6 +329,11 @@
 									 	style="width:70px; height: 28px;">
 								</div>
 							</div>
+							<div class="decan" style="width:24%;display:inline-block;">
+								<label for="isnconfirm" style="text-align:right;width:57%;">
+									<input type="checkbox" id="isnconfirm" name="isnconfirm" value="是" onclick="return false;">&nbsp;未确定服务期限
+								</label>
+							</div>
 						</div>
 						<!-- 附件信息begin -->
 						<div id ="fileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
@@ -581,13 +586,20 @@
 								<input id="srecycle" name="recycle" class="easyui-textbox" data-options="readonly:true" 
 									style="width: 56%; height: 28px; text-align:left;">
 							</div>
-							<div class="decan" style="width: 48%;display:inline-block;">
+							<div class="decan" style="width: 24%;display:inline-block;">
 								<div class="time_col">
 									<label style="width: 109px;text-align: right;">服务期限：</label> 
 									<input type="text" id="sbperiod" name="bperiod" class="easyui-textbox" data-options="readonly:true"
 										style="width:70px; height: 28px; " >-
 									<input type="text" id="seperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
 									 	style="width:70px; height: 28px;">
+								</div>
+							</div>
+							<div class="decan" style="width: 24%;display:inline-block;">
+								<div class="time_col">
+									<label for="cisnconfirm" style="text-align:right;width:57%;">
+										<input type="checkbox" id="cisnconfirm" name="isnconfirm" value="是" onclick="return false;">&nbsp;未确定服务期限
+									</label>
 								</div>
 							</div>
 						</div>

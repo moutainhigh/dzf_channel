@@ -17,6 +17,9 @@ public class ToolsUtil {
 	public ToolsUtil(){
 		
 	}
+	
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
 	/**
 	 * 获取两个日期之间的期间数
 	 * @param begindate
@@ -206,8 +209,6 @@ public class ToolsUtil {
   
         return map;  
     }
-    
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     
     /**
      * 获取月末日期
