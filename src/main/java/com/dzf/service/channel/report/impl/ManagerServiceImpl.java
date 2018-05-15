@@ -410,11 +410,11 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append("  and b.vprovince is not null ");
 			buf.append("  group by c.pk_corp,b.vprovince  order by b.vprovince)w group by w.vprovince");
 		}else{
-			buf.append(" and c.pk_corpk ");
+			buf.append(" and CONCAT(c.pk_corpk,c.pk_corp) ");
 			if(type==1){
 				buf.append(" not ");
 			}
-			buf.append("  in(select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9)  and substr(deductdata,1,7)<?)");
+			buf.append("  in(select CONCAT(pk_corpk,pk_corp) from cn_contract where nvl(dr,0)=0 and vstatus in(1,9)  and substr(deductdata,1,10)<?)");
 			buf.append("  and  ");
 			buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
 			buf.append("  group by c.pk_corp");
@@ -441,7 +441,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sp.addParam(qvo.getDbegindate());
 		sp.addParam(qvo.getDenddate());
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
-		sql.append(" select decode(patchstatus,2,0,1) as num,pk_confrim as pk_corp ,deductdata as denddate, ");
+		sql.append(" select decode(patchstatus,2,0,1) as anum,pk_confrim as pk_corp ,deductdata as denddate, ");
 		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as ntotalmny, " );   
 		sql.append(" nvl(ndeductmny,0) as ndeductmny,nvl(ndedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vstatus=1 or vstatus=9 or vstatus=10) and " );
@@ -449,7 +449,7 @@ public class ManagerServiceImpl implements IManagerService {
 		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 	    sql = new StringBuffer();
-	    sql.append(" select 0 as num,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
+	    sql.append(" select 0 as anum,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
 		sql.append(" nvl(nsubtotalmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and vstatus=9  and" );
@@ -457,7 +457,7 @@ public class ManagerServiceImpl implements IManagerService {
 		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 		sql = new StringBuffer();
-	    sql.append(" select -1 as num,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
+	    sql.append(" select -1 as anum,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
 		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0  and vstatus=10 and" );

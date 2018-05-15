@@ -67,7 +67,7 @@ function initDetailGrid(){
 			width : '100',
 			title : '提单量',
             halign:'center',
-			field : 'num',
+			field : 'anum',
 		},{
 			width : '120',
 			title : '合同代账费',
@@ -99,18 +99,18 @@ function initDetailGrid(){
 		onLoadSuccess : function(data) {
 			var rows = $('#gridh').datagrid('getRows');
 			var footerData = new Object();
-            var num = parseFloat(0);	
+            var anum = parseFloat(0);	
             var ntlmny = parseFloat(0);	
             var ndemny = parseFloat(0);	
             var nderebmny = parseFloat(0);	
             for (var i = 0; i < rows.length; i++) {
-            	num += getFloatValue(rows[i].num);
+            	anum += getFloatValue(rows[i].anum);
             	ntlmny += getFloatValue(rows[i].ntlmny);
             	ndemny += getFloatValue(rows[i].ndemny);
             	nderebmny += getFloatValue(rows[i].nderebmny);
             }
             footerData['edate'] = '合计';
-            footerData['num'] = num;
+            footerData['anum'] = anum;
             footerData['ntlmny'] = ntlmny;
             footerData['ndemny'] = ndemny;
             footerData['nderebmny'] = nderebmny;
