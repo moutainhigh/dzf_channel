@@ -19,7 +19,7 @@ function load(){
 		pageNumber : 1,//在设置分页属性的时候初始化页码
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
-		singleSelect : false,
+		singleSelect : true,
 		checkOnSelect : false,
 		idField : 'reid',
 		frozenColumns :[[ 
@@ -41,7 +41,7 @@ function load(){
 		] ],
 		onLoadSuccess : function(data) {
 			parent.$.messager.progress('close');
-			$('#grid').datagrid("selectRow", 0);  	
+//			$('#grid').datagrid("selectRow", 0);  	
 		}
 		
 	});
