@@ -1,5 +1,6 @@
 package com.dzf.service.channel.report;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,4 +50,5 @@ public interface ICustNumMoneyRep {
 	 * @throws DZFWarpException
 	 */
 	public DZFDouble getCustRate(Integer num1, Integer num2) throws DZFWarpException;
+	
 }
