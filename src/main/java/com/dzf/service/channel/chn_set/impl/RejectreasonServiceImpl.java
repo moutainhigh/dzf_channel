@@ -59,7 +59,10 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 
 	@Override
 	public RejectreasonVO save(RejectreasonVO data, String pk_corp) throws DZFWarpException {
-		checkOnly(data);
+		boolean flag = isExist(data);
+		if(flag){
+			throw new BusinessException("保存失败，驳回原因重复");
+		}
 		if (StringUtil.isEmpty(data.getPk_rejectreason())) {// 新增操作
 			return (RejectreasonVO) singleObjectBO.saveObject(pk_corp, data);
 		} else {// 更新操作
@@ -123,7 +126,7 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean checkOnly(RejectreasonVO data) throws DZFWarpException {
+	public boolean isExist(RejectreasonVO data) throws DZFWarpException {
 		SQLParameter sp = new SQLParameter();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select vreason from cn_rejectreason where nvl(dr,0) = 0 ");
@@ -142,8 +145,8 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 		List<RejectreasonVO> list = (List<RejectreasonVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 				new BeanListProcessor(RejectreasonVO.class));
 		if (list != null && list.size() > 0) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
