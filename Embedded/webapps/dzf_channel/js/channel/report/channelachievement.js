@@ -134,7 +134,9 @@ function lineQry(){
 		success : function(result){
 			if(result.success){
 				var row = result.rows;
-				initLineChart(row);
+				if(row != null){
+					initLineChart(row);
+				}
 			}else{
 				Public.tips({
 					content : result.msg,
@@ -232,7 +234,9 @@ function chartQry(){
 		success : function(result){
 			if(result.success){
 				var row = result.rows;
-				initBarChart(row);
+				if(row != null){
+					initBarChart(row);
+				}
 			}else{
 				Public.tips({
 					content : result.msg,
