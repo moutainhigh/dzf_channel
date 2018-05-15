@@ -118,9 +118,6 @@
 					<div style="margin-left:20px;display:inline">
 					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick='lineQry()'>查询</a>
 					</div>
-					<!-- <div style="float: right;">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">刷新</a>
-					</div> -->
 				</div>
 			</div>
 		    <div id="main" style="width: 100%;height:300px;"></div>
@@ -176,9 +173,6 @@
 					<div style="margin-left:20px;display:inline">
 					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick='chartQry()'>查询</a>
 					</div>
-					<!-- <div style="float: right;">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">刷新</a>
-					</div> -->
 				</div>
 			</div>
 			<div style="background: #FFF;">

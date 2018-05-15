@@ -65,6 +65,7 @@ function initLineListen(){
 			}else if(n == 3){
 				$("#qyear").show();
 			}
+			lineQry();
 		}
 	});
 }
@@ -87,6 +88,16 @@ function initChartListen(){
 			}else if(n == 2){
 				$("#tseason").show();
 			}
+			chartQry();
+		}
+	});
+	
+	$("#tshowtype").combobox({
+		onChange : function(n, o) {
+			if(o == "" || o == null){
+				return;
+			}
+			chartQry();
 		}
 	});
 }
@@ -195,6 +206,7 @@ function initLineChart(row){
  */
 function chartQry(){
 	var qrytype = $('#tqrytype').combobox('getValue');
+	var tshowtype = $('#tshowtype').combobox('getValue');
 	var bperiod = "";
 	var eperiod = "";
 	var year = $('#tyear').combobox('getValue');
@@ -214,6 +226,7 @@ function chartQry(){
 			bperiod : bperiod,
 			eperiod : eperiod,
 			year : year,
+			iptype : tshowtype,
 		},
 		async : false,
 		success : function(result){
@@ -261,8 +274,8 @@ function initBarChart(row){
 	    },
 	    xAxis: [{
 	        type: 'category',
-	        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
-//	        data: row.sdate,
+//	        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
+	        data: row.sdate,
 	    }],
 	    yAxis: [{
 	        type: 'value'
@@ -270,15 +283,15 @@ function initBarChart(row){
 	    series: [{
 	        name: '往期增长率',
 	        type: 'bar',
-	        data: [320, 332, 301, 334, 390, 330]
-//	        data: row.fir,
+//	        data: [320, 332, 301, 334, 390, 330]
+	        data: row.fir,
 	    },
 	    {
 	        name: '本期增长率',
 	        type: 'bar',
 	        stack: '广告',
-	        data: [120, 132, 101, 134, 90, 230]
-//	        data: row.sec,
+//	        data: [120, 132, 101, 134, 90, 230]
+	        data: row.sec,
 	    }]
 	};
 	// 使用刚指定的配置项和数据显示图表。

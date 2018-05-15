@@ -95,6 +95,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 4)", qrylist.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 4)");//扣款金额
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 4)", qrylist.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 4)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -189,6 +190,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -283,6 +285,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -489,7 +492,97 @@ public class AchievementServiceImpl implements IAchievementService {
 	 * @throws DZFWarpException
 	 */
 	private AchievementVO qryChartMonthData(QryParamVO paramvo, Map<Integer, String> powmap) throws DZFWarpException {
+		AchievementVO retvo = new AchievementVO();
+		List<DZFDouble> first = new ArrayList<DZFDouble>();
+		List<DZFDouble> second = new ArrayList<DZFDouble>();
+		if(paramvo.getBeginperiod().compareTo(paramvo.getEndperiod()) > 0){
+			throw new BusinessException("开始月度不能大于结束季度");
+		}
+		List<String> qrylist = new ArrayList<String>();
+		List<String> showdate = ToolsUtil.getPeriodsBp(paramvo.getBeginperiod(), paramvo.getEndperiod());
+		qrylist.addAll(showdate);
+		String preOneBegPeriod = ToolsUtil.getPreNumsYear(paramvo.getBeginperiod(), 1);//上一期期间
+		String preOneEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 1);
+		List<String> onedate = ToolsUtil.getPeriodsBp(preOneBegPeriod, preOneEndPeriod);
+		qrylist.addAll(onedate);
+		String preTwoBegPeriod = ToolsUtil.getPreNumsYear(paramvo.getBeginperiod(), 2);//上两期期间
+		String preTwoEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 2);
+		List<String> twodate = ToolsUtil.getPeriodsBp(preTwoBegPeriod, preTwoEndPeriod);
+		qrylist.addAll(twodate);
+		if(qrylist != null && qrylist.size() > 0){
+			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
+			DZFDouble submny = DZFDouble.ZERO_DBL;
+			//如果当期金额为0，则增长率为0，如果当期金额不为0，且上期金额为0，则增长率为100
+			String preoneperiod = "";
+			String pretwoperiod = "";
+			String period = "";
+			for(int i = 0; i < showdate.size(); i++){
+				period = showdate.get(i);
+				preoneperiod = ToolsUtil.getPreNumsYear(period, 1);
+				pretwoperiod = ToolsUtil.getPreNumsYear(period, 2);
+				//当期数据
+				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
+					second.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
+						second.add(new DZFDouble(100.00));
+					}else{
+						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneperiod));
+						second.add(submny.div(mnymap.get(preoneperiod)).div(100));
+					}
+				}
+				//往期数据
+				if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
+					first.add(DZFDouble.ZERO_DBL);
+				}else{
+					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
+						first.add(new DZFDouble(100.00));
+					}else{
+						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoperiod));
+						first.add(submny.div(mnymap.get(pretwoperiod)).div(100));
+					}
+				}
+			}
+			retvo.setShowdate(showdate);
+			retvo.setFirst(first);
+			retvo.setSecond(second);
+		}else{
+			throw new BusinessException("月度查询条件不能为空");
+		}
+		return retvo;
+	}
+	
+	/**
+	 * 获取柱状图-查询数据
+	 * @param paramvo
+	 * @param powmap
+	 * @param qrylist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String, DZFDouble> getMnyMap(QryParamVO paramvo, Map<Integer, String> powmap, List<String> qrylist)
+			throws DZFWarpException {
+		String qrysql = "";
+		qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
+		List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");// 扣款金额
+		qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
+		List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");// 退款金额
 		
+		Map<String, DZFDouble> kkmap = new HashMap<String, DZFDouble>();
+		Map<String, DZFDouble> jemap = new HashMap<String, DZFDouble>();
+		for (ContQryVO zvo : zlist) {
+			kkmap.put(zvo.getVperiod(), zvo.getNdedsummny());
+			jemap.put(zvo.getVperiod(), zvo.getNaccountmny());
+		}
+		for (ContQryVO fvo : flist) {
+			kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
+			jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
+		}
+		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() == 1){
+			return kkmap;
+		}else if(paramvo.getIpaytype() != null && paramvo.getIpaytype() == 2){
+			return jemap;
+		}
 		return null;
 	}
 	
