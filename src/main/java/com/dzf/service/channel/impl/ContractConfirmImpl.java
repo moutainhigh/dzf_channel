@@ -1082,6 +1082,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return confrimvo;
 				}
 				confrimvo.setVconfreason(paramvo.getVconfreason());
+				confrimvo.setVconfreasonid(paramvo.getVconfreasonid());
 				updateContract(confrimvo, opertype, cuserid, pk_corp);
 				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				confrimvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
