@@ -371,7 +371,9 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		if(powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))){
 			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			if(!StringUtil.isEmpty(powmap.get(2))){
+			if(!StringUtil.isEmpty(powmap.get(1))){
+				sql.append(" AND ").append(powmap.get(1));
+			}else if(!StringUtil.isEmpty(powmap.get(2))){
 				sql.append(" AND ").append(powmap.get(2));
 			}else if(!StringUtil.isEmpty(powmap.get(3))){
 				sql.append(" AND ").append(powmap.get(3));
@@ -412,7 +414,9 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		if(powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))){
 			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			if(!StringUtil.isEmpty(powmap.get(2))){
+			if(!StringUtil.isEmpty(powmap.get(1))){
+				sql.append(" AND ").append(powmap.get(1));
+			}else if(!StringUtil.isEmpty(powmap.get(2))){
 				sql.append(" AND ").append(powmap.get(2));
 			}else if(!StringUtil.isEmpty(powmap.get(3))){
 				sql.append(" AND ").append(powmap.get(3));
@@ -736,8 +740,28 @@ public class AchievementServiceImpl implements IAchievementService {
 		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ManagerVO.class));
 		if (list != null && list.size() > 0) {
-			pmap.put(1, "区域总经理");
-			return pmap;
+			sql = new StringBuffer();
+			spm = new SQLParameter();
+			sql.append("SELECT b.vprovince  \n");
+			sql.append("  FROM cn_chnarea a  \n");
+			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
+			sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
+			sql.append("   AND nvl(b.dr, 0) = 0  \n");
+			List<ChnAreaBVO> plist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+					new BeanListProcessor(ChnAreaBVO.class));
+			if (plist != null && plist.size() > 0) {
+				pklist = new ArrayList<String>();
+				for (ChnAreaBVO bvo : plist) {
+					if (bvo.getVprovince() != null) {
+						pklist.add(String.valueOf(bvo.getVprovince()));
+					}
+				}
+				if (pklist != null && pklist.size() > 0) {
+					String prosql = SqlUtil.buildSqlForIn("acc.vprovince", pklist.toArray(new String[0]));
+					pmap.put(1, prosql);
+					return pmap;
+				}
+			}
 		}
 		// 2、区域经理
 		sql = new StringBuffer();
