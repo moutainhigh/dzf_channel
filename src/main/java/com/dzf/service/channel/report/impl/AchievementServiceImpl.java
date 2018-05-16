@@ -37,7 +37,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	@Override
 	public AchievementVO queryLine(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> powmap = qryUserPower(paramvo);
-		if(powmap != null && !powmap.isEmpty() && !StringUtil.isEmpty(powmap.get(4))){
+		if(powmap == null || powmap.isEmpty()){
 			return null;
 		}
 		return queryLineDate(paramvo, powmap);
@@ -358,33 +358,36 @@ public class AchievementServiceImpl implements IAchievementService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ContQryVO> qryPositiveData(Map<Integer, String> powmap, String qrysql, String qrtdate) throws DZFWarpException {
+	private List<ContQryVO> qryPositiveData(Map<Integer, String> powmap, String qrysql, String qrtdate)
+			throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
 		sql.append("       SUM(nvl(t.ntotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
-		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
-			sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
-		}
+//		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(1))
+//				|| !StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
+//		}
+		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		if(powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))){
-			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			if(!StringUtil.isEmpty(powmap.get(1))){
-				sql.append(" AND ").append(powmap.get(1));
-			}else if(!StringUtil.isEmpty(powmap.get(2))){
-				sql.append(" AND ").append(powmap.get(2));
-			}else if(!StringUtil.isEmpty(powmap.get(3))){
-				sql.append(" AND ").append(powmap.get(3));
-			}
+//		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(1))
+//				|| !StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
+//		}
+		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+		if (!StringUtil.isEmpty(powmap.get(1))) {
+			sql.append(" AND ").append(powmap.get(1));
+		} else if (!StringUtil.isEmpty(powmap.get(2))) {
+			sql.append(" AND ").append(powmap.get(2));
+		} else if (!StringUtil.isEmpty(powmap.get(3))) {
+			sql.append(" AND ").append(powmap.get(3));
 		}
 		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		if(!StringUtil.isEmpty(qrysql)){
+		if (!StringUtil.isEmpty(qrysql)) {
 			sql.append(" AND ").append(qrysql);
 		}
 		sql.append(" GROUP BY ").append(qrtdate).append(" \n");
@@ -392,44 +395,48 @@ public class AchievementServiceImpl implements IAchievementService {
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}
-	
+
 	/**
 	 * 查询退款数据
+	 * 
 	 * @param powmap
 	 * @param qrylist
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ContQryVO> qryNegativeData(Map<Integer, String> powmap, String qrysql, String qrtdate) throws DZFWarpException {
+	private List<ContQryVO> qryNegativeData(Map<Integer, String> powmap, String qrysql, String qrtdate)
+			throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n") ;
-		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n") ; 
-		sql.append("       SUM(nvl(t.nsubtotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n") ; 
-		sql.append("  FROM cn_contract t  \n") ; 
-		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
-			sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
+		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n");
+		sql.append("       SUM(nvl(t.nsubtotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("  FROM cn_contract t  \n");
+//		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(1))
+//				|| !StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
+//		}
+		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+//		if (powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(1))
+//				|| !StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))) {
+//		}
+		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+		if (!StringUtil.isEmpty(powmap.get(1))) {
+			sql.append(" AND ").append(powmap.get(1));
+		} else if (!StringUtil.isEmpty(powmap.get(2))) {
+			sql.append(" AND ").append(powmap.get(2));
+		} else if (!StringUtil.isEmpty(powmap.get(3))) {
+			sql.append(" AND ").append(powmap.get(3));
 		}
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		if(powmap != null && !powmap.isEmpty() && (!StringUtil.isEmpty(powmap.get(2)) || !StringUtil.isEmpty(powmap.get(3)))){
-			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			if(!StringUtil.isEmpty(powmap.get(1))){
-				sql.append(" AND ").append(powmap.get(1));
-			}else if(!StringUtil.isEmpty(powmap.get(2))){
-				sql.append(" AND ").append(powmap.get(2));
-			}else if(!StringUtil.isEmpty(powmap.get(3))){
-				sql.append(" AND ").append(powmap.get(3));
-			}
-		}
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n") ; 
-		sql.append("   AND t.vdeductstatus in (?, ?)  \n") ; 
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		if(StringUtil.isEmpty(qrysql)){
+		if (StringUtil.isEmpty(qrysql)) {
 			sql.append(" AND ").append(qrysql);
 		}
-		sql.append(" GROUP BY ").append(qrtdate).append("  \n") ; 
+		sql.append(" GROUP BY ").append(qrtdate).append("  \n");
 		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
@@ -438,7 +445,7 @@ public class AchievementServiceImpl implements IAchievementService {
 	@Override
 	public AchievementVO queryChart(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> powmap = qryUserPower(paramvo);
-		if(powmap != null && !powmap.isEmpty() && !StringUtil.isEmpty(powmap.get(4))){
+		if(powmap == null || powmap.isEmpty()){
 			return null;
 		}
 		return queryChartDate(paramvo, powmap);
@@ -718,13 +725,30 @@ public class AchievementServiceImpl implements IAchievementService {
 	
 	/**
 	 * 查询用户角色权限  
-	 * 1、区域总经理；2、区域经理；3、渠道经理或渠道负责人（有可能一个渠道经理是多个地区的负责人，同时是另外多个地区的非负责人）；4、非销售人员；
+	 * 1、区域总经理；2、区域经理；3、渠道经理或渠道负责人（有可能一个渠道经理是多个地区的负责人，同时是另外多个地区的非负责人）；
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<Integer, String> qryUserPower(QryParamVO paramvo) throws DZFWarpException {
+		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
+			return qryUserPowerOne(paramvo);
+		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
+			return qryUserPowerTwo(paramvo);
+		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 3){
+			return qryUserPowerThree(paramvo);
+		}
+		return null;
+	}
+	
+	/**
+	 * 渠道总权限查询
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Integer, String> qryUserPower(QryParamVO paramvo) throws DZFWarpException {
+	private Map<Integer, String> qryUserPowerOne(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> pmap = new HashMap<Integer, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -761,11 +785,24 @@ public class AchievementServiceImpl implements IAchievementService {
 				if (pklist != null && pklist.size() > 0) {
 					String prosql = SqlUtil.buildSqlForIn("acc.vprovince", pklist.toArray(new String[0]));
 					pmap.put(1, prosql);
-					return pmap;
 				}
 			}
 		}
-		// 2、区域经理
+		return pmap;
+	}
+	
+	/**
+	 * 大区权限查询
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Integer, String> qryUserPowerTwo(QryParamVO paramvo) throws DZFWarpException {
+		Map<Integer, String> pmap = new HashMap<Integer, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		List<String> pklist = new ArrayList<String>();
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("SELECT b.vprovince  \n");
@@ -789,13 +826,23 @@ public class AchievementServiceImpl implements IAchievementService {
 			if (pklist != null && pklist.size() > 0) {
 				String prosql = SqlUtil.buildSqlForIn("acc.vprovince", pklist.toArray(new String[0]));
 				pmap.put(2, prosql);
-				return pmap;
 			}
 		}
-		// 3、渠道经理或渠道负责人
-		pklist = new ArrayList<String>();
-		sql = new StringBuffer();
-		spm = new SQLParameter();
+		return pmap;
+	}
+	
+	/**
+	 * 省权限查询
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Integer, String> qryUserPowerThree(QryParamVO paramvo) throws DZFWarpException {
+		Map<Integer, String> pmap = new HashMap<Integer, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		List<String> pklist = new ArrayList<String>();
 		// 3.1、区域负责人
 		sql.append("SELECT t.pk_corp  \n");
 		sql.append("  FROM cn_chnarea_b b  \n");
@@ -814,6 +861,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				pklist.add(acvo.getPk_corp());
 			}
 		}
+		//3.2其他区域非负责人
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("SELECT b.pk_corp  \n") ;
@@ -833,9 +881,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(pklist != null && pklist.size() > 0){
 			String corpsql = SqlUtil.buildSqlForIn("acc.pk_corp", pklist.toArray(new String[0]));
 			pmap.put(3, corpsql);
-			return pmap;
 		}
-		pmap.put(4, "非销售人员");
 		return pmap;
 	}
 

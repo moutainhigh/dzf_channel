@@ -129,6 +129,7 @@ function lineQry(){
 			qtype : qrytype,
 			bperiod : bperiod,
 			eperiod : eperiod,
+			corptype : 2,//节点类型  1：渠道总业绩分析；2：大区业绩分析； 3：省业绩分析；
 		},
 		async : false,
 		success : function(result){
@@ -229,6 +230,7 @@ function chartQry(){
 			eperiod : eperiod,
 			year : year,
 			iptype : tshowtype,
+			corptype : 2,//节点类型  1：渠道总业绩分析；2：大区业绩分析； 3：省业绩分析；
 		},
 		async : false,
 		success : function(result){
