@@ -747,6 +747,8 @@ public class AchievementServiceImpl implements IAchievementService {
 			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
 			sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
 			sql.append("   AND nvl(b.dr, 0) = 0  \n");
+			sql.append("   AND nvl(a.type, 0) = 1  \n");
+			sql.append("   AND nvl(b.type, 0) = 1  \n");
 			List<ChnAreaBVO> plist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 					new BeanListProcessor(ChnAreaBVO.class));
 			if (plist != null && plist.size() > 0) {
@@ -771,6 +773,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
 		sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.dr, 0) = 0  \n");
+		sql.append("   AND nvl(a.type, 0) = 1  \n");
+		sql.append("   AND nvl(b.type, 0) = 1  \n");
 		sql.append("   AND a.userid = ? \n");
 		spm.addParam(paramvo.getCuserid());
 		List<ChnAreaBVO> plist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -798,6 +802,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("  LEFT JOIN bd_account t ON b.vprovince = t.vprovince  \n");
 		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(b.type, 0) = 1  \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
 		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'  \n");
 		sql.append("   AND b.userid = ? \n");
@@ -815,6 +820,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("  FROM cn_chnarea_b b  \n") ; 
 		sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(b.ischarge, 'N') = 'N'  \n") ; 
+		sql.append("   AND nvl(b.type, 0) = 1  \n");
 		sql.append("   AND b.userid = ? \n");
 		spm.addParam(paramvo.getCuserid());
 		List<AccountVO> klist = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
