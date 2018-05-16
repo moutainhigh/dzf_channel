@@ -73,7 +73,7 @@ function initDetailGrid(){
 			title : '合同代账费',
 			align:'right',
             halign:'center',
-			field : 'ntlmny',
+			field : 'antlmny',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
@@ -100,18 +100,18 @@ function initDetailGrid(){
 			var rows = $('#gridh').datagrid('getRows');
 			var footerData = new Object();
             var anum = parseFloat(0);	
-            var ntlmny = parseFloat(0);	
+            var antlmny = parseFloat(0);	
             var ndemny = parseFloat(0);	
             var nderebmny = parseFloat(0);	
             for (var i = 0; i < rows.length; i++) {
             	anum += getFloatValue(rows[i].anum);
-            	ntlmny += getFloatValue(rows[i].ntlmny);
+            	antlmny += getFloatValue(rows[i].antlmny);
             	ndemny += getFloatValue(rows[i].ndemny);
             	nderebmny += getFloatValue(rows[i].nderebmny);
             }
             footerData['edate'] = '合计';
             footerData['anum'] = anum;
-            footerData['ntlmny'] = ntlmny;
+            footerData['antlmny'] = antlmny;
             footerData['ndemny'] = ndemny;
             footerData['nderebmny'] = nderebmny;
             var fs=new Array(1);

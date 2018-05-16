@@ -442,7 +442,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sp.addParam(qvo.getDenddate());
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
 		sql.append(" select decode(patchstatus,2,0,1) as anum,pk_confrim as pk_corp ,deductdata as denddate, ");
-		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as ntotalmny, " );   
+		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as antotalmny, " );   
 		sql.append(" nvl(ndeductmny,0) as ndeductmny,nvl(ndedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vstatus=1 or vstatus=9 or vstatus=10) and " );
 		sql.append(" deductdata>=? and deductdata<=? and pk_corp=? " );
@@ -450,7 +450,7 @@ public class ManagerServiceImpl implements IManagerService {
 		
 	    sql = new StringBuffer();
 	    sql.append(" select 0 as anum,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
-		sql.append(" nvl(nsubtotalmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(nsubtotalmny,0) as antotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and vstatus=9  and" );
 		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
@@ -458,7 +458,7 @@ public class ManagerServiceImpl implements IManagerService {
 		
 		sql = new StringBuffer();
 	    sql.append(" select -1 as anum,pk_confrim as pk_corp,substr(dchangetime,0,10)as denddate, ");
-		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as ntotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as antotalmny,nvl(nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(nsubdedrebamny,0) as ndedrebamny from cn_contract " );   
 		sql.append(" where nvl(isncust,'N')='N' and nvl(dr,0) = 0  and vstatus=10 and" );
 		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
