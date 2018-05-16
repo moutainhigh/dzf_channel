@@ -404,7 +404,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(t.nsubtotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("       SUM(nvl(t.nsubtotalmny, 0) + nvl(t.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
