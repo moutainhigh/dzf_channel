@@ -27,6 +27,7 @@ import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.channel.contract.ContractConfrimVO;
+import com.dzf.model.channel.contract.RejectHistoryHVO;
 import com.dzf.model.channel.contract.RejectHistoryVO;
 import com.dzf.model.channel.sale.RejectreasonVO;
 import com.dzf.model.demp.contract.ContractDocVO;
@@ -495,7 +496,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		}
 		if(!StringUtil.isEmpty(retvo.getVconfreason())){
-			RejectHistoryVO[] rejeVOs = qryRejectHistory(retvo.getPk_contract());
+			RejectHistoryHVO[] rejeVOs = qryRejectHistory(retvo.getPk_contract());
 			if(rejeVOs != null && rejeVOs.length > 0){
 				retvo.setChildren(rejeVOs);
 			}
@@ -509,11 +510,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private RejectHistoryVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
-		String sql = " nvl(dr,0) = 0 AND pk_contract = ? ";
+	private RejectHistoryHVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_contract = ? ORDER BY ts DESC";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_contract);
-		return (RejectHistoryVO[]) singleObjectBO.queryByCondition(RejectHistoryVO.class, sql, spm);
+		return (RejectHistoryHVO[]) singleObjectBO.queryByCondition(RejectHistoryHVO.class, sql, spm);
 	}
 
 	@Override
@@ -859,6 +860,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		String vconfreasonid = paramvo.getVconfreasonid();
 		String[] rejectids = vconfreasonid.split(",");
 		List<RejectHistoryVO> list = new ArrayList<RejectHistoryVO>();
+		
+		//存储驳回原因历史及明细：
+		RejectHistoryHVO rejehvo = new RejectHistoryHVO();
+		rejehvo.setPk_contract(paramvo.getPk_contract());
+		rejehvo.setPk_corp(paramvo.getPk_corp());
+		rejehvo.setVreason(paramvo.getVconfreason());
+		rejehvo.setDr(0);
+		rejehvo.setCoperatorid(cuserid);
+		rejehvo.setDoperatedate(new DZFDate());
+		
 		RejectHistoryVO hisvo = null;
 		RejectreasonVO revo = null;
 		Map<String,RejectreasonVO> remap = qryRejectMap();
@@ -869,7 +880,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					hisvo = new RejectHistoryVO();
 					hisvo.setPk_source(revo.getPk_rejectreason());
 					hisvo.setPk_contract(paramvo.getPk_contract());
-					hisvo.setPk_corp(pk_corp);
+					hisvo.setPk_corp(paramvo.getPk_corp());
 					hisvo.setVreason(revo.getVreason());
 					hisvo.setVsuggest(revo.getVsuggest());
 					hisvo.setDr(0);
@@ -879,8 +890,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 			}
 		}
+		
 		if(list != null && list.size() > 0){
-			singleObjectBO.insertVOArr(pk_corp, list.toArray(new RejectHistoryVO[0]));
+			rejehvo.setChildren(list.toArray(new RejectHistoryVO[0]));
+			singleObjectBO.saveObject(pk_corp, rejehvo);
 		}
 	}
 	
@@ -1639,7 +1652,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		}
 		if(confvo != null && !StringUtil.isEmpty(confvo.getVconfreason())){
-			RejectHistoryVO[] rejeVOs = qryRejectHistory(confvo.getPk_contract());
+			RejectHistoryHVO[] rejeVOs = qryRejectHistory(confvo.getPk_contract());
 			if(rejeVOs != null && rejeVOs.length > 0){
 				confvo.setChildren(rejeVOs);
 			}

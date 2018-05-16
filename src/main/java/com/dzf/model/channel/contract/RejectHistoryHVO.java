@@ -6,35 +6,26 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
- * 加盟商合同驳回历史
+ * 加盟商合同驳回历史主数据
  * @author zy
  *
  */
 @SuppressWarnings("rawtypes")
-public class RejectHistoryVO extends SuperVO {
+public class RejectHistoryHVO extends SuperVO {
 
-	private static final long serialVersionUID = 1024925115857871611L;
-	
+	private static final long serialVersionUID = 3331907401455070258L;
+
 	@FieldAlias("histid_h")
 	private String pk_rejecthistory_h;
 	
-	@FieldAlias("histid")
-	private String pk_rejecthistory;
-	
     @FieldAlias("contractid")
     private String pk_contract; // 合同主键
-	
-	@FieldAlias("sourceid")
-	private String pk_source;
 	
 	@FieldAlias("corpid")
 	private String pk_corp;//公司主键
 	
 	@FieldAlias("reason")
 	private String vreason;//驳回原因
-	
-	@FieldAlias("suggest")
-	private String vsuggest;//修改建议
 	
     @FieldAlias("operatorid")
     private String coperatorid; // 录入人
@@ -72,20 +63,8 @@ public class RejectHistoryVO extends SuperVO {
 		this.pk_corp = pk_corp;
 	}
 
-	public String getPk_rejecthistory() {
-		return pk_rejecthistory;
-	}
-
-	public String getPk_source() {
-		return pk_source;
-	}
-
 	public String getVreason() {
 		return vreason;
-	}
-
-	public String getVsuggest() {
-		return vsuggest;
 	}
 
 	public String getCoperatorid() {
@@ -104,20 +83,8 @@ public class RejectHistoryVO extends SuperVO {
 		return ts;
 	}
 
-	public void setPk_rejecthistory(String pk_rejecthistory) {
-		this.pk_rejecthistory = pk_rejecthistory;
-	}
-
-	public void setPk_source(String pk_source) {
-		this.pk_source = pk_source;
-	}
-
 	public void setVreason(String vreason) {
 		this.vreason = vreason;
-	}
-
-	public void setVsuggest(String vsuggest) {
-		this.vsuggest = vsuggest;
 	}
 
 	public void setCoperatorid(String coperatorid) {
@@ -138,17 +105,17 @@ public class RejectHistoryVO extends SuperVO {
 
 	@Override
 	public String getPKFieldName() {
-		return "pk_rejecthistory";
-	}
-
-	@Override
-	public String getParentPKFieldName() {
 		return "pk_rejecthistory_h";
 	}
 
 	@Override
+	public String getParentPKFieldName() {
+		return null;
+	}
+
+	@Override
 	public String getTableName() {
-		return "cn_rejecthistory";
+		return "cn_rejecthistory_h";
 	}
 
 }
