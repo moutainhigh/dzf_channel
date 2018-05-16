@@ -846,7 +846,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND pk_contract = ?  \n") ; 
 		sql.append("   AND pk_corp = ?  \n");
 		spm.addParam(paramvo.getPk_contract());
-		spm.addParam(pk_corp);
+		spm.addParam(paramvo.getPk_corp());
+		singleObjectBO.executeUpdate(sql.toString(), spm);
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("UPDATE cn_rejecthistory_h  \n") ;
+		sql.append("   SET dr = 1  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_contract = ?  \n") ; 
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(paramvo.getPk_contract());
+		spm.addParam(paramvo.getPk_corp());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	
