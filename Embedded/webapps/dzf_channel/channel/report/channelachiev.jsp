@@ -176,7 +176,7 @@
 				</div>
 			</div>
 			<div style="background: #FFF;">
-				<div style="text-align:left;width:9%;font-size:14px;float:left;padding-left:6px; 
+				<div style="text-align:left;width:11%;font-size:14px;float:left;padding-left:6px; 
 					padding-top:4px;font-size: 18px;font-weight: bold;">业绩同比(%)</div>
 					<div style="position:relative;padding-right:20px;padding-top:4px;">
 						<select class="easyui-combobox" data-options="editable:false,required:true,panelHeight:'auto'"
