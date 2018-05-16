@@ -44,6 +44,7 @@
 						</textarea>
 					</div>
 					<input id="reid" name="reid" type="hidden">
+					<input id="corpid" name="corpid" type="hidden">
 					<input id="updatets" name="updatets" type="hidden">
 				</form>
 				<div style="text-align: center;margin-top:20px;">

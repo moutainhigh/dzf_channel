@@ -127,22 +127,22 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean isExist(RejectreasonVO data) throws DZFWarpException {
-		SQLParameter sp = new SQLParameter();
+		SQLParameter spm = new SQLParameter();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select vreason from cn_rejectreason where nvl(dr,0) = 0 ");
 		sql.append(" and pk_corp = ? ");
-		sp.addParam(data.getPk_corp());
+		spm.addParam(data.getPk_corp());
 		if (!StringUtil.isEmptyWithTrim(data.getVreason())) {
 			sql.append(" and vreason = ? ");
-			sp.addParam(data.getVreason());
+			spm.addParam(data.getVreason());
 		} else {
 			throw new BusinessException("驳回原因不能为空");
 		}
 		if (!StringUtil.isEmpty(data.getPk_rejectreason())) {
 			sql.append(" and pk_rejectreason != ? ");
-			sp.addParam(data.getPk_rejectreason());
+			spm.addParam(data.getPk_rejectreason());
 		}
-		List<RejectreasonVO> list = (List<RejectreasonVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+		List<RejectreasonVO> list = (List<RejectreasonVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RejectreasonVO.class));
 		if (list != null && list.size() > 0) {
 			return true;
