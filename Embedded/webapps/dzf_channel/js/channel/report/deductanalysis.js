@@ -258,6 +258,7 @@ function load(type){
 		singleSelect : false,
 		border : true,
 		remoteSort:false,
+		showFooter:true,
 		//冻结在 左边的列 
 		frozenColumns:[[
 						{ field : 'corpid',    title : '会计公司主键', hidden : true},
@@ -269,7 +270,7 @@ function load(type){
 		]],
 		columns : columns,
 		onLoadSuccess : function(data) {
-			
+			calFooter();
 		},
 	});
 	
@@ -294,6 +295,26 @@ function load(type){
 		});
 	}
 	parent.$.messager.progress('close');
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var num = 0;	
+    var mny = 0;	
+    for (var i = 0; i < rows.length; i++) {
+    	num += getFloatValue(rows[i].num);
+    	mny += getFloatValue(rows[i].mny);
+    }
+    footerData['corpname'] = '合计';
+    footerData['num'] = num;
+    footerData['mny'] = mny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**
