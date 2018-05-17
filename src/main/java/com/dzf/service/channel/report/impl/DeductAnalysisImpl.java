@@ -347,20 +347,21 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			}
 		}
 		if(qrytype == 1){
-			sql.append("  SUM(CASE \n") ; 
-			if(!StringUtil.isEmpty(paramvo.getBeginperiod()) && !StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append("   WHEN ? < SUBSTR(t.deductdata,1,7) AND SUBSTR(t.deductdata,1,7) < ? THEN \n") ;
-				spm.addParam(paramvo.getBeginperiod());
-				spm.addParam(paramvo.getEndperiod());
-			}else if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
-				sql.append("   WHEN ? < t.deductdata AND t.deductdata < ? THEN \n") ; 
-				spm.addParam(paramvo.getBegdate());
-				spm.addParam(paramvo.getEnddate());
-			}
-			sql.append("    1 \n") ; 
-			sql.append("   ELSE \n") ; 
-			sql.append("    0 \n") ; 
-			sql.append(" END) AS icorpnums \n") ; 
+			sql.append("  COUNT(t.pk_confrim) AS icorpnums \n") ; 
+//			sql.append("  SUM(CASE \n") ; 
+//			if(!StringUtil.isEmpty(paramvo.getBeginperiod()) && !StringUtil.isEmpty(paramvo.getEndperiod())){
+//				sql.append("   WHEN ? < SUBSTR(t.deductdata,1,7) AND SUBSTR(t.deductdata,1,7) < ? THEN \n") ;
+//				spm.addParam(paramvo.getBeginperiod());
+//				spm.addParam(paramvo.getEndperiod());
+//			}else if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
+//				sql.append("   WHEN ? < t.deductdata AND t.deductdata < ? THEN \n") ; 
+//				spm.addParam(paramvo.getBegdate());
+//				spm.addParam(paramvo.getEnddate());
+//			}
+//			sql.append("    1 \n") ; 
+//			sql.append("   ELSE \n") ; 
+//			sql.append("    0 \n") ; 
+//			sql.append(" END) AS icorpnums \n") ; 
 		}else if(qrytype == 2){
 			sql.append(" SUM( ");
 			sql.append("    CASE t.vstatus \n") ; 
@@ -434,7 +435,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException {
