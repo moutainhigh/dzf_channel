@@ -192,15 +192,32 @@ public class AchievementServiceImpl implements IAchievementService {
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
-			for(ContQryVO zvo : zlist){
-				kkmap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNdedsummny());
-				jemap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNaccountmny());
-			}
 			String season = "";
+			for(ContQryVO zvo : zlist){
+				season = ToolsUtil.getSeason(zvo.getVperiod());
+				if(!kkmap.containsKey(season)){
+					kkmap.put(season, zvo.getNdedsummny());
+				}else{
+					kkmap.put(season, SafeCompute.add(kkmap.get(season), zvo.getNdedsummny()));
+				}
+				if(!jemap.containsKey(season)){
+					jemap.put(season, zvo.getNaccountmny());
+				}else{
+					jemap.put(season, SafeCompute.add(jemap.get(season), zvo.getNaccountmny()));
+				}
+			}
 			for(ContQryVO fvo : flist){
 				season = ToolsUtil.getSeason(fvo.getVperiod());
-				kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
-				jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+				if(!kkmap.containsKey(season)){
+					kkmap.put(season, fvo.getNdedsummny());
+				}else{
+					kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
+				}
+				if(!jemap.containsKey(season)){
+					jemap.put(season, fvo.getNaccountmny());
+				}else{
+					jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+				}
 			}
 			DZFDouble submny = DZFDouble.ZERO_DBL;
 			//如果当季度金额为0，则增长率为-100，如果当季度金额不为0，且上季度金额为0，则增长率为100
@@ -687,21 +704,38 @@ public class AchievementServiceImpl implements IAchievementService {
 		
 		Map<String, DZFDouble> kkmap = new HashMap<String, DZFDouble>();
 		Map<String, DZFDouble> jemap = new HashMap<String, DZFDouble>();
+		String season = "";
 		for (ContQryVO zvo : zlist) {
 			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
-				kkmap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNdedsummny());
-				jemap.put(ToolsUtil.getSeason(zvo.getVperiod()), zvo.getNaccountmny());
+				season = ToolsUtil.getSeason(zvo.getVperiod());
+				if(!kkmap.containsKey(season)){
+					kkmap.put(season, zvo.getNdedsummny());
+				}else{
+					kkmap.put(season, SafeCompute.add(kkmap.get(season), zvo.getNdedsummny()));
+				}
+				if(!jemap.containsKey(season)){
+					jemap.put(season, zvo.getNaccountmny());
+				}else{
+					jemap.put(season, SafeCompute.add(jemap.get(season), zvo.getNaccountmny()));
+				}
 			}else{
 				kkmap.put(zvo.getVperiod(), zvo.getNdedsummny());
 				jemap.put(zvo.getVperiod(), zvo.getNaccountmny());
 			}
 		}
-		String season = "";
 		for (ContQryVO fvo : flist) {
 			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
 				season = ToolsUtil.getSeason(fvo.getVperiod());
-				kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
-				jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+				if(!kkmap.containsKey(season)){
+					kkmap.put(season, fvo.getNdedsummny());
+				}else{
+					kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
+				}
+				if(!jemap.containsKey(season)){
+					jemap.put(season, fvo.getNaccountmny());
+				}else{
+					jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+				}
 			}else{
 				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
 				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
