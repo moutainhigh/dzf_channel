@@ -107,10 +107,10 @@ public class AchievementServiceImpl implements IAchievementService {
 			}
 			DZFDouble submny = DZFDouble.ZERO_DBL;
 			String preyear = String.valueOf(byear - 1);
-			//如果当月金额为0，则增长率为0，如果当月金额不为0，且上月金额为0，则增长率为100
+			//如果当月金额为0，则增长率为-100，如果当月金额不为0，且上月金额为0，则增长率为100
 			for(int i = 0; i < showdate.size(); i++){
 				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(kkmap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -131,7 +131,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				
 				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(jemap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -203,10 +203,10 @@ public class AchievementServiceImpl implements IAchievementService {
 				jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
 			}
 			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当季度金额为0，则增长率为0，如果当季度金额不为0，且上季度金额为0，则增长率为100
+			//如果当季度金额为0，则增长率为-100，如果当季度金额不为0，且上季度金额为0，则增长率为100
 			for(int i = 0; i < showdate.size(); i++){
 				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(kkmap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -227,7 +227,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				
 				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(jemap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -296,10 +296,10 @@ public class AchievementServiceImpl implements IAchievementService {
 				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 			}
 			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当月金额为0，则增长率为0，如果当月金额不为0，且上月金额为0，则增长率为100
+			//如果当月金额为0，则增长率为-100，如果当月金额不为0，且上月金额为0，则增长率为100
 			for(int i = 0; i < showdate.size(); i++){
 				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(kkmap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -320,7 +320,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				
 				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(i == 0){
 						if(CommonUtil.getDZFDouble(jemap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
@@ -485,7 +485,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
 			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当期金额为0，则增长率为0，如果当期金额不为0，且上期金额为0，则增长率为100
+			//如果当期金额为0，则增长率为-100，如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneyear = "";
 			String pretwoyear = "";
 			String period = "";
@@ -495,7 +495,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				pretwoyear = String.valueOf(Integer.parseInt(period) - 2);
 				//当期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(preoneyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						second.add(new DZFDouble(100.00));
@@ -506,7 +506,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				//往期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(preoneyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(pretwoyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						first.add(new DZFDouble(100.00));
@@ -552,7 +552,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
 			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当期金额为0，则增长率为0，如果当期金额不为0，且上期金额为0，则增长率为100
+			//如果当期金额为0，则增长率为-100，如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneperiod = "";
 			String pretwoperiod = "";
 			String period = "";
@@ -562,7 +562,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				pretwoperiod = ToolsUtil.getPreNumsYear(period, 2);
 				//当期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						second.add(new DZFDouble(100.00));
@@ -573,7 +573,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				//往期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						first.add(new DZFDouble(100.00));
@@ -620,7 +620,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
 			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当期金额为0，则增长率为0，如果当期金额不为0，且上期金额为0，则增长率为100
+			//如果当期金额为0，则增长率为-100，如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneperiod = "";
 			String pretwoperiod = "";
 			String period = "";
@@ -630,7 +630,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				pretwoperiod = ToolsUtil.getPreNumsYear(period, 2);
 				//当期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					second.add(DZFDouble.ZERO_DBL);
+					second.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						second.add(new DZFDouble(100.00));
@@ -641,7 +641,7 @@ public class AchievementServiceImpl implements IAchievementService {
 				}
 				//往期数据
 				if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					first.add(DZFDouble.ZERO_DBL);
+					first.add(new DZFDouble(100.00).multiply(-1));
 				}else{
 					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
 						first.add(new DZFDouble(100.00));
