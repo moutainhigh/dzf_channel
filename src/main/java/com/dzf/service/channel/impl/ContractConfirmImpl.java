@@ -53,6 +53,8 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IContractConfirm;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pushappmsg.IPushAppMessage;
+import com.dzf.spring.SpringUtils;
 
 @Service("contractconfser")
 public class ContractConfirmImpl implements IContractConfirm {
@@ -559,6 +561,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//5、回写客户纳税人性质 //回写客户是否为存量客户
 				Map<String, String> packmap = queryPackageMap();
 				updateCorp(paramvo, packmap);
+				//6、发送消息
+				saveAuditMsg(paramvo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(paramvo);
 				if(!StringUtil.isEmpty(errmsg)){
@@ -568,6 +572,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(paramvo);
+				//发送消息
+				saveAuditMsg(paramvo, 2, pk_corp, cuserid);
 			}
 		} finally {
 			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract(),uuid);
@@ -1101,6 +1107,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				updateSerPackage(confrimvo);
 				//5、回写客户纳税人性质  //回写客户是否为存量客户
 				updateCorp(confrimvo, packmap);
+				//6、发送消息
+				saveAuditMsg(confrimvo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(confrimvo);
 				if(!StringUtil.isEmpty(errmsg)){
@@ -1114,6 +1122,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				confrimvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 				setNullValue(confrimvo);
+				//发送消息
+				saveAuditMsg(confrimvo, 2, pk_corp, cuserid);
 			}
 		} finally {
 			LockUtil.getInstance().unLock_Key(confrimvo.getTableName(), confrimvo.getPk_contract(),uuid);
@@ -1708,5 +1718,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		confvo.setVstatusname(statusname);
 	}
 	
-	
+	/**
+	 * 发送合同审核消息
+	 * @param contvo
+	 * @param sendtype
+	 * @param loginpk
+	 * @param userid
+	 * @throws DZFWarpException
+	 */
+	private void saveAuditMsg(ContractConfrimVO contvo, Integer sendtype, String loginpk, String userid) throws DZFWarpException {
+		IPushAppMessage pushMsgService = (IPushAppMessage) SpringUtils.getBean("pushappmessageimpl");
+		pushMsgService.saveConAuditMsg(contvo, sendtype, loginpk, userid);
+	}
 }
