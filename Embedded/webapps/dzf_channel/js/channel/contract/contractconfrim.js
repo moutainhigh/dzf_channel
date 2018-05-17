@@ -520,12 +520,35 @@ function load(){
 			field : 'propor',
 			sortable:true,
 			sorter:orderfun,
-		},{
+		}, {
 			width : '100',
 			title : '扣费金额',
 			align:'right',
             halign:'center',
 			field : 'ndesummny',
+			formatter : function(value,row,index){
+				return formatMny(value);
+			},
+//			sortable:true,
+//			sorter:orderfun,
+			hidden : true
+		}, {
+			width : '100',
+			title : '预付款扣款',
+			align:'right',
+            halign:'center',
+			field : 'ndemny',
+			formatter : function(value,row,index){
+				return formatMny(value);
+			},
+			sortable:true,
+			sorter:orderfun,
+		}, {
+			width : '100',
+			title : '返点扣款',
+			align:'right',
+            halign:'center',
+			field : 'nderebmny',
 			formatter : function(value,row,index){
 				return formatMny(value);
 			},
