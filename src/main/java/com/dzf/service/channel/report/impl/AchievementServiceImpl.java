@@ -404,7 +404,12 @@ public class AchievementServiceImpl implements IAchievementService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(t.nsubtotalmny, 0) + nvl(t.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("       SUM(CASE t.vstatus  \n") ; 
+		sql.append("             WHEN 9 THEN  \n") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0)  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(t.nbookmny, 0)  \n") ; 
+		sql.append("           END) AS naccountmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
@@ -420,7 +425,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		if (StringUtil.isEmpty(qrysql)) {
+		if (!StringUtil.isEmpty(qrysql)) {
 			sql.append(" AND ").append(qrysql);
 		}
 		sql.append(" GROUP BY ").append(qrtdate).append("  \n");
