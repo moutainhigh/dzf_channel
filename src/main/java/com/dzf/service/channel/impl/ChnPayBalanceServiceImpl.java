@@ -136,12 +136,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			cal.add(Calendar.MONTH, 1);
 			cal.add(Calendar.DATE, -1);
 			end=new DZFDate(cal.getTime());
-			for(int i=0;i<3*3;i++){
+			for(int i=0;i<3*3+1;i++){
 				spm.addParam(start);
 				spm.addParam(end);
 			}
 		}else{
-			for(int i=0;i<3*3;i++){
+			for(int i=0;i<3*3+1;i++){
 				spm.addParam(paramvo.getBegdate());
 				spm.addParam(paramvo.getEnddate());
 			}
@@ -155,8 +155,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
 		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
-		buf.append("  ))as num,");
+		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)))");
+		buf.append("  -sum (decode(patchstatus,2,decode((sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
+		buf.append("   sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1),0)");
+		buf.append("  )as num,");
 		
 		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");

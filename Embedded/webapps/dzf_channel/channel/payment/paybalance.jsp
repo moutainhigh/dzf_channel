@@ -65,7 +65,7 @@
 			<div class="sel_time">
 				<div class="time_col">
 					<input id="da" type="radio" name="seledate" checked value="da"/>
-					<label>日期：</label> 
+					<label for="da">日期：</label> 
 					<font> 
 						<input id="begdate" type="text" class="easyui-datebox" data-options="validType:'checkdate'"
 							style="width:137px;height:30px;" value="<%=lastDate%>" />
@@ -79,7 +79,7 @@
 			</div>
 			<div class="time_col time_colp10">
 				<input id="pe" type="radio"  name="seledate" value="pe"/>
-				<label style="width:70px;">期间：</label> 
+				<label style="width:70px;" for="pe">期间：</label> 
 				<font>
 					<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false"
 						style="width:137px;height:30px;" value=<%=pym%> />
