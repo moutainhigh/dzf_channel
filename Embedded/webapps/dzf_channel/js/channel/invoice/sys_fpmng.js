@@ -100,6 +100,7 @@ function initDataGrid(){
 							}
 		            }},
 		            {width : '100',title : '备注',field : 'vmome',align:'center'},
+		            {width : '160',title : '发票流水号',field : 'reqserialno',align:'left'},
 		            {width : '200',title : '二维码URL',field : 'qrcodepath',align:'center',formatter:codeLink,},
 		            
 		            {width : '100',title : '',field : 'corpid',hidden:true},
