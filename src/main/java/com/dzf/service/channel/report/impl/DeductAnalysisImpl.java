@@ -51,8 +51,8 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			DeductAnalysisVO dedvo = null;
 			DeductAnalysisVO bakvo = null;
 			CorpVO corpvo = null;
-			int num = 0;
-			int connum = 0;
+			int num = 0;//循环次数
+			int connum = 0;//合同最终金额
 			DZFDouble ndedsummny = DZFDouble.ZERO_DBL;
 			for(String pk_corp : pk_corplist){
 				if(detmap != null && !detmap.isEmpty()){
@@ -84,6 +84,13 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 									if(num == 0){
 										connum = ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum());
 										ndedsummny = SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny());
+									}
+									retvo.setIcorpnums_sum(connum);//总合同数
+									retvo.setNdeductmny_sum(ndedsummny);//总扣款
+								}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
+									if(num == 0){
+										connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+										ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
 									}
 									retvo.setIcorpnums_sum(connum);//总合同数
 									retvo.setNdeductmny_sum(ndedsummny);//总扣款
@@ -123,6 +130,13 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 							if(dedvo != null){
 								retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));//总合同数
 								retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));//总扣款
+							}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
+								if(num == 0){
+									connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+									ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+								}
+								retvo.setIcorpnums_sum(connum);//总合同数
+								retvo.setNdeductmny_sum(ndedsummny);//总扣款
 							}
 						}else{//无扣款金额，只有退款金额，计算总合同数和总扣款
 							retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));//总合同数
@@ -155,6 +169,13 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 						if(dedvo != null){
 							retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));//总合同数
 							retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));//总扣款
+						}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
+							if(num == 0){
+								connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+								ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+							}
+							retvo.setIcorpnums_sum(connum);//总合同数
+							retvo.setNdeductmny_sum(ndedsummny);//总扣款
 						}
 					}else{//无扣款金额，只有退款金额，计算总合同数和总扣款
 						retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));//总合同数
