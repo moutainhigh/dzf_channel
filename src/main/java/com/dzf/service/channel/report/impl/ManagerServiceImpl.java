@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,31 +190,7 @@ public class ManagerServiceImpl implements IManagerService {
 			spm.addParam(qvo.getDenddate());
 			List<ManagerVO> list2 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			
-			buf=new StringBuffer();//扣款金额(预付款,返点款)
-			buf.append("  select pk_corp,");
-			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndeductmny,0)))+");
-			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdeductmny,0)))as ndeductmny,");
-			
-			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndedrebamny,0)))+");
-			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdedrebamny,0)))as ndedrebamny");
-			
-			buf.append("  from cn_contract where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vstatus=1 or vstatus=9 or vstatus=10) and ");
-			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
-			buf.append("  group by pk_corp");
-			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
-			
-		    buf=new StringBuffer();//预存款余额
+			buf=new StringBuffer();//预存款余额
 			buf.append(" select (nvl(npaymny,0)-nvl(nusedmny,0)) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
@@ -227,19 +202,29 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append(" group by fathercorp,chargedeptname  ");
 			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
 			
-			//提单量,合同代账费,
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			spm.addParam(qvo.getDbegindate());
-			spm.addParam(qvo.getDenddate());
-			
+			for(int i=0;i<6;i++){//地区提单量,地区合同代账费,（计算客单价）
+				spm.addParam(qvo.getDbegindate());
+				spm.addParam(qvo.getDenddate());
+			}
 			List<ManagerVO> list6 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,3).toString(), spm, new BeanListProcessor(ManagerVO.class));
-			spm.addParam(qvo.getDbegindate());
-			List<ManagerVO> list7 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,1).toString(), spm, new BeanListProcessor(ManagerVO.class));
-			List<ManagerVO> list8 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,2).toString(), spm, new BeanListProcessor(ManagerVO.class));
-
+			
+//			buf=new StringBuffer();//扣款金额(预付款,返点款)
+//			buf.append("  select pk_corp,");
+//			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+//			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndeductmny,0)))+");
+//			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+//			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdeductmny,0)))as ndeductmny,");
+//			
+//			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+//			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndedrebamny,0)))+");
+//			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+//			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdedrebamny,0)))as ndedrebamny");
+//			
+//			buf.append("  from cn_contract where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vstatus=1 or vstatus=9 or vstatus=10) and ");
+//			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
+//			buf.append("  group by pk_corp");
+//			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
+			
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -255,14 +240,14 @@ public class ManagerServiceImpl implements IManagerService {
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     } 
-		     if(list3!=null&&list3.size()>0){//扣款金额(预付款,返点款)
-		    	 for (ManagerVO managerVO : list3) {
-						ManagerVO vo = map.get(managerVO.getPk_corp());
-						vo.setNdeductmny(managerVO.getNdeductmny());
-						vo.setNdedrebamny(managerVO.getNdedrebamny());
-						map.put(managerVO.getPk_corp(),vo);
-					}
-		     }
+//		     if(list3!=null&&list3.size()>0){//扣款金额(预付款,返点款)
+//		    	 for (ManagerVO managerVO : list3) {
+//						ManagerVO vo = map.get(managerVO.getPk_corp());
+//						vo.setNdeductmny(managerVO.getNdeductmny());
+//						vo.setNdedrebamny(managerVO.getNdedrebamny());
+//						map.put(managerVO.getPk_corp(),vo);
+//					}
+//		     }
 		     if(list4!=null&&list4.size()>0){//预存款余额
 		    	 for (ManagerVO managerVO : list4) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -291,25 +276,33 @@ public class ManagerServiceImpl implements IManagerService {
 					}
 				}
 		     }
-		     if(list7!=null&&list7.size()>0){//新增提单量, 新增合同代账费
-		    	 for (ManagerVO managerVO : list7) {
+		     
+		     
+			List<ManagerVO> list7 =qryBoth(qvo,pks,1);
+			if(list7!=null&&list7.size()>0){//新增提单量, 新增合同代账费
+				 for (ManagerVO managerVO : list7) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
-						vo.setAnum(managerVO.getAnum());
-						vo.setAntotalmny(managerVO.getAntotalmny());
+						vo.setAnum(vo.getAnum()+managerVO.getAnum());
+						vo.setAntotalmny(vo.getAntotalmny().add(managerVO.getAntotalmny()));
+						vo.setNdeductmny(vo.getNdeductmny().add(managerVO.getNdeductmny()));
+						vo.setNdedrebamny(vo.getNdedrebamny().add(managerVO.getNdedrebamny()));
 						map.put(managerVO.getPk_corp(),vo);
 					}
-		     }
-		     if(list8!=null&&list8.size()>0){//续费提单量, 续费合同代账费
-		    	 for (ManagerVO managerVO : list8) {
+			}
+			List<ManagerVO> list8 =qryBoth(qvo,pks,2);
+			if(list8!=null&&list8.size()>0){//续费提单量, 续费合同代账费
+				 for (ManagerVO managerVO : list8) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
-						vo.setRnum(managerVO.getRnum());
-						vo.setRntotalmny(managerVO.getRntotalmny());
+						vo.setRnum(vo.getRnum()+managerVO.getAnum());
+						vo.setRntotalmny(vo.getRntotalmny().add(managerVO.getAntotalmny()));
+						vo.setNdeductmny(vo.getNdeductmny().add(managerVO.getNdeductmny()));
+						vo.setNdedrebamny(vo.getNdedrebamny().add(managerVO.getNdedrebamny()));
 						map.put(managerVO.getPk_corp(),vo);
 					}
-		     }
+			}
 		}
-		 Collection<ManagerVO> manas = map.values();
-		 ArrayList<ManagerVO> list= new ArrayList<ManagerVO>(manas);
+		Collection<ManagerVO> manas = map.values();
+		ArrayList<ManagerVO> list= new ArrayList<ManagerVO>(manas);
 		return list;
 	}
 	
@@ -368,13 +361,13 @@ public class ManagerServiceImpl implements IManagerService {
 	 */
 	private StringBuffer getSql(String[] pks,Integer type) {
 		StringBuffer buf=new StringBuffer();
-		if(type==3){
+//		if(type==3){
 			buf.append("  select wm_concat(w.pk_corp) as pk_corp,sum(w.rnum) as rnum,");
 			buf.append("  sum(w.rntotalmny) as rntotalmny,w.vprovince as vprovince from ( ");
 			buf.append("  select c.pk_corp,b.vprovince, ");
-		}else{
-			buf.append("  select c.pk_corp,");
-		}
+//		}else{
+//			buf.append("  select c.pk_corp,");
+//		}
 		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))");
 		buf.append("  +sum(decode(vstatus,10," );
@@ -384,11 +377,11 @@ public class ManagerServiceImpl implements IManagerService {
 		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)))");
 		buf.append("  -sum (decode(patchstatus,2,decode((sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
 		buf.append("   sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1),0)");
-		if(type==1){
-			buf.append("  )as anum,");
-		}else{
+//		if(type==1){
+//			buf.append("  )as anum,");
+//		}else{
 			buf.append("  )as rnum,");
-		}
+//		}
 		
 		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");
@@ -397,28 +390,28 @@ public class ManagerServiceImpl implements IManagerService {
 		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)+nvl(nbookmny,0)),");
 		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0))");
-		if(type==1){
-			buf.append("  ))as antotalmny from cn_contract c");
-		}else if(type==2){
-			buf.append("  ))as rntotalmny from cn_contract c");
-		}else{
+//		if(type==1){
+//			buf.append("  ))as antotalmny from cn_contract c");
+//		}else if(type==2){
+//			buf.append("  ))as rntotalmny from cn_contract c");
+//		}else{
 			buf.append("  ))as rntotalmny from cn_contract c");
 			buf.append("  left join bd_corp b on c.pk_corp=b.pk_corp");
-		}
+//		}
 		buf.append("  where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and (c.vstatus=1 or c.vstatus=9 or c.vstatus=10) ");
-		if(type==3){
+//		if(type==3){
 			buf.append("  and b.vprovince is not null ");
 			buf.append("  group by c.pk_corp,b.vprovince  order by b.vprovince)w group by w.vprovince");
-		}else{
-			buf.append(" and CONCAT(c.pk_corpk,c.pk_corp) ");
-			if(type==1){
-				buf.append(" not ");
-			}
-			buf.append("  in(select CONCAT(pk_corpk,pk_corp) from cn_contract where nvl(dr,0)=0 and vstatus in(1,9)  and substr(deductdata,1,10)<?)");
-			buf.append("  and  ");
-			buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-			buf.append("  group by c.pk_corp");
-		}
+//		}else{
+//			buf.append(" and CONCAT(c.pk_corpk,c.pk_corp) ");
+//			if(type==1){
+//				buf.append(" not ");
+//			}
+//			buf.append("  in(select CONCAT(pk_corpk,pk_corp) from cn_contract where nvl(dr,0)=0 and vstatus in(1,9)  and substr(deductdata,1,10)<?)");
+//			buf.append("  and  ");
+//			buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+//			buf.append("  group by c.pk_corp");
+//		}
 		return buf;
 	}
 	
@@ -433,7 +426,7 @@ public class ManagerServiceImpl implements IManagerService {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {//补提单的合同
 		StringBuffer sql = new StringBuffer();
@@ -480,6 +473,69 @@ public class ManagerServiceImpl implements IManagerService {
 				return o1.getDenddate().compareTo(o2.getDenddate());
 			}
 		});
+		return vos;
+	}
+	
+	/**
+	 * 1、type=1列表新增(提单量+代账费)2、type=2:列表续费；
+	 * 
+	 */
+	private List<ManagerVO> qryBoth(ManagerVO qvo,String[] pks,Integer type) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sp.addParam(qvo.getDbegindate());
+		sp.addParam(qvo.getDenddate());
+		sql.append(" select decode(c.patchstatus,2,0,1) as anum,c.pk_corp, ");//补提单合同，数量为0
+		sql.append(" nvl(c.ntotalmny,0)-nvl(c.nbookmny,0) as antotalmny, " );   
+		sql.append(" nvl(c.ndeductmny,0) as ndeductmny,nvl(c.ndedrebamny,0) as ndedrebamny from cn_contract c" );   
+		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and (c.vstatus=1 or c.vstatus=9 or c.vstatus=10) and " );
+		sql.append(" c.deductdata>=? and c.deductdata<=? and " );
+		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+		sql.append(" and c.pk_corp ");
+		if(type==1){
+			sql.append(" not ");
+		}
+		sql.append(" in (select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		
+	    sql = new StringBuffer();
+	    sql.append(" select 0 as anum,c.pk_corp, ");
+		sql.append(" nvl(c.nsubtotalmny,0) as antotalmny,nvl(c.nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(c.nsubdedrebamny,0) as ndedrebamny from cn_contract c" );   
+		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and c.vstatus=9  and" );
+		sql.append(" substr(c.dchangetime,0,10)>=? and substr(c.dchangetime,0,10)<=? and " );
+		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+		sql.append(" and c.pk_corp ");
+		if(type==1){
+			sql.append(" not ");
+		}
+		sql.append(" in(select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		
+		sql = new StringBuffer();
+	    sql.append(" select -1 as anum,c.pk_corp, ");
+		sql.append(" nvl(c.nsubtotalmny,0)+nvl(c.nbookmny,0) as antotalmny,nvl(c.nsubdeductmny,0) as ndeductmny , " );   
+		sql.append(" nvl(c.nsubdedrebamny,0) as ndedrebamny from cn_contract c" );   
+		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0  and c.vstatus=10 and" );
+		sql.append(" substr(c.dchangetime,0,10)>=? and substr(c.dchangetime,0,10)<=? and ");
+		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+		sql.append(" and c.pk_corp ");
+		if(type==1){
+			sql.append(" not ");
+		}
+		sql.append(" in (select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		List<ManagerVO> qryYZF =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+			
+		ArrayList<ManagerVO> vos=new ArrayList<>();
+		if(qryYSH!=null && qryYSH.size()>0){
+			vos.addAll(qryYSH);
+		}
+		if(qryYZZ!=null && qryYZZ.size()>0){
+			vos.addAll(qryYZZ);
+		}
+		if(qryYZF!=null && qryYZF.size()>0){
+			vos.addAll(qryYZF);
+		}
 		return vos;
 	}
 	
