@@ -55,6 +55,8 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			int connum = 0;//合同最终金额
 			DZFDouble ndedsummny = DZFDouble.ZERO_DBL;
 			for(String pk_corp : pk_corplist){
+				num = 0;
+				connum = 0;
 				if(detmap != null && !detmap.isEmpty()){
 					detlist = (List<DeductAnalysisVO>) detmap.get(pk_corp);
 					if(detlist != null && detlist.size() > 0){
