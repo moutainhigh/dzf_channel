@@ -277,7 +277,6 @@ public class ManagerServiceImpl implements IManagerService {
 				}
 		     }
 		     
-		     
 			List<ManagerVO> list7 =qryBoth(qvo,pks,1);
 			if(list7!=null&&list7.size()>0){//新增提单量, 新增合同代账费
 				 for (ManagerVO managerVO : list7) {
@@ -491,11 +490,11 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and (c.vstatus=1 or c.vstatus=9 or c.vstatus=10) and " );
 		sql.append(" c.deductdata>=? and c.deductdata<=? and " );
 		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-		sql.append(" and c.pk_corp ");
+		sql.append(" and c.pk_corpk ");
 		if(type==1){
 			sql.append(" not ");
 		}
-		sql.append(" in (select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		sql.append(" in (select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
 		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 	    sql = new StringBuffer();
@@ -505,11 +504,11 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and c.vstatus=9  and" );
 		sql.append(" substr(c.dchangetime,0,10)>=? and substr(c.dchangetime,0,10)<=? and " );
 		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-		sql.append(" and c.pk_corp ");
+		sql.append(" and c.pk_corpk ");
 		if(type==1){
 			sql.append(" not ");
 		}
-		sql.append(" in(select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		sql.append(" in(select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
 		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 		sql = new StringBuffer();
@@ -519,11 +518,11 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0  and c.vstatus=10 and" );
 		sql.append(" substr(c.dchangetime,0,10)>=? and substr(c.dchangetime,0,10)<=? and ");
 		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-		sql.append(" and c.pk_corp ");
+		sql.append(" and c.pk_corpk ");
 		if(type==1){
 			sql.append(" not ");
 		}
-		sql.append(" in (select pk_corp from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
+		sql.append(" in (select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
 		List<ManagerVO> qryYZF =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 			
 		ArrayList<ManagerVO> vos=new ArrayList<>();
