@@ -40,12 +40,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	public List<ChnBalanceRepVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<ChnBalanceRepVO> retlist = new ArrayList<ChnBalanceRepVO>();
 		List<String> pklist = new ArrayList<String>();
-		Map<String,ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);
-		Map<String,ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);
-		HashMap<String, ChnBalanceRepVO> map =new HashMap<>();
-		if(pklist != null && pklist.size() > 0){
-			if(paramvo.getQrytype()!=null && (paramvo.getQrytype()==-1 || paramvo.getQrytype()==2)){
-				map=queryConList(paramvo);
+		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);// 查询期初余额
+		Map<String, ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);// 查询明细金额
+		HashMap<String, ChnBalanceRepVO> map = new HashMap<String, ChnBalanceRepVO>();
+		if (pklist != null && pklist.size() > 0) {
+			if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
+				map = queryConList(paramvo);
 			}
 			ChnBalanceRepVO repvo = null;
 			ChnBalanceRepVO vo = null;
@@ -53,59 +53,59 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			CorpVO accvo = null;
 			String ipaytype = null;
 			Integer paytype = null;
-			for(String pk : pklist){
+			for (String pk : pklist) {
 				repvo = new ChnBalanceRepVO();
-				ipaytype = pk.substring(pk.indexOf(",")+1);  
+				ipaytype = pk.substring(pk.indexOf(",") + 1);
 				pk_corp = pk.substring(0, pk.indexOf(","));
 				repvo.setPk_corp(pk_corp);
 				accvo = CorpCache.getInstance().get(null, pk_corp);
-				if(accvo != null){
+				if (accvo != null) {
 					repvo.setCorpname(accvo.getUnitname());
 					repvo.setInnercode(accvo.getInnercode());
 				}
 				if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-					if (repvo.getInnercode().indexOf(paramvo.getCorpname())== -1
+					if (repvo.getInnercode().indexOf(paramvo.getCorpname()) == -1
 							&& repvo.getCorpname().indexOf(paramvo.getCorpname()) == -1) {
 						continue;
 					}
 				}
 				paytype = Integer.parseInt(ipaytype);
 				repvo.setIpaytype(paytype);
-				if(paytype == 1){
+				if (paytype == 1) {
 					repvo.setVpaytypename("保证金");
-				}else if(paytype == 2){
+				} else if (paytype == 2) {
 					repvo.setVpaytypename("预付款");
-				}else if(paytype == 3){
+				} else if (paytype == 3) {
 					repvo.setVpaytypename("返点");
 				}
-				if(map!=null && !map.isEmpty() && paytype == 2 && map.containsKey(repvo.getPk_corp())){
-					ChnBalanceRepVO balanvo=map.get(repvo.getPk_corp());
+				if (map != null && !map.isEmpty() && paytype == 2 && map.containsKey(repvo.getPk_corp())) {
+					ChnBalanceRepVO balanvo = map.get(repvo.getPk_corp());
 					repvo.setNum(balanvo.getNum());
 					repvo.setNaccountmny(balanvo.getNaccountmny());
 					repvo.setNbookmny(balanvo.getNbookmny());
 				}
-				if(initmap != null && !initmap.isEmpty()){
+				if (initmap != null && !initmap.isEmpty()) {
 					vo = initmap.get(pk);
-					if(vo != null){
-						if(paytype == 1){
+					if (vo != null) {
+						if (paytype == 1) {
 							repvo.setInitbalance(vo.getBail());
-						}else if(paytype == 2){
+						} else if (paytype == 2) {
 							repvo.setInitbalance(vo.getCharge());
-						}else if(paytype == 3){
+						} else if (paytype == 3) {
 							repvo.setInitbalance(vo.getRebate());
 						}
 					}
 				}
-				if(datamap != null && !datamap.isEmpty()){
+				if (datamap != null && !datamap.isEmpty()) {
 					vo = datamap.get(pk);
-					if(vo != null){
-						if(paytype == 1){
+					if (vo != null) {
+						if (paytype == 1) {
 							repvo.setNpaymny(vo.getBail());
-						}else if(paytype == 2){
+						} else if (paytype == 2) {
 							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
-						}else if(paytype == 3){
+						} else if (paytype == 3) {
 							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
@@ -125,6 +125,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 * @throws DZFWarpException
 	 */
+	@SuppressWarnings("unchecked")
 	private HashMap<String,ChnBalanceRepVO> queryConList(QryParamVO paramvo) throws DZFWarpException {
 		SQLParameter spm=new SQLParameter();
 		StringBuffer buf=new StringBuffer();
@@ -202,6 +203,14 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		repvo.setNbalance(balance);
 	}
 	
+	/**
+	 * 查询金额
+	 * @param paramvo
+	 * @param pklist  
+	 * @param qrytype  1：查询期初余额；2：查询明细金额；
+	 * @return
+	 * @throws DZFWarpException
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<String,ChnBalanceRepVO> qryDataMap(QryParamVO paramvo, List<String> pklist, Integer qrytype) throws DZFWarpException {
 		Map<String,ChnBalanceRepVO> map = new HashMap<String,ChnBalanceRepVO>();
@@ -562,6 +571,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 * @throws DZFWarpException
 	 */
+	@SuppressWarnings("unchecked")
 	private HashMap<String,ChnDetailVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
