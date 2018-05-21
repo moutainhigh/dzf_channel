@@ -503,7 +503,14 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny, \n");
 		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny, \n");
-		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
+//		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
+		//合同数量去掉补提单合同数
+		sql.append("       SUM(CASE  \n") ; 
+		sql.append("             WHEN nvl(t.patchstatus,0) != 2 THEN  \n") ; 
+		sql.append("              1  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           END) AS icontractnum  \n") ;
 		sql.append("  FROM cn_contract t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
