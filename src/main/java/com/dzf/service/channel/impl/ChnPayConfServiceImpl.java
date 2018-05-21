@@ -58,11 +58,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
-					if(!StringUtil.isEmpty(paramvo.getCorpname())){
-						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
-							retlist.add(vo);
-						}
-					}
+//					if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+//							retlist.add(vo);
+//						}
+//					}
 				}
 			}
 			if(!StringUtil.isEmpty(paramvo.getCorpname())){

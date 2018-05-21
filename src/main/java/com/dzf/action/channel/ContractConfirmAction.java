@@ -244,6 +244,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	public void getAttachImage(){
 		
 		InputStream is = null;
+		OutputStream os = null;
 		try {
 			ContractDocVO paramvo = new ContractDocVO();
 			paramvo = (ContractDocVO) DzfTypeUtils.cast(getRequest(), paramvo);
@@ -284,7 +285,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				 }else{
 					 
 				 }
-				 OutputStream os = getResponse().getOutputStream();
+				 os = getResponse().getOutputStream();
 				 is = new FileInputStream(afile);
 				 IOUtils.copy(is, os);
 			 }
@@ -295,8 +296,16 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				try {
 					is.close();
 				} catch (IOException e) {
+				    log.error(e.getMessage());
 				}
 			}
+			if(os != null){
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage());
+                }
+            }
 		}
 	}
 	

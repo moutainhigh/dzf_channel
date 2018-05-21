@@ -149,6 +149,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 	 */
 	public void getAttachImage() {
 		InputStream is = null;
+		OutputStream os = null;
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
@@ -171,19 +172,23 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			if (isexists) {
 				String path = getRequest().getSession().getServletContext().getRealPath("/");
 				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
-				OutputStream os = getResponse().getOutputStream();
+				os = getResponse().getOutputStream();
 				is = new FileInputStream(afile);
 				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
 
 		} finally {
-			if (is != null) {
 				try {
-					is.close();
+				    if (is != null) {
+				        is.close();
+				    }
+				    if(os != null){
+				        os.close();
+				    }
 				} catch (IOException e) {
+				    log.error(e.getMessage());
 				}
-			}
 		}
 	}
 	
@@ -192,6 +197,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 	 */
 	public void downFile() {
 		FileInputStream fileis = null;
+		ServletOutputStream out = null;
 		Json json = new Json();
 		try {
 			QryParamVO paramvo = new QryParamVO();
@@ -205,7 +211,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			String formattedName = URLEncoder.encode(vo.getFilename(), "UTF-8");
 			getResponse().addHeader("Content-Disposition", "attachment;filename=" + 
 					new String(vo.getFilename().getBytes("UTF-8"), "ISO8859-1") + ";filename*=UTF-8''" + formattedName);
-			ServletOutputStream out = getResponse().getOutputStream();
+			out = getResponse().getOutputStream();
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
 			while ((bytesRead = fileis.read(buf)) != -1) {
@@ -221,13 +227,16 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			log.error("文件下载失败", e);
 			json.setSuccess(false);
 		} finally {
-			if (fileis != null) {
 				try {
-					fileis.close();
+				    if (fileis != null) {
+				        fileis.close();
+				    }
+				    if (out != null) {
+				        out.close();
+                    }
 				} catch (IOException e) {
 					log.error("关闭流失败", e);
 				}
-			}
 		}
 	}
 }

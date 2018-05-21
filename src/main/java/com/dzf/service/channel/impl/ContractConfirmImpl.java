@@ -39,6 +39,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.Logger;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
@@ -1529,12 +1530,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 						try {
 							is.close();
 						} catch (IOException e) {
+						    Logger.error(this, e.getMessage(),e);
 						}
 					}
 					if (os != null) {
 						try {
 							os.close();
 						} catch (IOException e) {
+						    Logger.error(this, e.getMessage(),e);
 						}
 					}
 				}

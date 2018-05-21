@@ -192,6 +192,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	 */
 	public void getAttachImage() {
 		InputStream is = null;
+		OutputStream os = null;
 		try {
 			ChnPayBillVO vo = new ChnPayBillVO();
 			vo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), vo);
@@ -214,19 +215,23 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			if (isexists) {
 				String path = getRequest().getSession().getServletContext().getRealPath("/");
 				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
-				OutputStream os = getResponse().getOutputStream();
+				os = getResponse().getOutputStream();
 				is = new FileInputStream(afile);
 				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
 
 		} finally {
-			if (is != null) {
 				try {
-					is.close();
+				    if (is != null) {
+				        is.close();
+				    }
+				    if(os != null){
+				        os.close();
+				    }
 				} catch (IOException e) {
+				    log.error(e.getMessage());
 				}
-			}
 		}
 	}
 	
@@ -235,6 +240,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	 */
 	public void downFile() {
 		FileInputStream fileis = null;
+		ServletOutputStream out = null;
 		Json json = new Json();
 		try {
 			String billid = getRequest().getParameter("billid");
@@ -245,7 +251,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			String formattedName = URLEncoder.encode(vo.getDocName(), "UTF-8");
 			getResponse().addHeader("Content-Disposition", "attachment;filename=" + 
 					new String(vo.getDocName().getBytes("UTF-8"), "ISO8859-1") + ";filename*=UTF-8''" + formattedName);
-			ServletOutputStream out = getResponse().getOutputStream();
+			out = getResponse().getOutputStream();
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
 			while ((bytesRead = fileis.read(buf)) != -1) {
@@ -268,6 +274,13 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 					log.error("关闭流失败", e);
 				}
 			}
+			if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("关闭流失败", e);
+                }
+            }
 		}
 	}
 	
