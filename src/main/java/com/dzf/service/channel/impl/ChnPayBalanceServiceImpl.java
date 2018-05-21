@@ -42,6 +42,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<String> pklist = new ArrayList<String>();
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);// 查询期初余额
 		Map<String, ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);// 查询明细金额
+		if(paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)){
+			qryNoDeductConData(paramvo, pklist);
+		}
 		HashMap<String, ChnBalanceRepVO> map = new HashMap<String, ChnBalanceRepVO>();
 		if (pklist != null && pklist.size() > 0) {
 			if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
@@ -117,6 +120,61 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 查询零扣款合同的加盟商信息(既没有保证金，也没有预付款)
+	 * @param paramvo
+	 * @param pklist
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private void qryNoDeductConData(QryParamVO paramvo,List<String> pklist) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT DISTINCT t.pk_corp  \n") ;
+		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
+		sql.append("   AND t.vstatus = 1  \n") ; 
+		sql.append("   AND t.pk_confrim NOT IN (SELECT l.pk_bill  \n") ; 
+		sql.append("                              FROM cn_detail l  \n") ; 
+		sql.append("                             WHERE nvl(l.dr, 0) = 0  \n") ; 
+		sql.append("                               AND l.ipaytype = 2) \n");
+		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+	        sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+	    }
+		if(!StringUtil.isEmpty(paramvo.getPeriod())){
+			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
+				spm.addParam(paramvo.getBeginperiod());
+			}
+			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+				sql.append(" AND substr(t.deductdata,1,7) <= ? \n");
+				spm.addParam(paramvo.getEndperiod());
+			}
+		}else{
+			if(paramvo.getBegdate() != null){
+				sql.append(" AND deductdata >= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
+			if(paramvo.getEnddate() != null){
+				sql.append(" AND deductdata <= ? \n");
+				spm.addParam(paramvo.getEnddate());
+			}
+		}
+		List<ChnBalanceRepVO> list = (List<ChnBalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnBalanceRepVO.class));
+		if(list != null && list.size() > 0){
+			String pk = "";
+			for(ChnBalanceRepVO repvo : list){
+				pk = repvo.getPk_corp() + ",2";
+				if(!pklist.contains(pk)){
+					pklist.add(pk);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -492,7 +550,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append(" vstatus as dr,2 as ipaytype,2 as iopertype,vcontcode as vmemo from cn_contract" );   
 		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 and (vstatus=10 or vstatus=9) \n");
 		spm.addParam(paramvo.getPk_corp());
-		if(list!=null && list.size()>0){
+		if(ids != null && ids.length() > 0){
 			sql.append(" and pk_confrim not in (");
 			sql.append(ids.toString().substring(0,ids.toString().length()-1));
 			sql.append(" )");
@@ -537,7 +595,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0  \n");
 		sql.append(" and (vstatus=1 or vstatus=9 or vstatus=10) \n");
 		spm.addParam(paramvo.getPk_corp());
-		if(list!=null && list.size()>0){
+		if(ids != null && ids.length() > 0){
 			sql.append(" and pk_confrim not in (");
 			sql.append(ids.toString().substring(0,ids.toString().length()-1));
 			sql.append(" )");
