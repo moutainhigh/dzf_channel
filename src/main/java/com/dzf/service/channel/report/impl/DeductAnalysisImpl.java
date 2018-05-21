@@ -16,6 +16,7 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
@@ -34,6 +35,8 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	@Override
 	public List<DeductAnalysisVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<DeductAnalysisVO> retlist = new ArrayList<DeductAnalysisVO>();
+		//查询日期校验
+		checkQryDate(paramvo);
 		//1、客户主键
 		List<String> pk_corplist = new ArrayList<String>();
 		//2、扣款金额明细
@@ -191,6 +194,24 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			}
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 查询日期校验
+	 * @param paramvo
+	 * @throws DZFWarpException
+	 */
+	private void checkQryDate(QryParamVO paramvo) throws DZFWarpException {
+		if(!StringUtil.isEmpty(paramvo.getBeginperiod()) && !StringUtil.isEmpty(paramvo.getEndperiod())){
+			if(paramvo.getBeginperiod().compareTo(paramvo.getEndperiod()) > 0){
+				throw new BusinessException("开始查询期间不能大于结束查询期间");
+			}
+		}else if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
+			if(paramvo.getBegdate().compareTo(paramvo.getEnddate()) > 0){
+				throw new BusinessException("开始查询日期不能大于结束日期");
+			}
+		}
+		
 	}
 	
 	/**

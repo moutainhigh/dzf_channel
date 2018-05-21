@@ -155,6 +155,7 @@ function load(type){
 	var columns = getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype);
 	
 	var datarray =  new Array();
+	var errmsg = "";
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -243,12 +244,23 @@ function load(type){
 						}
 					}
 				}
+			}else{
+				errmsg = data.msg;
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			parent.$.messager.progress('close');
 		}
 	});
+	
+	if(!isEmpty(errmsg)){
+		parent.$.messager.progress('close');
+		Public.tips({
+			content : errmsg,
+			type : 2
+		});
+		return;
+	}
 	
 	$('#grid').datagrid({
 		striped : true,
