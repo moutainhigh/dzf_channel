@@ -299,13 +299,11 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-//		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-//			sql.append(" AND t.ndeductmny IS NOT NULL ");
-//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-//			sql.append(" AND t.ndedrebamny IS NOT NULL ");
-//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-//			sql.append(" AND t.ndedsummny IS NOT NULL ");
-//		}
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+			sql.append(" AND nvl(t.ndedrebamny,0) = 0 ");
+		}
 		sql.append(" GROUP BY \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
 			sql.append(" nvl(t.ndeductmny,0) ");
@@ -458,13 +456,11 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-//		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-//			sql.append(" AND t.nretdedmny IS NOT NULL ");
-//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-//			sql.append(" AND t.nretrebmny IS NOT NULL ");
-//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-//			sql.append(" AND t.nreturnmny IS NOT NULL ");
-//		}
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+			sql.append(" AND nvl(t.ndedrebamny,0) = 0 ");
+		}
 		sql.append(" GROUP BY \n") ; 
 		sql.append(" t.pk_corp  \n") ; 
 		sql.append(" ORDER BY t.pk_corp \n");
