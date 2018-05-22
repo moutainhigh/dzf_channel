@@ -518,7 +518,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		for (ChnDetailVO chnDetailVO : vos2) {
 			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
 			vmemo=new StringBuffer();
-			if(chnDetailVO.getDr()==9){
+			if(chnDetailVO.getDr() != null && chnDetailVO.getDr() == 9){
 				vmemo.append("合同终止：");
 			}else{
 				vmemo.append("合同作废：");
