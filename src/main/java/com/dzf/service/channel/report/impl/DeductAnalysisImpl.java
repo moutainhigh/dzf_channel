@@ -302,7 +302,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
 			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-			sql.append(" AND nvl(t.ndedrebamny,0) = 0 ");
+			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
 		}
 		sql.append(" GROUP BY \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
@@ -459,7 +459,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
 			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-			sql.append(" AND nvl(t.ndedrebamny,0) = 0 ");
+			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
 		}
 		sql.append(" GROUP BY \n") ; 
 		sql.append(" t.pk_corp  \n") ; 
