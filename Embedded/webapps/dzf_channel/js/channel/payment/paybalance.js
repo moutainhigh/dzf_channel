@@ -452,16 +452,23 @@ function npFormat(value,row,index){
  * @returns
  */
 function useFormat(value,row,index){
-	if(value == 0){
-		return "0.00";
+//	if(value == 0){
+//		return "0.00";
+//	}else{
+//		if(row.ddate != "合计"){
+//			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+//			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+//			return ss ;
+//		}else{
+//			return formatMny(value);
+//		}
+//	}
+	if(row.ddate != "合计"){
+		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+		return ss ;
 	}else{
-		if(row.ddate != "合计"){
-			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
-			return ss ;
-		}else{
-			return formatMny(value);
-		}
+		return formatMny(value);
 	}
 }
 
