@@ -222,7 +222,7 @@ function setFooter(){
     var anum = 0;	
     var rntlmny = 0;	
     var antlmny = 0;
-    var uprice= 0;
+//    var uprice= 0;
     var ndemny = 0;	
     var nderebmny = 0;	
     var outmny = 0;	
@@ -235,7 +235,7 @@ function setFooter(){
     	anum += parseFloat(rows[i].anum);
     	rntlmny += parseFloat(rows[i].rntlmny);
     	antlmny += parseFloat(rows[i].antlmny);
-    	uprice += parseFloat(rows[i].uprice);
+//    	uprice += parseFloat(rows[i].uprice);
     	ndemny += parseFloat(rows[i].ndemny);
     	nderebmny += parseFloat(rows[i].nderebmny);
     	outmny += parseFloat(rows[i].outmny);
@@ -249,7 +249,7 @@ function setFooter(){
     footerData['anum'] = anum;
     footerData['rntlmny'] = rntlmny;
     footerData['antlmny'] = antlmny;
-    footerData['uprice'] = uprice;
+//    footerData['uprice'] = uprice;
     footerData['ndemny'] = ndemny;
     footerData['nderebmny'] = nderebmny;
     footerData['outmny'] = outmny;
