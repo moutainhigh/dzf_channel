@@ -6,6 +6,12 @@ import com.dzf.model.sys.sys_power.CorpDocVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 
+/**
+ * 加盟商客户审批，已废弃不用
+ * @author gejw
+ * @time 2018年5月24日 下午1:38:14
+ *
+ */
 public interface IChannelCustomerApprove {
 	public void processApprove(CorpVO[] corps, String user) throws DZFWarpException;
 
