@@ -129,7 +129,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preyear));
-							first.add(submny.div(kkmap.get(preyear)).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(preyear))).multiply(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -137,7 +137,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(kkmap.get(showdate.get(i-1))).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -162,7 +162,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preyear));
-							second.add(submny.div(jemap.get(preyear)).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(preyear))).multiply(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -170,7 +170,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(jemap.get(showdate.get(i-1))).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -266,7 +266,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preseason));
-							first.add(submny.div(kkmap.get(preseason)).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(preseason))).multiply(100));
 						}
 					}else{
 						//(当季度金额 - 上一季度金额) / 上一季度金额
@@ -274,7 +274,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(kkmap.get(showdate.get(i-1))).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -299,7 +299,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preseason));
-							second.add(submny.div(jemap.get(preseason)).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(preseason))).multiply(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -307,7 +307,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(jemap.get(showdate.get(i-1))).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -383,7 +383,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preperiod));
-							first.add(submny.div(kkmap.get(preperiod)).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(preperiod))).multiply(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -391,7 +391,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							first.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(kkmap.get(showdate.get(i-1))).multiply(100));
+							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -416,7 +416,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preperiod));
-							second.add(submny.div(jemap.get(preperiod)).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(preperiod))).multiply(100));
 						}
 					}else{
 						//(当月金额 - 上一月金额) / 上一月金额
@@ -424,7 +424,7 @@ public class AchievementServiceImpl implements IAchievementService {
 							second.add(new DZFDouble(100.00));
 						}else{
 							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(jemap.get(showdate.get(i-1))).multiply(100));
+							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
 						}
 					}
 				}
@@ -436,6 +436,23 @@ public class AchievementServiceImpl implements IAchievementService {
 			throw new BusinessException("月度查询条件不能为空");
 		}
 		return retvo;
+	}
+	
+	/**
+	 * 取金额的绝对值
+	 * @param mny
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private DZFDouble getAbsValue(DZFDouble mny) throws DZFWarpException {
+		if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) == 0){
+			return DZFDouble.ZERO_DBL;
+		}else if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) > 0){
+			return mny;
+		}else if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) < 0){
+			return mny.multiply(new DZFDouble(-1));
+		}
+		return null;
 	}
 	
 	/**
@@ -594,7 +611,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						second.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneyear));
-						second.add(submny.div(mnymap.get(preoneyear)).multiply(100));
+						second.add(submny.div(getAbsValue(mnymap.get(preoneyear))).multiply(100));
 					}
 				}
 				//往期数据
@@ -609,7 +626,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						first.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoyear));
-						first.add(submny.div(mnymap.get(pretwoyear)).multiply(100));
+						first.add(submny.div(getAbsValue(mnymap.get(pretwoyear))).multiply(100));
 					}
 				}
 			}
@@ -669,7 +686,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						second.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneperiod));
-						second.add(submny.div(mnymap.get(preoneperiod)).multiply(100));
+						second.add(submny.div(getAbsValue(mnymap.get(preoneperiod))).multiply(100));
 					}
 				}
 				//往期数据
@@ -684,7 +701,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						first.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoperiod));
-						first.add(submny.div(mnymap.get(pretwoperiod)).multiply(100));
+						first.add(submny.div(getAbsValue(mnymap.get(pretwoperiod))).multiply(100));
 					}
 				}
 			}
@@ -745,7 +762,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						second.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneperiod));
-						second.add(submny.div(mnymap.get(preoneperiod)).multiply(100));
+						second.add(submny.div(getAbsValue(mnymap.get(preoneperiod))).multiply(100));
 					}
 				}
 				//往期数据
@@ -760,7 +777,7 @@ public class AchievementServiceImpl implements IAchievementService {
 						first.add(new DZFDouble(100.00));
 					}else{
 						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoperiod));
-						first.add(submny.div(mnymap.get(pretwoperiod)).multiply(100));
+						first.add(submny.div(getAbsValue(mnymap.get(pretwoperiod))).multiply(100));
 					}
 				}
 			}
