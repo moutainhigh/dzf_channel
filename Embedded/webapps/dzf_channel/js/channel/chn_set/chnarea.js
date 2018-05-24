@@ -38,18 +38,12 @@ function load() {
 			width : '260',
 			title : '所属省市',
 			field : 'provnames',
-			formatter : function(value) {
-	  			if(value!=undefined){
-	  				return "<span title='" + value + "'>" + value + "</span>";
-	  			}}
+			formatter : showTitle
 		},{
 			width : '280',
 			title : '备注',
 			field : 'vmemo',
-	  		formatter : function(value) {
-	  			if(value!=undefined){
-	  				return "<span title='" + value + "'>" + value + "</span>";
-	  			}}
+	  		formatter :showTitle
 		},{
 			width :'250',
 			title : '操作',
@@ -77,6 +71,12 @@ function load() {
 			$('#grid').datagrid("selectRow", 0);  	
 		}
 	});
+}
+
+function showTitle(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
 }
 
 function loadManager(){
@@ -558,6 +558,7 @@ function initCard(id){
 			width : '220',
 			field : 'corpnm',
 			title : '加盟商',
+			formatter : showTitle,
 			editor : {
 				type : 'textbox',
 				options : {
@@ -598,6 +599,7 @@ function initCard(id){
 			width : '280',
 			field : 'vmemo',
 			title : '备注',
+			formatter : showTitle,
 			editor : {
 				type : 'textbox',
 				options : {
