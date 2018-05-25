@@ -611,24 +611,30 @@ public class ContractConfirmImpl implements IContractConfirm {
 			corpvo.setIsncust(confvo.getIsncust());
 			singleObjectBO.update(corpvo, new String[]{"isncust"});
 		}
-		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质
-		if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 2){//补单合同
-			if(corpvo != null){
-				corpvo.setChargedeptname(confvo.getChargedeptname());
-				singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
-			}
-		}else{
-			if(corpvo != null){
-				//从套餐取纳税人性质
-				if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
-					if(packmap != null && !packmap.isEmpty()){
-						if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
-							corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
-							singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
-						}
-					}
-				}
-			}
+		//当为补单或客户档案的纳税人性质为空时，才更新客户档案纳税人性质   此逻辑去掉
+//		if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == 2){//补单合同
+//			if(corpvo != null){
+//				corpvo.setChargedeptname(confvo.getChargedeptname());
+//				singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+//			}
+//		}else{
+//			if(corpvo != null){
+//				//从套餐取纳税人性质
+//				if(!StringUtil.isEmpty(confvo.getPk_packagedef())){
+//					if(packmap != null && !packmap.isEmpty()){
+//						if(!StringUtil.isEmpty(packmap.get(confvo.getPk_packagedef()))){
+//							corpvo.setChargedeptname(packmap.get(confvo.getPk_packagedef()));
+//							singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+//						}
+//					}
+//				}
+//			}
+//		}
+		//审核时，直接从合同取“纳税人性质”更新我的客户“纳税人性质”
+		if(corpvo != null){
+			corpvo.setChargedeptname(confvo.getChargedeptname());
+			singleObjectBO.update(corpvo, new String[]{"chargedeptname"});
+			CorpCache.getInstance().remove(confvo.getPk_corpk());
 		}
 	}
 	
