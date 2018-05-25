@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -208,23 +213,6 @@ public class ManagerServiceImpl implements IManagerService {
 			}
 			List<ManagerVO> list6 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,3).toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
-//			buf=new StringBuffer();//扣款金额(预付款,返点款)
-//			buf.append("  select pk_corp,");
-//			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-//			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndeductmny,0)))+");
-//			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-//			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdeductmny,0)))as ndeductmny,");
-//			
-//			buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-//			buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ndedrebamny,0)))+");
-//			buf.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-//			buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubdedrebamny,0)))as ndedrebamny");
-//			
-//			buf.append("  from cn_contract where nvl(isncust,'N')='N' and nvl(dr,0) = 0 and (vstatus=1 or vstatus=9 or vstatus=10) and ");
-//			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
-//			buf.append("  group by pk_corp");
-//			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
-			
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -240,14 +228,7 @@ public class ManagerServiceImpl implements IManagerService {
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     } 
-//		     if(list3!=null&&list3.size()>0){//扣款金额(预付款,返点款)
-//		    	 for (ManagerVO managerVO : list3) {
-//						ManagerVO vo = map.get(managerVO.getPk_corp());
-//						vo.setNdeductmny(managerVO.getNdeductmny());
-//						vo.setNdedrebamny(managerVO.getNdedrebamny());
-//						map.put(managerVO.getPk_corp(),vo);
-//					}
-//		     }
+		     
 		     if(list4!=null&&list4.size()>0){//预存款余额
 		    	 for (ManagerVO managerVO : list4) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -266,15 +247,18 @@ public class ManagerServiceImpl implements IManagerService {
 					map.put(managerVO.getPk_corp(),vo);
 				}
 		     }
+		     HashMap<Integer, ManagerVO> promap=new HashMap<Integer, ManagerVO>();
 		     if(list6!=null&&list6.size()>0){//客单价
 		    	 for (ManagerVO managerVO : list6) {
-		    		 String[] split = managerVO.getPk_corp().split(",");
-		    		 for (String string : split) {
-		    			 if(map.get(string)!=null){
-		    				 map.get(string).setUnitprice(managerVO.getRntotalmny().div(managerVO.getRnum()));
-		    			 }
-					}
+		    		 promap.put(managerVO.getVprovince(), managerVO);
 				}
+		    	Iterator<Entry<String, ManagerVO>> iterator = map.entrySet().iterator();
+		    	while (iterator.hasNext()){
+		    		Entry<String, ManagerVO> entry = iterator.next();
+		    		ManagerVO mapvo =(ManagerVO)entry.getValue();
+		    		ManagerVO managerVO = promap.get(mapvo.getVprovince());
+		    		mapvo.setUnitprice(managerVO.getRntotalmny().div(managerVO.getRnum()));
+		    	}
 		     }
 		     
 			List<ManagerVO> list7 =qryBoth(qvo,pks,1);
@@ -480,24 +464,40 @@ public class ManagerServiceImpl implements IManagerService {
 	 * 
 	 */
 	private List<ManagerVO> qryBoth(ManagerVO qvo,String[] pks,Integer type) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
+		StringBuffer sql = null;
 		SQLParameter sp=new SQLParameter();
 		sp.addParam(qvo.getDbegindate());
 		sp.addParam(qvo.getDenddate());
-		sql.append(" select decode(c.patchstatus,2,0,1) as anum,c.pk_corp, ");//补提单合同，数量为0
+		
+		sql = new StringBuffer();//非补提单的合同
+		sql.append(" select 1 as anum,c.pk_corp, ");//补提单合同，数量为0
 		sql.append(" nvl(c.ntotalmny,0)-nvl(c.nbookmny,0) as antotalmny, " );   
 		sql.append(" nvl(c.ndeductmny,0) as ndeductmny,nvl(c.ndedrebamny,0) as ndedrebamny from cn_contract c" );   
 		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and (c.vstatus=1 or c.vstatus=9 or c.vstatus=10) and " );
-		sql.append(" c.deductdata>=? and c.deductdata<=? and " );
+		sql.append(" c.deductdata>=? and c.deductdata<=? and nvl(c.patchstatus,0)!=2 and " );
 		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
 		sql.append(" and c.pk_corpk ");
 		if(type==1){
 			sql.append(" not ");
 		}
 		sql.append(" in (select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
-		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		List<ManagerVO> qryNBT =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
-	    sql = new StringBuffer();
+		sql = new StringBuffer();//补提单的合同(补提单合同不能作废，变更)
+		sql.append(" select 0 as anum,c.pk_corp, ");
+		sql.append(" nvl(c.ntotalmny,0)-nvl(c.nbookmny,0) as antotalmny, " );   
+		sql.append(" nvl(c.ndeductmny,0) as ndeductmny,nvl(c.ndedrebamny,0) as ndedrebamny from cn_contract c,cn_contract t" );   
+		sql.append(" where nvl(c.isncust,'N')='N' and nvl(c.dr,0) = 0 and c.vstatus=1  and " );
+		sql.append(" c.deductdata>=? and c.deductdata<=? and nvl(c.patchstatus,0)=2 and c.pk_source=t.pk_contract and" );
+		sql.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+		sql.append(" and c.pk_corpk ");
+		if(type==1){
+			sql.append(" not ");
+		}
+		sql.append(" in (select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<t.deductdata)");
+		List<ManagerVO> qryYBT =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		
+	    sql = new StringBuffer();//变更的情况
 	    sql.append(" select 0 as anum,c.pk_corp, ");
 		sql.append(" nvl(c.nsubtotalmny,0) as antotalmny,nvl(c.nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(c.nsubdedrebamny,0) as ndedrebamny from cn_contract c" );   
@@ -509,9 +509,9 @@ public class ManagerServiceImpl implements IManagerService {
 			sql.append(" not ");
 		}
 		sql.append(" in(select pk_corpk from cn_contract where nvl(dr,0)=0 and vstatus in(1,9) and deductdata<c.deductdata)");
-		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
+		List<ManagerVO> qryYBG =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
-		sql = new StringBuffer();
+		sql = new StringBuffer();//作废的情况
 	    sql.append(" select -1 as anum,c.pk_corp, ");
 		sql.append(" nvl(c.nsubtotalmny,0)+nvl(c.nbookmny,0) as antotalmny,nvl(c.nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(c.nsubdedrebamny,0) as ndedrebamny from cn_contract c" );   
@@ -526,11 +526,14 @@ public class ManagerServiceImpl implements IManagerService {
 		List<ManagerVO> qryYZF =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 			
 		ArrayList<ManagerVO> vos=new ArrayList<>();
-		if(qryYSH!=null && qryYSH.size()>0){
-			vos.addAll(qryYSH);
+		if(qryNBT!=null && qryNBT.size()>0){
+			vos.addAll(qryNBT);
 		}
-		if(qryYZZ!=null && qryYZZ.size()>0){
-			vos.addAll(qryYZZ);
+		if(qryYBT!=null && qryYBT.size()>0){
+			vos.addAll(qryYBT);
+		}
+		if(qryYBG!=null && qryYBG.size()>0){
+			vos.addAll(qryYBG);
 		}
 		if(qryYZF!=null && qryYZF.size()>0){
 			vos.addAll(qryYZF);
