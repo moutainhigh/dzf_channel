@@ -20,6 +20,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
@@ -257,7 +258,9 @@ public class ManagerServiceImpl implements IManagerService {
 		    		Entry<String, ManagerVO> entry = iterator.next();
 		    		ManagerVO mapvo =(ManagerVO)entry.getValue();
 		    		ManagerVO managerVO = promap.get(mapvo.getVprovince());
-		    		mapvo.setUnitprice(managerVO.getRntotalmny().div(managerVO.getRnum()));
+		    		if(managerVO != null){
+		    			mapvo.setUnitprice(CommonUtil.getDZFDouble(managerVO.getRntotalmny()).div(CommonUtil.getDZFDouble(managerVO.getRnum())));
+		    		}
 		    	}
 		     }
 		     
