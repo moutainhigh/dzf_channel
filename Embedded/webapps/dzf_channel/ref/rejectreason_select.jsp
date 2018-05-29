@@ -88,10 +88,10 @@
 				pageSize:10,
 			    pageList:[10,20,30,40,50],
 				showFooter : true,
-				height:380,
+				height:400,
 				striped:true,
 			    columns:[[{field:'reid', title:'主键',checkbox:true},
-			     		  {field:'reason',title:'驳回原因',width:500},
+			     		  {field:'reason',title:'驳回原因',width:400},
 			              {field:'suggest',title:'修改建议',width:500}
 			   	 ]],
 				onDblClickRow:function(rowIndex, rowData){
@@ -123,13 +123,13 @@
 	</script>
 	<div  id="cardList">
 		<div class="mod-toolbar-top">
-			<div class="mod-toolbar-content">
+		<!-- 	<div class="mod-toolbar-content">
 				<div class="left mod-corp">
-					<!-- <input id="mcode" value="请输入编码或名称" 
+					<input id="mcode" value="请输入编码或名称" 
 						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
-						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" /> -->
+						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="mod-inner">
 			<div id="dataGrid" class="grid-wrap">

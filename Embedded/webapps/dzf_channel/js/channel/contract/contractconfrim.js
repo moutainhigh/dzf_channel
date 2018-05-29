@@ -1863,7 +1863,7 @@ function initRejectReason(){
 			handler : function(e) {
 				$("#manDlg").dialog('clear');
 				$("#rejeDlg").dialog({
-					width : 500,
+					width : 700,
 					height : 500,
 					readonly : true,
 					title : '选择原因',
