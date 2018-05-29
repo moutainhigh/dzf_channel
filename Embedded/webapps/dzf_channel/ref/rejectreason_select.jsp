@@ -87,11 +87,11 @@
 				pagination : true,
 				pageSize:10,
 			    pageList:[10,20,30,40,50],
-				showFooter : true,
-				height:400,
+				showFooter : false,
+				height:380,
 				striped:true,
 			    columns:[[{field:'reid', title:'主键',checkbox:true},
-			     		  {field:'reason',title:'驳回原因',width:400},
+			     		  {field:'reason',title:'驳回原因',width:360},
 			              {field:'suggest',title:'修改建议',width:500}
 			   	 ]],
 				onDblClickRow:function(rowIndex, rowData){
