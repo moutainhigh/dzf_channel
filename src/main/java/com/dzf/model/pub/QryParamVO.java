@@ -89,8 +89,19 @@ public class QryParamVO extends SuperVO {
     private String areaname;//大区名称
 	
 	@FieldAlias("ovince")
-	public Integer vprovince;// 地区
+	private Integer vprovince;// 地区
 	
+	@FieldAlias("qrysql")
+	private String vqrysql;//插叙语句
+	
+	public String getVqrysql() {
+		return vqrysql;
+	}
+
+	public void setVqrysql(String vqrysql) {
+		this.vqrysql = vqrysql;
+	}
+
 	public String getVyear() {
 		return vyear;
 	}
