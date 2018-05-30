@@ -178,7 +178,7 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	/**
-	 * 获取区域经理所负责客户
+	 * 获取渠道经理所负责客户
 	 * @param userids 以‘,’隔开
 	 * @return
 	 * @throws DZFWarpException
@@ -189,7 +189,7 @@ public class PubServiceImpl implements IPubService {
 			throw new BusinessException("区域经理信息不能为空");
 		}
 		List<String> retlist = new ArrayList<String>();
-		List<String> onlylist = new ArrayList<String>();
+//		List<String> onlylist = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" nvl(dr,0) = 0 AND nvl(type,0) = 1 ");
 		String[] users = userids.split(",");
@@ -199,27 +199,30 @@ public class PubServiceImpl implements IPubService {
 		}
 		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), null);
 		if(bVOs != null && bVOs.length > 0){
-			Map<Integer,List<String>> map = getProviceCorp();
-			List<String> corplist = null;
+//			Map<Integer,List<String>> map = getProviceCorp();
+//			List<String> corplist = null;
 			for(ChnAreaBVO bvo : bVOs){
-				if(bvo.getIsCharge() != null && bvo.getIsCharge().booleanValue()){
-					if(!onlylist.contains(bvo.getUserid()+""+bvo.getVprovince())){
-						if(map != null && !map.isEmpty()){
-							corplist = map.get(bvo.getVprovince());
-							if(corplist != null && corplist.size() > 0){
-								for(String corpk : corplist){
-									if(!retlist.contains(corpk)){
-										retlist.add(corpk);
-									}
-								}
-								onlylist.add(bvo.getUserid()+""+bvo.getVprovince());
-							}
-						}
-					}
-				}else{
-					if(!retlist.contains(bvo.getPk_corp())){
-						retlist.add(bvo.getPk_corp());
-					}
+//				if(bvo.getIsCharge() != null && bvo.getIsCharge().booleanValue()){
+//					if(!onlylist.contains(bvo.getUserid()+""+bvo.getVprovince())){
+//						if(map != null && !map.isEmpty()){
+//							corplist = map.get(bvo.getVprovince());
+//							if(corplist != null && corplist.size() > 0){
+//								for(String corpk : corplist){
+//									if(!retlist.contains(corpk)){
+//										retlist.add(corpk);
+//									}
+//								}
+//								onlylist.add(bvo.getUserid()+""+bvo.getVprovince());
+//							}
+//						}
+//					}
+//				}else{
+//					if(!retlist.contains(bvo.getPk_corp())){
+//						retlist.add(bvo.getPk_corp());
+//					}
+//				}
+				if(!retlist.contains(bvo.getPk_corp())){
+					retlist.add(bvo.getPk_corp());
 				}
 			}
 		}
