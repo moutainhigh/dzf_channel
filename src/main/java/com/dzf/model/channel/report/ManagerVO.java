@@ -2,6 +2,7 @@ package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
@@ -80,6 +81,9 @@ public class ManagerVO extends SuperVO {
 	private Integer xgmNum;//小规模数量
 	
 	private Integer ybrNum;//一般人数量
+	
+    @FieldAlias("xq")
+    private DZFBoolean isxq; // 是否续签
 
 	public String getInnercode() {
 		return innercode;
@@ -111,6 +115,14 @@ public class ManagerVO extends SuperVO {
 
 	public DZFDouble getUnitprice() {
 		return unitprice;
+	}
+
+	public DZFBoolean getIsxq() {
+		return isxq;
+	}
+
+	public void setIsxq(DZFBoolean isxq) {
+		this.isxq = isxq;
 	}
 
 	public void setUnitprice(DZFDouble unitprice) {
