@@ -8,8 +8,6 @@
 </head>
 <%
 	String issingle = request.getParameter("issingle");
-	String ovince = request.getParameter("ovince");
-	String corpids = request.getParameter("corpids");
 %>
 <body>
 <style>
@@ -96,11 +94,6 @@
 			               {field:'uname',title:'公司名称',width:500}
 			   	 ]];
 		}
-		var ovince = <%=ovince%>;
-		var corpids = '<%=corpids%>';
-		if(isEmpty(ovince)){
-			ovince=-1;
-		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
 		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
@@ -115,7 +108,6 @@
 			showFooter : true,
 			height:330,
 			striped:true,
-			queryParams: {'dr':ovince,'vmome':corpids},
 		    columns: columns,
 			onDblClickRow:function(rowIndex, rowData){
 				var rowTable = $('#gsTable').datagrid('getSelections');
@@ -140,7 +132,6 @@
 		      		var params = new Object();
 		      		//params["corpname"] = filtername;
 		      		params["corpcode"] = filtername;
-		      		params["dr"] = ovince;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 

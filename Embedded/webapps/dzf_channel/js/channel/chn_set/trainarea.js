@@ -7,6 +7,9 @@ $(function() {
 	loadManager();
 	load();
 	initManger();
+	selmap = new HashMap();
+	sellist = new ArrayList();
+	uidlist = new ArrayList();
 });
 
 function load() {
@@ -316,11 +319,13 @@ function initChnCorp(){
 	var ovince = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'ovince'});
 	var tar_ovince=$(ovince.target).textbox('getValue');
 	if(isEmpty(tar_ovince)){
-		Public.tips({
-			content : "请先选择负责地区",
-			type :2
-		});
+		Public.tips({content : "请先选择负责地区",type :2});
 		return;
+	}
+	var corpid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpid'});
+	var tar_corpid;
+	if(!isEmpty(corpid)){
+		tar_corpid=$(corpid.target).textbox('getValue');
 	}
 	var rows= $('#cardGrid').datagrid('getRows');
 	var corpids="";
@@ -328,7 +333,7 @@ function initChnCorp(){
 		if(i==editIndex ){
 			continue;
 		}
-		if(!isEmpty(rows[i].corpid)){
+		if(!isEmpty(rows[i].corpid) && tar_ovince==rows[i].ovince){
 			corpids=corpids+","+rows[i].corpid;
 		}
 	}
@@ -341,12 +346,28 @@ function initChnCorp(){
 		readonly: true,
 		title: '选择加盟商',
 		modal: true,
-		href: DZF.contextPath + '/ref/channel_select.jsp',
+		href: DZF.contextPath + '/ref/select_channels.jsp',
 		queryParams:{
 			'ovince': tar_ovince,
-			'corpids' : corpids
+			'corpids' : corpids,
+			'corpid': tar_corpid
 		},
-		buttons: '#chnBtn'
+		buttons : [ {
+			text : '确认',
+			handler : function() {
+				selmap = new HashMap();
+				selectCorps();
+				$('#chnDlg').dialog('close');
+			}
+		}, {
+			text : '取消',
+			handler : function() {
+				selmap = new HashMap();
+				sellist = new ArrayList();
+				uidlist = new ArrayList();
+				$('#chnDlg').dialog('close');
+			}
+		} ]
 	});
 }
 
