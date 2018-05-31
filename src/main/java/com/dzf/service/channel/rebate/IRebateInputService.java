@@ -73,4 +73,12 @@ public interface IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	public RebateVO queryById(RebateVO data, Integer opertype) throws DZFWarpException;
+	
+	/**
+	 * 获取渠道经理查询条件
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(String cuserid) throws DZFWarpException; 
 }

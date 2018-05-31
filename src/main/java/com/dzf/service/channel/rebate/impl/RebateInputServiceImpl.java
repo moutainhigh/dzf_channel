@@ -259,14 +259,17 @@ public class RebateInputServiceImpl implements IRebateInputService {
 					spm.addParam(paramvo.getVdeductstatus());
 				}
 			}
-			if(!StringUtil.isEmpty(paramvo.getCuserid())){
-				String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
-				if(corps != null && corps.length > 0){
-					String where = SqlUtil.buildSqlForIn("pk_corp", corps);
-					sql.append(" AND ").append(where);
-				}else{
-					sql.append("   AND pk_corp is null \n") ;
-				}
+//			if(!StringUtil.isEmpty(paramvo.getCuserid())){
+//				String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
+//				if(corps != null && corps.length > 0){
+//					String where = SqlUtil.buildSqlForIn("pk_corp", corps);
+//					sql.append(" AND ").append(where);
+//				}else{
+//					sql.append("   AND pk_corp is null \n") ;
+//				}
+//			}
+			if(!StringUtil.isEmpty(paramvo.getVqrysql())){
+				
 			}
 			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 				String[] corps = paramvo.getPk_corp().split(",");
@@ -276,6 +279,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 				sql.append("   AND pk_rebate = ? \n") ; 
 				spm.addParam(paramvo.getPk_bill());
+			}
+			if(!StringUtil.isEmpty(paramvo.getVqrysql())){//渠道经理过滤
+				sql.append(paramvo.getVqrysql());
 			}
 		}
 		qryvo.setSql(sql.toString());
@@ -735,6 +741,19 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		}
 		oldvo.setVshowdate(oldvo.getVyear()+"-0"+oldvo.getIseason());
 		return oldvo;
+	}
+
+	@Override
+	public String getQrySql(String cuserid) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		String[] corps = pubser.getManagerCorp(cuserid);
+		if(corps != null && corps.length > 0){
+			String where = SqlUtil.buildSqlForIn(" pk_corp ", corps);
+			sql.append(" AND ").append(where);
+		}else{
+			sql.append(" AND pk_corp is null \n") ; 
+		}
+		return sql.toString();
 	}
 
 }

@@ -72,10 +72,14 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			int page = paramvo == null ? 1: paramvo.getPage();
-            int rows = paramvo == null ? 100000: paramvo.getRows();
+			if(!StringUtil.isEmpty(paramvo.getCuserid())){//渠道经理查询条件
+				String sql = rebateser.getQrySql(paramvo.getCuserid());
+				paramvo.setVqrysql(sql);
+			}
             List<RebateVO> list = rebateser.query(paramvo);
 			if(list != null && list.size() > 0){
+				int page = paramvo == null ? 1: paramvo.getPage();
+				int rows = paramvo == null ? 100000: paramvo.getRows();
 				RebateVO[] rebatVOs = (RebateVO[]) QueryUtil.getPagedVOs(list.toArray(new RebateVO[0]), page, rows);
 				grid.setRows(Arrays.asList(rebatVOs));
 				grid.setTotal((long)(list.size()));
