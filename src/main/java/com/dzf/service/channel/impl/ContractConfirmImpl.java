@@ -260,6 +260,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.isncust,  \n") ; 
 		sql.append("       t.isnconfirm,  \n") ; 
 		sql.append("       t.chargedeptname,  \n") ; 
+		sql.append("       t.busitypemin,  \n") ;//业务小类
 		sql.append("       bs.vbusitypename,  \n") ; 
 		sql.append("       t.ntotalmny,  \n") ; 
 		sql.append("       t.nbookmny,  \n") ; 
