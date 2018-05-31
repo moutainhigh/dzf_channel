@@ -9,6 +9,7 @@ import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 合同确认VO
+ * 
  * @author zy
  *
  */
@@ -16,245 +17,287 @@ import com.dzf.pub.lang.DZFDouble;
 public class ContractConfrimVO extends SuperVO {
 
 	private static final long serialVersionUID = 8799494318014396487L;
-	
-    @FieldAlias("id")
-    private String pk_confrim; // 主键
-	
-    @FieldAlias("contractid")
-    private String pk_contract; // 合同主键
-    
-    @FieldAlias("area")
-    private String varea;//地区：取客户的省+市
-	
-    @FieldAlias("corpid")
-    private String pk_corp; // 渠道商主键
-    
-    @FieldAlias("corpnm")
-    private String corpname; // 渠道商名称
-    
-    @FieldAlias("corpkid")
-    private String pk_corpk; // 客户主键
-    
-    @FieldAlias("corpkna")
-    private String corpkname; // 客户名称
-    
-    @FieldAlias("chname")
-    public String chargedeptname;// 纳税人资格
-    
-    @FieldAlias("typemin")
-    private String busitypemin; // 业务小类
-    
-    @FieldAlias("typeminm")
-    private String vbusitypename; // 业务小类名称
-    
-    @FieldAlias("vccode")
-    private String vcontcode; // 合同编码
-    
-    @FieldAlias("ntlmny")
-    private DZFDouble ntotalmny; // 合同总金额
-    
-    @FieldAlias("naccmny")
-    private DZFDouble naccountmny; // 合同代账费（只做界面展示）
-    
-    @FieldAlias("bdate")
-    private DZFDate dbegindate; // 开始日期
 
-    @FieldAlias("edate")
-    private DZFDate denddate; // 结束日期
-    
-    @FieldAlias("nmsmny")
-    private DZFDouble nmservicemny; // 每月服务费
-    
-    @FieldAlias("ndesummny")
-    private DZFDouble ndedsummny;//扣款总金额
-    
-    @FieldAlias("ndemny")
-    private DZFDouble ndeductmny;//扣款金额-预付款
-    
-    @FieldAlias("nderebmny")
-    private DZFDouble ndedrebamny;//扣款金额-返点款
-    
-    @FieldAlias("propor")
-    private Integer ideductpropor;//扣款比例
-    
-    @FieldAlias("destatus")
-    private Integer vdeductstatus;//加盟商合同合同状态：0：待提交；5:待审核： 1：已审核； 7：拒绝审核；8：服务到期；9：已终止；10：已作废；
-    
-    @FieldAlias("status")
-    private Integer vstatus; // 合同状态 0：待提交；5:待审批；1：审核通过；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
-    
-    @FieldAlias("confreason")
-    private String vconfreason;// 驳回原因
-    
-    @FieldAlias("confreasonid")
-    private String vconfreasonid;// 驳回原因主键
-    
-    @FieldAlias("tstp")
-    private DZFDateTime tstamp;// 时间戳
-    
-    @FieldAlias("dr")
-    private Integer dr; // 删除标记
+//	@FieldAlias("operatorid")
+//	private String coperatorid; // 审核人
+//
+//	@FieldAlias("chgcycle")
+//	private String vchargecycle; // 收款周期 （此字段已废弃）（直接删除）
+//
+//	@FieldAlias("cylnum")
+//	private Integer icyclenum; // 周期数（直接删除）
+//
+//	@FieldAlias("typemin")
+//	private String busitypemin; // 业务小类（直接删除）
+//
+//	@FieldAlias("sourid")
+//	private String pk_source;// 补提交的合同来源主键（直接删除）
+	
+	// 与原合同重复字段 begin*************************
 
-    @FieldAlias("ts")
-    private DZFDateTime ts; // 时间戳
-    
-    @FieldAlias("conmemo")
-    private String vconmemo; // 审核备注
-    
-    @FieldAlias("voper")
-    private String voperator; // 经办人
-    
-    @FieldAlias("vopernm")
-    private String vopername; // 经办人姓名
-    
+	@FieldAlias("contractid")
+	private String pk_contract; // 合同主键
+
+	@FieldAlias("corpid")
+	private String pk_corp; // 渠道商主键
+
+	@FieldAlias("corpkid")
+	private String pk_corpk; // 客户主键
+
+	@FieldAlias("destatus")
+	private Integer vdeductstatus;// 加盟商合同合同状态：0：待提交；5:待审核： 1：已审核；
+									// 7：拒绝审核；8：服务到期；9：已终止；10：已作废；
+
+	@FieldAlias("status")
+	private Integer vstatus; // 合同状态
+								// 0：待提交；5:待审批；1：审核通过；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+
+	// 与原合同重复字段 end***************************
+
+	// 取原合同或缓存字段 begin*************************
+
+	@FieldAlias("area")
+	private String varea;// 地区：取客户的省+市 （不存库，取客户缓存）
+
+	@FieldAlias("corpnm")
+	private String corpname; // 渠道商名称（不存库，取客户缓存）
+
+	@FieldAlias("corpkna")
+	private String corpkname; // 客户名称（不存库，取客户缓存）
+	
+	@FieldAlias("vccode")
+	private String vcontcode; // 合同编码（不存库，取原合同）
+
+	@FieldAlias("pid")
+	private String pk_packagedef; // 套餐主键（不存库，取原合同）
+
+	@FieldAlias("isncust")
+	private DZFBoolean isncust;// 是否存量客户（不存库，取原合同）
+
+	private DZFBoolean isnconfirm;// 是否未确定服务期限（Y是未确定）（不存库，取原合同）
+
+	@FieldAlias("chname")
+	public String chargedeptname;// 纳税人资格（不存库，取原合同）
+
+	@FieldAlias("typeminm")
+	private String vbusitypename; // 业务小类名称（不存库，取原合同）
+
+	@FieldAlias("ntlmny")
+	private DZFDouble ntotalmny; // 合同总金额（不存库，取原合同）
+
+	@FieldAlias("nbmny")
+	private DZFDouble nbookmny; // 账本费（不存库，取原合同）
+
+	@FieldAlias("nmsmny")
+	private DZFDouble nmservicemny; // 每月服务费（不存库，取原合同）
+
+	@FieldAlias("contcycle")
+	private Integer icontractcycle;// 合同周期（不存库，取原合同）
+
+	@FieldAlias("recycle")
+	private Integer ireceivcycle;// 收款周期（不存库，取原合同）
+
+	@FieldAlias("submitime")
+	private DZFDateTime dsubmitime;// 提交时间（不存库，取原合同）
+
+	@FieldAlias("bperiod")
+	private String vbeginperiod;// 合同开始期间（不存库，取原合同）
+
+	@FieldAlias("eperiod")
+	private String vendperiod;// 合同结束期间（不存库，取原合同）
+	
+	@FieldAlias("bdate")
+	private DZFDate dbegindate; // 开始日期 （不存库，取原合同）合同变更使用
+
+	@FieldAlias("edate")
+	private DZFDate denddate; // 结束日期（不存库，取原合同）合同变更使用
+	
+	@FieldAlias("signdate")
+	private DZFDate dsigndate;// 签订合同日期（直接删除）
+
+	// 补单字段begin：
+	@FieldAlias("cperiod")
+	private String vchangeperiod;// 补提交的变更期间（不存库，取原合同）
+
+	@FieldAlias("pstatus")
+	private Integer patchstatus;// 加盟合同类型（null正常合同；1：被补提交的合同；2：补提交的合同；3：变更合同）（不存库，取原合同）
+	// 补单字段end
+	
+	@FieldAlias("confreason")
+	private String vconfreason;// 驳回原因（不存库，取原合同）
+	
+	@FieldAlias("adviser")
+	private String vadviser;// 销售顾问 （不存库，取原合同）
+
+	// 取原合同或缓存字段 end***************************
+
+	// 合同历史字段 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+	@FieldAlias("id")
+	private String pk_confrim; // 主键
+
+	@FieldAlias("naccmny")
+	private DZFDouble naccountmny; // 合同代账费（只做界面展示）
+	
 	@FieldAlias("balmny")
-	private DZFDouble nbalance;//预付款余额
-	
-	@FieldAlias("rebbalmny")
-	private DZFDouble nrebatebalance;//返点余额
-	
-    @FieldAlias("operatorid")
-    private String coperatorid; // 审核人
-    
-    @FieldAlias("contcycle")
-    private Integer icontractcycle;//合同周期
-    
-    @FieldAlias("chgcycle")
-    private String vchargecycle; // 收款周期 （此字段已废弃）
-    
-    @FieldAlias("adviser")
-    private String vadviser;//销售顾问
-    
-    @FieldAlias("cylnum")
-    private Integer icyclenum; // 周期数
-    
-    @FieldAlias("nbmny")
-    private DZFDouble nbookmny; // 账本费
-    
-    @FieldAlias("bperiod")
-    private String vbeginperiod;//合同开始期间
-    
-    @FieldAlias("eperiod")
-    private String vendperiod;//合同结束期间
-    
-    @FieldAlias("submitime")
-    private DZFDateTime dsubmitime;//提交时间
-    
-    @FieldAlias("dedate")
-    private DZFDate deductdata;//扣费日期
-    
-    @FieldAlias("ductime")
-    private DZFDateTime deductime;//扣费时间
-    
-    @FieldAlias("pid")
-    private String pk_packagedef; // 套餐主键
-    
-    @FieldAlias("salespromot")
-    private String vsalespromot;//促销活动（数据展示，不存库）
-    
-    @FieldAlias("errmsg")
-    private String verrmsg;//错误信息
-    
-    @FieldAlias("signdate")
-    private DZFDate dsigndate;// 签订合同日期
-    
-    @FieldAlias("isncust")
-    private DZFBoolean isncust;// 是否存量客户
-    
-    //补单字段begin：
-    @FieldAlias("cperiod")
-    private String vchangeperiod;//补提交的变更期间
-    
-    @FieldAlias("sourid")
-    private String pk_source;//补提交的合同来源主键
-    
-    @FieldAlias("pstatus")
-    private Integer patchstatus;// 加盟合同类型（null正常合同；1：被补提交的合同；2：补提交的合同；3：变更合同）
-    //补单字段end
-    
-    //变更合同字段begin：
-    @FieldAlias("changetype")
-    private Integer ichangetype;//变更类型1：C端客户终止，变更合同；2：提重了，合同作废；
-    
-    @FieldAlias("changereason")
-    private String vchangeraeson;//变更原因
-    
-    @FieldAlias("changememo")
-    private String vchangememo;//变更备注
-    
-    @FieldAlias("stperiod")
-    private String vstopperiod;//终止期间
-    
-    @FieldAlias("remny")
-    private DZFDouble nreturnmny;//退回扣款总金额
-    
-    @FieldAlias("rededmny")
-    private DZFDouble nretdedmny;//退回预付款金额
-    
-    @FieldAlias("rerebmny")
-    private DZFDouble nretrebmny;//退回返点款金额
-    
-    @FieldAlias("nchtlmny")
-    private DZFDouble nchangetotalmny; //变更后合同金额
-	
-    @FieldAlias("nchsumny")
-    private DZFDouble nchangesummny;//变更后扣款总金额
-    
-	@FieldAlias("nchdemny")
-    private DZFDouble nchangededutmny;//变更后预付款扣款金额
-	
-	@FieldAlias("nchremny")
-    private DZFDouble nchangerebatmny;//变更后返点款扣款金额
-	
-    @FieldAlias("changer")
-    private String vchanger; //变更人
-    
-    @FieldAlias("changetime")
-    private DZFDateTime dchangetime;//变更时间
-    
-    @FieldAlias("changedate")
-    private DZFDate dchangedate;//变更日期（不存库，只做展示）
-    
-    @FieldAlias("subtotalmny")
-    private DZFDouble nsubtotalmny;//变更后合同总金额差额
-    
-    @FieldAlias("subdesummny")
-    private DZFDouble nsubdedsummny;//变更后扣款总金额差额
-    
-    @FieldAlias("subdeductmny")
-    private DZFDouble nsubdeductmny;//变更后预付款扣款差额
-    
-    @FieldAlias("subderebmny")
-    private DZFDouble nsubdedrebamny;//变更后返点款扣款差额
-    
-    //变更合同字段end
-    
-    @FieldAlias("recycle")
-    private Integer ireceivcycle;//加盟商收款周期
-    
-    @FieldAlias("statusname")
-    private String vstatusname;//状态名称
-    
-    @FieldAlias("mname")
-    private String vmanagername; // 渠道经理
-    
-    @FieldAlias("chtype")
-    private Integer channeltype;//加盟商类型 1-普通加盟商；2-金牌加盟商；
+	private DZFDouble nbalance;// 预付款余额（只做界面展示）
 
-    @FieldAlias("corptp")
-    private String corptype; // 加盟商类型
-    
-    @FieldAlias("canedit")
-    private DZFBoolean iscanedit;//是否允许编辑
-    
-    private DZFBoolean isnconfirm;// 是否  未确定服务期限（Y是未确定）
+	@FieldAlias("rebbalmny")
+	private DZFDouble nrebatebalance;// 返点余额（只做界面展示）
+
+	@FieldAlias("salespromot")
+	private String vsalespromot;// 促销活动（只做界面展示）
+	
+	@FieldAlias("confreasonid")
+	private String vconfreasonid;// 驳回原因主键 （仅作数据传输）
+
+	@FieldAlias("tstp")
+	private DZFDateTime tstamp;// 时间戳
+
+	// 扣款字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+
+	@FieldAlias("dedate")
+	private DZFDate deductdata;// 扣费日期
+
+	@FieldAlias("ductime")
+	private DZFDateTime deductime;// 扣费时间
+
+	@FieldAlias("conmemo")
+	private String vconmemo; // 审核备注
+
+	@FieldAlias("voper")
+	private String voperator; // 经办人（审核人）
+
+	@FieldAlias("vopernm")
+	private String vopername; // 经办人（审核人）姓名
+
+	@FieldAlias("ndesummny")
+	private DZFDouble ndedsummny;// 扣款总金额
+
+	@FieldAlias("ndemny")
+	private DZFDouble ndeductmny;// 扣款金额-预付款
+
+	@FieldAlias("nderebmny")
+	private DZFDouble ndedrebamny;// 扣款金额-返点款
+
+	@FieldAlias("propor")
+	private Integer ideductpropor;// 扣款比例
+
+	// 扣款字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+
+	// 变更合同字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+
+	@FieldAlias("changetype")
+	private Integer ichangetype;// 变更类型1：C端客户终止，变更合同；2：提重了，合同作废；
+
+	@FieldAlias("changereason")
+	private String vchangeraeson;// 变更原因
+
+	@FieldAlias("changememo")
+	private String vchangememo;// 变更备注
+
+	@FieldAlias("stperiod")
+	private String vstopperiod;// 终止期间
+
+	@FieldAlias("remny")
+	private DZFDouble nreturnmny;// 退回扣款总金额
+
+	@FieldAlias("rededmny")
+	private DZFDouble nretdedmny;// 退回预付款金额
+
+	@FieldAlias("rerebmny")
+	private DZFDouble nretrebmny;// 退回返点款金额
+
+	@FieldAlias("nchtlmny")
+	private DZFDouble nchangetotalmny; // 变更后合同金额
+
+	@FieldAlias("nchsumny")
+	private DZFDouble nchangesummny;// 变更后扣款总金额
+
+	@FieldAlias("nchdemny")
+	private DZFDouble nchangededutmny;// 变更后预付款扣款金额
+
+	@FieldAlias("nchremny")
+	private DZFDouble nchangerebatmny;// 变更后返点款扣款金额
+
+	@FieldAlias("changer")
+	private String vchanger; // 变更人
+
+	@FieldAlias("changetime")
+	private DZFDateTime dchangetime;// 变更时间
+
+	@FieldAlias("changedate")
+	private DZFDate dchangedate;// 变更日期（不存库，只做展示）
+
+	@FieldAlias("subtotalmny")
+	private DZFDouble nsubtotalmny;// 变更后合同总金额差额
+
+	@FieldAlias("subdesummny")
+	private DZFDouble nsubdedsummny;// 变更后扣款总金额差额
+
+	@FieldAlias("subdeductmny")
+	private DZFDouble nsubdeductmny;// 变更后预付款扣款差额
+
+	@FieldAlias("subderebmny")
+	private DZFDouble nsubdedrebamny;// 变更后返点款扣款差额
+
+	// 变更合同字段end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+	@FieldAlias("mname")
+	private String vmanagername; // 渠道经理（只做界面展示）
+
+	@FieldAlias("chtype")
+	private Integer channeltype;// 加盟商类型 1-普通加盟商；2-金牌加盟商；
+
+	@FieldAlias("corptp")
+	private String corptype; // 加盟商类型（只做界面展示）
+
+	@FieldAlias("canedit")
+	private DZFBoolean iscanedit;// 是否允许编辑
+
+	@FieldAlias("errmsg")
+	private String verrmsg;// 错误信息
+
+	@FieldAlias("statusname")
+	private String vstatusname;// 状态名称
+
+	@FieldAlias("dr")
+	private Integer dr; // 删除标记
+
+	@FieldAlias("ts")
+	private DZFDateTime ts; // 时间戳
+
+	// 合同历史字段 end@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	
+	@FieldAlias("cts")
+	private DZFDateTime checkts;//数据校验时间戳
+
+	public String getVadviser() {
+		return vadviser;
+	}
+
+	public void setVadviser(String vadviser) {
+		this.vadviser = vadviser;
+	}
+
+	public DZFDateTime getCheckts() {
+		return checkts;
+	}
+
+	public void setCheckts(DZFDateTime checkts) {
+		this.checkts = checkts;
+	}
+
+	public DZFDate getDsigndate() {
+		return dsigndate;
+	}
+
+	public void setDsigndate(DZFDate dsigndate) {
+		this.dsigndate = dsigndate;
+	}
 
 	public DZFBoolean getIsnconfirm() {
 		return isnconfirm;
-	}
-
-	public void setIsnconfirm(DZFBoolean isnconfirm) {
-		this.isnconfirm = isnconfirm;
 	}
 
 	public String getVconfreasonid() {
@@ -263,6 +306,34 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setVconfreasonid(String vconfreasonid) {
 		this.vconfreasonid = vconfreasonid;
+	}
+
+	public DZFDate getDbegindate() {
+		return dbegindate;
+	}
+
+	public DZFDate getDenddate() {
+		return denddate;
+	}
+
+	public void setDbegindate(DZFDate dbegindate) {
+		this.dbegindate = dbegindate;
+	}
+
+	public void setDenddate(DZFDate denddate) {
+		this.denddate = denddate;
+	}
+
+	public void setIsnconfirm(DZFBoolean isnconfirm) {
+		this.isnconfirm = isnconfirm;
+	}
+
+	public String getVconfreason() {
+		return vconfreason;
+	}
+
+	public void setVconfreason(String vconfreason) {
+		this.vconfreason = vconfreason;
 	}
 
 	public DZFDate getDchangedate() {
@@ -465,10 +536,6 @@ public class ContractConfrimVO extends SuperVO {
 		return vchangeperiod;
 	}
 
-	public String getPk_source() {
-		return pk_source;
-	}
-
 	public Integer getPatchstatus() {
 		return patchstatus;
 	}
@@ -497,10 +564,6 @@ public class ContractConfrimVO extends SuperVO {
 		this.vchangeperiod = vchangeperiod;
 	}
 
-	public void setPk_source(String pk_source) {
-		this.pk_source = pk_source;
-	}
-
 	public void setPatchstatus(Integer patchstatus) {
 		this.patchstatus = patchstatus;
 	}
@@ -527,14 +590,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setIsncust(DZFBoolean isncust) {
 		this.isncust = isncust;
-	}
-
-	public DZFDate getDsigndate() {
-		return dsigndate;
-	}
-
-	public void setDsigndate(DZFDate dsigndate) {
-		this.dsigndate = dsigndate;
 	}
 
 	public String getVerrmsg() {
@@ -609,44 +664,12 @@ public class ContractConfrimVO extends SuperVO {
 		this.vendperiod = vendperiod;
 	}
 
-	public Integer getIcyclenum() {
-		return icyclenum;
-	}
-
-	public void setIcyclenum(Integer icyclenum) {
-		this.icyclenum = icyclenum;
-	}
-
 	public String getVarea() {
 		return varea;
 	}
 
 	public void setVarea(String varea) {
 		this.varea = varea;
-	}
-
-	public String getVchargecycle() {
-		return vchargecycle;
-	}
-
-	public void setVchargecycle(String vchargecycle) {
-		this.vchargecycle = vchargecycle;
-	}
-
-	public String getVadviser() {
-		return vadviser;
-	}
-
-	public void setVadviser(String vadviser) {
-		this.vadviser = vadviser;
-	}
-
-	public String getCoperatorid() {
-		return coperatorid;
-	}
-
-	public void setCoperatorid(String coperatorid) {
-		this.coperatorid = coperatorid;
 	}
 
 	public String getVconmemo() {
@@ -711,14 +734,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setTstamp(DZFDateTime tstamp) {
 		this.tstamp = tstamp;
-	}
-
-	public String getVconfreason() {
-		return vconfreason;
-	}
-
-	public void setVconfreason(String vconfreason) {
-		this.vconfreason = vconfreason;
 	}
 
 	public DZFDouble getNmservicemny() {
@@ -793,14 +808,6 @@ public class ContractConfrimVO extends SuperVO {
 		this.chargedeptname = chargedeptname;
 	}
 
-	public String getBusitypemin() {
-		return busitypemin;
-	}
-
-	public void setBusitypemin(String busitypemin) {
-		this.busitypemin = busitypemin;
-	}
-
 	public String getVbusitypename() {
 		return vbusitypename;
 	}
@@ -823,22 +830,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setNtotalmny(DZFDouble ntotalmny) {
 		this.ntotalmny = ntotalmny;
-	}
-
-	public DZFDate getDbegindate() {
-		return dbegindate;
-	}
-
-	public void setDbegindate(DZFDate dbegindate) {
-		this.dbegindate = dbegindate;
-	}
-
-	public DZFDate getDenddate() {
-		return denddate;
-	}
-
-	public void setDenddate(DZFDate denddate) {
-		this.denddate = denddate;
 	}
 
 	public DZFDate getDeductdata() {

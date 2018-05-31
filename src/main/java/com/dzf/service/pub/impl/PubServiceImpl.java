@@ -276,4 +276,61 @@ public class PubServiceImpl implements IPubService {
 		}
 		return null;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, String> getManagerMap() throws DZFWarpException {
+		Map<String, String> map = new HashMap<String,String>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT t.pk_corp, t.vprovince, b.userid  \n");
+		sql.append("  FROM bd_account t  \n");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON t.pk_corp = b.pk_corp  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(b.dr, 0) = 0  \n");
+		sql.append("   AND nvl(b.type, 0) = 1 \n");
+		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(ChnAreaBVO.class));
+		if(list != null && list.size() > 0){
+			Map<Integer, String> promap = qryProvMap();
+			String userid = "";
+			for(ChnAreaBVO bvo : list){
+				if(!StringUtil.isEmpty(bvo.getUserid())){
+					map.put(bvo.getPk_corp(), bvo.getUserid());
+				}else{
+					if(promap != null && !promap.isEmpty()){
+						userid = promap.get(bvo.getVprovince());
+						if(!StringUtil.isEmpty(userid)){
+							map.put(bvo.getPk_corp(), userid);
+						}
+					}
+				}
+			}
+		}
+		
+		return map;
+	}
+	
+	/**
+	 * 查询省所对应的渠道经理
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Integer, String> qryProvMap() throws DZFWarpException {
+		Map<Integer, String> promap = new HashMap<Integer, String>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT DISTINCT b.vprovince, b.userid  \n") ;
+		sql.append("  FROM cn_chnarea_b b  \n") ; 
+		sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(b.type, 0) = 1  \n") ; 
+		sql.append("   AND nvl(b.ischarge, 'N') = 'Y' \n");
+		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(ChnAreaBVO.class));
+		if(list != null && list.size() > 0){
+			for(ChnAreaBVO bvo : list){
+				promap.put(bvo.getVprovince(), bvo.getUserid());
+			}
+		}
+		return promap;
+	}
 }

@@ -40,7 +40,7 @@ public interface IPubService {
 	public Map<Integer,List<String>> getProviceCorp() throws DZFWarpException;
 	
 	/**
-	 * 获取区域经理所负责客户
+	 * 获取渠道经理所直接负责客户
 	 * @param userids
 	 * @return
 	 * @throws DZFWarpException
@@ -54,4 +54,12 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public String getManagerName(String pk_corp) throws DZFWarpException;
+	
+	/**
+	 * 获取加盟会计公司所对应的渠道经理
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<String, String> getManagerMap() throws DZFWarpException; 
 }

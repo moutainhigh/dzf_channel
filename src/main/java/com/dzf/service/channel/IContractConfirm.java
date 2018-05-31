@@ -19,6 +19,14 @@ public interface IContractConfirm {
 	 */
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException;
 	
+	/**
+	 * 查询数据总条数
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException;
+	
 //	/**
 //	 * 合同确认成功/确认失败
 //	 * @param confrimVOs
@@ -37,14 +45,14 @@ public interface IContractConfirm {
 	
 	/**
 	 * 扣款/驳回
-	 * @param paramvo
+	 * @param datavo
 	 * @param opertype
 	 * @param cuserid
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ContractConfrimVO updateDeductData(ContractConfrimVO paramvo, Integer opertype, String cuserid,
+	public ContractConfrimVO updateDeductData(ContractConfrimVO datavo, Integer opertype, String cuserid,
 			String pk_corp) throws DZFWarpException;
 
 	/**
@@ -95,4 +103,13 @@ public interface IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	public ContractConfrimVO queryInfoById(ContractConfrimVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 获取渠道经理查询条件
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(String cuserid) throws DZFWarpException; 
+	
 }

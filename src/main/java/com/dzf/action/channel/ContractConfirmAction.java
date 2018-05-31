@@ -33,7 +33,6 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.IContractConfirm;
 
 /**
@@ -61,22 +60,36 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		try {
 		    QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			List<ContractConfrimVO> clist = contractconfser.query(paramvo);
-			int page = paramvo == null ? 1 : paramvo.getPage();
-			int rows = paramvo == null ? 10000 : paramvo.getRows();
-			int len = clist == null ? 0 : clist.size();
-			if(len > 0){
-				grid.setTotal((long) (len));
-				ContractConfrimVO[] conVOs = clist.toArray(new ContractConfrimVO[0]);
-				conVOs = (ContractConfrimVO[]) QueryUtil.getPagedVOs(conVOs, page, rows);
-				grid.setRows(Arrays.asList(conVOs));
-				grid.setSuccess(true);
-				grid.setMsg("操作成功");
-			}else{
-				grid.setTotal(Long.valueOf(0));
-				grid.setRows(new ArrayList<ContractConfrimVO>());
-				grid.setMsg("操作结果为空");
+//			List<ContractConfrimVO> clist = contractconfser.query(paramvo);
+//			int page = paramvo == null ? 1 : paramvo.getPage();
+//			int rows = paramvo == null ? 10000 : paramvo.getRows();
+//			int len = clist == null ? 0 : clist.size();
+//			if(len > 0){
+//				grid.setTotal((long) (len));
+//				ContractConfrimVO[] conVOs = clist.toArray(new ContractConfrimVO[0]);
+//				conVOs = (ContractConfrimVO[]) QueryUtil.getPagedVOs(conVOs, page, rows);
+//				grid.setRows(Arrays.asList(conVOs));
+//				grid.setSuccess(true);
+//				grid.setMsg("操作成功");
+//			}else{
+//				grid.setTotal(Long.valueOf(0));
+//				grid.setRows(new ArrayList<ContractConfrimVO>());
+//				grid.setMsg("操作结果为空");
+//			}
+			if(!StringUtil.isEmpty(paramvo.getCuserid())){//渠道经理查询条件
+				String sql = contractconfser.getQrySql(paramvo.getCuserid());
+				paramvo.setVqrysql(sql);
 			}
+			int total = contractconfser.queryTotalRow(paramvo);
+			grid.setTotal((long)(total));
+			if(total > 0){
+				List<ContractConfrimVO> list = contractconfser.query(paramvo);
+				grid.setRows(list);
+			}else{
+				grid.setRows(new ArrayList<ContractConfrimVO>());
+			}
+			grid.setSuccess(true);
+			grid.setMsg("操作成功");
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");
 		}
@@ -113,23 +126,24 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			String type = getRequest().getParameter("opertype");
-			Integer opertype = Integer.parseInt(type);
+			Integer opertype = Integer.parseInt(type);//操作类型
+			
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
-			ContractConfrimVO paramvo = new ContractConfrimVO();
-			paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
+			ContractConfrimVO datavo = new ContractConfrimVO();
+			datavo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
 			
 			if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-				if(StringUtil.isEmpty(paramvo.getVconfreasonid())){
+				if(StringUtil.isEmpty(datavo.getVconfreasonid())){
 					throw new BusinessException("驳回原因不能为空");
 				}
 			}
 			
-			if(paramvo == null){
+			if(datavo == null){
 				log.info("单个审核-获取审核数据为空");
 			}
-			ContractConfrimVO retvo = contractconfser.updateDeductData(paramvo, opertype, getLoginUserid(), getLogincorppk());
+			ContractConfrimVO retvo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
 			json.setRows(retvo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
