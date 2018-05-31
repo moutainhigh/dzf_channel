@@ -1,13 +1,17 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <!DOCTYPE html>
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="renderer" content="webkit|ie-stand|ie-comp">
 <title>选择加盟商</title>
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
+<script src=<%UpdateGradeVersion.outversion(out,"../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 <%
-	String issingle = request.getParameter("issingle");
+	String ovince = request.getParameter("ovince");
+	String corpids = request.getParameter("corpids");
+	String corpid = request.getParameter("corpid");
 %>
 <body>
 <style>
@@ -37,7 +41,6 @@
 				var rowindex= $("#gsTable").datagrid('getRowIndex',$("#gsTable").datagrid('getSelected'));
 				$('#gsTable').datagrid('unselectRow',rowindex);
 				$('#gsTable').datagrid('selectRow',rowindex+1);
-				 //$('#leftGrid').datagrid('selectRow',2);
 			 }
 			});
 	});//enter 键代替tab键换行        end
@@ -78,21 +81,11 @@
 	
 	var rows = null;
 	$(function(){
-		var issingle = '<%=issingle%>';
-		var columns;
-		if(issingle == "true"){
-			issingle = true;
-			columns = [[   {field:'pk_gs', title:'主键id', hidden:true},
-			     		   {field:'incode',title:'公司编码',width:500},
-			               {field:'uname',title:'公司名称',width:500}
-			   	 ]];
-		}else{
-			issingle = false;
-			columns = [[   {field:'ck', checkbox:true },
-			               {field:'pk_gs', title:'主键id', hidden:true},
-			     		   {field:'incode',title:'公司编码',width:500},
-			               {field:'uname',title:'公司名称',width:500}
-			   	 ]];
+		var ovince = <%=ovince%>;
+		var corpids = '<%=corpids%>';
+		var corpid = '<%=corpid%>';
+		if(isEmpty(ovince)){
+			ovince=-1;
 		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
@@ -101,14 +94,19 @@
 			fitColumns: true,
 			idField:'pk_gs',
 			rownumbers : true,
-			singleSelect : issingle,
+			singleSelect : false,
 			pagination : true,
 			pageSize:10,
 		    pageList:[10,20,30,40,50],
 			showFooter : true,
 			height:330,
 			striped:true,
-		    columns: columns,
+			queryParams: {'dr':ovince,'vmome':corpids},
+		    columns: [[   {field:'ck', checkbox:true },
+			               {field:'pk_gs', title:'主键id', hidden:true},
+			     		   {field:'incode',title:'公司编码',width:500},
+			               {field:'uname',title:'公司名称',width:500}
+			   	 	]],
 			onDblClickRow:function(rowIndex, rowData){
 				var rowTable = $('#gsTable').datagrid('getSelections');
 				if(rowTable && rowTable[rowTable.length-1] == rowData){
@@ -120,9 +118,63 @@
 				rowTable = $('#gsTable').datagrid('clearSelections');
 			},
 			onLoadSuccess: function (data) {
-		   		if(!data.rows && data.rows.length>0){
-			   		rows = data.rows;
+				console.log("sfd");
+				var retrows = $("#gsTable").datagrid('getRows');
+		   		if(retrows != null && retrows.length > 0){
+					if(selmap != null && !selmap.isEmpty()){
+						for(var i = 0; i < retrows.length; i++){
+							if(selmap.containsKey(retrows[i].pk_gs)){
+								$('#gsTable').datagrid("checkRow",i);
+							}
+						}
+					}else{
+						var id = corpid.split(","); 
+						if(!isEmpty(id)){
+							for(var i = 0; i < retrows.length; i++) { 
+								if($.inArray(retrows[i].pk_gs, id) != -1){
+									$('#gsTable').datagrid("checkRow",i);
+									if(!uidlist.contains(retrows[i].pk_gs)){
+										uidlist.add(retrows[i].pk_gs);
+										sellist.add(retrows[i]);
+										selmap.put(retrows[i].pk_gs,retrows[i]);
+									}
+								}
+							}
+						}
+					}
 		   		}
+			},
+			onCheck : function(rowIndex,rowData){
+				if(!uidlist.contains(rowData.pk_gs)){
+					uidlist.add(rowData.pk_gs);
+					sellist.add(rowData);
+					selmap.put(rowData.pk_gs,rowData);
+				}
+			},
+			onUncheck : function(rowIndex,rowData){
+				if(sellist != null && sellist.size() > 0){
+					if(uidlist.contains(rowData.pk_gs)){
+						uidlist.removeObj(rowData.pk_gs);
+						sellist.removeObj(rowData);
+						selmap.remove(rowData.pk_gs);
+					}
+				}
+			},
+			onSelectAll : function(rows){
+				for(var i = 0;i < rows.length; i++){
+					if(!uidlist.contains(rows[i].pk_gs)){
+						uidlist.add(rows[i].pk_gs);
+						sellist.add(rows[i]);
+						selmap.put(rows[i].pk_gs,rows[i]);
+					}
+				}
+			},
+			onUncheckAll : function(rows){
+				for(var i = 0;i < rows.length; i++){
+					uidlist.removeObj(rows[i].pk_gs);
+					sellist.removeObj(rows[i]);
+					selmap.remove(rows[i].pk_gs);
+				}
 			}
 		});
 	
@@ -132,10 +184,10 @@
 		      		var params = new Object();
 		      		//params["corpname"] = filtername;
 		      		params["corpcode"] = filtername;
+		      		params["dr"] = ovince;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 
-		//JPlaceHolder.init(); 
 	});
 </script>
 	<div  id="cardList">
