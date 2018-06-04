@@ -22,7 +22,7 @@
 <title>发票管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/invoice/sys_fpmng.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .pos-background {
@@ -54,6 +54,7 @@
 				</div>
 				
 				<div class=right>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">电票余量</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onAutoBill()">电子票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">纸质票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>

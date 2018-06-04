@@ -65,7 +65,7 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">截止日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:219,height:27,readonly:true"  /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:219,height:27"  /></font>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>

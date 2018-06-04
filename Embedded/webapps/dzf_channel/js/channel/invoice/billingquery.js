@@ -185,6 +185,7 @@ function reloadData(){
     });
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
+    $("#querydate").html(bdate);
 }
 
 //双击选择公司

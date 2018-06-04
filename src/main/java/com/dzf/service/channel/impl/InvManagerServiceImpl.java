@@ -524,7 +524,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
         sql.append(
-                "select nvl(sum(nvl(invprice,0)),0) price from cn_invoice where nvl(dr,0) = 0 and pk_corp = ? and invstatus ！= 2 and ipaytype = ?");
+                "select nvl(sum(nvl(invprice,0)),0) price from cn_invoice where nvl(dr,0) = 0 and pk_corp = ? and invstatus = 1 and ipaytype = ?");
         sp.addParam(pk_corp);
         sp.addParam(ipaytype);
         String price = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("price")).toString();

@@ -60,7 +60,9 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		try {
 		    BillingInvoiceVO paramvo = new BillingInvoiceVO();
 			paramvo = (BillingInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			paramvo.setBdate(new DZFDate().toString());
+			if(paramvo.getBdate() == null){
+			    paramvo.setBdate(new DZFDate().toString());
+			}
 			List<BillingInvoiceVO> rows = billingQueryServiceImpl.query(paramvo);
 //			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setMsg("查询成功！");
