@@ -392,7 +392,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 //			sql.append("  COUNT(t.pk_confrim) AS icorpnums \n") ; 
 			//合同数量去掉补提单合同数
 			sql.append("       SUM(CASE  \n") ; 
-			sql.append("             WHEN nvl(t.patchstatus,0) != 2 THEN  \n") ; 
+			sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
 			sql.append("              1  \n") ; 
 			sql.append("             ELSE  \n") ; 
 			sql.append("              0  \n") ; 
@@ -407,7 +407,9 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			sql.append("    END ) AS icorpnums \n") ;
 		}
 		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append(" AND nvl(ct.dr, 0) = 0  \n") ; 
 		if(qrytype == 1){
 			sql.append("   AND t.vstatus IN (?, ?, ?) \n") ;
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
