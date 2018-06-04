@@ -207,46 +207,48 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		
 		buf=new StringBuffer();//提单量,合同代账费,账本费
-		buf.append("  select pk_corp,");
-		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))+");
-		buf.append("  sum(decode(vdeductstatus,10," );
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)))");
-		buf.append("  -sum (decode(patchstatus,2,decode((sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
-		buf.append("   sign(to_date(deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1),0)");
+		buf.append("  select t.pk_corp,");
+		buf.append("  sum(decode((sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))+");
+		buf.append("  sum(decode(t.vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)))");
+		buf.append("  -sum (decode(ct.patchstatus,2,decode((sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
+		buf.append("   sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1),0)");
 		buf.append("  )as num,");
 		
-		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)-nvl(nbookmny,0)))+");
-		buf.append("  sum(decode(vdeductstatus,10," );
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)+nvl(nbookmny,0)),");
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0))");
+		buf.append("  sum(decode((sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.ntotalmny,0)-nvl(ct.nbookmny,0)))+");
+		buf.append("  sum(decode(t.vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(t.nsubtotalmny,0)+nvl(ct.nbookmny,0)),");
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(t.nsubtotalmny,0))");
 		buf.append("  ))as naccountmny,");
 		
-		buf.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nbookmny,0)))+");
-		buf.append("  sum(decode(vdeductstatus,10," );
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-nvl(nbookmny,0)),");
-		buf.append("  decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
+		buf.append("  sum(decode((sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.nbookmny,0)))+");
+		buf.append("  sum(decode(t.vdeductstatus,10," );
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-nvl(ct.nbookmny,0)),");
+		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)");
 		buf.append("  ))as nbookmny");
 		
-		buf.append("  from cn_contract where nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9 or vdeductstatus=10) ");
+		buf.append("  from cn_contract t INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract ");
+		buf.append("  where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and (t.vdeductstatus=1 or t.vdeductstatus=9 or t.vdeductstatus=10) ");
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        buf.append(" and  pk_corp  in (" + corpIdS + ")");
+	        buf.append(" and  t.pk_corp  in (" + corpIdS + ")");
 	    }
-		buf.append("  group by pk_corp");
-		List<ChnBalanceRepVO> list =(List<ChnBalanceRepVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ChnBalanceRepVO.class));
-		HashMap<String, ChnBalanceRepVO> map =new HashMap<>();
+		buf.append("  group by t.pk_corp");
+		List<ChnBalanceRepVO> list = (List<ChnBalanceRepVO>) singleObjectBO.executeQuery(buf.toString(), spm,
+				new BeanListProcessor(ChnBalanceRepVO.class));
+		HashMap<String, ChnBalanceRepVO> map = new HashMap<>();
 		for (ChnBalanceRepVO chnBalanceRepVO : list) {
-			map.put(chnBalanceRepVO.getPk_corp(),chnBalanceRepVO);
+			map.put(chnBalanceRepVO.getPk_corp(), chnBalanceRepVO);
 		}
 		return map;
 	}
@@ -541,42 +543,44 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param ids
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private List<ChnDetailVO> qryByChange(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
 		StringBuffer sql;
 		SQLParameter spm;
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append(" select pk_confrim as pk_bill,substr(dchangetime,1,10) as doperatedate,pk_corpk as pk_corp," );   
-		sql.append(" vstatus as dr,2 as ipaytype,2 as iopertype,vcontcode as vmemo from cn_contract" );   
-		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0 and (vstatus=10 or vstatus=9) \n");
+		sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,1,10) as doperatedate,t.pk_corpk as pk_corp," );   
+		sql.append(" t.vstatus as dr,2 as ipaytype,2 as iopertype,ct.vcontcode as vmemo from cn_contract t" ); 
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0 and (t.vstatus=10 or t.vstatus=9) \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(ids != null && ids.length() > 0){
-			sql.append(" and pk_confrim not in (");
+			sql.append(" and t.pk_confrim not in (");
 			sql.append(ids.toString().substring(0,ids.toString().length()-1));
 			sql.append(" )");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(dchangetime,1,7) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) >= ? \n");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(dchangetime,1,7) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) <= ? \n");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND substr(dchangetime,1,10) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND substr(dchangetime,1,10) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" order by dchangetime \n");
-		List<ChnDetailVO> vos2 = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnDetailVO.class));
-		return vos2;
+		sql.append(" order by t.dchangetime \n");
+		return (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnDetailVO.class));
 	}
 	
 	/**
@@ -586,42 +590,44 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param ids
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private List<ChnDetailVO> qryByDeduct(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" select pk_confrim as pk_bill,deductdata as doperatedate,pk_corpk as pk_corp," );   
+		sql.append(" select t.pk_confrim as pk_bill,t.deductdata as doperatedate,t.pk_corpk as pk_corp," );   
 		sql.append(" 2 as ipaytype,2 as iopertype," );  
-		sql.append(" CONCAT(decode(nvl(isncust,'N'),'Y','存量客户:',''),vcontcode) as vmemo from cn_contract" );   
-		sql.append(" WHERE nvl(dr,0) = 0 and pk_corp=? and ideductpropor=0  \n");
-		sql.append(" and (vstatus=1 or vstatus=9 or vstatus=10) \n");
+		sql.append(" CONCAT(decode(nvl(ct.isncust,'N'),'Y','存量客户:',''),ct.vcontcode) as vmemo from cn_contract t" );   
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0  \n");
+		sql.append(" and (t.vstatus=1 or t.vstatus=9 or t.vstatus=10) \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(ids != null && ids.length() > 0){
-			sql.append(" and pk_confrim not in (");
+			sql.append(" and t.pk_confrim not in (");
 			sql.append(ids.toString().substring(0,ids.toString().length()-1));
 			sql.append(" )");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(deductdata,1,7) >= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(deductdata,1,7) <= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) <= ? \n");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND deductdata >= ? \n");
+				sql.append(" AND t.deductdata >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND deductdata <= ? \n");
+				sql.append(" AND t.deductdata <= ? \n");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" order by deductdata \n");
-		List<ChnDetailVO> vos1 = (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnDetailVO.class));
-		return vos1;
+		sql.append(" order by t.deductdata \n");
+		return (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnDetailVO.class));
 	}
 	/**
 	 * 查询付款单余额明细的合同相关数据
@@ -648,24 +654,27 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sp.addParam(paramvo.getEnddate());
 		}
 		sp.addParam(paramvo.getPk_corp());
-		sql.append(" select pk_confrim as pk_bill ,deductdata as doperatedate, ");
-		sql.append(" nvl(ntotalmny,0)-nvl(nbookmny,0) as naccountmny,nvl(nbookmny,0) as nbookmny from cn_contract" );   
-		sql.append(" where nvl(dr,0) = 0 and (vdeductstatus=1 or vdeductstatus=9 or vdeductstatus=10) and " );
-		sql.append(" deductdata>=? and deductdata<=? and pk_corp=? " );
+		sql.append(" select t.pk_confrim as pk_bill ,t.deductdata as doperatedate, ");
+		sql.append(" nvl(ct.ntotalmny,0)-nvl(ct.nbookmny,0) as naccountmny,nvl(ct.nbookmny,0) as nbookmny from cn_contract t" ); 
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and (t.vdeductstatus=1 or t.vdeductstatus=9 or t.vdeductstatus=10) and " );
+		sql.append(" t.deductdata>=? and t.deductdata<=? and t.pk_corp=? " );
 		List<ChnDetailVO> qryYSH =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));
 		
 	    sql = new StringBuffer();
-	    sql.append(" select pk_confrim as pk_bill,substr(dchangetime,0,10)as doperatedate, ");
-		sql.append(" nvl(nsubtotalmny,0) as naccountmny,0 as nbookmny  from cn_contract " );   
-		sql.append(" where nvl(dr,0) = 0 and vdeductstatus=9  and" );
-		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
+	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
+		sql.append(" nvl(t.nsubtotalmny,0) as naccountmny,0 as nbookmny  from cn_contract t " ); 
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.vdeductstatus=9  and" );
+		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
 		List<ChnDetailVO> qryYZZ =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));
 		
 		sql = new StringBuffer();
-	    sql.append(" select pk_confrim as pk_bill,substr(dchangetime,0,10)as doperatedate, ");
-		sql.append(" nvl(nsubtotalmny,0)+nvl(nbookmny,0) as naccountmny,-nvl(nbookmny,0) as nbookmny from cn_contract " );   
-		sql.append(" where nvl(dr,0) = 0  and vdeductstatus=10 and" );
-		sql.append(" substr(dchangetime,0,10)>=? and substr(dchangetime,0,10)<=? and pk_corp=?" );
+	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
+		sql.append(" nvl(t.nsubtotalmny,0)+nvl(ct.nbookmny,0) as naccountmny,-nvl(ct.nbookmny,0) as nbookmny from cn_contract t " );   
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" where nvl(t.dr,0) = 0  and nvl(ct.dr,0) = 0  and t.vdeductstatus=10 and" );
+		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
 		List<ChnDetailVO> qryYZF =(List<ChnDetailVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ChnDetailVO.class));	
 		HashMap<String,ChnDetailVO> map=new HashMap<>();
 		for (ChnDetailVO chnDetailVO : qryYSH) {
