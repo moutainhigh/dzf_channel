@@ -1739,72 +1739,72 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 
 	@Override
-	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
+	public ContractConfrimVO saveChange(ContractConfrimVO datavo, String cuserid, File[] files, String[] filenames)
 			throws DZFWarpException {
-		if(StringUtil.isEmpty(paramvo.getTableName()) || StringUtil.isEmpty(paramvo.getPk_contract())){
-			paramvo.setVerrmsg("数据错误");
-			return paramvo;
+		if(StringUtil.isEmpty(datavo.getTableName()) || StringUtil.isEmpty(datavo.getPk_contract())){
+			datavo.setVerrmsg("数据错误");
+			return datavo;
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_contract(),uuid, 120);
+			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_contract(),uuid, 120);
 			//1、变更前校验：
-			checkBeforeChange(paramvo);
+			checkBeforeChange(datavo);
 			//2、相关字段赋值：
-			if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
-				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
-				paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_9);
-				paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_1);
-				paramvo.setVchangeraeson("C端客户终止，变更合同");
-			} else if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
-				paramvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_10);
-				paramvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_10);
-				paramvo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
-				paramvo.setVchangeraeson("合同作废");
-				paramvo.setIdeductpropor(0);
+			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
+				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_9);
+				datavo.setIchangetype(IStatusConstant.ICONCHANGETYPE_1);
+				datavo.setVchangeraeson("C端客户终止，变更合同");
+			} else if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
+				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_10);
+				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_10);
+				datavo.setIchangetype(IStatusConstant.ICONCHANGETYPE_2);
+				datavo.setVchangeraeson("合同作废");
+				datavo.setIdeductpropor(0);
 			}
-			paramvo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
-			paramvo.setVchanger(cuserid);
-			paramvo.setDchangetime(new DZFDateTime());
-			paramvo.setTstamp(new DZFDateTime());
+			datavo.setPatchstatus(3);//加盟合同类型（null正常合同；1被补提交的合同；2补提交的合同；3变更合同）
+			datavo.setVchanger(cuserid);
+			datavo.setDchangetime(new DZFDateTime());
+			datavo.setTstamp(new DZFDateTime());
 			//3、退款（预付款退款、返点款退款）相关字段计算：
-			if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(DZFDouble.ZERO_DBL) > 0){
-				if(CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0){//返点扣款>0
-					if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(paramvo.getNdedrebamny()) <= 0){
+			if(CommonUtil.getDZFDouble(datavo.getNreturnmny()).compareTo(DZFDouble.ZERO_DBL) > 0){
+				if(CommonUtil.getDZFDouble(datavo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0){//返点扣款>0
+					if(CommonUtil.getDZFDouble(datavo.getNreturnmny()).compareTo(datavo.getNdedrebamny()) <= 0){
 						//3.1、0<退款总金额<=返点扣款，全部退返点
-						paramvo.setNretrebmny(paramvo.getNreturnmny());//返点退款
-						paramvo.setNretdedmny(DZFDouble.ZERO_DBL);//预付款退款
-					}else if(CommonUtil.getDZFDouble(paramvo.getNreturnmny()).compareTo(paramvo.getNdedrebamny()) > 0){
+						datavo.setNretrebmny(datavo.getNreturnmny());//返点退款
+						datavo.setNretdedmny(DZFDouble.ZERO_DBL);//预付款退款
+					}else if(CommonUtil.getDZFDouble(datavo.getNreturnmny()).compareTo(datavo.getNdedrebamny()) > 0){
 						//3.2、0<返点扣款<退款总金额，先退返点，再退预付款
-						paramvo.setNretrebmny(paramvo.getNdedrebamny());//返点退款 = 返点扣款
-						paramvo.setNretdedmny(SafeCompute.sub(paramvo.getNreturnmny(), paramvo.getNretrebmny()));//预付款退款 = 退款总金额 - 返点退款
+						datavo.setNretrebmny(datavo.getNdedrebamny());//返点退款 = 返点扣款
+						datavo.setNretdedmny(SafeCompute.sub(datavo.getNreturnmny(), datavo.getNretrebmny()));//预付款退款 = 退款总金额 - 返点退款
 					}
-				}else if(CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) == 0){//返点扣款=0
+				}else if(CommonUtil.getDZFDouble(datavo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) == 0){//返点扣款=0
 					//3.3、返点扣款=0，全部退预付款
-					paramvo.setNretrebmny(DZFDouble.ZERO_DBL);//返点退款
-					paramvo.setNretdedmny(paramvo.getNreturnmny());//预付款退款 = 退款总金额
+					datavo.setNretrebmny(DZFDouble.ZERO_DBL);//返点退款
+					datavo.setNretdedmny(datavo.getNreturnmny());//预付款退款 = 退款总金额
 				}
 			}
 			//4、变更后扣款（变更后预付款扣款、变更后返点扣款）相关字段计算：
-			paramvo.setNchangededutmny(SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNretdedmny()));//变更后预付款扣款 = 预付款扣款 - 预付款退款
-			paramvo.setNchangerebatmny(SafeCompute.sub(paramvo.getNdedrebamny(), paramvo.getNretrebmny()));//变更后返点扣款 = 返点扣款 - 返点退款
+			datavo.setNchangededutmny(SafeCompute.sub(datavo.getNdeductmny(), datavo.getNretdedmny()));//变更后预付款扣款 = 预付款扣款 - 预付款退款
+			datavo.setNchangerebatmny(SafeCompute.sub(datavo.getNdedrebamny(), datavo.getNretrebmny()));//变更后返点扣款 = 返点扣款 - 返点退款
 			
 			//5、变更差额数据处理：
 			//5.1、变更后合同总金额差额  = 原合同总金额 - 变更后合同金额
-			DZFDouble nsubtotalmny = SafeCompute.sub(paramvo.getNtotalmny(), paramvo.getNchangetotalmny());
-			paramvo.setNsubtotalmny(CommonUtil.getDZFDouble(nsubtotalmny).multiply(-1));
+			DZFDouble nsubtotalmny = SafeCompute.sub(datavo.getNtotalmny(), datavo.getNchangetotalmny());
+			datavo.setNsubtotalmny(CommonUtil.getDZFDouble(nsubtotalmny).multiply(-1));
 			
 			//5.2、变更后扣款总金额差额 = 原扣款总金额 - 变更后扣款总金额
-			DZFDouble nsubdedsummny = SafeCompute.sub(paramvo.getNdedsummny(), paramvo.getNchangesummny());
-			paramvo.setNsubdedsummny(CommonUtil.getDZFDouble(nsubdedsummny).multiply(-1));
+			DZFDouble nsubdedsummny = SafeCompute.sub(datavo.getNdedsummny(), datavo.getNchangesummny());
+			datavo.setNsubdedsummny(CommonUtil.getDZFDouble(nsubdedsummny).multiply(-1));
 			
 			//5.3、变更后预付款扣款差额 = 原预付款扣款金额 - 变更后预付款扣款金额
-			DZFDouble nsubdeductmny = SafeCompute.sub(paramvo.getNdeductmny(), paramvo.getNchangededutmny());
-			paramvo.setNsubdeductmny(CommonUtil.getDZFDouble(nsubdeductmny).multiply(-1));
+			DZFDouble nsubdeductmny = SafeCompute.sub(datavo.getNdeductmny(), datavo.getNchangededutmny());
+			datavo.setNsubdeductmny(CommonUtil.getDZFDouble(nsubdeductmny).multiply(-1));
 			
 			//5.4、变更后返点款扣款差额 = 原返点扣款金额 - 变更后返点扣款金额
-			DZFDouble nsubdedrebamny = SafeCompute.sub(paramvo.getNdedrebamny(), paramvo.getNchangerebatmny());
-			paramvo.setNsubdedrebamny(CommonUtil.getDZFDouble(nsubdedrebamny).multiply(-1));
+			DZFDouble nsubdedrebamny = SafeCompute.sub(datavo.getNdedrebamny(), datavo.getNchangerebatmny());
+			datavo.setNsubdedrebamny(CommonUtil.getDZFDouble(nsubdedrebamny).multiply(-1));
 			
 			// 6、更新合同历史数据
 			String[] str = new String[] { "vdeductstatus", "vstatus","ichangetype", "vchangeraeson", "vchangememo",
@@ -1812,40 +1812,40 @@ public class ContractConfirmImpl implements IContractConfirm {
 					"nreturnmny", "nretrebmny", "nretdedmny", 
 					"nchangetotalmny", "nchangesummny", "nchangededutmny", "nchangerebatmny",
 					"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny", "ideductpropor" };
-			singleObjectBO.update(paramvo, str);
+			singleObjectBO.update(datavo, str);
 			
 			// 7.1、更新原合同主表数据的合同结束日期、合同结束期间、合同周期、合同总金额
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			sql.append("update ynt_contract \n") ;
 			sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
-			if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 				spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-			}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+			}else if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
 				spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 				spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			}
 			spm.addParam(new DZFDateTime());
-			if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
-				String vbeginperiod = paramvo.getVbeginperiod();//合同开始期间
-				String vstopperiod = paramvo.getVstopperiod();//合同终止期间
+			if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
+				String vbeginperiod = datavo.getVbeginperiod();//合同开始期间
+				String vstopperiod = datavo.getVstopperiod();//合同终止期间
 				Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
 				sql.append(" , icontractcycle = ? , ntotalmny = ? \n") ;
 				spm.addParam(changenum);
-				spm.addParam(paramvo.getNchangetotalmny());
+				spm.addParam(datavo.getNchangetotalmny());
 				DZFDate denddate = null;
 				String vendperiod = "";
 				try {
-					String venddate = ToolsUtil.getDateAfterNum(paramvo.getDbegindate(), changenum);
+					String venddate = ToolsUtil.getDateAfterNum(datavo.getDbegindate(), changenum);
 					if(!StringUtil.isEmpty(venddate)){
 						denddate = new DZFDate(venddate);
 						vendperiod = denddate.getYear() + "-" + denddate.getStrMonth();
 						sql.append(" , denddate = ? , vendperiod = ? \n") ;
 						spm.addParam(denddate);
 						spm.addParam(vendperiod);
-						paramvo.setDenddate(denddate);
-						paramvo.setVendperiod(vendperiod);
+						datavo.setDenddate(denddate);
+						datavo.setVendperiod(vendperiod);
 					}
 				} catch (ParseException e) {
 					throw new BusinessException("获取变更后结束日期失败");
@@ -1855,13 +1855,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("   and pk_corp = ? \n") ; 
 			sql.append("   and pk_contract = ? \n");
 
-			spm.addParam(paramvo.getPk_corp());
-			spm.addParam(paramvo.getPk_contract());
+			spm.addParam(datavo.getPk_corp());
+			spm.addParam(datavo.getPk_contract());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			//7.2、如果是合同终止，更新合同子表“代理记账费”的应收金额、未收金额、应收期间；更新合同子表“ 账本费”的应收期间
-			if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
+			if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
 				//7.2.1 代理记账费
-				String vreceivmonth = paramvo.getVbeginperiod() + "至" + paramvo.getVendperiod();
+				String vreceivmonth = datavo.getVbeginperiod() + "至" + datavo.getVendperiod();
 				sql = new StringBuffer();
 				spm = new SQLParameter();
 				sql.append("UPDATE ynt_contract_b \n") ;
@@ -1870,11 +1870,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append("   AND pk_corp = ? \n") ; 
 				sql.append("   AND pk_contract = ? \n") ; 
 				sql.append("   AND icosttype = 1 \n");
-				spm.addParam(SafeCompute.sub(paramvo.getNchangetotalmny(), paramvo.getNbookmny()));
-				spm.addParam(SafeCompute.sub(paramvo.getNchangetotalmny(), paramvo.getNbookmny()));
+				spm.addParam(SafeCompute.sub(datavo.getNchangetotalmny(), datavo.getNbookmny()));
+				spm.addParam(SafeCompute.sub(datavo.getNchangetotalmny(), datavo.getNbookmny()));
 				spm.addParam(vreceivmonth);
-				spm.addParam(paramvo.getPk_corp());
-				spm.addParam(paramvo.getPk_contract());
+				spm.addParam(datavo.getPk_corp());
+				spm.addParam(datavo.getPk_contract());
 				singleObjectBO.executeUpdate(sql.toString(), spm);
 				//7.2.1 账本费
 				sql = new StringBuffer();
@@ -1886,32 +1886,32 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append("   AND pk_contract = ? \n") ; 
 				sql.append("   AND icosttype = 0 \n");
 				spm.addParam(vreceivmonth);
-				spm.addParam(paramvo.getPk_corp());
-				spm.addParam(paramvo.getPk_contract());
+				spm.addParam(datavo.getPk_corp());
+				spm.addParam(datavo.getPk_contract());
 				singleObjectBO.executeUpdate(sql.toString(), spm);
 			}
 			
 			//8、上传变更合同附件
-			saveContDocVO(paramvo, files, filenames, cuserid);
+			saveContDocVO(datavo, files, filenames, cuserid);
 			//9、更新合同变更后余额及余额明细表
 			StringBuffer vmemo = new StringBuffer();
-			if (paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
+			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				vmemo.append("合同终止：");
-			}else if(paramvo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+			}else if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
 				vmemo.append("合同终止：");
 
 			}
-			CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corpk());
+			CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
 			if(corpvo != null){
-				paramvo.setCorpkname(corpvo.getUnitname());
+				datavo.setCorpkname(corpvo.getUnitname());
 				vmemo.append(corpvo.getUnitname()).append("、");
 			}
-			vmemo.append(paramvo.getVcontcode());
-			updateChangeBalMny(paramvo, cuserid, vmemo.toString());
+			vmemo.append(datavo.getVcontcode());
+			updateChangeBalMny(datavo, cuserid, vmemo.toString());
 		} finally {
-			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_contract(),uuid);
+			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_contract(),uuid);
 		}
-		return paramvo;
+		return datavo;
 	}
 	
 	/**
