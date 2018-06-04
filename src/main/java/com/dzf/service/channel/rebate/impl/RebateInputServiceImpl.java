@@ -512,14 +512,16 @@ public class RebateInputServiceImpl implements IRebateInputService {
 //		sql.append("  nvl(COUNT(t.pk_confrim),0)  AS icontractnum \n");
 		//合同数量去掉补提单合同数
 		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(t.patchstatus,0) != 2 THEN  \n") ; 
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
 		sql.append("              1  \n") ; 
 		sql.append("             ELSE  \n") ; 
 		sql.append("              0  \n") ; 
 		sql.append("           END) AS icontractnum  \n") ;
 		sql.append("  FROM cn_contract t \n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0 \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N' \n");
 		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -587,8 +589,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append("                  0 \n") ; 
 		sql.append("               end AS zfnum \n") ; 
 		sql.append("          FROM cn_contract ct \n") ; 
+		sql.append("  INNER JOIN ynt_contract t ON t.pk_contract = t.pk_contract \n");
 		sql.append("         WHERE nvl(ct.dr, 0) = 0 \n") ; 
-		sql.append("           AND nvl(ct.isncust, 'N') = 'N' \n") ; 
+		sql.append("           AND nvl(t.dr, 0) = 0 \n");
+		sql.append("           AND nvl(t.isncust, 'N') = 'N' \n") ; 
 		sql.append("           AND ct.vdeductstatus in (?, ?) \n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
