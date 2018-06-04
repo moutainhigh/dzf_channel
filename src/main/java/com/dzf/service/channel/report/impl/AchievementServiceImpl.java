@@ -469,10 +469,12 @@ public class AchievementServiceImpl implements IAchievementService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(t.ntotalmny, 0) - nvl(t.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("       SUM(nvl(ct.ntotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(powmap.get(1))) {
 			sql.append(" AND ").append(powmap.get(1));
@@ -481,7 +483,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		} else if (!StringUtil.isEmpty(powmap.get(3))) {
 			sql.append(" AND ").append(powmap.get(3));
 		}
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -514,11 +516,13 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("             WHEN 9 THEN  \n") ; 
 		sql.append("              nvl(t.nsubtotalmny, 0)  \n") ; 
 		sql.append("             ELSE  \n") ; 
-		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(t.nbookmny, 0)  \n") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)  \n") ; 
 		sql.append("           END) AS naccountmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(powmap.get(1))) {
 			sql.append(" AND ").append(powmap.get(1));
@@ -527,7 +531,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		} else if (!StringUtil.isEmpty(powmap.get(3))) {
 			sql.append(" AND ").append(powmap.get(3));
 		}
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
