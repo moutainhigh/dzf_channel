@@ -172,28 +172,30 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT pk_corp, chargedeptname, COUNT(pk_corpk) AS num, SUM(ntotalmny) AS summny \n");
-		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname, \n");
+		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname, \n");
 		sql.append("               t.pk_corp AS pk_corp, \n");
 		sql.append("               t.pk_corpk AS pk_corpk, \n");
 		sql.append(
-				"               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny \n");
+				"               CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny \n");
 		// sql.append(" t.ntotalmny AS ntotalmny \n") ;
 		// sql.append(" FROM ynt_contract t \n") ;
 		sql.append("          FROM cn_contract t \n");
+		sql.append("         INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("           AND nvl(ct.dr, 0) = 0 \n");
 		if (corplist != null && corplist.size() > 0) {
 			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
 			sql.append(" and ");
 			sql.append(condition);
 		}
-		sql.append("           AND nvl(t.patchstatus, 0) != 2 \n");// 补单合同不统计
+		sql.append("           AND nvl(ct.patchstatus, 0) != 2 \n");// 补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0 \n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'\n");
-		sql.append("           AND (t.vbeginperiod = ? OR t.vendperiod = ? OR \n");
+		sql.append("           AND (ct.vbeginperiod = ? OR ct.vendperiod = ? OR \n");
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
-		sql.append("                (t.vbeginperiod < ? AND t.vendperiod > ? )) \n");
+		sql.append("                (ct.vbeginperiod < ? AND ct.vendperiod > ? )) \n");
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		// sql.append(" AND nvl(t.icontracttype, 1) = 2 \n") ;
@@ -239,22 +241,24 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("       chargedeptname,\n");
 		sql.append("       COUNT(pk_corpk) AS num,\n");
 		sql.append("       SUM(ntotalmny) AS summny\n");
-		sql.append("  FROM (SELECT NVL(t.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
+		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
 		sql.append("               t.pk_corp AS pk_corp,\n");
 		sql.append(
-				"               CASE t.vdeductstatus WHEN 1 THEN t.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny, \n");
+				"               CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny WHEN 9 THEN t.nchangetotalmny END AS ntotalmny, \n");
 		// sql.append(" t.ntotalmny AS ntotalmny,\n");
 		sql.append("               t.pk_corpk AS pk_corpk\n");
 		sql.append("          FROM cn_contract t\n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		// sql.append(" FROM ynt_contract t\n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0\n");
+		sql.append("           AND nvl(ct.dr, 0) = 0\n");
 		if (corplist != null && corplist.size() > 0) {
 			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
 			sql.append(" and ");
 			sql.append(condition);
 		}
-		sql.append("           AND nvl(t.patchstatus, 0) != 2 \n");// 补单合同不统计
+		sql.append("           AND nvl(ct.patchstatus, 0) != 2 \n");// 补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0\n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n");
 		sql.append("   AND t.pk_corp NOT IN \n");
@@ -262,7 +266,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM ynt_franchisee f \n");
 		sql.append("         WHERE nvl(dr, 0) = 0 \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("           AND SUBSTR(t.dsigndate, 1, 7) = ? \n");
+		sql.append("           AND SUBSTR(ct.dsigndate, 1, 7) = ? \n");
 		spm.addParam(paramvo.getPeriod());
 		// sql.append(" AND nvl(t.icontracttype, 1) = 2 \n");
 		sql.append("           AND t.vdeductstatus in ( 1 , 9) \n");// 合同状态 =
@@ -285,7 +289,7 @@ public class CustNumMoneyRepImpl implements ICustNumMoneyRep {
 		sql.append("          FROM ynt_franchisee f \n");
 		sql.append("         WHERE nvl(dr, 0) = 0 \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("                   AND SUBSTR(t.dsigndate, 1, 7) < ? \n");
+		sql.append("                   AND SUBSTR(ct.dsigndate, 1, 7) < ? \n");
 		spm.addParam(paramvo.getPeriod());
 		// sql.append(" AND nvl(t.icontracttype, 1) = 2\n");
 		sql.append("                   AND t.vdeductstatus in ( 1 , 9))) cu\n");// 合同状态
