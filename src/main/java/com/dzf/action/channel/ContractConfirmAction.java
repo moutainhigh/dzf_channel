@@ -1,14 +1,19 @@
 package com.dzf.action.channel;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -20,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.ContractConExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
@@ -32,6 +38,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IContractConfirm;
 
@@ -374,4 +381,60 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
+	
+	/**
+	 * 导出
+	 */
+	public void onExport(){
+        String strlist =getRequest().getParameter("strlist");
+        String qj = getRequest().getParameter("qj");
+        if(StringUtil.isEmpty(strlist)){
+            throw new BusinessException("导出数据不能为空!");
+        }   
+        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+        Map<String, String> mapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+        ContractConfrimVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ContractConfrimVO[].class, JSONConvtoJAVA.getParserConfig());
+        ArrayList<ContractConfrimVO> explist = new ArrayList<ContractConfrimVO>();
+        for(ContractConfrimVO vo : expVOs){
+            explist.add(vo);
+        }
+        HttpServletResponse response = getResponse();
+        Excelexport2003<ContractConfrimVO> ex = new Excelexport2003<ContractConfrimVO>();
+        ContractConExcelField fields = new ContractConExcelField();
+        fields.setVos(explist.toArray(new ContractConfrimVO[0]));;
+        fields.setQj(qj);
+        ServletOutputStream servletOutputStream = null;
+        OutputStream toClient = null;
+        try {
+            response.reset();
+            // 设置response的Header
+            String filename = fields.getExcelport2003Name();
+            String formattedName = URLEncoder.encode(filename, "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+            servletOutputStream = response.getOutputStream();
+            toClient = new BufferedOutputStream(servletOutputStream);
+            response.setContentType("applicationnd.ms-excel;charset=gb2312");
+            ex.exportExcel(fields, toClient);
+        } catch (Exception e) {
+            log.error("导出失败",e);
+        }  finally {
+            if(toClient != null){
+                try {
+                    toClient.flush();
+                    toClient.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+            if(servletOutputStream != null){
+                try {
+                    servletOutputStream.flush();
+                    servletOutputStream.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+        }
+	}
+	
 }

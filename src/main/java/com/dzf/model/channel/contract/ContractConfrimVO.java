@@ -45,12 +45,12 @@ public class ContractConfrimVO extends SuperVO {
 	private String pk_corpk; // 客户主键
 
 	@FieldAlias("destatus")
-	private Integer vdeductstatus;// 加盟商合同合同状态：0：待提交；5:待审核： 1：已审核；
+	private Integer vdeductstatus;// 加盟商合同合同状态：0：待提交；1：已审核；5:待审核： 
 									// 7：拒绝审核；8：服务到期；9：已终止；10：已作废；
 
 	@FieldAlias("status")
 	private Integer vstatus; // 合同状态
-								// 0：待提交；5:待审批；1：审核通过；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+								// 0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
 
 	// 与原合同重复字段 end***************************
 
@@ -74,7 +74,7 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("isncust")
 	private DZFBoolean isncust;// 是否存量客户（不存库，取原合同）
 
-	private DZFBoolean isnconfirm;// 是否未确定服务期限（Y是未确定）（不存库，取原合同）
+	private DZFBoolean isnconfirm;// 未确定服务期限（Y是未确定）（不存库，取原合同）
 
 	@FieldAlias("chname")
 	public String chargedeptname;// 纳税人资格（不存库，取原合同）

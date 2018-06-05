@@ -566,7 +566,7 @@ function load(){
 				if (value == '1')
 					return '已审核';
 				if (value == '7')
-					return '拒绝审核';
+					return '已驳回';
 				if (value == '8')
 					return '服务到期';
 				if (value == '9')
@@ -1913,4 +1913,18 @@ function dClickReje(rowTable){
 		$("#" + rejeid + "id").val(rids);
 	}
 	$("#rejeDlg").dialog('close');
+}
+
+/**
+ * 导出
+ */
+function onExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'请选择需导出的数据',type:2});
+		return;
+	}
+	var columns = $('#grid').datagrid("options").columns[0];
+	Business.getFile(DZF.contextPath+ '/contract/contractconf!onExport.action',
+			{'strlist':JSON.stringify(datarows),'qj' : $('#querydate').html()}, true, true);
 }
