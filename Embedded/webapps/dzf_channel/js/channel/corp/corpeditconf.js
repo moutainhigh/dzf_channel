@@ -102,7 +102,7 @@ function reloadData(){
 	$('#grid').datagrid('options').url = contextPath + '/corp/corpeditconf!query.action';
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
-	queryParams.qtype = -1;
+	queryParams.qtype = $('#qtype').combobox('getValue');
 	queryParams.cpid = $('#pk_account').val();
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');

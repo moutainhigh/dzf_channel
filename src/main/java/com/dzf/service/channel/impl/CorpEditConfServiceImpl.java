@@ -86,9 +86,8 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 			sql.append("   AND istatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append("   AND istatus not in  (?,?) \n");
+			sql.append("   AND istatus != ? \n");
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_0);
-			spm.addParam(IStatusConstant.ICORPEDITSTATUS_3);
 		}
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND substr(vsubmittime,1,10) >= ? \n");

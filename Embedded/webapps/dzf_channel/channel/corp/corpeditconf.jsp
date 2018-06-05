@@ -4,7 +4,7 @@
 <html>
 
 <head>
-<title>客户名称修改审核</title>
+<title>客户名称审核</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out,request.getContextPath()+"/js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
@@ -36,7 +36,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 160px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:190px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -54,6 +54,16 @@
 					<label style="width:80px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
 					<input id="pk_account" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">审核状态：</label>
+					<select id="qtype" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:130px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">待审核</option>
+						<option value="2">已审核</option>
+						<option value="3">已驳回</option>
+					</select>
 				</div>
 			</form>
 			<p>
