@@ -108,6 +108,7 @@
 						<option value="9">已终止</option>
 						<option value="10">已作废</option>
 						<option value="8">服务到期</option>
+						<option value="7">已驳回</option>
 					</select>
 					<label style="width:80px;text-align:right">客户类型：</label>
 					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
