@@ -35,7 +35,7 @@ public interface InvManagerService {
 	/**
 	 * 开票
 	 */
-	List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException;
+	List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid,String invtime) throws DZFWarpException;
 	
 	List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException;
 	

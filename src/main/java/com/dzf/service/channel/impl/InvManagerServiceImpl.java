@@ -94,14 +94,26 @@ public class InvManagerServiceImpl implements InvManagerService {
             sql.append(" and invtype = ?");
             spm.addParam(paramvo.getInvtype());
         }
-        if (!StringUtil.isEmpty(paramvo.getBdate())) {
-            sql.append(" and apptime >= ?");
-            spm.addParam(paramvo.getBdate());
+        if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+            if (!StringUtil.isEmpty(paramvo.getBdate())) {
+                sql.append(" and apptime >= ?");
+                spm.addParam(paramvo.getBdate());
+            }
+            if (!StringUtil.isEmpty(paramvo.getEdate())) {
+                sql.append(" and apptime <= ?");
+                spm.addParam(paramvo.getEdate());
+            }
+        }else{
+            if (!StringUtil.isEmpty(paramvo.getBdate())) {
+                sql.append(" and invtime >= ?");
+                spm.addParam(paramvo.getBdate());
+            }
+            if (!StringUtil.isEmpty(paramvo.getEdate())) {
+                sql.append(" and invtime <= ?");
+                spm.addParam(paramvo.getEdate());
+            }
         }
-        if (!StringUtil.isEmpty(paramvo.getEdate())) {
-            sql.append(" and apptime <= ?");
-            spm.addParam(paramvo.getEdate());
-        }
+        
         if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and pk_corp  in (" + corpIdS + ")");
@@ -192,7 +204,7 @@ public class InvManagerServiceImpl implements InvManagerService {
     }
 
     @Override
-    public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid) throws DZFWarpException {
+    public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid,String invtime) throws DZFWarpException {
         if (pk_invoices == null || pk_invoices.length == 0) {
             throw new BusinessException("请选择发票！");
         }
@@ -220,7 +232,7 @@ public class InvManagerServiceImpl implements InvManagerService {
             lists.add(vo);
             vo.setInvperson(userid);
             updateTicketPrice(vo);
-            updateInvoice(vo);
+            updateInvoice(vo,invtime);
         }
         return listError;
     }
@@ -478,9 +490,11 @@ public class InvManagerServiceImpl implements InvManagerService {
         singleObjectBO.updateAry(vos, new String[] { "invtime", "invperson", "invstatus" });
     }
 
-    private void updateInvoice(ChInvoiceVO vo) {
-        DZFDate time = new DZFDate();
-        vo.setInvtime(time.toString());
+    private void updateInvoice(ChInvoiceVO vo,String invtime) {
+        if(StringUtil.isEmpty(invtime)){
+            invtime = new DZFDate().toString();
+        }
+        vo.setInvtime(invtime);
         vo.setInvstatus(2);
         vo.setBillway(2);
         singleObjectBO.update(vo, new String[] { "invtime", "invperson", "invstatus","billway" });

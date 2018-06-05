@@ -129,12 +129,11 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void onBilling(){
 		Json json = new Json();
 		try{
-			ChInvoiceVO paramvo = new ChInvoiceVO();
-			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
 			String uid = getLoginUserid();
 			String pk_invoices = getRequest().getParameter("pk_invoices");
+			String invtime = getRequest().getParameter("invtime");
 			String[] pkArry = pkinvoicesToArray(pk_invoices);
-			List<ChInvoiceVO> listError = invManagerService.onBilling(pkArry,uid);
+			List<ChInvoiceVO> listError = invManagerService.onBilling(pkArry,uid,invtime);
 			int errorNum = listError == null ? 0 :listError.size();
 			int success = pkArry.length - errorNum;
 			StringBuffer msg = new StringBuffer();
@@ -153,6 +152,12 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		writeJson(json);
 	}
 	
+	/**
+	 * 电子票
+	 * @author gejw
+	 * @date 2018年6月5日
+	 * @time 下午3:43:27
+	 */
 	public void onAutoBill(){
         Json json = new Json();
         try{

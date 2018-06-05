@@ -167,8 +167,19 @@ function initChannel(){
 function reloadData(){
 	$('#grid').datagrid('options').url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
 	
-	var bdate = $('#bdate').datebox('getValue'); //开始日期
-	var edate = $('#edate').datebox('getValue'); //结束日期
+	var ischeck = $('#sq_tddate').is(':checked');
+	var bdate = ''; //开始日期
+	var edate = ''; //结束日期
+	if(ischeck){
+		qrytype = 1;
+		bdate = $('#bdate').datebox('getValue'); //开始日期
+		edate = $('#edate').datebox('getValue'); //结束日期
+	}else{
+		qrytype = 2;
+		bdate = $('#kp_bdate').datebox('getValue'); //开始日期
+		edate = $('#kp_edate').datebox('getValue'); //结束日期
+	}
+
 	$('#querydate').html(bdate + ' 至 ' + edate);
 	
     $('#grid').datagrid('load', {
@@ -176,7 +187,8 @@ function reloadData(){
         bdate: bdate,
         edate: edate,
         istatus : $('#istatus').combobox('getValue'),
-        itype : $('#itype').combobox('getValue')
+        itype : $('#itype').combobox('getValue'),
+        qrytype : qrytype
     });
     
     $('#qrydialog').hide();
@@ -216,8 +228,23 @@ function selectCorps(){
 	dClickCompany(rows);
 }
 
-//开票
+/**
+ * 纸质开票
+ */
 function onBilling(){
+	var rows = $('#grid').datagrid("getSelections");
+	if(rows == null || rows.length == 0){
+		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		return;
+	}
+	$('#billing').dialog('open');
+	$('#invtime').datebox('setValue',parent.SYSTEM.LoginDate);
+}
+
+/**
+ * 纸质票确认
+ */
+function onBill(){
 	var rows = $('#grid').datagrid("getSelections");
 	if(rows == null || rows.length == 0){
 		Public.tips({content : "请选择需要处理的数据!" ,type:2});
@@ -225,33 +252,30 @@ function onBilling(){
 	}
 	
 	var pk_invoices = [];
-	
-	$.messager.confirm('提示','请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！',
-			function(conf){
-		if(conf){
-			for(var i = 0; i < rows.length; i++){
-				pk_invoices.push(rows[i].id);
+
+	for(var i = 0; i < rows.length; i++){
+		pk_invoices.push(rows[i].id);
+	}
+	$.ajax({
+		type : 'post',
+		url : DZF.contextPath + '/sys/sys_inv_manager!onBilling.action',
+		data : {
+			"pk_invoices" : JSON.stringify(pk_invoices),
+			"invtime" : $('#invtime').datebox('getValue'),
+		},
+		dataType : 'json',
+		success: function(result){
+			if(result.success){
+				reloadData();
+				Public.tips({content : result.msg ,type:0});
+				$('#billing').dialog('close')
+			}else{
+				Public.tips({content : result.msg ,type:2});
 			}
-			$.ajax({
-				type : 'post',
-				url : DZF.contextPath + '/sys/sys_inv_manager!onBilling.action',
-				data : {
-					"pk_invoices" : JSON.stringify(pk_invoices)
-				},
-				dataType : 'json',
-				success: function(result){
-					if(result.success){
-						reloadData();
-						Public.tips({content : result.msg ,type:0});
-					}else{
-						Public.tips({content : result.msg ,type:2});
-					}
-				}
-			});
-			
 		}
 	});
 }
+
 
 function onAutoBill(){
 

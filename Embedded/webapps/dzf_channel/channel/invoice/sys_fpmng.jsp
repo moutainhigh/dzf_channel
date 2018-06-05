@@ -63,14 +63,15 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 230px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 260px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
 					<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="width: 80px;text-align:right">日期：</label>
+					<input id="sq_tddate" type="radio" name="seledate" checked />
+					<label style="width: 80px;text-align:right">申请日期：</label>
 					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" 
 						data-options="width:130,height:27,editable:true,validType:'checkdate'" value="<%=sdf.format(beforeDate)%>" /></font>
 					<font>-</font>
@@ -78,12 +79,21 @@
 						data-options="width:130,height:27,editable:true,validType:'checkdate'"  value="<%=sdf.format(nowDate)%>" /></font>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:80px;text-align:right">加盟商：</label>
+					<input id="kp_tddate" type="radio" name="seledate"  />
+					<label style="width: 80px;text-align:right">开票日期：</label>
+					<font><input name="bdate" type="text" id="kp_bdate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'" value="<%=sdf.format(beforeDate)%>" /></font>
+					<font>-</font>
+					<font><input name="edate" type="text" id="kp_edate" class="easyui-datebox" 
+						data-options="width:130,height:27,editable:true,validType:'checkdate'"  value="<%=sdf.format(nowDate)%>" /></font>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:97px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:80px;text-align:right">发票状态：</label>
+					<label style="width:97px;text-align:right">发票状态：</label>
 					<select id="istatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:219px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">待开票</option>
@@ -92,7 +102,7 @@
 					</select>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:80px;text-align:right">发票类型：</label>
+					<label style="width:97px;text-align:right">发票类型：</label>
 					<select id="itype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:219px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="0">专用发票</option>
@@ -197,6 +207,7 @@
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 		</div>
 		
+		
 		<div id="invInfo" class="easyui-dialog" title="电子票余量查询" 
 			data-options="modal:true,closed:true" style="width:940px;height:500px;">
 			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
@@ -211,5 +222,18 @@
 			</div>
 		</div>
 	</div>
+	<div id="billing" class="easyui-dialog" title="提示" style="width:300px;height:200px;padding:10px 20px;" 
+						data-options="modal:true,resizable:true,closed:true,buttons:'#billingBtn'">
+			<form action="" method="post" id="billFrom">
+			     <div style="width:230px;margin-bottom:6px;font-size:14px;">请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！</div>				
+				 <div class="time_col time_colp11">
+				 	开票日期:<input id="invtime" name="invtime" class = "easyui-datebox" style="width:130px;height:26px;"/>
+				 </div>
+			</form>
+		</div>
+		<div id="billingBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="onBill()">确定</a>
+	        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#billing').dialog('close')">取消</a>
+		</div>
 </body>
 </html>
