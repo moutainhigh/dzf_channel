@@ -99,8 +99,10 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 				if(map1.containsKey(id1)){
 					if(headvo.getType()==1){
 						throw new BusinessException("负责地区+渠道经理重复,请重新输入");
-					}else{
+					}else if(headvo.getType()==2){
 						throw new BusinessException("负责地区+培训师重复,请重新输入");
+					}else{
+						throw new BusinessException("负责地区+渠道运营重复,请重新输入");
 					}
 				}else{
 					map1.put(id1,"value");

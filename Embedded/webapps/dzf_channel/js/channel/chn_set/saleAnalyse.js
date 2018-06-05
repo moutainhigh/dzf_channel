@@ -10,8 +10,8 @@ $(window).resize(function(){
 
 $(function() {
 	changeArea();
-	initArea({"qtype" :3});
-	initProvince({"qtype" :3});
+	initArea({"qtype" :0});
+	initProvince({"qtype" :0});
 	initDate();
 	load();
 	quickfiltet();

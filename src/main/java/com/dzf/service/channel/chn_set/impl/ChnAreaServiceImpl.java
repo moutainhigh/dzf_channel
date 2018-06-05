@@ -291,13 +291,13 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
 		if(paramvo.getQrytype()!=2){
-			buf.append("  a.type=?");//1,3 是查询渠道区域划分
+			buf.append("  a.type=?");//1,0 是查询渠道区域划分
 			spm.addParam(1);
 		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分
-			spm.addParam(2);
+			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
+			spm.addParam(paramvo.getQrytype());
 		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3 ){//3是为了销售数据分析下拉，这个暂时没有权限限制
+		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3 ){//0是为了销售数据分析下拉，这个暂时没有权限限制
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -315,11 +315,11 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
 		if(paramvo.getQrytype()!=2){
-			buf.append("  a.type=?");//1,3 是查询渠道区域划分
+			buf.append("  a.type=?");//1,0 是查询渠道区域划分
 			spm.addParam(1);
 		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分
-			spm.addParam(2);
+			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
+			spm.addParam(paramvo.getQrytype());
 		}
 		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3 ){
 			buf.append("  and (b.userid=? or a.userid=?)");
@@ -344,11 +344,11 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
 		if(paramvo.getQrytype()!=2){
-			buf.append("  a.type=?");//1,3 是查询渠道区域划分
+			buf.append("  a.type=?");//1,0 是查询渠道区域划分
 			spm.addParam(1);
 		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分
-			spm.addParam(2);
+			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
+			spm.addParam(paramvo.getQrytype());
 		}
 		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3){
 			buf.append("  and (b.userid=? or a.userid=?)");
