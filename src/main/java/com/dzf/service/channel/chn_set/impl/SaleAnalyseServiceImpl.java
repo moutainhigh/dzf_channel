@@ -25,7 +25,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
 	
-	@SuppressWarnings({ "unchecked", "null", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<SaleAnalyseVO> query(SaleAnalyseVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -237,13 +237,15 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT cn.pk_corp, \n") ;
-		sql.append("  sum(decode((sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		sql.append("  sign(to_date(deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ntotalmny,0)))+");
-		sql.append("  sum(decode((sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		sql.append("  sign(to_date(substr(dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(nsubtotalmny,0)))as contractmny");
-		sql.append("  FROM cn_contract cn \n") ; 
+		sql.append("  sum(decode((sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		sql.append("  sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.ntotalmny,0)))+");
+		sql.append("  sum(decode((sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
+		sql.append("  sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(cn.nsubtotalmny,0)))as contractmny");
+		sql.append("  FROM cn_contract cn \n") ;
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
 		sql.append("  LEFT JOIN ynt_potcus s ON cn.pk_corpk = s.pk_corpk \n") ; 
 		sql.append(" WHERE nvl(cn.dr, 0) = 0 \n") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(s.dr, 0) = 0 \n") ; 
 		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
 		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
