@@ -95,9 +95,9 @@
 			idField:'pk_gs',
 			rownumbers : true,
 			singleSelect : false,
-			pagination : true,
-			pageSize:10,
-		    pageList:[10,20,30,40,50],
+// 			pagination : true,
+// 			pageSize:10,
+// 		    pageList:[10,20,30,40,50],
 			showFooter : true,
 			height:330,
 			striped:true,
@@ -118,7 +118,6 @@
 				rowTable = $('#gsTable').datagrid('clearSelections');
 			},
 			onLoadSuccess: function (data) {
-				console.log("sfd");
 				var retrows = $("#gsTable").datagrid('getRows');
 		   		if(retrows != null && retrows.length > 0){
 					if(selmap != null && !selmap.isEmpty()){

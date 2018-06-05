@@ -1,32 +1,48 @@
 var contextPath = DZF.contextPath;
+var chargeData=[{value:"否",text:"否"},{value:"是",text:"是"}];
 var status="brows";
 var editIndex = undefined;
-var chargeData=[{value:"否",text:"否"},{value:"是",text:"是"}];
+var type;
 var selmap;
 var sellist;
 var uidlist;
 
 $(function() {
+	type=$("#hidtype").val();
 	loadManager();
 	load();
 	initManger();
+	initCardCorpnm();
 	selmap = new HashMap();
 	sellist = new ArrayList();
 	uidlist = new ArrayList();
 });
+
+function loadManager(){
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/chn_set/chnarea!queryManager.action',
+		traditional : true,
+		async : false,
+		success : function(data, textStatus) {
+			if (data.success&& !isEmpty(data.rows)) {
+				$("#manager").text("加盟商总经理: "+data.rows);
+			}else{
+				$("#manager").text("加盟商总经理");
+			}
+		},
+	});
+}
 
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
 		url : DZF.contextPath + '/chn_set/chnarea!query.action',
 		idField : 'pk_area',
-//		pageNumber : 1,
-//		pageSize : DZF.pageSize,
-//		pageList : DZF.pageList,
-//		pagination : true,
 		rownumbers : true,
 		singleSelect : true,
-		queryParams : {'type' :1},
+		queryParams : {'type' :type},
 		height : Public.setGrid().h,
 		columns : [ [ {
 			width : '80',
@@ -79,36 +95,18 @@ function load() {
 	});
 }
 
-function showTitle(value){
-	if(value!=undefined){
-		return "<span title='" + value + "'>" + value + "</span>";
-	}
-}
-
-function loadManager(){
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath + '/chn_set/chnarea!queryManager.action',
-		traditional : true,
-		async : false,
-		success : function(data, textStatus) {
-			if (data.success&& !isEmpty(data.rows)) {
-				$("#manager").text("加盟商总经理: "+data.rows);
-			}else{
-				$("#manager").text("加盟商总经理");
-			}
-		},
-	});
-}
-
-
 function add(){
 	initCard();
-    $('#cardDialog').dialog({
-		modal:true,
-	});
-    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域划分');
+    $('#cardDialog').dialog({modal:true});
+	var title;
+	if(type=="1"){
+		title='渠道区域划分';
+	}else if (type=="2"){
+		title="培训区域划分";
+	}else{
+		title="运营区域划分";
+	}
+    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle',title);
     status="add";
     setItemEdit(false);
     $('#chnarea').form("clear");
@@ -116,7 +114,6 @@ function add(){
     for(var i=0;i<5;i++){
     	$('#cardGrid').datagrid('appendRow',{isCharge:chargeData[0].value})
     }
-//	editIndex = $('#cardGrid').datagrid('getRows').length - 1;
 	editIndex =0;
 	$('#cardGrid').datagrid('beginEdit',editIndex);
 };
@@ -134,10 +131,7 @@ function edit(id,style) {
 	}
     jQuery.ajax({
     	url : DZF.contextPath + '/chn_set/chnarea!queryByPrimaryKey.action',
-    	data : {
-    		'pk_area' : id,
-//    		'type' : 1,
-    	},
+    	data : {'pk_area' : id,},
     	type : 'post',
     	dataType : 'json',
     	success: function(result){
@@ -145,11 +139,19 @@ function edit(id,style) {
     			$('#cardDialog').dialog({
     				modal:true,
     			});
+    			var title;
+    			if(type=="1"){
+    				title="渠道区域";
+    			}else if (type=="2"){
+    				title="培训区域";
+    			}else{
+    				title="运营区域";
+    			}
     			if(status=="brows"){
-    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域');
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle',title);
     				setItemEdit(true);
     			}else{
-    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle','渠道区域修改');
+    				$('#cardDialog').dialog('open').dialog('center').dialog('setTitle',title+"修改");
     				setItemEdit(false);
     			}
     			$('#chnarea').form("clear");
@@ -163,6 +165,8 @@ function edit(id,style) {
     	}
     });
 }
+
+
 
 //删除
 function del(id){
@@ -199,8 +203,8 @@ function del(id){
 }
 
 /**
- *  校验保存
- */
+*  校验保存
+*/
 function checkSave(){
 	//校验
 	var flag = $('#chnarea').form('validate');
@@ -216,7 +220,6 @@ function checkSave(){
 	}
 	endBodyEdit();
 	// 校验子表
-//	var bodys=JSON.parse(JSON.stringify( $("#cardGrid").datagrid("getRows")));
 	var bodys= $("#cardGrid").datagrid("getRows");
 	var length=JSON.parse(JSON.stringify(bodys.length));
 	var u=0;
@@ -240,8 +243,8 @@ function checkSave(){
 }
 
 /**
- *  保存（新增和修改）
- */
+*  保存（新增和修改）
+*/
 function save() {
 	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
@@ -249,7 +252,7 @@ function save() {
 		childBody = childBody + JSON.stringify(rows[i]);
 		$("#cardGrid").datagrid('endEdit', i);
 	}
-	$("#type").textbox('setValue',1);
+	$("#type").textbox('setValue',type);
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#chnarea')));
 	postdata["body"] = childBody;
@@ -277,7 +280,6 @@ function save() {
 	});
 }
 
-
 function cancel(){
 	if(status == "add" || status == "edit"){
 		$.messager.confirm("提示", "确定取消吗？", function(flag) {
@@ -289,6 +291,215 @@ function cancel(){
 		});
 	}else{
 		$('#cardDialog').dialog('close');
+	}
+}
+
+
+/**
+ * 卡片grid初始化
+ */
+function initCard(id){
+	var areas;
+	//地区初始化
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryComboxArea.action',
+		data : {"pk_area" : id,'type' : type,},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				areas=result.rows;
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+	var uname;
+	if(type=="1"){
+		uname="渠道经理";
+	}else if (type=="2"){
+		uname="培训师";
+	}else{
+		uname="渠道运营";
+	}
+	$('#cardGrid').datagrid({
+		striped : true,
+		rownumbers : true,
+		idField : 'pk_areab',
+		height : 220,
+		singleSelect : true,
+		columns : [ [ 
+        {
+        	width : '60',
+			field : 'button',
+			title : '操作',
+        	formatter : coperatorLink
+		}, {
+			width : '150',
+			field : 'provname', 
+			title : '负责地区',
+			editor : {
+				type: 'combobox',
+                options: {
+                	height: 35,
+                	panelHeight: 100,
+                	showItemIcon: true,
+                	valueField: "name",
+                	editable: false,
+                	required : true,
+                	textField: "name",
+                	data: areas,
+                	onSelect: function (rec) { 
+                		var ovince = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'ovince'});
+                		$(ovince.target).textbox('setValue', rec.id);
+                		var corpnm = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpnm'});
+                		$(corpnm.target).textbox('setValue', null);
+                		var corpid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpid'});
+                		$(corpid.target).textbox('setValue', null);
+                	}
+                }
+            }
+		}, {
+			width : '150',
+			field : 'uname',
+			title : uname,
+			editor : {
+				type : 'textbox',
+				options : {
+					height:31,
+					editable:false,
+					icons: [{
+						iconCls:'icon-search',
+						handler: function(){
+							initChnUser();
+						}
+					}]
+				}
+			}
+		},{
+			width : '220',
+			field : 'corpnm',
+			title : '加盟商',
+			formatter :function(value, row, index) {
+				if(value!=undefined &&　status=="brows"){
+					return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+				}else{
+					return value;
+				}
+  			},
+			editor : {
+				type : 'textbox',
+				options : {
+					height:31,
+					editable:false,
+					icons: [{
+						iconCls:'icon-search',
+						handler: function(){
+							initChnCorp();
+						}
+					}]
+				}
+			}
+		},{
+			width : '95',
+			field : 'isCharge',
+			title : '省/市负责人',
+			formatter: function (value) {
+				var text = "";
+				if (value == '是')
+					text = "是";
+				if (value == '否')
+					text = "否";
+				return text;
+			},
+			editor : { 
+				   type: 'combobox',
+	               options: {
+	            	   height:31,
+	                   data: chargeData,
+	                   panelHeight: 80,
+                   	   showItemIcon: true,
+	                   valueField: "value",
+	                   textField: "text",
+	                   editable: false
+	               }},
+		},{
+			width : '280',
+			field : 'vmemo',
+			title : '备注',
+			formatter : showTitle,
+			editor : {
+				type : 'textbox',
+				options : {
+					height:31,
+					validType:['length[0,20]'],
+        			invalidMessage:"备注最大长度不能超过20",
+				}
+			}
+		},{
+			width : '100',
+			field : 'pk_area',
+			title : '主表主键',
+			hidden : true,
+		},{
+			width : '100',
+			field : 'uid',
+			title : '渠道经理主键',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		},{
+			width : '100',
+			field : 'ovince',
+			title : '地区',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		},{
+			width : '100',
+			field : 'corpid',
+			title : '加盟商主键',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		},{
+			width : '100',
+			field : 'incode',
+			title : '加盟商编码',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		}
+		] ],
+		onClickRow :  function(index, row){
+			if(status == "brows"){
+				return;
+			}
+			endBodyEdit('#cardGrid');
+			if($('#cardGrid').datagrid('validateRow', editIndex)){
+				if (index != undefined) {
+					$('#cardGrid').datagrid('beginEdit', index);
+					editIndex = index;
+				}           		
+			}else{
+				Public.tips({
+					content : "请先编辑必输项",
+					type : 2
+				});
+			}
+		} ,
+	});
+}
+
+function showTitle(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
 	}
 }
 
@@ -374,35 +585,6 @@ function initChnCorp(){
 	});
 }
 
-/**
- * 双击选择加盟商
- * @param rowTable
- */
-function dClickCompany(rowTable) {
-	var str = "";
-	var corpIds = "";
-	if (rowTable) {
-		for (var i = 0; i < rowTable.length; i++) {
-			if (i == rowTable.length - 1) {
-				str += rowTable[i].uname;
-				corpIds += rowTable[i].pk_gs;
-			} else {
-				str += rowTable[i].uname + ",";
-				corpIds += rowTable[i].pk_gs + ",";
-			}
-		}
-		var corpid = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpid'});
-		var corpnm = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpnm'});
-		$(corpid.target).textbox('setValue', corpIds);
-		$(corpnm.target).textbox('setValue', str);
-	}
-	$("#chnDlg").dialog('close');
-}
-
-function selectCorps(){
-	var rows = $('#gsTable').datagrid('getSelections');
-	dClickCompany(rows);
-}
 
 function initChnUser(){
 	$("#userdialog").dialog({
@@ -447,6 +629,26 @@ function selectChnUser(row){
 	$(uid.target).textbox('setValue', row.uid);
 	$(uname.target).textbox('setValue', row.uname);
 	$('#userdialog').dialog('close');
+}
+
+function initCardCorpnm(){
+	$('#gridh').datagrid({
+		striped : true,
+		rownumbers : true,
+		height : 320,
+		singleSelect : true,
+		columns : [ [ 
+	    {
+	    	width : '240',
+			field : 'incode',
+			title : '加盟商编码',
+		}, {
+			width : '240',
+			field : 'corpnm',
+			title : '加盟商名称',
+		}
+		] ]
+	});
 }
 
 /**
@@ -500,187 +702,65 @@ function selectManager(row){
 
 
 /**
- * 卡片grid初始化
+ * 双击选择加盟商
+ * @param rowTable
  */
-function initCard(id){
-	var areas;
-	//地区初始化
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/chn_set/chnarea!queryComboxArea.action',
-		data : {
-			"pk_area" : id,
-			'type' : 1,
-		},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-				areas=result.rows;
+function dClickCompany(rowTable) {
+	var str = "";
+	var corpIds = "";
+	var incodes="";
+	if (rowTable) {
+		for (var i = 0; i < rowTable.length; i++) {
+			if (i == rowTable.length - 1) {
+				str += rowTable[i].uname;
+				corpIds += rowTable[i].pk_gs;
+				incodes += rowTable[i].incode;
 			} else {
-				Public.tips({content : result.msg,type : 2});
+				str += rowTable[i].uname + ",";
+				corpIds += rowTable[i].pk_gs + ",";
+				incodes += rowTable[i].incode+ ",";
 			}
 		}
-	});
-	
-	$('#cardGrid').datagrid({
-		striped : true,
-		rownumbers : true,
-		idField : 'pk_areab',
-		height : 220,
-		singleSelect : true,
-		columns : [ [ 
-        {
-        	width : '60',
-			field : 'button',
-			title : '操作',
-        	formatter : coperatorLink
-		}, {
-			width : '150',
-			field : 'provname', 
-			title : '负责地区',
-			editor : {
-				type: 'combobox',
-                options: {
-                	height: 35,
-                	panelHeight: 100,
-                	showItemIcon: true,
-                	valueField: "name",
-                	editable: false,
-                	required : true,
-                	textField: "name",
-                	data: areas,
-                	onSelect: function (rec) { 
-                		var ovince = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'ovince'});
-                		$(ovince.target).textbox('setValue', rec.id);
-                		var corpnm = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpnm'});
-                		$(corpnm.target).textbox('setValue', null);
-                		var corpid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'corpid'});
-                		$(corpid.target).textbox('setValue', null);
-                	}
-                }
-            }
-		}, {
-			width : '150',
-			field : 'uname',
-			title : '渠道经理',
-			editor : {
-				type : 'textbox',
-				options : {
-					height:31,
-					editable:false,
-					icons: [{
-						iconCls:'icon-search',
-						handler: function(){
-							initChnUser();
-						}
-					}]
-				}
-			}
-		},{
-			width : '220',
-			field : 'corpnm',
-			title : '加盟商',
-			formatter : showTitle,
-			editor : {
-				type : 'textbox',
-				options : {
-					height:31,
-					editable:false,
-					icons: [{
-						iconCls:'icon-search',
-						handler: function(){
-							initChnCorp();
-						}
-					}]
-				}
-			}
-		},{
-			width : '95',
-			field : 'isCharge',
-			title : '省/市负责人',
-			formatter: function (value) {
-				var text = "";
-				if (value == '是')
-					text = "是";
-				if (value == '否')
-					text = "否";
-				return text;
-			},
-			editor : { 
-				   type: 'combobox',
-	               options: {
-	            	   height:31,
-	                   data: chargeData,
-	                   panelHeight: 80,
-                   	   showItemIcon: true,
-	                   valueField: "value",
-	                   textField: "text",
-	                   editable: false
-	               }},
-		},{
-			width : '280',
-			field : 'vmemo',
-			title : '备注',
-			formatter : showTitle,
-			editor : {
-				type : 'textbox',
-				options : {
-					height:31,
-					validType:['length[0,20]'],
-        			invalidMessage:"备注最大长度不能超过20",
-				}
-			}
-		},{
-			width : '100',
-			field : 'pk_area',
-			title : '主表主键',
-			hidden : true,
-		},{
-			width : '100',
-			field : 'uid',
-			title : '渠道经理主键',
-			hidden : true,
-			editor : {
-				type : 'textbox',
-			}
-		},{
-			width : '100',
-			field : 'ovince',
-			title : '地区',
-			hidden : true,
-			editor : {
-				type : 'textbox',
-			}
-		},{
-			width : '100',
-			field : 'corpid',
-			title : '加盟商主键',
-			hidden : true,
-			editor : {
-				type : 'textbox',
-			}
+		var corpid = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpid'});
+		var corpnm = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'corpnm'});
+		var incode = $('#cardGrid').datagrid('getEditor', {index : editIndex,field : 'incode'});
+		$(corpid.target).textbox('setValue', corpIds);
+		$(corpnm.target).textbox('setValue', str);
+		$(incode.target).textbox('setValue', incodes);
+	}
+	$("#chnDlg").dialog('close');
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+function qryDetail(index){
+	var row=$("#cardGrid").datagrid('getRows')[index];
+	var corpnm=row.corpnm;
+	var incode=row.incode;
+	var corpnms= new Array(); //定义一数组 
+	var incodes= new Array(); //定义一数组 
+	var param =  new Array();
+	var obj =  new Object();
+	if(corpnm.indexOf(",")!=-1){
+		corpnms=corpnm.split(",");
+		incodes=incode.split(",");
+		for(var i=0;i<corpnms.length;i++){
+			 obj =  new Object();
+			 obj["corpnm"]=corpnms[i];
+			 obj["incode"]=incodes[i];
+			 param[i]=obj;
 		}
-		] ],
-		onClickRow :  function(index, row){
-			if(status == "brows"){
-				return;
-			}
-			endBodyEdit('#cardGrid');
-			if($('#cardGrid').datagrid('validateRow', editIndex)){
-				if (index != undefined) {
-					$('#cardGrid').datagrid('beginEdit', index);
-					editIndex = index;
-				}           		
-			}else{
-				Public.tips({
-					content : "请先编辑必输项",
-					type : 2
-				});
-			}
-		} ,
-	});
+	}else{
+		 obj =  new Object();
+		 obj["corpnm"]=corpnm;
+		 obj["incode"]=incode;
+		 param[0]=obj;
+	}
+	$('#detail_dialog').dialog('open');
+	$("#gridh").datagrid('loadData',param);
 }
 
 function coperatorLink(val,row,index){  

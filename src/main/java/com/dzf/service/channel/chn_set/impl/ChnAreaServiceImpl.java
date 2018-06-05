@@ -208,17 +208,20 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 					if(!StringUtil.isEmpty(chnAreaBVO.getPk_corp())){
 						vo.setPk_corp(vo.getPk_corp()+","+chnAreaBVO.getPk_corp());
 						vo.setCorpname(vo.getCorpname()+","+cvo.getUnitname());
+						vo.setInnercode(vo.getInnercode()+","+cvo.getInnercode());
 					}
 					map.put(id,vo);
 				}else{
 					if(cvo!=null){
 						chnAreaBVO.setCorpname(cvo.getUnitname());
+						chnAreaBVO.setInnercode(cvo.getInnercode());
 					}
 					map.put(id,chnAreaBVO);
 				}
 			}else{
 				if(cvo!=null){
 					chnAreaBVO.setCorpname(cvo.getUnitname());
+					chnAreaBVO.setInnercode(cvo.getInnercode());
 				}
 				map.put(i+"",chnAreaBVO);
 				i++;

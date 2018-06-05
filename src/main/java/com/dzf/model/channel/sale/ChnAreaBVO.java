@@ -23,6 +23,9 @@ public class ChnAreaBVO extends SuperVO {
 	
     @FieldAlias("corpnm")
     private String corpname; // 负责渠道商名称
+    
+    @FieldAlias("incode")
+    private String innercode;//渠道商编码
 	
 	@FieldAlias("ovince")
 	public Integer vprovince;// 地区
@@ -69,6 +72,14 @@ public class ChnAreaBVO extends SuperVO {
 
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+
+	public String getInnercode() {
+		return innercode;
+	}
+
+	public void setInnercode(String innercode) {
+		this.innercode = innercode;
 	}
 
 	public String getUsername() {

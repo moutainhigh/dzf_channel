@@ -6,13 +6,14 @@
 <title>培训区域划分</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/trainarea.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/areacommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .panel-body{overflow:auto}
 </style>
 </head> 
 <body>
+	<input type="hidden" id="hidtype" value="2" >
 	<div id="listPanel" class="wrapper" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
@@ -67,6 +68,11 @@
 				<a href="javascript:void(0)" id="cancel" class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="cancel()">取消</a>
 			</div>
 		</form>
+	</div>
+	<div id="detail_dialog" class="easyui-dialog" title="加盟商联查" data-options="modal:true,closed:true" style="width:600px;height:400px;">
+		<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:400px;padding:10px">
+			 <table id="gridh"></table>	
+		</div>
 	</div>
 	<div id="gs_dialog"></div>
 	<div id="userdialog"></div>

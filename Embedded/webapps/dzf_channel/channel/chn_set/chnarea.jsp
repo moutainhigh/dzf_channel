@@ -6,13 +6,14 @@
 <title>渠道区域划分</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/chnarea.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/areacommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .panel-body{overflow:auto}
 </style>
 </head> 
 <body>
+	<input type="hidden" id="hidtype" value="1" >
 	<div id="listPanel" class="wrapper" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
@@ -48,7 +49,7 @@
 					<input id='aname'  name="aname" class="easyui-textbox"  data-options="validType:'length[0,10]',required:true"  style="width:60%;height:28px;text-align:left"></input>
 				</div>
 				<div  style="width:32%;display: inline-block;" >
-					<label style="text-align:right;width:35%;">大区总经理：</label> 
+					<label style="text-align:right;width:35%;">区总：</label> 
 					<input id="uname" name="uname" class="easyui-searchbox" data-options="required:true" style="width:60%;height:28px;text-align:left;"  > 
 					<input id="uid" name="uid" type="hidden"> 
 				</div>
@@ -67,6 +68,11 @@
 				<a href="javascript:void(0)" id="cancel" class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="cancel()">取消</a>
 			</div>
 		</form>
+	</div>
+	<div id="detail_dialog" class="easyui-dialog" title="加盟商联查" data-options="modal:true,closed:true" style="width:600px;height:400px;">
+		<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:400px;padding:10px">
+			 <table id="gridh"></table>	
+		</div>
 	</div>
 	<div id="gs_dialog"></div>
 	<div id="userdialog"></div>
