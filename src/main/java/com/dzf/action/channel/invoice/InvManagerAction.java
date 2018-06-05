@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.InvInfoExcelField;
 import com.dzf.action.channel.expfield.InvManageExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChInvoiceVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -177,6 +179,26 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
         writeJson(json);
     }
 	
+	/**
+	 * 查询票通电子发票库存信息
+	 * @author gejw
+	 * @time 上午11:00:43
+	 */
+	public void queryInvInfo(){
+
+        Json json = new Json();
+        try{
+            InvInfoResBVO[] vos = invManagerService.queryInvRepertoryInfo();
+            json.setMsg("电子票余量查询成功");
+            json.setSuccess(true);
+            json.setRows(vos);
+        } catch (Exception e){
+            printErrorLog(json, log, e, "电子票余量查询失败");
+        }
+        writeJson(json);
+    
+	}
+	
 	private String[] pkinvoicesToArray(String pk_invoices){
 		JSONArray array = JSON.parseArray(pk_invoices);
 		if (array != null && array.size() > 0) {
@@ -276,7 +298,6 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             explist.add(vo);
         }
         HttpServletResponse response = getResponse();
-//        ExportArrayExcel<ChInvoiceVO> ex = new ExportArrayExcel<ChInvoiceVO>();
         
         Excelexport2003<ChInvoiceVO> ex = new Excelexport2003<ChInvoiceVO>();
         InvManageExcelField fields = new InvManageExcelField();
@@ -292,9 +313,6 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             servletOutputStream = response.getOutputStream();
              toClient = new BufferedOutputStream(servletOutputStream);
             response.setContentType("applicationnd.ms-excel;charset=gb2312");
-//            byte[] length = ex.exportExcel("发票管理",cnFields,enFields ,explist, toClient,arrayList, arrayMap);
-//            String srt2=new String(length,"UTF-8");
-//            response.addHeader("Content-Length", srt2);
             ex.exportExcel(fields, toClient);
         } catch (Exception e) {
             log.error("导出失败",e);
@@ -317,4 +335,62 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             }
         }
 	}
+	
+	/**
+	 * 导出电票余量
+	 * @author gejw
+	 * @date 2018年6月5日
+	 * @time 下午2:41:27
+	 */
+	public void onExportInvInfo(){
+        String strlist =getRequest().getParameter("strlist");
+        String qj = getRequest().getParameter("qj");
+        if(StringUtil.isEmpty(strlist)){
+            throw new BusinessException("导出数据不能为空!");
+        }   
+        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+        Map<String, String> mapping = FieldMapping.getFieldMapping(new InvInfoResBVO());
+        InvInfoResBVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,InvInfoResBVO[].class, JSONConvtoJAVA.getParserConfig());
+        ArrayList<InvInfoResBVO> explist = new ArrayList<InvInfoResBVO>();
+        for(InvInfoResBVO vo : expVOs){
+            explist.add(vo);
+        }
+        HttpServletResponse response = getResponse();
+        
+        Excelexport2003<InvInfoResBVO> ex = new Excelexport2003<InvInfoResBVO>();
+        InvInfoExcelField fields = new InvInfoExcelField();
+        fields.setVos(explist.toArray(new InvInfoResBVO[0]));;
+        fields.setQj(qj);
+        ServletOutputStream servletOutputStream = null;
+        OutputStream toClient = null;
+        try {
+            response.reset();
+            // 设置response的Header
+            String date = DateUtils.getDate(new Date());
+            response.addHeader("Content-Disposition", "attachment;filename="+ new String(date+".xls"));
+            servletOutputStream = response.getOutputStream();
+             toClient = new BufferedOutputStream(servletOutputStream);
+            response.setContentType("applicationnd.ms-excel;charset=gb2312");
+            ex.exportExcel(fields, toClient);
+        } catch (Exception e) {
+            log.error("导出失败",e);
+        }  finally {
+            if(toClient != null){
+                try {
+                    toClient.flush();
+                    toClient.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+            if(servletOutputStream != null){
+                try {
+                    servletOutputStream.flush();
+                    servletOutputStream.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+        }
+    }
 }

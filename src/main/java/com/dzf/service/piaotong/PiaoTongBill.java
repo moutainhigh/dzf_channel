@@ -21,6 +21,10 @@ import com.alibaba.fastjson.JSON;
 import com.dzf.model.piaotong.PiaoTongInvVO;
 import com.dzf.model.piaotong.PiaoTongResBVO;
 import com.dzf.model.piaotong.PiaoTongResVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResHVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResVO;
+import com.dzf.model.piaotong.invinfo.QueryInvInfoVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.MD516;
 import com.dzf.pub.RemoteClient;
@@ -52,6 +56,7 @@ public class PiaoTongBill {
     private static String privateKey = null;
     private static String publicKey = null;
     private static String dzftaxno = null;
+    private static String ptuname = null;
 
     static {
         ResourceBundle bundle = PropertyResourceBundle.getBundle("piaotong");
@@ -65,8 +70,16 @@ public class PiaoTongBill {
         privateKey = bundle.getString("privateKey");
         publicKey = bundle.getString("publicKey");
         dzftaxno = bundle.getString("dzftaxno");
+        ptuname = bundle.getString("ptuname");
     }
 
+    /**
+     * 生成电子发票
+     * @author gejw
+     * @time 上午11:04:21
+     * @param hvo
+     * @return
+     */
     public PiaoTongResVO sendBill(PiaoTongInvVO hvo) {
 
         String result = null;
@@ -74,7 +87,7 @@ public class PiaoTongBill {
             logger.info("----------------请求开票-----------BEGIN");
             Map<String, String> map = getBusiParams(hvo);
             List<NameValuePair> params = getParam(map);
-            String url = ptxxurl;
+            String url = ptxxurl + "/tp/openapi/invoiceBlue.pt";
             result = RemoteClient.sendPostData(url, params);
 
             logger.info(result);
@@ -86,6 +99,34 @@ public class PiaoTongBill {
         PiaoTongResVO resvo = parseResult(result);
 
         return resvo;
+    }
+    
+    /**
+     * 查询票通库存发票信息
+     * @author gejw
+     * @date 2018年6月5日
+     * @time 上午11:07:24
+     */
+    public InvInfoResBVO[] queryInvRepertoryInfo(QueryInvInfoVO qvo){
+
+
+        String result = null;
+        try {
+            logger.info("----------------查询票通库存发票信息-----------BEGIN");
+            qvo.setEnterpriseName(ptuname);
+            Map<String, String> map = getBusiParams(qvo);
+            List<NameValuePair> params = getParam(map);
+            String url = ptxxurl + "/tp/openapi/getInvoiceRepertoryInfo.pt";
+            result = RemoteClient.sendPostData(url, params);
+
+            logger.info(result);
+            logger.info("----------------查询票通库存发票信息-----------END");
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        InvInfoResBVO[] resvos = parseInvInfo(result);
+        return resvos;
     }
 
     private PiaoTongResVO parseResult(String result) {
@@ -123,12 +164,62 @@ public class PiaoTongBill {
         return resvo;
         // return contentvo;
     }
+    
+    private InvInfoResBVO[] parseInvInfo(String result) {
+        if (StringUtil.isEmpty(result))
+            throw new BusinessException("电子票余量查询失败，请联系管理员");
+
+        InvInfoResVO resvo = JSON.parseObject(result, InvInfoResVO.class);
+        if (resvo == null || StringUtil.isEmpty(resvo.getCode()) || StringUtil.isEmpty(resvo.getMsg())) {
+            // throw new BusinessException("开票申请失败，请联系管理员");
+            return null;
+        } else if (!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())) {
+            return null;
+        }
+
+        String content = resvo.getContent();
+
+        if (StringUtil.isEmpty(content))
+            return null;
+
+        byte[] bytes;
+        try {
+            bytes = CommonXml.decrypt3DES(xxpwd, Base64CodeUtils.decode(content));
+            content = new String(bytes, "UTF-8");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        InvInfoResHVO contentvo = JSON.parseObject(content, InvInfoResHVO.class);
+        
+        return contentvo.getExtensionInfos();
+    }
 
     private Map<String, String> getBusiParams(PiaoTongInvVO hvo) throws Exception {
         hvo.setInvoiceReqSerialNo(getInvSerialNo(xxptbm));
         hvo.setTaxpayerNum(dzftaxno);//
         hvo.setSellerTaxpayerNum(dzftaxno);
         String content = OFastJSON.toJSONString(hvo);
+        byte[] bytes = CommonXml.encrypt3DES(xxpwd, content.getBytes("UTF-8"));
+        content = Base64CodeUtils.encode(bytes);
+        content = content.replace("\r\n", "").replace("\n", "");
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("platformCode", platformCode);
+        map.put("signType", signType);
+        map.put("format", format);
+        map.put("version", xxversion);
+        map.put("content", content);
+        map.put("timestamp", new DZFDateTime().toString());
+        map.put("serialNo", getSerialNo(xxptbm));// getSerialNo("DEMO"));
+        String sign = sign(getSignatureContent(map), privateKey);
+        sign = sign.replace("\r\n", "").replace("\n", "");
+        map.put("sign", sign);
+        return map;
+    }
+
+    private Map<String, String> getBusiParams(QueryInvInfoVO qvo) throws Exception {
+        qvo.setTaxpayerNum(dzftaxno);
+        String content = OFastJSON.toJSONString(qvo);
         byte[] bytes = CommonXml.encrypt3DES(xxpwd, content.getBytes("UTF-8"));
         content = Base64CodeUtils.encode(bytes);
         content = content.replace("\r\n", "").replace("\n", "");

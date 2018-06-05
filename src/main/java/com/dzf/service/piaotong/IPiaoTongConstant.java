@@ -27,4 +27,31 @@ public class IPiaoTongConstant {
         put("8016", "单价数量金额不匹配");
         put("8017", "折扣税额和税率不匹配");
     }};  
+    
+    
+    /** 发票种类代码  */
+    public static String INVOICEKINDCODE_01 = "01";
+    
+    public static String INVOICEKINDCODE_02 = "02";
+    
+    public static String INVOICEKINDCODE_03 = "03";
+    
+    public static String INVOICEKINDCODE_04 = "04";
+    
+    public static String INVOICEKINDCODE_10 = "10";
+    
+    public static String INVOICEKINDCODE_41 = "41";
+    
+    /** 发票种类名称  */
+    public static String INVOICEKINDNAME_01 = "增值税专用发票";
+    
+    public static String INVOICEKINDNAME_02 = "货运运输增值税专用发票";
+    
+    public static String INVOICEKINDNAME_03 = "机动车销售统一发票";
+    
+    public static String INVOICEKINDNAME_04 = "增值税普通发票";
+    
+    public static String INVOICEKINDNAME_10 = "增值税普通发票(电子)";
+    
+    public static String INVOICEKINDNAME_41 = "卷票";
 }

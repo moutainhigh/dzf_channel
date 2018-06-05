@@ -3,6 +3,7 @@ package com.dzf.service.channel;
 import java.util.List;
 
 import com.dzf.model.channel.ChInvoiceVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
@@ -51,5 +52,7 @@ public interface InvManagerService {
     ChInvoiceVO queryTotalPrice(String pk_corp, int ipaytype, String invprice) throws DZFWarpException;
 
     void save(ChInvoiceVO data) throws DZFWarpException;
+    
+    InvInfoResBVO[] queryInvRepertoryInfo() throws DZFWarpException;
     
 }

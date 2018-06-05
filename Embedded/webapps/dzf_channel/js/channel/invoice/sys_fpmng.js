@@ -262,8 +262,8 @@ function onAutoBill(){
 	}
 	
 	var ids = [];
-	
-	$.messager.confirm('提示','是否确认要为这些客户开具电子发票，传自动开票接口后不可取消，请慎重操作！',
+	var msg = '已选中'+rows.length+'张开票申请，请确认电票余量充足，传自动开票接口后不可取消，请慎重操作！'
+	$.messager.confirm('提示',msg,
 	  function(conf){
 		if(conf){
 			$.messager.progress({text : '开票中，请稍后.....'});
@@ -294,6 +294,94 @@ function onAutoBill(){
 	});
 
 }
+
+function queryInvInfo(){
+	initInvGrid();
+	$.ajax({
+		type : 'post',
+		url : DZF.contextPath + '/sys/sys_inv_manager!queryInvInfo.action',
+		dataType : 'json',
+		success: function(result){
+			if(result.success){
+				var res = result.rows;
+				$('#invInfo').dialog('open');
+				$('#gridInvInfo').datagrid('loadData',res);
+				$('#qrydate').html(parent.SYSTEM.ServerTime);
+			}else{
+				$.messager.alert('提示',result.msg); 
+			}
+		}
+	});
+}
+
+function initInvGrid(){
+	invgridh = $('#gridInvInfo').datagrid({
+		border : true,
+		striped : true,
+		rownumbers : true,
+		fitColumns : false,
+		height:'380',
+		singleSelect : true,
+		showFooter:true,
+		columns : [ [ {
+			width : '80',
+			title : '分机号',
+			align:'center',
+			halign:'center',
+			field : 'extensionNum',
+		}, {
+			width : '150',
+			title : '发票种类',
+            halign:'center',
+			field : 'invoiceKindCode',
+		},{
+			width : '100',
+			title : '发票代码',
+			align:'right',
+            halign:'center',
+			field : 'invoiceCode',
+		},{
+			width : '100',
+			title : '发票起始号码',
+			align:'right',
+            halign:'center',
+			field : 'invoiceStartNo',
+		}, {
+			width : '100',
+			title : '发票终止号码',
+			align:'center',
+            halign:'center',
+			field : 'invoiceEndNo',
+		},{
+			width : '90',
+			title : '剩余份数',
+			align:'right',
+            halign:'center',
+			field : 'invoiceSurplusNum',
+		},{
+			width : '150',
+			title : '购买日期',
+			align:'right',
+            halign:'center',
+			field : 'invoiceBuyTime',
+		},] ],
+		onLoadSuccess : function(data) {
+			var rows = $('#gridInvInfo').datagrid('getRows');
+			var footerData = new Object();
+			var invoiceSurplusNum = parseFloat(0);
+            for (var i = 0; i < rows.length; i++) {
+            	invoiceSurplusNum += getFloatValue(rows[i].invoiceSurplusNum);
+            }
+            footerData['extensionNum'] = '合计';
+            footerData['invoiceSurplusNum'] = invoiceSurplusNum;
+            var fs=new Array(1);
+            fs[0] = footerData;
+            $('#gridInvInfo').datagrid('reloadFooter',fs);
+            $('#gridInvInfo').datagrid("scrollTo",0);
+		},
+	});
+}
+
 
 /**
  * 快速查询
@@ -483,3 +571,15 @@ function onExport(){
 	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',{'strlist':JSON.stringify(datarows),'qj':$('#querydate').html()}, true, true);
 }
 
+/**
+ * 导出电票余量
+ */
+function onExportInvInfo(){
+	var datarows = $('#gridInvInfo').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'请选择需导出的数据',type:2});
+		return;
+	}
+	var columns = $('#gridInvInfo').datagrid("options").columns[0];
+	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExportInvInfo.action',{'strlist':JSON.stringify(datarows),'qj':$('#qrydate').html()}, true, true);
+}

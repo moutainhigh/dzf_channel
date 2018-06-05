@@ -20,6 +20,8 @@ import com.dzf.model.piaotong.PiaoTongInvBVO;
 import com.dzf.model.piaotong.PiaoTongInvVO;
 import com.dzf.model.piaotong.PiaoTongResBVO;
 import com.dzf.model.piaotong.PiaoTongResVO;
+import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
+import com.dzf.model.piaotong.invinfo.QueryInvInfoVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -63,11 +65,6 @@ public class InvManagerServiceImpl implements InvManagerService {
         }
         return retlist;
     }
-
-    // private String queryUserName(String userid){
-    // UserVO uvo = (UserVO)singleObjectBO.queryVOByID(userid, UserVO.class);
-    // return CodeUtils1.deCode(uvo.getUser_name());
-    // }
 
     @Override
     public Integer queryTotalRow(ChInvoiceVO paramvo) throws DZFWarpException {
@@ -591,6 +588,33 @@ public class InvManagerServiceImpl implements InvManagerService {
         if (nticketmny.doubleValue() < 0) {
             throw new BusinessException("开票金额不可以大于可开票金额，请重新填写");
         }
+    }
+
+    @Override
+    public InvInfoResBVO[] queryInvRepertoryInfo() throws DZFWarpException {
+        QueryInvInfoVO qvo = new QueryInvInfoVO();
+//        qvo.setEnterpriseName("北京大账房信息技术有限公司");
+//        qvo.setEnterpriseName("电子票测试新1");
+        PiaoTongBill bill = new PiaoTongBill();
+        InvInfoResBVO[] resvos = bill.queryInvRepertoryInfo(qvo);
+        if(resvos != null && resvos.length > 0){
+            for(InvInfoResBVO revo : resvos){
+                if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_01)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_01);
+                }else if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_02)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_02);
+                }else if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_03)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_03);
+                }else if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_04)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_04);
+                }else if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_10)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_10);
+                }else if(revo.getInvoiceKindCode().equals(IPiaoTongConstant.INVOICEKINDCODE_41)){
+                    revo.setInvoiceKindCode(IPiaoTongConstant.INVOICEKINDNAME_41);
+                }
+            }
+        }
+        return resvos;
     }
 
 }

@@ -54,7 +54,7 @@
 				</div>
 				
 				<div class=right>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">电票余量</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="queryInvInfo()">电票余量</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onAutoBill()">电子票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">纸质票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>
@@ -195,6 +195,20 @@
 		<div id="kj_buttons" style="display:none;">
 			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
+		</div>
+		
+		<div id="invInfo" class="easyui-dialog" title="电子票余量查询" 
+			data-options="modal:true,closed:true" style="width:940px;height:500px;">
+			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+				<label style="text-align:right">查询时间：</label> 
+				<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
+				<div class="right" style="float: right;display: inline-block;"> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExportInvInfo()">导出</a>
+			 	</div>
+			</div>	
+			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+				 <table id="gridInvInfo"></table>	
+			</div>
 		</div>
 	</div>
 </body>
