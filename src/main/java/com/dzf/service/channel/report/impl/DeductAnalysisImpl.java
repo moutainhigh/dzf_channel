@@ -326,7 +326,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
 				sql.append(" nvl(t.ndedsummny,0) ");
 			}
-			sql.append(" DESC");
+			sql.append(" ASC");
 		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
