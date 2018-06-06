@@ -121,12 +121,12 @@ var SYSTEM = {
 var modulus = "<%=modulus%>";
 var exponent = "<%=exponent%>";
 
-var current = 0;
+/* var current = 0;
 function tranImg(trun){
     var imgObj= document.getElementById('conturnid');
     current = (current+trun)%360;
     imgObj.style.transform = 'rotate('+current+'deg)';
-}
+} */
 </script>
 
 </head>
@@ -411,13 +411,15 @@ function tranImg(trun){
 <!-- 打开图片展示窗口 begin -->
 <div id="fullViewDlg" style="display: none;">	
 	<div  style="text-align: center;">
-	<a class="ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranImg(-90)">左转</a>
-	<a class="ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranImg(90)">右转</a>
+	<a class="tranleft" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
+	<a class="tranright" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
 	</div>
-  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+  	<!-- <div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
 		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
+	</div> -->
+	<div id="fullViewContent">
 	</div>
 </div>
 <!-- 打开图片展示窗口 end -->

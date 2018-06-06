@@ -204,8 +204,17 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		parent.openFullViewDlg('<div style="overflow:scroll;height:80%"><img id="conturnid" alt="无法显示图片" src="' + src 
-				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>','原图')
+//		parent.openFullViewDlg('<div style="overflow:scroll;height:80%"><img id="conturnid" alt="无法显示图片" src="' + src 
+//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>','原图')
+		
+		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
+		+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">','原图')
+		
+////	    var img = img + '<div style="overflow:scroll;height:80%">';
+//		var img = img + '	<img id="conturnid" alt="无法显示图片" src="'+src;
+//		var img = img + '	" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">';
+////		var img = img + '</div>';
+//		parent.openFullViewDlg(img,'原图');
 		
 	}
 }

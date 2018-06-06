@@ -438,3 +438,127 @@ function downFile(billid, type){
 		}
 	}
 }
+
+/**
+ * 左转
+ */
+function tranLeft(){
+	dealRotate($("#fullViewDlg > div > img ").get(0), -1);
+}
+
+/**
+ * 右转
+ */
+function tranRight(){
+	dealRotate($("#fullViewDlg > div > img ").get(0), 1);
+}
+
+function dealRotate(target, direction) {
+	var angle = $(target).data("angle") || 0;
+	angle = Number(angle);
+	angle = (360 + angle + direction * 90) % 360;
+	transformImage(target, undefined, angle);
+}
+
+/**
+ * 图片旋转及缩放
+ * @param img
+ * @param zoom
+ * @param angle
+ * @returns {Boolean}
+ */
+function transformImage(img, zoom, angle) {
+    if (!img)
+    	return false;
+    var canvas = document.getElementById('img_canvas');
+    if (canvas == null) {
+        canvas = document.createElement('canvas');
+        canvas.setAttribute("id", 'img_canvas');
+        $(img).after(canvas);
+    }
+    $(img).hide();
+    $(canvas).show();
+    if (zoom == undefined) {
+    	zoom = $(img).data("zoom");
+    	if (zoom == undefined) {
+    		zoom = 1
+		}
+	}
+    if (angle == undefined) {
+    	angle = $(img).data("angle");
+    	if (angle == undefined) {
+    		angle = 0;
+		}
+	}
+    var canvasContext = canvas.getContext('2d');
+    var positionX = 0;
+    var positionY = 0;
+    var zoomWidth = zoom * img.naturalWidth;
+    var zoomHeight = zoom * img.naturalHeight;
+    var cwidth = 0;
+    var cheight = 0;
+    if (zoom < 1 && (zoomWidth < 25 || zoomHeight < 25)) {
+    	// 太小，鼠标放不上去，就不能还原了
+		return;
+	}
+    switch (angle) {
+        case 0:
+        	cwidth = zoomWidth;
+        	cheight = zoomHeight;
+            break;
+        case 90:
+        	cwidth = zoomHeight;
+        	cheight = zoomWidth;
+        	positionY = -zoomHeight;
+            break;
+        case 180:
+        	cwidth = zoomWidth;
+        	cheight = zoomHeight;
+        	positionX = -zoomWidth;
+        	positionY = -zoomHeight;
+            break;
+        case 270:
+        	cwidth = zoomHeight;
+        	cheight = zoomWidth;
+        	positionX = -zoomWidth;
+            break;
+        default:
+    }
+    canvas.setAttribute('width', cwidth);
+    canvas.setAttribute('height', cheight);
+    canvasContext.rotate(angle * Math.PI / 180);
+    canvasContext.drawImage(img, positionX, positionY, zoomWidth, zoomHeight);
+    $(img).data({
+    	zoom: zoom,
+    	angle : angle
+    });
+    var dlgWidth = $("#tpfd").width() - 25;
+    if (cwidth > dlgWidth) {
+       $("#img_container span").hide();
+	} else {
+		$("#img_container span").show();
+	}
+}
+
+/**
+ * 判断dialog等是否打开
+ * @param id
+ * @returns
+ */
+function checkPanelVisible (id) {
+	return $('#' + id).parent().is(".panel:visible")
+}
+
+$(document).on("wheel",function(e) {
+	if (checkPanelVisible("fullViewDlg")) {
+		if (e.target == $("#fullViewDlg > div > img").get(0)
+				|| e.target == $("#img_canvas").get(0)) {
+			var orgEvent = e.originalEvent;
+			var zoom = $("#fullViewDlg > div > img").data("zoom");
+			zoom = zoom ? zoom : 1;
+			zoom = zoom - (orgEvent.deltaY > 0 ? 0.05 : -0.05);
+			transformImage($("#fullViewDlg > div > img")[0], zoom);
+			console.info("滚动");
+		}
+	}
+});
