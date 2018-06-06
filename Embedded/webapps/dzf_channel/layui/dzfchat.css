@@ -161,7 +161,7 @@
 	background: #0a72af;
 }
 
-/** 首页图片展示问题处理 */
+/** 锟斤拷页图片展示锟斤拷锟解处锟斤拷 */
  @media screen and (min-width: 1367px) and (max-width:1920px) {
  	.entrance_block_tu #fullViewContent{height:920px;}
  } 
@@ -169,3 +169,4 @@
  	.entrance_block_tu #fullViewContent{height:620px;}
  }
 .panel-tool{display: block;width:auto;}
+#fullViewContent img{    overflow: auto;}

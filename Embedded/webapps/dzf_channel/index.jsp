@@ -410,16 +410,16 @@ function tranImg(trun){
 </div>
 <!-- 打开图片展示窗口 begin -->
 <div id="fullViewDlg" style="display: none;">	
-	<div  style="text-align: center;">
-	<a class="tranleft" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
-	<a class="tranright" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
+	<div style="text-align: center;">
+	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
+	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
 	</div>
   	<!-- <div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
 		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
 	</div> -->
-	<div id="fullViewContent">
+	<div id="fullViewContent" style="overflow: auto;height:92%;text-align: center;">
 	</div>
 </div>
 <!-- 打开图片展示窗口 end -->
