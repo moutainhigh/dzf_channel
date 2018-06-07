@@ -62,6 +62,39 @@ public class ChnBalanceRepVO extends SuperVO{
     @FieldAlias("namny")
     private DZFDouble naccountmny; // 代账费(展示数据)
     
+    @FieldAlias("custnum")
+    private Integer icustnum;//存量合同数
+    
+    @FieldAlias("zeronum")
+    private Integer izeronum;//0扣款(非存量)合同数
+    
+    @FieldAlias("dednum")
+    private Integer idednum;//非存量合同数
+    
+	public Integer getIcustnum() {
+		return icustnum;
+	}
+
+	public Integer getIzeronum() {
+		return izeronum;
+	}
+
+	public Integer getIdednum() {
+		return idednum;
+	}
+
+	public void setIcustnum(Integer icustnum) {
+		this.icustnum = icustnum;
+	}
+
+	public void setIzeronum(Integer izeronum) {
+		this.izeronum = izeronum;
+	}
+
+	public void setIdednum(Integer idednum) {
+		this.idednum = idednum;
+	}
+
 	public Integer getIdeductpropor() {
 		return ideductpropor;
 	}

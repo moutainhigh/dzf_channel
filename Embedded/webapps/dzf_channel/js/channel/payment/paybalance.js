@@ -42,12 +42,30 @@ function load(){
 						return;
 	  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 	  			}
-		},{
+		},/*{
 			width : '60',
 			title : '合同数',
 			align:'center',
             halign:'center',
 			field : 'num',
+		},*/{
+			width : '100',
+			title : '存量合同数',
+			align:'center',
+            halign:'center',
+			field : 'custnum',
+		},{
+			width : '150',
+			title : '0扣款(非存量)合同数',
+			align:'center',
+            halign:'center',
+			field : 'zeronum',
+		},{
+			width : '100',
+			title : '非存量合同数',
+			align:'center',
+            halign:'center',
+			field : 'dednum',
 		},{
 			width : '100',
 			title : '合同代账费',
@@ -253,13 +271,19 @@ function qryDetail(index){
 	}
 	var rows = $('#grid').datagrid('getRows');
 	var row= rows[index];
+	var qtype = null;
+	if(row.iptype == 2){
+		qtype = $("input[name='seletype']:checked").val();
+	}else{
+		qtype = row.iptype;
+	}
 	$.ajax({
 		type : "post",
 		dataType : "json",
 		url : contextPath + "/chnpay/chnpaybalance!queryDetail.action",
 		data : {
 			"cpid" : row.corpid,
-			"qtype" : row.iptype,
+			"qtype" : qtype,
 			"bperiod" : bperiod,
 			"eperiod" : eperiod,
 			"begdate" : begdate,
