@@ -32,8 +32,6 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
 
-import sun.plugin2.message.GetNameSpaceMessage;
-
 @Service("chnpaybalanceser")
 public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	
