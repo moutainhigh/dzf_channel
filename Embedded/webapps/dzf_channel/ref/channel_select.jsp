@@ -98,7 +98,6 @@
 		}
 		var params = new Object();
 		var ovince = <%=ovince%>;
-		console.log('sdf');
 		if(ovince!=undefined){
 			params['dr']=ovince
 		}

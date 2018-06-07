@@ -62,4 +62,30 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public Map<String, String> getManagerMap() throws DZFWarpException; 
+	
+	/**
+	 * 获取  省市---》区域名称 
+	 * @param areaname
+	 * @param type
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<Integer, String> getAreaMap(String areaname,Integer type) throws DZFWarpException;
+	
+	/**
+	 * 指定用户id,判断是否为3个顶级用户
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public boolean checkIsLeader(String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 指定用户id,构造    获取其本身负责的加盟商客户  sql表达式
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String makeCondition(String cuserid) throws DZFWarpException;
+	
 }

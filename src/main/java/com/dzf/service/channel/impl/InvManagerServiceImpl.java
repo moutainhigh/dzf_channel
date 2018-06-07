@@ -41,6 +41,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.piaotong.IPiaoTongConstant;
 import com.dzf.service.piaotong.PiaoTongBill;
+import com.dzf.service.pub.IPubService;
 import com.itextpdf.xmp.impl.Base64;
 
 import oracle.net.aso.q;
@@ -53,6 +54,9 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Autowired
     private MultBodyObjectBO multBodyObjectBO;
+    
+    @Autowired
+    private IPubService pubService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -151,7 +155,7 @@ public class InvManagerServiceImpl implements InvManagerService {
     public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        sql.append("select pk_corp,unitname,innercode from bd_corp ");
+        sql.append("select pk_corp,unitname,innercode from bd_account ba");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
         sql.append(" and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
         if (vo.getDr() != null && vo.getDr() != -1) {// 给区域划分（省市过滤）用的
@@ -165,28 +169,14 @@ public class InvManagerServiceImpl implements InvManagerService {
             }
         }
         if(vo.getDr() != null && vo.getDr() == -1){//加盟商参照
-    		if(!checkLeader(vo)){
-    			List<String>  qryProvince= qryProvince(vo);
-    			List<String>  qryCorpIds = qryCorpIds(vo);
-    			if(qryProvince!=null && qryProvince.size()>0 && qryCorpIds!=null && qryCorpIds.size()>0){
-    				 sql.append(" and (vprovince  in (");
-    	             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
-    	             sql.append(" ) or ");
-    	             sql.append("  pk_corp  in (");
-	   	             sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
-	   	             sql.append(" ))");
-    			}else if(qryProvince!=null && qryProvince.size()>0 ){
-    				 sql.append(" and vprovince  in (");
-	   	             sql.append(qryProvince.toArray(new Integer[qryProvince.size()]));
-	   	             sql.append(" )");
-    			}else if(qryCorpIds!=null && qryCorpIds.size()>0){
-    				sql.append(" and pk_corp  in (");
-	   	            sql.append(SqlUtil.buildSqlConditionForIn(new String[qryCorpIds.size()]));
-	   	            sql.append(" )");
-    			}else{
-    				return null;
-    			}
-    		}
+        	if(!pubService.checkIsLeader(vo.getEmail())){
+        		String condition = pubService.makeCondition(vo.getEmail());
+        		if(condition!=null){
+        			sql.append(condition);
+        		}else{
+        			return null;
+        		}
+        	}
         }
         sql.append(" order by innercode ");
         List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
@@ -213,45 +203,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         return vos;
     }
     
-    //判断是否为顶级用户
-    private boolean checkLeader(ChInvoiceVO vo){
-    	boolean flg=false;
-    	String sql="select concat(concat(vdeptuserid ,vcomuserid ),vgroupuserid) from cn_leaderset where nvl(dr,0)=0";
-    	String ids =singleObjectBO.executeQuery(sql,null, new ColumnProcessor()).toString();
-		if(!StringUtil.isEmpty(ids) && ids.equals(vo.getEmail())){
-			flg=true;
-		}
-		return flg;
-    }
     
-    private List<String> qryProvince(ChInvoiceVO vo){
-    	StringBuffer buf =new StringBuffer();
-    	SQLParameter spm =new SQLParameter();
-    	buf.append("select distinct b.vprovince");
-    	buf.append("  from cn_chnarea_b b");
-    	buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
-    	buf.append(" where nvl(b.dr, 0) = 0");
-    	buf.append("   and nvl(a.dr, 0) = 0");
-    	buf.append("   and (a.userid = ?)");
-    	buf.append("    or (b.ischarge = 'Y' and b.userid = ?)");
-    	spm.addParam(vo.getEmail());
-    	spm.addParam(vo.getEmail());
-    	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(String.class));
-    	return list;
-    }
-    
-    private List<String> qryCorpIds(ChInvoiceVO vo){
-    	StringBuffer buf =new StringBuffer();
-    	SQLParameter spm =new SQLParameter();
-    	buf.append("select distinct b.pk_corp");
-    	buf.append("  from cn_chnarea_b b");
-    	buf.append(" where nvl(b.dr, 0) = 0 and ");
-    	buf.append("   b.ischarge = 'N' and b.userid = ?");
-    	spm.addParam(vo.getEmail());
-    	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new ColumnListProcessor());
-    	return list;
-    }
-
     @Override
     public List<ChInvoiceVO> onBilling(String[] pk_invoices, String userid,String invtime) throws DZFWarpException {
         if (pk_invoices == null || pk_invoices.length == 0) {
