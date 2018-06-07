@@ -1,6 +1,8 @@
 package com.dzf.service.channel.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
+import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.piaotong.PiaoTongInvBVO;
 import com.dzf.model.piaotong.PiaoTongInvVO;
 import com.dzf.model.piaotong.PiaoTongResBVO;
@@ -38,6 +42,8 @@ import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.piaotong.IPiaoTongConstant;
 import com.dzf.service.piaotong.PiaoTongBill;
 import com.itextpdf.xmp.impl.Base64;
+
+import oracle.net.aso.q;
 
 @Service("invManagerService")
 public class InvManagerServiceImpl implements InvManagerService {
@@ -145,19 +151,6 @@ public class InvManagerServiceImpl implements InvManagerService {
     public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        // int page = vo.getPage();
-        // int size = vo.getRows();
-        // sql.append("select pk_corp,unitname,innercode from (select
-        // pk_corp,unitname,innercode,rownum rn from bd_corp ");
-        // sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' and
-        // nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
-        // if(!StringUtil.isEmpty(vo.getCorpcode())){
-        // sql.append(" and instr(innercode,?) > 0");
-        // sp.addParam(vo.getCorpcode());
-        // }
-        // sql.append(" and rownum <= ?)");
-        // sql.append(" where rn > ?");
-        // sql.append(" order by innercode ");
         sql.append("select pk_corp,unitname,innercode from bd_corp ");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
         sql.append(" and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
@@ -171,16 +164,33 @@ public class InvManagerServiceImpl implements InvManagerService {
                 sql.append(" )");
             }
         }
-        // if(!StringUtil.isEmpty(vo.getCorpcode())){
-        // sql.append(" and instr(innercode,?) > 0");
-        // sp.addParam(vo.getCorpcode());
-        // }
+        if(vo.getDr() != null && vo.getDr() == -1){//加盟商参照
+    		if(!checkLeader(vo)){
+    			List<String>  qryProvince= qryProvince(vo);
+    			List<String>  qryCorpIds = qryCorpIds(vo);
+    			if(qryProvince!=null && qryProvince.size()>0 && qryCorpIds!=null && qryCorpIds.size()>0){
+    				 sql.append(" and (vprovince  in (");
+    	             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
+    	             sql.append(" ) or ");
+    	             sql.append("  pk_corp  in (");
+	   	             sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
+	   	             sql.append(" ))");
+    			}else if(qryProvince!=null && qryProvince.size()>0 ){
+    				 sql.append(" and vprovince  in (");
+	   	             sql.append(qryProvince.toArray(new Integer[qryProvince.size()]));
+	   	             sql.append(" )");
+    			}else if(qryCorpIds!=null && qryCorpIds.size()>0){
+    				sql.append(" and pk_corp  in (");
+	   	            sql.append(SqlUtil.buildSqlConditionForIn(new String[qryCorpIds.size()]));
+	   	            sql.append(" )");
+    			}else{
+    				return null;
+    			}
+    		}
+        }
         sql.append(" order by innercode ");
-        // sp.addParam(page*size);
-        // sp.addParam((page-1)*size);
         List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
                 new BeanListProcessor(CorpVO.class));
-
         if (list != null && list.size() > 0) {
             encodeCorpVO(list);
             List<CorpVO> rList = new ArrayList<>();
@@ -201,6 +211,45 @@ public class InvManagerServiceImpl implements InvManagerService {
             vo.setUnitname(CodeUtils1.deCode(vo.getUnitname()));
         }
         return vos;
+    }
+    
+    //判断是否为顶级用户
+    private boolean checkLeader(ChInvoiceVO vo){
+    	boolean flg=false;
+    	String sql="select concat(concat(vdeptuserid ,vcomuserid ),vgroupuserid) from cn_leaderset where nvl(dr,0)=0";
+    	String ids =singleObjectBO.executeQuery(sql,null, new ColumnProcessor()).toString();
+		if(!StringUtil.isEmpty(ids) && ids.equals(vo.getEmail())){
+			flg=true;
+		}
+		return flg;
+    }
+    
+    private List<String> qryProvince(ChInvoiceVO vo){
+    	StringBuffer buf =new StringBuffer();
+    	SQLParameter spm =new SQLParameter();
+    	buf.append("select distinct b.vprovince");
+    	buf.append("  from cn_chnarea_b b");
+    	buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
+    	buf.append(" where nvl(b.dr, 0) = 0");
+    	buf.append("   and nvl(a.dr, 0) = 0");
+    	buf.append("   and (a.userid = ?)");
+    	buf.append("    or (b.ischarge = 'Y' and b.userid = ?)");
+    	spm.addParam(vo.getEmail());
+    	spm.addParam(vo.getEmail());
+    	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(String.class));
+    	return list;
+    }
+    
+    private List<String> qryCorpIds(ChInvoiceVO vo){
+    	StringBuffer buf =new StringBuffer();
+    	SQLParameter spm =new SQLParameter();
+    	buf.append("select distinct b.pk_corp");
+    	buf.append("  from cn_chnarea_b b");
+    	buf.append(" where nvl(b.dr, 0) = 0 and ");
+    	buf.append("   b.ischarge = 'N' and b.userid = ?");
+    	spm.addParam(vo.getEmail());
+    	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new ColumnListProcessor());
+    	return list;
     }
 
     @Override

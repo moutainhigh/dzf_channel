@@ -95,6 +95,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 //			paramvo.setRows(getRows());
 			int page = paramvo == null ? 1: paramvo.getPage();
             int rows = paramvo ==null ? 100000: paramvo.getRows();
+            paramvo.setEmail(getLoginUserid());
 			List<CorpVO> list = invManagerService.queryChannel(paramvo);
 			if(list != null && list.size() > 0){
 			    CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]),page,rows);

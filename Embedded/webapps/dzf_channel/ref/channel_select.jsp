@@ -8,6 +8,8 @@
 </head>
 <%
 	String issingle = request.getParameter("issingle");
+	String ovince = request.getParameter("ovince");
+
 %>
 <body>
 <style>
@@ -95,6 +97,11 @@
 			   	 ]];
 		}
 		var params = new Object();
+		var ovince = <%=ovince%>;
+		console.log('sdf');
+		if(ovince!=undefined){
+			params['dr']=ovince
+		}
 		grid = $('#gsTable').datagrid({
 		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
 		    method: 'post',
@@ -107,6 +114,7 @@
 		    pageList:[10,20,30,40,50],
 			showFooter : true,
 			height:330,
+			queryParams: params,
 			striped:true,
 		    columns: columns,
 			onDblClickRow:function(rowIndex, rowData){
