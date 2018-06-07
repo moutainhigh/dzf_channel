@@ -6,6 +6,7 @@
 <title>运营区域划分</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/areacommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
 .panel-body{overflow:auto}
