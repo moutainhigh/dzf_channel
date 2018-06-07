@@ -206,7 +206,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 	/**
 	 * 查询加盟商总经理
 	 */
-	public  void queryManager(){
+	public void queryManager(){
 		Json json = new Json();
 		try {
 			String pk_corp = getLoginCorpInfo().getPk_corp();
@@ -293,7 +293,8 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 	}
 	
 	/**
-	 * 查询培训师（下拉选项）
+	 * 查询省级别 人（下拉选项）1,0 是查询渠道区域划分;0是为了销售数据分析下拉，这个暂时没有权限限制
+	 * 				   2     是查询培训区域划分 3 是查询运营区域划分
 	 */
 	public void queryTrainer() {
 		Grid grid = new Grid();
