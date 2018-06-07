@@ -167,7 +167,7 @@
 					<a class="ui-btn ui-btn-xz" onclick="deductCancel()">取消</a>
 				</div>
 			</div>
-			<div style="height:88%; overflow: auto;">
+			<div style="height:92%; overflow: auto;">
 				<div class="time_col time_colp11 " style="margin-top:10px;">
 					<div class="decan strong Marketing" style="width:22%;display: inline-block;">
 						<label style="width:40%;text-align: right;font-weight: bold;">预付款余额：</label>
