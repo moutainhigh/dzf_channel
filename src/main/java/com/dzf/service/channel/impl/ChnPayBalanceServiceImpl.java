@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
+import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
@@ -645,15 +645,44 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ChnDetailVO> queryDetail(QryParamVO paramvo) throws DZFWarpException {
-		List<ChnDetailVO> retlist = new ArrayList<ChnDetailVO>();
+	public List<ChnDetailRepVO> queryDetail(QryParamVO paramvo) throws DZFWarpException {
+		List<ChnDetailRepVO> retlist = new ArrayList<ChnDetailRepVO>();
 		List<String> pklist = new ArrayList<String>();
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);
 		DZFDouble coutbal = DZFDouble.ZERO_DBL;
 		if (initmap != null && !initmap.isEmpty()) {
-			ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + paramvo.getQrytype());
-			if (repvo != null) {
-				ChnDetailVO initvo = new ChnDetailVO();
+			if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//分类查询
+				ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + paramvo.getQrytype());
+				if (repvo != null) {
+					ChnDetailRepVO initvo = new ChnDetailRepVO();
+					if (!StringUtil.isEmpty(paramvo.getPeriod())) {
+						initvo.setDoperatedate(new DZFDate(paramvo.getBeginperiod() + "-01"));
+					} else {
+						initvo.setDoperatedate(paramvo.getBegdate());
+					}
+					initvo.setPk_corp(paramvo.getPk_corp());
+					CorpVO accvo = CorpCache.getInstance().get(null, paramvo.getPk_corp());
+					if (accvo != null) {
+						initvo.setCorpname(accvo.getUnitname());
+					}
+					initvo.setVmemo("期初余额");
+					if (paramvo.getQrytype() == 1) {
+						initvo.setNbalance(repvo.getBail());
+						coutbal = repvo.getBail();
+						initvo.setVpaytypename("保证金");
+					} else if (paramvo.getQrytype() == 2) {
+						initvo.setNbalance(repvo.getCharge());
+						coutbal = repvo.getCharge();
+						initvo.setVpaytypename("预付款");
+					} else if (paramvo.getQrytype() == 3) {
+						initvo.setNbalance(repvo.getRebate());
+						coutbal = repvo.getRebate();
+						initvo.setVpaytypename("返点");
+					}
+					retlist.add(initvo);
+				}
+			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部查询
+				ChnDetailRepVO initvo = new ChnDetailRepVO();
 				if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 					initvo.setDoperatedate(new DZFDate(paramvo.getBeginperiod() + "-01"));
 				} else {
@@ -665,40 +694,38 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					initvo.setCorpname(accvo.getUnitname());
 				}
 				initvo.setVmemo("期初余额");
-				if (paramvo.getQrytype() == 1) {
-					initvo.setNbalance(repvo.getBail());
-					coutbal = repvo.getBail();
-					initvo.setVpaytypename("保证金");
-				} else if (paramvo.getQrytype() == 2) {
+				ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + 2);//预付款期初余额
+				if(repvo != null){
 					initvo.setNbalance(repvo.getCharge());
 					coutbal = repvo.getCharge();
-					initvo.setVpaytypename("预付款");
-				} else if (paramvo.getQrytype() == 3) {
-					initvo.setNbalance(repvo.getRebate());
-					coutbal = repvo.getRebate();
-					initvo.setVpaytypename("返点");
 				}
+				repvo = initmap.get(paramvo.getPk_corp() + "," + 3);//返点期初余额
+				if(repvo != null){
+					initvo.setNbalance(SafeCompute.add(initvo.getNbalance(), repvo.getRebate()));
+					coutbal = SafeCompute.add(coutbal,repvo.getRebate());
+				}
+				initvo.setVpaytypename("预付款+返点");
 				retlist.add(initvo);
 			}
 		}
 
 		QrySqlSpmVO sqpvo = getDetailQry(paramvo);
-		List<ChnDetailVO> list = (List<ChnDetailVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
-				new BeanListProcessor(ChnDetailVO.class));
-		if (paramvo.getQrytype() == 2) {
+		List<ChnDetailRepVO> list = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
+				new BeanListProcessor(ChnDetailRepVO.class));
+		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 ||paramvo.getQrytype() == 2)) {
 			list = qryNoDeduction(list, paramvo);// 查询扣费为0的数据
 		}
 		if (list != null && list.size() > 0) {
-			List<ChnDetailVO> oederlist = getOrderList(list);
+			List<ChnDetailRepVO> oederlist = getOrderList(list);
 			CorpVO accvo = null;
 			DZFDouble balance = DZFDouble.ZERO_DBL;
-			HashMap<String, ChnDetailVO> contmap = null;//合同信息
+			HashMap<String, ChnDetailRepVO> contmap = null;//合同信息
 			//全部（显示在预付款上）、预付款、返点查询合同明细
 			if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 
 					|| paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
 				contmap = queryConDetail(paramvo);
 			}
-			for (ChnDetailVO vo : oederlist) {
+			for (ChnDetailRepVO vo : oederlist) {
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if (accvo != null) {
 					vo.setCorpname(accvo.getUnitname());
@@ -726,9 +753,23 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						key = "-1" + vo.getPk_bill();
 					}
 					if (contmap.containsKey(key)) {
-						ChnDetailVO chnDetailVO = contmap.get(key);
-						vo.setNaccountmny(chnDetailVO.getNaccountmny());
-						vo.setNbookmny(chnDetailVO.getNbookmny());
+						ChnDetailRepVO contvo = contmap.get(key);
+						if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//查询全部时，展示预付款和返点的合同相关金额
+							if(vo.getIpaytype() == 3 && vo.getIopertype() == 2){//返点扣款或返点退款
+								if(contvo.getIdeductype() != null && contvo.getIdeductype() == 3){//全部返点扣款
+									vo.setNaccountmny(contvo.getNaccountmny());
+									vo.setNbookmny(contvo.getNbookmny());
+								}
+							}else{
+								vo.setNaccountmny(contvo.getNaccountmny());
+								vo.setNbookmny(contvo.getNbookmny());
+							}
+						}else{
+							vo.setNaccountmny(contvo.getNaccountmny());
+							vo.setNbookmny(contvo.getNbookmny());
+						}
+//						vo.setNaccountmny(contvo.getNaccountmny());
+//						vo.setNbookmny(contvo.getNbookmny());
 					}
 				}
 				balance = SafeCompute.sub(vo.getNpaymny(), vo.getNusedmny());
@@ -747,43 +788,43 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param paramvo
 	 * @return
 	 */
-	private List<ChnDetailVO> qryNoDeduction(List<ChnDetailVO> list, QryParamVO paramvo) {
+	private List<ChnDetailRepVO> qryNoDeduction(List<ChnDetailRepVO> list, QryParamVO paramvo) {
 		StringBuffer ids=new StringBuffer();
-		for (ChnDetailVO chnDetailVO : list) {
-			ids.append("'"+chnDetailVO.getPk_bill()+"',");
+		for (ChnDetailRepVO ChnDetailRepVO : list) {
+			ids.append("'"+ChnDetailRepVO.getPk_bill()+"',");
 		}
-		List<ChnDetailVO> vos1 = qryByDeduct(list, paramvo, ids);
+		List<ChnDetailRepVO> vos1 = qryByDeduct(list, paramvo, ids);
 		CorpVO corpvo= null;
 		StringBuffer vmemo=null;
-		for (ChnDetailVO chnDetailVO : vos1) {
-			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
+		for (ChnDetailRepVO ChnDetailRepVO : vos1) {
+			corpvo = CorpCache.getInstance().get(null, ChnDetailRepVO.getPk_corp());
 			vmemo=new StringBuffer();
-			if(!StringUtil.isEmpty(chnDetailVO.getVmemo()) &&chnDetailVO.getVmemo().contains("存量客户")&& corpvo!=null){
-				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo().substring(5));
+			if(!StringUtil.isEmpty(ChnDetailRepVO.getVmemo()) &&ChnDetailRepVO.getVmemo().contains("存量客户")&& corpvo!=null){
+				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、").append(ChnDetailRepVO.getVmemo().substring(5));
 			}else if(corpvo!=null){
-				vmemo.append(corpvo.getUnitname()).append(chnDetailVO.getVmemo());
+				vmemo.append(corpvo.getUnitname()).append(ChnDetailRepVO.getVmemo());
 			}
-			chnDetailVO.setVmemo(vmemo.toString());
-			chnDetailVO.setDr(1);
-			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);
-			list.add(chnDetailVO);
+			ChnDetailRepVO.setVmemo(vmemo.toString());
+			ChnDetailRepVO.setDr(1);
+			ChnDetailRepVO.setNusedmny(DZFDouble.ZERO_DBL);
+			list.add(ChnDetailRepVO);
 		}
-		List<ChnDetailVO> vos2 = qryByChange(list, paramvo, ids);
-		for (ChnDetailVO chnDetailVO : vos2) {
-			corpvo = CorpCache.getInstance().get(null, chnDetailVO.getPk_corp());
+		List<ChnDetailRepVO> vos2 = qryByChange(list, paramvo, ids);
+		for (ChnDetailRepVO ChnDetailRepVO : vos2) {
+			corpvo = CorpCache.getInstance().get(null, ChnDetailRepVO.getPk_corp());
 			vmemo=new StringBuffer();
-			if(chnDetailVO.getDr() != null && chnDetailVO.getDr() == 9){
+			if(ChnDetailRepVO.getDr() != null && ChnDetailRepVO.getDr() == 9){
 				vmemo.append("合同终止：");
 			}else{
 				vmemo.append("合同作废：");
 			}
 			if(corpvo!=null){
-				vmemo.append(corpvo.getUnitname()).append("、").append(chnDetailVO.getVmemo());
+				vmemo.append(corpvo.getUnitname()).append("、").append(ChnDetailRepVO.getVmemo());
 			}
-			chnDetailVO.setVmemo(vmemo.toString());
-			chnDetailVO.setNusedmny(DZFDouble.ZERO_DBL);
-			chnDetailVO.setDr(-1);
-			list.add(chnDetailVO);
+			ChnDetailRepVO.setVmemo(vmemo.toString());
+			ChnDetailRepVO.setNusedmny(DZFDouble.ZERO_DBL);
+			ChnDetailRepVO.setDr(-1);
+			list.add(ChnDetailRepVO);
 		}
 		return list;
 	}
@@ -796,7 +837,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ChnDetailVO> qryByChange(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
+	private List<ChnDetailRepVO> qryByChange(List<ChnDetailRepVO> list, QryParamVO paramvo, StringBuffer ids) {
 		StringBuffer sql;
 		SQLParameter spm;
 		sql = new StringBuffer();
@@ -831,8 +872,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		sql.append(" order by t.dchangetime \n");
-		return (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ChnDetailVO.class));
+		return (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnDetailRepVO.class));
 	}
 	
 	/**
@@ -843,7 +884,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ChnDetailVO> qryByDeduct(List<ChnDetailVO> list, QryParamVO paramvo, StringBuffer ids) {
+	private List<ChnDetailRepVO> qryByDeduct(List<ChnDetailRepVO> list, QryParamVO paramvo, StringBuffer ids) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" select t.pk_confrim as pk_bill,t.deductdata as doperatedate,t.pk_corpk as pk_corp," );   
@@ -878,8 +919,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		sql.append(" order by t.deductdata \n");
-		return (List<ChnDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ChnDetailVO.class));
+		return (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnDetailRepVO.class));
 	}
 	/**
 	 * 查询付款单余额明细的合同相关数据
@@ -888,7 +929,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<String,ChnDetailVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
+	private HashMap<String,ChnDetailRepVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
 //		StringBuffer sql = new StringBuffer();
 //		SQLParameter spm = new SQLParameter();
 		DZFDate begdate = null;
@@ -914,8 +955,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 //		sql.append(" where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and (t.vdeductstatus=1 or t.vdeductstatus=9 or t.vdeductstatus=10) and " );
 //		sql.append(" t.deductdata>=? and t.deductdata<=? and t.pk_corp=? " );
 		QrySqlSpmVO qryvo = getQrySql(1, begdate, enddate, paramvo);
-		List<ChnDetailVO> kklist = (List<ChnDetailVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
-				new BeanListProcessor(ChnDetailVO.class));
+		List<ChnDetailRepVO> kklist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
+				new BeanListProcessor(ChnDetailRepVO.class));
 
 //	    sql = new StringBuffer();
 //	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
@@ -925,8 +966,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 //		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
 		
 		qryvo = getQrySql(2, begdate, enddate, paramvo);
-		List<ChnDetailVO> bglist = (List<ChnDetailVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
-				new BeanListProcessor(ChnDetailVO.class));
+		List<ChnDetailRepVO> bglist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
+				new BeanListProcessor(ChnDetailRepVO.class));
 		
 //		sql = new StringBuffer();
 //	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
@@ -936,21 +977,21 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 //		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
 		
 		qryvo = getQrySql(3, begdate, enddate, paramvo);
-		List<ChnDetailVO> zflist = (List<ChnDetailVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
-				new BeanListProcessor(ChnDetailVO.class));
+		List<ChnDetailRepVO> zflist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
+				new BeanListProcessor(ChnDetailRepVO.class));
 		
-		HashMap<String, ChnDetailVO> map = new HashMap<String, ChnDetailVO>();
-		for (ChnDetailVO chnDetailVO : kklist) {
-			String key = "1" + chnDetailVO.getPk_bill();
-			map.put(key, chnDetailVO);
+		HashMap<String, ChnDetailRepVO> map = new HashMap<String, ChnDetailRepVO>();
+		for (ChnDetailRepVO ChnDetailRepVO : kklist) {
+			String key = "1" + ChnDetailRepVO.getPk_bill();
+			map.put(key, ChnDetailRepVO);
 		}
-		for (ChnDetailVO chnDetailVO : bglist) {
-			String key = "-1" + chnDetailVO.getPk_bill();
-			map.put(key, chnDetailVO);
+		for (ChnDetailRepVO ChnDetailRepVO : bglist) {
+			String key = "-1" + ChnDetailRepVO.getPk_bill();
+			map.put(key, ChnDetailRepVO);
 		}
-		for (ChnDetailVO chnDetailVO : zflist) {
-			String key = "-1" + chnDetailVO.getPk_bill();
-			map.put(key, chnDetailVO);
+		for (ChnDetailRepVO ChnDetailRepVO : zflist) {
+			String key = "-1" + ChnDetailRepVO.getPk_bill();
+			map.put(key, ChnDetailRepVO);
 		}
 		return map;
 	}
@@ -969,9 +1010,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select t.pk_confrim as pk_bill,  \n") ;
-//		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//返点
-//			sql.append(" CASE WHEN nvl(t.ndeductmny,0) = 0 THEN 3 ELSE 0 END AS ideductype");
-//		}
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//查询全部时，区分该合同是否为全部返点扣款
+			sql.append(" CASE WHEN nvl(t.ndeductmny,0) = 0 AND nvl(t.ndedrebamny,0) != 0  \n");
+			sql.append("  THEN 3 ELSE 0 END AS ideductype, \n");
+		}
 		if(qrytype == 1){
 			sql.append("       t.deductdata as doperatedate,  \n") ; 
 			sql.append("       nvl(ct.ntotalmny, 0) - nvl(ct.nbookmny, 0) as naccountmny,  \n") ; 
@@ -1028,15 +1070,15 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private List<ChnDetailVO> getOrderList(List<ChnDetailVO> list) throws DZFWarpException{
-		List<ChnDetailVO> relist = new ArrayList<ChnDetailVO> ();
-		Map<DZFDate,List<ChnDetailVO>> map = new HashMap<DZFDate,List<ChnDetailVO>>();
-		List<ChnDetailVO> newlist = null;
-		List<ChnDetailVO> oldlist = null;
+	private List<ChnDetailRepVO> getOrderList(List<ChnDetailRepVO> list) throws DZFWarpException{
+		List<ChnDetailRepVO> relist = new ArrayList<ChnDetailRepVO> ();
+		Map<DZFDate,List<ChnDetailRepVO>> map = new HashMap<DZFDate,List<ChnDetailRepVO>>();
+		List<ChnDetailRepVO> newlist = null;
+		List<ChnDetailRepVO> oldlist = null;
 		List<DZFDate> keylist = new ArrayList<DZFDate>();
-		for(ChnDetailVO vo : list){
+		for(ChnDetailRepVO vo : list){
 			if(!map.containsKey(vo.getDoperatedate())){
-				newlist = new ArrayList<ChnDetailVO>();
+				newlist = new ArrayList<ChnDetailRepVO>();
 				newlist.add(vo);
 				map.put(vo.getDoperatedate(), newlist);
 				keylist.add(vo.getDoperatedate());
@@ -1056,10 +1098,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		});
 		for(DZFDate key : keylist){
 			newlist = map.get(key);
-			Collections.sort(newlist,new Comparator<ChnDetailVO>() {
+			Collections.sort(newlist,new Comparator<ChnDetailRepVO>() {
 
 				@Override
-				public int compare(ChnDetailVO o1, ChnDetailVO o2) {
+				public int compare(ChnDetailRepVO o1, ChnDetailRepVO o2) {
 					if(o1.getIpaytype() == IStatusConstant.IPAYTYPE_3){
 						return -o1.getIopertype().compareTo(o2.getIopertype());
 					}else{
@@ -1068,7 +1110,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				}
 				
 			});
-			for(ChnDetailVO vo : newlist){
+			for(ChnDetailRepVO vo : newlist){
 				relist.add(vo);
 			}
 		}
@@ -1089,6 +1131,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
+			sql.append(" AND ipaytype in (2, 3) \n");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){

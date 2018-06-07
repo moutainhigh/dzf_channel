@@ -26,8 +26,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChnPayBalExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnBalanceVO;
-import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
+import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
@@ -95,7 +95,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			List<ChnDetailVO> clist = paybalanSer.queryDetail(paramvo);
+			List<ChnDetailRepVO> clist = paybalanSer.queryDetail(paramvo);
 			grid.setRows(clist);
 			grid.setSuccess(true);
 			grid.setMsg("操作成功");

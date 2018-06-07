@@ -2,8 +2,8 @@ package com.dzf.service.channel;
 
 import java.util.List;
 
-import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
+import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -23,5 +23,5 @@ public interface IChnPayBalanceService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ChnDetailVO> queryDetail(QryParamVO paramvo) throws DZFWarpException;
+	public List<ChnDetailRepVO> queryDetail(QryParamVO paramvo) throws DZFWarpException;
 }
