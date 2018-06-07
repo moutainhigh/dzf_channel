@@ -192,7 +192,10 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			List<String> list = new ArrayList<String>();
 			list.add("incode");
 			list.add("corpnm");
-			list.add("num");
+//			list.add("num");
+			list.add("custnum");
+			list.add("zeronum");
+			list.add("dednum");
 			list.add("ptypenm");
 			list.add("propor");
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();

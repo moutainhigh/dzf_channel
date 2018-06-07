@@ -768,8 +768,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 							vo.setNaccountmny(contvo.getNaccountmny());
 							vo.setNbookmny(contvo.getNbookmny());
 						}
-//						vo.setNaccountmny(contvo.getNaccountmny());
-//						vo.setNbookmny(contvo.getNbookmny());
 					}
 				}
 				balance = SafeCompute.sub(vo.getNpaymny(), vo.getNusedmny());
@@ -777,7 +775,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				coutbal = vo.getNbalance();
 				retlist.add(vo);
 			}
-			// return oederlist;
 		}
 		return retlist;
 	}
@@ -930,8 +927,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 */
 	@SuppressWarnings("unchecked")
 	private HashMap<String,ChnDetailRepVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
-//		StringBuffer sql = new StringBuffer();
-//		SQLParameter spm = new SQLParameter();
 		DZFDate begdate = null;
 		DZFDate enddate = null;
 		//如果为期间查询，则把期间转换为开始日期（开始期间+'-01'），结束日期（结束期间下一个月减去1天），即开始期间月初日期、结束期间月末日期
@@ -947,35 +942,13 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			begdate = paramvo.getBegdate();
 			enddate = paramvo.getEnddate();
 		}
-//		spm.addParam(paramvo.getPk_corp());
-//		
-//		sql.append(" select t.pk_confrim as pk_bill ,t.deductdata as doperatedate, ");
-//		sql.append(" nvl(ct.ntotalmny,0)-nvl(ct.nbookmny,0) as naccountmny,nvl(ct.nbookmny,0) as nbookmny from cn_contract t" ); 
-//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-//		sql.append(" where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and (t.vdeductstatus=1 or t.vdeductstatus=9 or t.vdeductstatus=10) and " );
-//		sql.append(" t.deductdata>=? and t.deductdata<=? and t.pk_corp=? " );
 		QrySqlSpmVO qryvo = getQrySql(1, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> kklist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
-
-//	    sql = new StringBuffer();
-//	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
-//		sql.append(" nvl(t.nsubtotalmny,0) as naccountmny,0 as nbookmny  from cn_contract t " ); 
-//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-//		sql.append(" where nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.vdeductstatus=9  and" );
-//		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
 		
 		qryvo = getQrySql(2, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> bglist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
-		
-//		sql = new StringBuffer();
-//	    sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,0,10)as doperatedate, ");
-//		sql.append(" nvl(t.nsubtotalmny,0)+nvl(ct.nbookmny,0) as naccountmny,-nvl(ct.nbookmny,0) as nbookmny from cn_contract t " );   
-//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-//		sql.append(" where nvl(t.dr,0) = 0  and nvl(ct.dr,0) = 0  and t.vdeductstatus=10 and" );
-//		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and t.pk_corp=?" );
-		
 		qryvo = getQrySql(3, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> zflist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
