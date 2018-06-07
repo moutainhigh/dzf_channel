@@ -214,7 +214,10 @@ function selectCorps(){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
-	var num =0;
+//	var num =0;
+	var custnum = 0;
+	var zeronum = 0;
+	var dednum = 0;
 	var nbmny = 0;
 	var namny = 0;
 	var initbal = 0;
@@ -222,7 +225,10 @@ function calFooter(){
     var usemny = 0;	
     var balmny = 0;	
     for (var i = 0; i < rows.length; i++) {
-    	num += getFloatValue(rows[i].num);
+//    	num += getFloatValue(rows[i].num);
+    	custnum += getFloatValue(rows[i].custnum);
+    	zeronum += getFloatValue(rows[i].zeronum);
+    	dednum += getFloatValue(rows[i].dednum);
     	nbmny += getFloatValue(rows[i].nbmny);
     	namny += getFloatValue(rows[i].namny);
     	initbal += getFloatValue(rows[i].initbal);
@@ -231,7 +237,10 @@ function calFooter(){
     	balmny += getFloatValue(rows[i].balmny); 
     }
     footerData['incode'] = '合计';
-    footerData['num'] = num;
+//    footerData['num'] = num;
+    footerData['custnum'] = custnum;
+    footerData['zeronum'] = zeronum;
+    footerData['dednum'] = dednum;
     footerData['nbmny'] = nbmny;
     footerData['namny'] = namny;
     footerData['initbal'] = initbal;
