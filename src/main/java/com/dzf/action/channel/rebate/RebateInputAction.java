@@ -76,6 +76,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 				String sql = rebateser.getQrySql(paramvo.getCuserid());
 				paramvo.setVqrysql(sql);
 			}
+			paramvo.setCuserid(getLoginUserid());
             List<RebateVO> list = rebateser.query(paramvo);
 			if(list != null && list.size() > 0){
 				int page = paramvo == null ? 1: paramvo.getPage();
@@ -84,7 +85,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 				grid.setRows(Arrays.asList(rebatVOs));
 				grid.setTotal((long)(list.size()));
 			}else{
-			    grid.setRows(list);
+			    grid.setRows(new ArrayList<RebateVO>());
 			    grid.setTotal(0L);
 			}
             grid.setMsg("查询成功");

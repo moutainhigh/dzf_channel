@@ -308,7 +308,7 @@
 	<!-- 列表界面end -->
 	
 	<!-- 查询对话框 begin -->
-	<div id="qrydialog" class="qijian_box" style="display:none; width:450px; height:230px">
+	<div id="qrydialog" class="qijian_box" style="display:none; width:450px; height:260px">
 		<s class="s" style="left: 25px;"><i class="i"></i> </s>
 		<form id="query_form">
 			<h3>
@@ -355,6 +355,11 @@
 				<label style="width:90px;text-align:right">加盟商：</label>
 				<input id="qcorp" class="easyui-textbox" style="width:290px;height:28px;" />
 				<input id="qcorpid" type="hidden">
+			</div>
+			<div class="time_col time_colp10">
+				<label style="text-align:right;width: 90px;">大区：</label> 
+				<input id="aname"  name="aname" class="easyui-combobox" style="width: 290px; height: 28px;" 
+					data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 			</div>
 		</form>
 		<p>

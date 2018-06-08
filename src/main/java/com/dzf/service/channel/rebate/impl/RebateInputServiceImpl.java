@@ -49,6 +49,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	@Override
 	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySql(paramvo);
+		if(qryvo==null){
+			return null;
+		}
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(RebateVO.class));
 		if(list != null && list.size() > 0){
@@ -229,9 +232,15 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * \n") ;
-		sql.append("  FROM cn_rebate \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("SELECT a.* FROM cn_rebate a \n") ;
+		sql.append(" LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
+    	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
+    	if(condition!=null && !condition.equals("flg")){
+    		sql.append(condition);
+    	}else{
+    		return null;
+    	}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append("   AND istatus = ? \n") ; 
 			spm.addParam(paramvo.getQrytype());

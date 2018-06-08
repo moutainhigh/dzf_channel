@@ -5,6 +5,7 @@ var editIndex;
 $(function(){
 	load();
 	initRef();
+	initArea();
 	initQryData();
 	fastQry();
 	loadJumpData();
@@ -76,7 +77,8 @@ function initRef(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					issingle : "false"
+    					issingle : "false",
+    					ovince :"-1"
     				},
                     buttons: '#chnBtn'
                 });
@@ -101,13 +103,32 @@ function initRef(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					issingle : "true"
+    					issingle : "true",
+    					ovince :"-1"
     				},
                     buttons: '#chnBtn'
                 });
             }
         }]
     });
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
 }
 
 /**
@@ -447,6 +468,7 @@ function opermatter(val, row, index) {
  * 查询框-清空
  */
 function clearParams(){
+	$('#aname').combobox('setValue', null);
 	$('#manager').textbox("setValue",null);
 	$('#managerid').val(null);
 	$('#qcorp').textbox("setValue",null);
@@ -466,6 +488,8 @@ function reloadData(){
 		'destatus' : $("#qstatus").combobox("getValue"),
 		'uid' : $("#managerid").val(),
 		'cpid' : $("#qcorpid").val(),
+		'aname' : $("#aname").combobox('getValue')
+
 	});
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
