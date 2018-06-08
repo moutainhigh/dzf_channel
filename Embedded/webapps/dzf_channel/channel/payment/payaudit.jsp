@@ -4,11 +4,11 @@
 <html>
 
 <head>
-<title>付款单确认</title>
+<title>付款单审批</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out,request.getContextPath()+"/js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/payment/payconfirm.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/payment/payaudit.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 
 <body>
@@ -29,8 +29,7 @@
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
 						单据状态：
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(-1)">全部</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(5)">待确认</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(3)">已确认</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px;" onclick="qryData(2)">待审批</a>
 					</div>
 				</div>
 				
@@ -41,8 +40,8 @@
 					</div>
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="certain()" >收款确认</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(5)" >取消确认</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="certain()" >收款审批</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(2)">取消审批</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
 				</div>
 			</div>
@@ -65,6 +64,7 @@
 					<label style="width:80px;text-align:right">单据状态：</label>
 					<select id="status" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
+						<option value="2">待审批</option>
 						<option value="5">待确认</option>
 						<option value="3">已确认</option>
 						<option value="4">已驳回</option>
@@ -104,8 +104,8 @@
 		<div id="hlDialog" class="easyui-dialog" style="width:500px;height:300px;padding:20px 20px 10px;" data-options="closed:true">
 			<form id="commit">
 				<div class="time_col time_colp10">
-					 <font size="3"><label style="text-align:left;width:40%">你确定要收款确认吗?</label></font> 
-				 	 <input type="radio" style="margin-top: 6px;width:8%" name="seletype" id="confirm">
+					 <font size="3"><label style="text-align:left;width:40%">你确定要收款审批吗?</label></font> 
+				 	 <input type="radio" style="margin-top: 6px;width:8%" name="seletype" id="confirm" value>
 				 	<label style="text-align:left;width:12%">确认</label>
 					 <input type="radio" style="margin-top: 6px;width:6%" name="seletype" id="reject">
 					 <label style="text-align:left;width:12%">驳回</label>

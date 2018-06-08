@@ -91,6 +91,7 @@ public class ChnPayBillVO extends SuperVO {
     
     @FieldAlias("vbname")
     private String vbankname;//付款银行
+    
     @FieldAlias("vbcode")
     private String vbankcode;//付款账号
     
@@ -125,6 +126,17 @@ public class ChnPayBillVO extends SuperVO {
 
 	@FieldAlias("datime")
 	private DZFDateTime daudittime;// 审核时间
+	
+	@FieldAlias("rejectype")
+	private Integer irejectype;//驳回类型  1：审核驳回；2：确认驳回；
+
+	public Integer getIrejectype() {
+		return irejectype;
+	}
+
+	public void setIrejectype(Integer irejectype) {
+		this.irejectype = irejectype;
+	}
 
 	public String getVerrmsg() {
 		return verrmsg;

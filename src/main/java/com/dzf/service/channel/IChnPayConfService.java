@@ -24,15 +24,6 @@ public interface IChnPayConfService {
 	 */
 	public List<ChnPayBillVO> query(QryParamVO paramvo) throws DZFWarpException;
 	
-//	/**
-//	 * 确认收款、取消确认操作
-//	 * @param billVOs
-//	 * @param opertype
-//	 * @return
-//	 * @throws DZFWarpException
-//	 */
-//	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid,String vreason) throws DZFWarpException;
-	
 	/**
 	 * 通过主键查询单个VO
 	 * @param cid

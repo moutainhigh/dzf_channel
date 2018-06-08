@@ -7,33 +7,33 @@ $(function() {
 	load();
 	fastQry();
 	initListener();
-//	loadJumpData();
+	loadJumpData();
 });
 
-///**
-// * 由别的界面（付款单余额明细）跳转待合同确认界面
-// */
-//function loadJumpData(){
-//	var obj = Public.getRequest();
-//	var operate = obj.operate;
-//	if(operate == "topayc"){
-//		var id = obj.pk_billid;
-//		
-//		$('#grid').datagrid('unselectAll');
-//		var queryParams = $('#grid').datagrid('options').queryParams;
-//		$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
-//		queryParams.qtype = $('#status').combobox('getValue');
-//		queryParams.begdate = null;
-//		queryParams.enddate = null;
-//		queryParams.iptype = -1;
-//		queryParams.ipmode = -1;
-//		queryParams.cpid = null;
-//		queryParams.id = id;
-//		
-//		$('#grid').datagrid('options').queryParams = queryParams;
-//		$('#grid').datagrid('reload');
-//	}
-//}
+/**
+ * 由别的界面（付款单余额明细）跳转待合同审核界面
+ */
+function loadJumpData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	if(operate == "topayc"){
+		var id = obj.pk_billid;
+		
+		$('#grid').datagrid('unselectAll');
+		var queryParams = $('#grid').datagrid('options').queryParams;
+		$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+		queryParams.qtype = $('#status').combobox('getValue');
+		queryParams.begdate = null;
+		queryParams.enddate = null;
+		queryParams.iptype = -1;
+		queryParams.ipmode = -1;
+		queryParams.cpid = null;
+		queryParams.id = id;
+		
+		$('#grid').datagrid('options').queryParams = queryParams;
+		$('#grid').datagrid('reload');
+	}
+}
 
 /**
  * 监听事件
@@ -242,7 +242,7 @@ function load(){
 				if (value == '1')
 					return '待提交';
 				if (value == '2')
-					return '待确认';
+					return '待审批';
 				if (value == '3')
 					return '已确认';
 				if (value == '4')
@@ -308,7 +308,7 @@ function calFooter(){
 
 /**
  * 标签查询
- * @param type  -1：全部；5：待确认；3：已确认；
+ * @param type  -1：全部；2：待审批；
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
@@ -371,8 +371,8 @@ function fastQry(){
 }
 
 /**
- * 取消确认 
- * @param type 5：取消确认；
+ * 取消审批
+ * @param type 2：取消审批；
  */
 function operate(type){
 	var rows = $("#grid").datagrid("getChecked");
@@ -386,7 +386,7 @@ function operate(type){
 			data = data + JSON.stringify(rows[i]);
 		}
 	}
-	$.messager.confirm("提示", "你确定要取消确认吗?", function(r) {
+	$.messager.confirm("提示", "你确定要取消审批吗?", function(r) {
 		if (r) {
 			var postdata = new Object();
 			postdata["data"] = data;
@@ -397,7 +397,7 @@ function operate(type){
 }
 
 /**
- * 收款确认(跳转页面按钮)
+ * 审批确认(跳转页面按钮)
  */
 function certain(){
 	var rows = $("#grid").datagrid("getChecked");
@@ -406,7 +406,7 @@ function certain(){
         return;
 	}
 	$('#hlDialog').dialog({ modal:true });//设置dig属性
-    $('#hlDialog').dialog('open').dialog('center').dialog('setTitle','收款确认');
+    $('#hlDialog').dialog('open').dialog('center').dialog('setTitle','审批确认');
     $("#confirm").prop("checked",true);
     $("#vreason").textbox('readonly',true);
     $('input:radio[name="seletype"]').change( function(){  
@@ -421,7 +421,7 @@ function certain(){
 }
 
 /**
- * 收款确认(确认按钮)
+ * 审批确认(确认按钮)
  */
 function confirm(){
 	var ischeck = $('#reject').is(':checked');
@@ -447,10 +447,10 @@ function confirm(){
 	var postdata = new Object();
 	postdata["data"] = data;
 	if($('#reject').is(':checked')){
-		postdata["type"] = 4;
+		postdata["type"] = 9;
 		postdata["vreason"] = $('#vreason').textbox('getValue');
 	}else{
-		postdata["type"] = 3;
+		postdata["type"] = 2;
 	}
 	operatData(postdata,rows);
 	$("#commit").form('clear');
