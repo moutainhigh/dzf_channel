@@ -65,8 +65,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		try {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-//			paramvo.setPage(getPage());
-//			paramvo.setRows(getRows());
+			paramvo.setInvperson(getLoginUserid());
 			int total = invManagerService.queryTotalRow(paramvo);
 			if(total > 0){
 				List<ChInvoiceVO> rows = invManagerService.query(paramvo);
@@ -91,8 +90,6 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		try {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-//			paramvo.setPage(getPage());
-//			paramvo.setRows(getRows());
 			int page = paramvo == null ? 1: paramvo.getPage();
             int rows = paramvo ==null ? 100000: paramvo.getRows();
             paramvo.setEmail(getLoginUserid());

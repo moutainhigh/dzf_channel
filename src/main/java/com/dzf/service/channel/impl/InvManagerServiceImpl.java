@@ -1,10 +1,9 @@
 package com.dzf.service.channel.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,12 +13,10 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.piaotong.PiaoTongInvBVO;
 import com.dzf.model.piaotong.PiaoTongInvVO;
 import com.dzf.model.piaotong.PiaoTongResBVO;
@@ -44,8 +41,6 @@ import com.dzf.service.piaotong.PiaoTongBill;
 import com.dzf.service.pub.IPubService;
 import com.itextpdf.xmp.impl.Base64;
 
-import oracle.net.aso.q;
-
 @Service("invManagerService")
 public class InvManagerServiceImpl implements InvManagerService {
 
@@ -63,10 +58,17 @@ public class InvManagerServiceImpl implements InvManagerService {
     public List<ChInvoiceVO> query(ChInvoiceVO paramvo) throws DZFWarpException {
         QrySqlSpmVO qryvo = getQrySql(paramvo);
         List<ChInvoiceVO> retlist = (List<ChInvoiceVO>) multBodyObjectBO.queryDataPage(ChInvoiceVO.class,
-                qryvo.getSql(), qryvo.getSpm(), paramvo.getPage(), paramvo.getRows(), "ts");
+                qryvo.getSql(), qryvo.getSpm(), paramvo.getPage(), paramvo.getRows(), "a.ts");
         if (retlist != null && retlist.size() > 0) {
+        	Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
             UserVO uservo = null;
             for (ChInvoiceVO vo : retlist) {
+            	if(areaMap!=null && !areaMap.isEmpty()){
+					String area = areaMap.get(vo.getVprovince());
+					if(!StringUtil.isEmpty(area)){
+						vo.setAreaname(area);
+					}
+				}
                 uservo = UserCache.getInstance().get(vo.getInvperson(), null);
                 if (uservo != null) {
                     vo.setIperson(uservo.getUser_name());
@@ -79,6 +81,9 @@ public class InvManagerServiceImpl implements InvManagerService {
     @Override
     public Integer queryTotalRow(ChInvoiceVO paramvo) throws DZFWarpException {
         QrySqlSpmVO qryvo = getQrySql(paramvo);
+        if(qryvo==null){
+        	return 0;
+        }
         return multBodyObjectBO.queryDataTotal(ChInvoiceVO.class, qryvo.getSql(), qryvo.getSpm());
     }
 
@@ -92,44 +97,51 @@ public class InvManagerServiceImpl implements InvManagerService {
         QrySqlSpmVO qryvo = new QrySqlSpmVO();
         StringBuffer sql = new StringBuffer();
         SQLParameter spm = new SQLParameter();
-        sql.append("select * from cn_invoice ");
-        sql.append(" where nvl(dr,0) = 0 ");
+        sql.append("select a.*,ba.vprovince from cn_invoice a");
+        sql.append(" left join bd_account ba on a.pk_corp=ba.pk_corp ");
+        sql.append(" where nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
+    	String condition = pubService.makeCondition(paramvo.getInvperson(),paramvo.getAreaname());
+    	if(condition!=null && !condition.equals("flg")){
+    		sql.append(condition);
+    	}else{
+    		return null;
+    	}
         if (paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1) {
-            sql.append(" and invstatus = ?");
+            sql.append(" and a.invstatus = ?");
             spm.addParam(paramvo.getInvstatus());
         } else {
-            sql.append(" and invstatus in (1,2,3)");
+            sql.append(" and a.invstatus in (1,2,3)");
         }
         if (paramvo.getInvtype() != null && paramvo.getInvtype() != -1) {
-            sql.append(" and invtype = ?");
+            sql.append(" and a.invtype = ?");
             spm.addParam(paramvo.getInvtype());
         }
         if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
             if (!StringUtil.isEmpty(paramvo.getBdate())) {
-                sql.append(" and apptime >= ?");
+                sql.append(" and a.apptime >= ?");
                 spm.addParam(paramvo.getBdate());
             }
             if (!StringUtil.isEmpty(paramvo.getEdate())) {
-                sql.append(" and apptime <= ?");
+                sql.append(" and a.apptime <= ?");
                 spm.addParam(paramvo.getEdate());
             }
         }else{
             if (!StringUtil.isEmpty(paramvo.getBdate())) {
-                sql.append(" and invtime >= ?");
+                sql.append(" and a.invtime >= ?");
                 spm.addParam(paramvo.getBdate());
             }
             if (!StringUtil.isEmpty(paramvo.getEdate())) {
-                sql.append(" and invtime <= ?");
+                sql.append(" and a.invtime <= ?");
                 spm.addParam(paramvo.getEdate());
             }
         }
         
         if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-            sql.append(" and pk_corp  in (" + corpIdS + ")");
+            sql.append(" and a.pk_corp  in (" + corpIdS + ")");
         }
         if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-            sql.append(" and corpname like ?");
+            sql.append(" and a.corpname like ?");
             spm.addParam("%" + paramvo.getCorpname() + "%");
         }
         qryvo.setSql(sql.toString());
