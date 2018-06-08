@@ -115,17 +115,17 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		return qryvo;
 	}
 
-	@Override
-	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid,String vreason) throws DZFWarpException {
-		checkStatus(billVOs);
-		for(ChnPayBillVO billvo :billVOs){
-			if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-				continue;
-			}
-			updateData(billvo, opertype, cuserid,vreason);
-		}
-		return billVOs;
-	}
+//	@Override
+//	public ChnPayBillVO[] operate(ChnPayBillVO[] billVOs, Integer opertype, String cuserid,String vreason) throws DZFWarpException {
+//		checkStatus(billVOs);
+//		for(ChnPayBillVO billvo :billVOs){
+//			if(!StringUtil.isEmpty(billvo.getVerrmsg())){
+//				continue;
+//			}
+//			updateData(billvo, opertype, cuserid,vreason);
+//		}
+//		return billVOs;
+//	}
 	
 	@Override
 	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid, String vreason)
