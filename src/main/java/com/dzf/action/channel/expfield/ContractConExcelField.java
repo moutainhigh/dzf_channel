@@ -27,6 +27,7 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 	private Fieldelement[] fields = new Fieldelement[]{
 			new Fieldelement("isncust", "存量客户",false,0,false),
 			new Fieldelement("dsubmitime", "提交时间",false,0,false),
+			new Fieldelement("areaname", "大区",false,0,false),
 			new Fieldelement("varea", "地区",false,0,false),
 			new Fieldelement("vmanagername", "渠道经理",false,0,false),
 			new Fieldelement("corpname", "加盟商",false,0,false),

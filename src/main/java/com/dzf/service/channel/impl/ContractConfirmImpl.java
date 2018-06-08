@@ -71,6 +71,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQryCondition(paramvo, "listqry");
+		if(sqpvo==null){
+			return 0;
+		}
 		return multBodyObjectBO.queryDataTotal(ContractConfrimVO.class,sqpvo.getSql(), sqpvo.getSpm());
 	}
 
@@ -108,7 +111,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> list = (List<ContractConfrimVO>) multBodyObjectBO.queryDataPage(ContractConfrimVO.class, 
 					sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
-			setShowData(list, "listqry");
+			setShowData(list, "listqry",paramvo.getAreaname());
 		}
 		return list;
 	}
@@ -119,12 +122,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param showtype   1、listqry：列表查询；2、audit：审核查询；3、info：明细查询；
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(List<ContractConfrimVO> list, String showtype) throws DZFWarpException {
+	private void setShowData(List<ContractConfrimVO> list, String showtype,String areaname) throws DZFWarpException {
 		UserVO uservo = null;
 		CorpVO corpvo = null;
 		String statusname = "";
 		String manager = "";
 		Map<String,String> map = pubser.getManagerMap();
+		Map<Integer, String> areaMap = null;
+		if("listqry".equals(showtype)){
+			areaMap = pubser.getAreaMap(areaname,3);
+		}
 		for(ContractConfrimVO confvo : list){
 			confvo.setTstamp(confvo.getCheckts());//校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同
 			if("listqry".equals(showtype)){
@@ -150,6 +157,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}else{//待提交、已驳回
 					//合同代账费 = 合同总金额 - 合同账本费
 					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
+				}
+				if(areaMap != null && !areaMap.isEmpty()){
+					String area = areaMap.get(confvo.getVprovince());
+					if(!StringUtil.isEmpty(area)){
+						confvo.setAreaname(area);
+					}
 				}
 			}
 			uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
@@ -255,7 +268,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("              cn.tstamp  \n") ; 
 		sql.append("           END AS checkts,  \n") ;//原合同、历史合同时间戳
 		if("audit".equals(qrytype)){
-			sql.append("       acc.channeltype,  \n") ; //加盟商类型
+			sql.append("       ba.channeltype,  \n") ; //加盟商类型
+		}
+		if("listqry".equals(qrytype)){
+			sql.append("       ba.vprovince,  \n") ; //省份
 		}
 		sql.append("       t.vcontcode,  \n") ; 
 		sql.append("       t.pk_packagedef,  \n") ; 
@@ -311,14 +327,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("  FROM ynt_contract t  \n") ; 
 		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
-		if("audit".equals(qrytype)){
-			sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n") ; 
+		if(!"info".equals(qrytype)){
+			sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
 		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
-		if("audit".equals(qrytype)){
-			sql.append("   AND nvl(acc.dr, 0) = 0  \n") ; 
+		if(!"info".equals(qrytype)){
+			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		}
+		if("listqry".equals(qrytype)){
+			String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
+	    	if(condition!=null && !condition.equals("flg")){
+	    		sql.append(condition);
+	    	}else{
+	    		return null;
+	    	}
 		}
 		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
@@ -754,7 +778,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (list != null && list.size() > 0) {
-			setShowData(list, "audit");
+			setShowData(list, "audit",null);
 			return list.get(0);
 //			ContractConfrimVO vo = conflist.get(0);
 //			vo.setIscanedit(DZFBoolean.FALSE);
@@ -2183,7 +2207,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (list != null && list.size() > 0) {
-			setShowData(list, "info");
+			setShowData(list, "info",null);
 			confvo = list.get(0);
 		}
 		if(confvo != null && !StringUtil.isEmpty(confvo.getVconfreason())){

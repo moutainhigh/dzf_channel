@@ -371,37 +371,46 @@ public class PubServiceImpl implements IPubService {
     }
 	
 	@Override
-	public String makeCondition(String cuserid) throws DZFWarpException {
-		List<String>  qryProvince= qryProvince(cuserid);
-		List<String>  qryCorpIds = qryCorpIds(cuserid);
-		StringBuffer sql = new StringBuffer();
-		if(qryProvince!=null && qryProvince.size()>0 && qryCorpIds!=null && qryCorpIds.size()>0){
-			 sql.append(" and (ba.vprovince  in (");
-             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
-             sql.append(" ) or ");
-             sql.append("  ba.pk_corp  in (");
-             sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
-             sql.append(" ))");
-		}else if(qryProvince!=null && qryProvince.size()>0 ){
-			 sql.append(" and ba.vprovince  in (");
-             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
-             sql.append(" )");
-		}else if(qryCorpIds!=null && qryCorpIds.size()>0){
-			sql.append(" and ba.pk_corp  in (");
-            sql.append(SqlUtil.buildSqlConditionForIn(new String[qryCorpIds.size()]));
-            sql.append(" )");
+	public String makeCondition(String cuserid,String areaname) throws DZFWarpException {
+		boolean flg=checkIsLeader(cuserid);
+		String retstr=null;
+		if(flg && StringUtil.isEmpty(areaname)){
+			retstr="flg";
 		}else{
-			return null;
+			List<String>  qryProvince= qryProvince(cuserid,flg,areaname);
+			List<String>  qryCorpIds = qryCorpIds(cuserid,flg,areaname);
+			StringBuffer sql = new StringBuffer();
+			if(qryProvince!=null && qryProvince.size()>0 && qryCorpIds!=null && qryCorpIds.size()>0){
+				 sql.append(" and (ba.vprovince  in (");
+	             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
+	             sql.append(" ) or ");
+	             sql.append("  ba.pk_corp  in (");
+	             sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
+	             sql.append(" ))");
+	             retstr= sql.toString();
+			}else if(qryProvince!=null && qryProvince.size()>0 ){
+				 sql.append(" and ba.vprovince  in (");
+	             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
+	             sql.append(" )");
+	             retstr= sql.toString();
+			}else if(qryCorpIds!=null && qryCorpIds.size()>0){
+				sql.append(" and ba.pk_corp  in (");
+	            sql.append(SqlUtil.buildSqlConditionForIn(new String[qryCorpIds.size()]));
+	            sql.append(" )");
+	            retstr= sql.toString();
+			}
 		}
-		return sql.toString();
+		return retstr;
 	}
 	
 	/**
 	 * 以大区的所包含的省市，或渠道负责人的所在省市（省市维度）
 	 * @param cuserid
+	 * @param flg
+	 * @param areaname
 	 * @return
 	 */
-    private List<String> qryProvince(String cuserid){
+    private List<String> qryProvince(String cuserid,Boolean flg,String areaname){
     	StringBuffer buf =new StringBuffer();
     	SQLParameter spm =new SQLParameter();
     	buf.append("select distinct to_char(b.vprovince)");
@@ -410,10 +419,16 @@ public class PubServiceImpl implements IPubService {
     	buf.append(" where nvl(b.dr, 0) = 0");
     	buf.append("   and nvl(a.dr, 0) = 0");
     	buf.append("   and b.type = 3 ");
-    	buf.append("   and (a.userid = ? ");
-    	buf.append("    or (b.ischarge = 'Y' and b.userid = ?))");
-    	spm.addParam(cuserid);
-    	spm.addParam(cuserid);
+    	if(!flg){
+        	buf.append("   and (a.userid = ? ");
+        	buf.append("    or (b.ischarge = 'Y' and b.userid = ?))");
+        	spm.addParam(cuserid);
+        	spm.addParam(cuserid);
+    	}
+    	if(!StringUtil.isEmpty(areaname)){
+    		buf.append("   and a.areaname = ? ");
+    		spm.addParam(areaname);
+    	}
     	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new ColumnListProcessor());
     	return list;
     }
@@ -421,17 +436,28 @@ public class PubServiceImpl implements IPubService {
     /**
      * 以渠道经理所选的加盟商（加盟商客户维度）
      * @param cuserid
-     * @return
-     */
-    private List<String> qryCorpIds(String cuserid){
+	 * @param flg
+	 * @param areaname
+	 * @return
+	 */
+    private List<String> qryCorpIds(String cuserid,Boolean flg,String areaname){
+    	if(flg){
+    		return null;
+    	}
     	StringBuffer buf =new StringBuffer();
     	SQLParameter spm =new SQLParameter();
     	buf.append("select distinct b.pk_corp");
     	buf.append("  from cn_chnarea_b b");
-    	buf.append(" where nvl(b.dr, 0) = 0  ");
-    	buf.append("   and b.type = 3 and ");
-    	buf.append("   b.ischarge = 'N' and b.userid = ?");
+     	buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
+    	buf.append(" where nvl(b.dr, 0) = 0");
+    	buf.append("   and nvl(a.dr, 0) = 0");
+    	buf.append("   and b.type = 3 and b.ischarge = 'N' ");
+		buf.append("   and b.userid = ? ");
     	spm.addParam(cuserid);
+    	if(!StringUtil.isEmpty(areaname)){
+    		buf.append("   and a.areaname = ? ");
+    		spm.addParam(areaname);
+    	}
     	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new ColumnListProcessor());
     	return list;
     }

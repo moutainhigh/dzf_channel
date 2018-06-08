@@ -136,11 +136,14 @@
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">纳税人资格：</label>
 					<select id="corptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
-						style="width:150px;height:28px;">
+						style="width:110px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">小规模纳税人</option>
 						<option value="2">一般纳税人</option>
 					</select>
+					<label style="text-align:right;width: 43px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 120px; height: 28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 			</form>
 			<p>

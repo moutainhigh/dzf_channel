@@ -7,6 +7,7 @@ $(function() {
 	initQryPeroid();
 	initQryLitener();
 	initChannel();//初始化加盟商
+	initArea();
 	quickfiltet();
 });
 
@@ -25,7 +26,13 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
-		columns : [ [ {
+		columns : [ [{
+			width : '140',
+			title : '大区',
+			align : 'left',
+	        halign: 'center',
+			field : 'aname'
+		}, {
 			width : '120',
 			title : '加盟商编码',
             halign:'center',
@@ -156,7 +163,26 @@ function load(){
  */
 function clearParams(){
 	$("#pk_account").val(null);
+	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
 }
 
 //初始化加盟商
@@ -173,6 +199,9 @@ function initChannel(){
                   title: '选择加盟商',
                   modal: true,
                   href: DZF.contextPath + '/ref/channel_select.jsp',
+                  queryParams : {
+  					ovince :"-1"
+  				  },
                   buttons: '#kj_buttons'
               });
           }
@@ -656,6 +685,7 @@ function getQueryData(cpname){
 	}else{
 		cpname= null
 	}
+	var aname = $("#aname").combobox('getValue');
 	var qtype = $("input[name='seletype']:checked").val();
 	var queryData = {
 		"bperiod" : bperiod,
@@ -665,6 +695,7 @@ function getQueryData(cpname){
 		'qtype' : qtype,
 		'cpname' : cpname,
 		'period' : period,
+		'aname'	: aname,
 		"corps" : $("#pk_account").val(),
 	};
 	return queryData;

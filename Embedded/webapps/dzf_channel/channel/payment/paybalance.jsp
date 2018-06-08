@@ -56,7 +56,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="width:450px; height:280px;" data-options="closed:true">
+		<div class="qijian_box" id="qrydialog" style="width:450px; height:300px;" data-options="closed:true">
 			<s class="s"><i class="i"></i> </s>
 			<h3> 
 				<span>查询</span>
@@ -105,6 +105,11 @@
 				<label style="width:70px;text-align:right">加盟商：</label>
 				<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
 				<input id="pk_account" type="hidden">
+			</div>
+			<div class="time_col time_colp10">
+				<label style="text-align:right;width: 70px;">大区：</label> 
+				<input id="aname"  name="aname" class="easyui-combobox" style="width: 290px; height: 28px;" 
+					data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 			</div>
 			<p style="border: none;margin-top: 5px">
 				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
