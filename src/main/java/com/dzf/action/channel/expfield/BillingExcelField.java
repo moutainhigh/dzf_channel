@@ -25,6 +25,8 @@ public class BillingExcelField implements IExceport<BillingInvoiceVO>{
 	private String corpname = null;
 	
 	private Fieldelement[] fields = new Fieldelement[]{
+			new Fieldelement("areaname", "大区",false,0,false),
+			new Fieldelement("vprovname", "省份",false,0,false),
 			new Fieldelement("corpcode", "加盟商编码",false,0,false),
 			new Fieldelement("corpname", "加盟商名称",false,0,false),
 			new Fieldelement("debittotalmny", "累计扣款金额",true,2,false),
