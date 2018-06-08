@@ -131,61 +131,11 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 					json.setRows(rightlist);
 				}
 			}
-//			ChnPayBillVO[] retVOs = payconfSer.operate(billVOs, opertype, getLoginUserid(),vreason);
-//			if(retVOs != null && retVOs.length > 0){
-//				int rignum = 0;
-//				int errnum = 0;
-//				List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
-//				for(ChnPayBillVO retvo : retVOs){
-//					if(StringUtil.isEmpty(retvo.getVerrmsg() )){
-//						rignum++;
-//						rightlist.add(retvo);
-//					}else{
-//						errnum++;
-//					}
-//				}
-//				json.setSuccess(true);
-//				if(rignum > 0 && rignum == retVOs.length){
-//					json.setRows(retVOs);
-//					json.setMsg("成功"+rignum+"条");
-//				}else if(errnum > 0){
-//					json.setMsg("成功"+rignum+"条，失败"+errnum+"条，");
-//					json.setStatus(-1);
-//					if(rignum > 0){
-//						json.setRows(rightlist.toArray(new ChnPayBillVO[0]));
-//					}
-//				}
-//			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}
-	
-//	/**
-//	 * 查询单个数据
-//	 */
-//	public void queryByID(){
-//		Json json = new Json();
-//		try {
-//			ChnPayBillVO chn = new ChnPayBillVO();
-//			String pk_corp = getLogincorppk();
-//			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
-//			if(StringUtil.isEmpty(chn.getPk_paybill())){
-//				throw new BusinessException("主键为空");
-//			}
-//			if (StringUtil.isEmpty(chn.getPk_corp())){
-//				chn.setPk_corp(pk_corp);
-//			}
-//			ChnPayBillVO recust = payconfSer.queryByID(chn.getPk_paybill());
-//			json.setSuccess(true);
-//			json.setRows(recust);
-//			json.setMsg("查询成功!");
-//		} catch (Exception e) {
-//			printErrorLog(json, log, e, "查询失败");
-//		}
-//		writeJson(json);
-//	}
 	
 	/**
 	 * 获取附件显示图片
@@ -247,7 +197,6 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			ChnPayBillVO vo = payconfSer.queryByID(billid);
 			fileis = new FileInputStream(vo.getVfilepath());
 			getResponse().setContentType("application/octet-stream");
-			//getResponse().addHeader("Content-Disposition", "attachment;filename=" + new String(docvo.getDocName().getBytes("UTF-8"), "ISO8859-1"));
 			String formattedName = URLEncoder.encode(vo.getDocName(), "UTF-8");
 			getResponse().addHeader("Content-Disposition", "attachment;filename=" + 
 					new String(vo.getDocName().getBytes("UTF-8"), "ISO8859-1") + ";filename*=UTF-8''" + formattedName);
