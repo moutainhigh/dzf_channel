@@ -1,7 +1,5 @@
 var contextPath = DZF.contextPath;
 var grid;
-//var loadrows = null;
-//var isenter = false;//是否快速查询
 
 $(function() {
 	load();
@@ -280,10 +278,6 @@ function load(){
 		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
-//            if(!isenter){
-//				loadrows = data.rows;
-//			}
-//			isenter = false;
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
@@ -349,23 +343,6 @@ function fastQry(){
             	$('#grid').datagrid('options').queryParams = queryParams;
             	$('#grid').datagrid('reload');
             }
-//            if (filtername != "") {
-//           	 var jsonStrArr = [];
-//           	 if(loadrows){
-//           		 for(var i=0;i<loadrows.length;i++){
-//           			 var row = loadrows[i];
-//           			 if(row != null && !isEmpty(row["corpnm"])){
-//           				 if(row["corpnm"].indexOf(filtername) >= 0){
-//           					 jsonStrArr.push(row);
-//           				 } 
-//           			 }
-//           		 }
-//           		 isenter = true;
-//           		 $('#grid').datagrid('loadData',jsonStrArr);  
-//           	 }
-//            }else{
-//           	 $('#grid').datagrid('loadData',loadrows);
-//            } 
          }
    });
 }
@@ -530,25 +507,6 @@ function showImage(billid){
 			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 	  		+'</a></div>','原图');
-/*	$("#tpfd").dialog({
-		title: '附件浏览' ,
-		width:$(window).width()-100,
-		height:$(window).height()-100,
-		left: 10,
-		top: 10,
-		cache: false,
-		resizable: true,
-		center : true,
-		align:"center",
-		content : '<div style="overflow:scroll;height:100%;" >'+
-		'<a href="javascript:void(0)"   onmouseover="showTips(' + 0 + ')" onmouseout="hideTips(' + 0 + ')"  > ' +
-			'<span><img alt="无法显示图片" src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">' + 
-				  '<div id="reUpload' + 0 +'" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
-				  		'<h4><span id="tips'+0+'"></span></h4> '+
-				  '</div>  </span>' +
-	   '</a> </div>',
-		onLoad:function(){}
-});*/
 }
 
 /**

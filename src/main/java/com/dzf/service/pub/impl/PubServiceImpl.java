@@ -395,7 +395,7 @@ public class PubServiceImpl implements IPubService {
 	             retstr= sql.toString();
 			}else if(qryCorpIds!=null && qryCorpIds.size()>0){
 				sql.append(" and ba.pk_corp  in (");
-	            sql.append(SqlUtil.buildSqlConditionForIn(new String[qryCorpIds.size()]));
+	            sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 	            sql.append(" )");
 	            retstr= sql.toString();
 			}
