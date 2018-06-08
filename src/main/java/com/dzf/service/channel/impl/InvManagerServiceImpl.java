@@ -170,7 +170,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         }
         if(vo.getDr() != null && vo.getDr() == -1){//加盟商参照
         	if(!pubService.checkIsLeader(vo.getEmail())){
-        		String condition = pubService.makeCondition(vo.getEmail());
+        		String condition = pubService.makeCondition(vo.getEmail(),null);
         		if(condition!=null){
         			sql.append(condition);
         		}else{

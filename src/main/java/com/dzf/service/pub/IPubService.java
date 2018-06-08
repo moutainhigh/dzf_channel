@@ -83,9 +83,10 @@ public interface IPubService {
 	/**
 	 * 指定用户id,构造    获取其本身负责的加盟商客户  sql表达式
 	 * @param cuserid
+	 * @param areaname
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public String makeCondition(String cuserid) throws DZFWarpException;
+	public String makeCondition(String cuserid,String areaname) throws DZFWarpException;
 	
 }
