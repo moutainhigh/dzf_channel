@@ -271,6 +271,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	@FieldAlias("cts")
 	private DZFDateTime checkts;//数据校验时间戳
+	
+	//查询用的
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+	
+	@FieldAlias("ovince")
+	public Integer vprovince;// 省市
+
 
 	public String getVadviser() {
 		return vadviser;
@@ -320,8 +328,24 @@ public class ContractConfrimVO extends SuperVO {
 		this.dbegindate = dbegindate;
 	}
 
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
 	public void setDenddate(DZFDate denddate) {
 		this.denddate = denddate;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
 	}
 
 	public void setIsnconfirm(DZFBoolean isnconfirm) {

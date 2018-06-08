@@ -87,6 +87,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				String sql = contractconfser.getQrySql(paramvo.getCuserid());
 				paramvo.setVqrysql(sql);
 			}
+			paramvo.setCuserid(getLoginUserid());
 			int total = contractconfser.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){

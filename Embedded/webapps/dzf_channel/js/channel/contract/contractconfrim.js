@@ -368,6 +368,7 @@ function reloadData(){
 	queryParams.cpkid = $("#corpkid_ae").val();
 	queryParams.uid = $("#managerid").val();
 	queryParams.corptype = $('#corptype').combobox('getValue');
+	queryParams.aname = $("#aname").combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	if(ischeck){
@@ -477,12 +478,6 @@ function load(){
 //			sortable:true,
 //			sorter:orderfun,
 			hidden : true
-		},{
-			width : '140',
-			title : '大区',
-			align : 'left',
-            halign: 'center',
-			field : 'aname'
 		}, {
 			width :'100',
 			title : '存量客户',
@@ -496,6 +491,12 @@ function load(){
 			halign:'center',
 			field : 'submitime',
 			sortable:true,
+		},{
+			width : '140',
+			title : '大区',
+			align : 'left',
+            halign: 'center',
+			field : 'aname'
 		}, {
 			width : '150',
 			title : '地区',
