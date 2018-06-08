@@ -13,6 +13,7 @@ $(function() {
 	initManagerRef();
 	load();
 	fastQry();
+	initArea();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
 	loadJumpData();
 });
@@ -167,6 +168,9 @@ function initChannel(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-1"
+    				},
                     buttons: '#chnBtn'
                 });
             }
@@ -219,6 +223,7 @@ function selectCorps(){
 function clearParams(){
 	$('#corpkna_ae').combobox('readonly',true);
 	$("#pk_account").val(null);
+	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
 	$("#corpkid_ae").val(null);
 	$("#corpkna_ae").textbox("setValue",null);
@@ -472,6 +477,12 @@ function load(){
 //			sortable:true,
 //			sorter:orderfun,
 			hidden : true
+		},{
+			width : '140',
+			title : '大区',
+			align : 'left',
+            halign: 'center',
+			field : 'aname'
 		}, {
 			width :'100',
 			title : '存量客户',
@@ -689,6 +700,24 @@ function load(){
 			calFooter();
             $('#grid').datagrid("scrollTo",0);
 		},
+	});
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
 	});
 }
 

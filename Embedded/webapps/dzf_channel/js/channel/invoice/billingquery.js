@@ -11,6 +11,7 @@ $(window).resize(function() {
 $(function(){
 	initListener();
 	initDataGrid();
+	initArea();
 	initChannel();
 //	reloadData();
 });
@@ -89,6 +90,8 @@ function initDataGrid(){
 //		pageSize : 20,
 //		pageList : [ 20, 50, 100, 200 ],
 		columns : [[{width : '100',title : '',field : 'id',checkbox: true},
+		            {width : '140',title : '大区',field : 'aname',align : 'left'},
+		            {width : '140',title : '省份',field : 'provname',align : 'left'},
 		            {width : '150',title : '加盟商编码',field : 'ccode',align:'left'},
 		            {width : '260',title : '加盟商名称',field : 'cname',align:'left'},
 		            {width : '120',title : '累计扣款金额',field : 'dtotalmny',align:'right',
@@ -153,6 +156,24 @@ function calFooter(){
     $('#grid').datagrid('reloadFooter',fs);
 }
 
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
 
 //初始化加盟商
 function initChannel(){
@@ -168,6 +189,9 @@ function initChannel(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-1"
+    				},
                     buttons: '#kj_buttons'
                 });
             }
@@ -182,6 +206,7 @@ function reloadData(){
     $('#grid').datagrid('load', {
     	corps : $("#pk_account").val(),
         bdate: bdate,
+        aname: $("#aname").combobox('getValue'),
     });
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
@@ -213,6 +238,7 @@ function dClickCompany(rowTable){
 
 function clearParams(){
 	$("#pk_account").val(null);
+	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
 }
 

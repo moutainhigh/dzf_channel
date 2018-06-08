@@ -5,6 +5,7 @@ $(function() {
 	load();
 	initListener();
 	initChannel();
+	initArea();
 });
 
 /**
@@ -43,11 +44,32 @@ function initChannel(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-1"
+    				},
                     buttons: '#chnBtn'
                 });
             }
         }]
     });
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
 }
 
 /**
@@ -89,6 +111,7 @@ function selectCorps(){
  */
 function clearParams(){
 	$("#pk_account").val(null);
+	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
 }
 
@@ -104,6 +127,7 @@ function reloadData(){
 	queryParams.enddate = edate;
 	queryParams.qtype = $('#qtype').combobox('getValue');
 	queryParams.cpid = $('#pk_account').val();
+	queryParams.aname = $("#aname").combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
@@ -130,6 +154,12 @@ function load(){
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
+		},{
+			width : '140',
+			title : '大区',
+			align : 'left',
+            halign: 'center',
+			field : 'aname'
 		}, {
 			width : '230',
 			title : '加盟商',
@@ -177,10 +207,11 @@ function load(){
 				}
 			}
 		},{
-			width : '100',
+			width : '80',
 			title : '审核状态',
             halign:'center',
 			field : 'statu',
+			align:'center',
 			formatter : function(value) {
 				if (value == '0')
 					return '待提交';
@@ -192,10 +223,11 @@ function load(){
 					return '拒绝审核';
 			}
 		}, {
-			width : '180',
+			width : '160',
 			title : '提交时间',
 			align : 'left',
             halign: 'center',
+            align:'center',
 			field : 'subtime',
 		}, /*{
 			width : '140',

@@ -57,7 +57,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 160px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 190px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -71,6 +71,11 @@
 					<label style="width:80px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:right;width: 80px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 219px; height: 28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				
 			</form>
