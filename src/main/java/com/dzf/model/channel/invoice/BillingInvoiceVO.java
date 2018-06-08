@@ -34,6 +34,18 @@ public class BillingInvoiceVO extends SuperVO{
     private String[] corps;//渠道商ids
     
     private String bdate;//查询开始时间
+    
+	@FieldAlias("uid")
+	private String cuserid;// 用户ID
+    
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+
+    @FieldAlias("provname")
+	public String vprovname;//省市名称
+
+	@FieldAlias("ovince")
+	public Integer vprovince;// 省市
 
 	public String getBdate() {
         return bdate;
@@ -55,7 +67,39 @@ public class BillingInvoiceVO extends SuperVO{
         return debittotalmny;
     }
 
-    public void setDebittotalmny(DZFDouble debittotalmny) {
+    public String getCuserid() {
+		return cuserid;
+	}
+
+	public void setCuserid(String cuserid) {
+		this.cuserid = cuserid;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
+	public void setDebittotalmny(DZFDouble debittotalmny) {
         this.debittotalmny = debittotalmny;
     }
 

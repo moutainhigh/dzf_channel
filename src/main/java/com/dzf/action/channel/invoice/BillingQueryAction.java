@@ -63,6 +63,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 			if(paramvo.getBdate() == null){
 			    paramvo.setBdate(new DZFDate().toString());
 			}
+			paramvo.setCuserid(getLoginUserid());
 			List<BillingInvoiceVO> rows = billingQueryServiceImpl.query(paramvo);
 //			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setMsg("查询成功！");

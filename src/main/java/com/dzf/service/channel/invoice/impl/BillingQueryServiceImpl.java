@@ -3,6 +3,7 @@ package com.dzf.service.channel.invoice.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.AccountVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
@@ -25,6 +27,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
+import com.dzf.service.pub.IPubService;
 
 @Service("billingQueryServiceImpl")
 public class BillingQueryServiceImpl implements IBillingQueryService{
@@ -32,33 +35,51 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
+    @Autowired
+    private IPubService pubService;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BillingInvoiceVO> query(BillingInvoiceVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,");
+		sql.append(" select ba.pk_corp,ba.innercode as corpcode,");
+		sql.append(" ba.unitname as corpname,ba.vprovince,ba.citycounty as vprovname,");
 		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
-		sql.append(" from bd_account a");
-		sql.append(" left join cn_detail detail on a.pk_corp = detail.pk_corp ");
+		sql.append(" from bd_account ba");
+		sql.append(" left join cn_detail detail on ba.pk_corp = detail.pk_corp ");
 		sql.append(" and nvl(detail.dr,0) = 0 and detail.iopertype = 2 and detail.ipaytype = 2 ");
 		if (!StringUtil.isEmpty(paramvo.getBdate())) {
 			sql.append(" and detail.doperatedate <= ?");
 			sp.addParam(paramvo.getBdate());
 		}
-		sql.append(" where a.ischannel = 'Y'  ");
+		sql.append(" where ba.ischannel = 'Y'  ");
 		if (null != paramvo.getCorps() && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-			sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append(" group by a.pk_corp,a.innercode ,a.unitname");
+    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
+    	if(condition!=null && !condition.equals("flg")){
+    		sql.append(condition);
+    	}else{
+    		return new ArrayList<BillingInvoiceVO>();
+    	}
+		sql.append(" group by ba.pk_corp,ba.innercode ,ba.unitname,ba.vprovince,ba.citycounty");
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 				new BeanListProcessor(BillingInvoiceVO.class));
 		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(paramvo);
+		Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
 		if (list != null && list.size() > 0) {
 			List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
 			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 2);
+			CorpVO corpvo = null;
 			for (BillingInvoiceVO bvo : list) {
+				if(areaMap!=null && !areaMap.isEmpty()){
+					String area = areaMap.get(bvo.getVprovince());
+					if(!StringUtil.isEmpty(area)){
+						bvo.setAreaname(area);
+					}
+				}
 				BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
 				if (binvo != null) {
 					bvo.setBilltotalmny(CommonUtil.getDZFDouble(binvo.getBilltotalmny()));
