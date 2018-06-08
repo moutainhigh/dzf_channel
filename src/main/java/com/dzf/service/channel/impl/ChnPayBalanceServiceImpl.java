@@ -31,6 +31,7 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
+import com.dzf.service.pub.IPubService;
 
 @Service("chnpaybalanceser")
 public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
@@ -38,10 +39,24 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
+    @Autowired
+    private IPubService pubService;
+	
 	@Override
 	public List<ChnBalanceRepVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<ChnBalanceRepVO> retlist = new ArrayList<ChnBalanceRepVO>();
 		List<String> pklist = new ArrayList<String>();
+		String areaname=paramvo.getAreaname();
+		String condition = pubService.makeCondition(paramvo.getCuserid(),areaname);
+	  	if(condition==null){
+	  		return null;
+    	}
+	  	paramvo.setAreaname(condition);
+//    	if(condition!=null && !condition.equals("flg")){
+//    		querysql.append(condition);
+//    	}else{
+//    		return null;
+//    	}
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);// 查询期初余额
 		Map<String, ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);// 查询明细金额
 		if(paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 	|| paramvo.getQrytype() == 2 )){//全部查询、预付款查询
@@ -66,6 +81,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			CorpVO accvo = null;
 			String ipaytype = null;
 			Integer paytype = null;
+			Map<Integer, String> areaMap = pubService.getAreaMap(areaname,3);
 			for (String pk : pklist) {
 				repvo = new ChnBalanceRepVO();
 				ipaytype = pk.substring(pk.indexOf(",") + 1);
@@ -75,6 +91,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				if (accvo != null) {
 					repvo.setCorpname(accvo.getUnitname());
 					repvo.setInnercode(accvo.getInnercode());
+					if(areaMap!=null && !areaMap.isEmpty()){
+						repvo.setAreaname(areaMap.get(accvo.getVprovince()));
+					}
 				}
 				if (!StringUtil.isEmpty(paramvo.getCorpname())) {
 					if (repvo.getInnercode().indexOf(paramvo.getCorpname()) == -1
@@ -196,9 +215,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private void qryNoDeductConData(QryParamVO paramvo,List<String> pklist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT t.pk_corp  \n") ;
+		sql.append("SELECT DISTINCT t.pk_corp \n") ;
 		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append(" LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
 		sql.append("   AND t.vstatus = 1  \n") ; 
 		sql.append("   AND t.pk_confrim NOT IN (SELECT l.pk_bill  \n") ; 
@@ -209,6 +230,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 	        sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
 	    }
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			sql.append(paramvo.getAreaname());
+		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
 				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
@@ -220,11 +244,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND deductdata >= ? \n");
+				sql.append(" AND t.deductdata >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND deductdata <= ? \n");
+				sql.append(" AND t.deductdata <= ? \n");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
@@ -357,11 +381,16 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(nvl(ct.nbookmny, 0)) AS nbookmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
+		sql.append(" LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			sql.append(paramvo.getAreaname());
 		}
 //		if(pklist != null && pklist.size() > 0){
 //			String where = SqlUtil.buildSqlForIn("t.pk_corp", pklist.toArray(new String[0]));
@@ -454,11 +483,16 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("                END)) AS nbookmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n") ; 
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append("  LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			sql.append(paramvo.getAreaname());
 		}
 //		if(pklist != null && pklist.size() > 0){
 //			String where = SqlUtil.buildSqlForIn("t.pk_corp", pklist.toArray(new String[0]));
@@ -553,40 +587,44 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_corp, \n") ;
-		sql.append("       ipaytype, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 1, nvl(npaymny,0), 0)) AS bail, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0), 0)) AS charge, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 3, nvl(npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(ipaytype, 3, nvl(nusedmny,0), 0)) AS rebate \n") ; 
-		sql.append("  FROM cn_detail \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("SELECT a.pk_corp, \n") ;
+		sql.append("       a.ipaytype, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0), 0)) - \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0), 0)) AS charge, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) - \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; 
+		sql.append("  FROM cn_detail a \n") ; 
+		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        sql.append(" and pk_corp  in (" + corpIdS + ")");
+	        sql.append(" and a.pk_corp  in (" + corpIdS + ")");
 	    }
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			sql.append(paramvo.getAreaname());
+		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND ipaytype = ? \n");
+			sql.append(" AND a.ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(doperatedate,1,7) < ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) < ? \n");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND doperatedate < ? \n");
+				sql.append(" AND a.doperatedate < ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-			sql.append(" AND pk_corp = ? \n");
+			sql.append(" AND a.pk_corp = ? \n");
 			spm.addParam(paramvo.getPk_corp());
 		}
-		sql.append(" GROUP BY pk_corp, ipaytype \n");
-		sql.append(" ORDER BY pk_corp \n");
+		sql.append(" GROUP BY a.pk_corp, a.ipaytype \n");
+		sql.append(" ORDER BY a.pk_corp \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -601,43 +639,47 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_corp, \n") ;
-		sql.append("       ipaytype, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 1, nvl(npaymny,0), 0)) AS bail, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(npaymny,0) ,3 , nvl(npaymny,0),0)) AS npaymny, \n") ; 
-		sql.append("       SUM(decode(ipaytype, 2, nvl(nusedmny,0),3 , nvl(nusedmny,0),0)) AS nusedmny, \n") ; 
-		sql.append("       MIN(CASE ideductpropor WHEN 0 THEN NULL ELSE ideductpropor END) AS ideductpropor \n") ; 
-		sql.append("  FROM cn_detail \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append("SELECT a.pk_corp, \n") ;
+		sql.append("       a.ipaytype, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0) ,3 , nvl(a.npaymny,0),0)) AS npaymny, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0),3 , nvl(a.nusedmny,0),0)) AS nusedmny, \n") ; 
+		sql.append("       MIN(CASE a.ideductpropor WHEN 0 THEN NULL ELSE a.ideductpropor END) AS ideductpropor \n") ; 
+		sql.append("  FROM cn_detail a \n") ; 
+		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        sql.append(" and  pk_corp  in (" + corpIdS + ")");
+	        sql.append(" AND a.pk_corp  in (" + corpIdS + ")");
 	    }
+		if(!StringUtil.isEmpty(paramvo.getAreaname())){
+			sql.append(paramvo.getAreaname());
+		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND ipaytype = ? \n");
+			sql.append(" AND a.ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(doperatedate,1,7) >= ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) >= ? \n");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(doperatedate,1,7) <= ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) <= ? \n");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND doperatedate >= ? \n");
+				sql.append(" AND a.doperatedate >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND doperatedate <= ? \n");
+				sql.append(" AND a.doperatedate <= ? \n");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" GROUP BY pk_corp, ipaytype \n");
-		sql.append(" ORDER BY pk_corp \n");
+		sql.append(" GROUP BY a.pk_corp,a.ipaytype \n");
+		sql.append(" ORDER BY a.pk_corp \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

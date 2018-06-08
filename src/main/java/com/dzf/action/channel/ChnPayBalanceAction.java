@@ -66,6 +66,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+			paramvo.setCuserid(getLoginUserid());
 			List<ChnBalanceRepVO> clist = paybalanSer.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
@@ -190,6 +191,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			
 			//字符类型字段(取界面元素id)
 			List<String> list = new ArrayList<String>();
+			list.add("aname");
 			list.add("incode");
 			list.add("corpnm");
 //			list.add("num");

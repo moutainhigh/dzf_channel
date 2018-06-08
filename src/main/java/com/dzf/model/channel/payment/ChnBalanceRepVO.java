@@ -71,6 +71,15 @@ public class ChnBalanceRepVO extends SuperVO{
     @FieldAlias("dednum")
     private Integer idednum;//非存量合同数
     
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+
+    @FieldAlias("provname")
+	public String vprovname;//省市名称
+
+	@FieldAlias("ovince")
+	public Integer vprovince;// 省市
+    
 	public Integer getIcustnum() {
 		return icustnum;
 	}
@@ -89,6 +98,30 @@ public class ChnBalanceRepVO extends SuperVO{
 
 	public void setIzeronum(Integer izeronum) {
 		this.izeronum = izeronum;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
 	}
 
 	public void setIdednum(Integer idednum) {
