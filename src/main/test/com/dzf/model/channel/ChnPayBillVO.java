@@ -14,7 +14,7 @@ import com.dzf.pub.lang.DZFDouble;
  */
 public class ChnPayBillVO extends SuperVO {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4729021634998726662L;
 	
 	@FieldAlias("billid")
 	private String pk_paybill;// 主键
@@ -23,7 +23,7 @@ public class ChnPayBillVO extends SuperVO {
 	private String pk_corp;// 机构主键
 	
 	@FieldAlias("corpnm")
-	private String corpname;
+	private String corpname;// 机构名称
 	
 	@FieldAlias("vcode")
 	private String vbillcode;// 单据号
@@ -58,33 +58,43 @@ public class ChnPayBillVO extends SuperVO {
 	private Integer dr;
 
 	private DZFDateTime ts;
-
+	
 	@FieldAlias("npmny")
 	private DZFDouble npaymny;// 付款金额
-
+	
 	@FieldAlias("ipmode")
-	private Integer ipaymode;// 1:银行转账；2:支付宝；3：微信；
-
+	private Integer ipaymode;// 1:银行转账；2:支付宝；3：微信
+	
 	@FieldAlias("iptype")
-	private Integer ipaytype;// 1:加盟费；2：预付款；3、其他
-
+	private Integer ipaytype;// 1:加盟费；2：预付款
+	
 	@FieldAlias("status")
-	private Integer vstatus;// 1-待提交； 2-待确认（修改为待审核）；3-已确认；4-已驳回；5:-待确认；
+	private Integer vstatus;// 1：待提交； 2：待确认（修改为待审核）；3：已确认；4：已驳回；5:待确认；
+	
+    @FieldAlias("tstp")
+    private DZFDateTime tstamp;//时间戳
+    
+    @FieldAlias("errmsg")
+    private String verrmsg;//错误信息
+    
+    @FieldAlias("doc_name")
+    private String docName; // 附件名称(中文)
 
-	@FieldAlias("tstp")
-	private DZFDateTime tstamp;
+    @FieldAlias("doc_owner")
+    private String docOwner; // 上传人
 
-	@FieldAlias("doc_name")
-	private String docName; // 附件名称(中文)
-
-	@FieldAlias("doc_owner")
-	private String docOwner; // 上传人
-
-	@FieldAlias("doc_time")
-	private DZFDateTime docTime; // 上传时间
-
-	@FieldAlias("fpath")
-	private String vfilepath;// 文件存储路径
+    @FieldAlias("doc_time")
+    private DZFDateTime docTime; // 上传时间
+    
+    @FieldAlias("fpath")
+    private String vfilepath;// 文件存储路径
+    
+    @FieldAlias("vbname")
+    private String vbankname;//付款银行
+    @FieldAlias("vbcode")
+    private String vbankcode;//付款账号
+    
+    private String vreason;//驳回原因
 
 	@FieldAlias("subtime")
 	private DZFDateTime submitime;// 提交时间
@@ -115,6 +125,38 @@ public class ChnPayBillVO extends SuperVO {
 
 	@FieldAlias("datime")
 	private DZFDateTime daudittime;// 审核时间
+
+	public String getVerrmsg() {
+		return verrmsg;
+	}
+
+	public void setVerrmsg(String verrmsg) {
+		this.verrmsg = verrmsg;
+	}
+
+	public String getVbankname() {
+		return vbankname;
+	}
+
+	public void setVbankname(String vbankname) {
+		this.vbankname = vbankname;
+	}
+
+	public String getVbankcode() {
+		return vbankcode;
+	}
+
+	public void setVbankcode(String vbankcode) {
+		this.vbankcode = vbankcode;
+	}
+
+	public String getVreason() {
+		return vreason;
+	}
+
+	public void setVreason(String vreason) {
+		this.vreason = vreason;
+	}
 
 	public String getVauditid() {
 		return vauditid;
