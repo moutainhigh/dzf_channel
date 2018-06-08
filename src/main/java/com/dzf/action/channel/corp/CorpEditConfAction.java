@@ -65,6 +65,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			}
 		    QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+			paramvo.setCuserid(getLoginUserid());
 			int total = confser.queryTotalRow(paramvo, getLoginUserInfo());
 			json.setTotal((long)(total));
 			if(total > 0){

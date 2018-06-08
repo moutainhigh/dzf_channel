@@ -1,6 +1,7 @@
 package com.dzf.service.channel.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.ICorpEditConfService;
+import com.dzf.service.pub.IPubService;
 
 @Service("corpeditconfser")
 public class CorpEditConfServiceImpl implements ICorpEditConfService {
@@ -32,10 +34,16 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+    @Autowired
+    private IPubService pubService;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo, UserVO uservo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(paramvo,uservo);
+		if(sqpvo==null){
+        	return 0;
+        }
 		return multBodyObjectBO.queryDataTotal(CorpNameEVO.class,sqpvo.getSql(), sqpvo.getSpm());
 	}
 
@@ -47,7 +55,14 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 					sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
 			CorpVO corpvo = null;
+			Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
 			for(CorpNameEVO vo : list){
+				if(areaMap!=null && !areaMap.isEmpty()){
+					String area = areaMap.get(vo.getVprovince());
+					if(!StringUtil.isEmpty(area)){
+						vo.setAreaname(area);
+					}
+				}
 				corpvo = CorpCache.getInstance().get(null, vo.getFathercorp());
 				if(corpvo != null){
 					vo.setFathername(corpvo.getUnitname());
@@ -74,27 +89,33 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * \n") ;
-		sql.append("  FROM cn_corpnameedit \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
+		sql.append(" SELECT a.*,ba.vprovince FROM cn_corpnameedit a \n") ;
+		sql.append(" LEFT JOIN bd_account ba on a.fathercorp=ba.pk_corp ");
+		sql.append(" WHERE nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
+    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
+    	if(condition!=null && !condition.equals("flg")){
+    		sql.append(condition);
+    	}else{
+    		return null;
+    	}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 		    String[] strs = paramvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-		    sql.append(" AND fathercorp in (").append(inSql).append(")");
+		    sql.append(" AND a.fathercorp in (").append(inSql).append(")");
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append("   AND istatus = ? \n");
+			sql.append("   AND a.istatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append("   AND istatus != ? \n");
+			sql.append("   AND a.istatus != ? \n");
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_0);
 		}
 		if(paramvo.getBegdate() != null){
-			sql.append("   AND substr(vsubmittime,1,10) >= ? \n");
+			sql.append("   AND substr(a.vsubmittime,1,10) >= ? \n");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append("   AND substr(vsubmittime,1,10) <= ? \n");
+			sql.append("   AND substr(a.vsubmittime,1,10) <= ? \n");
 			spm.addParam(paramvo.getEnddate());
 		}
 		qryvo.setSql(sql.toString());
