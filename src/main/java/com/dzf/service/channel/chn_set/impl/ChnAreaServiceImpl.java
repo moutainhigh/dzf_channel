@@ -300,7 +300,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
 			spm.addParam(paramvo.getQrytype());
 		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3 ){//0是为了销售数据分析下拉，这个暂时没有权限限制
+		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0 ){//0是为了销售数据分析下拉，这个暂时没有权限限制
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -324,7 +324,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
 			spm.addParam(paramvo.getQrytype());
 		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3 ){
+		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0 ){
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -353,7 +353,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
 			spm.addParam(paramvo.getQrytype());
 		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=3){
+		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0){
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
