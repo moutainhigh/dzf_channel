@@ -704,6 +704,9 @@ function load(){
 	});
 }
 
+/**
+ * 查询大区初始化
+ */
 function initArea(){
 	$.ajax({
 		type : 'POST',
