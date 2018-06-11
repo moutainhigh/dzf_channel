@@ -8,10 +8,10 @@ import com.dzf.pub.IExceport;
 import com.dzf.pub.lang.DZFDate;
 
 /**
- * 付款单确认导出配置
+ * 付款单审批导出配置
  *
  */
-public class ChnPayBillExcelField implements IExceport<ChnPayBillVO> {
+public class ChnPayAuditExcelField implements IExceport<ChnPayBillVO> {
 	
 	private ChnPayBillVO[] vos = null;
 	
@@ -34,7 +34,7 @@ public class ChnPayBillExcelField implements IExceport<ChnPayBillVO> {
 			new Fieldelement("vbankcode", "付款账号",false,0,false),
 			new Fieldelement("vstatus", "单据状态",false,0,false,new String[]{"","待提交","待确认","已确认","已驳回","待确认"}),
 			new Fieldelement("vmemo", "备注",false,0,false),
-			new Fieldelement("dconfirmtime", "收款确认时间",false,0,false),
+			new Fieldelement("dapprovetime", "收款审批时间",false,0,false),
 			new Fieldelement("vreason","驳回说明",false,0,false),
 	};
 
@@ -76,17 +76,17 @@ public class ChnPayBillExcelField implements IExceport<ChnPayBillVO> {
 
 	@Override
 	public String getExcelport2003Name() {
-		return "付款单确认" + now + ".xls";
+		return "付款单审批" + now + ".xls";
 	}
 
 	@Override
 	public String getExcelport2007Name() {
-		return "付款单确认" + now + ".xlsx";
+		return "付款单审批" + now + ".xlsx";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "付款单确认";
+		return "付款单审批";
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ChnPayBillExcelField implements IExceport<ChnPayBillVO> {
 
 	@Override
 	public String getSheetName() {
-		return "付款单确认";
+		return "付款单审批";
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
 import com.dzf.action.channel.expfield.ChnPayBillExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnPayBillVO;
@@ -155,7 +156,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				isexists = false;
 			}
 			String fpath = "";
-			if(vo != null){
+			if (vo != null) {
 				fpath = vo.getVfilepath();
 			}
 			File afile = new File(fpath);
@@ -163,8 +164,10 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				isexists = false;
 			}
 			if (isexists) {
-				String path = getRequest().getSession().getServletContext().getRealPath("/");
-				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
+				// String path =
+				// getRequest().getSession().getServletContext().getRealPath("/");
+				// String typeiconpath = path + "images" + File.separator +
+				// "typeicon" + File.separator;
 				os = getResponse().getOutputStream();
 				is = new FileInputStream(afile);
 				IOUtils.copy(is, os);
@@ -172,16 +175,16 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		} catch (Exception e) {
 
 		} finally {
-				try {
-				    if (is != null) {
-				        is.close();
-				    }
-				    if(os != null){
-				        os.close();
-				    }
-				} catch (IOException e) {
-				    log.error(e.getMessage());
+			try {
+				if (is != null) {
+					is.close();
 				}
+				if (os != null) {
+					os.close();
+				}
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
 		}
 	}
 	
@@ -234,7 +237,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	}
 	
 	/**
-	 * Excel导出方法 
+	 * 付款单确认导出
 	 */
 	public void exportExcel(){
 		String strlist =getRequest().getParameter("strlist");
@@ -247,7 +250,57 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		ChnPayBillVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ChnPayBillVO[].class, JSONConvtoJAVA.getParserConfig());
 		HttpServletResponse response = getResponse();
 		Excelexport2003<ChnPayBillVO> ex = new Excelexport2003<>();
-		ChnPayBillExcelField fields= new ChnPayBillExcelField();
+		ChnPayBillExcelField fields = new ChnPayBillExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+	        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+		} catch (Exception e) {
+			log.error("导出失败",e);
+		}  finally {
+			if(toClient != null){
+				try {
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
+				}
+			}
+			if(servletOutputStream != null){
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 付款单审批导出
+	 */
+	public void exportAuditExcel(){
+		String strlist =getRequest().getParameter("strlist");
+		String qj = getRequest().getParameter("qj");
+		if(StringUtil.isEmpty(strlist)){
+			throw new BusinessException("导出数据不能为空!");
+		}	
+		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new ChnPayBillVO());
+		ChnPayBillVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ChnPayBillVO[].class, JSONConvtoJAVA.getParserConfig());
+		HttpServletResponse response = getResponse();
+		Excelexport2003<ChnPayBillVO> ex = new Excelexport2003<>();
+		ChnPayAuditExcelField fields = new ChnPayAuditExcelField();
 		fields.setVos(expVOs);
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;

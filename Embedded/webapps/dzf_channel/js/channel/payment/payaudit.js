@@ -515,6 +515,7 @@ function doExport(){
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
 	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');
-	Business.getFile(DZF.contextPath+ '/chnpay/chnpayconf!exportExcel.action',{'strlist':JSON.stringify(datarows),'qj':qj}, true, true);
+	Business.getFile(DZF.contextPath+ '/chnpay/chnpayconf!exportAuditExcel.action',
+			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
 }
 
