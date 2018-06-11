@@ -161,6 +161,41 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			return updateRejectData(billvo, opertype,vreason, cuserid);
 		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_2){//取消审批
 			return updateReturnData(billvo, opertype, cuserid);
+		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_10){//收款审批
+			return updateAuditData(billvo, opertype, cuserid);
+		}
+		return billvo;
+	}
+	
+	/**
+	 * 收款审批
+	 * @param billvo
+	 * @param opertype
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private ChnPayBillVO updateAuditData(ChnPayBillVO billvo, Integer opertype, String cuserid) throws DZFWarpException{
+		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
+			billvo.setVerrmsg("数据错误");
+			return billvo;
+		}
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
+			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
+				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
+				return billvo;
+			}
+			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
+			billvo.setIrejectype(1);//驳回类型：审批驳回
+			billvo.setVapproveid(cuserid);//审批人
+			billvo.setDapprovedate(new DZFDate());//审批日期
+			billvo.setDapprovetime(new DZFDateTime());//审批时间
+			billvo.setTstamp(new DZFDateTime());//操作时间
+			singleObjectBO.update(billvo, new String[]{"vstatus","vapproveid", "dapprovetime", "tstamp"});
+		} finally {
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}
@@ -186,10 +221,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				return billvo;
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_2);//付款单状态 待审批
-			billvo.setVconfirmid(cuserid);//取消审批人
-			billvo.setDconfirmtime(new DZFDateTime());//取消审批时间
+			billvo.setVapproveid(null);//审批人
+			billvo.setDapprovedate(null);//审批日期
+			billvo.setDapprovetime(null);//审批时间
 			billvo.setTstamp(new DZFDateTime());//操作时间
-			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
+			singleObjectBO.update(billvo, new String[]{"vstatus","vapproveid", "dapprovedate", "dapprovetime","tstamp"});
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
@@ -369,10 +405,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 					return billvo;
 				}
 				billvo.setIrejectype(1);//驳回类型：审批驳回
-				billvo.setVauditid(cuserid);//确认-驳回人
-				billvo.setDaudittime(new DZFDateTime());//确认-驳回时间
-				upstr.add("vauditid");
-				upstr.add("daudittime");
+				billvo.setVapproveid(cuserid);//审批-驳回人
+				billvo.setDapprovedate(new DZFDate());//审批-驳回日期
+				billvo.setDapprovetime(new DZFDateTime());//审批-驳回时间
+				upstr.add("vapproveid");
+				upstr.add("dapprovedate");
+				upstr.add("dapprovetime");
 			}
 			upstr.add("irejectype");
 			billvo.setVreason(vreason);

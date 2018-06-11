@@ -2,12 +2,13 @@ package com.dzf.model.pub;
 
 public interface IStatusConstant {
 
-	/** 付款单操作类型 (2：取消审批；3：收款确认；4：收款驳回；5：取消确认；9：审批驳回；) */
+	/** 付款单操作类型 (2：取消审批；3：收款确认；4：收款驳回；5：取消确认；9：审批驳回；10：审批通过；) */
 	public static int ICHNOPRATETYPE_2 = 2;
 	public static int ICHNOPRATETYPE_3 = 3; 
 	public static int ICHNOPRATETYPE_4 = 4; 
 	public static int ICHNOPRATETYPE_5 = 5; 
 	public static int ICHNOPRATETYPE_9 = 9;
+	public static int ICHNOPRATETYPE_10 = 10;
 	
 	/** 付款单状态 (1：待提交；2：待审批；3：已确认；4：已驳回；5:待确认；) */
 	public static int IPAYSTATUS_1 = 1;

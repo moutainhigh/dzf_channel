@@ -105,7 +105,12 @@ function viewAttachCard(){
 	$("#attachViewDlg").css("display","block");
 	$("#attachViewDlg").dialog("center");
 }
-//获取附件显示url
+
+/**
+ * 获取附件显示url
+ * @param attach
+ * @returns {String}
+ */
 function getAttachImgUrl(attach){
 	
 	var ext = getFileExt(attach['doc_name']);
@@ -120,7 +125,10 @@ function getAttachImgUrl(attach){
 }
 
 
-//显示附件上的提示
+/**
+ * 显示附件上的提示
+ * @param i
+ */
 function showTips(i){
 
 	var div = "#reUpload"+i;
@@ -131,13 +139,20 @@ function showTips(i){
 	$(tipkey).html(tips);	
 }
 
-//隐藏提示
+/**
+ * 隐藏提示
+ * @param i
+ */
 function hideTips(i){
 	var div = "#reUpload"+i;
 	$(div).css("display","none");	
 }
 
-//获取提示内容
+/**
+ * 获取提示内容
+ * @param i
+ * @returns {String}
+ */
 function getTipContents(i) {
 
 	var tips = "";
@@ -158,44 +173,9 @@ function getTipContents(i) {
 }
 
 /**
- * 双击附件
+ * 双击显示大图
  * @param i
  */
-//function doubleImage(i){
-//	var ext = getFileExt(arrachrows[i]['doc_name']);
-//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
-//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
-//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-//		$("#tpfd").empty();
-//		var offset = $("#tpght").offset();
-//		$("#tpfd").dialog({
-//			title: '原图' ,
-////			width:$("#tpght").width() + 100,
-////			height:$("#tpght").height() + 100,
-////			width:'1160',
-////			height:'90%',
-//			width:$(window).width()-200,
-//			height:$(window).height()-100,
-////			left: offset.left,
-////			top: offset.top,
-//			cache: false,
-//			resizable: true,
-//			center : true,
-//			align:"center",
-//			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
-//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
-//			onLoad:function(){
-//				
-//			}
-//		});
-//	}else if("pdf"==ext.toLowerCase()){
-//		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
-//	}else{
-//		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
-//	}
-//}
-
 function doubleImage(i){
 	var ext = getFileExt(arrachrows[i]['doc_name']);
 	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
@@ -204,22 +184,16 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-//		parent.openFullViewDlg('<div style="overflow:scroll;height:80%"><img id="conturnid" alt="无法显示图片" src="' + src 
-//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>','原图')
-		
 		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
 		+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">','原图')
-		
-////	    var img = img + '<div style="overflow:scroll;height:80%">';
-//		var img = img + '	<img id="conturnid" alt="无法显示图片" src="'+src;
-//		var img = img + '	" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">';
-////		var img = img + '</div>';
-//		parent.openFullViewDlg(img,'原图');
-		
 	}
 }
 
-//获取附件扩展
+/**
+ * 获取附件扩展
+ * @param filename
+ * @returns
+ */
 function getFileExt(filename){
 	
 	var index1=filename.lastIndexOf(".")+1;
@@ -228,44 +202,6 @@ function getFileExt(filename){
 	
 	return ext;
 }
-
-///**
-// * 合同信息双击事件
-// * @param i
-// */
-//function doubleDocImage(i){
-//	var ext = getFileExt(arrachrows[i]['doc_name']);
-//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
-//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
-//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-//		$("#filedoc").empty();
-////		var offset = $("#tpght").offset();
-//		$("#filedoc").dialog({
-//			title: '原图' ,
-////			width:'1160',
-////			height:'90%',
-//			width:$(window).width()-200,
-//			height:$(window).height()-100,
-////			left: offset.left,
-////			top: offset.top,
-//			cache: false,
-//			resizable: true,
-//			center : true,
-//			align:"center",
-//			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src 
-//				+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
-//			onLoad:function(){
-//				
-//			}
-//		});
-//	}else if("pdf"==ext.toLowerCase()){
-//		window.open(DZF.contextPath +'/jslib/pdfjs-1.6.210-dist/web/viewer.jsp?file='+encodeURIComponent(src));
-//	}else{
-//		Business.getFile(DZF.contextPath + '/contract/contractconf!downloadAttach.action', {doc_id:arrachrows[i].doc_id}, true, true);
-//	}
-//	
-//}
 
 /**
  * 设置快捷键

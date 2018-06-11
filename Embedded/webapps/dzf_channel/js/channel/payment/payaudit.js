@@ -219,6 +219,8 @@ function load(){
 					return '已确认';
 				if (value == '4')
 					return '已驳回';
+				if (value == '5')
+					return '待确认';
 			}
 		}, {
 			width : '140',
@@ -232,9 +234,9 @@ function load(){
 			}
 		}, {
 			width : '140',
-			title : '收款确认时间',
+			title : '收款审批时间',
             halign:'center',
-			field : 'dctime',
+			field : 'datime',
 		}, {
 			width : '140',
 			title : '驳回说明',
@@ -401,7 +403,7 @@ function confirm(){
 		postdata["type"] = 9;
 		postdata["vreason"] = $('#vreason').textbox('getValue');
 	}else{
-		postdata["type"] = 2;
+		postdata["type"] = 10;
 	}
 	operatData(postdata,rows);
 	$("#commit").form('clear');
@@ -473,14 +475,22 @@ function operatData(postdata, rows){
 	});
 }
 
+/**
+ * 显示大图
+ * @param billid
+ */
 function showImage(billid){
 	var src = DZF.contextPath + "/chnpay/chnpayconf!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
 	$("#tpfd").empty();
-	parent.openFullViewDlg('<div style="overflow:scroll;height:80%"  >'
-			+'<a  onclick="downFile(\'' +billid + '\',1)"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
-			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
-			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
-	  		+'</a></div>','原图');
+//	parent.openFullViewDlg('<div style="overflow:scroll;height:80%" >'
+//			+'<a  onclick="downFile(\'' +billid + '\',1)" >'
+//			+'<img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
+//			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
+//			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
+//	  		+'</a></div>','原图');
+	var img = '<img id="conturnid" alt="无法显示图片" onclick="downFile(\'' +billid + '\',1)" '+
+		'src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
+	parent.openFullViewDlg(img, '原图');
 }
 
 /**

@@ -234,7 +234,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	}
 	
 	/**
-	 * Excel导出方法  1渠道；2区域；3总
+	 * Excel导出方法 
 	 */
 	public void exportExcel(){
 		String strlist =getRequest().getParameter("strlist");
