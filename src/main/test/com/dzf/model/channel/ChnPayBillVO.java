@@ -118,17 +118,52 @@ public class ChnPayBillVO extends SuperVO {
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
 
-	@FieldAlias("vaid")
-	private String vauditid;// 审核人ID
+	@FieldAlias("approid")
+	private String vapproveid;// 审核人
+	
+	@FieldAlias("approname")
+	private String vapprovename;//审核人名称
 
-	@FieldAlias("vaname")
-	private String vauditname;// 审核人名称
-
-	@FieldAlias("datime")
-	private DZFDateTime daudittime;// 审核时间
+	@FieldAlias("approdate")
+	private DZFDate dapprovedate;// 审核日期
+	
+	@FieldAlias("approtime")
+	private DZFDateTime dapprovetime;// 审核时间
 	
 	@FieldAlias("rejectype")
 	private Integer irejectype;//驳回类型  1：审核驳回；2：确认驳回；
+
+	public String getVapproveid() {
+		return vapproveid;
+	}
+
+	public void setVapproveid(String vapproveid) {
+		this.vapproveid = vapproveid;
+	}
+
+	public String getVapprovename() {
+		return vapprovename;
+	}
+
+	public void setVapprovename(String vapprovename) {
+		this.vapprovename = vapprovename;
+	}
+
+	public DZFDate getDapprovedate() {
+		return dapprovedate;
+	}
+
+	public void setDapprovedate(DZFDate dapprovedate) {
+		this.dapprovedate = dapprovedate;
+	}
+
+	public DZFDateTime getDapprovetime() {
+		return dapprovetime;
+	}
+
+	public void setDapprovetime(DZFDateTime dapprovetime) {
+		this.dapprovetime = dapprovetime;
+	}
 
 	public Integer getIrejectype() {
 		return irejectype;
@@ -168,30 +203,6 @@ public class ChnPayBillVO extends SuperVO {
 
 	public void setVreason(String vreason) {
 		this.vreason = vreason;
-	}
-
-	public String getVauditid() {
-		return vauditid;
-	}
-
-	public void setVauditid(String vauditid) {
-		this.vauditid = vauditid;
-	}
-
-	public String getVauditname() {
-		return vauditname;
-	}
-
-	public void setVauditname(String vauditname) {
-		this.vauditname = vauditname;
-	}
-
-	public DZFDateTime getDaudittime() {
-		return daudittime;
-	}
-
-	public void setDaudittime(DZFDateTime daudittime) {
-		this.daudittime = daudittime;
 	}
 
 	public String getPk_paybill() {
