@@ -28,12 +28,16 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IManagerService;
+import com.dzf.service.pub.IPubService;
 
 @Service("mana_manager")
 public class ManagerServiceImpl implements IManagerService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
+	
+    @Autowired
+    private IPubService pubService;
 	
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
@@ -81,7 +85,7 @@ public class ManagerServiceImpl implements IManagerService {
 	 */
 	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type) {
 		if(type==3){//渠道总数据
-			if(!checkIsLeader(qvo)){
+			if(!pubService.checkIsLeader(qvo.getUserid())){
 				return null;
 			}
 		}
@@ -418,18 +422,6 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append(" group by c.pk_corp,yt.isxq ");
 		}
 		return buf;
-	}
-	
-	private boolean checkIsLeader(ManagerVO qvo) {
-		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset where nvl(dr,0)=0";
-		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
-		if(list!=null&&list.size()>0){
-			ManagerVO vo=list.get(0);
-			if(qvo.getUserid().equals(vo.getCusername())||qvo.getUserid().equals(vo.getCorpname())||qvo.getUserid().equals(vo.getUsername())){
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	@Override
