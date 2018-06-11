@@ -558,7 +558,6 @@ $(document).on("wheel",function(e) {
 			zoom = zoom ? zoom : 1;
 			zoom = zoom - (orgEvent.deltaY > 0 ? 0.05 : -0.05);
 			transformImage($("#fullViewDlg > div > img")[0], zoom);
-			console.info("滚动");
 		}
 	}
 });
