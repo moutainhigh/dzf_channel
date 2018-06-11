@@ -379,7 +379,7 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append("  sum(w.rntotalmny) as rntotalmny,w.vprovince as vprovince from ( ");
 			buf.append("  select c.pk_corp,b.vprovince, ");
 		}else{
-			buf.append("  select c.pk_corp,nvl(yt.isxq,'N'),");
+			buf.append("  select c.pk_corp,nvl(yt.isxq,'N') isxq,");
 		}
 		buf.append("  sum(decode((sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))");
