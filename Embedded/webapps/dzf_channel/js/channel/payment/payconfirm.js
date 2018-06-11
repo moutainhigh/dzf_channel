@@ -138,6 +138,7 @@ function reloadData(){
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;
+	queryParams.corptype = 2;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
@@ -240,11 +241,13 @@ function load(){
 				if (value == '1')
 					return '待提交';
 				if (value == '2')
-					return '待确认';
+					return '待审批';
 				if (value == '3')
 					return '已确认';
 				if (value == '4')
 					return '已驳回';
+				if (value == '5')
+					return '待确认';
 			}
 		}, {
 			width : '140',
@@ -313,6 +316,7 @@ function qryData(type){
 	queryParams.enddate = '';
 	queryParams.iptype = -1;
 	queryParams.ipmode = -1;
+	queryParams.corptype = 2;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
 	queryParams.cpid = "";
 	queryParams.id = null;
 	queryParams.cpname = null;
@@ -340,6 +344,7 @@ function fastQry(){
             	queryParams.begdate = $('#bdate').datebox('getValue');
             	queryParams.enddate = $('#edate').datebox('getValue');
             	queryParams.cpname = filtername;
+            	queryParams.corptype = 2;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
             	$('#grid').datagrid('options').queryParams = queryParams;
             	$('#grid').datagrid('reload');
             }

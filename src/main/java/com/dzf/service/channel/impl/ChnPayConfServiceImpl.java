@@ -82,10 +82,23 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT * FROM cn_paybill WHERE nvl(dr,0) = 0 \n");
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
+		}else{
+			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
+				sql.append(" AND vstatus in ( ?, ?, ?, ?) \n");
+				spm.addParam(IStatusConstant.IPAYSTATUS_2);
+				spm.addParam(IStatusConstant.IPAYSTATUS_3);
+				spm.addParam(IStatusConstant.IPAYSTATUS_4);
+				spm.addParam(IStatusConstant.IPAYSTATUS_5);
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
+				sql.append(" AND vstatus in ( ?, ?) \n");
+				spm.addParam(IStatusConstant.IPAYSTATUS_3);
+				spm.addParam(IStatusConstant.IPAYSTATUS_5);
+			}
 		}
+//		sql.append(" AND vstatus != 1");
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
 		    sql.append(" AND ipaytype = ? \n");
             spm.addParam(paramvo.getIpaytype());
@@ -108,7 +121,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			sql.append(" AND pk_paybill = ? \n");
             spm.addParam(paramvo.getPk_bill());
 		}
-		sql.append(" AND vstatus != 1");
 		sql.append(" order by dpaydate desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

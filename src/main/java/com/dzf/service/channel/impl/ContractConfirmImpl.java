@@ -71,9 +71,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQryCondition(paramvo, "listqry");
-		if(sqpvo==null){
-			return 0;
-		}
+//		if(sqpvo == null){
+//			return 0;
+//		}
 		return multBodyObjectBO.queryDataTotal(ContractConfrimVO.class,sqpvo.getSql(), sqpvo.getSpm());
 	}
 
@@ -336,14 +336,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!"info".equals(qrytype)){
 			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		}
-		if("listqry".equals(qrytype)){
-			String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
-	    	if(condition!=null && !condition.equals("flg")){
-	    		sql.append(condition);
-	    	}else{
-	    		return null;
-	    	}
-		}
+//		if ("listqry".equals(qrytype)) {
+//			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+//			if (condition != null && !condition.equals("flg")) {
+//				sql.append(condition);
+//			} else {
+//				return null;
+//			}
+//		}
 		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同

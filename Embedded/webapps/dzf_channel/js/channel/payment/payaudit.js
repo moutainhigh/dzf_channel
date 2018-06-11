@@ -110,6 +110,7 @@ function reloadData(){
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
+	queryParams.corptype = 1;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
 	queryParams.id = null;
 	queryParams.cpname = null;
 	$('#grid').datagrid('options').queryParams = queryParams;
@@ -289,6 +290,7 @@ function qryData(type){
 	queryParams.enddate = '';
 	queryParams.iptype = -1;
 	queryParams.ipmode = -1;
+	queryParams.corptype = 1;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
 	queryParams.cpid = "";
 	queryParams.id = null;
 	queryParams.cpname = null;
@@ -316,6 +318,7 @@ function fastQry(){
             	queryParams.begdate = $('#bdate').datebox('getValue');
             	queryParams.enddate = $('#edate').datebox('getValue');
             	queryParams.cpname = filtername;
+            	queryParams.corptype = 1;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
             	$('#grid').datagrid('options').queryParams = queryParams;
             	$('#grid').datagrid('reload');
             }

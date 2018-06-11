@@ -67,7 +67,6 @@
 						<option value="-1">全部</option>
 						<option value="5">待确认</option>
 						<option value="3">已确认</option>
-						<option value="4">已驳回</option>
 					</select>
 					<label style="width:80px;text-align:right">付款类型：</label>
 					<select id="iptype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
