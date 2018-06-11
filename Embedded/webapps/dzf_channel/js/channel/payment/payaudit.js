@@ -18,7 +18,30 @@ function initListener(){
 	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
 	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
-	initChannel();
+	
+	initChannel();//加盟商参照初始化
+	initArea();//查询大区初始化
+}
+
+/**
+ * 查询大区初始化
+ */
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
 }
 
 /**
@@ -94,6 +117,7 @@ function clearParams(){
 	$('#status').combobox('setValue', '-1');
 	$('#iptype').combobox('setValue', '-1');
 	$('#ipmode').combobox('setValue', '-1');
+	$('#aname').combobox('setValue', null);
 }
 
 /**
@@ -113,6 +137,7 @@ function reloadData(){
 	queryParams.corptype = 1;//查询节点类型 1：付款单审批查询；2：付款单确认查询；
 	queryParams.id = null;
 	queryParams.cpname = null;
+	queryParams.aname = $("#aname").combobox('getValue');//查询大区
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
@@ -139,6 +164,12 @@ function load(){
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
+		}, {
+			width : '140',
+			title : '大区',
+			align : 'left',
+            halign: 'center',
+			field : 'aname'
 		}, {
 			width : '240',
 			title : '加盟商',

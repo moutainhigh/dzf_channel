@@ -81,47 +81,57 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * FROM cn_paybill WHERE nvl(dr,0) = 0 \n");
+		sql.append("SELECT t.* FROM cn_paybill t \n");
+		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
+			sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+		}
+		
+		sql.append("  WHERE nvl(t.dr,0) = 0 \n");
+		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
+			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
-			sql.append(" AND vstatus = ? \n");
+			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
-				sql.append(" AND vstatus in ( ?, ?, ?, ?) \n");
+			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
+				sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
 				spm.addParam(IStatusConstant.IPAYSTATUS_2);
 				spm.addParam(IStatusConstant.IPAYSTATUS_3);
 				spm.addParam(IStatusConstant.IPAYSTATUS_4);
 				spm.addParam(IStatusConstant.IPAYSTATUS_5);
-			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
-				sql.append(" AND vstatus in ( ?, ?) \n");
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){//付款单确认
+				sql.append(" AND t.vstatus in ( ?, ?) \n");
 				spm.addParam(IStatusConstant.IPAYSTATUS_3);
 				spm.addParam(IStatusConstant.IPAYSTATUS_5);
 			}
 		}
-//		sql.append(" AND vstatus != 1");
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
-		    sql.append(" AND ipaytype = ? \n");
+		    sql.append(" AND t.ipaytype = ? \n");
             spm.addParam(paramvo.getIpaytype());
 		}
 		if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
-            sql.append(" AND ipaymode = ? \n");
+            sql.append(" AND t.ipaymode = ? \n");
             spm.addParam(paramvo.getIpaymode());
         }
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
-		    sql.append(" AND (dpaydate >= ? and dpaydate <= ? )\n");
+		    sql.append(" AND (t.dpaydate >= ? and t.dpaydate <= ? )\n");
             spm.addParam(paramvo.getBegdate());
             spm.addParam(paramvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 		    String[] strs = paramvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-		    sql.append(" AND pk_corp in (").append(inSql).append(")");
+		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-			sql.append(" AND pk_paybill = ? \n");
+			sql.append(" AND t.pk_paybill = ? \n");
             spm.addParam(paramvo.getPk_bill());
 		}
-		sql.append(" order by dpaydate desc");
+		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
+			sql.append(paramvo.getVqrysql());
+		}
+		sql.append(" order by t.dpaydate desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

@@ -250,7 +250,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	/**
 	 * 获取查询条件
 	 * @param paramvo
+	 * @param qrytype   listqry:列表查询；audit：审核查询；info：详情查询；
 	 * @return
+	 * @throws DZFWarpException
 	 */
 	private QrySqlSpmVO getQryCondition(QryParamVO paramvo, String qrytype) throws DZFWarpException {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();

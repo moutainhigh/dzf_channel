@@ -84,13 +84,17 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">支付方式：</label>
-					<select id="ipmode" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:150px;height:28px;">
+					<select id="ipmode" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:120px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">银行转账</option>
 						<option value="2">支付宝</option>
 						<option value="3">微信</option>
 						<option value="4">其他</option>
 					</select>
+					<label style="text-align:right;width: 43px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width:118px;height:28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" /> 
 				</div>
 			</form>
 			<p>

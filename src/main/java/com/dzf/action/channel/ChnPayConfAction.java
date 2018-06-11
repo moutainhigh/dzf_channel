@@ -38,6 +38,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayConfService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 付款单确认
@@ -56,6 +57,9 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	@Autowired
 	private IChnPayConfService payconfSer;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询方法
 	 */
@@ -63,7 +67,20 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			int total = payconfSer.queryTotalRow(paramvo);
+			paramvo.setCuserid(getLoginUserid());
+			int total = 0;
+			//列表查询，根据登录人和选择区域进行过滤
+			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
+				String sql = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+				if (sql != null && !sql.equals("flg")) {
+					paramvo.setVqrysql(sql);
+					total = payconfSer.queryTotalRow(paramvo);
+				} else {
+					total = 0;
+				}
+			}else{
+				total = payconfSer.queryTotalRow(paramvo);
+			}
 			grid.setTotal((long)(total));
 			if(total > 0){
 				List<ChnPayBillVO> clist = payconfSer.query(paramvo);
