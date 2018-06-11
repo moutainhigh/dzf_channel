@@ -41,9 +41,6 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo, UserVO uservo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(paramvo,uservo);
-		if(sqpvo==null){
-        	return 0;
-        }
 		return multBodyObjectBO.queryDataTotal(CorpNameEVO.class,sqpvo.getSql(), sqpvo.getSpm());
 	}
 
@@ -85,18 +82,15 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private QrySqlSpmVO getQrySqlSpm(QryParamVO paramvo, UserVO uservo) throws DZFWarpException{
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO paramvo, UserVO sd) throws DZFWarpException{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(" SELECT a.*,ba.vprovince FROM cn_corpnameedit a \n") ;
 		sql.append(" LEFT JOIN bd_account ba on a.fathercorp=ba.pk_corp ");
 		sql.append(" WHERE nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
-    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
-    	if(condition!=null && !condition.equals("flg")){
-    		sql.append(condition);
-    	}else{
-    		return null;
+    	if(!StringUtil.isEmpty(paramvo.getVqrysql())){
+    		sql.append(paramvo.getVqrysql());
     	}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 		    String[] strs = paramvo.getPk_corp().split(",");

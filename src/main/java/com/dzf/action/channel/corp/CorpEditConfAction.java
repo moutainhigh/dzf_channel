@@ -33,6 +33,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.ICorpEditConfService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 客户名称修改审核
@@ -51,6 +52,9 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 	@Autowired
 	private ICorpEditConfService confser;
 	
+    @Autowired
+    private IPubService pubService;
+	
 	/**
 	 * 查询
 	 */
@@ -66,7 +70,14 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		    QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
-			int total = confser.queryTotalRow(paramvo, getLoginUserInfo());
+			int total = 0;
+			String condition = pubService.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			if (condition != null) {
+				if(!condition.equals("flg")){
+					paramvo.setVqrysql(condition);
+				}
+				total = confser.queryTotalRow(paramvo, getLoginUserInfo());
+			}
 			json.setTotal((long)(total));
 			if(total > 0){
 				List<CorpNameEVO> clist = confser.query(paramvo, uservo);

@@ -83,12 +83,12 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			int total = 0;
 			//列表查询，根据登录人和选择区域进行过滤
 			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
-			if (condition != null && !condition.equals("flg")) {
-				qsql.append(condition);
-				paramvo.setVqrysql(qsql.toString());
+			if (condition != null ) {
+				if(!condition.equals("flg")){
+					qsql.append(condition);
+					paramvo.setVqrysql(qsql.toString());
+				}
 				total = contractconfser.queryTotalRow(paramvo);
-			} else {
-				total = 0;
 			}
 			grid.setTotal((long)(total));
 			if(total > 0){

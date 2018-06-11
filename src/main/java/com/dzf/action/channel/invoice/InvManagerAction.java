@@ -37,6 +37,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
@@ -57,6 +58,9 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	@Autowired
 	private InvManagerService invManagerService;
 	
+    @Autowired
+    private IPubService pubService;
+	
 	/**
 	 * 查询
 	 */
@@ -65,8 +69,14 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		try {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			paramvo.setInvperson(getLoginUserid());
-			int total = invManagerService.queryTotalRow(paramvo);
+			int total=0;
+			String condition = pubService.makeCondition(getLoginUserid(), paramvo.getAreaname());
+			if (condition != null) {
+				if(!condition.equals("flg")){
+					paramvo.setAreaname(condition);
+				}
+				total = invManagerService.queryTotalRow(paramvo);
+			}
 			if(total > 0){
 				List<ChInvoiceVO> rows = invManagerService.query(paramvo);
 				grid.setRows(rows);
