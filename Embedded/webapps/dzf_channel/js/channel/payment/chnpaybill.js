@@ -61,7 +61,9 @@ function load() {
 			}},
 		    {width : '50',title : '附件',field : 'fj',align:'center',
 				formatter: function(value,row,index){
-  				return '<a href="#" style="color:blue"  onclick="viewAttachCard(\''+row.billid+'\')">' + "附件"+ '</a>';
+					if(!isEmpty(row.billid)){
+						return '<a href="javascript:void(0)"  style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
+					}
 		    }},
 			{width : '80',title : '单据状态',field : 'status',align:'center',
 		  		formatter : function(value) {
@@ -696,108 +698,25 @@ function viewImageFile(row){
 	});
 }
 
+/**
+ * 显示大图
+ * @param billid
+ */
+function showImage(billid){
+	var src = DZF.contextPath + "/chnpay/chnpaybill!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
+	$("#tpfd").empty();
+	var img = '<img id="conturnid" alt="无法显示图片" '+
+		'src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
+	parent.openFullViewDlg(img, '原图');
+}
 
 /**
- * 详细界面查看附件
+ * 设置快捷键
  */
-function viewAttachCard(billid){
-	var para = {};
-	para.billid = billid;
-	$.ajax({
-		type : "POST",
-		url : DZF.contextPath + "/chnpay/chnpaybill!queryByID.action",
-  		dataType : 'json',
-  		data : para,
-  		processData : true,
-  		async : false,//异步传输
-  		success : function(result) {
-			var row= result.rows;
-			arrachrow = result.rows;
-			$("#attachs").html('');
-			if(row.fpath){
-				var srcpath = row.fpath.replace(/\\/g, "/");
-				var attachImgUrl = getAttachImgUrl(row);
-				$('<li><a href="javascript:void(0)" onmouseover="showTips()"  onmouseout="hideTips()"  ondblclick="doubleImage();" ><span><img src="' +
-							attachImgUrl +  '" /><div id="reUpload" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
-							'<h4><span id="tips"></span></h4></div></span><font>' +
-							row.doc_name + '</font></a></li>').appendTo($("#attachs"));
-			}
-		}
-	});
-	$("#attachViewDlg").dialog({
-		width:$(window).width()-100,
-		height:$(window).height()-100,
-		closable:true,
-		title:'附件浏览',
-		modal:true
-	});	
-	$("#attachViewDlg").css("display","block");
-	$("#attachViewDlg").dialog("center");
-}
-
-//获取附件显示url
-function getAttachImgUrl(attach){
-	var ext = getFileExt(attach['doc_name']);
-	return DZF.contextPath + '/chnpay/chnpaybill!getAttachImage.action?billid=' + attach.billid+"&time="+Math.random();
-}
-
-
-//显示附件上的提示
-function showTips(){
-	var div = "#reUpload";
-	$(div).css("display","block");
-	var tips = getTipContents();
-	var tipkey = "#tips";
-	$(tipkey).html(tips);	
-}
-
-//隐藏提示
-function hideTips(){
-	var div = "#reUpload";
-	$(div).css("display","none");	
-}
-
-//获取提示内容
-function getTipContents(){
-	var tips = "";
-	if(arrachrow){
-		var ext = getFileExt(arrachrow['doc_name']);
-		if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-				||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-			tips = "双击查看原图";
-		}
+$(document).keydown(function(e) {
+	//ESC 关闭附件预览框
+	if (e.keyCode == 27) {
+		parent.closeFullViewDlg();
 	}
-	return tips;
-}
+});
 
-//双击附件
-function doubleImage(){
-	var ext = getFileExt(arrachrow['doc_name']);
-	var src = DZF.contextPath + "/chnpay/chnpaybill!getAttachImage.action?billid=" + arrachrow.billid+"&time=" +Math.random();
-	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-		$("#tpfd").empty();
-		var offset = $("#tpght").offset();
-		$("#tpfd").dialog({
-			title: '原图' ,
-			width:$("#tpght").width(),
-			height:$("#tpght").height(),
-			left: offset.left,
-			top: offset.top,
-			cache: false,
-			resizable: true,
-			center : true,
-			align:"center",
-			content : '<div style="overflow:scroll;height:100%"><img alt="无法显示图片" src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" "></div>',
-			onLoad:function(){}
-		});
-	}
-}
-
-//获取附件扩展
-function getFileExt(filename){
-	var index1=filename.lastIndexOf(".")+1;
-	var index2=filename.length;
-	var ext=filename.substring(index1,index2);
-	return ext;
-}
