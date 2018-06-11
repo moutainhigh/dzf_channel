@@ -236,7 +236,7 @@ function load(){
 			width : '140',
 			title : '收款审批时间',
             halign:'center',
-			field : 'datime',
+			field : 'approtime',
 		}, {
 			width : '140',
 			title : '驳回说明',
