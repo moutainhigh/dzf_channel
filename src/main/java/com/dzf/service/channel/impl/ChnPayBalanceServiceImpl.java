@@ -50,13 +50,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		String condition = pubService.makeCondition(paramvo.getCuserid(),areaname);
 	  	if(condition==null){
 	  		return null;
+    	}else if(condition.equals("flg")){
+    		condition=null;
     	}
 	  	paramvo.setAreaname(condition);
-//    	if(condition!=null && !condition.equals("flg")){
-//    		querysql.append(condition);
-//    	}else{
-//    		return null;
-//    	}
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);// 查询期初余额
 		Map<String, ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);// 查询明细金额
 		if(paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 	|| paramvo.getQrytype() == 2 )){//全部查询、预付款查询
