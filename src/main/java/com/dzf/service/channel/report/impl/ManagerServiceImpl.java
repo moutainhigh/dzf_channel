@@ -120,21 +120,21 @@ public class ManagerServiceImpl implements IManagerService {
 		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
 		if(list!=null && list.size()>0){
 			for (ManagerVO managerVO : list) {
-				boolean flg=(managerVO.getCorpname()==null) || (managerVO.getPk_corp().equals(managerVO.getCorpname()));
-				if(flg){
-					if(managerVO.getCorpname()==null){
+//				boolean flg=(managerVO.getCorpname()==null) || (managerVO.getPk_corp().equals(managerVO.getCorpname()));
+//				if(flg){
+					if(managerVO.getCorpname()==null || !(managerVO.getPk_corp().equals(managerVO.getCorpname()))){
 						managerVO.setCuserid(null);
 					}
 					if(!map.containsKey(managerVO.getPk_corp())){
 						if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
 							map.put(managerVO.getPk_corp(), managerVO);
 						}
-					}else if(managerVO.getCorpname()!=null){
+					}else if(!StringUtil.isEmpty(managerVO.getCuserid())){
 						if(StringUtil.isEmpty(qvo.getCuserid()) || qvo.getCuserid().equals(managerVO.getCuserid())){
 							map.put(managerVO.getPk_corp(), managerVO);
 						}
 					}
-				}
+//				}
 			}
 			Collection<ManagerVO> manas = map.values();
 			list= new ArrayList<ManagerVO>(manas);
