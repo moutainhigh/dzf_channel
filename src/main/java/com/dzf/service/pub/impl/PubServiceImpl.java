@@ -364,7 +364,7 @@ public class PubServiceImpl implements IPubService {
     	boolean flg=false;
     	String sql="select concat(concat(vdeptuserid ,vcomuserid ),vgroupuserid) from cn_leaderset where nvl(dr,0)=0";
     	String ids =singleObjectBO.executeQuery(sql,null, new ColumnProcessor()).toString();
-		if(!StringUtil.isEmpty(ids) && ids.equals(cuserid)){
+		if(!StringUtil.isEmpty(ids) && ids.contains(cuserid)){
 			flg=true;
 		}
 		return flg;
