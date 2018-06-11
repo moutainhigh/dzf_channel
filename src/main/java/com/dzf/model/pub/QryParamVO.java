@@ -92,7 +92,7 @@ public class QryParamVO extends SuperVO {
 	private Integer vprovince;// 地区
 	
 	@FieldAlias("qrysql")
-	private String vqrysql;//插叙语句
+	private String vqrysql;//查询语句
 	
 	public String getVqrysql() {
 		return vqrysql;

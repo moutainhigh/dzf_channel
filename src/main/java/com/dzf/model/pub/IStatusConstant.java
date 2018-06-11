@@ -10,7 +10,7 @@ public interface IStatusConstant {
 	public static int ICHNOPRATETYPE_9 = 9;
 	public static int ICHNOPRATETYPE_10 = 10;
 	
-	/** 付款单状态 (1：待提交；2：待审批；3：已确认；4：已驳回；5:待确认；) */
+	/** 付款单状态 (1：待提交；2：待审批；3：已确认；4：已驳回；5：待确认；) */
 	public static int IPAYSTATUS_1 = 1;
 	public static int IPAYSTATUS_2 = 2;
 	public static int IPAYSTATUS_3 = 3;
