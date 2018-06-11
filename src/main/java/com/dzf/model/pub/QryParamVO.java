@@ -94,6 +94,17 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("qrysql")
 	private String vqrysql;//查询语句
 	
+	@FieldAlias("mid")
+	private String vmanager;//渠道经理id
+	
+	public String getVmanager() {
+		return vmanager;
+	}
+
+	public void setVmanager(String vmanager) {
+		this.vmanager = vmanager;
+	}
+
 	public String getVqrysql() {
 		return vqrysql;
 	}

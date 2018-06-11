@@ -366,7 +366,7 @@ function reloadData(){
 	}
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.cpkid = $("#corpkid_ae").val();
-	queryParams.uid = $("#managerid").val();
+	queryParams.mid = $("#managerid").val();
 	queryParams.corptype = $('#corptype').combobox('getValue');
 	queryParams.aname = $("#aname").combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
@@ -396,7 +396,7 @@ function clearQryParam(queryParams){
 	queryParams.cpkid = null;
 	queryParams.id = null;
 	queryParams.cpname = null;
-	queryParams.uid = null;
+	queryParams.mid = null;
 }
 
 /**

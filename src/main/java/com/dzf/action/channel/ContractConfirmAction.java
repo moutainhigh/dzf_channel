@@ -41,6 +41,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IContractConfirm;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 合同确认
@@ -59,6 +60,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	@Autowired
 	private IContractConfirm contractconfser;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询方法
 	 */
@@ -67,28 +71,25 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		try {
 		    QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-//			List<ContractConfrimVO> clist = contractconfser.query(paramvo);
-//			int page = paramvo == null ? 1 : paramvo.getPage();
-//			int rows = paramvo == null ? 10000 : paramvo.getRows();
-//			int len = clist == null ? 0 : clist.size();
-//			if(len > 0){
-//				grid.setTotal((long) (len));
-//				ContractConfrimVO[] conVOs = clist.toArray(new ContractConfrimVO[0]);
-//				conVOs = (ContractConfrimVO[]) QueryUtil.getPagedVOs(conVOs, page, rows);
-//				grid.setRows(Arrays.asList(conVOs));
-//				grid.setSuccess(true);
-//				grid.setMsg("操作成功");
-//			}else{
-//				grid.setTotal(Long.valueOf(0));
-//				grid.setRows(new ArrayList<ContractConfrimVO>());
-//				grid.setMsg("操作结果为空");
-//			}
-			if(!StringUtil.isEmpty(paramvo.getCuserid())){//渠道经理查询条件
+			StringBuffer qsql = new StringBuffer();//附加查询条件
+			if(!StringUtil.isEmpty(paramvo.getVmanager())){//渠道经理查询条件
 				String sql = contractconfser.getQrySql(paramvo.getCuserid());
-				paramvo.setVqrysql(sql);
+				if(!StringUtil.isEmpty(sql)){
+					qsql.append(sql);
+				}
+//				paramvo.setVqrysql(sql);
 			}
 			paramvo.setCuserid(getLoginUserid());
-			int total = contractconfser.queryTotalRow(paramvo);
+			int total = 0;
+			//列表查询，根据登录人和选择区域进行过滤
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			if (condition != null && !condition.equals("flg")) {
+				qsql.append(condition);
+				paramvo.setVqrysql(qsql.toString());
+				total = contractconfser.queryTotalRow(paramvo);
+			} else {
+				total = 0;
+			}
 			grid.setTotal((long)(total));
 			if(total > 0){
 				List<ContractConfrimVO> list = contractconfser.query(paramvo);
