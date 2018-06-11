@@ -491,7 +491,7 @@ function load(){
 			halign:'center',
 			field : 'submitime',
 			sortable:true,
-		},{
+		}, {
 			width : '140',
 			title : '大区',
 			align : 'left',

@@ -127,7 +127,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		CorpVO corpvo = null;
 		String statusname = "";
 		String manager = "";
-		Map<String,String> map = pubser.getManagerMap();
+		Map<String,String> marmap = pubser.getManagerMap();//渠道经理
 		Map<Integer, String> areaMap = null;
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname,3);
@@ -182,8 +182,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(corpvo != null){
 				confvo.setCorpkname(corpvo.getUnitname());//客户名称
 			}
-			if(map != null && !map.isEmpty()){
-				manager = map.get(confvo.getPk_corp());
+			if(marmap != null && !marmap.isEmpty()){
+				manager = marmap.get(confvo.getPk_corp());
 				if(!StringUtil.isEmpty(manager)){
 					uservo = UserCache.getInstance().get(manager, null);
 					if (uservo != null) {
@@ -914,10 +914,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				
 				//3、预付款扣款、返点扣款分项校验：
-				errmsg = checkBalance(datavo, cuserid, balVOs);
-				if(!StringUtil.isEmpty(errmsg)){
-					setNullValue(datavo);
-					throw new BusinessException(errmsg);
+				if(datavo.getIdeductpropor() != 0){
+					errmsg = checkBalance(datavo, cuserid, balVOs);
+					if(!StringUtil.isEmpty(errmsg)){
+						setNullValue(datavo);
+						throw new BusinessException(errmsg);
+					}
 				}
 				
 				//4、生成合同审核数据
@@ -1535,7 +1537,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return confrimvo;
 				}
 				//2、计算扣款分项金额：
-				countDedMny(confrimvo, balVOs);
+				if(paramvo.getIdeductpropor() != 0){
+					countDedMny(confrimvo, balVOs);
+				}
 				
 				//3、生成合同审核数据
 //				ChnBalanceVO[] balVOs = queryBalance(confrimvo.getPk_corp());
