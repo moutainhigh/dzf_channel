@@ -273,12 +273,12 @@
 								<input id="corpkna" name="corpkna" class="easyui-textbox" data-options="readonly:true" 
 									style="width:76%;height:28px;text-align:left;">
 							</div>
-							<div class="decan" style="width:24%;display: inline-block;">
+							<div class="decan" style="width:25%;display: inline-block;">
 								<label style="width:40%;text-align: right;">存量客户：</label>
 								<input type="checkbox" id="isncust" name="isncust" value="是" onclick="return false;">
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:40%;text-align: right;">合同编号：</label>
+								<label style="width:38.6%;text-align: right;">合同编号：</label>
 								<input id="vccode" name="vccode"  class="easyui-textbox" data-options="readonly:true" 
 									style="width:56%;height:28px;text-align:left;">
 							</div>
