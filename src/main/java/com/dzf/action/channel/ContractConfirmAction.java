@@ -77,7 +77,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				if(!StringUtil.isEmpty(sql)){
 					qsql.append(sql);
 				}
-//				paramvo.setVqrysql(sql);
 			}
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
@@ -87,9 +86,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				if(!condition.equals("flg")){
 					qsql.append(condition);
 				}
+				paramvo.setVqrysql(qsql.toString());
 				total = contractconfser.queryTotalRow(paramvo);
 			}
-			paramvo.setVqrysql(qsql.toString());
 			grid.setTotal((long)(total));
 			if(total > 0){
 				List<ContractConfrimVO> list = contractconfser.query(paramvo);
