@@ -73,7 +73,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String condition = pubService.makeCondition(getLoginUserid(), paramvo.getAreaname());
 			if (condition != null) {
 				if(!condition.equals("flg")){
-					paramvo.setAreaname(condition);
+					paramvo.setVprovname(condition);
 				}
 				total = invManagerService.queryTotalRow(paramvo);
 			}

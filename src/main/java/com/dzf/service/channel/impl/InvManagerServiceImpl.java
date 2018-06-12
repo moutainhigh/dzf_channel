@@ -97,8 +97,8 @@ public class InvManagerServiceImpl implements InvManagerService {
         sql.append("select a.*,ba.vprovince from cn_invoice a");
         sql.append(" left join bd_account ba on a.pk_corp=ba.pk_corp ");
         sql.append(" where nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
-    	if(!StringUtil.isEmpty(paramvo.getAreaname())){
-    		sql.append(paramvo.getAreaname());
+    	if(!StringUtil.isEmpty(paramvo.getVprovname())){
+    		sql.append(paramvo.getVprovname());
     	}
         if (paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1) {
             sql.append(" and a.invstatus = ?");
