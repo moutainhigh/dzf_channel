@@ -220,7 +220,7 @@ function load(){
 				if (value == '2')
 					return '已审核';
 				if (value == '3')
-					return '拒绝审核';
+					return '已驳回';
 			}
 		}, {
 			width : '160',
