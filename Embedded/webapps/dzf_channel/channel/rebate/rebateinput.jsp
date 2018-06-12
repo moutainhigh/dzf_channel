@@ -99,6 +99,7 @@
 						    <input id="corp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
 								data-options="required:true,validType:'length[0,100]'" />
 							<input id="corpid" name="corpid" type="hidden">
+							<input id="ovince" name="ovince" type="hidden">
 						</div>
 					</div>
 				 	<div class="time_col time_colp11">

@@ -191,6 +191,7 @@ function selectCorps(){
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
+	var vprovince="";
 	if(rowTable){
 		if (rowTable.length > 300) {
 			Public.tips({
@@ -207,10 +208,12 @@ function dClickCompany(rowTable){
 			}
 			corpIds.push(rowTable[i].pk_gs);
 		}
+		vprovince=rowTable[0].ovince;
 		$("#" + refid).textbox("setValue",str);
 		$("#" + refid + "id").val(corpIds);
 		if(refid == "corp"){
 			getDebateMny(corpIds[0]);
+			$("#ovince").val(vprovince);
 		}
 	}
 	$("#chnDlg").dialog('close');

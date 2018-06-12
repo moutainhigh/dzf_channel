@@ -103,10 +103,13 @@ public class RebateVO extends SuperVO {
     //只展示，不存库字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
     
 	@FieldAlias("aname")
-    private String vareaname;// 大区
+    private String areaname;// 大区
 	
 	@FieldAlias("provname")
 	public String vprovname;// 省（市）
+	
+	@FieldAlias("ovince")
+	public Integer vprovince;//省（市）
 	
     @FieldAlias("mname")
     private String vmanagername; // 渠道经理
@@ -145,6 +148,14 @@ public class RebateVO extends SuperVO {
 		return voperatorname;
 	}
 
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
 	public void setVoperatorname(String voperatorname) {
 		this.voperatorname = voperatorname;
 	}
@@ -165,16 +176,16 @@ public class RebateVO extends SuperVO {
 		this.verrmsg = verrmsg;
 	}
 
-	public String getVareaname() {
-		return vareaname;
-	}
-
-	public void setVareaname(String vareaname) {
-		this.vareaname = vareaname;
-	}
-
 	public String getVperiod() {
 		return vperiod;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
 	}
 
 	public void setVperiod(String vperiod) {
