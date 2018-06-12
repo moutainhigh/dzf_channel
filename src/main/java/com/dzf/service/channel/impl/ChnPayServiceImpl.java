@@ -98,7 +98,7 @@ public class ChnPayServiceImpl implements IChnPayService {
     	String condition = pubService.makeCondition(uservo.getCuserid(),chn.getAreaname());
     	if(condition!=null && !condition.equals("flg")){
     		querysql.append(condition);
-    	}else{
+    	}else if(condition==null){
     		return null;
     	}
 		querysql.append(" order by a.dpaydate desc ");

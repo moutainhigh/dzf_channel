@@ -59,9 +59,9 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
 		}
     	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
-    	if(condition!=null && !condition.equals("flg")){
+     	if(condition!=null && !condition.equals("flg")){
     		sql.append(condition);
-    	}else{
+    	}else if(condition==null){
     		return new ArrayList<BillingInvoiceVO>();
     	}
 		sql.append(" group by ba.pk_corp,ba.innercode ,ba.unitname,ba.vprovince,ba.citycounty");
