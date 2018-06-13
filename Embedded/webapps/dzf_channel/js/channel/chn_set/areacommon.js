@@ -369,6 +369,7 @@ function initCard(id){
 				type : 'textbox',
 				options : {
 					height:31,
+					required : true,
 					editable:false,
 					icons: [{
 						iconCls:'icon-search',
