@@ -3,7 +3,7 @@ var grid;
 
 $(function() {
 	load();
-	fastQry();
+//	fastQry();
 	initListener();
 	loadJumpData();
 });
@@ -321,33 +321,34 @@ function qryData(type){
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }
-/**
- * 快速过滤
- */
-function fastQry(){
-	$('#filter_value').textbox('textbox').keydown(function (e) {
-		 if (e.keyCode == 13) {
-            var filtername = $("#filter_value").val(); 
-            if(filtername != ""){
-            	var queryParams = $('#grid').datagrid('options').queryParams;
-            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
-            	var rows = $('#grid').datagrid('getRows');
-            	if(rows != null && rows.length > 0){
-            		queryParams.qtype = $('#status').combobox('getValue');
-            		queryParams.iptype = $('#iptype').combobox('getValue');
-            		queryParams.ipmode = $('#ipmode').combobox('getValue');
-            		queryParams.cpid = $("#pk_account").val();
-            		queryParams.id = null;
-            	}
-            	queryParams.begdate = $('#bdate').datebox('getValue');
-            	queryParams.enddate = $('#edate').datebox('getValue');
-            	queryParams.cpname = filtername;
-            	$('#grid').datagrid('options').queryParams = queryParams;
-            	$('#grid').datagrid('reload');
-            }
-         }
-   });
-}
+
+///**
+// * 快速过滤
+// */
+//function fastQry(){
+//	$('#filter_value').textbox('textbox').keydown(function (e) {
+//		 if (e.keyCode == 13) {
+//            var filtername = $("#filter_value").val(); 
+//            if(filtername != ""){
+//            	var queryParams = $('#grid').datagrid('options').queryParams;
+//            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+//            	var rows = $('#grid').datagrid('getRows');
+//            	if(rows != null && rows.length > 0){
+//            		queryParams.qtype = $('#status').combobox('getValue');
+//            		queryParams.iptype = $('#iptype').combobox('getValue');
+//            		queryParams.ipmode = $('#ipmode').combobox('getValue');
+//            		queryParams.cpid = $("#pk_account").val();
+//            		queryParams.id = null;
+//            	}
+//            	queryParams.begdate = $('#bdate').datebox('getValue');
+//            	queryParams.enddate = $('#edate').datebox('getValue');
+//            	queryParams.cpname = filtername;
+//            	$('#grid').datagrid('options').queryParams = queryParams;
+//            	$('#grid').datagrid('reload');
+//            }
+//         }
+//   });
+//}
 
 /**
  * 取消确认 

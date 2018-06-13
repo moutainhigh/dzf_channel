@@ -38,7 +38,6 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayConfService;
-import com.dzf.service.pub.IPubService;
 
 /**
  * 付款单确认
@@ -57,9 +56,6 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	@Autowired
 	private IChnPayConfService payconfSer;
 	
-	@Autowired
-	private IPubService pubser;
-	
 	/**
 	 * 查询方法
 	 */
@@ -68,15 +64,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
-			int total = 0;
-			//列表查询，根据登录人和选择区域进行过滤
-			String sql = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
-			if (sql != null && !sql.equals("flg")) {
-				paramvo.setVqrysql(sql);
-				total = payconfSer.queryTotalRow(paramvo);
-			} else {
-				total = 0;
-			}
+			int total = payconfSer.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){
 				List<ChnPayBillVO> clist = payconfSer.query(paramvo);
@@ -93,7 +81,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	}
 	
 	/**
-	 * 收款确认、取消确认、驳回
+	 * 收款确认、确认驳回、取消确认
 	 */
 	public void operate() {
 		Json json = new Json();
@@ -299,53 +287,4 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		}
 	}
 	
-	/**
-	 * 付款单审批导出
-	 */
-	public void exportAuditExcel(){
-		String strlist =getRequest().getParameter("strlist");
-		String qj = getRequest().getParameter("qj");
-		if(StringUtil.isEmpty(strlist)){
-			throw new BusinessException("导出数据不能为空!");
-		}	
-		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new ChnPayBillVO());
-		ChnPayBillVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ChnPayBillVO[].class, JSONConvtoJAVA.getParserConfig());
-		HttpServletResponse response = getResponse();
-		Excelexport2003<ChnPayBillVO> ex = new Excelexport2003<>();
-		ChnPayAuditExcelField fields = new ChnPayAuditExcelField();
-		fields.setVos(expVOs);
-		fields.setQj(qj);
-		ServletOutputStream servletOutputStream = null;
-		OutputStream toClient = null;
-		try {
-			response.reset();
-			// 设置response的Header
-			String filename = fields.getExcelport2003Name();
-			String formattedName = URLEncoder.encode(filename, "UTF-8");
-	        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
-			servletOutputStream = response.getOutputStream();
-			toClient = new BufferedOutputStream(servletOutputStream);
-			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			ex.exportExcel(fields, toClient);
-		} catch (Exception e) {
-			log.error("导出失败",e);
-		}  finally {
-			if(toClient != null){
-				try {
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
-			if(servletOutputStream != null){
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
-		}
-	}
 }

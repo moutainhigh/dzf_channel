@@ -1,6 +1,5 @@
 package com.dzf.service.channel.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,22 +49,23 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
-			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
+//			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
-					if(!StringUtil.isEmpty(paramvo.getCorpname())){
-						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
-							retlist.add(vo);
-						}
-					}
+					//此代码为界面 加盟商名称 快速过滤，暂时注释
+//					if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+//							retlist.add(vo);
+//						}
+//					}
 				}
 			}
-			if(!StringUtil.isEmpty(paramvo.getCorpname())){
-				return retlist;
-			}
+//			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//				return retlist;
+//			}
 		}
 		return list;
 	}
@@ -80,17 +80,13 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.* FROM cn_paybill t \n");
-		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
-		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		sql.append("  WHERE nvl(t.dr,0) = 0 \n");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
-			spm.addParam(IStatusConstant.IPAYSTATUS_2);
+			sql.append(" AND t.vstatus in ( ?, ?) \n");
 			spm.addParam(IStatusConstant.IPAYSTATUS_3);
-			spm.addParam(IStatusConstant.IPAYSTATUS_4);
 			spm.addParam(IStatusConstant.IPAYSTATUS_5);
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
@@ -114,9 +110,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 			sql.append(" AND t.pk_paybill = ? \n");
             spm.addParam(paramvo.getPk_bill());
-		}
-		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
-			sql.append(paramvo.getVqrysql());
 		}
 		sql.append(" order by t.dpaydate desc");
 		qryvo.setSql(sql.toString());
@@ -189,7 +182,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
+			if(billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 				return billvo;
 			}
@@ -264,7 +257,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() == IStatusConstant.IPAYSTATUS_3){
+			if(billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_3){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【已确认】");
 				return billvo;
 			}
@@ -319,7 +312,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
-			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
+			if(billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 				return billvo;
 			}

@@ -1,7 +1,7 @@
 package com.dzf.service.channel.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayAuditService;
 import com.dzf.service.channel.IChnPayConfService;
+import com.dzf.service.pub.IPubService;
 
 @Service("payauditser")
 public class ChnPayAuditServiceImpl implements IChnPayAuditService {
@@ -36,6 +37,9 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	
 	@Autowired
 	private IChnPayConfService payconfSer;
+	
+	@Autowired
+	private IPubService pubser;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -50,22 +54,30 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
-			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
+//			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
+			Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), 3);//渠道运营区域设置
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
-					if(!StringUtil.isEmpty(paramvo.getCorpname())){
-						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
-							retlist.add(vo);
-						}
+					//此代码为界面 加盟商名称 快速过滤，暂时注释
+//					if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
+//							retlist.add(vo);
+//						}
+//					}
+				}
+				if(areamap != null && !areamap.isEmpty()){
+					String area = areamap.get(vo.getVprovince());
+					if(!StringUtil.isEmpty(area)){
+						vo.setAreaname(area);//渠道运营区域
 					}
 				}
 			}
-			if(!StringUtil.isEmpty(paramvo.getCorpname())){
-				return retlist;
-			}
+//			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+//				return retlist;
+//			}
 		}
 		return list;
 	}
@@ -79,15 +91,18 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.* FROM cn_paybill t \n");
-		
-		sql.append("  WHERE nvl(t.dr,0) = 0 \n");
+		sql.append("SELECT t.*,ba.vprovince FROM cn_paybill t \n");
+		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append(" AND t.vstatus in ( ?, ?) \n");
+			sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
+			spm.addParam(IStatusConstant.IPAYSTATUS_2);
 			spm.addParam(IStatusConstant.IPAYSTATUS_3);
+			spm.addParam(IStatusConstant.IPAYSTATUS_4);
 			spm.addParam(IStatusConstant.IPAYSTATUS_5);
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
@@ -111,6 +126,9 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 			sql.append(" AND t.pk_paybill = ? \n");
             spm.addParam(paramvo.getPk_bill());
+		}
+		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
+			sql.append(paramvo.getVqrysql());
 		}
 		sql.append(" order by t.dpaydate desc");
 		qryvo.setSql(sql.toString());
@@ -162,7 +180,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
+			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 				return billvo;
 			}
@@ -197,7 +215,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
-			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
+			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 				return billvo;
 			}
@@ -233,7 +251,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() == IStatusConstant.IPAYSTATUS_5){
+			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
 				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 				return billvo;
 			}

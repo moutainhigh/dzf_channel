@@ -34,12 +34,12 @@
 					</div>
 				</div>
 				
-				<div class="left mod-crumb">
+<!-- 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
 						<label class="mr5">加盟商：</label>
 						<input style="height:28px;width:250px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
 					</div>
-				</div>
+				</div> -->
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="certain()" >收款确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(5)" >取消确认</a>

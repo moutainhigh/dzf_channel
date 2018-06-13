@@ -3,7 +3,7 @@ var grid;
 
 $(function() {
 	load();
-	fastQry();
+//	fastQry();
 	initListener();
 });
 
@@ -127,7 +127,7 @@ function reloadData(){
 	var bdate = $('#bdate').datebox('getValue'); //开始日期
 	var edate = $('#edate').datebox('getValue'); //结束日期
 	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayaudit!query.action';
 	queryParams.qtype = $('#status').combobox('getValue');
 	queryParams.begdate = bdate;
 	queryParams.enddate = edate;
@@ -314,7 +314,7 @@ function calFooter(){
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
+	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayaudit!query.action';
 	queryParams.qtype = type;
 	queryParams.begdate = '';
 	queryParams.enddate = '';
@@ -326,33 +326,34 @@ function qryData(type){
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }
-/**
- * 快速过滤
- */
-function fastQry(){
-	$('#filter_value').textbox('textbox').keydown(function (e) {
-		 if (e.keyCode == 13) {
-            var filtername = $("#filter_value").val(); 
-            if(filtername != ""){
-            	var queryParams = $('#grid').datagrid('options').queryParams;
-            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
-            	var rows = $('#grid').datagrid('getRows');
-            	if(rows != null && rows.length > 0){
-            		queryParams.qtype = $('#status').combobox('getValue');
-            		queryParams.iptype = $('#iptype').combobox('getValue');
-            		queryParams.ipmode = $('#ipmode').combobox('getValue');
-            		queryParams.cpid = $("#pk_account").val();
-            		queryParams.id = null;
-            	}
-            	queryParams.begdate = $('#bdate').datebox('getValue');
-            	queryParams.enddate = $('#edate').datebox('getValue');
-            	queryParams.cpname = filtername;
-            	$('#grid').datagrid('options').queryParams = queryParams;
-            	$('#grid').datagrid('reload');
-            }
-         }
-   });
-}
+
+///**
+// * 快速过滤
+// */
+//function fastQry(){
+//	$('#filter_value').textbox('textbox').keydown(function (e) {
+//		 if (e.keyCode == 13) {
+//            var filtername = $("#filter_value").val(); 
+//            if(filtername != ""){
+//            	var queryParams = $('#grid').datagrid('options').queryParams;
+//            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayaudit!query.action';
+//            	var rows = $('#grid').datagrid('getRows');
+//            	if(rows != null && rows.length > 0){
+//            		queryParams.qtype = $('#status').combobox('getValue');
+//            		queryParams.iptype = $('#iptype').combobox('getValue');
+//            		queryParams.ipmode = $('#ipmode').combobox('getValue');
+//            		queryParams.cpid = $("#pk_account").val();
+//            		queryParams.id = null;
+//            	}
+//            	queryParams.begdate = $('#bdate').datebox('getValue');
+//            	queryParams.enddate = $('#edate').datebox('getValue');
+//            	queryParams.cpname = filtername;
+//            	$('#grid').datagrid('options').queryParams = queryParams;
+//            	$('#grid').datagrid('reload');
+//            }
+//         }
+//   });
+//}
 
 /**
  * 取消审批
@@ -456,7 +457,7 @@ function operatData(postdata, rows){
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/chnpay/chnpayconf!operate.action',
+		url : contextPath + '/chnpay/chnpayaudit!operate.action',
 		data : postdata,
 		traditional : true,
 		async : false,
@@ -548,7 +549,7 @@ function doExport(){
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
 	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');
-	Business.getFile(DZF.contextPath+ '/chnpay/chnpayconf!exportAuditExcel.action',
+	Business.getFile(DZF.contextPath+ '/chnpay/chnpayaudit!exportAuditExcel.action',
 			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
 }
 
