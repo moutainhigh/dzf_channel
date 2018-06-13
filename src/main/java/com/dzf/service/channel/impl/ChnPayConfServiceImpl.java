@@ -1,9 +1,7 @@
 package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,29 +80,18 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.* FROM cn_paybill t \n");
-		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
-			sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
-		}
-		
-		sql.append("  WHERE nvl(t.dr,0) = 0 \n");
-		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
-			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
-		}
+		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){//付款单审批
-				sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
-				spm.addParam(IStatusConstant.IPAYSTATUS_2);
-				spm.addParam(IStatusConstant.IPAYSTATUS_3);
-				spm.addParam(IStatusConstant.IPAYSTATUS_4);
-				spm.addParam(IStatusConstant.IPAYSTATUS_5);
-			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){//付款单确认
-				sql.append(" AND t.vstatus in ( ?, ?) \n");
-				spm.addParam(IStatusConstant.IPAYSTATUS_3);
-				spm.addParam(IStatusConstant.IPAYSTATUS_5);
-			}
+			sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
+			spm.addParam(IStatusConstant.IPAYSTATUS_2);
+			spm.addParam(IStatusConstant.IPAYSTATUS_3);
+			spm.addParam(IStatusConstant.IPAYSTATUS_4);
+			spm.addParam(IStatusConstant.IPAYSTATUS_5);
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
 		    sql.append(" AND t.ipaytype = ? \n");
@@ -115,7 +102,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
             spm.addParam(paramvo.getIpaymode());
         }
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
-		    sql.append(" AND (t.dpaydate >= ? and t.dpaydate <= ? )\n");
+		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
             spm.addParam(paramvo.getBegdate());
             spm.addParam(paramvo.getEnddate());
 		}
@@ -151,7 +138,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * 校验数据状态
 	 * @param billVOs
 	 */
-	private ChnPayBillVO checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException {
+	@Override
+	public ChnPayBillVO checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException {
 		ChnPayBillVO oldvo = (ChnPayBillVO) singleObjectBO.queryByPrimaryKey(ChnPayBillVO.class, billvo.getPk_paybill());
 		if(oldvo != null){
 			if(oldvo.getDr() != null && oldvo.getDr() == 1){
@@ -168,7 +156,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	}
 	
 	/**
-	 * 收款确认、取消确认、确认驳回、审批驳回、取消审批
+	 * 收款确认、确认驳回、取消确认
 	 * @param billvo
 	 * @param opertype
 	 * @param cuserid
@@ -177,79 +165,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	private ChnPayBillVO updateData(ChnPayBillVO billvo, Integer opertype, String cuserid,String vreason){
 		if(opertype == IStatusConstant.ICHNOPRATETYPE_3){//收款确认
 			return updateConfrimData(billvo, opertype, cuserid);
+		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4){//确认驳回
+			return updateRejectData(billvo, vreason, cuserid);
 		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_5){//取消确认
 			return updateCancelData(billvo, opertype, cuserid);
-		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4 || opertype == IStatusConstant.ICHNOPRATETYPE_9){//确认驳回、审批驳回
-			return updateRejectData(billvo, opertype,vreason, cuserid);
-		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_2){//取消审批
-			return updateReturnData(billvo, opertype, cuserid);
-		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_10){//收款审批
-			return updateAuditData(billvo, opertype, cuserid);
-		}
-		return billvo;
-	}
-	
-	/**
-	 * 收款审批
-	 * @param billvo
-	 * @param opertype
-	 * @param cuserid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private ChnPayBillVO updateAuditData(ChnPayBillVO billvo, Integer opertype, String cuserid) throws DZFWarpException{
-		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-			billvo.setVerrmsg("数据错误");
-			return billvo;
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-				return billvo;
-			}
-			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
-			billvo.setIrejectype(null);//驳回类型
-			billvo.setVapproveid(cuserid);//审批人
-			billvo.setDapprovedate(new DZFDate());//审批日期
-			billvo.setDapprovetime(new DZFDateTime());//审批时间
-			billvo.setTstamp(new DZFDateTime());//操作时间
-			singleObjectBO.update(billvo, new String[]{"vstatus","irejectype","vapproveid","dapprovedate","dapprovetime", "tstamp"});
-		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
-		}
-		return billvo;
-	}
-	
-	/**
-	 * 取消审批
-	 * @param billvo
-	 * @param opertype
-	 * @param cuserid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private ChnPayBillVO updateReturnData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
-		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-			billvo.setVerrmsg("数据错误");
-			return billvo;
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
-			if(billvo.getVstatus() == IStatusConstant.IPAYSTATUS_5){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
-				return billvo;
-			}
-			billvo.setVstatus(IStatusConstant.IPAYSTATUS_2);//付款单状态 待审批
-			billvo.setVapproveid(null);//审批人
-			billvo.setDapprovedate(null);//审批日期
-			billvo.setDapprovetime(null);//审批时间
-			billvo.setTstamp(new DZFDateTime());//操作时间
-			singleObjectBO.update(billvo, new String[]{"vstatus","vapproveid", "dapprovedate", "dapprovetime","tstamp"});
-		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}
@@ -364,12 +283,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				}else{
 					DZFDouble npaymny = SafeCompute.sub(balvo.getNpaymny(), billvo.getNpaymny());
 					balvo.setNpaymny(npaymny);
-					if(npaymny.compareTo(DZFDouble.ZERO_DBL) == 0){
-						balvo.setDr(1);
-						singleObjectBO.update(balvo, new String[]{"npaymny","dr"});
-					}else{
-						singleObjectBO.update(balvo, new String[]{"npaymny"});
-					}
+					//直接更新付款余额表-已付款金额，如果仅有一单付款单，则更新后已付款金额为0
+					singleObjectBO.update(balvo, new String[]{"npaymny"});
 				}
 				sql = " update cn_detail set dr = 1 where pk_bill = ? ";
 				spm = new SQLParameter();
@@ -388,13 +303,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	}
 
 	/**
-	 * 驳回
+	 * 确认驳回
 	 * @param billvo
-	 * @param opertype  4：收款驳回；9：审批驳回；
+	 * @param vreason
+	 * @param cuserid
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, Integer opertype, String vreason, String cuserid)
+	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, String vreason, String cuserid)
 			throws DZFWarpException {
 		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
 			billvo.setVerrmsg("数据错误");
@@ -403,82 +319,24 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
-//			if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_3){
-//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已确认】");
-//				return billvo;
-//			}else if(billvo.getVstatus() == IStatusConstant.ICHNOPRATETYPE_4){
-//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态已为【已驳回】");
-//				return billvo;
-//			}
-			List<String> upstr = new ArrayList<String>();
-			if(opertype == IStatusConstant.ICHNOPRATETYPE_4){
-				if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
-					billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
-					return billvo;
-				}
-				billvo.setIrejectype(2);//驳回类型：确认驳回
-				billvo.setVconfirmid(cuserid);//确认-驳回人
-				billvo.setDconfirmtime(new DZFDateTime());//确认驳回时间
-				upstr.add("vconfirmid");
-				upstr.add("dconfirmtime");
-			}else if(opertype == IStatusConstant.ICHNOPRATETYPE_9){
-				if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-					billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-					return billvo;
-				}
-				billvo.setIrejectype(1);//驳回类型：审批驳回
-				billvo.setVapproveid(cuserid);//审批-驳回人
-				billvo.setDapprovedate(new DZFDate());//审批-驳回日期
-				billvo.setDapprovetime(new DZFDateTime());//审批-驳回时间
-				upstr.add("vapproveid");
-				upstr.add("dapprovedate");
-				upstr.add("dapprovetime");
+			if(billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
+				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
+				return billvo;
 			}
-			upstr.add("irejectype");
+			billvo.setIrejectype(2);//驳回类型：确认驳回
+			billvo.setVconfirmid(cuserid);//确认-驳回人
+			billvo.setDconfirmtime(new DZFDateTime());//确认驳回时间
 			billvo.setVreason(vreason);
-			billvo.setVstatus(IStatusConstant.IPAYSTATUS_4);//付款单状态
+			billvo.setVstatus(IStatusConstant.IPAYSTATUS_4);//付款单状态  已驳回
 			billvo.setTstamp(new DZFDateTime());//操作时间
-			upstr.add("vreason");
-			upstr.add("vstatus");
-			upstr.add("tstamp");
-			singleObjectBO.update(billvo, upstr.toArray(new String[0]));
+			String[] str = new String[]{"irejectype","vconfirmid","dconfirmtime","vreason","vstatus","tstamp"}; 
+			singleObjectBO.update(billvo, str);
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
 	}
 	
-	
-	/**
-	 * 校验数据状态
-	 * @param billVOs
-	 */
-	private void checkStatus(ChnPayBillVO[] billVOs) throws DZFWarpException {
-		Map<String,ChnPayBillVO> billmap = new HashMap<String,ChnPayBillVO>();
-		List<String> pklist = new ArrayList<String>();
-		for(ChnPayBillVO vo : billVOs){
-			billmap.put(vo.getPk_paybill(), vo);
-			pklist.add(vo.getPk_paybill());
-		}
-		ChnPayBillVO[] oldVOs = null;
-		if(pklist != null && pklist.size() > 0){
-			StringBuffer sql = new StringBuffer();
-			sql.append(" nvl(dr,0) =0 ");
-			String where = SqlUtil.buildSqlForIn("pk_paybill", pklist.toArray(new String[0]));
-			sql.append(" and ").append(where);
-			oldVOs = (ChnPayBillVO[]) singleObjectBO.queryByCondition(ChnPayBillVO.class, sql.toString(), null);
-			if(oldVOs != null && oldVOs.length > 0){
-				ChnPayBillVO billvo = null;
-				for(ChnPayBillVO oldvo : oldVOs){
-					billvo = billmap.get(oldvo.getPk_paybill());
-					if(oldvo.getTstamp().compareTo(billvo.getTstamp()) != 0){
-						billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"发生变化");
-					}
-				}
-			}
-		}
-	}
-
 	@Override
 	public ChnPayBillVO queryByID(String cid) throws DZFWarpException {
 		return  (ChnPayBillVO)singleObjectBO.queryVOByID(cid, ChnPayBillVO.class);

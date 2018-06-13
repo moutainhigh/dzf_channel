@@ -6,7 +6,7 @@ import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
-public interface IChnPayConfService {
+public interface IChnPayAuditService {
 
 	/**
 	 * 查询数据行数
@@ -25,15 +25,7 @@ public interface IChnPayConfService {
 	public List<ChnPayBillVO> query(QryParamVO paramvo) throws DZFWarpException;
 	
 	/**
-	 * 通过主键查询单个VO
-	 * @param cid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public ChnPayBillVO queryByID(String cid) throws DZFWarpException;
-	
-	/**
-	 * 确认收款、取消确认、驳回 单条数据操作
+	 * 确认审批、取消审批、驳回 单条数据操作
 	 * @param billvo
 	 * @param opertype
 	 * @param cuserid
@@ -42,12 +34,4 @@ public interface IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid,String vreason) throws DZFWarpException;
-	
-	/**
-	 * 校验数据状态
-	 * @param billvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public ChnPayBillVO checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException;
 }
