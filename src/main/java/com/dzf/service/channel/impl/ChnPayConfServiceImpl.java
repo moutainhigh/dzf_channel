@@ -210,12 +210,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				return billvo;
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
-			billvo.setIrejectype(1);//驳回类型：审批驳回
+			billvo.setIrejectype(null);//驳回类型
 			billvo.setVapproveid(cuserid);//审批人
 			billvo.setDapprovedate(new DZFDate());//审批日期
 			billvo.setDapprovetime(new DZFDateTime());//审批时间
 			billvo.setTstamp(new DZFDateTime());//操作时间
-			singleObjectBO.update(billvo, new String[]{"vstatus","vapproveid", "dapprovetime", "tstamp"});
+			singleObjectBO.update(billvo, new String[]{"vstatus","irejectype","vapproveid","dapprovedate","dapprovetime", "tstamp"});
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
@@ -313,8 +313,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				balvo.setDoperatedate(new DZFDate());
 				balvo.setDr(0);
 				singleObjectBO.saveObject("000001", balvo);
-				singleObjectBO.saveObject("000001", detvo);
 			}
+			singleObjectBO.saveObject("000001", detvo);
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_3);//付款单状态
 			billvo.setVconfirmid(cuserid);//确认人
 			billvo.setDconfirmtime(new DZFDateTime());//确认时间
