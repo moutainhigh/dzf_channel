@@ -912,7 +912,8 @@ public class AchievementServiceImpl implements IAchievementService {
 			sql.append("SELECT t.vprovince  \n");
 			sql.append("  FROM bd_account t \n");
 			sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-			sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
+			sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+			sql.append("   AND t.vprovince is not null \n");
 			List<ChnAreaBVO> clist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 					new BeanListProcessor(ChnAreaBVO.class));
 			if(clist != null && clist.size() > 0){
