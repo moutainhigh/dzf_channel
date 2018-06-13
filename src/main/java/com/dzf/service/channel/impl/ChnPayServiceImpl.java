@@ -306,13 +306,13 @@ public class ChnPayServiceImpl implements IChnPayService {
 			if (chn.getVstatus() == 1 && chn.getSystype()==2) {
 				flg = true;
 			}
-			if (chn.getVstatus() == 2 && chn.getSystype()==2) {
+			if (chn.getVstatus() == 2) {
 				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3 && chn.getSystype()==2) {
+			} else if (chn.getVstatus() == 3) {
 				str1.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 4 && chn.getSystype()==2) {
+			}else if (chn.getVstatus() == 4) {
 				str2.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 5 && chn.getSystype()==2) {
+			}else if (chn.getVstatus() == 5) {
 				str3.append(chn.getVbillcode() + '、');
 			}else if(chn.getSystype()==1){
 				str4.append(chn.getVbillcode() + '、');
@@ -321,36 +321,36 @@ public class ChnPayServiceImpl implements IChnPayService {
 				if (str0.length() != 0) {
 					String str;
 					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待审批付款，不能提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待审批单据，不能提交；<br>";
 				}
 				if (str1.length() != 0) {
 					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认付款，不能提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能提交；<br>";
 				}
 				if (str2.length() != 0) {
 					String str = str2.substring(0, str2.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已驳回付款，不能提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是已驳回单据，不能提交；<br>";
 				}
 				if (str3.length() != 0) {
 					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认付款，不能提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能提交；<br>";
 				}
 				if (str4.length() != 0) {
 					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是客户的单子，不能操作；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
 				}
 			}
 		} else if (stat ==1) {// 批量取消提交
 			if (chn.getVstatus() == 2 && chn.getSystype()==2) {
 				flg = true;
 			}
-			if (chn.getVstatus() == 1 && chn.getSystype()==2) {
+			if (chn.getVstatus() == 1) {
 				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3 && chn.getSystype()==2) {
+			} else if (chn.getVstatus() == 3) {
 				str1.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 4 && chn.getSystype()==2) {
+			}else if (chn.getVstatus() == 4) {
 				str2.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 5 && chn.getSystype()==2) {
+			}else if (chn.getVstatus() == 5 ) {
 				str3.append(chn.getVbillcode() + '、');
 			}else if(chn.getSystype()==1){
 				str4.append(chn.getVbillcode() + '、');
@@ -359,37 +359,37 @@ public class ChnPayServiceImpl implements IChnPayService {
 				if (str0.length() != 0) {
 					String str;
 					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待提交付款，不能取消提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待提交单据，不能取消提交；<br>";
 				}
 				if (str1.length() != 0) {
 					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认付款，不能取消提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能取消提交；<br>";
 				}
 				
 				if (str2.length() != 0) {
 					String str = str2.substring(0, str2.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已驳回付款，不能取消提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是已驳回单据，不能取消提交；<br>";
 				}
 				if (str3.length() != 0) {
 					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认付款，不能取消提交；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能取消提交；<br>";
 				}
 				if (str4.length() != 0) {
 					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是客户的单子，不能操作；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
 				}
 			}
 		} else if(stat==-1){//删除
-			if ((chn.getVstatus() ==1 || chn.getVstatus() ==4 && chn.getSystype()==2)) {
+			if ((chn.getVstatus() ==1 || chn.getVstatus() ==4) && chn.getSystype()==2) {
 				flg = true;
 			}
-			if (chn.getVstatus() == 2 && chn.getSystype()==2) {
+			if (chn.getVstatus() == 2) {
 				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3 && chn.getSystype()==2) {
+			} else if (chn.getVstatus() == 3) {
 				str1.append(chn.getVbillcode() + '、');
 			}/*else if (chn.getVstatus() == 4) {
 				str2.append(chn.getVbillcode() + '、');
-			}*/else if (chn.getVstatus() == 5 && chn.getSystype()==2) {
+			}*/else if (chn.getVstatus() == 5) {
 				str3.append(chn.getVbillcode() + '、');
 			}else if(chn.getSystype()==1){
 				str4.append(chn.getVbillcode() + '、');
@@ -398,11 +398,11 @@ public class ChnPayServiceImpl implements IChnPayService {
 				if (str0.length() != 0) {
 					String str;
 					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待审批付款，不能删除；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待审批单据，不能删除；<br>";
 				}
 				if (str1.length() != 0) {
 					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认付款，不能删除；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能删除；<br>";
 				}
 //				if (str2.length() != 0) {
 //					String str = str2.substring(0, str2.length() - 1);
@@ -410,11 +410,11 @@ public class ChnPayServiceImpl implements IChnPayService {
 //				}
 				if (str3.length() != 0) {
 					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认付款，不能删除；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能删除；<br>";
 				}
 				if (str4.length() != 0) {
 					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是客户的单子，不能操作；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
 				}
 			}
 		}
