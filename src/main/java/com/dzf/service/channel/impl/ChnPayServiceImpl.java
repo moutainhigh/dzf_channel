@@ -161,6 +161,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		if(files!=null&&filenames!=null){
 			vo=saveAttachment(vo,corpvo,cuserid,files[0],filenames[0]);
 		}
+		Integer vprovince=vo.getVprovince();
 		if(!StringUtil.isEmpty(vo.getPk_paybill())){//修改
 			String[] str={"vbillcode","dpaydate","vhandleid","vbankname","vbankcode",
 					"vhandlename","vmemo","npaymny","ipaymode","ipaytype","tstamp"};
@@ -180,6 +181,12 @@ public class ChnPayServiceImpl implements IChnPayService {
 			vo.setVstatus(1);//待提交
 			vo.setTs(new DZFDateTime());//时间戳
 			vo= (ChnPayBillVO) singleObjectBO.saveObject(vo.getPk_corp(), vo);//新增
+		}
+		corpvo= CorpCache.getInstance().get(null, vo.getPk_corp());
+		if(corpvo!=null){
+			Map<Integer, String> areaMap = pubService.getAreaMap(null, 3);
+			vo.setVprovname(corpvo.getCitycounty());
+			vo.setAreaname(areaMap.get(vprovince));
 		}
 		return vo;
 	}
@@ -495,6 +502,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		CorpVO cvo=CorpCache.getInstance().get(null, retvo.getPk_corp());
 		if(cvo!=null){
 			retvo.setCorpname(cvo.getUnitname());
+			retvo.setVprovince(cvo.getVprovince());
 		}
 		return  retvo;
 	}

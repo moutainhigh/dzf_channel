@@ -70,13 +70,13 @@ function load() {
 				if (value == '1')
 					return '待提交'; 
 				if (value == '2')
-					return '待确认';
+					return '待审批';
 				if (value == '3')
 					return '已确认';
 				if (value == '4')
 					return '已驳回';
 				if (value == '5')
-					return '待审批';
+					return '待确认';
 			}},
 			{width : '140',title : '驳回说明', halign:'center',field : 'vreason',formatter : showTitle},
 		  	{width : '120',title : '付款人',field : 'vhname'}, 
@@ -283,6 +283,7 @@ function dClickCompany(rowTable){
 			$("#qcorpnm").textbox("setValue",str);
 			$("#qcorpid").val(corpIds);
 		}else{
+			$("#ovince").val(rowTable[0].ovince);
 			$("#corpnm").textbox("setValue",str);
 			$("#corpid").val(rowTable[0].pk_gs);
 		}
@@ -698,6 +699,11 @@ function viewImageFile(row){
 			}
 		}
 	});
+}
+
+//获取附件显示url
+function getAttachImgUrl(attach){
+	return DZF.contextPath + '/chnpay/chnpaybill!getAttachImage.action?billid=' + attach.billid+"&time="+Math.random();
 }
 
 /**

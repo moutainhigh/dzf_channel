@@ -138,6 +138,7 @@
 						<label style="width:100px;text-align: right;">加盟商名称:</label>
 					    <input id="corpnm" name="corpnm" class="easyui-textbox" style="width:50%;height:28px;" data-options="required:true" />
 						<input id="corpid" name="corpid" type="hidden">
+						<input id="ovince" name="ovince" type="hidden">
 					</div>
 				</div>
 
