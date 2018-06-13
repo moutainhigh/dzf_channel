@@ -81,12 +81,12 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	private void setShowInfo(List<RebateVO> list,String areaname) throws DZFWarpException{
-		Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
+//		Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
 		Map<String,String> marmap = pubser.getManagerMap();//渠道经理
 		Map<Integer, String> areamap = pubser.getAreaMap(areaname,3);//大区
 //		Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
 		for(RebateVO vo : list){
-			setShowData(vo, provmap,marmap,areamap);
+			setShowData(vo,marmap,areamap);
 		}
 	}
 	
@@ -94,15 +94,13 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * 设置单个返点单展示信息
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(RebateVO vo, Map<Integer, String> provmap,Map<String,String> marmap,Map<Integer, String> areamap)	throws DZFWarpException {
+	private void setShowData(RebateVO vo,Map<String,String> marmap,Map<Integer, String> areamap)	throws DZFWarpException {
 		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
 		UserVO uservo = null;
 		String cuserid= null;
 		if (corpvo != null) {
 			if (corpvo.getVprovince() != null) {
-				if (provmap != null && !provmap.isEmpty()) {
-					vo.setVprovname(provmap.get(corpvo.getVprovince()));
-				}
+				vo.setVprovname(corpvo.getCitycounty());
 				if (marmap != null && !marmap.isEmpty()) {
 					cuserid = marmap.get(vo.getPk_corp());
 					uservo = UserCache.getInstance().get(cuserid, null);
@@ -326,10 +324,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			RebateVO retvo =  (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if(retvo != null){
 				retvo.setVprovince(data.getVprovince());
-				Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
 				Map<String,String> marmap = pubser.getManagerMap();//渠道经理
 				Map<Integer, String> areaMap = pubser.getAreaMap(null,3);//大区
-				setShowData(retvo, provmap,marmap,areaMap);
+				setShowData(retvo,marmap,areaMap);
 			}
 			return retvo;
 		} finally {

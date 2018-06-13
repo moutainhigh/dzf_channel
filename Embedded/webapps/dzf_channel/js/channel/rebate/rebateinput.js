@@ -317,7 +317,7 @@ function load(){
 		              { field : 'operdate', title : '录入日期',width :'110',halign: 'center',align:'center' }, 
 		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left', formatter:codeLink },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
-		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
+		              { field : 'provname', title : '地区',width :'140',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corp', title : '加盟商名称',width :'160',halign: 'center',align:'left'}, 

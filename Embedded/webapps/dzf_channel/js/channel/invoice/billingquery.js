@@ -91,7 +91,7 @@ function initDataGrid(){
 //		pageList : [ 20, 50, 100, 200 ],
 		columns : [[{width : '100',title : '',field : 'id',checkbox: true},
 		            {width : '140',title : '大区',field : 'aname',align : 'left'},
-		            {width : '140',title : '省份',field : 'provname',align : 'left'},
+		            {width : '140',title : '地区',field : 'provname',align : 'left'},
 		            {width : '150',title : '加盟商编码',field : 'ccode',align:'left'},
 		            {width : '260',title : '加盟商名称',field : 'cname',align:'left'},
 		            {width : '120',title : '累计扣款金额',field : 'dtotalmny',align:'right',

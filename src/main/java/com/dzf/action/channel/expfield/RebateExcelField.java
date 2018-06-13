@@ -27,8 +27,8 @@ public class RebateExcelField implements IExceport<RebateVO> {
 	private Fieldelement[] fields = new Fieldelement[]{
 			new Fieldelement("doperatedate", "录入日期",false,0,false),
 			new Fieldelement("vbillcode", "返点单号",false,0,false),
-			new Fieldelement("vareaname", "大区",false,0,false),
-			new Fieldelement("vprovname", "省(市)",false,0,false),
+			new Fieldelement("areaname", "大区",false,0,false),
+			new Fieldelement("vprovname", "地区",false,0,false),
 			new Fieldelement("vmanagername", "渠道经理",false,0,false),
 			new Fieldelement("corpcode", "加盟商编码",false,0,false),
 			new Fieldelement("corpname", "加盟商名称",false,0,false),
