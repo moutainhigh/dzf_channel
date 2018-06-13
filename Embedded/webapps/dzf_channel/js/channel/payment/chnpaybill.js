@@ -31,7 +31,7 @@ function load() {
 		columns : [ [ 
 		    {field : 'ck',checkbox : true}, 
 			{width : '140',title : '大区',field : 'aname'}, 
-			{width : '140',title : '省份',field : 'provname'}, 
+			{width : '140',title : '地区',field : 'provname'}, 
 			{width : '240',title : '加盟商',field : 'corpnm'}, 
 			{width : '100',title : '付款日期',field : 'dpdate',align:'center'}, 
 		  	{width : '200',title : '单据号',field : 'vcode',},  
@@ -75,6 +75,8 @@ function load() {
 					return '已确认';
 				if (value == '4')
 					return '已驳回';
+				if (value == '5')
+					return '待审批';
 			}},
 			{width : '140',title : '驳回说明', halign:'center',field : 'vreason',formatter : showTitle},
 		  	{width : '120',title : '付款人',field : 'vhname'}, 
@@ -97,9 +99,9 @@ function clearParams(){
 	$("#qcorpid").val(null);
 	$("#qcorpnm").textbox("setValue",null);
 	$('#aname').combobox('setValue', null);
-	$('#status').combobox('setValue', '-1');
-	$('#iptype').combobox('setValue', '-1');
-	$('#ipmode').combobox('setValue', '-1');
+	$('#qstatus').combobox('setValue', '-1');
+	$('#qiptype').combobox('setValue', '-1');
+	$('#qipmode').combobox('setValue', '-1');
 }
 
 /**
