@@ -398,7 +398,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 				if (str0.length() != 0) {
 					String str;
 					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认付款，不能删除；<br>";
+					errmsg = errmsg + "付款编号：" + str + "，是待审批付款，不能删除；<br>";
 				}
 				if (str1.length() != 0) {
 					String str = str1.substring(0, str1.length() - 1);

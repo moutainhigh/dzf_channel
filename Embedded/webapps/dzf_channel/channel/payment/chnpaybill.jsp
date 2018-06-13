@@ -73,8 +73,8 @@
 					<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">待提交</option>
-						<option value="5">待审批</option>
-						<option value="2">待确认</option>
+						<option value="2">待审批</option>
+						<option value="5">待确认</option>
 						<option value="3">已确认</option>
 						<option value="4">已驳回</option>
 					</select>
