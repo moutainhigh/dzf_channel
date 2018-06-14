@@ -344,7 +344,7 @@ function initCard(id){
 				type: 'combobox',
                 options: {
                 	height: 35,
-                	panelHeight: 100,
+                	panelHeight: 160,
                 	showItemIcon: true,
                 	valueField: "name",
                 	editable: false,
