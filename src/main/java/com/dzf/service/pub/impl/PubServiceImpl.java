@@ -372,7 +372,10 @@ public class PubServiceImpl implements IPubService {
 	
 	@Override
 	public String makeCondition(String cuserid,String areaname) throws DZFWarpException {
-		boolean flg=checkIsLeader(cuserid);
+		boolean flg=false;
+		if(cuserid==null||checkIsLeader(cuserid)){
+			flg=true;
+		}
 		String retstr=null;
 		if(flg && StringUtil.isEmpty(areaname)){
 			retstr="flg";
