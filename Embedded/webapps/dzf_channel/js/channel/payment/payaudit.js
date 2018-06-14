@@ -67,6 +67,9 @@ function initChannel(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-1"
+    				},
                     buttons: '#chnBtn'
                 });
             }
