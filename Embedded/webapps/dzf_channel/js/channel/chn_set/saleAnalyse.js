@@ -10,8 +10,8 @@ $(window).resize(function(){
 
 $(function() {
 	changeArea();
-	initArea({"qtype" :0});
-	initProvince({"qtype" :0});
+	initArea({"qtype" :1,'stype':1});
+	initProvince({"qtype" :1,'stype':1});
 	initDate();
 	load();
 	quickfiltet();
@@ -60,9 +60,9 @@ function initProvince(queryData){
 function changeArea(){
 	 $("#aname").combobox({
 		onChange : function(n, o) {
-			var queryData={"qtype" :3};
+			var queryData={"qtype" :1,"stype" :1};
 			if(n!='全部'){
-				queryData={'aname' : n,"qtype" :3};
+				queryData={'aname' : n,"qtype" :1,"stype" :1};
 				$('#ovince').combobox('setValue',null);
 			}
 			initProvince(queryData);
