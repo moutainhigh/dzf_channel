@@ -946,12 +946,11 @@ public class AchievementServiceImpl implements IAchievementService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		List<String> pklist = new ArrayList<String>();
-		sql.append("SELECT b.vprovince  \n");
+		sql.append("SELECT DISTINCT b.vprovince  \n");
 		sql.append("  FROM cn_chnarea_b b  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON a.pk_chnarea = b.pk_chnarea  \n");
 		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.type, 0) = 1  \n");
-		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'  \n");
 		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
 			sql.append("   AND a.userid = ? \n");
 			spm.addParam(paramvo.getCuserid());
