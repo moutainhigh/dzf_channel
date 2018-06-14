@@ -48,6 +48,9 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("qtype")
 	private Integer qrytype;//查询类型
 	
+	@FieldAlias("stype")
+	private Integer seletype;//选择类型
+	
 	@FieldAlias("begdate")
 	private DZFDate begdate;// 开始日期
 
@@ -123,6 +126,14 @@ public class QryParamVO extends SuperVO {
 
 	public void setVyear(String vyear) {
 		this.vyear = vyear;
+	}
+
+	public Integer getSeletype() {
+		return seletype;
+	}
+
+	public void setSeletype(Integer seletype) {
+		this.seletype = seletype;
 	}
 
 	public void setIseason(Integer iseason) {

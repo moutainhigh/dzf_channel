@@ -75,7 +75,7 @@ public interface IChnAreaService {
 	public List<ComboBoxVO> queryProvince(QryParamVO paramvo) throws DZFWarpException ;
 	
 	/**
-	 * 培训师参照（下拉框查询用的）
+	 * 省（市）一级别参照（下拉框查询用的）
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException

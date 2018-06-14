@@ -29,6 +29,7 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.service.channel.chn_set.IChnAreaService;
+import com.dzf.service.pub.IPubService;
 
 @Service("chn_area")
 public class ChnAreaServiceImpl implements IChnAreaService {
@@ -38,6 +39,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO = null;
+	
+    @Autowired
+    private IPubService pubService;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -292,15 +296,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		SQLParameter spm = new SQLParameter();
 		buf.append(" select distinct a.areaname as name, a.areacode as id ");
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
-		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
-		if(paramvo.getQrytype()<2){
-			buf.append("  a.type=?");//1,0 是查询渠道区域划分
-			spm.addParam(1);
-		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
-			spm.addParam(paramvo.getQrytype());
-		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0 ){//0是为了销售数据分析下拉，这个暂时没有权限限制
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
+		spm.addParam(paramvo.getQrytype());
+		if(!pubService.checkIsLeader(paramvo.getCuserid()) &&paramvo.getSeletype()!=null ){
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -316,15 +314,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		SQLParameter spm = new SQLParameter();
 		buf.append(" select distinct b.vprovname as name, b.vprovince as id");
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
-		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
-		if(paramvo.getQrytype()<2){
-			buf.append("  a.type=?");//1,0 是查询渠道区域划分
-			spm.addParam(1);
-		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
-			spm.addParam(paramvo.getQrytype());
-		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0 ){
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
+		spm.addParam(paramvo.getQrytype());
+		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()==null ){
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -345,19 +337,13 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		SQLParameter spm = new SQLParameter();
 		buf.append(" select distinct b.userid as id ");
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
-		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and ");
-		if(paramvo.getQrytype()<2){
-			buf.append("  a.type=?");//1,0 是查询渠道区域划分
-			spm.addParam(1);
-		}else{
-			buf.append("  a.type=?");//2     是查询培训区域划分 3 是查询运营区域划分
-			spm.addParam(paramvo.getQrytype());
-		}
-		if(!checkIsLeader(paramvo) && paramvo.getQrytype()!=0){
-			buf.append("  and (b.userid=? or a.userid=?)");
-			spm.addParam(paramvo.getCuserid());
-			spm.addParam(paramvo.getCuserid());
-		}
+		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
+		spm.addParam(paramvo.getQrytype());
+//		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()!=null){
+//			buf.append("  and (b.userid=? or a.userid=?)");
+//			spm.addParam(paramvo.getCuserid());
+//			spm.addParam(paramvo.getCuserid());
+//		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			buf.append("  and a.areaname=? ");
 			spm.addParam(paramvo.getAreaname());
@@ -374,18 +360,6 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			}
 		}
 		return list;
-	}
-	
-	private boolean checkIsLeader(QryParamVO paramvo) {
-		String sql="select vdeptuserid corpname,vcomuserid username,vgroupuserid cusername from cn_leaderset where nvl(dr,0)=0";
-		List<ManagerVO> list =(List<ManagerVO>)singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ManagerVO.class));
-		if(list!=null&&list.size()>0){
-			ManagerVO vo=list.get(0);
-			if(paramvo.getCuserid().equals(vo.getCusername())||paramvo.getCuserid().equals(vo.getCorpname())||paramvo.getCuserid().equals(vo.getUsername())){
-				return true;
-			}
-		}
-		return false;
 	}
 	
 }
