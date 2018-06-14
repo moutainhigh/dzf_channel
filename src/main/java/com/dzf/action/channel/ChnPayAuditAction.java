@@ -65,12 +65,12 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
 			//列表查询，根据登录人和选择区域进行过滤
-			String sql = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
-			if (sql != null && !sql.equals("flg")) {
-				paramvo.setVqrysql(sql);
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			if (condition != null ) {
+				if(!condition.equals("flg")){
+					paramvo.setVqrysql(condition);
+				}
 				total = payauditser.queryTotalRow(paramvo);
-			} else {
-				total = 0;
 			}
 			grid.setTotal((long)(total));
 			if(total > 0){
