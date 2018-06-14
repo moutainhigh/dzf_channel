@@ -135,7 +135,7 @@
 						<input id='dpdate' name="dpdate" class="easyui-datebox"  data-options="required:true" style="width: 50%; height: 28px; text-align: left">
 					</div>
 					<div style="width:32%;display: inline-block;">
-						<label style="width:100px;text-align: right;">加盟商名称:</label>
+						<label style="width:100px;text-align: right;"><i class="bisu">*</i>加盟商名称:</label>
 					    <input id="corpnm" name="corpnm" class="easyui-textbox" style="width:50%;height:28px;" data-options="required:true" />
 						<input id="corpid" name="corpid" type="hidden">
 						<input id="ovince" name="ovince" type="hidden">
