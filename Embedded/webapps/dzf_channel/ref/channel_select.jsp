@@ -137,7 +137,9 @@
 		       if(event.keyCode == "13") {//Enter 键事件
 		    	   var filtername = $("#unitcode").val(); ; 
 		      		var params = new Object();
-		      		params["dr"] = ovince;
+		    		if(ovince!=undefined){
+		    			params['dr']=ovince
+		    		}
 		      		params["corpcode"] = filtername;
 		      		grid.datagrid('load',params); 
 		       }
