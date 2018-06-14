@@ -118,6 +118,7 @@ function reloadData(){
 	queryParams.ipmode = $('#qipmode').combobox('getValue');
 	queryParams.corpid = $("#qcorpid").val();
 	queryParams.aname = $("#aname").combobox('getValue');
+	queryParams.corpnm = null;
 	$('#chn_grid').datagrid('unselectAll');
 	$('#chn_grid').datagrid('options').url =DZF.contextPath + '/chnpay/chnpaybill!query.action';
 	$('#chn_grid').datagrid('options').queryParams = queryParams;
@@ -157,6 +158,8 @@ function fastQry(){
             	$('#chn_grid').datagrid('options').url = contextPath + '/chnpay/chnpaybill!query.action';
           		$('#chn_grid').datagrid('options').queryParams = queryParams;
           		$('#chn_grid').datagrid('reload');
+            }else{
+            	reloadData();
             }
          }
    });
