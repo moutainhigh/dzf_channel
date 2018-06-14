@@ -58,7 +58,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
 		}
-    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
+    	String condition = pubService.makeCondition(null,paramvo.getAreaname());
      	if(condition!=null && !condition.equals("flg")){
     		sql.append(condition);
     	}else if(condition==null){

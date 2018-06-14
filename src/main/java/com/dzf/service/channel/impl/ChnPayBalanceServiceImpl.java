@@ -47,7 +47,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<ChnBalanceRepVO> retlist = new ArrayList<ChnBalanceRepVO>();
 		List<String> pklist = new ArrayList<String>();
 		String areaname=paramvo.getAreaname();
-		String condition = pubService.makeCondition(paramvo.getCuserid(),areaname);
+		String condition = pubService.makeCondition(null,areaname);
 	  	if(condition==null){
 	  		return null;
     	}else if(condition.equals("flg")){

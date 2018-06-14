@@ -70,7 +70,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
 			int total=0;
-			String condition = pubService.makeCondition(getLoginUserid(), paramvo.getAreaname());
+			String condition = pubService.makeCondition(null, paramvo.getAreaname());
 			if (condition != null) {
 				if(!condition.equals("flg")){
 					paramvo.setVprovname(condition);
