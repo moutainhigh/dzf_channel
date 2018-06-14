@@ -59,7 +59,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		querysql.append(" select a.*,ba.vprovince,su.user_name submitname from cn_paybill a ");
 		querysql.append(" left join sm_user su on a.submitid=su.cuserid and a.submitid is not null ");
 		querysql.append(" left join bd_account ba on a.pk_corp=ba.pk_corp ");
-		querysql.append(" 	where nvl(a.dr,0) = 0 ");
+		querysql.append(" 	where nvl(a.dr,0) = 0 and  a.systype=2 ");
 		if (chn.getDoperatedate() != null) {// 付款日期
 			querysql.append(" and a.dpaydate >= ? ");
 			sp.addParam(chn.getDoperatedate());
@@ -90,7 +90,6 @@ public class ChnPayServiceImpl implements IChnPayService {
 			querysql.append(" and a.vstatus =? ");
 			sp.addParam(chn.getVstatus());
 		}
-		querysql.append(" and (a.vstatus != 1 or systype=2 ) ");
 		if(!StringUtil.isEmpty(chn.getPk_corp())){
 		    String[] strs = chn.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
