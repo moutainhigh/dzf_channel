@@ -298,7 +298,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
-		if(!pubService.checkIsLeader(paramvo.getCuserid()) &&paramvo.getSeletype()!=null ){
+		if(!pubService.checkIsLeader(paramvo.getCuserid()) &&paramvo.getSeletype()==null ){
 			buf.append("  and (b.userid=? or a.userid=?)");
 			spm.addParam(paramvo.getCuserid());
 			spm.addParam(paramvo.getCuserid());
@@ -339,7 +339,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
-//		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()!=null){
+//		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()==null){
 //			buf.append("  and (b.userid=? or a.userid=?)");
 //			spm.addParam(paramvo.getCuserid());
 //			spm.addParam(paramvo.getCuserid());
