@@ -35,7 +35,7 @@
 				</div>
 				<div class="time_col time_colp10">
 					<input id="kh" type="radio" name="level" value="3"/>
-					<label for='kh' style='width:250px'>客户数据权限</label> 
+					<label for='kh' style='width:250px'>加盟商数据权限</label> 
 				</div>
 			</form>
 		</div>
