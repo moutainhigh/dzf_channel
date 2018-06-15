@@ -1269,7 +1269,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			
 			// 6、更新合同历史数据
 			String[] str = new String[] { "vdeductstatus", "vstatus","ichangetype", "vchangeraeson", "vchangememo",
-					"vstopperiod", "vchanger","dchangetime","patchstatus","tstamp",
+					"vstopperiod", "vchanger","dchangetime","tstamp",
 					"nreturnmny", "nretrebmny", "nretdedmny", 
 					"nchangetotalmny", "nchangesummny", "nchangededutmny", "nchangerebatmny",
 					"nsubtotalmny", "nsubdedsummny", "nsubdeductmny", "nsubdedrebamny", "ideductpropor" };
