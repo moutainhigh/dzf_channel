@@ -123,18 +123,18 @@ public class UrlFilter implements Filter {
 					}
 				//powerMap.(url.replace(contextPath, "")) == null || !powerMap.get(url.replace(contextPath, ""))){
 				}
-//				if(!b){
-//					if(url.endsWith(".action")){
-//						res.getWriter().write("{\"success\":false,\"msg\":\"无权操作,请联系管理员\"}");
-//						res.getWriter().flush();
-//						res.getWriter().close();
-//						return;	
-//					}else{
-//						session.setAttribute("errorMsg", "无权操作,请联系管理员!");
-//						req.getRequestDispatcher("/error_kj.jsp").forward(req,res);
-//	   				 	return;
-//					}
-//				}
+				if(!b){
+					if(url.endsWith(".action")){
+						res.getWriter().write("{\"success\":false,\"msg\":\"无权操作,请联系管理员\"}");
+						res.getWriter().flush();
+						res.getWriter().close();
+						return;	
+					}else{
+						session.setAttribute("errorMsg", "无权操作,请联系管理员!");
+						req.getRequestDispatcher("/error_kj.jsp").forward(req,res);
+	   				 	return;
+					}
+				}
 			}
 	        filterChain.doFilter(request, response);
 			return;

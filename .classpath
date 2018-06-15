@@ -89,7 +89,7 @@
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-context-4.2.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-core-4.2.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-expression-4.2.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-jdbc-4.2.1.RELEASE.jar" sourcepath="D:/源码/spring-jdbc-4.2.1.RELEASE-sources.jar"/>
+	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-jdbc-4.2.1.RELEASE.jar" sourcepath="D:/婧愮爜/spring-jdbc-4.2.1.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-orm-4.2.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-tx-4.2.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/spring-web-4.2.1.RELEASE.jar"/>
@@ -107,11 +107,7 @@
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/freemarker-2.3.22.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/ognl-3.0.14.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/struts2-convention-plugin-2.3.28.1.jar"/>
-	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/struts2-core-2.3.28.1.jar" sourcepath="E:/sourceCode/struts-2.3.34-all.zip">
-		<attributes>
-			<attribute name="source_encoding" value="UTF-8"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/struts2-core-2.3.28.1.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/struts2-spring-plugin-2.3.28.1.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/xwork-core-2.3.28.1.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/ojdbc7.jar"/>
