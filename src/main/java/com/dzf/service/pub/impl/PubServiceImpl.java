@@ -386,14 +386,28 @@ public class PubServiceImpl implements IPubService {
 			if((dataLevel==1 && !StringUtil.isEmpty(areaname)) || (dataLevel==2)){
 				List<String>  qryProvince= qryProvince(cuserid,dataLevel,areaname);
 				if(qryProvince!=null && qryProvince.size()>0 ){
-					 sql.append(" and (ba.vprovince  in (");
+					 sql.append(" and ba.vprovince  in (");
 		             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
-		             sql.append(" ) ");
+		             sql.append(" )");
 		             retstr= sql.toString();
 				}
 			}else if(dataLevel==3){
 				List<String>  qryCorpIds = qryCorpIds(cuserid,areaname);
-				if(qryCorpIds!=null && qryCorpIds.size()>0){
+				List<String>  qryProvince= qryProvince(cuserid,dataLevel,areaname);
+				if(qryProvince!=null && qryProvince.size()>0 && qryCorpIds!=null && qryCorpIds.size()>0){
+					 sql.append(" and (ba.vprovince  in (");
+		             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
+		             sql.append(" ) or ");
+		             sql.append("  ba.pk_corp  in (");
+		             sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
+		             sql.append(" ))");
+		             retstr= sql.toString();
+				}else if(qryProvince!=null && qryProvince.size()>0 ){
+					 sql.append(" and ba.vprovince  in (");
+		             sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
+		             sql.append(" )");
+		             retstr= sql.toString();
+				}else if(qryCorpIds!=null && qryCorpIds.size()>0){
 					sql.append(" and ba.pk_corp  in (");
 		            sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 		            sql.append(" )");
@@ -459,7 +473,7 @@ public class PubServiceImpl implements IPubService {
     	buf.append(" where nvl(b.dr, 0) = 0");
     	buf.append("   and nvl(a.dr, 0) = 0");
     	buf.append("   and b.type = 3 ");
-    	if(dataLevel==2){
+    	if(dataLevel!=1){
         	buf.append("   and (a.userid = ? ");
         	buf.append("    or (b.ischarge = 'Y' and b.userid = ?))");
         	spm.addParam(cuserid);
