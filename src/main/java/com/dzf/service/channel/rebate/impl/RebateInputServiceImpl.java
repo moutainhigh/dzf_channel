@@ -49,7 +49,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	@Override
 	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySql(paramvo);
-		if(qryvo==null){
+		if(qryvo == null){
 			return null;
 		}
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
@@ -244,9 +244,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT a.*,ba.vprovince FROM cn_rebate a \n") ;
-		sql.append(" LEFT JOIN bd_account ba on a.pk_corp = ba.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
+		sql.append("SELECT t.*,ba.vprovince FROM cn_rebate t \n") ;
+		sql.append(" LEFT JOIN bd_account ba on t.pk_corp = ba.pk_corp ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
     	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
     	if(condition!=null && !condition.equals("flg")){
     		sql.append(condition);
@@ -254,29 +254,29 @@ public class RebateInputServiceImpl implements IRebateInputService {
     		return null;
     	}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append("   AND istatus = ? \n") ; 
+			sql.append("   AND t.istatus = ? \n") ; 
 			spm.addParam(paramvo.getQrytype());
 		}else{
 			if(!StringUtil.isEmpty(paramvo.getVyear())){
-				sql.append("   AND vyear = ? \n") ; 
+				sql.append("   AND t.vyear = ? \n") ; 
 				spm.addParam(paramvo.getVyear());
 			}
 			if(paramvo.getIseason() != null && paramvo.getIseason() != -1){
-				sql.append("   AND iseason = ? \n") ; 
+				sql.append("   AND t.iseason = ? \n") ; 
 				spm.addParam(paramvo.getIseason());
 			}
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 				if(paramvo.getVdeductstatus() == -2){
-					sql.append("   AND istatus in (?,?,?) \n") ;
+					sql.append("   AND t.istatus in (?,?,?) \n") ;
 					spm.addParam(IStatusConstant.IREBATESTATUS_1);
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
 				}else if(paramvo.getVdeductstatus() == -3){
-					sql.append("   AND istatus in (?,?) \n") ;
+					sql.append("   AND t.istatus in (?,?) \n") ;
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
 				}else{
-					sql.append("   AND istatus = ? \n") ; 
+					sql.append("   AND t.istatus = ? \n") ; 
 					spm.addParam(paramvo.getVdeductstatus());
 				}
 			}
@@ -291,11 +291,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 //			}
 			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 				String[] corps = paramvo.getPk_corp().split(",");
-				String where = SqlUtil.buildSqlForIn("pk_corp", corps);
+				String where = SqlUtil.buildSqlForIn("t.pk_corp", corps);
 				sql.append(" AND ").append(where);
 			}
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-				sql.append("   AND pk_rebate = ? \n") ; 
+				sql.append("   AND t.pk_rebate = ? \n") ; 
 				spm.addParam(paramvo.getPk_bill());
 			}
 			if(!StringUtil.isEmpty(paramvo.getVqrysql())){//渠道经理过滤
@@ -772,10 +772,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		StringBuffer sql = new StringBuffer();
 		String[] corps = pubser.getManagerCorp(cuserid);
 		if(corps != null && corps.length > 0){
-			String where = SqlUtil.buildSqlForIn(" pk_corp ", corps);
+			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND pk_corp is null \n") ; 
+			sql.append(" AND t.pk_corp is null \n") ; 
 		}
 		return sql.toString();
 	}

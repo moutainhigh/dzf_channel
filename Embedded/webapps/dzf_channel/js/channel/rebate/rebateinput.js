@@ -489,7 +489,7 @@ function reloadData(){
 		'year' : $("#qyear").combobox("getValue"),
 		'season' : season,
 		'destatus' : $("#qstatus").combobox("getValue"),
-		'uid' : $("#managerid").val(),
+		'mid' : $("#managerid").val(),
 		'cpid' : $("#qcorpid").val(),
 		'aname' : $("#aname").combobox('getValue')
 
@@ -530,8 +530,8 @@ function fastQry(){
             	if(rows != null && rows.length > 0){
             		//做过查询
             		queryParams.destatus = $("#qstatus").combobox("getValue");
-            		queryParams.cpid = $("#managerid").val();
-            		queryParams.uid = $("#qcorpid").val();
+            		queryParams.mid = $("#managerid").val();
+            		queryParams.cpid = $("#qcorpid").val();
             		queryParams.year = $("#qyear").combobox("getValue");
             		queryParams.season = isEmpty($("#qjd").combobox("getValue")) ? -1 : $("#qjd").combobox("getValue");
             	}

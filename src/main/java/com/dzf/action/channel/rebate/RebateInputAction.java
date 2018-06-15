@@ -72,8 +72,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			if(!StringUtil.isEmpty(paramvo.getCuserid())){//渠道经理查询条件
-				String sql = rebateser.getQrySql(paramvo.getCuserid());
+			if(!StringUtil.isEmpty(paramvo.getVmanager())){//渠道经理查询条件
+				String sql = rebateser.getQrySql(paramvo.getVmanager());
 				paramvo.setVqrysql(sql);
 			}
 			paramvo.setCuserid(getLoginUserid());
