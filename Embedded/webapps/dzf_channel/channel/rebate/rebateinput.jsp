@@ -95,7 +95,7 @@
 							</select>
 						</div>
 					 	<div style="display: inline-block;width:38%;">
-							<label style="width:100px;text-align: right;">&emsp;加盟商名称:</label>
+							<label style="width:100px;text-align: right;"><i class="bisu">*</i>加盟商名称:</label>
 						    <input id="corp" name="corp" class="easyui-textbox" style="width:220px;height:26px;"
 								data-options="required:true,validType:'length[0,100]'" />
 							<input id="corpid" name="corpid" type="hidden">
@@ -114,12 +114,12 @@
 								data-options="readonly:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>				
 						<div style="width:24%;display: inline-block">
-							<label style="width:80px;text-align: right;">返点基数:</label>
+							<label style="width:80px;text-align: right;"><i class="bisu">*</i>返点基数:</label>
 							<input id="basemny" name="basemny" class="easyui-numberbox" style="width:120px;height:26px;"
 								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
 						<div style="width:24%;display: inline-block">
-							<label style="width:80px;text-align: right;">返点金额:</label>
+							<label style="width:80px;text-align: right;"><i class="bisu">*</i>返点金额:</label>
 							<input id="rebatemny" name="rebatemny" class="easyui-numberbox" style="width:120px;height:26px;" 
 								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
