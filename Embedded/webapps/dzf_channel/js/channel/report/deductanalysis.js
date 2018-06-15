@@ -190,6 +190,9 @@ function load(type){
 							obj['num'] = rows[i].sumnum;//总合同数
 							obj['mny'] = rows[i].summny;//总扣款
 							obj['retnum'] = rows[i].retnum;//退回合同数
+							obj['custnum'] = rows[i].custnum;//存量合同数
+							obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
+							obj['dednum'] = rows[i].dednum;//非存量合同数
 							if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
 								obj['retmny'] = '-'+rows[i].retmny;//退回金额
 							}else{
@@ -229,6 +232,9 @@ function load(type){
 								obj['num'] = rows[i].sumnum;//总合同数
 								obj['mny'] = rows[i].summny;//总扣款
 								obj['retnum'] = rows[i].retnum;//退回合同数
+								obj['custnum'] = rows[i].custnum;//存量合同数
+								obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
+								obj['dednum'] = rows[i].dednum;//非存量合同数
 								if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
 									obj['retmny'] = '-'+rows[i].retmny;//退回金额
 								}else{
@@ -273,11 +279,14 @@ function load(type){
 		showFooter:true,
 		//冻结在 左边的列 
 		frozenColumns:[[
-						{ field : 'corpid',    title : '会计公司主键', hidden : true},
+						{ field : 'corpid',    title : '会计公司主键', hidden:true},
 		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
 		                { field : 'stocknum',  title : '存量客户', width : 100, halign:'center',align:'right'},
-		                { field : 'num',  title : '总合同数', width : 100, halign:'center',align:'right'}, 
+//		                { field : 'num',  title : '总合同数', width : 100, halign:'center',align:'right', hidden:true}, 
+		                { field : 'custnum',  title : '存量合同数', width : 100, halign:'center',align:'right', },
+		                { field : 'zeronum',  title : '0扣款(非存量)合同数', width : 160, halign:'center',align:'right', },
+		                { field : 'dednum',  title : '非存量合同数', width : 100, halign:'center',align:'right', },
 		                { field : 'mny',  title : '总扣款', width : 100, halign:'center',align:'right',formatter:formatMny},
 		]],
 		columns : columns,

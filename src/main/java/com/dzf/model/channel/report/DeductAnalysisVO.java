@@ -43,6 +43,39 @@ public class DeductAnalysisVO extends SuperVO {
 	
 	@FieldAlias("stocknum")
 	private Integer istocknum;//存量客户数
+	
+    @FieldAlias("custnum")
+    private Integer icustnum;//存量合同数
+    
+    @FieldAlias("zeronum")
+    private Integer izeronum;//0扣款(非存量)合同数
+    
+    @FieldAlias("dednum")
+    private Integer idednum;//非存量合同数
+
+	public Integer getIcustnum() {
+		return icustnum;
+	}
+
+	public void setIcustnum(Integer icustnum) {
+		this.icustnum = icustnum;
+	}
+
+	public Integer getIzeronum() {
+		return izeronum;
+	}
+
+	public void setIzeronum(Integer izeronum) {
+		this.izeronum = izeronum;
+	}
+
+	public Integer getIdednum() {
+		return idednum;
+	}
+
+	public void setIdednum(Integer idednum) {
+		this.idednum = idednum;
+	}
 
 	public Integer getIretnum() {
 		return iretnum;

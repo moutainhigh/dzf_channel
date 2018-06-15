@@ -55,17 +55,28 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			DeductAnalysisVO bakvo = null;
 			CorpVO corpvo = null;
 			int num = 0;//循环次数
-			int connum = 0;//合同最终金额
+			int connum = 0;//合同总数量
+			
+		    int icustnum = 0;//存量合同数
+		    int izeronum = 0;//0扣款(非存量)合同数
+		    int idednum = 0;//非存量合同数
+			
 			DZFDouble ndedsummny = DZFDouble.ZERO_DBL;
 			for(String pk_corp : pk_corplist){
 				num = 0;
 				connum = 0;
+				icustnum = 0;//存量合同数
+			    izeronum = 0;//0扣款(非存量)合同数
+			    idednum = 0;//非存量合同数
 				if(detmap != null && !detmap.isEmpty()){
 					detlist = (List<DeductAnalysisVO>) detmap.get(pk_corp);
 					if(detlist != null && detlist.size() > 0){
 						for(DeductAnalysisVO dvo : detlist){
 							num = 0;
 							connum = 0;
+							icustnum = 0;//存量合同数
+						    izeronum = 0;//0扣款(非存量)合同数
+						    idednum = 0;//非存量合同数
 							ndedsummny = DZFDouble.ZERO_DBL;
 							retvo = new DeductAnalysisVO();
 							retvo.setPk_corp(pk_corp);
@@ -81,6 +92,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 								if(bakvo != null){
 									retvo.setIretnum(bakvo.getIcorpnums());//退回合同数
 									retvo.setNretmny(bakvo.getNdeducmny());//退回金额
+									
+									retvo.setIcustnum(bakvo.getIcustnum());//存量合同数
+									retvo.setIzeronum(bakvo.getIzeronum());//0扣款(非存量)合同数
+									retvo.setIdednum(bakvo.getIdednum());//非存量合同数
 								}
 							}
 							if(dedmap != null && !dedmap.isEmpty()){
@@ -89,24 +104,45 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 									if(num == 0){
 										connum = ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum());
 										ndedsummny = SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny());
+										
+										icustnum = ToolsUtil.addInteger(dedvo.getIcustnum(),retvo.getIcustnum());//存量合同数
+									    izeronum = ToolsUtil.addInteger(dedvo.getIzeronum(),retvo.getIzeronum());//0扣款(非存量)合同数
+									    idednum = ToolsUtil.addInteger(dedvo.getIdednum(),retvo.getIdednum());//非存量合同数
 									}
 									retvo.setIcorpnums_sum(connum);//总合同数
 									retvo.setNdeductmny_sum(ndedsummny);//总扣款
+									
+									retvo.setIcustnum(icustnum);//存量合同数
+									retvo.setIzeronum(izeronum);//0扣款(非存量)合同数
+									retvo.setIdednum(idednum);//非存量合同数
 								}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
 									if(num == 0){
 										connum = ToolsUtil.subInteger(0, retvo.getIretnum());
 										ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+										icustnum = ToolsUtil.addInteger(0,retvo.getIcustnum());//存量合同数
+									    izeronum = ToolsUtil.addInteger(0,retvo.getIzeronum());//0扣款(非存量)合同数
+									    idednum = ToolsUtil.addInteger(0,retvo.getIdednum());//非存量合同数
 									}
 									retvo.setIcorpnums_sum(connum);//总合同数
 									retvo.setNdeductmny_sum(ndedsummny);//总扣款
+									
+									retvo.setIcustnum(icustnum);//存量合同数
+									retvo.setIzeronum(izeronum);//0扣款(非存量)合同数
+									retvo.setIdednum(idednum);//非存量合同数
 								}
 							}else{//无扣款金额，只有退款金额，计算总合同数和总扣款
 								if(num == 0){
 									connum = ToolsUtil.subInteger(0, retvo.getIretnum());
 									ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+									icustnum = ToolsUtil.addInteger(0,retvo.getIcustnum());//存量合同数
+								    izeronum = ToolsUtil.addInteger(0,retvo.getIzeronum());//0扣款(非存量)合同数
+								    idednum = ToolsUtil.addInteger(0,retvo.getIdednum());//非存量合同数
 								}
 								retvo.setIcorpnums_sum(connum);//总合同数
 								retvo.setNdeductmny_sum(ndedsummny);//总扣款
+								retvo.setIcustnum(icustnum);//存量合同数
+								retvo.setIzeronum(izeronum);//0扣款(非存量)合同数
+								retvo.setIdednum(idednum);//非存量合同数
 							}
 							if(custmap != null && !custmap.isEmpty()){
 								retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
@@ -128,6 +164,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 							if(bakvo != null){
 								retvo.setIretnum(bakvo.getIcorpnums());//退回合同数
 								retvo.setNretmny(bakvo.getNdeducmny());//退回金额
+								
+								retvo.setIcustnum(bakvo.getIcustnum());//存量合同数
+								retvo.setIzeronum(bakvo.getIzeronum());//0扣款(非存量)合同数
+								retvo.setIdednum(bakvo.getIdednum());//非存量合同数
 							}
 						}
 						if(dedmap != null && !dedmap.isEmpty()){
@@ -135,17 +175,33 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 							if(dedvo != null){
 								retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));//总合同数
 								retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));//总扣款
+								
+								retvo.setIcustnum(ToolsUtil.addInteger(dedvo.getIcustnum(),retvo.getIcustnum()));//存量合同数
+								retvo.setIzeronum(ToolsUtil.addInteger(dedvo.getIzeronum(),retvo.getIzeronum()));//0扣款(非存量)合同数
+								retvo.setIdednum(ToolsUtil.addInteger(dedvo.getIdednum(),retvo.getIdednum()));//非存量合同数
 							}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
 								if(num == 0){
 									connum = ToolsUtil.subInteger(0, retvo.getIretnum());
 									ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+									
+									icustnum = ToolsUtil.addInteger(0,retvo.getIcustnum());//存量合同数
+								    izeronum = ToolsUtil.addInteger(0,retvo.getIzeronum());//0扣款(非存量)合同数
+								    idednum = ToolsUtil.addInteger(0,retvo.getIdednum());//非存量合同数
 								}
 								retvo.setIcorpnums_sum(connum);//总合同数
 								retvo.setNdeductmny_sum(ndedsummny);//总扣款
+								
+								retvo.setIcustnum(icustnum);//存量合同数
+								retvo.setIzeronum(izeronum);//0扣款(非存量)合同数
+								retvo.setIdednum(idednum);//非存量合同数
 							}
 						}else{//无扣款金额，只有退款金额，计算总合同数和总扣款
 							retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));//总合同数
 							retvo.setNdeductmny_sum(SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny()));//总扣款
+							
+							retvo.setIcustnum(ToolsUtil.addInteger(0,retvo.getIcustnum()));//存量合同数
+							retvo.setIzeronum(ToolsUtil.addInteger(0,retvo.getIzeronum()));//0扣款(非存量)合同数
+							retvo.setIdednum(ToolsUtil.addInteger(0,retvo.getIdednum()));//非存量合同数
 						}
 						if(custmap != null && !custmap.isEmpty()){
 							retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
@@ -167,6 +223,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 						if(bakvo != null){
 							retvo.setIretnum(bakvo.getIcorpnums());//退回合同数
 							retvo.setNretmny(bakvo.getNdeducmny());//退回金额
+							
+							retvo.setIcustnum(bakvo.getIcustnum());//存量合同数
+							retvo.setIzeronum(bakvo.getIzeronum());//0扣款(非存量)合同数
+							retvo.setIdednum(bakvo.getIdednum());//非存量合同数
 						}
 					}
 					if(dedmap != null && !dedmap.isEmpty()){
@@ -174,17 +234,31 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 						if(dedvo != null){
 							retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));//总合同数
 							retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));//总扣款
+							
+							retvo.setIcustnum(ToolsUtil.addInteger(dedvo.getIcustnum(),retvo.getIcustnum()));//存量合同数
+							retvo.setIzeronum(ToolsUtil.addInteger(dedvo.getIzeronum(),retvo.getIzeronum()));//0扣款(非存量)合同数
+							retvo.setIdednum(ToolsUtil.addInteger(dedvo.getIdednum(),retvo.getIdednum()));//非存量合同数
 						}else{//此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
 							if(num == 0){
 								connum = ToolsUtil.subInteger(0, retvo.getIretnum());
 								ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+								
+								icustnum = ToolsUtil.addInteger(0,retvo.getIcustnum());//存量合同数
+							    izeronum = ToolsUtil.addInteger(0,retvo.getIzeronum());//0扣款(非存量)合同数
+							    idednum = ToolsUtil.addInteger(0,retvo.getIdednum());//非存量合同数
 							}
 							retvo.setIcorpnums_sum(connum);//总合同数
 							retvo.setNdeductmny_sum(ndedsummny);//总扣款
+							retvo.setIcustnum(icustnum);//存量合同数
+							retvo.setIzeronum(izeronum);//0扣款(非存量)合同数
+							retvo.setIdednum(idednum);//非存量合同数
 						}
 					}else{//无扣款金额，只有退款金额，计算总合同数和总扣款
 						retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));//总合同数
 						retvo.setNdeductmny_sum(SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny()));//总扣款
+						retvo.setIcustnum(ToolsUtil.addInteger(0,retvo.getIcustnum()));//存量合同数
+						retvo.setIzeronum(ToolsUtil.addInteger(0,retvo.getIzeronum()));//0扣款(非存量)合同数
+						retvo.setIdednum(ToolsUtil.addInteger(0,retvo.getIdednum()));//非存量合同数
 					}
 					if(custmap != null && !custmap.isEmpty()){
 						retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
@@ -343,7 +417,12 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	@SuppressWarnings("unchecked")
 	private Map<String,DeductAnalysisVO> queryTotalMny(QryParamVO paramvo, int qrytype, List<String> pk_corplist) throws DZFWarpException {
 		Map<String,DeductAnalysisVO> map = new HashMap<String,DeductAnalysisVO>();
-		QrySqlSpmVO qryvo = getTotalQrySqlSpm(paramvo, qrytype);
+		QrySqlSpmVO qryvo = null;
+		if(qrytype == 1){
+			qryvo =  getKkTotalQrySqlSpm(paramvo, qrytype);
+		}else if(qrytype == 2){
+			qryvo =  getTkTotalQrySqlSpm(paramvo, qrytype);
+		}
 		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(DeductAnalysisVO.class));
 		if(list != null && list.size() > 0){
@@ -357,100 +436,188 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		return map;
 	}
 	
+//	/**
+//	 * 获取金额汇总查询语句
+//	 * @param paramvo
+//	 * @param qrytype  1：扣款；2：退款
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	private QrySqlSpmVO getTotalQrySqlSpm(QryParamVO paramvo, int qrytype) throws DZFWarpException {
+//		QrySqlSpmVO qryvo = new QrySqlSpmVO();
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter spm = new SQLParameter();
+//		sql.append("SELECT t.pk_corp,  \n") ;
+//		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//预付款
+//			if(qrytype == 1){
+//				sql.append(" SUM(nvl(t.ndeductmny,0)) AS ndeducmny, \n") ;
+//			}else if(qrytype == 2){
+//				sql.append(" SUM(nvl(t.nretdedmny,0)) AS ndeducmny, \n") ;
+//			}
+//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点
+//			if(qrytype == 1){
+//				sql.append(" SUM(nvl(t.ndedrebamny,0)) AS ndeducmny, \n") ;
+//			}else if(qrytype == 2){
+//				sql.append(" SUM(nvl(t.nretrebmny,0)) AS ndeducmny, \n") ;
+//			}
+//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部
+//			if(qrytype == 1){
+//				sql.append(" SUM(nvl(t.ndedsummny,0)) AS ndeducmny, \n") ;
+//			}else if(qrytype == 2){
+//				sql.append(" SUM(nvl(t.nreturnmny,0)) AS ndeducmny, \n") ;
+//			}
+//		}
+//		if(qrytype == 1){
+//			//合同数量去掉补提单合同数
+//			sql.append("       SUM(CASE  \n") ; 
+//			sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
+//			sql.append("              1  \n") ; 
+//			sql.append("             ELSE  \n") ; 
+//			sql.append("              0  \n") ; 
+//			sql.append("           END) AS icorpnums  \n") ;
+//		}else if(qrytype == 2){
+//			sql.append(" SUM( ");
+//			sql.append("    CASE t.vstatus \n") ; 
+//			sql.append("      WHEN 10 THEN \n") ; 
+//			sql.append("       1 \n") ; 
+//			sql.append("      ELSE \n") ; 
+//			sql.append("       0 \n") ; 
+//			sql.append("    END ) AS icorpnums \n") ;
+//		}
+//		sql.append("  FROM cn_contract t  \n") ; 
+//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+//		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+//		sql.append(" AND nvl(ct.dr, 0) = 0  \n") ; 
+//		if(qrytype == 1){
+//			sql.append("   AND t.vstatus IN (?, ?, ?) \n") ;
+//			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+//			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+//			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+//		}else if(qrytype == 2){
+//			sql.append("   AND t.vstatus IN (?, ?) \n") ; 
+//			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+//			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+//		}
+//		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+//			if(qrytype == 1){
+//				sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
+//			}else if(qrytype == 2){
+//				sql.append(" AND SUBSTR(t.dchangetime,1,7) >= ? \n");
+//			}
+//			spm.addParam(paramvo.getBeginperiod());
+//		}
+//		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+//			if(qrytype == 1){
+//				sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n");
+//			}else if(qrytype == 2){
+//				sql.append(" AND SUBSTR(t.dchangetime,1,7) <= ? \n");
+//			}
+//			spm.addParam(paramvo.getEndperiod());
+//		}
+//		if(paramvo.getBegdate() != null){
+//			if(qrytype == 1){
+//				sql.append(" AND t.deductdata >= ? \n");
+//			}else if(qrytype == 2){
+//				sql.append(" AND SUBSTR(t.dchangetime,1,10) >= ? \n");
+//			}
+//			spm.addParam(paramvo.getBegdate());
+//		}
+//		if(paramvo.getEnddate() != null){
+//			if(qrytype == 1){
+//				sql.append(" AND t.deductdata <= ? \n");
+//			}else if(qrytype == 2){
+//				sql.append(" AND SUBSTR(t.dchangetime,1,10) <= ? \n");
+//			}
+//			spm.addParam(paramvo.getEnddate());
+//		}
+//		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+//			String[] corps = paramvo.getPk_corp().split(",");
+//			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+//			sql.append(" AND ").append(where);
+//		}
+//		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+//			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
+//		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+//			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
+//		}
+//		sql.append(" GROUP BY \n") ; 
+//		sql.append(" t.pk_corp  \n") ; 
+//		sql.append(" ORDER BY t.pk_corp \n");
+//		qryvo.setSql(sql.toString());
+//		qryvo.setSpm(spm);
+//		return qryvo;
+//	}
+	
 	/**
-	 * 获取金额汇总查询语句
+	 * 获取扣款数据查询sql
 	 * @param paramvo
-	 * @param qrytype  1：扣款；2：退款
+	 * @param qrytype
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private QrySqlSpmVO getTotalQrySqlSpm(QryParamVO paramvo, int qrytype) throws DZFWarpException {
+	private QrySqlSpmVO getKkTotalQrySqlSpm(QryParamVO paramvo, int qrytype) throws DZFWarpException {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,  \n") ;
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//预付款
-			if(qrytype == 1){
-				sql.append(" SUM(nvl(t.ndeductmny,0)) AS ndeducmny, \n") ;
-			}else if(qrytype == 2){
-				sql.append(" SUM(nvl(t.nretdedmny,0)) AS ndeducmny, \n") ;
-			}
+			sql.append(" SUM(nvl(t.ndeductmny,0)) AS ndeducmny, \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点
-			if(qrytype == 1){
-				sql.append(" SUM(nvl(t.ndedrebamny,0)) AS ndeducmny, \n") ;
-			}else if(qrytype == 2){
-				sql.append(" SUM(nvl(t.nretrebmny,0)) AS ndeducmny, \n") ;
-			}
+			sql.append(" SUM(nvl(t.ndedrebamny,0)) AS ndeducmny, \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部
-			if(qrytype == 1){
-				sql.append(" SUM(nvl(t.ndedsummny,0)) AS ndeducmny, \n") ;
-			}else if(qrytype == 2){
-				sql.append(" SUM(nvl(t.nreturnmny,0)) AS ndeducmny, \n") ;
-			}
+			sql.append(" SUM(nvl(t.ndedsummny,0)) AS ndeducmny, \n") ;
 		}
-		if(qrytype == 1){
-//			sql.append("  COUNT(t.pk_confrim) AS icorpnums \n") ; 
-			//合同数量去掉补提单合同数
-			sql.append("       SUM(CASE  \n") ; 
-			sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
-			sql.append("              1  \n") ; 
-			sql.append("             ELSE  \n") ; 
-			sql.append("              0  \n") ; 
-			sql.append("           END) AS icorpnums  \n") ;
-		}else if(qrytype == 2){
-			sql.append(" SUM( ");
-			sql.append("    CASE t.vstatus \n") ; 
-			sql.append("      WHEN 10 THEN \n") ; 
-			sql.append("       1 \n") ; 
-			sql.append("      ELSE \n") ; 
-			sql.append("       0 \n") ; 
-			sql.append("    END ) AS icorpnums \n") ;
-		}
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("              1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) AS icustnum,  \n");
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND  \n");
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("              1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) AS izeronum,  \n");
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND  \n");
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("              1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) AS idednum,  \n");
+		
+		//合同数量去掉补提单合同数
+		sql.append("       SUM(CASE  \n") ; 
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
+		sql.append("              1  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           END) AS icorpnums  \n") ;//合同数量
+		
 		sql.append("  FROM cn_contract t  \n") ; 
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append(" AND nvl(ct.dr, 0) = 0  \n") ; 
-		if(qrytype == 1){
-			sql.append("   AND t.vstatus IN (?, ?, ?) \n") ;
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		}else if(qrytype == 2){
-			sql.append("   AND t.vstatus IN (?, ?) \n") ; 
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		}
-//		sql.append("   AND nvl(t.isncust, 'N') = 'N' \n") ; 
+		sql.append("   AND t.vstatus IN (?, ?, ?) \n") ;
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-			if(qrytype == 1){
-				sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
-			}else if(qrytype == 2){
-				sql.append(" AND SUBSTR(t.dchangetime,1,7) >= ? \n");
-			}
+			sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-			if(qrytype == 1){
-				sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n");
-			}else if(qrytype == 2){
-				sql.append(" AND SUBSTR(t.dchangetime,1,7) <= ? \n");
-			}
+			sql.append(" AND SUBSTR(t.deductdata,1,7) <= ? \n");
 			spm.addParam(paramvo.getEndperiod());
 		}
 		if(paramvo.getBegdate() != null){
-			if(qrytype == 1){
-				sql.append(" AND t.deductdata >= ? \n");
-			}else if(qrytype == 2){
-				sql.append(" AND SUBSTR(t.dchangetime,1,10) >= ? \n");
-			}
+			sql.append(" AND t.deductdata >= ? \n");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			if(qrytype == 1){
-				sql.append(" AND t.deductdata <= ? \n");
-			}else if(qrytype == 2){
-				sql.append(" AND SUBSTR(t.dchangetime,1,10) <= ? \n");
-			}
+			sql.append(" AND t.deductdata <= ? \n");
 			spm.addParam(paramvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
@@ -458,13 +625,100 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
+		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 1) {//预付款扣款
 			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
-		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点扣款
 			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
 		}
-		sql.append(" GROUP BY \n") ; 
-		sql.append(" t.pk_corp  \n") ; 
+		sql.append(" GROUP BY t.pk_corp \n") ; 
+		sql.append(" ORDER BY t.pk_corp \n");
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
+	}
+	
+	/**
+	 * 获取退款数据查询sql
+	 * @param paramvo
+	 * @param qrytype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private QrySqlSpmVO getTkTotalQrySqlSpm(QryParamVO paramvo, int qrytype) throws DZFWarpException {
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp,  \n") ;
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//预付款
+			sql.append(" SUM(nvl(t.nretdedmny,0)) AS ndeducmny, \n") ;
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点
+			sql.append(" SUM(nvl(t.nretrebmny,0)) AS ndeducmny, \n") ;
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部
+			sql.append(" SUM(nvl(t.nreturnmny,0)) AS ndeducmny, \n") ;
+		}
+		sql.append("       SUM(CASE  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND  \n") ; 
+		sql.append("             	  t.vstatus = 10 THEN  \n") ; 
+		sql.append("              -1  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           END) AS icustnum,  \n") ; 
+		sql.append("       SUM(CASE  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND  \n") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND t.vstatus = 10 THEN  \n") ; 
+		sql.append("              -1  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           END) AS izeronum,  \n") ; 
+		sql.append("       SUM(CASE  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND  \n") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND t.vstatus = 10 THEN  \n") ; 
+		sql.append("              -1  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           END) AS idednum,  \n") ; 
+		sql.append(" SUM( ");
+		sql.append("    CASE t.vstatus \n") ; 
+		sql.append("      WHEN 10 THEN \n") ; 
+		sql.append("       1 \n") ; 
+		sql.append("      ELSE \n") ; 
+		sql.append("       0 \n") ; 
+		sql.append("    END ) AS icorpnums \n") ;//退款合同数量
+		
+		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append(" AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND t.vstatus IN (?, ?) \n") ; 
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
+			sql.append(" AND SUBSTR(t.dchangetime,1,7) >= ? \n");
+			spm.addParam(paramvo.getBeginperiod());
+		}
+		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
+			sql.append(" AND SUBSTR(t.dchangetime,1,7) <= ? \n");
+			spm.addParam(paramvo.getEndperiod());
+		}
+		if(paramvo.getBegdate() != null){
+			sql.append(" AND SUBSTR(t.dchangetime,1,10) >= ? \n");
+			spm.addParam(paramvo.getBegdate());
+		}
+		if(paramvo.getEnddate() != null){
+			sql.append(" AND SUBSTR(t.dchangetime,1,10) <= ? \n");
+			spm.addParam(paramvo.getEnddate());
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+			String[] corps = paramvo.getPk_corp().split(",");
+			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+			sql.append(" AND ").append(where);
+		}
+		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 1) {//预付款扣款
+			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
+		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点扣款
+			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
+		}
+		sql.append(" GROUP BY t.pk_corp \n") ; 
 		sql.append(" ORDER BY t.pk_corp \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

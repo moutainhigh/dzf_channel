@@ -109,7 +109,9 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		exptitlist.add("加盟商编码");
 		exptitlist.add("加盟商");
 		exptitlist.add("存量客户");
-		exptitlist.add("总合同数");
+		exptitlist.add("存量合同数");
+		exptitlist.add("0扣款(非存量)合同数");
+		exptitlist.add("非存量合同数");
 		exptitlist.add("总扣款");
 		
 		//2、导出字段编码
@@ -123,16 +125,20 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		hbhtitlist.add("加盟商编码");
 		hbhtitlist.add("加盟商");
 		hbhtitlist.add("存量客户");
-		hbhtitlist.add("总合同数");
+		hbhtitlist.add("存量合同数");
+		hbhtitlist.add("0扣款(非存量)合同数");
+		hbhtitlist.add("非存量合同数");
 		hbhtitlist.add("总扣款");
 		//6、合并行字段下标
-		Integer[] hbhindexs = new Integer[]{0,1,2,3,4};
+		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,5,6};
 		//7、字符集合
 		List<String> strslist = new ArrayList<String>();
 		strslist.add("corpcode");
 		strslist.add("corpname");
 		strslist.add("stocknum");
-		strslist.add("num");
+		strslist.add("custnum");
+		strslist.add("zeronum");
+		strslist.add("dednum");
 		//8、金额集合
 		List<String> mnylist = new ArrayList<String>();
 		mnylist.add("mny");
@@ -153,7 +159,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 				exptitlist.add("金额");
 			}
 		}
-		int j = 5;
+		int j = 7;
 		for(int i = 0; i < hblcolsarray.size(); i++){
 			field = (Map<String, String>) hblcolsarray.get(i);
 			hbltitlist.add(String.valueOf(field.get("title")));
