@@ -1,4 +1,5 @@
 var contextPath = DZF.contextPath;
+var hjcols = null;//汇总列字段
 
 $(function(){
 	initQueryDlg();
@@ -324,15 +325,43 @@ function load(type){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
-    var num = 0;	
+//    var num = 0;	
     var mny = 0;	
+    var stocknum = 0;//存量客户
+    var custnum = 0;//存量合同数
+    var zeronum = 0;//0扣款(非存量)合同数
+    var dednum = 0;//非存量合同数
+    
     for (var i = 0; i < rows.length; i++) {
-    	num += getFloatValue(rows[i].num);
+//    	num += getFloatValue(rows[i].num);
     	mny += getFloatValue(rows[i].mny);
+    	stocknum += getFloatValue(rows[i].stocknum);
+    	custnum += getFloatValue(rows[i].custnum);
+    	zeronum += getFloatValue(rows[i].zeronum);
+    	dednum += getFloatValue(rows[i].dednum);
+    	
+		if(hjcols != null && hjcols.length > 0){
+			for(var j = 0; j < hjcols.length; j++){
+				var col = hjcols[j][0];
+	    		hjcols[j][1] += getFloatValue(rows[i][col]);
+	    	}
+	    }
     }
     footerData['corpname'] = '合计';
-    footerData['num'] = num;
+//    footerData['num'] = num;
     footerData['mny'] = mny;
+    footerData['stocknum'] = stocknum;
+    footerData['custnum'] = stocknum;
+    footerData['zeronum'] = zeronum;
+    footerData['dednum'] = dednum;
+    
+    if(hjcols != null && hjcols.length > 0){
+		for(var j = 0; j < hjcols.length; j++){
+			var col = hjcols[j][0];
+    		footerData[col] = hjcols[j][1];
+    	}
+    }
+    
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
@@ -343,6 +372,7 @@ function calFooter(){
  * @param onlymap
  */
 function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
+	hjcols = new Array();
 	var columns = new Array(); 
 	var columnsh = new Array();//列及合并列名称
 	var columnsb = new Array();//子列表名称集合
@@ -364,6 +394,8 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 //	columnb1["formatter"] = useFormat;
 	columnsb.push(columnb1); 
 	
+	hjcols.push(new Array('retnum', 0));
+	
 	var columnb2 = {};
 	columnb2["title"] = '金额';  
 	columnb2["field"] = 'retmny';  
@@ -372,6 +404,8 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 	columnb2["align"] = 'right'; 
 	columnb2["formatter"] = formatMny;
 	columnsb.push(columnb2); 
+	
+	hjcols.push(new Array('retmny', 0));
 	
 	$.ajax({
 		type : "post",
@@ -420,6 +454,8 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 //							column1["formatter"] = useFormat;
 							columnsb.push(column1); 
 							
+							hjcols.push(new Array('num'+(i+1)+'', 0));
+							
 							var column2 = {};
 							column2["title"] = '扣款';  
 							column2["field"] = 'mny'+(i+1);  
@@ -428,6 +464,8 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 							column2["align"] = 'right'; 
 							column2["formatter"] = formatMny;
 							columnsb.push(column2); 
+							
+							hjcols.push(new Array('mny'+(i+1)+'', 0));
 							
 							onlycol.add(rows[i].dedmny);
 						}
