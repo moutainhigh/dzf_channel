@@ -53,7 +53,7 @@ public interface IPubService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public String getManagerName(String pk_corp) throws DZFWarpException;
+//	public String getManagerName(String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 获取加盟会计公司所对应的渠道经理

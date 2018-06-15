@@ -245,7 +245,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT a.*,ba.vprovince FROM cn_rebate a \n") ;
-		sql.append(" LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
+		sql.append(" LEFT JOIN bd_account ba on a.pk_corp = ba.pk_corp ");
 		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
     	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
     	if(condition!=null && !condition.equals("flg")){
@@ -289,9 +289,6 @@ public class RebateInputServiceImpl implements IRebateInputService {
 //					sql.append("   AND pk_corp is null \n") ;
 //				}
 //			}
-			if(!StringUtil.isEmpty(paramvo.getVqrysql())){
-				
-			}
 			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 				String[] corps = paramvo.getPk_corp().split(",");
 				String where = SqlUtil.buildSqlForIn("pk_corp", corps);

@@ -191,7 +191,7 @@ public class PubServiceImpl implements IPubService {
 			throw new BusinessException("区域经理信息不能为空");
 		}
 		List<String> retlist = new ArrayList<String>();
-//		List<String> onlylist = new ArrayList<String>();
+		List<String> onlylist = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" nvl(dr,0) = 0 AND nvl(type,0) = 1 ");
 		String[] users = userids.split(",");
@@ -201,30 +201,36 @@ public class PubServiceImpl implements IPubService {
 		}
 		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), null);
 		if(bVOs != null && bVOs.length > 0){
-//			Map<Integer,List<String>> map = getProviceCorp();
-//			List<String> corplist = null;
+			Map<Integer,List<String>> map = getProviceCorp();
+			List<String> corplist = null;
 			for(ChnAreaBVO bvo : bVOs){
-//				if(bvo.getIsCharge() != null && bvo.getIsCharge().booleanValue()){
-//					if(!onlylist.contains(bvo.getUserid()+""+bvo.getVprovince())){
-//						if(map != null && !map.isEmpty()){
-//							corplist = map.get(bvo.getVprovince());
-//							if(corplist != null && corplist.size() > 0){
-//								for(String corpk : corplist){
-//									if(!retlist.contains(corpk)){
-//										retlist.add(corpk);
-//									}
-//								}
-//								onlylist.add(bvo.getUserid()+""+bvo.getVprovince());
-//							}
-//						}
-//					}
-//				}else{
-//					if(!retlist.contains(bvo.getPk_corp())){
-//						retlist.add(bvo.getPk_corp());
-//					}
-//				}
-				if(!retlist.contains(bvo.getPk_corp())){
-					retlist.add(bvo.getPk_corp());
+				if(bvo.getIsCharge() != null && bvo.getIsCharge().booleanValue()){
+					if(!onlylist.contains(bvo.getUserid()+""+bvo.getVprovince())){
+						if(map != null && !map.isEmpty()){
+							corplist = map.get(bvo.getVprovince());
+							if(corplist != null && corplist.size() > 0){
+								for(String corpk : corplist){
+									if(!StringUtil.isEmpty(corpk)){
+										if(!retlist.contains(corpk)){
+											retlist.add(corpk);
+										}
+									}
+								}
+								onlylist.add(bvo.getUserid()+""+bvo.getVprovince());
+							}
+						}
+					}
+				}else{
+					if(!StringUtil.isEmpty(bvo.getPk_corp())){
+						if(!retlist.contains(bvo.getPk_corp())){
+							retlist.add(bvo.getPk_corp());
+						}
+					}
+				}
+				if(!StringUtil.isEmpty(bvo.getPk_corp())){
+					if(!retlist.contains(bvo.getPk_corp())){
+						retlist.add(bvo.getPk_corp());
+					}
 				}
 			}
 		}
@@ -234,51 +240,54 @@ public class PubServiceImpl implements IPubService {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public String getManagerName(String pk_corp) throws DZFWarpException {
-		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? AND nvl(type,0) = 1 ";
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(pk_corp);
-		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
-		if (bVOs != null && bVOs.length > 0) {
-			String userid = bVOs[0].getUserid();
-			if (!StringUtil.isEmpty(userid)) {
-				UserVO uservo = UserCache.getInstance().get(userid, null);
-				if (uservo != null) {
-					return uservo.getUser_name();
-				}
-			}
-		} else {
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT * \n");
-			sql.append("  FROM cn_chnarea_b \n");
-			sql.append(" WHERE vprovince = (SELECT vprovince \n");
-			sql.append("                      FROM bd_account \n");
-			sql.append("                     WHERE nvl(dr, 0) = 0 \n");
-			sql.append("                       AND nvl(ischannel, 'N') = 'Y' \n");
-			sql.append("                       AND nvl(isaccountcorp, 'N') = 'Y' \n");
-			sql.append("                       AND pk_corp = ? ) \n");
-			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
-			sql.append("   AND nvl(type,0) = 1 \n");
-			sql.append("   AND nvl(dr,0) = 0 \n");
-			spm = new SQLParameter();
-			spm.addParam(pk_corp);
-			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-					new BeanListProcessor(ChnAreaBVO.class));
-			if(blist != null && blist.size() > 0){
-				String userid = blist.get(0).getUserid();
-				if (!StringUtil.isEmpty(userid)) {
-					UserVO uservo = UserCache.getInstance().get(userid, null);
-					if (uservo != null) {
-						return uservo.getUser_name();
-					}
-				}
-			}
-		}
-		return null;
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public String getManagerName(String pk_corp) throws DZFWarpException {
+//		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? AND nvl(type,0) = 1 ";
+//		SQLParameter spm = new SQLParameter();
+//		spm.addParam(pk_corp);
+//		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
+//		if (bVOs != null && bVOs.length > 0) {
+//			String userid = bVOs[0].getUserid();
+//			if (!StringUtil.isEmpty(userid)) {
+//				UserVO uservo = UserCache.getInstance().get(userid, null);
+//				if (uservo != null) {
+//					return uservo.getUser_name();
+//				}
+//			}
+//		} else {
+//			StringBuffer sql = new StringBuffer();
+//			sql.append("SELECT * \n");
+//			sql.append("  FROM cn_chnarea_b \n");
+//			sql.append(" WHERE vprovince = (SELECT vprovince \n");
+//			sql.append("                      FROM bd_account \n");
+//			sql.append("                     WHERE nvl(dr, 0) = 0 \n");
+//			sql.append("                       AND nvl(ischannel, 'N') = 'Y' \n");
+//			sql.append("                       AND nvl(isaccountcorp, 'N') = 'Y' \n");
+//			sql.append("                       AND pk_corp = ? ) \n");
+//			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
+//			sql.append("   AND nvl(type,0) = 1 \n");
+//			sql.append("   AND nvl(dr,0) = 0 \n");
+//			spm = new SQLParameter();
+//			spm.addParam(pk_corp);
+//			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+//					new BeanListProcessor(ChnAreaBVO.class));
+//			if(blist != null && blist.size() > 0){
+//				String userid = blist.get(0).getUserid();
+//				if (!StringUtil.isEmpty(userid)) {
+//					UserVO uservo = UserCache.getInstance().get(userid, null);
+//					if (uservo != null) {
+//						return uservo.getUser_name();
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
+	/**
+	 * 获取加盟商对应的渠道经理
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String> getManagerMap() throws DZFWarpException {
@@ -293,19 +302,19 @@ public class PubServiceImpl implements IPubService {
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(ChnAreaBVO.class));
 		if(list != null && list.size() > 0){
-			Map<Integer, String> promap = qryProvMap();
-			String userid = "";
+//			Map<Integer, String> promap = qryProvMap();
+//			String userid = "";
 			for(ChnAreaBVO bvo : list){
 				if(!StringUtil.isEmpty(bvo.getUserid())){
 					map.put(bvo.getPk_corp(), bvo.getUserid());
-				}else{
+				}/*else{
 					if(promap != null && !promap.isEmpty()){
 						userid = promap.get(bvo.getVprovince());
 						if(!StringUtil.isEmpty(userid)){
 							map.put(bvo.getPk_corp(), userid);
 						}
 					}
-				}
+				}*/
 			}
 		}
 		return map;

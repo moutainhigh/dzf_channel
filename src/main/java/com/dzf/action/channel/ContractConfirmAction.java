@@ -73,7 +73,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			StringBuffer qsql = new StringBuffer();//附加查询条件
 			if(!StringUtil.isEmpty(paramvo.getVmanager())){//渠道经理查询条件
-				String sql = contractconfser.getQrySql(paramvo.getCuserid());
+				String sql = contractconfser.getQrySql(paramvo.getVmanager());
 				if(!StringUtil.isEmpty(sql)){
 					qsql.append(sql);
 				}
