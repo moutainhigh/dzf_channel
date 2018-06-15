@@ -59,6 +59,8 @@ function load() {
 				if (value == '4')
 					return '其他';
 			}},
+			{width : '160',title : '付款银行',field : 'vbname',}, 
+			{width : '160',title : '付款账号',field : 'vbcode',}, 
 		    {width : '50',title : '附件',field : 'fj',align:'center',
 				formatter: function(value,row,index){
 					if(!isEmpty(row.billid)){
