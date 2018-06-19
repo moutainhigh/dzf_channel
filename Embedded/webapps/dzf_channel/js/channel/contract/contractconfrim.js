@@ -12,7 +12,7 @@ $(function() {
 	$('#corpkna_ae').textbox('readonly',true);
 	initManagerRef();
 	load();
-	fastQry();
+//	fastQry();
 	initArea();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
 	loadJumpData();
@@ -816,53 +816,53 @@ function qryData(type){
 	$('#grid').datagrid('reload');
 }
 
-/**
- * 快速过滤
- */
-function fastQry(){
-	$('#filter_value').textbox('textbox').keydown(function (e) {
-		 if (e.keyCode == 13) {
-            var filtername = $("#filter_value").val(); 
-            if(!isEmpty(filtername)){
-            	var queryParams = $('#grid').datagrid('options').queryParams;
-            	var rows = $('#grid').datagrid('getRows');
-            	clearQryParam(queryParams);
-            	if(rows != null && rows.length > 0){
-            		//做过查询
-            		queryParams.destatus = $('#destatus').combobox('getValue');
-            		var isncust=$('#isncust').combobox('getValue');
-            		if(!isEmpty(isncust)){
-            			queryParams.isncust = isncust;
-            		}
-            		queryParams.cpid = $("#pk_account").val();
-            		queryParams.cpkid = $("#corpkid_ae").val();
-            		if ($("#normal").is(':checked') && !$("#supple").is(':checked')) {
-            			queryParams.qtype = 1;
-            		} else if(!$("#normal").is(':checked') && $("#supple").is(':checked')) {
-            			queryParams.qtype = 2;
-            		} else if(!$("#normal").is(':checked') && !$("#supple").is(':checked')) {
-            			$('#grid').datagrid('loadData',{ total:0, rows:[]});
-            		    $('#qrydialog').hide();
-            		    $('#grid').datagrid('unselectAll');
-            			return;
-            		}
-            	}
-            	var ischeck = $('#tddate').is(':checked');
-            	if(ischeck){
-            		queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
-            		queryParams.enddate = $('#edate').datebox('getValue'); //结束日期
-            	}else{
-            		queryParams.bperiod = $('#bperiod').datebox('getValue');
-            		queryParams.eperiod = $('#eperiod').datebox('getValue');
-            	}
-            	queryParams.cpname = filtername;
-          		grid.datagrid('options').url = contextPath + '/contract/contractconf!query.action';
-          		$('#grid').datagrid('options').queryParams = queryParams;
-          		$('#grid').datagrid('reload');
-            }
-         }
-   });
-}
+///**
+// * 快速过滤
+// */
+//function fastQry(){
+//	$('#filter_value').textbox('textbox').keydown(function (e) {
+//		 if (e.keyCode == 13) {
+//            var filtername = $("#filter_value").val(); 
+//            if(!isEmpty(filtername)){
+//            	var queryParams = $('#grid').datagrid('options').queryParams;
+//            	var rows = $('#grid').datagrid('getRows');
+//            	clearQryParam(queryParams);
+//            	if(rows != null && rows.length > 0){
+//            		//做过查询
+//            		queryParams.destatus = $('#destatus').combobox('getValue');
+//            		var isncust=$('#isncust').combobox('getValue');
+//            		if(!isEmpty(isncust)){
+//            			queryParams.isncust = isncust;
+//            		}
+//            		queryParams.cpid = $("#pk_account").val();
+//            		queryParams.cpkid = $("#corpkid_ae").val();
+//            		if ($("#normal").is(':checked') && !$("#supple").is(':checked')) {
+//            			queryParams.qtype = 1;
+//            		} else if(!$("#normal").is(':checked') && $("#supple").is(':checked')) {
+//            			queryParams.qtype = 2;
+//            		} else if(!$("#normal").is(':checked') && !$("#supple").is(':checked')) {
+//            			$('#grid').datagrid('loadData',{ total:0, rows:[]});
+//            		    $('#qrydialog').hide();
+//            		    $('#grid').datagrid('unselectAll');
+//            			return;
+//            		}
+//            	}
+//            	var ischeck = $('#tddate').is(':checked');
+//            	if(ischeck){
+//            		queryParams.begdate = $('#bdate').datebox('getValue'); //开始日期
+//            		queryParams.enddate = $('#edate').datebox('getValue'); //结束日期
+//            	}else{
+//            		queryParams.bperiod = $('#bperiod').datebox('getValue');
+//            		queryParams.eperiod = $('#eperiod').datebox('getValue');
+//            	}
+//            	queryParams.cpname = filtername;
+//          		grid.datagrid('options').url = contextPath + '/contract/contractconf!query.action';
+//          		$('#grid').datagrid('options').queryParams = queryParams;
+//          		$('#grid').datagrid('reload');
+//            }
+//         }
+//   });
+//}
 
 /**
  * 单条审核

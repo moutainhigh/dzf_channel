@@ -49,12 +49,12 @@
 					</div>
 				</div>
 				
-				<div class="left mod-crumb">
+<!-- 				<div class="left mod-crumb">
 					<div class="h30 h30-arrow" id="filter">
 						<input style="height:28px;width:220px" class="easyui-textbox" id="filter_value" 
 							prompt="请输入加盟商名称,按Enter键 "/> 
 					</div>
-				</div>
+				</div> -->
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">合同审核</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="bathAudit()">批量审核</a>

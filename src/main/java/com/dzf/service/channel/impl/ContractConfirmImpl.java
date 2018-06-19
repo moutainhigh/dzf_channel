@@ -98,7 +98,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		String statusname = "";
 		String manager = "";
 		Map<String,String> marmap = pubser.getManagerMap();//渠道经理
-		Map<Integer, String> areaMap = null;
+		Map<Integer, String> areaMap = null;//大区集合
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname,3);
 		}
@@ -131,7 +131,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(areaMap != null && !areaMap.isEmpty()){
 					String area = areaMap.get(confvo.getVprovince());
 					if(!StringUtil.isEmpty(area)){
-						confvo.setAreaname(area);
+						confvo.setAreaname(area);//大区
 					}
 				}
 			}
