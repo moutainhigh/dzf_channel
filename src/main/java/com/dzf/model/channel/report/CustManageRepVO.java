@@ -1,40 +1,12 @@
 package com.dzf.model.channel.report;
 
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDouble;
 
-@SuppressWarnings("rawtypes")
-public class CustManageRepVO extends SuperVO{
+@SuppressWarnings("serial")
+public class CustManageRepVO extends DataVO{
 
 	private static final long serialVersionUID = -4959336844095570423L;
-	
-	@FieldAlias("aname")
-    private String areaname;//大区名称
-	
-	@FieldAlias("uid")
-    private String userid; // 用户主键（大区总经理）
-    
-    @FieldAlias("uname")
-    private String username; // 用户名称（大区总经理）
-    
-    @FieldAlias("incode")
-    private String innercode;//加盟商编码
-	 
-	@FieldAlias("provin")
-	private String vprovince;//省份
-	
-	@FieldAlias("cuid")
-    private String cuserid; // 用户主键（培训师）
-	
-    @FieldAlias("cuname")
-    private String cusername; // 用户名称（培训师）
-	
-	@FieldAlias("pid")
-	private String pk_corp;//会计公司主键
-	
-	@FieldAlias("pname")
-	private String vcorpname;//加盟商名称
 	
 	@FieldAlias("custsmall")
 	private Integer icustsmall;//小规模数量
@@ -113,18 +85,6 @@ public class CustManageRepVO extends SuperVO{
 	
 	@FieldAlias("ratet6")
 	private DZFDouble icustratetaxpay6;//其他类行业占比-一般纳税人
-
-	public String getVprovince() {
-		return vprovince;
-	}
-
-	public String getPk_corp() {
-		return pk_corp;
-	}
-
-	public String getVcorpname() {
-		return vcorpname;
-	}
 
 	public Integer getIcustsmall() {
 		return icustsmall;
@@ -230,16 +190,8 @@ public class CustManageRepVO extends SuperVO{
 		this.cuserid = cuserid;
 	}
 
-	public void setVprovince(String vprovince) {
-		this.vprovince = vprovince;
-	}
-
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
-	}
-
-	public void setVcorpname(String vcorpname) {
-		this.vcorpname = vcorpname;
 	}
 
 	public void setIcustsmall(Integer icustsmall) {
@@ -392,21 +344,6 @@ public class CustManageRepVO extends SuperVO{
 
 	public void setIcustratetaxpay6(DZFDouble icustratetaxpay6) {
 		this.icustratetaxpay6 = icustratetaxpay6;
-	}
-
-	@Override
-	public String getPKFieldName() {
-		return null;
-	}
-
-	@Override
-	public String getParentPKFieldName() {
-		return null;
-	}
-
-	@Override
-	public String getTableName() {
-		return null;
 	}
 
 }

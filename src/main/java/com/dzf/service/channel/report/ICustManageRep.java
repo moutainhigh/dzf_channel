@@ -15,7 +15,7 @@ public interface ICustManageRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<CustManageRepVO> query(QryParamVO paramvo) throws DZFWarpException;
+	public List<CustManageRepVO> query(QryParamVO paramvo) throws DZFWarpException, IllegalAccessException, Exception;
 	
 	/**
 	 * 查询行业排序

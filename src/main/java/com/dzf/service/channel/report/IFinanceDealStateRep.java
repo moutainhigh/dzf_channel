@@ -14,5 +14,5 @@ public interface IFinanceDealStateRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws DZFWarpException;
+	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws  DZFWarpException, IllegalAccessException, Exception;
 }

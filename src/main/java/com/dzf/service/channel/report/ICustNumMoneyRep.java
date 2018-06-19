@@ -19,7 +19,7 @@ public interface ICustNumMoneyRep {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws DZFWarpException;
+	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws  DZFWarpException, IllegalAccessException, Exception;
 	
 	/**
 	 * 客户查询

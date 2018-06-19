@@ -2,6 +2,7 @@ package com.dzf.service.channel.report.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,13 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.report.CustNumMoneyRepVO;
+import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
@@ -32,7 +33,7 @@ import com.dzf.service.channel.report.ICustNumMoneyRep;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
 
 @Service("financedealstaterepser")
-public class FinanceDealStateRepImpl implements IFinanceDealStateRep {
+public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinanceDealStateRep {
 
 	@Autowired
 	private ICustNumMoneyRep custServ;
@@ -41,7 +42,7 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep {
 	private SingleObjectBO singleObjectBO;
 
 	@Override
-	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws DZFWarpException {
+	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws  DZFWarpException, IllegalAccessException, Exception {
 		if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 			try {
 				String begindate = ToolsUtil.getMaxMonthDate(paramvo.getPeriod() + "-01");
@@ -51,9 +52,13 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep {
 			}
 		}
 		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
-		List<String> corplist = new ArrayList<String>();
 		List<String> countcorplist = new ArrayList<String>();
-		HashMap<String, FinanceDealStateRepVO> map = queryCorps(paramvo, corplist);
+		HashMap<String, DataVO> map = queryCorps(paramvo,FinanceDealStateRepVO.class);
+		List<String> corplist = null;
+		if(map!=null && !map.isEmpty()){
+			Collection<String> col = map.keySet();
+			corplist = new ArrayList<String>(col);
+		}
 		if (corplist != null && corplist.size() > 0) {
 			List<CustCountVO> custlist = (List<CustCountVO>) custServ.queryCustNum(paramvo, 1, corplist);
 			Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
@@ -65,11 +70,11 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep {
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			for (String pk_corp : corplist) {
-				retvo = map.get(pk_corp);
+				retvo =(FinanceDealStateRepVO)map.get(pk_corp);
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if (corpvo != null) {
-					retvo.setVcorpname(corpvo.getUnitname());
-					retvo.setVprovince(corpvo.getCitycounty());
+					retvo.setCorpname(corpvo.getUnitname());
+					retvo.setVprovname(corpvo.getCitycounty());
 				}
 				uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
 				if (uservo != null) {
@@ -169,174 +174,6 @@ public class FinanceDealStateRepImpl implements IFinanceDealStateRep {
 			}
 		}
 		return retmap;
-	}
-
-	public HashMap<String, FinanceDealStateRepVO> queryCorps(QryParamVO paramvo, List<String> corplist)
-			throws DZFWarpException {
-		Boolean flg = checkIsLeader(paramvo);
-		HashMap<String, FinanceDealStateRepVO> map = new HashMap<>();
-		List<String> vprovinces = new ArrayList<>();
-		List<FinanceDealStateRepVO> qryCharge = qryCharge(paramvo, flg);
-		for (FinanceDealStateRepVO financeDealStateRepVO : qryCharge) {
-			Boolean flag = false;// 判断查询框的培训经理的过滤
-			if (StringUtil.isEmpty(paramvo.getCuserid())
-					|| paramvo.getCuserid().equals(financeDealStateRepVO.getCuserid())) {
-				flag = true;
-			}
-			if (!map.containsKey(financeDealStateRepVO.getPk_corp()) && flag) {
-				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
-				corplist.add(financeDealStateRepVO.getPk_corp());
-			} else {
-				if (!StringUtil.isEmpty(financeDealStateRepVO.getCuserid())) {
-					map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
-				}
-			}
-			if (!vprovinces.contains(financeDealStateRepVO.getVprovince())) {
-				vprovinces.add(financeDealStateRepVO.getVprovince());
-			}
-		}
-		List<FinanceDealStateRepVO> qryNotCharge = qryNotCharge(paramvo, flg, vprovinces);
-		for (FinanceDealStateRepVO financeDealStateRepVO : qryNotCharge) {
-			Boolean flag = false;// 判断查询框的培训经理的过滤
-			if (StringUtil.isEmpty(paramvo.getCuserid())
-					|| paramvo.getCuserid().equals(financeDealStateRepVO.getCuserid())) {
-				flag = true;
-			}
-			if (!map.containsKey(financeDealStateRepVO.getPk_corp()) && flag) {
-				map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
-				corplist.add(financeDealStateRepVO.getPk_corp());
-			} else {
-				if (!StringUtil.isEmpty(financeDealStateRepVO.getCuserid())) {
-					map.put(financeDealStateRepVO.getPk_corp(), financeDealStateRepVO);
-				}
-			}
-		}
-		return map;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<FinanceDealStateRepVO> qryCharge(QryParamVO paramvo, Boolean flg) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp,  \n");
-		sql.append("       a.areaname,  \n");
-		sql.append("       a.userid,  \n");
-		sql.append("       b.vprovname,  \n");
-		sql.append("       b.vprovince,  \n");
-		sql.append("       p.innercode,  \n");
-		sql.append("       (case  \n");
-		sql.append("         when b.pk_corp is null then  \n");
-		sql.append("          null  \n");
-		sql.append("         when b.pk_corp != p.pk_corp then  \n");
-		sql.append("          null  \n");
-		sql.append("         else  \n");
-		sql.append("          b.userid  \n");
-		sql.append("       end) cuserid  \n");
-		sql.append("  from bd_account p  \n");
-		sql.append(" right join cn_chnarea_b b on p.vprovince = b.vprovince  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
-		sql.append("   and p.fathercorp = ?  \n");
-		sql.append("   and b.type = 2  \n");
-		sql.append("   and nvl(b.ischarge, 'N') = 'Y'  \n");
-		sql.append("   AND p.pk_corp NOT IN  \n");
-		sql.append("       (SELECT f.pk_corp  \n");
-		sql.append("          FROM ynt_franchisee f  \n");
-		sql.append("         WHERE nvl(dr, 0) = 0  \n");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sp.addParam(IDefaultValue.DefaultGroup);
-		if (!flg) {
-			sql.append("  and (a.userid=? or b.userid=? )");
-			sp.addParam(paramvo.getUser_name());
-			sp.addParam(paramvo.getUser_name());
-		}
-		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
-			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(paramvo.getAreaname());
-		}
-		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
-			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(paramvo.getVprovince());
-		}
-		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
-			sql.append(" and b.userid=? ");// 渠道经理
-			sp.addParam(paramvo.getCuserid());
-		}
-		List<FinanceDealStateRepVO> list = (List<FinanceDealStateRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,
-				new BeanListProcessor(FinanceDealStateRepVO.class));
-		return list;
-	}
-
-	private List<FinanceDealStateRepVO> qryNotCharge(QryParamVO paramvo, Boolean flg, List<String> vprovinces) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp,  \n");
-		sql.append("       a.areaname,  \n");
-		sql.append("       a.userid,  \n");
-		sql.append("       b.userid cuserid,  \n");
-		sql.append("       b.vprovname,  \n");
-		sql.append("       b.vprovince,  \n");
-		sql.append("       p.innercode  \n");
-		sql.append("  from bd_account p  \n");
-		sql.append(" right join cn_chnarea_b b on p.pk_corp = b.pk_corp  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = 2  \n");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
-		sql.append("   and p.fathercorp = ?  \n");
-		sql.append("   and nvl(b.ischarge, 'N') = 'N'  \n");
-		sql.append("   AND p.pk_corp NOT IN  \n");
-		sql.append("       (SELECT f.pk_corp  \n");
-		sql.append("          FROM ynt_franchisee f  \n");
-		sql.append("         WHERE nvl(dr, 0) = 0  \n");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sp.addParam(IDefaultValue.DefaultGroup);
-		if (!flg) {
-			if (vprovinces != null && vprovinces.size() > 0) {
-				sql.append("  and ((a.userid=? or b.userid=? ) or ");
-				sql.append(SqlUtil.buildSqlForIn("b.vprovince", vprovinces.toArray(new String[vprovinces.size()])));
-				sql.append(" )");
-			} else {
-				sql.append("  and (a.userid=? or b.userid=? )");
-			}
-			sp.addParam(paramvo.getUser_name());
-			sp.addParam(paramvo.getUser_name());
-		}
-		if (!StringUtil.isEmpty(paramvo.getAreaname())) {
-			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(paramvo.getAreaname());
-		}
-		if (paramvo.getVprovince() != null && paramvo.getVprovince() != -1) {
-			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(paramvo.getVprovince());
-		}
-		if (!StringUtil.isEmpty(paramvo.getCuserid())) {
-			sql.append(" and b.userid=? ");// 渠道经理
-			sp.addParam(paramvo.getCuserid());
-		}
-		List<FinanceDealStateRepVO> vos = (List<FinanceDealStateRepVO>) singleObjectBO.executeQuery(sql.toString(), sp,
-				new BeanListProcessor(FinanceDealStateRepVO.class));
-		return vos;
-	}
-
-	private boolean checkIsLeader(QryParamVO paramvo) {
-		String sql = "select vdeptuserid corpcode,vcomuserid corpname,vgroupuserid pk_corpk from cn_leaderset where nvl(dr,0)=0";
-		List<QryParamVO> list = (List<QryParamVO>) singleObjectBO.executeQuery(sql, null,
-				new BeanListProcessor(QryParamVO.class));
-		if (list != null && list.size() > 0) {
-			QryParamVO vo = list.get(0);
-			if (paramvo.getUser_name().equals(vo.getCorpcode()) || paramvo.getUser_name().equals(vo.getCorpname())
-					|| paramvo.getUser_name().equals(vo.getPk_corpk())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

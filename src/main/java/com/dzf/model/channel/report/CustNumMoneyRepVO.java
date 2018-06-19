@@ -1,6 +1,5 @@
 package com.dzf.model.channel.report;
 
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDouble;
 
@@ -9,37 +8,9 @@ import com.dzf.pub.lang.DZFDouble;
  * @author 宗岩
  *
  */
-@SuppressWarnings("rawtypes")
-public class CustNumMoneyRepVO extends SuperVO {
+public class CustNumMoneyRepVO extends DataVO {
 
 	private static final long serialVersionUID = 7914020685684503615L;
-	
-	@FieldAlias("aname")
-    private String areaname;//大区名称
-	
-	@FieldAlias("uid")
-    private String userid; // 用户主键（大区总经理）
-    
-    @FieldAlias("uname")
-    private String username; // 用户名称（大区总经理）
-    
-    @FieldAlias("incode")
-    private String innercode;//加盟商编码
-	 
-	@FieldAlias("provin")
-	private String vprovince;//省份
-	
-	@FieldAlias("cuid")
-    private String cuserid; // 用户主键（培训师）
-	
-    @FieldAlias("cuname")
-    private String cusername; // 用户名称（培训师）
-	
-	@FieldAlias("pid")
-	private String pk_corp;//会计公司主键
-	
-	@FieldAlias("pname")
-	private String vcorpname;//加盟商名称
 	
 	@FieldAlias("stockcusts")
 	private Integer istockcustsmall;//客户-小规模
@@ -250,16 +221,8 @@ public class CustNumMoneyRepVO extends SuperVO {
 		this.ilastrenewconttaxpay = ilastrenewconttaxpay;
 	}
 
-	public String getVprovince() {
-		return vprovince;
-	}
-
 	public String getPk_corp() {
 		return pk_corp;
-	}
-
-	public String getVcorpname() {
-		return vcorpname;
 	}
 
 	public Integer getIstockcustsmall() {
@@ -310,16 +273,8 @@ public class CustNumMoneyRepVO extends SuperVO {
 		return irenewconttaxpay;
 	}
 
-	public void setVprovince(String vprovince) {
-		this.vprovince = vprovince;
-	}
-
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
-	}
-
-	public void setVcorpname(String vcorpname) {
-		this.vcorpname = vcorpname;
 	}
 
 	public void setIstockcustsmall(Integer istockcustsmall) {
@@ -433,20 +388,5 @@ public class CustNumMoneyRepVO extends SuperVO {
 	public void setIrenewcustratetaxpay(DZFDouble irenewcustratetaxpay) {
 		this.irenewcustratetaxpay = irenewcustratetaxpay;
 	}
-
-	@Override
-	public String getPKFieldName() {
-		return null;
-	}
-
-	@Override
-	public String getParentPKFieldName() {
-		return null;
-	}
-
-	@Override
-	public String getTableName() {
-		return null;
-	}
-
+	
 }
