@@ -13,7 +13,6 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.AccountVO;
@@ -27,7 +26,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
 
-@Service("highseascorpser")
+@Service("pubservice")
 public class PubServiceImpl implements IPubService {
 	
     @Autowired
