@@ -15,7 +15,6 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -298,9 +297,14 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
-		if(!pubService.checkIsLeader(paramvo.getCuserid()) &&paramvo.getSeletype()==null ){
-			buf.append("  and (b.userid=? or a.userid=?)");
+		Integer level=pubService.getDataLevel(paramvo.getCuserid());
+		if(level==null){
+			return list;
+		}else if(level==2){
+			buf.append("  and a.userid=? ");
 			spm.addParam(paramvo.getCuserid());
+		}else if(level==3){
+			buf.append("  and b.userid=? ");
 			spm.addParam(paramvo.getCuserid());
 		}
 		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
@@ -316,9 +320,14 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
-		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()==null ){
-			buf.append("  and (b.userid=? or a.userid=?)");
+		Integer level=pubService.getDataLevel(paramvo.getCuserid());
+		if(level==null){
+			return list;
+		}else if(level==2){
+			buf.append("  and a.userid=? ");
 			spm.addParam(paramvo.getCuserid());
+		}else if(level==3){
+			buf.append("  and b.userid=? ");
 			spm.addParam(paramvo.getCuserid());
 		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
@@ -339,11 +348,16 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
-//		if(!pubService.checkIsLeader(paramvo.getCuserid())  && paramvo.getSeletype()==null){
-//			buf.append("  and (b.userid=? or a.userid=?)");
-//			spm.addParam(paramvo.getCuserid());
-//			spm.addParam(paramvo.getCuserid());
-//		}
+		Integer level=pubService.getDataLevel(paramvo.getCuserid());
+		if(level==null){
+			return list;
+		}else if(level==2){
+			buf.append("  and a.userid=? ");
+			spm.addParam(paramvo.getCuserid());
+		}else if(level==3){
+			buf.append("  and b.userid=? ");
+			spm.addParam(paramvo.getCuserid());
+		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			buf.append("  and a.areaname=? ");
 			spm.addParam(paramvo.getAreaname());
