@@ -14,7 +14,6 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
-import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
@@ -597,25 +596,23 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	private RebateVO queryRetMny(RebateVO data) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(t.nsubdeductmny, 0)) AS ndebitmny, \n") ;
-		sql.append("       SUM(nvl(t.nsubdeductmny, 0)) AS nbasemny, \n") ; 
-		sql.append("       SUM(nvl(t.zfnum, 0)) AS icontractnum \n") ; 
-		sql.append("  FROM (SELECT ct.*, \n") ; 
-		sql.append("               case ct.vstatus \n") ; 
-		sql.append("                 when 10 then \n") ; 
-		sql.append("                  1 \n") ; 
-		sql.append("                 else \n") ; 
-		sql.append("                  0 \n") ; 
-		sql.append("               end AS zfnum \n") ; 
-		sql.append("          FROM cn_contract ct \n") ; 
-		sql.append("  INNER JOIN ynt_contract t ON t.pk_contract = t.pk_contract \n");
-		sql.append("         WHERE nvl(ct.dr, 0) = 0 \n") ; 
-		sql.append("           AND nvl(t.dr, 0) = 0 \n");
-		sql.append("           AND nvl(t.isncust, 'N') = 'N' \n") ; 
-		sql.append("           AND ct.vdeductstatus in (?, ?) \n") ; 
+		sql.append("SELECT SUM(nvl(ct.nsubdeductmny, 0)) AS ndebitmny,  \n") ; 
+		sql.append("       SUM(nvl(ct.nsubdeductmny, 0)) AS nbasemny,  \n") ; 
+		sql.append("       SUM(case ct.vstatus  \n") ; 
+		sql.append("             when 10 then  \n") ; 
+		sql.append("              1  \n") ; 
+		sql.append("             else  \n") ; 
+		sql.append("              0  \n") ; 
+		sql.append("           end) AS icontractnum  \n") ; 
+		sql.append("  FROM cn_contract ct  \n") ; 
+		sql.append(" INNER JOIN ynt_contract t ON ct.pk_contract = t.pk_contract  \n") ; 
+		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n") ; 
+		sql.append("   AND ct.vdeductstatus in (?, ?) \n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		sql.append("           AND ct.pk_corp = ? \n") ; 
+		sql.append("   AND ct.pk_corp = ? \n") ; 
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
@@ -624,7 +621,6 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		} else {
 			throw new BusinessException("返点单所属年、所属季度不能为空");
 		}
-		sql.append("  ) t \n");
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
 		if(list != null && list.size() > 0){
