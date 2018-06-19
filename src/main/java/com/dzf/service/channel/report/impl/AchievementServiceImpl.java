@@ -13,7 +13,6 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.AchievementVO;
 import com.dzf.model.channel.report.ContQryVO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
@@ -27,12 +26,16 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.IAchievementService;
+import com.dzf.service.pub.IPubService;
 
 @Service("achievementser")
 public class AchievementServiceImpl implements IAchievementService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private IPubService pubser;
 
 	@Override
 	public AchievementVO queryLine(QryParamVO paramvo) throws DZFWarpException {
@@ -875,12 +878,19 @@ public class AchievementServiceImpl implements IAchievementService {
 	 * @throws DZFWarpException
 	 */
 	private Map<Integer, String> qryUserPower(QryParamVO paramvo) throws DZFWarpException {
+		Integer level = pubser.getDataLevel(paramvo.getCuserid());
 		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
-			return qryUserPowerOne(paramvo);
+			if(level != null && level == 1){
+				return qryUserPowerOne(paramvo);
+			}
 		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
-			return qryUserPowerTwo(paramvo);
+			if(level != null && level == 2){
+				return qryUserPowerTwo(paramvo);
+			}
 		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 3){
-			return qryUserPowerThree(paramvo);
+			if(level != null && level == 3){
+				return qryUserPowerThree(paramvo);
+			}
 		}
 		return null;
 	}
@@ -894,41 +904,42 @@ public class AchievementServiceImpl implements IAchievementService {
 	@SuppressWarnings("unchecked")
 	private Map<Integer, String> qryUserPowerOne(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> pmap = new HashMap<Integer, String>();
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter spm = new SQLParameter();
+//		// 1、区域总经理；
+//		sql.append("SELECT t.pk_leaderset  \n");
+//		sql.append("  FROM cn_leaderset t  \n");
+//		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+//		sql.append("   AND (t.vdeptuserid = ? OR t.vcomuserid = ? OR t.vgroupuserid = ? ) \n");
+//		spm.addParam(paramvo.getCuserid());
+//		spm.addParam(paramvo.getCuserid());
+//		spm.addParam(paramvo.getCuserid());
+//		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+//				new BeanListProcessor(ManagerVO.class));
+//		if (list != null && list.size() > 0) {
+//			
+//		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		// 1、区域总经理；
-		sql.append("SELECT t.pk_leaderset  \n");
-		sql.append("  FROM cn_leaderset t  \n");
+		sql.append("SELECT t.vprovince  \n");
+		sql.append("  FROM bd_account t \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND (t.vdeptuserid = ? OR t.vcomuserid = ? OR t.vgroupuserid = ? ) \n");
-		spm.addParam(paramvo.getCuserid());
-		spm.addParam(paramvo.getCuserid());
-		spm.addParam(paramvo.getCuserid());
-		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ManagerVO.class));
-		if (list != null && list.size() > 0) {
-			sql = new StringBuffer();
-			spm = new SQLParameter();
-			sql.append("SELECT t.vprovince  \n");
-			sql.append("  FROM bd_account t \n");
-			sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-			sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
-			sql.append("   AND t.vprovince is not null \n");
-			List<ChnAreaBVO> clist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-					new BeanListProcessor(ChnAreaBVO.class));
-			if(clist != null && clist.size() > 0){
-				List<String> pklist = new ArrayList<String>();
-				String vprov = "";
-				for(ChnAreaBVO bvo : clist){
-					vprov = String.valueOf(bvo.getVprovince());
-					if(!pklist.contains(bvo.getVprovince())){
-						pklist.add(vprov);
-					}
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND t.vprovince is not null \n");
+		List<ChnAreaBVO> clist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnAreaBVO.class));
+		if(clist != null && clist.size() > 0){
+			List<String> pklist = new ArrayList<String>();
+			String vprov = "";
+			for(ChnAreaBVO bvo : clist){
+				vprov = String.valueOf(bvo.getVprovince());
+				if(!pklist.contains(bvo.getVprovince())){
+					pklist.add(vprov);
 				}
-				if(pklist != null && pklist.size() > 0){
-					String corpsql = SqlUtil.buildSqlForIn("acc.vprovince", pklist.toArray(new String[0]));
-					pmap.put(1, corpsql);
-				}
+			}
+			if(pklist != null && pklist.size() > 0){
+				String corpsql = SqlUtil.buildSqlForIn("acc.vprovince", pklist.toArray(new String[0]));
+				pmap.put(1, corpsql);
 			}
 		}
 		return pmap;
