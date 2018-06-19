@@ -448,10 +448,13 @@ function save(){
 		return;
 	}
 	var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
-	if(reg.test($('#vcode').textbox('getValue'))){ 
+	var code=trimStr($('#vcode').textbox('getValue'));
+	if(reg.test(code)){ 
 		Public.tips({content:"单据号不能包含汉字",type:2});
 		$('#vcode').textbox('setValue',"");
 		return;
+	}else{
+		$('#vcode').textbox('setValue',code);
 	}
 	parent.$.messager.progress({
 		text : '保存中....'
