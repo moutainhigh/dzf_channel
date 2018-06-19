@@ -367,17 +367,6 @@ public class PubServiceImpl implements IPubService {
 	}
 	
 	@Override
-    public boolean checkIsLeader(String cuserid) throws DZFWarpException {
-    	boolean flg=false;
-    	String sql="select concat(concat(vdeptuserid ,vcomuserid ),vgroupuserid) from cn_leaderset where nvl(dr,0)=0";
-    	String ids =singleObjectBO.executeQuery(sql,null, new ColumnProcessor()).toString();
-		if(!StringUtil.isEmpty(ids) && ids.contains(cuserid)){
-			flg=true;
-		}
-		return flg;
-    }
-	
-	@Override
 	public String makeCondition(String cuserid,String areaname) throws DZFWarpException {
 		Integer dataLevel = getDataLevel(cuserid);
 		String retstr=null;
@@ -420,14 +409,9 @@ public class PubServiceImpl implements IPubService {
 		return retstr;
 	}
 	
-	
-	/**
-	 * 获取当前登陆人，对应角色、最大数据权限
-	 * @param cuserid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private Integer getDataLevel(String cuserid) throws DZFWarpException{
+
+	@Override
+	public Integer getDataLevel(String cuserid) throws DZFWarpException{
 		Integer reint=null;
 		StringBuffer buf=new StringBuffer();
 		SQLParameter sp=new SQLParameter();

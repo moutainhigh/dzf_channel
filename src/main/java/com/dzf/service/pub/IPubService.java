@@ -73,14 +73,6 @@ public interface IPubService {
 	public Map<Integer, String> getAreaMap(String areaname,Integer type) throws DZFWarpException;
 	
 	/**
-	 * 指定用户id,判断是否为3个顶级用户
-	 * @param cuserid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public boolean checkIsLeader(String cuserid) throws DZFWarpException;
-	
-	/**
 	 * 指定用户id,构造    获取其本身负责的加盟商客户  sql表达式
 	 * @param cuserid
 	 * @param areaname
@@ -89,4 +81,11 @@ public interface IPubService {
 	 */
 	public String makeCondition(String cuserid,String areaname) throws DZFWarpException;
 	
+	/**
+	 * 获取当前登陆人，对应角色、最大数据权限
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Integer getDataLevel(String cuserid) throws DZFWarpException;
 }
