@@ -546,3 +546,18 @@ function orderfun(a,b){
 	b = getFloatValue(b);  
 	return (a>b?1:-1);
 }
+
+/**
+ * 去除字符空格（如果需要去掉字符间空格，第二个参数传'g'）
+ * @param str
+ * @param is_global
+ * @returns
+ */
+function trimStr(str, is_global) {
+    var result;
+    result = str.replace(/(^\s+)|(\s+$)/g, "");
+    if (is_global== "g") {
+        result = result.replace(/\s/g, "");
+    }
+    return result;
+}

@@ -19,6 +19,7 @@ import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.lang.DZFDate;
@@ -418,13 +419,14 @@ public class PubServiceImpl implements IPubService {
 		buf.append("   from sm_role sr\n");
 		buf.append("  right join sm_user_role ur on sr.pk_role = ur.pk_role \n");
 		buf.append("  right join cn_datapower cn on sr.pk_role=cn.pk_role   \n");
-		buf.append("  where sr.roletype =?\n");
-		buf.append("    and sr.pk_corp = '000001'\n");
+		buf.append("  where sr.roletype =? \n");
+		buf.append("    and sr.pk_corp = ? \n");
 		buf.append("    and nvl(sr.dr, 0) = 0\n");
 		buf.append("    and nvl(sr.seal, 'N') = 'N'\n");
 		buf.append("     and nvl(ur.dr, 0) = 0\n");
 		buf.append("     and ur.cuserid = ?\n");
 		sp.addParam(7);
+		sp.addParam(IDefaultValue.DefaultGroup);
 		sp.addParam(cuserid);
 		List<String> list=(List<String>)singleObjectBO.executeQuery(buf.toString(), sp, new ColumnListProcessor("ct"));
 		if(list!=null && list.size()>0){
