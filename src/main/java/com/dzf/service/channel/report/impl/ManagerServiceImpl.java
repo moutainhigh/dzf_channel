@@ -42,10 +42,15 @@ public class ManagerServiceImpl implements IManagerService {
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
 		List<ManagerVO> list=new ArrayList<ManagerVO>();
-		if(type==1){
+		Integer level = pubService.getDataLevel(qvo.getUserid());
+		if(level==null){
+			
+		}else if(type==3 && level<=1){
+			list = qryBoth(qvo,type);//3渠道总
+		}else if(type==2 && level<=2){
+			list = qryBoth(qvo,type);//2大区 
+		}else if(type==1 && level<=3){
 			list = qryChannel(qvo);//1省
-		}else{
-			list = qryBoth(qvo,type);//2大区 +　3渠道总
 		}
 		if(list!=null && list.size()!=0){
 			Collections.sort(list, new Comparator<ManagerVO>() {
@@ -84,11 +89,6 @@ public class ManagerServiceImpl implements IManagerService {
 	 * @return
 	 */
 	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type) {
-		if(type==3){//渠道总数据
-			if(!pubService.checkIsLeader(qvo.getUserid())){
-				return null;
-			}
-		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("  select a.areaname,a.userid,");
