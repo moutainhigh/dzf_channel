@@ -420,7 +420,7 @@ function showImage(id){
 	var img = '<img id="conturnid" alt="无法显示图片" ondblclick="downFile(\'' +id + '\', 2)" onmouseover="showTips()" onmouseout="hideTips()" '
 		+' src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 		+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;">';
-	parent.openFullViewDlg(img, '原图');
+	parent.openFullViewDlg(img, '原图', id, 2 );
 }
 
 /**

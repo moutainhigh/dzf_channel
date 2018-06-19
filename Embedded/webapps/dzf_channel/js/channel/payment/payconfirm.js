@@ -231,7 +231,7 @@ function load(){
 					return '<a href="javascript:void(0)"  style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
 				}
 			}
-		},{
+		}, {
 			width : '70',
 			title : '单据状态',
             halign:'center',
@@ -515,10 +515,10 @@ function showImage(billid){
 //			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 //	  		+'</a></div>','原图');
 	var img = '<img id="conturnid" alt="无法显示图片" onclick="downFile(\'' +billid + '\',1)" '
-	+ 'ondblclick="downFile(\'' + billid + '\', 1)" onmouseover="showTips()" onmouseout="hideTips()"'
+	+ ' onmouseover="showTips()" onmouseout="hideTips()"'
 	+ 'src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 	+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" />';
-	parent.openFullViewDlg(img, '原图');
+	parent.openFullViewDlg(img, '原图', billid, 1);
 }
 
 /**

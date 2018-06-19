@@ -15,13 +15,12 @@ $(window).resize(function() {
 	});
 });  
 
+var bid;//图片下载专用id
+var dtype;//图片下载专用类型
+
 $(function() {
 	initListener();
 	initBusiData();
-	
-//	downFile(billid, type);
-//	showTips();
-//	hideTips();
 });
 
 /**
@@ -282,31 +281,6 @@ function initBusiData(){
 	});
 }
 
-/**
- * 展示最大化图片
- * @param content
- * @param title
- */
-function openFullViewDlg (content,title) {
-	$("#fullViewContent").html(content);
-	$("#fullViewDlg").dialog({
-		width:$(window).width()-100,
-		height:$(window).height()-50,
-		closable:true,
-		title: title,
-		modal:true,
-	});	
-	$("#fullViewDlg").css("display","block");
-	$("#fullViewDlg").dialog("center");
-}
-
-/**
- * 关闭图片展示框
- */
-function closeFullViewDlg(){
-	 $('#fullViewDlg').dialog('close');
-}
-
 function updatePsw(){
 //	$("#isEditInfo").removeAttr("checked");
 	$("#user_password").val("");
@@ -408,6 +382,36 @@ function savePsw(){
 }
 
 /**
+ * 展示最大化图片
+ * @param content 图片
+ * @param title   表体
+ * @param billid  下载主键
+ * @param downtype   下载类型
+ */
+
+function openFullViewDlg (content,title, billid, downtype) {
+	bid = billid;
+	dtype = downtype;
+	$("#fullViewContent").html(content);
+	$("#fullViewDlg").dialog({
+		width:$(window).width()-100,
+		height:$(window).height()-50,
+		closable:true,
+		title: title,
+		modal:true,
+	});	
+	$("#fullViewDlg").css("display","block");
+	$("#fullViewDlg").dialog("center");
+}
+
+/**
+ * 关闭图片展示框
+ */
+function closeFullViewDlg(){
+	 $('#fullViewDlg').dialog('close');
+}
+
+/**
  * 显示提示
  * @param i
  */
@@ -453,6 +457,11 @@ function tranRight(){
 	dealRotate($("#fullViewDlg > div > img ").get(0), 1);
 }
 
+/**
+ * 旋转及缩放公共方法
+ * @param target
+ * @param direction
+ */
 function dealRotate(target, direction) {
 	var angle = $(target).data("angle") || 0;
 	angle = Number(angle);
@@ -534,10 +543,22 @@ function transformImage(img, zoom, angle) {
     });
     var dlgWidth = $("#tpfd").width() - 25;
     if (cwidth > dlgWidth) {
-       $("#img_container span").hide();
+    	$("#img_container span").hide();
 	} else {
 		$("#img_container span").show();
 	}
+    
+    canvas.addEventListener('dblclick', function(e) {
+    	downFile(bid, dtype);
+    }, false);
+    
+    canvas.addEventListener('mouseover', function(e) {
+    	showTips();
+    }, false);
+    
+    canvas.addEventListener('mouseout', function(e) {
+    	hideTips();
+    }, false);
 }
 
 /**
