@@ -298,7 +298,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
 		Integer level=pubService.getDataLevel(paramvo.getCuserid());
-		if(level==null){
+		if(paramvo.getSeletype()!=null && paramvo.getSeletype()==1 ){
+			//销售数据
+		}else if(level==null){
 			return list;
 		}else if(level==2){
 			buf.append("  and a.userid=? ");
@@ -321,7 +323,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
 		Integer level=pubService.getDataLevel(paramvo.getCuserid());
-		if(level==null){
+		if(paramvo.getSeletype()!=null && paramvo.getSeletype()==1 ){
+			//销售数据
+		}else if(level==null){
 			return list;
 		}else if(level==2){
 			buf.append("  and a.userid=? ");
@@ -349,7 +353,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
 		Integer level=pubService.getDataLevel(paramvo.getCuserid());
-		if(level==null){
+		if(paramvo.getSeletype()!=null && paramvo.getSeletype()==1 ){
+			//销售数据
+		}else if(level==null){
 			return list;
 		}else if(level==2){
 			buf.append("  and a.userid=? ");
