@@ -1279,6 +1279,10 @@ function bathconf(){
  * @param postdata
  */
 function bathconfrim(postdata, rows){
+	var bdate = new Date();
+	$.messager.progress({
+		text : '数据审核中....'
+	});
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -1292,6 +1296,7 @@ function bathconfrim(postdata, rows){
 					content : result.msg,
 					type : 1
 				});
+				isclose = true;
 			} else {
 				if(result.status == -1){
 					Public.tips({
@@ -1325,11 +1330,21 @@ function bathconfrim(postdata, rows){
 						});
 					}
 				}
-				
 				$("#grid").datagrid('uncheckAll');
+				isclose = true;
 			}
 		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			parent.$.messager.progress('close');
+		}
 	});
+	
+	var edate = new Date();
+	var time = edate.getTime() - bdate.getTime();
+	
+	setTimeout(function(){
+		$.messager.progress('close');
+	}, time);
 }
 
 /**
