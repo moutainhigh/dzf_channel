@@ -884,11 +884,11 @@ public class AchievementServiceImpl implements IAchievementService {
 				return qryUserPowerOne(paramvo);
 			}
 		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
-			if(level != null && level == 2){
+			if(level != null && level <= 2){
 				return qryUserPowerTwo(paramvo);
 			}
 		}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 3){
-			if(level != null && level == 3){
+			if(level != null && level <= 3){
 				return qryUserPowerThree(paramvo);
 			}
 		}
