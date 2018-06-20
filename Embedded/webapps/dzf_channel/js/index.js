@@ -417,7 +417,7 @@ function closeFullViewDlg(){
  */
 function showTips(){
 	$("#reUpload").css("display","block");
-	$("#reUpload").html("双击下载");	
+	$("#reUpload").html("单击下载");	
 }
 
 /**
@@ -426,21 +426,6 @@ function showTips(){
  */
 function hideTips(){
 	$("#reUpload").css("display","none");	
-}
-
-/**
- * 附件下载
- * @param billid
- * @param type 1:付款单确认；2：客户名称修改确认；
- */
-function downFile(billid, type){
-	if(billid && billid != ""){
-		if(type == 1){
-			Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
-		}else if(type == 2){
-			Business.getFile(DZF.contextPath + '/corp/corpeditconf!downFile.action', {id : billid}, true, true);
-		}
-	}
 }
 
 /**
@@ -484,6 +469,18 @@ function transformImage(img, zoom, angle) {
         canvas = document.createElement('canvas');
         canvas.setAttribute("id", 'img_canvas');
         $(img).after(canvas);
+        
+        canvas.addEventListener('click', function(e) {
+        	downFile(bid, dtype);
+        }, false);
+        
+        canvas.addEventListener('mouseover', function(e) {
+        	showTips();
+        }, false);
+        
+        canvas.addEventListener('mouseout', function(e) {
+        	hideTips();
+        }, false);
     }
     $(img).hide();
     $(canvas).show();
@@ -547,18 +544,22 @@ function transformImage(img, zoom, angle) {
 	} else {
 		$("#img_container span").show();
 	}
-    
-    canvas.addEventListener('dblclick', function(e) {
-    	downFile(bid, dtype);
-    }, false);
-    
-    canvas.addEventListener('mouseover', function(e) {
-    	showTips();
-    }, false);
-    
-    canvas.addEventListener('mouseout', function(e) {
-    	hideTips();
-    }, false);
+
+}
+
+/**
+ * 附件下载
+ * @param billid
+ * @param type 1:付款单确认；2：客户名称修改确认；
+ */
+function downFile(billid, type){
+	if(billid && billid != ""){
+		if(type == 1){
+			Business.getFile(DZF.contextPath + '/chnpay/chnpayconf!downFile.action', {billid : billid}, true, true);
+		}else if(type == 2){
+			Business.getFile(DZF.contextPath + '/corp/corpeditconf!downFile.action', {id : billid}, true, true);
+		}
+	}
 }
 
 /**
