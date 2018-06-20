@@ -115,6 +115,8 @@ function initRadioListen(){
  * @param type  0：初始化界面加载；1；查询；2；刷新；
  */
 function load(type){
+	var bdate = new Date();
+	
 	var onlycol =  new ArrayList();//金额展示集合
 	var onlymap = new HashMap();//金额对应列数
 	
@@ -148,7 +150,7 @@ function load(type){
 		$('#jqj').html(begdate + ' 至 ' + enddate);
 	}
 	
-	parent.$.messager.progress({
+	$.messager.progress({
 		text : '数据加载中....'
 	});
 	
@@ -256,12 +258,12 @@ function load(type){
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			parent.$.messager.progress('close');
+			$.messager.progress('close');
 		}
 	});
 	
 	if(!isEmpty(errmsg)){
-		parent.$.messager.progress('close');
+		$.messager.progress('close');
 		Public.tips({
 			content : errmsg,
 			type : 2
@@ -316,7 +318,12 @@ function load(type){
 			type : 0
 		});
 	}
-	parent.$.messager.progress('close');
+	var edate = new Date();
+	var time = edate.getTime() - bdate.getTime();
+	
+	setTimeout(function(){
+		$.messager.progress('close');
+	}, time/2);
 }
 
 /**
