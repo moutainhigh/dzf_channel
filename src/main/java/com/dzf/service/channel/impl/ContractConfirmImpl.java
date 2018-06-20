@@ -220,7 +220,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	/**
 	 * 获取查询条件
 	 * @param paramvo
-	 * @param qrytype   listqry:列表查询；audit：审核查询；info：详情查询；
+	 * @param qrytype   listqry:列表查询；audit：审核查询；info：详情查询；"":合同变更或其他；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -1378,9 +1378,20 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param paramvo
 	 * @throws DZFWarpException
 	 */
+	@SuppressWarnings("unchecked")
 	private void checkBeforeChange(ContractConfrimVO paramvo) throws DZFWarpException {
-		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class,
-				paramvo.getPk_confrim());
+		ContractConfrimVO oldvo = null;
+//		ContractConfrimVO oldvo = (ContractConfrimVO) singleObjectBO.queryByPrimaryKey(ContractConfrimVO.class,
+//				paramvo.getPk_confrim());
+		QryParamVO pavo = new QryParamVO();
+		pavo.setPk_bill(paramvo.getPk_confrim());
+		pavo.setPk_corp(paramvo.getPk_corp());
+		QrySqlSpmVO qryvo =  getQryCondition(pavo, "");
+		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(qryvo.getSql(),
+				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
+		if (list != null && list.size() > 0) {
+			oldvo = list.get(0);
+		}
 		if(oldvo == null){
 			throw new BusinessException("变更合同信息错误");
 		}
