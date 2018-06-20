@@ -1344,7 +1344,7 @@ function bathconfrim(postdata, rows){
 	
 	setTimeout(function(){
 		$.messager.progress('close');
-	}, time);
+	}, time/2);
 }
 
 /**

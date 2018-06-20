@@ -583,7 +583,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			corpvo.setChargedeptname(datavo.getChargedeptname());
 			uplist.add("chargedeptname");
 			//2、审核时，如果我的客户“是否存量客户”为空，且合同“是否存量客户”不为空，则更新我的客户“是否存量客户”为是
-			if(datavo.getIsncust() != null && (datavo.getIsncust() != null && datavo.getIsncust().booleanValue())){
+			if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
 				corpvo.setIsncust(datavo.getIsncust());
 				uplist.add("isncust");
 			}
@@ -800,8 +800,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateRejectHistory(ContractConfrimVO paramvo, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE cn_rejecthistory  \n") ;
-		sql.append("   SET dr = 1  \n") ; 
+		sql.append("DELETE FROM cn_rejecthistory  \n") ;
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
 		sql.append("   AND pk_contract = ?  \n") ; 
 		sql.append("   AND pk_corp = ?  \n");
@@ -810,8 +809,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("UPDATE cn_rejecthistory_h  \n") ;
-		sql.append("   SET dr = 1  \n") ; 
+		sql.append("DELETE FROM cn_rejecthistory_h  \n") ;
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
 		sql.append("   AND pk_contract = ?  \n") ; 
 		sql.append("   AND pk_corp = ?  \n");
