@@ -391,7 +391,7 @@ public class ManagerServiceImpl implements IManagerService {
 		buf.append("  )as rnum,");
 		
 		buf.append("  sum(decode((sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		buf.append("  sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(yt.ntotalmny,0)-nvl(yt.nbookmny,0)))+");
+		buf.append("  sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(yt.nchangetotalmny,0)-nvl(yt.nbookmny,0)))+");
 		buf.append("  sum(decode(c.vstatus,10," );
 		buf.append("  decode((sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(c.nsubtotalmny,0)+nvl(yt.nbookmny,0)),");
@@ -425,7 +425,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sp.addParam(qvo.getDenddate());
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
 		sql.append(" select decode(yt.patchstatus,2,0,1) as anum,t.pk_confrim as pk_corp ,t.deductdata as denddate, ");
-		sql.append(" nvl(yt.ntotalmny,0)-nvl(yt.nbookmny,0) as antotalmny, " );   
+		sql.append(" nvl(yt.nchangetotalmny,0)-nvl(yt.nbookmny,0) as antotalmny, " );   
 		sql.append(" nvl(t.ndeductmny,0) as ndeductmny,nvl(t.ndedrebamny,0) as ndedrebamny from cn_contract t" );
 		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
 		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) and " );
