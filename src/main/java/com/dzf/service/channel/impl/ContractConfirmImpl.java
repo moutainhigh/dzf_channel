@@ -271,7 +271,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       cn.tstamp,  \n") ; 
 		sql.append("       cn.deductdata,  \n") ; 
 		sql.append("       cn.deductime,  \n") ; 
-		sql.append("       cn.vconmemo,  \n") ; 
+//		sql.append("       cn.vconmemo,  \n") ; 
 		sql.append("       cn.voperator,  \n") ; 
 		sql.append("       cn.ndedsummny,  \n") ; 
 		sql.append("       cn.ndeductmny,  \n") ; 

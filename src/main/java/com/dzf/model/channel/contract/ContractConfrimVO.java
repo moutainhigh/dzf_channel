@@ -33,6 +33,9 @@ public class ContractConfrimVO extends SuperVO {
 //	@FieldAlias("sourid")
 //	private String pk_source;// 补提交的合同来源主键（直接删除）
 	
+//	@FieldAlias("conmemo")
+//	private String vconmemo; // 审核备注（无用，直接删除）
+	
 	// 与原合同重复字段 begin*************************
 
 	@FieldAlias("contractid")
@@ -161,9 +164,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	@FieldAlias("ductime")
 	private DZFDateTime deductime;// 扣费时间
-
-	@FieldAlias("conmemo")
-	private String vconmemo; // 审核备注
 
 	@FieldAlias("voper")
 	private String voperator; // 经办人（审核人）
@@ -693,14 +693,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setVarea(String varea) {
 		this.varea = varea;
-	}
-
-	public String getVconmemo() {
-		return vconmemo;
-	}
-
-	public void setVconmemo(String vconmemo) {
-		this.vconmemo = vconmemo;
 	}
 
 	public String getVoperator() {
