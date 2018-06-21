@@ -306,7 +306,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 //		buf.append("  )as num,");
 //		
 //		buf.append("  sum(decode((sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-//		buf.append("  sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.ntotalmny,0)-nvl(ct.nbookmny,0)))+");
+//		buf.append("  sign(to_date(t.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.nchangetotalmny,0)-nvl(ct.nbookmny,0)))+");
 //		buf.append("  sum(decode(t.vdeductstatus,10," );
 //		buf.append("  decode((sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 //		buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(t.nsubtotalmny,0)+nvl(ct.nbookmny,0)),");
@@ -374,7 +374,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
 		sql.append("           END) AS idednum,  \n");
-		sql.append("       SUM(nvl(ct.ntotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny,  \n");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny,  \n");
 		sql.append("       SUM(nvl(ct.nbookmny, 0)) AS nbookmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
@@ -1049,7 +1049,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		if(qrytype == 1){
 			sql.append("       t.deductdata as doperatedate,  \n") ; 
-			sql.append("       nvl(ct.ntotalmny, 0) - nvl(ct.nbookmny, 0) as naccountmny,  \n") ; 
+			sql.append("       nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0) as naccountmny,  \n") ; 
 			sql.append("       nvl(ct.nbookmny, 0) as nbookmny  \n") ; 
 		}else if(qrytype == 2){
 			sql.append("       substr(t.dchangetime, 0, 10) as doperatedate,  \n") ; 
