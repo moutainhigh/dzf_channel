@@ -584,6 +584,13 @@ function initChnCorp(){
 			}
 		} ]
 	});
+    $("#chnDlg").dialog({  
+        onClose: function () {  
+        	selmap = new HashMap();
+    		sellist = new ArrayList();
+    		uidlist = new ArrayList();
+        }  
+    }); 
 }
 
 
