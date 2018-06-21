@@ -246,7 +246,7 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT cn.pk_corp, \n") ;
 		sql.append("  sum(decode((sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
-		sql.append("  sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.ntotalmny,0)))+");
+		sql.append("  sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.nchangetotalmny,0)))+");
 		sql.append("  sum(decode((sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		sql.append("  sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(cn.nsubtotalmny,0)))as contractmny");
 		sql.append("  FROM cn_contract cn \n") ;
