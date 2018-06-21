@@ -157,7 +157,7 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("tstp")
 	private DZFDateTime tstamp;// 时间戳
 
-	// 扣款字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+	// 扣款字段begin^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^：
 
 	@FieldAlias("dedate")
 	private DZFDate deductdata;// 扣费日期
@@ -183,9 +183,9 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("propor")
 	private Integer ideductpropor;// 扣款比例
 
-	// 扣款字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+	// 扣款字段end^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-	// 变更合同字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&：
+	// 变更合同字段begin%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%：
 
 	@FieldAlias("changetype")
 	private Integer ichangetype;// 变更类型1：C端客户终止，变更合同；2：提重了，合同作废；
@@ -207,9 +207,9 @@ public class ContractConfrimVO extends SuperVO {
 
 	@FieldAlias("rerebmny")
 	private DZFDouble nretrebmny;// 退回返点款金额
-
+	
 	@FieldAlias("nchtlmny")
-	private DZFDouble nchangetotalmny; // 变更后合同金额
+	private DZFDouble nchangetotalmny; // 变更后合同总金额
 
 	@FieldAlias("nchsumny")
 	private DZFDouble nchangesummny;// 变更后扣款总金额
@@ -241,7 +241,7 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("subderebmny")
 	private DZFDouble nsubdedrebamny;// 变更后返点款扣款差额
 
-	// 变更合同字段end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// 变更合同字段end%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	@FieldAlias("mname")
 	private String vmanagername; // 渠道经理（只做界面展示）
@@ -269,15 +269,26 @@ public class ContractConfrimVO extends SuperVO {
 
 	// 合同历史字段 end@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	
 	@FieldAlias("cts")
 	private DZFDateTime checkts;//数据校验时间戳(区分原合同数据和历史数据)
 	
-	//查询用的
 	@FieldAlias("aname")
     private String areaname;//大区名称 (运营区域)
 	
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省/市(获取加盟商的运营区域设置)
+	
+	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	
+	public DZFDouble getNchangetotalmny() {
+		return nchangetotalmny;
+	}
+	
+	public void setNchangetotalmny(DZFDouble nchangetotalmny) {
+		this.nchangetotalmny = nchangetotalmny;
+	}
 
 	public String getVadviser() {
 		return vadviser;
@@ -575,10 +586,6 @@ public class ContractConfrimVO extends SuperVO {
 		return nreturnmny;
 	}
 
-	public DZFDouble getNchangetotalmny() {
-		return nchangetotalmny;
-	}
-
 	public DZFDouble getNchangededutmny() {
 		return nchangededutmny;
 	}
@@ -601,10 +608,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setNreturnmny(DZFDouble nreturnmny) {
 		this.nreturnmny = nreturnmny;
-	}
-
-	public void setNchangetotalmny(DZFDouble nchangetotalmny) {
-		this.nchangetotalmny = nchangetotalmny;
 	}
 
 	public void setNchangededutmny(DZFDouble nchangededutmny) {

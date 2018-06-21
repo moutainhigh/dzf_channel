@@ -111,12 +111,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNdeductmny()));//预付款扣款
 					confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNdedrebamny()));//返点扣款
 				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
-					confvo.setNtotalmny(confvo.getNchangetotalmny());//合同总金额 = 变更后合同总金额
+//					confvo.setNtotalmny(confvo.getNchangetotalmny());//合同总金额 = 变更后合同总金额
 					confvo.setNdedsummny(confvo.getNchangesummny());//扣款总金额 = 变更后扣款总金额
 					confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNchangededutmny()));//预付款扣款 = 变更后预付款扣款
 					confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNchangerebatmny()));//返点扣款 = 变更后返点扣款
 					//合同代账费 = 变更后合同总金额 - 合同账本费
-					confvo.setNaccountmny(SafeCompute.sub(confvo.getNchangetotalmny(), confvo.getNbookmny()));
+					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
 				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
 					confvo.setNtotalmny(DZFDouble.ZERO_DBL);//合同总金额
 					confvo.setNdedsummny(DZFDouble.ZERO_DBL);//扣款总金额
@@ -284,7 +284,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       cn.nreturnmny,  \n") ; 
 		sql.append("       cn.nretdedmny,  \n") ; 
 		sql.append("       cn.nretrebmny,  \n") ; 
-		sql.append("       cn.nchangetotalmny,  \n") ; 
+		sql.append("       t.nchangetotalmny,  \n") ; //原合同金额
 		sql.append("       cn.nchangesummny,  \n") ; 
 		sql.append("       cn.nchangededutmny,  \n") ; 
 		sql.append("       cn.nchangerebatmny,  \n") ; 
