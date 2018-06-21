@@ -1,5 +1,6 @@
 package com.dzf.service.channel.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -227,13 +228,23 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				singleObjectBO.saveObject("000001", balvo);
 			}
 			singleObjectBO.saveObject("000001", detvo);
+			
+			List<String> upstr = new ArrayList<String>();
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_3);//付款单状态
 			billvo.setVconfirmid(cuserid);//确认人
 			billvo.setDconfirmtime(new DZFDateTime());//确认时间
 			billvo.setTstamp(new DZFDateTime());//操作时间戳
-			billvo.setVreason(null);//清空驳回原因
-			billvo.setIrejectype(null);//清空驳回类型
-			singleObjectBO.update(billvo, new String[]{"vstatus","vconfirmid", "dconfirmtime", "tstamp"});
+			upstr.add("vstatus");
+			upstr.add("vconfirmid");
+			upstr.add("dconfirmtime");
+			upstr.add("tstamp");
+			if(billvo.getIrejectype() != null && billvo.getIrejectype() == 2){//确认驳回
+				billvo.setIrejectype(null);//清空驳回类型
+				billvo.setVreason(null);//清空驳回原因
+				upstr.add("irejectype");
+				upstr.add("vreason");
+			}
+			singleObjectBO.update(billvo, upstr.toArray(new String[0]));
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}

@@ -498,10 +498,33 @@ function operatData(postdata, rows){
 						}
 					}
 					for(var i in indexes){
-						$('#grid').datagrid('updateRow', {
-							index : indexes[i],
-							row : result.rows[i]
-						});
+						if(isEmpty(rerows[i].rejectype)){
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									rejectype : null,
+									vreason : null,
+									status : rerows[i].status,
+									approid : rerows[i].approid,
+									approdate : rerows[i].approdate,
+									approtime : rerows[i].approtime,
+									tstp : rerows[i].tstp,
+								}
+							});
+						}else{
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									rejectype : rerows[i].rejectype,
+									vreason : rerows[i].vreason,
+									status : rerows[i].status,
+									approid : rerows[i].approid,
+									approdate : rerows[i].approdate,
+									approtime : rerows[i].approtime,
+									tstp : rerows[i].tstp,
+								}
+							});
+						}
 					}
 				}
 				$("#grid").datagrid('uncheckAll');
