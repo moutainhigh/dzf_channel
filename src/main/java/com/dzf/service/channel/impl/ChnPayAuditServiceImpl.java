@@ -186,11 +186,12 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
 			billvo.setIrejectype(null);//驳回类型
+			billvo.setVreason(null);//驳回原因
 			billvo.setVapproveid(cuserid);//审批人
 			billvo.setDapprovedate(new DZFDate());//审批日期
 			billvo.setDapprovetime(new DZFDateTime());//审批时间
 			billvo.setTstamp(new DZFDateTime());//操作时间
-			singleObjectBO.update(billvo, new String[]{"vstatus","irejectype","vapproveid",
+			singleObjectBO.update(billvo, new String[]{"vstatus","irejectype", "vreason", "vapproveid",
 					"dapprovedate","dapprovetime", "tstamp"});
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
