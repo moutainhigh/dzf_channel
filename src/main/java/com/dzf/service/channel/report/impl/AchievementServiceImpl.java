@@ -473,7 +473,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
 		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(ct.ntotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
