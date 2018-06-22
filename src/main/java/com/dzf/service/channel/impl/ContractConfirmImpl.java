@@ -546,8 +546,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					updateSerPackage(packvo);
 				}
 				//8、回写我的客户纳税人性质 、是否为存量客户
-				Map<String, String> packmap = queryPackageMap();
-				updateCorp(datavo, packmap);
+				updateCorp(datavo);
 				//9、发送消息
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
@@ -575,7 +574,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param packmap
 	 * @throws DZFWarpException
 	 */
-	private void updateCorp(ContractConfrimVO datavo, Map<String, String> packmap) throws DZFWarpException{
+	private void updateCorp(ContractConfrimVO datavo) throws DZFWarpException{
 		CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
 		List<String> uplist = new ArrayList<String>();
 		if(corpvo != null){
@@ -1041,7 +1040,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//6、回写套餐促销活动名额
 				updateSerPackage(packvo);
 				//7、回写我的客户“纳税人性质  、是否存量客户”
-				updateCorp(confrimvo, packmap);
+				updateCorp(confrimvo);
 				//8、发送消息
 				saveAuditMsg(confrimvo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
