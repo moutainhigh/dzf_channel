@@ -1066,6 +1066,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return confrimvo;
 	}
 	
+	/**
+	 * 审核前校验
+	 * @param confrimvo
+	 * @param checktype    single：单个合同审核
+	 * @return
+	 * @throws DZFWarpException
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<String,Object> CheckBeforeAudit(ContractConfrimVO confrimvo, String checktype) throws DZFWarpException{
 		Map<String,Object> map = new HashMap<String,Object>();
