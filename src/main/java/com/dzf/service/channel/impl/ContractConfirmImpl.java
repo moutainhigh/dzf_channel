@@ -507,6 +507,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			PackageDefVO packvo = null;//套餐信息
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				
+				System.out.println("审核前:"+ new DZFDateTime());
+				
 				//1、审核前校验
 				Map<String,Object> checkmap = CheckBeforeAudit(datavo,"single");
 				if(checkmap != null && !checkmap.isEmpty()){
@@ -518,11 +520,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 					setNullValue(datavo);
 					throw new BusinessException(errmsg);
 				}
+				System.out.println("单个审核1:"+ new DZFDateTime());
 				
 				//2、计算扣款金额
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
 					countDedMny(datavo, balVOs);
 				}
+				System.out.println("单个审核2:"+ new DZFDateTime());
 				
 				//3、预付款扣款、返点扣款分项校验：
 				if(datavo.getIdeductpropor() != 0){
@@ -532,23 +536,29 @@ public class ContractConfirmImpl implements IContractConfirm {
 						throw new BusinessException(errmsg);
 					}
 				}
-				
+				System.out.println("单个审核3:"+ new DZFDateTime());
 				//4、生成合同审核数据
 				datavo = saveContConfrim(datavo, cuserid);
+				System.out.println("单个审核4:"+ new DZFDateTime());
 				//5、回写付款余额
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(datavo, cuserid, balVOs);
 				}
+				System.out.println("单个审核5:"+ new DZFDateTime());
 				//6、更新原合同加盟合同状态、驳回原因
 				updateContract(datavo, opertype, cuserid, pk_corp);
+				System.out.println("单个审核6:"+ new DZFDateTime());
 				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
 					updateSerPackage(packvo);
 				}
+				System.out.println("单个审核7:"+ new DZFDateTime());
 				//8、回写我的客户纳税人性质 、是否为存量客户
 				updateCorp(datavo);
+				System.out.println("单个审核8:"+ new DZFDateTime());
 				//9、发送消息
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
+				System.out.println("单个审核9:"+ new DZFDateTime());
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(datavo);
 				if(!StringUtil.isEmpty(errmsg)){
@@ -1006,6 +1016,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			ChnBalanceVO[] balVOs = null;//余额信息
 			PackageDefVO packvo = null;//套餐信息
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+				System.out.println("批量审核前:"+ new DZFDateTime());
 				//1、计算扣款总金额：
 				countDedSumMny(confrimvo, paramvo);
 				Map<String,Object> checkmap =  CheckBeforeAudit(confrimvo, "batch");
@@ -1019,30 +1030,36 @@ public class ContractConfirmImpl implements IContractConfirm {
 					setNullValue(confrimvo);
 					return confrimvo;
 				}
+				System.out.println("批量审核1:"+ new DZFDateTime());
 				//2、计算扣款分项金额：
 				if(paramvo.getIdeductpropor() != 0){
 					countDedMny(confrimvo, balVOs);
 				}
-				
+				System.out.println("批量审核2:"+ new DZFDateTime());
 				//3、生成合同审核数据
 				confrimvo = saveContConfrim(confrimvo, cuserid);
 				if(!StringUtil.isEmpty(confrimvo.getVerrmsg())){
 					setNullValue(confrimvo);
 					return confrimvo;
 				}
-				
+				System.out.println("批量审核3:"+ new DZFDateTime());
 				//4、回写付款余额
 				if(paramvo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(confrimvo, cuserid, balVOs);
 				}
+				System.out.println("批量审核4:"+ new DZFDateTime());
 				//5、更新合同加盟合同状态、驳回原因
 				updateContract(confrimvo, opertype, cuserid, pk_corp);
+				System.out.println("批量审核5:"+ new DZFDateTime());
 				//6、回写套餐促销活动名额
 				updateSerPackage(packvo);
+				System.out.println("批量审核6:"+ new DZFDateTime());
 				//7、回写我的客户“纳税人性质  、是否存量客户”
 				updateCorp(confrimvo);
+				System.out.println("批量审核7:"+ new DZFDateTime());
 				//8、发送消息
 				saveAuditMsg(confrimvo, 1, pk_corp, cuserid);
+				System.out.println("批量审核8:"+ new DZFDateTime());
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				errmsg = checkBeforeReject(confrimvo);
 				if(!StringUtil.isEmpty(errmsg)){
