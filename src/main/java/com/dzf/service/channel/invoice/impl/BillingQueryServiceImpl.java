@@ -165,6 +165,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
         cvo.setInvstatus(1);//状态
         cvo.setIpaytype(0);
         cvo.setInvcorp(2);
+        cvo.setRusername(avo.getLinkman2());
         singleObjectBO.saveObject(vo.getPk_corp(), cvo);
     }
     
