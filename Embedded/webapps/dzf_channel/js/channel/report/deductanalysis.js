@@ -196,10 +196,13 @@ function load(type){
 							obj['custnum'] = rows[i].custnum;//存量合同数
 							obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
 							obj['dednum'] = rows[i].dednum;//非存量合同数
-							if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+//							if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+//								obj['retmny'] = '-'+rows[i].retmny;//退回金额
+//							}else{
+//								obj['retmny'] = rows[i].retmny;//退回金额
+//							}
+							if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
 								obj['retmny'] = '-'+rows[i].retmny;//退回金额
-							}else{
-								obj['retmny'] = rows[i].retmny;//退回金额
 							}
 							obj['corpcode'] = rows[i].corpcode;//加盟商编码
 							obj['corpname'] = rows[i].corpname;//加盟商名称
@@ -238,10 +241,13 @@ function load(type){
 								obj['custnum'] = rows[i].custnum;//存量合同数
 								obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
 								obj['dednum'] = rows[i].dednum;//非存量合同数
-								if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+//								if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
+//									obj['retmny'] = '-'+rows[i].retmny;//退回金额
+//								}else{
+//									obj['retmny'] = rows[i].retmny;//退回金额
+//								}
+								if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
 									obj['retmny'] = '-'+rows[i].retmny;//退回金额
-								}else{
-									obj['retmny'] = rows[i].retmny;//退回金额
 								}
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
