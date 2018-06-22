@@ -256,6 +256,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			List<ComboBoxVO> vos = chnarea.queryArea(qvo);
 			if(vos==null||vos.size()==0){
 				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
 				grid.setMsg("查询数据为空!");
 			}else{
 				grid.setRows(vos);
@@ -280,6 +281,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			List<ComboBoxVO> vos = chnarea.queryProvince(qvo);
 			if(vos==null||vos.size()==0){
 				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
 				grid.setMsg("查询数据为空!");
 			}else{
 				grid.setRows(vos);
@@ -305,6 +307,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			List<ComboBoxVO> vos = chnarea.queryTrainer(qvo);
 			if(vos==null||vos.size()==0){
 				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
 				grid.setMsg("查询数据为空!");
 			}else{
 				grid.setRows(vos);
