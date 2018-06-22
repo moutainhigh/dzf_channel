@@ -16,7 +16,6 @@ import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.AccountVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
@@ -72,7 +71,6 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 		if (list != null && list.size() > 0) {
 			List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
 			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 2);
-			CorpVO corpvo = null;
 			for (BillingInvoiceVO bvo : list) {
 				if(areaMap!=null && !areaMap.isEmpty()){
 					String area = areaMap.get(bvo.getVprovince());
