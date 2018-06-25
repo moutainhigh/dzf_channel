@@ -490,30 +490,44 @@ function operatData(postdata, rows){
 						}
 					}
 					for(var i in indexes){
-						if(isEmpty(rerows[i].rejectype)){
+						if(postdata["type"] == 5){//取消确认
 							$('#grid').datagrid('updateRow', {
 								index : indexes[i],
 								row : {
 									rejectype : null,
 									vreason : null,
 									status : rerows[i].status,
-									vcid : rerows[i].vcid,
-									dctime : rerows[i].dctime,
+									vcid : null,
+									dctime : null,
 									tstp : rerows[i].tstp,
 								}
 							});
 						}else{
-							$('#grid').datagrid('updateRow', {
-								index : indexes[i],
-								row : {
-									rejectype : rerows[i].rejectype,
-									vreason : rerows[i].vreason,
-									status : rerows[i].status,
-									vcid : rerows[i].vcid,
-									dctime : rerows[i].dctime,
-									tstp : rerows[i].tstp,
-								}
-							});
+							if(isEmpty(rerows[i].rejectype)){
+								$('#grid').datagrid('updateRow', {
+									index : indexes[i],
+									row : {
+										rejectype : null,
+										vreason : null,
+										status : rerows[i].status,
+										vcid : rerows[i].vcid,
+										dctime : rerows[i].dctime,
+										tstp : rerows[i].tstp,
+									}
+								});
+							}else{
+								$('#grid').datagrid('updateRow', {
+									index : indexes[i],
+									row : {
+										rejectype : rerows[i].rejectype,
+										vreason : rerows[i].vreason,
+										status : rerows[i].status,
+										vcid : rerows[i].vcid,
+										dctime : rerows[i].dctime,
+										tstp : rerows[i].tstp,
+									}
+								});
+							}
 						}
 					}
 				}
