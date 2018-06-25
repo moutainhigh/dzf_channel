@@ -634,7 +634,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			//正常和作废扣款：1、预付款扣款金额不为0；2、扣款总金额为0；
 			//变更扣款：1、状态为变更，且变更后预付款扣款金额不为0；
 			sql.append(" AND ( (  ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 )  AND t.vstatus IN (?, ?) ) \n");
-			sql.append(" OR (nvl(t.nchangededutmny,0) != 0 AND t.vstatus = ? )  )\n");
+			sql.append(" OR t.vstatus = ?   )\n");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -742,7 +742,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 //			sql.append(" AND nvl(t.ndedrebamny,0) != 0 ");
 //		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 1) {//预付款扣款
-			sql.append(" AND ( (nvl(t.nchangededutmny,0) != 0 AND t.vstatus = ? )  \n");
+			sql.append(" AND ( t.vstatus = ?   \n");
 			sql.append("  OR ( (nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) AND t.vstatus = ? ) ) \n");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
