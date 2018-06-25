@@ -76,7 +76,7 @@ public class PushAppMessageImpl implements IPushAppMessage {
 		//存储消息数据
 		singleObjectBO.saveObject(loginpk, convertVO);
 		//激光推送消息
-		sendWyAppMsg(dealman, msg.toString());
+//		sendWyAppMsg(dealman, msg.toString());
 	}
 
 	/**
