@@ -379,7 +379,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
 			sql.append(paramvo.getVqrysql());
 		}
-		sql.append(" ORDER BY t.ts desc \n");
+		sql.append(" ORDER BY t.dsubmitime desc \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -580,7 +580,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			corpvo.setChargedeptname(datavo.getChargedeptname());
 			uplist.add("chargedeptname");
 			//2、审核时，如果我的客户“是否存量客户”为空，且合同“是否存量客户”不为空，则更新我的客户“是否存量客户”为是
-			if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
+			if(corpvo.getIsncust() == null && (datavo.getIsncust() != null && datavo.getIsncust().booleanValue())){
 				corpvo.setIsncust(datavo.getIsncust());
 				uplist.add("isncust");
 			}
@@ -703,11 +703,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 	
 	/**
 	 * 计算扣款总金额
-	 * @param confrimvo
-	 * @param paramvo
+	 * @param confrimvo  合同vo
+	 * @param paramvo  参数vo
 	 */
 	private void countDedSumMny(ContractConfrimVO confrimvo, ContractConfrimVO paramvo){
-		confrimvo.setIdeductpropor(paramvo.getIdeductpropor());//扣款比例
+		confrimvo.setIdeductpropor(confrimvo.getIdeductpropor());//扣款比例
 		confrimvo.setVoperator(paramvo.getVoperator());//经办人
 		confrimvo.setVconfreason(paramvo.getVconfreason());//驳回原因
 		//合同扣款基数 = 合同总金额 - 账本费
@@ -995,7 +995,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 			return confrimvo;
 		}
 		if(confrimvo.getIsncust() != null && confrimvo.getIsncust().booleanValue()){
-			paramvo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
+//			paramvo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
+			confrimvo.setIdeductpropor(0);
+		}else{
+			confrimvo.setIdeductpropor(paramvo.getIdeductpropor());
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
@@ -1018,7 +1021,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return confrimvo;
 				}
 				//2、计算扣款分项金额：
-				if(paramvo.getIdeductpropor() != 0){
+				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
 					countDedMny(confrimvo, balVOs);
 				}
 				//3、生成合同审核数据
@@ -1028,13 +1031,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 					return confrimvo;
 				}
 				//4、回写付款余额
-				if(paramvo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
+				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(confrimvo, cuserid, balVOs);
 				}
-				//5、更新合同加盟合同状态、驳回原因
+				//5、更新原合同加盟合同状态、驳回原因
 				updateContract(confrimvo, opertype, cuserid, pk_corp);
-				//6、回写套餐促销活动名额
-				updateSerPackage(packvo);
+				//6、回写套餐促销活动名额(补提交的合同不回写套餐数量)
+				if(confrimvo.getPatchstatus() == null || (confrimvo.getPatchstatus() != null && confrimvo.getPatchstatus() != 2)){
+					updateSerPackage(packvo);
+				}
 				//7、回写我的客户“纳税人性质  、是否存量客户”
 				updateCorp(confrimvo);
 				//8、发送消息
