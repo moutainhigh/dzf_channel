@@ -1172,6 +1172,9 @@ function deductConfri(){
 					type : 2
 				});
 			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.progress('close');
 		}
 	});
 }
@@ -1298,6 +1301,13 @@ function bathconfrim(postdata, rows){
 				});
 				isclose = true;
 			} else {
+				var edate = new Date();
+				var time = edate.getTime() - bdate.getTime();
+				
+				setTimeout(function(){
+					$.messager.progress('close');
+				}, time/2);
+				
 				if(result.status == -1){
 					Public.tips({
 						content : result.msg,
@@ -1338,13 +1348,7 @@ function bathconfrim(postdata, rows){
 			parent.$.messager.progress('close');
 		}
 	});
-	
-	var edate = new Date();
-	var time = edate.getTime() - bdate.getTime();
-	
-	setTimeout(function(){
-		$.messager.progress('close');
-	}, time/2);
+
 }
 
 /**

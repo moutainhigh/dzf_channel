@@ -301,6 +301,13 @@ function load(type){
 		columns : columns,
 		onLoadSuccess : function(data) {
 			calFooter();
+			
+			var edate = new Date();
+			var time = edate.getTime() - bdate.getTime();
+			
+			setTimeout(function(){
+				$.messager.progress('close');
+			}, time/2);
 		},
 	});
 	
@@ -324,12 +331,8 @@ function load(type){
 			type : 0
 		});
 	}
-	var edate = new Date();
-	var time = edate.getTime() - bdate.getTime();
+
 	
-	setTimeout(function(){
-		$.messager.progress('close');
-	}, time/2);
 }
 
 /**
