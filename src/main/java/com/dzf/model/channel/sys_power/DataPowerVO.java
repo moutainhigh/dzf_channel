@@ -21,7 +21,7 @@ public class DataPowerVO extends SuperVO {
     private String pk_role; // 角色主键
     
     @FieldAlias("level")
-    private Integer idatalevel;
+    private Integer idatalevel;//1:所有数据权限；2:大区数据权限；3:加盟商数据权限
     
 	@FieldAlias("coptid")
 	private String coperatorid;// 创建人
