@@ -144,6 +144,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 					changetotalmny = confvo.getNtotalmny();//变更后合同金额 = (原合同)现金额
 					confvo.setNtotalmny(totalmny);
 					confvo.setNchangetotalmny(changetotalmny);
+				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
+					totalmny = confvo.getNchangetotalmny();//合同总金额 = (原合同)变更前合同金额
+					confvo.setNtotalmny(totalmny);
+					confvo.setNchangetotalmny(DZFDouble.ZERO_DBL);
 				}
 				//0：待提交；5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
 				switch(confvo.getVdeductstatus()){
