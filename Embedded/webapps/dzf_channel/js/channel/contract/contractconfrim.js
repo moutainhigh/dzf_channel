@@ -1294,6 +1294,13 @@ function bathconfrim(postdata, rows){
 		traditional : true,
 		async : false,
 		success : function(result) {
+			var edate = new Date();
+			var time = edate.getTime() - bdate.getTime();
+			
+			setTimeout(function(){
+				$.messager.progress('close');
+			}, time/2);
+			
 			if (!result.success) {
 				Public.tips({
 					content : result.msg,
@@ -1301,13 +1308,6 @@ function bathconfrim(postdata, rows){
 				});
 				isclose = true;
 			} else {
-				var edate = new Date();
-				var time = edate.getTime() - bdate.getTime();
-				
-				setTimeout(function(){
-					$.messager.progress('close');
-				}, time/2);
-				
 				if(result.status == -1){
 					Public.tips({
 						content : result.msg,
