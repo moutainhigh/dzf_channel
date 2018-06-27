@@ -1282,7 +1282,6 @@ function bathconf(){
  * @param postdata
  */
 function bathconfrim(postdata, rows){
-	var bdate = new Date();
 	$.messager.progress({
 		text : '数据审核中....'
 	});
@@ -1292,15 +1291,8 @@ function bathconfrim(postdata, rows){
 		url : contextPath + '/contract/contractconf!bathconfrim.action',
 		data : postdata,
 		traditional : true,
-		async : false,
 		success : function(result) {
-			var edate = new Date();
-			var time = edate.getTime() - bdate.getTime();
-			
-			setTimeout(function(){
-				$.messager.progress('close');
-			}, time/2);
-			
+			$.messager.progress('close');
 			if (!result.success) {
 				Public.tips({
 					content : result.msg,
