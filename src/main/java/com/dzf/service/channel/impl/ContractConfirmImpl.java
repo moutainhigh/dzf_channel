@@ -102,6 +102,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname,3);
 		}
+		DZFDouble totalmny = DZFDouble.ZERO_DBL;
+		DZFDouble changetotalmny = DZFDouble.ZERO_DBL;
 		for(ContractConfrimVO confvo : list){
 			confvo.setTstamp(confvo.getCheckts());//校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同
 			if("listqry".equals(showtype)){
@@ -110,11 +112,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
 					confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNdeductmny()));//预付款扣款
 					confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNdedrebamny()));//返点扣款
+					confvo.setNchangetotalmny(null);//变更后合同金额
 				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
-//					confvo.setNtotalmny(confvo.getNchangetotalmny());//合同总金额 = 变更后合同总金额
 					confvo.setNdedsummny(confvo.getNchangesummny());//扣款总金额 = 变更后扣款总金额
 					confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNchangededutmny()));//预付款扣款 = 变更后预付款扣款
 					confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNchangerebatmny()));//返点扣款 = 变更后返点扣款
+			
 					//合同代账费 = 变更后合同总金额 - 合同账本费
 					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
 				}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
@@ -127,11 +130,69 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}else{//待提交、已驳回
 					//合同代账费 = 合同总金额 - 合同账本费
 					confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
+					confvo.setNchangetotalmny(null);//变更后合同金额
 				}
 				if(areaMap != null && !areaMap.isEmpty()){
 					String area = areaMap.get(confvo.getVprovince());
 					if(!StringUtil.isEmpty(area)){
 						confvo.setAreaname(area);//大区
+					}
+				}
+			}else if("info".equals(showtype)){//明细查询
+				if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
+					totalmny = confvo.getNchangetotalmny();//合同总金额 = (原合同)变更前合同金额
+					changetotalmny = confvo.getNtotalmny();//变更后合同金额 = (原合同)现金额
+					confvo.setNtotalmny(totalmny);
+					confvo.setNchangetotalmny(changetotalmny);
+				}
+				//0：待提交；5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
+				switch(confvo.getVdeductstatus()){
+				case 0:
+					statusname = "待提交";
+					break;
+				case 5:
+					statusname = "待审核";
+					break;
+				case 1:
+					statusname = "已审核";
+					break;
+				case 7:
+					statusname = "已驳回";
+					break;
+				case 8:
+					statusname = "服务到期";
+					break;
+				case 9:
+					statusname = "已终止";
+					break;
+				case 10:
+					statusname = "已作废";
+					break;
+				}
+				confvo.setVstatusname(statusname);
+			}else if("audit".equals(showtype)){//审核查询
+				confvo.setNchangetotalmny(null);//变更后合同金额
+				confvo.setIscanedit(DZFBoolean.FALSE);
+				if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){
+					confvo.setCorptype("普通加盟商");
+					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+						confvo.setIdeductpropor(0);
+					}else{
+						confvo.setIdeductpropor(10);
+					}
+				}else if(confvo.getChanneltype() != null && confvo.getChanneltype() == 2){
+					confvo.setCorptype("金牌加盟商");
+					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+						confvo.setIdeductpropor(0);
+					}else{
+						confvo.setIdeductpropor(5);
+						confvo.setIscanedit(DZFBoolean.TRUE);
+					}
+				}else{
+					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+						confvo.setIdeductpropor(0);
+					}else{
+						confvo.setIdeductpropor(10);
 					}
 				}
 			}
@@ -160,59 +221,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 						confvo.setVmanagername(uservo.getUser_name());//渠道经理
 					}
 				}
-			}
-			
-			if("audit".equals(showtype)){
-				confvo.setIscanedit(DZFBoolean.FALSE);
-				if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){
-					confvo.setCorptype("普通加盟商");
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
-					}else{
-						confvo.setIdeductpropor(10);
-					}
-				}else if(confvo.getChanneltype() != null && confvo.getChanneltype() == 2){
-					confvo.setCorptype("金牌加盟商");
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
-					}else{
-						confvo.setIdeductpropor(5);
-						confvo.setIscanedit(DZFBoolean.TRUE);
-					}
-				}else{
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
-					}else{
-						confvo.setIdeductpropor(10);
-					}
-				}
-			}
-			if("info".equals(showtype)){
-				//0：待提交；5:待审批： 1：审核通过； 7：已驳回；8：服务到期；9：已终止；10：已作废；
-				switch(confvo.getVdeductstatus()){
-				case 0:
-					statusname = "待提交";
-					break;
-				case 5:
-					statusname = "待审核";
-					break;
-				case 1:
-					statusname = "已审核";
-					break;
-				case 7:
-					statusname = "已驳回";
-					break;
-				case 8:
-					statusname = "服务到期";
-					break;
-				case 9:
-					statusname = "已终止";
-					break;
-				case 10:
-					statusname = "已作废";
-					break;
-				}
-				confvo.setVstatusname(statusname);
 			}
 		}
 	}
@@ -284,7 +292,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       cn.nreturnmny,  \n") ; 
 		sql.append("       cn.nretdedmny,  \n") ; 
 		sql.append("       cn.nretrebmny,  \n") ; 
-		sql.append("       t.nchangetotalmny,  \n") ; //原合同金额
+		sql.append("       t.nchangetotalmny,  \n") ; //原合同金额(原合同)/变更后合同金额(历史合同-终止、作废)
 		sql.append("       cn.nchangesummny,  \n") ; 
 		sql.append("       cn.nchangededutmny,  \n") ; 
 		sql.append("       cn.nchangerebatmny,  \n") ; 
