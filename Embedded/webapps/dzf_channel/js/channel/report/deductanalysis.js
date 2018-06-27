@@ -367,7 +367,7 @@ function calFooter(){
 //    footerData['num'] = num;
     footerData['mny'] = mny;
     footerData['stocknum'] = stocknum;
-    footerData['custnum'] = stocknum;
+    footerData['custnum'] = custnum;
     footerData['zeronum'] = zeronum;
     footerData['dednum'] = dednum;
     
