@@ -45,6 +45,8 @@ public class UserRoleServiceImpl implements IUserRoleService {
         sf.append(" select sr.pk_role,sr.role_name,ur.pk_user_role from sm_role sr ");
         sf.append(" left join sm_user_role ur on sr.pk_role = ur.pk_role and ur.cuserid = ? and nvl(ur.dr,0) = 0");
         sf.append(" where sr.roletype = ? and sr.pk_corp = ? and nvl(sr.dr,0) = 0 and nvl(sr.seal,'N') = 'N'");
+        sf.append(" and sr.role_code not in ('channel','corpzjl','qdsqr','cwb-kp','cwb-zj','gszjl','corpqdyyjl')");
+//        sf.append(" and sr.role_code in ('channel','corpzjl','qdsqr','cwb-kp','cwb-zj','gszjl','corpqdyyjl')");
         sp.addParam(7);
         sp.addParam(pk_corp);
         List<URoleVO> list = (List<URoleVO>) singleObjectBO.executeQuery(sf.toString(), sp,
