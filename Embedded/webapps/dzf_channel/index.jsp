@@ -89,14 +89,13 @@
 <link id="parent-skin" href="css/lan_skin.css" rel="stylesheet" />
 <link href="layui/css/layui.css" rel="stylesheet">
 <link href="layui/dzfchat.css" rel="stylesheet">
-<style>
-</style> 
 
 <script type="text/javascript" src="./js/jsapi.js"></script>
 <script type="text/javascript" src="./js/corechart.js"></script>		
 <script type="text/javascript" src="./js/jquery.gvChart-1.0.1.min.js"></script>
 <script type="text/javascript" src="./js/jquery.ba-resize.min.js"></script>
 <script type="text/javascript" src="./js/echarts.common.min.js"></script>
+<script type="text/javascript" src="./js/e-smart-zoom.jquery.min.js"></script>
 
 <script src="layui/layui.js" charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript" src="layui/base64.min.js"></script>
@@ -127,8 +126,18 @@ function tranImg(trun){
     current = (current+trun)%360;
     imgObj.style.transform = 'rotate('+current+'deg)';
 } */
-</script>
 
+var current = 0;
+function tranImg(trun){
+    var imgObj= document.getElementById('conturnid');
+    current = (current+trun)%360;
+    imgObj.style.transform = 'rotate('+current+'deg)';
+}
+</script>
+<style>
+#fullViewContent img{height:460px;}
+.zoomableContainer{margin:0 auto}
+</style>
 </head>
 
 <body class="dzf-skin index_body index_body_index" >
@@ -409,20 +418,43 @@ function tranImg(trun){
 <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
 </div>
 <!-- 打开图片展示窗口 begin -->
-<div id="fullViewDlg" style="display: none;">	
+<div id="fullViewDlg" style="display: none;text-align: center;">	
 	<div style="text-align: center;">
-	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
-	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
+	<!-- <a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
+	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a> -->
+	<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a>
+	<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>
 	</div>
   	<!-- <div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
 		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
 	</div> -->
-	<div id="fullViewContent" style="overflow: auto;height:92%;text-align: center;">
+	<div id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;">
 	</div>
 </div>
 <!-- 打开图片展示窗口 end -->
+<script>
 
+$(document).ready(function() {        
+
+    $('#fullViewContent').smartZoom({'containerClass':'zoomableContainer'});        
+     
+    function zoomButtonClickHandler(e){
+
+        var scaleToAdd = 0.8;
+
+        if(e.target.id == 'zoomOut')
+
+            scaleToAdd = -scaleToAdd;
+
+        $('#fullViewContent').smartZoom('zoom', scaleToAdd);
+
+    } 
+    
+
+});
+
+</script>
 </body>
 </html>
