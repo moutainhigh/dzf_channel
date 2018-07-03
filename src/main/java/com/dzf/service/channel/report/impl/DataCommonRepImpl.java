@@ -1,11 +1,9 @@
 package com.dzf.service.channel.report.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +11,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DataVO;
-import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;

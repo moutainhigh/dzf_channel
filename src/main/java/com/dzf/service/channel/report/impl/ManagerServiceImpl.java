@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.sys.sys_power.CorpVO;
