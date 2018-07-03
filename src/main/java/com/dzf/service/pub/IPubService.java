@@ -88,4 +88,14 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public Integer getDataLevel(String cuserid) throws DZFWarpException;
+	
+	
+	/**
+	 * 获取省市负责人为cuserid的所有的省份
+	 * @param cuserid
+	 * @param type
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<String> qryPros(String cuserid,Integer type) throws DZFWarpException;
 }

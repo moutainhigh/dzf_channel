@@ -76,8 +76,10 @@ public class ManagerServiceImpl implements IManagerService {
 		if(qryCharge == null || qryCharge.size() == 0){
 			qryCharge = new ArrayList<>();
         }else{
-        	List<String> pros=qryPros(qvo);
-        	condition = SqlUtil.buildSqlForIn("b.vprovince",pros.toArray(new String[pros.size()]));
+        	List<String> pros=pubService.qryPros(qvo.getUserid(),1);
+        	if(pros!=null && pros.size()>0){
+        		condition = SqlUtil.buildSqlForIn("b.vprovince",pros.toArray(new String[pros.size()]));
+        	}
         }
 		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,condition);//查询  非  省/市负责人相关的数据
         if(qryNotCharge != null && qryNotCharge.size() > 0){
@@ -113,7 +115,7 @@ public class ManagerServiceImpl implements IManagerService {
 		SQLParameter sp = new SQLParameter();
 		sql.append("  select a.areaname,a.userid,");
 		sql.append("  	   y.region_name vprovname,");
-		sql.append("       p.pk_corp, p.innercode, p.vprovince,");
+		sql.append("       p.pk_corp, p.innercode, p.vprovince,b.ischarge isxq,");
 		sql.append("       b.userid cuserid,b.pk_corp corpname");//, b.vprovince
 		sql.append("  from bd_account p");
 		sql.append("  left join ynt_area y on p.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
@@ -136,20 +138,35 @@ public class ManagerServiceImpl implements IManagerService {
 			sql.append(" and b.vprovince=? ");// 省市
 			sp.addParam(qvo.getVprovince());
 		}
+		Boolean isQuery=true;
 		if (!StringUtil.isEmpty(qvo.getCuserid())) {
-			sql.append(" and b.userid=? ");// 渠道经理
+			isQuery=false;
+			String condition=null;
+			List<String> qryPros = pubService.qryPros(qvo.getCuserid(),1);
+			if(qryPros!=null ||qryPros.size()>0){
+				condition = SqlUtil.buildSqlForIn("b.vprovince",qryPros.toArray(new String[qryPros.size()]));
+				sql.append(" and ("+condition+" or b.userid=? ) " );
+			}else{
+				 sql.append(" and b.userid=? " );//渠道经理
+			}
 			sp.addParam(qvo.getCuserid());
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
 		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
 		if(list!=null && list.size()>0){
+			Boolean isPut=true;
 			for (ManagerVO managerVO : list) {
 				if(managerVO.getCorpname()==null || !(managerVO.getPk_corp().equals(managerVO.getCorpname()))){
 					managerVO.setCuserid(null);
 				}
-				if(!map.containsKey(managerVO.getPk_corp())){
+				if(!isQuery &&(managerVO.getIsxq().booleanValue() || !StringUtil.isEmpty(managerVO.getCuserid()))){
+					isPut=true;
+				}else if(!isQuery){
+					isPut=false;
+				}
+				if(!map.containsKey(managerVO.getPk_corp())&& isPut){
 					map.put(managerVO.getPk_corp(), managerVO);
-				}else if(!StringUtil.isEmpty(managerVO.getCuserid())){
+				}else if(!StringUtil.isEmpty(managerVO.getCuserid())&& isPut){
 					map.put(managerVO.getPk_corp(), managerVO);
 				}
 			}
@@ -194,26 +211,6 @@ public class ManagerServiceImpl implements IManagerService {
 		return vos;
 	}
 	
-	/**
-	 * 查询登陆人为省市负责人，负责所有的省份
-	 * @param qvo
-	 * @return
-	 */
-	private List<String> qryPros(ManagerVO qvo) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp=new SQLParameter();
-		sql.append("  select distinct to_char(vprovince) vprovince \n");
-		sql.append("   from cn_chnarea_b b\n");
-		sql.append("  where nvl(b.dr, 0) = 0\n");
-		sql.append("    and b.type = 1\n");
-		sql.append("    and nvl(b.ischarge, 'N') = 'Y'\n");
-		sql.append("    and b.userid = ? \n");
-	    sp.addParam(qvo.getUserid());
-	    List<String>  vos = (List<String>)singleObjectBO.executeQuery(sql.toString(), sp, new ColumnListProcessor("vprovince"));
-		return vos;
-	}
-	
-
 	private ArrayList<ManagerVO> queryCommon(ManagerVO qvo,List<ManagerVO> vos) {
 		LinkedHashMap<String, ManagerVO> map = new LinkedHashMap<String, ManagerVO>();
 		ArrayList<String> pk_corps =new ArrayList<>();

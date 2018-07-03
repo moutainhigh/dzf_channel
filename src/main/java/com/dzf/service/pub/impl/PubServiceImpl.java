@@ -497,5 +497,21 @@ public class PubServiceImpl implements IPubService {
     	List<String> list =(List<String>) singleObjectBO.executeQuery(buf.toString(),spm, new ColumnListProcessor());
     	return list;
     }
+    
+	@Override
+	public List<String> qryPros(String cuserid,Integer type) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp=new SQLParameter();
+		sql.append("  select distinct to_char(vprovince) vprovince \n");
+		sql.append("   from cn_chnarea_b b\n");
+		sql.append("  where nvl(b.dr, 0) = 0\n");
+		sql.append("    and b.type = ?\n");
+		sql.append("    and nvl(b.ischarge, 'N') = 'Y'\n");
+		sql.append("    and b.userid = ? \n");
+	    sp.addParam(type);
+	    sp.addParam(cuserid);
+	    List<String>  vos = (List<String>)singleObjectBO.executeQuery(sql.toString(), sp, new ColumnListProcessor("vprovince"));
+		return vos;
+	}
 	
 }

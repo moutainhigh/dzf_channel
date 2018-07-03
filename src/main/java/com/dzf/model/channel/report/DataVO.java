@@ -2,6 +2,7 @@ package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 
 /**
  * 数据权限vo(目前只是用在数据运营管理报表的三个节点)
@@ -39,6 +40,9 @@ public class DataVO extends SuperVO {
 	
 	@FieldAlias("corpnm")
 	public String corpname;//加盟商名称
+	
+	@FieldAlias("isCharge")
+	public DZFBoolean isCharge;//是否省/市负责人
 
 	public String getAreaname() {
 		return areaname;
@@ -62,6 +66,14 @@ public class DataVO extends SuperVO {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public DZFBoolean getIsCharge() {
+		return isCharge;
+	}
+
+	public void setIsCharge(DZFBoolean isCharge) {
+		this.isCharge = isCharge;
 	}
 
 	public String getVprovname() {
