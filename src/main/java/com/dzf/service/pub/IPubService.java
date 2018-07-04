@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IPubService {
@@ -98,4 +99,13 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public List<String> qryPros(String cuserid,Integer type) throws DZFWarpException;
+	
+	   /**
+     * 在线业务系统功能操作是校验是否有节点权限，防止攻击
+     * @author gejw
+     * @time 下午2:22:25
+     * @param uvo
+     * @throws DZFWarpException
+     */
+    public void checkFunnode(UserVO uvo,String funnode) throws DZFWarpException;
 }

@@ -16,15 +16,19 @@ import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.AccountVO;
+import com.dzf.model.sys.sys_power.SysFunNodeVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.IDefaultValue;
+import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.ISysFunnodeService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
 
 @Service("pubservice")
@@ -35,6 +39,9 @@ public class PubServiceImpl implements IPubService {
     
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+    @Autowired
+    private ISysFunnodeService sysFunnodeService = null;
 
     @Override
 	public HashMap<Integer, String> queryAreaMap(String parenter_id) throws DZFWarpException {
@@ -513,5 +520,21 @@ public class PubServiceImpl implements IPubService {
 	    List<String>  vos = (List<String>)singleObjectBO.executeQuery(sql.toString(), sp, new ColumnListProcessor("vprovince"));
 		return vos;
 	}
+	
+    @Override
+    public void checkFunnode(UserVO uvo,String funnode) throws DZFWarpException {
+        List<SysFunNodeVO> list = sysFunnodeService.querySysnodeByUser(uvo, IGlobalConstants.DZF_CHANNEL);
+        if(list != null && list.size() > 0){
+            ArrayList<String> lnode = new ArrayList<>();
+            for(SysFunNodeVO svo : list){
+                lnode.add(svo.getFun_code());
+            }
+            if(!lnode.contains(funnode)){
+                throw new BusinessException("无操作节点权限，请联系管理员。");
+            }
+        }else{
+            throw new BusinessException("无操作节点权限，请联系管理员。");
+        }
+    }
 	
 }
