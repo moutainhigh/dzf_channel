@@ -62,6 +62,8 @@ public class InvManagerServiceImpl implements InvManagerService {
         if (retlist != null && retlist.size() > 0) {
         	Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
             UserVO uservo = null;
+            String ddate = null;
+            String vcmemo = null;
             for (ChInvoiceVO vo : retlist) {
             	if(areaMap!=null && !areaMap.isEmpty()){
 					String area = areaMap.get(vo.getVprovince());
@@ -69,6 +71,9 @@ public class InvManagerServiceImpl implements InvManagerService {
 						vo.setAreaname(area);
 					}
 				}
+            	ddate = vo.getDchangedate() == null ? "" : vo.getDchangedate().toString();
+            	vcmemo = vo.getVchangememo() == null ? "" : vo.getVchangememo();
+            	vo.setVchangememo(ddate+" "+vcmemo);
                 uservo = UserCache.getInstance().get(vo.getInvperson(), null);
                 if (uservo != null) {
                     vo.setIperson(uservo.getUser_name());
@@ -634,6 +639,15 @@ public class InvManagerServiceImpl implements InvManagerService {
             }
         }
         return resvos;
+    }
+
+    @Override
+    public void onChange(ChInvoiceVO data) throws DZFWarpException {
+        ChInvoiceVO cvo = queryByPk(data.getPk_invoice());
+        if(cvo != null && cvo.getInvstatus() != 2){
+            throw new BusinessException("只有已开票的单据可以换票。");
+        }
+        singleObjectBO.update(data,new String[]{"dchangedate","vchangememo"});
     }
 
 }

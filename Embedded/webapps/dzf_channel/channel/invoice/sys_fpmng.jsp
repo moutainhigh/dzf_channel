@@ -57,6 +57,7 @@
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="queryInvInfo()">电票余量</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onAutoBill()">电子票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onBilling()">纸质票</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onChange()">换票</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onEdit()">修改</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDelete()">删除</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExport()">导出</a>
@@ -239,6 +240,22 @@
 		<div id="billingBtn" style="display:none;">
 			<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="onBill()">确定</a>
 	        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#billing').dialog('close')">取消</a>
+		</div>
+		
+	<div id="change" class="easyui-dialog" title="换票" style="width:380px;height:260px;padding:10px 20px;" 
+						data-options="modal:true,resizable:true,closed:true,buttons:'#changeBtn'">
+			<form action="" method="post" id="changeFrom">			
+				 <div class="time_col time_colp11">
+				 	开票日期:<input id="dcdate" name="dcdate" class = "easyui-datebox" style="width:130px;height:26px;"/>
+				 </div>
+				 <div class="time_col time_colp11">
+					换票说明:<input id="vcmemo" name="vcmemo" class="easyui-textbox" data-options="multiline:true" style="width:230px;height:90px;text-align:left">
+				</div>
+			</form>
+		</div>
+		<div id="changeBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="change()">确定</a>
+	        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#change').dialog('close')">取消</a>
 		</div>
 </body>
 </html>

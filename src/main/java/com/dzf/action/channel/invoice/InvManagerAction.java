@@ -34,6 +34,7 @@ import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
@@ -296,6 +297,29 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	    }
 	    writeJson(json);
 	}
+	
+	public void onChange(){
+        Json json = new Json();
+        try{
+            String pk_invoice = getRequest().getParameter("id");
+            String dcdate = getRequest().getParameter("dcdate");
+            if(StringUtil.isEmpty(dcdate)){
+                throw new BusinessException("换票日期不能为空。");
+            }
+            String vcmemo = getRequest().getParameter("vcmemo");
+            ChInvoiceVO cvo = new ChInvoiceVO();
+            cvo.setPk_invoice(pk_invoice);
+            cvo.setDchangedate(new DZFDate(dcdate));
+            cvo.setVchangememo(vcmemo);
+            cvo.setPk_corp(getLogincorppk());
+            invManagerService.onChange(cvo);
+            json.setMsg("换票成功");
+            json.setSuccess(true);
+        } catch (Exception e){
+            printErrorLog(json, log, e, "开票失败");
+        }
+        writeJson(json);
+    }
 	
 	public void onExport(){
         String strlist =getRequest().getParameter("strlist");

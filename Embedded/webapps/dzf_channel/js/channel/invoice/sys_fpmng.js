@@ -102,6 +102,7 @@ function initDataGrid(){
 							}
 		            }},
 		            {width : '100',title : '备注',field : 'vmome',align:'center'},
+		            {width : '100',title : '换票说明',field : 'vcmemo',align:'center'},
 		            {width : '160',title : '发票流水号',field : 'reqserialno',align:'left'},
 		            {width : '200',title : '二维码URL',field : 'qrcodepath',align:'center',formatter:codeLink,},
 		            
@@ -633,3 +634,55 @@ function onExportInvInfo(){
 	var columns = $('#gridInvInfo').datagrid("options").columns[0];
 	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExportInvInfo.action',{'strlist':JSON.stringify(datarows),'qj':$('#qrydate').html()}, true, true);
 }
+
+/**
+ * 纸质开票
+ */
+function onChange(){
+	var rows = $('#grid').datagrid("getSelections");
+	if(rows == null || rows.length == 0){
+		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		return;
+	}else if(rows.length > 1){
+		Public.tips({content : "只能选择一条数据处理。" ,type:2});
+		return;
+	}
+	$('#change').dialog('open');
+	$('#dcdate').datebox('setValue',parent.SYSTEM.LoginDate);
+}
+
+
+/**
+ * 换票
+ */
+function change(){
+	var rows = $('#grid').datagrid("getSelections");
+	if(rows == null || rows.length == 0){
+		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		return;
+	}else if(rows.length > 1){
+		Public.tips({content : "只能选择一条数据处理。" ,type:2});
+		return;
+	}
+	
+	$.ajax({
+		type : 'post',
+		url : DZF.contextPath + '/sys/sys_inv_manager!onChange.action',
+		data : {
+			"id" : rows[0].id,
+			"dcdate" : $('#dcdate').datebox('getValue'),
+			"vcmemo" : $('#vcmemo').textbox('getValue'),
+		},
+		dataType : 'json',
+		success: function(result){
+			if(result.success){
+				reloadData();
+				Public.tips({content : result.msg ,type:0});
+				$('#change').dialog('close')
+			}else{
+				Public.tips({content : result.msg ,type:2});
+			}
+		}
+	});
+}
+

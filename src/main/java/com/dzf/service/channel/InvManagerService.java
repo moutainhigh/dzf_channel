@@ -55,4 +55,13 @@ public interface InvManagerService {
     
     InvInfoResBVO[] queryInvRepertoryInfo() throws DZFWarpException;
     
+    /**
+     * 换票
+     * @author gejw
+     * @time 下午4:27:37
+     * @param data
+     * @throws DZFWarpException
+     */
+    void onChange(ChInvoiceVO data) throws DZFWarpException;
+    
 }

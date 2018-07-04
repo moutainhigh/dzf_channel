@@ -2,6 +2,7 @@ package com.dzf.model.channel;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
@@ -53,15 +54,11 @@ public class ChInvoiceVO extends SuperVO{
 	
 	private String invperson;//开票人主键
 	
-	private String iperson;//开票人
+	private String iperson;//开票人（不存库）
 	
 	private Integer dr;
 	
 	private DZFDateTime ts;
-	
-	private String bdate;//查询开始时间
-	
-	private String edate;//查询结束时间
 	
 	@FieldAlias("paytype")
 	private Integer ipaytype;//付款类型  0：预付款   1：加盟费
@@ -70,14 +67,6 @@ public class ChInvoiceVO extends SuperVO{
 	private String nticketmny;//可开票金额
 	
 	private String vmome;//备注
-	
-	private String tempprice;//(用于计算的临时金钱)
-	
-	private String corpcode;//公司编码
-	
-	private String[] corps;//渠道商ids
-	
-	private String[] pk_invoices;//发票ids
 	
 	private Integer invcorp;//1:加盟商发起；2:大账房发起
 	
@@ -90,10 +79,31 @@ public class ChInvoiceVO extends SuperVO{
 	private String reqserialno;//发票请求流水号
 	
 	private String qrcodepath;//二维码url
+	
 	@FieldAlias("runame")
 	private String rusername;//收票人
 	
 	private Integer billway;//开票方式：1-电子开票；2-纸质票
+	
+	@FieldAlias("dcdate")
+	private DZFDate dchangedate;//换票日期
+	
+	@FieldAlias("vcmemo")
+	private String vchangememo;//换票说明
+	
+	
+	/******以下字段不存库*********/
+    private String bdate;//查询开始时间
+    
+    private String edate;//查询结束时间
+    
+	private String tempprice;//(用于计算的临时金钱)
+	   
+	private String corpcode;//公司编码
+	    
+	private String[] corps;//渠道商ids
+	    
+	private String[] pk_invoices;//发票ids
 	
 	private Integer qrytype;//1:申请日期；2：开票日期
 	
@@ -106,6 +116,22 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
     
+    public DZFDate getDchangedate() {
+        return dchangedate;
+    }
+
+    public void setDchangedate(DZFDate dchangedate) {
+        this.dchangedate = dchangedate;
+    }
+
+    public String getVchangememo() {
+        return vchangememo;
+    }
+
+    public void setVchangememo(String vchangememo) {
+        this.vchangememo = vchangememo;
+    }
+
     public Integer getQrytype() {
         return qrytype;
     }
