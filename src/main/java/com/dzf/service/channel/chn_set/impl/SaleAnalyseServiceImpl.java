@@ -60,8 +60,13 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,DZFDouble> incmap = qryIncContMny(qvo);//5、查询增值服务合同金额
 		
 		List<SaleAnalyseVO> retlist = new ArrayList<SaleAnalyseVO>();
+		
 		SaleAnalyseVO visitvo = null;
+		Integer signvo = null;
 		SaleAnalyseVO numvo = null;
+		DZFDouble chnvo = null;
+		DZFDouble incvo = null;
+		
 		CorpVO cvo = null;
 		for (SaleAnalyseVO salevo : list) {
 			String pk_corp = salevo.getPk_corp();
@@ -82,7 +87,10 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 				}
 			}
 			if(signmap != null && !signmap.isEmpty()){
-				salevo.setIsignnum(signmap.get(pk_corp));
+				signvo=signmap.get(pk_corp);
+				if(signvo!=null){
+					salevo.setIsignnum(signmap.get(pk_corp));
+				}
 			}
 			if(nummap != null && !nummap.isEmpty()){
 				numvo = nummap.get(pk_corp);
@@ -92,7 +100,10 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 				}
 			}
 			if(chnmap != null && !chnmap.isEmpty()){
-				salevo.setContractmny(chnmap.get(pk_corp));
+				chnvo= chnmap.get(pk_corp);
+				if(chnvo!=null){
+					salevo.setContractmny(chnvo);
+				}
 			}
 			if(incmap != null && !incmap.isEmpty()){
 				if(salevo.getContractmny()!=null){
@@ -104,7 +115,9 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 			if(salevo.getIsignnum() != null && salevo.getContractmny() != null){
 				salevo.setPricemny(salevo.getContractmny().div(new DZFDouble(salevo.getIsignnum())));
 			}
-			retlist.add(salevo);
+			if(visitvo!=null || signvo!=null|| numvo!=null|| chnvo!=null|| incvo!=null){
+				retlist.add(salevo);
+			}
 		}
 		return retlist;
 	}
