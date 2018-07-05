@@ -33,6 +33,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.DateUtils;
@@ -138,6 +139,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void onBilling(){
 		Json json = new Json();
 		try{
+		    pubService.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
 			String uid = getLoginUserid();
 			String pk_invoices = getRequest().getParameter("pk_invoices");
 			String invtime = getRequest().getParameter("invtime");
@@ -170,6 +172,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void onAutoBill(){
         Json json = new Json();
         try{
+            pubService.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
             ChInvoiceVO paramvo = new ChInvoiceVO();
             paramvo = (ChInvoiceVO)DzfTypeUtils.cast(getRequest(), paramvo);
             String pk_invoices = getRequest().getParameter("ids");
@@ -229,6 +232,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void save(){
         Json json = new Json();
         try {
+            pubService.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
             invManagerService.save(data);
             json.setSuccess(true);
             json.setMsg("保存成功!");
@@ -241,6 +245,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void delete(){
         Json json = new Json();
         try{
+            pubService.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
             String invoices = getRequest().getParameter("invoices");
             if(!StringUtil.isEmpty(invoices)){
                 invoices = invoices.replace("}{", "},{");
@@ -301,6 +306,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	public void onChange(){
         Json json = new Json();
         try{
+            pubService.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
             String pk_invoice = getRequest().getParameter("id");
             String dcdate = getRequest().getParameter("dcdate");
             if(StringUtil.isEmpty(dcdate)){
