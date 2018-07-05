@@ -65,9 +65,9 @@ public interface IPubService {
 	public Map<String, String> getManagerMap() throws DZFWarpException; 
 	
 	/**
-	 * 获取  省市---》区域名称 
-	 * @param areaname
-	 * @param type
+	 * 获取 省对应的区域名称<省，区域名称> 
+	 * @param areaname 区域名称
+	 * @param type 数据类型
 	 * @return
 	 * @throws DZFWarpException
 	 */
