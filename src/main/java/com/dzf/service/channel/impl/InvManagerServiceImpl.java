@@ -105,10 +105,12 @@ public class InvManagerServiceImpl implements InvManagerService {
     	if(!StringUtil.isEmpty(paramvo.getVprovname())){
     		sql.append(paramvo.getVprovname());
     	}
-        if (paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1) {
+    	if(paramvo.getInvstatus() != null && paramvo.getInvstatus() == 9){
+    	    sql.append(" and a.dchangedate is not null");
+    	}else if (paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1) {
             sql.append(" and a.invstatus = ?");
             spm.addParam(paramvo.getInvstatus());
-        } else {
+        }else {
             sql.append(" and a.invstatus in (1,2,3)");
         }
         if (paramvo.getInvtype() != null && paramvo.getInvtype() != -1) {
