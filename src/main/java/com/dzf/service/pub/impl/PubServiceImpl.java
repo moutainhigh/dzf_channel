@@ -393,7 +393,7 @@ public class PubServiceImpl implements IPubService {
 	public String getAreaName(Integer vprovince, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname vprovname, b.vprovince  \n");
+		sql.append("select a.areaname \n");
 		sql.append("  from cn_chnarea_b b  \n");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
 		sql.append(" where nvl(b.dr, 0) = 0  \n");
