@@ -349,30 +349,58 @@ public class PubServiceImpl implements IPubService {
 		return promap;
 	}
 	
+	/**
+	 * type： 1：渠道区域；2：培训区域；3：运营区域；
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Map<Integer, String> getAreaMap(String areaname,Integer type) throws DZFWarpException {
+	public Map<Integer, String> getAreaMap(String areaname, Integer type) throws DZFWarpException {
 		Map<Integer, String> promap = new HashMap<Integer, String>();
 		StringBuffer sql = new StringBuffer();
-		SQLParameter spm=new SQLParameter();
-		sql.append("select  a.areaname vprovname ,b.vprovince  \n") ;
+		SQLParameter spm = new SQLParameter();
+		sql.append("select a.areaname vprovname, b.vprovince  \n") ;
 		sql.append("  from cn_chnarea_b b  \n") ; 
-		sql.append(" left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea \n") ; 
-		sql.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0  and b.type =? \n") ; 
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n") ; 
+		sql.append(" where nvl(b.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(a.dr, 0) = 0  \n") ; 
+		sql.append("   and b.type = ? \n");
 		spm.addParam(type);
-		if(!StringUtil.isEmpty(areaname)){
-			sql.append(" and a.areaname=?");
+		if (!StringUtil.isEmpty(areaname)) {
+			sql.append(" and a.areaname = ?");
 			spm.addParam(areaname);
 		}
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnAreaBVO.class));
-		if(list != null && list.size() > 0){
-			for(ChnAreaBVO bvo : list){
+		if (list != null && list.size() > 0) {
+			for (ChnAreaBVO bvo : list) {
 				promap.put(bvo.getVprovince(), bvo.getVprovname());
 			}
 		}
 		return promap;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getAreaName(Integer vprovince, Integer type) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select a.areaname vprovname, b.vprovince  \n") ;
+		sql.append("  from cn_chnarea_b b  \n") ; 
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n") ; 
+		sql.append(" where nvl(b.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(a.dr, 0) = 0  \n") ; 
+		sql.append("   and b.type = ? \n");
+		spm.addParam(type);
+		sql.append("   and b.vprovince = ? \n");
+		spm.addParam(vprovince);
+		List<ChnAreaVO> list = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnAreaVO.class));
+		if(list != null && list.size() > 0){
+			return list.get(0).getAreaname();
+		}
+		return null;
+	}
+
 	@Override
 	public String makeCondition(String cuserid,String areaname) throws DZFWarpException {
 		Integer dataLevel = getDataLevel(cuserid);

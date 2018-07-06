@@ -71,4 +71,7 @@ public interface IStatusConstant {
 	public static int ICORPEDITSTATUS_2 = 2;//已审核
 	public static int ICORPEDITSTATUS_3 = 3;//拒绝审核
 	
+	/** 退款单状态(0：待确认；1：已确认；)*/
+	public static int IREFUNDSTATUS_0 = 0;
+	public static int IREFUNDSTATUS_1 = 1;
 }

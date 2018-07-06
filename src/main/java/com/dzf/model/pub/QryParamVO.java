@@ -31,10 +31,10 @@ public class QryParamVO extends SuperVO {
 	private String pk_corpk;// 客户
 	
 	@FieldAlias("cpkcode")
-	private String corpkcode;
+	private String corpkcode;// 客户编码
 	
 	@FieldAlias("cpkname")
-	private String corpkname;
+	private String corpkname;// 客户名称
 
 	@FieldAlias("uid")
 	private String cuserid;// 用户ID
@@ -100,6 +100,17 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("mid")
 	private String vmanager;//渠道经理id
 	
+	@FieldAlias("vcode")
+	private String vbillcode;//单据编码
+	
+	public String getVbillcode() {
+		return vbillcode;
+	}
+
+	public void setVbillcode(String vbillcode) {
+		this.vbillcode = vbillcode;
+	}
+
 	public String getVmanager() {
 		return vmanager;
 	}

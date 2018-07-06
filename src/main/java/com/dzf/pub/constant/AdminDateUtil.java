@@ -1,6 +1,8 @@
 
 package com.dzf.pub.constant;
 
+import java.util.Calendar;
+
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.DateUtils;
@@ -11,6 +13,8 @@ import com.dzf.pub.util.DateUtils;
  *
  */
 public class AdminDateUtil {
+	
+    private static Calendar CALENDAR = Calendar.getInstance();
     
     /**
      * 服务器时间：年-月-日
@@ -79,4 +83,23 @@ public class AdminDateUtil {
         long millis = DateUtils.getPreviousYear(new DZFDate().getMillis());
         return new DZFDate(millis).toString();
     }
+    
+    /**
+     * 取当前日期往前推N个月
+     * @param n
+     * @return
+     */
+     public static String getPreviousNMonth(int n) {
+         long millis = incrementMonth(new DZFDate().getMillis(), -1*n);
+         return new DZFDate(millis).toString();
+     }
+     
+     private static long incrementMonth(long date, int increment) {
+         Calendar calendar = CALENDAR;
+         synchronized (calendar) {
+             calendar.setTimeInMillis(date);
+             calendar.add(Calendar.MONTH, increment);
+             return calendar.getTimeInMillis();
+         }
+     }
 }

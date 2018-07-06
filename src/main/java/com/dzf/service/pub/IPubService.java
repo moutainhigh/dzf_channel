@@ -65,13 +65,22 @@ public interface IPubService {
 	public Map<String, String> getManagerMap() throws DZFWarpException; 
 	
 	/**
-	 * 获取 省对应的区域名称<省，区域名称> 
+	 * 获取 省(直辖市)对应的区域名称<省(直辖市)，区域名称> 
 	 * @param areaname 区域名称
 	 * @param type 数据类型
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	public Map<Integer, String> getAreaMap(String areaname,Integer type) throws DZFWarpException;
+	
+	/**
+	 * 通过省(直辖市)获取对应的区域名称
+	 * @param vprovince
+	 * @param type
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getAreaName(Integer vprovince, Integer type) throws DZFWarpException;
 	
 	/**
 	 * 指定用户id,构造    获取其本身负责的加盟商客户  sql表达式
