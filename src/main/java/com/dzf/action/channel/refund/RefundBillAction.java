@@ -133,7 +133,6 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 				data.setVbillcode(data.getVbillcode().trim());
 			}
 		}
-		data.setUpdatets(new DZFDateTime());
 	}
 	
 	/**

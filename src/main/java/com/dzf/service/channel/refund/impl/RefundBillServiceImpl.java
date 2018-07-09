@@ -145,6 +145,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			if(!StringUtil.isEmpty(errmsg)){
 				throw new BusinessException(errmsg);
 			}
+			datavo.setUpdatets(new DZFDateTime());
 			updateData(datavo);
 		}
 		setShowName(datavo);
