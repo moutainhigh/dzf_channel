@@ -1,9 +1,16 @@
 package com.dzf.action.channel.refund;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -13,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.RefundExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.refund.RefundBillVO;
 import com.dzf.model.pub.Grid;
@@ -26,6 +34,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
+import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -304,6 +313,61 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 导出
+	 */
+	public void onExport(){
+        String strlist =getRequest().getParameter("strlist");
+        String qj = getRequest().getParameter("qj");
+        if(StringUtil.isEmpty(strlist)){
+            throw new BusinessException("导出数据不能为空");
+        }   
+        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+        Map<String, String> mapping = FieldMapping.getFieldMapping(new RefundBillVO());
+        RefundBillVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,RefundBillVO[].class, JSONConvtoJAVA.getParserConfig());
+        ArrayList<RefundBillVO> explist = new ArrayList<RefundBillVO>();
+        for(RefundBillVO vo : expVOs){
+            explist.add(vo);
+        }
+        HttpServletResponse response = getResponse();
+        Excelexport2003<RefundBillVO> ex = new Excelexport2003<RefundBillVO>();
+        RefundExcelField fields = new RefundExcelField();
+        fields.setVos(explist.toArray(new RefundBillVO[0]));;
+        fields.setQj(qj);
+        ServletOutputStream servletOutputStream = null;
+        OutputStream toClient = null;
+        try {
+            response.reset();
+            // 设置response的Header
+            String filename = fields.getExcelport2003Name();
+            String formattedName = URLEncoder.encode(filename, "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+            servletOutputStream = response.getOutputStream();
+            toClient = new BufferedOutputStream(servletOutputStream);
+            response.setContentType("applicationnd.ms-excel;charset=gb2312");
+            ex.exportExcel(fields, toClient);
+        } catch (Exception e) {
+            log.error("导出失败",e);
+        }  finally {
+            if(toClient != null){
+                try {
+                    toClient.flush();
+                    toClient.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+            if(servletOutputStream != null){
+                try {
+                    servletOutputStream.flush();
+                    servletOutputStream.close();
+                } catch (IOException e) {
+                    log.error("导出失败",e);
+                }
+            }
+        }
 	}
 	
 }

@@ -632,8 +632,8 @@ function onExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/rebate/rebateinput!onExport.action',{
-		'strlist':JSON.stringify(datarows),/*'qj' : $('#jqj').html(),*/}, true, true);
+	Business.getFile(DZF.contextPath+ '/refund/refundbill!onExport.action',{
+		'strlist':JSON.stringify(datarows),'qj' : $('#jqj').html(),}, true, true);
 }
 
 
