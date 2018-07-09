@@ -1,7 +1,9 @@
 package com.dzf.action.channel.refund;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -9,6 +11,8 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.refund.RefundBillVO;
 import com.dzf.model.pub.Grid;
@@ -20,9 +24,12 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.refund.IRefundBillService;
 import com.dzf.service.pub.IPubService;
 
@@ -90,6 +97,10 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 					throw new BusinessException("登陆用户错误");
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
+				}
+				if (data.getNrefbzjmny().compareTo(DZFDouble.ZERO_DBL) == 0
+						&& data.getNrefyfkmny().compareTo(DZFDouble.ZERO_DBL) == 0) {
+					throw new BusinessException("保证金退款与预付款退款不能同时都为0");
 				}
 				setDefaultValue(data);
 				data = refundser.save(data, getLogincorppk());
@@ -177,6 +188,121 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 		} else {
 			json.setSuccess(false);
 			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 删除
+	 */
+	public void delete(){
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			
+			String data = getRequest().getParameter("data");
+			if (StringUtil.isEmpty(data)) {
+				throw new BusinessException("数据不能为空");
+			}
+			data = data.replace("}{", "},{");
+			data = "[" + data + "]";
+			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
+			Map<String, String> custmaping = FieldMapping.getFieldMapping(new RefundBillVO());
+			RefundBillVO[] refVOs = DzfTypeUtils.cast(arrayJson, custmaping, RefundBillVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			
+			int rignum = 0;
+			int errnum = 0;
+			List<RefundBillVO> rightlist = new ArrayList<RefundBillVO>();
+			StringBuffer errmsg = new StringBuffer();
+			for(RefundBillVO refvo : refVOs){
+				refvo = refundser.delete(refvo);
+				if(!StringUtil.isEmpty(refvo.getVerrmsg() )){
+					errnum++;
+					errmsg.append(refvo.getVerrmsg()).append("<br>");
+				}else{
+					rignum++;
+					rightlist.add(refvo);
+				}
+			}
+			json.setSuccess(true);
+			if(rignum > 0 && rignum == refVOs.length){
+				json.setRows(Arrays.asList(refVOs));
+				json.setMsg("成功"+rignum+"条");
+			}else if(errnum > 0){
+				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setStatus(-1);
+				if(rignum > 0){
+					json.setRows(rightlist);
+				}
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 操作
+	 */
+	public void operat(){
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			
+			String data = getRequest().getParameter("data");
+			if (StringUtil.isEmpty(data)) {
+				throw new BusinessException("数据不能为空");
+			}
+			data = data.replace("}{", "},{");
+			data = "[" + data + "]";
+			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
+			Map<String, String> custmaping = FieldMapping.getFieldMapping(new RefundBillVO());
+			RefundBillVO[] refVOs = DzfTypeUtils.cast(arrayJson, custmaping, RefundBillVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			
+			String type = getRequest().getParameter("opertype");
+			int opertype = Integer.parseInt(type);//1、确认；2、取消确认；
+			
+			int rignum = 0;
+			int errnum = 0;
+			List<RefundBillVO> rightlist = new ArrayList<RefundBillVO>();
+			StringBuffer errmsg = new StringBuffer();
+			for(RefundBillVO refvo : refVOs){
+				refvo = refundser.updateOperat(refvo, opertype, getLoginUserid());
+				if(!StringUtil.isEmpty(refvo.getVerrmsg())){
+					errnum++;
+					errmsg.append(refvo.getVerrmsg()).append("<br>");
+				}else{
+					rignum++;
+					rightlist.add(refvo);
+				}
+			}
+			json.setSuccess(true);
+			if(rignum > 0 && rignum == refVOs.length){
+				json.setRows(Arrays.asList(refVOs));
+				json.setMsg("成功"+rignum+"条");
+			}else if(errnum > 0){
+				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setStatus(-1);
+				if(rignum > 0){
+					json.setRows(rightlist);
+				}
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}

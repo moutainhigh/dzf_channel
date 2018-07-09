@@ -62,7 +62,7 @@ public class RefundBillVO extends SuperVO {
 	private String vconfirmid;//确认人
 	
 	@FieldAlias("confdate")
-	private DZFDateTime dconfirmdate;//确认日期
+	private DZFDate dconfirmdate;//确认日期
 	
 	@FieldAlias("aname")
     private String areaname;// 大区（仅作展示）
@@ -111,11 +111,11 @@ public class RefundBillVO extends SuperVO {
 		this.voperator = voperator;
 	}
 
-	public DZFDateTime getDconfirmdate() {
+	public DZFDate getDconfirmdate() {
 		return dconfirmdate;
 	}
 
-	public void setDconfirmdate(DZFDateTime dconfirmdate) {
+	public void setDconfirmdate(DZFDate dconfirmdate) {
 		this.dconfirmdate = dconfirmdate;
 	}
 

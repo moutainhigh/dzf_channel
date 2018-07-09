@@ -49,4 +49,22 @@ public interface IRefundBillService {
 	 * @throws DZFWarpException
 	 */
 	public RefundBillVO checkBeforeSave(RefundBillVO datavo) throws DZFWarpException;
+	
+	/**
+	 * 删除
+	 * @param datavo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public RefundBillVO delete(RefundBillVO datavo) throws DZFWarpException;
+	
+	/**
+	 * 确认、取消确认-更新操作数据
+	 * @param datavo
+	 * @param opertype
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public RefundBillVO updateOperat(RefundBillVO datavo, Integer opertype, String cuserid) throws DZFWarpException;
 }

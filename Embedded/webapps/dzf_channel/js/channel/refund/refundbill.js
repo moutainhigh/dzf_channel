@@ -6,6 +6,7 @@ $(function(){
 	load();
 	initRef();
 	setQryData();
+	reloadData();
 });
 
 /**
@@ -205,9 +206,9 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		singleSelect : false,
-		checkOnSelect : false,
-		idField : 'rebid',
+		idField : 'refid',
 		columns : [ [ 
+					  { field : 'ck', checkbox : true },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
 		              { field : 'provname', title : '地区',width :'140',halign: 'center',align:'left'} ,
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
@@ -221,7 +222,7 @@ function load(){
 		              { field : 'confdate', title : '确认日期',width :'100',halign: 'center',align:'left'} ,
 		              { field : 'oper', title : '录入人',width :'120',halign: 'center',align:'left'} ,
 		              { field : 'operdate', title : '录入日期',width :'100',halign: 'center',align:'left'} ,
-				      { field : 'reid', title : '主键', hidden:true},
+				      { field : 'refid', title : '主键', hidden:true},
 				      { field : 'updatets', title : '时间戳', hidden:true},
 		] ],
 		onLoadSuccess : function(data) {
@@ -336,11 +337,11 @@ function onSave(){
 					if(!isEmpty(row.errmsg)){
 						$.messager.confirm("提示", row.errmsg, function(r) {
 							if (r) {
-								saveSubmit(postdata);
+								saveSubmit(postdata, 1);
 							}
 						});
 					}else{
-						saveSubmit(postdata);
+						saveSubmit(postdata, 1);
 					}
 				} else {
 					Public.tips({
@@ -362,12 +363,20 @@ function onSave(){
 
 /**
  * 保存-公用方法
+ * @param postdata
+ * @param type  1：新增；2：修改；
  */
-function saveSubmit(postdata) {
+function saveSubmit(postdata, type) {
 	$.messager.progress({
 		text : '数据保存中，请稍后.....'
 	});
-	$('#addForm').form('submit', {
+	var ele;
+	if(type == 1){
+		ele = '#addForm';
+	}else if(type == 2){
+		ele = '#editForm';
+	}
+	$(ele).form('submit', {
 		url : contextPath + '/refund/refundbill!save.action',
 		queryParams : postdata,
 		success : function(result) {
@@ -379,8 +388,13 @@ function saveSubmit(postdata) {
 					type : 0
 				})
 				var row = result.rows;
-				$('#addDlg').dialog('close');
-				$('#grid').datagrid('appendRow',row);
+				if(type == 1){
+					$('#addDlg').dialog('close');
+					$('#grid').datagrid('appendRow',row);
+				}else if(type == 2){
+					$('#editDlg').dialog('close');
+					reloadData();
+				}
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -394,141 +408,59 @@ function saveSubmit(postdata) {
 /**
  * 修改
  */
-function onEdit(index){
-	var row = $('#grid').datagrid('getData').rows[index];
-	$.ajax({
-		url : DZF.contextPath + "/rebate/rebateinput!queryById.action",
-		dataType : 'json',
-		data : row,
-		success : function(rs) {
-			if (rs.success) {
-				editIndex = index;
-				$('#editDlg').dialog({
-					modal:true
-				});//设置dig属性
-				$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
-				var row = rs.rows;
-				$('#editForm').form('clear');
-				setFormValue(row);
-			} else {
-				Public.tips({
-					content : rs.msg,
-					type : 1
-				});
-			}
-		},
-	});
-}
-
-/**
- * 修改设置表单的值
- * @param row
- */
-function setFormValue(row){
-	$('#erebid').val(row.rebid);
-	$('#evcode').textbox('setValue',row.vcode);
-	$('#eshowdate').textbox('setValue', row.showdate);
-	$('#eyear').val(row.year);
-	$('#eseason').val(row.season);
-	$('#ecorp').textbox('setValue',row.corp);
-	$('#ecorpid').val(row.corpid);
-	$('#econtnum').numberbox('setValue', row.contnum);
-	$('#edebitmny').numberbox('setValue', row.debitmny);
-	$('#ebasemny').numberbox('setValue', row.basemny);
-	$('#erebatemny').numberbox('setValue', row.rebatemny);
-	$('#ememo').textbox('setValue',row.memo);
-	$('#estatusname').textbox('setValue',row.statusname);
-	$('#eopername').textbox('setValue',row.opername);
-	$('#eoperdate').textbox('setValue',row.operdate);
-}
-
-/**
- * 修改监听事件
- */
-function initEditListener(){
-//	$("#eyear").combobox({
-//		onChange : function(n, o) {
-//			getEditDebateMny($("#ecorpid").val());
-//		}
-//	});
-//	$("#eseason").combobox({
-//		onChange : function(n, o) {
-//			getEditDebateMny($("#ecorpid").val());
-//		}
-//	});
-	$("#ebasemny").numberbox({
-		onChange : function(n, o) {
-			var debitmny = getFloatValue($("#edebitmny").numberbox("getValue"));
-			if(getFloatValue(n) > debitmny){
-				Public.tips({
-					content : "返点基数不能大于扣款金额",
-					type : 2
-				});
-				$("#ebasemny").numberbox("setValue",debitmny);
-				return; 
-			}
-		}
-	});
-	$("#erebatemny").numberbox({
-		onChange : function(n, o) {
-			var basemny = getFloatValue($("#ebasemny").numberbox("getValue"));
-			if(getFloatValue(n) > basemny){
-				Public.tips({
-					content : "返点金额不能大于返点基数",
-					type : 2
-				});
-				$("#erebatemny").numberbox("setValue",basemny);
-				return; 
-			}
-		}
-	});
-}
-
-///**
-// * 通过加盟商主键、所属年、所属季度计算扣款金额和返点基数
-// */
-//function getEditDebateMny(cpid){
-//	var year = $("#eyear").combobox("getValue");
-//	var season = $("#eseason").combobox("getValue");
-//	if(isEmpty(year) || isEmpty(year) || isEmpty(cpid)){
-//		return;
-//	}
-//	$.ajax({
-//		url : contextPath + '/rebate/rebateinput!queryDebateMny.action',
-//		dataType : 'json',
-//		data : {
-//			'year' : year,
-//			'season' : season,
-//			'corpid' : cpid,
-//		},
-//		success : function(rs) {
-//			if (rs.success) {
-//				var row = rs.rows;
-//				$("#edebitmny").numberbox("setValue",row['debitmny']);
-//				$("#ebasemny").numberbox("setValue",row['basemny']);
-//			} 
-//		},
-//	});
-//}
-
-/**
- * 审批历史按钮点击监听事件
- */
-function historyListen(){
-	$(".btn-slide").click(function() {
-		$("#panela").slideToggle("slow");
-		$(this).toggleClass("active");
-		return false;
-	})
+function onEdit(){
+	var rows = $("#grid").datagrid("getChecked");
+	if(rows == null || rows.length != 1){
+		Public.tips({content:'请选择一行的数据',type:2});
+		return;
+	}
+	
+	var row = rows[0];
+	if(row.stat == 1)	{
+		Public.tips({content:'该记录状态为已确认，不允许修改',type:2});
+		return;
+	}
+	
+	$('#editDlg').dialog({
+		modal:true
+	});//设置dig属性
+	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
+	$('#editForm').form('clear');
+	$('#editForm').form('load', row);
 }
 
 /**
  * 修改保存
  */
 function onEditSave(){
-	var postdata = new Object();
 	if($("#editForm").form('validate')){
+		var postdata = new Object();
 		postdata["data"] = JSON.stringify(serializeObject($('#editForm')));
+		$('#editForm').form('submit', {
+			url : contextPath + '/refund/refundbill!checkBeforeSave.action',
+			queryParams : postdata,
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				if (result.success) {
+					var row = result.rows;
+					if(!isEmpty(row.errmsg)){
+						$.messager.confirm("提示", row.errmsg, function(r) {
+							if (r) {
+								saveSubmit(postdata, 2);
+							}
+						});
+					}else{
+						saveSubmit(postdata, 2);
+					}
+				} else {
+					Public.tips({
+						content : result.msg,
+						type : 1
+					})
+				}
+			}
+		});
+		
 	} else {
 		Public.tips({
 			content : "必输信息为空或格式不正确",
@@ -536,60 +468,36 @@ function onEditSave(){
 		});
 		return; 
 	}
-	$.messager.progress({
-		text : '数据保存中，请稍后.....'
-	});
-	$('#editForm').form('submit', {
-		url : contextPath + '/rebate/rebateinput!save.action',
-		queryParams : postdata,
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			$.messager.progress('close');
-			if (result.success) {
-				Public.tips({
-					content : result.msg,
-					type : 0
-				})
-				var row = result.rows;
-				$('#editDlg').dialog('close');
-				$('#grid').datagrid('updateRow', {
-					index : editIndex,
-					row : row
-				});
-			} else {
-				Public.tips({
-					content : result.msg,
-					type : 1
-				})
-			}
-		}
-	});
 }
 
 /**
  * 删除
  */
-function onDelete(ths){
-	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
-//	var row = $('#grid').datagrid('getData').rows[index];
-	var row = $('#grid').datagrid('getData').rows[tindex];
-	if (row.istatus != 0 && row.istatus != 4) {
+function onDelete(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length == 0) {
 		Public.tips({
-			content : '该记录状态不为待提交或已驳回，不允许删除',
+			content : '请选择需要处理的数据',
 			type : 2
 		});
 		return;
 	}
+	var postdata = new Object();
+	var data = "";
+	for(var i = 0; i < rows.length; i++){
+		data = data + JSON.stringify(rows[i]);
+	}
+	postdata["data"] = data;
+	
 	$.messager.confirm("提示", "你确定要删除吗?", function(r) {
 		if (r) {
 			$.ajax({
-				url : DZF.contextPath + "/rebate/rebateinput!delete.action",
+				url : DZF.contextPath + "/refund/refundbill!delete.action",
 				dataType : 'json',
-				data : row,
+				data : postdata,
 				success : function(rs) {
 					if (rs.success) {
-						$('#grid').datagrid('deleteRow', Number(tindex)); 
-						$("#grid").datagrid('unselectAll');
+						reloadData();
 						Public.tips({
 							content : rs.msg,
 							type : 0
@@ -607,9 +515,11 @@ function onDelete(ths){
 }
 
 /**
- * 提交
+ * 确认、取消确认-操作数据
+ * @param type  1：确认；2：取消确认；
  */
-function onCommit(){
+
+function onOperat(type){
 	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null || rows.length == 0) {
 		Public.tips({
@@ -618,16 +528,36 @@ function onCommit(){
 		});
 		return;
 	}
+	
+	var msg;
+	if(type == 1){
+		msg = "你确定要确认吗";
+	}else if(type == 2){
+		msg = "你确定要取消确认吗";
+	}
+	
+	$.messager.confirm("提示", msg, function(r) {
+		if (r) {
+			updateData(type, rows);
+		}
+	});
+}
+
+/**
+ * 确认、取消确认-更新数据
+ */
+function updateData(type, rows){
 	var postdata = new Object();
 	var data = "";
 	for(var i = 0; i < rows.length; i++){
 		data = data + JSON.stringify(rows[i]);
 	}
 	postdata["data"] = data;
+	postdata["opertype"] = type;
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/rebate/rebateinput!saveCommit.action',
+		url : contextPath + '/refund/refundbill!operat.action',
 		data : postdata,
 		traditional : true,
 		async : false,
@@ -648,26 +578,42 @@ function onCommit(){
 						content : result.msg,
 					});
 				}
-				$('#allotDialog').dialog('close');
 				var rerows = result.rows;
 				if(rerows != null && rerows.length > 0){
 					var map = new HashMap(); 
 					for(var i = 0; i < rerows.length; i++){
-						map.put(rerows[i].pkcustno,rerows[i]);
+						map.put(rerows[i].refid, rerows[i]);
 					}
 					var index;
 					var indexes = new Array();
 					for(var i = 0; i < rows.length; i++){
-						if(map.containsKey(rows[i].pkcustno)){
+						if(map.containsKey(rows[i].refid)){
 							index = $('#grid').datagrid('getRowIndex', rows[i]);
 							indexes.push(index);
 						}
 					}
 					for(var i in indexes){
-						$('#grid').datagrid('updateRow', {
-							index : indexes[i],
-							row : rerows[i]
-						});
+						if(type == 1){
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									stat : rerows[i].stat,
+									updatets : rerows[i].updatets,
+									confid : rerows[i].confid,
+									confdate : rerows[i].confdate,
+								}
+							});
+						}else if(type == 2){
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									stat : rerows[i].stat,
+									updatets : rerows[i].updatets,
+									confid : null,
+									confdate : null,
+								}
+							});
+						}
 					}
 				}
 				$("#grid").datagrid('uncheckAll');
