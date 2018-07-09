@@ -22,25 +22,6 @@ function setQryData(){
  * 参照格式化
  */
 function initRef(){
-//	//渠道经理参照初始化
-//	$('#manager').textbox({
-//        editable: false,
-//        icons: [{
-//            iconCls: 'icon-search',
-//            handler: function(e) {
-//                $("#manDlg").dialog({
-//                    width: 600,
-//                    height: 480,
-//                    readonly: true,
-//                    title: '选择渠道经理',
-//                    modal: true,
-//                    href: DZF.contextPath + '/ref/manager_select.jsp',
-//                    buttons: '#manBtn'
-//                });
-//            }
-//        }]
-//    });
-	
 	//查询-加盟商参照初始化
 	$('#qcorp').textbox({
 		onClickIcon : function() {
@@ -93,61 +74,6 @@ function initRef(){
         }]
     });
 }
-
-//function initArea(){
-//	$.ajax({
-//		type : 'POST',
-//		async : false,
-//		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
-//		data : {"qtype" :3},
-//		dataTye : 'json',
-//		success : function(result) {
-//			var result = eval('(' + result + ')');
-//			if (result.success) {
-//			    $('#aname').combobox('loadData',result.rows);
-//			} else {
-//				Public.tips({content : result.msg,type : 2});
-//			}
-//		}
-//	});
-//}
-
-///**
-// * 渠道经理选择事件
-// */
-//function selectMans(){
-//	var rows = $('#mgrid').datagrid('getSelections');
-//	dClickMans(rows);
-//}
-
-///**
-// * 双击选择渠道经理
-// * @param rowTable
-// */
-//function dClickMans(rowTable){
-//	var unames = "";
-//	var uids = [];
-//	if(rowTable){
-//		if (rowTable.length > 300) {
-//			Public.tips({
-//				content : "一次最多只能选择300个经理",
-//				type : 2
-//			});
-//			return;
-//		}
-//		for(var i=0;i<rowTable.length;i++){
-//			if(i == rowTable.length - 1){
-//				unames += rowTable[i].uname;
-//			}else{
-//				unames += rowTable[i].uname+",";
-//			}
-//			uids.push(rowTable[i].uid);
-//		}
-//		$("#manager").textbox("setValue",unames);
-//		$("#managerid").val(uids);
-//	}
-//	 $("#manDlg").dialog('close');
-//}
 
 /**
  * 加盟商选择事件

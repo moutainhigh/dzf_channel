@@ -206,15 +206,6 @@
 	</div>
 	<!-- 查询对话框 end -->
 	
-<!-- 	<!-- 渠道经理参照对话框及按钮 begin -->
-	<div id="manDlg"></div>
-	<div id="manBtn" style="display:none;">
-		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
-		<a href="javascript:void(0)" class="easyui-linkbutton" 
-			onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
-	</div>
-	渠道经理参照对话框及按钮 end -->
-	
 	<!-- 加盟商参照对话框及按钮 begin -->
 	<div id="chnDlg"></div>
 	<div id="chnBtn" style="display:none;">
@@ -223,7 +214,6 @@
 			onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
 	</div>
 	<!-- 加盟商参照对话框及按钮 end -->
-	
 	
 </body>
 
