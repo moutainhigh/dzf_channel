@@ -84,7 +84,7 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 				json.setMsg("保存成功");
 			}
 			//日志记录	销售管理规则设置
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getValue(),LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName(),ISysConstants.SYS_1);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getValue(),LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName(),ISysConstants.SYS_3);
 		}  catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
