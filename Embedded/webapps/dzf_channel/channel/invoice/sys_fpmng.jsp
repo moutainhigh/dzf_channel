@@ -105,6 +105,7 @@
 						<option value="1">待开票</option>
 						<option value="2">已开票</option>
 						<option value="3">开票失败</option>
+						<option value="9">已换票</option>
 					</select>
 				</div>
 				<div class="time_col time_colp10">

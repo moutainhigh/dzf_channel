@@ -209,6 +209,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             json.setMsg("电子票余量查询成功");
             json.setSuccess(true);
             json.setRows(vos);
+            writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(),"查询电票余量",ISysConstants.SYS_3);
         } catch (Exception e){
             printErrorLog(json, log, e, "电子票余量查询失败");
         }
@@ -236,6 +237,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             invManagerService.save(data);
             json.setSuccess(true);
             json.setMsg("保存成功!");
+            writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(),"发票申请修改："+data.getCorpname(),ISysConstants.SYS_3);
         } catch (Exception e) {
             printErrorLog(json, log, e, "保存失败");
         }
@@ -321,6 +323,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
             invManagerService.onChange(cvo);
             json.setMsg("换票成功");
             json.setSuccess(true);
+            
         } catch (Exception e){
             printErrorLog(json, log, e, "开票失败");
         }
@@ -377,6 +380,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
                 }
             }
         }
+        writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(),"导出发票申请表",ISysConstants.SYS_3);
 	}
 	
 	/**

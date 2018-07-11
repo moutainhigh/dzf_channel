@@ -16,9 +16,11 @@ import com.dzf.model.sys.sys_power.SysPowerConditVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.IGlobalConstants;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.sys.sys_power.IUserService;
 
 /**
@@ -57,6 +59,7 @@ public class ChnUserAction extends BaseAction<UserVO>{
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("保存成功");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),"新增用户：" + data.getUser_code() +" "+data.getUser_name(),ISysConstants.SYS_3);
     		}else{
     			json.setSuccess(false);
     			json.setMsg("保存失败:数据为空。");
@@ -86,6 +89,7 @@ public class ChnUserAction extends BaseAction<UserVO>{
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("更新成功");
+                writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),"修改用户：" + data.getUser_code() +" "+data.getUser_name(),ISysConstants.SYS_3);
     		}else{
     			json.setSuccess(false);
     			json.setMsg("更新失败:数据为空。");

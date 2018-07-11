@@ -27,12 +27,14 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.invoice.IBillingQueryService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 渠道商--发票管理--加盟商发票查询
@@ -69,6 +71,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 			grid.setMsg("查询成功！");
 			grid.setSuccess(true);
 			grid.setRows(rows);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(),"加盟商开票查询成功",ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
@@ -130,9 +133,6 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
         BillingInvoiceVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,BillingInvoiceVO[].class, JSONConvtoJAVA.getParserConfig());
         ArrayList<BillingInvoiceVO> explist = new ArrayList<BillingInvoiceVO>();
         for(BillingInvoiceVO vo : expVOs){
-//            vo.setDebittotalmny(vo.getDebittotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
-//            vo.setBilltotalmny(vo.getBilltotalmny().setScale(2, DZFDouble.ROUND_HALF_UP));
-//            vo.setNoticketmny(vo.getNoticketmny().setScale(2, DZFDouble.ROUND_HALF_UP));
             explist.add(vo);
         }
         HttpServletResponse response = getResponse();
@@ -173,5 +173,6 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
                 }
             }
         }
+        writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(),"导出加盟商开票查询表",ISysConstants.SYS_3);
 	}
 }
