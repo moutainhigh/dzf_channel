@@ -647,6 +647,10 @@ function onChange(){
 		Public.tips({content : "只能选择一条数据处理。" ,type:2});
 		return;
 	}
+	if(rows[0].istatus != 2){
+		Public.tips({content : "只有已开票的单据可以换票。" ,type:2});
+		return;
+	}
 	$('#change').dialog('open');
 	$('#dcdate').datebox('setValue',parent.SYSTEM.LoginDate);
 }
@@ -664,7 +668,6 @@ function change(){
 		Public.tips({content : "只能选择一条数据处理。" ,type:2});
 		return;
 	}
-	
 	$.ajax({
 		type : 'post',
 		url : DZF.contextPath + '/sys/sys_inv_manager!onChange.action',
