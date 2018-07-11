@@ -114,6 +114,13 @@ function initDataGrid(){
 			});
 		},
 		onLoadSuccess : function(data) {
+			console.log(data)
+			for(var i = 0;i<data.rows.length;i++){
+				if(data.rows[i].istatus == 2 && data.rows[i].vcmemo !== " " ){
+					console.log($(".datagrid-view2 .datagrid-body .datagrid-row").eq(i).find(".datagrid-cell-c1-istatus").parent())
+					$(".datagrid-view2 .datagrid-body .datagrid-row").eq(i).find(".datagrid-cell-c1-istatus").parent().css("background","url(../../img/getexchange.png) no-repeat")
+				}
+			}
 			if(!isenter){
 				loadrows = data.rows;
 			}
