@@ -103,33 +103,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 	}
 	
 	/**
-	 * 检验导出权限
-	 */
-	public void checkExport(){
-		Grid grid = new Grid();
-		try {
-			Integer type = Integer.parseInt(getRequest().getParameter("type"));
-			String funnode=null;
-			switch (type) {
-			case 1:
-				funnode= IFunNode.CHANNEL_16;
-				break;
-			case 2:
-				funnode= IFunNode.CHANNEL_17;
-				break;
-			default:
-				funnode= IFunNode.CHANNEL_18;
-				break;
-			}
-			pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BTN_EXPORT);
-			grid.setSuccess(true);
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "操作失败");
-		}
-		writeJson(grid);
-	}
-
-	/**
 	 * Excel导出方法  1渠道；2区域；3总
 	 */
 	public void exportExcel(){
