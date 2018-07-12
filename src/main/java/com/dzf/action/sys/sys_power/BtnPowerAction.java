@@ -23,9 +23,9 @@ public class BtnPowerAction extends BaseAction<URoleVO> {
     public void checkBtnPower() {
         Grid grid = new Grid();
         try {
-            String btn_name = getRequest().getParameter("btn_name");
+            String btncode = getRequest().getParameter("btncode");
             String funnode = getRequest().getParameter("funnode");
-            pubservice.checkButton(getLoginUserInfo(), funnode, btn_name);
+            pubservice.checkButton(getLoginUserInfo(), funnode, btncode);
             grid.setSuccess(true);
             grid.setMsg("校验通过");
             grid.setRows(null);

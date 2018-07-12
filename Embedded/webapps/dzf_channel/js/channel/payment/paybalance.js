@@ -732,9 +732,12 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/chnpay/chnpaybalance!onExport.action',{
-		'strlist':JSON.stringify(datarows),'qj' : $('#jqj').html(),}, true, true);
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[0];
+		Business.getFile(DZF.contextPath+ '/chnpay/chnpaybalance!onExport.action',{
+			'strlist':JSON.stringify(datarows),'qj' : $('#jqj').html(),}, true, true);
+	}
+	checkBtnPower('export','channel3',callback);
 }
 
 /**
@@ -778,11 +781,14 @@ function onDetExport(){
 			Public.tips({content:'明细数据为空',type:2});
 			return;
 		}
+	var callback=function(){
 		var columns = $('#gridh').datagrid("options").columns[0];
  		var qrydate = $("#qrydate").text();
  		var corpnm = $("#corpnm").text();
  		var ptypenm = $("#ptypenm").text();
-	Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetExport.action',{'strlist':JSON.stringify(datarows),
-		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+ 		Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetExport.action',{'strlist':JSON.stringify(datarows),
+ 			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+	}
+	checkBtnPower('export','channel3',callback);
 }
 	

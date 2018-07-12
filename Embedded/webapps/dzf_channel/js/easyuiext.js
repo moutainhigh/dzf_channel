@@ -561,3 +561,27 @@ function trimStr(str, is_global) {
     }
     return result;
 }
+
+/**
+ * 校验按钮权限
+ */
+function checkBtnPower(btncode,funnode,callback){
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: DZF.contextPath + '/sys/btnPower!checkBtnPower.action',
+        data : {
+        	btncode : btncode,
+        	funnode : funnode,
+		},
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (data.success) {
+            	callback();
+            }else{
+            	Public.tips({content:data.msg,type:1});
+            }
+        },
+    });
+}

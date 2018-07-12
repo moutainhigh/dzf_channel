@@ -511,17 +511,18 @@ function onExport() {
 		});
 		return;
 	}
-	
-	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
-	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
-	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
-	
-	Business.getFile(DZF.contextPath + "/report/deductanalysis!export.action", {
-		"strlist": JSON.stringify(datarows),
-		'hblcols':JSON.stringify(hblcols), //合并列信息
-		'cols':JSON.stringify(cols),//除冻结列之外，导出字段编码
-		'hbhcols':JSON.stringify(hbhcols)//冻结列编码
-	}, true, true);
+	var callback=function(){
+		var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
+		var cols = $('#grid').datagrid('getColumnFields');               // 行信息
+		var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+		Business.getFile(DZF.contextPath + "/report/deductanalysis!export.action", {
+			"strlist": JSON.stringify(datarows),
+			'hblcols':JSON.stringify(hblcols), //合并列信息
+			'cols':JSON.stringify(cols),//除冻结列之外，导出字段编码
+			'hbhcols':JSON.stringify(hbhcols)//冻结列编码
+		}, true, true);
+	}
+	checkBtnPower('export','channel29',callback);
 }
 
 /**

@@ -625,8 +625,12 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',{'strlist':JSON.stringify(datarows),'qj':$('#querydate').html()}, true, true);
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[0];
+		Business.getFile(DZF.contextPath+ '/sys/sys_inv_manager!onExport.action',
+				{'strlist':JSON.stringify(datarows),'qj':$('#querydate').html()}, true, true);
+	}
+	checkBtnPower('export','channel39',callback);
 }
 
 /**

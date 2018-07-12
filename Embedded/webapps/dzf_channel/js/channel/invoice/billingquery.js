@@ -257,9 +257,13 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	var bdate = $('#bdate').datebox('getValue'); //开始日期
-	Business.getFile(DZF.contextPath+ '/invoice/billingquery!onExport.action',{'strlist':JSON.stringify(datarows),'bdate':bdate}, true, true);
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[0];
+		var bdate = $('#bdate').datebox('getValue'); //开始日期
+		Business.getFile(DZF.contextPath+ '/invoice/billingquery!onExport.action',
+				{'strlist':JSON.stringify(datarows),'bdate':bdate}, true, true);
+	}
+	checkBtnPower('export','channel22',callback);
 }
 
 function onBilling(){

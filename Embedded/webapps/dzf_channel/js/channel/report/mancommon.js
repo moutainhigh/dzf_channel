@@ -156,40 +156,28 @@ function onDetPrint(){
 }
 
 /**
- * 检验明细导出
- * @returns
- */
-function onDetExport(){
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath + '/report/manager!checkExport.action',
-		traditional : true,
-		async : false,
-		success : function(result) {
-			if (!result.success) {
-				$.messager.confirm("提示", result.msg);
-			} else {
-				openDetExport();
-			}
-		},
-	});
-}
-
-/**
  * 明细导出
  */
-function openDetExport(){
+function onDetExport(){
 	var datarows = $('#gridh').datagrid("getRows");
 	if( datarows == null||datarows.length == 0){
 		Public.tips({content:'明细数据为空',type:2});
 		return;
 	}
-	var columns = $('#gridh').datagrid("options").columns[0];
-	var qrydate = $("#qrydate").text();
-	var corpnm = $("#corpnm").text();
-	Business.getFile(contextPath+ '/report/manager!onDetExport.action',{'strlist':JSON.stringify(datarows),
-		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm}, true, true);
+	var callback=function(){
+		var columns = $('#gridh').datagrid("options").columns[0];
+		var qrydate = $("#qrydate").text();
+		var corpnm = $("#corpnm").text();
+		Business.getFile(contextPath+ '/report/manager!onDetExport.action',{'strlist':JSON.stringify(datarows),
+			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm}, true, true);
+	}
+	var funcode='channel18';
+	if(type=='1'){
+		funcode='channel16';
+	}else if(type=='2'){
+		funcode='channel17';
+	}
+	checkBtnPower('export',funcode,callback);
 }
 
 
@@ -304,34 +292,22 @@ function mergeCell(data,is){
  * 导出
  */
 function doExport(type){
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath + '/report/manager!checkExport.action',
-		traditional : true,
-		async : false,
-		data :{"type":type},
-		success : function(result) {
-			if (!result.success) {
-				$.messager.confirm("提示", result.msg);
-			} else {
-				openExport(type);
-			}
-		},
-	});
-}
-
-/**
- * 导出
- */
-function openExport(type){
 	var datarows = $('#grid').datagrid("getRows");
 	if(datarows == null || datarows.length == 0){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-//	var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');,'qj':qj
-	Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',
-			{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'type':type}, true, true);
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[0];
+//		var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');,'qj':qj
+		Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',
+				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'type':type}, true, true);
+	}
+	var funcode='channel18';
+	if(type=='1'){
+		funcode='channel16';
+	}else if(type=='2'){
+		funcode='channel17';
+	}
+	checkBtnPower('export',funcode,callback);
 }
