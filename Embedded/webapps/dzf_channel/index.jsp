@@ -477,7 +477,6 @@ function initconturnid() {
 	var oImg = document.getElementById('conturnid');
 	/*拖拽功能*/
 	(function() {
-		debugger
 		addEvent(oImg, 'mousedown', function(ev) {
 			
 			var oEvent = prEvent(ev),
@@ -516,18 +515,17 @@ function initconturnid() {
 	(function() {
 		addWheelEvent(oImg, function(delta) {
 			console.log(this.offsetX)
-			var ratioL = (this.clientX - oImg.offsetLeft) / oImg.offsetWidth,
-			ratioT = (this.clientY - oImg.offsetTop) / oImg.offsetHeight,
-			qusX = oImg.offsetWidth,
-			qusY = oImg.offsetHeight,
+			var ratioL = this.offsetX / oImg.offsetWidth,
+			ratioT = this.offsetY / oImg.offsetHeight,
+			qusX = oImg.offsetLeft + this.offsetX,
+			qusY = oImg.offsetTop + this.offsetY,
 
 			ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
 			w = parseInt(oImg.offsetWidth * ratioDelta),
 			h = parseInt(oImg.offsetHeight * ratioDelta),
-			
-			l = Math.round(oImg.offsetLeft - oImg.offsetWidth * (ratioDelta - 1)/2),
-			t = Math.round(oImg.offsetTop - oImg.offsetHeight * (ratioDelta - 1)/2);
-			
+
+			l = Math.round(qusX - (w * ratioL)),
+			t = Math.round(qusY - (h * ratioT));
 			with(oImg.style) {
 				width = w +'px';
 				height = h +'px';
