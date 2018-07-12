@@ -121,7 +121,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 				funnode= IFunNode.CHANNEL_18;
 				break;
 			}
-			pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BUTTON_EXPORT);
+			pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BTN_EXPORT);
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");
@@ -166,7 +166,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			funnode= IFunNode.CHANNEL_18;
 			break;
 		}
-		pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BUTTON_EXPORT);
+		pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BTN_EXPORT);
 		fieldlist.add("provname");
 		fieldlist.add("cuname");
 		fieldlist.add("corpnm");

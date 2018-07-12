@@ -1968,7 +1968,24 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/contract/contractconf!onExport.action',
-			{'strlist':JSON.stringify(datarows),'qj' : $('#querydate').html()}, true, true);
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: contextPath + '/sys/btnPower!checkBtnPower.action',
+        data : {
+        	btn_name : 'export',
+        	funnode : 'channel4',
+		},
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (data.success) {
+            	var columns = $('#grid').datagrid("options").columns[0];
+            	Business.getFile(DZF.contextPath+ '/contract/contractconf!onExport.action',
+            			{'strlist':JSON.stringify(datarows),'qj' : $('#querydate').html()}, true, true);
+            }else{
+            	Public.tips({content:data.msg,type:1});
+            }
+        },
+    });
 }

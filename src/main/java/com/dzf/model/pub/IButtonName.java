@@ -2,5 +2,5 @@ package com.dzf.model.pub;
 
 public interface IButtonName {
 
-	public static String BUTTON_EXPORT = "导出";//按钮导出
+	public static String BTN_EXPORT = "export";//按钮导出
 }

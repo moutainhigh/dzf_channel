@@ -579,21 +579,23 @@ public class PubServiceImpl implements IPubService {
 	
 	@Override
 	public void checkButton(UserVO uvo,String funnode,String butname) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
+        StringBuffer sql = new StringBuffer();
         SQLParameter spm = new SQLParameter();
         sql.append(" select b.userids,s.fun_name from cn_button b ");
         sql.append(" left join sm_funnode s on b.pk_funnode=s.pk_funnode ");
         sql.append(" where nvl(b.dr,0) = 0 and nvl(s.dr,0) = 0 and nvl(b.ispreset,'N')='N' ");
-        sql.append(" and b.but_name=? and s.fun_code=?");
+        sql.append(" and b.btn_code = ? and s.fun_code = ? ");
         spm.addParam(butname);
         spm.addParam(funnode);
         Object executeQuery = singleObjectBO.executeQuery(sql.toString(),spm, new ColumnProcessor());
         if(executeQuery!=null){
-        	 String userids =executeQuery.toString();
-        	 if(!userids.contains(uvo.getCuserid())){
-        		 throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
+             String userids =executeQuery.toString();
+             if(!userids.contains(uvo.getCuserid())){
+                 throw new BusinessException("对不起，你没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
              }
+        }else{
+            throw new BusinessException("对不起，你没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
         }
-	}
+    }
 
 }

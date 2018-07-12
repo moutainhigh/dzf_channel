@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.sys_power.URoleVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.service.channel.sys_power.IUserRoleService;
+import com.dzf.service.pub.LogRecordEnum;
 
 @ParentPackage("basePackage")
 @Namespace("/sys")
@@ -66,6 +70,12 @@ public class UserPowerAction extends BaseAction<URoleVO> {
                     userRoleServiceImpl.saveUserRoleVO(vos, userid, pk_corp);
                     grid.setSuccess(true);
                     grid.setMsg("保存成功！");
+                    UserVO uvo = UserCache.getInstance().get(userid, null);
+                    StringBuffer msg = new StringBuffer("分配权限");
+                    if(uvo != null){
+                        msg.append(":").append(uvo.getUser_code()).append(" ").append(uvo.getUser_name()) ;
+                    }
+                    writeLogRecord(LogRecordEnum.OPE_CHANNEL_QXFP.getValue(),msg.toString() ,ISysConstants.SYS_3);
                 }
             }
         } catch (Exception e) {
