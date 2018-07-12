@@ -430,31 +430,113 @@ function tranImg(trun){
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
 	</div> -->
-	<div id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;">
+	<div id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">
 	</div>
 </div>
 <!-- 打开图片展示窗口 end -->
 <script>
 
-$(document).ready(function() {        
+function addEvent(obj, sType, fn) {
+	if (obj.addEventListener) {
+		obj.addEventListener(sType, fn, false);
+	} else {
+		obj.attachEvent('on' + sType, fn);
+	}
+};
+function removeEvent(obj, sType, fn) {
+	if (obj.removeEventListener) {
+		obj.removeEventListener(sType, fn, false);
+	} else {
+		obj.detachEvent('on' + sType, fn);
+	}
+};
+function prEvent(ev) {
+	var oEvent = ev || window.event;
+	if (oEvent.preventDefault) {
+		oEvent.preventDefault();
+	}
+	return oEvent;
+}
+/*添加滑轮事件*/
+function addWheelEvent(obj, callback) {
+	if (window.navigator.userAgent.toLowerCase().indexOf('firefox') != -1) {
+		addEvent(obj, 'DOMMouseScroll', wheel);
+	} else {
+		addEvent(obj, 'mousewheel', wheel);
+	}
+	function wheel(ev) {
+		var oEvent = prEvent(ev),
+		delta = oEvent.detail ? oEvent.detail > 0 : oEvent.wheelDelta < 0;
+		callback && callback.call(oEvent, delta);
+		return false;
+	}
+};
+/*页面载入后*/
+function initconturnid() {
+	
+	var oImg = document.getElementById('conturnid');
+	/*拖拽功能*/
+	(function() {
+		debugger
+		addEvent(oImg, 'mousedown', function(ev) {
+			
+			var oEvent = prEvent(ev),
+			oParent = oImg.parentNode,
+			disX = oEvent.clientX,
+			disY = oEvent.clientY,
+			marginX =oImg.offsetLeft,
+			marginY =oImg.offsetTop,
+			startMove = function(ev) {
+				if (oParent.setCapture) {
+					oParent.setCapture();
+				}
+				var oEvent = ev || window.event,
+				l = oEvent.clientX - disX,
+				t = oEvent.clientY - disY;
+				oImg.style.left =marginX + l +'px';
+				oImg.style.top = marginY+ t +'px';
+				oParent.onselectstart = function() {
+					return false;
+				}
+			}, endMove = function(ev) {
+				if (oParent.releaseCapture) {
+					oParent.releaseCapture();
+				}
+				oParent.onselectstart = null;
+				removeEvent(oParent, 'mousemove', startMove);
+				removeEvent(oParent, 'mouseup', endMove);
+			};
+			addEvent(oParent, 'mousemove', startMove);
+			addEvent(oParent, 'mouseup', endMove);
+			return false;
+		});
+	})();
+	/*以鼠标位置为中心的滑轮放大功能*/
+	
+	(function() {
+		addWheelEvent(oImg, function(delta) {
+			console.log(this.offsetX)
+			var ratioL = (this.clientX - oImg.offsetLeft) / oImg.offsetWidth,
+			ratioT = (this.clientY - oImg.offsetTop) / oImg.offsetHeight,
+			qusX = oImg.offsetWidth,
+			qusY = oImg.offsetHeight,
 
-    $('#fullViewContent').smartZoom({'containerClass':'zoomableContainer'});        
-     
-    function zoomButtonClickHandler(e){
-
-        var scaleToAdd = 0.8;
-
-        if(e.target.id == 'zoomOut')
-
-            scaleToAdd = -scaleToAdd;
-
-        $('#fullViewContent').smartZoom('zoom', scaleToAdd);
-
-    } 
-    
-
-});
-
+			ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
+			w = parseInt(oImg.offsetWidth * ratioDelta),
+			h = parseInt(oImg.offsetHeight * ratioDelta),
+			
+			l = Math.round(oImg.offsetLeft - oImg.offsetWidth * (ratioDelta - 1)/2),
+			t = Math.round(oImg.offsetTop - oImg.offsetHeight * (ratioDelta - 1)/2);
+			
+			with(oImg.style) {
+				width = w +'px';
+				height = h +'px';
+				left = l +'px';
+				top = t +'px';
+			}
+		});
+	})();
+};
 </script>
 </body>
 </html>

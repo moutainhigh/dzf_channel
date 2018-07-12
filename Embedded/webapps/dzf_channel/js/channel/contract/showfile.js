@@ -185,9 +185,14 @@ function doubleImage(i){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
 		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">','原图')
+		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
 	}
+
 }
+
+
+
+
 
 /**
  * 获取附件扩展

@@ -402,6 +402,9 @@ function openFullViewDlg (content,title, billid, downtype) {
 	});	
 	$("#fullViewDlg").css("display","block");
 	$("#fullViewDlg").dialog("center");
+	
+	initconturnid()
+	
 }
 
 /**
@@ -572,15 +575,15 @@ function checkPanelVisible (id) {
 	return $('#' + id).parent().is(".panel:visible")
 }
 
-$(document).on("wheel",function(e) {
-	if (checkPanelVisible("fullViewDlg")) {
-		if (e.target == $("#fullViewDlg > div > img").get(0)
-				|| e.target == $("#img_canvas").get(0)) {
-			var orgEvent = e.originalEvent;
-			var zoom = $("#fullViewDlg > div > img").data("zoom");
-			zoom = zoom ? zoom : 1;
-			zoom = zoom - (orgEvent.deltaY > 0 ? 0.05 : -0.05);
-			transformImage($("#fullViewDlg > div > img")[0], zoom);
-		}
-	}
-});
+//$(document).on("wheel",function(e) {
+//	if (checkPanelVisible("fullViewDlg")) {
+//		if (e.target == $("#fullViewDlg > div > img").get(0)
+//				|| e.target == $("#img_canvas").get(0)) {
+//			var orgEvent = e.originalEvent;
+//			var zoom = $("#fullViewDlg > div > img").data("zoom");
+//			zoom = zoom ? zoom : 1;
+//			zoom = zoom - (orgEvent.deltaY > 0 ? 0.05 : -0.05);
+//			transformImage($("#fullViewDlg > div > img")[0], zoom);
+//		}
+//	}
+//});
