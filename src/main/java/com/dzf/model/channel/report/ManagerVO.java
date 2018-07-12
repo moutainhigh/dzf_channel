@@ -27,6 +27,9 @@ public class ManagerVO extends SuperVO {
 	
 	@FieldAlias("aname")
     private String areaname;//大区名称
+	
+	@FieldAlias("acode")
+	private String areacode;//大区编码
     
 	@FieldAlias("uid")
     private String userid; // 用户主键（大区总经理）
@@ -115,6 +118,14 @@ public class ManagerVO extends SuperVO {
 
 	public DZFDouble getUnitprice() {
 		return unitprice;
+	}
+
+	public String getAreacode() {
+		return areacode;
+	}
+
+	public void setAreacode(String areacode) {
+		this.areacode = areacode;
 	}
 
 	public DZFBoolean getIsxq() {

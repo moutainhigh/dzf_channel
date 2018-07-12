@@ -56,7 +56,21 @@ public class ManagerServiceImpl implements IManagerService {
 			Collections.sort(list, new Comparator<ManagerVO>() {
 				@Override
 				public int compare(ManagerVO o1, ManagerVO o2) {
-					return o1.getVprovince().compareTo(o2.getVprovince());
+					int sort=0;
+					if(o1.getAreacode()!=null && o2.getAreacode()!=null){
+						if(o1.getAreacode().equals(o2.getAreacode())){
+							sort=o1.getVprovince().compareTo(o2.getVprovince());
+						}else{
+							sort=o1.getAreacode().compareTo(o2.getAreacode());
+						}
+					}else if(o1.getAreacode()==null && o2.getAreacode()!=null){
+						sort=1;
+					}else if(o2.getAreacode()==null && o1.getAreacode()!=null){
+						sort=-1;
+					}else{
+						sort=o1.getVprovince().compareTo(o2.getVprovince());
+					}
+					return sort;
 				}
 			});
 			list=queryCommon(qvo,list);
@@ -112,7 +126,7 @@ public class ManagerServiceImpl implements IManagerService {
 	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("  select a.areaname,a.userid,");
+		sql.append("  select a.areaname,a.areacode,a.userid,");
 		sql.append("  	   y.region_name vprovname,");
 		sql.append("       p.pk_corp, p.innercode, p.vprovince,b.ischarge isxq,");
 		sql.append("       b.userid cuserid,b.pk_corp corpname");//, b.vprovince
@@ -178,7 +192,7 @@ public class ManagerServiceImpl implements IManagerService {
 	private List<ManagerVO> qryCharge(ManagerVO qvo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid ,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname,");
+		sql.append("select p.pk_corp ,a.areaname,a.areacode,a.userid ,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname,");
 //		sql.append(" (case when b.pk_corp is null then null else b.userid end) cuserid ");
 		sql.append(" (case when b.pk_corp is null then null  when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
 		sql.append(" from bd_account p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
@@ -194,7 +208,7 @@ public class ManagerServiceImpl implements IManagerService {
 	private List<ManagerVO> qryNotCharge(ManagerVO qvo,String condition) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode");
+		sql.append("select p.pk_corp ,a.areaname,a.areacode,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode");
 		sql.append(" from bd_account p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
