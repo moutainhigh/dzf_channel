@@ -156,9 +156,30 @@ function onDetPrint(){
 }
 
 /**
- * 明细导出
+ * 检验明细导出
+ * @returns
  */
 function onDetExport(){
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/report/manager!checkExport.action',
+		traditional : true,
+		async : false,
+		success : function(result) {
+			if (!result.success) {
+				$.messager.confirm("提示", result.msg);
+			} else {
+				openDetExport();
+			}
+		},
+	});
+}
+
+/**
+ * 明细导出
+ */
+function openDetExport(){
 	var datarows = $('#gridh').datagrid("getRows");
 	if( datarows == null||datarows.length == 0){
 		Public.tips({content:'明细数据为空',type:2});
@@ -278,10 +299,32 @@ function mergeCell(data,is){
 　	}
 }
 
+
 /**
  * 导出
  */
 function doExport(type){
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/report/manager!checkExport.action',
+		traditional : true,
+		async : false,
+		data :{"type":type},
+		success : function(result) {
+			if (!result.success) {
+				$.messager.confirm("提示", result.msg);
+			} else {
+				openExport(type);
+			}
+		},
+	});
+}
+
+/**
+ * 导出
+ */
+function openExport(type){
 	var datarows = $('#grid').datagrid("getRows");
 	if(datarows == null || datarows.length == 0){
 		Public.tips({content:'当前界面数据为空',type:2});

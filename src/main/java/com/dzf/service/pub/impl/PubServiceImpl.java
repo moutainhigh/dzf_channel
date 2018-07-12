@@ -591,7 +591,7 @@ public class PubServiceImpl implements IPubService {
         if(executeQuery!=null){
         	 String userids =executeQuery.toString();
         	 if(!userids.contains(uvo.getCuserid())){
-        		 throw new BusinessException("对不起，你没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
+        		 throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
              }
         }
 	}

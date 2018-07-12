@@ -24,17 +24,23 @@ import com.dzf.action.channel.ChnPayBalanceAction;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IButtonName;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.report.IManagerService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.ExportUtil;
 import com.dzf.service.pub.report.PrintUtil;
 import com.itextpdf.text.DocumentException;
+
+import oracle.net.aso.s;
 
 /**
  * 加盟商管理
@@ -48,6 +54,9 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 
 	@Autowired
 	private IManagerService manager;
+	
+	@Autowired
+	private IPubService pubService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 	
@@ -92,6 +101,33 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * 检验导出权限
+	 */
+	public void checkExport(){
+		Grid grid = new Grid();
+		try {
+			Integer type = Integer.parseInt(getRequest().getParameter("type"));
+			String funnode=null;
+			switch (type) {
+			case 1:
+				funnode= IFunNode.CHANNEL_16;
+				break;
+			case 2:
+				funnode= IFunNode.CHANNEL_17;
+				break;
+			default:
+				funnode= IFunNode.CHANNEL_18;
+				break;
+			}
+			pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BUTTON_EXPORT);
+			grid.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "操作失败");
+		}
+		writeJson(grid);
+	}
 
 	/**
 	 * Excel导出方法  1渠道；2区域；3总
@@ -111,16 +147,26 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();
+		String funnode=null;
 		int num=8;
 		String title="省数据分析";
-		if(type==3){
+		switch (type) {
+		case 1:
+			funnode= IFunNode.CHANNEL_16;
+			break;
+		case 2:
+			title="大区数据分析";
+			funnode= IFunNode.CHANNEL_17;
+			break;
+		default:
 			num=10;
 			title="渠道总数据分析";
 			fieldlist.add("aname");
 			fieldlist.add("uname");
-		}else if(type==2){
-			title="大区数据分析";
+			funnode= IFunNode.CHANNEL_18;
+			break;
 		}
+		pubService.checkButton(getLoginUserInfo(), funnode,IButtonName.BUTTON_EXPORT);
 		fieldlist.add("provname");
 		fieldlist.add("cuname");
 		fieldlist.add("corpnm");
