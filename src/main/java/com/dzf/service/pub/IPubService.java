@@ -125,5 +125,5 @@ public interface IPubService {
      * @param butname
      * @throws DZFWarpException
      */
-    public void checkButton(UserVO uvo,String funnode,String butname) throws DZFWarpException;
+    public void checkButton(UserVO uvo,String funnode,String btncode) throws DZFWarpException;
 }

@@ -458,10 +458,14 @@ function doExport(){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[1];
-	var dateColumns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(DZF.contextPath+ '/report/debitquery!exportExcel.action',
-			{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'dateColumns':JSON.stringify(dateColumns)}, true, true);
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[1];
+		var dateColumns = $('#grid').datagrid("options").columns[0];
+		Business.getFile(DZF.contextPath+ '/report/debitquery!exportExcel.action',
+				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),
+				'dateColumns':JSON.stringify(dateColumns)}, true, true);
+	}
+	checkBtnPower('export','channel23',callback);
 }
 
 /**
