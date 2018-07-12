@@ -402,7 +402,6 @@ function openFullViewDlg (content,title, billid, downtype) {
 	});	
 	$("#fullViewDlg").css("display","block");
 	$("#fullViewDlg").dialog("center");
-	
 	initconturnid()
 	
 }
