@@ -158,7 +158,7 @@ function onDetPrint(){
 /**
  * 明细导出
  */
-function onDetExport(){
+function onDetExport(type){
 	var datarows = $('#gridh').datagrid("getRows");
 	if( datarows == null||datarows.length == 0){
 		Public.tips({content:'明细数据为空',type:2});
