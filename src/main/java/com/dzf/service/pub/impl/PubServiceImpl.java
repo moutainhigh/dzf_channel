@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.AccountVO;
@@ -574,6 +575,25 @@ public class PubServiceImpl implements IPubService {
 		} else {
 			throw new BusinessException("无操作节点权限，请联系管理员。");
 		}
+	}
+	
+	@Override
+	public void checkButton(UserVO uvo,String funnode,String butname) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+        SQLParameter spm = new SQLParameter();
+        sql.append(" select b.userids,s.fun_name from cn_button b ");
+        sql.append(" left join sm_funnode s on b.pk_funnode=s.pk_funnode ");
+        sql.append(" where nvl(b.dr,0) = 0 and nvl(s.dr,0) = 0 and nvl(b.ispreset,'N')='N' ");
+        sql.append(" and b.but_name=? and s.fun_code=?");
+        spm.addParam(butname);
+        spm.addParam(funnode);
+        Object executeQuery = singleObjectBO.executeQuery(sql.toString(),spm, new ColumnProcessor());
+        if(executeQuery!=null){
+        	 String userids =executeQuery.toString();
+        	 if(!userids.contains(uvo.getCuserid())){
+        		 throw new BusinessException("对不起，你没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
+             }
+        }
 	}
 
 }

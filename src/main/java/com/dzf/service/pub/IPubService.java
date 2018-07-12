@@ -109,7 +109,7 @@ public interface IPubService {
 	 */
 	public List<String> qryPros(String cuserid,Integer type) throws DZFWarpException;
 	
-	   /**
+	/**
      * 在线业务系统功能操作是校验是否有节点权限，防止攻击
      * @author gejw
      * @time 下午2:22:25
@@ -117,4 +117,13 @@ public interface IPubService {
      * @throws DZFWarpException
      */
     public void checkFunnode(UserVO uvo,String funnode) throws DZFWarpException;
+    
+    /**
+     * 检验当前登陆人是否有导出权限
+     * @param uvo
+     * @param funnode
+     * @param butname
+     * @throws DZFWarpException
+     */
+    public void checkButton(UserVO uvo,String funnode,String butname) throws DZFWarpException;
 }
