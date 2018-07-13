@@ -72,28 +72,7 @@ function load(){
 	                   	{ field : 'jms04', title : '销售主管', width : 60,align:'center' },
 	                   	{ field : 'jms10', title : '销售', width : 60,align:'center' },
 	                ]],
-		onLoadSuccess : function(data) {
-//			var rows = $('#grid').datagrid('getRows');
-//			var footerData = new Object();
-//			var custsmall = 0;	// 
-//			var custtaxpay = 0;	// 
-//
-//			for (var i = 0; i < rows.length; i++) {
-//				if(rows[i].custsmall != undefined && rows[i].custsmall != null){
-//					custsmall += parseFloat(rows[i].custsmall);
-//				}
-//				if(rows[i].custtaxpay != undefined && rows[i].custtaxpay != null){
-//					custtaxpay += parseFloat(rows[i].custtaxpay);
-//				}
-//			}
-//			footerData['pname'] = '合计';
-//			footerData['custsmall'] = custsmall;
-//			footerData['custtaxpay'] = custtaxpay;
-//
-//			var fs=new Array(1);
-//			fs[0] = footerData;
-//			$('#grid').datagrid('reloadFooter',fs);
-		},
+		onLoadSuccess : function(data) {},
 	});
 }
 
