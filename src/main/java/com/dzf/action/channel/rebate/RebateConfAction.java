@@ -18,9 +18,11 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.rebate.IRebateConfService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 返点单确认
@@ -39,6 +41,9 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 	@Autowired
 	private IRebateConfService confser;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 确认/驳回
 	 */
@@ -52,6 +57,7 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_26);
 				String opertype = getRequest().getParameter("opertype");
 				Integer iopertype = null;
 				if(opertype != null){
@@ -79,6 +85,13 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 	public void updateCanc() {
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_26);
 			String data = getRequest().getParameter("data"); // 审核数据
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
