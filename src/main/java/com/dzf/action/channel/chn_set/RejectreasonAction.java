@@ -19,11 +19,14 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.chn_set.impl.IRejectreasonService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 合同审批设置
+ * 
  * @author zy
  *
  */
@@ -33,11 +36,14 @@ import com.dzf.service.channel.chn_set.impl.IRejectreasonService;
 public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 
 	private static final long serialVersionUID = 4198508246490206214L;
-	
+
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	IRejectreasonService rejectser;
+	
+	@Autowired
+	private IPubService pubser;
 
 	/**
 	 * 查询
@@ -46,9 +52,9 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		Grid json = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			QryParamVO vo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
@@ -56,11 +62,11 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 				vo.setPk_corp(getLoginCorpInfo().getPk_corp());
 			}
 			int total = rejectser.queryTotalRow(vo, uservo);
-			json.setTotal((long)(total));
-			if(total > 0){
+			json.setTotal((long) (total));
+			if (total > 0) {
 				List<RejectreasonVO> clist = rejectser.query(vo, uservo);
 				json.setRows(clist);
-			}else{
+			} else {
 				json.setRows(new ArrayList<RejectreasonVO>());
 			}
 			json.setSuccess(true);
@@ -70,7 +76,7 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 保存
 	 */
@@ -79,42 +85,44 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
 				setDefaultValue(data);
 				data = rejectser.save(data, getLogincorppk());
 				json.setRows(data);
-				json.setSuccess(true);	
+				json.setSuccess(true);
 				json.setMsg("保存成功");
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "保存失败");
 			}
-		}else {
+		} else {
 			json.setSuccess(false);
 			json.setMsg("保存失败");
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 保存前设置默认值
+	 * 
 	 * @param data
 	 * @throws DZFWarpException
 	 */
 	private void setDefaultValue(RejectreasonVO data) throws DZFWarpException {
-		if(StringUtil.isEmpty(data.getPk_rejectreason())){
+		if (StringUtil.isEmpty(data.getPk_rejectreason())) {
 			data.setCoperatorid(getLoginUserid());
 			data.setDoperatedate(new DZFDate());
 			data.setPk_corp(getLogincorppk());
 			data.setDr(0);
-		}else{
+		} else {
 			data.setLastmodifypsnid(getLoginUserid());
 		}
 	}
-	
+
 	/**
 	 * 删除
 	 */
@@ -123,11 +131,12 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
 				rejectser.delete(data);
 				json.setSuccess(true);
 				json.setMsg("操作成功");
@@ -140,7 +149,7 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 通过主键查询信息
 	 */
@@ -149,9 +158,9 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
 				RejectreasonVO retvo = rejectser.queryById(data);
