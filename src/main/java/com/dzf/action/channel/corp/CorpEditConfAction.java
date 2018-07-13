@@ -102,12 +102,12 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_30);
 			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_30);
 			String data = getRequest().getParameter("data"); // 操作数据
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
