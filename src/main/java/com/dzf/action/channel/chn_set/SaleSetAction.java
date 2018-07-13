@@ -13,13 +13,16 @@ import com.dzf.model.channel.sale.SaleSetVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.chn_set.ISaleSetService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
@@ -36,15 +39,23 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@Autowired
-	private ISaleSetService saleSet = null;
-	
+	private ISaleSetService saleSet;
+
+	@Autowired
+	private IPubService pubser;
+
 	/**
 	 * 查询
 	 */
 	public void query() {
 		Json json = new Json();
 		try {
-			String pk_corp = getLoginCorpInfo().getPk_corp();
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
 			SaleSetVO vo = new SaleSetVO();
 			vo = (SaleSetVO) DzfTypeUtils.cast(getRequest(), vo);
 			SaleSetVO query = saleSet.query(vo);
@@ -63,38 +74,52 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 	public void save() {
 		Json json = new Json();
 		try {
-			if(data != null){
+			if (data != null) {
+				UserVO uservo = getLoginUserInfo();
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+					throw new BusinessException("登陆用户错误");
+				} else if (uservo == null) {
+					throw new BusinessException("登陆用户错误");
+				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_20);
 				String pk_corp = getLoginCorpInfo().getPk_corp();
 				data.setPk_corp(pk_corp);
-				if(StringUtil.isEmpty(data.getPk_saleset())){//新增，默认录入人与日期
+				if (StringUtil.isEmpty(data.getPk_saleset())) {// 新增，默认录入人与日期
 					data.setDoperatedate(new DZFDate());
 					data.setCoperatorid(getLoginUserInfo().getCuserid());
 					data.setTs(new DZFDateTime());
-				}else{//修改，最后修改日期，修改人
+				} else {// 修改，最后修改日期，修改人
 					data.setLastmodifypsnid(getLoginUserInfo().getCuserid());
 					data.setLastmodifydate(new DZFDateTime());
 				}
 				saleSet.save(data);
-				if(!StringUtil.isEmpty(data.getLastmodifypsnid())){
-					UserVO uvo =  UserCache.getInstance().get(data.getLastmodifypsnid(), null);
+				if (!StringUtil.isEmpty(data.getLastmodifypsnid())) {
+					UserVO uvo = UserCache.getInstance().get(data.getLastmodifypsnid(), null);
 					data.setLastmodifypsn(uvo.getUser_name());
 				}
 				json.setData(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功");
 			}
-			//日志记录	销售管理规则设置
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getValue(),LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName(),ISysConstants.SYS_3);
-		}  catch (Exception e) {
+			// 日志记录 销售管理规则设置
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_XSGZSZ.getValue(), LogRecordEnum.OPE_CHANNEL_XSGZSZ.getName(),
+					ISysConstants.SYS_3);
+		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
 		writeJson(json);
 	}
-	
-	public void history(){
-	 Grid grid = new Grid();
+
+	public void history() {
+		Grid grid = new Grid();
 		try {
-			String pk_corp = getLoginCorpInfo().getPk_corp();
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			String pk_corp = getLogincorppk();
 			SaleSetVO vo = new SaleSetVO();
 			vo.setPk_corp(pk_corp);
 			List<SaleSetVO> list = saleSet.queryHistory(vo);
@@ -106,5 +131,5 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 		}
 		writeJson(grid);
 	}
-	
+
 }
