@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
 import com.dzf.action.channel.expfield.ChnPayBillExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnPayBillVO;
@@ -35,9 +34,11 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayConfService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 付款单确认
@@ -56,12 +57,21 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 	@Autowired
 	private IChnPayConfService payconfSer;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询方法
 	 */
 	public void query() {
 		Grid grid = new Grid();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
 			int total = payconfSer.queryTotalRow(paramvo);
@@ -87,6 +97,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_2);
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
@@ -165,10 +176,6 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				isexists = false;
 			}
 			if (isexists) {
-				// String path =
-				// getRequest().getSession().getServletContext().getRealPath("/");
-				// String typeiconpath = path + "images" + File.separator +
-				// "typeicon" + File.separator;
 				os = getResponse().getOutputStream();
 				is = new FileInputStream(afile);
 				IOUtils.copy(is, os);
