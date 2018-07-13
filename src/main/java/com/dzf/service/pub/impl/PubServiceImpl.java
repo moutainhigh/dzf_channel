@@ -144,7 +144,12 @@ public class PubServiceImpl implements IPubService {
 		if (StringUtil.isEmpty(code)) {
 			return str + "0001";
 		}
-		int num = Integer.parseInt(code.substring(8));
+		int num = 0;
+		if("cn_refund".equals(tablename)){
+			num = Integer.parseInt(code.substring(10));
+		}else{
+			num = Integer.parseInt(code.substring(8));
+		}
 		num = num + 1;
 		String nums = String.valueOf(num);
 		switch (nums.length()) {
