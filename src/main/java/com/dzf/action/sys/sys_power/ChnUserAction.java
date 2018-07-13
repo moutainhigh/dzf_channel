@@ -19,116 +19,148 @@ import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.sys.sys_power.IUserService;
 
 /**
  * 加盟商用户管理
- * @author 
+ * 
+ * @author
  *
  */
 @ParentPackage("basePackage")
 @Namespace("/sys")
 @Action(value = "/chnUseract")
-public class ChnUserAction extends BaseAction<UserVO>{
-	
+public class ChnUserAction extends BaseAction<UserVO> {
+
 	private static final long serialVersionUID = 1L;
 
 	private Logger log = Logger.getLogger(this.getClass());
-	
-	private static final String UTYPE = "6";//加盟商系统登录用户
-	
+
+	private static final String UTYPE = "6";// 加盟商系统登录用户
+
 	@Autowired
 	private IUserService userService;
-	
-	public void save(){
+
+	@Autowired
+	private IPubService pubser;
+
+	public void save() {
 		Json json = new Json();
-		try{
-    		if (data != null) {
-				UserVO vo = ((UserVO)data);
+		try {
+			if (data != null) {
+				UserVO uservo = getLoginUserInfo();
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+					throw new BusinessException("登陆用户错误");
+				} else if (uservo == null) {
+					throw new BusinessException("登陆用户错误");
+				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
+				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
-				vo.setPk_creatcorp(loginCorp);//创建用户的公司
+				vo.setPk_creatcorp(loginCorp);// 创建用户的公司
 				vo.setPk_corp(loginCorp);
 				data.setXsstyle(UTYPE);
-				if(vo.getPk_corp() == null)
+				if (vo.getPk_corp() == null)
 					throw new BusinessException("所属公司不能为空");
-				UserVO[] datas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{data}, 0);
+				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
+						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { data }, 0);
 				userService.save(datas[0]);
-				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{datas[0]}, 1);
+				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils
+						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { datas[0] }, 1);
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("保存成功");
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),"新增用户：" + data.getUser_code() +" "+data.getUser_name(),ISysConstants.SYS_3);
-    		}else{
-    			json.setSuccess(false);
-    			json.setMsg("保存失败:数据为空。");
-    		}
-		}catch(Exception e){
-            printErrorLog(json, log, e, "保存失败");
-        }
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),
+						"新增用户：" + data.getUser_code() + " " + data.getUser_name(), ISysConstants.SYS_3);
+			} else {
+				json.setSuccess(false);
+				json.setMsg("保存失败:数据为空。");
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "保存失败");
+		}
 		writeJson(json);
 	}
-	
-	public void update(){
+
+	public void update() {
 		Json json = new Json();
-		try{
-    		if (data != null) {
-				UserVO vo = ((UserVO)data);
+		try {
+			if (data != null) {
+				UserVO uservo = getLoginUserInfo();
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+					throw new BusinessException("登陆用户错误");
+				} else if (uservo == null) {
+					throw new BusinessException("登陆用户错误");
+				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
+				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
 				UserVO user = UserCache.getInstance().get(vo.getCuserid(), vo.getPk_corp());
-				if(user == null){
+				if (user == null) {
 					throw new BusinessException("该数据不存在或已删除！");
 				}
-				if(!loginCorp.equals(vo.getPk_corp())){
-				    throw new BusinessException("修改的用户不属于当前登陆公司，不允许修改。");
+				if (!loginCorp.equals(vo.getPk_corp())) {
+					throw new BusinessException("修改的用户不属于当前登陆公司，不允许修改。");
 				}
-				UserVO[] datas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{data}, 0);
+				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
+						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { data }, 0);
 				userService.update(datas[0]);
-				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name","corpnm","crtcorp"}, new UserVO[]{datas[0]}, 1);	
+				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils
+						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { datas[0] }, 1);
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("更新成功");
-                writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),"修改用户：" + data.getUser_code() +" "+data.getUser_name(),ISysConstants.SYS_3);
-    		}else{
-    			json.setSuccess(false);
-    			json.setMsg("更新失败:数据为空。");
-    		}
-		}catch(Exception e){
-            printErrorLog(json, log, e, "更新失败");
-        }
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_YHGL.getValue(),
+						"修改用户：" + data.getUser_code() + " " + data.getUser_name(), ISysConstants.SYS_3);
+			} else {
+				json.setSuccess(false);
+				json.setMsg("更新失败:数据为空。");
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "更新失败");
+		}
 		writeJson(json);
 	}
-	
-	public void query() throws Exception{
+
+	public void query() throws Exception {
 		Grid grid = new Grid();
 		String loginCorp = IGlobalConstants.DefaultGroup;
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
 			SysPowerConditVO qryVO = new SysPowerConditVO();
 			String ilock = getRequest().getParameter("ilock");
-			String invalid = getRequest().getParameter("invalid");//失效
+			String invalid = getRequest().getParameter("invalid");// 失效
 			qryVO.setCrtcorp_id(loginCorp);
 			qryVO.setUtype(UTYPE);
 			qryVO.setIlock(ilock);
-			List<UserVO> list = userService.query(loginCorp,qryVO);
-			List<UserVO> alist=new ArrayList<>();
-			if(invalid!=null&&invalid.equals("N")){//查询没有失效的用户
+			List<UserVO> list = userService.query(loginCorp, qryVO);
+			List<UserVO> alist = new ArrayList<>();
+			if (invalid != null && invalid.equals("N")) {// 查询没有失效的用户
 				for (UserVO userVO : list) {
-					if(userVO.getDisable_time()==null||new DZFDate().before(userVO.getDisable_time())){
+					if (userVO.getDisable_time() == null || new DZFDate().before(userVO.getDisable_time())) {
 						alist.add(userVO);
 					}
 				}
-			}else{
-				alist=list;
+			} else {
+				alist = list;
 			}
 			UserVO[] array = alist.toArray(new UserVO[0]);
-			array = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[]{"user_name"}, array,1);
-			if(list != null && list.size()>0){
+			array = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[] { "user_name" }, array, 1);
+			if (list != null && list.size() > 0) {
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
-				grid.setTotal((long)alist.size());
+				grid.setTotal((long) alist.size());
 				grid.setRows(alist);
-			}else{
+			} else {
 				grid.setRows(new ArrayList<UserVO>());
 				grid.setSuccess(false);
 				grid.setMsg("查询数据为空");
