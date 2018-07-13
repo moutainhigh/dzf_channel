@@ -73,7 +73,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	private void setListShowName(List<RefundBillVO> list) throws DZFWarpException {
 		CorpVO corpvo = null;
 		UserVO uservo = null;
-		Map<Integer, String> areamap = pubser.getAreaMap(null, 3);
+		Map<Integer, String> areamap = pubser.getAreaMap(null, 1);
 		for(RefundBillVO bvo : list){
 			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
 			if(corpvo != null){
