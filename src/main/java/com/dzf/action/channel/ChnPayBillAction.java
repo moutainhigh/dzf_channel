@@ -25,14 +25,17 @@ import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.IChnPayService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 渠道-付款单
@@ -45,14 +48,24 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 
 	private static final long serialVersionUID = -5179718423895024141L;
 	
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private IChnPayService chnpay;
+	
+	@Autowired
+	private IPubService pubser;
 
-	private Logger log = Logger.getLogger(this.getClass());
 
 	public void query() {
 		Grid grid = new Grid();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			ChnPayBillVO paramvo = new ChnPayBillVO();
 		    paramvo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			int page = paramvo == null ?1: paramvo.getPage();
@@ -83,6 +96,13 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		Json json = new Json();
 		if (data != null) {
 			try {
+				UserVO uservo = getLoginUserInfo();
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
+				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+					throw new BusinessException("登陆用户错误");
+				}else if(uservo == null){
+					throw new BusinessException("登陆用户错误");
+				}
 				CorpVO accvo = getLoginCorpInfo();
 				File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("pFile");
 				String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("pFile");
@@ -116,6 +136,13 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 	public void updateStatus() {
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			String chns = getRequest().getParameter("chns");
 			String temp = getRequest().getParameter("stat");
 			chns = chns.replace("}{", "},{");
@@ -150,6 +177,12 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 	public void queryByID(){
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			ChnPayBillVO chn = new ChnPayBillVO();
 			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
 			if(StringUtil.isEmpty(chn.getPk_paybill())){
@@ -171,13 +204,15 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 	public void delete() {
 		Json json = new Json();
 		try {
-			String pk_corp = getLogincorppk();
-			String cids=getRequest().getParameter("bids");
-//			if (StringUtil.isEmpty(pk_corp)) {
-//				pk_corp = getLoginCorpInfo().getPk_corp();
-//			}
-//			CheckUtil.checkPower(pk_corp, IMsgConstant.ACTION_SELF, getLoginUserInfo());
-			chnpay.delete(getLogincorppk(),cids);
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			String cids = getRequest().getParameter("bids");
+			chnpay.delete(getLogincorppk(), cids);
 			json.setSuccess(true);
 			json.setRows(data);
 			json.setMsg("删除成功!");
@@ -239,6 +274,13 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 	public void deleteImageFile(){
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			ChnPayBillVO paramvo = new ChnPayBillVO();
 			paramvo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			if (StringUtil.isEmpty(paramvo.getPk_corp())){
