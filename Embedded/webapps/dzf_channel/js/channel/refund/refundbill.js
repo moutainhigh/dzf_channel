@@ -456,8 +456,22 @@ function onOperat(type){
 	
 	var msg;
 	if(type == 1){
+		if(rows[0].stat == 1){
+			Public.tips({
+				content : '该数据状态为已确认',
+				type : 2
+			});
+			return;
+		}
 		msg = "你确定要确认吗";
 	}else if(type == 2){
+		if(rows[0].stat == 0){
+			Public.tips({
+				content : '该数据状态为待确认',
+				type : 2
+			});
+			return;
+		}
 		msg = "你确定要取消确认吗";
 	}
 	
