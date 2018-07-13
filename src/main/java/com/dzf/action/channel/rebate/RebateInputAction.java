@@ -34,15 +34,18 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 返点单录入
+ * 
  * @author zy
  *
  */
@@ -52,44 +55,47 @@ import com.dzf.service.channel.rebate.IRebateInputService;
 public class RebateInputAction extends BaseAction<RebateVO> {
 
 	private static final long serialVersionUID = 9155544110565105231L;
-	
+
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private IRebateInputService rebateser;
-	
+
+	@Autowired
+	private IPubService pubser;
+
 	/**
 	 * 查询
 	 */
-	public void query(){
+	public void query() {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			if(!StringUtil.isEmpty(paramvo.getVmanager())){//渠道经理查询条件
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {// 渠道经理查询条件
 				String sql = rebateser.getQrySql(paramvo.getVmanager());
 				paramvo.setVqrysql(sql);
 			}
 			paramvo.setCuserid(getLoginUserid());
-            List<RebateVO> list = rebateser.query(paramvo);
-			if(list != null && list.size() > 0){
-				int page = paramvo == null ? 1: paramvo.getPage();
-				int rows = paramvo == null ? 100000: paramvo.getRows();
+			List<RebateVO> list = rebateser.query(paramvo);
+			if (list != null && list.size() > 0) {
+				int page = paramvo == null ? 1 : paramvo.getPage();
+				int rows = paramvo == null ? 100000 : paramvo.getRows();
 				RebateVO[] rebatVOs = (RebateVO[]) QueryUtil.getPagedVOs(list.toArray(new RebateVO[0]), page, rows);
 				grid.setRows(Arrays.asList(rebatVOs));
-				grid.setTotal((long)(list.size()));
-			}else{
-			    grid.setRows(new ArrayList<RebateVO>());
-			    grid.setTotal(0L);
+				grid.setTotal((long) (list.size()));
+			} else {
+				grid.setRows(new ArrayList<RebateVO>());
+				grid.setTotal(0L);
 			}
-            grid.setMsg("查询成功");
-            grid.setSuccess(true);
+			grid.setMsg("查询成功");
+			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
@@ -104,125 +110,129 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_25);
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
 				setDefaultValue(data);
 				data = rebateser.save(data, getLogincorppk());
 				json.setRows(data);
-				json.setSuccess(true);	
+				json.setSuccess(true);
 				json.setMsg("保存成功");
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "保存失败");
 			}
-		}else {
+		} else {
 			json.setSuccess(false);
 			json.setMsg("保存失败");
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 保存前设置默认值
+	 * 
 	 * @throws DZFWarpException
 	 */
-	private void setDefaultValue(RebateVO data) throws DZFWarpException{
+	private void setDefaultValue(RebateVO data) throws DZFWarpException {
 		data.setFathercorp(getLogincorppk());
 		data.setCoperatorid(getLoginUserid());
 		data.setDoperatedate(new DZFDate());
 		data.setTstamp(new DZFDateTime());
 		data.setTs(new DZFDateTime());
 		data.setDr(0);
-		data.setIstatus(IStatusConstant.IREBATESTATUS_0);//待提交
-		if(!StringUtil.isEmpty(data.getVbillcode())){
+		data.setIstatus(IStatusConstant.IREBATESTATUS_0);// 待提交
+		if (!StringUtil.isEmpty(data.getVbillcode())) {
 			data.setVbillcode(data.getVbillcode().trim());
 		}
 		data.setVsperiod(getPeriod(data, true));
 		data.setVeperiod(getPeriod(data, false));
 	}
-	
+
 	/**
 	 * 获取季度的起止期间
+	 * 
 	 * @param data
 	 * @param ptype
 	 * @return
 	 */
-	private String getPeriod(RebateVO data, boolean isbegin){
-		if(StringUtil.isEmpty(data.getVyear())){
+	private String getPeriod(RebateVO data, boolean isbegin) {
+		if (StringUtil.isEmpty(data.getVyear())) {
 			throw new BusinessException("所属年不能为空");
 		}
-		if(data.getIseason() == null){
+		if (data.getIseason() == null) {
 			throw new BusinessException("所属季度不能为空");
 		}
 		String month = "";
-		switch(data.getIseason()){
-			case 1:
-				if(isbegin){
-					month = "-01";
-				}else{
-					month = "-03";
-				}
-				break;
-			case 2:
-				if(isbegin){
-					month = "-04";
-				}else{
-					month = "-06";
-				}
-				break;
-			case 3:
-				if(isbegin){
-					month = "-07";
-				}else{
-					month = "-09";
-				}
-				break;
-			case 4:
-				if(isbegin){
-					month = "-10";
-				}else{
-					month = "-12";
-				}
-				break;
+		switch (data.getIseason()) {
+		case 1:
+			if (isbegin) {
+				month = "-01";
+			} else {
+				month = "-03";
+			}
+			break;
+		case 2:
+			if (isbegin) {
+				month = "-04";
+			} else {
+				month = "-06";
+			}
+			break;
+		case 3:
+			if (isbegin) {
+				month = "-07";
+			} else {
+				month = "-09";
+			}
+			break;
+		case 4:
+			if (isbegin) {
+				month = "-10";
+			} else {
+				month = "-12";
+			}
+			break;
 		}
-		return data.getVyear()+month;
+		return data.getVyear() + month;
 	}
-	
+
 	/**
 	 * 渠道经理参照查询
 	 */
-	public void queryManager(){
+	public void queryManager() {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			int page = paramvo == null ? 1: paramvo.getPage();
-            int rows = paramvo == null ? 100000: paramvo.getRows();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			int page = paramvo == null ? 1 : paramvo.getPage();
+			int rows = paramvo == null ? 100000 : paramvo.getRows();
 			List<ManagerRefVO> list = rebateser.queryManagerRef(paramvo);
-			if(list != null && list.size() > 0){
-				ManagerRefVO[] refVOs = (ManagerRefVO[]) QueryUtil.getPagedVOs(list.toArray(new ManagerRefVO[0]), page, rows);
+			if (list != null && list.size() > 0) {
+				ManagerRefVO[] refVOs = (ManagerRefVO[]) QueryUtil.getPagedVOs(list.toArray(new ManagerRefVO[0]), page,
+						rows);
 				grid.setRows(Arrays.asList(refVOs));
-				grid.setTotal((long)(list.size()));
-			}else{
-			    grid.setRows(list);
-			    grid.setTotal(0L);
+				grid.setTotal((long) (list.size()));
+			} else {
+				grid.setRows(list);
+				grid.setTotal(0L);
 			}
-            grid.setMsg("查询成功");
-            grid.setSuccess(true);
+			grid.setMsg("查询成功");
+			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * 删除
 	 */
@@ -231,11 +241,12 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_25);
 				rebateser.delete(data);
 				json.setSuccess(true);
 				json.setMsg("操作成功");
@@ -248,7 +259,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 查询返点相关金额
 	 */
@@ -257,9 +268,9 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
 				RebateVO batevo = rebateser.queryDebateMny(data);
@@ -275,13 +286,20 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 提交
 	 */
 	public void saveCommit() {
 		Json json = new Json();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_25);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
@@ -307,22 +325,22 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			json.setRows(retlist);
 			json.setSuccess(true);
 			if (retlist != null && retlist.size() > 0) {
-				if(errmsg != null && errmsg.length() > 0){
+				if (errmsg != null && errmsg.length() > 0) {
 					json.setMsg("成功提交" + retlist.size() + "条数据，失败" + (custVOs.length - retlist.size()) + "条数据，失败原因："
 							+ errmsg.toString());
-				}else{
-					json.setMsg("成功提交"+ retlist.size() +"条数据");
+				} else {
+					json.setMsg("成功提交" + retlist.size() + "条数据");
 				}
 			} else {
 				json.setStatus(-1);
-				json.setMsg("成功提交0条数据，失败原因："+ errmsg.toString());
+				json.setMsg("成功提交0条数据，失败原因：" + errmsg.toString());
 			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "提交失败");
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 通过主键查询返点单和审批历史信息（修改使用）
 	 */
@@ -331,12 +349,12 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
-				RebateVO batevo = rebateser.queryById(data,1);
+				RebateVO batevo = rebateser.queryById(data, 1);
 				json.setSuccess(true);
 				json.setRows(batevo);
 			} catch (Exception e) {
@@ -348,7 +366,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 通过主键查询返点单和审批历史信息（查看使用）
 	 */
@@ -357,12 +375,12 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
-				RebateVO batevo = rebateser.queryById(data,2);
+				RebateVO batevo = rebateser.queryById(data, 2);
 				json.setSuccess(true);
 				json.setRows(batevo);
 			} catch (Exception e) {
@@ -374,59 +392,60 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 导出
 	 */
-	public void onExport(){
-        String strlist =getRequest().getParameter("strlist");
-//        String qj = getRequest().getParameter("qj");
-        if(StringUtil.isEmpty(strlist)){
-            throw new BusinessException("导出数据不能为空!");
-        }   
-        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-        Map<String, String> mapping = FieldMapping.getFieldMapping(new RebateVO());
-        RebateVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,RebateVO[].class, JSONConvtoJAVA.getParserConfig());
-        ArrayList<RebateVO> explist = new ArrayList<RebateVO>();
-        for(RebateVO vo : expVOs){
-            explist.add(vo);
-        }
-        HttpServletResponse response = getResponse();
-        Excelexport2003<RebateVO> ex = new Excelexport2003<RebateVO>();
-        RebateExcelField fields = new RebateExcelField();
-        fields.setVos(explist.toArray(new RebateVO[0]));;
-        fields.setQj("");
-        ServletOutputStream servletOutputStream = null;
-        OutputStream toClient = null;
-        try {
-            response.reset();
-            // 设置response的Header
-            String filename = fields.getExcelport2003Name();
-            String formattedName = URLEncoder.encode(filename, "UTF-8");
-            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
-            servletOutputStream = response.getOutputStream();
-            toClient = new BufferedOutputStream(servletOutputStream);
-            response.setContentType("applicationnd.ms-excel;charset=gb2312");
-            ex.exportExcel(fields, toClient);
-        } catch (Exception e) {
-            log.error("导出失败",e);
-        }  finally {
-            if(toClient != null){
-                try {
-                    toClient.flush();
-                    toClient.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-            if(servletOutputStream != null){
-                try {
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-        }
+	public void onExport() {
+		String strlist = getRequest().getParameter("strlist");
+		if (StringUtil.isEmpty(strlist)) {
+			throw new BusinessException("导出数据不能为空!");
+		}
+		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new RebateVO());
+		RebateVO[] expVOs = DzfTypeUtils.cast(exparray, mapping, RebateVO[].class, JSONConvtoJAVA.getParserConfig());
+		ArrayList<RebateVO> explist = new ArrayList<RebateVO>();
+		for (RebateVO vo : expVOs) {
+			explist.add(vo);
+		}
+		HttpServletResponse response = getResponse();
+		Excelexport2003<RebateVO> ex = new Excelexport2003<RebateVO>();
+		RebateExcelField fields = new RebateExcelField();
+		fields.setVos(explist.toArray(new RebateVO[0]));
+		;
+		fields.setQj("");
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+		} catch (Exception e) {
+			log.error("导出失败", e);
+		} finally {
+			if (toClient != null) {
+				try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+		}
 	}
 }
