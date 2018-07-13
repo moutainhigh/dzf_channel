@@ -38,6 +38,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IContractConfirm;
@@ -128,6 +129,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
@@ -168,6 +170,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
@@ -337,6 +340,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	public void saveChange() {
 		Json json = new Json();
 		if (data != null) {
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_31);
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
 			try {
