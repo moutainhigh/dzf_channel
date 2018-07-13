@@ -31,12 +31,14 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.ICorpEditConfService;
 import com.dzf.service.pub.IPubService;
 
 /**
  * 客户名称修改审核
+ * 
  * @author zy
  *
  */
@@ -48,13 +50,13 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 	private static final long serialVersionUID = -856333864149848124L;
 
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private ICorpEditConfService confser;
-	
-    @Autowired
-    private IPubService pubService;
-	
+
+	@Autowired
+	private IPubService pubser;
+
 	/**
 	 * 查询
 	 */
@@ -62,27 +64,27 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		Grid json = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-		    QryParamVO paramvo = new QryParamVO();
+			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
-			String condition = pubService.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
 			if (condition != null) {
-				if(!condition.equals("flg")){
+				if (!condition.equals("flg")) {
 					paramvo.setVqrysql(condition);
 				}
 				total = confser.queryTotalRow(paramvo, getLoginUserInfo());
 			}
-			json.setTotal((long)(total));
-			if(total > 0){
+			json.setTotal((long) (total));
+			if (total > 0) {
 				List<CorpNameEVO> clist = confser.query(paramvo, uservo);
 				json.setRows(clist);
-			}else{
+			} else {
 				json.setRows(new ArrayList<CorpNameEVO>());
 			}
 			json.setSuccess(true);
@@ -92,8 +94,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		}
 		writeJson(json);
 	}
-	
-	
+
 	/**
 	 * 审核
 	 */
@@ -101,19 +102,20 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_30);
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			String data = getRequest().getParameter("data"); // 操作数据
-			if(StringUtil.isEmpty(data)){
+			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
 			}
-			String type = getRequest().getParameter("type"); 
-			String vreason = getRequest().getParameter("vreason"); //驳回原因
-			int opertype = Integer.valueOf(type);//操作类型   2：审核通过； 3：拒绝审核；
-			if(opertype == 3 && StringUtil.isEmpty(vreason)){
+			String type = getRequest().getParameter("type");
+			String vreason = getRequest().getParameter("vreason"); // 驳回原因
+			int opertype = Integer.valueOf(type);// 操作类型 2：审核通过； 3：拒绝审核；
+			if (opertype == 3 && StringUtil.isEmpty(vreason)) {
 				throw new BusinessException("驳回原因不能为空");
 			}
 			data = data.replace("}{", "},{");
@@ -121,32 +123,32 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new CorpNameEVO());
 			CorpNameEVO[] billVOs = DzfTypeUtils.cast(arrayJson, headmaping, CorpNameEVO[].class,
-					JSONConvtoJAVA.getParserConfig()); 
+					JSONConvtoJAVA.getParserConfig());
 			int rignum = 0;
 			int errnum = 0;
 			StringBuffer errmsg = new StringBuffer();
 			List<CorpNameEVO> rightlist = new ArrayList<CorpNameEVO>();
-			for(CorpNameEVO billvo : billVOs){
-				if(billvo == null){
+			for (CorpNameEVO billvo : billVOs) {
+				if (billvo == null) {
 					log.info("客户名称修改-获取操作数据为空");
 				}
 				billvo = confser.updateAudit(billvo, uservo, opertype, vreason);
-				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-					errnum ++;
+				if (!StringUtil.isEmpty(billvo.getVerrmsg())) {
+					errnum++;
 					errmsg.append(billvo.getVerrmsg()).append("<br>");
-				}else{
-					rignum ++;
+				} else {
+					rignum++;
 					rightlist.add(billvo);
 				}
 			}
 			json.setSuccess(true);
-			if(rignum > 0 && rignum == billVOs.length){
+			if (rignum > 0 && rignum == billVOs.length) {
 				json.setRows(rightlist);
-				json.setMsg("成功"+rignum+"条");
-			}else if(errnum > 0){
-				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setMsg("成功" + rignum + "条");
+			} else if (errnum > 0) {
+				json.setMsg("成功" + rignum + "条，失败" + errnum + "条，失败原因：" + errmsg.toString());
 				json.setStatus(-1);
-				if(rignum > 0){
+				if (rignum > 0) {
 					json.setRows(rightlist);
 				}
 			}
@@ -155,7 +157,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 获取附件显示图片
 	 */
@@ -174,7 +176,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 				isexists = false;
 			}
 			String fpath = "";
-			if(vo != null){
+			if (vo != null) {
 				fpath = vo.getVurl();
 			}
 			File afile = new File(fpath);
@@ -191,19 +193,19 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 		} catch (Exception e) {
 
 		} finally {
-				try {
-				    if (is != null) {
-				        is.close();
-				    }
-				    if(os != null){
-				        os.close();
-				    }
-				} catch (IOException e) {
-				    log.error(e.getMessage());
+			try {
+				if (is != null) {
+					is.close();
 				}
+				if (os != null) {
+					os.close();
+				}
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
 		}
 	}
-	
+
 	/**
 	 * 文件下载
 	 */
@@ -221,8 +223,9 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			fileis = new FileInputStream(vo.getVurl());
 			getResponse().setContentType("application/octet-stream");
 			String formattedName = URLEncoder.encode(vo.getFilename(), "UTF-8");
-			getResponse().addHeader("Content-Disposition", "attachment;filename=" + 
-					new String(vo.getFilename().getBytes("UTF-8"), "ISO8859-1") + ";filename*=UTF-8''" + formattedName);
+			getResponse().addHeader("Content-Disposition",
+					"attachment;filename=" + new String(vo.getFilename().getBytes("UTF-8"), "ISO8859-1")
+							+ ";filename*=UTF-8''" + formattedName);
 			out = getResponse().getOutputStream();
 			byte[] buf = new byte[4 * 1024]; // 4K buffer
 			int bytesRead;
@@ -239,16 +242,16 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			log.error("文件下载失败", e);
 			json.setSuccess(false);
 		} finally {
-				try {
-				    if (fileis != null) {
-				        fileis.close();
-				    }
-				    if (out != null) {
-				        out.close();
-                    }
-				} catch (IOException e) {
-					log.error("关闭流失败", e);
+			try {
+				if (fileis != null) {
+					fileis.close();
 				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				log.error("关闭流失败", e);
+			}
 		}
 	}
 }
