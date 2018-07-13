@@ -242,10 +242,44 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * type  -1：新增时查询；1：保存前校验；2：确认前校验；
+	 */
 	@Override
-	public RefundBillVO queryRefundMny(RefundBillVO paramvo) throws DZFWarpException {
+	public RefundBillVO queryRefundMny(RefundBillVO paramvo, Integer type) throws DZFWarpException {
 		RefundBillVO retvo = new RefundBillVO();
+		if(type != null && (type == -1 || type == 1)){
+			// 1、计算付款余额表余额
+			RefundBillVO balvo = qryReBanMny(paramvo);
+			if(balvo != null){
+				retvo.setNrefbzjmny(balvo.getNrefbzjmny());
+				retvo.setNrefyfkmny(balvo.getNrefyfkmny());
+			}
+			// 2、计算退款单未确认单据的退款金额
+			RefundBillVO refvo = qryRefundMny(paramvo);
+			if(refvo != null){
+				retvo.setNrefbzjmny(SafeCompute.sub(retvo.getNrefbzjmny(), refvo.getNrefbzjmny()));
+				retvo.setNrefyfkmny(SafeCompute.sub(retvo.getNrefyfkmny(), refvo.getNrefyfkmny()));
+			}
+		}else if(type != null && type == 2){
+			// 1、计算付款余额表余额
+			RefundBillVO balvo = qryReBanMny(paramvo);
+			if(balvo != null){
+				retvo.setNrefbzjmny(balvo.getNrefbzjmny());
+				retvo.setNrefyfkmny(balvo.getNrefyfkmny());
+			}
+		}
+		return retvo;
+	}
+
+	/**
+	 * 查询余额表可退款金额
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private RefundBillVO qryReBanMny(RefundBillVO paramvo) throws DZFWarpException {
 		// 1、计算付款余额表余额
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -258,6 +292,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		List<ChnBalanceVO> blist = (List<ChnBalanceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnBalanceVO.class));
 		if(blist != null && blist.size() > 0){
+			RefundBillVO retvo = new RefundBillVO();
 			for(ChnBalanceVO bvo : blist){
 				if(bvo.getIpaytype() != null && bvo.getIpaytype() == 1){//保证金
 					retvo.setNrefbzjmny(SafeCompute.sub(bvo.getNpaymny(), bvo.getNusedmny()));
@@ -265,8 +300,22 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					retvo.setNrefyfkmny(SafeCompute.sub(bvo.getNpaymny(), bvo.getNusedmny()));
 				}
 			}
+			return retvo;
 		}
+		return null;
+	}
+	
+	/**
+	 * 查询保存态退款金额
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private RefundBillVO qryRefundMny(RefundBillVO paramvo) throws DZFWarpException {
 		// 2、计算退款单未确认单据的退款金额
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("SELECT SUM(d.nrefbzjmny) AS nrefbzjmny, SUM(d.nrefyfkmny) AS nrefyfkmny  \n") ;
@@ -283,17 +332,18 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		List<RefundBillVO> flist = (List<RefundBillVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RefundBillVO.class));
 		if(flist != null && flist.size() > 0){
-			RefundBillVO fvo = flist.get(0);
-			retvo.setNrefbzjmny(SafeCompute.sub(retvo.getNrefbzjmny(), fvo.getNrefbzjmny()));
-			retvo.setNrefyfkmny(SafeCompute.sub(retvo.getNrefyfkmny(), fvo.getNrefyfkmny()));
+			return flist.get(0);
 		}
-		return retvo;
+		return null;
 	}
-
+	
+	/**
+	 * 1：保存前校验；2：确认前校验；
+	 */
 	@Override
-	public RefundBillVO checkBeforeSave(RefundBillVO datavo) throws DZFWarpException {
+	public RefundBillVO checkBeforeSave(RefundBillVO datavo, Integer checktype) throws DZFWarpException {
 		StringBuffer errmsg = new StringBuffer();
-		RefundBillVO refvo = queryRefundMny(datavo);
+		RefundBillVO refvo = queryRefundMny(datavo, checktype);
 		if(datavo.getNrefbzjmny().compareTo(refvo.getNrefbzjmny()) > 0){
 			errmsg.append("保证金退款金额大于该加盟商的期末余额，退款后余额可能为负值，");
 		}
@@ -301,7 +351,11 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			errmsg.append("预付款退款金额大于该加盟商的期末余额，退款后余额可能为负值，");
 		}
 		if(errmsg != null && errmsg.length() > 0){
-			errmsg.append("确认保存？");
+			if(checktype != null && checktype == 1){
+				errmsg.append("确认保存？");
+			}else if(checktype != null && checktype == 1){
+				errmsg.append("确定确认？");
+			}
 			datavo.setVerrmsg(errmsg.toString());
 		}
 		return datavo;

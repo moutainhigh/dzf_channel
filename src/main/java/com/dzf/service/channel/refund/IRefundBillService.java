@@ -37,18 +37,20 @@ public interface IRefundBillService {
 	/**
 	 * 查询退款金额
 	 * @param paramvo
+	 * @param type  -1：新增时查询；1：保存前校验；2：确认前校验；
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public RefundBillVO queryRefundMny(RefundBillVO paramvo) throws DZFWarpException;
+	public RefundBillVO queryRefundMny(RefundBillVO paramvo, Integer type) throws DZFWarpException;
 	
 	/**
-	 * 保存前校验
+	 * 保存、确认前校验
 	 * @param datavo
+	 * @param checktype  1：保存前校验；2：确认前校验；
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public RefundBillVO checkBeforeSave(RefundBillVO datavo) throws DZFWarpException;
+	public RefundBillVO checkBeforeSave(RefundBillVO datavo, Integer checktype) throws DZFWarpException;
 	
 	/**
 	 * 删除

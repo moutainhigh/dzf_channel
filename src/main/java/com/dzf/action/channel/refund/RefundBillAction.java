@@ -158,7 +158,7 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
-				RefundBillVO refvo = refundser.queryRefundMny(data);
+				RefundBillVO refvo = refundser.queryRefundMny(data, -1);
 				json.setSuccess(true);
 				json.setRows(refvo);
 				json.setMsg("操作成功");
@@ -177,25 +177,51 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 	 */
 	public void checkBeforeSave() {
 		Json json = new Json();
-		if (data != null) {
-			try {
-				UserVO uservo = getLoginUserInfo();
-				pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
-					throw new BusinessException("登陆用户错误");
-				}
-				RefundBillVO refvo = refundser.checkBeforeSave(data);
-				json.setSuccess(true);
-				json.setRows(refvo);
-				json.setMsg("操作成功");
-			} catch (Exception e) {
-				printErrorLog(json, log, e, "操作失败");
+//		if (data != null) {
+//			try {
+//				UserVO uservo = getLoginUserInfo();
+//				pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
+//				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+//					throw new BusinessException("登陆用户错误");
+//				}else if(uservo == null){
+//					throw new BusinessException("登陆用户错误");
+//				}
+//				String type = getRequest().getParameter("checktype");
+//				Integer checktype = Integer.parseInt(type);
+//				RefundBillVO refvo = refundser.checkBeforeSave(data, checktype);
+//				json.setSuccess(true);
+//				json.setRows(refvo);
+//				json.setMsg("操作成功");
+//			} catch (Exception e) {
+//				printErrorLog(json, log, e, "操作失败");
+//			}
+//		} else {
+//			json.setSuccess(false);
+//			json.setMsg("操作数据为空");
+//		}
+		
+		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
 			}
-		} else {
-			json.setSuccess(false);
-			json.setMsg("操作数据为空");
+			String data = getRequest().getParameter("data");
+			JSON headjs = (JSON) JSON.parse(data);
+			Map<String, String> refmaping = FieldMapping.getFieldMapping(new RefundBillVO());
+			RefundBillVO billvo = DzfTypeUtils.cast(headjs, refmaping, RefundBillVO.class, JSONConvtoJAVA.getParserConfig());
+			
+			String type = getRequest().getParameter("checktype");
+			Integer checktype = Integer.parseInt(type);
+			
+			RefundBillVO refvo = refundser.checkBeforeSave(billvo, checktype);
+			json.setSuccess(true);
+			json.setRows(refvo);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}

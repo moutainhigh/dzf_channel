@@ -83,12 +83,12 @@
 						<div style="width:32%;display: inline-block">
 							<label style="width:90px;text-align: right;"><i class="bisu">*</i>预付款退款:</label>
 							<input id="yfktk" name="yfktk" class="easyui-numberbox" style="width:200px;height:26px;"
-								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
+								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','" />
 						</div>	
 						<div style="width:33%;display: inline-block">
 							<label style="width:90px;text-align: right;"><i class="bisu">*</i>保证金退款:</label>
 							<input id="bzjtk" name="bzjtk" class="easyui-numberbox" style="width:200px;height:26px;" 
-								data-options="required:true,validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
+								data-options="validType:'length[0,12]',min:0,precision:2,groupSeparator:','"/>
 						</div>
 					</div>
 					<div class="time_col time_colp11">
@@ -119,12 +119,12 @@
 			          	<div style="width:32%;display: inline-block">
 							<label style="width:90px;text-align:right;">&emsp;退款单号: </label>
 							<input id="evcode" name="vcode" class="easyui-textbox" style="width:200px;height:26px;"
-								data-options="readonly:true,required:true,validType:'length[0,30]'" />
+								data-options="readonly:true,validType:'length[0,30]'" />
 					 	</div>
 					 	<div style="display: inline-block;width:33%;">
 							<label style="width:90px;text-align: right;"><i class="bisu">*</i>加盟商:</label>
 						    <input id="ecorp" name="corp" class="easyui-textbox" style="width:200px;height:26px;"
-								data-options="readonly:true,required:true,validType:'length[0,100]'" />
+								data-options="readonly:true,validType:'length[0,100]'" />
 							<input id="ecorpid" name="corpid" type="hidden">
 						</div>
 						<div style="display: inline-block;width:33%;">

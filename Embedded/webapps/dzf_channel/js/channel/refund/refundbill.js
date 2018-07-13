@@ -196,6 +196,7 @@ function reloadData(){
 	});
 	setQryData();
 	$("#qrydialog").hide();  
+	$("#grid").datagrid('uncheckAll');
 }
 
 /**
@@ -249,16 +250,13 @@ function onSave(){
 	if($("#addForm").form('validate')){
 		var postdata = new Object();
 		postdata["data"] = JSON.stringify(serializeObject($('#addForm')));
+		postdata["checktype"] = 1;
 		$('#addForm').form('submit', {
 			url : contextPath + '/refund/refundbill!checkBeforeSave.action',
 			queryParams : postdata,
 			success : function(result) {
 				var result = eval('(' + result + ')');
 				if (result.success) {
-					Public.tips({
-						content : result.msg,
-						type : 0
-					})
 					var row = result.rows;
 					if(!isEmpty(row.errmsg)){
 						$.messager.confirm("提示", row.errmsg, function(r) {
@@ -362,6 +360,7 @@ function onEditSave(){
 	if($("#editForm").form('validate')){
 		var postdata = new Object();
 		postdata["data"] = JSON.stringify(serializeObject($('#editForm')));
+		postdata["checktype"] = 1;
 		$('#editForm').form('submit', {
 			url : contextPath + '/refund/refundbill!checkBeforeSave.action',
 			queryParams : postdata,
@@ -447,9 +446,9 @@ function onDelete(){
 
 function onOperat(type){
 	var rows = $('#grid').datagrid('getChecked');
-	if (rows == null || rows.length == 0) {
+	if (rows == null || rows.length != 1) {
 		Public.tips({
-			content : '请选择需要处理的数据',
+			content : '请选择一行的数据',
 			type : 2
 		});
 		return;
@@ -464,7 +463,35 @@ function onOperat(type){
 	
 	$.messager.confirm("提示", msg, function(r) {
 		if (r) {
-			updateData(type, rows);
+			if(type == 1){
+				var postdata = new Object();
+				postdata["data"] = JSON.stringify(rows[0]);
+				postdata["checktype"] = 2;
+				$.ajax({
+					type : "post",
+					dataType : "json",
+					url : contextPath + '/refund/refundbill!checkBeforeSave.action',
+					data : postdata,
+					traditional : true,
+					async : false,
+					success : function(result) {
+						if (result.success) {
+							var row = result.rows;
+							if(!isEmpty(row.errmsg)){
+								$.messager.confirm("提示", row.errmsg, function(r) {
+									if (r) {
+										updateData(type, rows);
+									}
+								});
+							}else{
+								updateData(type, rows);
+							}
+						} 
+					},
+				});
+			}else if(type == 2){
+				updateData(type, rows);
+			}
 		}
 	});
 }
@@ -546,6 +573,7 @@ function updateData(type, rows){
 			}
 		},
 	});
+	$("#grid").datagrid('uncheckAll');
 }
 
 /**
