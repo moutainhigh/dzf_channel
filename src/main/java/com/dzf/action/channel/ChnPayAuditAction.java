@@ -30,6 +30,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayAuditService;
@@ -61,6 +62,12 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 	public void query() {
 		Grid grid = new Grid();
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
@@ -94,6 +101,7 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_37);
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
