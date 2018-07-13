@@ -11,10 +11,13 @@ import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.service.channel.rebate.IRebateAuditService;
+import com.dzf.service.pub.IPubService;
 
 /**
  * 返点单审批
+ * 
  * @author zy
  *
  */
@@ -26,10 +29,13 @@ public class RebateAuditAction extends BaseAction<RebateVO> {
 	private static final long serialVersionUID = -4800266979617985267L;
 
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private IRebateAuditService auditser;
-	
+
+	@Autowired
+	private IPubService pubser;
+
 	/**
 	 * 审批/驳回
 	 */
@@ -38,25 +44,26 @@ public class RebateAuditAction extends BaseAction<RebateVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_27);
 				String opertype = getRequest().getParameter("opertype");
 				Integer iopertype = null;
-				if(opertype != null){
+				if (opertype != null) {
 					iopertype = Integer.parseInt(opertype);
 				}
 				data.setVapproveid(getLoginUserid());
 				data = auditser.updateAudit(data, getLogincorppk(), iopertype);
 				json.setRows(data);
-				json.setSuccess(true);	
+				json.setSuccess(true);
 				json.setMsg("审批成功");
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "审批失败");
 			}
-		}else {
+		} else {
 			json.setSuccess(false);
 			json.setMsg("审批失败");
 		}
