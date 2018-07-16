@@ -26,15 +26,19 @@ import com.dzf.model.channel.CorpNameEVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.ICorpEditConfService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 客户名称修改审核
@@ -150,6 +154,19 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 				json.setStatus(-1);
 				if (rignum > 0) {
 					json.setRows(rightlist);
+				}
+			}
+			if(rignum > 0){
+				if(opertype == 2){//审核通过
+					if(rignum == 1){
+						CorpVO corpvo = CorpCache.getInstance().get(null, rightlist.get(0).getPk_corp());
+						if(corpvo != null){
+							writeLogRecord(LogRecordEnum.OPE_CHANNEL_30.getValue(), 
+									"审核客户名称：客户编码:"+corpvo.getInnercode(), ISysConstants.SYS_3);
+						}
+					}else{
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_30.getValue(), "审核客户名称"+rignum+"个", ISysConstants.SYS_3);
+					}
 				}
 			}
 		} catch (Exception e) {
