@@ -26,6 +26,7 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -34,6 +35,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.IChnAreaService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 渠道区域划分或培训区域划分
@@ -67,10 +69,32 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
 			ChnAreaVO headvo = requestDealStep(getRequest());
+			String operate="";
+			if(StringUtil.isEmpty(headvo.getPk_chnarea())){
+				operate="新增";
+			}else{
+				operate="修改";
+			}
 			headvo = chnarea.save(headvo);
 			json.setSuccess(true);
 			json.setRows(headvo);
 			json.setMsg("保存成功!");
+			Integer logValue=null;
+			if(headvo.getType()==1){
+				logValue=LogRecordEnum.OPE_CHANNEL_QDQYHF.getValue();
+				operate+="渠道区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+			}else if(headvo.getType()==2){
+				logValue=LogRecordEnum.OPE_CHANNEL_28.getValue();
+				operate+="培训区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+			}else{
+				logValue=LogRecordEnum.OPE_CHANNEL_35.getValue();
+				operate+="运营区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+			}
+			if("新增".equals(operate)){
+				writeLogRecord(logValue, operate, ISysConstants.SYS_3);
+			}else{
+				writeLogRecord(logValue, operate, ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
