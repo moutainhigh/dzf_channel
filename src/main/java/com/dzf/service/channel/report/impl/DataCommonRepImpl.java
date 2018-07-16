@@ -178,7 +178,7 @@ public class DataCommonRepImpl {
 	private List<DataVO> qryNotCharge(QryParamVO qvo,Class cla) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname,");
+		sql.append("select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname ");
 		sql.append(" from bd_account p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2" );
