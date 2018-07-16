@@ -164,13 +164,14 @@ public class InvManagerServiceImpl implements InvManagerService {
         return Integer.valueOf(total);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
         sql.append("select pk_corp,unitname,innercode,vprovince from bd_account ba");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
-        sql.append(" and nvl(ischannel,'N') = 'Y' and nvl(isseal,'N')='N' ");
+        sql.append(" and nvl(ischannel,'N') = 'Y' ");
         if (vo.getDr() != null && vo.getDr() != -1) {// 给区域划分（省市过滤）用的
             sql.append(" and vprovince=? ");
             sp.addParam(vo.getDr());
