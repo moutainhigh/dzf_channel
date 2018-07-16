@@ -23,11 +23,13 @@ import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -35,6 +37,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayAuditService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 付款单审批
@@ -112,7 +115,7 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 				throw new BusinessException("数据不能为空");
 			}
 			String type = getRequest().getParameter("type"); // 操作类型
-			String vreason = getRequest().getParameter("vreason"); // 操作类型
+			String vreason = getRequest().getParameter("vreason"); // 驳回原因
 			Integer opertype = Integer.valueOf(type);
 			data = data.replace("}{", "},{");
 			data = "[" + data + "]";
@@ -146,6 +149,25 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 				json.setStatus(-1);
 				if(rignum > 0){
 					json.setRows(rightlist);
+				}
+			}
+			if(rignum > 0){
+				if(opertype == IStatusConstant.ICHNOPRATETYPE_10){//收款审批
+					if(rignum == 1){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "审核付款单：单据号："
+								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+					}else{
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "审核付款单"+rignum+"个", ISysConstants.SYS_3);
+					}
+				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_9){//审批驳回
+					if(rignum == 1){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "驳回付款单：单据号："
+								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+					}else{
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "驳回付款单"+rignum+"个", ISysConstants.SYS_3);
+					}
+				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_2){//取消审批
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "取消审批付款单", ISysConstants.SYS_3);
 				}
 			}
 		} catch (Exception e) {
@@ -183,6 +205,7 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出付款单", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
