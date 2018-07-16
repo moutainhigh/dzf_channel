@@ -54,7 +54,7 @@ function initDataGrid(){
 							} else if(value ==1){
 								return '加盟费';
 							} 
-		            }},
+		            }}, 
 		            /*{width : '80',title : '发票性质',field : 'nature',align:'left',
 						formatter: function(value,row,index){
 			          		if (value == 0){
@@ -102,7 +102,12 @@ function initDataGrid(){
 							}
 		            }},
 		            {width : '100',title : '备注',field : 'vmome',align:'center'},
-		            {width : '100',title : '换票说明',field : 'vcmemo',align:'center'},
+		            {width : '100',title : '换票说明',field : 'vcmemo',align:'center',formatter : function(value) {
+			    		if(value!=undefined){
+			    			return "<span title='" + value + "'>" + value + "</span>";
+			    		}
+					}},
+				
 		            {width : '160',title : '发票流水号',field : 'reqserialno',align:'left'},
 		            {width : '200',title : '二维码URL',field : 'qrcodepath',align:'center',formatter:codeLink,},
 		            
