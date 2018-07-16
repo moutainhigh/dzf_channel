@@ -440,6 +440,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 			str="2";
 		}
 		mapz.put("stat",str);
+		mapz.put("len_suc", vos.length);
 		return mapz;
 	}
 
@@ -449,6 +450,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		mapz.put("errmsg", errmsg);
 		mapz.put("list", null);
 		mapz.put("stat","2");
+		mapz.put("len_suc", 0);
 		return mapz;
 	}
 

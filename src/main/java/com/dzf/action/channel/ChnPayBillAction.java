@@ -171,6 +171,20 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 				cons[0].setSubmitid(getLoginUserid());// 提单人
 			}
 			HashMap<String, Object> cmap = chnpay.updateStatusMult(cons, stat);
+			Integer len_suc = Integer.valueOf(cmap.get("len_suc").toString());
+			if(cons.length==1){
+				if(stat==-1 && len_suc!=0){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_36.getValue(), "删除付款单：单据号："+cons[0].getVbillcode(), ISysConstants.SYS_3);
+				}else if(stat==2 && len_suc!=0){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_36.getValue(), "提交付款单：单据号："+cons[0].getVbillcode(), ISysConstants.SYS_3);
+				}
+			}else{
+				if(stat==-1 && len_suc!=0){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_36.getValue(), "删除付款单"+len_suc+"个", ISysConstants.SYS_3);
+				}else if(stat==2 && len_suc!=0){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_36.getValue(), "提交付款单"+len_suc+"个", ISysConstants.SYS_3);
+				}
+			}
 			if (cmap.get("stat").equals("1")) {
 				json.setStatus(-1);
 			}
