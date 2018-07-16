@@ -367,7 +367,7 @@ function insertData(data){
 	});
 
 	$('#grid').datagrid('appendRow',{
-			aname: data.rows[data.rows.length-2].aname+'合计',
+			aname: data.rows[data.rows.length-2].aname==undefined?'无大区合计':data.rows[data.rows.length-2].aname+'合计',
 			bondmny	:	bondmny2,
 			predeposit 	:	predeposit2 ,
 			xgmNum 	:	xgmNum2 ,
