@@ -247,7 +247,7 @@
 						data-options="modal:true,resizable:true,closed:true,buttons:'#changeBtn'">
 			<form action="" method="post" id="changeFrom">			
 				 <div class="time_col time_colp11">
-				 	开票日期:<input id="dcdate" name="dcdate" class = "easyui-datebox" style="width:130px;height:26px;"/>
+				 	换票日期:<input id="dcdate" name="dcdate" class = "easyui-datebox" style="width:130px;height:26px;"/>
 				 </div>
 				 <div class="time_col time_colp11">
 					换票说明:<input id="vcmemo" name="vcmemo" class="easyui-textbox" data-options="multiline:true" style="width:230px;height:90px;text-align:left">
