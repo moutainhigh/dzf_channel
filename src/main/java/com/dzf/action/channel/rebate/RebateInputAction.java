@@ -32,6 +32,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -42,6 +43,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 返点单录入
@@ -116,11 +118,18 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
+				String opertype = "";
+				if(StringUtil.isEmpty(data.getPk_rebate())){
+					opertype = "isAdd";
+				}
 				setDefaultValue(data);
 				data = rebateser.save(data, getLogincorppk());
 				json.setRows(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功");
+				if("isAdd".equals(opertype)){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "新增返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+				}
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "保存失败");
 			}
@@ -331,6 +340,12 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 				} else {
 					json.setMsg("成功提交" + retlist.size() + "条数据");
 				}
+				if(retlist.size() == 1){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "提交返点单：单据号："
+							+retlist.get(0).getVbillcode(), ISysConstants.SYS_3);
+				}else{
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "提交返点单"+retlist.size()+"个", ISysConstants.SYS_3);
+				}
 			} else {
 				json.setStatus(-1);
 				json.setMsg("成功提交0条数据，失败原因：" + errmsg.toString());
@@ -412,7 +427,6 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		Excelexport2003<RebateVO> ex = new Excelexport2003<RebateVO>();
 		RebateExcelField fields = new RebateExcelField();
 		fields.setVos(explist.toArray(new RebateVO[0]));
-		;
 		fields.setQj("");
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -427,6 +441,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "导出返点单", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
