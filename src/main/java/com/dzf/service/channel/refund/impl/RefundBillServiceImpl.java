@@ -123,7 +123,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		}
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 			sql.append("   AND f.istatus = ? \n");
-			spm.addBlobParam(paramvo.getVdeductstatus());
+			spm.addParam(paramvo.getVdeductstatus());
 		}
 		sql.append("   ORDER BY f.updatets DESC \n");
 		qryvo.setSql(sql.toString());

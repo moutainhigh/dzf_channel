@@ -172,7 +172,7 @@
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 			</h3>
 			<div class="time_col time_colp10">
-				<label style="width: 90px;text-align:right">退款期间：</label>
+				<label style="width: 90px;text-align:right">退款日期：</label>
 				<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" value=<%= btdate %>
 					data-options="width:130,height:27,editable:true,validType:'checkdate'"/></font>
 				<font>-</font>
