@@ -36,6 +36,7 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -43,6 +44,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IContractConfirm;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 合同确认
@@ -154,6 +156,13 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				log.info("单个审核-获取审核数据为空");
 			}
 			ContractConfrimVO retvo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
+			if(retvo != null){
+				if(IStatusConstant.IDEDUCTYPE_1 == opertype){//审核
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+				}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+				}
+			}
 			json.setRows(retvo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
@@ -171,7 +180,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if(uservo != null && !"000001".equals(uservo.getPk_corp())){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
@@ -229,6 +238,13 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				json.setStatus(-1);
 				if(rignum > 0){
 					json.setRows(rightlist);
+				}
+			}
+			if(rignum > 0){
+				if(opertype == 1){//审核
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同："+rignum+"个", ISysConstants.SYS_3);
+				}else if(opertype == 2){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同："+rignum+"个", ISysConstants.SYS_3);
 				}
 			}
 		} catch (Exception e) {
@@ -348,6 +364,13 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 					throw new BusinessException("变更附件不能为空");
 				}
 				ContractConfrimVO retvo = contractconfser.saveChange(data, getLoginUserid(), files, filenames);
+				if(retvo != null){
+					if(data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){//终止
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "终止合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+					}else if(data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){//作废
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "作废合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+					}
+				}
 				json.setRows(retvo);
 				json.setSuccess(true);	
 				json.setMsg("变更成功");
@@ -420,6 +443,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
             toClient = new BufferedOutputStream(servletOutputStream);
             response.setContentType("applicationnd.ms-excel;charset=gb2312");
             ex.exportExcel(fields, toClient);
+            writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "导出合同列表", ISysConstants.SYS_3);
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
