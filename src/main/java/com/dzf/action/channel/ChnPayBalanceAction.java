@@ -32,6 +32,7 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.Field.FieldMapping;
@@ -41,6 +42,7 @@ import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportUtil;
 import com.dzf.service.pub.report.PrintUtil;
 import com.itextpdf.text.DocumentException;
@@ -78,6 +80,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 				grid.setRows(Arrays.asList(balVOs));
 				grid.setSuccess(true);
 				grid.setMsg("操作成功");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_3.getValue(), "付款余额表查询", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
 				grid.setRows(new ArrayList<ChnBalanceRepVO>());
