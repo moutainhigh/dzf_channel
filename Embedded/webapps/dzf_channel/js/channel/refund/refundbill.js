@@ -463,7 +463,7 @@ function onOperat(type){
 			});
 			return;
 		}
-		msg = "你确定要确认吗";
+		msg = "你确定要确认吗？";
 	}else if(type == 2){
 		if(rows[0].stat == 0){
 			Public.tips({
@@ -472,7 +472,7 @@ function onOperat(type){
 			});
 			return;
 		}
-		msg = "你确定要取消确认吗";
+		msg = "你确定要取消确认吗？";
 	}
 	
 	$.messager.confirm("提示", msg, function(r) {
