@@ -24,6 +24,7 @@ import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldMapping;
@@ -31,6 +32,7 @@ import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IDebitQueryService;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.PrintUtil;
 import com.itextpdf.text.DocumentException;
@@ -81,6 +83,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			grid.setRows(rows);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功!");
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_23.getValue(), "加盟商扣款查询成功", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
@@ -162,6 +165,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			}
  			bodyvos[0].setDbegindate(qj);
 			printGroup(new HashMap<String, List<SuperVO>>(),bodyvos, "加盟商扣款查询", columnlist, columnkeys.toArray(new String[columnkeys.size()]),size,70);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_23.getValue(), "加盟商扣款查询表打印", ISysConstants.SYS_3);
 		} catch (DocumentException e) {
 			log.error(e);
 		} catch (IOException e) {
@@ -221,6 +225,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			byte[] length = ex.exportDebitExcel("加盟商扣款查询",heads,heads1,fieldslist ,array,toClient,"",fieldlist);
 			String srt2=new String(length,"UTF-8");
 			response.addHeader("Content-Length", srt2);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_23.getValue(), "加盟商扣款查询表导出", ISysConstants.SYS_3);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
