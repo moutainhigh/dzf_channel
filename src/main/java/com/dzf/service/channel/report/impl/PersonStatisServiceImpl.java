@@ -29,8 +29,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
-//	private static String[] str1={"jms02","jms06","jms07","jms08","jms09","jms05","jms11"};
-	
 	private static String[] str={"jms03","jms04","jms10"};
 
 	@Override
@@ -93,6 +91,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
 		sql.append("         inner join sm_user su on sur.cuserid = su.cuserid");
+		sql.append("                              and nvl(su.locked_tag,'N')= 'N'");
 		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp where");
 		sql.append(SqlUtil.buildSqlForIn("su.pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0   ");
@@ -110,12 +109,15 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param areaname
 	 */
 	private void setZhanBi(PersonStatisVO setVO,Integer tmp, String areaname) {
+		DZFDouble tem_total=null;
 		if(Arrays.asList(str).contains(areaname)){
+			tem_total=setVO.getXtotal()==null? DZFDouble.ZERO_DBL : setVO.getXtotal();
 			DZFDouble xtotal = tmp == null ? DZFDouble.ZERO_DBL : new DZFDouble(tmp);
-			setVO.setXtotal(xtotal.div(setVO.getTotal()).multiply(100));
-		}else{
+			setVO.setXtotal(tem_total.add(xtotal.div(setVO.getTotal()).multiply(100)));
+		}else if(!"jms01".equals(areaname)){
+			tem_total=setVO.getKtotal()==null? DZFDouble.ZERO_DBL : setVO.getKtotal();
 			DZFDouble ktotal = tmp == null ? DZFDouble.ZERO_DBL : new DZFDouble(tmp);
-			setVO.setKtotal(ktotal.div(setVO.getTotal()).multiply(100));
+			setVO.setKtotal(tem_total.add(ktotal.div(setVO.getTotal()).multiply(100)));
 		}
 	}
 
