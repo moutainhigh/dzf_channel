@@ -2,7 +2,6 @@ package com.dzf.action.channel.chn_set;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import com.dzf.model.channel.sale.SaleAnalyseVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
@@ -31,6 +31,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.ISaleAnalyseService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 销售数据分析
@@ -59,6 +60,9 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 			grid.setRows(rows);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功!");
+			if(rows!=null && rows.size()>0){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_24.getValue(), "销售数据分析查询成功", ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
