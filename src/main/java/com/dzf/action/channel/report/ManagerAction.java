@@ -28,6 +28,7 @@ import com.dzf.model.pub.IButtonName;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.constant.IFunNode;
@@ -35,6 +36,7 @@ import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.report.IManagerService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.ExportUtil;
 import com.dzf.service.pub.report.PrintUtil;
@@ -78,6 +80,13 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 				grid.setRows(vos);
 				grid.setSuccess(true);
 				grid.setMsg("查询成功!");
+				if(type==3){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_QDZSJFX.getValue(), "渠道总数据分析查询成功", ISysConstants.SYS_3);
+				}else if(type==2){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_DQSJFX.getValue(), "大区总数据分析查询成功", ISysConstants.SYS_3);
+				}else{
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_SSJFX.getValue(), "省数据分析查询成功", ISysConstants.SYS_3);
+				}
 			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
@@ -181,6 +190,13 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			byte[] length = ex.exportManExcel(title,heads,heads1,fieldslist ,exparray,toClient,"",fieldlist,num);
 			String srt2=new String(length,"UTF-8");
 			response.addHeader("Content-Length", srt2);
+			if(type==3){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_QDZSJFX.getValue(), "导出渠道总数据分析表", ISysConstants.SYS_3);
+			}else if(type==2){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_DQSJFX.getValue(), "导出大区总数据分析表", ISysConstants.SYS_3);
+			}/*else{
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_SSJFX.getValue(), "导出省数据分析表", ISysConstants.SYS_3);
+			}*/
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
