@@ -27,11 +27,13 @@ import com.dzf.action.channel.expfield.ChnPayBillExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -39,6 +41,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IChnPayConfService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 付款单确认
@@ -142,6 +145,25 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				json.setStatus(-1);
 				if(rignum > 0){
 					json.setRows(rightlist);
+				}
+			}
+			if(rignum > 0){
+				if(opertype == IStatusConstant.ICHNOPRATETYPE_3){//收款确认
+					if(rignum == 1){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "确认付款单：单据号："
+								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+					}else{
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "确认付款单"+rignum+"个", ISysConstants.SYS_3);
+					}
+				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4){//确认驳回
+					if(rignum == 1){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "驳回付款单：单据号："
+								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+					}else{
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "驳回付款单"+rignum+"个", ISysConstants.SYS_3);
+					}
+				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_5){//取消确认
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "取消确认付款单", ISysConstants.SYS_3);
 				}
 			}
 		} catch (Exception e) {
@@ -273,6 +295,7 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "导出付款单", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
