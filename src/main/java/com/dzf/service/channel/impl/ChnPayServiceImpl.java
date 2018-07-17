@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
-import com.dzf.dao.jdbc.framework.processor.ArrayProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChnPayBillVO;
@@ -274,7 +272,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 			return reFail(mapz, len, errmsg);
 		}
 		String s = sb.substring(0, sb.length()-1);
-		HashMap<String, Object> cmap = checkDatas(vos, s, vos[0].getPk_corp(), errmsg, stat);
+		HashMap<String, Object> cmap = checkDatas(vos, s, errmsg, stat);
 		list=(ArrayList<ChnPayBillVO>) cmap.get("list");
 		errmsg=(String) cmap.get("errmsg");
 		if(list!=null&&list.size()>0){
@@ -550,11 +548,10 @@ public class ChnPayServiceImpl implements IChnPayService {
 	/**
 	 * 多个付款时间戳校验
 	 */
-	private HashMap<String,Object> checkDatas(ChnPayBillVO[] vos,String pk_paybills, String pk_corp,String errmsg,int stat){
+	private HashMap<String,Object> checkDatas(ChnPayBillVO[] vos,String pk_paybills,String errmsg,int stat){
 		HashMap<String,Object> cmap=new HashMap<>();
-		String condition = " pk_corp=? and nvl(dr,0)=0 and pk_paybill in("+ pk_paybills + ")";
+		String condition = "  nvl(dr,0)=0 and pk_paybill in("+ pk_paybills + ")";//pk_corp=? and
 		SQLParameter params = new SQLParameter();
-		params.addParam(pk_corp);
 		ArrayList<ChnPayBillVO> list = (ArrayList<ChnPayBillVO>)singleObjectBO.retrieveByClause(ChnPayBillVO.class, condition, params);
 		HashMap<String , ChnPayBillVO> map=new HashMap<>();
 		for (ChnPayBillVO vo : list) {
