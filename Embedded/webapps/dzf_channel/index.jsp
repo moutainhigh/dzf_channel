@@ -435,7 +435,6 @@ function tranImg(trun){
 </div>
 <!-- 打开图片展示窗口 end -->
 <script>
-
 function addEvent(obj, sType, fn) {
 	if (obj.addEventListener) {
 		obj.addEventListener(sType, fn, false);
@@ -474,8 +473,13 @@ function addWheelEvent(obj, callback) {
 /*页面载入后*/
 function initconturnid() {
 	document.getElementById('conturnid').onload = function(){
-		document.getElementById('conturnid').style.left = (1200 - document.getElementById('conturnid').offsetWidth)/2 + "px"
-		document.getElementById('conturnid').style.top = (520 - document.getElementById('conturnid').offsetHeight)/2 + "px"
+		var widths = document.getElementById("fullViewDlg").offsetWidth - 100 ;
+		 heights = document.getElementById("fullViewDlg").offsetHeight  -116 ;
+		 widthpx = widths+"px";
+		 heightpx = heights+"px";
+		$("#fullViewContent").css({"width":widthpx,"height":heightpx})
+		document.getElementById('conturnid').style.left = (widths - document.getElementById('conturnid').offsetWidth)/2 + "px"
+		document.getElementById('conturnid').style.top = (heights - document.getElementById('conturnid').offsetHeight)/2 + "px"
 
 	}
 	
@@ -520,19 +524,21 @@ function initconturnid() {
 	
 	(function() {
 		addWheelEvent(oImg, function(delta) {
-			console.log(this.offsetX)
+			
 			var ratioL = this.offsetX / oImg.offsetWidth,
 			ratioT = this.offsetY / oImg.offsetHeight,
 			qusX = oImg.offsetLeft + this.offsetX,
 			qusY = oImg.offsetTop + this.offsetY,
-
 			ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
-		
+			
 			w = parseInt(oImg.offsetWidth * ratioDelta),
 			h = parseInt(oImg.offsetHeight * ratioDelta),
-
+	
 			l = Math.round(qusX - (w * ratioL)),
 			t = Math.round(qusY - (h * ratioT));
+			if(w < 150 || h<80){
+				return false
+			};
 			with(oImg.style) {
 				width = w +'px';
 				height = h +'px';
