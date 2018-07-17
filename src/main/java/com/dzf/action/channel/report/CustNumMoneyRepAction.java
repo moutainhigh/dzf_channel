@@ -14,9 +14,11 @@ import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 加盟商客户数量金额统计
@@ -56,6 +58,7 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustNumMoneyRepVO[0]), page, rows)));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "业绩统计查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
 				grid.setRows(list);

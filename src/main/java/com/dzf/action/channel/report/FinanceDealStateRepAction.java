@@ -14,10 +14,12 @@ import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 财务处理情况反馈
@@ -58,6 +60,7 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new FinanceDealStateRepVO[0]), page, rows)));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_8.getValue(), "财务处理分析查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
 				grid.setRows(list);

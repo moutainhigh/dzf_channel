@@ -15,10 +15,12 @@ import com.dzf.model.channel.report.CustManageRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.ICustManageRep;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 加盟商客户管理
@@ -59,6 +61,7 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustManageRepVO[0]), page, rows)));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_HYFX.getValue(), "行业分析查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
 				grid.setRows(list);
