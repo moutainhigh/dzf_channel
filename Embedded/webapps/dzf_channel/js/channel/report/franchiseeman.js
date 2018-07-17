@@ -188,6 +188,22 @@ function load() {
 			],
 		onLoadSuccess : function(data) {
 			insertData(data);
+			
+			for(var i = 0;i<data.rows.length;i++){
+				if(data.rows[i].provname){
+					if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "省" || data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "市" ){
+						
+						$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")
+					}else if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "计" ){
+						$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
+					}
+				}else if(data.rows[i].aname.substr(data.rows[i].aname.length -2,2) == "合计"){
+					
+					$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#a9b9d5")
+				}
+			}
+			
+			
 		}
 	});
 }
