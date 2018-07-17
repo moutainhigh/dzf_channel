@@ -18,13 +18,16 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IPackageDefService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 服务套餐定义
@@ -96,6 +99,23 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 			// json.setRows(data);
 			json.setSuccess(true);
 			json.setMsg("保存成功");
+			PackageDefVO logVO=null;
+			StringBuffer buf=new StringBuffer();
+			if(insertData!=null && insertData.length>0){
+				logVO=insertData[0];
+				buf.append("新增服务套餐：");
+				buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+				buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+				buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+			}else if(updateData!=null && updateData.length>0){
+				logVO=updateData[0];
+				buf.append("修改服务套餐：");
+				buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+				buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+				buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败！");
 		}
@@ -137,6 +157,17 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 				json.setSuccess(true);
 				json.setRows(defvos);
 				json.setMsg("删除成功");
+				if(defvos!=null && defvos.length==1){
+					PackageDefVO logVO=defvos[0];
+					StringBuffer buf=new StringBuffer();
+					buf.append("删除服务套餐：");
+					buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+					buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+					buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+				}else if(defvos!=null && defvos.length>1){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), "删除服务套餐"+defvos.length+"个", ISysConstants.SYS_3);
+				}
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "删除失败");
 			}
@@ -170,6 +201,17 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 				json.setSuccess(true);
 				json.setRows(defvos);
 				json.setMsg("发布成功");
+				if(defvos!=null && defvos.length==1){
+					PackageDefVO logVO=defvos[0];
+					StringBuffer buf=new StringBuffer();
+					buf.append("发布服务套餐：");
+					buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+					buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+					buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+				}else if(defvos!=null && defvos.length>1){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), "发布服务套餐"+defvos.length+"个", ISysConstants.SYS_3);
+				}
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "发布失败");
 			}
@@ -203,6 +245,17 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 				json.setSuccess(true);
 				json.setRows(defvos);
 				json.setMsg("下架成功");
+				if(defvos!=null && defvos.length==1){
+					PackageDefVO logVO=defvos[0];
+					StringBuffer buf=new StringBuffer();
+					buf.append("下架服务套餐：");
+					buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+					buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+					buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+				}else if(defvos!=null && defvos.length>1){
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), "下架服务套餐"+defvos.length+"个", ISysConstants.SYS_3);
+				}
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "下架失败");
 			}
