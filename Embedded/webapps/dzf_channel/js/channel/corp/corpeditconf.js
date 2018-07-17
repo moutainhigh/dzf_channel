@@ -417,7 +417,7 @@ function showImage(id){
 //			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
 //			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
 //	  		+'</a></div>','原图');
-	var img = '<img id="conturnid" alt="无法显示图片" dblclick="downFile(\'' +id + '\', 2)" onmouseover="showTips()" onmouseout="hideTips()" '
+	var img = '<img id="conturnid" alt="无法显示图片" ondblclick="downFile(\'' +id + '\', 2)" onmouseover="showTips()" onmouseout="hideTips()" '
 		+' src="' + src + '" style="position: absolute;z-index: 1;left:50px;top:50px;">'
 		+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;">';
 	parent.openFullViewDlg(img, '原图', id, 2 );
