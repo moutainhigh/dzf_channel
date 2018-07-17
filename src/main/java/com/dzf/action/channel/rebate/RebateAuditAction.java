@@ -8,12 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.rebate.RebateVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.service.channel.rebate.IRebateAuditService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 返点单审批
@@ -57,6 +60,13 @@ public class RebateAuditAction extends BaseAction<RebateVO> {
 				}
 				data.setVapproveid(getLoginUserid());
 				data = auditser.updateAudit(data, getLogincorppk(), iopertype);
+				if(data != null){
+					if (iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_1) {//驳回修改
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "审批确认返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}else if(iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_4){//审核通过
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "驳回确认返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}
+				}
 				json.setRows(data);
 				json.setSuccess(true);
 				json.setMsg("审批成功");
