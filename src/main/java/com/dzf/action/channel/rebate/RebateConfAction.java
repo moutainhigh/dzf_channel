@@ -12,10 +12,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.rebate.RebateVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -23,6 +25,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.rebate.IRebateConfService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 返点单确认
@@ -66,6 +69,13 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 				data.setVconfirmid(getLoginUserid());
 				data.setTconfirmtime(new DZFDateTime());
 				data = confser.updateConf(data, getLogincorppk(), iopertype);
+				if(data != null){
+					if (iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_1) {//驳回修改
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_26.getValue(), "驳回返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}else if(iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_2){//确认通过
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_26.getValue(), "确认返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}
+				}
 				json.setRows(data);
 				json.setSuccess(true);	
 				json.setMsg("确认成功");
@@ -110,6 +120,11 @@ public class RebateConfAction extends BaseAction<RebateVO> {
 				iopertype = Integer.parseInt(opertype);
 			}
 			RebateVO retvo = confser.updateConf(rabateVOs[0], getLogincorppk(), iopertype);
+			if(retvo != null){
+				if(iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_3){//取消确认
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_26.getValue(), "取消确认返点单：单据号："+retvo.getVbillcode(), ISysConstants.SYS_3);
+				}
+			}
 			json.setRows(retvo);
 			json.setSuccess(true);	
 			json.setMsg("取消确认成功");
