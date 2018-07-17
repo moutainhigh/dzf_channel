@@ -31,6 +31,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
@@ -41,6 +42,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.refund.IRefundBillService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 付款单
@@ -107,12 +109,25 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 				}else if(uservo == null){
 					throw new BusinessException("登陆用户错误");
 				}
+				String opertype = "";
+				if(StringUtil.isEmpty(data.getPk_refund())){
+					opertype = "isAdd";
+				}else{
+					opertype = "isEdit";
+				}
 				if (data.getNrefbzjmny().compareTo(DZFDouble.ZERO_DBL) == 0
 						&& data.getNrefyfkmny().compareTo(DZFDouble.ZERO_DBL) == 0) {
 					throw new BusinessException("保证金退款与预付款退款不能同时都为0");
 				}
 				setDefaultValue(data);
 				data = refundser.save(data, getLogincorppk());
+				if(data != null){
+					if("isAdd".equals(opertype)){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "新增退款单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}else if("isEdit".equals(opertype)){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "修改退款单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+					}
+				}
 				json.setRows(data);
 				json.setSuccess(true);	
 				json.setMsg("保存成功");
@@ -177,29 +192,6 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 	 */
 	public void checkBeforeSave() {
 		Json json = new Json();
-//		if (data != null) {
-//			try {
-//				UserVO uservo = getLoginUserInfo();
-//				pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
-//				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-//					throw new BusinessException("登陆用户错误");
-//				}else if(uservo == null){
-//					throw new BusinessException("登陆用户错误");
-//				}
-//				String type = getRequest().getParameter("checktype");
-//				Integer checktype = Integer.parseInt(type);
-//				RefundBillVO refvo = refundser.checkBeforeSave(data, checktype);
-//				json.setSuccess(true);
-//				json.setRows(refvo);
-//				json.setMsg("操作成功");
-//			} catch (Exception e) {
-//				printErrorLog(json, log, e, "操作失败");
-//			}
-//		} else {
-//			json.setSuccess(false);
-//			json.setMsg("操作数据为空");
-//		}
-		
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_40);
@@ -333,6 +325,19 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 				json.setStatus(-1);
 				if(rignum > 0){
 					json.setRows(rightlist);
+				}
+			}
+			if(rignum > 0){
+				if(opertype == IStatusConstant.IREFOPERATYPE_1){//退款确认
+					if(rignum == 0){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "确认退款单：单据号："+
+								rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
+					}
+				}else if(opertype == IStatusConstant.IREFOPERATYPE_2){//取消确认
+					if(rignum == 0){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "取消确认退款单：单据号："+
+								rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
+					}
 				}
 			}
 		} catch (Exception e) {
