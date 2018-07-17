@@ -21,7 +21,7 @@ import com.dzf.service.channel.report.ICustNumMoneyRep;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 加盟商客户数量金额统计
+ * 业绩统计
  * @author zy
  *
  */
