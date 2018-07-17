@@ -11,7 +11,9 @@ import com.dzf.model.channel.report.AchievementVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.service.channel.report.IAchievementService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 业绩分析
@@ -43,6 +45,13 @@ public class AchievementAction extends BaseAction<AchievementVO> {
 			json.setRows(linevo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
+			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_34.getValue(), "渠道总业绩分析查询成功", ISysConstants.SYS_3);
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_33.getValue(), "大区业绩分析查询成功", ISysConstants.SYS_3);
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 3){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_32.getValue(), "省业绩分析查询成功", ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
@@ -62,6 +71,13 @@ public class AchievementAction extends BaseAction<AchievementVO> {
 			json.setRows(linevo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
+			if(paramvo.getCorptype() != null && paramvo.getCorptype() == 1){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_34.getValue(), "渠道总业绩分析查询成功", ISysConstants.SYS_3);
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_33.getValue(), "大区业绩分析查询成功", ISysConstants.SYS_3);
+			}else if(paramvo.getCorptype() != null && paramvo.getCorptype() == 3){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_32.getValue(), "省业绩分析查询成功", ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
