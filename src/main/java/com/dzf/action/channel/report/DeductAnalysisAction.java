@@ -25,9 +25,11 @@ import com.dzf.model.channel.report.DeductAnalysisVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.report.IDeductAnalysis;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 
 /**
@@ -55,8 +57,11 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			List<DeductAnalysisVO> vos = analyser.query(paramvo);
-			grid.setRows(vos);
+			List<DeductAnalysisVO> list = analyser.query(paramvo);
+			if(list != null && list.size() > 0){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
+			}
+			grid.setRows(list);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功");
 		} catch (Exception e) {
