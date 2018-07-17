@@ -55,7 +55,7 @@ public class RebateConfServiceImpl implements IRebateConfService{
 		}else if(opertype != null && opertype == IStatusConstant.IREBATEOPERTYPE_3){
 			if (data.getIstatus() != null && 
 					data.getIstatus() != IStatusConstant.IREBATESTATUS_2) {
-				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待批核态");
+				throw new BusinessException("返点单号" + data.getVbillcode() + "不为待审批态");
 			}
 			data.setIstatus(IStatusConstant.IREBATESTATUS_1);
 		}
