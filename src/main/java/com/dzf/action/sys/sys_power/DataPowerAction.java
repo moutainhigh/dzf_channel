@@ -16,11 +16,14 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.sys_power.IDataPowerService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 @ParentPackage("basePackage")
 @Namespace("/sys")
@@ -102,6 +105,11 @@ public class DataPowerAction extends BaseAction<DataPowerVO> {
 				json.setRows(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功!");
+				StringBuffer msg = new StringBuffer("设置数据权限");
+				if (uservo!=null) {
+					msg.append(":").append(uservo.getUser_code()).append(" ").append(uservo.getUser_name());
+				}
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_38.getValue(), msg.toString(), ISysConstants.SYS_3);
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "保存失败!");
 			}
