@@ -18,11 +18,13 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.chn_set.impl.IRejectreasonService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 合同审批设置
@@ -91,8 +93,21 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 					throw new BusinessException("登陆用户错误");
 				}
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
+				String opertype = "";
+				if(StringUtil.isEmpty(data.getPk_rejectreason())){
+					opertype = "isAdd";
+				}else{
+					opertype = "isEdit";
+				}
 				setDefaultValue(data);
 				data = rejectser.save(data, getLogincorppk());
+				if(data != null){
+					if("isAdd".equals(opertype)){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_31.getValue(), "新增合同驳回原因："+data.getVreason(), ISysConstants.SYS_3);
+					}else if("isAdd".equals(opertype)){
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_31.getValue(), "修改合同驳回原因："+data.getVreason(), ISysConstants.SYS_3);
+					}
+				}
 				json.setRows(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功");
@@ -138,6 +153,7 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 				}
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
 				rejectser.delete(data);
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_31.getValue(), "删除合同驳回原因："+data.getVreason(), ISysConstants.SYS_3);
 				json.setSuccess(true);
 				json.setMsg("操作成功");
 			} catch (Exception e) {
