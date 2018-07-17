@@ -193,7 +193,7 @@ function load() {
 				if(data.rows[i].provname){
 					if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "省" || data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "市" ){
 						
-						$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")
+						/*$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")*/
 					}else if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "计" ){
 						$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
 					}
