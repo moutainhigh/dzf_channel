@@ -155,14 +155,14 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 				if(opertype == IStatusConstant.ICHNOPRATETYPE_10){//收款审批
 					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "审核付款单：单据号："
-								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+								+rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}else{
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "审核付款单"+rignum+"个", ISysConstants.SYS_3);
 					}
 				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_9){//审批驳回
 					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "驳回付款单：单据号："
-								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+								+rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}else{
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "驳回付款单"+rignum+"个", ISysConstants.SYS_3);
 					}

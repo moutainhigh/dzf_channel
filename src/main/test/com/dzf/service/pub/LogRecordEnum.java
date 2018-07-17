@@ -49,7 +49,7 @@ public enum LogRecordEnum {
     OPE_CHANNEL_23(93,"加盟商扣款查询"),OPE_CHANNEL_24(94,"销售数据分析"),OPE_CHANNEL_25(95,"返点单录入"),OPE_CHANNEL_26(96," 返点单确认"),
     OPE_CHANNEL_27(97,"返点单审批"),OPE_CHANNEL_28(98,"培训区域划分"),OPE_CHANNEL_29(99,"扣款统计表"),OPE_CHANNEL_3(100,"付款余额查询"),
     OPE_CHANNEL_30(101,"客户名称审核"),OPE_CHANNEL_31(102,"合同审批设置"),OPE_CHANNEL_32(103," 省业绩分析"),OPE_CHANNEL_33(104,"大区业绩分析"),
-    OPE_CHANNEL_34(105,"渠道总业绩分析"),OPE_CHANNEL_35(106,"运营区域划分"),OPE_CHANNEL_36(107,"付款单录入"),OPE_CHANNEL_37(107,"付款单审批"),
+    OPE_CHANNEL_34(105,"渠道总业绩分析"),OPE_CHANNEL_35(106,"运营区域划分"),OPE_CHANNEL_36(107,"付款单录入"),OPE_CHANNEL_37(108,"付款单审批"),
     OPE_CHANNEL_38(109,"数据权限"),OPE_CHANNEL_4(111,"合同审核"),OPE_CHANNEL_40(112,"退款单"),
     OPE_CHANNEL_41(113,"加盟商人员统计"),OPE_CHANNEL_5(114,"客户审批"),OPE_CHANNEL_6(115,"服务套餐定义"),OPE_CHANNEL_7(116,"业绩统计"),
     OPE_CHANNEL_8(117,"财务处理分析");
