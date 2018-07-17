@@ -722,7 +722,7 @@ function showImage(billid){
 	var src = DZF.contextPath + "/chnpay/chnpaybill!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
 	$("#tpfd").empty();
 	var img = '<img id="conturnid" alt="无法显示图片" '+
-		'src="' + src + '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
+		'src="' + src + '" style="position: absolute;z-index: 1;left:50px;top:50px;">'
 	parent.openFullViewDlg(img, '原图');
 }
 

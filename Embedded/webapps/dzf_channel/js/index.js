@@ -419,7 +419,7 @@ function closeFullViewDlg(){
  */
 function showTips(){
 	$("#reUpload").css("display","block");
-	$("#reUpload").html("单击下载");	
+	$("#reUpload").html("双击下载");	
 }
 
 /**
