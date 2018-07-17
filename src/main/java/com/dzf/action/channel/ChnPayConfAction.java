@@ -151,14 +151,14 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 				if(opertype == IStatusConstant.ICHNOPRATETYPE_3){//收款确认
 					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "确认付款单：单据号："
-								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+								+rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}else{
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "确认付款单"+rignum+"个", ISysConstants.SYS_3);
 					}
 				}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4){//确认驳回
 					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "驳回付款单：单据号："
-								+rightlist.get(0).getVbillcode()+"个", ISysConstants.SYS_3);
+								+rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}else{
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_FKDQR.getValue(), "驳回付款单"+rignum+"个", ISysConstants.SYS_3);
 					}
