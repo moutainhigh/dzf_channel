@@ -319,7 +319,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 					}
 					StringBuffer str = new StringBuffer();
 					str.append(getLoginUserInfo().getUser_name());
-					str.append("删除发票申请").append(vos.length).append("条");
+					str.append("删除发票").append(vos.length).append("张");
 					writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), str.toString(), ISysConstants.SYS_3);
 				}
 				json.setMsg("成功删除" + len + "张单据，失败" + (length - len) + "张单据  ");
