@@ -759,7 +759,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//2、0<预付款余额<扣款总金额，先扣预付款，再扣返点余额
 			datavo.setNdeductmny(paybalance);//预付款扣款金额
 			datavo.setNdedrebamny(SafeCompute.sub(ndedsummny, paybalance));//返点款扣款金额
-		}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) == 0 
+		}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) <= 0 
 				&& rebbalance.compareTo(ndedsummny) > 0){
 			//3、预付款余额=0，则全扣返点余额
 			datavo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
