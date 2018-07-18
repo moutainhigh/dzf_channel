@@ -108,6 +108,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
                 }
                 json.setMsg("成功生成"+len+"张单据，失败"+(length - len) +"张单据<br>  "+msg.toString());
                 json.setSuccess(true);
+                writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(),"开票成功"+len+"张",ISysConstants.SYS_3);
             }else{
                 json.setSuccess(false);
                 json.setRows(0);
