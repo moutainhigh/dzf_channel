@@ -176,6 +176,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			json.setMsg(msg.toString());
 			json.setSuccess(true);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "成功开具纸质发票" + success+"张",ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "开票失败");
 		}
@@ -216,6 +217,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			json.setMsg(msg.toString());
 			json.setSuccess(true);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "成功开具电子发票" + success+"张",ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "开票失败");
 		}
