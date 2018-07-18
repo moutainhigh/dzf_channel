@@ -329,12 +329,12 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 			}
 			if(rignum > 0){
 				if(opertype == IStatusConstant.IREFOPERATYPE_1){//退款确认
-					if(rignum == 0){
+					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "确认退款单：单据号："+
 								rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}
 				}else if(opertype == IStatusConstant.IREFOPERATYPE_2){//取消确认
-					if(rignum == 0){
+					if(rignum == 1){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_40.getValue(), "取消确认退款单：单据号："+
 								rightlist.get(0).getVbillcode(), ISysConstants.SYS_3);
 					}
