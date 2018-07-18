@@ -62,9 +62,9 @@ public class RebateAuditAction extends BaseAction<RebateVO> {
 				data = auditser.updateAudit(data, getLogincorppk(), iopertype);
 				if(data != null){
 					if (iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_1) {//驳回修改
-						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "审批确认返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "驳回返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
 					}else if(iopertype != null && iopertype == IStatusConstant.IREBATEOPERTYPE_4){//审核通过
-						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "驳回确认返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "审批返点单：单据号："+data.getVbillcode(), ISysConstants.SYS_3);
 					}
 				}
 				json.setRows(data);

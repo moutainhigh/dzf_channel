@@ -86,6 +86,7 @@ function save(){
 		return;
 	}
 	$('#roleid').val(row.id);
+	$('#rolename').val(row.text);
 	$('#dataPower').form('submit', {
 		url : contextPath + '/sys/dataPower!save.action',
 		success : function(result) {

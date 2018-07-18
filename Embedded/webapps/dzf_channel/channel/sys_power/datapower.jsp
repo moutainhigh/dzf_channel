@@ -24,6 +24,7 @@
 			<form id="dataPower" method="post">
 				<div class="time_col time_colp11" style="display:none">
 					<input id="roleid" name="roleid" type='text'> 
+					<input id="rolename" name="rolename" type='text'> 
 				</div>
 				<div class="time_col time_colp10">
 					<input id="sy" type="radio" name="level" value="1"/>

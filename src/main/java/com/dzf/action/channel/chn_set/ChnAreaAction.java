@@ -82,13 +82,13 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			Integer logValue=null;
 			if(headvo.getType()==1){
 				logValue=LogRecordEnum.OPE_CHANNEL_QDQYHF.getValue();
-				operate+="渠道区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+				operate+="渠道区域:"+headvo.getAreacode()+" "+headvo.getAreaname();
 			}else if(headvo.getType()==2){
 				logValue=LogRecordEnum.OPE_CHANNEL_28.getValue();
-				operate+="培训区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+				operate+="培训区域:"+headvo.getAreacode()+" "+headvo.getAreaname();
 			}else{
 				logValue=LogRecordEnum.OPE_CHANNEL_35.getValue();
-				operate+="运营区域"+headvo.getAreacode()+" "+headvo.getAreaname();
+				operate+="运营区域:"+headvo.getAreacode()+" "+headvo.getAreaname();
 			}
 			if("新增".equals(operate)){
 				writeLogRecord(logValue, operate, ISysConstants.SYS_3);
@@ -183,6 +183,9 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
 			String pk_area = getRequest().getParameter("pk_area");
+			String type = getRequest().getParameter("type");
+			String acode = getRequest().getParameter("acode");
+			String aname = getRequest().getParameter("aname");
 			if (StringUtil.isEmpty(pk_area)) {
 				throw new BusinessException("主键为空");
 			}
@@ -191,6 +194,20 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			json.setSuccess(true);
 			json.setRows(data);
 			json.setMsg("删除成功!");
+			String operate=":";
+			if(!StringUtil.isEmpty(acode)){
+				operate+=acode+" ";
+			}
+			if(!StringUtil.isEmpty(aname)){
+				operate+=aname;
+			}
+			if("1".equals(type)){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_QDQYHF.getValue(), "删除渠道区域"+operate, ISysConstants.SYS_3);
+			}else if("2".equals(type)){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_28.getValue(), "删除培训区域"+operate, ISysConstants.SYS_3);
+			}else if("3".equals(type)){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_35.getValue(), "删除运营区域"+operate, ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "删除失败");
 		}

@@ -105,11 +105,8 @@ public class DataPowerAction extends BaseAction<DataPowerVO> {
 				json.setRows(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功!");
-				StringBuffer msg = new StringBuffer("设置数据权限");
-				if (uservo!=null) {
-					msg.append(":").append(uservo.getUser_code()).append(" ").append(uservo.getUser_name());
-				}
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_38.getValue(), msg.toString(), ISysConstants.SYS_3);
+				String rolename = getRequest().getParameter("rolename");
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_38.getValue(), rolename==null?"设置数据权限:":"设置数据权限:"+rolename, ISysConstants.SYS_3);
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "保存失败!");
 			}
