@@ -179,6 +179,9 @@ function del(id){
 				url : DZF.contextPath + '/chn_set/chnarea!delete.action',
 				data : {
 					'pk_area': id,
+					'type' :type,
+					'acode':row.acode,
+					'aname':row.aname,
 				},
 				type : 'post',
 				dataType : 'json',
