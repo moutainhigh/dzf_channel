@@ -104,7 +104,7 @@ public class RejectreasonAction extends BaseAction<RejectreasonVO> {
 				if(data != null){
 					if("isAdd".equals(opertype)){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_31.getValue(), "新增合同驳回原因："+data.getVreason(), ISysConstants.SYS_3);
-					}else if("isAdd".equals(opertype)){
+					}else if("isEdit".equals(opertype)){
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_31.getValue(), "修改合同驳回原因："+data.getVreason(), ISysConstants.SYS_3);
 					}
 				}
