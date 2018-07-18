@@ -995,7 +995,7 @@ function onExport(){
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
 	Business.getFile(DZF.contextPath+ '/rebate/rebateinput!onExport.action',{
-		'strlist':JSON.stringify(datarows),/*'qj' : $('#jqj').html(),*/}, true, true);
+		'strlist':JSON.stringify(datarows),'printype' : 0,}, true, true);
 }
 
 

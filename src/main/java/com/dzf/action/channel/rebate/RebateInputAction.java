@@ -416,6 +416,7 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		if (StringUtil.isEmpty(strlist)) {
 			throw new BusinessException("导出数据不能为空!");
 		}
+		String printype = getRequest().getParameter("printype");
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new RebateVO());
 		RebateVO[] expVOs = DzfTypeUtils.cast(exparray, mapping, RebateVO[].class, JSONConvtoJAVA.getParserConfig());
@@ -441,7 +442,11 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "导出返点单", ISysConstants.SYS_3);
+			if("0".equals(printype)){//返点单录入
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "导出返点单", ISysConstants.SYS_3);
+			}else if("1".equals(printype)){//返点单审批
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "导出返点单", ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
