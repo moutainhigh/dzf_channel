@@ -57,7 +57,7 @@ function load() {
 			title : '区域负责人',
 			field : 'uname'
 		},{
-			width : '260',
+			width : '330',
 			title : '所属省市',
 			field : 'provnames',
 			formatter : showTitle
@@ -67,7 +67,7 @@ function load() {
 			field : 'vmemo',
 	  		formatter :showTitle
 		},{
-			width :'250',
+			width :'180',
 			title : '操作',
 			field : 'cz',
 			align : 'center',
