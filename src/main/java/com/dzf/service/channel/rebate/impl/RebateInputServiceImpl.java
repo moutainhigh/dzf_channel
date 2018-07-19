@@ -484,9 +484,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if(!StringUtil.isEmpty(errmsg)){
 			throw new BusinessException(errmsg);
 		}
-		String sql = " UPDATE cn_rebate SET dr = 1, tstamp = ? WHERE nvl(dr,0) = 0 AND pk_rebate = ? ";
+		String sql = " DELETE FROM cn_rebate WHERE pk_rebate = ? ";
 		SQLParameter spm = new SQLParameter();
-		spm.addParam(new DZFDateTime());
 		spm.addParam(data.getPk_rebate());
 		singleObjectBO.executeUpdate(sql, spm);
 	}
