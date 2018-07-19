@@ -369,7 +369,10 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		}else{
 		    String uuid = UUID.randomUUID().toString();
 			try {
-				singleObjectBO.deleteObject(datavo);
+				String delsql = "delete from cn_refund where pk_refund = ? ";
+				SQLParameter spm = new SQLParameter();
+				spm.addParam(datavo.getPk_refund());
+				singleObjectBO.executeUpdate(delsql, spm);
 			} finally {
 				LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
 			}
