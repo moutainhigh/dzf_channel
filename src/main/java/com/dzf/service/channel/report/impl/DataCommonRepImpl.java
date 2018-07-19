@@ -171,6 +171,14 @@ public class DataCommonRepImpl {
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
     	sp.addParam(qvo.getUser_name());
+		if (!StringUtil.isEmpty(qvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(qvo.getAreaname());
+		}
+		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(qvo.getVprovince());
+		}
 	    List<DataVO> list =(List<DataVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(cla));
 	    return list;
 	}
@@ -195,6 +203,14 @@ public class DataCommonRepImpl {
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 	    sp.addParam(qvo.getUser_name());
+		if (!StringUtil.isEmpty(qvo.getAreaname())) {
+			sql.append(" and a.areaname=? "); // 大区
+			sp.addParam(qvo.getAreaname());
+		}
+		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
+			sql.append(" and b.vprovince=? ");// 省市
+			sp.addParam(qvo.getVprovince());
+		}
 	    List<DataVO> vos =(List<DataVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(cla));
 		return vos;
 	}
