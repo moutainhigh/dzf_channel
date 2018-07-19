@@ -703,7 +703,7 @@ em, i {
 .panel-tool a:hover {
 	background-color: #4297d9;
 }
-.panel-body{overflow:hidden}
+.panel-body{overflow:auto}
 .window-shadow {
 	box-shadow: 2px 2px 7px #777778;
 }
@@ -2532,10 +2532,10 @@ text-align: right;
 /*    .datagrid-view{width:100% !important;}
  */
 /*  .panel-body{overflow:auto;} */
- .sys_taxjxs .combo-panel, .busimng-body .combo-panel, .busi_query .panel-body, .jdmangemnet-body .combo-panel, .bsworkbench-body .combo-panel, .jzworkbench-body .combo-panel, .kjgztjb-body .combo-panel,
+/*  .sys_taxjxs .combo-panel, .busimng-body .combo-panel, .busi_query .panel-body, .jdmangemnet-body .combo-panel, .bsworkbench-body .combo-panel, .jzworkbench-body .combo-panel, .kjgztjb-body .combo-panel,
 .sys_opelog .combo-panel, .ckgepub-body .combo-panel, .repayorder-body .combo-panel, .dzf_sys_sorp .combo-panel, .cwhzb_class .combo-panel, .contract_xi .combo-panel,
 .khywtjb-body .combo-panel, .weborder-body .combo-panel, .contract_xi .combo-panel, .contractReportant-body .combo-panel, .send_message_body .combo-panel, .sys_cpqy-body .combo-panel, 
-.srvpropub-body .combo-panel, .packgepub-body .combo-panel,.ysworkbench .combo-panel,.jmstz-body .combo-panel, .pljz .combo-panel, .zzpljz .combo-panel{overflow:auto;}  
+.srvpropub-body .combo-panel, .packgepub-body .combo-panel,.ysworkbench .combo-panel,.jmstz-body .combo-panel, .pljz .combo-panel, .zzpljz .combo-panel{overflow:auto;}   */
 
 /*  .payee{text-align: right;background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#d6dce1), to(#f9fafb));} */
 .card_busi .header{float:left;font-size:16px;line-height:46px;padding-left:16px;color:#000;font-weight:normal;}
