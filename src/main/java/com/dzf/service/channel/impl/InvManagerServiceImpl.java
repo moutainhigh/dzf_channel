@@ -431,7 +431,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
         sql.append(" from bd_account a");
         sql.append(
-                " left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2 and nvl(detail.dr,0) = 0 and detail.doperatedate <= ?");
+                " left join cn_detail detail on a.pk_corp = detail.pk_corp and detail.iopertype = 2 and detail.ipaytype = 2 and nvl(detail.dr,0) = 0 and detail.doperatedate <= ?");
         sp.addParam(new DZFDate());
         sql.append(" where a.ischannel = 'Y'  ");
         sql.append(" group by a.pk_corp");
