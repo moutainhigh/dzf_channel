@@ -472,8 +472,20 @@ function fastQry() {
 			if(filtername != ""){
 				var url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
 				$('#grid').datagrid('options').url = url;
-				var bdate = $('#bdate').datebox('getValue'); //开始日期
-				var edate = $('#edate').datebox('getValue'); //结束日期
+				
+				var ischeck = $('#sq_tddate').is(':checked');
+				var bdate = ''; //开始日期
+				var edate = ''; //结束日期
+				if(ischeck){
+					qrytype = 1;
+					bdate = $('#bdate').datebox('getValue'); //开始日期
+					edate = $('#edate').datebox('getValue'); //结束日期
+				}else{
+					qrytype = 2;
+					bdate = $('#kp_bdate').datebox('getValue'); //开始日期
+					edate = $('#kp_edate').datebox('getValue'); //结束日期
+				}
+				
 				var rows = $('#grid').datagrid('getRows');
 				if(rows != null && rows.length > 0){
 					$('#grid').datagrid('load', {
@@ -481,7 +493,10 @@ function fastQry() {
 						edate: edate,
 						corps : $("#pk_account").val(),
 						istatus : $('#istatus').combobox('getValue'),
+						itype : $('#itype').combobox('getValue'),
 						cname: filtername,
+						aname　: $("#aname").combobox('getValue'),
+						qrytype : qrytype,
 					});
 				}else{
 					$('#grid').datagrid('load', {
