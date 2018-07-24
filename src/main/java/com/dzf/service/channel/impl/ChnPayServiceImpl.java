@@ -570,7 +570,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 				clist.add(vo);
 			}
 		}
-		if(str!=""){
+		if(!StringUtil.isEmpty(str)){
 			errmsg="付款编号："+str.substring(0,str.length()-1)+"数据已发生变化;";
 		}
 		cmap.put("list", clist);
