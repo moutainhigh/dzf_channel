@@ -937,9 +937,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 					map.put("reb", balvo);
 				}
 			}
-			CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
-			if(corpvo != null){
-				datavo.setCorpkname(corpvo.getUnitname());
+			CorpVO corpvo = null;
+			if(datavo != null && !StringUtil.isEmpty(datavo.getPk_corpk())){
+				corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
+				if(corpvo != null){
+					datavo.setCorpkname(corpvo.getUnitname());
+				}
 			}
 			if(datavo != null && CommonUtil.getDZFDouble(datavo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
 				ChnBalanceVO balancevo = map.get("pay");
