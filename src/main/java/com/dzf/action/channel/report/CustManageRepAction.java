@@ -49,11 +49,11 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
 			if(paramvo != null){
 				paramvo.setUser_name(getLoginUserid());
+				paramvo.setBegdate(new DZFDate());
 			}
-			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+			if(paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			paramvo.setBegdate(new DZFDate());
 			List<CustManageRepVO> list = custServ.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo ==null ? 10000 : paramvo.getRows();
@@ -84,7 +84,7 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+			if(paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			List<CustCountVO> list = custServ.queryIndustry(paramvo);
