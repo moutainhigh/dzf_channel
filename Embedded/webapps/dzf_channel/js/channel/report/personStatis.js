@@ -61,7 +61,7 @@ function load(){
 		                { field : 'total',  title : '总用户数', width : 60,halign:'center',align:'right',rowspan:2},
 	                ],[
 	                   	{ field : 'jms02', title : '会计经理', width : 60,align:'right' },
-	                   	{ field : 'jms06', title : '会计主管', width : 60,align:'right' },
+	                   	{ field : 'jms06', title : '主管会计', width : 60,align:'right' },
 	                   	{ field : 'jms07', title : '主办会计', width : 60,align:'right' },
 	                   	{ field : 'jms08', title : '记账会计', width : 60,align:'right' },
 	                   	{ field : 'jms09', title : '财税支持', width : 60,align:'right' },
