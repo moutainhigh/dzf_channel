@@ -45,23 +45,15 @@ public class CorpQueryServiceImpl implements ICorpQueryService {
 			if (vos != null && vos.size() > 0) {
 				CorpVO[] cvos = vos.toArray(new CorpVO[0]);
 				List<CorpVO> list = new ArrayList<>();
-//				String enf_name = null;
 				String en_name = null;
 				String unitname = null;
 				for (CorpVO cvo : cvos) {
 					unitname = cvo.getUnitname();
 					if (!StringUtil.isEmpty(unitname)) {
 						en_name = PinyinUtil.getFullSpell(unitname);
-//						enf_name = PinyinUtil.getFirstSpell(unitname);
 					}
-//					if (unitname.contains(corpname) || en_name.contains(corpname) || enf_name.contains(corpname)) {
-//						list.add(cvo);
-//					} else if (!StringUtils.isEmpty(cvo.getInnercode()) && cvo.getInnercode().contains(corpcode)) {
-//						list.add(cvo);
-//					}
-					if ((!StringUtils.isEmpty(unitname)
-							&& (unitname.indexOf(corpname) >= 0 || en_name.indexOf(corpname) >= 0
-									|| en_name.indexOf(corpname) >= 0))
+					if ((!StringUtils.isEmpty(unitname) && unitname.indexOf(corpname) >= 0)
+							|| (!StringUtils.isEmpty(en_name) && en_name.indexOf(corpname) >= 0)
 							|| (!StringUtils.isEmpty(cvo.getInnercode())
 									&& cvo.getInnercode().indexOf(corpcode) >= 0)) {
 						list.add(cvo);
@@ -70,7 +62,11 @@ public class CorpQueryServiceImpl implements ICorpQueryService {
 				return list.toArray(new CorpVO[0]);
 			}
 		}
-		return vos.toArray(new CorpVO[0]);
+		if(vos != null && vos.size() > 0){
+			return vos.toArray(new CorpVO[0]);
+		}else{
+			return new CorpVO[0]; 
+		}
 	}
 
 	/**
@@ -152,7 +148,11 @@ public class CorpQueryServiceImpl implements ICorpQueryService {
 				return list.toArray(new CorpVO[0]);
 			}
 		}
-		return vos.toArray(new CorpVO[0]);
+		if(vos != null && vos.size() > 0){
+			return vos.toArray(new CorpVO[0]);
+		}else{
+			return new CorpVO[0];
+		}
 	}
 
 	/**
