@@ -486,25 +486,17 @@ function fastQry() {
 					edate = $('#kp_edate').datebox('getValue'); //结束日期
 				}
 				
-				var rows = $('#grid').datagrid('getRows');
-				if(rows != null && rows.length > 0){
-					$('#grid').datagrid('load', {
-						bdate: bdate,
-						edate: edate,
-						corps : $("#pk_account").val(),
-						istatus : $('#istatus').combobox('getValue'),
-						itype : $('#itype').combobox('getValue'),
-						cname: filtername,
-						aname　: $("#aname").combobox('getValue'),
-						qrytype : qrytype,
-					});
-				}else{
-					$('#grid').datagrid('load', {
-						bdate: bdate,
-						edate: edate,
-						cname: filtername,
-					});
-				}
+				$('#grid').datagrid('load', {
+					bdate: bdate,
+					edate: edate,
+					corps : $("#pk_account").val(),
+					istatus : $('#istatus').combobox('getValue'),
+					itype : $('#itype').combobox('getValue'),
+					cname: filtername,
+					aname　: $("#aname").combobox('getValue'),
+					qrytype : qrytype,
+				});
+				
 			}
 //			if (filtername != "") {
 //				var jsonStrArr = [];
