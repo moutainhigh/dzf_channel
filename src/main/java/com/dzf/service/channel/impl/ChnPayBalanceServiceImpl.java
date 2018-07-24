@@ -575,7 +575,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	@SuppressWarnings("unchecked")
 	private Map<String,ChnBalanceRepVO> qryDataMap(QryParamVO paramvo, List<String> pklist, Integer qrytype) throws DZFWarpException {
 		Map<String,ChnBalanceRepVO> map = new HashMap<String,ChnBalanceRepVO>();
-		QrySqlSpmVO qryvo = null;
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		if(qrytype == 1){
 			qryvo = getInitQryParam(paramvo);
 		}else if(qrytype == 2){
