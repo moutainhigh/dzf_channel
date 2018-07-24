@@ -178,7 +178,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	private String checkState(RefundBillVO datavo, Integer type) throws DZFWarpException {
 		RefundBillVO oldvo = (RefundBillVO) singleObjectBO.queryByPrimaryKey(RefundBillVO.class, datavo.getPk_refund());
 		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
-			return "退款单"+oldvo.getVbillcode()+"已经被删除；";
+			return "退款单"+datavo.getVbillcode()+"已经被删除；";
 		}
 		if(datavo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0){
 			return "退款单"+oldvo.getVbillcode()+"发生变化，请刷新界面后，再次尝试；";
