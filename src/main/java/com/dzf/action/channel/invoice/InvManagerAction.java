@@ -117,7 +117,9 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 100000 : paramvo.getRows();
-			paramvo.setEmail(getLoginUserid());
+			if(paramvo != null){
+				paramvo.setEmail(getLoginUserid());
+			}
 			List<CorpVO> list = invManagerService.queryChannel(paramvo);
 			if (list != null && list.size() > 0) {
 				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
