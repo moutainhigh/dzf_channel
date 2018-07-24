@@ -826,40 +826,44 @@ public class AchievementServiceImpl implements IAchievementService {
 		Map<String, DZFDouble> kkmap = new HashMap<String, DZFDouble>();
 		Map<String, DZFDouble> jemap = new HashMap<String, DZFDouble>();
 		String season = "";
-		for (ContQryVO zvo : zlist) {
-			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
-				season = ToolsUtil.getSeason(zvo.getVperiod());
-				if(!kkmap.containsKey(season)){
-					kkmap.put(season, zvo.getNdedsummny());
+		if(zlist != null && zlist.size() > 0){
+			for (ContQryVO zvo : zlist) {
+				if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
+					season = ToolsUtil.getSeason(zvo.getVperiod());
+					if(!kkmap.containsKey(season)){
+						kkmap.put(season, zvo.getNdedsummny());
+					}else{
+						kkmap.put(season, SafeCompute.add(kkmap.get(season), zvo.getNdedsummny()));
+					}
+					if(!jemap.containsKey(season)){
+						jemap.put(season, zvo.getNaccountmny());
+					}else{
+						jemap.put(season, SafeCompute.add(jemap.get(season), zvo.getNaccountmny()));
+					}
 				}else{
-					kkmap.put(season, SafeCompute.add(kkmap.get(season), zvo.getNdedsummny()));
+					kkmap.put(zvo.getVperiod(), zvo.getNdedsummny());
+					jemap.put(zvo.getVperiod(), zvo.getNaccountmny());
 				}
-				if(!jemap.containsKey(season)){
-					jemap.put(season, zvo.getNaccountmny());
-				}else{
-					jemap.put(season, SafeCompute.add(jemap.get(season), zvo.getNaccountmny()));
-				}
-			}else{
-				kkmap.put(zvo.getVperiod(), zvo.getNdedsummny());
-				jemap.put(zvo.getVperiod(), zvo.getNaccountmny());
 			}
 		}
-		for (ContQryVO fvo : flist) {
-			if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
-				season = ToolsUtil.getSeason(fvo.getVperiod());
-				if(!kkmap.containsKey(season)){
-					kkmap.put(season, fvo.getNdedsummny());
+		if(flist != null && flist.size() > 0){
+			for (ContQryVO fvo : flist) {
+				if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//按照季度查询
+					season = ToolsUtil.getSeason(fvo.getVperiod());
+					if(!kkmap.containsKey(season)){
+						kkmap.put(season, fvo.getNdedsummny());
+					}else{
+						kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
+					}
+					if(!jemap.containsKey(season)){
+						jemap.put(season, fvo.getNaccountmny());
+					}else{
+						jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
+					}
 				}else{
-					kkmap.put(season, SafeCompute.add(kkmap.get(season), fvo.getNdedsummny()));
+					kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
+					jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 				}
-				if(!jemap.containsKey(season)){
-					jemap.put(season, fvo.getNaccountmny());
-				}else{
-					jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
-				}
-			}else{
-				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
-				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 			}
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() == 1){
