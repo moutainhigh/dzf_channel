@@ -417,7 +417,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	@SuppressWarnings("unchecked")
 	private Map<String,DeductAnalysisVO> queryTotalMny(QryParamVO paramvo, int qrytype, List<String> pk_corplist) throws DZFWarpException {
 		Map<String,DeductAnalysisVO> map = new HashMap<String,DeductAnalysisVO>();
-		QrySqlSpmVO qryvo = null;
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		if(qrytype == 1){
 			qryvo =  getKkTotalQrySqlSpm(paramvo, qrytype);
 		}else if(qrytype == 2){
