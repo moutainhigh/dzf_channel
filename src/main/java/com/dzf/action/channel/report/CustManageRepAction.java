@@ -47,7 +47,9 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			paramvo.setUser_name(getLoginUserid());
+			if(paramvo != null){
+				paramvo.setUser_name(getLoginUserid());
+			}
 			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
