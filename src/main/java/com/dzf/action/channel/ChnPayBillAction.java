@@ -268,7 +268,13 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 			if (vo == null) {
 				isexists = false;
 			}
-			String fpath = vo.getVfilepath();
+			String fpath = "";
+			if(vo != null){
+				fpath = vo.getVfilepath();
+			}
+			if(StringUtil.isEmpty(fpath)){
+				throw new BusinessException("附件路径不能为空");
+			}
 			File afile = new File(fpath);
 			if (!afile.exists()) {
 				isexists = false;
