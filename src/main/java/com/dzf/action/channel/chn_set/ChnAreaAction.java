@@ -67,8 +67,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
-			ChnAreaVO headvo = requestDealStep(getRequest());
+			ChnAreaVO headvo = requestDealStep(getRequest(),uservo);
 			String operate="";
 			if(StringUtil.isEmpty(headvo.getPk_chnarea())){
 				operate="新增";
@@ -101,7 +100,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		writeJson(json);
 	}
 
-	private ChnAreaVO requestDealStep(HttpServletRequest request) {
+	private ChnAreaVO requestDealStep(HttpServletRequest request,UserVO uservo) {
 		String head = request.getParameter("head");
 		String body = request.getParameter("body"); // 子表
 		body = body.replace("}{", "},{");
@@ -112,14 +111,21 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 		Map<String, String> bodymapping = FieldMapping.getFieldMapping(new ChnAreaBVO());
 
 		ChnAreaVO headvo = DzfTypeUtils.cast(headjs, headmaping, ChnAreaVO.class, JSONConvtoJAVA.getParserConfig());
+		if(headvo.getType()==1){
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
+		}else if(headvo.getType()==2){
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_28);
+		}else{
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_35);
+		}
 		String pk_corp = headvo.getPk_corp();
 		if (StringUtil.isEmpty(pk_corp)) {
-			pk_corp = getLoginCorpInfo().getPk_corp();
+			pk_corp = uservo.getPk_corp();
 			headvo.setPk_corp(pk_corp);
 		}
 		if (StringUtil.isEmpty(headvo.getPk_chnarea())) {
 			headvo.setDoperatedate(new DZFDate());
-			headvo.setCoperatorid(getLoginUserInfo().getCuserid());
+			headvo.setCoperatorid(uservo.getCuserid());
 			headvo.setTs(new DZFDateTime());
 		}
 		ChnAreaBVO[] bodyvos = DzfTypeUtils.cast(array, bodymapping, ChnAreaBVO[].class,
@@ -181,15 +187,21 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
-			String pk_area = getRequest().getParameter("pk_area");
 			String type = getRequest().getParameter("type");
-			String acode = getRequest().getParameter("acode");
-			String aname = getRequest().getParameter("aname");
+			if("1".equals(type)){
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_15);
+			}else if("2".equals(type)){
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_28);
+			}else if("3".equals(type)){
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_35);
+			}
+			String pk_area = getRequest().getParameter("pk_area");
 			if (StringUtil.isEmpty(pk_area)) {
 				throw new BusinessException("主键为空");
 			}
-			String pk_corp = getLoginCorpInfo().getPk_corp();
+			String acode = getRequest().getParameter("acode");
+			String aname = getRequest().getParameter("aname");
+			String pk_corp = uservo.getPk_corp();
 			chnarea.delete(pk_area, pk_corp);
 			json.setSuccess(true);
 			json.setRows(data);
@@ -287,7 +299,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			String pk_corp = getLoginCorpInfo().getPk_corp();
+			String pk_corp = uservo.getPk_corp();
 			String username = chnarea.queryManager(pk_corp);
 			json.setRows(username);
 			json.setSuccess(true);
@@ -342,7 +354,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}
 			QryParamVO qvo = new QryParamVO();
 			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
-			qvo.setCuserid(getLoginUserid());
+			qvo.setCuserid(uservo.getCuserid());
 			List<ComboBoxVO> vos = chnarea.queryArea(qvo);
 			if (vos == null || vos.size() == 0) {
 				grid.setRows(new ArrayList<ChnAreaVO>());
@@ -373,7 +385,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}
 			QryParamVO qvo = new QryParamVO();
 			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
-			qvo.setCuserid(getLoginUserid());
+			qvo.setCuserid(uservo.getCuserid());
 			List<ComboBoxVO> vos = chnarea.queryProvince(qvo);
 			if (vos == null || vos.size() == 0) {
 				grid.setRows(new ArrayList<ChnAreaVO>());
@@ -405,7 +417,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 			}
 			QryParamVO qvo = new QryParamVO();
 			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
-			qvo.setCuserid(getLoginUserid());
+			qvo.setCuserid(uservo.getCuserid());
 			List<ComboBoxVO> vos = chnarea.queryTrainer(qvo);
 			if (vos == null || vos.size() == 0) {
 				grid.setRows(new ArrayList<ChnAreaVO>());
