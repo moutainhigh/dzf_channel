@@ -153,14 +153,14 @@ public class ManagerServiceImpl implements IManagerService {
 		}
 		Boolean isQuery=true;
 		if (!StringUtil.isEmpty(qvo.getCuserid())) {
-			isQuery=false;
-			String condition=null;
-			List<String> qryPros = pubService.qryPros(qvo.getCuserid(),1);
-			if(qryPros!=null ||qryPros.size()>0){
-				condition = SqlUtil.buildSqlForIn("b.vprovince",qryPros.toArray(new String[qryPros.size()]));
-				sql.append(" and ("+condition+" or b.userid=? ) " );
-			}else{
-				 sql.append(" and b.userid=? " );//渠道经理
+			isQuery = false;
+			String condition = null;
+			List<String> qryPros = pubService.qryPros(qvo.getCuserid(), 1);
+			if (qryPros != null && qryPros.size() > 0) {
+				condition = SqlUtil.buildSqlForIn("b.vprovince", qryPros.toArray(new String[qryPros.size()]));
+				sql.append(" and (" + condition + " or b.userid=? ) ");
+			} else {
+				sql.append(" and b.userid=? ");// 渠道经理
 			}
 			sp.addParam(qvo.getCuserid());
 		}
