@@ -215,18 +215,22 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
 			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
-			for(ContractConfrimVO confvo : confrimVOs){
-				if(confvo == null){
-					log.info("批量审核-获取审核数据为空");
-				}else{
-					confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap, getLogincorppk());
-				}
-				if(!StringUtil.isEmpty(confvo.getVerrmsg() )){
-					errnum++;
-					errmsg.append(confvo.getVerrmsg()).append("<br>");
-				}else{
-					rignum++;
-					rightlist.add(confvo);
+			if(confrimVOs != null && confrimVOs.length > 0){
+				for(ContractConfrimVO confvo : confrimVOs){
+					if(confvo == null){
+						log.info("批量审核-获取审核数据为空");
+					}else{
+						confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap, getLogincorppk());
+					}
+					if(confvo != null){
+						if(!StringUtil.isEmpty(confvo.getVerrmsg())){
+							errnum++;
+							errmsg.append(confvo.getVerrmsg()).append("<br>");
+						}else{
+							rignum++;
+							rightlist.add(confvo);
+						}
+					}
 				}
 			}
 			json.setSuccess(true);
@@ -282,74 +286,81 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	/**
 	 * 获取附件显示图片
 	 */
-	public void getAttachImage(){
-		
+	public void getAttachImage() {
+
 		InputStream is = null;
 		OutputStream os = null;
 		try {
 			ContractDocVO paramvo = new ContractDocVO();
 			paramvo = (ContractDocVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			ContractDocVO[] resvos = contractconfser.getAttatches(paramvo);
 			boolean isexists = true;
-			if(resvos==null||resvos[0]==null){
+			if (resvos == null || resvos[0] == null) {
 				isexists = false;
 			}
-			 String fpath = resvos[0].getVfilepath();
-			 File afile = new File(fpath);
-			 if(!afile.exists()){
-				 isexists = false;
-			 }
-			 if(isexists){
-				 String path = getRequest().getSession().getServletContext().getRealPath("/");
-				 String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
-				 if(fpath.toLowerCase().lastIndexOf(".pdf")>0){
-				/*	 typeiconpath += "pdf.jpg";
-					 afile = new File(typeiconpath);*/
-				 }else if(fpath.toLowerCase().lastIndexOf(".doc")>0){
-					 typeiconpath += "word.jpg";
-					 afile = new File(typeiconpath);
-				 }else if(fpath.toLowerCase().lastIndexOf(".xls")>0){
-					 typeiconpath += "excel.jpg";
-					 afile = new File(typeiconpath);
-				 }else if(fpath.toLowerCase().lastIndexOf(".ppt")>0){
-					 typeiconpath += "powerpoint.jpg";
-					 afile = new File(typeiconpath);
-				 }else if(fpath.toLowerCase().lastIndexOf(".zip")>0
-						 ||fpath.toLowerCase().lastIndexOf(".rar")>0){
-					 
-					 typeiconpath += "zip.jpg";
-					 afile = new File(typeiconpath);
-					 
-				 }else{
-					 
-				 }
-				 os = getResponse().getOutputStream();
-				 is = new FileInputStream(afile);
-				 IOUtils.copy(is, os);
-			 }
+			String fpath = "";
+			if(resvos != null && resvos.length > 0){
+				fpath = resvos[0].getVfilepath();
+			}
+			if(StringUtil.isEmpty(fpath)){
+				throw new BusinessException("附件路径不能为空");
+			}
+			File afile = new File(fpath);
+			if (!afile.exists()) {
+				isexists = false;
+			}
+			if (isexists) {
+				String path = getRequest().getSession().getServletContext().getRealPath("/");
+				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
+				if (fpath.toLowerCase().lastIndexOf(".pdf") > 0) {
+					/*
+					 * typeiconpath += "pdf.jpg"; afile = new
+					 * File(typeiconpath);
+					 */
+				} else if (fpath.toLowerCase().lastIndexOf(".doc") > 0) {
+					typeiconpath += "word.jpg";
+					afile = new File(typeiconpath);
+				} else if (fpath.toLowerCase().lastIndexOf(".xls") > 0) {
+					typeiconpath += "excel.jpg";
+					afile = new File(typeiconpath);
+				} else if (fpath.toLowerCase().lastIndexOf(".ppt") > 0) {
+					typeiconpath += "powerpoint.jpg";
+					afile = new File(typeiconpath);
+				} else if (fpath.toLowerCase().lastIndexOf(".zip") > 0 || fpath.toLowerCase().lastIndexOf(".rar") > 0) {
+
+					typeiconpath += "zip.jpg";
+					afile = new File(typeiconpath);
+
+				} else {
+
+				}
+				os = getResponse().getOutputStream();
+				is = new FileInputStream(afile);
+				IOUtils.copy(is, os);
+			}
 		} catch (Exception e) {
-			
-		}finally{
-			if(is!=null){
+
+		} finally {
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
-				    log.error(e.getMessage());
+					log.error(e.getMessage());
 				}
 			}
-			if(os != null){
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					log.error(e.getMessage());
+				}
+			}
 		}
 	}
-	
+
 	/**
 	 * 变更保存
 	 */
