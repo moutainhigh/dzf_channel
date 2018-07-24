@@ -45,7 +45,7 @@ public class CorpQueryAction extends BaseAction<CorpVO> {
 		try {
 			QueryParamVO paramvo = new QueryParamVO();
 			paramvo = (QueryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
+			if (paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
 //			String isbseal = getRequest().getParameter("isbseal");//是否包含已停用(包含已停用的客户，默认不包含)
