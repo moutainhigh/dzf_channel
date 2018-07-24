@@ -48,7 +48,7 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 			if(paramvo != null){
 				paramvo.setUser_name(getLoginUserid());
 			}
-			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+			if(paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			List<CustNumMoneyRepVO> list = custServ.query(paramvo);
