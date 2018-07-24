@@ -88,7 +88,11 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 				}
 			}
 		}
-		return vos.toArray(new ChnAreaVO[0]);
+		if(vos != null && vos.size() > 0){
+			return vos.toArray(new ChnAreaVO[0]);
+		}else{
+			return new ChnAreaVO[0];
+		}
 	}
 	
 
@@ -174,11 +178,13 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	@Override
 	public ChnAreaVO queryByPrimaryKey(String pk) throws DZFWarpException {
 		ChnAreaVO hvo = (ChnAreaVO)singleObjectBO.queryVOByID(pk, ChnAreaVO.class);
-		UserVO user = UserCache.getInstance().get(hvo.getUserid(), null);
-		if(user != null){
-			hvo.setUsername(user.getUser_name());
-		}
 		if(hvo != null){
+			if(!StringUtil.isEmpty(hvo.getUserid())){
+				UserVO uvo = UserCache.getInstance().get(hvo.getUserid(), null);
+				if(uvo != null){
+					hvo.setUsername(uvo.getUser_name());
+				}
+			}
 			ChnAreaBVO[] bvos = queryBy1ID(pk);
 			hvo.setChildren(bvos); 
 		}
