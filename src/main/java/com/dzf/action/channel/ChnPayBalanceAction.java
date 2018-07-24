@@ -68,7 +68,9 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			paramvo.setCuserid(getLoginUserid());
+			if(paramvo != null){
+				paramvo.setCuserid(getLoginUserid());
+			}
 			List<ChnBalanceRepVO> clist = paybalanSer.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
