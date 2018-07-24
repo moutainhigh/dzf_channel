@@ -1,19 +1,16 @@
 /**
  * 明细查询
  */
-function qryDetail(index){
+function qryDetail(corpid,corpnm){
 	var bdate = $("#bdate").datebox("getValue");
 	var edate = $("#edate").datebox("getValue");
 	var	qrydate = bdate + "至" + edate;
-	var rows = $('#grid').datagrid('getRows');
-	var row= rows[index];
-	var corpnm=row.corpnm;
 	$.ajax({
 		type : "post",
 		dataType : "json",
 		url : contextPath +'/report/manager!queryDetail.action',
 		data : {
-			"corpid" : row.corpid,
+			"corpid" : corpid,
 			"bdate" : bdate,
 			"edate" : edate,
 		},

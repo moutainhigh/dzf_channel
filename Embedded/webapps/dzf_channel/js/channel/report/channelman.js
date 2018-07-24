@@ -33,7 +33,7 @@ function load() {
 					}else if(value=="合计"){
 						return "合计";
 					}else{
-						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
 					}
 			}}, 
 			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
