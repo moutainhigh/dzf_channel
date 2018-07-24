@@ -933,7 +933,7 @@ public class AchievementServiceImpl implements IAchievementService {
 			String vprov = "";
 			for(ChnAreaBVO bvo : clist){
 				vprov = String.valueOf(bvo.getVprovince());
-				if(!pklist.contains(bvo.getVprovince())){
+				if(!pklist.contains(vprov)){
 					pklist.add(vprov);
 				}
 			}
@@ -972,7 +972,7 @@ public class AchievementServiceImpl implements IAchievementService {
 			String vprov = "";
 			for(ChnAreaBVO bvo : clist){
 				vprov = String.valueOf(bvo.getVprovince());
-				if(!pklist.contains(bvo.getVprovince())){
+				if(!pklist.contains(vprov)){
 					pklist.add(vprov);
 				}
 			}
