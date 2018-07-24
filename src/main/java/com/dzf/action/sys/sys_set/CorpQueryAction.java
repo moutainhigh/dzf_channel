@@ -14,6 +14,7 @@ import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.service.sys.sys_set.ICorpQueryService;
 
@@ -44,8 +45,8 @@ public class CorpQueryAction extends BaseAction<CorpVO> {
 		try {
 			QueryParamVO paramvo = new QueryParamVO();
 			paramvo = (QueryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if (paramvo.getPk_corp() == null || paramvo.getPk_corp().equals("")) {
-				paramvo.setPk_corp(getLoginCorpInfo().getPk_corp());
+			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
+				paramvo.setPk_corp(getLogincorppk());
 			}
 //			String isbseal = getRequest().getParameter("isbseal");//是否包含已停用(包含已停用的客户，默认不包含)
 //			if(!StringUtil.isEmpty(isbseal)&&isbseal.equals("Y")){
