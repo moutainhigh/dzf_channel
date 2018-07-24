@@ -47,13 +47,13 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if(paramvo != null){
+			if (paramvo != null) {
 				paramvo.setUser_name(getLoginUserid());
+				paramvo.setBegdate(new DZFDate());
 			}
-			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
+			if (paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			paramvo.setBegdate(new DZFDate());
 			List<FinanceDealStateRepVO> list = financeServ.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
