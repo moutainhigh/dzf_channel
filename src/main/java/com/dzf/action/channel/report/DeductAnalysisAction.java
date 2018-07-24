@@ -182,8 +182,8 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			String date = DateUtils.getDate(new Date());
 			String fileName = null;
 			String userAgent = getRequest().getHeader("user-agent");  
-            if (userAgent != null && userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0   
-                    || userAgent.indexOf("Safari") >= 0) {  
+            if (!StringUtil.isEmpty(userAgent) && ( userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0   
+                    || userAgent.indexOf("Safari") >= 0 ) ) {  
                 fileName= new String(("扣款统计表").getBytes(), "ISO8859-1");  
             } else {  
                 fileName=URLEncoder.encode("扣款统计表","UTF8"); //其他浏览器  
