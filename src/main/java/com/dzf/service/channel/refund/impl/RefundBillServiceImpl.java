@@ -252,8 +252,8 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			// 1、计算付款余额表余额
 			RefundBillVO balvo = qryReBanMny(paramvo);
 			if(balvo != null){
-				retvo.setNrefbzjmny(balvo.getNrefbzjmny());
-				retvo.setNrefyfkmny(balvo.getNrefyfkmny());
+				retvo.setNrefbzjmny(CommonUtil.getDZFDouble(balvo.getNrefbzjmny()));
+				retvo.setNrefyfkmny(CommonUtil.getDZFDouble(balvo.getNrefyfkmny()));
 			}
 			// 2、计算退款单未确认单据的退款金额
 			RefundBillVO refvo = qryRefundMny(paramvo);
@@ -265,8 +265,8 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			// 1、计算付款余额表余额
 			RefundBillVO balvo = qryReBanMny(paramvo);
 			if(balvo != null){
-				retvo.setNrefbzjmny(balvo.getNrefbzjmny());
-				retvo.setNrefyfkmny(balvo.getNrefyfkmny());
+				retvo.setNrefbzjmny(CommonUtil.getDZFDouble(balvo.getNrefbzjmny()));
+				retvo.setNrefyfkmny(CommonUtil.getDZFDouble(balvo.getNrefyfkmny()));
 			}
 		}
 		return retvo;
