@@ -751,12 +751,8 @@ em, i {
 	padding: 0 10px;
 	color: #555
 }
-/* .dialog-button .c6{background: #2a87d5;border:none;border-bottom: 2px solid #206ba4;margin:5px 10px 5px 0px;padding: 0 17px;filter:none;}
-.c6  .l-btn-text{color:#fff;}
-.dialog-button .c6:hover {background: #2267a8;border:none;border-bottom: 2px solid #2267a8;color: #fff} */
 .l-btn {
 	filter: none;
-	/* progid:DXImageTransform.Microsoft.gradient(enabled=false); */
 }
 
 .tableForm tr th {
@@ -823,14 +819,6 @@ em, i {
 .messager-body {
 	padding: 10px 10px 20px 10px;
 }
-/* .datagrid-cell a{margin-left:8px;width: 16px; height: 16px;background: url(../images/main_ico.png) no-repeat;vertical-align: middle;float:left;}
-.datagrid-cell a.add_col{background-position: -33px -27px;}
-.datagrid-cell a.del_col{background-position: -49px -27px;}
-.datagrid-cell a.add_col:hover{background-position: -33px -43px;}
-.datagrid-cell a.del_col:hover{background-position: -49px -43px;} */
-
-/*  #cardList,.grid-wrap,.mod-inner{height:99%;} */
-/* .mod-inner{ padding:0px 0px 0px 18px; } */ /*gjw注释*/
 .mod-right {
 	padding-left: 10px;
 }
@@ -1014,10 +1002,6 @@ em, i {
 .panel-with-icon {
 	color: #060606;
 }
-/*.main-wrap{position:relative;z-index:3;width:100%;height:60%;border:1px red solid;}
-.wrap-right,.wrap-center{position: absolute;border: 1px solid #d4d4d4;background:#fff;z-index: 10;overflow: hidden;}
-.wrap-right h3{background:#fff;height:35px;line-height:35px;font-size:14px;}
-.wrap-right h3 span{float:left;width:16px;height:18px;margin:8px 10px 0px 15px;background: url(../images/main_ico.png) no-repeat;background-position: -208px 0px;}*/
 .panel-header {
 	padding: 10px 0;
 	filter: none;
@@ -2177,12 +2161,6 @@ pre {
 }
 /* 自适应表格样式 */
 .keep {
-	/* border-radius: 3px !important;
-	width: 36px; */
-	/* height: 24px;
-	line-height: 24px !important; */
-/* 	text-align: center;
-	margin-top: 4px; */
 }
 
 .dzf-skin .mod-toolbar-top {
@@ -2219,13 +2197,7 @@ pre {
 
 .payee {
 	text-align: right;
-/* background: -moz-linear-gradient(top, #ccc 0%, #ffffff 100%); 
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ccc), color-stop(100%,#ffffff)); 
-background: -webkit-linear-gradient(top, #ccc 0%,#ffffff 100%); 
-background: -o-linear-gradient(top, #ccc 0%,#ffffff 100%); 
-background: -ms-linear-gradient(top, #ccc 0%,#ffffff 100%); 
-background: linear-gradient(to bottom, #ccc 0%,#ffffff 100%);  */
-background: #EFF1F2;
+	background: #EFF1F2;
 }
 
 .sty_header {
@@ -2331,10 +2303,6 @@ background: #EFF1F2;
 	left: 0px;
 	top: 0px;
 }
-/* form{margin-top:18px;} */
-/*  .panel-body-noborder {
-	border-width: 1px;
-}  */
 
 .top-margin {
 	margin-top: 18px;
@@ -2342,23 +2310,11 @@ background: #EFF1F2;
 .money_del .window .layout-split-south .layout-body{
 	border:none;
 }
-/* .money_del .window .layout-split-north .panel-body-noheader{
-	border:none;
-	
-} */
 .money_del .window .layout-split-north .datagrid-view{
 	border:1px solid #D4D4D4;
 }
 @media screen and (min-width: 1367px) and (max-width:1920px) {
-/* 	body {
-		padding: 0 1% 0 1.5%;
-	} */datagrid-body
-	/* .ui-btn {
-        height: 32px;
-        line-height: 32px;
-        margin-bottom: 0;
-        margin-right: 12px;
-    }*/
+	datagrid-body
 	.mod-toolbar-content {
 		padding: 14px 10px;
 		height: 32px;
@@ -2372,17 +2328,6 @@ background: #EFF1F2;
 }
 
 @media screen and (min-width:1025px) and (max-width:1366px) {
-/* 	body {
-		padding: 0 0.8% 0 1.6%;
-	} */
-	/* .ui-btn {
-        height: 28px;
-        line-height: 28px;
-        margin-bottom: 0;
-        margin-right: 3px;
-        font-size: 12px;
-        padding: 0 5px;
-    } */
 	.mod-toolbar-content {
 		padding: 10px;
 		height: 32px;
@@ -2397,30 +2342,20 @@ background: #EFF1F2;
 
  .datagrid-cell .dt{ border-radius: 5px;}
 .panel-title{color:black;}
-/* .datagrid-cell a {color:#fff;width:45px;height:22px;display:inline-block;} *//* 业务处理页 */
-
-/*.card_ri .panel-title{color:black;}*//* 业务查询页 */ 
 
   .numberbox .textbox-text {text-align: right;} 
 
-.panel-header{/* background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#d6dce1), to(#f9fafb)) ; */background: #EFF1F2;} /* 代理记账合同明细 */ 
+.panel-header{background: #EFF1F2;} /* 代理记账合同明细 */ 
 
 .textbox-invalid {  border-color: #D4D4D4;}
-/* #dataGridContent .panel-body{height:76% !important;} */
  .datagrid-body .textbox{border:none}/* 代理记合同 */ 
  
 .time_col .textbox{border-radius:5px;}
 .add_price .header{float:left;font-size:15px;line-height:40px;padding-left:16px;font-weight: bold;}
-/*  .l-btn-text{line-height:24px;} */
  .datagrid-htable .datagrid-header-row{background:#e9edf3;}
-/*  .textbox-invalid{border-color: #D4D4D4;} */
-/*  .textbox-text{text-align: right;} */
-/* .numberbox .textbox-text{text-align: right;}*/
-/* .datagrid-body .textbox{border:none} *//* 增值服务合同  */
  
 .datagrid-cell-c6-bdate {width: 114px !important;}
 .datagrid-cell-c6-edate {width: 114px !important;}
-/* .numberbox .textbox-text {text-align: right;} *//*合同审核  合同  */
 
 .datagrid td {vertical-align: middle;}
 .picUp_1 a:link{text-decoration: none;color:#ffffff;}
@@ -2433,50 +2368,17 @@ background: #EFF1F2;
 
 .datagrid-body .datagrid-editable td {text-align: center;}
 .window-mask{margin-top: 0;}panel-body panel-body-noheader panel-body-noborder
-	/* .panel-body{overflow: hidden;height:60% !important;} */
 .time_colp11 label{width:9%;}
 .dzf_sys_sorp .right{float:right;border:none;}
-	/* .panel-body{overflow: hidden;} */
-/* .dzf_sys_sorp .numberbox .textbox-text {
-		text-align: right;
-}*/
-	/* .panel-body-noborder {
-    	border-width:1px;
-    }   */ 
 .dzf_sys_sorp .ui-btn{margin-left:-4px;}
-/*.dzf_sys_sorp .datagrid-body .textbox{border:none}*//*我的客户  */
 
-
-
-/*.sys_corp_cha .datagrid-body .datagrid-editable td {text-align: center;}*/
-/*.sys_corp_cha .window-mask{margin-top: 0;}panel-body panel-body-noheader panel-body-noborder*/
-/*.sys_corp_cha .panel-body{overflow: hidden;height:60% !important;}*/
-/*.sys_corp_cha  .time_colp11 label{width:9%;}*/
 .sys_corp_cha  .right{float:right;border:none;}
-/* .sys_corp_cha .panel-body{overflow: hidden;} */
- 
-/* .sys_corp_cha .numberbox .textbox-text {
-text-align: right;
-}*/
-/*.sys_corp_cha .panel-body-noborder {
-    border-width:1px;
-}*//*客户查询  */
 .srveva_serve .datagrid-cell .dt{color:#FFF !important;}/* 服务评价*/
 
-/*.dsdj_offer #dataGridht .panel-title,#dataGridhx .panel-title{color:#000}*//*代收代缴明细账  */
-
-/* .cwhzb_class .mod-crumb span{margin-right:0px;} */
 .cwhzb_class tbody a{color: #0000cd;}
 .cwhzb_class .datagrid-header-inner{background: #e9edf3;}/*财务汇总表  */
 
 .deal_card_class{overflow:hidden;overflow-y:auto;}
-/*.deal_card_class .panel-title{color:black;}*/
-/* .deal_card_class .l-btn-text {
-    font-size: 14px;
-    line-height: 28px;
-} */
-/* .deal_card_class .easyui-linkbutton,.dialog-button .l-btn-small{display: inline-block;margin:5px 10px 5px 0px;padding: 0 17px;height: 28px;line-height:28px;border: 1px solid #c1c1c1;border-radius: 3px;background: #fff;text-decoration:none;background: -moz-linear-gradient(top, #fff, #f4f4f4);background: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#f4f4f4));background: -o-linear-gradient(top, #fff, #f4f4f4);background: -ms-linear-gradient(top, #fff 0, #f4f4f4 100%);background: linear-gradient(top, #fff, #f4f4f4);font: 14px/2 \5b8b\4f53;font-family: Microsoft YaHei;color: #555;vertical-align: middle;cursor: pointer}
- */
   .l-btn-left {
   display: inline-block;
   position: relative;
@@ -2484,7 +2386,6 @@ text-align: right;
   margin: 0;
   padding: 0;
   vertical-align: top;
-/*   width: 40px; */
   height: 26px;
 }/*业务查询卡片*/
 #sign{margin-left:30px;}/*代理记账合同明细  */
@@ -2514,39 +2415,12 @@ text-align: right;
     font-size: 12px;
     line-height: 24px;
 }
-/* .easyui-linkbutton,.dialog-button .l-btn-small{display: inline-block;margin:5px 10px 5px 0px;padding: 0 17px;height: 28px;line-height:28px;border: 1px solid #c1c1c1;border-radius: 3px;background: #fff;text-decoration:none;background: -moz-linear-gradient(top, #fff, #f4f4f4);background: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#f4f4f4));background: -o-linear-gradient(top, #fff, #f4f4f4);background: -ms-linear-gradient(top, #fff 0, #f4f4f4 100%);background: linear-gradient(top, #fff, #f4f4f4);font: 14px/2 \5b8b\4f53;font-family: Microsoft YaHei;color: #555;vertical-align: middle;cursor: pointer}
- */
- /* .l-btn-left {
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  vertical-align: top;
-  width: 40px;
-  height: 30px;
-} */
-/*   .datagrid{width:100% !important;}  */
-/*  .panel-header{width:100% !important;} */
-/*  .panel-header .panel-title{color:#fff !important;} */
-/*    .datagrid-view{width:100% !important;}
- */
-/*  .panel-body{overflow:auto;} */
-/*  .sys_taxjxs .combo-panel, .busimng-body .combo-panel, .busi_query .panel-body, .jdmangemnet-body .combo-panel, .bsworkbench-body .combo-panel, .jzworkbench-body .combo-panel, .kjgztjb-body .combo-panel,
-.sys_opelog .combo-panel, .ckgepub-body .combo-panel, .repayorder-body .combo-panel, .dzf_sys_sorp .combo-panel, .cwhzb_class .combo-panel, .contract_xi .combo-panel,
-.khywtjb-body .combo-panel, .weborder-body .combo-panel, .contract_xi .combo-panel, .contractReportant-body .combo-panel, .send_message_body .combo-panel, .sys_cpqy-body .combo-panel, 
-.srvpropub-body .combo-panel, .packgepub-body .combo-panel,.ysworkbench .combo-panel,.jmstz-body .combo-panel, .pljz .combo-panel, .zzpljz .combo-panel{overflow:auto;}   */
 
-/*  .payee{text-align: right;background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#d6dce1), to(#f9fafb));} */
 .card_busi .header{float:left;font-size:16px;line-height:46px;padding-left:16px;color:#000;font-weight:normal;}
 .card_col{margin-bottom:12px;} /*业务处理卡片  */ 
 .ziliao_toggle .window .datagrid-view{border-top:1px solid #d4d4d4;}/*资料交接  */
-/* .sys_busity .mod-toolbar-content{padding-bottom:18px;} *//*业务设置  */
-/* .sys_busset .easyui-fluid #card_panel .easyui-layout .layout-panel-center form .panel-body{width:100% !important;} */
-/* .sys_busset .mod-toolbar-content{padding-bottom:18px;} */
 .sys_busset .numberbox .textbox-text{text-align: left;}/*业务小类  */
 .sys_product_s .numberbox .textbox-text{text-align: left;}/*业务大类  */
-/* .sys_taxjxs .panel:nth-of-type(2) .combo-panel{background:red;}纳税信息维护  */
 .pic_change .window #print_dialog{height:407px !important;}/*图片。处理  */
 .dsdj_offer .mod-inner .datagrid-body td p{border:1px solid #ccc}/* 代收代缴明细账 */
 .busimng-body .mod-inner #dataGrid .panel-body{width:99.8% !important}/*业务处理界面的  */
