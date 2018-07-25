@@ -1430,11 +1430,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 3){
 			throw new BusinessException("该合同已变更，不允许再次变更");
 		}
-		if(paramvo.getIchangetype() == 1){
+		if(paramvo.getIchangetype() == 1){//合同终止
+			String vstopperiod = oldvo.getVstopperiod();// 终止期间
+			String vbeginperiod = oldvo.getVbeginperiod();// 合同开始期间
+			String vendperiod = oldvo.getVendperiod();// 合同结束期间
+			if(vstopperiod.compareTo(vbeginperiod) < 0 || vstopperiod.compareTo(vendperiod) > 0){
+				throw new BusinessException("终止期间不能在服务期间之外，请重新选择终止期间");
+			}
 			//再次计算退回扣款相关金额并进行校验
 			DZFDouble ntotalmny = oldvo.getNtotalmny();// 原合同总金额
-			String vbeginperiod = oldvo.getVbeginperiod();//合同开始期间
-			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
+//			String vbeginperiod = oldvo.getVbeginperiod();//合同开始期间
+//			String vstopperiod = paramvo.getVstopperiod();//合同终止期间
 			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
 			Integer ireceivcycle = CommonUtil.getInteger(oldvo.getIreceivcycle());//原收款周期
 			DZFDouble ndedsummny = oldvo.getNdedsummny();//原扣款总金额
