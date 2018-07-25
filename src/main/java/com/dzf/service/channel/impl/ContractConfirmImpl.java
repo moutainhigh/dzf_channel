@@ -1431,7 +1431,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throw new BusinessException("该合同已变更，不允许再次变更");
 		}
 		if(paramvo.getIchangetype() == 1){//合同终止
-			String vstopperiod = oldvo.getVstopperiod();// 终止期间
+			String vstopperiod = paramvo.getVstopperiod();// 终止期间
 			String vbeginperiod = oldvo.getVbeginperiod();// 合同开始期间
 			String vendperiod = oldvo.getVendperiod();// 合同结束期间
 			if(vstopperiod.compareTo(vbeginperiod) < 0 || vstopperiod.compareTo(vendperiod) > 0){
