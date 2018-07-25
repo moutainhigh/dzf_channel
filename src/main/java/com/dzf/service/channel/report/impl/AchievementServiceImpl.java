@@ -964,8 +964,10 @@ public class AchievementServiceImpl implements IAchievementService {
 		sql.append("SELECT DISTINCT b.vprovince  \n");
 		sql.append("  FROM cn_chnarea_b b  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON a.pk_chnarea = b.pk_chnarea  \n");
+		sql.append("  LEFT JOIN bd_account t ON b.vprovince = t.vprovince  \n");
 		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.type, 0) = 1  \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
 		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
 			sql.append("   AND a.userid = ? \n");
 			spm.addParam(paramvo.getCuserid());

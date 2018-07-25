@@ -1688,6 +1688,19 @@ function changeConfri(){
 		});			
 		return;
 	}
+	var opertype = $('input:radio[name="chtype"]:checked').val();	
+	if(opertype == 1){
+		var stperiod = $("#stperiod").val();//终止期间
+		var sbperiod = $("#sbperiod").val();//开始期间
+		var seperiod = $("#seperiod").val();//结束期间
+		if(stperiod < sbperiod || stperiod > seperiod){
+			Public.tips({
+				content : '终止期间不能在服务期间之外，请重新选择终止期间',
+				type : 2
+			});			
+			return;
+		}
+	}
 	parent.$.messager.progress({
 		text : '变更中....'
 	});
