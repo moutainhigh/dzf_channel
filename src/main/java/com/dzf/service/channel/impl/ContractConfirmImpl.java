@@ -259,8 +259,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		sql.append("       t.vcontcode,  \n") ; 
 		sql.append("       t.pk_packagedef,  \n") ; 
-		sql.append("       t.isncust,  \n") ; 
-		sql.append("       t.isnconfirm,  \n") ; 
+		sql.append("       nvl(t.isncust,'N') AS isncust,  \n") ; // 是否存量客户
+		sql.append("       nvl(t.isnconfirm,'N') AS isnconfirm,  \n") ; // 未确定服务期限
 		sql.append("       t.chargedeptname,  \n") ; 
 		sql.append("       t.busitypemin,  \n") ;//业务小类
 		sql.append("       bs.vbusitypename,  \n") ; 
