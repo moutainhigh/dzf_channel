@@ -642,6 +642,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				}
 				packvo.setIusenum(num + 1);
 				singleObjectBO.update(packvo, new String[]{"iusenum"});
+			} catch (Exception e) {
+				if (e instanceof BusinessException)
+					throw new BusinessException(e.getMessage());
+				else
+					throw new WiseRunException(e);
 			} finally {
 				LockUtil.getInstance().unLock_Key(packvo.getTableName(), packvo.getPk_packagedef(),uuid);
 			}
@@ -1403,6 +1408,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			vmemo.append(datavo.getVcontcode());
 			updateChangeBalMny(datavo, cuserid, vmemo.toString());
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_contract(),uuid);
 		}
