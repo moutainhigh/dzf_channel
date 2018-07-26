@@ -433,14 +433,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
         JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
         Map<String, String> mapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
         ContractConfrimVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ContractConfrimVO[].class, JSONConvtoJAVA.getParserConfig());
-        ArrayList<ContractConfrimVO> explist = new ArrayList<ContractConfrimVO>();
-        for(ContractConfrimVO vo : expVOs){
-            explist.add(vo);
-        }
         HttpServletResponse response = getResponse();
         Excelexport2003<ContractConfrimVO> ex = new Excelexport2003<ContractConfrimVO>();
         ContractConExcelField fields = new ContractConExcelField();
-        fields.setVos(explist.toArray(new ContractConfrimVO[0]));;
+        fields.setVos(expVOs);
         fields.setQj(qj);
         ServletOutputStream servletOutputStream = null;
         OutputStream toClient = null;
