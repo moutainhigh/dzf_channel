@@ -16,8 +16,10 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -203,6 +205,11 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 			upstr.add("dapprovetime");
 			upstr.add("tstamp");
 			singleObjectBO.update(billvo, upstr.toArray(new String[0]));
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
@@ -240,6 +247,11 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 			String[] str = new String[]{"irejectype","vapproveid","dapprovedate","dapprovetime",
 					"vreason","vstatus","tstamp"};
 			singleObjectBO.update(billvo, str);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
@@ -272,6 +284,11 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 			billvo.setDapprovetime(null);//审批时间
 			billvo.setTstamp(new DZFDateTime());//操作时间
 			singleObjectBO.update(billvo, new String[]{"vstatus","vapproveid", "dapprovedate", "dapprovetime","tstamp"});
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
