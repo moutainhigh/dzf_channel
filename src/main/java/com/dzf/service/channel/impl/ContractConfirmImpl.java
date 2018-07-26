@@ -513,7 +513,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			String pk_corp) throws DZFWarpException {
 	    String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_contract(),uuid, 120);
+			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);
 			String errmsg = "";//错误信息
 			ChnBalanceVO[] balVOs = null;//余额信息
 			PackageDefVO packvo = null;//套餐信息
@@ -573,7 +573,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				saveAuditMsg(datavo, 2, pk_corp, cuserid);
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_contract(),uuid);
+			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(),uuid);
 		}
 		
 		return datavo;
@@ -1018,7 +1018,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(confrimvo.getTableName(), confrimvo.getPk_contract(),uuid, 120);
+			LockUtil.getInstance().tryLockKey("ynt_contract", confrimvo.getPk_contract(),uuid, 120);
 			String errmsg = "";
 			ChnBalanceVO[] balVOs = null;//余额信息
 			PackageDefVO packvo = null;//套餐信息
@@ -1077,7 +1077,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				saveAuditMsg(confrimvo, 2, pk_corp, cuserid);
 			}
 		} finally {
-			LockUtil.getInstance().unLock_Key(confrimvo.getTableName(), confrimvo.getPk_contract(),uuid);
+			LockUtil.getInstance().unLock_Key("ynt_contract", confrimvo.getPk_contract(),uuid);
 		}
 
 		return confrimvo;
