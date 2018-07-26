@@ -17,6 +17,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 
@@ -73,7 +74,12 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 				LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 30);
 				singleObjectBO.update(data,
 						new String[] { "vreason", "vsuggest", "lastmodifypsnid", "updatets" });
-			} finally {
+			} catch (Exception e) {
+	            if (e instanceof BusinessException)
+	                throw new BusinessException(e.getMessage());
+	            else
+	                throw new WiseRunException(e);
+	        } finally {
 				LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
 			}
 		}
@@ -103,7 +109,12 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 		try {
 			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 30);
 			singleObjectBO.deleteObject(data);
-		} finally {
+		} catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        } finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rejectreason(),uuid);
 		}
 	}
