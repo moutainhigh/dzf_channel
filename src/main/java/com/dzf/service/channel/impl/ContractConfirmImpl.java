@@ -40,6 +40,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.Logger;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
@@ -572,7 +573,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//发送消息
 				saveAuditMsg(datavo, 2, pk_corp, cuserid);
 			}
-		} finally {
+		}catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        }
+		finally {
 			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(),uuid);
 		}
 		
@@ -1076,7 +1083,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//发送消息
 				saveAuditMsg(confrimvo, 2, pk_corp, cuserid);
 			}
-		} finally {
+		} catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        }
+		finally {
 			LockUtil.getInstance().unLock_Key("ynt_contract", confrimvo.getPk_contract(),uuid);
 		}
 
