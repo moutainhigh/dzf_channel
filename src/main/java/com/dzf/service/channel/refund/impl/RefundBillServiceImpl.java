@@ -25,6 +25,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -163,6 +164,11 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_refund(),uuid, 60);
 			String[] str = new String[]{"updatets", "drefunddate", "nrefyfkmny", "nrefbzjmny", "vmemo"};
 			singleObjectBO.update(datavo, str);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
 		}
@@ -369,10 +375,16 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		}else{
 		    String uuid = UUID.randomUUID().toString();
 			try {
+				LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_refund(),uuid, 60);
 				String delsql = "delete from cn_refund where pk_refund = ? ";
 				SQLParameter spm = new SQLParameter();
 				spm.addParam(datavo.getPk_refund());
 				singleObjectBO.executeUpdate(delsql, spm);
+			} catch (Exception e) {
+				if (e instanceof BusinessException)
+					throw new BusinessException(e.getMessage());
+				else
+					throw new WiseRunException(e);
 			} finally {
 				LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
 			}
@@ -438,6 +450,11 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			datavo.setUpdatets(new DZFDateTime());
 			String[] str = new String[]{"istatus","vconfirmid","dconfirmdate","updatets"};
 			singleObjectBO.update(datavo, str);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
 		}
