@@ -16,6 +16,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
@@ -74,6 +75,11 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 				//3、只有审核通过才记录存储返点单金额
 				saveRebateMny(data, pk_corp);
 			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_rebate(),uuid);
 		}
