@@ -16,8 +16,10 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
@@ -167,6 +169,11 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 			paramvo.setTapprovetime(new DZFDateTime());
 			singleObjectBO.update(paramvo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
 					"vapprovename", "tapprovetime" });
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_corpnameedit(),uuid);
 		}
