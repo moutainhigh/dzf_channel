@@ -1119,30 +1119,31 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				//1、计算扣款总金额：
 				countDedSumMny(confrimvo, paramvo);
+				//2、审核前校验
 				Map<String,Object> checkmap =  CheckBeforeAudit(confrimvo, "batch");
 				if(checkmap != null && !checkmap.isEmpty()){
 					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
-				//2、计算扣款分项金额：
+				//3、计算扣款分项金额：
 				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
 					countDedMny(confrimvo, balVOs);
 				}
-				//3、生成合同审核数据
+				//4、生成合同审核数据
 				confrimvo = saveContConfrim(confrimvo, cuserid);
-				//4、回写付款余额
+				//5、回写付款余额
 				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(confrimvo, cuserid, balVOs);
 				}
-				//5、更新原合同加盟合同状态、驳回原因
+				//6、更新原合同加盟合同状态、驳回原因
 				updateContract(confrimvo, opertype, cuserid, pk_corp);
-				//6、回写套餐促销活动名额(补提交的合同不回写套餐数量)
+				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)
 				if(confrimvo.getPatchstatus() == null || (confrimvo.getPatchstatus() != null && confrimvo.getPatchstatus() != 2)){
 					updateSerPackage(packvo);
 				}
-				//7、回写我的客户“纳税人性质  、是否存量客户”
+				//8、回写我的客户“纳税人性质  、是否存量客户”
 				updateCorp(confrimvo);
-				//8、发送消息
+				//9、发送消息
 				saveAuditMsg(confrimvo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				checkBeforeReject(confrimvo);
