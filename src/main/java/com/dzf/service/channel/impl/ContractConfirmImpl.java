@@ -548,25 +548,27 @@ public class ContractConfirmImpl implements IContractConfirm {
 					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
-				//4、计算扣款分项金额：
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
+					//4、计算扣款分项金额：
 					countDedMny(datavo, balVOs);
+					//5、预付款扣款、返点扣款分项校验：
+					checkBalance(datavo, cuserid, balVOs);
 				}
-				//5、生成合同审核数据：
+				//6、生成合同审核数据：
 				datavo = saveContConfrim(datavo, cuserid);
-				//6、回写付款余额：
+				//7、回写付款余额：
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(datavo, cuserid, balVOs);
 				}
-				//7、更新原合同加盟合同状态、驳回原因
+				//8、更新原合同加盟合同状态、驳回原因
 				updateContract(datavo, opertype, cuserid, pk_corp);
-				//8、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+				//9、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
 					updateSerPackage(packvo);
 				}
-				//9、回写我的客户“纳税人性质  、是否存量客户”：
+				//10、回写我的客户“纳税人性质  、是否存量客户”：
 				updateCorp(datavo);
-				//10、发送消息：
+				//11、发送消息：
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				checkBeforeReject(datavo);
@@ -778,17 +780,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 	
 	/**
 	 * 预付款余额、返点余额生成前校验
-	 * @param paramvo
+	 * @param datavo
 	 * @param cuserid
 	 * @param balVOs
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private void checkBalance(ContractConfrimVO paramvo, String cuserid, ChnBalanceVO[] balVOs) throws DZFWarpException {
+	private void checkBalance(ContractConfrimVO datavo, String cuserid, ChnBalanceVO[] balVOs) throws DZFWarpException {
 		//先校验，再进行数据存储，否则会造成数据存储错误
 		Map<String,ChnBalanceVO> map = new HashMap<String,ChnBalanceVO>();
 		String corpname = "";
-		CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corp());
+		CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corp());
 		if(corpvo != null){
 			corpname = corpvo.getUnitname();
 		}
@@ -800,26 +802,26 @@ public class ContractConfirmImpl implements IContractConfirm {
 				map.put("reb", balvo);
 			}
 		}
-		if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){//返点款扣款
+		if(datavo != null && CommonUtil.getDZFDouble(datavo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){//返点款扣款
 			ChnBalanceVO balancevo = map.get("reb");
 			if(balancevo == null){
 				errmsg = "加盟商："+corpname+"余额表信息为空；";
 				throw new BusinessException(errmsg);
 			}
 			DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
-			if(balance.compareTo(paramvo.getNdedrebamny()) < 0){
+			if(balance.compareTo(datavo.getNdedrebamny()) < 0){
 				errmsg = "加盟商："+corpname+"返点余额不足；";
 				throw new BusinessException(errmsg);
 			}
 		}
-		if(paramvo != null && CommonUtil.getDZFDouble(paramvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
+		if(datavo != null && CommonUtil.getDZFDouble(datavo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
 			ChnBalanceVO balancevo = map.get("pay");
 			if(balancevo == null){
 				errmsg = "加盟商："+corpname+"余额表信息为空；";
 				throw new BusinessException(errmsg);
 			}
 			DZFDouble balance = SafeCompute.sub(balancevo.getNpaymny(), balancevo.getNusedmny());
-			if(balance.compareTo(paramvo.getNdeductmny()) < 0){
+			if(balance.compareTo(datavo.getNdeductmny()) < 0){
 				errmsg = "加盟商："+corpname+"预付款余额不足；";
 				throw new BusinessException(errmsg);
 			}
