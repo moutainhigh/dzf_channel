@@ -137,7 +137,7 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 					rightlist.add(billvo);
 				} catch (Exception e) {
 					errnum ++;
-					errmsg.append(billvo.getVerrmsg()).append("<br>");
+					errmsg.append(e.getMessage()).append("<br>");
 				}
 //				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
 //					errnum ++;
