@@ -22,7 +22,6 @@ import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
-import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.rebate.IRebateAuditService;
 import com.dzf.service.channel.rebate.IRebateInputService;
 
@@ -154,9 +153,37 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 		spm.addParam(IStatusConstant.IPAYTYPE_3);
 		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, sql, spm);
 		if(balVOs != null && balVOs.length > 0){
-			balvo = balVOs[0];
-			balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), data.getNrebatemny()));
-			singleObjectBO.update(balvo, new String[]{"npaymny"});
+//			balvo = balVOs[0];
+//			balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), data.getNrebatemny()));
+//			singleObjectBO.update(balvo, new String[]{"npaymny"});
+			
+			String uid = UUID.randomUUID().toString();
+			try {
+				LockUtil.getInstance().tryLockKey("cn_balance",
+						data.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uid, 120);
+				StringBuffer usql = new StringBuffer();
+				spm = new SQLParameter();
+				usql.append("UPDATE cn_balance l  \n");
+				usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+				spm.addParam(data.getNrebatemny());
+				usql.append(" WHERE l.ipaytype = ?  \n");
+				spm.addParam(IStatusConstant.IPAYTYPE_3);
+				usql.append("   AND l.pk_corp = ?  \n");
+				spm.addParam(data.getPk_corp());
+				int res = singleObjectBO.executeUpdate(usql.toString(), spm);
+				if(res != 1){
+					throw new BusinessException("余额表金额更新错误");
+				}
+			} catch (Exception e) {
+				if (e instanceof BusinessException)
+					throw new BusinessException(e.getMessage());
+				else
+					throw new WiseRunException(e);
+			} finally {
+				LockUtil.getInstance().unLock_Key("cn_balance",
+						data.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uid);
+			}
+			
 		}else{
 			balvo = new ChnBalanceVO();
 			balvo.setPk_corp(data.getPk_corp());
