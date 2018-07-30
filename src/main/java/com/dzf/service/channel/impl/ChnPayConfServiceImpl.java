@@ -330,11 +330,46 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 					balvo.setNpaymny(npaymny);
 					//直接更新付款余额表-已付款金额，如果仅有一单付款单，则更新后已付款金额为0
 					singleObjectBO.update(balvo, new String[]{"npaymny"});
+					
+					String uid = UUID.randomUUID().toString();
+					try {
+						LockUtil.getInstance().tryLockKey("cn_balance",
+								billvo.getPk_corp() + "" + billvo.getIpaytype(), uid, 120);
+						//更新余额表：
+						StringBuffer usql = new StringBuffer();
+						spm = new SQLParameter();
+						usql.append("UPDATE cn_balance l  \n");
+						usql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+						spm.addParam(billvo.getNpaymny());
+						usql.append(" WHERE l.ipaytype = ?  \n");
+						spm.addParam(IStatusConstant.IPAYTYPE_2);
+						usql.append("   AND l.pk_corp = ?  \n");
+						spm.addParam(billvo.getPk_corp());
+						int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+						if(res == 1){
+							sql = " delete from cn_detail where pk_bill = ? and pk_corp = ? ";
+							spm = new SQLParameter();
+							spm.addParam(billvo.getPk_paybill());
+							spm.addParam(billvo.getPk_corp());
+							singleObjectBO.executeUpdate(sql, spm);
+						}else{
+							String unitname = "";
+							CorpVO corpvo = CorpCache.getInstance().get(null, billvo.getPk_corp());
+							if(corpvo != null){
+								unitname = corpvo.getUnitname();
+							}
+							throw new BusinessException("客户："+unitname+"余额表付款金额更新错误；");
+						}
+					} catch (Exception e) {
+						if (e instanceof BusinessException)
+							throw new BusinessException(e.getMessage());
+						else
+							throw new WiseRunException(e);
+					} finally {
+						LockUtil.getInstance().unLock_Key("cn_balance",
+								billvo.getPk_corp() + "" + billvo.getIpaytype(), uid);
+					}
 				}
-				sql = " update cn_detail set dr = 1 where pk_bill = ? ";
-				spm = new SQLParameter();
-				spm.addParam(billvo.getPk_paybill());
-				singleObjectBO.executeUpdate(sql, spm);
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
 			billvo.setVconfirmid(cuserid);//取消确认人
