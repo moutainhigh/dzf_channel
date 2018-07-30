@@ -519,13 +519,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			ChnBalanceVO[] balVOs = null;// 余额信息
 			PackageDefVO packvo = null;// 套餐信息
 			if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 扣款
-				// 1、审核前校验
+				// 1、审核前校验：
 				Map<String, Object> checkmap = CheckBeforeAudit(datavo, "single");
 				if (checkmap != null && !checkmap.isEmpty()) {
 					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
-				// 2、计算扣款金额
+				// 2、计算扣款分项金额：
 				if (datavo.getIdeductpropor() != 0) {// 扣款比例如果为0，则不计算扣款金额
 					countDedMny(datavo, balVOs);
 				}
@@ -1091,7 +1091,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	/**
 	 * 批量审核-审核单个数据
-	 * @param confrimvo 合同数据
+	 * @param datavo 合同数据
 	 * @param paramvo  参数数据
 	 * @param opertype
 	 * @param cuserid
@@ -1100,61 +1100,61 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	@Override
-	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
+	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
 			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
 		
-		if(StringUtil.isEmpty(confrimvo.getTableName()) || StringUtil.isEmpty(confrimvo.getPk_contract())){
+		if(StringUtil.isEmpty(datavo.getTableName()) || StringUtil.isEmpty(datavo.getPk_contract())){
 			throw new BusinessException("数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey("ynt_contract", confrimvo.getPk_contract(),uuid, 120);
-			if(confrimvo.getIsncust() != null && confrimvo.getIsncust().booleanValue()){
-				confrimvo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
+			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);
+			if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
+				datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
 			}else{
-				confrimvo.setIdeductpropor(paramvo.getIdeductpropor());
+				datavo.setIdeductpropor(paramvo.getIdeductpropor());
 			}
 			ChnBalanceVO[] balVOs = null;//余额信息
 			PackageDefVO packvo = null;//套餐信息
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				//1、计算扣款总金额：
-				countDedSumMny(confrimvo, paramvo);
-				//2、审核前校验
-				Map<String,Object> checkmap =  CheckBeforeAudit(confrimvo, "batch");
+				countDedSumMny(datavo, paramvo);
+				//2、审核前校验：
+				Map<String,Object> checkmap =  CheckBeforeAudit(datavo, "batch");
 				if(checkmap != null && !checkmap.isEmpty()){
 					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
 				//3、计算扣款分项金额：
-				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
-					countDedMny(confrimvo, balVOs);
+				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
+					countDedMny(datavo, balVOs);
 				}
-				//4、生成合同审核数据
-				confrimvo = saveContConfrim(confrimvo, cuserid);
-				//5、回写付款余额
-				if(confrimvo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
-					updateBalanceMny(confrimvo, cuserid, balVOs);
+				//4、生成合同审核数据：
+				datavo = saveContConfrim(datavo, cuserid);
+				//5、回写付款余额：
+				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
+					updateBalanceMny(datavo, cuserid, balVOs);
 				}
-				//6、更新原合同加盟合同状态、驳回原因
-				updateContract(confrimvo, opertype, cuserid, pk_corp);
-				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)
-				if(confrimvo.getPatchstatus() == null || (confrimvo.getPatchstatus() != null && confrimvo.getPatchstatus() != 2)){
+				//6、更新原合同加盟合同状态、驳回原因：
+				updateContract(datavo, opertype, cuserid, pk_corp);
+				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
 					updateSerPackage(packvo);
 				}
-				//8、回写我的客户“纳税人性质  、是否存量客户”
-				updateCorp(confrimvo);
-				//9、发送消息
-				saveAuditMsg(confrimvo, 1, pk_corp, cuserid);
+				//8、回写我的客户“纳税人性质  、是否存量客户”：
+				updateCorp(datavo);
+				//9、发送消息：
+				saveAuditMsg(datavo, 1, pk_corp, cuserid);
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-				checkBeforeReject(confrimvo);
-				confrimvo.setVconfreason(paramvo.getVconfreason());
-				confrimvo.setVconfreasonid(paramvo.getVconfreasonid());
-				updateContract(confrimvo, opertype, cuserid, pk_corp);
-				confrimvo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
-				confrimvo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+				checkBeforeReject(datavo);
+				datavo.setVconfreason(paramvo.getVconfreason());
+				datavo.setVconfreasonid(paramvo.getVconfreasonid());
+				updateContract(datavo, opertype, cuserid, pk_corp);
+				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
 //				setNullValue(confrimvo);
 				//发送消息
-				saveAuditMsg(confrimvo, 2, pk_corp, cuserid);
+				saveAuditMsg(datavo, 2, pk_corp, cuserid);
 			}
 			
 		} catch (Exception e) {
@@ -1164,9 +1164,9 @@ public class ContractConfirmImpl implements IContractConfirm {
                 throw new WiseRunException(e);
         }
 		finally {
-			LockUtil.getInstance().unLock_Key("ynt_contract", confrimvo.getPk_contract(),uuid);
+			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(),uuid);
 		}
-		return confrimvo;
+		return datavo;
 	}
 	
 	/**

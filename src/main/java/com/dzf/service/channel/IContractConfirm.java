@@ -84,7 +84,7 @@ public interface IContractConfirm {
 	
 	/**
 	 * 批量审核-审核单个数据
-	 * @param confrimvo
+	 * @param datavo
 	 * @param paramvo
 	 * @param opertype
 	 * @param cuserid
@@ -92,7 +92,7 @@ public interface IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
+	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
 			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException;
 	
 	/**
