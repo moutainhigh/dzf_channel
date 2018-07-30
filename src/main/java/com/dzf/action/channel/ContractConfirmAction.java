@@ -153,14 +153,11 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			}
 			
 			if(datavo == null){
-				log.info("单个审核-获取审核数据为空");
+				throw new BusinessException("单个审核-获取审核数据为空");
 			}
-			try {
-				datavo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
-				json.setRows(datavo);
-			} catch (Exception e) {
-				throw new BusinessException(e.getMessage());
-			}
+//			datavo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
+			datavo = contractconfser.updateAuditData(datavo, null, opertype, getLoginUserid(), getLogincorppk(), "single");
+			json.setRows(datavo);
 			if(datavo != null){
 				if(IStatusConstant.IDEDUCTYPE_1 == opertype){//审核
 					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码："+datavo.getVcontcode(), ISysConstants.SYS_3);
@@ -221,29 +218,22 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 //			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
 			if (confrimVOs != null && confrimVOs.length > 0) {
-				for (ContractConfrimVO confvo : confrimVOs) {
-					if (confvo == null) {
+				for (ContractConfrimVO datavo : confrimVOs) {
+					if (datavo == null) {
 						log.info("批量审核-获取审核数据为空");
 					} else {
 						try {
-							confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(),
-									 getLogincorppk());
+//							confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(),
+//									 getLogincorppk());
+							datavo = contractconfser.updateAuditData(datavo, paramvo, opertype, getLoginUserid(),
+									getLogincorppk(), "batch");
 							rignum++;
-							rightlist.add(confvo);
+							rightlist.add(datavo);
 						} catch (Exception e) {
 							errnum++;
 							errmsg.append(e.getMessage()).append("<br>");
 						}
 					}
-//					if (confvo != null) {
-//						if (!StringUtil.isEmpty(confvo.getVerrmsg())) {
-//							errnum++;
-//							errmsg.append(confvo.getVerrmsg()).append("<br>");
-//						} else {
-//							rignum++;
-//							rightlist.add(confvo);
-//						}
-//					}
 				}
 			}
 			json.setSuccess(true);

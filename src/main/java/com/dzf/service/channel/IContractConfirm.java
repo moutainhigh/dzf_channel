@@ -43,17 +43,17 @@ public interface IContractConfirm {
 	 */
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException;
 	
-	/**
-	 * 扣款/驳回
-	 * @param datavo
-	 * @param opertype
-	 * @param cuserid
-	 * @param pk_corp
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public ContractConfrimVO updateDeductData(ContractConfrimVO datavo, Integer opertype, String cuserid,
-			String pk_corp) throws DZFWarpException;
+//	/**
+//	 * 扣款/驳回
+//	 * @param datavo
+//	 * @param opertype
+//	 * @param cuserid
+//	 * @param pk_corp
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	public ContractConfrimVO updateDeductData(ContractConfrimVO datavo, Integer opertype, String cuserid,
+//			String pk_corp) throws DZFWarpException;
 
 	/**
 	 * 获取附件列表
@@ -75,25 +75,25 @@ public interface IContractConfirm {
 	public ContractConfrimVO saveChange(ContractConfrimVO paramvo, String cuserid, File[] files, String[] filenames)
 			throws DZFWarpException;
 	
-	/**
-	 * 查询套餐属性
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public Map<String, String> queryPackageMap() throws DZFWarpException;
+//	/**
+//	 * 查询套餐属性
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	public Map<String, String> queryPackageMap() throws DZFWarpException;
 	
-	/**
-	 * 批量审核-审核单个数据
-	 * @param datavo
-	 * @param paramvo
-	 * @param opertype
-	 * @param cuserid
-	 * @param pk_corp
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException;
+//	/**
+//	 * 批量审核-审核单个数据
+//	 * @param datavo
+//	 * @param paramvo
+//	 * @param opertype
+//	 * @param cuserid
+//	 * @param pk_corp
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
+//			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 查询合同信息
@@ -110,5 +110,19 @@ public interface IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	public String getQrySql(String cuserid) throws DZFWarpException; 
+	
+	/**
+	 * 审核/驳回操作
+	 * @param datavo  合同信息
+	 * @param paramvo 参数信息（批量审核使用）
+	 * @param opertype  操作类型：1：审核；2：驳回；
+	 * @param cuserid
+	 * @param pk_corp
+	 * @param checktype 校验类型：single：单个审核；batch：批量审核；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO updateAuditData(ContractConfrimVO datavo, ContractConfrimVO paramvo, Integer opertype,
+			String cuserid, String pk_corp, String checktype) throws DZFWarpException;
 	
 }

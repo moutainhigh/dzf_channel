@@ -417,22 +417,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return sql.toString();
 	}
 	
-	/**
-	 * 查询套餐属性
-	 * @return
-	 */
-	@Override
-	public Map<String, String> queryPackageMap() throws DZFWarpException {
-		Map<String, String> map = new HashMap<String, String>();
-		String sql = " nvl(dr,0) = 0 ";
-		PackageDefVO[] packVOs = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, sql, null);
-		if(packVOs != null && packVOs.length > 0){
-			for(PackageDefVO vo : packVOs){
-				map.put(vo.getPk_packagedef(), vo.getVtaxpayertype());
-			}
-		}
-		return map;
-	}
+//	/**
+//	 * 查询套餐属性
+//	 * @return
+//	 */
+//	@Override
+//	public Map<String, String> queryPackageMap() throws DZFWarpException {
+//		Map<String, String> map = new HashMap<String, String>();
+//		String sql = " nvl(dr,0) = 0 ";
+//		PackageDefVO[] packVOs = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, sql, null);
+//		if(packVOs != null && packVOs.length > 0){
+//			for(PackageDefVO vo : packVOs){
+//				map.put(vo.getPk_packagedef(), vo.getVtaxpayertype());
+//			}
+//		}
+//		return map;
+//	}
 	
 	/**
 	 * 通过主键查询合同数据
@@ -509,55 +509,74 @@ public class ContractConfirmImpl implements IContractConfirm {
 		return (RejectHistoryHVO[]) singleObjectBO.queryByCondition(RejectHistoryHVO.class, sql, spm);
 	}
 
+	/**
+	 * 审核/驳回操作
+	 * @param datavo  合同信息
+	 * @param paramvo 参数信息（批量审核使用）
+	 * @param opertype  操作类型：1：审核；2：驳回；
+	 * @param cuserid
+	 * @param pk_corp
+	 * @param checktype 校验类型：single：单个审核；batch：批量审核；
+	 * @return
+	 * @throws DZFWarpException
+	 */
 	@Override
-	public ContractConfrimVO updateDeductData(ContractConfrimVO datavo, Integer opertype, String cuserid, 
-			String pk_corp) throws DZFWarpException {
+	public ContractConfrimVO updateAuditData(ContractConfrimVO datavo, ContractConfrimVO paramvo, Integer opertype,
+			String cuserid, String pk_corp, String checktype) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			//加锁信息：1、原合同；
 			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(), uuid, 120);
-			ChnBalanceVO[] balVOs = null;// 余额信息
-			PackageDefVO packvo = null;// 套餐信息
-			if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 扣款
-				// 1、审核前校验：
-				Map<String, Object> checkmap = CheckBeforeAudit(datavo, "single");
-				if (checkmap != null && !checkmap.isEmpty()) {
+			//1、批量审核-设置扣款比例：
+			if("batch".equals(checktype)){
+				if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
+					datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
+				}else{
+					datavo.setIdeductpropor(paramvo.getIdeductpropor());
+				}
+			}
+			ChnBalanceVO[] balVOs = null;//余额信息
+			PackageDefVO packvo = null;//套餐信息
+			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+				//2、批量审核-计算扣款总金额：
+				if("batch".equals(checktype)){
+					countDedSumMny(datavo, paramvo);
+				}
+				//3、审核前校验：
+				Map<String,Object> checkmap =  CheckBeforeAudit(datavo, checktype);
+				if(checkmap != null && !checkmap.isEmpty()){
 					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
-				// 2、计算扣款分项金额：
-				if (datavo.getIdeductpropor() != 0) {// 扣款比例如果为0，则不计算扣款金额
+				//4、计算扣款分项金额：
+				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
 					countDedMny(datavo, balVOs);
 				}
-
-				// 3、预付款扣款、返点扣款分项校验：
-				if (datavo.getIdeductpropor() != 0) {
-					checkBalance(datavo, cuserid, balVOs);
-				}
-
-				// 4、生成合同审核数据
+				//5、生成合同审核数据：
 				datavo = saveContConfrim(datavo, cuserid);
-				// 5、回写付款余额
-				if (datavo.getIdeductpropor() != 0) {// 扣款比例如果为0，则不回写余额
+				//6、回写付款余额：
+				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(datavo, cuserid, balVOs);
 				}
-				// 6、更新原合同加盟合同状态、驳回原因
+				//7、更新原合同加盟合同状态、驳回原因
 				updateContract(datavo, opertype, cuserid, pk_corp);
-				// 7、回写套餐促销活动名额(补提交的合同不回写套餐数量)
-				if (datavo.getPatchstatus() == null
-						|| (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)) {
+				//8、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
 					updateSerPackage(packvo);
 				}
-				// 8、回写我的客户纳税人性质 、是否为存量客户
+				//9、回写我的客户“纳税人性质  、是否存量客户”：
 				updateCorp(datavo);
-				// 9、发送消息
+				//10、发送消息：
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
-			} else if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
+			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				checkBeforeReject(datavo);
+				if("batch".equals(checktype)){
+					datavo.setVconfreason(paramvo.getVconfreason());
+					datavo.setVconfreasonid(paramvo.getVconfreasonid());
+				}
 				updateContract(datavo, opertype, cuserid, pk_corp);
 				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
 				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
-//				setNullValue(datavo);
 				// 发送消息
 				saveAuditMsg(datavo, 2, pk_corp, cuserid);
 			}
@@ -571,6 +590,69 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		return datavo;
 	}
+
+//	@Override
+//	public ContractConfrimVO updateDeductData(ContractConfrimVO datavo, Integer opertype, String cuserid, 
+//			String pk_corp) throws DZFWarpException {
+//		String uuid = UUID.randomUUID().toString();
+//		try {
+//			//加锁信息：1、原合同；
+//			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(), uuid, 120);
+//			ChnBalanceVO[] balVOs = null;// 余额信息
+//			PackageDefVO packvo = null;// 套餐信息
+//			if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 扣款
+//				// 1、审核前校验：
+//				Map<String, Object> checkmap = CheckBeforeAudit(datavo, "single");
+//				if (checkmap != null && !checkmap.isEmpty()) {
+//					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
+//					packvo = (PackageDefVO) checkmap.get("package");
+//				}
+//				// 2、计算扣款分项金额：
+//				if (datavo.getIdeductpropor() != 0) {// 扣款比例如果为0，则不计算扣款金额
+//					countDedMny(datavo, balVOs);
+//				}
+//
+//				// 3、预付款扣款、返点扣款分项校验：
+//				if (datavo.getIdeductpropor() != 0) {
+//					checkBalance(datavo, cuserid, balVOs);
+//				}
+//
+//				// 4、生成合同审核数据
+//				datavo = saveContConfrim(datavo, cuserid);
+//				// 5、回写付款余额
+//				if (datavo.getIdeductpropor() != 0) {// 扣款比例如果为0，则不回写余额
+//					updateBalanceMny(datavo, cuserid, balVOs);
+//				}
+//				// 6、更新原合同加盟合同状态、驳回原因
+//				updateContract(datavo, opertype, cuserid, pk_corp);
+//				// 7、回写套餐促销活动名额(补提交的合同不回写套餐数量)
+//				if (datavo.getPatchstatus() == null
+//						|| (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)) {
+//					updateSerPackage(packvo);
+//				}
+//				// 8、回写我的客户纳税人性质 、是否为存量客户
+//				updateCorp(datavo);
+//				// 9、发送消息
+//				saveAuditMsg(datavo, 1, pk_corp, cuserid);
+//			} else if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
+//				checkBeforeReject(datavo);
+//				updateContract(datavo, opertype, cuserid, pk_corp);
+//				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
+//				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
+////				setNullValue(datavo);
+//				// 发送消息
+//				saveAuditMsg(datavo, 2, pk_corp, cuserid);
+//			}
+//		} catch (Exception e) {
+//			if (e instanceof BusinessException)
+//				throw new BusinessException(e.getMessage());
+//			else
+//				throw new WiseRunException(e);
+//		} finally {
+//			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(), uuid);
+//		}
+//		return datavo;
+//	}
 	
 	/**
 	 * 更新我的客户“纳税人性质、是否存量客户”
@@ -1089,85 +1171,85 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 	}
 
-	/**
-	 * 批量审核-审核单个数据
-	 * @param datavo 合同数据
-	 * @param paramvo  参数数据
-	 * @param opertype
-	 * @param cuserid
-	 * @param packmap
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@Override
-	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
-		
-		if(StringUtil.isEmpty(datavo.getTableName()) || StringUtil.isEmpty(datavo.getPk_contract())){
-			throw new BusinessException("数据错误");
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);
-			if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
-				datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
-			}else{
-				datavo.setIdeductpropor(paramvo.getIdeductpropor());
-			}
-			ChnBalanceVO[] balVOs = null;//余额信息
-			PackageDefVO packvo = null;//套餐信息
-			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
-				//1、计算扣款总金额：
-				countDedSumMny(datavo, paramvo);
-				//2、审核前校验：
-				Map<String,Object> checkmap =  CheckBeforeAudit(datavo, "batch");
-				if(checkmap != null && !checkmap.isEmpty()){
-					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
-					packvo = (PackageDefVO) checkmap.get("package");
-				}
-				//3、计算扣款分项金额：
-				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
-					countDedMny(datavo, balVOs);
-				}
-				//4、生成合同审核数据：
-				datavo = saveContConfrim(datavo, cuserid);
-				//5、回写付款余额：
-				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
-					updateBalanceMny(datavo, cuserid, balVOs);
-				}
-				//6、更新原合同加盟合同状态、驳回原因：
-				updateContract(datavo, opertype, cuserid, pk_corp);
-				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
-				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
-					updateSerPackage(packvo);
-				}
-				//8、回写我的客户“纳税人性质  、是否存量客户”：
-				updateCorp(datavo);
-				//9、发送消息：
-				saveAuditMsg(datavo, 1, pk_corp, cuserid);
-			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-				checkBeforeReject(datavo);
-				datavo.setVconfreason(paramvo.getVconfreason());
-				datavo.setVconfreasonid(paramvo.getVconfreasonid());
-				updateContract(datavo, opertype, cuserid, pk_corp);
-				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
-				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
-//				setNullValue(confrimvo);
-				//发送消息
-				saveAuditMsg(datavo, 2, pk_corp, cuserid);
-			}
-			
-		} catch (Exception e) {
-            if (e instanceof BusinessException)
-                throw new BusinessException(e.getMessage());
-            else
-                throw new WiseRunException(e);
-        }
-		finally {
-			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(),uuid);
-		}
-		return datavo;
-	}
+//	/**
+//	 * 批量审核-审核单个数据
+//	 * @param datavo 合同数据
+//	 * @param paramvo  参数数据
+//	 * @param opertype
+//	 * @param cuserid
+//	 * @param packmap
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	@Override
+//	public ContractConfrimVO updateBathDeductData(ContractConfrimVO datavo, ContractConfrimVO paramvo,
+//			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
+//		
+//		if(StringUtil.isEmpty(datavo.getTableName()) || StringUtil.isEmpty(datavo.getPk_contract())){
+//			throw new BusinessException("数据错误");
+//		}
+//		String uuid = UUID.randomUUID().toString();
+//		try {
+//			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);
+//			if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
+//				datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
+//			}else{
+//				datavo.setIdeductpropor(paramvo.getIdeductpropor());
+//			}
+//			ChnBalanceVO[] balVOs = null;//余额信息
+//			PackageDefVO packvo = null;//套餐信息
+//			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+//				//1、计算扣款总金额：
+//				countDedSumMny(datavo, paramvo);
+//				//2、审核前校验：
+//				Map<String,Object> checkmap =  CheckBeforeAudit(datavo, "batch");
+//				if(checkmap != null && !checkmap.isEmpty()){
+//					balVOs = (ChnBalanceVO[]) checkmap.get("balance");
+//					packvo = (PackageDefVO) checkmap.get("package");
+//				}
+//				//3、计算扣款分项金额：
+//				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
+//					countDedMny(datavo, balVOs);
+//				}
+//				//4、生成合同审核数据：
+//				datavo = saveContConfrim(datavo, cuserid);
+//				//5、回写付款余额：
+//				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
+//					updateBalanceMny(datavo, cuserid, balVOs);
+//				}
+//				//6、更新原合同加盟合同状态、驳回原因：
+//				updateContract(datavo, opertype, cuserid, pk_corp);
+//				//7、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+//				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
+//					updateSerPackage(packvo);
+//				}
+//				//8、回写我的客户“纳税人性质  、是否存量客户”：
+//				updateCorp(datavo);
+//				//9、发送消息：
+//				saveAuditMsg(datavo, 1, pk_corp, cuserid);
+//			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+//				checkBeforeReject(datavo);
+//				datavo.setVconfreason(paramvo.getVconfreason());
+//				datavo.setVconfreasonid(paramvo.getVconfreasonid());
+//				updateContract(datavo, opertype, cuserid, pk_corp);
+//				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+//				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);//已驳回
+////				setNullValue(confrimvo);
+//				//发送消息
+//				saveAuditMsg(datavo, 2, pk_corp, cuserid);
+//			}
+//			
+//		} catch (Exception e) {
+//            if (e instanceof BusinessException)
+//                throw new BusinessException(e.getMessage());
+//            else
+//                throw new WiseRunException(e);
+//        }
+//		finally {
+//			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(),uuid);
+//		}
+//		return datavo;
+//	}
 	
 	/**
 	 * 审核前校验
