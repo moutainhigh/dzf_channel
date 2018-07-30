@@ -155,17 +155,21 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			if(datavo == null){
 				log.info("单个审核-获取审核数据为空");
 			}
-			ContractConfrimVO retvo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
-			if(retvo != null){
+			try {
+				datavo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
+				json.setRows(datavo);
+			} catch (Exception e) {
+				throw new BusinessException(e.getMessage());
+			}
+			if(datavo != null){
 				if(IStatusConstant.IDEDUCTYPE_1 == opertype){//审核
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码："+datavo.getVcontcode(), ISysConstants.SYS_3);
 				}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：合同编码："+datavo.getVcontcode(), ISysConstants.SYS_3);
 				}
 			}
-			json.setRows(retvo);
-			json.setSuccess(true);
 			json.setMsg("操作成功");
+			json.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
@@ -175,80 +179,89 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	/**
 	 * 批量审核
 	 */
-	public void bathconfrim(){
+	public void bathconfrim() {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
-			if(uservo != null && !"000001".equals(uservo.getPk_corp())){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			String contract = getRequest().getParameter("contract"); // 审核数据
-			if(StringUtil.isEmpty(contract)){
+			if (StringUtil.isEmpty(contract)) {
 				throw new BusinessException("数据不能为空");
 			}
 			String type = getRequest().getParameter("opertype");
-			int opertype = Integer.parseInt(type);//1、扣款；2、驳回；
-			
+			int opertype = Integer.parseInt(type);// 1、扣款；2、驳回；
+
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
-			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
-			
+			ContractConfrimVO paramvo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class,
+					JSONConvtoJAVA.getParserConfig());
+
 			contract = contract.replace("}{", "},{");
 			contract = "[" + contract + "]";
 			JSONArray arrayJson = (JSONArray) JSON.parseArray(contract);
 			Map<String, String> contmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO[] confrimVOs = DzfTypeUtils.cast(arrayJson, contmaping, ContractConfrimVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-			
-			if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-				if(StringUtil.isEmpty(paramvo.getVconfreasonid())){
+
+			if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
+				if (StringUtil.isEmpty(paramvo.getVconfreasonid())) {
 					throw new BusinessException("驳回原因不能为空");
 				}
 			}
-			
+
 			int rignum = 0;
 			int errnum = 0;
 			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
 			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
-			if(confrimVOs != null && confrimVOs.length > 0){
-				for(ContractConfrimVO confvo : confrimVOs){
-					if(confvo == null){
+			if (confrimVOs != null && confrimVOs.length > 0) {
+				for (ContractConfrimVO confvo : confrimVOs) {
+					if (confvo == null) {
 						log.info("批量审核-获取审核数据为空");
-					}else{
-						confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(), packmap, getLogincorppk());
-					}
-					if(confvo != null){
-						if(!StringUtil.isEmpty(confvo.getVerrmsg())){
-							errnum++;
-							errmsg.append(confvo.getVerrmsg()).append("<br>");
-						}else{
+					} else {
+						try {
+							confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(),
+									packmap, getLogincorppk());
 							rignum++;
 							rightlist.add(confvo);
+						} catch (Exception e) {
+							errnum++;
+							errmsg.append(confvo.getVcontcode()).append(e.getMessage()).append("<br>");
 						}
 					}
+//					if (confvo != null) {
+//						if (!StringUtil.isEmpty(confvo.getVerrmsg())) {
+//							errnum++;
+//							errmsg.append(confvo.getVerrmsg()).append("<br>");
+//						} else {
+//							rignum++;
+//							rightlist.add(confvo);
+//						}
+//					}
 				}
 			}
 			json.setSuccess(true);
-			if(rignum > 0 && rignum == confrimVOs.length){
+			if (rignum > 0 && rignum == confrimVOs.length) {
 				json.setRows(Arrays.asList(confrimVOs));
-				json.setMsg("成功"+rignum+"条");
-			}else if(errnum > 0){
-				json.setMsg("成功"+rignum+"条，失败"+errnum+"条，失败原因："	+ errmsg.toString());
+				json.setMsg("成功" + rignum + "条");
+			} else if (errnum > 0) {
+				json.setMsg("成功" + rignum + "条，失败" + errnum + "条，失败原因：" + errmsg.toString());
 				json.setStatus(-1);
-				if(rignum > 0){
+				if (rignum > 0) {
 					json.setRows(rightlist);
 				}
 			}
-			if(rignum > 0){
-				if(opertype == 1){//审核
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同："+rignum+"个", ISysConstants.SYS_3);
-				}else if(opertype == 2){
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同："+rignum+"个", ISysConstants.SYS_3);
+			if (rignum > 0) {
+				if (opertype == 1) {// 审核
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：" + rignum + "个", ISysConstants.SYS_3);
+				} else if (opertype == 2) {
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：" + rignum + "个", ISysConstants.SYS_3);
 				}
 			}
 		} catch (Exception e) {
