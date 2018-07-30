@@ -326,10 +326,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 //					return billvo;
 					throw new BusinessException("单据号"+billvo.getVbillcode()+"余额不足");
 				}else{
-					DZFDouble npaymny = SafeCompute.sub(balvo.getNpaymny(), billvo.getNpaymny());
-					balvo.setNpaymny(npaymny);
-					//直接更新付款余额表-已付款金额，如果仅有一单付款单，则更新后已付款金额为0
-					singleObjectBO.update(balvo, new String[]{"npaymny"});
+//					DZFDouble npaymny = SafeCompute.sub(balvo.getNpaymny(), billvo.getNpaymny());
+//					balvo.setNpaymny(npaymny);
+//					//直接更新付款余额表-已付款金额，如果仅有一单付款单，则更新后已付款金额为0
+//					singleObjectBO.update(balvo, new String[]{"npaymny"});
 					
 					String uid = UUID.randomUUID().toString();
 					try {
