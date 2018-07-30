@@ -218,7 +218,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			int rignum = 0;
 			int errnum = 0;
 			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
-			Map<String, String> packmap = contractconfser.queryPackageMap();
+//			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
 			if (confrimVOs != null && confrimVOs.length > 0) {
 				for (ContractConfrimVO confvo : confrimVOs) {
@@ -227,7 +227,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 					} else {
 						try {
 							confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(),
-									packmap, getLogincorppk());
+									 getLogincorppk());
 							rignum++;
 							rightlist.add(confvo);
 						} catch (Exception e) {

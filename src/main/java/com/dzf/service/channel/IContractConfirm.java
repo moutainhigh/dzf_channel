@@ -88,13 +88,12 @@ public interface IContractConfirm {
 	 * @param paramvo
 	 * @param opertype
 	 * @param cuserid
-	 * @param packmap
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, Map<String, String> packmap, String pk_corp) throws DZFWarpException;
+			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 查询合同信息

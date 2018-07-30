@@ -1101,7 +1101,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 */
 	@Override
 	public ContractConfrimVO updateBathDeductData(ContractConfrimVO confrimvo, ContractConfrimVO paramvo,
-			Integer opertype, String cuserid, Map<String, String> packmap, String pk_corp) throws DZFWarpException {
+			Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
 		
 		if(StringUtil.isEmpty(confrimvo.getTableName()) || StringUtil.isEmpty(confrimvo.getPk_contract())){
 			throw new BusinessException("数据错误");
