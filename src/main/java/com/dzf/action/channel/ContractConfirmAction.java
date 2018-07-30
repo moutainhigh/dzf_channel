@@ -232,7 +232,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 							rightlist.add(confvo);
 						} catch (Exception e) {
 							errnum++;
-							errmsg.append(confvo.getVcontcode()).append(e.getMessage()).append("<br>");
+							errmsg.append(e.getMessage()).append("<br>");
 						}
 					}
 //					if (confvo != null) {
