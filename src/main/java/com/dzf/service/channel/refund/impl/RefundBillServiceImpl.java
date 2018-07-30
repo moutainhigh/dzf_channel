@@ -142,10 +142,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			checkCodeOnly(datavo);//返点单单号唯一性校验
 			datavo = (RefundBillVO) singleObjectBO.saveObject(logincorp, datavo);
 		}else{
-			String errmsg = checkState(datavo, 1);
-			if(!StringUtil.isEmpty(errmsg)){
-				throw new BusinessException(errmsg);
-			}
+			checkState(datavo, 1);
 			datavo.setUpdatets(new DZFDateTime());
 			updateData(datavo);
 		}
@@ -181,28 +178,33 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private String checkState(RefundBillVO datavo, Integer type) throws DZFWarpException {
+	private void checkState(RefundBillVO datavo, Integer type) throws DZFWarpException {
 		RefundBillVO oldvo = (RefundBillVO) singleObjectBO.queryByPrimaryKey(RefundBillVO.class, datavo.getPk_refund());
 		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
-			return "退款单"+datavo.getVbillcode()+"已经被删除；";
+//			return "退款单"+datavo.getVbillcode()+"已经被删除；";
+			throw new BusinessException("退款单"+datavo.getVbillcode()+"已经被删除；");
 		}
 		if(datavo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0){
-			return "退款单"+oldvo.getVbillcode()+"发生变化，请刷新界面后，再次尝试；";
+//			return "退款单"+oldvo.getVbillcode()+"发生变化，请刷新界面后，再次尝试；";
+			throw new BusinessException("退款单"+oldvo.getVbillcode()+"发生变化，请刷新界面后，再次尝试；");
 		}
 		if(type == 1 || type == 2){
 			if(datavo.getIstatus() == IStatusConstant.IREFUNDSTATUS_1){//已确认
-				return "退款单"+oldvo.getVbillcode()+"状态为已确认";
+//				return "退款单"+oldvo.getVbillcode()+"状态为已确认";
+				throw new BusinessException("退款单"+oldvo.getVbillcode()+"状态为已确认");
 			}
 		}else if(type == 3){
 			if(datavo.getIstatus() == IStatusConstant.IREFUNDSTATUS_1){//已确认
-				return "退款单"+oldvo.getVbillcode()+"状态为已确认";
+//				return "退款单"+oldvo.getVbillcode()+"状态为已确认";
+				throw new BusinessException("退款单"+oldvo.getVbillcode()+"状态为已确认");
 			}
 		}else if(type == 4){
 			if(datavo.getIstatus() == IStatusConstant.IREFUNDSTATUS_0){//待确认
-				return "退款单"+oldvo.getVbillcode()+"状态为待确认";
+//				return "退款单"+oldvo.getVbillcode()+"状态为待确认";
+				throw new BusinessException("退款单"+oldvo.getVbillcode()+"状态为待确认");
 			}
 		}
-		return null;
+//		return null;
 	}
 	
 	/**
@@ -369,40 +371,31 @@ public class RefundBillServiceImpl implements IRefundBillService {
 
 	@Override
 	public RefundBillVO delete(RefundBillVO datavo) throws DZFWarpException {
-		String errmsg = checkState(datavo, 2);
-		if(!StringUtil.isEmpty(errmsg)){
-			datavo.setVerrmsg(errmsg);
-		}else{
-		    String uuid = UUID.randomUUID().toString();
-			try {
-				LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_refund(),uuid, 60);
-				String delsql = "delete from cn_refund where pk_refund = ? ";
-				SQLParameter spm = new SQLParameter();
-				spm.addParam(datavo.getPk_refund());
-				singleObjectBO.executeUpdate(delsql, spm);
-			} catch (Exception e) {
-				if (e instanceof BusinessException)
-					throw new BusinessException(e.getMessage());
-				else
-					throw new WiseRunException(e);
-			} finally {
-				LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
-			}
+		checkState(datavo, 2);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_refund(),uuid, 60);
+			String delsql = "delete from cn_refund where pk_refund = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(datavo.getPk_refund());
+			singleObjectBO.executeUpdate(delsql, spm);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_refund(), uuid);
 		}
 		return datavo;
 	}
 
 	@Override
 	public RefundBillVO updateOperat(RefundBillVO datavo, Integer opertype, String cuserid) throws DZFWarpException {
-		String errmsg = "";
 		if(opertype == IStatusConstant.IREFOPERATYPE_1){//退款确认
-			errmsg = checkState(datavo, 3);
+			checkState(datavo, 3);
 		}else if(opertype == IStatusConstant.IREFOPERATYPE_2){//取消确认
-			errmsg = checkState(datavo, 4);
-		}
-		if(!StringUtil.isEmpty(errmsg)){
-			datavo.setVerrmsg(errmsg);
-			return datavo;
+			checkState(datavo, 4);
 		}
 		return updateBalance(datavo, opertype, cuserid);
 	}
@@ -474,20 +467,56 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			balvo =  bmap.get(IStatusConstant.IPAYTYPE_1);//保证金
 			if(balvo != null){
 				//更新余额表：
-				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), refvo.getNrefbzjmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
-				//更新明细表：
-				ChnDetailVO detvo = new ChnDetailVO();
-				detvo.setPk_corp(refvo.getPk_corp());
-				detvo.setNpaymny(SafeCompute.sub(DZFDouble.ZERO_DBL, refvo.getNrefbzjmny()));
-				detvo.setIpaytype(IStatusConstant.IPAYTYPE_1);//保证金
-				detvo.setPk_bill(refvo.getPk_refund());//退款单主键
-				detvo.setVmemo("退款：保证金");
-				detvo.setCoperatorid(cuserid);
-				detvo.setDoperatedate(new DZFDate());
-				detvo.setDr(0);
-				detvo.setIopertype(IStatusConstant.IDETAILTYPE_4);//退款单退款
-				singleObjectBO.saveObject("000001", detvo);
+//				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), refvo.getNrefbzjmny()));
+//				singleObjectBO.update(balvo, new String[]{"npaymny"});
+				
+				String uuid = UUID.randomUUID().toString();
+				try {
+					LockUtil.getInstance().tryLockKey("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_1, uuid, 120);
+					//更新余额表：
+					StringBuffer sql = new StringBuffer();
+					SQLParameter spm = new SQLParameter();
+					sql.append("UPDATE cn_balance l  \n");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+					spm.addParam(refvo.getNrefbzjmny());
+					sql.append(" WHERE l.ipaytype = ?  \n");
+					spm.addParam(IStatusConstant.IPAYTYPE_1);
+					sql.append("   AND l.pk_corp = ?  \n");
+					spm.addParam(refvo.getPk_corp());
+					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+					if(res == 1){
+						//更新明细表：
+						ChnDetailVO detvo = new ChnDetailVO();
+						detvo.setPk_corp(refvo.getPk_corp());
+						detvo.setNpaymny(SafeCompute.sub(DZFDouble.ZERO_DBL, refvo.getNrefbzjmny()));
+						detvo.setIpaytype(IStatusConstant.IPAYTYPE_1);//保证金
+						detvo.setPk_bill(refvo.getPk_refund());//退款单主键
+						detvo.setVmemo("退款：保证金");
+						detvo.setCoperatorid(cuserid);
+						detvo.setDoperatedate(new DZFDate());
+						detvo.setDr(0);
+						detvo.setIopertype(IStatusConstant.IDETAILTYPE_4);//退款单退款
+						singleObjectBO.saveObject("000001", detvo);
+					}else{
+						String unitname = "";
+						CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
+						if(corpvo != null){
+							unitname = corpvo.getUnitname();
+						}
+						throw new BusinessException("客户："+unitname+"余额表-保证金更新错误；");
+					}
+					
+				} catch (Exception e) {
+					if (e instanceof BusinessException)
+						throw new BusinessException(e.getMessage());
+					else
+						throw new WiseRunException(e);
+				} finally {
+					LockUtil.getInstance().unLock_Key("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_1, uuid);
+				}
+				
 			}else{
 				String unitname = "";
 				CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
@@ -501,20 +530,54 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			balvo =  bmap.get(IStatusConstant.IPAYTYPE_2);//预付款
 			if(balvo != null){
 				//更新余额表：
-				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), refvo.getNrefyfkmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
-				//更新明细表：
-				ChnDetailVO detvo = new ChnDetailVO();
-				detvo.setPk_corp(refvo.getPk_corp());
-				detvo.setNpaymny(SafeCompute.sub(DZFDouble.ZERO_DBL, refvo.getNrefyfkmny()));
-				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
-				detvo.setPk_bill(refvo.getPk_refund());//退款单主键
-				detvo.setVmemo("退款：预付款");
-				detvo.setCoperatorid(cuserid);
-				detvo.setDoperatedate(new DZFDate());
-				detvo.setDr(0);
-				detvo.setIopertype(IStatusConstant.IDETAILTYPE_4);//退款单退款
-				singleObjectBO.saveObject("000001", detvo);
+//				balvo.setNpaymny(SafeCompute.sub(balvo.getNpaymny(), refvo.getNrefyfkmny()));
+//				singleObjectBO.update(balvo, new String[]{"npaymny"});
+				String uuid = UUID.randomUUID().toString();
+				try {
+					LockUtil.getInstance().tryLockKey("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid, 120);
+					//更新余额表：
+					StringBuffer sql = new StringBuffer();
+					SQLParameter spm = new SQLParameter();
+					sql.append("UPDATE cn_balance l  \n");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+					spm.addParam(refvo.getNrefbzjmny());
+					sql.append(" WHERE l.ipaytype = ?  \n");
+					spm.addParam(IStatusConstant.IPAYTYPE_2);
+					sql.append("   AND l.pk_corp = ?  \n");
+					spm.addParam(refvo.getPk_corp());
+					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+					if(res == 1){
+						//更新明细表：
+						ChnDetailVO detvo = new ChnDetailVO();
+						detvo.setPk_corp(refvo.getPk_corp());
+						detvo.setNpaymny(SafeCompute.sub(DZFDouble.ZERO_DBL, refvo.getNrefyfkmny()));
+						detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);//预付款
+						detvo.setPk_bill(refvo.getPk_refund());//退款单主键
+						detvo.setVmemo("退款：预付款");
+						detvo.setCoperatorid(cuserid);
+						detvo.setDoperatedate(new DZFDate());
+						detvo.setDr(0);
+						detvo.setIopertype(IStatusConstant.IDETAILTYPE_4);//退款单退款
+						singleObjectBO.saveObject("000001", detvo);
+					}else{
+						String unitname = "";
+						CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
+						if(corpvo != null){
+							unitname = corpvo.getUnitname();
+						}
+						throw new BusinessException("客户："+unitname+"余额表-预付款更新错误；");
+					}
+				} catch (Exception e) {
+					if (e instanceof BusinessException)
+						throw new BusinessException(e.getMessage());
+					else
+						throw new WiseRunException(e);
+				} finally {
+					LockUtil.getInstance().unLock_Key("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid);
+				}
+				
 			}else{
 				String unitname = "";
 				CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
@@ -539,21 +602,56 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			balvo =  bmap.get(IStatusConstant.IPAYTYPE_1);//保证金
 			if(balvo != null){
 				//更新余额表：
-				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), refvo.getNrefbzjmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
-				//删除保证金退款明细：
-				StringBuffer sql = new StringBuffer();
-				SQLParameter spm = new SQLParameter();
-				sql.append("DELETE FROM cn_detail  \n") ;
-				sql.append(" WHERE pk_corp = ?  \n") ; 
-				sql.append("   AND ipaytype = ?  \n") ; 
-				sql.append("   AND pk_bill = ?  \n") ; 
-				sql.append("   AND iopertype = ? \n");
-				spm.addParam(refvo.getPk_corp());
-				spm.addParam(IStatusConstant.IPAYTYPE_1);//保证金
-				spm.addParam(refvo.getPk_refund());//退款单主键
-				spm.addParam(IStatusConstant.IDETAILTYPE_4);//退款单退款
-				singleObjectBO.executeUpdate(sql.toString(), spm);
+//				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), refvo.getNrefbzjmny()));
+//				singleObjectBO.update(balvo, new String[]{"npaymny"});
+				
+				String uuid = UUID.randomUUID().toString();
+				try {
+					LockUtil.getInstance().tryLockKey("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_1, uuid, 120);
+					//更新余额表：
+					StringBuffer sql = new StringBuffer();
+					SQLParameter spm = new SQLParameter();
+					sql.append("UPDATE cn_balance l  \n");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+					spm.addParam(refvo.getNrefbzjmny());
+					sql.append(" WHERE l.ipaytype = ?  \n");
+					spm.addParam(IStatusConstant.IPAYTYPE_1);
+					sql.append("   AND l.pk_corp = ?  \n");
+					spm.addParam(refvo.getPk_corp());
+					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+					if(res == 1){
+						//删除保证金退款明细：
+						sql = new StringBuffer();
+						spm = new SQLParameter();
+						sql.append("DELETE FROM cn_detail  \n") ;
+						sql.append(" WHERE pk_corp = ?  \n") ; 
+						sql.append("   AND ipaytype = ?  \n") ; 
+						sql.append("   AND pk_bill = ?  \n") ; 
+						sql.append("   AND iopertype = ? \n");
+						spm.addParam(refvo.getPk_corp());
+						spm.addParam(IStatusConstant.IPAYTYPE_1);//保证金
+						spm.addParam(refvo.getPk_refund());//退款单主键
+						spm.addParam(IStatusConstant.IDETAILTYPE_4);//退款单退款
+						singleObjectBO.executeUpdate(sql.toString(), spm);
+					}else{
+						String unitname = "";
+						CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
+						if(corpvo != null){
+							unitname = corpvo.getUnitname();
+						}
+						throw new BusinessException("客户："+unitname+"余额表-保证金更新错误；");
+					}
+				} catch (Exception e) {
+					if (e instanceof BusinessException)
+						throw new BusinessException(e.getMessage());
+					else
+						throw new WiseRunException(e);
+				} finally {
+					LockUtil.getInstance().unLock_Key("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_1, uuid);
+				}
+
 			}else{
 				String unitname = "";
 				CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
@@ -569,19 +667,53 @@ public class RefundBillServiceImpl implements IRefundBillService {
 				//更新余额表：
 				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), refvo.getNrefyfkmny()));
 				singleObjectBO.update(balvo, new String[]{"npaymny"});
-				//删除预付款退款明细：
-				StringBuffer sql = new StringBuffer();
-				SQLParameter spm = new SQLParameter();
-				sql.append("DELETE FROM cn_detail  \n") ;
-				sql.append(" WHERE pk_corp = ?  \n") ; 
-				sql.append("   AND ipaytype = ?  \n") ; 
-				sql.append("   AND pk_bill = ?  \n") ; 
-				sql.append("   AND iopertype = ? \n");
-				spm.addParam(refvo.getPk_corp());
-				spm.addParam(IStatusConstant.IPAYTYPE_2);//预付款
-				spm.addParam(refvo.getPk_refund());//退款单主键
-				spm.addParam(IStatusConstant.IDETAILTYPE_4);//退款单退款
-				singleObjectBO.executeUpdate(sql.toString(), spm);
+				
+				String uuid = UUID.randomUUID().toString();
+				try {
+					LockUtil.getInstance().tryLockKey("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid, 120);
+					//更新余额表：
+					StringBuffer sql = new StringBuffer();
+					SQLParameter spm = new SQLParameter();
+					sql.append("UPDATE cn_balance l  \n");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+					spm.addParam(refvo.getNrefbzjmny());
+					sql.append(" WHERE l.ipaytype = ?  \n");
+					spm.addParam(IStatusConstant.IPAYTYPE_2);
+					sql.append("   AND l.pk_corp = ?  \n");
+					spm.addParam(refvo.getPk_corp());
+					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+					if(res == 1){
+						//删除预付款退款明细：
+						sql = new StringBuffer();
+						spm = new SQLParameter();
+						sql.append("DELETE FROM cn_detail  \n") ;
+						sql.append(" WHERE pk_corp = ?  \n") ; 
+						sql.append("   AND ipaytype = ?  \n") ; 
+						sql.append("   AND pk_bill = ?  \n") ; 
+						sql.append("   AND iopertype = ? \n");
+						spm.addParam(refvo.getPk_corp());
+						spm.addParam(IStatusConstant.IPAYTYPE_2);//预付款
+						spm.addParam(refvo.getPk_refund());//退款单主键
+						spm.addParam(IStatusConstant.IDETAILTYPE_4);//退款单退款
+						singleObjectBO.executeUpdate(sql.toString(), spm);
+					}else{
+						String unitname = "";
+						CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());
+						if(corpvo != null){
+							unitname = corpvo.getUnitname();
+						}
+						throw new BusinessException("客户："+unitname+"余额表-预付款更新错误；");
+					}
+				} catch (Exception e) {
+					if (e instanceof BusinessException)
+						throw new BusinessException(e.getMessage());
+					else
+						throw new WiseRunException(e);
+				} finally {
+					LockUtil.getInstance().unLock_Key("cn_balance",
+							refvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid);
+				}
 			}else{
 				String unitname = "";
 				CorpVO corpvo = CorpCache.getInstance().get(null, refvo.getPk_corp());

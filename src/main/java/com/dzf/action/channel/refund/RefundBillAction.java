@@ -248,14 +248,21 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 			List<RefundBillVO> rightlist = new ArrayList<RefundBillVO>();
 			StringBuffer errmsg = new StringBuffer();
 			for(RefundBillVO refvo : refVOs){
-				refvo = refundser.delete(refvo);
-				if(!StringUtil.isEmpty(refvo.getVerrmsg() )){
-					errnum++;
-					errmsg.append(refvo.getVerrmsg()).append("<br>");
-				}else{
+				try {
+					refvo = refundser.delete(refvo);
 					rignum++;
 					rightlist.add(refvo);
+				} catch (Exception e) {
+					errnum++;
+					errmsg.append(e.getMessage()).append("<br>");
 				}
+//				if(!StringUtil.isEmpty(refvo.getVerrmsg() )){
+//					errnum++;
+//					errmsg.append(refvo.getVerrmsg()).append("<br>");
+//				}else{
+//					rignum++;
+//					rightlist.add(refvo);
+//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == refVOs.length){
@@ -307,14 +314,21 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 			List<RefundBillVO> rightlist = new ArrayList<RefundBillVO>();
 			StringBuffer errmsg = new StringBuffer();
 			for(RefundBillVO refvo : refVOs){
-				refvo = refundser.updateOperat(refvo, opertype, getLoginUserid());
-				if(!StringUtil.isEmpty(refvo.getVerrmsg())){
-					errnum++;
-					errmsg.append(refvo.getVerrmsg()).append("<br>");
-				}else{
+				try {
+					refvo = refundser.updateOperat(refvo, opertype, getLoginUserid());
 					rignum++;
 					rightlist.add(refvo);
+				} catch (Exception e) {
+					errnum++;
+					errmsg.append(e.getMessage()).append("<br>");
 				}
+//				if(!StringUtil.isEmpty(refvo.getVerrmsg())){
+//					errnum++;
+//					errmsg.append(refvo.getVerrmsg()).append("<br>");
+//				}else{
+//					rignum++;
+//					rightlist.add(refvo);
+//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == refVOs.length){
