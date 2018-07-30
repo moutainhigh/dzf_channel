@@ -128,17 +128,24 @@ public class ChnPayAuditAction extends BaseAction<ChnPayBillVO> {
 			StringBuffer errmsg = new StringBuffer();
 			List<ChnPayBillVO> rightlist = new ArrayList<ChnPayBillVO>();
 			for(ChnPayBillVO billvo : billVOs){
-				if(billvo == null){
-					log.info("付款单-获取操作数据为空");
-				}
-				billvo = payauditser.updateOperate(billvo, opertype, getLoginUserid(), vreason);
-				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-					errnum ++;
-					errmsg.append(billvo.getVerrmsg()).append("<br>");
-				}else{
+				try {
+					if(billvo == null){
+						throw new BusinessException("付款单-获取操作数据为空");
+					}
+					billvo = payauditser.updateOperate(billvo, opertype, getLoginUserid(), vreason);
 					rignum ++;
 					rightlist.add(billvo);
+				} catch (Exception e) {
+					errnum ++;
+					errmsg.append(billvo.getVerrmsg()).append("<br>");
 				}
+//				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
+//					errnum ++;
+//					errmsg.append(billvo.getVerrmsg()).append("<br>");
+//				}else{
+//					rignum ++;
+//					rightlist.add(billvo);
+//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == billVOs.length){

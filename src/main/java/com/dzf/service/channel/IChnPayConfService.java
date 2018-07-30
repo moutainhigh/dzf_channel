@@ -49,5 +49,5 @@ public interface IChnPayConfService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ChnPayBillVO checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException;
+	public void checkBillStatus(ChnPayBillVO billvo) throws DZFWarpException;
 }

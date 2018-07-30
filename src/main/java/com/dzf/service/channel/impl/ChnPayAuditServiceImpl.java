@@ -142,10 +142,10 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	@Override
 	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid, String vreason)
 			throws DZFWarpException {
-		billvo = payconfSer.checkBillStatus(billvo);
-		if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-			return billvo;
-		}
+		payconfSer.checkBillStatus(billvo);
+//		if(!StringUtil.isEmpty(billvo.getVerrmsg())){
+//			return billvo;
+//		}
 		return updateData(billvo, opertype, cuserid, vreason);
 	}
 	
@@ -177,15 +177,17 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	 */
 	private ChnPayBillVO updateAuditData(ChnPayBillVO billvo, Integer opertype, String cuserid) throws DZFWarpException{
 		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-			billvo.setVerrmsg("数据错误");
-			return billvo;
+//			billvo.setVerrmsg("数据错误");
+//			return billvo;
+			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-				return billvo;
+//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
+//				return billvo;
+				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 			}
 			List<String> upstr = new ArrayList<String>();
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);//付款单状态 待确认
@@ -227,15 +229,17 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, String vreason, String cuserid)
 			throws DZFWarpException {
 		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
-			billvo.setVerrmsg("数据错误");
-			return billvo;
+//			billvo.setVerrmsg("数据错误");
+//			return billvo;
+			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-				return billvo;
+//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
+//				return billvo;
+				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 			}
 			billvo.setIrejectype(1);//驳回类型：审批驳回
 			billvo.setVapproveid(cuserid);//审批-驳回人
@@ -268,15 +272,17 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	 */
 	private ChnPayBillVO updateReturnData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
 		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-			billvo.setVerrmsg("数据错误");
-			return billvo;
+//			billvo.setVerrmsg("数据错误");
+//			return billvo;
+			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
-				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
-				return billvo;
+//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
+//				return billvo;
+				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_2);//付款单状态 待审批
 			billvo.setVapproveid(null);//审批人
