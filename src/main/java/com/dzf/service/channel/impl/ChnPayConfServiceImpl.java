@@ -236,7 +236,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 					LockUtil.getInstance().unLock_Key("cn_balance",
 							billvo.getPk_corp() + "" + billvo.getIpaytype(), uid);
 				}
-				
+				singleObjectBO.saveObject("000001", detvo);
 			}else{
 				balvo = new ChnBalanceVO();
 				balvo.setPk_corp(billvo.getPk_corp());
@@ -247,9 +247,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				balvo.setDoperatedate(new DZFDate());
 				balvo.setDr(0);
 				singleObjectBO.saveObject("000001", balvo);
+				singleObjectBO.saveObject("000001", detvo);
 			}
-			singleObjectBO.saveObject("000001", detvo);
-			
 			List<String> upstr = new ArrayList<String>();
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_3);//付款单状态
 			billvo.setVconfirmid(cuserid);//确认人
