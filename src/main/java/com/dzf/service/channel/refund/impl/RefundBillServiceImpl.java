@@ -541,7 +541,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					SQLParameter spm = new SQLParameter();
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
-					spm.addParam(refvo.getNrefbzjmny());
+					spm.addParam(refvo.getNrefyfkmny());
 					sql.append(" WHERE l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
@@ -665,8 +665,8 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			balvo =  bmap.get(IStatusConstant.IPAYTYPE_2);//预付款
 			if(balvo != null){
 				//更新余额表：
-				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), refvo.getNrefyfkmny()));
-				singleObjectBO.update(balvo, new String[]{"npaymny"});
+//				balvo.setNpaymny(SafeCompute.add(balvo.getNpaymny(), refvo.getNrefyfkmny()));
+//				singleObjectBO.update(balvo, new String[]{"npaymny"});
 				
 				String uuid = UUID.randomUUID().toString();
 				try {
@@ -677,7 +677,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					SQLParameter spm = new SQLParameter();
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
-					spm.addParam(refvo.getNrefbzjmny());
+					spm.addParam(refvo.getNrefyfkmny());
 					sql.append(" WHERE l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
