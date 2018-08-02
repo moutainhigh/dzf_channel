@@ -1037,7 +1037,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			errmsg = "合同数据错误";
 			throw new BusinessException(errmsg);
 		}
-//		return "";
 	}
 	
 	/**
@@ -1082,11 +1081,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
 					spm.addParam(datavo.getNdeductmny());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-					// ChnBalanceVO balancevo = map.get("pay");
-					// balancevo.setNusedmny(SafeCompute.add(balancevo.getNusedmny(),
-					// datavo.getNdeductmny()));
-					// singleObjectBO.update(balancevo, new
-					// String[]{"nusedmny"});
 					if (res == 1) {
 						ChnDetailVO detvo = new ChnDetailVO();
 						detvo.setPk_corp(datavo.getPk_corp());
@@ -1120,11 +1114,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 			}
 			if (datavo != null && CommonUtil.getDZFDouble(datavo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {// 返点款扣款
-				// ChnBalanceVO balancevo = map.get("reb");
-				// balancevo.setNusedmny(SafeCompute.add(balancevo.getNusedmny(),
-				// datavo.getNdedrebamny()));
-				// singleObjectBO.update(balancevo, new String[]{"nusedmny"});
-
 				String uuid = UUID.randomUUID().toString();
 				try {
 					LockUtil.getInstance().tryLockKey("cn_balance",
@@ -1285,20 +1274,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (tstamp != null && tstamp.compareTo(confrimvo.getTstamp()) != 0) {
 				errmsg = "合同号：" + confrimvo.getVcontcode() + "数据发生变化，请刷新界面后，再次尝试；";
 				throw new BusinessException(errmsg);
-//				map.put("errmsg", errmsg);
-//				return map;
 			}
 			if (IStatusConstant.IDEDUCTSTATUS_5 != Integer.parseInt(String.valueOf(obj[1]))) {
 				errmsg = "合同号：" + confrimvo.getVcontcode() + "状态不为待审核；";
 				throw new BusinessException(errmsg);
-//				map.put("errmsg", errmsg);
-//				return map;
 			}
 		} else {
 			errmsg = "合同号：" + confrimvo.getVcontcode() + "数据错误；";
 			throw new BusinessException(errmsg);
-//			map.put("errmsg", errmsg);
-//			return map;
 		}
 
 		// 2、预付款余额校验（扣款比例不为0的情况进行校验）
@@ -1312,8 +1295,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(ndedsummny.compareTo(confrimvo.getNdedsummny()) != 0){
 					errmsg = "合同号：" + confrimvo.getVcontcode() + "扣款金额计算错误；";
 					throw new BusinessException(errmsg);
-//					map.put("errmsg", errmsg);
-//					return map;
 				}
 			}
 			
@@ -1335,16 +1316,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if (balasum.compareTo(confrimvo.getNdedsummny()) < 0) {//与扣款总结做比较
 					errmsg = "合同号：" + confrimvo.getVcontcode() + "扣款金额大于预付款余额与返点余额之和；";
 					throw new BusinessException(errmsg);
-//					map.put("errmsg", errmsg);
-//					return map;
 				}
 				
 				map.put("balance", balVOs);
 			} else {
 				errmsg = "合同号：" + confrimvo.getVcontcode() + "扣款金额大于预付款余额与返点余额之和；";
 				throw new BusinessException(errmsg);
-//				map.put("errmsg", errmsg);
-//				return map;
 			}
 			
 			
@@ -1359,8 +1336,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (num.compareTo(pulishnum) == 0) {
 				errmsg = "合同号：" + confrimvo.getVcontcode() + "对应套餐发布个数已经用完；";
 				throw new BusinessException(errmsg);
-//				map.put("errmsg", errmsg);
-//				return map;
 			}
 			map.put("package", packvo);
 		}
@@ -1403,7 +1378,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(StringUtil.isEmpty(datavo.getTableName()) || StringUtil.isEmpty(datavo.getPk_contract())){
 			datavo.setVerrmsg("数据错误");
 			throw new BusinessException("数据错误");
-//			return datavo;
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
@@ -1767,8 +1741,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 					spm.addParam(paramvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					
-//					balancevo.setNusedmny(SafeCompute.sub(balancevo.getNusedmny(), paramvo.getNretdedmny()));
-//					singleObjectBO.update(balancevo, new String[]{"nusedmny"});
 					if(res == 1){
 						ChnDetailVO detvo = new ChnDetailVO();
 						detvo.setPk_corp(paramvo.getPk_corp());
@@ -1814,8 +1786,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(paramvo.getPk_corp());
-//					balancevo.setNusedmny(SafeCompute.sub(balancevo.getNusedmny(), paramvo.getNretrebmny()));
-//					singleObjectBO.update(balancevo, new String[]{"nusedmny"});
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
 						ChnDetailVO detvo = new ChnDetailVO();
