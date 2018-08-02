@@ -260,7 +260,7 @@ function tranImg(trun){
 											data-options="readonly:true," 
 											style="width:80px;height:28px;text-align:right">户
 									</font></p>
-									<p><samp></samp><span>本周收到加盟费：</span>
+									<p><samp></samp><span>本周收到保证金：</span>
 									<font>
 										<input id="tswkinitfee" name="tswkinitfee" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
@@ -307,13 +307,13 @@ function tranImg(trun){
 										data-options="readonly:true," 
 										style="width:80px;height:28px;text-align:right">户
 								</font></p>
-								<p><samp></samp><span>本年累计已收加盟费：</span>
+								<p><samp></samp><span>本年累计已收保证金：</span>
 								<font>
 									<input id="tsyrinitfee" name="tsyrinitfee" class="easyui-numberbox" 
 										data-options="readonly:true,precision:2,groupSeparator:','" 
 										style="width:80px;height:28px;text-align:right">元
 								</font></p>
-								<p><samp></samp><span>本月收到加盟费：</span>
+								<p><samp></samp><span>本月收到保证金：</span>
 								<font>
 									<input id="tsmhinitfee" name="tsmhinitfee" class="easyui-numberbox" 
 										data-options="readonly:true,precision:2,groupSeparator:','" 
