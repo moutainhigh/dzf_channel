@@ -172,7 +172,7 @@ public class InvManagerServiceImpl implements InvManagerService {
         sql.append("select pk_corp,unitname,innercode,vprovince from bd_account ba");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
         sql.append(" and nvl(ischannel,'N') = 'Y' ");
-        if (vo.getDr() != null && vo.getDr() != -1) {// 给区域划分（省市过滤）用的
+        if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
             sql.append(" and vprovince=? ");
             sp.addParam(vo.getDr());
             if (!StringUtil.isEmpty(vo.getVmome())) {
@@ -181,13 +181,20 @@ public class InvManagerServiceImpl implements InvManagerService {
                 sql.append(SqlUtil.buildSqlConditionForIn(split));
                 sql.append(" )");
             }
-        }
-        if(vo.getDr() != null && vo.getDr() == -1){//加盟商参照
+        }else if(vo.getDr() != null && vo.getDr() <0 ){//增加权限的加盟商参照
     		String condition = pubService.makeCondition(vo.getEmail(),null);
     		if(condition!=null && !condition.equals("flg")){
     			sql.append(condition);
     		}else if(condition==null){
     			return null;
+    		}
+    		if(vo.getDr()==-2){//数据运营管理，4个报表
+    			sql.append(" and pk_corp not in (");
+    			sql.append("       (SELECT f.pk_corp  \n");
+    			sql.append("          FROM ynt_franchisee f  \n");
+    			sql.append("         WHERE nvl(dr, 0) = 0  \n");
+    			sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+    			sql.append(" )");
     		}
         }
         sql.append(" order by innercode ");

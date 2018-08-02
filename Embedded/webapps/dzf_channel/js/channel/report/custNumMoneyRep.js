@@ -23,6 +23,7 @@ function initQry(){
 	});
 	initQryCommbox();
 	changeDate();
+	initChannel();
 }
 
 function changeDate(){
@@ -33,27 +34,19 @@ function changeDate(){
 	});
 }
 
-//查询框关闭事件
-function closeCx() {
-	$("#qrydialog").css("visibility", "hidden");
-}
-
-
 /**
  * 数据表格初始化
  */
 function load(){
 	var vince=$('#ovince').combobox('getValue');
-	if(isEmpty(vince)){
-		vince=-1;
-	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
 		queryParams:{
 			'period' : $('#qryperiod').datebox('getValue'),//查询期间
 			'aname' : $('#aname').combobox('getValue'),
 			'ovince' : vince,
-			'uid' : $('#uid').combobox('getValue')
+			'uid' : $('#uid').combobox('getValue'),
+			'stype' : $('#stype').is(':checked')?0:1,
 		},
 		striped : true,
 		title : '',
@@ -228,6 +221,8 @@ function reloadData(){
 	}
 	queryParams.ovince = vince;
 	queryParams.uid = $('#uid').combobox('getValue');
+	queryParams.corps = $("#pk_account").val();
+	queryParams.stype = $('#stype').is(':checked')?0:1,
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 }

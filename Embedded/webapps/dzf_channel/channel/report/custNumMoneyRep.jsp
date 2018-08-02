@@ -12,9 +12,6 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%> charset="UTF-8" type="text/javascript"></script>
-<style type="text/css">
-.panel-body{overflow:auto}
-</style>
 </head>
 <%
 	//获取当前月期间
@@ -42,7 +39,7 @@
 					</div>
 		        </div>
 		    </div>
-		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
+		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -67,6 +64,15 @@
 					<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:right;width:70px">加盟商：</label>
+					<input id="channel_select" class="easyui-textbox" style="width:295px;height:28px;" />
+					<input id="pk_account" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:left;width:115px" for='stype'>包含已解约加盟商</label> 
+					<input id="stype" type="checkbox" style="width:20px;height:28px;text-align:left;margin-left:2px;"/>
+				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 
 					<a class="ui-btn save_input" onclick="reloadData()">确定</a>
@@ -76,6 +82,13 @@
 			<div id="dataGrid" class="grid-wrap">
 				<table id="grid"></table>
 			</div>
+			
+			<div id="kj_dialog"></div>
+			<div id="kj_buttons" style="display:none;">
+				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
+			</div>
+			
 		</div>
 	</div>
 </body>

@@ -14,6 +14,7 @@ import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 
@@ -100,6 +101,14 @@ public class DataCommonRepImpl {
 		sql.append("   and nvl(p.ischannel,'N')='Y'"); 
 		sql.append("   and nvl(p.isseal,'N')='N'"); 
 		sql.append("   and p.vprovince is not null "); 
+		if(qvo.getSeletype()!=null && qvo.getSeletype()!=0){//不包含已解约加盟商
+			sql.append(" and (p.drelievedate is null or p.drelievedate >? )" );
+			sp.addParam(new DZFDate().toString());
+		}
+        if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
+            String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
+            sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+        }
 		sql.append("   AND p.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");
 		sql.append("          FROM ynt_franchisee f  \n");
@@ -165,6 +174,14 @@ public class DataCommonRepImpl {
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and b.userid=?" );
 	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
+		if(qvo.getSeletype()!=null && qvo.getSeletype()!=0){//不包含已解约加盟商
+			sql.append(" and (p.drelievedate is null or p.drelievedate >? )" );
+			sp.addParam(new DZFDate());
+		}
+	    if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
+            String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
+            sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+        }
 		sql.append("   AND p.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");
 		sql.append("          FROM ynt_franchisee f  \n");
@@ -196,6 +213,14 @@ public class DataCommonRepImpl {
 		}else{
 			 sql.append(" and b.userid=? " );
 		}
+		if(qvo.getSeletype()!=null && qvo.getSeletype()!=0){//不包含已解约加盟商
+			sql.append(" and (p.drelievedate is null or p.drelievedate >? )" );
+			sp.addParam(new DZFDate());
+		}
+		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
+            String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
+            sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+        }
 	    sql.append(" and nvl(b.ischarge,'N')='N' " );
 		sql.append("   AND p.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");

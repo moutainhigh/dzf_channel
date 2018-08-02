@@ -20,6 +20,7 @@ function initQry(){
 		$("#qrydialog").css("visibility", "visible");
 	});
 	initQryCommbox();
+	initChannel();
 }
 
 /**
@@ -36,7 +37,8 @@ function load(){
 		queryParams:{
 			'aname' : $('#aname').combobox('getValue'),
 			'ovince' :vince,
-			'uid' : $('#uid').combobox('getValue')
+			'uid' : $('#uid').combobox('getValue'),
+			'corps' : $("#pk_account").val(),
 		},
 		striped : true,
 		title : '',

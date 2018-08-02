@@ -21,11 +21,18 @@ function changeArea(){
 	});
 }
 
+//查询框关闭事件
+function closeCx() {
+	$("#qrydialog").css("visibility", "hidden");
+}
+
 //清空查询条件
 function clearCondition(){
 	$('#aname').combobox('select',null);
 	$('#ovince').combobox('select',null);
 	$('#uid').combobox('select',null);
+	$("#pk_account").val(null);
+	$("#channel_select").textbox("setValue",null);
 }
 
 function changeProvince(){
@@ -93,4 +100,57 @@ function initManager(queryData){
 			}
 		}
 	});
+}
+
+//初始化加盟商
+function initChannel(){
+    $('#channel_select').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#kj_dialog").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-2"
+    				},
+                    buttons: '#kj_buttons'
+                    	
+                });
+            }
+        }]
+    });
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+//双击选择公司
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	 $("#kj_dialog").dialog('close');
 }
