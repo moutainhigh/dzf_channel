@@ -321,7 +321,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 						spm.addParam(IStatusConstant.IPAYTYPE_2);
 						usql.append("   AND l.pk_corp = ?  \n");
 						spm.addParam(billvo.getPk_corp());
-						int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+						int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 						if(res == 1){
 							sql = " delete from cn_detail where pk_bill = ? and pk_corp = ? ";
 							spm = new SQLParameter();
