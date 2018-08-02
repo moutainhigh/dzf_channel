@@ -62,7 +62,7 @@ function load(){
 		remoteSort:false,
 		columns : [ 
 		            [ 
-					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
+//					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
 		            { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',rowspan:2},
 		            { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',rowspan:2},
 		            { field : 'provname',  title : '省份', width : 160,halign:'center',align:'left',rowspan:2}, 
@@ -225,4 +225,21 @@ function reloadData(){
 	queryParams.stype = $('#stype').is(':checked')?0:1,
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
+}
+
+/**
+ * 导出
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	var callback=function(){
+		var columns = $('#grid').datagrid("options").columns[0];
+		Business.getFile(DZF.contextPath+ '/report/custnummoneyrep!exportExcel.action',
+				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns)}, true, true);
+	}
+	checkBtnPower('export',"channel8",callback);
 }

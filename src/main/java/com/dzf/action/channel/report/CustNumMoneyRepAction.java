@@ -1,7 +1,16 @@
 package com.dzf.action.channel.report;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -9,16 +18,24 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.dzf.action.pub.BaseAction;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IButtonName;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.constant.IFunNode;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
+import com.dzf.service.pub.report.ExportExcel;
+import com.dzf.service.pub.report.PrintUtil;
 
 /**
  * 业绩统计
@@ -28,7 +45,7 @@ import com.dzf.service.pub.LogRecordEnum;
 @ParentPackage("basePackage")
 @Namespace("/report")
 @Action(value = "custnummoneyrep")
-public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
+public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 
 	private static final long serialVersionUID = 2245193927232918375L;
 	
@@ -36,6 +53,9 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 	
 	@Autowired
 	private ICustNumMoneyRep custServ;
+	
+	@Autowired
+	private IPubService pubService;
 
 	/**
 	 * 查询
@@ -72,4 +92,103 @@ public class CustNumMoneyRepAction extends BaseAction<CustNumMoneyRepVO> {
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * Excel导出方法
+	 */
+	public void exportExcel(){
+		String strlist =getRequest().getParameter("strlist");
+		if(StringUtil.isEmpty(strlist)){
+			throw new BusinessException("导出数据不能为空!");
+		}
+		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		String columns =getRequest().getParameter("columns");
+		JSONArray headlist = (JSONArray) JSON.parseArray(columns);
+		List<String> heads = new ArrayList<String>();
+		List<String> heads1 = new ArrayList<String>();
+		List<String> fieldslist = new ArrayList<String>();
+		Map<String, String> name = null;
+		List<String> fieldlist = new ArrayList<String>();
+		int num=6;
+		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_8,IButtonName.BTN_EXPORT);
+		fieldlist.add("aname");
+		fieldlist.add("uname");
+		fieldlist.add("provname");
+		fieldlist.add("incode");
+		fieldlist.add("corpnm");
+		fieldlist.add("stockcusts");
+		fieldlist.add("stockcustt");
+		fieldlist.add("newcusts");
+		fieldlist.add("newcustt");
+		fieldlist.add("renewcusts");
+		fieldlist.add("renewcustt");
+		for (int i = 0 ; i< headlist.size(); i ++) {
+			 name=(Map<String, String>) headlist.get(i);
+			 if(i>=num){
+				 heads.add("小规模");
+				 heads.add("一般纳税人");
+				 heads1.add(name.get("title"));
+			 }else{
+				 heads.add(name.get("title"));
+				 fieldslist.add(name.get("field"));
+			 }
+		}
+       fieldslist.add("stockcusts");
+       fieldslist.add("stockcustt");
+       fieldslist.add("stockconts");
+       fieldslist.add("stockcontt");
+       fieldslist.add("newcusts");
+       fieldslist.add("newcustt");
+       fieldslist.add("newconts");
+       fieldslist.add("newcontt");
+       fieldslist.add("renewcusts");
+       fieldslist.add("renewcustt");
+       fieldslist.add("renewconts");
+       fieldslist.add("renewcontt");
+       fieldslist.add("newcustrates");
+       fieldslist.add("newcustratet");
+       fieldslist.add("newcontrates");
+       fieldslist.add("newcontratet");
+       fieldslist.add("renewcustrates");
+       fieldslist.add("renewcustratet");
+       fieldslist.add("renewcontrates");
+       fieldslist.add("renewcontratet");
+		ExportExcel<CustNumMoneyRepVO> ex =new ExportExcel();
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			HttpServletResponse response = getResponse();
+			response.reset();
+			String date = DateUtils.getDate(new Date());
+			response.addHeader("Content-Disposition", "attachment;filename="
+					+ new String(date+".xls"));
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("application/vnd.ms-excel;charset=gb2312");
+			byte[] length = ex.exportYjtjExcel("业绩统计",heads,heads1,fieldslist ,exparray,toClient,"",fieldlist,num);
+			String srt2=new String(length,"UTF-8");
+			response.addHeader("Content-Length", srt2);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩统计表", ISysConstants.SYS_3);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} finally {
+			if(toClient != null){
+				try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					log.error(e);
+				}
+			}
+			if(servletOutputStream != null){
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error(e);
+				}
+			}
+		}
+	}
+	
 }

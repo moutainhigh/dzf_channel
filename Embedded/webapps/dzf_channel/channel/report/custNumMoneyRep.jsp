@@ -36,6 +36,7 @@
 				  	<div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
 							data-options=" plain:true" onclick="reloadData()" id="">刷新</a> 
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport()">导出</a>
 					</div>
 		        </div>
 		    </div>
