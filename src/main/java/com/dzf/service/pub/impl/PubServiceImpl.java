@@ -635,31 +635,35 @@ public class PubServiceImpl implements IPubService {
 	public String getPowerSql(String cuserid, Integer datatype) throws DZFWarpException {
 		Integer datalevel = getDataLevel(cuserid);
 		StringBuffer sql = new StringBuffer();
-		if (datalevel != null && (datalevel == 1 || datalevel == 2)) {
-			List<String> qryProvince = queryProvince(cuserid, datalevel, datatype);
-			if (qryProvince != null && qryProvince.size() > 0) {
-				sql.append(" AND t.vprovince  in (");
-				sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[0])));
-				sql.append(" )");
-			}
-		} else if (datalevel != null && datalevel == 3) {
-			List<String> corlist = queryCorpIds(cuserid, datatype);
-			List<String> prolist = queryProvince(cuserid, datalevel, datatype);
-			if (prolist != null && prolist.size() > 0 && corlist != null && corlist.size() > 0) {
-				sql.append(" AND (t.vprovince  in (");
-				sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
-				sql.append(" ) OR ");
-				sql.append("  t.pk_corp  in (");
-				sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
-				sql.append(" ))");
-			} else if (prolist != null && prolist.size() > 0) {
-				sql.append(" AND t.vprovince  in (");
-				sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
-				sql.append(" )");
-			} else if (corlist != null && corlist.size() > 0) {
-				sql.append(" AND t.pk_corp  in (");
-				sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
-				sql.append(" )");
+		if(datalevel != null){
+			if(datalevel == 1){
+				sql.append("alldata");
+			}else if (datalevel == 2) {
+				List<String> qryProvince = queryProvince(cuserid, datalevel, datatype);
+				if (qryProvince != null && qryProvince.size() > 0) {
+					sql.append(" AND t.vprovince  in (");
+					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[0])));
+					sql.append(" )");
+				}
+			} else if (datalevel == 3) {
+				List<String> corlist = queryCorpIds(cuserid, datatype);
+				List<String> prolist = queryProvince(cuserid, datalevel, datatype);
+				if (prolist != null && prolist.size() > 0 && corlist != null && corlist.size() > 0) {
+					sql.append(" AND (t.vprovince  in (");
+					sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
+					sql.append(" ) OR ");
+					sql.append("  t.pk_corp  in (");
+					sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
+					sql.append(" ))");
+				} else if (prolist != null && prolist.size() > 0) {
+					sql.append(" AND t.vprovince  in (");
+					sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
+					sql.append(" )");
+				} else if (corlist != null && corlist.size() > 0) {
+					sql.append(" AND t.pk_corp  in (");
+					sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
+					sql.append(" )");
+				}
 			}
 		}
 		if(sql != null && sql.length() > 0){

@@ -1,5 +1,6 @@
 package com.dzf.service.channel.report.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -401,10 +402,34 @@ public class IndexRepImpl implements IIndexRep {
 				 }
 				 return -1;//所分配的单个角色，不在角色对应的权限中，不予查询
 			}else{
-				return -1;//分配多个角色，不予查询
+				List<String> bigroles = getBigPowerRole();
+				//分配多个角色，如果有最大数据权限角色，则查询所有数据；剩余情况，不予查询；
+				for(String code : codelist){
+					if(bigroles.contains(code)){
+						return 0;
+					}
+				}
+				return -1;
 			}
 		}
 		return -1;//没分配角色，不予查询
+	}
+	
+	/**
+	 * 拥有最大数据的角色
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<String> getBigPowerRole() throws DZFWarpException {
+		List<String> list = new ArrayList<String>();
+		list.add("channel");
+		list.add("corpzxgl");
+		list.add("corpzjl");
+		list.add("qdsqr");
+		list.add("gszjl");
+		list.add("cwb-kp");
+		list.add("cwb-zj");
+		return list;
 	}
 	
 	/**
