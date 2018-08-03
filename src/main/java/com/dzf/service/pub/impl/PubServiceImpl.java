@@ -18,6 +18,7 @@ import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.SysFunNodeVO;
+import com.dzf.model.sys.sys_power.UserRoleVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.BusinessException;
@@ -459,6 +460,7 @@ public class PubServiceImpl implements IPubService {
 		return retstr;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Integer getDataLevel(String cuserid) throws DZFWarpException {
 		Integer reint = null;
@@ -603,4 +605,119 @@ public class PubServiceImpl implements IPubService {
         }
     }
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> queryRoleCode(String cuserid) throws DZFWarpException {
+		List<String> list = new ArrayList<String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT DISTINCT l.role_code  role_code \n");
+		sql.append("  FROM sm_role l  \n");
+		sql.append("  LEFT JOIN sm_user_role ul ON l.pk_role = ul.pk_role  \n");
+		sql.append("  LEFT JOIN sm_user r ON ul.cuserid = r.cuserid  \n");
+		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ul.dr, 0) = 0  \n");
+		sql.append("   AND nvl(r.dr, 0) = 0  \n");
+		sql.append("   AND l.roletype = 7  \n");
+		sql.append("   AND r.cuserid = ? \n");
+		spm.addParam(cuserid);
+		List<UserRoleVO> ret = (List<UserRoleVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(UserRoleVO.class));
+		if(ret != null && ret.size() > 0){
+			for(UserRoleVO rvo : ret){
+				list.add(rvo.getRole_code());
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public String getPowerSql(String cuserid, Integer datatype) throws DZFWarpException {
+		Integer datalevel = getDataLevel(cuserid);
+		StringBuffer sql = new StringBuffer();
+		if (datalevel != null && (datalevel == 1 || datalevel == 2)) {
+			List<String> qryProvince = queryProvince(cuserid, datalevel, datatype);
+			if (qryProvince != null && qryProvince.size() > 0) {
+				sql.append(" AND t.vprovince  in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[0])));
+				sql.append(" )");
+			}
+		} else if (datalevel != null && datalevel == 3) {
+			List<String> corlist = queryCorpIds(cuserid, datatype);
+			List<String> prolist = queryProvince(cuserid, datalevel, datatype);
+			if (prolist != null && prolist.size() > 0 && corlist != null && corlist.size() > 0) {
+				sql.append(" AND (t.vprovince  in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
+				sql.append(" ) OR ");
+				sql.append("  t.pk_corp  in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
+				sql.append(" ))");
+			} else if (prolist != null && prolist.size() > 0) {
+				sql.append(" AND t.vprovince  in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
+				sql.append(" )");
+			} else if (corlist != null && corlist.size() > 0) {
+				sql.append(" AND t.pk_corp  in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
+				sql.append(" )");
+			}
+		}
+		if(sql != null && sql.length() > 0){
+			return sql.toString();
+		}
+		return "";
+	}
+	
+	/**
+	 * 查询用户负责的省份
+	 * @param cuserid
+	 * @param datalevel
+	 * @param datatype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> queryProvince(String cuserid, Integer datalevel, Integer datatype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select distinct to_char(b.vprovince) \n");
+		sql.append("  from cn_chnarea_b b");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
+		sql.append(" where nvl(b.dr, 0) = 0");
+		sql.append("   and nvl(a.dr, 0) = 0");
+		sql.append("   and b.type = ? ");
+		spm.addParam(datatype);
+		if (datalevel != 1) {
+			sql.append("   and (a.userid = ? ");
+			sql.append("    or (b.ischarge = 'Y' and b.userid = ?))");
+			spm.addParam(cuserid);
+			spm.addParam(cuserid);
+		}
+		return (List<String>) singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor());
+	}
+
+	/**
+	 * 查询用户负责的客户
+	 * @param cuserid
+	 * @param datatype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> queryCorpIds(String cuserid, Integer datatype) throws DZFWarpException {
+		StringBuffer buf = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		buf.append("select distinct b.pk_corp");
+		buf.append("  from cn_chnarea_b b");
+		buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
+		buf.append(" where nvl(b.dr, 0) = 0");
+		buf.append("   and nvl(a.dr, 0) = 0");
+		buf.append("   and b.ischarge = 'N' ");
+		buf.append("   and b.type = ?  ");
+		spm.addParam(datatype);
+		buf.append("   and b.userid = ? ");
+		spm.addParam(cuserid);
+		return (List<String>) singleObjectBO.executeQuery(buf.toString(), spm, new ColumnListProcessor());
+	}
+	
 }

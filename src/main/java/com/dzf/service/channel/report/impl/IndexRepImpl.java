@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.model.channel.ChnPayBillVO;
-import com.dzf.model.channel.contract.ContractConfrimVO;
+import com.dzf.model.channel.report.BalanceRepVO;
+import com.dzf.model.channel.report.ContQryVO;
 import com.dzf.model.channel.report.MonthBusimngVO;
 import com.dzf.model.channel.report.WeekBusimngVO;
 import com.dzf.model.pub.IStatusConstant;
@@ -20,16 +20,22 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.IIndexRep;
+import com.dzf.service.pub.IPubService;
 
 @Service("indexrepimpl")
 public class IndexRepImpl implements IIndexRep {
 	
     @Autowired
     private SingleObjectBO singleObjectBO;
+    
+    @Autowired
+    private IPubService pubser;
 
 	@Override
 	public WeekBusimngVO queryBusiByWeek(QryParamVO paramvo) throws DZFWarpException {
@@ -38,19 +44,35 @@ public class IndexRepImpl implements IIndexRep {
 			paramvo.setBegdate(weekmap.get("begin"));
 			paramvo.setEnddate(weekmap.get("end"));
 		}
-		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_1);
 		WeekBusimngVO budivo = new WeekBusimngVO();
-		budivo.setItswkfranchisee(qryFranchiseeNum(paramvo));//本周新增加盟商
-		Map<Integer, DZFDouble> chisfeemap = qryFranchiseeFee(paramvo);
-		if(chisfeemap != null){
-			budivo.setNtswkinitialfee(chisfeemap.get(1));//本周收到加盟费
-			budivo.setNtswkcharge(chisfeemap.get(2));//本周收到预付款
+		Integer datatype = getDataType(paramvo.getCuserid());
+		String addsql = "";
+		if(datatype != null){
+			if(datatype == -1){
+				return budivo;
+			}else if(datatype == 0){
+				addsql = "alldata";
+			}else{
+				addsql = pubser.getPowerSql(paramvo.getCuserid(), datatype);
+			}
+		}else{
+			return budivo;
 		}
-		budivo.setItswkcustomer(qryCustNum(paramvo));//本周新增客户
-		Map<String, DZFDouble> contmap = qryContractMny(paramvo);
+		if(StringUtil.isEmpty(addsql)){
+			return budivo;
+		}
+		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_1);
+		budivo.setItswkfranchisee(qryFranchiseeNum(paramvo, addsql));//本周新增加盟商
+		BalanceRepVO balvo = qryFranchiseeFee(paramvo, addsql);
+		if(balvo != null){
+			budivo.setNtswkinitialfee(balvo.getNbzjmny());//本周收到保证金
+			budivo.setNtswkcharge(balvo.getNyfkmny());//本周收到预付款
+		}
+		budivo.setItswkcustomer(qryCustNum(paramvo, addsql));//本周新增客户
+		Map<String, DZFDouble> contmap = qryContractMny(paramvo, addsql);
 		if(contmap != null){
-			budivo.setNtswkcontamount(contmap.get("ntotalmny"));
-			budivo.setNtswkamount(contmap.get("ndeductmny"));
+			budivo.setNtswkcontamount(contmap.get("ntotalmny"));//本周新增合同金额
+			budivo.setNtswkamount(contmap.get("ndeductmny"));//本周扣款金额
 		}
 		return budivo;
 	}
@@ -60,7 +82,7 @@ public class IndexRepImpl implements IIndexRep {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Integer qryFranchiseeNum(QryParamVO paramvo) throws DZFWarpException {
+	private Integer qryFranchiseeNum(QryParamVO paramvo, String addsql) throws DZFWarpException {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -83,6 +105,12 @@ public class IndexRepImpl implements IIndexRep {
 			sql.append("  AND t.begindate <= ? ");
 			spm.addParam(date);
 		}
+		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");
+		sql.append(" AND (t.drelievedate is null OR t.drelievedate > ? )" );
+		spm.addParam(new DZFDate());
+		if(!"alldata".equals(addsql)){
+			sql.append(addsql);
+		}
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(AccountVO.class));
 		if (list != null && list.size() > 0) {
@@ -92,46 +120,51 @@ public class IndexRepImpl implements IIndexRep {
 	}
 
 	/**
-	 * 查询加盟费、预付款金额：1、本周；2、本月；本年；
+	 * 查询保证金、预付款金额：1、本周；2、本月；本年；
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Integer, DZFDouble> qryFranchiseeFee(QryParamVO paramvo) throws DZFWarpException {
+	private BalanceRepVO qryFranchiseeFee(QryParamVO paramvo, String addsql) throws DZFWarpException {
 		DZFDate date = new DZFDate();
-		Map<Integer, DZFDouble> map = new HashMap<Integer,DZFDouble>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pay.ipaytype, sum(nvl(pay.npaymny,0)) as npaymny \n");
-		sql.append("  FROM cn_paybill pay \n");
-		sql.append(" WHERE nvl(pay.dr, 0) = 0 \n");
-		sql.append("   AND pay.ipaytype = 3 ");
+		sql.append("SELECT  nvl(sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ;
+		sql.append("      - sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nbzjmny,  \n") ; 
+		sql.append("        nvl(sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ; 
+		sql.append("      - sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny  \n") ; 
+		sql.append("  FROM cn_detail l  \n") ; 
+		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp  \n") ; 
+		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
+		sql.append(" AND nvl(t.dr,0) = 0  \n") ; 
+		sql.append(" AND l.ipaytype IN (1, 2)  \n") ; 
+		sql.append(" AND l.iopertype IN (1,4) \n");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND pay.dconfirmtime >= ? \n");
-				spm.addParam(paramvo.getBegdate() + " 00:00:00");
+				sql.append("   AND l.doperatedate >= ? \n");
+				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   and pay.dconfirmtime <= ? \n");
-				spm.addParam(paramvo.getEnddate() + " 23:59:59");
+				sql.append("   and l.doperatedate <= ? \n");
+				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(pay.dconfirmtime,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(l.doperatedate,1,7) = ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(pay.dconfirmtime,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(l.doperatedate,1,4) = ? \n") ; 
 			spm.addParam(date.getYear());
 		}
-		sql.append(" GROUP BY pay.ipaytype ");
-		List<ChnPayBillVO> list = (List<ChnPayBillVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ChnPayBillVO.class));
-		if(list != null && list.size() > 0){
-			for(ChnPayBillVO vo: list){
-				map.put(vo.getIpaytype(), vo.getNpaymny());
-			}
+		if(!"alldata".equals(addsql)){
+			sql.append(addsql);
 		}
-		return map;
+		List<BalanceRepVO> list = (List<BalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(BalanceRepVO.class));
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		return null;
 	}
 	
 	/**
@@ -141,7 +174,7 @@ public class IndexRepImpl implements IIndexRep {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Integer qryCustNum(QryParamVO paramvo) throws DZFWarpException {
+	private Integer qryCustNum(QryParamVO paramvo, String addsql) throws DZFWarpException {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -167,6 +200,12 @@ public class IndexRepImpl implements IIndexRep {
 			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
 			spm.addParam(date.getYear());
 		}
+		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");
+		sql.append(" AND (t.drelievedate is null OR t.drelievedate > ? )" );
+		spm.addParam(new DZFDate());
+		if(!"alldata".equals(addsql)){
+			sql.append(addsql);
+		}
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpVO.class));
 		if(list != null && list.size() > 0){
@@ -180,72 +219,215 @@ public class IndexRepImpl implements IIndexRep {
 	 * @param paramvo
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private Map<String, DZFDouble> qryContractMny(QryParamVO paramvo) {
-		DZFDate date = new DZFDate();
+	private Map<String, DZFDouble> qryContractMny(QryParamVO paramvo, String addsql) throws DZFWarpException {
 		Map<String, DZFDouble> map = new HashMap<String, DZFDouble>();
+		map.put("ntotalmny", DZFDouble.ZERO_DBL);
+		map.put("ndeductmny", DZFDouble.ZERO_DBL);
+		List<ContQryVO> kklist = qryPositiveData(paramvo, addsql);
+		if(kklist != null && kklist.size() > 0){
+			map.put("ntotalmny", SafeCompute.add(map.get("ntotalmny"), kklist.get(0).getNaccountmny()));
+			map.put("ndeductmny", SafeCompute.add(map.get("ndeductmny"), kklist.get(0).getNdedsummny()));
+		}
+		List<ContQryVO> tklist = qryNegativeData(paramvo, addsql);
+		if(tklist != null && tklist.size() > 0){
+			map.put("ntotalmny", SafeCompute.add(map.get("ntotalmny"), tklist.get(0).getNaccountmny()));
+			map.put("ndeductmny", SafeCompute.add(map.get("ndeductmny"), tklist.get(0).getNdedsummny()));
+		}
+		return map;
+	}
+	
+	/**
+	 * 查询扣款数据
+	 * @param paramvo
+	 * @param addsql
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<ContQryVO> qryPositiveData(QryParamVO paramvo, String addsql) throws DZFWarpException {
+		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT sum(nvl(t.ntotalmny, 0)) as ntotalmny, \n");
-		sql.append("       sum(nvl(t.ndeductmny, 0)) as ndeductmny \n");
-		sql.append("  FROM cn_contract t \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND t.vdeductstatus = 2 \n");
+		sql.append("SELECT SUM(nvl(cn.ndedsummny, 0)) AS ndedsummny,  \n");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
+		sql.append("  FROM cn_contract cn  \n");
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
+		sql.append("  LEFT JOIN bd_account t ON cn.pk_corp = t.pk_corp  \n");
+		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
+		sql.append("   AND cn.vdeductstatus in (?, ?, ?)  \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND t.deductdata >= ? \n");
+				sql.append("   AND cn.deductdata >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   AND t.deductdata <= ? \n");
+				sql.append("   AND cn.deductdata <= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.deductdata,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.deductdata,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ? \n") ; 
 			spm.addParam(date.getYear());
 		}
-		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ContractConfrimVO.class));
-		if(list != null && list.size() > 0){
-			map.put("ntotalmny", list.get(0).getNtotalmny());
-			map.put("ndeductmny", list.get(0).getNdeductmny());
+		if (!"alldata".equals(addsql)) {
+			sql.append(addsql);
 		}
-		return map;
+		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ContQryVO.class));
+	}
+	
+	/**
+	 * 查询退款数据
+	 * @param paramvo
+	 * @param addsql
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<ContQryVO> qryNegativeData(QryParamVO paramvo, String addsql) throws DZFWarpException {
+		DZFDate date = new DZFDate();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT SUM(nvl(cn.nsubdedsummny, 0)) AS ndedsummny,  \n");
+		sql.append("       SUM(CASE cn.vstatus  \n") ; 
+		sql.append("             WHEN 9 THEN  \n") ; 
+		sql.append("              nvl(cn.nsubtotalmny, 0)  \n") ; 
+		sql.append("             ELSE  \n") ; 
+		sql.append("              nvl(cn.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)  \n") ; 
+		sql.append("           END) AS naccountmny  \n") ; 
+		sql.append("  FROM cn_contract cn  \n");
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
+		sql.append("  LEFT JOIN bd_account t ON cn.pk_corp = t.pk_corp  \n");
+		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
+		sql.append("   AND cn.vdeductstatus in (?, ?)  \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
+			if (paramvo.getBegdate() != null) {
+				sql.append("   AND cn.deductdata >= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
+			if (paramvo.getEnddate() != null) {
+				sql.append("   AND cn.deductdata <= ? \n");
+				spm.addParam(paramvo.getBegdate());
+			}
+		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
+			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
+			spm.addParam(date.getYear()+"-"+date.getStrMonth());
+		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
+			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ? \n") ; 
+			spm.addParam(date.getYear());
+		}
+		if (!"alldata".equals(addsql)) {
+			sql.append(addsql);
+		}
+		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ContQryVO.class));
 	}
 
 	@Override
 	public MonthBusimngVO queryBusiByMonth(QryParamVO paramvo) throws DZFWarpException {
 		MonthBusimngVO busivo = new MonthBusimngVO();
-		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_3);
-		//现有加盟商、现有客户数、本年累计已收加盟费、本年累计收到预付款、本年累计扣款金额
-		busivo.setIfranchisee(qryFranchiseeNum(paramvo));//现有加盟商
-		busivo.setIcustomer(qryCustNum(paramvo));//现有客户数
-		Map<Integer, DZFDouble> yearfeemap = qryFranchiseeFee(paramvo);
-		if(yearfeemap != null){
-			busivo.setNtsyrinitialfee(yearfeemap.get(1));//本年累计已收加盟费
-			busivo.setNtsyrcharge(yearfeemap.get(2));//本年累计收到预付款
+		Integer datatype = getDataType(paramvo.getCuserid());
+		String addsql = "";
+		if(datatype != null){
+			if(datatype == -1){
+				return busivo;
+			}else if(datatype == 0){
+				addsql = "alldata";
+			}else{
+				addsql = pubser.getPowerSql(paramvo.getCuserid(), datatype);
+			}
+		}else{
+			return busivo;
 		}
-		Map<String, DZFDouble> yearconmap = qryContractMny(paramvo);
+		if(StringUtil.isEmpty(addsql)){
+			return busivo;
+		}
+		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_3);
+		//现有加盟商、现有客户数、本年累计已收保证金、本年累计收到预付款、本年累计扣款金额
+		busivo.setIfranchisee(qryFranchiseeNum(paramvo, addsql));//现有加盟商
+		busivo.setIcustomer(qryCustNum(paramvo, addsql));//现有客户数
+		BalanceRepVO ybalvo =  qryFranchiseeFee(paramvo, addsql);
+		if(ybalvo != null){
+			busivo.setNtsyrinitialfee(ybalvo.getNbzjmny());//本年累计已收保证金
+			busivo.setNtsyrcharge(ybalvo.getNyfkmny());//本年累计收到预付款
+		}
+		Map<String, DZFDouble> yearconmap = qryContractMny(paramvo, addsql);
 		if(yearconmap != null){
 			busivo.setNtsyramount(yearconmap.get("ndeductmny"));//本年累计扣款金额
 		}
-		//本月新增加盟商、本月新增客户数、本月收到加盟费、本月收到预付款、本月扣款金额、本月新增合同金额
+		//本月新增加盟商、本月新增客户数、本月收到保证金、本月收到预付款、本月扣款金额、本月新增合同金额
 		paramvo.setQrytype(IStatusConstant.IINDEXQRYTYPE_2);
-		busivo.setItsmhfranchisee(qryFranchiseeNum(paramvo));//本月新增加盟商
-		busivo.setItsmhcustomer(qryCustNum(paramvo));//本月新增客户数
-		Map<Integer, DZFDouble> monthfeemap = qryFranchiseeFee(paramvo);
-		if(monthfeemap != null){
-			busivo.setNtsmhinitialfee(yearfeemap.get(1));//本月收到加盟费
-			busivo.setNtsmhcharge(yearfeemap.get(2));//本月收到预付款
+		busivo.setItsmhfranchisee(qryFranchiseeNum(paramvo, addsql));//本月新增加盟商
+		busivo.setItsmhcustomer(qryCustNum(paramvo, addsql));//本月新增客户数
+		BalanceRepVO mbalvo =  qryFranchiseeFee(paramvo, addsql);
+		if(mbalvo != null){
+			busivo.setNtsmhinitialfee(mbalvo.getNbzjmny());//本月收到保证金
+			busivo.setNtsmhcharge(mbalvo.getNyfkmny());//本月收到预付款
 		}
-		Map<String, DZFDouble> monthconmap = qryContractMny(paramvo);
+		Map<String, DZFDouble> monthconmap = qryContractMny(paramvo, addsql);
 		if(monthconmap != null){
 			busivo.setNtsmhcontamount(monthconmap.get("ntotalmny"));//本月扣款金额
 			busivo.setNtsmhamount(monthconmap.get("ndeductmny"));//本月新增合同金额
 		}
 		return busivo;
+	}
+	
+	/**
+	 * 获取查询的数据类型
+	 * @param cuserid
+	 * @return -1:无权查询数据；0：所有数据；1：渠道区域；2：培训区域；3：运营区域；
+	 * @throws DZFWarpException
+	 */
+	private Integer getDataType(String cuserid) throws DZFWarpException {
+		List<String> codelist = pubser.queryRoleCode(cuserid);
+		if(codelist != null && codelist.size() > 0){
+			if(codelist.size() == 1){
+				 Map<String,Integer> typemap = getRoleType();
+				 if(typemap != null && !typemap.isEmpty()){
+					 return typemap.get(codelist.get(0));
+				 }
+				 return -1;//所分配的单个角色，不在角色对应的权限中，不予查询
+			}else{
+				return -1;//分配多个角色，不予查询
+			}
+		}
+		return -1;//没分配角色，不予查询
+	}
+	
+	/**
+	 * 获取角色对应的权限表
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String,Integer> getRoleType() throws DZFWarpException{
+		Map<String,Integer> map = new HashMap<String,Integer>();
+		// 0：所有数据；1：渠道区域；2：培训区域；3：运营区域；
+		map.put("channel", 0);//加盟商管理
+		map.put("corpzxgl", 0);//直销管理
+		map.put("corppxjl", 3);//运营培训经理-->培训区域设置
+		map.put("corppxs", 3);//培训师-->培训区域设置
+		map.put("corpzjl", 0);//在线会计部总经理
+		map.put("corpdqz", 1);//大区总-->渠道区域设置
+		map.put("corpqdjl", 1);//渠道经理-->渠道区域设置
+		map.put("corpqdyy", 3);//渠道运营-->运营区域设置
+		map.put("qdsqr", 0);//财务部-财务核算
+		map.put("gszjl", 0);//公司总经理
+		map.put("corpqdyyjl", 3);//渠道运营经理-->运营区域设置
+		map.put("cwb-kp", 0);//财务部-财务开票
+		map.put("cwb-zj", 0);//财务部-财务总监
+		return map;
 	}
 }

@@ -126,4 +126,22 @@ public interface IPubService {
      * @throws DZFWarpException
      */
     public void checkButton(UserVO uvo,String funnode,String btncode) throws DZFWarpException;
+    
+    /**
+     * 查询用户分配的角色编码
+     * @param cuserid
+     * @return
+     * @throws DZFWarpException
+     */
+    public List<String> queryRoleCode(String cuserid) throws DZFWarpException;
+    
+    /**
+     * 获取角色查询条件
+     * @param cuserid
+     * @param datatype
+     * @return
+     * @throws DZFWarpException
+     */
+    public String getPowerSql(String cuserid, Integer datatype) throws DZFWarpException;
+    
 }
