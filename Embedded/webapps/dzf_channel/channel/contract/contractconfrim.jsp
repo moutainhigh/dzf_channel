@@ -14,6 +14,9 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/contractconfrim.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/showfile.js");%> charset="UTF-8" type="text/javascript"></script>
+
+<script src=<%UpdateGradeVersion.outversion(out, "../../jslib/build/layer.js");%> charset="UTF-8" type="text/javascript"></script>
+
 </head>
 <%
 	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);

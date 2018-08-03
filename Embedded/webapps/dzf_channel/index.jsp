@@ -96,7 +96,7 @@
 <script type="text/javascript" src="./js/jquery.ba-resize.min.js"></script>
 <script type="text/javascript" src="./js/echarts.common.min.js"></script>
 <script type="text/javascript" src="./js/e-smart-zoom.jquery.min.js"></script>
-
+<script type="text/javascript" src="./jslib/build/layer.js" ></script>
 <script src="layui/layui.js" charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript" src="layui/base64.min.js"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"js/security.js");%> charset="UTF-8" type="text/javascript"></script>
