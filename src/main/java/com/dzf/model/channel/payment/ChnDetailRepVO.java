@@ -35,7 +35,7 @@ public class ChnDetailRepVO extends SuperVO {
 	private DZFDouble npaymny;//付款金额
 	
 	@FieldAlias("iptype")
-	private Integer ipaytype;//付款类型   1:加盟费；2：预付款；3：返点；
+	private Integer ipaytype;//付款类型   1：加盟费；2：预付款；3：返点；
 	
 	@FieldAlias("ptypenm")
 	private String vpaytypename;//付款类型名称 
@@ -57,7 +57,7 @@ public class ChnDetailRepVO extends SuperVO {
     private DZFDateTime ts;
     
     @FieldAlias("opertype")
-    private Integer iopertype;//操作类型  1:付款单付款；2：合同扣款；3：返点单计入金额；4：退款单退款；
+    private Integer iopertype;//操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；
     
     @FieldAlias("opertypenm")
     private String vopertypename;//操作类型名称
