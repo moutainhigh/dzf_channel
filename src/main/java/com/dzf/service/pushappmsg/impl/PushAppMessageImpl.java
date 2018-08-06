@@ -13,6 +13,7 @@ import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.message.MsgAdminVO;
 import com.dzf.model.pub.INodeConstant;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.MsgtypeEnum;
@@ -71,12 +72,16 @@ public class PushAppMessageImpl implements IPushAppMessage {
 		} else if (sendtype.equals(2)) {
 			type = MsgtypeEnum.MSG_TYPE_BHXX;
 		}
-		MsgAdminVO convertVO = convertVO(pk_corp, pk_corpk, type, dealman, sendman, null, msg.toString(), pk_bill,
-				node);
-		//存储消息数据
-		singleObjectBO.saveObject(loginpk, convertVO);
-		//激光推送消息
+		if(msg != null && msg.length() > 0){
+			MsgAdminVO convertVO = convertVO(pk_corp, pk_corpk, type, dealman, sendman, null, msg.toString(), pk_bill,
+					node);
+			//存储消息数据
+			singleObjectBO.saveObject(loginpk, convertVO);
+			//激光推送消息
 //		sendWyAppMsg(dealman, msg.toString());
+		}else{
+			throw new BusinessException("提示消息不能为空");
+		}
 	}
 
 	/**
