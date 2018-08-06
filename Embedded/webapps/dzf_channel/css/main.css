@@ -524,7 +524,10 @@ display: inline-block;margin-left: 10px;padding: 0 17px;height: 28px;line-height
 .dzf-skin .main_top{min-width:inherit}
 .dzf-skin .logo{left:0;height:58px;width:152px;overflow:hidden}
 .dzf-skin .logo span{margin:-15px 0 0 0}
- .dzf-skin .logo span img{/* height:105px */ height:48px;    padding-top: 20px;}
+.dzf-skin .logo span img{/* height:105px */    height:66px;padding-top:18px;   display: inherit; margin-left: -22px;;}
+.dzf-skin .logo span p{color: #FFF; font-size: 12px; margin: -56px 0px 4px 40px;}
+ .dzf-skin .logo span div{ margin-left:8px;font-size: 12px;} 
+ 
 .dzf-skin .sidebar{width:152px;padding-top:58px}
 .dzf-skin div#sidebar:before{position:absolute;width:44px;height:100%;display:block;content:""}
 .dzf-skin .sidebar ul{width:152px;padding:0 0;background:#275482}

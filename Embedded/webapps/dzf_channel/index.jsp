@@ -145,7 +145,7 @@ function tranImg(trun){
 <input type="hidden" id="loginid" value="<%=cuserid%>" />
 <input type="hidden" id="xingming" value="<%=username%>" />
 <div class="logo">
-	<span><img src="./images/logoo.png" /></span>
+	<span><img src="./images/logo.png" /><p>在线会计业务系统</p><div><a style="color:#FFF" href="javascript:addTabNew('更新日志','updatelog2.html')">V2.180726 </a></div></span>
 </div>
 <div id="sidebar" class="sidebar easyui-accordion" style="height:100%;" >
 	<ul id="nav">
