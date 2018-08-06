@@ -133,6 +133,7 @@ function load(){
 		pageList : DZF.pageList,
 		singleSelect : false,
 		idField : 'refid',
+		showFooter : true,
 		columns : [ [ 
 					  { field : 'ck', checkbox : true },
 		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
@@ -152,7 +153,24 @@ function load(){
 				      { field : 'updatets', title : '时间戳', hidden:true},
 		] ],
 		onLoadSuccess : function(data) {
-			$('#grid').datagrid("scrollTo",0);
+			var rows = $('#grid').datagrid('getRows');
+			var footerData = new Object();
+			var yfktk = 0;// 预付款退款
+			var bzjtk = 0;// 保证金退款
+			for (var i = 0; i < rows.length; i++) {
+				if (!isEmpty(rows[i].yfktk)) {
+					yfktk += parseFloat(rows[i].yfktk);
+				}
+				if (!isEmpty(rows[i].bzjtk)) {
+					bzjtk += parseFloat(rows[i].bzjtk);
+				}
+			}
+			footerData['corp'] = '合计';
+			footerData['yfktk'] = yfktk;
+			footerData['bzjtk'] = bzjtk;
+			var fs = new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter', fs);
 		}
 	});
 }
