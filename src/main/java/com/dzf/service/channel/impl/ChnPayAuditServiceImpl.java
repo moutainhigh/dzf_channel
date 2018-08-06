@@ -16,11 +16,13 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
@@ -60,6 +62,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 //			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
 			Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), 3);//渠道运营区域设置
+			UserVO uservo = null;
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
@@ -76,6 +79,10 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 					if(!StringUtil.isEmpty(area)){
 						vo.setAreaname(area);//渠道运营区域
 					}
+				}
+				uservo = UserCache.getInstance().get(vo.getVapproveid(), null);
+				if(uservo != null){
+					vo.setVapprovename(uservo.getUser_name());
 				}
 			}
 //			if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -143,9 +150,6 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	public ChnPayBillVO updateOperate(ChnPayBillVO billvo, Integer opertype, String cuserid, String vreason)
 			throws DZFWarpException {
 		payconfSer.checkBillStatus(billvo);
-//		if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-//			return billvo;
-//		}
 		return updateData(billvo, opertype, cuserid, vreason);
 	}
 	
@@ -177,16 +181,12 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	 */
 	private ChnPayBillVO updateAuditData(ChnPayBillVO billvo, Integer opertype, String cuserid) throws DZFWarpException{
 		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-//			billvo.setVerrmsg("数据错误");
-//			return billvo;
 			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-//				return billvo;
 				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 			}
 			List<String> upstr = new ArrayList<String>();
@@ -215,6 +215,10 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
+		UserVO uservo = UserCache.getInstance().get(billvo.getVapproveid(), null);
+		if(uservo != null){
+			billvo.setVapprovename(uservo.getUser_name());
+		}
 		return billvo;
 	}
 	
@@ -229,16 +233,12 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, String vreason, String cuserid)
 			throws DZFWarpException {
 		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
-//			billvo.setVerrmsg("数据错误");
-//			return billvo;
 			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_2){
-//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
-//				return billvo;
 				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待审批】");
 			}
 			billvo.setIrejectype(1);//驳回类型：审批驳回
@@ -259,6 +259,10 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
+		UserVO uservo = UserCache.getInstance().get(billvo.getVapproveid(), null);
+		if(uservo != null){
+			billvo.setVapprovename(uservo.getUser_name());
+		}
 		return billvo;
 	}
 	
@@ -272,16 +276,12 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	 */
 	private ChnPayBillVO updateReturnData(ChnPayBillVO billvo, Integer opertype, String cuserid)throws DZFWarpException{
 		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-//			billvo.setVerrmsg("数据错误");
-//			return billvo;
 			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus()  != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
-//				billvo.setVerrmsg("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
-//				return billvo;
 				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_2);//付款单状态 待审批

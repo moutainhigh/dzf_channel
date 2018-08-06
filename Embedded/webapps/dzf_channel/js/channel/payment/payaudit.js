@@ -267,6 +267,11 @@ function load(){
 				}
 			}
 		}, {
+			width : '100',
+			title : '审批人',
+            halign:'center',
+			field : 'approname',
+		}, {
 			width : '140',
 			title : '收款审批时间',
             halign:'center',
@@ -509,6 +514,7 @@ function operatData(postdata, rows){
 									approdate : null,
 									approtime : null,
 									tstp : rerows[i].tstp,
+									approname : null,
 								}
 							});
 						}else{
@@ -523,6 +529,7 @@ function operatData(postdata, rows){
 										approdate : rerows[i].approdate,
 										approtime : rerows[i].approtime,
 										tstp : rerows[i].tstp,
+										approname : rerows[i].approname,
 									}
 								});
 							}else{
@@ -536,6 +543,7 @@ function operatData(postdata, rows){
 										approdate : rerows[i].approdate,
 										approtime : rerows[i].approtime,
 										tstp : rerows[i].tstp,
+										approname : rerows[i].approname,
 									}
 								});
 							}
