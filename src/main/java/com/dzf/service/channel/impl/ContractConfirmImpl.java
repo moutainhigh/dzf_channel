@@ -790,9 +790,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		//先校验，再进行数据存储，否则会造成数据存储错误
 		Map<String,ChnBalanceVO> map = new HashMap<String,ChnBalanceVO>();
 		String corpname = "";
-		CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corp());
-		if(corpvo != null){
-			corpname = corpvo.getUnitname();
+		if(datavo != null){
+			CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corp());
+			if(corpvo != null){
+				corpname = corpvo.getUnitname();
+			}
 		}
 		String errmsg = "";
 		for(ChnBalanceVO balvo : balVOs){
@@ -826,7 +828,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				throw new BusinessException(errmsg);
 			}
 		}
-//		return "";
 	}
 	
 	/**
@@ -1710,7 +1711,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateChangeBalMny(ContractConfrimVO paramvo, String cuserid, String vmemo) throws DZFWarpException {
 		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype in (?,?) ";
 		SQLParameter yespm = new SQLParameter();
-		yespm.addParam(paramvo.getPk_corp());
+		if(paramvo == null){
+			throw new BusinessException("合同信息不能为空");
+		}else{
+			yespm.addParam(paramvo.getPk_corp());
+		}
 		yespm.addParam(IStatusConstant.IPAYTYPE_2);
 		yespm.addParam(IStatusConstant.IPAYTYPE_3);
 		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
