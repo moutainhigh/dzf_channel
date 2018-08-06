@@ -17,11 +17,13 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -54,6 +56,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		if(list != null && list.size() > 0){
 //			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
+			UserVO uservo = null;
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
@@ -64,6 +67,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 //							retlist.add(vo);
 //						}
 //					}
+				}
+				uservo = UserCache.getInstance().get(vo.getVconfirmid(), null);
+				if(uservo != null){
+					vo.setVconfirmname(uservo.getUser_name());
 				}
 			}
 //			if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -273,6 +280,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
+		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
+		if(uservo != null){
+			billvo.setVconfirmname(uservo.getUser_name());
+		}
 		return billvo;
 	}
 	
@@ -409,6 +420,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
+		}
+		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
+		if(uservo != null){
+			billvo.setVconfirmname(uservo.getUser_name());
 		}
 		return billvo;
 	}

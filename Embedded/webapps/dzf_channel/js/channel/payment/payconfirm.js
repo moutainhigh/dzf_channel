@@ -264,6 +264,11 @@ function load(){
             halign:'center',
 			field : 'dctime',
 		}, {
+			width : '100',
+			title : '确认人',
+            halign:'center',
+			field : 'vcname',
+		}, {
 			width : '140',
 			title : '驳回说明',
             halign:'center',
@@ -500,6 +505,7 @@ function operatData(postdata, rows){
 									vcid : null,
 									dctime : null,
 									tstp : rerows[i].tstp,
+									vcname : null,
 								}
 							});
 						}else{
@@ -513,6 +519,7 @@ function operatData(postdata, rows){
 										vcid : rerows[i].vcid,
 										dctime : rerows[i].dctime,
 										tstp : rerows[i].tstp,
+										vcname : rerows[i].vcname,
 									}
 								});
 							}else{
@@ -525,6 +532,7 @@ function operatData(postdata, rows){
 										vcid : rerows[i].vcid,
 										dctime : rerows[i].dctime,
 										tstp : rerows[i].tstp,
+										vcname : rerows[i].vcname,
 									}
 								});
 							}
