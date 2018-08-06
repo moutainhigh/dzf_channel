@@ -1118,6 +1118,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				try {
 					LockUtil.getInstance().tryLockKey("cn_balance",
 							datavo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid, 120);
+					sql = new StringBuffer();
+					spm = new SQLParameter();
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
 					spm.addParam(datavo.getNdeductmny());
