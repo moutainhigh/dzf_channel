@@ -586,3 +586,38 @@ function checkPanelVisible (id) {
 //		}
 //	}
 //});
+
+
+/**
+ * 更新日志
+ * 
+ * 图片最大化
+ */
+function loaduplogpic(url){
+	var left,top;
+	if($(window).width() -1100 <= 0){
+		left = 0;
+	}else{
+		left =  Math.floor(($(window).width() -1100)/2);
+	}
+	if($(window).height() -500 <=0){
+		top = 0;
+	}else{
+		top =  Math.floor(($(window).height() -500)/2);
+	}
+	layui.use('layer', function(){
+	 var layer = layui.layer;
+	 layer.open({
+		  type: 1,
+		  title: false,
+		  closeBtn: 1,
+		  area: ['1100px','500px'],
+		  offset: [top,left],
+		  skin: 'layui-layer-nobg', //没有背景色
+		  shadeClose: true,
+		  scrollbar :false,
+		  content: '<div><img src="'+url+'"></div>'
+		});
+	});
+}
+
