@@ -66,12 +66,12 @@ function load(){
 		columns : [ 
 		            [ 
 					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
-					{ field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',rowspan:2},
-					{ field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',rowspan:2},
-					{ field : 'provname',  title : '省份', width : 160,halign:'center',align:'left',rowspan:2}, 
-					{ field : 'incode',  title : '加盟商编码', width : 160,halign:'center',align:'left',rowspan:2},
-					{ field : 'corpnm', title : '加盟商名称', width:260,halign:'center',align:'left',rowspan:2},
-					{ field : 'cuname',  title : '培训师', width : 160,halign:'center',align:'left',rowspan:2},
+					{ field : 'aname',  title : '大区', width : 60,halign:'center',align:'left',rowspan:2},
+					{ field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
+					{ field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',rowspan:2}, 
+					{ field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
+					{ field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
+					{ field : 'cuname',  title : '培训师', width : 90,halign:'center',align:'left',rowspan:2},
 					 { field : 'custsmall', title : '小规模数量', width:120,halign:'center',align:'right',rowspan:2},
 					 { field : 'custtaxpay', title : '一般纳税人数量', width:120,halign:'center',align:'right',rowspan:2},
 		             
@@ -79,10 +79,10 @@ function load(){
 		             { field : 'voucher', title : '凭证数量', halign:'center',align:'center',colspan:2},
 		             ] ,
         [
-            { field : 'custrates', title : '小规模', width : 150, formatter:formatMny, halign:'center',align:'right'}, 
-            { field : 'custratet', title : '一般纳税人', width : 150, formatter:formatMny, halign:'center',align:'right'}, 
-            { field : 'vouchernums', title : '小规模', width : 150, halign:'center',align:'right'}, 
-            { field : 'vouchernumt', title : '一般纳税人', width : 150, halign:'center',align:'right'}, 
+            { field : 'custrates', title : '小规模', width : 100, formatter:formatMny, halign:'center',align:'right'}, 
+            { field : 'custratet', title : '一般纳税人', width : 100, formatter:formatMny, halign:'center',align:'right'}, 
+            { field : 'vouchernums', title : '小规模', width : 100, halign:'center',align:'right'}, 
+            { field : 'vouchernumt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
         ] ],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
