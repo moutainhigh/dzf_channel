@@ -133,5 +133,6 @@
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/druid-1.0.15.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/dzfbase.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/dzfpub.jar"/>
+	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/fastdfs-client-java-1.25.jar"/>
 	<classpathentry kind="output" path="Embedded/webapps/dzf_channel/WEB-INF/classes"/>
 </classpath>
