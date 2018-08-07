@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage;
 
+import java.io.File;
 import java.util.List;
 
 import com.dzf.model.channel.dealmanage.GoodsVO;
@@ -22,4 +23,14 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public List<GoodsVO> query(GoodsVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 保存
+	 * @param datavo
+	 * @param files
+	 * @param filenames
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException;
 }

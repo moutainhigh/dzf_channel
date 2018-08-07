@@ -1,5 +1,7 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +10,18 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.file.fastdfs.AppException;
+import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.ChnPayBillVO;
+import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
+import com.dzf.spring.SpringUtils;
 
 @Service("goodsmanageser")
 public class GoodsManageServiceImpl implements IGoodsManageService {
@@ -67,5 +75,39 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		sql.append(" ORDER BY g.updatets DESC \n");
 		return qryvo;
+	}
+
+	@Override
+	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException {
+		datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
+		List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
+		for(int i = 0; i < files.length; i++){
+			String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
+			String filepath = "";
+			try {
+				filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
+			} catch (AppException e) {
+				throw new BusinessException("图片上传错误");
+			}
+			if(!StringUtil.isEmpty(filepath)){
+				throw new BusinessException("图片上传错误");
+			}
+			GoodsDocVO docvo = new GoodsDocVO();
+			docvo.setPk_corp(datavo.getPk_corp());
+			docvo.setPk_goods(datavo.getPk_goods());
+			docvo.setDocName(filenames[i]);
+			docvo.setDocTemp(fname);
+			docvo.setVfilepath(filepath);
+			docvo.setCoperatorid(datavo.getCoperatorid());
+			docvo.setDoperatedate(new DZFDate());
+			docvo.setDr(0);
+			doclist.add(docvo);
+		}
+		if(doclist != null && doclist.size() > 0){
+			singleObjectBO.insertVOArr(datavo.getPk_corp(), doclist.toArray(new GoodsDocVO[0]));
+		}else{
+			throw new BusinessException("图片上传错误");
+		}
+		return datavo;
 	}
 }

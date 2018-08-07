@@ -183,4 +183,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_40 = "channel40";
     
+    /**
+     * 商品管理
+     */
+    public static final String CHANNEL_41 = "channel41";
+    
 }
