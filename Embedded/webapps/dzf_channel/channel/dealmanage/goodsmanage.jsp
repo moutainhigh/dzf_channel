@@ -95,7 +95,8 @@
 					</div>
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单位：</label> 
-						<input class="easyui-textbox" style="width:66%; height: 28px; text-align: left"></input>
+						<input class="easyui-textbox" style="width:50%; height: 28px; text-align: left"></input>
+						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="prickle()"> 添加</a>
 					</div>
 				</div>
 				<div class="time_col time_colp10">
@@ -131,7 +132,20 @@
 				</div>
 			</form>
 	</div>
+		<!-- 计量单位对话框 -->
+		<div id="jlDialog" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 		
+			<div class="time_col time_colp11">
+			<div style="display: inline-block;">
+				<label style="text-align:right;width:140px;">单位：</label>
+				<input  class="easyui-textbox" style="width:150px;height:25px;"/>
+			</div>
+			</div>
+		<div style="text-align:center;margin-top:40px;">
+				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="">保存</a> 
+					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="">取消</a>
+				</div>
+	</div>
 	</div>
 </body>
 </html>

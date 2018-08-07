@@ -153,6 +153,13 @@ function add(){
 	
 		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
 }
+/**
+ * 计量单位添加
+ */
+function prickle(){
+	
+		$('#jlDialog').dialog('open').dialog('center').dialog('setTitle', '商品计量单位');
+}
 
 /**
  * 发布
