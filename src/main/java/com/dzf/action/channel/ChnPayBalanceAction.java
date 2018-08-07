@@ -228,10 +228,10 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			JSONArray headlist = (JSONArray) JSON.parseArray(columns);
 			List<String> heads = new ArrayList<String>();
 			List<String> fieldslist = new ArrayList<String>();
-			Map<String, String> pmap = new HashMap<String, String>();
-			pmap.put("qrydate", qrydate);
-			pmap.put("corpnm", corpnm);
-			pmap.put("ptypenm", ptypenm);
+			ArrayList<String> listData = new ArrayList<>();
+	        listData.add("查询："+qrydate);
+	        listData.add("加盟商："+corpnm);
+	        listData.add("付款类型："+ptypenm);
 			
 			Map<String, String> name = null;
 			int[] widths =new  int[]{};
@@ -252,7 +252,7 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
 			util.setIscross(DZFBoolean.TRUE);
-			util.printMultiColumn(array, "付款单余额明细", heads, fields, widths, 20, list, pmap);
+			util.printMultiColumn(array, "付款单余额明细", heads, fields, widths, 20, list, listData);
 		
 		}catch(DocumentException e){
 			throw new WiseRunException(e);
@@ -277,9 +277,9 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		List<String> heads = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> pmap = new HashMap<String, String>();
-		pmap.put("查询", qrydate);
-		pmap.put("加盟商", corpnm);
-		pmap.put("付款类型", ptypenm);
+		pmap.put("查询", "查询："+qrydate);
+		pmap.put("加盟商", "加盟商：" + corpnm);
+		pmap.put("付款类型", "付款类型：" + ptypenm);
 		//字符类型字段(取界面元素id)
 		List<String> stringlist = new ArrayList<String>();
 		stringlist.add("ddate");

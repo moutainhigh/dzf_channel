@@ -1098,7 +1098,7 @@ em, i {
 	width: 190px;
 }
 
-.quick-add-link {
+/* .quick-add-link {
 	line-height: 30px;
 	padding-left: 20px;
 	position: relative;
@@ -1112,7 +1112,7 @@ em, i {
 	left: 0;
 	position: absolute;
 	top: 1px
-}
+} */
 
 .ui-droplist-wrap {
 	background: #fff;
@@ -1287,7 +1287,7 @@ em, i {
 }
 
 /*期末处理*/
-.position_box {
+/* .position_box {
 	width: 330px;
 	height: 250px;
 	position: absolute;
@@ -1316,16 +1316,16 @@ em, i {
 	position: absolute;
 	top: -9px;
 	left: -10px;
-}
+} */
 
 .top10 {
 	margin-top: 15px;
 }
 
 /*步骤*/
-.steps {
+/* .steps {
 	margin-right: 18px;
-}
+} */
 
 /*错误提示页*/
 .error_div {
@@ -1352,7 +1352,7 @@ em, i {
 }
 
 /*收款管理*/
-.ui-datebox-wrap {
+/* .ui-datebox-wrap {
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
@@ -1374,8 +1374,8 @@ em, i {
 	border-right: 0;
 	font-family: Microsoft YaHei;
 }
-
-.btn-wrap-date {
+ */
+/* .btn-wrap-date {
 	float: left;
 	width: 22px;
 	height: 22px;
@@ -1405,8 +1405,8 @@ em, i {
 .ui-datebox-wrap a.btn-right:hover {
 	background-position: -68px -61px
 }
-
-.ui-combo-wrap .trigger, .ui-spinbox-wrap a {
+ */
+/* .ui-combo-wrap .trigger, .ui-spinbox-wrap a {
 	background: #fff url(../images/main_ico.png) no-repeat
 }
 
@@ -1446,15 +1446,15 @@ em, i {
 	border-right: 1px solid #ddd;
 	border-top: 1px solid #ddd;
 }
-
-.ui-spinbox-wrap .btn-down {
+ */
+/* .ui-spinbox-wrap .btn-down {
 	height: 14px;
 	position: relative;
 	border-top: none;
 	border-bottom: 1px solid #ddd;
-}
+} */
 
-.ui-spinbox-hover .btn-wrap-hover .btn-up {
+/* .ui-spinbox-hover .btn-wrap-hover .btn-up {
 	background-position: -350px -24px
 }
 
@@ -1468,9 +1468,9 @@ em, i {
 
 .ui-spinbox-hover .btn-wrap-hover .btn-down:hover {
 	background-position: -366px -40px
-}
+} */
 
-.ui-spinbox-txt {
+/* .ui-spinbox-txt {
 	outline: 0;
 	float: left;
 	text-align: center;
@@ -1482,9 +1482,9 @@ em, i {
 	padding: 6px 5px;
 	color: #555;
 	font-family: Microsoft YaHei;
-}
+} */
 
-.ui-btnbox-wrap {
+/*. ui-btnbox-wrap {
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
@@ -1508,9 +1508,9 @@ em, i {
 
 .ui-btnbox-wrap .btn-gl:hover {
 	background-position: 0px -21px;
-}
+} */
 /*合同修改*/
-.contract_modify {
+/* .contract_modify {
 	position: absolute;
 	top: 100px;
 	left: 200px;
@@ -1549,7 +1549,7 @@ em, i {
 	font-size: 14px;
 	position: relative;
 }
-
+ */
 .ui-input-50 {
 	padding: 6px 5px;
 	height: 16px;
@@ -1564,7 +1564,7 @@ em, i {
 	font-size: 14px;
 }
 
-.contract_from textarea {
+/* .contract_from textarea {
 	width: 830px;
 	height: 80px;
 	border: 1px #e4e4e4 solid;
@@ -1603,10 +1603,10 @@ em, i {
 	text-align: center;
 	border-left: 1px solid #d4d4d4;
 	border-top: 1px solid #d4d4d4;
-}
+} */
 
 /*收款管理表格*/
-.proceeds {
+/* .proceeds {
 	margin: 0px 18px 0 0;
 	height: 90%;
 	overflow: auto;
@@ -1640,7 +1640,7 @@ em, i {
 .proceeds-table td div {
 	text-align: center;
 	margin: 0 auto;
-}
+} */
 
 .xh {
 	width: 55px;
@@ -2200,22 +2200,23 @@ pre {
 	background: #EFF1F2;
 }
 
-.sty_header {
+/* .sty_header {
 	float: left;
 	font-size: 15px;
 	line-height: 40px;
 	padding-left: 16px;
 	font-weight: bold;
-} /* 收款登记   退款登记 */
-.sys_toll label {
+} */
+ /* 收款登记   退款登记 */
+/* .sys_toll label {
 	width: 7.4%;
-} /*收款登记 */
+} 收款登记
 .sty_refer label {
 	width: 8.8%;
-} /* 收款查询  退款说明*/
+} 收款查询  退款说明
 .sys_check label {
 	width: 9%;
-} /*收款审核 */
+} 收款审核 */
 
 /*图片浏览*/
 .menu_entrances {
@@ -2319,9 +2320,9 @@ pre {
 		padding: 14px 10px;
 		height: 32px;
 	}
-	.contract_xi  #List_panel .easyui-fluid {
+	/* .contract_xi  #List_panel .easyui-fluid {
 		height:804px !important;
-	}
+	} */
 	.sys_corp_cha .easyui-fluid #card_panel .mod-inner{
 		height:56% !important;
 	}
@@ -2332,9 +2333,9 @@ pre {
 		padding: 10px;
 		height: 32px;
 	}
-	.contract_xi  #List_panel .easyui-fluid{
+	/* .contract_xi  #List_panel .easyui-fluid{
 		height:492px !important;
-	}/* 合同明细表 底部边框线缺失 */
+	} *//* 合同明细表 底部边框线缺失 */
 	.sys_corp_cha .easyui-fluid #card_panel .mod-inner{
 		height:52% !important;
 	}
@@ -2345,22 +2346,22 @@ pre {
 
   .numberbox .textbox-text {text-align: right;} 
 
-.panel-header{background: #EFF1F2;} /* 代理记账合同明细 */ 
+/* .panel-header{background: #EFF1F2;} 代理记账合同明细 
 
 .textbox-invalid {  border-color: #D4D4D4;}
- .datagrid-body .textbox{border:none}/* 代理记合同 */ 
+ .datagrid-body .textbox{border:none}代理记合同  */
  
 .time_col .textbox{border-radius:5px;}
 .add_price .header{float:left;font-size:15px;line-height:40px;padding-left:16px;font-weight: bold;}
  .datagrid-htable .datagrid-header-row{background:#e9edf3;}
  
-.datagrid-cell-c6-bdate {width: 114px !important;}
-.datagrid-cell-c6-edate {width: 114px !important;}
+/* .datagrid-cell-c6-bdate {width: 114px !important;}
+.datagrid-cell-c6-edate {width: 114px !important;} */
 
 .datagrid td {vertical-align: middle;}
-.picUp_1 a:link{text-decoration: none;color:#ffffff;}
+/* .picUp_1 a:link{text-decoration: none;color:#ffffff;}
 .picUp_1 a:visited{text-decoration: none;color:#ffffff;}
-.picUp_1 a:hover{color:#ffffff;text-decoration: none;}/*图片处理  */
+.picUp_1 a:hover{color:#ffffff;text-decoration: none;}图片处理  */
 
 .info a:link{text-decoration: none;color:#000000;}
 .info a:visited{text-decoration: none;color:#000000;}
@@ -2372,13 +2373,13 @@ pre {
 .dzf_sys_sorp .right{float:right;border:none;}
 .dzf_sys_sorp .ui-btn{margin-left:-4px;}
 
-.sys_corp_cha  .right{float:right;border:none;}
-.srveva_serve .datagrid-cell .dt{color:#FFF !important;}/* 服务评价*/
+/* .sys_corp_cha  .right{float:right;border:none;}
+.srveva_serve .datagrid-cell .dt{color:#FFF !important;}服务评价
 
 .cwhzb_class tbody a{color: #0000cd;}
-.cwhzb_class .datagrid-header-inner{background: #e9edf3;}/*财务汇总表  */
-
-.deal_card_class{overflow:hidden;overflow-y:auto;}
+.cwhzb_class .datagrid-header-inner{background: #e9edf3;}财务汇总表 
+ */
+/* .deal_card_class{overflow:hidden;overflow-y:auto;}
   .l-btn-left {
   display: inline-block;
   position: relative;
@@ -2387,9 +2388,9 @@ pre {
   padding: 0;
   vertical-align: top;
   height: 26px;
-}/*业务查询卡片*/
-#sign{margin-left:30px;}/*代理记账合同明细  */
-.fileDocTable{
+} *//*业务查询卡片*/
+/* #sign{margin-left:30px;}代理记账合同明细  */
+/* .fileDocTable{
 		width:100%;
 		margin:0 auto;
 		border:1px solid #999999;
@@ -2409,38 +2410,39 @@ pre {
 	}
 	.innerTD{
 		padding : 10px
-	}/*资料交接 */
-.panel-title{color:#FFF;}
-.l-btn-text {
+	} */
+	/*资料交接 */
+/* .panel-title{color:#FFF;} */
+/* .l-btn-text {
     font-size: 12px;
     line-height: 24px;
-}
+} */
 
-.card_busi .header{float:left;font-size:16px;line-height:46px;padding-left:16px;color:#000;font-weight:normal;}
-.card_col{margin-bottom:12px;} /*业务处理卡片  */ 
-.ziliao_toggle .window .datagrid-view{border-top:1px solid #d4d4d4;}/*资料交接  */
-.sys_busset .numberbox .textbox-text{text-align: left;}/*业务小类  */
-.sys_product_s .numberbox .textbox-text{text-align: left;}/*业务大类  */
-.pic_change .window #print_dialog{height:407px !important;}/*图片。处理  */
-.dsdj_offer .mod-inner .datagrid-body td p{border:1px solid #ccc}/* 代收代缴明细账 */
-.busimng-body .mod-inner #dataGrid .panel-body{width:99.8% !important}/*业务处理界面的  */
-.send_mails #cardPanel .panel-body{overflow:auto;}/*群发邮件  */
-.payment_fu #dataGridSub .textbox,.collect_shou #dataGridsub .textbox{height:29px !important;}/*付款凭证 */
+/* .card_busi .header{float:left;font-size:16px;line-height:46px;padding-left:16px;color:#000;font-weight:normal;}
+.card_col{margin-bottom:12px;} 业务处理卡片  
+.ziliao_toggle .window .datagrid-view{border-top:1px solid #d4d4d4;}资料交接 
+.sys_busset .numberbox .textbox-text{text-align: left;}业务小类 
+.sys_product_s .numberbox .textbox-text{text-align: left;}业务大类 
+.pic_change .window #print_dialog{height:407px !important;}图片。处理 
+.dsdj_offer .mod-inner .datagrid-body td p{border:1px solid #ccc}代收代缴明细账
+.busimng-body .mod-inner #dataGrid .panel-body{width:99.8% !important}业务处理界面的 
+.send_mails #cardPanel .panel-body{overflow:auto;}群发邮件 
+.payment_fu #dataGridSub .textbox,.collect_shou #dataGridsub .textbox{height:29px !important;}付款凭证 */
  .header{float:left;font-size:15px;line-height:40px;padding-left:16px;font-weight: bold;}
  .datagrid-toolbar{border:0px 0px 0px 0px;}
  .datebox-button table{text-align: center;}
  /* 欠费统计 */
- .dljzfmng-main{height:40px;line-height:40px;border-left:1px solid #ccc;border-right:1px solid #ccc;padding-left:14px;}
+/*  .dljzfmng-main{height:40px;line-height:40px;border-left:1px solid #ccc;border-right:1px solid #ccc;padding-left:14px;}
  .dljzfmng-left,.dljzfmng-center,.dljzfmng-right{float:left;margin-right:38px;    font-weight: bold; }
- .dljzfmng-left a,.dljzfmng-center a,.dljzfmng-right a{color:#f21210;}
+ .dljzfmng-left a,.dljzfmng-center a,.dljzfmng-right a{color:#f21210;} */
  /*发送内容  */
- .sendcontent{height:65%;margin-top:10px;}
+/*  .sendcontent{height:65%;margin-top:10px;}
 .sendcontent .ke-container-default{height:100%}
 .sendcontent .ke-container-default .ke-edit{height:calc(100% - 27px)!important}
-.sendcontent .ke-container-default .ke-edit .ke-edit-iframe{height:100%!important}
-.dzf-skin a.btn_disable  {
+.sendcontent .ke-container-default .ke-edit .ke-edit-iframe{height:100%!important} */
+/* .dzf-skin a.btn_disable  {
    background: gray;
-}
+} */
 .dzf-skin .ui-put{background:#b2b2b2;padding:2px 10px;display: inline-block;border-radius: 4px;}
 .dzf-skin .ui-put:hover {
   background:#1675ca !important;

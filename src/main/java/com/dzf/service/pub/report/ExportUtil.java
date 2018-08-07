@@ -96,33 +96,29 @@ public class ExportUtil<T> {
 
 			// 合并期间、公司行
 			if(submap != null && !submap.isEmpty()){
-				if (title.equals("付款单余额明细") || title.equals("合同金额明细") ) {
-					HSSFRow rowtitle1 = sheet.createRow(3);
-					HSSFCell celltitle1 = rowtitle1.createCell(0);
-					HSSFCell celltitle2 = rowtitle1.createCell(2);
-					HSSFCell celltitle3 = rowtitle1.createCell(4);
-					celltitle1.setCellValue("查询：" + submap.get("查询"));
-					celltitle2.setCellValue("加盟商：" + submap.get("加盟商"));
-					if(title.equals("付款单余额明细") ){
-						celltitle3.setCellValue("付款类型：" + submap.get("付款类型"));
-					}
-					
-					HSSFCellStyle style3 = workbook.createCellStyle();
-					style3.setFont(font);
-					style3.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-					celltitle1.setCellStyle(style3);
-					sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
-					
-					celltitle2.setCellStyle(style3);
-					sheet.addMergedRegion(new CellRangeAddress(3, 3, 2, 3));
-					
-					HSSFCellStyle style4 = workbook.createCellStyle();
-					style4.setFont(font);
-					style4.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
-					style4.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-					celltitle3.setCellStyle(style4);
-					sheet.addMergedRegion(new CellRangeAddress(3, 3, 4, 4));
-				} 
+				HSSFRow rowtitle1 = sheet.createRow(3);
+				HSSFCell celltitle1 = rowtitle1.createCell(0);
+				HSSFCell celltitle2 = rowtitle1.createCell(2);
+				HSSFCell celltitle3 = rowtitle1.createCell(4);
+				celltitle1.setCellValue(submap.get("查询"));
+				celltitle2.setCellValue(submap.get("加盟商"));
+				celltitle3.setCellValue(submap.get("付款类型"));
+				
+				HSSFCellStyle style3 = workbook.createCellStyle();
+				style3.setFont(font);
+				style3.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				celltitle1.setCellStyle(style3);
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
+				
+				celltitle2.setCellStyle(style3);
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, 2, 3));
+				
+				HSSFCellStyle style4 = workbook.createCellStyle();
+				style4.setFont(font);
+				style4.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+				style4.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				celltitle3.setCellStyle(style4);
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, 4, 4));
 			}
 			// end 合并期间、公司行
 

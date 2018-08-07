@@ -96,6 +96,26 @@
 			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 		</div>
+		
+		<div id="payDetail" class="easyui-dialog" title="扣款明细" 
+			data-options="modal:true,closed:true" style="width:940px;height:500px;">
+			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+				<label style="text-align:right">查询：</label> 
+				<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
+				<label style="text-align:right">加盟商：</label> 
+				<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
+				<!-- <label style="text-align:right">付款类型：</label> 
+				<span id ="ptypenm" style="vertical-align: middle;font-size:14px;"></span> -->
+			<div class="right" style="float: right;display: inline-block;"> 
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onRecPrint()">打印</a>
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onRecExport()">导出</a>
+		 	</div>
+			</div>	
+			
+			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+				 <table id="gridp"></table>	
+			</div>
+		</div>
 	</div>
 </body>
 </html>

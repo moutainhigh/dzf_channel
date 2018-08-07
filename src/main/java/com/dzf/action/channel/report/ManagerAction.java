@@ -26,7 +26,6 @@ import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IButtonName;
 import com.dzf.pub.BusinessException;
-import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
@@ -41,8 +40,6 @@ import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.ExportUtil;
 import com.dzf.service.pub.report.PrintUtil;
 import com.itextpdf.text.DocumentException;
-
-import oracle.net.aso.s;
 
 /**
  * 加盟商管理
@@ -232,9 +229,9 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			JSONArray headlist = (JSONArray) JSON.parseArray(columns);
 			List<String> heads = new ArrayList<String>();
 			List<String> fieldslist = new ArrayList<String>();
-			Map<String, String> pmap = new HashMap<String, String>();
-			pmap.put("qrydate", qrydate);
-			pmap.put("corpnm", corpnm);
+			ArrayList<String> listData = new ArrayList<>();
+            listData.add("查询："+qrydate);
+            listData.add("加盟商："+corpnm);
 			Map<String, String> name = null;
 			int[] widths =new  int[]{};
 			if(strlist==null){
@@ -253,7 +250,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ManagerVO> util = new PrintUtil<ManagerVO>();
 			util.setIscross(DZFBoolean.TRUE);
-			util.printMultiColumn(array, "合同金额明细", heads, fields, widths, 20, list, pmap);
+			util.printMultiColumn(array, "合同金额明细", heads, fields, widths, 20, list, listData);
 		}catch(DocumentException e){
 			throw new WiseRunException(e);
 		}catch(IOException e){
@@ -274,8 +271,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		List<String> heads = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> pmap = new HashMap<String, String>();
-		pmap.put("查询", qrydate);
-		pmap.put("加盟商", corpnm);
+		pmap.put("查询", "查询："+qrydate);
+        pmap.put("加盟商", "加盟商：" + corpnm);
 		//字符类型字段(取界面元素id)
 		List<String> stringlist = new ArrayList<String>();
 		stringlist.add("edate");

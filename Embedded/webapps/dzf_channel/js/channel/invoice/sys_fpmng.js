@@ -13,9 +13,30 @@ $(function(){
 	initDataGrid();
 	initArea();
 	initChannel();
-	reloadData();
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	if(operate == 'linkqry'){
+		queryLink(obj)
+	}else{
+		reloadData();
+	}
 	fastQry();
 });
+
+/**
+ * 
+ * 穿透查询
+ */
+function queryLink(obj){
+	$('#grid').datagrid('options').url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
+    $('#grid').datagrid('load', {
+    	corps : obj.corpid,
+        edate: obj.edate,
+        qrytype : 1,
+    });
+    $('#grid').datagrid('unselectAll');
+    $('#querydate').html(obj.edate);
+}
 
 //初始化监听
 function initListener(){
@@ -498,23 +519,6 @@ function fastQry() {
 				});
 				
 			}
-//			if (filtername != "") {
-//				var jsonStrArr = [];
-//				if (loadrows) {
-//					for (var i = 0; i < loadrows.length; i++) {
-//						var row = loadrows[i];
-//						if (row != null && !isEmpty(row["cname"])) {
-//							if (row["cname"].indexOf(filtername) >= 0) {
-//								jsonStrArr.push(row);
-//							}
-//						}
-//					}
-//					isenter = true;
-//					$('#grid').datagrid('loadData', jsonStrArr);
-//				}
-//			} else {
-//				$('#grid').datagrid('loadData', loadrows);
-//			}
 		}
 	});
 }

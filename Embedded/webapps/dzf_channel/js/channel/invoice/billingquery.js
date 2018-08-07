@@ -15,6 +15,7 @@ $(function(){
 	initArea();
 	initChannel();
 //	reloadData();
+	initGridP();
 });
 
 //初始化监听
@@ -55,20 +56,6 @@ function fastQry(){
  		    	    });
  		    	}
  		    }
-//		   if (filtername) {
-//				var jsonStrArr = [];
-//				if(loadrows){
-//					for(var i=0;i<loadrows.length;i++){
-//						var row = loadrows[i];
-//						if(row.ccode.indexOf(filtername) >= 0 || row.cname.indexOf(filtername) >= 0){
-//							jsonStrArr.push(row);
-//						} 
-//					}
-//					$('#grid').datagrid('loadData',jsonStrArr);   
-//				}
-//			}else{
-//				$('#grid').datagrid('loadData',loadrows);
-//			} 
         }
     });
 }
@@ -100,14 +87,16 @@ function initDataGrid(){
 							if (value == 0) {
 								return "0.00";
 							}
-							return formatMny(value);
+//							return formatMny(value);
+							return "<a href='javascript:void(0)' style='color:blue' onclick=\"payDetail('"+index+"')\">" + formatMny(value) + "</a>";
 		            }},
 		            {width : '120',title : '累计开票金额',field : 'btotalmny',align:'right',
 		            	formatter: function(value,row,index){
 							if (value == 0) {
 								return "0.00";
 							}
-							return formatMny(value);
+//							return formatMny(value);
+							return "<a href='javascript:void(0)' style='color:blue' onclick=\"invDetail('"+index+"')\">" + formatMny(value) + "</a>";
 		            }},
 		            {width : '120',title : '未开票金额',field : 'noticketmny',align:'right',
 		            	formatter: function(value,row,index){
@@ -301,3 +290,168 @@ function onBilling(){
 	});
 }
 
+/**
+ * 扣款明细联查
+ * @param index
+ */
+function payDetail(index){
+	var qrydate = $("#bdate").datebox("getValue");
+	var rows = $('#grid').datagrid('getRows');
+	var row= rows[index];
+	$('#gridp').datagrid('options').url = DZF.contextPath + '/invoice/billingquery!queryRecDetail.action';
+	$('#corpnm').html(row.cname);
+	$('#qrydate').html(qrydate);
+	$('#payDetail').dialog('open');
+    $('#gridp').datagrid('load', {
+    	begdate : qrydate,
+		cpid:row.corpid,
+    });
+}
+
+function initGridP(){
+	gridh = $('#gridp').datagrid({
+		border : true,
+		striped : true,
+		rownumbers : true,
+		fitColumns : false,
+		height:'350',
+		singleSelect : true,
+		pagination : true,
+		pageSize : DZF.pageSize_min,
+		pageList : DZF.pageList_min,
+		showFooter:true,
+		columns : [ [ {
+			width : '80',
+			title : '日期',
+			align:'center',
+			halign:'center',
+			field : 'ddate',
+		}, {
+			width : '260',
+			title : '摘要',
+            halign:'center',
+			field : 'memo',
+			formatter : function(value) {
+	    		if(value!=undefined){
+	    			return "<span title='" + value + "'>" + value + "</span>";
+	    		}
+			}
+		},{
+			width : '100',
+			title : '合同代账费',
+			align:'right',
+            halign:'center',
+			field : 'namny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '80',
+			title : '账本费',
+			align:'right',
+            halign:'center',
+			field : 'nbmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		}, {
+			width : '90',
+			title : '扣款比率(%)',
+			align:'center',
+            halign:'center',
+			field : 'propor',
+			formatter : function(value,row,index){
+				if(value == 0){
+					return null;
+				}else{
+					return value;
+				}
+			}
+		},{
+			width : '90',
+			title : '扣款金额',
+			align:'right',
+            halign:'center',
+			field : 'usemny',
+			formatter : useFormat
+		}] ],
+		onLoadSuccess : function(data) {
+			var rows = $('#gridp').datagrid('getRows');
+			var footerData = new Object();
+			var nbmny = parseFloat(0);
+			var namny = parseFloat(0);
+            var npmnysum = parseFloat(0);	// 付款金额
+            for (var i = 0; i < rows.length; i++) {
+            	nbmny += getFloatValue(rows[i].nbmny);
+            	namny += getFloatValue(rows[i].namny);
+            	npmnysum += getFloatValue(rows[i].usemny);
+            }
+            footerData['ddate'] = '合计';
+            footerData['nbmny'] = nbmny;
+            footerData['namny'] = namny;
+            footerData['usemny'] = npmnysum;
+            var fs=new Array(1);
+            fs[0] = footerData;
+            $('#gridp').datagrid('reloadFooter',fs);
+            $('#gridp').datagrid("scrollTo",0);
+		},
+	});
+}
+
+function useFormat(value,row,index){
+	if(row.ddate != "合计"){
+		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+		return ss ;
+	}else{
+		return formatMny(value);
+	}
+}
+
+/**
+ * 扣款明细---打印
+ */
+function onRecPrint(){
+	var datarows = $('#gridp').datagrid("getRows");
+	if( datarows == null||datarows.length == 0){
+		Public.tips({content:'明细数据为空',type:2});
+		return;
+	}
+	var columns = $('#gridp').datagrid("options").columns[0];
+	var qrydate = $("#qrydate").text();
+	var corpnm = $("#corpnm").text();
+	
+	Business.getFile(DZF.contextPath+ '/invoice/billingquery!onRecPrint.action',{'strlist':JSON.stringify(datarows),
+		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm}, true, true);
+}
+/**
+ * 扣款明细---导出
+ */
+function onRecExport(){
+	var datarows = $('#gridp').datagrid("getRows");
+	if( datarows == null||datarows.length == 0){
+			Public.tips({content:'明细数据为空',type:2});
+			return;
+		}
+	var callback=function(){
+		var columns = $('#gridp').datagrid("options").columns[0];
+ 		var qrydate = $("#qrydate").text();
+ 		var corpnm = $("#corpnm").text();
+ 		Business.getFile(DZF.contextPath+ '/invoice/billingquery!onRecExport.action',{'strlist':JSON.stringify(datarows),
+ 			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm}, true, true);
+	}
+	checkBtnPower('export','channel22',callback);
+}
+
+/**
+ * 累计开票明细
+ * @param index
+ */
+function invDetail(index){
+	var qrydate = $("#bdate").datebox("getValue");
+	var rows = $('#grid').datagrid('getRows');
+	var row= rows[index];
+	parent.addTabNew('发票管理','channel/invoice/sys_fpmng.jsp?operate=linkqry&corpid='+row.corpid+'&edate='+qrydate);
+}

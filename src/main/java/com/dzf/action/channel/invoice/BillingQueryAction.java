@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -23,18 +27,27 @@ import com.dzf.action.channel.expfield.BillingExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
+import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
+import com.dzf.service.channel.balance.IRecPayDetailService;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 import com.dzf.service.pub.LogRecordEnum;
+import com.dzf.service.pub.report.ExportUtil;
+import com.dzf.service.pub.report.PrintUtil;
+import com.itextpdf.text.DocumentException;
 
 /**
  * 渠道商--发票管理--加盟商发票查询
@@ -53,6 +66,8 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 	
 	@Autowired
 	private IBillingQueryService billingQueryServiceImpl;
+	@Autowired
+	private IRecPayDetailService recPayDetailService;
 	
 	/**
 	 * 查询
@@ -176,4 +191,153 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
         }
         writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(),"导出加盟商开票查询表",ISysConstants.SYS_3);
 	}
+	
+	/**
+	 * 扣款明细
+	 * @author gejw
+	 * @time 上午10:15:41
+	 */
+    public void queryRecDetail(){
+        Json grid = new Json();
+        try {
+            QryParamVO paramvo = new QryParamVO();
+            paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+            if(paramvo.getBegdate() == null){
+                paramvo.setBegdate(new DZFDate());
+            }
+            List<ChnDetailRepVO> list = recPayDetailService.queryRecDetail(paramvo);
+            if(list != null && list.size() > 0){
+                ChnDetailRepVO[] vos = getPagedVOs(list.toArray(new ChnDetailRepVO[0]),paramvo.getPage(),paramvo.getRows());
+                grid.setRows(vos);
+            }else{
+                grid.setRows(0);
+            }
+            grid.setMsg("查询成功！");
+            grid.setSuccess(true);
+            grid.setTotal((long) list.size());
+            writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(),"扣款明细查询成功",ISysConstants.SYS_3);
+        } catch (Exception e) {
+            printErrorLog(grid, log, e, "查询失败");
+        }
+        writeJson(grid);
+    }
+    
+    private ChnDetailRepVO[] getPagedVOs(ChnDetailRepVO[] cvos,int page,int rows){
+        int beginIndex = rows * (page-1);
+        int endIndex = rows*page;
+        if(endIndex>=cvos.length){//防止endIndex数组越界
+            endIndex=cvos.length;
+        }
+        cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+        return cvos;
+    }
+    
+    public void onRecPrint() {
+        try{
+            String strlist =getRequest().getParameter("strlist");
+            String columns =getRequest().getParameter("columns");
+            String qrydate =getRequest().getParameter("qrydate");
+            String corpnm =getRequest().getParameter("corpnm");
+            
+            JSONArray array = (JSONArray) JSON.parseArray(strlist);
+            JSONArray headlist = (JSONArray) JSON.parseArray(columns);
+            List<String> heads = new ArrayList<String>();
+            List<String> fieldslist = new ArrayList<String>();
+            ArrayList<String> listData = new ArrayList<>();
+            listData.add("查询："+qrydate);
+            listData.add("加盟商："+corpnm);
+            
+            Map<String, String> name = null;
+            int[] widths =new  int[]{};
+            if(strlist==null){
+                return;
+            }
+            for (int i = 0 ; i< headlist.size(); i ++) {
+                 name=(Map<String, String>) headlist.get(i);
+                 heads.add(name.get("title"));
+                 fieldslist.add(name.get("field"));
+                 widths =ArrayUtils.addAll(widths, new int[] {3}); 
+            }
+            //字符类型字段(取界面元素id)
+            List<String> list = new ArrayList<String>();
+            list.add("ddate");
+            list.add("memo");
+            list.add("propor");
+            String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
+            PrintUtil<BillingQueryAction> util = new PrintUtil<BillingQueryAction>();
+            util.setIscross(DZFBoolean.TRUE);
+            util.printMultiColumn(array, "扣款明细", heads, fields, widths, 20, list, listData);
+        
+        }catch(DocumentException e){
+            throw new WiseRunException(e);
+        }catch(IOException e){
+            throw new WiseRunException(e);
+        }
+    }
+    
+    public void onRecExport(){
+        String strlist =getRequest().getParameter("strlist");
+        String columns =getRequest().getParameter("columns");
+        
+        String qrydate =getRequest().getParameter("qrydate");
+        String corpnm =getRequest().getParameter("corpnm");
+        String ptypenm =getRequest().getParameter("ptypenm");
+        
+        JSONArray array = (JSONArray) JSON.parseArray(strlist);
+        JSONArray headlist = (JSONArray) JSON.parseArray(columns);
+        List<String> heads = new ArrayList<String>();
+        List<String> fieldslist = new ArrayList<String>();
+        Map<String, String> pmap = new HashMap<String, String>();
+        pmap.put("查询", "查询："+qrydate);
+        pmap.put("加盟商", "加盟商：" + corpnm);
+        //字符类型字段(取界面元素id)
+        List<String> stringlist = new ArrayList<String>();
+        stringlist.add("ddate");
+        stringlist.add("memo");
+        stringlist.add("propor");
+        Map<String, String> name = null;
+        if(strlist == null){
+            return;
+        }
+        for (int i = 0 ; i< headlist.size(); i ++) {
+             name=(Map<String, String>) headlist.get(i);
+             heads.add(name.get("title"));
+             fieldslist.add(name.get("field"));
+        }
+        ExportUtil<BillingQueryAction> ex =new ExportUtil<BillingQueryAction>();
+        ServletOutputStream servletOutputStream = null;
+        OutputStream toClient = null;
+        try {
+            HttpServletResponse response = getResponse();
+            response.reset();
+            String date = DateUtils.getDate(new Date());
+            response.addHeader("Content-Disposition", "attachment;filename="
+                    + new String(date+".xls"));
+            servletOutputStream = response.getOutputStream();
+            toClient = new BufferedOutputStream(servletOutputStream);
+            response.setContentType("application/vnd.ms-excel;charset=gb2312");
+            byte[] length = ex.exportExcel("扣款明细",heads,fieldslist ,array, toClient,"",stringlist,pmap);
+            String srt2=new String(length,"UTF-8");
+            response.addHeader("Content-Length", srt2);
+        } catch (IOException e) {
+            log.error(e);
+        } finally {
+            if(toClient != null){
+                try {
+                    toClient.flush();
+                    toClient.close();
+                } catch (IOException e) {
+                    log.error(e);
+                }
+            }
+            if(servletOutputStream != null){
+                try {
+                    servletOutputStream.flush();
+                    servletOutputStream.close();
+                } catch (IOException e) {
+                    log.error(e);
+                }
+            }
+        }
+    }
 }

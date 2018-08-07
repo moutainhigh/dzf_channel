@@ -69,7 +69,7 @@ public class PrintUtil<T> extends BaseAction<T> {
 	 * @throws IOException
 	 */
 	public void printMultiColumn(JSONArray array ,  String titlename, List<String> columns,String[] fields,
-			int[] widths, Integer pagecount, List<String> list, Map<String, String> pmap) throws DocumentException, IOException {
+			int[] widths, Integer pagecount, List<String> list, ArrayList<String> listData) throws DocumentException, IOException {
 		BaseFont bf = BaseFont.createFont(IGlobalConstants.FONTPATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);// C:/windows/fonts/simfang.ttf
 		BaseFont bf_Bold = BaseFont.createFont(IGlobalConstants.FONTPATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);//IGlobalConstants.FONTPATH
 		Font titleFonts = new Font(bf_Bold, 20, Font.BOLD);
@@ -112,16 +112,19 @@ public class PrintUtil<T> extends BaseAction<T> {
 				title.setAlignment(Element.ALIGN_CENTER);
 				document.add(title);
 				//副标题  注释
-				if(pmap != null && !pmap.isEmpty()){
+				if(listData != null && listData.size() > 0){
 					Paragraph head = new Paragraph();
-					if (titlename.equals("付款单余额明细")) {
-						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
-						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
-						head.add(new Chunk(getSpace(3) + "付款类型：" + pmap.get("ptypenm") + getSpace(6), tableHeadFounts));
-					}else if(titlename.equals("合同金额明细")){
-						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
-						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
+					for(String l : listData){
+					    head.add(new Chunk(getSpace(3) + l + getSpace(6), tableHeadFounts));
 					}
+//					if (titlename.equals("付款单余额明细")) {
+//						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
+//						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
+//						head.add(new Chunk(getSpace(3) + "付款类型：" + pmap.get("ptypenm") + getSpace(6), tableHeadFounts));
+//					}else if(titlename.equals("合同金额明细")){
+//						head.add(new Chunk(getSpace(3) + "查询：" + pmap.get("qrydate") + getSpace(6), tableHeadFounts));
+//						head.add(new Chunk(getSpace(3) + "加盟商：" + pmap.get("corpnm") + getSpace(6), tableHeadFounts));
+//					}
 					head.setAlignment(Element.ALIGN_LEFT);
 					document.add(head);
 				}
