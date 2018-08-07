@@ -151,6 +151,7 @@ function dele(index){
  */
 function add(){
 	
+		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
 }
 
 /**

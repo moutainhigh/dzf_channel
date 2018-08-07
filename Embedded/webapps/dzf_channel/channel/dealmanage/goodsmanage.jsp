@@ -11,6 +11,7 @@
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/chnpaybill.css");%> rel="stylesheet" />
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%> charset="UTF-8" type="text/javascript"></script>
 
 </head>
@@ -73,7 +74,63 @@
 			<table id="grid"></table>
 		</div>
 		
-		
+	<!-- 新增对话框 -->
+		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+				<form id="chn_add" method="post">
+				<div class="time_col time_colp10">
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">商品编码：</label> 
+						<input class="easyui-textbox"  data-options="validType:'length[0,30]'" style="width:66%; height: 28px; text-align: left"> 
+					</div>
+					<div style="width:46%;display: inline-block;">
+						<label style="width:120px;text-align: right;">商品名称：</label>
+					    <input class="easyui-textbox" style="width:66%;height:28px;" />
+					</div>
+				</div>
+
+				<div class="time_col time_colp10">
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">单价：</label> 
+						<input class="easyui-textbox" style="width:66%; height: 28px; text-align: left">
+					</div>
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">单位：</label> 
+						<input class="easyui-textbox" style="width:66%; height: 28px; text-align: left"></input>
+					</div>
+				</div>
+				<div class="time_col time_colp10">
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">付款银行：</label> 
+						<input class="easyui-textbox" style="width:66%;height:28px;text-align:left">
+					</div>
+				</div>
+				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
+					<div style="width:100%;display: inline-block;">
+						<label style="text-align:right;width:135px;vertical-align: top;">备注：</label>
+						<textarea class="easyui-textbox" data-options="multiline:true,validType:'length[0,150]'" style="width:74%;height:100px;"></textarea>
+					</div>
+				</div>
+				<div class="time_col time_colp11" style="margin:10px 0px 10px 0px;">
+			       <div style="width:24%;display: inline-block;white-space: nowrap;">
+					<label style="text-align:right;width:135px; vertical-align: top;">商品图片：</label>
+					<div class="uploadImg" style="display: inline-block;">
+					   	<div class="imgbox1">
+						    <div class="imgnum">
+						        <input type="file" class="filepath2" name="pFile"  accept="image/gif,image/jpeg,image/jpg,image/png"/>
+						        <span class="Dlelete" id ="span1" ><img src="../../images/Dustbin.png"/></span>
+						        <img src="../../images/wer_03.png" class="img11" id="img11"/>
+						        <img src="" class="img22" id="img12" />
+						    </div>
+						</div>
+					</div>	
+					</div>
+				</div>
+				<div style="float:right;margin-top:40px;margin-right:76px;">
+				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="">保存</a> 
+					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="">取消</a>
+				</div>
+			</form>
+	</div>
 		
 	</div>
 </body>
