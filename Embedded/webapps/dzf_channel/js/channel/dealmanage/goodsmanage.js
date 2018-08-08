@@ -102,6 +102,20 @@ function load(){
 }
 
 /**
+ * 查询数据
+ */
+function reloadData(){
+	var url = DZF.contextPath + '/dealmanage/goodsmanage!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'gcode' : $("#qgcode").val(),
+		'gname' : $("#qgname").val(),
+		'status' :  $('#qstatus').combobox('getValue'),
+	});
+	$('#grid').datagrid('clearSelections');
+}
+
+/**
  * 商品说明添加tips显示
  * @param value
  */
@@ -119,8 +133,8 @@ function noteFormat(value){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="edit(' + index + ')">审批</a>'+
-	'<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="dele(' + index + ')">审批</a>';
+	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="edit(' + index + ')">编辑</a>'+
+	'<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="dele(' + index + ')">删除</a>';
 }
 
 /**
@@ -150,15 +164,185 @@ function dele(index){
  * 新增
  */
 function add(){
-	
-		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
+	initFileEvent();
+	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
+	$('#goods_add').form('clear');
+	$("#image1").html('');
+	var htmlImg = '<div class="imgbox">'+
+					'<div class="imgnum">'+
+						'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+						'<span class="close1"><img src="../../images/Dustbin.png"/></span>'+
+						'<img src="../../images/wer_03.png" class="img1" /> ' +
+						'<img src="" class="img2" />'+
+					'</div>'+
+				  '</div>';
+	$("#image1").html(htmlImg);
+	initMeas();
+	initMeasSelect();
 }
+
 /**
- * 计量单位添加
+ * 计量单位选择事件
  */
-function prickle(){
+function initMeasSelect(){
+	$("#measid").combobox({
+		onChange : function(n, o) {
+			$('#mname').val($('#measid').combobox('getText'));
+		}
+	});
+}
+
+/**
+ * 新增商品-初始化计量单位
+ */
+function initMeas(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/goodsmanage!initMeasCombox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#measid").combobox("loadData",result.rows);
+			}
+		}
+	});
+}
+
+/**
+ * 上传图片添加事件
+ */
+function initFileEvent(){
+	$(".uploadImg").on("change",".filepath1",function(){//添加附件
+		if(this.files.length <= 0){
+			return;
+		}
+		var fname = this.files[0].name;
+		var imageExt=fname.substr(fname.lastIndexOf(".")).toLowerCase();//获得文件后缀名
+	    if(imageExt !='.jpg' && imageExt !='.png' && imageExt !='.jpeg'){
+	        Public.tips({ content : "请上传后缀名为jpg、png、jpeg的图片", type : 2 });
+	        return;
+	    }
+		var srcs = getObjectURL(this.files[0]);   //获取路径
+		var imgsrc = $(this).nextAll(".img2").attr("src"); 
+	    //this指的是input
+	    $(this).nextAll(".img1").hide();   //this指的是input
+	    $(this).nextAll(".img2").show();  //fireBUg查看第二次换图片不起做用
+	    $(this).nextAll('.close1').show();   //this指的是input
+	    $(this).nextAll(".img2").attr("src",srcs);    //this指的是input
+	    if(imgsrc == null || imgsrc == ""){
+	    	 var htmlImg='<div class="imgbox">'+
+				     		'<div class="imgnum">'+
+				     			'<input type="file" class="filepath1" name="imageFile" multiple="multiple"'+
+				     				' accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+				     			'<span class="close1"><img height="26" src="../../images/Dustbin.png"/></span>'+
+						            '<img src="../../images/wer_03.png" class="img1" />'+
+						            '<img src="" class="img2" />'+
+						        '</div>'+
+				         '</div>';
+	    	 $(this).parent().parent().after(htmlImg);
+	    }
+	    initClick();
+	    var data_id = $(this).nextAll('.close1').attr("data-id");
+	   	if(data_id){
+	   		deleteImageFile(data_id)
+	   	}
+	});
+}
+
+/**
+ * 获取图片路径
+ * @param file
+ * @returns
+ */
+function getObjectURL(file) {
+    var url = null;
+	if (window.createObjectURL != undefined) {
+		url = window.createObjectURL(file)
+	} else if (window.URL != undefined) {
+		url = window.URL.createObjectURL(file)
+	} else if (window.webkitURL != undefined) {
+		url = window.webkitURL.createObjectURL(file)
+	}
+    return url;
+};
+
+/**
+ * 删除界面图片
+ */
+function initClick(){
+	$(".close1").on("click",function() {
+		var data_id = $(this).attr("data-id");
+    	if(data_id){
+    		deleteImageFile(data_id);
+    	}
+    	if($(this).nextAll(".img2").attr("src")){
+    		$(this).hide();     //this指的是span
+    		$(this).nextAll(".img2").hide();
+    		$(this).nextAll(".img1").show();
+    		if($('.imgbox').length>1){
+    			$(this).parent().parent().remove();
+    		}
+    	}
+    })
+}
+
+/**
+ * 调用后台接口删除图片
+ * @param data_id
+ */
+function deleteImageFile(data_id){
+	$.ajax({
+		url : contextPath + "/chnpay/chncontract!deleteImageFile.action",
+		traditional : true,
+		async : false,
+		dataType : 'json',
+		data : {
+			"doc_id" : data_id,
+		},
+	});
+}
+
+/**
+ * 商品-新增保存
+ */
+function onSave(){
+	if ($("#goods_add").form('validate')) {
+		$.messager.progress({
+			text : '数据保存中，请稍后.....'
+		});
+		
+		$('#goods_add').form('submit', {
+			url : DZF.contextPath + '/dealmanage/goodsmanage!save.action',
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				$.messager.progress('close');
+				if (result.success) {
+					initMeas();
+					$('#cbDialog').dialog('close');
+				} else {
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}
+			}
+		});
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+}
+
+/**
+ * 商品-取消
+ */
+function onCancel(){
 	
-		$('#jlDialog').dialog('open').dialog('center').dialog('setTitle', '商品计量单位');
 }
 
 /**
@@ -174,3 +358,53 @@ function publish(){
 function off(){
 	
 }
+
+/**
+ * 添加单位
+ */
+function addMeas(){
+	$('#jlDialog').dialog('open').dialog('center').dialog('setTitle', '商品计量单位');
+	$('#meas_add').form('clear');
+}
+
+/**
+ * 计量单位-保存
+ */
+function measSave(){
+	if ($("#meas_add").form('validate')) {
+		$.messager.progress({
+			text : '数据保存中，请稍后.....'
+		});
+		
+		$('#meas_add').form('submit', {
+			url : DZF.contextPath + '/dealmanage/goodsmanage!saveMeas.action',
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				$.messager.progress('close');
+				if (result.success) {
+					initMeas();
+					$('#jlDialog').dialog('close');
+				} else {
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}
+			}
+		});
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+}
+
+/**
+ * 计量单位-取消
+ */
+function measCancel(){
+	$('#jlDialog').dialog('close');
+}
+

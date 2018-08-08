@@ -12,14 +12,18 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.file.fastdfs.AppException;
 import com.dzf.file.fastdfs.FastDfsUtil;
-import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
+import com.dzf.model.channel.dealmanage.MeasVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.spring.SpringUtils;
 
@@ -35,7 +39,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Override
 	public Integer queryTotalRow(GoodsVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
-		return multBodyObjectBO.queryDataTotal(ChnPayBillVO.class,sqpvo.getSql(), sqpvo.getSpm());
+		return multBodyObjectBO.queryDataTotal(GoodsVO.class,sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -44,7 +48,15 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
 		List<GoodsVO> list = (List<GoodsVO>) multBodyObjectBO.queryDataPage(GoodsVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		
+		if(list != null && list.size() > 0){
+			UserVO uservo = null;
+			for(GoodsVO vo : list){
+				uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+				if(uservo != null){
+					vo.setVopername(uservo.getUser_name());
+				}
+			}
+		}
 		return list;
 	}
 
@@ -74,6 +86,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			spm.addParam(pamvo.getVgoodsname()+"%");
 		}
 		sql.append(" ORDER BY g.updatets DESC \n");
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
 		return qryvo;
 	}
 
@@ -89,7 +103,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			} catch (AppException e) {
 				throw new BusinessException("图片上传错误");
 			}
-			if(!StringUtil.isEmpty(filepath)){
+			if(StringUtil.isEmpty(filepath)){
 				throw new BusinessException("图片上传错误");
 			}
 			GoodsDocVO docvo = new GoodsDocVO();
@@ -98,6 +112,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			docvo.setDocName(filenames[i]);
 			docvo.setDocTemp(fname);
 			docvo.setVfilepath(filepath);
+			docvo.setDocOwner(datavo.getCoperatorid());
+			docvo.setDocTime(new DZFDateTime());
 			docvo.setCoperatorid(datavo.getCoperatorid());
 			docvo.setDoperatedate(new DZFDate());
 			docvo.setDr(0);
@@ -109,5 +125,35 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			throw new BusinessException("图片上传错误");
 		}
 		return datavo;
+	}
+
+	@Override
+	public List<ComboBoxVO> queryMeasCombox(String pk_corp) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? \n";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pk_corp);
+		MeasVO[] measVOs = (MeasVO[]) singleObjectBO.queryByCondition(MeasVO.class, sql, spm);
+		List<ComboBoxVO> list = new ArrayList<ComboBoxVO>();
+		if(measVOs != null && measVOs.length > 0){
+			ComboBoxVO boxvo = null;
+			for(MeasVO vo : measVOs){
+				boxvo = new ComboBoxVO();
+				boxvo.setId(vo.getPk_measdoc());
+				boxvo.setName(vo.getVmeasname());
+				list.add(boxvo);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public MeasVO saveMeas(GoodsVO pamvo) throws DZFWarpException {
+		MeasVO measvo = new MeasVO();
+		measvo.setPk_corp(pamvo.getPk_corp());
+		measvo.setVmeasname(pamvo.getVmeasname());
+		measvo.setCoperatorid(pamvo.getCoperatorid());
+		measvo.setDoperatedate(new DZFDate());
+		measvo.setDr(0);
+		return (MeasVO) singleObjectBO.saveObject(measvo.getPk_corp(), measvo);
 	}
 }

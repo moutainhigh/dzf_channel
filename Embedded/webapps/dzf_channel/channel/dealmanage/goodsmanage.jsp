@@ -7,7 +7,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>合同审核</title>
+<title>商品管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
@@ -46,15 +46,15 @@
 			</h3>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品编码：</label>
-				<input id="gcode" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<input id="qgcode" class="easyui-textbox" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品名称：</label>
-				<input id="gname" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<input id="qgname" class="easyui-textbox" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">合同状态：</label>
-				<select id="destatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					editable="false" style="width:290px;height:28px;">
 					<option value="-1">全部</option>
 					<option value="1">已保存</option>
@@ -74,78 +74,83 @@
 			<table id="grid"></table>
 		</div>
 		
-	<!-- 新增对话框 -->
-		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
-				<form id="chn_add" method="post">
+		<!-- 新增对话框  begin-->
+		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" 
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+			<form id="goods_add" method="post" enctype="multipart/form-data">
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 
-						<input class="easyui-textbox"  data-options="validType:'length[0,30]'" style="width:66%; height: 28px; text-align: left"> 
+						<input class="easyui-textbox"  id="gcode" name="gcode" data-options="required:true,validType:'length[0,30]'" 
+							style="width:66%; height: 28px; text-align: left"> 
 					</div>
 					<div style="width:46%;display: inline-block;">
 						<label style="width:120px;text-align: right;">商品名称：</label>
-					    <input class="easyui-textbox" style="width:66%;height:28px;" />
+					    <input class="easyui-textbox" id="gname" name="gname" data-options="required:true,validType:'length[0,50]'"
+					    	style="width:66%;height:28px;" />
 					</div>
 				</div>
 
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单价：</label> 
-						<input class="easyui-textbox" style="width:66%; height: 28px; text-align: left">
+						<input class="easyui-numberbox" id="price" name = "price" data-options="required:true,min:0,precision:2,groupSeparator:','"  
+							style="width:66%; height: 28px; text-align: left">
 					</div>
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单位：</label> 
-						<input class="easyui-textbox" style="width:50%; height: 28px; text-align: left"></input>
-						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="prickle()"> 添加</a>
-					</div>
-				</div>
-				<div class="time_col time_colp10">
-					<div style="width: 46%; display: inline-block;">
-						<label style="text-align: right; width: 120px;">付款银行：</label> 
-						<input class="easyui-textbox" style="width:66%;height:28px;text-align:left">
+						<input id="measid" name="measid" class="easyui-combobox" 
+							data-options="valueField:'id', textField:'name', panelHeight:'auto',editable:false,required:true," 
+							style="width:50%; height: 28px; text-align: left"></input>
+						<input id="mname" name="mname" type="hidden">
+						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="addMeas()">添加</a>
 					</div>
 				</div>
 				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
 					<div style="width:100%;display: inline-block;">
-						<label style="text-align:right;width:135px;vertical-align: top;">备注：</label>
-						<textarea class="easyui-textbox" data-options="multiline:true,validType:'length[0,150]'" style="width:74%;height:100px;"></textarea>
+						<label style="text-align:right;width:135px;vertical-align:top;">商品说明：</label>
+						<textarea id ="note" name="note" class="easyui-textbox" data-options="multiline:true,validType:'length[0,150]'" 
+							style="width:74%;height:100px;">
+						</textarea>
 					</div>
 				</div>
 				<div class="time_col time_colp11" style="margin:10px 0px 10px 0px;">
-			       <div style="width:24%;display: inline-block;white-space: nowrap;">
-					<label style="text-align:right;width:135px; vertical-align: top;">商品图片：</label>
-					<div class="uploadImg" style="display: inline-block;">
-					   	<div class="imgbox1">
-						    <div class="imgnum">
-						        <input type="file" class="filepath2" name="pFile"  accept="image/gif,image/jpeg,image/jpg,image/png"/>
-						        <span class="Dlelete" id ="span1" ><img src="../../images/Dustbin.png"/></span>
-						        <img src="../../images/wer_03.png" class="img11" id="img11"/>
-						        <img src="" class="img22" id="img12" />
-						    </div>
+			    	<div style="display: inline-block;white-space: nowrap;">
+						<label style="text-align:right;width:135px; display: inline-block;vertical-align: top;">商品图片：</label>
+						<div style="display: inline-block;white-space: nowrap;width:83%;height:120px;overflow:auto">
+							 <div class="uploadImg"  style="display: inline-block;white-space: nowrap;width:100%;">
+								<div style="overflow: auto;" id="image1"></div> 
+							</div>
 						</div>
-					</div>	
 					</div>
 				</div>
+				
 				<div style="float:right;margin-top:40px;margin-right:76px;">
-				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="">保存</a> 
-					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="">取消</a>
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="onSave()">保存</a> 
+					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="onCancel()">取消</a>
 				</div>
 			</form>
-	</div>
-		<!-- 计量单位对话框 -->
-		<div id="jlDialog" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+		</div>
+		<!-- 新增对话框  end-->
 		
-			<div class="time_col time_colp11">
-			<div style="display: inline-block;">
-				<label style="text-align:right;width:140px;">单位：</label>
-				<input  class="easyui-textbox" style="width:150px;height:25px;"/>
-			</div>
-			</div>
-		<div style="text-align:center;margin-top:40px;">
-				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="">保存</a> 
-					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="">取消</a>
+		<!-- 计量单位对话框  begin-->
+		<div id="jlDialog" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" 
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+			<form id="meas_add" method="post">
+				<div class="time_col time_colp11">
+					<div style="display: inline-block;">
+						<label style="text-align:right;width:140px;">单位：</label>
+						<input id="amname" name="mname" class="easyui-textbox" style="width:150px;height:25px;"/>
+					</div>
 				</div>
-	</div>
+			</form>
+			<div style="text-align:center;margin-top:40px;">
+			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="measSave()">保存</a> 
+				<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="measCancel()">取消</a>
+			</div>
+		</div>
+		<!-- 计量单位对话框  end-->
+		
 	</div>
 </body>
 </html>

@@ -31,7 +31,7 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("price")
 	private DZFDouble nprice;//单价
 	
-	@FieldAlias("meas")
+	@FieldAlias("mname")
 	private String vmeasname;//单位
 	
 	@FieldAlias("measid")
@@ -62,6 +62,14 @@ public class GoodsVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
+	public String getVopername() {
+		return vopername;
+	}
+
+	public void setVopername(String vopername) {
+		this.vopername = vopername;
+	}
+
 	public String getPk_goods() {
 		return pk_goods;
 	}

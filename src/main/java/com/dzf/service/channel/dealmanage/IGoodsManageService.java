@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import com.dzf.model.channel.dealmanage.GoodsVO;
+import com.dzf.model.channel.dealmanage.MeasVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IGoodsManageService {
@@ -33,4 +35,20 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException;
+	
+	/**
+	 * 查询计量单位下拉值
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryMeasCombox(String pk_corp) throws DZFWarpException;
+	
+	/**
+	 * 保存计量单位
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public MeasVO saveMeas(GoodsVO pamvo) throws DZFWarpException;
 }

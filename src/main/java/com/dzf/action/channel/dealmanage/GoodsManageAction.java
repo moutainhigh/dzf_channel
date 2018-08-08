@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.dealmanage.GoodsVO;
+import com.dzf.model.channel.dealmanage.MeasVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -81,6 +83,11 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
@@ -116,6 +123,58 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			data.setCoperatorid(getLoginUserid());
 			data.setDoperatedate(new DZFDate());
 		}
+	}
+	
+	/**
+	 * 初始化
+	 */
+	public void initMeasCombox() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			List<ComboBoxVO> list = manser.queryMeasCombox(getLogincorppk());
+			grid.setMsg("查询成功");
+			grid.setSuccess(true);
+			grid.setRows(list);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 保存计量单位
+	 */
+	public void saveMeas() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			if (data == null) {
+				throw new BusinessException("数据信息不能为空");
+			}
+			data.setPk_corp(getLogincorppk());
+			data.setCoperatorid(getLoginUserid());
+			MeasVO measvo = manser.saveMeas(data);
+			json.setSuccess(true);
+			json.setRows(measvo);
+			json.setMsg("保存成功");
+		} catch (Exception e) {
+			json.setSuccess(false);
+			json.setMsg("保存失败");
+			printErrorLog(json, log, e, "保存失败");
+		}
+		writeJson(json);
 	}
 
 }
