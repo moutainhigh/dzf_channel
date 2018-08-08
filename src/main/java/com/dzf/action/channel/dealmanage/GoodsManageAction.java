@@ -1,7 +1,10 @@
 package com.dzf.action.channel.dealmanage;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -12,6 +15,8 @@ import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
+import com.dzf.file.fastdfs.FastDfsUtil;
+import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -26,6 +31,7 @@ import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.spring.SpringUtils;
 
 /**
  * 商品管理
@@ -94,16 +100,16 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			}
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
-			if (files == null || files.length == 0) {
+			if (StringUtil.isEmpty(data.getPk_goods()) && (files == null || files.length == 0)) {
 				throw new BusinessException("商品图片不能为空");
 			}
 			if (StringUtil.isEmpty(data.getPk_corp())) {
 				data.setPk_corp(getLogincorppk());
 			}
 			setDefaultValue(data);
-			GoodsVO returnvo = manser.save(data, files, filenames);
+			GoodsVO retvo = manser.save(data, files, filenames);
 			json.setSuccess(true);
-			json.setRows(returnvo);
+			json.setRows(retvo);
 			json.setMsg("保存成功");
 		} catch (Exception e) {
 			json.setSuccess(false);
@@ -176,5 +182,121 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		}
 		writeJson(json);
 	}
+	
+	/**
+	 * 通过主键查询商品信息
+	 */
+	public void queryByID() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			GoodsVO pamvo = new GoodsVO();
+			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if (StringUtil.isEmpty(pamvo.getPk_goods())) {
+				throw new BusinessException("主键为空");
+			}
+			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLogincorppk());
+			}
+			GoodsVO retvo = manser.queryByID(pamvo);
+			json.setSuccess(true);
+			json.setRows(retvo);
+			json.setMsg("查询成功!");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 获取商品图片信息
+	 */
+	public void getAttaches() {
+		Json json = new Json();
+		json.setSuccess(false);
+		try {
+			GoodsVO pamvo = new GoodsVO();
+			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLogincorppk());
+			}
+			GoodsDocVO[] resvos = manser.getAttatches(pamvo);
+			if (resvos != null) {
+				json.setRows(Arrays.asList(resvos));
+			} else {
+				json.setRows(new GoodsDocVO[0]);
+			}
+			json.setSuccess(true);
+			json.setMsg("获取商品图片成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "获取商品图片失败");
+		}
+		writeJson(json);
+	}
 
+	/**
+	 * 获取商品图片信息
+	 */
+	public void getAttachImage() {
+		
+		GoodsDocVO pamvo = new GoodsDocVO();
+		pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
+		if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+			pamvo.setPk_corp(getLogincorppk());
+		}
+		
+		//从文件服务器下载图片
+		String imgpath = pamvo.getVfilepath();
+		OutputStream output = null;
+		
+		if (StringUtil.isEmptyWithTrim(imgpath)) {
+			throw new BusinessException("下载文件传入参数不能为空！");
+		}
+		if(imgpath.startsWith("/")){
+			imgpath = imgpath.substring(1);
+		}
+		try {
+			output = getResponse().getOutputStream();
+			byte[] bytes = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).downFile(imgpath);
+			output.write(bytes);
+			output.flush();
+		} catch (Exception e) {
+			com.dzf.pub.Logger.error(this, e.getMessage(), e);
+		} finally {
+			try {
+				if (output != null) {
+					output.close();
+				}
+			} catch (IOException e) {
+				com.dzf.pub.Logger.error(this, e.getMessage(), e);
+			}
+		}
+	}
+	
+	/**
+	 * 删除图片
+	 */
+	public void deleteFile() {
+		Json json = new Json();
+		json.setSuccess(false);
+		try {
+			GoodsDocVO pamvo = new GoodsDocVO();
+			pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLogincorppk());
+			}
+			manser.deleteFile(pamvo);
+			json.setSuccess(true);
+			json.setMsg("删除商品图片成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "删除商品图片失败");
+		}
+		writeJson(json);
+	}
+	
 }

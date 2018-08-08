@@ -3,6 +3,7 @@ package com.dzf.service.channel.dealmanage;
 import java.io.File;
 import java.util.List;
 
+import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -51,4 +52,27 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public MeasVO saveMeas(GoodsVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 通过主键查询商品信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsVO queryByID(GoodsVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 通过主键查询商品图片信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsDocVO[] getAttatches(GoodsVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 删除商品信息
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException;
 }

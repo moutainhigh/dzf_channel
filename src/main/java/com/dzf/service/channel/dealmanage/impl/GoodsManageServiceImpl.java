@@ -93,6 +93,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException {
+		if(!StringUtil.isEmpty(datavo.getPk_goods())){
+			checkDataStatus(datavo);
+		}
 		datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 		List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
 		for(int i = 0; i < files.length; i++){
@@ -126,6 +129,21 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		return datavo;
 	}
+	
+	/**
+	 * 数据状态校验
+	 * @throws DZFWarpException
+	 */
+	private void checkDataStatus(GoodsVO datavo) throws DZFWarpException {
+		GoodsVO oldvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, datavo.getPk_goods());
+		if(oldvo != null){
+			if(oldvo.getUpdatets().compareTo(datavo.getUpdatets()) != 0){
+				throw new BusinessException("请刷新界面数据，再次尝试");
+			}
+		}else{
+			throw new BusinessException("数据错误");
+		}
+	}
 
 	@Override
 	public List<ComboBoxVO> queryMeasCombox(String pk_corp) throws DZFWarpException {
@@ -156,4 +174,40 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		measvo.setDr(0);
 		return (MeasVO) singleObjectBO.saveObject(measvo.getPk_corp(), measvo);
 	}
+
+	@Override
+	public GoodsVO queryByID(GoodsVO pamvo) throws DZFWarpException {
+		GoodsVO oldvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, pamvo.getPk_goods());
+		if(oldvo == null){
+			throw new BusinessException("数据错误");
+		}
+		return oldvo;
+	}
+
+	@Override
+	public GoodsDocVO[] getAttatches(GoodsVO pamvo) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pamvo.getPk_corp());
+		spm.addParam(pamvo.getPk_goods());
+		return (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
+	}
+
+	@Override
+	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException {
+		try {
+			((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(pamvo.getVfilepath());
+		} catch (AppException e) {
+			throw new BusinessException("商品图片删除失败");
+		}
+		String sql = " delete from cn_goodsdoc where vfilepath = ? and pk_corp = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pamvo.getVfilepath());
+		spm.addParam(pamvo.getPk_corp());
+		int res = singleObjectBO.executeUpdate(sql, spm);
+		if(res != 1){
+			throw new BusinessException("商品图片删除失败");
+		}
+	}
+	
 }

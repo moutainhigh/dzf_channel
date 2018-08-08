@@ -78,6 +78,13 @@
 		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="goods_add" method="post" enctype="multipart/form-data">
+				<input id="status" name="status" type="hidden">
+				<input id="pubdate" name="pubdate" type="hidden">
+				<input id="dofdate" name="dofdate" type="hidden">
+				<input id="operid" name="operid" type="hidden">
+				<input id="operdate" name="operdate" type="hidden">
+				<input id="updatets" name="updatets" type="hidden">
+				<input id="gid" name="gid" type="hidden">
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 
@@ -94,7 +101,8 @@
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单价：</label> 
-						<input class="easyui-numberbox" id="price" name = "price" data-options="required:true,min:0,precision:2,groupSeparator:','"  
+						<input class="easyui-numberbox" id="price" name = "price" 
+							data-options="required:true,min:0,precision:2,groupSeparator:','"  
 							style="width:66%; height: 28px; text-align: left">
 					</div>
 					<div style="width: 46%; display: inline-block;">

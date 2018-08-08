@@ -1,4 +1,4 @@
-
+var contextPath = DZF.contextPath;
 $(function(){
 	load();
 });
@@ -142,7 +142,134 @@ function opermatter(val, row, index) {
  * @param index
  */
 function edit(index){
+	var erow = $('#grid').datagrid('getData').rows[index];
+	var row = queryByID(erow.gid);
+	if(isEmpty(row)){
+		return;
+	}
 	
+	initFileEvent();
+	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '修改商品');
+	$('#goods_add').form('clear');
+	initMeas();
+	initMeasSelect();
+	$('#goods_add').form('load', row);
+	
+	$("#measid").combobox("setValue",row.measid);
+	
+	viewImageFiles(row);
+	$('.filepath1').prop('disabled',false);
+	$('.filepath2').prop('disabled',false);
+	var htmlImg= '<div class="imgbox">'+
+			'<div class="imgnum">'+
+				'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+				'<span class="close1"><img src="../../images/Dustbin.png"/></span>'+
+				'<img src="../../images/wer_03.png" class="img1" /> ' +
+				'<img src="" class="img2" />'+
+			'</div>'+
+		'</div>';
+	$("#image1").append(htmlImg);
+	initClick();
+	initIdDelClick();
+}
+
+/**
+ * 展示商品图片
+ * @param row
+ */
+function viewImageFiles(row){
+	$.ajax({
+		type : "POST",
+		url : contextPath + "/dealmanage/goodsmanage!getAttaches.action",
+  		dataType : 'json',
+  		data : row,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			arrachrows = result.rows;
+			$("#image1").html('')
+			$("#img12").attr("src",'');
+			$("#span1").attr("data-id",'');
+			$("#img11").show();
+			if(rows && rows.length > 0){
+				var ret = 0;
+				for(var i = 0;i<rows.length;i++){
+					if(rows[i].fpath){
+						var url = getAttachImgUrl(rows[i]);
+						var htmlImg= '<div class="imgbox">'+
+										'<div class="imgnum">'+
+										'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+										'<span class="close1" data-id="'+rows[i].fpath+'"><img src="../../images/Dustbin.png"/></span>'+
+										'<img src="'+url+'" class="img2" />'+
+										'</div>'+
+									 '</div>';
+						$("#image1").append(htmlImg);
+					}
+				} 
+				$('.filepath1').prop('disabled',true);
+				$('.filepath2').prop('disabled',true);
+			}
+		}
+	});
+}
+
+/**
+ * 获取图片信息
+ * @param attach
+ * @returns {String}
+ */
+function getAttachImgUrl(row){
+	var ext = getFileExt(row['fpath']);
+	if("pdf"==ext.toLowerCase()){		
+		return "../../images/typeicon/pdf.jpg";
+	}else if("txt"==ext.toLowerCase()){		
+		return "../../images/typeicon/txt.jpg";
+	}
+	return DZF.contextPath + '/dealmanage/goodsmanage!getAttachImage.action?fpath=' + row.fpath  + '&doc_id=' + row.doc_id ;	
+}
+
+/**
+ * 获取附件扩展
+ * @param filename
+ * @returns
+ */
+function getFileExt(filename){
+	var index1 = filename.lastIndexOf(".")+1;
+	var index2 = filename.length;
+	var ext = filename.substring(index1,index2);
+	return ext;
+}
+
+/**
+ * 通过主键查询商品信息
+ * @param contractid
+ * @returns
+ */
+function queryByID(gid){
+	var row;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		traditional : true,
+		async : false,
+		url : contextPath + '/dealmanage/goodsmanage!queryByID.action',
+		data : {
+			"gid" : gid,
+		},
+		success : function(data, textStatus) {
+			if (!data.success) {
+				Public.tips({
+					content :  data.msg,
+					type : 1
+				});	
+				return;
+			} else {
+				row = data.rows;
+			}
+		},
+	});
+	return row;
 }
 
 /**
@@ -179,6 +306,9 @@ function add(){
 	$("#image1").html(htmlImg);
 	initMeas();
 	initMeasSelect();
+	
+	initClick();
+	initIdDelClick();
 }
 
 /**
@@ -246,7 +376,7 @@ function initFileEvent(){
 	    initClick();
 	    var data_id = $(this).nextAll('.close1').attr("data-id");
 	   	if(data_id){
-	   		deleteImageFile(data_id)
+	   		deleteImageFile(data_id);
 	   	}
 	});
 }
@@ -289,12 +419,32 @@ function initClick(){
 }
 
 /**
+ * 删除图片
+ */
+function initIdDelClick(){
+    $(".Dlelete").on("click",function() {
+    	if(status == "brows"){
+    		return;
+    	}
+    	var data_id = $(this).attr("data-id");
+    	if(data_id){
+    		deleteImageFile(data_id);
+    	}
+        $(this).hide();     //this指的是span
+        $(this).nextAll(".img22").hide();
+        $(this).nextAll(".img11").show();
+        $(this).nextAll(".img22").attr("src","")
+        $(this).prev().val('');
+    });
+}
+
+/**
  * 调用后台接口删除图片
  * @param data_id
  */
 function deleteImageFile(data_id){
 	$.ajax({
-		url : contextPath + "/chnpay/chncontract!deleteImageFile.action",
+		url : contextPath + "/dealmanage/goodsmanage!deleteFile.action",
 		traditional : true,
 		async : false,
 		dataType : 'json',
@@ -308,6 +458,14 @@ function deleteImageFile(data_id){
  * 商品-新增保存
  */
 function onSave(){
+	if ($('.img2')[0].src.indexOf('goodsmanage.jsp') >= 0) {
+		Public.tips({
+			content : "商品图片不能为空",
+			type : 2
+		});
+		return;
+	}
+	
 	if ($("#goods_add").form('validate')) {
 		$.messager.progress({
 			text : '数据保存中，请稍后.....'
