@@ -34,7 +34,7 @@ public class GoodsDocVO extends SuperVO {
 	private String docOwner; // 上传人
 
 	@FieldAlias("doc_time")
-	private DZFDateTime docTime; // 上传时间
+	private Long docTime; // 上传时间
 
 	@FieldAlias("fpath")
 	private String vfilepath;// 文件存储路径　
@@ -95,11 +95,11 @@ public class GoodsDocVO extends SuperVO {
 		this.docOwner = docOwner;
 	}
 
-	public DZFDateTime getDocTime() {
+	public Long getDocTime() {
 		return docTime;
 	}
 
-	public void setDocTime(DZFDateTime docTime) {
+	public void setDocTime(Long docTime) {
 		this.docTime = docTime;
 	}
 

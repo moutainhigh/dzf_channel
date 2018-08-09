@@ -75,4 +75,19 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 删除商品信息
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	public void delete(GoodsVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 通过主键查询商品图片信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsDocVO queryGoodsDocById(GoodsDocVO pamvo) throws DZFWarpException;
 }

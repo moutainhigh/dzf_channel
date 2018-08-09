@@ -2,6 +2,7 @@ package com.dzf.service.channel.dealmanage.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.spring.SpringUtils;
 
@@ -114,9 +114,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			docvo.setPk_goods(datavo.getPk_goods());
 			docvo.setDocName(filenames[i]);
 			docvo.setDocTemp(fname);
-			docvo.setVfilepath(filepath);
+			docvo.setVfilepath(filepath.substring(1));
 			docvo.setDocOwner(datavo.getCoperatorid());
-			docvo.setDocTime(new DZFDateTime());
+			docvo.setDocTime(new Date().getTime());
 			docvo.setCoperatorid(datavo.getCoperatorid());
 			docvo.setDoperatedate(new DZFDate());
 			docvo.setDr(0);
@@ -195,19 +195,73 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException {
+		GoodsDocVO oldvo = (GoodsDocVO) singleObjectBO.queryByPrimaryKey(GoodsDocVO.class, pamvo.getPk_goodsdoc());
+		if(oldvo == null){
+			throw new BusinessException("商品图片信息错误");
+		}
+		if(StringUtil.isEmpty(oldvo.getVfilepath())){
+			throw new BusinessException("商品图片信息错误");
+		}
 		try {
-			((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(pamvo.getVfilepath());
+			((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(oldvo.getVfilepath());
 		} catch (AppException e) {
 			throw new BusinessException("商品图片删除失败");
 		}
-		String sql = " delete from cn_goodsdoc where vfilepath = ? and pk_corp = ? ";
+		String sql = " delete from cn_goodsdoc where pk_goodsdoc = ? and pk_corp = ? ";
 		SQLParameter spm = new SQLParameter();
-		spm.addParam(pamvo.getVfilepath());
+		spm.addParam(pamvo.getPk_goodsdoc());
 		spm.addParam(pamvo.getPk_corp());
 		int res = singleObjectBO.executeUpdate(sql, spm);
 		if(res != 1){
 			throw new BusinessException("商品图片删除失败");
 		}
+	}
+
+	@Override
+	public void delete(GoodsVO pamvo) throws DZFWarpException {
+		checkDataStatus(pamvo);
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pamvo.getPk_corp());
+		spm.addParam(pamvo.getPk_goods());
+		GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
+		if(docVOs != null && docVOs.length > 0){
+			for(GoodsDocVO docvo : docVOs){
+				if(StringUtil.isEmpty(docvo.getVfilepath())){
+					throw new BusinessException("商品图片错误");
+				}
+				try {
+					((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(docvo.getVfilepath());
+				} catch (AppException e) {
+					throw new BusinessException("商品图片删除失败");
+				}
+			}
+			sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
+			spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_corp());
+			spm.addParam(pamvo.getPk_goods());
+			int res = singleObjectBO.executeUpdate(sql, spm);
+			if(res == 0){
+				throw new BusinessException("商品图片信息删除失败");
+			}
+		}
+		sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
+		spm = new SQLParameter();
+		spm.addParam(pamvo.getPk_corp());
+		spm.addParam(pamvo.getPk_goods());
+		int res = singleObjectBO.executeUpdate(sql, spm);
+		if(res == 0){
+			throw new BusinessException("商品信息删除失败");
+		}
+	}
+
+	@Override
+	public GoodsDocVO queryGoodsDocById(GoodsDocVO pamvo) throws DZFWarpException {
+		GoodsDocVO docvo = (GoodsDocVO) singleObjectBO.queryByPrimaryKey(GoodsDocVO.class, pamvo.getPk_goodsdoc());
+		if(docvo == null){
+			throw new BusinessException("商品图片信息查询错误");
+		}
+		return docvo;
 	}
 	
 }

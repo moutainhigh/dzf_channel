@@ -1,4 +1,6 @@
 var contextPath = DZF.contextPath;
+var status;
+var editIndex;
 $(function(){
 	load();
 });
@@ -162,7 +164,8 @@ function edit(index){
 	$('.filepath2').prop('disabled',false);
 	var htmlImg= '<div class="imgbox">'+
 			'<div class="imgnum">'+
-				'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+				'<input type="file" class="filepath1" name="imageFile" multiple="multiple"'+
+					'accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
 				'<span class="close1"><img src="../../images/Dustbin.png"/></span>'+
 				'<img src="../../images/wer_03.png" class="img1" /> ' +
 				'<img src="" class="img2" />'+
@@ -171,6 +174,8 @@ function edit(index){
 	$("#image1").append(htmlImg);
 	initClick();
 	initIdDelClick();
+	status = "edit";
+	editIndex = index;
 }
 
 /**
@@ -200,7 +205,7 @@ function viewImageFiles(row){
 						var htmlImg= '<div class="imgbox">'+
 										'<div class="imgnum">'+
 										'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
-										'<span class="close1" data-id="'+rows[i].fpath+'"><img src="../../images/Dustbin.png"/></span>'+
+										'<span class="close1" data-id="'+rows[i].doc_id+'"><img src="../../images/Dustbin.png"/></span>'+
 										'<img src="'+url+'" class="img2" />'+
 										'</div>'+
 									 '</div>';
@@ -219,14 +224,16 @@ function viewImageFiles(row){
  * @param attach
  * @returns {String}
  */
-function getAttachImgUrl(row){
+function getAttachImgUrl(row) {
 	var ext = getFileExt(row['fpath']);
-	if("pdf"==ext.toLowerCase()){		
+	if ("pdf" == ext.toLowerCase()) {
 		return "../../images/typeicon/pdf.jpg";
-	}else if("txt"==ext.toLowerCase()){		
+	} else if ("txt" == ext.toLowerCase()) {
 		return "../../images/typeicon/txt.jpg";
 	}
-	return DZF.contextPath + '/dealmanage/goodsmanage!getAttachImage.action?fpath=' + row.fpath  + '&doc_id=' + row.doc_id ;	
+	return DZF.contextPath
+			+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='
+			+ row.doc_id;
 }
 
 /**
@@ -278,13 +285,41 @@ function queryByID(gid){
  */
 function dele(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-	if (row.istatus != 1) {
+	if (row.status != 1) {
 		Public.tips({
 			content : '该记录不是已保存状态，不允许删除',
 			type : 2
 		});
 		return;
 	}
+	$.messager.confirm("提示", "你确定删除吗？", function(flag) {
+		if (flag) {
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : contextPath + '/dealmanage/goodsmanage!delete.action',
+				data : row,
+				traditional : true,
+				async : false,
+				success : function(data, textStatus) {
+					if (!data.success) {
+						Public.tips({
+							content : data.msg,
+							type : 1
+						});
+					} else {
+						$('#grid').datagrid('clearSelections');
+						$('#grid').datagrid('deleteRow', index); 
+						Public.tips({
+							content : data.msg,
+						});
+					}
+				},
+			});
+		} else {
+			return null;
+		}
+	});
 }
 
 /**
@@ -309,6 +344,7 @@ function add(){
 	
 	initClick();
 	initIdDelClick();
+	status = "add";
 }
 
 /**
@@ -477,8 +513,18 @@ function onSave(){
 				var result = eval('(' + result + ')');
 				$.messager.progress('close');
 				if (result.success) {
+					var row = result.rows;
 					initMeas();
 					$('#cbDialog').dialog('close');
+					if(status == "edit"){
+						$('#grid').datagrid('updateRow', {
+							index : editIndex,
+							row : row
+						});
+						editIndex = null;
+					}else if(status == "add"){
+						$('#grid').datagrid('appendRow',row);
+					}
 				} else {
 					Public.tips({
 						content : result.msg,
@@ -500,7 +546,9 @@ function onSave(){
  * 商品-取消
  */
 function onCancel(){
-	
+	$('#cbDialog').dialog('close');
+	status = "brows";
+	editIndex = null;
 }
 
 /**

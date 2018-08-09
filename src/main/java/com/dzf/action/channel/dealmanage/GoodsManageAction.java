@@ -21,6 +21,7 @@ import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -128,6 +129,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		if(StringUtil.isEmpty(data.getPk_goods())){
 			data.setCoperatorid(getLoginUserid());
 			data.setDoperatedate(new DZFDate());
+			data.setVstatus(IStatusConstant.IGOODSSTATUS_1);
 		}
 	}
 	
@@ -243,26 +245,22 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 	 * 获取商品图片信息
 	 */
 	public void getAttachImage() {
-		
 		GoodsDocVO pamvo = new GoodsDocVO();
 		pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
 		if (StringUtil.isEmpty(pamvo.getPk_corp())) {
 			pamvo.setPk_corp(getLogincorppk());
 		}
-		
-		//从文件服务器下载图片
-		String imgpath = pamvo.getVfilepath();
+		GoodsDocVO docvo = manser.queryGoodsDocById(pamvo);
+		if (docvo == null) {
+			throw new BusinessException("商品图片信息错误");
+		}
+		if (StringUtil.isEmpty(docvo.getVfilepath())) {
+			throw new BusinessException("商品图片路径错误");
+		}
 		OutputStream output = null;
-		
-		if (StringUtil.isEmptyWithTrim(imgpath)) {
-			throw new BusinessException("下载文件传入参数不能为空！");
-		}
-		if(imgpath.startsWith("/")){
-			imgpath = imgpath.substring(1);
-		}
 		try {
 			output = getResponse().getOutputStream();
-			byte[] bytes = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).downFile(imgpath);
+			byte[] bytes = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).downFile(docvo.getVfilepath());
 			output.write(bytes);
 			output.flush();
 		} catch (Exception e) {
@@ -285,6 +283,13 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		json.setSuccess(false);
 		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
 			GoodsDocVO pamvo = new GoodsDocVO();
 			pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -295,6 +300,34 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			json.setMsg("删除商品图片成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "删除商品图片失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 删除商品
+	 */
+	public void delete() {
+		Json json = new Json();
+		json.setSuccess(false);
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			GoodsVO pamvo = new GoodsVO();
+			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLogincorppk());
+			}
+			manser.delete(pamvo);
+			json.setSuccess(true);
+			json.setMsg("删除商品成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "删除商品失败");
 		}
 		writeJson(json);
 	}
