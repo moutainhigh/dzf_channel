@@ -86,6 +86,17 @@ public interface IStatusConstant {
 	public static int IGOODSSTATUS_2 = 2;
 	public static int IGOODSSTATUS_3 = 3;
 	
-	/** 商品订单状态动作*/
-	public static String IGOODSACTION1 = "订单创建";
+	/** 商品订单状态(0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；)*/
+	public static int IORDERSTATUS_0 = 0;
+	public static int IORDERSTATUS_1 = 1;
+	public static int IORDERSTATUS_2 = 2;
+	public static int IORDERSTATUS_3 = 3;
+	public static int IORDERSTATUS_4 = 4;
+	
+	/** 商品订单操作动作 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单*/
+	public static String IORDERACTION_0 = "create";
+	public static String IORDERACTION_1 = "confirm";
+	public static String IORDERACTION_2 = "send";
+	public static String IORDERACTION_3 = "receive";
+	public static String IORDERACTION_4 = "cancel";
 }
