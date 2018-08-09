@@ -280,8 +280,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Override
 	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
+		String pk_goods = "";
 		try {
-			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsdoc(), uuid, 120);
 			GoodsDocVO oldvo = (GoodsDocVO) singleObjectBO.queryByPrimaryKey(GoodsDocVO.class, pamvo.getPk_goodsdoc());
 			if(oldvo == null){
 				throw new BusinessException("商品图片信息错误");
@@ -289,6 +289,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			if(StringUtil.isEmpty(oldvo.getVfilepath())){
 				throw new BusinessException("商品图片信息错误");
 			}
+			pk_goods = oldvo.getPk_goods();
+			LockUtil.getInstance().tryLockKey("cn_goods", pk_goods, uuid, 120);
 			try {
 				((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(oldvo.getVfilepath());
 			} catch (AppException e) {
@@ -308,45 +310,56 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goodsdoc(), uuid);
+			LockUtil.getInstance().unLock_Key("cn_goods", pk_goods, uuid);
 		}
 	}
 
 	@Override
 	public void delete(GoodsVO pamvo) throws DZFWarpException {
 		checkDataStatus(pamvo);
-		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(pamvo.getPk_corp());
-		spm.addParam(pamvo.getPk_goods());
-		GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
-		if(docVOs != null && docVOs.length > 0){
-			for(GoodsDocVO docvo : docVOs){
-				if(StringUtil.isEmpty(docvo.getVfilepath())){
-					throw new BusinessException("商品图片错误");
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
+			String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_corp());
+			spm.addParam(pamvo.getPk_goods());
+			GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
+			if(docVOs != null && docVOs.length > 0){
+				for(GoodsDocVO docvo : docVOs){
+					if(StringUtil.isEmpty(docvo.getVfilepath())){
+						throw new BusinessException("商品图片错误");
+					}
+					try {
+						((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(docvo.getVfilepath());
+					} catch (AppException e) {
+						throw new BusinessException("商品图片删除失败");
+					}
 				}
-				try {
-					((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(docvo.getVfilepath());
-				} catch (AppException e) {
-					throw new BusinessException("商品图片删除失败");
+				sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
+				spm = new SQLParameter();
+				spm.addParam(pamvo.getPk_corp());
+				spm.addParam(pamvo.getPk_goods());
+				int res = singleObjectBO.executeUpdate(sql, spm);
+				if(res == 0){
+					throw new BusinessException("商品图片信息删除失败");
 				}
 			}
-			sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
+			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
 			spm = new SQLParameter();
 			spm.addParam(pamvo.getPk_corp());
 			spm.addParam(pamvo.getPk_goods());
 			int res = singleObjectBO.executeUpdate(sql, spm);
 			if(res == 0){
-				throw new BusinessException("商品图片信息删除失败");
+				throw new BusinessException("商品信息删除失败");
 			}
-		}
-		sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
-		spm = new SQLParameter();
-		spm.addParam(pamvo.getPk_corp());
-		spm.addParam(pamvo.getPk_goods());
-		int res = singleObjectBO.executeUpdate(sql, spm);
-		if(res == 0){
-			throw new BusinessException("商品信息删除失败");
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goods(), uuid);
 		}
 	}
 
