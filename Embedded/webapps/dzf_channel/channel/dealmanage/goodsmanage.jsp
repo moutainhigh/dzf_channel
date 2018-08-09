@@ -10,8 +10,9 @@
 <title>商品管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/dealmanage/goodsmanage.css");%> rel="stylesheet" />
+<%-- <link href=<%UpdateGradeVersion.outversion(out, "../../css/chnpaybill.css");%> rel="stylesheet" /> --%>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<link href=<%UpdateGradeVersion.outversion(out, "../../css/chnpaybill.css");%> rel="stylesheet" />
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%> charset="UTF-8" type="text/javascript"></script>
 
 </head>
