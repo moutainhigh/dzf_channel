@@ -3,6 +3,7 @@ var status;
 var editIndex;
 $(function(){
 	load();
+	reloadData();
 });
 
 /**
@@ -152,6 +153,7 @@ function edit(index){
 	
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '修改商品');
+	$('#gcode').textbox("readonly",true);
 	$('#goods_add').form('clear');
 	initMeas();
 	initMeasSelect();
@@ -328,6 +330,7 @@ function dele(index){
 function add(){
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
+	$('#gcode').textbox("readonly",false);
 	$('#goods_add').form('clear');
 	$("#image1").html('');
 	var htmlImg = '<div class="imgbox">'+

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.file.fastdfs.AppException;
 import com.dzf.file.fastdfs.FastDfsUtil;
@@ -112,6 +114,15 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsVO saveNew(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException{
+		if (StringUtil.isEmptyWithTrim(datavo.getVgoodscode())) {
+			String code = getVgoodscode();
+			datavo.setVgoodscode(code);
+		}else{
+			datavo.setVgoodscode(datavo.getVgoodscode().replaceAll(" ", ""));
+		}
+		if (isCoodExist(datavo)) {
+			throw new BusinessException("商品编码"+datavo.getVgoodscode()+"已经存在");
+		}
 		datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 		List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
 		for(int i = 0; i < files.length; i++){
@@ -146,6 +157,71 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		return datavo;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private boolean isCoodExist(GoodsVO pamvo) throws DZFWarpException {
+		SQLParameter sp = new SQLParameter();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select vgoodscode from cn_goods where nvl(dr,0) = 0 ");
+		if (!StringUtil.isEmptyWithTrim(pamvo.getVgoodscode())) {
+			sql.append(" and vgoodscode = ? ");
+			sp.addParam(pamvo.getVgoodscode());
+		} else {
+			throw new BusinessException("商品编码不能为空");
+		}
+		if (!StringUtil.isEmpty(pamvo.getPk_goods())) {
+			sql.append(" and pk_goods != ? ");
+			sp.addParam(pamvo.getPk_goods());
+		}
+		List<GoodsVO> list = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(GoodsVO.class));
+		if (list != null && list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 获取商品编码
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private String getVgoodscode() throws DZFWarpException {
+		DZFDate date = new DZFDate();
+		String year = String.valueOf(date.getYear());
+		String str = "SP" + year;
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append(" SELECT MAX(vbillcode) FROM cn_goods \n");
+		sql.append("  WHERE nvl(dr,0) = 0 \n");
+		sql.append(" AND vbillcode LIKE ? ");
+		spm.addParam(str + "___");
+		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ArrayListProcessor());
+		String code = "";
+		if (result != null && !result.isEmpty()) {
+			for (int i = 0; i < result.size(); i++) {
+				Object[] obj = (Object[]) result.get(i);
+				code = String.valueOf(obj[0]);
+			}
+		}
+		if (StringUtil.isEmpty(code)) {
+			return str + "001";
+		}
+		int num = Integer.parseInt(code.substring(6));
+		num = num + 1;
+		String nums = String.valueOf(num);
+		switch (nums.length()) {
+		case 1:
+			nums = "00" + nums;
+			break;
+		case 2:
+			nums = "0" + nums;
+			break;
+		}
+		return str + nums;
+	}
+	
 	/**
 	 * 修改保存
 	 * @param datavo
@@ -156,7 +232,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	 */
 	private GoodsVO saveEdit(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException{
 		checkDataStatus(datavo);
-		
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_goods(), uuid, 120);
@@ -241,6 +316,10 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	public MeasVO saveMeas(GoodsVO pamvo) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
+			boolean flag = isMeasExist(pamvo);
+			if(flag){
+				throw new BusinessException("计量单位"+pamvo.getVmeasname()+"已经存在");
+			}
 			LockUtil.getInstance().tryLockKey("cn_measdoc", pamvo.getVmeasname(), uuid, 120);
 			MeasVO measvo = new MeasVO();
 			measvo.setPk_corp(pamvo.getPk_corp());
@@ -257,6 +336,25 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		} finally {
 			LockUtil.getInstance().unLock_Key("cn_measdoc", pamvo.getVmeasname(), uuid);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean isMeasExist(GoodsVO pamvo) throws DZFWarpException {
+		SQLParameter sp = new SQLParameter();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select vmeasname from cn_measdoc where nvl(dr,0) = 0 ");
+		if (!StringUtil.isEmptyWithTrim(pamvo.getVmeasname())) {
+			sql.append(" and vmeasname = ? ");
+			sp.addParam(pamvo.getVmeasname());
+		} else {
+			throw new BusinessException("计量单位不能为空");
+		}
+		List<GoodsVO> list = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(GoodsVO.class));
+		if (list != null && list.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

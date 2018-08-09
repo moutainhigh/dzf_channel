@@ -89,7 +89,7 @@
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 
-						<input class="easyui-textbox"  id="gcode" name="gcode" data-options="required:true,validType:'length[0,30]'" 
+						<input class="easyui-textbox"  id="gcode" name="gcode" data-options="validType:'length[0,30]'" 
 							style="width:66%; height: 28px; text-align: left"> 
 					</div>
 					<div style="width:46%;display: inline-block;">
