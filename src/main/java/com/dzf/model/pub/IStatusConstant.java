@@ -77,9 +77,14 @@ public interface IStatusConstant {
 	public static int IREFUNDSTATUS_0 = 0;
 	public static int IREFUNDSTATUS_1 = 1;
 	
-	/** 退款单操作(1：确认退款；1：取消确认；)*/
+	/** 退款单操作(1：确认退款；2：取消确认；)*/
 	public static int IREFOPERATYPE_1 = 1;
 	public static int IREFOPERATYPE_2 = 2;
+	
+	/** 商品状态(1：已保存；2：已发布；3：已下架)*/
+	public static int IGOODSSTATUS_1 = 1;
+	public static int IGOODSSTATUS_2 = 2;
+	public static int IGOODSSTATUS_3 = 3;
 	
 	/** 商品订单状态动作*/
 	public static String IGOODSACTION1 = "订单创建";
