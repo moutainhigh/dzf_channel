@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,10 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.spring.SpringUtils;
 
@@ -93,9 +96,22 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException {
-		if(!StringUtil.isEmpty(datavo.getPk_goods())){
-			checkDataStatus(datavo);
+		if(StringUtil.isEmpty(datavo.getPk_goods())){
+			return saveNew(datavo, files, filenames);
+		}else{
+			return saveEdit(datavo, files, filenames);
 		}
+	}
+	
+	/**
+	 * 新增保存
+	 * @param datavo
+	 * @param files
+	 * @param filenames
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private GoodsVO saveNew(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException{
 		datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 		List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
 		for(int i = 0; i < files.length; i++){
@@ -116,7 +132,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			docvo.setDocTemp(fname);
 			docvo.setVfilepath(filepath.substring(1));
 			docvo.setDocOwner(datavo.getCoperatorid());
-			docvo.setDocTime(new Date().getTime());
+			docvo.setDocTime(String.valueOf(new Date().getTime()));
 			docvo.setCoperatorid(datavo.getCoperatorid());
 			docvo.setDoperatedate(new DZFDate());
 			docvo.setDr(0);
@@ -127,6 +143,63 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}else{
 			throw new BusinessException("图片上传错误");
 		}
+		return datavo;
+	}
+	
+	/**
+	 * 修改保存
+	 * @param datavo
+	 * @param files
+	 * @param filenames
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private GoodsVO saveEdit(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException{
+		checkDataStatus(datavo);
+		
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_goods(), uuid, 120);
+			datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
+			List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
+			for(int i = 0; i < files.length; i++){
+				String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
+				String filepath = "";
+				try {
+					filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
+				} catch (AppException e) {
+					throw new BusinessException("图片上传错误");
+				}
+				if(StringUtil.isEmpty(filepath)){
+					throw new BusinessException("图片上传错误");
+				}
+				GoodsDocVO docvo = new GoodsDocVO();
+				docvo.setPk_corp(datavo.getPk_corp());
+				docvo.setPk_goods(datavo.getPk_goods());
+				docvo.setDocName(filenames[i]);
+				docvo.setDocTemp(fname);
+				docvo.setVfilepath(filepath.substring(1));
+				docvo.setDocOwner(datavo.getCoperatorid());
+				docvo.setDocTime(String.valueOf(new Date().getTime()));
+				docvo.setCoperatorid(datavo.getCoperatorid());
+				docvo.setDoperatedate(new DZFDate());
+				docvo.setDr(0);
+				doclist.add(docvo);
+			}
+			if(doclist != null && doclist.size() > 0){
+				singleObjectBO.insertVOArr(datavo.getPk_corp(), doclist.toArray(new GoodsDocVO[0]));
+			}else{
+				throw new BusinessException("图片上传错误");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_goods(), uuid);
+		}
+		
 		return datavo;
 	}
 	
@@ -166,13 +239,24 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public MeasVO saveMeas(GoodsVO pamvo) throws DZFWarpException {
-		MeasVO measvo = new MeasVO();
-		measvo.setPk_corp(pamvo.getPk_corp());
-		measvo.setVmeasname(pamvo.getVmeasname());
-		measvo.setCoperatorid(pamvo.getCoperatorid());
-		measvo.setDoperatedate(new DZFDate());
-		measvo.setDr(0);
-		return (MeasVO) singleObjectBO.saveObject(measvo.getPk_corp(), measvo);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_measdoc", pamvo.getVmeasname(), uuid, 120);
+			MeasVO measvo = new MeasVO();
+			measvo.setPk_corp(pamvo.getPk_corp());
+			measvo.setVmeasname(pamvo.getVmeasname());
+			measvo.setCoperatorid(pamvo.getCoperatorid());
+			measvo.setDoperatedate(new DZFDate());
+			measvo.setDr(0);
+			return (MeasVO) singleObjectBO.saveObject(measvo.getPk_corp(), measvo);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_measdoc", pamvo.getVmeasname(), uuid);
+		}
 	}
 
 	@Override
@@ -195,25 +279,36 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public void deleteFile(GoodsDocVO pamvo) throws DZFWarpException {
-		GoodsDocVO oldvo = (GoodsDocVO) singleObjectBO.queryByPrimaryKey(GoodsDocVO.class, pamvo.getPk_goodsdoc());
-		if(oldvo == null){
-			throw new BusinessException("商品图片信息错误");
-		}
-		if(StringUtil.isEmpty(oldvo.getVfilepath())){
-			throw new BusinessException("商品图片信息错误");
-		}
+		String uuid = UUID.randomUUID().toString();
 		try {
-			((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(oldvo.getVfilepath());
-		} catch (AppException e) {
-			throw new BusinessException("商品图片删除失败");
-		}
-		String sql = " delete from cn_goodsdoc where pk_goodsdoc = ? and pk_corp = ? ";
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(pamvo.getPk_goodsdoc());
-		spm.addParam(pamvo.getPk_corp());
-		int res = singleObjectBO.executeUpdate(sql, spm);
-		if(res != 1){
-			throw new BusinessException("商品图片删除失败");
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsdoc(), uuid, 120);
+			GoodsDocVO oldvo = (GoodsDocVO) singleObjectBO.queryByPrimaryKey(GoodsDocVO.class, pamvo.getPk_goodsdoc());
+			if(oldvo == null){
+				throw new BusinessException("商品图片信息错误");
+			}
+			if(StringUtil.isEmpty(oldvo.getVfilepath())){
+				throw new BusinessException("商品图片信息错误");
+			}
+			try {
+				((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(oldvo.getVfilepath());
+			} catch (AppException e) {
+				throw new BusinessException("商品图片删除失败");
+			}
+			String sql = " delete from cn_goodsdoc where pk_goodsdoc = ? and pk_corp = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_goodsdoc());
+			spm.addParam(pamvo.getPk_corp());
+			int res = singleObjectBO.executeUpdate(sql, spm);
+			if(res != 1){
+				throw new BusinessException("商品图片删除失败");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goodsdoc(), uuid);
 		}
 	}
 
