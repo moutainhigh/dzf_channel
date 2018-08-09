@@ -99,10 +99,15 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Override
 	public GoodsVO save(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException {
 		if(StringUtil.isEmpty(datavo.getPk_goods())){
-			return saveNew(datavo, files, filenames);
+			datavo = saveNew(datavo, files, filenames);
 		}else{
-			return saveEdit(datavo, files, filenames);
+			datavo = saveEdit(datavo, files, filenames);
 		}
+		UserVO uservo = UserCache.getInstance().get(datavo.getCoperatorid(), null);
+		if(uservo != null){
+			datavo.setVopername(uservo.getUser_name());
+		}
+		return datavo;
 	}
 	
 	/**
@@ -192,9 +197,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		String str = "SP" + year;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT MAX(vbillcode) FROM cn_goods \n");
+		sql.append(" SELECT MAX(vgoodscode) FROM cn_goods \n");
 		sql.append("  WHERE nvl(dr,0) = 0 \n");
-		sql.append(" AND vbillcode LIKE ? ");
+		sql.append(" AND vgoodscode LIKE ? ");
 		spm.addParam(str + "___");
 		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new ArrayListProcessor());
@@ -295,7 +300,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public List<ComboBoxVO> queryMeasCombox(String pk_corp) throws DZFWarpException {
-		String sql = " nvl(dr,0) = 0 AND pk_corp = ? \n";
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? ORDER BY ts DESC \n";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_corp);
 		MeasVO[] measVOs = (MeasVO[]) singleObjectBO.queryByCondition(MeasVO.class, sql, spm);
