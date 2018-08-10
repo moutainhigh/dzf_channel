@@ -961,12 +961,12 @@ function onCommit(){
 				if(rerows != null && rerows.length > 0){
 					var map = new HashMap(); 
 					for(var i = 0; i < rerows.length; i++){
-						map.put(rerows[i].pkcustno,rerows[i]);
+						map.put(rerows[i].rebid,rerows[i]);
 					}
 					var index;
 					var indexes = new Array();
 					for(var i = 0; i < rows.length; i++){
-						if(map.containsKey(rows[i].pkcustno)){
+						if(map.containsKey(rows[i].rebid)){
 							index = $('#grid').datagrid('getRowIndex', rows[i]);
 							indexes.push(index);
 						}
