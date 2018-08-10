@@ -297,11 +297,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			if(oldvo.getUpdatets().compareTo(datavo.getUpdatets()) != 0){
 				throw new BusinessException("请刷新界面数据，再次尝试");
 			}
-			if(type == 0){
-				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
-					throw new BusinessException("该商品已经发布，不允许修改");
-				}
-			}else if(type == 3){
+			if(type == 3){
 				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
 					throw new BusinessException("该商品已经发布");
 				}
@@ -380,10 +376,16 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	}
 
 	@Override
-	public GoodsVO queryByID(GoodsVO pamvo) throws DZFWarpException {
+	public GoodsVO queryByID(GoodsVO pamvo, Integer itype) throws DZFWarpException {
+		// itype 0：修改查询；1：详情查询；
 		GoodsVO oldvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, pamvo.getPk_goods());
 		if(oldvo == null){
 			throw new BusinessException("数据错误");
+		}
+		if(itype == 0){//修改查询
+			if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
+				throw new BusinessException("该商品已经发布，不允许修改");
+			}
 		}
 		return oldvo;
 	}

@@ -219,7 +219,9 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
 				pamvo.setPk_corp(getLogincorppk());
 			}
-			GoodsVO retvo = manser.queryByID(pamvo);
+			String type = getRequest().getParameter("type");
+			Integer itype = Integer.parseInt(type);
+			GoodsVO retvo = manser.queryByID(pamvo,itype);
 			json.setSuccess(true);
 			json.setRows(retvo);
 			json.setMsg("查询成功!");

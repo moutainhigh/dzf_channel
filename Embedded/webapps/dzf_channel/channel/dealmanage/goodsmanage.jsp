@@ -75,7 +75,7 @@
 			<table id="grid"></table>
 		</div>
 		
-		<!-- 新增对话框  begin-->
+		<!-- 新增/修改对话框  begin-->
 		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="goods_add" method="post" enctype="multipart/form-data">
@@ -140,7 +140,7 @@
 				</div>
 			</form>
 		</div>
-		<!-- 新增对话框  end-->
+		<!-- 新增/修改对话框  end-->
 		
 		<!-- 计量单位对话框  begin-->
 		<div id="jlDialog" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" 
@@ -159,6 +159,65 @@
 			</div>
 		</div>
 		<!-- 计量单位对话框  end-->
+		
+		<!-- 详情对话框  begin-->
+		<div id="infoDlg" class="easyui-dialog" style="height:500px;width:860px;overflow:hidden;padding-top:18px;" 
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+			<form id="goods_info" method="post" enctype="multipart/form-data">
+				<input id="istatus" name="status" type="hidden">
+				<input id="ipubdate" name="pubdate" type="hidden">
+				<input id="idofdate" name="dofdate" type="hidden">
+				<input id="ioperid" name="operid" type="hidden">
+				<input id="ioperdate" name="operdate" type="hidden">
+				<input id="iupdatets" name="updatets" type="hidden">
+				<input id="igid" name="gid" type="hidden">
+				<div class="time_col time_colp10">
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">商品编码：</label> 
+						<input class="easyui-textbox"  id="igcode" name="gcode" data-options="readonly:true" 
+							style="width:66%; height: 28px; text-align: left"> 
+					</div>
+					<div style="width:46%;display: inline-block;">
+						<label style="width:120px;text-align: right;">商品名称：</label>
+					    <input class="easyui-textbox" id="igname" name="gname" data-options="readonly:true"
+					    	style="width:66%;height:28px;" />
+					</div>
+				</div>
+
+				<div class="time_col time_colp10">
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">单价：</label> 
+						<input class="easyui-numberbox" id="iprice" name = "price" 
+							data-options="readonly:true,min:0,precision:2,groupSeparator:','"  
+							style="width:66%; height: 28px; text-align: left">
+					</div>
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">单位：</label> 
+						<input class="easyui-textbox" id="imname" name="mname" data-options="readonly:true"
+							style="width:66%; height: 28px; text-align: left">
+					</div>
+				</div>
+				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
+					<div style="width:100%;display: inline-block;">
+						<label style="text-align:right;width:135px;vertical-align:top;">商品说明：</label>
+						<textarea id ="inote" name="note" class="easyui-textbox" data-options="multiline:true,readonly:true" 
+							style="width:74%;height:100px;">
+						</textarea>
+					</div>
+				</div>
+				<div class="time_col time_colp11" style="margin:10px 0px 10px 0px;">
+			    	<div style="display: inline-block;white-space: nowrap;">
+						<label style="text-align:right;width:135px; display: inline-block;vertical-align: top;">商品图片：</label>
+						<div style="display: inline-block;white-space: nowrap;width:83%;height:120px;overflow:auto">
+							 <div class="uploadImg"  style="display: inline-block;white-space: nowrap;width:100%;">
+								<div style="overflow: auto;" id="image2"></div> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 详情对话框  end-->
 		
 	</div>
 </body>

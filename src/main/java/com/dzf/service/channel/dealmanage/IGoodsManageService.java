@@ -59,7 +59,7 @@ public interface IGoodsManageService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public GoodsVO queryByID(GoodsVO pamvo) throws DZFWarpException;
+	public GoodsVO queryByID(GoodsVO pamvo, Integer itype) throws DZFWarpException;
 	
 	/**
 	 * 通过主键查询商品图片信息

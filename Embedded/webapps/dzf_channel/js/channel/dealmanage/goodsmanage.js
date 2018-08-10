@@ -45,8 +45,9 @@ function load(){
 			width : '200',
 			title : '商品名称',
 			field : 'gname',
-			align : 'center',
+			align : 'left',
             halign : 'center',
+            formatter:namematter,
 		}, {
 			width : '100',
 			title : '单价',
@@ -151,7 +152,7 @@ function opermatter(val, row, index) {
  */
 function edit(index){
 	var erow = $('#grid').datagrid('getData').rows[index];
-	var row = queryByID(erow.gid);
+	var row = queryByID(erow.gid, 0);
 	if(isEmpty(row)){
 		return;
 	}
@@ -166,7 +167,6 @@ function edit(index){
 	$("#measid").combobox("setValue",row.measid);
 	viewImageFiles(row);
 	$('.filepath1').prop('disabled',false);
-	$('.filepath2').prop('disabled',false);
 	var htmlImg= '<div class="imgbox">'+
 			'<div class="imgnum">'+
 				'<input type="file" class="filepath1" name="imageFile" multiple="multiple"'+
@@ -219,7 +219,6 @@ function viewImageFiles(row){
 					}
 				} 
 				$('.filepath1').prop('disabled',true);
-				$('.filepath2').prop('disabled',true);
 			}
 		}
 	});
@@ -259,7 +258,7 @@ function getFileExt(filename){
  * @param contractid
  * @returns
  */
-function queryByID(gid){
+function queryByID(gid, type){
 	var row;
 	$.ajax({
 		type : "post",
@@ -269,6 +268,7 @@ function queryByID(gid){
 		url : contextPath + '/dealmanage/goodsmanage!queryByID.action',
 		data : {
 			"gid" : gid,
+			"type" : type,
 		},
 		success : function(data, textStatus) {
 			if (!data.success) {
@@ -708,5 +708,87 @@ function measSave(){
  */
 function measCancel(){
 	$('#jlDialog').dialog('close');
+}
+
+/**
+ * 商品名称格式化
+ * @param value
+ * @param row
+ * @param index
+ * @returns {String}
+ */
+function namematter(value,row,index){
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 展示详情
+ * @param index
+ */
+function showInfo(index){
+	var erow = $('#grid').datagrid('getData').rows[index];
+	var row = queryByID(erow.gid, 1);
+	if(isEmpty(row)){
+		return;
+	}
+	
+	$('#infoDlg').dialog('open').dialog('center').dialog('setTitle', '商品详情');
+	$('#goods_info').form('clear');
+	$('#goods_info').form('load', row);
+	viewImageInfo(row);
+	status = "brow";
+}
+
+/**
+ * 展示商品图片
+ * @param row
+ */
+function viewImageInfo(row){
+	$.ajax({
+		type : "POST",
+		url : contextPath + "/dealmanage/goodsmanage!getAttaches.action",
+  		dataType : 'json',
+  		data : row,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			arrachrows = result.rows;
+			$("#image2").html('')
+			$("#img12").attr("src",'');
+			$("#span1").attr("data-id",'');
+			$("#img11").show();
+			if(rows && rows.length > 0){
+				var ret = 0;
+				for(var i = 0;i<rows.length;i++){
+					if(rows[i].fpath){
+						var url = getAttachImgUrl(rows[i]);
+						var htmlImg= '<div class="imgbox">'+
+										'<div class="imgnum">'+
+											'<a href="javascript:void(0)" ondblclick="doubleImage(\'' + rows[i].doc_id + '\');">'+
+												'<img src="'+url+'" class="img2" />'+
+											'</a>'
+										'</div>'+
+									 '</div>';
+						$("#image2").append(htmlImg);
+					}
+				} 
+				$('.filepath1').prop('disabled',true);
+			}
+		}
+	});
+}
+
+/**
+ * 双击显示大图
+ * @param i
+ */
+function doubleImage(doc_id){
+	var src = DZF.contextPath+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='	+ doc_id;
+	if(!isEmpty(src)){
+		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
+		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
+	}
+
 }
 
