@@ -593,6 +593,9 @@ function operdata(type){
 	}
 	postdata["data"] = data;
 	postdata["type"] = type;
+	$.messager.progress({
+		text : '数据操作中....'
+	});
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -601,6 +604,7 @@ function operdata(type){
 		traditional : true,
 		async : false,
 		success : function(result) {
+			$.messager.progress('close');
 			if (!result.success) {
 				Public.tips({
 					content : result.msg,
