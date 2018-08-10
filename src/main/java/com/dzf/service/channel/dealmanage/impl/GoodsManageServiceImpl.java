@@ -57,11 +57,24 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if(list != null && list.size() > 0){
 			UserVO uservo = null;
+			String vstaname = "";
 			for(GoodsVO vo : list){
 				uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
 				if(uservo != null){
 					vo.setVopername(uservo.getUser_name());
 				}
+				switch(vo.getVstatus()){
+					case 1 :
+						vstaname = "已保存";
+						break;
+					case 2 :
+						vstaname = "已发布";
+						break;
+					case 3 :
+						vstaname = "已下架";
+						break;
+				}
+				vo.setVstaname(vstaname);
 			}
 		}
 		return list;
@@ -387,6 +400,19 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				throw new BusinessException("该商品已经发布，不允许修改");
 			}
 		}
+		String vstaname = "";
+		switch(oldvo.getVstatus()){
+			case 1 :
+				vstaname = "已保存";
+				break;
+			case 2 :
+				vstaname = "已发布";
+				break;
+			case 3 :
+				vstaname = "已下架";
+				break;
+		}
+		oldvo.setVstaname(vstaname);
 		return oldvo;
 	}
 

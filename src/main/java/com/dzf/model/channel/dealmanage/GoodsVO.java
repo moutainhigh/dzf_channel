@@ -43,6 +43,9 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("status")
 	private Integer vstatus;//状态  1：已保存；2：已发布；3：已下架；
 	
+	@FieldAlias("staname")
+	private String vstaname;//状态名称
+	
 	@FieldAlias("pubdate")
 	private DZFDate dpublishdate;//发布日期
 	
@@ -62,6 +65,14 @@ public class GoodsVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
+	public String getVstaname() {
+		return vstaname;
+	}
+
+	public void setVstaname(String vstaname) {
+		this.vstaname = vstaname;
+	}
+
 	public String getVopername() {
 		return vopername;
 	}

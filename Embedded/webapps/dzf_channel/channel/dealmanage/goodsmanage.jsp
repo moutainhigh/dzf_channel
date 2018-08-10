@@ -171,29 +171,34 @@
 				<input id="iupdatets" name="updatets" type="hidden">
 				<input id="igid" name="gid" type="hidden">
 				<div class="time_col time_colp10">
-					<div style="width: 46%; display: inline-block;">
+					<div style="width: 31%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 
 						<input class="easyui-textbox"  id="igcode" name="gcode" data-options="readonly:true" 
-							style="width:66%; height: 28px; text-align: left"> 
+							style="width:45%; height: 28px; text-align: left"> 
 					</div>
-					<div style="width:46%;display: inline-block;">
+					<div style="width:62%;display: inline-block;">
 						<label style="width:120px;text-align: right;">商品名称：</label>
 					    <input class="easyui-textbox" id="igname" name="gname" data-options="readonly:true"
-					    	style="width:66%;height:28px;" />
+					    	style="width:72%;height:28px;" />
 					</div>
 				</div>
 
 				<div class="time_col time_colp10">
-					<div style="width: 46%; display: inline-block;">
+					<div style="width: 31%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单价：</label> 
 						<input class="easyui-numberbox" id="iprice" name = "price" 
 							data-options="readonly:true,min:0,precision:2,groupSeparator:','"  
-							style="width:66%; height: 28px; text-align: left">
+							style="width:45%; height: 28px; text-align: left">
 					</div>
-					<div style="width: 46%; display: inline-block;">
-						<label style="text-align: right; width: 120px;">单位：</label> 
+					<div style="width: 31%; display: inline-block;">
+						<label style="text-align: right; width: 119px;">单位：</label> 
 						<input class="easyui-textbox" id="imname" name="mname" data-options="readonly:true"
-							style="width:66%; height: 28px; text-align: left">
+							style="width:50%; height: 28px; text-align: left">
+					</div>
+					<div style="width: 31%; display: inline-block;">
+						<label style="text-align: right; width: 101px;">状态：</label> 
+						<input class="easyui-textbox" id="istaname" name="staname" data-options="readonly:true"
+							style="width:50%; height: 28px; text-align: left">
 					</div>
 				</div>
 				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
