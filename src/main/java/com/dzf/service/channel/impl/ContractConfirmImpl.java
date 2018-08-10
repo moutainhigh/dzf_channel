@@ -1123,13 +1123,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 					spm = new SQLParameter();
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
-					spm.addParam(datavo.getNdeductmny());
+					spm.addParam(datavo.getNdedrebamny());
 					sql.append(" WHERE l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(datavo.getPk_corp());
 					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
-					spm.addParam(datavo.getNdeductmny());
+					spm.addParam(datavo.getNdedrebamny());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if (res == 1) {
 						ChnDetailVO detvo = new ChnDetailVO();
