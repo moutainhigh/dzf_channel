@@ -18,24 +18,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	private static final long serialVersionUID = 8799494318014396487L;
 
-//	@FieldAlias("operatorid")
-//	private String coperatorid; // 审核人
-//
-//	@FieldAlias("chgcycle")
-//	private String vchargecycle; // 收款周期 （此字段已废弃）（直接删除）
-//
-//	@FieldAlias("cylnum")
-//	private Integer icyclenum; // 周期数（直接删除）
-//
-//	@FieldAlias("typemin")
-//	private String busitypemin; // 业务小类（直接删除）
-//
-//	@FieldAlias("sourid")
-//	private String pk_source;// 补提交的合同来源主键（直接删除）
-	
-//	@FieldAlias("conmemo")
-//	private String vconmemo; // 审核备注（无用，直接删除）
-	
 	// 与原合同重复字段 begin*************************
 
 	@FieldAlias("contractid")
