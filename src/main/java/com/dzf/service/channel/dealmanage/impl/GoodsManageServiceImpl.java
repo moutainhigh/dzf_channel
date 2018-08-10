@@ -20,6 +20,7 @@ import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -28,6 +29,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.spring.SpringUtils;
@@ -236,7 +238,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsVO saveEdit(GoodsVO datavo, File[] files, String[] filenames) throws DZFWarpException{
-		checkDataStatus(datavo);
+		checkDataStatus(datavo, 1);
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_goods(), uuid, 120);
@@ -285,13 +287,28 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	
 	/**
 	 * 数据状态校验
+	 * @param datavo
+	 * @param type  0：修改查询；1：修改保存；2：删除；3：发布；4：下架；
 	 * @throws DZFWarpException
 	 */
-	private void checkDataStatus(GoodsVO datavo) throws DZFWarpException {
+	private void checkDataStatus(GoodsVO datavo, Integer type) throws DZFWarpException {
 		GoodsVO oldvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, datavo.getPk_goods());
 		if(oldvo != null){
 			if(oldvo.getUpdatets().compareTo(datavo.getUpdatets()) != 0){
 				throw new BusinessException("请刷新界面数据，再次尝试");
+			}
+			if(type == 0){
+				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
+					throw new BusinessException("该商品已经发布，不允许修改");
+				}
+			}else if(type == 3){
+				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
+					throw new BusinessException("该商品已经发布");
+				}
+			}else if(type == 4){
+				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_3){
+					throw new BusinessException("该商品已经下架");
+				}
 			}
 		}else{
 			throw new BusinessException("数据错误");
@@ -419,7 +436,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public void delete(GoodsVO pamvo) throws DZFWarpException {
-		checkDataStatus(pamvo);
+		checkDataStatus(pamvo, 2);
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
@@ -473,6 +490,46 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			throw new BusinessException("商品图片信息查询错误");
 		}
 		return docvo;
+	}
+
+	@Override
+	public GoodsVO updateData(GoodsVO pamvo, Integer itype) throws DZFWarpException {
+		if (itype == 1) {
+			checkDataStatus(pamvo, 3);
+		} else if (itype == 2) {
+			checkDataStatus(pamvo, 4);
+		}
+
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
+			List<String> strlist = new ArrayList<String>();
+			strlist.add("vstatus");
+			strlist.add("updatets");
+			if(itype == 1){
+				pamvo.setVstatus(IStatusConstant.IGOODSSTATUS_2);
+				pamvo.setUpdatets(new DZFDateTime());
+				pamvo.setDpublishdate(new DZFDate());
+				pamvo.setDoffdate(null);
+				strlist.add("dpublishdate");
+				strlist.add("doffdate");
+			}else if(itype == 2){
+				pamvo.setVstatus(IStatusConstant.IGOODSSTATUS_3);
+				pamvo.setUpdatets(new DZFDateTime());
+				pamvo.setDoffdate(new DZFDate());
+				strlist.add("doffdate");
+			}
+			singleObjectBO.update(pamvo, strlist.toArray(new String[0]));
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goods(), uuid);
+		}
+
+		return null;
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -14,6 +15,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
@@ -27,11 +30,15 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.spring.SpringUtils;
 
 /**
@@ -328,6 +335,71 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			json.setMsg("删除商品成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "删除商品失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 操作数据
+	 */
+	public void updateData() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			String data = getRequest().getParameter("data");
+			if (StringUtil.isEmpty(data)) {
+				throw new BusinessException("数据不能为空");
+			}
+			String type = getRequest().getParameter("type");
+			Integer itype = Integer.parseInt(type);
+			data = data.replace("}{", "},{");
+			data = "[" + data + "]";
+			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
+			Map<String, String> custmaping = FieldMapping.getFieldMapping(new GoodsVO());
+			GoodsVO[] goodsVOs = DzfTypeUtils.cast(arrayJson, custmaping, GoodsVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			List<GoodsVO> rightlist = new ArrayList<GoodsVO>();
+			int rignum = 0;
+			int errnum = 0;
+			StringBuffer errmsg = new StringBuffer();
+			if (goodsVOs != null && goodsVOs.length > 0) {
+				for (GoodsVO vo : goodsVOs) {
+					try {
+						vo = manser.updateData(vo, itype);
+						rightlist.add(vo);
+						rignum++;
+					} catch (Exception e) {
+						errnum++;
+						errmsg.append(e.getMessage()).append("<br>");
+					}
+				}
+			}
+			json.setSuccess(true);
+			if (rignum > 0 && rignum == goodsVOs.length) {
+				json.setRows(Arrays.asList(goodsVOs));
+				json.setMsg("成功" + rignum + "条");
+			} else if (errnum > 0) {
+				json.setMsg("成功" + rignum + "条，失败" + errnum + "条，失败原因：" + errmsg.toString());
+				json.setStatus(-1);
+				if (rignum > 0) {
+					json.setRows(rightlist);
+				}
+			}
+			if (rignum > 0) {
+				if (itype == 1) {// 发布
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_42.getValue(), "发布商品", ISysConstants.SYS_3);
+				} else if (itype == 2) {// 下架
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_42.getValue(), "下架商品", ISysConstants.SYS_3);
+				}
+			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "提交失败");
 		}
 		writeJson(json);
 	}

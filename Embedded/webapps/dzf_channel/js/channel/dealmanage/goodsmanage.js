@@ -32,6 +32,11 @@ function load(){
 			hidden : true
 		}, {
 			width : '100',
+			title : '时间戳',
+			field : 'updatets',
+			hidden : true
+		}, {
+			width : '100',
 			title : '商品编码',
 			field : 'gcode',
 			align : 'center',
@@ -158,9 +163,7 @@ function edit(index){
 	initMeas();
 	initMeasSelect();
 	$('#goods_add').form('load', row);
-	
 	$("#measid").combobox("setValue",row.measid);
-	
 	viewImageFiles(row);
 	$('.filepath1').prop('disabled',false);
 	$('.filepath2').prop('disabled',false);
@@ -206,7 +209,8 @@ function viewImageFiles(row){
 						var url = getAttachImgUrl(rows[i]);
 						var htmlImg= '<div class="imgbox">'+
 										'<div class="imgnum">'+
-										'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+										'<input type="file" class="filepath1" name="imageFile" multiple="multiple" '+
+											'accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
 										'<span class="close1" data-id="'+rows[i].doc_id+'"><img src="../../images/Dustbin.png"/></span>'+
 										'<img src="'+url+'" class="img2" />'+
 										'</div>'+
@@ -335,7 +339,8 @@ function add(){
 	$("#image1").html('');
 	var htmlImg = '<div class="imgbox">'+
 					'<div class="imgnum">'+
-						'<input type="file" class="filepath1" name="imageFile" multiple="multiple" accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
+						'<input type="file" class="filepath1" name="imageFile" multiple="multiple" '+
+							'accept="image/gif,image/jpeg,image/jpg,image/png"/>'+
 						'<span class="close1"><img src="../../images/Dustbin.png"/></span>'+
 						'<img src="../../images/wer_03.png" class="img1" /> ' +
 						'<img src="" class="img2" />'+
@@ -558,14 +563,102 @@ function onCancel(){
  * 发布
  */
 function publish(){
-	
+	operdata(1);
 }
 
 /**
  * 下架
  */
 function off(){
-	
+	operdata(2);
+}
+
+/**
+ * 操作数据
+ * @param type
+ */
+function operdata(type){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length == 0) {
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});
+		return;
+	}
+	var postdata = new Object();
+	var data = "";
+	for(var i = 0; i < rows.length; i++){
+		data = data + JSON.stringify(rows[i]);
+	}
+	postdata["data"] = data;
+	postdata["type"] = type;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/dealmanage/goodsmanage!updateData.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(result) {
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				});
+			} else {
+				if(result.status == -1){
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+					});
+				}
+				$('#allotDialog').dialog('close');
+				var rerows = result.rows;
+				if(rerows != null && rerows.length > 0){
+					var map = new HashMap(); 
+					for(var i = 0; i < rerows.length; i++){
+						map.put(rerows[i].gid,rerows[i]);
+					}
+					var index;
+					var indexes = new Array();
+					for(var i = 0; i < rows.length; i++){
+						if(map.containsKey(rows[i].gid)){
+							index = $('#grid').datagrid('getRowIndex', rows[i]);
+							indexes.push(index);
+						}
+					}
+					for(var i in indexes){
+						if(type == 1){
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									status : rerows[i].status,
+									pubdate : rerows[i].pubdate,
+									dofdate : null,
+									updatets : rerows[i].updatets,
+								}
+							});
+						}else if(type == 2){
+							$('#grid').datagrid('updateRow', {
+								index : indexes[i],
+								row : {
+									status : rerows[i].status,
+									pubdate : rerows[i].pubdate,
+									dofdate : rerows[i].dofdate,
+								}
+							});
+						}
+					}
+				}
+				$("#grid").datagrid('uncheckAll');
+			}
+		},
+	});
 }
 
 /**

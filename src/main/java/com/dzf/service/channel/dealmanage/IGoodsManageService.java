@@ -90,4 +90,13 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public GoodsDocVO queryGoodsDocById(GoodsDocVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 发布、下架数据
+	 * @param pamvo
+	 * @param itype
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsVO updateData(GoodsVO pamvo, Integer itype) throws DZFWarpException;
 }
