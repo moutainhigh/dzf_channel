@@ -23,7 +23,7 @@ function load(){
 		showFooter:true,
 		idField : 'gid',
 		frozenColumns :[[ { field : 'ck', checkbox : true },
-			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
+			              { field : 'operate', title : '操作列',width :'90',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ {
 			width : '100',
@@ -141,8 +141,8 @@ function noteFormat(value){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="edit(' + index + ')">编辑</a>'+
-	'<a href="#" class="ui-btn ui-btn-xz" style="margin-bottom:0px;" onclick="dele(' + index + ')">删除</a>';
+	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(' + index + ')">删除</a>';
 }
 
 /**
