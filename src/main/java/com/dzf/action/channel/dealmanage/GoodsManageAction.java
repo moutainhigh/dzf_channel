@@ -114,11 +114,18 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			if (StringUtil.isEmpty(data.getPk_corp())) {
 				data.setPk_corp(getLogincorppk());
 			}
+			String operat = "";
+			if(!StringUtil.isEmpty(data.getPk_goods())){
+				operat = "edit";
+			}
 			setDefaultValue(data);
 			GoodsVO retvo = manser.save(data, files, filenames);
 			json.setSuccess(true);
 			json.setRows(retvo);
 			json.setMsg("保存成功");
+			if(operat == "edit"){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_42.getValue(), "编辑商品“"+data.getVgoodscode()+"”", ISysConstants.SYS_3);
+			}
 		} catch (Exception e) {
 			json.setSuccess(false);
 			json.setMsg("保存失败");
@@ -333,6 +340,8 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			manser.delete(pamvo);
 			json.setSuccess(true);
 			json.setMsg("删除商品成功");
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_42.getValue(), "删除商品“"+pamvo.getVgoodscode()
+				+pamvo.getVgoodsname()+"”", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "删除商品失败");
 		}
