@@ -31,6 +31,7 @@
 				</div>
 				
 				<div class="right">
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="addqx();">取消原因</a>
 				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancel()">取消订单</a>
@@ -76,12 +77,41 @@
 		</div>
 		
 <script>
+function addqx() {
+	$('#qxDialog').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
 
+}
 function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '订单详情');
 
 }
 </script>
+		<div id="qxDialog" class="easyui-dialog"
+			style="width: 500px; height: 300px; padding-top: 20px; font-size: 14px;"
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+        <div style="width: 80%; margin: 0 auto;">
+			<div class="time_col time_colp11">
+				<input type="radio"> <label style="width: 250px;"
+					for="ctype1">加盟商账户预付款余额不足</label>
+			</div>
+			<div class="time_col time_colp11">
+				<input type="radio"> <label style="width: 250px;">商品缺货</label>
+			</div>
+			<div class="time_col time_colp11">
+				<input type="radio"> <label style="width: 250px;">其它原因</label>
+			</div>	
+		   <div class="time_col time_colp11">
+				 <div style="display: inline-block; margin-top: 5px;">
+					<textarea type="text" placeholder="请输入取消订单原因"  class="easyui-textbox" data-options="required:true,multiline:true,validType:'length[0,200]'"
+						style="width: 380px; height: 70px; display: none;" textboxname="memo"></textarea>
+				</div>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">取消</a>
+				</div>
+			</div>
+		</div>
 
 		<div id="cbDialog" class="easyui-dialog"
 			style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
