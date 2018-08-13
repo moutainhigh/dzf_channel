@@ -258,34 +258,34 @@ function tranImg(trun){
 									<font>
 										<input id="tswkfranc" name="tswkfranc" class="easyui-numberbox" 
 											data-options="readonly:true," 
-											style="width:80px;height:28px;text-align:right">户
+											style="width:90px;height:28px;text-align:right">户
 									</font></p>
 									<p><samp></samp><span>本周收到保证金：</span>
 									<font>
 										<input id="tswkinitfee" name="tswkinitfee" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
-											style="width:80px;height:28px;text-align:right">元
+											style="width:90px;height:28px;text-align:right">元
 									</font></p>
 									<p><samp></samp><span>本周新增客户：</span>
 									<font>
 										<input id="tswkcust" name="tswkcust" class="easyui-numberbox" 
 											data-options="readonly:true," 
-											style="width:80px;height:28px;text-align:right">户
+											style="width:90px;height:28px;text-align:right">户
 									</font></p>
 									<p><samp></samp><span>本周新增合同金额：</span><font>
 										<input id="tswkcont" name="tswkcont" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
-											style="width:80px;height:28px;text-align:right">元
+											style="width:90px;height:28px;text-align:right">元
 									</font></p>
 									<p><samp></samp><span>本周收到预付款：</span><font>
 										<input id="tswkcharge" name="tswkcharge" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
-											style="width:80px;height:28px;text-align:right">元
+											style="width:90px;height:28px;text-align:right">元
 									</font></p>
 									<p><samp></samp><span>本周扣款金额：</span><font>
 										<input id="tswkamount" name="tswkamount" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
-											style="width:80px;height:28px;text-align:right">元
+											style="width:90px;height:28px;text-align:right">元
 									</font></p>
 								</div>
 							</form>
@@ -299,37 +299,37 @@ function tranImg(trun){
 								<font>
 									<input id="franch" name="franch" class="easyui-numberbox" 
 										data-options="readonly:true," 
-										style="width:80px;height:28px;text-align:right">户
+										style="width:90px;height:28px;text-align:right">户
 								</font></p>
 								<p><samp></samp><span>本月新增加盟商：</span>
 								<font>
 									<input id="tsmhfranch" name="tsmhfranch" class="easyui-numberbox" 
 										data-options="readonly:true," 
-										style="width:80px;height:28px;text-align:right">户
+										style="width:90px;height:28px;text-align:right">户
 								</font></p>
 								<p><samp></samp><span>本年累计已收保证金：</span>
 								<font>
 									<input id="tsyrinitfee" name="tsyrinitfee" class="easyui-numberbox" 
 										data-options="readonly:true,precision:2,groupSeparator:','" 
-										style="width:80px;height:28px;text-align:right">元
+										style="width:90px;height:28px;text-align:right">元
 								</font></p>
 								<p><samp></samp><span>本月收到保证金：</span>
 								<font>
 									<input id="tsmhinitfee" name="tsmhinitfee" class="easyui-numberbox" 
 										data-options="readonly:true,precision:2,groupSeparator:','" 
-										style="width:80px;height:28px;text-align:right">元
+										style="width:90px;height:28px;text-align:right">元
 								</font></p>
 								<p><samp></samp><span>现有客户数：</span>
 								<font>
 									<input id="cust" name="cust" class="easyui-numberbox" 
 										data-options="readonly:true," 
-										style="width:80px;height:28px;text-align:right">户
+										style="width:90px;height:28px;text-align:right">户
 								</font></p>
 								<p><samp></samp><span>本月新增客户：</span>
 								<font>
 									<input id="tsmhcust" name="tsmhcust" class="easyui-numberbox" 
 										data-options="readonly:true," 
-										style="width:80px;height:28px;text-align:right">户
+										style="width:90px;height:28px;text-align:right">户
 								</font></p>
 							    </div>
 								</div>
@@ -340,31 +340,31 @@ function tranImg(trun){
 										<font>
 											<input id="tsmhcont" name="tsmhcont" class="easyui-numberbox" 
 												data-options="readonly:true,precision:2,groupSeparator:','" 
-												style="width:80px;height:28px;text-align:right">元
+												style="width:90px;height:28px;text-align:right">元
 										</font></p>
 										<p><samp></samp><span>本年累计收到预付款：</span>
 										<font>
 											<input id="tsyrcharge" name="tsyrcharge" class="easyui-numberbox" 
 												data-options="readonly:true,precision:2,groupSeparator:','" 
-												style="width:80px;height:28px;text-align:right">元
+												style="width:90px;height:28px;text-align:right">元
 										</font></p>
 										<p><samp></samp><span>本年累计扣款金额：</span>
 										<font>
 											<input id="tsyramount" name="tsyramount" class="easyui-numberbox" 
 												data-options="readonly:true,precision:2,groupSeparator:','" 
-												style="width:80px;height:28px;text-align:right">元
+												style="width:90px;height:28px;text-align:right">元
 										</font></p>
 										<p><samp></samp><span>本月收到预付款：</span>
 										<font>
 											<input id="tsmhcharge" name="tsmhcharge" class="easyui-numberbox" 
 												data-options="readonly:true,precision:2,groupSeparator:','" 
-												style="width:80px;height:28px;text-align:right">元
+												style="width:90px;height:28px;text-align:right">元
 										</font></p>
 										<p><samp></samp><span>本月扣款金额：</span>
 										<font>
 										<input id="tsmhamount" name="tsmhamount" class="easyui-numberbox" 
 											data-options="readonly:true,precision:2,groupSeparator:','" 
-											style="width:80px;height:28px;text-align:right">元
+											style="width:90px;height:28px;text-align:right">元
 									</font></p>
 									</div>
 								</div>
