@@ -1,0 +1,145 @@
+.shop_pick {
+	width: 73px;
+	height: 30px;
+	background: url(../images/shop.png) no-repeat;
+	color: #FFF;
+	text-indent: 4px;
+	font-size: 14px;
+}
+
+.pick_main {
+	border-bottom: 1px solid #c1c1c1;
+	height: 90px;
+}
+
+.pick_left {
+	float: left;
+	width: 70px;
+	height: 70px;
+	margin: 10px 10px 10px 36px;
+}
+
+.pick_cost {
+	font-size: 14px;
+}
+
+.pick_right {
+	float: left;
+	margin: 6px 0px;
+}
+
+.pick_cost_A {
+	float: left;
+	width: 320px;
+}
+
+.pick_cost_A span {
+	margin-right: 10px;
+}
+
+.pick_cost_B {
+	float: left;
+	width: 80px;
+	text-align: center;
+}
+
+.pick_cost_C {
+	float: left;
+	width: 260px;
+	text-align: right;
+	color: red;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.shop_come {
+	height: 44px;
+	background: #e2e2e2;
+	text-align: right;
+}
+
+.goodsbuy_foot {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 44px;
+	line-height: 44px;
+	background: #e2e2e2;
+	text-align: right;
+}
+
+.shop_cut {
+	text-align: right;
+}
+
+.shop_cut_left {
+	display: inline;
+	padding-right: 10px;
+}
+
+.shop_cut_left span {
+	color: red;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.shop_cut_right {
+	display: inline;
+	padding-right: 34px;
+}
+
+.goodsbuy_btn {
+	text-align: right;
+	padding: 20px;
+}
+
+.icon {
+	margin: 10px 0px 10px
+}
+
+.shift {
+	overflow: auto;
+	height: 430px;
+}
+
+.flow {
+	width: 96%;
+	margin: 0px auto;
+	display: inline-block
+}
+
+.flow_one {
+	width: 25%;
+	text-align: center;
+	float: left;
+}
+
+.flow_main {
+	width: 25%;
+	text-align: center;
+	float: left;
+	position: relative;
+}
+
+.flow_mian_img {
+	position: absolute;
+	top: 10px;
+	left: -77px;
+	" src="../images/shop_xq.png
+}
+
+.order {
+	width: 34%;
+	display: inline-block
+}
+
+.order label {
+	text-align: right;
+	width: 30%;
+}
+
+.order span {
+	width: 70%;
+	height: 28px;
+	text-align: left
+}

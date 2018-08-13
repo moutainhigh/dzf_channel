@@ -10,6 +10,7 @@
 <title>商品管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/channelorder.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorder.js");%> charset="UTF-8" type="text/javascript"></script>
 
@@ -30,6 +31,7 @@
 				</div>
 				
 				<div class="right">
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancel()">取消订单</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="sendOut()">商品发货</a>
@@ -73,6 +75,145 @@
 			<table id="grid"></table>
 		</div>
 		
+<script>
+
+function add() {
+	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '订单详情');
+
+}
+</script>
+
+		<div id="cbDialog" class="easyui-dialog"
+			style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+
+			<div class="shift">
+				<div style="margin-bottom: 20px;">
+					<div style="width: 10%; display: inline-block">
+						<div class="shop_pick">订单信息</div>
+					</div>
+					<div class="order">
+						<label>订单编号：</label> <span>8808201800034 </span>
+					</div>
+					<div class="order">
+						<label>加盟商：</label> <span>加盟商演示系统 </span>
+					</div>
+				</div>
+				<div class="flow">
+					<div class="flow_one">
+						<div>
+							<img src="../../images/shop_cj.png">
+						</div>
+						<div>订单创建</div>
+						<div>
+							<span>2018-08-07</span>&nbsp;<label>20:20</label>
+						</div>
+					</div>
+					<div class="flow_main">
+						<div>
+							<img src="../../images/shop_qr.png">
+						</div>
+						<div>订单确认</div>
+						<div>
+							<span>2018-08-07</span>&nbsp;<label>20:20</label>
+						</div>
+						<div>
+							<img class="flow_mian_img" src="../../images/shop_xq.png">
+						</div>
+					</div>
+					<div class="flow_main">
+						<div>
+							<img src="../../images/shop_fh.png">
+						</div>
+						<div>商品发货</div>
+						<div>
+							<span>2018-08-07</span>&nbsp;<label>20:20</label>
+						</div>
+						<div>
+							<img class="flow_mian_img" src="../../images/shop_xq.png">
+						</div>
+					</div>
+					<div class="flow_main">
+						<div>
+							<img src="../../images/shop_sh.png">
+						</div>
+						<div>已收货</div>
+						<div>
+							<span>2018-08-07</span>&nbsp;<label>20:20</label>
+						</div>
+						<div>
+							<img class="flow_mian_img" src="../../images/shop_xq.png">
+						</div>
+					</div>
+				</div>
+				<div class="icon">
+					<div class="shop_pick">快递信息</div>
+				</div>
+				<div style="margin-left: 40px;">
+					<div class="order">
+						<label>物流公司：</label> <span>顺丰速运 </span>
+					</div>
+					<div class="order">
+						<label>快递单号：</label> <span>8808201800034 </span>
+					</div>
+				</div>
+				<div class="icon">
+					<div class="shop_pick">收货信息</div>
+				</div>
+				<div style="margin-left: 40px;">
+					汪家帆，17676872346，内蒙古自治区乌兰察布市四子王旗乌兰花镇供济堂后德义赛罕小区B单元502，110239	
+				</div>
+				<div class="icon">
+					<div class="shop_pick">已选商品</div>
+				</div>
+
+				<div class=" pick_main">
+					<div class="pick_left">
+						<img src="../../images/shop_img1.png" />
+					</div>
+					<div class=" pick_right">
+						<div>
+							大账房定制水杯 &emsp;<span>三色可选</span>
+						</div>
+						<div class=" pick_cost">
+							<div class=" pick_cost_A">
+								<span>时尚</span><span>健康</span><span>耐用</span>
+							</div>
+							<div class="pick_cost_B">3</div>
+							<div class="pick_cost_C">¥ 99.00</div>
+						</div>
+					</div>
+				</div>
+				<div class=" pick_main">
+					<div class="pick_left">
+						<img src="../../images/shop_img1.png" />
+					</div>
+					<div class=" pick_right">
+						<div>
+							大账房定制水杯 &emsp;<span>三色可选</span>
+						</div>
+						<div class=" pick_cost">
+							<div class=" pick_cost_A">
+								<span>时尚</span><span>健康</span><span>耐用</span>
+							</div>
+							<div class="pick_cost_B">3</div>
+							<div class="pick_cost_C">¥ 99.00</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="goodsbuy_foot">
+				<div class="shop_cut_left">
+				    实付款：<span>¥ 300.00</span>
+				</div>
+				<div class="shop_cut_right">
+					(包含返点<span>¥ 100.00</span>)
+				</div>
+			</div>
+		</div>
+
+
 	</div>
 </body>
 </html>
