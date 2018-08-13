@@ -99,4 +99,11 @@ public interface IStatusConstant {
 	public static String IORDERACTION_2 = "send";
 	public static String IORDERACTION_3 = "receive";
 	public static String IORDERACTION_4 = "cancel";
+	
+	/** 商品订单操作说明 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单*/
+	public static String IORDERDESCRIBE_0 = "订单创建";
+	public static String IORDERDESCRIBE_1 = "订单确认";
+	public static String IORDERDESCRIBE_2 = "商品发货";
+	public static String IORDERDESCRIBE_3 = "已收货";
+	public static String IORDERDESCRIBE_4 = "取消订单";
 }

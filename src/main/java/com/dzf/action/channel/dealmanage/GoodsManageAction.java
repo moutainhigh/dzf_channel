@@ -410,7 +410,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 				}
 			}
 		} catch (Exception e) {
-			printErrorLog(json, log, e, "提交失败");
+			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}

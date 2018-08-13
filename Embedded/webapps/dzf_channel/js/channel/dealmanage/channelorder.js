@@ -1,4 +1,3 @@
-
 $(function(){
 	load();
 });
@@ -112,7 +111,33 @@ function load(){
  * 确认
  */
 function confirm(){
+	var row = null;
+	var rows = $("#grid").datagrid("getChecked");
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});
+		return;
+	} else {
+		row = rows[0];
+	}
+	if (row.vstatus != 0) {
+		
+	}
 	
+	$.messager.confirm("提示", "确认后将扣除加盟商账户余额，是否确认订单？", function(flag) {
+		if (flag) {
+			var index =  $('#grid').datagrid('getRowIndex', row);
+			var postdata = new Object();
+			var data = JSON.stringify(row);
+			postdata["data"] = data;
+			postdata["type"] = type;
+			
+		} else {
+			return null;
+		}
+	});
 }
 
 /**
@@ -127,5 +152,42 @@ function cancel(){
  */
 function sendOut(){
 	
+}
+
+/**
+ * 操作数据
+ * @param row
+ * @param type
+ */
+function operdata(postdata, index){
+	$.messager.progress({
+		text : '数据操作中....'
+	});
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/dealmanage/channelorder!operdata.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(data, textStatus) {
+			$.messager.progress('close');
+			if (!data.success) {
+				Public.tips({
+					content : data.msg,
+					type : 1
+				});
+			} else {
+				$('#grid').datagrid('clearSelections');
+				$('#grid').datagrid('updateRow', {
+					index : index,
+					row : data.rows
+				});
+				Public.tips({
+					content : data.msg,
+				});
+			}
+		},
+	});
 }
 

@@ -58,18 +58,51 @@ public class GoodsBillVO extends MultSuperVO {
     //仅作展示用字段begin
     
 	@FieldAlias("pcode")
-    private String corpcode; // 公司编码
+    private String corpcode; // 公司编码（仅作数据展示）
 	
 	@FieldAlias("pname")
-    private String corpname; // 公司编码
+    private String corpname; // 公司编码（仅作数据展示）
 	
 	@FieldAlias("submtime")
-	private DZFDateTime dsubmittime; //提交时间
+	private DZFDateTime dsubmittime; //提交时间（仅作数据展示）
+	
+	@FieldAlias("reason")
+	private String vrejereason;//驳回原因（仅作数据传递）
+	
+	@FieldAlias("logunit")
+	private String logisticsunit; //物流公司
+	
+	@FieldAlias("fcode")
+	private String fastcode; //物流单号
 	
 	//仅作展示用字段end
     
 	public String getPk_goodsbill() {
 		return pk_goodsbill;
+	}
+
+	public String getLogisticsunit() {
+		return logisticsunit;
+	}
+
+	public void setLogisticsunit(String logisticsunit) {
+		this.logisticsunit = logisticsunit;
+	}
+
+	public String getFastcode() {
+		return fastcode;
+	}
+
+	public void setFastcode(String fastcode) {
+		this.fastcode = fastcode;
+	}
+
+	public String getVrejereason() {
+		return vrejereason;
+	}
+
+	public void setVrejereason(String vrejereason) {
+		this.vrejereason = vrejereason;
 	}
 
 	public String getCorpcode() {

@@ -28,4 +28,14 @@ public interface IChannelOrderService {
 	 */
 	public List<GoodsBillVO> query(GoodsBillVO pamvo) throws DZFWarpException;
 	
+	/**
+	 * 操作数据 
+	 * @param pamvo
+	 * @param type  1：确认；2：取消订单；3：商品发货；
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsBillVO updateData(GoodsBillVO pamvo, Integer type, String cuserid) throws DZFWarpException;
+	
 }

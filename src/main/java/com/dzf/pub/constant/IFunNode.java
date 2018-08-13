@@ -188,4 +188,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_41 = "channel41";
     
+    /**
+     * 加盟商订单
+     */
+    public static final String CHANNEL_42 = "channel42";
+    
 }
