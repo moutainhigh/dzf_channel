@@ -85,6 +85,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT l.pk_goodsbill,  \n") ;
 		sql.append("       l.vbillcode,  \n") ; 
+		sql.append("       l.vreceivername,  \n") ; 
+		sql.append("       l.phone,  \n") ; 
+		sql.append("       l.vzipcode,  \n") ; 
+		sql.append("       l.vreceiveaddress,  \n") ; 
 		sql.append("       l.pk_corp,  \n") ; 
 		sql.append("       l.ndedsummny,  \n") ; 
 		sql.append("       l.ndeductmny,  \n") ; 

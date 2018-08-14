@@ -1,4 +1,5 @@
 var contextPath = DZF.contextPath;
+var editIndex = undefined;
 
 $(function(){
 	load();
@@ -21,7 +22,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
-		idField : 'gid',
+		idField : 'billid',
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
@@ -36,6 +37,26 @@ function load(){
 			field : 'updatets',
 			hidden : true
 		}, {
+			width : '100',
+			title : '收货人',
+			field : 'rename',
+			hidden : true
+		},{
+			width : '100',
+			title : '手机号码',
+			field : 'phone',
+			hidden : true
+		},{
+			width : '100',
+			title : '邮政编码',
+			field : 'recode',
+			hidden : true
+		},{
+			width : '100',
+			title : '收货地址',
+			field : 'readdress',
+			hidden : true
+		},{
 			width : '160',
 			title : '订单编码',
 			field : 'billcode',
@@ -361,8 +382,134 @@ function cancCancel(){
  * 商品发货
  */
 function sendOut(){
-
+	var rows = $("#grid").datagrid("getChecked");
+	if (rows == null || rows.length == 0) {
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});
+		return;
+	}
+	
+	var datarray =  new Array();
+	for(var i = 0; i < rows.length; i++){
+		if(rows[i].vstatus != 1){
+			Public.tips({
+				content : '订单'+rows[i].billcode+'状态不为待发货',
+				type : 2
+			});
+			return;
+		}else{
+			datarray.push(rows[i]);
+		}
+	}
+	
+	
+	$('#setOutDlg').dialog({
+		modal : true
+	});
+	$('#setOutDlg').dialog('open').dialog('center').dialog('setTitle', '商品发货');
+	$('#sgrid').datagrid({
+		striped : true,
+		title : '',
+		rownumbers : true,
+		singleSelect : false,
+		idField : 'billid',
+		columns : [ [ {
+			field : 'billcode',
+			title : '订单编号',
+			width : 130,
+			halign : 'center',
+			align : 'left'
+		}, {
+			field : 'rename',
+			title : '收货人',
+			width : 80,
+			halign : 'center',
+			align : 'left'
+		}, {
+			field : 'phone',
+			title : '手机号码',
+			width : 100,
+			halign : 'center',
+			align : 'left'
+		}, {
+			field : 'recode',
+			title : '邮政编码',
+			width : 90,
+			halign : 'center',
+			align : 'left'
+		}, {
+			field : 'readdress',
+			title : '收货地址',
+			width : 180,
+			halign : 'center',
+			align : 'left'
+		}, {
+			field : 'logunit',
+			title : '物流公司',
+			width : 150,
+			editor : {
+				type : 'textbox',
+				options : {
+					required : true,
+					height : 31
+				}
+			}
+		}, {
+			field : 'fcode',
+			title : '物流单号',
+			width : 150,
+			editor : {
+				type : 'textbox',
+				options : {
+					required : true,
+					height : 31
+				}
+			}
+		}, {
+			field : 'billid',
+			title : '主键',
+			hidden : true
+		}, ] ],
+		onClickRow:function(rowIndex,rowData){
+			endBodyEdit();
+        },
+        onDblClickRow:function (rowIndex, rowData) {
+        	endBodyEdit();
+        	if(editIndex != undefined){
+        		if($('#sgrid').datagrid('validateRow', editIndex)){
+        			if (rowIndex != undefined) {
+        				$("#sgrid").datagrid('beginEdit', rowIndex);
+        				editIndex = rowIndex;
+        			}           		
+        		}else{
+        			Public.tips({
+        				content : "请先编辑必输项",
+        				type : 2
+        			});
+        		}
+        	}else{
+        		if (rowIndex != undefined) {
+    				$("#sgrid").datagrid('beginEdit', rowIndex);
+    				editIndex = rowIndex;
+    			}
+        	}
+        },
+	});
+	
+	$('#sgrid').datagrid('loadData', datarray);
 }
+
+/**
+ * 编辑结束事件
+ */
+function endBodyEdit(){
+    var rw = $("#sgrid").datagrid('getRows');
+ 	for ( var i = 0; i < rw.length; i++) {
+ 		$("#sgrid").datagrid('endEdit', i);
+ 	}
+};
 
 /**
  * 操作数据
@@ -404,3 +551,104 @@ function operdata(postdata, index, type){
 	});
 }
 
+/**
+ * 发货-保存
+ */
+function sendSave(){
+	endBodyEdit();
+	var rows = $("#sgrid").datagrid("getRows");
+	var data = '';
+	for(var i = 0; i < rows.length; i++){
+		if(isEmpty(rows[i].logunit)){
+			Public.tips({
+				content : '订单'+rows[i].billcode+'物流公司不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(rows[i].fcode)){
+			Public.tips({
+				content : '订单'+rows[i].billcode+'物流单号不能为空',
+				type : 2
+			});
+			return;
+		}
+		data = data + JSON.stringify(rows[i]);
+	}
+	if(isEmpty(data)){
+		Public.tips({
+			content : '操作数据不能为空',
+			type : 2
+		});
+		return;
+	}
+	
+	var postdata = new Object();
+	postdata["data"] = data;
+	postdata["type"] = 3;
+	
+	$.messager.progress({
+		text : '数据操作中....'
+	});
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/dealmanage/channelorder!updateData.action',
+		data : postdata,
+		traditional : true,
+		success : function(result) {
+			$.messager.progress('close');
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				});
+			} else {
+				if(result.status == -1){
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+					});
+				}
+				$('#setOutDlg').dialog('close');
+				var rerows = result.rows;
+				if(rerows != null && rerows.length > 0){
+					var map = new HashMap(); 
+					for(var i = 0; i < rerows.length; i++){
+						map.put(rerows[i].billid,rerows[i]);
+					}
+					var index;
+					var indexes = new Array();
+					for(var i = 0; i < rows.length; i++){
+						if(map.containsKey(rows[i].billid)){
+							index = $('#grid').datagrid('getRowIndex', rows[i]);
+							indexes.push(index);
+						}
+					}
+					for(var i in indexes){
+						$('#grid').datagrid('updateRow', {
+							index : indexes[i],
+							row : rerows[i]
+						});
+					}
+				}
+				$("#grid").datagrid('uncheckAll');
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.progress('close');
+		}
+	});
+	
+}
+
+/**
+ * 发货-取消
+ */
+function sendCancel(){
+	$('#setOutDlg').dialog('close');
+}

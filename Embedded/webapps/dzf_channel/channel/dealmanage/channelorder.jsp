@@ -37,7 +37,7 @@
 				</div>
 				
 				<div class="right">
-				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancOrder()">取消订单</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="sendOut()">商品发货</a>
@@ -121,6 +121,16 @@
 			</div>
 		</div>
 		<!-- 取消订单end -->
+		
+		<!-- 发货列表begin -->
+		<div id="setOutDlg" class="easyui-dialog" style="width:1000px;height:450px;" data-options="closed:true">
+			<table id="sgrid" style="height:85%;"></table>
+			<div style="text-align:center;margin-top:20px;">
+			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="sendSave()">保存</a> 
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="sendCancel()">取消</a>
+			</div>
+		</div>
+		<!-- 发货列表end -->
 
 		<!-- 订单详情begin -->
 		<div id="cbDialog" class="easyui-dialog" style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
