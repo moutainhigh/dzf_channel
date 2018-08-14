@@ -98,14 +98,13 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			String type = getRequest().getParameter("type");
 			Integer itype = Integer.parseInt(type);
 			
-			data = data.replace("}{", "},{");
-			data = "[" + data + "]";
-			JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
-			Map<String, String> custmaping = FieldMapping.getFieldMapping(new GoodsBillVO());
-			GoodsBillVO ordervo = DzfTypeUtils.cast(arrayJson, custmaping, GoodsBillVO.class,
+			JSON djson = (JSON) JSON.parse(data);
+			Map<String, String> maping = FieldMapping.getFieldMapping(new GoodsBillVO());
+			GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
 					JSONConvtoJAVA.getParserConfig());
 			
 			ordervo = orderser.updateData(ordervo, itype, getLoginUserid());
+			json.setSuccess(true);
 			json.setRows(ordervo);
 			json.setMsg("操作成功");
 		} catch (Exception e) {

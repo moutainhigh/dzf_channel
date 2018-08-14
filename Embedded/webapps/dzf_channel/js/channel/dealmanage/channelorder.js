@@ -1,3 +1,5 @@
+var contextPath = DZF.contextPath;
+
 $(function(){
 	load();
 	initRef();
@@ -21,6 +23,9 @@ function load(){
 		showFooter:true,
 		idField : 'gid',
 		columns : [ [ {
+			field : 'ck',
+			checkbox : true
+		}, {
 			width : '100',
 			title : '主键',
 			field : 'billid',
@@ -239,8 +244,8 @@ function confirm(){
 			var postdata = new Object();
 			var data = JSON.stringify(row);
 			postdata["data"] = data;
-			postdata["type"] = type;
-			operdata(postdata, index);
+			postdata["type"] = 1;
+			operdata(postdata, index, 1);
 		} else {
 			return null;
 		}
@@ -250,7 +255,7 @@ function confirm(){
 /**
  * 取消订单
  */
-function cancel(){
+function cancOrder(){
 	var row = null;
 	var rows = $("#grid").datagrid("getChecked");
 	if (rows == null || rows.length != 1) {
@@ -269,14 +274,94 @@ function cancel(){
 		});
 		return;
 	}
-	
+	$('#cancelDlg').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
+	$('#cancfrom').form('clear');
+	$("#reason").textbox({'readonly':true});
+	$("#reason").textbox({'required':false});
+	$("#reason").textbox({'prompt':null});
+	initListen();
+	$('#reason1').prop('checked',true);
+}
+
+/**
+ * 取消原因监听
+ */
+function initListen(){
+	$(":radio").click( function(){
+		var reatype = $('input:radio[name="reatype"]:checked').val();
+		if(reatype == 3){
+			$("#reason").textbox({'readonly':false});
+			$("#reason").textbox({'required':true});
+			$("#reason").textbox({'prompt':'请输入取消订单原因'});
+		}else{
+			$("#reason").textbox({'readonly':true});
+			$("#reason").textbox({'required':false});
+			$("#reason").textbox({'prompt':null});
+		}
+	});
+}
+
+/**
+ * 取消订单-保存
+ */
+function cancSave(){
+	if ($("#cancfrom").form('validate')) {
+		var row = null;
+		var rows = $("#grid").datagrid("getChecked");
+		if (rows == null || rows.length != 1) {
+			Public.tips({
+				content : '请选择一行数据',
+				type : 2
+			});
+			return;
+		} else {
+			row = rows[0];
+		}
+		if (row.vstatus != 0) {
+			Public.tips({
+				content : '该数据状态不为待确认',
+				type : 2
+			});
+			return;
+		}
+		
+		var reason = "";
+		var reatype = $('input:radio[name="reatype"]:checked').val();
+		if(reatype == 1){
+			reason = "加盟商账户预付款余额不足";
+		}else if(reatype == 2){
+			reason = "商品缺货";
+		}else if(reatype == 3){
+			reason = $('#reason').val();
+		}
+		row.reason = reason;
+		var index =  $('#grid').datagrid('getRowIndex', row);
+		var postdata = new Object();
+		var data = JSON.stringify(row);
+		postdata["data"] = data;
+		postdata["type"] = 2;
+		operdata(postdata, index, 2);
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
+}
+
+/**
+ * 取消订单-取消
+ */
+function cancCancel(){
+	$('#cancelDlg').dialog('close');
 }
 
 /**
  * 商品发货
  */
 function sendOut(){
-	
+
 }
 
 /**
@@ -284,14 +369,14 @@ function sendOut(){
  * @param row
  * @param type
  */
-function operdata(postdata, index){
+function operdata(postdata, index, type){
 	$.messager.progress({
 		text : '数据操作中....'
 	});
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/dealmanage/channelorder!operdata.action',
+		url : contextPath + '/dealmanage/channelorder!operData.action',
 		data : postdata,
 		traditional : true,
 		async : false,
@@ -308,6 +393,9 @@ function operdata(postdata, index){
 					index : index,
 					row : data.rows
 				});
+				if(type == 2){
+					$('#cancelDlg').dialog('close');
+				}
 				Public.tips({
 					content : data.msg,
 				});

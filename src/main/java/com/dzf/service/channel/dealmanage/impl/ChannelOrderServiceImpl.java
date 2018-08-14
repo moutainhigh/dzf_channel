@@ -339,14 +339,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
 				if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
 					if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){
-						if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) < 0){
+						if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0){
 							throw new BusinessException("确认失败！加盟商"+corpname+"账户返点余额不足");
 						}
 						map.put("rebate", balvo);
 					}
 				}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
 					if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){
-						if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) < 0){
+						if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0){
 							throw new BusinessException("确认失败！加盟商"+corpname+"账户预付款余额不足");
 						}
 						map.put("payment", balvo);

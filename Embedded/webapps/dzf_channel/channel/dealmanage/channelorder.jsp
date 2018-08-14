@@ -17,9 +17,6 @@
 </head>
 
 <script>
-	function addqx() {
-		$('#cancelDlg').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
-	}
 	function add() {
 		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '订单详情');
 	}
@@ -40,10 +37,9 @@
 				</div>
 				
 				<div class="right">
-				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="addqx();">取消原因</a>
 				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancel()">取消订单</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancOrder()">取消订单</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="sendOut()">商品发货</a>
 				</div>
 			</div>
@@ -98,26 +94,29 @@
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
         	<div style="width: 80%; margin: 0 auto;">
 				<div class="time_col time_colp11">
-					<input type="radio"> <label style="width: 250px;"
-						for="ctype1">加盟商账户预付款余额不足</label>
+					<input id="reason1" name="reatype" type="radio" value="1" checked />
+					<label style="width: 250px;" for="reason1">加盟商账户预付款余额不足</label>
 				</div>
 				<div class="time_col time_colp11">
-					<input type="radio"> <label style="width: 250px;">商品缺货</label>
+					<input id="reason2" name="reatype" type="radio" value="2" />
+					<label style="width: 250px;" for="reason2">商品缺货</label>
 				</div>
 				<div class="time_col time_colp11">
-					<input type="radio"> <label style="width: 250px;">其它原因</label>
+					<input id="reason3" name="reatype" type="radio" value="3" />
+					<label style="width: 250px;" for="reason3">其它原因</label>
 				</div>	
 			   	<div class="time_col time_colp11">
-					 <div style="display: inline-block; margin-top: 5px;">
-						<textarea type="text" placeholder="请输入取消订单原因"  class="easyui-textbox" 
-							data-options="required:true,multiline:true,validType:'length[0,200]'"
-							style="width: 380px; height: 70px; display: none;" textboxname="memo">
-						</textarea>
-					</div>
+			   		<form id="cancfrom" method="post">
+						<div style="display: inline-block; margin-top: 5px;">
+							<input type="text" class="easyui-textbox" id="reason" name="reason"
+								data-options="multiline:true,validType:'length[0,200]',"
+								style="width:380px; height:70px; display:none;">
+						</div>
+					</form>
 				</div>
 				<div style="text-align:center;margin-top:20px;">
-				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="">保存</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">取消</a>
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="cancSave()">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="cancCancel()">取消</a>
 				</div>
 			</div>
 		</div>
