@@ -218,6 +218,7 @@ function reloadData(){
 		'vstatus' :  $('#qstatus').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
+	$('#qrydialog').hide();
 }
 
 /**
