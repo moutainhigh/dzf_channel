@@ -1337,7 +1337,7 @@ function bathconfrim(postdata, rows){
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			parent.$.messager.progress('close');
+			$.messager.progress('close');
 		}
 	});
 
