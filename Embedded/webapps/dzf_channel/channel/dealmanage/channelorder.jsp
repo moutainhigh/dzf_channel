@@ -15,6 +15,15 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorder.js");%> charset="UTF-8" type="text/javascript"></script>
 
 </head>
+
+<script>
+	function addqx() {
+		$('#cancelDlg').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
+	}
+	function add() {
+		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '订单详情');
+	}
+</script>
 <body>
 	<div id="List_panel" class="wrapper" data-options="closed:false">
 		<div class="mod-toolbar-top">
@@ -47,21 +56,25 @@
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 			</h3>
 			<div class="time_col time_colp10">
-				<label style="width:85px;text-align:right">商品编码：</label>
-				<input id="qgcode" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<label style="width:85px;text-align:right">订单编码：</label>
+				<input id="qbcode" class="easyui-textbox" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:85px;text-align:right">商品名称：</label>
-				<input id="qgname" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<label style="width:85px;text-align:right">加盟商：</label>
+				<input id="qcpname" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<input id="qcpid" type="hidden">
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:85px;text-align:right">合同状态：</label>
+				<label style="width:85px;text-align:right">订单状态：</label>
 				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					editable="false" style="width:290px;height:28px;">
+					<!-- 状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消； -->
 					<option value="-1">全部</option>
-					<option value="1">已保存</option>
-					<option value="2">已发布</option>
-					<option value="3">已下架</option>
+					<option value="0">待确认</option>
+					<option value="1">待发货</option>
+					<option value="2">已发货</option>
+					<option value="3">已收货</option>
+					<option value="4">已取消</option>
 				</select>
 			</div>
 			<p>
@@ -76,45 +89,42 @@
 			<table id="grid"></table>
 		</div>
 		
-<script>
-function addqx() {
-	$('#qxDialog').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
-
-}
-function add() {
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '订单详情');
-
-}
-</script>
-		<div id="qxDialog" class="easyui-dialog"
-			style="width: 500px; height: 300px; padding-top: 20px; font-size: 14px;"
+		<!-- 加盟商参照对话框begin -->
+		<div id="chnDlg"></div>
+		<!-- 加盟商参照对话框end -->
+		
+		<!-- 取消订单begin -->
+		<div id="cancelDlg" class="easyui-dialog" style="width: 500px; height: 300px; padding-top: 20px; font-size: 14px;"
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
-        <div style="width: 80%; margin: 0 auto;">
-			<div class="time_col time_colp11">
-				<input type="radio"> <label style="width: 250px;"
-					for="ctype1">加盟商账户预付款余额不足</label>
-			</div>
-			<div class="time_col time_colp11">
-				<input type="radio"> <label style="width: 250px;">商品缺货</label>
-			</div>
-			<div class="time_col time_colp11">
-				<input type="radio"> <label style="width: 250px;">其它原因</label>
-			</div>	
-		   <div class="time_col time_colp11">
-				 <div style="display: inline-block; margin-top: 5px;">
-					<textarea type="text" placeholder="请输入取消订单原因"  class="easyui-textbox" data-options="required:true,multiline:true,validType:'length[0,200]'"
-						style="width: 380px; height: 70px; display: none;" textboxname="memo"></textarea>
+        	<div style="width: 80%; margin: 0 auto;">
+				<div class="time_col time_colp11">
+					<input type="radio"> <label style="width: 250px;"
+						for="ctype1">加盟商账户预付款余额不足</label>
 				</div>
+				<div class="time_col time_colp11">
+					<input type="radio"> <label style="width: 250px;">商品缺货</label>
+				</div>
+				<div class="time_col time_colp11">
+					<input type="radio"> <label style="width: 250px;">其它原因</label>
+				</div>	
+			   	<div class="time_col time_colp11">
+					 <div style="display: inline-block; margin-top: 5px;">
+						<textarea type="text" placeholder="请输入取消订单原因"  class="easyui-textbox" 
+							data-options="required:true,multiline:true,validType:'length[0,200]'"
+							style="width: 380px; height: 70px; display: none;" textboxname="memo">
+						</textarea>
+					</div>
 				</div>
 				<div style="text-align:center;margin-top:20px;">
-				      <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="">保存</a> 
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="">取消</a>
 				</div>
 			</div>
 		</div>
+		<!-- 取消订单end -->
 
-		<div id="cbDialog" class="easyui-dialog"
-			style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
+		<!-- 订单详情begin -->
+		<div id="cbDialog" class="easyui-dialog" style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 
 			<div class="shift">
@@ -242,7 +252,7 @@ function add() {
 				</div>
 			</div>
 		</div>
-
+		<!-- 订单详情end -->
 
 	</div>
 </body>

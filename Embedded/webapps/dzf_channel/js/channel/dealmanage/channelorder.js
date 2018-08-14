@@ -1,5 +1,7 @@
 $(function(){
 	load();
+	initRef();
+	reloadData();
 });
 
 /**
@@ -29,25 +31,25 @@ function load(){
 			field : 'updatets',
 			hidden : true
 		}, {
-			width : '100',
+			width : '160',
 			title : '订单编码',
 			field : 'billcode',
-			align : 'center',
-            halign : 'center',
-		}, {
-			width : '200',
-			title : '提交时间',
-			field : 'gname',
 			align : 'left',
             halign : 'center',
 		}, {
-			width : '200',
+			width : '150',
+			title : '提交时间',
+			field : 'submtime',
+			align : 'left',
+            halign : 'center',
+		}, {
+			width : '150',
 			title : '加盟商编码',
 			field : 'pcode',
 			align : 'left',
             halign : 'center',
 		}, {
-			width : '200',
+			width : '180',
 			title : '加盟商名称',
 			field : 'pname',
 			align : 'left',
@@ -108,6 +110,107 @@ function load(){
 }
 
 /**
+ * 参照初始化
+ */
+function initRef(){
+    $('#qcpname').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#chnDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-1"
+    				},
+    				buttons : [ {
+    					text : '确认',
+    					handler : function() {
+    						selectCorps();
+    					}
+    				}, {
+    					text : '取消',
+    					handler : function() {
+    						$("#chnDlg").dialog('close');
+    					}
+    				} ]
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 加盟商选择事件
+ */
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		
+		$("#qcpname").textbox("setValue",str);
+		$("#qcpid").val(corpIds);
+	}
+	 $("#chnDlg").dialog('close');
+}
+
+/**
+ * 查询数据
+ */
+function reloadData(){
+	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'billcode' : $("#qbcode").val(),
+		'corpid' : $("#qcpid").val(),
+		'vstatus' :  $('#qstatus').combobox('getValue'),
+	});
+	$('#grid').datagrid('clearSelections');
+}
+
+/**
+ * 清除查询条件
+ */
+function clearParams(){
+	$("#qbcode").textbox('setValue',null);
+	$("#qcpname").textbox('setValue',null);
+	$("#qcpid").val(null);
+}
+
+/**
+ * 取消
+ */
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+/**
  * 确认
  */
 function confirm(){
@@ -123,7 +226,11 @@ function confirm(){
 		row = rows[0];
 	}
 	if (row.vstatus != 0) {
-		
+		Public.tips({
+			content : '该数据状态不为待确认',
+			type : 2
+		});
+		return;
 	}
 	
 	$.messager.confirm("提示", "确认后将扣除加盟商账户余额，是否确认订单？", function(flag) {
@@ -133,7 +240,7 @@ function confirm(){
 			var data = JSON.stringify(row);
 			postdata["data"] = data;
 			postdata["type"] = type;
-			
+			operdata(postdata, index);
 		} else {
 			return null;
 		}
@@ -144,6 +251,24 @@ function confirm(){
  * 取消订单
  */
 function cancel(){
+	var row = null;
+	var rows = $("#grid").datagrid("getChecked");
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});
+		return;
+	} else {
+		row = rows[0];
+	}
+	if (row.vstatus != 0) {
+		Public.tips({
+			content : '该数据状态不为待确认',
+			type : 2
+		});
+		return;
+	}
 	
 }
 

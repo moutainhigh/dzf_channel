@@ -52,8 +52,25 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
 		List<GoodsBillVO> list = (List<GoodsBillVO>) multBodyObjectBO.queryDataPage(GoodsBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		
+		if(list != null && list.size() > 0){
+			setShowValue(list);
+		}
 		return list;
+	}
+	
+	/**
+	 * 设置显示名称
+	 * @throws DZFWarpException
+	 */
+	private void setShowValue(List<GoodsBillVO> list) throws DZFWarpException {
+		CorpVO corpvo = null;
+		for(GoodsBillVO bvo : list){
+			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
+			if(corpvo != null){
+				bvo.setCorpcode(corpvo.getUnitcode());
+				bvo.setCorpname(corpvo.getUnitname());
+			}
+		}
 	}
 	
 	/**
@@ -72,6 +89,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndedsummny,  \n") ; 
 		sql.append("       l.ndeductmny,  \n") ; 
 		sql.append("       l.ndedrebamny,  \n") ; 
+		sql.append("       l.vstatus,  \n") ; 
 		sql.append("       s.doperatetime AS dsubmittime  \n") ; 
 		sql.append("  FROM cn_goodsbill l  \n") ; 
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n") ; 
