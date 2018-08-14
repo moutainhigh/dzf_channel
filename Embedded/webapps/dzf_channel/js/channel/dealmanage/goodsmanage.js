@@ -125,6 +125,21 @@ function reloadData(){
 }
 
 /**
+ * 清除查询条件
+ */
+function clearParams(){
+	$("#qgcode").textbox('setValue',null);
+	$("#qgname").textbox('setValue',null);
+}
+
+/**
+ * 取消
+ */
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+/**
  * 商品说明添加tips显示
  * @param value
  */
