@@ -257,34 +257,34 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_goods(), uuid, 120);
 			datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 			List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
-			for(int i = 0; i < files.length; i++){
-				String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
-				String filepath = "";
-				try {
-					filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
-				} catch (AppException e) {
-					throw new BusinessException("图片上传错误");
+			if(files != null && files.length > 0){
+				for(int i = 0; i < files.length; i++){
+					String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
+					String filepath = "";
+					try {
+						filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
+					} catch (AppException e) {
+						throw new BusinessException("图片上传错误");
+					}
+					if(StringUtil.isEmpty(filepath)){
+						throw new BusinessException("图片上传错误");
+					}
+					GoodsDocVO docvo = new GoodsDocVO();
+					docvo.setPk_corp(datavo.getPk_corp());
+					docvo.setPk_goods(datavo.getPk_goods());
+					docvo.setDocName(filenames[i]);
+					docvo.setDocTemp(fname);
+					docvo.setVfilepath(filepath.substring(1));
+					docvo.setDocOwner(datavo.getCoperatorid());
+					docvo.setDocTime(String.valueOf(new Date().getTime()));
+					docvo.setCoperatorid(datavo.getCoperatorid());
+					docvo.setDoperatedate(new DZFDate());
+					docvo.setDr(0);
+					doclist.add(docvo);
 				}
-				if(StringUtil.isEmpty(filepath)){
-					throw new BusinessException("图片上传错误");
+				if(doclist != null && doclist.size() > 0){
+					singleObjectBO.insertVOArr(datavo.getPk_corp(), doclist.toArray(new GoodsDocVO[0]));
 				}
-				GoodsDocVO docvo = new GoodsDocVO();
-				docvo.setPk_corp(datavo.getPk_corp());
-				docvo.setPk_goods(datavo.getPk_goods());
-				docvo.setDocName(filenames[i]);
-				docvo.setDocTemp(fname);
-				docvo.setVfilepath(filepath.substring(1));
-				docvo.setDocOwner(datavo.getCoperatorid());
-				docvo.setDocTime(String.valueOf(new Date().getTime()));
-				docvo.setCoperatorid(datavo.getCoperatorid());
-				docvo.setDoperatedate(new DZFDate());
-				docvo.setDr(0);
-				doclist.add(docvo);
-			}
-			if(doclist != null && doclist.size() > 0){
-				singleObjectBO.insertVOArr(datavo.getPk_corp(), doclist.toArray(new GoodsDocVO[0]));
-			}else{
-				throw new BusinessException("图片上传错误");
 			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
