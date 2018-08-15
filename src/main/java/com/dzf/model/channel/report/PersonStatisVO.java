@@ -21,9 +21,27 @@ public class PersonStatisVO extends DataVO{
 	private Integer jms03;//销售经理
 	private Integer jms04;//销售主管
 	private Integer jms10;//销售
+	
+	private Integer lznum;//离职数
+	private DZFDouble ltotal;//流失率 
+	
 	private DZFDouble ktotal;//会计人员
 	private DZFDouble xtotal;//销售人员
 	private Integer total;//总用户
+	
+	public Integer getLznum() {
+		return lznum;
+	}
+	public void setLznum(Integer lznum) {
+		this.lznum = lznum;
+	}
+	public DZFDouble getLtotal() {
+		return ltotal;
+	}
+	public void setLtotal(DZFDouble ltotal) {
+		this.ltotal = ltotal;
+	}
+
 	public Integer getJms01() {
 		return jms01;
 	}
