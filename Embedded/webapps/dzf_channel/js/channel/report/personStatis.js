@@ -10,6 +10,7 @@ $(window).resize(function(){
 $(function() {
 	initQry();
 	load();
+	initUserGrid();
 });
 
 //初始化
@@ -48,12 +49,15 @@ function load(){
 		showFooter : true,
 		border : true,
 		remoteSort:false,
-		columns : [[	{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
+		columns : [[	{ field : 'corpid',    title : '会计公司主键', hidden : true,rowspan:2},
 		                { field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',rowspan:2},
 		                { field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',rowspan:2},
 		                { field : 'provname',  title : '省份', width : 160,halign:'center',align:'left',rowspan:2}, 
 		                { field : 'incode',  title : '加盟商编码', width : 140,halign:'center',align:'left',rowspan:2},
-		                { field : 'corpnm', title : '加盟商名称', width:240,halign:'center',align:'left',rowspan:2},
+		                { field : 'corpnm', title : '加盟商名称', width:240,halign:'center',align:'left',rowspan:2,
+		                	formatter: function(value,row,index){
+								return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
+			            }},
 		                { field : 'cuname',  title : '培训师', width : 100,halign:'center',align:'left',rowspan:2},
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
 		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:7},
@@ -75,6 +79,56 @@ function load(){
 	                   	{ field : 'jms10', title : '销售', width : 70,align:'right' },
 	                ]],
 		onLoadSuccess : function(data) {},
+	});
+}
+
+function qryUserDetail(corpid){
+	$('#userGrid').datagrid('options').url = DZF.contextPath + '/report/personStatis!queryUserDetail.action';
+	$('#userDetail').dialog('open');
+    $('#userGrid').datagrid('load', {
+		cpid:corpid,
+    });
+}
+
+function initUserGrid(){
+	gridh = $('#userGrid').datagrid({
+		border : true,
+		striped : true,
+		rownumbers : true,
+		fitColumns : false,
+		height:'380',
+		singleSelect : true,
+//		pagination : true,
+//		pageSize : DZF.pageSize_min,
+//		pageList : DZF.pageList_min,
+		showFooter:true,
+		columns : [ [ {
+			width : '100',
+			title : '部门',
+			align:'center',
+			halign:'center',
+			field : 'deptname',
+		}, {
+			width : '100',
+			title : '用户名称',
+            halign:'center',
+			field : 'uname',
+		},{
+			width : '200',
+			title : '角色',
+			align:'right',
+            halign:'center',
+			field : 'rolename',
+		},{
+			width : '80',
+			title : '客户数',
+			align:'right',
+            halign:'center',
+			field : 'corpnum',
+		}, ] ],
+		onLoadSuccess : function(data) {
+			
+		},
 	});
 }
 

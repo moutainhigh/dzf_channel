@@ -75,6 +75,12 @@
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 			</div>
 		</div>
+		<div id="userDetail" class="easyui-dialog" title="加盟商人员明细表" 
+			data-options="modal:true,closed:true" style="width:940px;height:500px;">
+			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+				 <table id="userGrid"></table>	
+			</div>
+		</div>
 	</div>
 </body>
 </html>

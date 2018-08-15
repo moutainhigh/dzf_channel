@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.PersonStatisVO;
+import com.dzf.model.channel.report.UserDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.report.IPersonStatis;
@@ -57,4 +59,19 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 		writeJson(grid);
 	}
 
+	   public void queryUserDetail(){
+	        Grid grid = new Grid();
+	        try {
+	            QryParamVO paramvo = new QryParamVO();
+	            paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
+	            List<UserDetailVO> list = personStatis.queryUserDetail(paramvo);
+	            QueryDeCodeUtils.decKeyUtils(new String[] { "user_name" }, list, 1);
+	            grid.setRows(list);
+	            grid.setSuccess(true);
+	            grid.setMsg("查询成功");
+	        } catch (Exception e) {
+	            printErrorLog(grid, log, e, "查询失败");
+	        }
+	        writeJson(grid);
+	    }
 }
