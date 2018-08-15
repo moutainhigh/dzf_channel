@@ -38,4 +38,12 @@ public interface IChannelOrderService {
 	 */
 	public GoodsBillVO updateData(GoodsBillVO pamvo, Integer type, String cuserid) throws DZFWarpException;
 	
+	/**
+	 * 查询订单详情
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsBillVO qryOrderDet(GoodsBillVO pamvo) throws DZFWarpException;
+	
 }

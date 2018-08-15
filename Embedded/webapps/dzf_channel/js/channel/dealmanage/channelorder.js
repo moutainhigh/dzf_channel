@@ -41,25 +41,36 @@ function load(){
 			title : '收货人',
 			field : 'rename',
 			hidden : true
-		},{
+		}, {
 			width : '100',
 			title : '手机号码',
 			field : 'phone',
 			hidden : true
-		},{
+		}, {
 			width : '100',
 			title : '邮政编码',
 			field : 'recode',
 			hidden : true
-		},{
+		}, {
 			width : '100',
 			title : '收货地址',
 			field : 'readdress',
 			hidden : true
-		},{
+		}, {
+			width : '100',
+			title : '物流公司',
+			field : 'logunit',
+			hidden : true
+		}, {
+			width : '100',
+			title : '物流单号',
+			field : 'fcode',
+			hidden : true
+		}, {
 			width : '160',
 			title : '订单编码',
 			field : 'billcode',
+			formatter:codeLink,
 			align : 'left',
             halign : 'center',
 		}, {
@@ -652,4 +663,189 @@ function sendSave(){
  */
 function sendCancel(){
 	$('#setOutDlg').dialog('close');
+}
+
+/**
+ * 订单编码格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	if(!isEmpty(row.billid)){
+		return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+	}
+}
+
+/**
+ * 查看订单明细
+ * @param index
+ */
+function showInfo(index){
+	var qrow = $('#grid').datagrid('getData').rows[index];
+	$('#infoDlg').dialog('open').dialog('center').dialog('setTitle', '订单详情');
+	$("#billcode").html(null);
+	$("#pname").html(null);
+	$("#receinfo").html(null);
+	$("#ndesummny").html(null);
+	$("#nderebmny").html(null);
+	
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: contextPath + '/dealmanage/channelorder!qryOrderDet.action',
+        data: qrow,
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (!data.success) {
+            	Public.tips({content:data.msg,type:1});
+            } else {
+                var row = data.rows;
+                $("#billcode").html(row.billcode);
+            	$("#pname").html(row.pname);
+            	$("#receinfo").html(row.rename+"，"+row.phone+"，"+row.readdress+"，"+row.recode);
+            	$("#ndesummny").html(row.ndesummny);
+            	$("#nderebmny").html(row.nderebmny);
+                
+            	//1、订单流程详情：
+            	$("#detail").empty();
+                if(row.detail != null && row.detail.length > 0){
+                	var detail = row.detail;
+                	var showinfo = "";
+            		showinfo = showinfo + "<div class='flow'>";
+            		if(row.vstatus != 4){//非取消订单
+            			for(var i = 0; i < detail.length; i++){
+            				if(i == 0){
+            					showinfo = showinfo + "<div class='flow_one'>";
+            					showinfo = showinfo + "	<div>";
+            					showinfo = showinfo + "		<img src='../../images/shop_cj.png'>";
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].describe+"</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].optime+"</div>";
+            					showinfo = showinfo + "</div>";
+            				}else{
+            					showinfo = showinfo + "<div class='flow_main'>";
+            					showinfo = showinfo + "	<div>";
+            					if(i == 1){
+            						showinfo = showinfo + "<img src='../../images/shop_qr.png'>";
+            					}else if(i == 2){
+            						showinfo = showinfo + "<img src='../../images/shop_fh.png'>";
+            					}else if(i == 3){
+            						showinfo = showinfo + "<img src='../../images/shop_sh.png'>";
+            					}
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].describe+"</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].optime+"</div>";
+            					showinfo = showinfo + " <div>";
+            					showinfo = showinfo + "		<img class='flow_mian_img' src='../../images/shop_xq.png'>";
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "</div>";
+            				}
+            			}
+            		}else if(row.vstatus == 4){//取消订单
+            			for(var i = 0; i < detail.length; i++){
+            				if(i == 0){
+            					showinfo = showinfo + "<div class='flow_one'>";
+            					showinfo = showinfo + "	<div>";
+            					showinfo = showinfo + "		<img src='../../images/shop_cj.png'>";
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].describe+"</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].optime+"</div>";
+            					showinfo = showinfo + "</div>";
+            				}else{
+            					showinfo = showinfo + "<div class='flow_main'>";
+            					showinfo = showinfo + "	<div>";
+            					showinfo = showinfo + "		<img src='../../images/shop_qx.png'>";
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].describe+"</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].optime+"</div>";
+            					showinfo = showinfo + "	<div>"+detail[i].note+"</div>";
+            					showinfo = showinfo + " <div>";
+            					showinfo = showinfo + "		<img class='flow_mian_img' src='../../images/shop_xq.png'>";
+            					showinfo = showinfo + "	</div>";
+            					showinfo = showinfo + "</div>";
+            				}
+            			}
+            		}
+            		showinfo = showinfo + "<div class='flow'>";
+            		$("#detail").append(showinfo);
+                }
+                
+                //2、快递信息
+                $("#fast").empty();
+                if(row.vstatus == 2 || row.vstatus == 3){
+                	var showinfo = "";
+                	showinfo = showinfo + "<div class='icon'>";
+                	showinfo = showinfo + "	<div class='shop_pick'>快递信息</div>";
+                	showinfo = showinfo + "</div>";
+                	showinfo = showinfo + "<div style='margin-left: 40px;'>";
+                	showinfo = showinfo + "	<div class='order'>";
+                	showinfo = showinfo + "		<label>物流公司：</label> <span>"+row.logunit+"</span>";
+                	showinfo = showinfo + " </div>";
+                	showinfo = showinfo + " <div class='order'>";
+                	showinfo = showinfo + "	<label>快递单号：</label> <span>"+row.fcode+"</span>";
+                	showinfo = showinfo + "	</div>";
+                	showinfo = showinfo + "</div>";
+                	$("#fast").append(showinfo);
+                }
+                
+                //3、商品信息
+                $("#goods").empty();
+                if(row.goods != null && row.goods.length > 0){
+                	var goods = row.goods;
+                	var showinfo = "";
+                	for(var i = 0; i < goods.length; i++){
+                		var url = getImgUrl(goods[i]);
+                		showinfo = showinfo + "<div class='pick_main'>";
+                		showinfo = showinfo + "	<div class='pick_left'>";
+                		showinfo = showinfo + "		<img src='"+ url +"'/>";
+                		showinfo = showinfo + "	</div>";
+                		showinfo = showinfo + "	<div class='pick_right'>";
+                		showinfo = showinfo + "		<div>"+goods[i].gname+"</div>";
+                		showinfo = showinfo + "		<div class='pick_cost'>";
+                		showinfo = showinfo + "			<div class='pick_cost_A'>";
+                		showinfo = showinfo + "				<span>&nbsp;</span>";
+                		showinfo = showinfo + "			</div>";
+                		showinfo = showinfo + "			<div class='pick_cost_B'>"+goods[i].amount+"</div>";
+                		showinfo = showinfo + "			<div class='pick_cost_C'>¥"+goods[i].price+"</div>";
+                		showinfo = showinfo + "		</div>";
+                		showinfo = showinfo + "	</div>";
+                		showinfo = showinfo + "</div>";
+                	}
+                	$("#goods").append(showinfo);
+                }
+            }
+        },
+    });
+	
+}
+
+/**
+ * 获取图片信息
+ * @param attach
+ * @returns {String}
+ */
+function getImgUrl(row) {
+	var ext = getFileExt(row['fpath']);
+	if ("pdf" == ext.toLowerCase()) {
+		return "../../images/typeicon/pdf.jpg";
+	} else if ("txt" == ext.toLowerCase()) {
+		return "../../images/typeicon/txt.jpg";
+	}
+	return DZF.contextPath
+			+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='
+			+ row.doc_id;
+}
+
+/**
+ * 获取附件扩展
+ * @param filename
+ * @returns
+ */
+function getFileExt(filename){
+	var index1 = filename.lastIndexOf(".")+1;
+	var index2 = filename.length;
+	var ext = filename.substring(index1,index2);
+	return ext;
 }

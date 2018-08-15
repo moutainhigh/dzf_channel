@@ -176,4 +176,30 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 		writeJson(json);
 	}
 	
+	/**
+	 * 查询订单详情
+	 */
+	public void qryOrderDet() {
+		Json json = new Json();
+		try {
+			GoodsBillVO pamvo = (GoodsBillVO) DzfTypeUtils.cast(getRequest(), new GoodsBillVO());
+			if (StringUtil.isEmptyWithTrim(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLoginCorpInfo().getPk_corp());
+			}
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			GoodsBillVO detvo = orderser.qryOrderDet(pamvo);
+			json.setRows(detvo);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
 }

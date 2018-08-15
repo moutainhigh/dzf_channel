@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
+import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.dealmanage.GoodsBillSVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.pub.CommonUtil;
@@ -94,10 +96,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndeductmny,  \n") ; 
 		sql.append("       l.ndedrebamny,  \n") ; 
 		sql.append("       l.vstatus,  \n") ; 
+		sql.append("       t.logisticsunit,  \n") ; 
+		sql.append("       t.fastcode,  \n") ; 
 		sql.append("       s.doperatetime AS dsubmittime  \n") ; 
 		sql.append("  FROM cn_goodsbill l  \n") ; 
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n") ; 
 		sql.append("                            AND s.vstatus = 0  \n") ; 
+		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n") ; 
+		sql.append("                            AND t.vstatus = 2  \n") ; 
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(s.dr, 0) = 0  \n") ; 
 		if(!StringUtil.isEmpty(pamvo.getVbillcode())){
@@ -386,6 +392,45 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}else{
 			throw new BusinessException("订单：【"+pamvo.getVbillcode()+"】数据错误");
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public GoodsBillVO qryOrderDet(GoodsBillVO pamvo) throws DZFWarpException {
+		GoodsBillVO gvo = null;
+		List<GoodsBillVO> list = query(pamvo); 
+		if(list != null && list.size() > 0){
+			gvo = list.get(0);
+		}else{
+			throw new BusinessException("商品订单信息错误");
+		}
+		//查询订单流程详情
+		String qsql = " nvl(dr,0) = 0 AND pk_goodsbill = ? ORDER BY ts ASC";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pamvo.getPk_goodsbill());
+		GoodsBillSVO[] sVOs = (GoodsBillSVO[]) singleObjectBO.queryByCondition(GoodsBillSVO.class, qsql, spm);
+		if(sVOs != null && sVOs.length > 0){
+			gvo.setDetail(sVOs);
+		}
+		//查询订单商品详情
+		StringBuffer sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("select b.*,ss.pk_goodsdoc,ss.vnote,ss.vfilepath ");
+		sql.append("  from cn_goodsbill_b b ");
+		sql.append("  left join (select c.pk_goods pk_goods,c.pk_goodsdoc,s.vnote,c.vfilepath ");
+		sql.append("               from cn_goodsdoc c ");
+		sql.append("              inner join cn_goods s on s.pk_goods = c.pk_goods ");
+		sql.append("              where c.docTime in ");
+		sql.append("                    (select min(docTime) from cn_goodsdoc group by pk_goods)) ss ");
+		sql.append("   on b.pk_goods = ss.pk_goods ");
+		sql.append("   where nvl(b.dr,0) = 0 and b.pk_goodsbill = ? ");
+		spm.addParam(pamvo.getPk_goodsbill());
+		List<GoodsBillBVO> blist = (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsBillBVO.class));
+		if(blist != null && blist.size() > 0){
+			gvo.setGoods(blist.toArray(new GoodsBillBVO[0]));
+		}
+		return gvo;
 	}
 
 }

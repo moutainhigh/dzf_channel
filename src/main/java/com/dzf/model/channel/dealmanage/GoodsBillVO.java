@@ -75,10 +75,30 @@ public class GoodsBillVO extends MultSuperVO {
 	@FieldAlias("fcode")
 	private String fastcode; //物流单号
 	
+	private GoodsBillSVO[] detail;//订单明细
+	
+	private GoodsBillBVO[] goods;//商品明细
+	
 	//仅作展示用字段end
     
 	public String getPk_goodsbill() {
 		return pk_goodsbill;
+	}
+
+	public GoodsBillSVO[] getDetail() {
+		return detail;
+	}
+
+	public void setDetail(GoodsBillSVO[] detail) {
+		this.detail = detail;
+	}
+
+	public GoodsBillBVO[] getGoods() {
+		return goods;
+	}
+
+	public void setGoods(GoodsBillBVO[] goods) {
+		this.goods = goods;
 	}
 
 	public String getLogisticsunit() {

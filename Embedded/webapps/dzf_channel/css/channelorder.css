@@ -143,3 +143,8 @@
 	height: 28px;
 	text-align: left
 }
+
+.pick_left img {
+	width: 70px;
+	height: 70px;
+}

@@ -48,6 +48,42 @@ public class GoodsBillBVO extends SuperVO {
 
     private DZFDateTime ts; // 时间戳
     
+    //仅作数据展示begin
+    
+	@FieldAlias("doc_id")
+	private String pk_goodsdoc; // 商品主键
+	
+	@FieldAlias("note")
+	private String vnote;//商品说明
+	
+	@FieldAlias("fpath")
+	private String vfilepath;// 文件存储路径　
+	
+	//仅作数据展示end
+	
+	public String getVfilepath() {
+		return vfilepath;
+	}
+
+	public void setVfilepath(String vfilepath) {
+		this.vfilepath = vfilepath;
+	}
+
+	public String getVnote() {
+		return vnote;
+	}
+
+	public void setVnote(String vnote) {
+		this.vnote = vnote;
+	}
+
+	public String getPk_goodsdoc() {
+		return pk_goodsdoc;
+	}
+
+	public void setPk_goodsdoc(String pk_goodsdoc) {
+		this.pk_goodsdoc = pk_goodsdoc;
+	}
 
 	public String getPk_goodsbill() {
 		return pk_goodsbill;
