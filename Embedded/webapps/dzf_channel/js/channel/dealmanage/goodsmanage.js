@@ -670,6 +670,7 @@ function operdata(type){
 									status : rerows[i].status,
 									pubdate : rerows[i].pubdate,
 									dofdate : rerows[i].dofdate,
+									updatets : rerows[i].updatets,
 								}
 							});
 						}
