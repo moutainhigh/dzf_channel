@@ -29,6 +29,13 @@
 					<span class="cur"></span>
 				</div>
 				
+				<div class="left mod-crumb">
+					<div style="margin:4px 0px 0px 10px;float:left;font-size:14px;">
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
+							onclick="qryData()">待确认</a>
+					</div>
+				</div>
+				
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true"  onclick="add();">订单详情</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
@@ -102,7 +109,7 @@
 			   		<form id="cancfrom" method="post">
 						<div style="display: inline-block; margin-top: 5px;">
 							<input type="text" class="easyui-textbox" id="reason" name="reason"
-								data-options="multiline:true,validType:'length[0,200]',"
+								data-options="multiline:true,validType:'length[0,50]',"
 								style="width:380px; height:70px; display:none;">
 						</div>
 					</form>

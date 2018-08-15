@@ -233,6 +233,18 @@ function reloadData(){
 }
 
 /**
+ * 标签查询-待确认
+ */
+function qryData(){
+	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'vstatus' : 0,
+	});
+	$('#grid').datagrid('clearSelections');
+}
+
+/**
  * 清除查询条件
  */
 function clearParams(){
