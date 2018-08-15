@@ -349,6 +349,9 @@ function canConfirm(){
  * 操作数据
  */
 function operatData(postdata, rows){
+	$.messager.progress({
+		text : '数据处理中....'
+	});
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -357,6 +360,7 @@ function operatData(postdata, rows){
 		traditional : true,
 		async : false,
 		success : function(result) {
+			$.messager.progress('close');
 			if (!result.success) {
 				if("数据不能为空" == result.msg){
 					Public.tips({
@@ -399,6 +403,9 @@ function operatData(postdata, rows){
 				$("#grid").datagrid('uncheckAll');
 			}
 		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.progress('close');
+		}
 	});
 }
 

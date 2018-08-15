@@ -932,6 +932,9 @@ function onCommit(){
 		data = data + JSON.stringify(rows[i]);
 	}
 	postdata["data"] = data;
+	$.messager.progress({
+		text : '数据处理中....'
+	});
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -940,6 +943,7 @@ function onCommit(){
 		traditional : true,
 		async : false,
 		success : function(result) {
+			$.messager.progress('close');
 			if (!result.success) {
 				Public.tips({
 					content : result.msg,
@@ -981,6 +985,9 @@ function onCommit(){
 				$("#grid").datagrid('uncheckAll');
 			}
 		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.progress('close');
+		}
 	});
 }
 
