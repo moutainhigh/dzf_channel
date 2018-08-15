@@ -463,7 +463,7 @@ function canConfirm(){
  */
 function operatData(postdata, rows){
 	$.messager.progress({
-		text : '数据操作中....'
+		text : '数据处理中....'
 	});
 	$.ajax({
 		type : "post",
