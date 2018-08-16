@@ -201,7 +201,7 @@ public class IndexRepImpl implements IIndexRep {
 			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
 			spm.addParam(date.getYear());
 		}
-		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");
+		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");//已封存的加盟商数据不统计，加盟商的已封存客户统计
 		sql.append(" AND (t.drelievedate is null OR t.drelievedate > ? )" );
 		spm.addParam(new DZFDate());
 		if(!"alldata".equals(addsql)){
