@@ -192,7 +192,7 @@ public class IndexRepImpl implements IIndexRep {
 			}
 			if (paramvo.getEnddate() != null) {
 				sql.append("   AND p.createdate <= ? \n");
-				spm.addParam(paramvo.getBegdate());
+				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
 			sql.append(" AND SUBSTR(p.createdate,1,7) = ? \n") ; 
@@ -269,7 +269,7 @@ public class IndexRepImpl implements IIndexRep {
 			}
 			if (paramvo.getEnddate() != null) {
 				sql.append("   AND cn.deductdata <= ? \n");
-				spm.addParam(paramvo.getBegdate());
+				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
 			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
@@ -321,7 +321,7 @@ public class IndexRepImpl implements IIndexRep {
 			}
 			if (paramvo.getEnddate() != null) {
 				sql.append("   AND cn.deductdata <= ? \n");
-				spm.addParam(paramvo.getBegdate());
+				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
 			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
