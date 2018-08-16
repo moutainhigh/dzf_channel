@@ -169,7 +169,7 @@ public class InvManagerServiceImpl implements InvManagerService {
     public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
         SQLParameter sp = new SQLParameter();
-        sql.append("select pk_corp,unitname,innercode,vprovince from bd_account ba");
+        sql.append("select pk_corp,unitname,innercode,vprovince from bd_account t");
         sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
         sql.append(" and nvl(ischannel,'N') = 'Y' ");
         if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
@@ -182,8 +182,8 @@ public class InvManagerServiceImpl implements InvManagerService {
                 sql.append(" )");
             }
         }else if(vo.getDr() != null && vo.getDr() <0 ){//增加权限的加盟商参照
-    		String condition = pubService.makeCondition(vo.getEmail(),null);
-    		if(condition!=null && !condition.equals("flg")){
+    		String condition = pubService.getPowerSql(vo.getEmail(),vo.getDr()==-2?2:3);
+    		if(condition!=null && !condition.equals("alldata")){
     			sql.append(condition);
     		}else if(condition==null){
     			return null;

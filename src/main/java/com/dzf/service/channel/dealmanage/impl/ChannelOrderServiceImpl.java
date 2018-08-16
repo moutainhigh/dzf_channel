@@ -69,7 +69,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		for(GoodsBillVO bvo : list){
 			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
 			if(corpvo != null){
-				bvo.setCorpcode(corpvo.getUnitcode());
+				bvo.setCorpcode(corpvo.getInnercode());
 				bvo.setCorpname(corpvo.getUnitname());
 			}
 		}

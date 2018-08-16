@@ -165,7 +165,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 	}
 
 	/**
-	 * 查询存量客户数量、合同金额
+	 * 查询非存量客户数量、合同金额
 	 * 
 	 * @param paramvo
 	 * @return
@@ -190,6 +190,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("           AND nvl(ct.dr, 0) = 0 \n");
+		sql.append("           AND nvl(ct.isncust,'N')='N' \n");//不统计存量客户
 		if (corplist != null && corplist.size() > 0) {
 			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
 			sql.append(" and ");
@@ -267,6 +268,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("           AND nvl(ct.patchstatus, 0) != 2 \n");// 补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0\n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n");
+		sql.append("           AND nvl(ct.isncust,'N')='N' \n");//不统计存量客户
 		sql.append("   AND t.pk_corp NOT IN \n");
 		sql.append("       (SELECT f.pk_corp \n");
 		sql.append("          FROM ynt_franchisee f \n");
