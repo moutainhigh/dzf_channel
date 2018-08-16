@@ -174,6 +174,7 @@ public class DataCommonRepImpl {
 		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2" );
 	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and b.userid=?" );
 	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
+	    sp.addParam(qvo.getUser_name());
 		if(qvo.getSeletype()!=null && qvo.getSeletype()!=0){//不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )" );
 			sp.addParam(new DZFDate());
@@ -187,7 +188,6 @@ public class DataCommonRepImpl {
 		sql.append("          FROM ynt_franchisee f  \n");
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-    	sp.addParam(qvo.getUser_name());
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
 			sp.addParam(qvo.getAreaname());
@@ -213,6 +213,7 @@ public class DataCommonRepImpl {
 		}else{
 			 sql.append(" and b.userid=? " );
 		}
+		sp.addParam(qvo.getUser_name());
 		if(qvo.getSeletype()!=null && qvo.getSeletype()!=0){//不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )" );
 			sp.addParam(new DZFDate());
@@ -227,7 +228,6 @@ public class DataCommonRepImpl {
 		sql.append("          FROM ynt_franchisee f  \n");
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-	    sp.addParam(qvo.getUser_name());
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
 			sp.addParam(qvo.getAreaname());
