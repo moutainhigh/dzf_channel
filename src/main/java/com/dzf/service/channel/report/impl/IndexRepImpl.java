@@ -132,9 +132,9 @@ public class IndexRepImpl implements IIndexRep {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT  nvl(sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ;
-		sql.append("      - sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nbzjmny,  \n") ; 
+		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nbzjmny,  \n") ; 
 		sql.append("        nvl(sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ; 
-		sql.append("      - sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny  \n") ; 
+		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny  \n") ; 
 		sql.append("  FROM cn_detail l  \n") ; 
 		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
