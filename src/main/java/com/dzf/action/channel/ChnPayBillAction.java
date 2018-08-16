@@ -238,7 +238,7 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			String cids = getRequest().getParameter("bids");
-			chnpay.delete(getLogincorppk(), cids);
+			chnpay.delete(cids);
 			json.setSuccess(true);
 			json.setRows(data);
 			json.setMsg("删除成功!");

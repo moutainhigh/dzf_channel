@@ -2,7 +2,6 @@ package com.dzf.service.channel;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -13,7 +12,7 @@ public interface IChnPayService {
 
 	public ChnPayBillVO save(ChnPayBillVO vo,CorpVO corpvo,String cuserid,File[] files,String[] filenames) throws DZFWarpException;
 	
-	public void delete(String pk_corp,String cids) throws DZFWarpException;
+	public void delete(String cids) throws DZFWarpException;
 	
 	public ChnPayBillVO[] query(ChnPayBillVO cust,UserVO uservo) throws DZFWarpException ;
 	
