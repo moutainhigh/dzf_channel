@@ -418,21 +418,21 @@ function tranImg(trun){
 <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
 </div>
 <!-- 打开图片展示窗口 begin -->
-<div id="fullViewDlg" style="display: none;text-align: center;">	
+<!-- <div id="fullViewDlg" style="display: none;text-align: center;">	
 	<div style="text-align: center;">
-	<!-- <a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
-	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a> -->
+	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
+	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
 	<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a>
 	<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>
 	</div>
-  	<!-- <div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
+  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
 		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
 			<ul class="tu_block" id="fullViewContent"></ul>
 		</div>
-	</div> -->
+	</div>
 	<div id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">
 	</div>
-</div>
+</div> -->
 <!-- 打开图片展示窗口 end -->
 <script>
 function addEvent(obj, sType, fn) {
@@ -473,8 +473,8 @@ function addWheelEvent(obj, callback) {
 /*页面载入后*/
 function initconturnid() {
 	document.getElementById('conturnid').onload = function(){
-		var widths = document.getElementById("fullViewDlg").offsetWidth - 100 ;
-		 heights = document.getElementById("fullViewDlg").offsetHeight  -116 ;
+		var widths = document.getElementById("fullViewDlg").offsetWidth - 142 ;
+		 heights = document.getElementById("fullViewDlg").offsetHeight  -66 ;
 		 widthpx = widths+"px";
 		 heightpx = heights+"px";
 		$("#fullViewContent").css({"width":widthpx,"height":heightpx})

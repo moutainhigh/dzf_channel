@@ -56,7 +56,6 @@ function viewattach(infoindex){
 	$("#attachViewDlg").css("display","block");
 	$("#attachViewDlg").dialog("center");
 }
-
 /**
  * 详细界面查看附件
  */
@@ -184,13 +183,40 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
+		parent.openFullViewDlg('<div style="text-align: center;padding-top:10px;"><a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a><a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div><div class="fullViewContent" id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;"><img id="conturnid" alt="无法显示图片" src="' + src 
+		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;"></div>','原图')
 	}
 
 }
 
-
+//function doubleImage(i){
+//	var ext = getFileExt(arrachrows[i]['doc_name']);
+//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
+//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
+//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+//		$("#tpfd").empty();
+//		var offset = $("#tpght").offset();
+////		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
+////		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
+//		
+//		var img = "<img id='fullViewDlg' src=" + src + " style='position: absolute;z-index: 1;left:50px;top:50px;' />";  
+//		layer.open({  
+//		    type: 1,  
+//		    shade: false,  
+//		    title: '图片', //不显示标题  
+//		    area:['auto','auto'],  
+//		    area: ['99%','90%'],  
+//		    content: img + "<div id='fullViewContent' style='text-align: center;padding-top:10px;'><a class='ui-btn ui-btn-xz' onclick='tranImg(-90)'>左转</a><a class='ui-btn ui-btn-xz' onclick='tranImg(90)'>右转</a></div>", 
+//		    maxmin: true,
+//		    shadeClose: true,
+//		    cancel: function () {  
+//		        //layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
+//		    }  
+//		});  
+//	}
+//
+//}
 
 
 

@@ -390,20 +390,44 @@ function savePsw(){
  */
 
 function openFullViewDlg (content,title, billid, downtype) {
-	bid = billid;
-	dtype = downtype;
-	$("#fullViewContent").html(content);
-	$("#fullViewDlg").dialog({
-		width:$(window).width()-100,
-		height:$(window).height()-50,
-		closable:true,
-		title: title,
-		modal:true,
-	});	
-	$("#fullViewDlg").css("display","block");
-	$("#fullViewDlg").dialog("center");
+//	bid = billid;
+//	dtype = downtype;
+//	$("#fullViewContent").html(content);
+//	$("#fullViewDlg").dialog({
+//		width:$(window).width()-100,
+//		height:$(window).height()-50,
+//		closable:true,
+//		title: title,
+//		modal:true,
+//	});	
+//	$("#fullViewDlg").css("display","block");
+//	$("#fullViewDlg").dialog("center");
+	showImage(content);
 	initconturnid()
 	
+	
+}
+
+/**
+ * layui展示图片
+ * @param content
+ */
+function showImage(content){
+//	var img = "<img id='fullViewDlg' src=" + src + " style='position: absolute;z-index: 1;left:50px;top:50px;' />";  
+	layer.open({  
+	    type: 1,  
+	    shade: false,  
+	    title: '图片', //不显示标题  
+	    area:['auto','auto'],  
+	    area: ['99%','90%'],  
+	    content: content  , 
+	    maxmin: true,
+	    shadeClose: true,
+	    cancel: function () {  
+	        //layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
+	    }  
+	});  
+	$(".layui-layer-content").attr("id","fullViewDlg");
 }
 
 /**
