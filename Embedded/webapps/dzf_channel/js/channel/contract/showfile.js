@@ -183,8 +183,17 @@ function doubleImage(i){
 			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		parent.openFullViewDlg('<div style="text-align: center;padding-top:10px;"><a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a><a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div><div class="fullViewContent" id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;"><img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;"></div>','原图')
+		var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">';
+//		parent.openFullViewDlg('<div style="text-align: center;padding-top:10px;"> '+
+//								'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
+//								'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div>'+
+//								'<div id="fullViewContent" '+
+//								'style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">'+
+//								'<img id="conturnid" alt="无法显示图片" src="' + src 
+//								+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">'+
+//								' </div>','原图')
+		parent.openFullViewDlg(img, '原图');
 	}
 
 }

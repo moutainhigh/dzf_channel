@@ -402,7 +402,14 @@ function openFullViewDlg (content,title, billid, downtype) {
 //	});	
 //	$("#fullViewDlg").css("display","block");
 //	$("#fullViewDlg").dialog("center");
-	showImage(content);
+	var simg = '<div style="text-align: center;padding-top:10px;"> '+
+	'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
+	'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div>'+
+	'<div id="fullViewContent" '+
+	'style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">'+
+	 content +
+	' </div>'
+	showImage(simg);
 	initconturnid()
 	
 	
