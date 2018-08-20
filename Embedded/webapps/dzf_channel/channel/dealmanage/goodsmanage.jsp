@@ -102,7 +102,7 @@
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">单价：</label> 
 						<input class="easyui-numberbox" id="price" name = "price" 
-							data-options="required:true,min:0,precision:2,groupSeparator:','"  
+							data-options="required:true,min:0.01,precision:2,groupSeparator:','"  
 							style="width:66%; height: 28px; text-align: left">
 					</div>
 					<div style="width: 46%; display: inline-block;">
