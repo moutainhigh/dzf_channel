@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +31,12 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.piaotong.IPiaoTongConstant;
@@ -52,6 +55,8 @@ public class InvManagerServiceImpl implements InvManagerService {
     
     @Autowired
     private IPubService pubService;
+    
+    private final static String tablename = "cn_invoice";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -231,28 +236,44 @@ public class InvManagerServiceImpl implements InvManagerService {
         List<ChInvoiceVO> lists = new ArrayList<ChInvoiceVO>();
         List<ChInvoiceVO> listError = new ArrayList<ChInvoiceVO>();
         HashMap<String, DZFDouble> mapUse = queryUsedMny();
-        ChInvoiceVO[] cvos = queryByPks(pk_invoices);
-        for (ChInvoiceVO vo : cvos) {
-            DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
-            DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
-            if (vo.getInvstatus() != 1) {
-                vo.setMsg("要确认开票的单据不是待开票状态");
-                listError.add(vo);
-                continue;
+        for(String pk : pk_invoices){
+            String uuid = UUID.randomUUID().toString();
+            ChInvoiceVO vo = new ChInvoiceVO();
+            try{
+                LockUtil.getInstance().tryLockKey("tablename", pk, uuid, 60);
+                vo = queryByPk(pk);
+
+                DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
+                DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
+                if (vo.getInvstatus() != 1) {
+                    vo.setMsg("要确认开票的单据不是待开票状态");
+                    listError.add(vo);
+                    continue;
+                }
+                DZFDouble invprice = new DZFDouble(vo.getInvprice());
+                if (invprice.compareTo(umny.sub(invmny)) > 0) {
+                    StringBuffer msg = new StringBuffer();
+                    msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
+                            .append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
+                    vo.setMsg(msg.toString());
+                    listError.add(vo);
+                    continue;
+                }
+                lists.add(vo);
+                vo.setInvperson(userid);
+                updateTicketPrice(vo);
+                updateInvoice(vo,invtime);
+            
+            }catch(Exception e){
+                if (e instanceof BusinessException){
+                    vo = queryByPk(pk);
+                    vo.setMsg(e.getMessage());
+                    listError.add(vo);
+                }else
+                    throw new WiseRunException(e);
+            }finally{
+                LockUtil.getInstance().unLock_Key(tablename, pk, uuid);
             }
-            DZFDouble invprice = new DZFDouble(vo.getInvprice());
-            if (invprice.compareTo(umny.sub(invmny)) > 0) {
-                StringBuffer msg = new StringBuffer();
-                msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
-                        .append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
-                vo.setMsg(msg.toString());
-                listError.add(vo);
-                continue;
-            }
-            lists.add(vo);
-            vo.setInvperson(userid);
-            updateTicketPrice(vo);
-            updateInvoice(vo,invtime);
         }
         return listError;
     }
@@ -269,7 +290,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Override
     public List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException {
-        //
+        
         if (pk_invoices == null || pk_invoices.length == 0) {
             throw new BusinessException("请选择数据。");
         }
@@ -295,31 +316,43 @@ public class InvManagerServiceImpl implements InvManagerService {
             }
         }
         for (ChInvoiceVO vo : cvos) {
-            DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
-            DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
-            if (vo.getInvstatus() != 1 && vo.getInvstatus() != 3) {
-                vo.setMsg("要确认开票的单据不是待开票状态");
-                listError.add(vo);
-                continue;
-            }
-            DZFDouble invprice = new DZFDouble(vo.getInvprice());
-            if (invprice.compareTo(umny.sub(invmny)) > 0) {
-                StringBuffer msg = new StringBuffer();
-                msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
-                        .append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
-                vo.setMsg(msg.toString());
-                listError.add(vo);
-                continue;
-            }
-            lists.add(vo);
-            vo.setInvperson(uvo.getCuserid());
-            PiaoTongResVO resvo = savePiaoTong(vo, uvo);
-            if(resvo == null){
-                vo.setMsg("票通未返回接收数据结果。");
-                listError.add(vo);
-            }else if(!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())){
-                vo.setMsg(resvo.getMsg());
-                listError.add(vo);
+            String uuid = UUID.randomUUID().toString();
+            try{
+                LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
+                DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
+                DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
+                if (vo.getInvstatus() != 1 && vo.getInvstatus() != 3) {
+                    vo.setMsg("要确认开票的单据不是待开票状态");
+                    listError.add(vo);
+                    continue;
+                }
+                DZFDouble invprice = new DZFDouble(vo.getInvprice());
+                if (invprice.compareTo(umny.sub(invmny)) > 0) {
+                    StringBuffer msg = new StringBuffer();
+                    msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
+                            .append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
+                    vo.setMsg(msg.toString());
+                    listError.add(vo);
+                    continue;
+                }
+                lists.add(vo);
+                vo.setInvperson(uvo.getCuserid());
+                PiaoTongResVO resvo = savePiaoTong(vo, uvo);
+                if(resvo == null){
+                    vo.setMsg("票通未返回接收数据结果。");
+                    listError.add(vo);
+                }else if(!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())){
+                    vo.setMsg(resvo.getMsg());
+                    listError.add(vo);
+                }
+            }catch(Exception e){
+                if (e instanceof BusinessException){
+                    vo.setMsg(e.getMessage());
+                    listError.add(vo);
+                }else
+                    throw new WiseRunException(e);
+            }finally{
+                LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
             }
         }
         return listError;
@@ -522,18 +555,30 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Override
     public void delete(ChInvoiceVO vo) throws DZFWarpException {
-        ChInvoiceVO chvo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
-        if (chvo != null) {
-//            if (chvo.getInvstatus() != 3) {
-//                if (chvo.getInvcorp() != 2) {
-//                    throw new BusinessException("加盟商提交的开票申请不能删除。");
+        String uuid = UUID.randomUUID().toString();
+        try{
+            LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
+            ChInvoiceVO chvo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
+            if (chvo != null) {
+//                if (chvo.getInvstatus() != 3) {
+//                    if (chvo.getInvcorp() != 2) {
+//                        throw new BusinessException("加盟商提交的开票申请不能删除。");
+//                    }
 //                }
-//            }
-            if (chvo.getInvstatus() == 2) {
-                throw new BusinessException("发票状态为【已开票】，不能删除！");
+                if (chvo.getInvstatus() == 2) {
+                    throw new BusinessException("发票状态为【已开票】，不能删除！");
+                }
+                singleObjectBO.deleteObject(vo);
             }
-            singleObjectBO.deleteObject(vo);
+        }catch(Exception e){
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        }finally{
+            LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
         }
+        
     }
 
     @Override
@@ -584,28 +629,39 @@ public class InvManagerServiceImpl implements InvManagerService {
 
     @Override
     public void save(ChInvoiceVO vo) throws DZFWarpException {
-        ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
-        if (StringUtil.isEmpty(vo.getPk_corp())) {
-            if (ovo == null) {
-                throw new BusinessException("数据已被删除，请刷新重新操作。");
+        String uuid = UUID.randomUUID().toString();
+        try{
+            LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
+            ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
+            if (StringUtil.isEmpty(vo.getPk_corp())) {
+                if (ovo == null) {
+                    throw new BusinessException("数据已被删除，请刷新重新操作。");
+                }
+                vo.setPk_corp(ovo.getPk_corp());
             }
-            vo.setPk_corp(ovo.getPk_corp());
+            if(hasDigit(vo.getRusername())){
+                throw new BusinessException("收票人不能包含数字。");
+            }
+            if (ovo.getInvstatus() == 2) {
+                throw new BusinessException("已开票，不允许修改。");
+            }
+            String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
+                    "bankcode", "email", "vmome","rusername" };
+            if(ovo.getInvstatus() == 3){
+                vo.setInvstatus(1);
+                fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
+                        "bankcode", "email", "vmome","rusername","invstatus" };
+            }
+            checkInvPrice(vo);
+            singleObjectBO.update(vo, fieldNames);
+        }catch(Exception e){
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        }finally{
+            LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
         }
-        if(hasDigit(vo.getRusername())){
-            throw new BusinessException("收票人不能包含数字。");
-        }
-        if (ovo.getInvstatus() == 2) {
-            throw new BusinessException("已开票，不允许修改。");
-        }
-        String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                "bankcode", "email", "vmome","rusername" };
-        if(ovo.getInvstatus() == 3){
-            vo.setInvstatus(1);
-            fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                    "bankcode", "email", "vmome","rusername","invstatus" };
-        }
-        checkInvPrice(vo);
-        singleObjectBO.update(vo, fieldNames);
     }
 
     /**
