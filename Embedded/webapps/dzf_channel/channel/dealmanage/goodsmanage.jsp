@@ -53,7 +53,7 @@
 				<input id="qgname" class="easyui-textbox" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:85px;text-align:right">合同状态：</label>
+				<label style="width:85px;text-align:right">商品状态：</label>
 				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					editable="false" style="width:290px;height:28px;">
 					<option value="-1">全部</option>
