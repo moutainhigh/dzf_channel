@@ -149,7 +149,7 @@
 					<div style="display: inline-block;">
 						<label style="text-align:right;width:140px;">单位：</label>
 						<input id="amname" name="mname" class="easyui-textbox" 
-							data-options="validType:'length[0,5]'" style="width:150px;height:25px;"/>
+							data-options="validType:'length[0,2]'" style="width:150px;height:25px;"/>
 					</div>
 				</div>
 			</form>
