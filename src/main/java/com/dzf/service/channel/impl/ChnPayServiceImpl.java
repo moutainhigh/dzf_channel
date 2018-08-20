@@ -22,14 +22,13 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChnPayBillVO;
+import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.Logger;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.SessionRedis.IRedisSessionCallback;
-import com.dzf.pub.SessionRedis.SessionRedisClient;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
@@ -38,9 +37,8 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayService;
+import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
-
-import redis.clients.jedis.Jedis;
 
 @Service("dfz_chnpay")
 public class ChnPayServiceImpl implements IChnPayService {
@@ -49,6 +47,9 @@ public class ChnPayServiceImpl implements IChnPayService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
+	
+	@Autowired
+	private IBillCodeService billCode = null;
 	
     @Autowired
     private IPubService pubService;
@@ -147,12 +148,20 @@ public class ChnPayServiceImpl implements IChnPayService {
 			checkData(vo.getTstamp(),vo.getPk_paybill());
 		}
 		if(StringUtil.isEmpty(vo.getVbillcode())){
-			DZFDate today=new DZFDate();
-			String code = getCode(vo.getTableName(),vo.getPk_corp()+today.getYear()+today.getStrMonth(),vo.getPk_corp());
+			MaxCodeVO mcvo=new MaxCodeVO();
+			mcvo.setTbName(vo.getTableName());
+			mcvo.setFieldName("vbillcode");
+			mcvo.setPk_corp(vo.getPk_corp());
+			mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
+			mcvo.setDiflen(3);
+			String code = billCode.getDefaultCode(mcvo);
 			if (StringUtil.isEmpty(code)) {
 				throw new BusinessException("获取付款编号失败,没有相应的编码规则");
 			}
 			vo.setVbillcode(code);
+			if(!checkCodeIsUnique(vo) ){
+				throw new BusinessException("请手动输入付款编码!");
+			}
 		}else{
 			vo.setVbillcode(vo.getVbillcode().replaceAll(" ", ""));
 			if(!checkCodeIsUnique(vo) ){
@@ -570,87 +579,6 @@ public class ChnPayServiceImpl implements IChnPayService {
 		vo.setDocTime(null);
 		vo.setVfilepath(null);
 		singleObjectBO.update(vo,new String[]{"docName","docOwner","docTime","vfilepath"});
-	}
-	
-	/**
-	 * 获取编码
-	 * @param key
-	 * @param field
-	 * @param pk_corp
-	 * @param seconds
-	 * @return
-	 */
-    private String getCode(final String key, final String field, final String pk_corp) {
-        String code = ((String ) SessionRedisClient.getInstance().exec(new IRedisSessionCallback() {
-            public Object exec(Jedis jedis) {
-            	if(jedis == null){
-            		return null;
-            	}
-                return getContCode(jedis,key, field,pk_corp);
-            }
-        }));
-        return code;
-    }
-    
-    private String getContCode(Jedis jedis,String key, String field,String pk_corp){
-    	if(jedis == null){
-    		return null;
-    	}
-        String code=jedis.hget(key, field);//获取value
-        if(!StringUtil.isEmpty(code)){//从redis取值
-            code=addCode(code);
-            jedis.hset(key, field,code);
-            Long l = jedis.setnx(code, code);
-            if(l == 0){
-                getContCode(jedis,key, field,pk_corp);
-            }
-            jedis.expire(code, 120);
-        }else{//从数据库里取值
-            code=makeCode(pk_corp);
-            jedis.hset(key, field,code); 
-        }
-        return code;
-    }
-	
-    /**
-	 * 从数据库里取值
-	 * @param pk_corp
-	 * @return
-	 */
-	private String makeCode(String pk_corp) {
-		 String code;
-	     StringBuffer sql = new StringBuffer();
-	     SQLParameter sp = new SQLParameter();
-	     DZFDate today=new DZFDate();
-	     String ymtime="FK"+today.getYear()+today.getStrMonth();
-	     sql.append("select max(vbillcode) as count from cn_paybill");
-	     sql.append(" where pk_corp=? and nvl(dr,0) = 0  and substr(doperatedate,0,7) = ? and substr(vbillcode,0,8)= ? ");
-	     sp.addParam(pk_corp);
-	     sp.addParam(today.toString().substring(0, 7));
-	     sp.addParam(ymtime);
-	     String maxcode=null;
-	     try {
-	         maxcode = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
-	     } catch (NullPointerException e) {
-	        code=ymtime+"001";
-	        return code;
-	     }
-	     Integer num=Integer.parseInt(maxcode.substring(8))+1;
-	     String nums = String.format("%03d", num);
-	     code=maxcode.substring(0,8)+nums;
-	     return addCode(maxcode);
-	}
-	
-	/**
-	 * 在以前的编码上加一
-	 * @param nums
-	 * @return
-	 */
-	private String addCode(String maxcode){
-		Integer num=Integer.parseInt(maxcode.substring(8))+1;
-		String str = String.format("%03d", num);
-		maxcode=maxcode.substring(0,8)+str;
-		return maxcode;
 	}
 
 }
