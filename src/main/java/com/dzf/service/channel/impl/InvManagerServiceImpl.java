@@ -240,7 +240,7 @@ public class InvManagerServiceImpl implements InvManagerService {
             String uuid = UUID.randomUUID().toString();
             ChInvoiceVO vo = new ChInvoiceVO();
             try{
-                LockUtil.getInstance().tryLockKey("tablename", pk, uuid, 60);
+                LockUtil.getInstance().tryLockKey(tablename, pk, uuid, 60);
                 vo = queryByPk(pk);
 
                 DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
