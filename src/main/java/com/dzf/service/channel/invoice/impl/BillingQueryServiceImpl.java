@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,11 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
@@ -36,6 +39,8 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 	
     @Autowired
     private IPubService pubService;
+    
+    private final static String tablename = "cn_invoice";
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -131,40 +136,51 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 
     @Override
     public void insertBilling(BillingInvoiceVO vo) throws DZFWarpException {
-        if(vo.getNoticketmny().compareTo(DZFDouble.ZERO_DBL) <= 0){
-            throw new BusinessException("未开票金额必须大于0");
+        String uuid = UUID.randomUUID().toString();
+        try{
+            LockUtil.getInstance().tryLockKey(tablename, vo.getPk_corp(), uuid, 60);
+            if(vo.getNoticketmny().compareTo(DZFDouble.ZERO_DBL) <= 0){
+                throw new BusinessException("未开票金额必须大于0");
+            }
+            DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
+            DZFDouble umny = CommonUtil.getDZFDouble(vo.getDebittotalmny());
+            DZFDouble invprice = new DZFDouble(vo.getNoticketmny());
+            if(invprice.compareTo(umny.sub(invmny)) > 0){
+                StringBuffer msg = new StringBuffer();
+                msg.append("你本次要开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP))
+                    .append("元大于可开票金额").append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请刷新数据。");
+                throw new BusinessException(msg.toString());
+            }
+            AccountVO avo = (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, vo.getPk_corp());
+            if(StringUtil.isEmpty(avo.getTaxcode())){
+                throw new BusinessException("开票信息【税号】为空。");
+            }
+            ChInvoiceVO cvo = new ChInvoiceVO();
+            cvo.setPk_corp(vo.getPk_corp());
+            cvo.setCorpname(vo.getCorpname());
+            cvo.setInvnature(0);//发票性质
+            cvo.setTaxnum(avo.getTaxcode());//税号
+            cvo.setInvprice(vo.getNoticketmny());//开票金额
+            cvo.setInvtype(avo.getInvtype() == null ? 2 : avo.getInvtype());//发票类型
+            cvo.setCorpaddr(avo.getPostaddr());//公司地址
+            cvo.setInvphone(CodeUtils1.deCode(avo.getPhone1()));
+            cvo.setBankcode(avo.getVbankcode());//开户账户
+            cvo.setBankname(avo.getVbankname());//开户行
+            cvo.setEmail(avo.getEmail1());//邮箱
+            cvo.setApptime(new DZFDate().toString());//申请日期
+            cvo.setInvstatus(1);//状态
+            cvo.setIpaytype(0);
+            cvo.setInvcorp(2);
+            cvo.setRusername(avo.getLinkman2());
+            singleObjectBO.saveObject(vo.getPk_corp(), cvo);
+        }catch(Exception e){
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+        }finally{
+            LockUtil.getInstance().unLock_Key(tablename, vo.getPk_corp(), uuid);
         }
-        DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
-        DZFDouble umny = CommonUtil.getDZFDouble(vo.getDebittotalmny());
-        DZFDouble invprice = new DZFDouble(vo.getNoticketmny());
-        if(invprice.compareTo(umny.sub(invmny)) > 0){
-            StringBuffer msg = new StringBuffer();
-            msg.append("你本次要开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP))
-                .append("元大于可开票金额").append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请刷新数据。");
-            throw new BusinessException(msg.toString());
-        }
-        AccountVO avo = (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, vo.getPk_corp());
-        if(StringUtil.isEmpty(avo.getTaxcode())){
-            throw new BusinessException("开票信息【税号】为空。");
-        }
-        ChInvoiceVO cvo = new ChInvoiceVO();
-        cvo.setPk_corp(vo.getPk_corp());
-        cvo.setCorpname(vo.getCorpname());
-        cvo.setInvnature(0);//发票性质
-        cvo.setTaxnum(avo.getTaxcode());//税号
-        cvo.setInvprice(vo.getNoticketmny());//开票金额
-        cvo.setInvtype(avo.getInvtype() == null ? 2 : avo.getInvtype());//发票类型
-        cvo.setCorpaddr(avo.getPostaddr());//公司地址
-        cvo.setInvphone(CodeUtils1.deCode(avo.getPhone1()));
-        cvo.setBankcode(avo.getVbankcode());//开户账户
-        cvo.setBankname(avo.getVbankname());//开户行
-        cvo.setEmail(avo.getEmail1());//邮箱
-        cvo.setApptime(new DZFDate().toString());//申请日期
-        cvo.setInvstatus(1);//状态
-        cvo.setIpaytype(0);
-        cvo.setInvcorp(2);
-        cvo.setRusername(avo.getLinkman2());
-        singleObjectBO.saveObject(vo.getPk_corp(), cvo);
     }
     
     /**
