@@ -442,8 +442,8 @@ public class IndexRepImpl implements IIndexRep {
 		// 0：所有数据；1：渠道区域；2：培训区域；3：运营区域；
 		map.put("channel", 0);//加盟商管理
 		map.put("corpzxgl", 0);//直销管理
-		map.put("corppxjl", 3);//运营培训经理-->培训区域设置
-		map.put("corppxs", 3);//培训师-->培训区域设置
+		map.put("corppxjl", 2);//运营培训经理-->培训区域设置
+		map.put("corppxs", 2);//培训师-->培训区域设置
 		map.put("corpzjl", 0);//在线会计部总经理
 		map.put("corpdqz", 1);//大区总-->渠道区域设置
 		map.put("corpqdjl", 1);//渠道经理-->渠道区域设置
