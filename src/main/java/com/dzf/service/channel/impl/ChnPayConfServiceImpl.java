@@ -226,7 +226,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 					usql.append("UPDATE cn_balance l  \n");
 					usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
 					spm.addParam(billvo.getNpaymny());
-					usql.append(" WHERE l.ipaytype = ?  \n");
+					usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(billvo.getIpaytype());
 					usql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(billvo.getPk_corp());
@@ -331,7 +331,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 						usql.append("UPDATE cn_balance l  \n");
 						usql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
 						spm.addParam(billvo.getNpaymny());
-						usql.append(" WHERE l.ipaytype = ?  \n");
+						usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 						spm.addParam(billvo.getIpaytype());
 						usql.append("   AND l.pk_corp = ?  \n");
 						spm.addParam(billvo.getPk_corp());

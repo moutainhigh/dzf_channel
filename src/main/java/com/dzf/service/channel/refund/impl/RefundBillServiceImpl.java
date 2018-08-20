@@ -480,7 +480,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
 					spm.addParam(refvo.getNrefbzjmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_1);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(refvo.getPk_corp());
@@ -542,7 +542,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
 					spm.addParam(refvo.getNrefyfkmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(refvo.getPk_corp());
@@ -615,7 +615,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
 					spm.addParam(refvo.getNrefbzjmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_1);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(refvo.getPk_corp());
@@ -678,7 +678,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
 					spm.addParam(refvo.getNrefyfkmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(refvo.getPk_corp());

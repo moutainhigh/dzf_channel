@@ -1075,7 +1075,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
 					spm.addParam(datavo.getNdeductmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(datavo.getPk_corp());
@@ -1124,7 +1124,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
 					spm.addParam(datavo.getNdedrebamny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(datavo.getPk_corp());
@@ -1742,7 +1742,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
 					spm.addParam(paramvo.getNretdedmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(paramvo.getPk_corp());
@@ -1789,7 +1789,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("UPDATE cn_balance l  \n");
 					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
 					spm.addParam(paramvo.getNretrebmny());
-					sql.append(" WHERE l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(paramvo.getPk_corp());

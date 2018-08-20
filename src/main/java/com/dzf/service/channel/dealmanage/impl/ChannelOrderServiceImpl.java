@@ -231,7 +231,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				sql.append("UPDATE cn_balance l  \n");
 				sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
 				spm.addParam(pamvo.getNdedrebamny());
-				sql.append(" WHERE l.ipaytype = ?  \n");
+				sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 				spm.addParam(IStatusConstant.IPAYTYPE_3);
 				sql.append("   AND l.pk_corp = ?  \n");
 				spm.addParam(pamvo.getPk_corp());
@@ -274,7 +274,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				sql.append("UPDATE cn_balance l  \n");
 				sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
 				spm.addParam(pamvo.getNdeductmny());
-				sql.append(" WHERE l.ipaytype = ?  \n");
+				sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
 				spm.addParam(IStatusConstant.IPAYTYPE_2);
 				sql.append("   AND l.pk_corp = ?  \n");
 				spm.addParam(pamvo.getPk_corp());
