@@ -105,7 +105,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			sql.append("   AND g.vgoodsname like ?  \n") ; 
 			spm.addParam(pamvo.getVgoodsname()+"%");
 		}
-		sql.append(" ORDER BY g.updatets DESC \n");
+		sql.append(" ORDER BY g.ts DESC \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
