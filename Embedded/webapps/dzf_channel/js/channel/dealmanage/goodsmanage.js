@@ -58,6 +58,12 @@ function load(){
 				if(value == 0)return "0.00";
 				return formatMny(value);
 			},
+		}, {
+			width : '60',
+			title : '单位',
+			field : 'mname',
+            halign : 'center',
+			align : 'left',
 		},{
 			width : '160',
 			title : '商品说明',
