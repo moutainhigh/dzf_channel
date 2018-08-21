@@ -227,27 +227,6 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		writeJson(json);
 	}
 
-	public void delete() {
-		Json json = new Json();
-		try {
-			UserVO uservo = getLoginUserInfo();
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
-			String cids = getRequest().getParameter("bids");
-			chnpay.delete(cids);
-			json.setSuccess(true);
-			json.setRows(data);
-			json.setMsg("删除成功!");
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "删除失败");
-		}
-		writeJson(json);
-	}
-
 	/****
 	 * 获取附件显示图片
 	 */

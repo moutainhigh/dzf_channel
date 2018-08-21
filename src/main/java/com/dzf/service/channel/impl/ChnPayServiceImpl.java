@@ -29,12 +29,14 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.Logger;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayService;
 import com.dzf.service.pub.IBillCodeService;
@@ -144,14 +146,69 @@ public class ChnPayServiceImpl implements IChnPayService {
 	
 	@Override
 	public ChnPayBillVO save(ChnPayBillVO vo,CorpVO corpvo,String cuserid,File[] files,String[] filenames) throws DZFWarpException {
-		if(!StringUtil.isEmpty(vo.getPk_paybill())){
-			checkData(vo.getTstamp(),vo.getPk_paybill());
+		String uuid = UUID.randomUUID().toString();
+		String id=vo.getPk_paybill();
+		try {
+			if(!StringUtil.isEmpty(id)){
+				LockUtil.getInstance().tryLockKey(vo.getTableName(), id,uuid, 60);
+				checkData(vo.getTstamp(),vo.getPk_paybill());
+			}
+			makeCode(vo, corpvo);
+			vo.setTstamp(new DZFDateTime());
+			if(files!=null&&filenames!=null){
+				vo=saveAttachment(vo,corpvo,cuserid,files[0],filenames[0]);
+			}
+			Integer vprovince=vo.getVprovince();
+			if(!StringUtil.isEmpty(id)){//修改
+				String[] str={"vbillcode","dpaydate","vhandleid","vbankname","vbankcode",
+						"vhandlename","vmemo","npaymny","ipaymode","ipaytype","tstamp"};
+				if(vo.getVstatus()==4){
+					vo.setVstatus(1);
+					vo.setSubmitid(null);
+					vo.setSubmitime(new DZFDateTime());
+					String[] str1={"vstatus","submitid","submitime"};
+					str=(String[]) ArrayUtils.addAll(str, str1);
+				}
+				if(files!=null&&filenames!=null){
+					String[] str1={"docName","docOwner","docTime","vfilepath"};
+					str=(String[]) ArrayUtils.addAll(str, str1);
+				}
+				singleObjectBO.update(vo,str);
+			}else{
+				vo.setVstatus(1);//待提交
+				vo.setTs(new DZFDateTime());//时间戳
+				vo= (ChnPayBillVO) singleObjectBO.saveObject(vo.getPk_corp(), vo);//新增
+			}
+			corpvo= CorpCache.getInstance().get(null, vo.getPk_corp());
+			if(corpvo!=null){
+				Map<Integer, String> areaMap = pubService.getAreaMap(null, 3);
+				vo.setVprovname(corpvo.getCitycounty());
+				vo.setAreaname(areaMap.get(vprovince));
+			}
+		}catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+		} finally {
+			if(!StringUtil.isEmpty(id)){
+				LockUtil.getInstance().unLock_Key(vo.getTableName(), id,uuid);
+			}
 		}
+		return vo;
+	}
+	
+	/**
+	 * 校验编码+生成编码
+	 * @param vo
+	 * @param corpvo
+	 */
+	private void makeCode(ChnPayBillVO vo, CorpVO corpvo) {
 		if(StringUtil.isEmpty(vo.getVbillcode())){
 			MaxCodeVO mcvo=new MaxCodeVO();
 			mcvo.setTbName(vo.getTableName());
 			mcvo.setFieldName("vbillcode");
-			mcvo.setPk_corp(vo.getPk_corp());
+			mcvo.setPk_corp(corpvo.getPk_corp());
 			mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
 			mcvo.setDiflen(3);
 			String code = billCode.getDefaultCode(mcvo);
@@ -159,47 +216,23 @@ public class ChnPayServiceImpl implements IChnPayService {
 				throw new BusinessException("获取付款编号失败,没有相应的编码规则");
 			}
 			vo.setVbillcode(code);
+		}else{
+			vo.setVbillcode(vo.getVbillcode().replaceAll(" ", ""));
+		}
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid, 60);
 			if(!checkCodeIsUnique(vo) ){
 				throw new BusinessException("请手动输入付款编码!");
 			}
-		}else{
-			vo.setVbillcode(vo.getVbillcode().replaceAll(" ", ""));
-			if(!checkCodeIsUnique(vo) ){
-				throw new BusinessException("付款编码重复,请重新输入");
-			}
+		}catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid);
 		}
-		vo.setTstamp(new DZFDateTime());
-		if(files!=null&&filenames!=null){
-			vo=saveAttachment(vo,corpvo,cuserid,files[0],filenames[0]);
-		}
-		Integer vprovince=vo.getVprovince();
-		if(!StringUtil.isEmpty(vo.getPk_paybill())){//修改
-			String[] str={"vbillcode","dpaydate","vhandleid","vbankname","vbankcode",
-					"vhandlename","vmemo","npaymny","ipaymode","ipaytype","tstamp"};
-			if(vo.getVstatus()==4){
-				vo.setVstatus(1);
-				vo.setSubmitid(null);
-				vo.setSubmitime(new DZFDateTime());
-				String[] str1={"vstatus","submitid","submitime"};
-				str=(String[]) ArrayUtils.addAll(str, str1);
-			}
-			if(files!=null&&filenames!=null){
-				String[] str1={"docName","docOwner","docTime","vfilepath"};
-				str=(String[]) ArrayUtils.addAll(str, str1);
-			}
-			singleObjectBO.update(vo,str);
-		}else{
-			vo.setVstatus(1);//待提交
-			vo.setTs(new DZFDateTime());//时间戳
-			vo= (ChnPayBillVO) singleObjectBO.saveObject(vo.getPk_corp(), vo);//新增
-		}
-		corpvo= CorpCache.getInstance().get(null, vo.getPk_corp());
-		if(corpvo!=null){
-			Map<Integer, String> areaMap = pubService.getAreaMap(null, 3);
-			vo.setVprovname(corpvo.getCitycounty());
-			vo.setAreaname(areaMap.get(vprovince));
-		}
-		return vo;
 	}
 	
 	/**
@@ -250,220 +283,207 @@ public class ChnPayServiceImpl implements IChnPayService {
 
 	@Override
 	public HashMap<String, Object> updateStatusMult(ChnPayBillVO[] vos, int stat) throws DZFWarpException {
-		HashMap<String, Object> mapz = new HashMap<>();
-		String errmsg = "";
-		ArrayList<ChnPayBillVO> list = new ArrayList<>();
-		HashMap<String, Object> hmap = new HashMap<>();
-		hmap.put("str0", new StringBuffer());
-		hmap.put("str1", new StringBuffer());
-		hmap.put("str2", new StringBuffer());
-		hmap.put("str3", new StringBuffer());
-		hmap.put("str4", new StringBuffer());
-		hmap.put("errmsg", errmsg);
-		int len = vos.length;
-		int i = 0;
-		StringBuffer sb = new StringBuffer();
+	    int len=vos.length;
+	    HashMap<Integer, StringBuffer> map = new HashMap<>();
+	    ArrayList<ChnPayBillVO> list = new ArrayList<>();
+	    StringBuffer setBuff=new StringBuffer();
+	    ArrayList<String> ids=new ArrayList<>();
+	    Integer putStatus;
+	    //1、校验状态是否可以操作
 		for (ChnPayBillVO vo : vos) {
-			if ((boolean) judStatus(vo, stat, i, len, hmap).get("flg")) {
+			if (judStatus(vo, stat)){
 				list.add(vo);
-				sb.append("'");
-				sb.append(vo.getPk_paybill());
-				sb.append("',");
+				ids.add(vo.getPk_paybill());
+				if(stat==2){
+					vo.setSubmitid(vos[0].getSubmitid());
+					vo.setSubmitime(new DZFDateTime());
+				}else if(stat==1){
+					vo.setSubmitid(null);
+					vo.setSubmitime(null);
+				}
+			}else{
+				putStatus=vo.getSystype()==2?300:vo.getVstatus();
+				setBuff=map.get(putStatus)==null?new StringBuffer():map.get(putStatus);
+				setBuff.append(vo.getVbillcode()).append("、");
+				map.put(putStatus,setBuff);
 			}
-			if(stat==2){
-				vo.setSubmitid(vos[0].getSubmitid());
-				vo.setSubmitime(new DZFDateTime());
-			}else if(stat==1){
-				vo.setSubmitid(null);
-				vo.setSubmitime(null);
-			}
-			i++;
 		}
-		errmsg = (String) hmap.get("errmsg");
 		if (list != null && list.size() > 0) {
 			vos = list.toArray(new ChnPayBillVO[list.size()]);
 		} else {
-			return reFail(mapz, len, errmsg);
+			return reFail(map,len,stat);
 		}
-		String s = sb.substring(0, sb.length()-1);
-		HashMap<String, Object> cmap = checkDatas(vos, s, errmsg, stat);
-		list=(ArrayList<ChnPayBillVO>) cmap.get("list");
-		errmsg=(String) cmap.get("errmsg");
-		if(list!=null&&list.size()>0){
-			vos=list.toArray(new ChnPayBillVO[list.size()]);
-		}else{
-			return reFail(mapz,len,errmsg);
+		
+		// 2、校验数据是否变化+3、其它用户正在操作
+		HashMap<String, ChnPayBillVO> conMap = qryByIds(ids);
+		ChnPayBillVO getvo;
+		list = new ArrayList<>();
+		ids=new ArrayList<>();
+		String uuid = UUID.randomUUID().toString();
+		String cids="";//只是为了删除功能
+		try {
+			for (ChnPayBillVO vo : vos) {
+				boolean lockKey = LockUtil.getInstance().addLockKey("cn_paybill", vo.getPk_paybill(), uuid, 120);
+				if (!lockKey) {
+					setBuff = map.get(200) == null ? new StringBuffer() : map.get(200);
+					setBuff.append(vo.getVbillcode()).append("、");
+					map.put(200, setBuff);
+				}else{
+					getvo = conMap.get(vo.getPk_paybill());
+					if (vo.getTstamp() != null && vo.getTstamp().compareTo(getvo.getTstamp()) != 0) {
+						setBuff = map.get(100) == null ? new StringBuffer() : map.get(100);
+						setBuff.append(vo.getVbillcode()).append("、");
+						map.put(100, setBuff);
+					} else {
+						cids+="'"+vo.getPk_paybill()+"'"+",";
+						vo.setVstatus(stat);
+						vo.setTstamp(new DZFDateTime());
+						ids.add(vo.getPk_paybill());
+						list.add(vo);
+					}
+				}
+			}
+			if (list != null && list.size() > 0) {
+				vos = list.toArray(new ChnPayBillVO[list.size()]);
+			} else {
+				return reFail(map, len, stat);
+			}
+			if(stat!=-1){
+				singleObjectBO.updateAry(vos, new String[] { "vstatus", "tstamp","submitid","submitime"});
+			}else {
+				cids=cids.substring(0, cids.length()-1);
+				delete(cids);
+			}
+			return reSucess(map, len, vos, stat);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			for (String string : conMap.keySet()) {
+				LockUtil.getInstance().unLock_Key("cn_paybill", string, uuid);
+			}
 		}
-		if(stat!=-1){
-			singleObjectBO.updateAry(vos, new String[] { "vstatus", "tstamp","submitid","submitime"});
-//			singleObjectBO.updateAry(vos, new String[] { "vstatus", "tstamp"});
-		}else {
-			String cids=(String) cmap.get("cids");
-			cids=cids.substring(0, cids.length()-1);
-			delete(cids);
-		}
-		return reSucess(mapz, len, vos, errmsg);
 	}
+	
+	/**
+	 * 根据id,查询付款单
+	 * @param ids
+	 * @return
+	 * @throws BusinessException
+	 */
+   private HashMap<String , ChnPayBillVO> qryByIds(List<String> ids) throws BusinessException{
+      HashMap<String , ChnPayBillVO> map=new HashMap<>();
+      String condition = "  nvl(dr,0)=0 and "+SqlUtil.buildSqlForIn("pk_paybill",ids.toArray(new String[ids.size()]));
+      ArrayList<ChnPayBillVO> list = (ArrayList<ChnPayBillVO>)singleObjectBO.retrieveByClause(ChnPayBillVO.class, condition, null);
+      for (ChnPayBillVO vo : list) {
+         map.put(vo.getPk_paybill(), vo);
+      }
+      return map;
+   }
 
-	private HashMap<String, Object> judStatus(ChnPayBillVO chn, int stat, int i, int len,HashMap<String, Object> hmap) {
-		StringBuffer str0 = (StringBuffer) hmap.get("str0");
-		StringBuffer str1 = (StringBuffer) hmap.get("str1");
-		StringBuffer str2 = (StringBuffer) hmap.get("str2");
-		StringBuffer str3 = (StringBuffer) hmap.get("str3");
-		StringBuffer str4 = (StringBuffer) hmap.get("str4");
-		String errmsg = (String) hmap.get("errmsg");
-		boolean flg = false;
-		if (stat == 2) {// 批量提交
-			if (chn.getVstatus() == 1 && chn.getSystype()==2) {
-				flg = true;
+	
+	private Boolean judStatus(ChnPayBillVO chn, int stat) {
+		boolean flg=true;
+		if(chn.getSystype()==1){//加盟商录入单据
+			return false;
+		}
+		if (stat == 2) {// 批量提交  
+			if(chn.getVstatus() != 1){
+				flg=false;
 			}
-			if (chn.getVstatus() == 2) {
-				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3) {
-				str1.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 4) {
-				str2.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 5) {
-				str3.append(chn.getVbillcode() + '、');
-			}else if(chn.getSystype()==1){
-				str4.append(chn.getVbillcode() + '、');
-			}
-			if (i == len - 1) {
-				if (str0.length() != 0) {
-					String str;
-					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待审批单据，不能提交；<br>";
-				}
-				if (str1.length() != 0) {
-					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能提交；<br>";
-				}
-				if (str2.length() != 0) {
-					String str = str2.substring(0, str2.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已驳回单据，不能提交；<br>";
-				}
-				if (str3.length() != 0) {
-					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能提交；<br>";
-				}
-				if (str4.length() != 0) {
-					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
-				}
-			}
-		} else if (stat ==1) {// 批量取消提交
-			if (chn.getVstatus() == 2 && chn.getSystype()==2) {
-				flg = true;
-			}
-			if (chn.getVstatus() == 1) {
-				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3) {
-				str1.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 4) {
-				str2.append(chn.getVbillcode() + '、');
-			}else if (chn.getVstatus() == 5 ) {
-				str3.append(chn.getVbillcode() + '、');
-			}else if(chn.getSystype()==1){
-				str4.append(chn.getVbillcode() + '、');
-			}
-			if (i == len - 1) {
-				if (str0.length() != 0) {
-					String str;
-					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待提交单据，不能取消提交；<br>";
-				}
-				if (str1.length() != 0) {
-					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能取消提交；<br>";
-				}
-				
-				if (str2.length() != 0) {
-					String str = str2.substring(0, str2.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已驳回单据，不能取消提交；<br>";
-				}
-				if (str3.length() != 0) {
-					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能取消提交；<br>";
-				}
-				if (str4.length() != 0) {
-					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
-				}
-			}
-		} else if(stat==-1){//删除
-			if ((chn.getVstatus() ==1 || chn.getVstatus() ==4) && chn.getSystype()==2) {
-				flg = true;
-			}
-			if (chn.getVstatus() == 2) {
-				str0.append(chn.getVbillcode() + '、');
-			} else if (chn.getVstatus() == 3) {
-				str1.append(chn.getVbillcode() + '、');
-			}/*else if (chn.getVstatus() == 4) {
-				str2.append(chn.getVbillcode() + '、');
-			}*/else if (chn.getVstatus() == 5) {
-				str3.append(chn.getVbillcode() + '、');
-			}else if(chn.getSystype()==1){
-				str4.append(chn.getVbillcode() + '、');
-			}
-			if (i == len - 1) {
-				if (str0.length() != 0) {
-					String str;
-					str = str0.substring(0, str0.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待审批单据，不能删除；<br>";
-				}
-				if (str1.length() != 0) {
-					String str = str1.substring(0, str1.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是已确认单据，不能删除；<br>";
-				}
-//				if (str2.length() != 0) {
-//					String str = str2.substring(0, str2.length() - 1);
-//					errmsg = errmsg + "付款编号：" + str + "，是已驳回付款，不能删除；<br>";
-//				}
-				if (str3.length() != 0) {
-					String str = str3.substring(0, str3.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，是待确认单据，不能删除；<br>";
-				}
-				if (str4.length() != 0) {
-					String str = str4.substring(0, str4.length() - 1);
-					errmsg = errmsg + "付款编号：" + str + "，加盟商录入单据，不能操作；<br>";
-				}
+		} 
+		if (stat ==1) {// 批量取消提交
+			if(chn.getVstatus() != 2){
+				flg=false;
 			}
 		}
-		hmap.put("flg", flg);
-		hmap.put("str0", str0);
-		hmap.put("str1", str1);
-		hmap.put("str2", str2);
-		hmap.put("str3", str3);
-		hmap.put("str4", str4);
-		hmap.put("errmsg", errmsg);
-		return hmap;
+		if(stat==-1){//删除
+			if(chn.getVstatus() !=1 && chn.getVstatus() !=4){
+				flg=false;
+			}
+		}
+		return flg;
 	}
-
-	private HashMap<String, Object> reSucess(HashMap<String, Object> mapz, int len, ChnPayBillVO[] vos, String errmsg) {
-		if (!StringUtil.isEmpty(errmsg)) {
-			errmsg = "其中<br>" + errmsg;
+	
+	private HashMap<String, Object> reSucess(HashMap<Integer, StringBuffer> map,int len, ChnPayBillVO[] vos,Integer stat) {
+		String czmsg="";
+		if(stat==2){
+			czmsg="不能提交；<br>";
+		}else if(stat==1){
+			czmsg="不能取消提交；<br>";
+		}else if(stat==-1){
+			czmsg="不能删除；<br>";
 		}
-		errmsg = "成功" + vos.length + "条," + "失败" + (len - vos.length) + "条," + errmsg;
-		errmsg = errmsg.substring(0, errmsg.length() - 1);
-		mapz.put("errmsg", errmsg);
-		mapz.put("list", vos);
+		HashMap<String, Object> retmap = new HashMap<>();
+		StringBuffer errmsg=new StringBuffer();
+		errmsg.append("成功").append(vos.length).append("条,失败").append(len - vos.length).append("条");
+		if(len - vos.length!=0){
+			errmsg.append(",其中:");
+			errmsg.append(getStatusMsg(map, czmsg));
+		}
+		retmap.put("errmsg", errmsg.toString());
+		retmap.put("list", vos);
 		String str="1";
 		if(vos.length<len){
 			str="2";
 		}
-		mapz.put("stat",str);
-		mapz.put("len_suc", vos.length);
-		return mapz;
+		retmap.put("stat",str);
+		return retmap;
 	}
 
-	private HashMap<String, Object> reFail(HashMap<String, Object> mapz, int len, String errmsg) {
-		errmsg = "成功0条," + "失败" + len + "条,其中<br>" + errmsg;
-		errmsg = errmsg.substring(0, errmsg.length() - 1);
-		mapz.put("errmsg", errmsg);
-		mapz.put("list", null);
-		mapz.put("stat","2");
-		mapz.put("len_suc", 0);
-		return mapz;
+	private HashMap<String, Object> reFail(HashMap<Integer, StringBuffer> map,int len,Integer stat) {
+		String czmsg="";
+		if(stat==2){
+			czmsg="不能提交；<br>";
+		}else if(stat==1){
+			czmsg="不能取消提交；<br>";
+		}else if(stat==-1){
+			czmsg="不能删除；<br>";
+		}
+		HashMap<String, Object> retmap = new HashMap<>();
+		StringBuffer errmsg=new StringBuffer();
+		errmsg .append("成功0条,失败").append(len).append("条,其中:");
+		errmsg.append(getStatusMsg(map, czmsg));
+		retmap.put("errmsg", errmsg.toString());
+		retmap.put("list", null);
+		retmap.put("stat","2");
+		return retmap;
+	}
+
+	private String getStatusMsg(HashMap<Integer, StringBuffer> map, String czmsg) {
+		StringBuffer errmsg=new StringBuffer();
+		for (Integer inte : map.keySet()) {
+			errmsg.append("付款编号："); 
+			if(inte==1){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",是待提交,").append(czmsg); 
+			}else if(inte==2){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",是待审批,").append(czmsg); 
+			}else if(inte==3){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",是已确认,").append(czmsg); 
+			}else if(inte==4){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",是拒绝审核,").append(czmsg); 
+			}else if(inte==5){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",是待确认,").append(czmsg); 
+			}else if(inte==100){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",数据已发生变化<br>"); 
+			}else if(inte==200){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",其他用户正在操作<br>"); 
+			}else if(inte==300){
+				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
+				errmsg.append(",加盟商录入单据<br>"); 
+			}
+			
+		}
+		return errmsg.toString();
 	}
 
 	private boolean checkCodeIsUnique(ChnPayBillVO vo) {
@@ -497,8 +517,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		return  retvo;
 	}
 
-	@Override
-	public void delete(String cids) throws DZFWarpException {
+	private void delete(String cids) throws DZFWarpException {
 		if (!StringUtil.isEmpty(cids)) {
 			SQLParameter sp = new SQLParameter();
 			StringBuffer sql = new StringBuffer();

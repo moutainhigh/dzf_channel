@@ -12,8 +12,6 @@ public interface IChnPayService {
 
 	public ChnPayBillVO save(ChnPayBillVO vo,CorpVO corpvo,String cuserid,File[] files,String[] filenames) throws DZFWarpException;
 	
-	public void delete(String cids) throws DZFWarpException;
-	
 	public ChnPayBillVO[] query(ChnPayBillVO cust,UserVO uservo) throws DZFWarpException ;
 	
 	public ChnPayBillVO queryByID(String cid) throws DZFWarpException;
