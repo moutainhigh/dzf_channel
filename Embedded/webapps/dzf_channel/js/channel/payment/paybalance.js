@@ -49,13 +49,7 @@ function load(){
 						return;
 	  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
 	  			}
-		},/*{
-			width : '60',
-			title : '合同数',
-			align:'center',
-            halign:'center',
-			field : 'num',
-		},*/{
+		},{
 			width : '100',
 			title : '存量合同数',
 			align:'center',
@@ -99,10 +93,6 @@ function load(){
 			align:'center',
             halign:'center',
 			field : 'propor',
-//			formatter : function(value,row,index){
-//				if(!isEmpty(value))
-//					return value+"%";
-//			}
 		},{
 			width : '70',
 			title : '付款类型',
@@ -243,7 +233,6 @@ function selectCorps(){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
-//	var num =0;
 	var custnum = 0;
 	var zeronum = 0;
 	var dednum = 0;
@@ -254,7 +243,6 @@ function calFooter(){
     var usemny = 0;	
     var balmny = 0;	
     for (var i = 0; i < rows.length; i++) {
-//    	num += getFloatValue(rows[i].num);
     	custnum += getFloatValue(rows[i].custnum);
     	zeronum += getFloatValue(rows[i].zeronum);
     	dednum += getFloatValue(rows[i].dednum);
@@ -266,7 +254,6 @@ function calFooter(){
     	balmny += getFloatValue(rows[i].balmny); 
     }
     footerData['incode'] = '合计';
-//    footerData['num'] = num;
     footerData['custnum'] = custnum;
     footerData['zeronum'] = zeronum;
     footerData['dednum'] = dednum;
@@ -365,12 +352,8 @@ function initDetailGrid(){
 		striped : true,
 		rownumbers : true,
 		fitColumns : false,
-		/*height : Public.setGrid().h,*/
 		height:'350',
 		singleSelect : true,
-//		pagination : true,// 分页工具栏显示
-//		pageSize : DZF.pageSize_min,
-//		pageList : DZF.pageList_min,
 		showFooter:true,
 		columns : [ [ {
 			width : '80',
@@ -514,17 +497,6 @@ function npFormat(value,row,index){
  * @returns
  */
 function useFormat(value,row,index){
-//	if(value == 0){
-//		return "0.00";
-//	}else{
-//		if(row.ddate != "合计"){
-//			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-//			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
-//			return ss ;
-//		}else{
-//			return formatMny(value);
-//		}
-//	}
 	if(row.ddate != "合计"){
 		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
 		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
