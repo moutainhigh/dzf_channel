@@ -73,7 +73,7 @@ function load(){
 			formatter : noteFormat
 		}, {
 			width : '100',
-			title : '合同状态',
+			title : '商品状态',
 			field : 'status',
             halign : 'center',
 			align : 'center',
