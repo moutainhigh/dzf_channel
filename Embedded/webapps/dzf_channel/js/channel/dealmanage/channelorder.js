@@ -477,7 +477,9 @@ function sendOut(){
 				type : 'textbox',
 				options : {
 					required : true,
-					height : 31
+					height : 31,
+					validType:['length[0,20]'],
+					invalidMessage:"物流公司最大长度不能超过20",
 				}
 			}
 		}, {
@@ -488,7 +490,9 @@ function sendOut(){
 				type : 'textbox',
 				options : {
 					required : true,
-					height : 31
+					height : 31,
+					validType:['length[0,20]'],
+					invalidMessage:"物流单号最大长度不能超过20",
 				}
 			}
 		}, {
