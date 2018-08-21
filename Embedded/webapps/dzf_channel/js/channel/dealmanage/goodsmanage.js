@@ -374,7 +374,32 @@ function add(){
 	
 	initClick();
 	initIdDelClick();
+	initEvent();
 	status = "add";
+}
+
+/**
+ * 监听事件
+ */
+function initEvent(){
+	$('#gcode').textbox({// 去除空格
+		onChange : function(n, o) {
+			if(isEmpty(n)){
+				return;
+			}
+			var _trim = trimStr(n,'g');
+			$("#gcode").textbox("setValue", _trim);
+		}
+	});
+	$('#gname').textbox({// 去除空格
+		onChange : function(n, o) {
+			if(isEmpty(n)){
+				return;
+			}
+			var _trim = trimStr(n,'g');
+			$("#gname").textbox("setValue", _trim);
+		}
+	});
 }
 
 /**
