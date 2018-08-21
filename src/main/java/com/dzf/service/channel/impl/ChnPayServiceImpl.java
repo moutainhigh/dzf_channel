@@ -302,7 +302,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 					vo.setSubmitime(null);
 				}
 			}else{
-				putStatus=vo.getSystype()==2?300:vo.getVstatus();
+				putStatus=vo.getSystype()==1?300:vo.getVstatus();
 				setBuff=map.get(putStatus)==null?new StringBuffer():map.get(putStatus);
 				setBuff.append(vo.getVbillcode()).append("、");
 				map.put(putStatus,setBuff);
@@ -425,6 +425,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		}
 		retmap.put("errmsg", errmsg.toString());
 		retmap.put("list", vos);
+		retmap.put("len_suc", vos.length);
 		String str="1";
 		if(vos.length<len){
 			str="2";
@@ -449,6 +450,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		retmap.put("errmsg", errmsg.toString());
 		retmap.put("list", null);
 		retmap.put("stat","2");
+		retmap.put("len_suc", 0);
 		return retmap;
 	}
 
