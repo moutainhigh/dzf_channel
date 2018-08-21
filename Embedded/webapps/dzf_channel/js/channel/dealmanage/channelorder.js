@@ -716,7 +716,11 @@ function showInfo(index){
                 var row = data.rows;
                 $("#billcode").html(row.billcode);
             	$("#pname").html(row.pname);
-            	$("#receinfo").html(row.rename+"，"+row.phone+"，"+row.readdress+"，"+row.recode);
+            	if(!isEmpty(row.recode)){
+            		$("#receinfo").html(row.rename+"，"+row.phone+"，"+row.readdress+"，"+row.recode);
+            	}else{
+            		$("#receinfo").html(row.rename+"，"+row.phone+"，"+row.readdress);
+            	}
             	$("#ndesummny").html(row.ndesummny);
             	$("#nderebmny").html(row.nderebmny);
                 
