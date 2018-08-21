@@ -125,7 +125,7 @@
 				<div class="time_col time_colp11" style="margin:10px 0px 10px 0px;">
 			    	<div style="display: inline-block;white-space: nowrap;">
 						<label style="text-align:right;width:135px; display: inline-block;vertical-align: top;">商品图片：</label>
-						<div style="display: inline-block;white-space: nowrap;width:83%;height:120px;overflow:auto">
+						<div style="display: inline-block;white-space: nowrap;width:700px;height:120px;overflow:auto">
 							 <div class="uploadImg"  style="display: inline-block;white-space: nowrap;width:100%;">
 								<div style="overflow: auto;" id="image1"></div> 
 							</div>
