@@ -6,8 +6,35 @@ $(function(){
 	load();
 	initRef();
 	setQryData();
-	reloadData();
+	loadData();//加载数据
 });
+
+/**
+ * 加载数据
+ */
+function loadData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	var url = contextPath + '/refund/refundbill!query.action';
+	$('#grid').datagrid('options').url = url;
+	if(operate == "toref"){
+		var id = obj.id;
+		$('#grid').datagrid('load', {
+			'id' : id,
+		});
+	}else{
+		$('#grid').datagrid('load', {
+			'begdate' : $('#bdate').datebox('getValue'),
+			'enddate' : $('#edate').datebox('getValue'),
+			'cpid' : $("#qcorpid").val(),
+			'vcode' : $('#vcode').textbox('getValue'),
+			'destatus' : $("#qstatus").combobox("getValue"),
+		});
+		setQryData();
+	}
+	$('#grid').datagrid('unselectAll');
+	$('#grid').datagrid('clearSelections');
+}
 
 /**
  * 查询框初始化

@@ -126,6 +126,10 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			sql.append("   AND f.istatus = ? \n");
 			spm.addParam(paramvo.getVdeductstatus());
 		}
+		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
+			sql.append("   AND f.pk_refund = ? \n");
+			spm.addParam(paramvo.getPk_bill());
+		}
 		sql.append("   ORDER BY f.updatets DESC \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

@@ -118,6 +118,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			sql.append("   AND l.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
+		if(!StringUtil.isEmpty(pamvo.getPk_goodsbill())){
+			sql.append(" AND l.pk_goodsbill = ? ");
+			spm.addParam(pamvo.getPk_goodsbill());
+		}
 		sql.append(" ORDER BY s.doperatetime DESC");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

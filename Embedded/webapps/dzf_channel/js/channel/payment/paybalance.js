@@ -472,14 +472,19 @@ function npFormat(value,row,index){
 		return "0.00";
 	}else{
 		if(row.ddate != "合计"){
-			if(row.iptype == 3){
+			if(row.opertype ==  3){
 				var url = 'channel/rebate/rebateinput.jsp?operate=topayc&pk_billid='+row.billid;
 				var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('返点单录入','"+url+"');\">"
 				+formatMny(value)+"</a>";
 				return ss ;
-			}else{
+			}else if(row.opertype == 1){
 				var url = 'channel/payment/payconfirm.jsp?operate=topayc&pk_billid='+row.billid;
 				var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('付款单确认','"+url+"');\">"
+				+formatMny(value)+"</a>";
+				return ss ;
+			}else if(row.opertype == 4){
+				var url = 'channel/refund/refundbill.jsp?operate=toref&id='+row.billid;
+				var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('退款单','"+url+"');\">"
 				+formatMny(value)+"</a>";
 				return ss ;
 			}
@@ -498,9 +503,17 @@ function npFormat(value,row,index){
  */
 function useFormat(value,row,index){
 	if(row.ddate != "合计"){
-		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
-		return ss ;
+		if(row.opertype == 2){
+			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+			return ss ;
+		}else if(row.opertype == 5){
+			var url = 'channel/dealmanage/channelorder.jsp?operate=toorder&billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('加盟商订单','"+url+"');\">"+formatMny(value)+"</a>";
+			return ss ;
+		}else{
+			return formatMny(value);
+		}
 	}else{
 		return formatMny(value);
 	}

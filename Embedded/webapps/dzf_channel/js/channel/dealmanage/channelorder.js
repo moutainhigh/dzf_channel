@@ -4,8 +4,32 @@ var editIndex = undefined;
 $(function(){
 	load();
 	initRef();
-	reloadData();
+	loadData();//加载数据
 });
+
+/**
+ * 加载数据
+ */
+function loadData(){
+	var obj = Public.getRequest();
+	var operate = obj.operate;
+	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
+	$('#grid').datagrid('options').url = url;
+	if(operate == "toorder"){
+		var billid = obj.billid;
+		$('#grid').datagrid('load', {
+			'billid' : billid,
+		});
+	}else{
+		$('#grid').datagrid('load', {
+			'billcode' : $("#qbcode").val(),
+			'corpid' : $("#qcpid").val(),
+			'vstatus' :  $('#qstatus').combobox('getValue'),
+		});
+	}
+	$('#grid').datagrid('unselectAll');
+	$('#grid').datagrid('clearSelections');
+}
 
 /**
  * 列表表格加载

@@ -57,7 +57,7 @@ public class ChnDetailRepVO extends SuperVO {
     private DZFDateTime ts;
     
     @FieldAlias("opertype")
-    private Integer iopertype;//操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；
+    private Integer iopertype;//操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；5：商品购买；
     
     @FieldAlias("opertypenm")
     private String vopertypename;//操作类型名称
