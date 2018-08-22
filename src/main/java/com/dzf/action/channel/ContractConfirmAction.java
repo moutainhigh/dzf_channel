@@ -131,7 +131,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_4);
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
@@ -180,7 +180,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_31);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_4);
 			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
 			} else if (uservo == null) {
@@ -370,7 +370,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	public void saveChange() {
 		Json json = new Json();
 		if (data != null) {
-			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_31);
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_4);
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
 			try {
