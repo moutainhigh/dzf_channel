@@ -1535,7 +1535,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				vmemo.append("合同终止：");
 			}else if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
-				vmemo.append("合同终止：");
+				vmemo.append("合同作废：");
 			}
 			CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
 			if(corpvo != null){
