@@ -25,8 +25,8 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
-res = res+'<li><a href="#V5.180726"><cite>V5.180726</cite></a></li>';
-res = res+'<li><a href="#V5.180627"><cite>V5.180627</cite></a></li>';
+res = res+'<li><a href="#V1.180830"><cite>V1.180830</cite></a></li>';
+/* res = res+'<li><a href="#V5.180627"><cite>V5.180627</cite></a></li>'; */
 res = res+'</ul>';
 res = res+'</div>';
 $(document).ready(function (){
@@ -65,224 +65,104 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2018年7月26日重磅更新
+	 &nbsp;2018年8月30日重磅更新
     </blockquote>
     <ul class="layui-timeline">
         <li class="layui-timeline-item">
-        <a name="V5.180726"></a>
+        <a name="V1.180830"></a>
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
             <div class="layui-timeline-content layui-text">
 	            <div class="layui-timeline-title">
-	               <h2 style="color: #FF5722;">V5.180726&nbsp;&nbsp;<span class="layui-badge-rim">2018-07-26</span></h2>
+	               <h2 style="color: #FF5722;">V1.180830&nbsp;&nbsp;<span class="layui-badge-rim">2018-08-30</span></h2>
 	            </div>
 	            <ul>
 					<li>
-		              <h3>支持企业会计制度</h3>
-					  <p>本版本预制了企业会计制度的会计科目、资产负债表、利润表、期末处理。</p>
+		              <h3>1.新增交易管理模块</h3>
+					
 		              <ul>
-		                <li>建账支持选择“企业会计制度”<br>
-		                	<img alt="建账" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image001.jpg')" src="./20180726/image001.jpg">
+		                <li>商品管理：可新增商品，对已有商品进行发布、下架<br>
+		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image001.png')" src="./20180830/image001.png">
 		                </li>
-						<li>支持采用“企业会计制度”会计科目入账<br>
-		                	<img alt="会计科目" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image002.jpg')" src="./20180726/image002.jpg">
+						<li>加盟商订单：对加盟商提交的订单进行确认、发货<br>
+		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image002.png')" src="./20180830/image002.png">
+		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image003.png')" src="./20180830/image003.png">
 		                </li>
-						<li>支持企业会计制度相关报表:资产负债表、利润表，并形成相关纳税申报表<br>
-		                	<img alt="资产负债表" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image003.jpg')" src="./20180726/image003.jpg">
-							<img alt="纳税申报" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image004.jpg')" src="./20180726/image004.jpg">
-		                </li>
-						<li>支持企业会计制度相关期末处理<br>
-		                	<img alt="期末处理" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image005.jpg')" src="./20180726/image005.jpg">
-		                </li>
+						
 		              </ul>
 		            </li>
 					<li>
-						<h3>图片支持“识别”操作</h3>
+						<h3>2.首页数据更新</h3>
 						<ul>
-	  		                <li>图片浏览“已制证票据”界面勾选票据，点击“识别”，可对“票据图片”进行识别制单。<br>
-	  		                	<img alt="图片浏览" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image006.jpg')" src="./20180726/image006.jpg">
+						<li>用户拥有的数据权限不同，首页显示的数据也不同<br>
+		                	
+							<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image004.png')" src="./20180830/image004.png">
+		                </li>
+						</ul>
+					</li>
+					<li>
+						<h3>3.加盟商人员统计优化</h3>
+						<ul>
+	  		                <li>点击列表加盟商名称可查看加盟商人员、角色、部门以用户负责客户数<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image005.png')" src="./20180830/image005.png">
 	  		                </li>
-							<li>凭证界面，点击“识别”可对“票据图片”进行识别制单。<br>
-	  		                	<img alt="识别" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image007.jpg')" src="./20180726/image007.jpg">
+	  		                 <li>加盟商人员统计列表增加“离职数”“流失率”，统计加盟商员工离职情况<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image006.png')" src="./20180830/image006.png">
+	  		                </li>
+							
+						</ul>
+					</li>
+				
+					<li>
+						<h3>4.加盟商开票查询优化</h3>
+						<ul>
+							<li>累计开票增加开票明细查询<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image007.png')" src="./20180830/image007.png">
+	  		                </li>
+	  		                <li>累计扣款增加扣款明细查询<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image008.png')" src="./20180830/image008.png">
 	  		                </li>
 						</ul>
 					</li>
 					<li>
-						<h3>进项发票、销项发票、银行对账单功能优化</h3>
+						<h3>5.业绩统计报表优化</h3>
 						<ul>
-	  		                <li>合并规则支持：相同期间科目合并、相同期间科目合并，银行科目不合并、同期间合并（科目不合并）。<br>
-	  		                	<img alt="合并规则" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image008.jpg')" src="./20180726/image008.jpg">
+							<li>业绩统计查询数据不再包含存量客户数  <br> 列表增加【导出】按钮，可导出数据至excel表<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image009.png')" src="./20180830/image009.png">
 	  		                </li>
-							<li>银行对账单支持与银行回单自动对账<br>状态栏可以查看：银行对账单120笔，银行回单98笔，未收到22笔。<br>
-	  		                	<img alt="状态栏" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image009.jpg')" src="./20180726/image009.jpg"><br>
-								点击“未收到回单”可查看未绑定“银行回单”对账单数据。<br>
-								<img alt="未收到回单" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image010.jpg')" src="./20180726/image010.jpg">
+	  		                <li>查询条件增加是否包含已解约加盟商选项<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image010.png')" src="./20180830/image010.png">
 	  		                </li>
 						</ul>
 					</li>
-					<li>
-						<h3>附加税计提根据“纳税信息”节点维护的税率计提</h3>
+				    <li>
+						<h3>6.数据运营管理报表优化</h3>
 						<ul>
-	  		                <li>
-	  		                	<img alt="纳税信息" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image011.jpg')" src="./20180726/image011.jpg">
-								<img alt="税收测算" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image012.jpg')" src="./20180726/image012.jpg">
+							<li>业绩统计、财务处理分析、行业分析列表字段长度调整 <br>业绩统计、财务处理分析、行业分析、加盟商人员统计增加加盟商查询<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image011.png')" src="./20180830/image011.png">
 	  		                </li>
+	  		                
 						</ul>
 					</li>
-					<li>
-						<h3>收入预警支持按“月度、季度、年度、连续12月”组合预警</h3>
+					 <li>
+						<h3>7.易用性优化</h3>
 						<ul>
-							<li>
-	  		                	<img alt="预警" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image013.jpg')" src="./20180726/image013.jpg">
-								<img alt="预警" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image014.jpg')" src="./20180726/image014.jpg">
+							<li>在线会计业务系统附件查看可最小化至底部<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image012.png')" src="./20180830/image012.png">
 	  		                </li>
+	  		                <li>付款单审批、确认列表界面增加审批人<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image013.png')" src="./20180830/image013.png">
+	  		                </li>
+	  		                <li>退款单列表界面增加合计行<br>
+	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image014.png')" src="./20180830/image014.png">
+	  		                </li>
+	  		                
 						</ul>
 					</li>
-					<li>
-						<h3>资产负债表不平提示差额及具体原因，查账更方便</h3>
-						<ul>
-							<li>资产负债表不平提示差额及具体原因，点击查看连接到相应节点。<br>
-	  		                	<img alt="资产负债表" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image015.jpg')" src="./20180726/image015.jpg">
-	  		                </li>
-						</ul>
-					</li>
-					<li>
-						<h3>财务报表支持税局tax格式导出，并导入到国税系统中，直接申报，减少手工录入</h3>
-						<ul>
-							<li>
-	  		                	<img alt="财务报表" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image016.jpg')" src="./20180726/image016.jpg">
-	  		                </li>
-						</ul>
-					</li>
-					<li>
-						<h3>一般纳税人测算税额更完善</h3>
-						<ul>
-							<li>税收测算节点增加“待认证抵扣税额”，未认证的票据金额累计会到“待认证抵扣税额”<br>
-	  		                	<img alt="税收测算" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image017.jpg')" src="./20180726/image017.jpg">
-	  		                </li>
-						</ul>
-					</li>
-					<li>
-						<h3>总账推库存模式功能优化</h3>
-						<ul>
-							<li>存货支持快捷新增“存货类别”和“计量单位”<br>
-	  		                	<img alt="库存" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image018.jpg')" src="./20180726/image018.jpg">
-	  		                	<img alt="库存" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image019.jpg')" src="./20180726/image019.jpg">
-	  		                </li>
-						</ul>
-					</li>
-					<li>
-						<h3>纳税申报</h3>
-						<ul>
-							<li>
-								北京地区增加小规模月报表申报<br>
-	  		                	<img alt="北京地区增加小规模月报表申报" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image020.jpg')" src="./20180726/image020.jpg">
-	  		                	<img alt="北京地区增加小规模月报表申报" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image021.jpg')" src="./20180726/image021.jpg">
-	  		                </li>
-							<li>纳税信息优化<br>
-								（1）纳税信息维护节点，默认打开是当前公司的详情页；可返回至列表界面<br>
-								（2）增加3个字段：法定代表人、法人电话、期末从业人数<br>
-	  		                	<img alt="纳税信息" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image022.jpg')" src="./20180726/image022.jpg">
-	  		                </li>
-							<li>
-								客户端支持批量维护公司纳税信息，可同步到在线会计端纳税信息节点<br>
-	  		                	<img alt="客户端" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180726/image023.jpg')" src="./20180726/image023.jpg"><br>
-	  		                </li>
-						</ul>
-					</li>
+				
+				
 				</ul>
             </div>
         </li>
-
-       <li class="layui-timeline-item">
-        <a name="V5.180627"></a>
-        <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
-        <div class="layui-timeline-content layui-text">
-          <div class="layui-timeline-title" >
-            <h2>V5.180627&nbsp;&nbsp;<span class="layui-badge-rim">2018-06-27</span></h2>
-          </div>
-          <ul>
-            <li>
-              <h3>银行对账单新增5家银行导入</h3>
-              <ul>
-              <!-- <a target="_blank" href="./20180627/image001.png" >#查看图片</a> -->
-                <li>新增银行类型：重庆农村商业银行、中国农业银行苏州分行、苏州银行、中国建设银行、中国建设银行苏州分行。<br>
-                	<img alt="新增银行" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image001.png')" src="./20180627/image001.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>智能识别显示图片识别信息</h3>
-              <ul>
-                <li>在图片浏览、填制凭证显示图片识别结果，对于智能生成凭证正确性检查更方便。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image003.png')"  src="./20180627/image003.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>支持数量、单价、汇率精度自定义设置</h3>
-              <ul>
-                <li>参数设置—设置数量、单价、汇率精度。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image005.png')"  src="./20180627/image005.png">
-                </li>
-                <li>填制凭证时数量、单价、汇率的精度会根据预先设置展示。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image007.png')"  src="./20180627/image007.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>凭证合并</h3>
-              <ul>
-                <li>智能识别的凭证和手工录入的凭证合并。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image009.png')"  src="./20180627/image009.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>支持村集体组织核算</h3>
-              <ul>
-                <li>会计科目方案增加农村集体经济组织。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image011.png')"  src="./20180627/image011.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>存货导入自动新增存货类别、计量单位项目</h3>
-              <ul>
-                <li>库存管理模块导入存货数据，自动根据导入存货数据新增存货类别、计量单位项目。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image013.png')"  src="./20180627/image013.png">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3>存货成本表支持负库存调整</h3>
-              <ul>
-                <li>库存成本表新增调整库存按钮，根据账务需要进行库存调整（总账凭证生成存货单据）。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image019.png')"  src="./20180627/image019.png">
-                </li>
-                <li>选择需要调整的存货点击调整库存，系统自动联查到凭证管理节点，展示该存货相关凭证数据。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image021.png')"  src="./20180627/image021.png">
-                </li>
-                <li>凭证界面显示存货结存数量，调整凭证后保存即可。
-                <br>
-                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20180627/image023.png')"  src="./20180627/image023.png">
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </li>
-
-
-     
-   
 
       <li class="layui-timeline-item">
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
