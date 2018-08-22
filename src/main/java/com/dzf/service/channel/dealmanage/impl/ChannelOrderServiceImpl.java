@@ -96,6 +96,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndeductmny,  \n") ; 
 		sql.append("       l.ndedrebamny,  \n") ; 
 		sql.append("       l.vstatus,  \n") ; 
+		sql.append("       l.updatets,  \n") ; 
 		sql.append("       t.logisticsunit,  \n") ; 
 		sql.append("       t.fastcode,  \n") ; 
 		sql.append("       s.doperatetime AS dsubmittime  \n") ; 
@@ -140,7 +141,6 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid, 120);
-			
 			checkData(pamvo, type);
 			if(type != null && type == 1){
 				return updateConfirm(pamvo, cuserid);
@@ -385,6 +385,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private void checkData(GoodsBillVO pamvo, Integer type) throws DZFWarpException {
 		GoodsBillVO oldvo = (GoodsBillVO) singleObjectBO.queryByPrimaryKey(GoodsBillVO.class, pamvo.getPk_goodsbill());
 		if(oldvo != null){
+			if(pamvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0){
+				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
+			}
 			if(type != null && (type == 1 || type == 2) ){
 				if(oldvo.getVstatus() != null && oldvo.getVstatus() != 0){
 					throw new BusinessException("订单：【"+pamvo.getVbillcode()+"】状态不为待确认");
