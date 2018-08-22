@@ -426,10 +426,11 @@ function showImage(content){
 	    shade: false,  
 	    title: '图片', //不显示标题  
 	    area:['auto','auto'],  
-	    area: ['99%','90%'],  
+	    area: ['90%','90%'],  
 	    content: content  , 
 	    maxmin: true,
 	    shadeClose: true,
+	    moveOut: true,
 	    cancel: function () {  
 	        //layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
 	    }  
