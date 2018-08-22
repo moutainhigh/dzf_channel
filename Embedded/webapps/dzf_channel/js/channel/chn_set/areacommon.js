@@ -44,6 +44,7 @@ function load() {
 		singleSelect : true,
 		queryParams : {'type' :type},
 		height : Public.setGrid().h,
+		width : Public.setGrid().w,
 		columns : [ [ {
 			width : '80',
 			title : '编码',
