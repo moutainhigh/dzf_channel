@@ -163,14 +163,43 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @return
 	 */
 	private ChnPayBillVO updateData(ChnPayBillVO billvo, Integer opertype, String cuserid,String vreason){
-		if(opertype == IStatusConstant.ICHNOPRATETYPE_3){//收款确认
-			return updateConfrimData(billvo, opertype, cuserid);
-		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4){//确认驳回
-			return updateRejectData(billvo, vreason, cuserid);
-		}else if(opertype == IStatusConstant.ICHNOPRATETYPE_5){//取消确认
-			return updateCancelData(billvo, opertype, cuserid);
+		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
+			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
+		}
+		String uuid = UUID.randomUUID().toString();
+		try {
+			checkData(billvo);
+			if(opertype == IStatusConstant.ICHNOPRATETYPE_3){//收款确认
+				billvo = updateConfrimData(billvo, opertype, cuserid);
+			}else if(opertype == IStatusConstant.ICHNOPRATETYPE_4){//确认驳回
+				billvo = updateRejectData(billvo, vreason, cuserid);
+			}else if(opertype == IStatusConstant.ICHNOPRATETYPE_5){//取消确认
+				billvo = updateCancelData(billvo, opertype, cuserid);
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
 		return billvo;
+	}
+	
+	/**
+	 * 操作数据前校验
+	 * @param billvo
+	 * @throws DZFWarpException
+	 */
+	private void checkData(ChnPayBillVO billvo) throws DZFWarpException {
+		ChnPayBillVO oldvo = (ChnPayBillVO) singleObjectBO.queryByPrimaryKey(ChnPayBillVO.class, billvo.getPk_paybill());
+		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
+			throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
+		}
+		if(billvo.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+			throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
+		}
 	}
 	
 	/**
@@ -182,12 +211,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateConfrimData(ChnPayBillVO billvo, Integer opertype, String cuserid) throws DZFWarpException {
-		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
-			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
+//		if(StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())){
+//			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
+//		}
+//		String uuid = UUID.randomUUID().toString();
+//		try {
+//			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 120);
 			if(billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
 				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 			}
@@ -272,14 +301,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				upstr.add("vreason");
 			}
 			singleObjectBO.update(billvo, upstr.toArray(new String[0]));
-		} catch (Exception e) {
-			if (e instanceof BusinessException)
-				throw new BusinessException(e.getMessage());
-			else
-				throw new WiseRunException(e);
-		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
-		}
+//		} catch (Exception e) {
+//			if (e instanceof BusinessException)
+//				throw new BusinessException(e.getMessage());
+//			else
+//				throw new WiseRunException(e);
+//		} finally {
+//			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
+//		}
 		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
 		if(uservo != null){
 			billvo.setVconfirmname(uservo.getUser_name());
@@ -298,12 +327,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 */
 	private ChnPayBillVO updateCancelData(ChnPayBillVO billvo, Integer opertype, String cuserid)
 			throws DZFWarpException {
-		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
-			throw new BusinessException("单据号" + billvo.getVbillcode() + "数据错误");
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), uuid, 120);
+//		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
+//			throw new BusinessException("单据号" + billvo.getVbillcode() + "数据错误");
+//		}
+//		String uuid = UUID.randomUUID().toString();
+//		try {
+//			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(), uuid, 120);
 			if (billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_3) {
 				throw new BusinessException("单据号" + billvo.getVbillcode() + "状态不为【已确认】");
 			}
@@ -319,11 +348,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				if (balance.compareTo(billvo.getNpaymny()) < 0) {
 					throw new BusinessException("单据号" + billvo.getVbillcode() + "余额不足");
 				} else {
-					String uid = UUID.randomUUID().toString();
 					String uiid = UUID.randomUUID().toString();
+					String uid = UUID.randomUUID().toString();
 					try {
 						LockUtil.getInstance().tryLockKey("cn_balance", billvo.getPk_corp() + "" + billvo.getIpaytype(),
-								uid, 120);
+								uiid, 120);
 						LockUtil.getInstance().tryLockKey("cn_detail", billvo.getPk_paybill(), uid, 120);
 						// 更新余额表：
 						StringBuffer usql = new StringBuffer();
@@ -337,7 +366,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 						spm.addParam(billvo.getPk_corp());
 						int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 						if (res == 1) {
-							sql = " delete from cn_detail where pk_bill = ? and pk_corp = ? ";
+							sql = " delete from cn_detail where nvl(dr,0) = 0 and pk_bill = ? and pk_corp = ? ";
 							spm = new SQLParameter();
 							spm.addParam(billvo.getPk_paybill());
 							spm.addParam(billvo.getPk_corp());
@@ -365,8 +394,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 							throw new WiseRunException(e);
 					} finally {
 						LockUtil.getInstance().unLock_Key("cn_balance", billvo.getPk_corp() + "" + billvo.getIpaytype(),
-								uid);
-						LockUtil.getInstance().unLock_Key("cn_detail", billvo.getPk_paybill(), uiid);
+								uiid);
+						LockUtil.getInstance().unLock_Key("cn_detail", billvo.getPk_paybill(), uid);
 					}
 				}
 			}
@@ -375,14 +404,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setDconfirmtime(new DZFDateTime());// 取消确认时间
 			billvo.setTstamp(new DZFDateTime());// 操作时间
 			singleObjectBO.update(billvo, new String[] { "vstatus", "vconfirmid", "dconfirmtime", "tstamp" });
-		} catch (Exception e) {
-			if (e instanceof BusinessException)
-				throw new BusinessException(e.getMessage());
-			else
-				throw new WiseRunException(e);
-		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(), uuid);
-		}
+//		} catch (Exception e) {
+//			if (e instanceof BusinessException)
+//				throw new BusinessException(e.getMessage());
+//			else
+//				throw new WiseRunException(e);
+//		} finally {
+//			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(), uuid);
+//		}
 		return billvo;
 	}
 
@@ -396,12 +425,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 */
 	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, String vreason, String cuserid)
 			throws DZFWarpException {
-		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
-			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
-		}
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
+//		if (StringUtil.isEmpty(billvo.getTableName()) || StringUtil.isEmpty(billvo.getPk_paybill())) {
+//			throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
+//		}
+//		String uuid = UUID.randomUUID().toString();
+//		try {
+//			LockUtil.getInstance().tryLockKey(billvo.getTableName(), billvo.getPk_paybill(),uuid, 60);
 			if(billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5){
 				throw new BusinessException("单据号"+billvo.getVbillcode()+"状态不为【待确认】");
 			}
@@ -413,14 +442,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setTstamp(new DZFDateTime());//操作时间
 			String[] str = new String[]{"irejectype","vconfirmid","dconfirmtime","vreason","vstatus","tstamp"}; 
 			singleObjectBO.update(billvo, str);
-		} catch (Exception e) {
-			if (e instanceof BusinessException)
-				throw new BusinessException(e.getMessage());
-			else
-				throw new WiseRunException(e);
-		} finally {
-			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
-		}
+//		} catch (Exception e) {
+//			if (e instanceof BusinessException)
+//				throw new BusinessException(e.getMessage());
+//			else
+//				throw new WiseRunException(e);
+//		} finally {
+//			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
+//		}
 		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
 		if(uservo != null){
 			billvo.setVconfirmname(uservo.getUser_name());

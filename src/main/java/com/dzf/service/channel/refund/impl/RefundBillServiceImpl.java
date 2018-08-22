@@ -629,7 +629,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 						sql = new StringBuffer();
 						spm = new SQLParameter();
 						sql.append("DELETE FROM cn_detail  \n") ;
-						sql.append(" WHERE pk_corp = ?  \n") ; 
+						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?  \n") ; 
 						sql.append("   AND ipaytype = ?  \n") ; 
 						sql.append("   AND pk_bill = ?  \n") ; 
 						sql.append("   AND iopertype = ? \n");
@@ -692,7 +692,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 						sql = new StringBuffer();
 						spm = new SQLParameter();
 						sql.append("DELETE FROM cn_detail  \n") ;
-						sql.append(" WHERE pk_corp = ?  \n") ; 
+						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?  \n") ; 
 						sql.append("   AND ipaytype = ?  \n") ; 
 						sql.append("   AND pk_bill = ?  \n") ; 
 						sql.append("   AND iopertype = ? \n");

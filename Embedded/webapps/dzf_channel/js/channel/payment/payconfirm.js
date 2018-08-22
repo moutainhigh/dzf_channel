@@ -282,6 +282,10 @@ function load(){
 			field : 'billid',
 			title : '主键',
 			hidden : true
+		}, {
+			field : 'tstp',
+			title : '时间戳',
+			hidden : true
 		}, ] ],
 		onLoadSuccess : function(data) {
             parent.$.messager.progress('close');
