@@ -213,7 +213,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 			mcvo.setDiflen(3);
 			String code = billCode.getDefaultCode(mcvo);
 			if (StringUtil.isEmpty(code)) {
-				throw new BusinessException("获取付款编号失败,没有相应的编码规则");
+				throw new BusinessException("获取付款单据号失败,没有相应的编码规则");
 			}
 			vo.setVbillcode(code);
 		}else{
@@ -221,9 +221,9 @@ public class ChnPayServiceImpl implements IChnPayService {
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid, 60);
+			LockUtil.getInstance().tryLockKey(vo.getTableName()+corpvo.getPk_corp(), vo.getVbillcode(),uuid, 60);
 			if(!checkCodeIsUnique(vo) ){
-				throw new BusinessException("请手动输入付款编码!");
+				throw new BusinessException("付款单据号重复,请重新输入或稍后再试!");
 			}
 		}catch (Exception e) {
             if (e instanceof BusinessException)
@@ -231,7 +231,7 @@ public class ChnPayServiceImpl implements IChnPayService {
             else
                 throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid);
+			LockUtil.getInstance().unLock_Key(vo.getTableName()+corpvo.getPk_corp(), vo.getVbillcode(),uuid);
 		}
 	}
 	
