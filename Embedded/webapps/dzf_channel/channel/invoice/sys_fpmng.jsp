@@ -134,6 +134,7 @@
 				<div data-options="region:'north'" style="padding-top:20px;">
 					<form id="fp_form" method="post">
 						<input type='hidden' id="id" name="id"/>
+						<input type='hidden' id="updatets" name="updatets"/>
 						<input type='hidden' id="corpid" name="corpid"/>
 						<input id="tempprice" type='hidden' name="tempprice"/>
 						<div class="time_col time_colp11">

@@ -35,6 +35,7 @@ import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
@@ -633,10 +634,17 @@ public class InvManagerServiceImpl implements InvManagerService {
         try{
             LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
             ChInvoiceVO ovo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
-            if (StringUtil.isEmpty(vo.getPk_corp())) {
-                if (ovo == null) {
-                    throw new BusinessException("数据已被删除，请刷新重新操作。");
+            if (ovo == null) {
+                throw new BusinessException("数据已被删除，请刷新重新操作。");
+            }
+            if(ovo.getUpdatets() !=null){
+                if(vo.getUpdatets() != null && !vo.getUpdatets().equals(ovo.getUpdatets())){
+                    throw new BusinessException("数据已发生变化，请刷新后操作");
+                }else if(vo.getUpdatets() == null){
+                    throw new BusinessException("数据已发生变化，请刷新后操作");
                 }
+            }
+            if (StringUtil.isEmpty(vo.getPk_corp())) {
                 vo.setPk_corp(ovo.getPk_corp());
             }
             if(hasDigit(vo.getRusername())){
@@ -646,13 +654,14 @@ public class InvManagerServiceImpl implements InvManagerService {
                 throw new BusinessException("已开票，不允许修改。");
             }
             String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                    "bankcode", "email", "vmome","rusername" };
+                    "bankcode", "email", "vmome","rusername","updatets" };
             if(ovo.getInvstatus() == 3){
                 vo.setInvstatus(1);
                 fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                        "bankcode", "email", "vmome","rusername","invstatus" };
+                        "bankcode", "email", "vmome","rusername","invstatus","updatets" };
             }
             checkInvPrice(vo);
+            vo.setUpdatets(new DZFDateTime());
             singleObjectBO.update(vo, fieldNames);
         }catch(Exception e){
             if (e instanceof BusinessException)

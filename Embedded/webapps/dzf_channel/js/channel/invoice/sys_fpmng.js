@@ -133,6 +133,7 @@ function initDataGrid(){
 		            {width : '200',title : '二维码URL',field : 'qrcodepath',align:'center',formatter:codeLink,},
 		            
 		            {width : '100',title : '',field : 'corpid',hidden:true},
+		            {width : '100',title : '',field : 'updatets',hidden:true},
 		          ]],
 		onBeforeLoad : function(param) {
 			$.messager.progress({
