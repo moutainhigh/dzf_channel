@@ -99,11 +99,11 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		if(!StringUtil.isEmpty(pamvo.getVgoodscode())){
 			sql.append("   AND g.vgoodscode like ?  \n") ; 
-			spm.addParam(pamvo.getVgoodscode()+"%");
+			spm.addParam("%"+pamvo.getVgoodscode()+"%");
 		}
 		if(!StringUtil.isEmpty(pamvo.getVgoodsname())){
 			sql.append("   AND g.vgoodsname like ?  \n") ; 
-			spm.addParam(pamvo.getVgoodsname()+"%");
+			spm.addParam("%"+pamvo.getVgoodsname()+"%");
 		}
 		sql.append(" ORDER BY g.ts DESC \n");
 		qryvo.setSql(sql.toString());
