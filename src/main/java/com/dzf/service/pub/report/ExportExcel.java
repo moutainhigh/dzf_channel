@@ -900,9 +900,13 @@ public byte[] exportYjtjExcel(String title, List<String> headers, List<String> h
 					HSSFRichTextString richString;
 					HSSFCell cell = row1.createCell(count);
 					if (map.get(key) != null) {
-						if(key.contains("trates") || key.contains("tratet")){
+						if(key.contains("trate")){
 							if(new DZFDouble(map.get(key).toString()).equals(new DZFDouble().ZERO_DBL)){
 								cell.setCellValue("--");
+							}else{
+								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
+								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
+								cell.setCellValue(doublevalue.toString());
 							}
 						}else if(!fieldlist.contains(key)){
 							DZFDouble doublevalue = new DZFDouble(map.get(key).toString());

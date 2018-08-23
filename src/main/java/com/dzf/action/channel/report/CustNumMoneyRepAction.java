@@ -116,6 +116,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldlist.add("provname");
 		fieldlist.add("incode");
 		fieldlist.add("corpnm");
+		fieldlist.add("cuname");
 		fieldlist.add("stockcusts");
 		fieldlist.add("stockcustt");
 		fieldlist.add("newcusts");
