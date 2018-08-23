@@ -95,7 +95,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         sql.append(" 	on a.pk_corp = balance.pk_corp");
         sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp ");
         sql.append(" and (contract.vdeductstatus = 1 or contract.vdeductstatus = 9 or contract.vdeductstatus = 10) ");//
-        sql.append(" where a.ischannel = 'Y'and nvl(a.dr,0)=0  and nvl(contract.dr, 0) = 0 ");
+        sql.append(" where nvl(contract.dr, 0) = 0 ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and a.pk_corp  in (" + corpIdS + ")");
