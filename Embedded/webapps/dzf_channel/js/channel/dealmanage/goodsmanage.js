@@ -165,7 +165,7 @@ function noteFormat(value){
  */
 function opermatter(val, row, index) {
 	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(' + index + ')">删除</a>';
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
 }
 
 /**
@@ -309,10 +309,11 @@ function queryByID(gid, type){
 
 /**
  * 删除
- * @param index
+ * @param ths
  */
-function dele(index){
-	var row = $('#grid').datagrid('getData').rows[index];
+function dele(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	var row = $('#grid').datagrid('getData').rows[tindex];
 	if (row.status != 1) {
 		Public.tips({
 			content : '该记录不是已保存状态，不允许删除',
@@ -337,7 +338,7 @@ function dele(index){
 						});
 					} else {
 						$('#grid').datagrid('clearSelections');
-						$('#grid').datagrid('deleteRow', index); 
+						$('#grid').datagrid('deleteRow', Number(tindex)); 
 						Public.tips({
 							content : data.msg,
 						});
