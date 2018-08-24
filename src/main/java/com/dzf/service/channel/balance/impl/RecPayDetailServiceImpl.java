@@ -50,7 +50,7 @@ public class RecPayDetailServiceImpl implements IRecPayDetailService {
         str.append(" join cn_contract cncon on dl.pk_bill = cncon.pk_confrim");
         str.append(" join ynt_contract con on con.pk_contract = cncon.pk_contract");
         str.append(" where nvl(dl.dr,0) = 0 and nvl(cncon.dr,0) = 0 and nvl(con.dr,0) = 0 ");
-        str.append(" and nvl(dl.iopertype,1) = 2 and dl.ipaytype = 2");
+        str.append(" and nvl(dl.iopertype,1) in (2,5) and dl.ipaytype = 2");
         str.append(" and dl.pk_corp = ? and dl.doperatedate <= ?");
         str.append(" order by  dl.doperatedate desc");
         return str.toString();

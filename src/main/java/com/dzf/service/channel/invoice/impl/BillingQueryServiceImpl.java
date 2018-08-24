@@ -52,7 +52,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 		sql.append(" sum(nvl(detail.nusedmny,0)) as debittotalmny ");
 		sql.append(" from bd_account ba");
 		sql.append(" left join cn_detail detail on ba.pk_corp = detail.pk_corp ");
-		sql.append(" and nvl(detail.dr,0) = 0 and detail.iopertype = 2 and detail.ipaytype = 2 ");
+		sql.append(" and nvl(detail.dr,0) = 0 and detail.iopertype in (2,5) and detail.ipaytype = 2 ");
 		if (!StringUtil.isEmpty(paramvo.getBdate())) {
 			sql.append(" and detail.doperatedate <= ?");
 			sp.addParam(paramvo.getBdate());
