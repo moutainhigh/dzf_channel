@@ -118,56 +118,45 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
-
-	@Override
-	public CorpNameEVO updateAudit(CorpNameEVO paramvo, UserVO uservo, int opertype, String vreason) throws DZFWarpException {
-		String errmsg = checkBeforeAudit(paramvo);
-		if(!StringUtil.isEmpty(errmsg)){
-			paramvo.setVerrmsg(errmsg);
-			return paramvo;
-		}else{
-			paramvo = updateData(paramvo, uservo, opertype, vreason);
-		}
-		return paramvo;
-	}
 	
 	/**
 	 * 更新数据
-	 * @param paramvo
+	 * @param datavo
 	 * @param uservo
 	 * @param opertype
 	 * @param vreason
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private CorpNameEVO updateData(CorpNameEVO paramvo, UserVO uservo, int opertype, String vreason)
+	public CorpNameEVO updateData(CorpNameEVO datavo, UserVO uservo, int opertype, String vreason)
 			throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(paramvo.getTableName(), paramvo.getPk_corpnameedit(),uuid, 60);
+			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_corpnameedit(),uuid, 60);
+			checkBeforeAudit(datavo);
 			if (opertype == 2) {
-				CorpVO corpvo = CorpCache.getInstance().get(null, paramvo.getPk_corp());
+				CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corp());
 				if(corpvo != null){
-					corpvo.setUnitname(CodeUtils1.enCode(paramvo.getVnewname()));
+					corpvo.setUnitname(CodeUtils1.enCode(datavo.getVnewname()));
 					singleObjectBO.update(corpvo, new String[] { "unitname" });
-					CorpCache.getInstance().remove(paramvo.getPk_corp());
+					CorpCache.getInstance().remove(datavo.getPk_corp());
 				} else {
-					String errmsg = "原客户名称" + CodeUtils1.deCode(paramvo.getVoldname()) + "数据错误";
-					paramvo.setVerrmsg(errmsg);
+					String errmsg = "原客户名称" + CodeUtils1.deCode(datavo.getVoldname()) + "数据错误";
+					datavo.setVerrmsg(errmsg);
 				} 
-				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_2);
-				paramvo.setVapprovenote(null);
+				datavo.setIstatus(IStatusConstant.ICORPEDITSTATUS_2);
+				datavo.setVapprovenote(null);
 			} else if (opertype == 3) {
-				paramvo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
-				paramvo.setVapprovenote(vreason);
+				datavo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
+				datavo.setVapprovenote(vreason);
 			}
-			paramvo.setUpdatets(new DZFDateTime());
+			datavo.setUpdatets(new DZFDateTime());
 			if (uservo != null) {
-				paramvo.setVapproveid(uservo.getCuserid());
-				paramvo.setVapprovename(uservo.getUser_name());
+				datavo.setVapproveid(uservo.getCuserid());
+				datavo.setVapprovename(uservo.getUser_name());
 			}
-			paramvo.setTapprovetime(new DZFDateTime());
-			singleObjectBO.update(paramvo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
+			datavo.setTapprovetime(new DZFDateTime());
+			singleObjectBO.update(datavo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
 					"vapprovename", "tapprovetime" });
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -175,28 +164,29 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(paramvo.getTableName(), paramvo.getPk_corpnameedit(),uuid);
+			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_corpnameedit(),uuid);
 		}
-		return paramvo;
+		return datavo;
 	}
-
+	
 	/**
 	 * 审核前校验
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private String checkBeforeAudit(CorpNameEVO paramvo) throws DZFWarpException {
-		String errmsg = "";
+	private void checkBeforeAudit(CorpNameEVO paramvo) throws DZFWarpException {
 		//1、时间戳校验
 		CorpNameEVO oldvo = (CorpNameEVO) singleObjectBO.queryByPrimaryKey(CorpNameEVO.class, paramvo.getPk_corpnameedit());
-		if(oldvo != null && oldvo.getUpdatets() != null && oldvo.getUpdatets().compareTo(paramvo.getUpdatets()) != 0){
-			errmsg = "原客户名称"+CodeUtils1.deCode(paramvo.getVoldname())+"数据已经发生变化，请刷新界面数据后，再次尝试";
+		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
+			throw new BusinessException("原客户名称"+CodeUtils1.deCode(paramvo.getVoldname())+"数据已经发生变化，请刷新界面数据后，再次尝试");
+		}
+		if(oldvo.getUpdatets() != null && oldvo.getUpdatets().compareTo(paramvo.getUpdatets()) != 0){
+			throw new BusinessException("原客户名称"+CodeUtils1.deCode(paramvo.getVoldname())+"数据已经发生变化，请刷新界面数据后，再次尝试");
 		}
 		if(paramvo.getIstatus() != null && paramvo.getIstatus() != IStatusConstant.ICORPEDITSTATUS_1){
-			errmsg = "原客户名称"+CodeUtils1.deCode(paramvo.getVoldname())+"数据不为待审核";
+			throw new BusinessException("原客户名称"+CodeUtils1.deCode(paramvo.getVoldname())+"数据不为待审核");
 		}
-		return errmsg;
 	}
 
 	@Override

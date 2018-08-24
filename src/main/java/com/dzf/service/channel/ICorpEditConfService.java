@@ -28,6 +28,14 @@ public interface ICorpEditConfService {
 	public List<CorpNameEVO> query(QryParamVO paramvo, UserVO uservo) throws DZFWarpException;
 	
 	/**
+	 * 通过主键查询修改信息
+	 * @param pk_corpnameedit
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public CorpNameEVO queryByID(String pk_corpnameedit) throws DZFWarpException;
+	
+	/**
 	 * 审核/拒绝审核
 	 * @param paramvo
 	 * @param uservo
@@ -36,14 +44,6 @@ public interface ICorpEditConfService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public CorpNameEVO updateAudit(CorpNameEVO paramvo, UserVO uservo, int opertype, String vreason) throws DZFWarpException;
-	
-	/**
-	 * 通过主键查询修改信息
-	 * @param pk_corpnameedit
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public CorpNameEVO queryByID(String pk_corpnameedit) throws DZFWarpException;
+	public CorpNameEVO updateData(CorpNameEVO paramvo, UserVO uservo, int opertype, String vreason) throws DZFWarpException;
 
 }

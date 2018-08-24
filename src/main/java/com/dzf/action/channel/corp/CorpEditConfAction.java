@@ -136,13 +136,13 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 				if (billvo == null) {
 					log.info("客户名称修改-获取操作数据为空");
 				}
-				billvo = confser.updateAudit(billvo, uservo, opertype, vreason);
-				if (!StringUtil.isEmpty(billvo.getVerrmsg())) {
-					errnum++;
-					errmsg.append(billvo.getVerrmsg()).append("<br>");
-				} else {
+				try {
+					billvo = confser.updateData(billvo, uservo, opertype, vreason);
 					rignum++;
 					rightlist.add(billvo);
+				} catch (Exception e) {
+					errnum++;
+					errmsg.append(e.getMessage()).append("<br>");
 				}
 			}
 			json.setSuccess(true);
