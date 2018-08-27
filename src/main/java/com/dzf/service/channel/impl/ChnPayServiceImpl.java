@@ -153,7 +153,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 				LockUtil.getInstance().tryLockKey(vo.getTableName(), id,uuid, 60);
 				checkData(vo.getTstamp(),vo.getPk_paybill());
 			}
-			makeCode(vo, corpvo);
+			makeCode(vo);
 			vo.setTstamp(new DZFDateTime());
 			if(files!=null&&filenames!=null){
 				vo=saveAttachment(vo,corpvo,cuserid,files[0],filenames[0]);
@@ -203,17 +203,17 @@ public class ChnPayServiceImpl implements IChnPayService {
 	 * @param vo
 	 * @param corpvo
 	 */
-	private void makeCode(ChnPayBillVO vo, CorpVO corpvo) {
+	private void makeCode(ChnPayBillVO vo) {
 		if(StringUtil.isEmpty(vo.getVbillcode())){
 			MaxCodeVO mcvo=new MaxCodeVO();
 			mcvo.setTbName(vo.getTableName());
 			mcvo.setFieldName("vbillcode");
-			mcvo.setPk_corp(corpvo.getPk_corp());
+			mcvo.setPk_corp(vo.getPk_corp());
 			mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
 			mcvo.setDiflen(3);
 			String code = billCode.getDefaultCode(mcvo);
 			if (StringUtil.isEmpty(code)) {
-				throw new BusinessException("获取付款单据号失败,没有相应的编码规则");
+				throw new BusinessException("获取付款单据号失败,请手动输入");
 			}
 			vo.setVbillcode(code);
 		}else{
@@ -221,7 +221,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		}
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(vo.getTableName()+corpvo.getPk_corp(), vo.getVbillcode(),uuid, 60);
+			LockUtil.getInstance().tryLockKey(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid, 60);
 			if(!checkCodeIsUnique(vo) ){
 				throw new BusinessException("付款单据号重复,请重新输入或稍后再试!");
 			}
@@ -231,7 +231,7 @@ public class ChnPayServiceImpl implements IChnPayService {
             else
                 throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(vo.getTableName()+corpvo.getPk_corp(), vo.getVbillcode(),uuid);
+			LockUtil.getInstance().unLock_Key(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid);
 		}
 	}
 	
