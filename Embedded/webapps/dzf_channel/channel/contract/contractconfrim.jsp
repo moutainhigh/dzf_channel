@@ -772,12 +772,12 @@
 									style="width:76%;height:28px;text-align:left;">
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:41%;text-align: right;">签订日期：</label>
+								<label style="width:40%;text-align: right;">签订日期：</label>
 								<input id="isigndate" name="signdate" class="easyui-textbox"  data-options="readonly:true" 
 									style="width:56%;height:28px;text-align:left">
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:41%;text-align: right;">业务类型：</label>
+								<label style="width:40%;text-align: right;">业务类型：</label>
 								<input id="itypeminm" name="typeminm" class="easyui-textbox" data-options="readonly:true"
 									style="width:56%;height:28px;text-align:left;">
 							</div>
