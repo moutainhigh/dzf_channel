@@ -388,14 +388,11 @@ public class InvManagerServiceImpl implements InvManagerService {
         hvo.setBuyerName(cvo.getCorpname());
         hvo.setBuyerTaxpayerNum(cvo.getTaxnum());
         
-        //当电子发票类型为“电子发票和普通发票”时，购买方只需要传加盟商的名称、税号、邮箱，地址、电话、开户行及账号传空值
-        //只电子发票类型为“专用发票”时，购买方才传递地址、电话、开户行及账号信息
-        if(cvo.getInvtype() != null && cvo.getInvtype() == 0){
-        	hvo.setBuyerAddress(cvo.getCorpaddr());
-        	hvo.setBuyerBankName(cvo.getBankname());
-        	hvo.setBuyerBankAccount(cvo.getBankcode());
-        	hvo.setBuyerTel(cvo.getInvphone());
-        }
+        //电子发票，购买方地址、电话、开户行及账号信息传空
+//        hvo.setBuyerAddress(cvo.getCorpaddr());
+//        hvo.setBuyerBankName(cvo.getBankname());
+//        hvo.setBuyerBankAccount(cvo.getBankcode());
+//        hvo.setBuyerTel(cvo.getInvphone());
         
         hvo.setTakerEmail(cvo.getEmail());
 //        hvo.setTakerEmail("gejingwei@dazhangfang.com");
