@@ -117,58 +117,6 @@ public class PubServiceImpl implements IPubService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String queryCode(String tablename) throws DZFWarpException {
-		DZFDate date = new DZFDate();
-		String year = String.valueOf(date.getYear());
-		String str = null;
-		if("cn_refund".equals(tablename)){
-			str = "tk" + year + date.getStrMonth() + date.getStrDay();
-		}else{
-			str = year + date.getStrMonth() + date.getStrDay();
-		}
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT MAX(vbillcode) FROM \n");
-		sql.append(tablename);
-		sql.append("  WHERE nvl(dr,0) = 0 \n");
-		sql.append(" AND vbillcode LIKE ? ");
-		spm.addParam(str + "____");
-		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new ArrayListProcessor());
-		String code = "";
-		if (result != null && !result.isEmpty()) {
-			for (int i = 0; i < result.size(); i++) {
-				Object[] obj = (Object[]) result.get(i);
-				code = String.valueOf(obj[0]);
-			}
-		}
-		if (StringUtil.isEmpty(code)) {
-			return str + "0001";
-		}
-		int num = 0;
-		if("cn_refund".equals(tablename)){
-			num = Integer.parseInt(code.substring(10));
-		}else{
-			num = Integer.parseInt(code.substring(8));
-		}
-		num = num + 1;
-		String nums = String.valueOf(num);
-		switch (nums.length()) {
-		case 1:
-			nums = "000" + nums;
-			break;
-		case 2:
-			nums = "00" + nums;
-			break;
-		case 3:
-			nums = "0" + nums;
-			break;
-		}
-		return str + nums;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public Map<Integer, List<String>> getProviceCorp() throws DZFWarpException {
 		Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
 		StringBuffer sql = new StringBuffer();

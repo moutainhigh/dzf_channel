@@ -18,6 +18,7 @@ import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.refund.RefundBillVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
+import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -34,6 +35,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.refund.IRefundBillService;
+import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
 
 @Service("refundbillser")
@@ -47,6 +49,9 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IBillCodeService billCodeSer;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -139,7 +144,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	@Override
 	public RefundBillVO save(RefundBillVO datavo, String logincorp) throws DZFWarpException {
 		if(StringUtil.isEmpty(datavo.getVbillcode())){
-			String vbillcode = pubser.queryCode("cn_refund");
+			String vbillcode = getVbillcode();
 			datavo.setVbillcode(vbillcode);
 		}
 		if(StringUtil.isEmpty(datavo.getPk_refund())){//新增
@@ -152,6 +157,28 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		}
 		setShowName(datavo);
 		return datavo;
+	}
+	
+	/**
+	 * 获取单据编码
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getVbillcode() throws DZFWarpException {
+		DZFDate date = new DZFDate();
+		String year = String.valueOf(date.getYear());
+		String str = "tk" + year + date.getStrMonth() + date.getStrDay();
+		MaxCodeVO mcvo = new MaxCodeVO();
+		mcvo.setTbName("cn_refund");
+		mcvo.setFieldName("vbillcode");
+		mcvo.setPk_corp("000001");
+		mcvo.setBillType(str);
+		mcvo.setDiflen(4);
+		String code = billCodeSer.getDefaultCode(mcvo);
+		if (StringUtil.isEmpty(code)) {
+			throw new BusinessException("获取单据编码失败");
+		}
+		return code;
 	}
 	
 	/**

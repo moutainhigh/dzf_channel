@@ -26,14 +26,6 @@ public interface IPubService {
 	public Map<String,ChnAreaVO> queryLargeArea() throws DZFWarpException;
 	
 	/**
-	 * 获取单号，年月日+4位流水号
-	 * @param tablename
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public String queryCode(String tablename) throws DZFWarpException;
-	
-	/**
 	 * 获取各个省（直辖市）对应的加盟商
 	 * @return
 	 * @throws DZFWarpException
@@ -47,14 +39,6 @@ public interface IPubService {
 	 * @throws DZFWarpException
 	 */
 	public String[] getManagerCorp(String userids) throws DZFWarpException;
-	
-	/**
-	 * 通过加盟商获取渠道经理名称
-	 * @param pk_corp
-	 * @return
-	 * @throws DZFWarpException
-	 */
-//	public String getManagerName(String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 获取加盟会计公司所对应的渠道经理

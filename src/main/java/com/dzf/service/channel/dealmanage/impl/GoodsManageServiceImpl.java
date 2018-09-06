@@ -21,6 +21,7 @@ import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.IStatusConstant;
+import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -32,6 +33,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
+import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
 
 @Service("goodsmanageser")
@@ -42,6 +44,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private IBillCodeService billCodeSer;
 
 	@Override
 	public Integer queryTotalRow(GoodsVO pamvo) throws DZFWarpException {
@@ -160,7 +165,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			docvo.setPk_corp(datavo.getPk_corp());
 			docvo.setPk_goods(datavo.getPk_goods());
 			docvo.setDocName(filenames[i]);
-			docvo.setDocTemp(fname);
+			docvo.setDocTemp(filepath.substring(filepath.lastIndexOf("/")+1));
 			docvo.setVfilepath(filepath.substring(1));
 			docvo.setDocOwner(datavo.getCoperatorid());
 			docvo.setDocTime(String.valueOf(new Date().getTime()));
@@ -205,41 +210,21 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
 	private String getVgoodscode() throws DZFWarpException {
 		DZFDate date = new DZFDate();
 		String year = String.valueOf(date.getYear());
 		String str = "SP" + year;
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT MAX(vgoodscode) FROM cn_goods \n");
-		sql.append("  WHERE nvl(dr,0) = 0 \n");
-		sql.append(" AND vgoodscode LIKE ? ");
-		spm.addParam(str + "___");
-		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new ArrayListProcessor());
-		String code = "";
-		if (result != null && !result.isEmpty()) {
-			for (int i = 0; i < result.size(); i++) {
-				Object[] obj = (Object[]) result.get(i);
-				code = String.valueOf(obj[0]);
-			}
-		}
+		MaxCodeVO mcvo = new MaxCodeVO();
+		mcvo.setTbName("cn_goods");
+		mcvo.setFieldName("vgoodscode");
+		mcvo.setPk_corp("000001");
+		mcvo.setBillType(str);
+		mcvo.setDiflen(4);
+		String code = billCodeSer.getDefaultCode(mcvo);
 		if (StringUtil.isEmpty(code)) {
-			return str + "001";
+			throw new BusinessException("获取商品编码失败");
 		}
-		int num = Integer.parseInt(code.substring(6));
-		num = num + 1;
-		String nums = String.valueOf(num);
-		switch (nums.length()) {
-		case 1:
-			nums = "00" + nums;
-			break;
-		case 2:
-			nums = "0" + nums;
-			break;
-		}
-		return str + nums;
+		return code;
 	}
 	
 	/**
@@ -273,7 +258,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 					docvo.setPk_corp(datavo.getPk_corp());
 					docvo.setPk_goods(datavo.getPk_goods());
 					docvo.setDocName(filenames[i]);
-					docvo.setDocTemp(fname);
+					docvo.setDocTemp(filepath.substring(filepath.lastIndexOf("/")+1));
 					docvo.setVfilepath(filepath.substring(1));
 					docvo.setDocOwner(datavo.getCoperatorid());
 					docvo.setDocTime(String.valueOf(new Date().getTime()));

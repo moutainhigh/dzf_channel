@@ -16,6 +16,7 @@ import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
+import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.pub.WorkflowVO;
@@ -28,12 +29,14 @@ import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
+import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
 
 @Service("rebateinptser")
@@ -44,6 +47,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IBillCodeService billCodeSer;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -313,7 +319,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		try {
 			chcekBeforeSave(data);
 			if(StringUtil.isEmpty(data.getVbillcode())){
-				String vbillcode = pubser.queryCode("cn_rebate");
+				String vbillcode = getVbillcode();
 				data.setVbillcode(vbillcode);
 				checkCodeOnly(data);//返点单单号唯一性校验
 			}
@@ -334,6 +340,28 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(),uuid);
 		}
+	}
+	
+	/**
+	 * 获取单据编码
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getVbillcode() throws DZFWarpException {
+		DZFDate date = new DZFDate();
+		String year = String.valueOf(date.getYear());
+		String str = year + date.getStrMonth() + date.getStrDay();
+		MaxCodeVO mcvo = new MaxCodeVO();
+		mcvo.setTbName("cn_rebate");
+		mcvo.setFieldName("vbillcode");
+		mcvo.setPk_corp("000001");
+		mcvo.setBillType(str);
+		mcvo.setDiflen(4);
+		String code = billCodeSer.getDefaultCode(mcvo);
+		if (StringUtil.isEmpty(code)) {
+			throw new BusinessException("获取单据编码失败");
+		}
+		return code;
 	}
 	
 	/**
