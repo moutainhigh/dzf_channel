@@ -137,8 +137,10 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" where nvl(p.dr, 0) = 0");
 		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'"); 
 		sql.append("   and nvl(p.ischannel,'N')='Y'"); 
-		sql.append("   and nvl(p.isseal,'N')='N'"); 
+//		sql.append("   and nvl(p.isseal,'N')='N'"); 
+//		sql.append("   and (p.sealeddate is null or p.sealeddate > ? ) "); 
 		sql.append("   and p.vprovince is not null "); 
+//		sp.addParam(new DZFDate());
 	    if(type==2){// 区域总经理
 	    	sql.append(" and a.userid=? ");
 	    	sp.addParam(qvo.getUserid());
@@ -277,7 +279,7 @@ public class ManagerServiceImpl implements IManagerService {
 			
 			buf=new StringBuffer();//小规模及一般纳税人的数量
 			buf.append(" select count(pk_corp) anum,chargedeptname corpname, fathercorp pk_corp from bd_corp  ");
-			buf.append(" where nvl(dr,0)=0 and nvl(isseal,'N')='N' and nvl(isaccountcorp,'N')='N' and chargedeptname is not null and ");
+			buf.append(" where nvl(dr,0)=0 and nvl(isaccountcorp,'N')='N' and chargedeptname is not null and ");
 			buf.append(SqlUtil.buildSqlForIn("fathercorp ",pks));
 			buf.append(" group by fathercorp,chargedeptname  ");
 			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
