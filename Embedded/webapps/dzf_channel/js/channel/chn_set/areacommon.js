@@ -250,6 +250,9 @@ function checkSave(){
 *  保存（新增和修改）
 */
 function save() {
+	parent.$.messager.progress({
+		text : '保存中....'
+	});
 	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
 	for (var i = 0; i < rows.length; i++) {
