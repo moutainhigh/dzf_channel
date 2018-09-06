@@ -38,15 +38,18 @@ function changeDate(){
  * 数据表格初始化
  */
 function load(){
-	var vince=$('#ovince').combobox('getValue');
+	var vince = $('#ovince').combobox('getValue');
+	if(isEmpty(vince)){
+		vince = -1;
+	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
 		queryParams:{
 			'period' : $('#qryperiod').datebox('getValue'),//查询期间
 			'aname' : $('#aname').combobox('getValue'),
-			'ovince' : vince,
+			'ovince' : vince ,
 			'uid' : $('#uid').combobox('getValue'),
-			'stype' : $('#stype').is(':checked')?0:1,
+			'stype' : $('#stype').is(':checked') ? 0 : 1,
 		},
 		striped : true,
 		title : '',
