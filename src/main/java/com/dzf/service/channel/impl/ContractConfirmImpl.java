@@ -532,10 +532,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 					packvo = (PackageDefVO) checkmap.get("package");
 				}
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不计算扣款金额
-					//4、计算扣款分项金额：
-					countDedMny(datavo, balVOs);
-					//5、预付款扣款、返点扣款分项校验：
-					checkBalance(datavo, cuserid, balVOs);
+					if(datavo.getPatchstatus() != null && 
+							IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){//一般人转小规模合同审核
+						countDedMny(datavo);
+					}else{
+						//4、计算扣款分项金额：
+						countDedMny(datavo, balVOs);
+						//5、预付款扣款、返点扣款分项校验：
+						checkBalance(datavo, cuserid, balVOs);
+					}
 				}
 				//6、生成合同审核数据：
 				datavo = saveContConfrim(datavo, cuserid);
@@ -546,7 +551,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//8、更新原合同加盟合同状态、驳回原因
 				updateContract(datavo, opertype, cuserid, pk_corp);
 				//9、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
-				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null && datavo.getPatchstatus() != 2)){
+				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2)){
 					updateSerPackage(packvo);
 				}
 				//10、回写我的客户“纳税人性质  、是否存量客户”：
@@ -775,6 +781,34 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//3、预付款余额=0，则全扣返点余额
 			datavo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
 			datavo.setNdedrebamny(ndedsummny);//返点款扣款金额
+		}
+	}
+	
+	/**
+	 * 计算扣款分项金额（预付款扣款、返点扣款）一般人转小规模
+	 * @param datavo
+	 * @throws DZFWarpException
+	 */
+	private void countDedMny(ContractConfrimVO datavo) throws DZFWarpException {
+		DZFDouble ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, datavo.getNdedsummny());//扣款总金额
+		
+		ContractConfrimVO sourcevo = queryInfoById(datavo);
+		DZFDouble srebatemny = DZFDouble.ZERO_DBL;//原合同返点扣款金额
+		if(sourcevo != null){
+			srebatemny = CommonUtil.getDZFDouble(sourcevo.getNdedsummny());
+		}
+		//1、原合同的返点扣款金额 >= 转合同扣款总金额，则转合同全退返点款金额
+		if(srebatemny.compareTo(ndedsummny) >= 0){
+			datavo.setNdedrebamny(datavo.getNdedsummny());//返点单扣款金额
+			datavo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
+		}else if(srebatemny.compareTo(DZFDouble.ZERO_DBL) > 0 && srebatemny.compareTo(ndedsummny) < 0){
+			//2、0<原合同的返点扣款金额<转合同扣款总金额，则转合同先退返点，再退预付款
+			datavo.setNdedrebamny(SafeCompute.sub(DZFDouble.ZERO_DBL, srebatemny));//返点单扣款金额
+			datavo.setNdeductmny(SafeCompute.sub(ndedsummny, srebatemny).multiply(new DZFDouble(-1)));//预付款扣款金额
+		}else if(srebatemny.compareTo(DZFDouble.ZERO_DBL) <= 0){
+			//3、原合同的返点扣款金额=0，则转合同全退预付款
+			datavo.setNdedrebamny(DZFDouble.ZERO_DBL);//返点单扣款金额
+			datavo.setNdeductmny(datavo.getNdedsummny());//预付款扣款金额
 		}
 	}
 	
@@ -1033,9 +1067,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 						detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);// 返点款
 						detvo.setPk_bill(datavo.getPk_confrim());
 						if (datavo.getIsncust() != null && datavo.getIsncust().booleanValue()) {
-							detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
+							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
+								detvo.setVmemo("存量客户：小规模转一般人");
+							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+								detvo.setVmemo("存量客户：一般人转小规模");
+							}else{
+								detvo.setVmemo("存量客户");
+							}
+							//detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						} else {
-							detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
+							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
+								detvo.setVmemo("小规模转一般人");
+							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+								detvo.setVmemo("一般人转小规模");
+							}
+							//detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						}
 						detvo.setCoperatorid(cuserid);
 						detvo.setDoperatedate(new DZFDate());
@@ -1393,13 +1439,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(oldvo.getVdeductstatus() != null && oldvo.getVdeductstatus() != IStatusConstant.IDEDUCTSTATUS_1){
 			throw new BusinessException("合同状态不为审核通过");
 		}
-		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 1){
-			throw new BusinessException("该合同已被补提单，不允许变更");
+		if(oldvo.getPatchstatus() != null && (oldvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_1 
+				|| oldvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_4)){
+			throw new BusinessException("该合同纳税人资格已变更，不允许变更");
 		}
-		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 2){
-			throw new BusinessException("该合同为补提单，不允许变更");
+		if(oldvo.getPatchstatus() != null && (oldvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_2
+				|| oldvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_5)){
+			throw new BusinessException("该合同为纳税人资格变更单，不允许变更");
 		}
-		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == 3){
+		if(oldvo.getPatchstatus() != null && oldvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_3){
 			throw new BusinessException("该合同已变更，不允许再次变更");
 		}
 		if(paramvo.getIchangetype() == 1){//合同终止

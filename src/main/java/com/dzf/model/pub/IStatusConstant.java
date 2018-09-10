@@ -106,4 +106,11 @@ public interface IStatusConstant {
 	public static String IORDERDESCRIBE_2 = "商品发货";
 	public static String IORDERDESCRIBE_3 = "已收货";
 	public static String IORDERDESCRIBE_4 = "取消订单";
+	
+	/** 加盟商合同类型 null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同*/
+	public static int ICONTRACTTYPE_1 = 1;
+	public static int ICONTRACTTYPE_2 = 2;
+	public static int ICONTRACTTYPE_3 = 3;
+	public static int ICONTRACTTYPE_4 = 4;
+	public static int ICONTRACTTYPE_5 = 5;
 }

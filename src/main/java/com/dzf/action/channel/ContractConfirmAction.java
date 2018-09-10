@@ -33,12 +33,14 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
@@ -157,11 +159,25 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			}
 			datavo = contractconfser.updateAuditData(datavo, null, opertype, getLoginUserid(), getLogincorppk(), "single");
 			json.setRows(datavo);
-			if(datavo != null){
-				if(IStatusConstant.IDEDUCTYPE_1 == opertype){//审核
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码："+datavo.getVcontcode(), ISysConstants.SYS_3);
-				}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：合同编码："+datavo.getVcontcode(), ISysConstants.SYS_3);
+			if (datavo != null) {
+				if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 审核
+					String corpcode = "";
+					CorpVO corpvo = CorpCache.getInstance().get(null, datavo.getPk_corpk());
+					if (corpvo != null) {
+						corpcode = corpvo.getInnercode();
+					}
+					if (datavo.getPatchstatus() != null && (IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus() 
+							|| IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus())) {
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(),
+								"纳税人变更：客户编码[" + corpcode + "] 合同编码[" + datavo.getVcontcode() + "]",
+								ISysConstants.SYS_3);
+					} else {
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "审核合同：合同编码：" + datavo.getVcontcode(),
+								ISysConstants.SYS_3);
+					}
+				} else if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "驳回合同：合同编码：" + datavo.getVcontcode(),
+							ISysConstants.SYS_3);
 				}
 			}
 			json.setMsg("操作成功");
@@ -221,6 +237,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 						log.info("批量审核-获取审核数据为空");
 					} else {
 						try {
+							if(IStatusConstant.IDEDUCTYPE_1 == opertype && datavo.getPatchstatus() != null 
+									&& IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+								throw new BusinessException("一般人转小规模合同，不允许批量审核");
+							}
 							datavo = contractconfser.updateAuditData(datavo, paramvo, opertype, getLoginUserid(),
 									getLogincorppk(), "batch");
 							rignum++;

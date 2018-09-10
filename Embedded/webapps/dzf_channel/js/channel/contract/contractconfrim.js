@@ -894,7 +894,7 @@ function audit(){
 	$("#fileshow").hide();
 	initListener();//初始化扣款比例监听
 	$('#deductfrom').form('clear');
-	if(rows[0].pstatus == 2){
+	if(rows[0].pstatus == 2 || rows[0].pstatus == 5){
     	$("#issupple").show();
     }else{
     	$("#issupple").hide();
@@ -902,6 +902,11 @@ function audit(){
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件
 	initRejectReason();
+	if(rows[0].pstatus == 5){
+		$("#propor").numberbox("readonly", true);
+	}else{
+		$("#propor").numberbox("readonly", false);
+	}
 }
 
 /**
@@ -1369,16 +1374,16 @@ function change(){
 		});			
 		return;
 	}
-	if(rows[0].pstatus == 1){
+	if(rows[0].pstatus == 1 || rows[0].pstatus == 4){
 		Public.tips({
-			content : '该合同已被补提单，不允许变更',
+			content : '该合同纳税人资格已变更，不允许变更',
 			type : 2
 		});			
 		return;
 	}
-	if(rows[0].pstatus == 2){
+	if(rows[0].pstatus == 2 || rows[0].pstatus == 5){
 		Public.tips({
-			content : '该合同为补提单，不允许变更',
+			content : '该合同为纳税人资格变更单，不允许变更',
 			type : 2
 		});			
 		return;
