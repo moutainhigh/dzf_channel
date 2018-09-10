@@ -155,7 +155,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			if(datavo == null){
 				throw new BusinessException("单个审核-获取审核数据为空");
 			}
-//			datavo = contractconfser.updateDeductData(datavo, opertype, getLoginUserid(), getLogincorppk());
 			datavo = contractconfser.updateAuditData(datavo, null, opertype, getLoginUserid(), getLogincorppk(), "single");
 			json.setRows(datavo);
 			if(datavo != null){
@@ -215,7 +214,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			int rignum = 0;
 			int errnum = 0;
 			List<ContractConfrimVO> rightlist = new ArrayList<ContractConfrimVO>();
-//			Map<String, String> packmap = contractconfser.queryPackageMap();
 			StringBuffer errmsg = new StringBuffer();
 			if (confrimVOs != null && confrimVOs.length > 0) {
 				for (ContractConfrimVO datavo : confrimVOs) {
@@ -223,8 +221,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 						log.info("批量审核-获取审核数据为空");
 					} else {
 						try {
-//							confvo = contractconfser.updateBathDeductData(confvo, paramvo, opertype, getLoginUserid(),
-//									 getLogincorppk());
 							datavo = contractconfser.updateAuditData(datavo, paramvo, opertype, getLoginUserid(),
 									getLogincorppk(), "batch");
 							rignum++;
