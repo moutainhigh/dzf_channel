@@ -58,7 +58,7 @@ function load(){
 		                	formatter: function(value,row,index){
 								return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
 			            }},
-		                { field : 'cuname',  title : '培训师', width : 100,halign:'center',align:'left',rowspan:2},
+		                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
 		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:7},
 		                { field : 'ktotal',  title : '人员占比(%)', width : 90,halign:'center',align:'right',rowspan:2,formatter:formatMny},

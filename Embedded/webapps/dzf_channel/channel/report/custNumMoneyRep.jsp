@@ -61,7 +61,7 @@
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width:70px;">培训师：</label> 
+					<label style="text-align:right;width:70px;">会计运营经理：</label> 
 					<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
