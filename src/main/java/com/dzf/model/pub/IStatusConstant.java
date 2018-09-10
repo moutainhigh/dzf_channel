@@ -34,7 +34,7 @@ public interface IStatusConstant {
 	public static int IPAYTYPE_2 = 2;
 	public static int IPAYTYPE_3 = 3;
 	
-	/** 合同明细单操作类型 (1:预付款付款；2：合同扣款；3：返点录入；4：退款单退款；5：商品购买；) */
+	/** 扣款明细单操作类型 (1:预付款付款；2：合同扣款；3：返点录入；4：退款单退款；5：商品购买；) */
 	public static int IDETAILTYPE_1 = 1;
 	public static int IDETAILTYPE_2 = 2;
 	public static int IDETAILTYPE_3 = 3;
