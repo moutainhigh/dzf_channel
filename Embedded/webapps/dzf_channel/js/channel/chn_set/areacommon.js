@@ -44,7 +44,7 @@ function load() {
 		singleSelect : true,
 		queryParams : {'type' :type},
 		height : Public.setGrid().h,
-		width : Public.setGrid().w,
+		width : Public.setGrid().w+20,
 		columns : [ [ {
 			width : '80',
 			title : '编码',
@@ -327,7 +327,7 @@ function initCard(id){
 	if(type=="1"){
 		uname="渠道经理";
 	}else if (type=="2"){
-		uname="培训师";
+		uname="会计运营经理";
 	}else{
 		uname="渠道运营";
 	}
