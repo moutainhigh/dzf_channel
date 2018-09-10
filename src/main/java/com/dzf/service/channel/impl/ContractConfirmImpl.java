@@ -276,7 +276,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.dbegindate,  \n") ; 
 		sql.append("       t.denddate,  \n") ; 
 		sql.append("       t.vchangeperiod,  \n") ; 
-		sql.append("       t.patchstatus,  \n") ; 
+		sql.append("       t.patchstatus,  \n") ; //加盟商合同类型：null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同
 		sql.append("       t.vconfreason,  \n") ; 
 		sql.append("       t.dsigndate,  \n") ; 
 		sql.append("       t.vadviser,  \n") ; 
