@@ -885,7 +885,9 @@ function audit(){
 	}
 	var title = "";
 	if(rows[0].pstatus == 2){
-		title = "合同审核-纳税人变更";
+		title = "合同审核-小规模转一般人";
+    }else if(rows[0].pstatus == 5){
+    	title = "合同审核-一般人转小规模";
     }else{
     	title = "合同审核";
     }
@@ -902,11 +904,6 @@ function audit(){
 	initdeductData(rows[0]);//初始化扣款数据
 	initFileDoc(rows[0]);//初始化附件
 	initRejectReason();
-	if(rows[0].pstatus == 5){
-		$("#propor").numberbox("readonly", true);
-	}else{
-		$("#propor").numberbox("readonly", false);
-	}
 }
 
 /**

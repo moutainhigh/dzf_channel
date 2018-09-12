@@ -178,26 +178,45 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else if("audit".equals(showtype)){//审核查询
 				confvo.setNchangetotalmny(null);//变更后合同金额
 				confvo.setIscanedit(DZFBoolean.FALSE);
-				if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){
-					confvo.setCorptype("普通加盟商");
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
-					}else{
-						confvo.setIdeductpropor(10);
+				if(confvo.getPatchstatus() != null && confvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_5){//小规模转一般人
+					if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){
+						confvo.setCorptype("普通加盟商");
+					}else if(confvo.getChanneltype() != null && confvo.getChanneltype() == 2){
+						confvo.setCorptype("金牌加盟商");
 					}
-				}else if(confvo.getChanneltype() != null && confvo.getChanneltype() == 2){
-					confvo.setCorptype("金牌加盟商");
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
-					}else{
-						confvo.setIdeductpropor(5);
-						confvo.setIscanedit(DZFBoolean.TRUE);
+					ContractConfrimVO pamvo = new ContractConfrimVO();
+					pamvo.setPk_contract(confvo.getPk_source());
+					pamvo.setPk_corp(confvo.getPk_corp());
+					ContractConfrimVO sourcevo = queryInfoById(pamvo);
+					if(sourcevo != null){
+						confvo.setIdeductpropor(sourcevo.getIdeductpropor());
 					}
+					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
-					if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
-						confvo.setIdeductpropor(0);
+					if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){// 加盟商类型 1：普通加盟商；2：金牌加盟商；
+						confvo.setCorptype("普通加盟商");
+						if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+							confvo.setIdeductpropor(0);
+							confvo.setIscanedit(DZFBoolean.TRUE);
+						}else{
+							confvo.setIdeductpropor(10);
+						}
+					}else if(confvo.getChanneltype() != null && confvo.getChanneltype() == 2){
+						confvo.setCorptype("金牌加盟商");
+						if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+							confvo.setIdeductpropor(0);
+							confvo.setIscanedit(DZFBoolean.TRUE);
+						}else{
+							confvo.setIdeductpropor(5);
+							confvo.setIscanedit(DZFBoolean.TRUE);
+						}
 					}else{
-						confvo.setIdeductpropor(10);
+						if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){
+							confvo.setIdeductpropor(0);
+							confvo.setIscanedit(DZFBoolean.TRUE);
+						}else{
+							confvo.setIdeductpropor(10);
+						}
 					}
 				}
 			}
@@ -280,6 +299,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.vconfreason,  \n") ; 
 		sql.append("       t.dsigndate,  \n") ; 
 		sql.append("       t.vadviser,  \n") ; 
+		sql.append("       t.pk_source,  \n") ; //来源合同主键
 		sql.append("       cn.pk_confrim,  \n") ; 
 		sql.append("       cn.tstamp,  \n") ; 
 		sql.append("       cn.deductdata,  \n") ; 
@@ -516,6 +536,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 					datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
 				}else{
 					datavo.setIdeductpropor(paramvo.getIdeductpropor());
+				}
+			}else if("single".equals(checktype)){
+				if(datavo.getIsncust() != null && datavo.getIsncust().booleanValue()){
+					datavo.setIdeductpropor(0);//存量客户的扣款比例默认为0%
 				}
 			}
 			ChnBalanceVO[] balVOs = null;//余额信息
@@ -792,10 +816,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void countDedMny(ContractConfrimVO datavo) throws DZFWarpException {
 		DZFDouble ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, datavo.getNdedsummny());//扣款总金额
 		
-		ContractConfrimVO sourcevo = queryInfoById(datavo);
+		ContractConfrimVO pamvo = new ContractConfrimVO();
+		if(StringUtil.isEmpty(datavo.getPk_source())){
+			throw new BusinessException("来源合同信息错误");
+		}
+		pamvo.setPk_contract(datavo.getPk_source());
+		pamvo.setPk_corp(datavo.getPk_corp());
+		ContractConfrimVO sourcevo = queryInfoById(pamvo);
 		DZFDouble srebatemny = DZFDouble.ZERO_DBL;//原合同返点扣款金额
 		if(sourcevo != null){
-			srebatemny = CommonUtil.getDZFDouble(sourcevo.getNdedsummny());
+			srebatemny = CommonUtil.getDZFDouble(sourcevo.getNdedrebamny());
 		}
 		//1、原合同的返点扣款金额 >= 转合同扣款总金额，则转合同全退返点款金额
 		if(srebatemny.compareTo(ndedsummny) >= 0){
@@ -1018,9 +1048,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 						detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);// 预付款
 						detvo.setPk_bill(datavo.getPk_confrim());
 						if (datavo.getIsncust() != null && datavo.getIsncust().booleanValue()) {
-							detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
+							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
+								detvo.setVmemo("存量客户：小规模转一般人");
+							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+								detvo.setVmemo("存量客户：一般人转小规模");
+							}else{
+								detvo.setVmemo("存量客户");
+							}
+							//detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						} else {
-							detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
+							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
+								detvo.setVmemo("小规模转一般人");
+							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+								detvo.setVmemo("一般人转小规模");
+							}
+							//detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						}
 						detvo.setCoperatorid(cuserid);
 						detvo.setDoperatedate(new DZFDate());

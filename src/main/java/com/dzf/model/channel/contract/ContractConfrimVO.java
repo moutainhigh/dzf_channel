@@ -113,6 +113,9 @@ public class ContractConfrimVO extends SuperVO {
 	
 	@FieldAlias("adviser")
 	private String vadviser;// 销售顾问 （不存库，取原合同）
+	
+    @FieldAlias("sourid")
+    private String pk_source;//来源合同主键（不存库，取原合同）
 
 	// 取原合同或缓存字段 end***************************
 
@@ -229,7 +232,7 @@ public class ContractConfrimVO extends SuperVO {
 	private String vmanagername; // 渠道经理（只做界面展示）
 
 	@FieldAlias("chtype")
-	private Integer channeltype;// 加盟商类型 1-普通加盟商；2-金牌加盟商；
+	private Integer channeltype;// 加盟商类型 1：普通加盟商；2：金牌加盟商；
 
 	@FieldAlias("corptp")
 	private String corptype; // 加盟商类型（只做界面展示）
@@ -264,6 +267,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public String getPk_source() {
+		return pk_source;
+	}
+
+	public void setPk_source(String pk_source) {
+		this.pk_source = pk_source;
+	}
+
 	public DZFDouble getNchangetotalmny() {
 		return nchangetotalmny;
 	}
