@@ -454,21 +454,21 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			sql.append(" SUM(nvl(t.ndedsummny,0)) AS ndeducmny, \n") ;
 		}
 		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
 		sql.append("              1  \n");
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
 		sql.append("           END) AS icustnum,  \n");
 		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND  \n");
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 \n");
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
 		sql.append("              1  \n");
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
 		sql.append("           END) AS izeronum,  \n");
 		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND  \n");
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 THEN  \n");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0   \n");
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
 		sql.append("              1  \n");
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
@@ -476,7 +476,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		
 		//合同数量去掉补提单合同数
 		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 THEN  \n") ; 
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n") ; 
 		sql.append("              1  \n") ; 
 		sql.append("             ELSE  \n") ; 
 		sql.append("              0  \n") ; 
@@ -557,26 +557,26 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			sql.append(" SUM(nvl(t.nreturnmny,0)) AS ndeducmny, \n") ;
 		}
 		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND  \n") ; 
-		sql.append("             	  t.vstatus = 10 THEN  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2   \n") ; 
+		sql.append("             	  AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
 		sql.append("              -1  \n") ; 
 		sql.append("             ELSE  \n") ; 
 		sql.append("              0  \n") ; 
-		sql.append("           END) AS icustnum,  \n") ; 
+		sql.append("           END) AS icustnum,  \n") ; //存量合同数：不统计小规模转一般人和一般人转小规模
 		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND t.vstatus = 10 THEN  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0   \n") ; 
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
 		sql.append("              -1  \n") ; 
 		sql.append("             ELSE  \n") ; 
 		sql.append("              0  \n") ; 
-		sql.append("           END) AS izeronum,  \n") ; 
+		sql.append("           END) AS izeronum,  \n") ; //0扣款(非存量)合同数：不统计小规模转一般人和一般人转小规模
 		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND t.vstatus = 10 THEN  \n") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0   \n") ; 
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
 		sql.append("              -1  \n") ; 
 		sql.append("             ELSE  \n") ; 
 		sql.append("              0  \n") ; 
-		sql.append("           END) AS idednum,  \n") ; 
+		sql.append("           END) AS idednum,  \n") ; //非存量合同数：不统计小规模转一般人和一般人转小规模
 		sql.append(" SUM( ");
 		sql.append("    CASE t.vstatus \n") ; 
 		sql.append("      WHEN 10 THEN \n") ; 
