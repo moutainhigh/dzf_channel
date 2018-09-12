@@ -443,8 +443,10 @@ public class ManagerServiceImpl implements IManagerService {
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,-1),");
 		buf.append("  decode((sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,0)))");
-		buf.append("  -sum (decode(yt.patchstatus,2,decode((sign(to_date(c.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
-		buf.append("   sign(to_date(c.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1),0)");
+		buf.append("  -sum (case when (yt.patchstatus=2 or yt.patchstatus=5) then (");
+		buf.append("  decode((sign(to_date(c.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))*");
+		buf.append("  sign(to_date(c.deductdata, 'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd'))),1,0,1)");
+		buf.append("   )else 0 end ");
 		
 		buf.append("  )as rnum,");
 		
@@ -482,7 +484,8 @@ public class ManagerServiceImpl implements IManagerService {
 		sp.addParam(qvo.getDbegindate());
 		sp.addParam(qvo.getDenddate());
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
-		sql.append(" select decode(yt.patchstatus,2,0,1) as anum,t.pk_confrim as pk_corp ,t.deductdata as denddate, ");
+		sql.append(" select (case yt.patchstatus when 2 then 0 when 5 then  0 else 1 end) as anum ,");
+		sql.append(" t.pk_confrim as pk_corp ,t.deductdata as denddate, ");
 		sql.append(" nvl(yt.nchangetotalmny,0)-nvl(yt.nbookmny,0) as antotalmny, " );   
 		sql.append(" nvl(t.ndeductmny,0) as ndeductmny,nvl(t.ndedrebamny,0) as ndedrebamny from cn_contract t" );
 		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
