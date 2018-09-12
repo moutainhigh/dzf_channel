@@ -719,11 +719,32 @@ function getAttachImgUrl(attach){
  * @param billid
  */
 function showImage(billid){
-	var src = DZF.contextPath + "/chnpay/chnpaybill!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
-	$("#tpfd").empty();
-	var img = '<img id="conturnid" alt="无法显示图片" '+
-		'src="' + src + '" style="position: absolute;z-index: 1;left:50px;top:50px;">'
-	parent.openFullViewDlg(img, '原图');
+	var para = {};
+	para.billid = billid;
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/chnpay/chnpaybill!queryByID.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var row= result.rows;
+			arrachrow = result.rows;
+			$("#attachs").html('');
+			if(row.fpath){
+				$("#tpfd").empty();
+				var img = '<img id="conturnid" alt="无法显示图片" '+
+					'src="' + getAttachImgUrl(arrachrow) + '" style="position: absolute;z-index: 1;left:50px;top:50px;">'
+				parent.openFullViewDlg(img, '原图');
+			}else{
+				Public.tips({
+					content : "该付款单没有附件",
+					type : 2
+				});
+			}
+		}
+	});
 }
 
 /**
