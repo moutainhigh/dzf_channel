@@ -387,9 +387,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-			sql.append(" AND nvl(t.patchstatus, 0) != 2 \n") ;
+			sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-			sql.append(" AND nvl(t.patchstatus, 0) = 2 \n") ;
+			sql.append(" AND ( nvl(t.patchstatus, 0) = 2 OR nvl(t.patchstatus, 0) = 5) \n") ;
 		}
 		if(paramvo.getCorptype() != null){
 			if(paramvo.getCorptype() == 1){

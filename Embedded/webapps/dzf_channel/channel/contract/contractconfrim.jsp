@@ -99,7 +99,7 @@
 					<label style="width:100px;text-align:left">正常提单</label> 
 					<input id="supple" name="supple" type="checkbox" checked 
 						style="width:20px;height:28px;text-align:left;margin-left:20px;"/>
-					<label style="width:100px;text-align:left">补提单</label> 
+					<label style="width:100px;text-align:left">纳税人变更</label> 
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">合同状态：</label>
