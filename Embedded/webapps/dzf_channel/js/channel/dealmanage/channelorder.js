@@ -165,7 +165,30 @@ function load(){
 			}
 		} ] ],
 		onLoadSuccess : function(data) {
-            $('#grid').datagrid("scrollTo",0);
+			parent.$.messager.progress('close');
+			var rows = $('#grid').datagrid('getRows');
+			var footerData = new Object();
+			var ndesummny = 0;// 订单金额
+			var ndemny = 0;// 预付款付款
+			var nderebmny = 0;// 返点付款
+			for (var i = 0; i < rows.length; i++) {
+				if (!isEmpty(rows[i].ndesummny)) {
+					ndesummny += parseFloat(rows[i].ndesummny);
+				}
+				if (!isEmpty(rows[i].ndemny)) {
+					ndemny += parseFloat(rows[i].ndemny);
+				}
+				if (!isEmpty(rows[i].nderebmny)) {
+					nderebmny += parseFloat(rows[i].nderebmny);
+				}
+			}
+			footerData['pname'] = '合计';
+			footerData['ndesummny'] = ndesummny;
+			footerData['ndemny'] = ndemny;
+			footerData['nderebmny'] = nderebmny;
+			var fs = new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter', fs);
 		},
 	});
 }
