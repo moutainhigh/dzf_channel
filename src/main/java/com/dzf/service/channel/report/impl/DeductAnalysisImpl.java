@@ -518,7 +518,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//返点扣款
 			//正常和作废扣款：1、返点扣款金额不为0；
-			//变更扣款：1、状态为变更
+			//变更扣款：1、状态为变更，返点扣款金额不为0；
 			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus IN (?, ?, ?) )  \n");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);

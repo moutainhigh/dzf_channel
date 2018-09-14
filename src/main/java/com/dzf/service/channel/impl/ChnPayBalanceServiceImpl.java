@@ -314,9 +314,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//返点扣款
 			//正常和作废扣款：1、返点扣款金额不为0；
-			//变更扣款：1、状态为变更，且变更后返点扣款金额不为0；
-			sql.append(" AND (  ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus IN (?, ?) )  \n");
-			sql.append(" OR ( nvl(t.nchangerebatmny,0) != 0 AND t.vstatus = ? ) ) \n");
+			//变更扣款：1、状态为变更，返点扣款金额不为0；
+			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus IN (?, ?, ?) )  \n");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -421,8 +420,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//返点扣款
-			sql.append(" AND ( ( nvl(t.nchangerebatmny,0) != 0 AND t.vstatus = ? )  \n");
-			sql.append("  OR ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus = ? ) ) \n");
+			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus in ( ?, ? ) )  \n");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}else{
