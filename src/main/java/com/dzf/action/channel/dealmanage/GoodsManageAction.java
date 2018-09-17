@@ -102,7 +102,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
@@ -181,7 +181,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
@@ -305,7 +305,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			GoodsDocVO pamvo = new GoodsDocVO();
 			pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -333,7 +333,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			GoodsVO pamvo = new GoodsVO();
 			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -362,7 +362,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_41);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");

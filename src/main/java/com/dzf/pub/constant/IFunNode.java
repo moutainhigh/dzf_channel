@@ -186,11 +186,21 @@ public interface IFunNode {
     /**
      * 商品管理
      */
-    public static final String CHANNEL_41 = "channel41";
+    public static final String CHANNEL_44 = "channel44";
     
     /**
      * 加盟商订单
      */
-    public static final String CHANNEL_42 = "channel42";
+    public static final String CHANNEL_45 = "channel45";
+    
+    /**
+     * 业绩统计-新增统计
+     */
+    public static final String CHANNEL_46  = "channel46";
+    
+    /**
+     * 业绩统计-续费统计
+     */
+    public static final String CHANNEL_47  = "channel47";
     
 }

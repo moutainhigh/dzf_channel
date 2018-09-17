@@ -90,7 +90,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_42);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_45);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
@@ -125,7 +125,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_42);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_45);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
 				throw new BusinessException("数据不能为空");
