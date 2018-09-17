@@ -303,16 +303,16 @@
 									style="width:56%;height:28px;text-align:left;">
 							</div>
 							<div class="decan" style="width:24%;display: inline-block;">
-								<label style="width:40%;text-align: right;">账本费：</label>
-								<input id="nbmny" name="nbmny" class="easyui-numberbox"  
-									data-options="readonly:true,precision:2,groupSeparator:','"
-									style="width:56%;height:28px;text-align:left"></input>
-							</div>
-							<div class="decan" style="width:24%;display: inline-block;">
 								<label style="width:40%;text-align: right;">合同金额：</label>
 								<input id="ntlmny" name="ntlmny" class="easyui-numberbox"  
 									data-options="readonly:true,precision:2,groupSeparator:','"
 									style="width:56%;height:28px;text-align:left;">
+							</div>
+							<div id = "nbook" class="decan" style="width:24%;display:none;">
+								<label style="width:40%;text-align: right;">账本费：</label>
+								<input id="nbmny" name="nbmny" class="easyui-numberbox"  
+									data-options="readonly:true,precision:2,groupSeparator:','"
+									style="width:30%;height:28px;text-align:left"></input>
 							</div>
 						</div>
 						<div class="time_col time_colp11 ">

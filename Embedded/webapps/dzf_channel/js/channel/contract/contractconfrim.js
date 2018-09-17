@@ -893,6 +893,12 @@ function audit(){
     }
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
 	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle',title);
+	
+	$('#nbook').css('display','none');
+	if(rows[0].pstatus != 5){
+		$('#nbook').css('display','inline-block');
+	}
+	
 	$("#fileshow").hide();
 	initListener();//初始化扣款比例监听
 	$('#deductfrom').form('clear');
