@@ -1,6 +1,5 @@
 package com.dzf.service.channel.report;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +12,22 @@ import com.dzf.pub.lang.DZFDouble;
 public interface ICustNumMoneyRep {
 
 	/**
-	 * 查询
+	 * 查询新增客户相关信息
 	 * @param paramvo
 	 * @param uservo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws  DZFWarpException, IllegalAccessException, Exception;
+	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws  DZFWarpException;
+	
+	/**
+	 * 查询续费客户相关信息
+	 * @param paramvo
+	 * @param uservo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<CustNumMoneyRepVO> queryRenew(QryParamVO paramvo) throws  DZFWarpException;
 	
 	/**
 	 * 客户查询

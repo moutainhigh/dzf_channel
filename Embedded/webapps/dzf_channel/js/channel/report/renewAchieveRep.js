@@ -43,7 +43,7 @@ function load(){
 		vince = -1;
 	}
 	$('#grid').datagrid({
-		url : DZF.contextPath + "/report/custnummoneyrep!query.action",
+		url : DZF.contextPath + "/report/renewachieverep!queryRenew.action",
 		queryParams:{
 			'period' : $('#qryperiod').datebox('getValue'),//查询期间
 			'aname' : $('#aname').combobox('getValue'),
@@ -73,26 +73,26 @@ function load(){
 		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		            { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
 		            { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
-		            { field : 'newcust', title : '新增客户数量', halign:'center',align:'center',colspan:2},
-		            { field : 'newcont', title : '新增客户合同金额', halign:'center',align:'center',colspan:2},
+		            { field : 'renewcust', title : '续费客户数量', halign:'center',align:'center',colspan:2},
+		            { field : 'renewcont', title : '续费客户合同金额', halign:'center',align:'center',colspan:2},
 		             
-		            { field : 'newcustrate', title : '新增客户增长率(%)', width:120,halign:'center',align:'right',colspan:2},
-		            { field : 'newcontrate', title : '新增合同增长率(%)', width:120,halign:'center',align:'right',colspan:2},
-		             ] ,
+		            { field : 'renewcustrate', title : '续费客户占比(%)', width:100,halign:'center',align:'right',colspan:2},
+		            { field : 'renewcontrate', title : '续费合同占比(%)', width:100,halign:'center',align:'right',colspan:2},
+		           ] ,
         [
             { field : 'stockcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
             { field : 'stockcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
             { field : 'stockconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
             { field : 'stockcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'newcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
-            { field : 'newcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
-            { field : 'newconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'newcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
+            { field : 'renewcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
+            { field : 'renewcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
+            { field : 'renewconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
+            { field : 'renewcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
             
-            { field : 'newcustrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'newcustratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'newcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'newcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcustrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcustratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
+            { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
             
         ] ],
         onLoadSuccess : function(data) {
@@ -103,10 +103,10 @@ function load(){
         	var stockconts = 0;	//
         	var stockcontt = 0;	//
         	
-        	var newcusts = 0;	//
-        	var newcustt = 0;	//
-        	var newconts = 0;	//
-        	var newcontt = 0;	//
+        	var renewcusts = 0;	//
+        	var renewcustt = 0;	//
+        	var renewconts = 0;	//
+        	var renewcontt = 0;	//
         	for (var i = 0; i < rows.length; i++) {
         		if(rows[i].stockcusts != undefined && rows[i].stockcusts != null){
         			stockcusts += parseFloat(rows[i].stockcusts);
@@ -121,19 +121,19 @@ function load(){
         			stockcontt += parseFloat(rows[i].stockcontt);
         		}
         		
-        		if(rows[i].newcusts != undefined && rows[i].newcusts != null){
-        			newcusts += parseFloat(rows[i].newcusts);
+        		if(rows[i].renewcusts != undefined && rows[i].renewcusts != null){
+        			renewcusts += parseFloat(rows[i].renewcusts);
         		}
-        		if(rows[i].newcustt != undefined && rows[i].newcustt != null){
-        			newcustt += parseFloat(rows[i].newcustt);
+        		if(rows[i].renewcustt != undefined && rows[i].renewcustt != null){
+        			renewcustt += parseFloat(rows[i].renewcustt);
         		}
-        		if(rows[i].newconts != undefined && rows[i].newconts != null){
-        			newconts += parseFloat(rows[i].newconts);
+        		if(rows[i].renewconts != undefined && rows[i].renewconts != null){
+        			renewconts += parseFloat(rows[i].renewconts);
         		}
-        		if(rows[i].newcontt != undefined && rows[i].newcontt != null){
-        			newcontt += parseFloat(rows[i].newcontt);
+        		if(rows[i].renewcontt != undefined && rows[i].renewcontt != null){
+        			renewcontt += parseFloat(rows[i].renewcontt);
         		}
-        		
+
         	}
         	footerData['pname'] = '合计';
         	footerData['stockcusts'] = stockcusts;
@@ -145,6 +145,11 @@ function load(){
         	footerData['newcustt'] = newcustt;
         	footerData['newconts'] = newconts;
         	footerData['newcontt'] = newcontt;
+        	
+        	footerData['renewcusts'] = renewcusts;
+        	footerData['renewcustt'] = renewcustt;
+        	footerData['renewconts'] = renewconts;
+        	footerData['renewcontt'] = renewcontt;
         	
         	var fs=new Array(1);
         	fs[0] = footerData;
@@ -178,13 +183,13 @@ function formatLocalMny(value){
  * 查询
  */
 function reloadData(){
-	$('#grid').datagrid('options').url = DZF.contextPath + "/report/custnummoneyrep!query.action";
+	$('#grid').datagrid('options').url = DZF.contextPath + "/report/renewachieverep!queryRenew.action";
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	queryParams.period = $('#qryperiod').datebox('getValue');
 	queryParams.aname = $('#aname').combobox('getValue');
 	var vince=$('#ovince').combobox('getValue');
 	if(isEmpty(vince)){
-		vince=-1;
+		vince = -1;
 	}
 	queryParams.ovince = vince;
 	queryParams.uid = $('#uid').combobox('getValue');
@@ -206,8 +211,8 @@ function doExport(){
 	}
 	var callback=function(){
 		var columns = $('#grid').datagrid("options").columns[0];
-		Business.getFile(DZF.contextPath+ '/report/custnummoneyrep!exportExcel.action',
+		Business.getFile(DZF.contextPath+ '/report/renewachieverep!exportExcel.action',
 				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns)}, true, true);
 	}
-	checkBtnPower('export',"channel46",callback);
+	checkBtnPower('export',"channel47",callback);
 }

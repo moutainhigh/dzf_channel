@@ -6,12 +6,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>新增统计</title>
+<title>续费统计</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/renewAchieveRep.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 <%
 	//获取当前月期间

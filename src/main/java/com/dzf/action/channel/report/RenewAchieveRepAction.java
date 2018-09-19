@@ -38,50 +38,51 @@ import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.PrintUtil;
 
 /**
- * 业绩统计-新增统计
+ * 业绩统计-续费统计
+ * 
  * @author zy
  *
  */
 @ParentPackage("basePackage")
 @Namespace("/report")
-@Action(value = "custnummoneyrep")
-public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
+@Action(value = "renewachieverep")
+public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 
-	private static final long serialVersionUID = 2245193927232918375L;
-	
+	private static final long serialVersionUID = 7071363023455589093L;
+
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private ICustNumMoneyRep custServ;
-	
+
 	@Autowired
 	private IPubService pubService;
 
 	/**
 	 * 查询
 	 */
-	public void query(){
+	public void queryRenew() {
 		Grid grid = new Grid();
 		try {
 			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			if(paramvo != null){
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			if (paramvo != null) {
 				paramvo.setUser_name(getLoginUserid());
 			}
-			if(paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())){
+			if (paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			List<CustNumMoneyRepVO> list = custServ.query(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
-			int rows = paramvo ==null ? 10000 : paramvo.getRows();
-		    int len = list == null ? 0 : list.size();
-		    if (len > 0) {
+			int rows = paramvo == null ? 10000 : paramvo.getRows();
+			int len = list == null ? 0 : list.size();
+			if (len > 0) {
 				grid.setTotal((long) (len));
 				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustNumMoneyRepVO[0]), page, rows)));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "业绩新增统计查询成功", ISysConstants.SYS_3);
-			}else{
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "业绩续费统计查询成功", ISysConstants.SYS_3);
+			} else {
 				grid.setTotal(Long.valueOf(0));
 				grid.setRows(list);
 				grid.setSuccess(true);
@@ -92,7 +93,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * Excel导出方法
 	 */
@@ -110,7 +111,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();
 		int num = 6;
-		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_46, IButtonName.BTN_EXPORT);
+		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_47, IButtonName.BTN_EXPORT);
 		fieldlist.add("aname");
 		fieldlist.add("uname");
 		fieldlist.add("provname");
@@ -119,8 +120,8 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldlist.add("cuname");
 		fieldlist.add("stockcusts");
 		fieldlist.add("stockcustt");
-		fieldlist.add("newcusts");
-		fieldlist.add("newcustt");
+		fieldlist.add("renewcusts");
+		fieldlist.add("renewcustt");
 		for (int i = 0; i < headlist.size(); i++) {
 			name = (Map<String, String>) headlist.get(i);
 			if (i >= num) {
@@ -136,14 +137,14 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldslist.add("stockcustt");
 		fieldslist.add("stockconts");
 		fieldslist.add("stockcontt");
-		fieldslist.add("newcusts");
-		fieldslist.add("newcustt");
-		fieldslist.add("newconts");
-		fieldslist.add("newcontt");
-		fieldslist.add("newcustrates");
-		fieldslist.add("newcustratet");
-		fieldslist.add("newcontrates");
-		fieldslist.add("newcontratet");
+		fieldslist.add("renewcusts");
+		fieldslist.add("renewcustt");
+		fieldslist.add("renewconts");
+		fieldslist.add("renewcontt");
+		fieldslist.add("renewcustrates");
+		fieldslist.add("renewcustratet");
+		fieldslist.add("renewcontrates");
+		fieldslist.add("renewcontratet");
 		ExportExcel<CustNumMoneyRepVO> ex = new ExportExcel<CustNumMoneyRepVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -155,11 +156,11 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportYjtjExcel("业绩新增统计", heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
+			byte[] length = ex.exportYjtjExcel("业绩续费统计", heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
 					num);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩新增统计表", ISysConstants.SYS_3);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩续费统计表", ISysConstants.SYS_3);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
@@ -181,5 +182,5 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 			}
 		}
 	}
-	
+
 }
