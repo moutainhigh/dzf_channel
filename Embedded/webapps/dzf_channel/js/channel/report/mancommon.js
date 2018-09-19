@@ -1,10 +1,12 @@
+var corpid;
 /**
  * 明细查询
  */
-function qryDetail(corpid,corpnm){
+function qryDetail(cid,corpnm){
 	var bdate = $("#bdate").datebox("getValue");
 	var edate = $("#edate").datebox("getValue");
 	var	qrydate = bdate + "至" + edate;
+	corpid=cid;
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -34,8 +36,8 @@ function qryDetail(corpid,corpnm){
 				}
 				$('#corpnm').html(corpnm);
 				$('#qrydate').html(qrydate);
-				$('#detail_dialog').dialog('open');
 				$('#gridh').datagrid('loadData',res);
+				$('#detail_dialog').dialog('open');
 			}
 		}
 	});
@@ -49,24 +51,32 @@ function initDetailGrid(){
 		border : true,
 		striped : true,
 		rownumbers : true,
-		fitColumns : false,
+		fitColumns : true,
 		/*height : Public.setGrid().h,*/
 		height:'350',
 		singleSelect : true,
 		showFooter:true,
 		columns : [ [ {
-			width : '110',
+			width : '90',
 			title : '日期',
 			align:'center',
 			halign:'center',
 			field : 'edate',
 		}, {
-			width : '100',
+			width : '60',
 			title : '提单量',
-            halign:'center',
+			align:'center',
+			halign:'center',
 			field : 'anum',
+		}, {
+			width : '160',
+			title : '合同编码',
+            halign:'left',
+			field : 'vccode',
+			formatter :useFormat,
 		},{
-			width : '120',
+			
+			width : '100',
 			title : '合同代账费',
 			align:'right',
             halign:'center',
@@ -76,7 +86,7 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		},{
-			width : '120',
+			width : '100',
 			title : '预付款扣款',
 			align:'right',
             halign:'center',
@@ -86,12 +96,15 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		},{
-			width : '140',
+			width : '100',
 			title : '返点扣款',
 			align:'right',
             halign:'center',
 			field : 'nderebmny',
-			formatter :useFormat
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
 		},] ],
 		onLoadSuccess : function(data) {
 			var rows = $('#gridh').datagrid('getRows');
@@ -129,10 +142,8 @@ function initDetailGrid(){
 function useFormat(value,row,index){
 	if(row.edate != "合计"){
 		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.corpid;
-		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+value+"</a>";
 		return ss ;
-	}else{
-		return formatMny(value);
 	}
 }
 
@@ -140,12 +151,12 @@ function useFormat(value,row,index){
  * 明细打印
  */
 function onDetPrint(){
-	var datarows = $('#gridh').datagrid("getRows");
+	var datarows = $(id).datagrid("getRows");
 	if( datarows == null||datarows.length == 0){
 		Public.tips({content:'明细数据为空',type:2});
 		return;
 	}
-	var columns = $('#gridh').datagrid("options").columns[0];
+	var columns = $(id).datagrid("options").columns[0];
 	var qrydate = $("#qrydate").text();
 	var corpnm = $("#corpnm").text();
 	Business.getFile(contextPath+ '/report/manager!onDetPrint.action',{'strlist':JSON.stringify(datarows),
@@ -156,13 +167,13 @@ function onDetPrint(){
  * 明细导出
  */
 function onDetExport(type){
-	var datarows = $('#gridh').datagrid("getRows");
+	var datarows = $(id).datagrid("getRows");
 	if( datarows == null||datarows.length == 0){
 		Public.tips({content:'明细数据为空',type:2});
 		return;
 	}
 	var callback=function(){
-		var columns = $('#gridh').datagrid("options").columns[0];
+		var columns = $(id).datagrid("options").columns[0];
 		var qrydate = $("#qrydate").text();
 		var corpnm = $("#corpnm").text();
 		Business.getFile(contextPath+ '/report/manager!onDetExport.action',{'strlist':JSON.stringify(datarows),

@@ -1,4 +1,5 @@
 var contextPath = DZF.contextPath;
+var id='#gridh';
 
 $(function() {
 	initQry();

@@ -92,9 +92,26 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 	}
 	
 	/**
-	 * 明细查询方法
+	 * 明细查询方法(已审核)
 	 */
 	public void queryDetail() {
+		Grid grid = new Grid();
+		try {
+			ManagerVO paramvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), new ManagerVO());
+			List<ManagerVO> clist = manager.queryDetail(paramvo);
+			grid.setRows(clist);
+			grid.setSuccess(true);
+			grid.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "操作失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 明细查询方法(未审核)
+	 */
+	public void queryWDetail() {
 		Grid grid = new Grid();
 		try {
 			ManagerVO paramvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), new ManagerVO());
@@ -246,7 +263,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			//字符类型字段(取界面元素id)
 			List<String> list = new ArrayList<String>();
 			list.add("edate");
-			list.add("num");
+			list.add("anum");
+			list.add("vccode");
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ManagerVO> util = new PrintUtil<ManagerVO>();
 			util.setIscross(DZFBoolean.TRUE);
@@ -276,6 +294,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		//字符类型字段(取界面元素id)
 		List<String> stringlist = new ArrayList<String>();
 		stringlist.add("edate");
+		stringlist.add("anum");
+		stringlist.add("vccode");
 		Map<String, String> name = null;
 		if(strlist == null){
 			return;

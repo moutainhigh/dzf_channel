@@ -87,6 +87,9 @@ public class ManagerVO extends SuperVO {
 	
     @FieldAlias("xq")
     private DZFBoolean isxq; // 是否续签
+    
+    @FieldAlias("vccode")
+    private String vcontcode; // 合同编码
 
 	public String getInnercode() {
 		return innercode;
@@ -122,6 +125,14 @@ public class ManagerVO extends SuperVO {
 
 	public String getAreacode() {
 		return areacode;
+	}
+
+	public String getVcontcode() {
+		return vcontcode;
+	}
+
+	public void setVcontcode(String vcontcode) {
+		this.vcontcode = vcontcode;
 	}
 
 	public void setAreacode(String areacode) {

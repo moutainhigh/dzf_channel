@@ -17,11 +17,19 @@ public interface IManagerService {
 	public List<ManagerVO> query(ManagerVO vo,Integer type) throws DZFWarpException;
 	
 	/**
-	 * 明细查询
+	 * 明细查询(已审核)
 	 * @param vo
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	public List<ManagerVO> queryDetail(ManagerVO vo) throws DZFWarpException;
+	
+	/**
+	 * 明细查询(未审核)
+	 * @param vo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ManagerVO> queryWDetail(ManagerVO vo) throws DZFWarpException;
 	
 }
