@@ -72,7 +72,7 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 			if (paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			List<CustNumMoneyRepVO> list = custServ.query(paramvo);
+			List<CustNumMoneyRepVO> list = custServ.queryRenew(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
 			int len = list == null ? 0 : list.size();

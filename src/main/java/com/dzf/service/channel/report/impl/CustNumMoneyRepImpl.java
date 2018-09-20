@@ -154,22 +154,25 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 					retvo.setCusername(uservo.getUser_name());
 				}
 				// 1、 客户数量、合同金额赋值：
+				
+				// 1 、客户数量、合同金额：
 				if (custmap != null && !custmap.isEmpty()) {
-					retvo.setIrenewcusttaxpay(custmap.get(pk_corp + "一般纳税人"));
-					retvo.setIrenewcustsmall(custmap.get(pk_corp + "小规模纳税人"));
+					retvo.setIstockcusttaxpay(custmap.get(pk_corp + "一般纳税人"));
+					retvo.setIstockcustsmall(custmap.get(pk_corp + "小规模纳税人"));
 				}
 				if (conmap != null && !conmap.isEmpty()) {
-					retvo.setIrenewconttaxpay(conmap.get(pk_corp + "一般纳税人"));
-					retvo.setIrenewcontsmall(conmap.get(pk_corp + "小规模纳税人"));
+					retvo.setIstockconttaxpay(conmap.get(pk_corp + "一般纳税人"));
+					retvo.setIstockcontsmall(conmap.get(pk_corp + "小规模纳税人"));
 				}
+				
 				// 2、 续费客户数量、合同金额赋值：
 				if (ncustmap != null && !ncustmap.isEmpty()) {
-					retvo.setInewcusttaxpay(ncustmap.get(pk_corp + "一般纳税人"));
-					retvo.setInewcustsmall(ncustmap.get(pk_corp + "小规模纳税人"));
+					retvo.setIrenewcusttaxpay(ncustmap.get(pk_corp + "一般纳税人"));
+					retvo.setIrenewcustsmall(ncustmap.get(pk_corp + "小规模纳税人"));
 				}
 				if (nconmap != null && !nconmap.isEmpty()) {
-					retvo.setInewconttaxpay(nconmap.get(pk_corp + "一般纳税人"));
-					retvo.setInewcontsmall(nconmap.get(pk_corp + "小规模纳税人"));
+					retvo.setIrenewconttaxpay(nconmap.get(pk_corp + "一般纳税人"));
+					retvo.setIrenewcontsmall(nconmap.get(pk_corp + "小规模纳税人"));
 				}
 
 				// 3 、上月续费客户数量、合同金额赋值：
@@ -234,7 +237,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			spm.addParam(preperiod);
 		} else if (qrytype != null && (qrytype == 3 || qrytype == 4)) {
 			sql.append(" AND p.pk_corp IN ( \n");
-			sql.append("SELECT t.pk_corp \n");
+			sql.append("SELECT t.pk_corpk \n");
 			sql.append("  FROM cn_contract t  \n");
 			sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 			sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
@@ -252,9 +255,9 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			if (qrytype != null && (qrytype == 3 || qrytype == 4)) {
 				sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
 				sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
-				if (qrytype != null && qrytype == 1) {
+				if (qrytype != null && qrytype == 3) {
 					spm.addParam(paramvo.getPeriod());
-				} else if (qrytype != null && qrytype == 2) {
+				} else if (qrytype != null && qrytype == 4) {
 					String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
 					spm.addParam(preperiod);
 				}
@@ -335,7 +338,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
-		sql.append("  LEFT JOIN bd_corp p ON acc.pk_corp = p.fathercorp  \n");
+		sql.append("  LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
@@ -379,9 +382,9 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		} else if (qrytype != null && (qrytype == 3 || qrytype == 4)) {
 			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
 			sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
-			if (qrytype != null && qrytype == 1) {
+			if (qrytype != null && qrytype == 3) {
 				spm.addParam(paramvo.getPeriod());
-			} else if (qrytype != null && qrytype == 2) {
+			} else if (qrytype != null && qrytype == 4) {
 				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
 				spm.addParam(preperiod);
 			}
@@ -421,7 +424,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
-		sql.append("  LEFT JOIN bd_corp p ON acc.pk_corp = p.fathercorp  \n");
+		sql.append("  LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp   \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
