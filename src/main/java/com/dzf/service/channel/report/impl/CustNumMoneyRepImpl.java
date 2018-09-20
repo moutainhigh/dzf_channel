@@ -128,15 +128,26 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			Map<String, Integer> custmap = queryCustNum(paramvo, corplist, null);
 			Map<String, DZFDouble> conmap = queryContMny(paramvo, corplist, null);
 			// 2、查询续费客户数量、合同金额
-			Map<String, Integer> ncustmap = queryCustNum(paramvo, corplist, 3);
+			paramvo.setQrytype(1);//扣款客户数
+			Map<String, Integer> kcustmap = queryCustNum(paramvo, corplist, 3);
+			paramvo.setQrytype(2);//作废客户数
+			Map<String, Integer> tcustmap = queryCustNum(paramvo, corplist, 3);
+			paramvo.setQrytype(null);
+			
 			Map<String, DZFDouble> nconmap = queryContMny(paramvo, corplist, 3);
 			// 3、查询上一个月续费客户数量、合同金额
-			Map<String, Integer> lncustmap = queryCustNum(paramvo, corplist, 4);
+			paramvo.setQrytype(1);//扣款客户数
+			Map<String, Integer> lkcustmap = queryCustNum(paramvo, corplist, 4);
+			paramvo.setQrytype(2);//作废客户数
+			Map<String, Integer> ltcustmap = queryCustNum(paramvo, corplist, 4);
+			paramvo.setQrytype(null);
 			Map<String, DZFDouble> lnconmap = queryContMny(paramvo, corplist, 4);
 
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			CustNumMoneyRepVO retvo = null;
+			
+			Integer counum = null;
 
 			for (String pk_corp : corplist) {
 				retvo = (CustNumMoneyRepVO) map.get(pk_corp);
@@ -153,7 +164,6 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				if (uservo != null) {
 					retvo.setCusername(uservo.getUser_name());
 				}
-				// 1、 客户数量、合同金额赋值：
 				
 				// 1 、客户数量、合同金额：
 				if (custmap != null && !custmap.isEmpty()) {
@@ -166,9 +176,16 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				}
 				
 				// 2、 续费客户数量、合同金额赋值：
-				if (ncustmap != null && !ncustmap.isEmpty()) {
-					retvo.setIrenewcusttaxpay(ncustmap.get(pk_corp + "一般纳税人"));
-					retvo.setIrenewcustsmall(ncustmap.get(pk_corp + "小规模纳税人"));
+				if (kcustmap != null && !kcustmap.isEmpty()) {
+					retvo.setIrenewcusttaxpay(kcustmap.get(pk_corp + "一般纳税人"));
+					retvo.setIrenewcustsmall(kcustmap.get(pk_corp + "小规模纳税人"));
+				}
+				if(tcustmap != null && !tcustmap.isEmpty()){
+					counum = tcustmap.get(pk_corp + "一般纳税人");
+					retvo.setIrenewcusttaxpay(ToolsUtil.subInteger(retvo.getIrenewcusttaxpay(), counum));
+					
+					counum = tcustmap.get(pk_corp + "小规模纳税人");
+					retvo.setIrenewcustsmall(ToolsUtil.subInteger(retvo.getIrenewcustsmall(), counum));
 				}
 				if (nconmap != null && !nconmap.isEmpty()) {
 					retvo.setIrenewconttaxpay(nconmap.get(pk_corp + "一般纳税人"));
@@ -176,9 +193,16 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				}
 
 				// 3 、上月续费客户数量、合同金额赋值：
-				if (lncustmap != null && !lncustmap.isEmpty()) {
-					retvo.setIlastrenewcusttaxpay(lncustmap.get(pk_corp + "一般纳税人"));
-					retvo.setIlastrenewcustsmall(lncustmap.get(pk_corp + "小规模纳税人"));
+				if (lkcustmap != null && !lkcustmap.isEmpty()) {
+					retvo.setIlastrenewcusttaxpay(lkcustmap.get(pk_corp + "一般纳税人"));
+					retvo.setIlastrenewcustsmall(lkcustmap.get(pk_corp + "小规模纳税人"));
+				}
+				if(ltcustmap != null && !ltcustmap.isEmpty()){
+					counum = ltcustmap.get(pk_corp + "一般纳税人");
+					retvo.setIlastrenewcusttaxpay(ToolsUtil.subInteger(retvo.getIlastrenewcusttaxpay(), counum));
+					
+					counum = ltcustmap.get(pk_corp + "小规模纳税人");
+					retvo.setIlastrenewcustsmall(ToolsUtil.subInteger(retvo.getIlastrenewcustsmall(), counum));
 				}
 				if (lnconmap != null && !lnconmap.isEmpty()) {
 					retvo.setIlastrenewconttaxpay(lnconmap.get(pk_corp + "一般纳税人"));
@@ -252,16 +276,38 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				sql.append(" AND ");
 				sql.append(where);
 			}
-			if (qrytype != null && (qrytype == 3 || qrytype == 4)) {
-				sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-				sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
-				if (qrytype != null && qrytype == 3) {
+			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
+			if (qrytype != null && qrytype == 3) {
+				if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//查询扣款客户
+					sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
 					spm.addParam(paramvo.getPeriod());
-				} else if (qrytype != null && qrytype == 4) {
-					String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
+					sql.append("   AND t.vdeductstatus in (?, ?, ? )  \n");
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+				}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//查询退款客户
+					sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
+					spm.addParam(paramvo.getPeriod());
+					sql.append("   AND t.vdeductstatus = ?  \n");
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+				}
+			} else if (qrytype != null && qrytype == 4) {
+				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
+				if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){//查询扣款客户
+					sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
 					spm.addParam(preperiod);
+					sql.append("   AND t.vdeductstatus in (?, ?, ? )  \n");
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+				}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//查询退款客户
+					sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
+					spm.addParam(preperiod);
+					sql.append("   AND t.vdeductstatus = ?  \n");
+					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 				}
 			}
+			sql.append(" AND ct.patchstatus not in (2, 5) \n");
 			sql.append(" ) ");
 		}
 		sql.append(" GROUP BY p.fathercorp, NVL(p.chargedeptname, '小规模纳税人') \n");
@@ -448,16 +494,9 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				sql.append(" AND ");
 				sql.append(where);
 			}
-			sql.append(" AND SUBSTR(p.createdate, 1, 7) = ? \n");
-			if (qrytype != null && qrytype == 1) {
-				spm.addParam(paramvo.getPeriod());
-			} else if (qrytype != null && qrytype == 2) {
-				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
-				spm.addParam(preperiod);
-			}
 			sql.append(" ) ");
 			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
-			sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
+			sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
 			if (qrytype != null && qrytype == 1) {
 				spm.addParam(paramvo.getPeriod());
 			} else if (qrytype != null && qrytype == 2) {
@@ -466,14 +505,11 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			}
 		} else if (qrytype != null && (qrytype == 3 || qrytype == 4)) {
 			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
 			sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
 			if (qrytype != null && qrytype == 3) {
 				spm.addParam(paramvo.getPeriod());
-				spm.addParam(paramvo.getPeriod());
 			} else if (qrytype != null && qrytype == 4) {
 				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
-				spm.addParam(preperiod);
 				spm.addParam(preperiod);
 			}
 		}
