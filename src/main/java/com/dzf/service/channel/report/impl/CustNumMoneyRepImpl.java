@@ -466,7 +466,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("              nvl(t.nsubtotalmny, 0)\n");
 		sql.append("             ELSE  \n");
 		sql.append("              nvl(t.nsubtotalmny, 0) \n");
-		sql.append("           END) AS naccountmny  \n");
+		sql.append("           END) AS summny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
