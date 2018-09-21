@@ -307,7 +307,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 				}
 			}
-			sql.append(" AND ct.patchstatus not in (2, 5) \n");
+			sql.append(" AND nvl(ct.patchstatus,-1) not in (2, 5) \n");
 			sql.append(" ) ");
 		}
 		sql.append(" GROUP BY p.fathercorp, NVL(p.chargedeptname, '小规模纳税人') \n");
@@ -380,7 +380,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp, \n");
 		sql.append("       NVL(p.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
-		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS summny  \n");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0)) AS summny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
@@ -465,7 +465,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("             WHEN 9 THEN  \n");
 		sql.append("              nvl(t.nsubtotalmny, 0)\n");
 		sql.append("             ELSE  \n");
-		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)\n");
+		sql.append("              nvl(t.nsubtotalmny, 0) \n");
 		sql.append("           END) AS naccountmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
@@ -551,7 +551,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(" and ");
 			sql.append(condition);
 		}
-		sql.append("           AND nvl(ct.patchstatus, 0) != 2 \n");// 补单合同不统计
+		sql.append("           AND nvl(ct.patchstatus, -1) != 2 \n");// 补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0 \n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'\n");
 		sql.append("           AND (ct.vbeginperiod = ? OR ct.vendperiod = ? OR \n");
@@ -614,7 +614,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(" and ");
 			sql.append(condition);
 		}
-		sql.append("           AND nvl(ct.patchstatus, 0) != 2 \n");// 补单合同不统计
+		sql.append("           AND nvl(ct.patchstatus, -1) != 2 \n");// 补单合同不统计
 		sql.append("           AND nvl(acc.dr, 0) = 0\n");
 		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y' \n");
 		sql.append("           AND nvl(ct.isncust,'N')='N' \n");// 不统计存量客户

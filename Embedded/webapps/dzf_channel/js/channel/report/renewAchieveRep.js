@@ -141,11 +141,6 @@ function load(){
         	footerData['stockconts'] = stockconts;
         	footerData['stockcontt'] = stockcontt;
         	
-        	footerData['newcusts'] = newcusts;
-        	footerData['newcustt'] = newcustt;
-        	footerData['newconts'] = newconts;
-        	footerData['newcontt'] = newcontt;
-        	
         	footerData['renewcusts'] = renewcusts;
         	footerData['renewcustt'] = renewcustt;
         	footerData['renewconts'] = renewconts;
