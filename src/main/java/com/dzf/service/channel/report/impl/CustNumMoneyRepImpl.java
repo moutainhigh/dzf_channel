@@ -396,7 +396,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(where);
 		}
 		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND t.pk_corp IN ( ");
+			sql.append(" AND t.pk_corpk IN ( ");
 			sql.append("SELECT p.pk_corp \n");
 			sql.append("  FROM bd_corp p  \n");
 			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
@@ -481,7 +481,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(where);
 		}
 		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND t.pk_corp IN ( ");
+			sql.append(" AND t.pk_corpk IN ( ");
 			sql.append("SELECT p.pk_corp \n");
 			sql.append("  FROM bd_corp p  \n");
 			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
