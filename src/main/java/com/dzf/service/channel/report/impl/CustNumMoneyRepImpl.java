@@ -396,27 +396,27 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(where);
 		}
 		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND t.pk_corpk IN ( ");
-			sql.append("SELECT p.pk_corp \n");
-			sql.append("  FROM bd_corp p  \n");
-			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
-			sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
-			sql.append("   AND nvl(p.isncust, 'N') = 'N'  \n");
-			if (corplist != null && corplist.size() > 0) {
-				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
-				sql.append(" AND ");
-				sql.append(where);
-			}
-			sql.append(" AND SUBSTR(p.createdate, 1, 7) = ? \n");
-			if (qrytype != null && qrytype == 1) {
-				spm.addParam(paramvo.getPeriod());
-			} else if (qrytype != null && qrytype == 2) {
-				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
-				spm.addParam(preperiod);
-			}
-			sql.append(" ) ");
+//			sql.append(" AND t.pk_corpk IN ( ");
+//			sql.append("SELECT p.pk_corp \n");
+//			sql.append("  FROM bd_corp p  \n");
+//			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
+//			sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
+//			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+//			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
+//			sql.append("   AND nvl(p.isncust, 'N') = 'N'  \n");
+//			if (corplist != null && corplist.size() > 0) {
+//				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
+//				sql.append(" AND ");
+//				sql.append(where);
+//			}
+//			sql.append(" AND SUBSTR(p.createdate, 1, 7) = ? \n");
+//			if (qrytype != null && qrytype == 1) {
+//				spm.addParam(paramvo.getPeriod());
+//			} else if (qrytype != null && qrytype == 2) {
+//				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
+//				spm.addParam(preperiod);
+//			}
+//			sql.append(" ) ");
 			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
 			sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
 			if (qrytype != null && qrytype == 1) {
@@ -461,12 +461,13 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,\n");
 		sql.append("       NVL(p.chargedeptname, '小规模纳税人') AS chargedeptname,\n");
-		sql.append("       SUM(CASE t.vstatus  \n");
-		sql.append("             WHEN 9 THEN  \n");
-		sql.append("              nvl(t.nsubtotalmny, 0)\n");
-		sql.append("             ELSE  \n");
-		sql.append("              nvl(t.nsubtotalmny, 0) \n");
-		sql.append("           END) AS summny  \n");
+		sql.append("       SUM(nvl(t.nsubtotalmny, 0)) AS summny");
+//		sql.append("       SUM(CASE t.vstatus  \n");
+//		sql.append("             WHEN 9 THEN  \n");
+//		sql.append("              nvl(t.nsubtotalmny, 0)\n");
+//		sql.append("             ELSE  \n");
+//		sql.append("              nvl(t.nsubtotalmny, 0) \n");
+//		sql.append("           END) AS summny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  \n");
@@ -481,20 +482,20 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(where);
 		}
 		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND t.pk_corpk IN ( ");
-			sql.append("SELECT p.pk_corp \n");
-			sql.append("  FROM bd_corp p  \n");
-			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
-			sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
-			sql.append("   AND nvl(p.isncust, 'N') = 'N'  \n");
-			if (corplist != null && corplist.size() > 0) {
-				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
-				sql.append(" AND ");
-				sql.append(where);
-			}
-			sql.append(" ) ");
+//			sql.append(" AND t.pk_corpk IN ( ");
+//			sql.append("SELECT p.pk_corp \n");
+//			sql.append("  FROM bd_corp p  \n");
+//			sql.append("  LEFT JOIN bd_account acc ON p.fathercorp = acc.pk_corp  \n");
+//			sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
+//			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+//			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
+//			sql.append("   AND nvl(p.isncust, 'N') = 'N'  \n");
+//			if (corplist != null && corplist.size() > 0) {
+//				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
+//				sql.append(" AND ");
+//				sql.append(where);
+//			}
+//			sql.append(" ) ");
 			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
 			sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
 			if (qrytype != null && qrytype == 1) {
