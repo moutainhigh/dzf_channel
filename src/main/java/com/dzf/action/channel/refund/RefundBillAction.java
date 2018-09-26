@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RefundExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.refund.RefundBillVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
@@ -115,8 +116,8 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 				}else{
 					opertype = "isEdit";
 				}
-				if (data.getNrefbzjmny().compareTo(DZFDouble.ZERO_DBL) == 0
-						&& data.getNrefyfkmny().compareTo(DZFDouble.ZERO_DBL) == 0) {
+				if (CommonUtil.getDZFDouble(data.getNrefbzjmny()).compareTo(DZFDouble.ZERO_DBL) == 0
+						&& CommonUtil.getDZFDouble(data.getNrefyfkmny()).compareTo(DZFDouble.ZERO_DBL) == 0) {
 					throw new BusinessException("保证金退款与预付款退款不能同时都为0");
 				}
 				setDefaultValue(data);
