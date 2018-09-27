@@ -539,7 +539,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
 		sql.append(" select (case yt.patchstatus when 2 then 0 when 5 then  0 else 1 end) as anum,yt.vcontcode, ");
 		sql.append(" yt.pk_contract as pk_corp,substr(yt.dsubmitime,0,10) as denddate, ");
-		sql.append(" nvl(yt.ntotalmny,0)-nvl(yt.nbookmny,0) as antotalmny, " );   
+		sql.append(" nvl(yt.ntotalmny,0)-nvl(yt.nbookmny,0) as antotalmny " );   
 		sql.append(" from ynt_contract yt " );
 		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(yt.dr,0) = 0 and yt.vstatus=5 and " );
 		sql.append(" substr(yt.dsubmitime,0,10)>=? and substr(yt.dsubmitime,0,10)<=? and yt.pk_corp=? " );
