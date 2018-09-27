@@ -115,7 +115,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		Grid grid = new Grid();
 		try {
 			ManagerVO paramvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), new ManagerVO());
-			List<ManagerVO> clist = manager.queryDetail(paramvo);
+			List<ManagerVO> clist = manager.queryWDetail(paramvo);
 			grid.setRows(clist);
 			grid.setSuccess(true);
 			grid.setMsg("操作成功");

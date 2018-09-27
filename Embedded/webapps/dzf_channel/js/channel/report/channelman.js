@@ -173,7 +173,7 @@ function initWshGrid(){
 				}
 			}] ],
 			onLoadSuccess : function(data) {
-				var rows = $('#gridh').datagrid('getRows');
+				var rows = $('#gridw').datagrid('getRows');
 				var footerData = new Object();
 	            var anum = parseFloat(0);	
 	            var antlmny = parseFloat(0);	
@@ -193,19 +193,17 @@ function initWshGrid(){
 }
 
 function initTabs(){
-	var bdate = $('#bdate').datebox('getValue');
-	var edate = $('#edate').datebox('getValue');
 	$('#detail').tabs({
 	    border:false,
 	    onSelect:function(title){
 			if("已审核" == title){
 				id='#gridh';
 				$('#gridh').datagrid('options').url = contextPath + '/report/manager!queryDetail.action';
-				$('#gridh').datagrid('load', {"corpid":corpid,"bdate":bdate,"edate":edate});
+				$('#gridh').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
 			}else if("未审核" == title){
 				id='#gridw';
 				$('#gridw').datagrid('options').url = contextPath + '/report/manager!queryWDetail.action';
-				$('#gridw').datagrid('load', {"corpid":corpid,"bdate":bdate,"edate":edate});
+				$('#gridw').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
 			}
 	    }
 	});
