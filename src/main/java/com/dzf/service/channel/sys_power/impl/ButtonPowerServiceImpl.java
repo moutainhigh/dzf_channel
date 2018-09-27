@@ -67,14 +67,6 @@ public class ButtonPowerServiceImpl implements IButtonPowerService {
 	public void save(RoleButtonVO[] vos) throws DZFWarpException {
 		singleObjectBO.executeUpdate("update sm_role_button set dr=1 ", null);
 		singleObjectBO.insertVOArr("000001", vos);
-//		SQLParameter spm = new SQLParameter();
-//		for (RoleButtonVO roleButtonVO : vos) {
-//			spm = new SQLParameter();
-//			spm.addParam(roleButtonVO.getPk_role());
-//			spm.addParam(roleButtonVO.getPk_button());
-//			spm.addParam(roleButtonVO.getPk_funnode());
-//			singleObjectBO.executeUpdate("insert into sm_role_button (pk_role,pk_button,pk_funnode) values(?,?,?)  ", spm);
-//		}
 	}
 	
 }
