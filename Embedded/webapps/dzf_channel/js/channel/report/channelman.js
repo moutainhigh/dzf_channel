@@ -240,7 +240,7 @@ function qryChnDetail(cid,corpnm){
 				
 				$('#gridh').datagrid('resize',{ 
 					height : '350',
-					width : '90%'
+					width : '100%'
 				});
 			}
 		}
