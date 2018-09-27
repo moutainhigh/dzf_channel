@@ -47,6 +47,7 @@ public class ButtonPowerServiceImpl implements IButtonPowerService {
 		sql.append("   left join sm_role_button rbu on but.pk_button = rbu.pk_button \n");
 		sql.append("   left join sm_role  r on rbu.pk_role=r.pk_role \n");
 		sql.append(" where nvl(but.dr,0)=0 and nvl(but.isseal,'N')='N' \n");
+		sql.append(" order by but_code  \n");
 		List<ButtonVO> list = (List<ButtonVO>) singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(ButtonVO.class));
 		ButtonVO getvo=new ButtonVO();
 		List<ButtonVO> retlist =new ArrayList<>();

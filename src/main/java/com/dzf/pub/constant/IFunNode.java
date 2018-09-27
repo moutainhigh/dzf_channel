@@ -203,4 +203,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_47  = "channel47";
     
+    /**
+     * 基础设置-按钮权限
+     */
+    public static final String CHANNEL_48  = "channel48";
+    
 }

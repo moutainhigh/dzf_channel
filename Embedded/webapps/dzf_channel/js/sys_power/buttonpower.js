@@ -37,7 +37,9 @@ function loadHead(){
 					height : Public.setGrid().h,
 					remoteSort:false,
 					columns : columns,
-					onLoadSuccess : function(data) {},
+					onLoadSuccess : function(data) {
+						mergeCell(data,this);
+					},
 				});
 			}else{
 				Public.tips({content : msg,type : 1});
@@ -177,6 +179,26 @@ function beginBodyEdit(){
 	 	$("#grid").datagrid('beginEdit', i);
 	 }
 };
+
+/**
+ * 合并单元格
+ * @returns
+ */
+function mergeCell(data,is){
+	var mark=1;                                              
+　　　for (var i=1; i <data.rows.length; i++) {    
+　　　　　　if (data.rows[i]['fname'] == data.rows[i-1]['fname']) {  
+　　　　　　　　mark += 1;                                            
+　　　　　　　　$(is).datagrid('mergeCells',{ 
+　　　　　　　　　　index: i+1-mark,                 
+　　　　　　　　　　field: 'fname',              
+　　　　　　　　　　rowspan:mark                 
+　　　　　　　　}); 
+　　　　　　}else{
+　　　　　　　　mark=1;                                
+　　　　　　}
+　	}
+}
 
 /**
  * 按钮显示

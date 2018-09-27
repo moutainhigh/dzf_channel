@@ -19,8 +19,10 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.sys_power.IButtonPowerService;
+import com.dzf.service.pub.IPubService;
 
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
@@ -32,6 +34,9 @@ public class ButtonPowerAction extends BaseAction<ButtonVO> {
 
 	@Autowired
 	private IButtonPowerService butPower;
+	
+	@Autowired
+	private IPubService pubser;
 	
 	public void queryHead() {
 		Json json = new Json();
@@ -80,6 +85,7 @@ public class ButtonPowerAction extends BaseAction<ButtonVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_48);
 			String body = getRequest().getParameter("body"); // 第一个子表
 			body = body.replace("}{", "},{");
 			body = "[" + body + "]";
@@ -87,7 +93,6 @@ public class ButtonPowerAction extends BaseAction<ButtonVO> {
 			Map<String, String> bodymapping = FieldMapping.getFieldMapping(new RoleButtonVO());
 			RoleButtonVO[] bodyvos = DzfTypeUtils.cast(array, bodymapping, RoleButtonVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-//				pubser.checkFunnode(uservo, IFunNode.CHANNEL_38);
 			butPower.save(bodyvos);
 			json.setRows(data);
 			json.setSuccess(true);
