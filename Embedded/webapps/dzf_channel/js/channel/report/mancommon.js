@@ -147,6 +147,7 @@ function useFormat(value,row,index){
 	}
 }
 
+
 /**
  * 明细打印
  */

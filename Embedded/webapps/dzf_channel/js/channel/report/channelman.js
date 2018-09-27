@@ -160,7 +160,7 @@ function initWshGrid(){
 				title : '合同编码',
 	            halign:'left',
 				field : 'vccode',
-				formatter :useFormat,
+				formatter :weiFormat,
 			},{
 				width : '120',
 				title : '合同代账费',
@@ -190,6 +190,14 @@ function initWshGrid(){
 	            $('#gridw').datagrid("scrollTo",0);
 			},
 		});
+}
+
+function weiFormat(value,row,index){
+	if(row.edate != "合计"){
+		var url = 'channel/contract/contractconfrim.jsp?operate=toYnt&contractid='+row.corpid;
+		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+value+"</a>";
+		return ss ;
+	}
 }
 
 function initTabs(){

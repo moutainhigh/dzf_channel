@@ -103,6 +103,9 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("vcode")
 	private String vbillcode;//单据编码
 	
+	@FieldAlias("contractid")
+	private String pk_contract; // 合同主键
+	
 	public String getVbillcode() {
 		return vbillcode;
 	}
@@ -125,6 +128,14 @@ public class QryParamVO extends SuperVO {
 
 	public void setVqrysql(String vqrysql) {
 		this.vqrysql = vqrysql;
+	} 
+
+	public String getPk_contract() {
+		return pk_contract;
+	}
+
+	public void setPk_contract(String pk_contract) {
+		this.pk_contract = pk_contract;
 	}
 
 	public String getVyear() {

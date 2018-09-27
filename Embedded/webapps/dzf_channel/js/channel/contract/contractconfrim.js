@@ -112,11 +112,11 @@ function dClickMans(rowTable){
  * 由别的界面（付款单余额明细）跳转待合同审核界面
  */
 function loadJumpData(){
+	debugger
 	var obj = Public.getRequest();
 	var operate = obj.operate;
 	if(operate == "tocont"){
 		var id = obj.pk_billid;
-		
 		$('#grid').datagrid('unselectAll');
 		var queryParams = $('#grid').datagrid('options').queryParams;
 		$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
@@ -124,6 +124,17 @@ function loadJumpData(){
 		queryParams.enddate = null;
 		queryParams.qtype = -1;
 		queryParams.id = id;
+		$('#grid').datagrid('options').queryParams = queryParams;
+		$('#grid').datagrid('reload');
+	}else if(operate == "toYnt"){//ynt_contract 主键
+		var contractid = obj.contractid;
+		$('#grid').datagrid('unselectAll');
+		var queryParams = $('#grid').datagrid('options').queryParams;
+		$('#grid').datagrid('options').url =contextPath + '/contract/contractconf!query.action';
+		queryParams.begdate = null;
+		queryParams.enddate = null;
+		queryParams.qtype = -1;
+		queryParams.contractid = contractid;
 		$('#grid').datagrid('options').queryParams = queryParams;
 		$('#grid').datagrid('reload');
 	}

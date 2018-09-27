@@ -386,6 +386,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm.addParam(paramvo.getPk_bill());
 			}
 		}
+		if(!StringUtil.isEmpty(paramvo.getPk_contract())){
+			sql.append("   AND t.pk_contract = ? \n") ;//原合同合同主键
+			spm.addParam(paramvo.getPk_contract());
+		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
 			sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 \n") ;
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
