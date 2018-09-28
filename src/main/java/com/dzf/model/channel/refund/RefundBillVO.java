@@ -7,7 +7,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
- * 付款单VO
+ * 退款单VO
  * @author zy
  *
  */
