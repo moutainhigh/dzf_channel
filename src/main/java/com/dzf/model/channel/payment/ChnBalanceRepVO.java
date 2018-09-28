@@ -79,7 +79,18 @@ public class ChnBalanceRepVO extends SuperVO{
 
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
+	
+	@FieldAlias("mname")
+	private String vmanagername; // 渠道经理（只做界面展示）
     
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
+	}
+
 	public Integer getIcustnum() {
 		return icustnum;
 	}

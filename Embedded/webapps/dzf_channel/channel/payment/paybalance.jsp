@@ -55,8 +55,14 @@
 			</div>
 		</div>
 		
+		<div class="mod-inner">
+			<div id="dataGrid" class="grid-wrap">
+				<table id="grid"></table>
+			</div>
+		</div>
+		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="width:450px; height:300px;" data-options="closed:true">
+		<div class="qijian_box" id="qrydialog" style="width:450px; height:330px;" data-options="closed:true">
 			<s class="s"><i class="i"></i> </s>
 			<h3> 
 				<span>查询</span>
@@ -102,6 +108,11 @@
 				<label style="width:60px;" for='all'>全部</label> 
 			</div>
 			<div class="time_col time_colp10">
+				<label style="width:70px;text-align:right">渠道经理：</label>
+				<input id="manager" class="easyui-textbox" style="width:290px;height:28px;" />
+				<input id="managerid" type="hidden">
+			</div>
+			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">加盟商：</label>
 				<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
 				<input id="pk_account" type="hidden">
@@ -118,20 +129,18 @@
 			</p>
 		</div>
 		<!-- 查询对话框 end -->
-		<div class="mod-inner">
-			<div id="dataGrid" class="grid-wrap">
-				<table id="grid"></table>
-			</div>
-		</div>
 		
+		<!-- 加盟商参照begin -->
 		<div id="kj_dialog"></div>
 		<div id="kj_buttons" style="display:none;">
 			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 		</div>
+		<!-- 加盟商参照begin -->
 		
+		<!-- 付款单余额明细begin -->
 		<div id="detail_dialog" class="easyui-dialog" title="付款单余额明细" 
-			data-options="modal:true,closed:true" style="width:940px;height:500px;">
+			data-options="modal:true,closed:true" style="width:1140px;height:500px;">
 			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
 				<label style="text-align:right">查询：</label> 
 				<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
@@ -149,6 +158,17 @@
 				 <table id="gridh"></table>	
 			</div>
 		</div>
+		<!-- 付款单余额明细end -->
+		
+		<!-- 渠道经理参照对话框及按钮 begin -->
+		<div id="manDlg"></div>
+		<div id="manBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道经理参照对话框及按钮 end -->
+		
 	</div>
 	
 </body>

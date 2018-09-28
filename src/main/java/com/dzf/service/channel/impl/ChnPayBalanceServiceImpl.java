@@ -22,9 +22,11 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
@@ -41,32 +43,49 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	
     @Autowired
     private IPubService pubService;
-	
+    
 	@Override
 	public List<ChnBalanceRepVO> query(QryParamVO paramvo) throws DZFWarpException {
 		List<ChnBalanceRepVO> retlist = new ArrayList<ChnBalanceRepVO>();
 		List<String> pklist = new ArrayList<String>();
-		String areaname=paramvo.getAreaname();
-		String condition = pubService.makeCondition(paramvo.getCuserid(),areaname);
-	  	if(condition==null){
-	  		return null;
-    	}else if(condition.equals("flg")){
-    		condition=null;
-    	}
-	  	paramvo.setAreaname(condition);
+		StringBuffer qrysql = new StringBuffer();//附加查询条件
+		//1、渠道经理查询条件
+		if(!StringUtil.isEmpty(paramvo.getVmanager())){
+			String[] corps = pubService.getManagerCorp(paramvo.getVmanager());
+			if(corps != null && corps.length > 0){
+				String where = SqlUtil.buildSqlForIn(" ba.pk_corp ", corps);
+				qrysql.append(" AND ").append(where);
+			}else{
+				return null;
+			}
+		}
+		//2、根据当前登陆人和选择的运营大区，获取有权限查询的客户
+		String areaname = paramvo.getAreaname();
+		String areaqry = pubService.makeCondition(paramvo.getCuserid(), areaname);
+		if (areaqry == null) {
+			return null;
+		} else if (areaqry.equals("flg")) {
+			areaqry = null;
+		}
+		if(!StringUtil.isEmpty(areaqry)){
+			qrysql.append(areaqry);
+		}
+		if(qrysql != null && qrysql.length() > 0){
+			paramvo.setAreaname(qrysql.toString());
+		}
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);// 查询期初余额
 		Map<String, ChnBalanceRepVO> datamap = qryDataMap(paramvo, pklist, 2);// 查询明细金额
-		if(paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 	|| paramvo.getQrytype() == 2 )){//全部查询、预付款查询
-			//0扣款按照预付款扣款统计
+		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {// 全部查询、预付款查询
+			// 0扣款按照预付款扣款统计
 			qryNoDeductConData(paramvo, pklist);
 		}
-		Map<String, ChnBalanceRepVO> posimap = null;//扣款合同信息
-		Map<String, ChnBalanceRepVO> negamap = null;//退款合同信息
+		Map<String, ChnBalanceRepVO> posimap = null;// 扣款合同信息
+		Map<String, ChnBalanceRepVO> negamap = null;// 退款合同信息
 		ChnBalanceRepVO contvo = null;
 		if (pklist != null && pklist.size() > 0) {
-			//全部查询、预付款查询、返点查询
-			if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2
-					|| paramvo.getQrytype() == 3)) {
+			// 全部查询、预付款查询、返点查询
+			if (paramvo.getQrytype() != null
+					&& (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
 				posimap = qryPositiveData(paramvo, pklist);
 				negamap = qryNegativeData(paramvo, pklist);
 			}
@@ -76,7 +95,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			CorpVO accvo = null;
 			String ipaytype = null;
 			Integer paytype = null;
-			Map<Integer, String> areaMap = pubService.getAreaMap(areaname,3);
+			Map<Integer, String> areaMap = pubService.getAreaMap(areaname, 3);//运营区域
+			Map<String,String> marmap = pubService.getManagerMap();//渠道经理
+			String manager = "";
+			UserVO uservo = null;
 			for (String pk : pklist) {
 				repvo = new ChnBalanceRepVO();
 				ipaytype = pk.substring(pk.indexOf(",") + 1);
@@ -86,7 +108,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				if (accvo != null) {
 					repvo.setCorpname(accvo.getUnitname());
 					repvo.setInnercode(accvo.getInnercode());
-					if(areaMap!=null && !areaMap.isEmpty()){
+					if (areaMap != null && !areaMap.isEmpty()) {
 						repvo.setAreaname(areaMap.get(accvo.getVprovince()));
 					}
 				}
@@ -105,60 +127,71 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				} else if (paytype == 3) {
 					repvo.setVpaytypename("返点");
 				}
-				//全部查询、预付款查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在预付款上
-				if(paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)){
-					if(paytype == 2){
-						if(posimap != null && !posimap.isEmpty()){
-							contvo = posimap.get(repvo.getPk_corp());
-							if(contvo != null){
-								repvo.setIcustnum(contvo.getIcustnum());
-								repvo.setIzeronum(contvo.getIzeronum());
-								repvo.setIdednum(contvo.getIdednum());
-								repvo.setNaccountmny(contvo.getNaccountmny());
-								repvo.setNbookmny(contvo.getNbookmny());
-							}
+				if(marmap != null && !marmap.isEmpty()){
+					manager = marmap.get(pk_corp);
+					if(!StringUtil.isEmpty(manager)){
+						uservo = UserCache.getInstance().get(manager, null);
+						if (uservo != null) {
+							repvo.setVmanagername(uservo.getUser_name());//渠道经理
 						}
-						if(negamap != null && !negamap.isEmpty()){
-							contvo = negamap.get(repvo.getPk_corp());
-							if(contvo != null){
-								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
-								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
-								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
-								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
-								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
-							}
-						}
-						repvo.setNum(CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
-								+ CommonUtil.getInteger(repvo.getIdednum()));
-					}
-				//返点查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在返点上
-				}else if(paramvo.getQrytype() != null && (paramvo.getQrytype() == 3)){
-					if(paytype == 3){
-						if(posimap != null && !posimap.isEmpty()){
-							contvo = posimap.get(repvo.getPk_corp());
-							if(contvo != null){
-								repvo.setIcustnum(contvo.getIcustnum());
-								repvo.setIzeronum(contvo.getIzeronum());
-								repvo.setIdednum(contvo.getIdednum());
-								repvo.setNaccountmny(contvo.getNaccountmny());
-								repvo.setNbookmny(contvo.getNbookmny());
-							}
-						}
-						if(negamap != null && !negamap.isEmpty()){
-							contvo = negamap.get(repvo.getPk_corp());
-							if(contvo != null){
-								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
-								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
-								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
-								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
-								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
-							}
-						}
-						repvo.setNum(CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
-								+ CommonUtil.getInteger(repvo.getIdednum()));
 					}
 				}
-	
+				// 全部查询、预付款查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在预付款上
+				if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
+					if (paytype == 2) {
+						if (posimap != null && !posimap.isEmpty()) {
+							contvo = posimap.get(repvo.getPk_corp());
+							if (contvo != null) {
+								repvo.setIcustnum(contvo.getIcustnum());
+								repvo.setIzeronum(contvo.getIzeronum());
+								repvo.setIdednum(contvo.getIdednum());
+								repvo.setNaccountmny(contvo.getNaccountmny());
+								repvo.setNbookmny(contvo.getNbookmny());
+							}
+						}
+						if (negamap != null && !negamap.isEmpty()) {
+							contvo = negamap.get(repvo.getPk_corp());
+							if (contvo != null) {
+								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
+								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
+								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
+								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
+								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
+							}
+						}
+						repvo.setNum(
+								CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
+										+ CommonUtil.getInteger(repvo.getIdednum()));
+					}
+					// 返点查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在返点上
+				} else if (paramvo.getQrytype() != null && (paramvo.getQrytype() == 3)) {
+					if (paytype == 3) {
+						if (posimap != null && !posimap.isEmpty()) {
+							contvo = posimap.get(repvo.getPk_corp());
+							if (contvo != null) {
+								repvo.setIcustnum(contvo.getIcustnum());
+								repvo.setIzeronum(contvo.getIzeronum());
+								repvo.setIdednum(contvo.getIdednum());
+								repvo.setNaccountmny(contvo.getNaccountmny());
+								repvo.setNbookmny(contvo.getNbookmny());
+							}
+						}
+						if (negamap != null && !negamap.isEmpty()) {
+							contvo = negamap.get(repvo.getPk_corp());
+							if (contvo != null) {
+								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
+								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
+								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
+								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
+								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
+							}
+						}
+						repvo.setNum(
+								CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
+										+ CommonUtil.getInteger(repvo.getIdednum()));
+					}
+				}
+
 				if (initmap != null && !initmap.isEmpty()) {
 					vo = initmap.get(pk);
 					if (vo != null) {
@@ -220,7 +253,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	        sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
 	    }
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
-			sql.append(paramvo.getAreaname());
+			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
@@ -301,7 +334,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
 		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
-			sql.append(paramvo.getAreaname());
+			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 2) {//预付款扣款
 			//正常和作废扣款：1、预付款扣款金额不为0；2、扣款总金额为0；
@@ -412,7 +445,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
 		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
-			sql.append(paramvo.getAreaname());
+			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 2) {//预付款扣款
 			sql.append(" AND (  t.vstatus = ?  \n");
@@ -517,14 +550,14 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) - \n") ; 
 		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; 
 		sql.append("  FROM cn_detail a \n") ; 
-		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
+		sql.append("  LEFT JOIN bd_account ba on a.pk_corp = ba.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0) = 0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+	        sql.append(" and a.pk_corp in (" + corpIdS + ")");
 	    }
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
-			sql.append(paramvo.getAreaname());
+			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND a.ipaytype = ? \n");
@@ -575,7 +608,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	        sql.append(" AND a.pk_corp  in (" + corpIdS + ")");
 	    }
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
-			sql.append(paramvo.getAreaname());
+			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND a.ipaytype = ? \n");
@@ -611,11 +644,191 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	@Override
 	public List<ChnDetailRepVO> queryDetail(QryParamVO paramvo) throws DZFWarpException {
 		List<ChnDetailRepVO> retlist = new ArrayList<ChnDetailRepVO>();
+		//1、查询明细期初数据
+		DZFDouble coutbal = getDetInitData(paramvo, retlist);
+
+		//2、查询明细数据
+		QrySqlSpmVO sqpvo = getDetailQry(paramvo);
+		List<ChnDetailRepVO> list = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
+				new BeanListProcessor(ChnDetailRepVO.class));
+		
+		//3、查询零扣款数据
+		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
+			//查询全部或查询预付款时，把零扣款的数据查询出来
+			List<ChnDetailRepVO> zerolist = qryZeroDeduction(list, paramvo);// 查询扣费为0的数据
+			if(zerolist != null && zerolist.size() > 0){
+				list.addAll(zerolist);
+			}
+		}
+		if (list != null && list.size() > 0) {
+			List<ChnDetailRepVO> orderlist = getOrderList(list);
+			CorpVO corpvo = null;
+			DZFDouble balance = DZFDouble.ZERO_DBL;
+			Map<String, ChnDetailRepVO> contmap = null;// 合同信息
+			// 查询全部（显示在预付款上）、预付款、返点，查询合同明细
+			if (paramvo.getQrytype() != null
+					&& (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
+				contmap = queryConDetail(paramvo);
+			}
+			for (ChnDetailRepVO repvo : orderlist) {
+				corpvo = CorpCache.getInstance().get(null, repvo.getPk_corp());
+				if (corpvo != null) {
+					repvo.setCorpname(corpvo.getUnitname());
+				}
+				corpvo = CorpCache.getInstance().get(null, repvo.getPk_corpk());
+				if(corpvo != null){
+					repvo.setCorpkname(corpvo.getUnitname());
+				}
+				//设置类型名称：
+				setTypeName(repvo);
+				//设置合同相关金额、合同扣款相关的备注
+				setContData(paramvo, contmap, repvo);
+				balance = SafeCompute.sub(repvo.getNpaymny(), repvo.getNusedmny());
+				repvo.setNbalance(SafeCompute.add(coutbal, balance));
+				coutbal = repvo.getNbalance();
+				retlist.add(repvo);
+			}
+		}
+		return retlist;
+	}
+	
+	/**
+	 * 设置类型名称
+	 * @param repvo
+	 * @throws DZFWarpException
+	 */
+	private void setTypeName(ChnDetailRepVO repvo) throws DZFWarpException {
+		if (repvo.getIpaytype() != null) {
+			switch (repvo.getIpaytype()) {
+			case 1:
+				repvo.setVpaytypename("保证金");
+				break;
+			case 2:
+				repvo.setVpaytypename("预付款");
+				break;
+			case 3:
+				repvo.setVpaytypename("返点");
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * 设置合同相关金额、合同扣款相关的备注
+	 * @param paramvo
+	 * @param contmap
+	 * @param repvo
+	 * @throws DZFWarpException
+	 */
+	private void setContData(QryParamVO paramvo, Map<String, ChnDetailRepVO> contmap, 
+			ChnDetailRepVO repvo) throws DZFWarpException{
+		if (contmap != null && !contmap.isEmpty()) {
+			String key = "1" + repvo.getPk_bill();
+//			if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) == 0
+//					&& (vo.getDr() != null && vo.getDr() == -1)) {
+//				key = "-1" + vo.getPk_bill();
+//			}
+//			if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
+//				key = "-1" + vo.getPk_bill();
+//			}
+			//加盟商合同类型（null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同）
+			//零扣款的合同：0扣款：patchstatus值为1；0退款：patchstatus值为3；
+			//正常扣款的合同：1：被2补提交的原合同；2：小规模转一般人的合同；4：被5补提交的原合同;5:一般人转小规模的合同
+			//           特殊情况：正常扣款后，变更的合同，patchstatus值都为3，但是扣款金额一正一负
+			if(CommonUtil.getDZFDouble(repvo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) <= 0
+					&& repvo.getPatchstatus() != null && repvo.getPatchstatus() == 3){//变更合同
+				key = "-1" + repvo.getPk_bill();
+			}
+			if (contmap.containsKey(key)) {
+				ChnDetailRepVO contvo = contmap.get(key);
+				if (paramvo.getQrytype() != null && paramvo.getQrytype() == -1) {// 查询全部时，展示预付款和返点的合同相关金额
+					if (repvo.getIpaytype() == 3 && repvo.getIopertype() == 2) {// 返点扣款或返点退款
+						if (contvo.getIdeductype() != null && contvo.getIdeductype() == 3) {// 全部返点扣款
+							repvo.setNaccountmny(contvo.getNaccountmny());
+							repvo.setNbookmny(contvo.getNbookmny());
+						}
+					} else {
+						repvo.setNaccountmny(contvo.getNaccountmny());
+						repvo.setNbookmny(contvo.getNbookmny());
+					}
+				} else {
+					repvo.setNaccountmny(contvo.getNaccountmny());
+					repvo.setNbookmny(contvo.getNbookmny());
+				}
+				//设置合同扣款相关的备注
+				setShowMemo(repvo);
+			}
+		}
+	}
+	
+	/**
+	 * 设置合同扣款相关的备注
+	 * @param repvo
+	 * @throws DZFWarpException
+	 */
+	private void setShowMemo(ChnDetailRepVO repvo) throws DZFWarpException {
+		if(CommonUtil.getDZFDouble(repvo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) != 0){
+			//零扣款的数据的备注已经在查询时组装好，不需要重新处理
+			//加盟商合同类型（null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同）
+			//1、正常扣款数据，需要区分存量客户和非存量客户：value = null,1,4
+			if (repvo.getPatchstatus() == null || (repvo.getPatchstatus() != null
+					&& (repvo.getPatchstatus() == 1 || repvo.getPatchstatus() == 4))) {
+				if (repvo.getIsncust() != null && repvo.getIsncust().booleanValue()) {
+					repvo.setVmemo("存量客户");
+				} else {
+					repvo.setVmemo("");
+				}
+			}else if(repvo.getPatchstatus() != null && repvo.getPatchstatus() == 3){
+				//2、正常扣款后，变更的合同，按照扣款金额区分扣款或退款，按照合同状态区分终止或作废：value = 3
+				if(CommonUtil.getDZFDouble(repvo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) > 0){
+					if(repvo.getIsncust() != null && repvo.getIsncust().booleanValue()){
+						repvo.setVmemo("存量客户");
+					}else{
+						repvo.setVmemo("");
+					}
+				}else if(CommonUtil.getDZFDouble(repvo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) < 0){
+					if(repvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){
+						repvo.setVmemo("合同终止");
+					}else if(repvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){
+						repvo.setVmemo("合同作废");
+					}
+				}
+				
+			} else if (repvo.getPatchstatus() != null
+					&& (repvo.getPatchstatus() == 2 || repvo.getPatchstatus() == 5)) {
+				//3、纳税人变更合同：
+				if(repvo.getPatchstatus() == 2){
+					if (repvo.getIsncust() != null && repvo.getIsncust().booleanValue()) {
+						repvo.setVmemo("存量客户：小规模转一般人");
+					} else {
+						repvo.setVmemo("小规模转一般人");
+					}
+				}else if(repvo.getPatchstatus() == 5){
+					if (repvo.getIsncust() != null && repvo.getIsncust().booleanValue()) {
+						repvo.setVmemo("存量客户：一般人转小规模");
+					} else {
+						repvo.setVmemo("一般人转小规模");
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 获取明细的期初数据
+	 * @param paramvo
+	 * @param retlist
+	 * @param pklist
+	 * @param coutbal
+	 * @throws DZFWarpException
+	 */
+	private DZFDouble getDetInitData(QryParamVO paramvo, List<ChnDetailRepVO> retlist) 
+			throws DZFWarpException {
+		DZFDouble coutbal = DZFDouble.ZERO_DBL;
 		List<String> pklist = new ArrayList<String>();
 		Map<String, ChnBalanceRepVO> initmap = qryDataMap(paramvo, pklist, 1);
-		DZFDouble coutbal = DZFDouble.ZERO_DBL;
 		if (initmap != null && !initmap.isEmpty()) {
-			if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//分类查询
+			if (paramvo.getQrytype() != null && paramvo.getQrytype() != -1) {// 分类查询
 				ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + paramvo.getQrytype());
 				if (repvo != null) {
 					ChnDetailRepVO initvo = new ChnDetailRepVO();
@@ -645,7 +858,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					}
 					retlist.add(initvo);
 				}
-			}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//全部查询
+			} else if (paramvo.getQrytype() != null && paramvo.getQrytype() == -1) {// 全部查询
 				ChnDetailRepVO initvo = new ChnDetailRepVO();
 				if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 					initvo.setDoperatedate(new DZFDate(paramvo.getBeginperiod() + "-01"));
@@ -658,89 +871,21 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					initvo.setCorpname(accvo.getUnitname());
 				}
 				initvo.setVmemo("期初余额");
-				ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + 2);//预付款期初余额
-				if(repvo != null){
+				ChnBalanceRepVO repvo = initmap.get(paramvo.getPk_corp() + "," + 2);// 预付款期初余额
+				if (repvo != null) {
 					initvo.setNbalance(repvo.getCharge());
 					coutbal = repvo.getCharge();
 				}
-				repvo = initmap.get(paramvo.getPk_corp() + "," + 3);//返点期初余额
-				if(repvo != null){
+				repvo = initmap.get(paramvo.getPk_corp() + "," + 3);// 返点期初余额
+				if (repvo != null) {
 					initvo.setNbalance(SafeCompute.add(initvo.getNbalance(), repvo.getRebate()));
-					coutbal = SafeCompute.add(coutbal,repvo.getRebate());
+					coutbal = SafeCompute.add(coutbal, repvo.getRebate());
 				}
 				initvo.setVpaytypename("预付款+返点");
 				retlist.add(initvo);
 			}
 		}
-
-		QrySqlSpmVO sqpvo = getDetailQry(paramvo);
-		List<ChnDetailRepVO> list = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
-				new BeanListProcessor(ChnDetailRepVO.class));
-		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 ||paramvo.getQrytype() == 2)) {
-			list = qryNoDeduction(list, paramvo);// 查询扣费为0的数据
-		}
-		if (list != null && list.size() > 0) {
-			List<ChnDetailRepVO> oederlist = getOrderList(list);
-			CorpVO accvo = null;
-			DZFDouble balance = DZFDouble.ZERO_DBL;
-			HashMap<String, ChnDetailRepVO> contmap = null;//合同信息
-			//全部（显示在预付款上）、预付款、返点查询合同明细
-			if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 
-					|| paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
-				contmap = queryConDetail(paramvo);
-			}
-			for (ChnDetailRepVO vo : oederlist) {
-				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-				if (accvo != null) {
-					vo.setCorpname(accvo.getUnitname());
-				}
-				if (vo.getIpaytype() != null) {
-					switch (vo.getIpaytype()) {
-					case 1:
-						vo.setVpaytypename("保证金");
-						break;
-					case 2:
-						vo.setVpaytypename("预付款");
-						break;
-					case 3:
-						vo.setVpaytypename("返点");
-						break;
-					}
-				}
-				if (contmap != null && !contmap.isEmpty()) {
-					String key = "1" + vo.getPk_bill();
-					if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) == 0 
-							&& (vo.getDr() != null && vo.getDr() == -1)) {
-						key = "-1" + vo.getPk_bill();
-					}
-					if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
-						key = "-1" + vo.getPk_bill();
-					}
-					if (contmap.containsKey(key)) {
-						ChnDetailRepVO contvo = contmap.get(key);
-						if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//查询全部时，展示预付款和返点的合同相关金额
-							if(vo.getIpaytype() == 3 && vo.getIopertype() == 2){//返点扣款或返点退款
-								if(contvo.getIdeductype() != null && contvo.getIdeductype() == 3){//全部返点扣款
-									vo.setNaccountmny(contvo.getNaccountmny());
-									vo.setNbookmny(contvo.getNbookmny());
-								}
-							}else{
-								vo.setNaccountmny(contvo.getNaccountmny());
-								vo.setNbookmny(contvo.getNbookmny());
-							}
-						}else{
-							vo.setNaccountmny(contvo.getNaccountmny());
-							vo.setNbookmny(contvo.getNbookmny());
-						}
-					}
-				}
-				balance = SafeCompute.sub(vo.getNpaymny(), vo.getNusedmny());
-				vo.setNbalance(SafeCompute.add(coutbal, balance));
-				coutbal = vo.getNbalance();
-				retlist.add(vo);
-			}
-		}
-		return retlist;
+		return coutbal;
 	}
 	
 	/**
@@ -749,45 +894,67 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param paramvo
 	 * @return
 	 */
-	private List<ChnDetailRepVO> qryNoDeduction(List<ChnDetailRepVO> list, QryParamVO paramvo) {
-		StringBuffer ids=new StringBuffer();
-		for (ChnDetailRepVO ChnDetailRepVO : list) {
-			ids.append("'"+ChnDetailRepVO.getPk_bill()+"',");
+	private List<ChnDetailRepVO> qryZeroDeduction(List<ChnDetailRepVO> list, QryParamVO paramvo) {
+		List<ChnDetailRepVO> zerolist = new ArrayList<ChnDetailRepVO>();
+//		StringBuffer ids = new StringBuffer();
+		List<String> pklist = new ArrayList<String>();
+		for (ChnDetailRepVO repvo : list) {
+//			ids.append("'" + repvo.getPk_bill() + "',");
+			pklist.add(repvo.getPk_bill());
 		}
-		List<ChnDetailRepVO> vos1 = qryByDeduct(list, paramvo, ids);
-		CorpVO corpvo= null;
-		StringBuffer vmemo=null;
-		for (ChnDetailRepVO ChnDetailRepVO : vos1) {
-			corpvo = CorpCache.getInstance().get(null, ChnDetailRepVO.getPk_corp());
-			vmemo=new StringBuffer();
-			if(!StringUtil.isEmpty(ChnDetailRepVO.getVmemo()) &&ChnDetailRepVO.getVmemo().contains("存量客户")&& corpvo!=null){
-				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、").append(ChnDetailRepVO.getVmemo().substring(5));
-			}else if(corpvo!=null){
-				vmemo.append(corpvo.getUnitname()).append(ChnDetailRepVO.getVmemo());
-			}
-			ChnDetailRepVO.setVmemo(vmemo.toString());
-			ChnDetailRepVO.setDr(1);
-			ChnDetailRepVO.setNusedmny(DZFDouble.ZERO_DBL);
-			list.add(ChnDetailRepVO);
+		String addwhere = "";
+		if(pklist != null && pklist.size() > 0){
+			StringBuffer where = new StringBuffer();
+			where.append(" AND t.pk_confrim NOT IN (");
+			String qrywhere = SqlUtil.buildSqlConditionForIn(pklist.toArray(new String[0]));
+			where.append(qrywhere);
+			where.append(" ) ");
+			addwhere = where.toString();
 		}
-		List<ChnDetailRepVO> vos2 = qryByChange(list, paramvo, ids);
-		for (ChnDetailRepVO ChnDetailRepVO : vos2) {
-			corpvo = CorpCache.getInstance().get(null, ChnDetailRepVO.getPk_corp());
-			vmemo=new StringBuffer();
-			if(ChnDetailRepVO.getDr() != null && ChnDetailRepVO.getDr() == 9){
-				vmemo.append("合同终止：");
-			}else{
-				vmemo.append("合同作废：");
-			}
-			if(corpvo!=null){
-				vmemo.append(corpvo.getUnitname()).append("、").append(ChnDetailRepVO.getVmemo());
-			}
-			ChnDetailRepVO.setVmemo(vmemo.toString());
-			ChnDetailRepVO.setNusedmny(DZFDouble.ZERO_DBL);
-			ChnDetailRepVO.setDr(-1);
-			list.add(ChnDetailRepVO);
+		//1、查询零扣款数据：
+		List<ChnDetailRepVO> dlist = qryZeroDeduct(list, paramvo, addwhere);
+		if(dlist != null && dlist.size() > 0){
+			zerolist.addAll(dlist);
 		}
-		return list;
+//		CorpVO corpvo = null;
+//		StringBuffer vmemo = null;
+//		for (ChnDetailRepVO repvo : zlist) {
+//			corpvo = CorpCache.getInstance().get(null, repvo.getPk_corp());
+//			vmemo = new StringBuffer();
+//			if (!StringUtil.isEmpty(repvo.getVmemo()) && repvo.getVmemo().contains("存量客户")
+//					&& corpvo != null) {
+//				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、")
+//						.append(repvo.getVmemo().substring(5));
+//			} else if (corpvo != null) {
+//				vmemo.append(corpvo.getUnitname()).append(repvo.getVmemo());
+//			}
+//			repvo.setVmemo(vmemo.toString());
+//			repvo.setDr(1);
+//			repvo.setNusedmny(DZFDouble.ZERO_DBL);
+//			list.add(repvo);
+//		}
+		//2、查询零退款数据：
+		List<ChnDetailRepVO> clist = qryZeroChange(list, paramvo, addwhere);
+		if(clist != null && clist.size() > 0){
+			zerolist.addAll(clist);
+		}
+//		for (ChnDetailRepVO crepvo : clist) {
+//			corpvo = CorpCache.getInstance().get(null, crepvo.getPk_corp());
+//			vmemo = new StringBuffer();
+//			if (crepvo.getDr() != null && crepvo.getDr() == 9) {
+//				vmemo.append("合同终止：");
+//			} else {
+//				vmemo.append("合同作废：");
+//			}
+//			if (corpvo != null) {
+//				vmemo.append(corpvo.getUnitname()).append("、").append(crepvo.getVmemo());
+//			}
+//			crepvo.setVmemo(vmemo.toString());
+//			crepvo.setNusedmny(DZFDouble.ZERO_DBL);
+//			crepvo.setDr(-1);
+//			list.add(crepvo);
+//		}
+		return zerolist;
 	}
 	
 	/**
@@ -798,20 +965,41 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ChnDetailRepVO> qryByChange(List<ChnDetailRepVO> list, QryParamVO paramvo, StringBuffer ids) {
-		StringBuffer sql;
-		SQLParameter spm;
-		sql = new StringBuffer();
-		spm = new SQLParameter();
-		sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,1,10) as doperatedate,t.pk_corpk as pk_corp," );   
-		sql.append(" t.vstatus as dr,2 as ipaytype,2 as iopertype,ct.vcontcode as vmemo from cn_contract t" ); 
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0 and (t.vstatus=10 or t.vstatus=9) \n");
+	private List<ChnDetailRepVO> qryZeroChange(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+//		sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,1,10) as doperatedate,t.pk_corpk as pk_corp," );   
+//		sql.append(" t.vstatus as dr,2 as ipaytype,2 as iopertype,ct.vcontcode as vmemo from cn_contract t" ); 
+//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+//		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0 and (t.vstatus=10 or t.vstatus=9) \n");
+		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
+		sql.append("       substr(t.dchangetime, 1, 10) AS doperatedate,  \n") ; 
+		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
+		sql.append("       t.vstatus AS dr,  \n") ; 
+		sql.append("       2 AS ipaytype,  \n") ; 
+		sql.append("       2 AS iopertype,  \n") ; 
+		sql.append("       ct.vcontcode,  \n") ; 
+		sql.append("       ct.pk_corpk,  \n") ; 
+		sql.append("       0.00 AS nusedmny,  \n") ; 
+		sql.append("       3 AS patchstatus,  \n") ;
+		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') as vmemo  \n") ; 
+		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND t.pk_corp = ?  \n") ; 
+		sql.append("   AND t.ideductpropor = 0  \n") ; 
+		sql.append("   AND t.vstatus IN (?, ?)");
 		spm.addParam(paramvo.getPk_corp());
-		if(ids != null && ids.length() > 0){
-			sql.append(" and t.pk_confrim not in (");
-			sql.append(ids.toString().substring(0,ids.toString().length()-1));
-			sql.append(" )");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+//		if(ids != null && ids.length() > 0){
+//			sql.append(" and t.pk_confrim not in (");
+//			sql.append(ids.toString().substring(0,ids.toString().length()-1));
+//			sql.append(" )");
+//		}
+		if(!StringUtil.isEmpty(addwhere)){
+			sql.append(addwhere);
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
@@ -845,20 +1033,52 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<ChnDetailRepVO> qryByDeduct(List<ChnDetailRepVO> list, QryParamVO paramvo, StringBuffer ids) {
+	private List<ChnDetailRepVO> qryZeroDeduct(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" select t.pk_confrim as pk_bill,t.deductdata as doperatedate,t.pk_corpk as pk_corp," );   
-		sql.append(" 2 as ipaytype,2 as iopertype," );  
-		sql.append(" CONCAT(decode(nvl(ct.isncust,'N'),'Y','存量客户:',''),ct.vcontcode) as vmemo from cn_contract t" );   
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0  \n");
-		sql.append(" and (t.vstatus=1 or t.vstatus=9 or t.vstatus=10) \n");
+//		sql.append(" select t.pk_confrim as pk_bill,t.deductdata as doperatedate,t.pk_corpk as pk_corp," );   
+//		sql.append(" 2 as ipaytype,2 as iopertype," );  
+//		sql.append(" CONCAT(decode(nvl(ct.isncust,'N'),'Y','存量客户:',''),ct.vcontcode) as vmemo from cn_contract t" );   
+//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+//		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0  \n");
+//		sql.append(" and (t.vstatus=1 or t.vstatus=9 or t.vstatus=10) \n");
+		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
+		sql.append("       t.deductdata AS doperatedate,  \n") ; 
+		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
+		sql.append("       2 AS ipaytype,  \n") ; 
+		sql.append("       2 AS iopertype,  \n") ; 
+		sql.append("       ct.vcontcode,  \n") ; 
+		sql.append("       ct.pk_corpk,  \n") ; 
+		sql.append("       0.00 AS nusedmny,  \n") ; 
+		sql.append("       1 AS patchstatus,  \n") ; 
+//		sql.append("       CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户:', ''),  \n") ; 
+//		sql.append("              ct.vcontcode) as vmemo  \n") ; 
+		sql.append("       CASE  \n") ; 
+		sql.append("         WHEN nvl(ct.patchstatus, -1) = 2 THEN  \n") ; 
+		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '小规模转一般人')  \n") ; 
+		sql.append("         WHEN nvl(ct.patchstatus, -1) = 5 THEN  \n") ; 
+		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '一般人转小规模')  \n") ; 
+		sql.append("         ELSE  \n") ; 
+		sql.append("          decode(nvl(ct.isncust, 'N'), 'Y', '存量客户', '')  \n") ; 
+		sql.append("       END as vmemo  \n") ;
+		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND t.pk_corp = ?  \n") ; 
+		sql.append("   AND t.ideductpropor = 0  \n") ; 
+		sql.append("   AND t.vstatus IN (?, ? , ?) \n");
 		spm.addParam(paramvo.getPk_corp());
-		if(ids != null && ids.length() > 0){
-			sql.append(" and t.pk_confrim not in (");
-			sql.append(ids.toString().substring(0,ids.toString().length()-1));
-			sql.append(" )");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+//		if(ids != null && ids.length() > 0){
+//			sql.append(" AND t.pk_confrim not in (");
+//			sql.append(ids.toString().substring(0,ids.toString().length()-1));
+//			sql.append(" )");
+//		}
+		if(!StringUtil.isEmpty(addwhere)){
+			sql.append(addwhere);
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
@@ -891,6 +1111,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 */
 	@SuppressWarnings("unchecked")
 	private HashMap<String,ChnDetailRepVO> queryConDetail(QryParamVO paramvo) throws DZFWarpException {
+		HashMap<String, ChnDetailRepVO> map = new HashMap<String, ChnDetailRepVO>();
 		DZFDate begdate = null;
 		DZFDate enddate = null;
 		//如果为期间查询，则把期间转换为开始日期（开始期间+'-01'），结束日期（结束期间下一个月减去1天），即开始期间月初日期、结束期间月末日期
@@ -906,29 +1127,31 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			begdate = paramvo.getBegdate();
 			enddate = paramvo.getEnddate();
 		}
+		//1、查询扣款合同信息：
 		QrySqlSpmVO qryvo = getQrySql(1, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> kklist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
+		for (ChnDetailRepVO repvo : kklist) {
+			String key = "1" + repvo.getPk_bill();
+			map.put(key, repvo);
+		}
 		
+		//2、查询变更合同信息：
 		qryvo = getQrySql(2, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> bglist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
+		for (ChnDetailRepVO repvo : bglist) {
+			String key = "-1" + repvo.getPk_bill();
+			map.put(key, repvo);
+		}
+		
+		//3、查询作废合同信息：
 		qryvo = getQrySql(3, begdate, enddate, paramvo);
 		List<ChnDetailRepVO> zflist = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
-		
-		HashMap<String, ChnDetailRepVO> map = new HashMap<String, ChnDetailRepVO>();
-		for (ChnDetailRepVO ChnDetailRepVO : kklist) {
-			String key = "1" + ChnDetailRepVO.getPk_bill();
-			map.put(key, ChnDetailRepVO);
-		}
-		for (ChnDetailRepVO ChnDetailRepVO : bglist) {
-			String key = "-1" + ChnDetailRepVO.getPk_bill();
-			map.put(key, ChnDetailRepVO);
-		}
-		for (ChnDetailRepVO ChnDetailRepVO : zflist) {
-			String key = "-1" + ChnDetailRepVO.getPk_bill();
-			map.put(key, ChnDetailRepVO);
+		for (ChnDetailRepVO repvo : zflist) {
+			String key = "-1" + repvo.getPk_bill();
+			map.put(key, repvo);
 		}
 		return map;
 	}
@@ -1026,17 +1249,14 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			}
 		}
 		Collections.sort(keylist, new Comparator<DZFDate>(){
-
 			@Override
 			public int compare(DZFDate o1, DZFDate o2) {
 				return o1.compareTo(o2);
 			}
-			
 		});
 		for(DZFDate key : keylist){
 			newlist = map.get(key);
 			Collections.sort(newlist,new Comparator<ChnDetailRepVO>() {
-
 				@Override
 				public int compare(ChnDetailRepVO o1, ChnDetailRepVO o2) {
 					if(o1.getIpaytype() == IStatusConstant.IPAYTYPE_3){
@@ -1045,7 +1265,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						return o1.getIopertype().compareTo(o2.getIopertype());
 					}
 				}
-				
 			});
 			for(ChnDetailRepVO vo : newlist){
 				relist.add(vo);
@@ -1063,34 +1282,47 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 and pk_corp=? \n");
+//		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 and pk_corp = ? \n");
+		sql.append("SELECT l.*, \n") ;
+		sql.append("       ct.patchstatus, \n");
+		sql.append("       ct.vcontcode, \n");
+		sql.append("       ct.pk_corpk, \n");
+		sql.append("       ct.vstatus, \n");
+		sql.append("       ct.isncust \n");
+		sql.append("  FROM cn_detail l  \n") ; 
+		sql.append("  LEFT JOIN cn_contract t ON l.pk_bill = t.pk_confrim  \n") ; 
+		sql.append("  LEFT JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND l.pk_corp = ? \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND ipaytype = ? \n");
+			sql.append(" AND l.ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-			sql.append(" AND ipaytype in (2, 3) \n");
+			sql.append(" AND l.ipaytype in (2, 3) \n");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(doperatedate,1,7) >= ? \n");
+				sql.append(" AND substr(l.doperatedate,1,7) >= ? \n");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(doperatedate,1,7) <= ? \n");
+				sql.append(" AND substr(l.doperatedate,1,7) <= ? \n");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND doperatedate >= ? \n");
+				sql.append(" AND l.doperatedate >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND doperatedate <= ? \n");
+				sql.append(" AND l.doperatedate <= ? \n");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" order by ts asc");
+		sql.append(" order by l.ts asc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

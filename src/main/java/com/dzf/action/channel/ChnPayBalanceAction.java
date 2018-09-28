@@ -249,6 +249,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			list.add("ddate");
 			list.add("memo");
 			list.add("propor");
+			list.add("corpknm");
+			list.add("vccode");
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
 			util.setIscross(DZFBoolean.TRUE);
@@ -285,6 +287,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		stringlist.add("ddate");
 		stringlist.add("memo");
 		stringlist.add("propor");
+		stringlist.add("corpknm");
+		stringlist.add("vccode");
 		Map<String, String> name = null;
 		if(strlist == null){
 			return;

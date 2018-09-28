@@ -9,6 +9,7 @@ $(function() {
 	initChannel();//初始化加盟商
 	initArea();
 	quickfiltet();
+	initManagerRef();//渠道经理参照初始化
 });
 
 /**
@@ -32,6 +33,11 @@ function load(){
 			align : 'left',
 	        halign: 'center',
 			field : 'aname'
+		}, {
+			width : '120',
+			title : '渠道经理',
+			halign:'center',
+			field : 'mname',
 		}, {
 			width : '120',
 			title : '加盟商编码',
@@ -154,9 +160,14 @@ function load(){
 function clearParams(){
 	$("#pk_account").val(null);
 	$('#aname').combobox('setValue', null);
-	$("#channel_select").textbox("setValue",null);
+	$("#channel_select").textbox("setValue", null);
+	$("#manager").textbox("setValue", null);
+	$("#managerid").val(null);
 }
 
+/**
+ * 查询-大区下拉初始化
+ */
 function initArea(){
 	$.ajax({
 		type : 'POST',
@@ -175,7 +186,9 @@ function initArea(){
 	});
 }
 
-//初始化加盟商
+/**
+ * 查询-加盟商参照初始化
+ */
 function initChannel(){
   $('#channel_select').textbox({
       editable: false,
@@ -199,7 +212,10 @@ function initChannel(){
   });
 }
 
-//双击选择公司
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
@@ -222,6 +238,9 @@ function dClickCompany(rowTable){
 	 $("#kj_dialog").dialog('close');
 }
 
+/**
+ * 选择加盟商
+ */
 function selectCorps(){
 	var rows = $('#gsTable').datagrid('getSelections');
 	dClickCompany(rows);
@@ -371,8 +390,30 @@ function initDetailGrid(){
 	    			return "<span title='" + value + "'>" + value + "</span>";
 	    		}
 			}
-		},{
-			width : '100',
+		}, {
+			width : '150',
+			title : '客户名称',
+			align:'left',
+            halign:'center',
+			field : 'corpknm',
+			formatter : function(value) {
+	    		if(value!=undefined){
+	    			return "<span title='" + value + "'>" + value + "</span>";
+	    		}
+			}
+		}, {
+			width : '130',
+			title : '合同编码',
+			align:'left',
+            halign:'center',
+			field : 'vccode',
+			formatter : function(value) {
+	    		if(value!=undefined){
+	    			return "<span title='" + value + "'>" + value + "</span>";
+	    		}
+			}
+		}, {
+			width : '80',
 			title : '合同代账费',
 			align:'right',
             halign:'center',
@@ -381,8 +422,8 @@ function initDetailGrid(){
 				if(value == 0)return "0.00";
 				return formatMny(value);
 			}
-		},{
-			width : '80',
+		}, {
+			width : '70',
 			title : '账本费',
 			align:'right',
             halign:'center',
@@ -404,22 +445,22 @@ function initDetailGrid(){
 					return value;
 				}
 			}
-		},{
+		}, {
 			width : '90',
 			title : '付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
 			formatter : npFormat
-		},{
-			width : '90',
+		}, {
+			width : '80',
 			title : '扣款金额',
 			align:'right',
             halign:'center',
 			field : 'usemny',
 			formatter : useFormat
-		},{
-			width : '100',
+		}, {
+			width : '90',
 			title : '期末余额',
 			align:'right',
             halign:'center',
@@ -505,11 +546,13 @@ function useFormat(value,row,index){
 	if(row.ddate != "合计"){
 		if(row.opertype == 2){
 			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"
+				+formatMny(value)+"</a>";
 			return ss ;
 		}else if(row.opertype == 5){
 			var url = 'channel/dealmanage/channelorder.jsp?operate=toorder&billid='+row.billid;
-			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('加盟商订单','"+url+"');\">"+formatMny(value)+"</a>";
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('加盟商订单','"+url+"');\">"
+				+formatMny(value)+"</a>";
 			return ss ;
 		}else{
 			return formatMny(value);
@@ -641,7 +684,7 @@ function reloadData(queryData){
 	if(isEmpty(queryData)){
 		$('#grid').datagrid('options').queryParams = getQueryData();
 	}else{
-		$('#grid').datagrid('options').queryParams =queryData;
+		$('#grid').datagrid('options').queryParams = queryData;
 	}
 	$('#grid').datagrid('options').url = contextPath + '/chnpay/chnpaybalance!query.action';
 	$('#grid').datagrid('reload');
@@ -649,29 +692,35 @@ function reloadData(queryData){
 	$("#qrydialog").css("visibility", "hidden");
 }
 
+/**
+ * 获取查询条件
+ * @param cpname
+ * @returns {___anonymous17096_17317}
+ */
 function getQueryData(cpname){
-	var begdate= null;
-	var enddate= null;
-	var bperiod= null;
-	var eperiod= null;
-	var period= null;
+	var begdate = null;
+	var enddate = null;
+	var bperiod = null;
+	var eperiod = null;
+	var period = null;
 	var cpname;
 	var ischeck = $('#da').is(':checked');
 	if(ischeck){
-		begdate=$("#begdate").textbox('getValue');
-		enddate=$("#enddate").textbox('getValue')
+		begdate = $("#begdate").textbox('getValue');
+		enddate = $("#enddate").textbox('getValue')
 	}else{
-		bperiod=$("#begperiod").val();
-		eperiod=$("#endperiod").val();
-		period='period';
+		bperiod = $("#begperiod").val();
+		eperiod = $("#endperiod").val();
+		period = 'period';
 	}
 	if(!isEmpty(cpname)){
-		cpname=cpname;
+		cpname = cpname;
 	}else{
-		cpname= null
+		cpname = null
 	}
 	var aname = $("#aname").combobox('getValue');
 	var qtype = $("input[name='seletype']:checked").val();
+	var mid = $("#managerid").val();
 	var queryData = {
 		"bperiod" : bperiod,
 		"eperiod" : eperiod,
@@ -682,10 +731,14 @@ function getQueryData(cpname){
 		'period' : period,
 		'aname'	: aname,
 		"corps" : $("#pk_account").val(),
+		"mid" : mid,
 	};
 	return queryData;
 }
 
+/**
+ * 快速过滤查询
+ */
 function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
         if (e.keyCode == 13) {
@@ -775,5 +828,65 @@ function onDetExport(){
  			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
 	}
 	checkBtnPower('export','channel3',callback);
+}
+
+/**
+ * 渠道经理参照初始化
+ */
+function initManagerRef(){
+	$('#manager').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#manDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道经理',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/manager_select.jsp',
+                    buttons: '#manBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道经理选择事件
+ */
+function selectMans(){
+	var rows = $('#mgrid').datagrid('getSelections');
+	dClickMans(rows);
+}
+
+/**
+ * 双击选择渠道经理
+ * @param rowTable
+ */
+function dClickMans(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个经理",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#manager").textbox("setValue",unames);
+		$("#managerid").val(uids);
+	}
+	 $("#manDlg").dialog('close');
 }
 	
