@@ -2,6 +2,7 @@ package com.dzf.model.channel.payment;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -23,7 +24,7 @@ public class ChnDetailRepVO extends SuperVO {
 	private String pk_corp;
 	
 	@FieldAlias("corpnm")
-	private String corpname;// 机构名称
+	private String corpname;//加盟商名称
 	
 	@FieldAlias("usemny")
 	private DZFDouble nusedmny;//已用金额
@@ -76,6 +77,72 @@ public class ChnDetailRepVO extends SuperVO {
     
     @FieldAlias("deductype")
     private Integer ideductype;//扣款类型 3：全部返点扣款；
+    
+	@FieldAlias("vccode")
+	private String vcontcode; // 合同编码
+	
+    @FieldAlias("pstatus")
+    private Integer patchstatus;// 加盟商合同类型（null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同）
+    
+	@FieldAlias("corpkid")
+	private String pk_corpk; // 客户主键
+    
+	@FieldAlias("corpknm")
+	private String corpkname;//客户名称
+	
+	@FieldAlias("status")
+	private Integer vstatus; // 合同状态  0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+	
+	@FieldAlias("isncust")
+	private DZFBoolean isncust;// 是否存量客户
+
+	public DZFBoolean getIsncust() {
+		return isncust;
+	}
+
+	public void setIsncust(DZFBoolean isncust) {
+		this.isncust = isncust;
+	}
+
+	public Integer getVstatus() {
+		return vstatus;
+	}
+
+	public void setVstatus(Integer vstatus) {
+		this.vstatus = vstatus;
+	}
+
+	public String getPk_corpk() {
+		return pk_corpk;
+	}
+
+	public void setPk_corpk(String pk_corpk) {
+		this.pk_corpk = pk_corpk;
+	}
+
+	public String getCorpkname() {
+		return corpkname;
+	}
+
+	public void setCorpkname(String corpkname) {
+		this.corpkname = corpkname;
+	}
+
+	public Integer getPatchstatus() {
+		return patchstatus;
+	}
+
+	public void setPatchstatus(Integer patchstatus) {
+		this.patchstatus = patchstatus;
+	}
+
+	public String getVcontcode() {
+		return vcontcode;
+	}
+
+	public void setVcontcode(String vcontcode) {
+		this.vcontcode = vcontcode;
+	}
 
 	public Integer getIdeductype() {
 		return ideductype;
