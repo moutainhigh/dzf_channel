@@ -46,7 +46,7 @@ public class ChnAreaBVO extends SuperVO {
 	private String vmemo;// 备注
 	
 	@FieldAlias("type")
-	public Integer type;//1:渠道经理；2：培训师
+	public Integer type;//1:渠道经理；2：培训师；3：运营；
 	
 	@FieldAlias("dr")
 	private Integer dr;// 删除标记
