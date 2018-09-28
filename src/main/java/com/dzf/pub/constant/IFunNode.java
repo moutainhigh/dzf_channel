@@ -208,4 +208,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_48  = "channel48";
     
+    /**
+     * 退款明细查询
+     */
+    public static final String CHANNEL_49  = "channel49";
+    
 }
