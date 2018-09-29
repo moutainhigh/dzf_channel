@@ -22,9 +22,6 @@ public class DataVO extends SuperVO {
     
 	@FieldAlias("provname")
 	public String vprovname;// 省市名称
-//
-//	@FieldAlias("ovince")
-//	public Integer vprovince;// 省市
 	
 	@FieldAlias("cuid")
 	public String cuserid; // 用户主键（培训师）
