@@ -23,7 +23,7 @@ import com.dzf.service.channel.report.ICustManageRep;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 加盟商客户管理
+ * 行业分析
  * @author zy
  *
  */
