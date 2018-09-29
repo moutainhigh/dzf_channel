@@ -29,26 +29,26 @@ public interface ICustNumMoneyRep {
 	 */
 	public List<CustNumMoneyRepVO> queryRenew(QryParamVO paramvo) throws  DZFWarpException;
 	
-	/**
-	 * 客户查询
-	 * @param paramvo
-	 * @param qrytype
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype, List<String> corplist) throws DZFWarpException;
-	
-	/**
-	 * 客户计算
-	 * @param custlist
-	 * @param qrytype
-	 * @param corplist
-	 * @param countcorplist
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
-			List<String> corplist, List<String> countcorplist) throws DZFWarpException;
+//	/**
+//	 * 客户查询
+//	 * @param paramvo
+//	 * @param qrytype
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype, List<String> corplist) throws DZFWarpException;
+//	
+//	/**
+//	 * 客户计算
+//	 * @param custlist
+//	 * @param qrytype
+//	 * @param corplist
+//	 * @param countcorplist
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	public Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
+//			List<String> corplist, List<String> countcorplist) throws DZFWarpException;
 	
 	/**
 	 * 客户占比计算

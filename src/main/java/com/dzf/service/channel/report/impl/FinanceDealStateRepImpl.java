@@ -14,7 +14,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.CustCountVO;
-import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.pub.QryParamVO;
@@ -29,80 +28,100 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
 
 @Service("financedealstaterepser")
 public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinanceDealStateRep {
 
 	@Autowired
-	private ICustNumMoneyRep custServ;
-
-	@Autowired
 	private SingleObjectBO singleObjectBO;
 
 	@Override
-	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws  DZFWarpException, IllegalAccessException, Exception {
-		if (!StringUtil.isEmpty(paramvo.getPeriod())) {
+	public List<FinanceDealStateRepVO> query(QryParamVO pamvo) throws DZFWarpException {
+		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
 			try {
-				String begindate = ToolsUtil.getMaxMonthDate(paramvo.getPeriod() + "-01");
-				paramvo.setBegdate(new DZFDate(begindate));
+				String begindate = ToolsUtil.getMaxMonthDate(pamvo.getPeriod() + "-01");
+				pamvo.setBegdate(new DZFDate(begindate));
 			} catch (ParseException e) {
 				throw new BusinessException("日期格式转换错误");
 			}
 		}
-		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
-		List<String> countcorplist = new ArrayList<String>();
-		HashMap<String, DataVO> map = queryCorps(paramvo,FinanceDealStateRepVO.class);
+		
+		//1、按照所选则的大区、省（市）、会计运营经理和当前登陆人过滤出符合条件的加盟商信息
+		HashMap<String, DataVO> map = queryCorps(pamvo, FinanceDealStateRepVO.class);
 		List<String> corplist = null;
-		if(map!=null && !map.isEmpty()){
+		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
 			corplist = new ArrayList<String>(col);
 		}
+		
 		if (corplist != null && corplist.size() > 0) {
-			List<CustCountVO> custlist = (List<CustCountVO>) custServ.queryCustNum(paramvo, 1, corplist);
-			Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
-			CustNumMoneyRepVO custnumvo = null;
-			FinanceDealStateRepVO retvo = null;
-			Map<String, Map<String, CustCountVO>> retmap = queryVoucher(countcorplist, paramvo.getPeriod());
-			Map<String, CustCountVO> voumap = null;
-			CustCountVO countvo = null;
+			return getRetList(pamvo, corplist, map);
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取返回数据列表
+	 * @param pamvo
+	 * @param corplist
+	 * @param map
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<FinanceDealStateRepVO> getRetList(QryParamVO pamvo, List<String> corplist, HashMap<String, DataVO> map)
+			throws DZFWarpException {
+		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
+		List<String> replist = new ArrayList<String>();// 统计凭证的加盟商主键
+		List<CustCountVO> custlist = queryCustNum(pamvo, corplist);
+		Map<String, FinanceDealStateRepVO> custmap = getRetMap(custlist, replist);
+		if(custmap == null || custmap.isEmpty()){
+			return null;
+		}
+		FinanceDealStateRepVO retvo = null;
+		FinanceDealStateRepVO showvo = null;
+		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(replist, pamvo.getPeriod());
+		if (replist != null && replist.size() > 0) {
 			CorpVO corpvo = null;
 			UserVO uservo = null;
-			for (String pk_corp : corplist) {
-				retvo =(FinanceDealStateRepVO)map.get(pk_corp);
+			Map<String, CustCountVO> voumap = null;
+			CustCountVO countvo = null;
+			for (String pk_corp : replist) {
+				retvo = custmap.get(pk_corp);
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
+					retvo.setInnercode(corpvo.getInnercode());// 加盟商编码
 				}
-				uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setUsername(uservo.getUser_name());
-				}
-				uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setCusername(uservo.getUser_name());
-				}
-				custnumvo = custmap.get(pk_corp);
-				if (custnumvo != null) {
-					retvo.setIcustsmall(custnumvo.getIstockcustsmall());
-					retvo.setIcusttaxpay(custnumvo.getIstockcusttaxpay());
+				showvo = (FinanceDealStateRepVO) map.get(pk_corp);
+				if (showvo != null) {
+					retvo.setAreaname(showvo.getAreaname());// 大区
+					uservo = UserCache.getInstance().get(showvo.getUserid(), pk_corp);
+					if (uservo != null) {
+						retvo.setUsername(uservo.getUser_name());// 区总
+					}
+					uservo = UserCache.getInstance().get(showvo.getCuserid(), pk_corp);
+					if (uservo != null) {
+						retvo.setCusername(uservo.getUser_name());// 会计运营经理
+					}
 				}
 				retvo.setIcustratesmall(getCustRate(retvo.getIcustsmall(), retvo.getIcusttaxpay()));
 				retvo.setIcustratetaxpay(getCustRate(retvo.getIcusttaxpay(), retvo.getIcustsmall()));
-				voumap = retmap.get(pk_corp);
-				if (voumap != null) {
-					countvo = voumap.get("小规模纳税人");
-					if (countvo != null) {
-						retvo.setIvouchernummall(countvo.getNum());
+				if(retmap != null && !retmap.isEmpty()){
+					voumap = retmap.get(pk_corp);
+					if (voumap != null && !voumap.isEmpty()) {
+						countvo = voumap.get("小规模纳税人");
+						if (countvo != null) {
+							retvo.setIvouchernummall(countvo.getNum());
+						}
+						countvo = voumap.get("一般纳税人");
+						if (countvo != null) {
+							retvo.setIvouchernumtaxpay(countvo.getNum());
+						}
 					}
-					countvo = voumap.get("一般纳税人");
-					if (countvo != null) {
-						retvo.setIvouchernumtaxpay(countvo.getNum());
-					}
+					
 				}
-
 				retlist.add(retvo);
 			}
 		}
@@ -174,6 +193,110 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			}
 		}
 		return retmap;
+	}
+	
+	/**
+	 * 查询各类纳税人资格的新增及存量客户
+	 * 
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustCountVO> queryCustNum(QryParamVO pamvo, List<String> corplist) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
+		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
+		sql.append("       COUNT(p.pk_corp) AS num,  \n");
+		sql.append("       nvl(p.isncust, 'N') AS isncust  \n");
+		sql.append("  FROM bd_corp p  \n");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
+		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
+			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
+			spm.addParam(pamvo.getBeginperiod());
+		}
+		if (corplist != null && corplist.size() > 0) {
+			String filter = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+			sql.append(" AND ");
+			sql.append(filter);
+		}
+		if(pamvo.getCorps() != null && pamvo.getCorps().length > 0){
+			String filter = SqlUtil.buildSqlForIn("t.pk_corp", pamvo.getCorps());
+			sql.append(" AND ");
+			sql.append(filter);
+		}
+		sql.append(" GROUP BY t.pk_corp,  \n");
+		sql.append("          nvl(p.chargedeptname, '小规模纳税人'),  \n");
+		sql.append("          nvl(p.isncust, 'N') \n");
+		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustCountVO.class));
+	}
+
+	/**
+	 * 查询各类纳税人资格的新增及存量客户汇总
+	 * @param list
+	 * @param replist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String, FinanceDealStateRepVO> getRetMap(List<CustCountVO> list, List<String> replist)
+			throws DZFWarpException {
+		Map<String, FinanceDealStateRepVO> map = new HashMap<String, FinanceDealStateRepVO>();
+		if(list != null && list.size() > 0){
+			FinanceDealStateRepVO repvo = null;
+			for(CustCountVO cvo : list){
+				if(!map.containsKey(cvo.getPk_corp())){
+					repvo = new FinanceDealStateRepVO();
+					repvo.setPk_corp(cvo.getPk_corp());
+					if("小规模纳税人".equals(cvo.getChargedeptname())){
+						if(cvo.getIsncust() != null && cvo.getIsncust().booleanValue()){//存量
+							repvo.setIstocksmall(cvo.getNum());
+						}else{//新增
+							repvo.setInewsmall(cvo.getNum());
+						}
+						repvo.setIcustsmall(cvo.getNum());
+					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+						if(cvo.getIsncust() != null && cvo.getIsncust().booleanValue()){//存量
+							repvo.setIstocktaxpay(cvo.getNum());
+						}else{//新增
+							repvo.setInewtaxpay(cvo.getNum());
+						}
+						repvo.setIcusttaxpay(cvo.getNum());
+					}
+					if(!replist.contains(cvo.getPk_corp())){
+						replist.add(cvo.getPk_corp());
+					}
+					map.put(cvo.getPk_corp(), repvo);
+				}else{
+					repvo = map.get(cvo.getPk_corp());
+					if("小规模纳税人".equals(cvo.getChargedeptname())){
+						if(cvo.getIsncust() != null && cvo.getIsncust().booleanValue()){//存量
+							repvo.setIstocksmall(ToolsUtil.addInteger(repvo.getIstocksmall(), cvo.getNum()));
+						}else{//新增
+							repvo.setInewsmall(ToolsUtil.addInteger(repvo.getInewsmall(), cvo.getNum()));
+						}
+						repvo.setIcustsmall(ToolsUtil.addInteger(repvo.getIcustsmall(), cvo.getNum()));
+					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+						if(cvo.getIsncust() != null && cvo.getIsncust().booleanValue()){//存量
+							repvo.setIstocktaxpay(ToolsUtil.addInteger(repvo.getIstocktaxpay(), cvo.getNum()));
+						}else{//新增
+							repvo.setInewtaxpay(ToolsUtil.addInteger(repvo.getInewtaxpay(), cvo.getNum()));
+						}
+						repvo.setIcusttaxpay(ToolsUtil.addInteger(repvo.getIcusttaxpay(), cvo.getNum()));
+					}
+					map.put(cvo.getPk_corp(), repvo);
+				}
+			}
+		}
+		return map;
 	}
 
 }

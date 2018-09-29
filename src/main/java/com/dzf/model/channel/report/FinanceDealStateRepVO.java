@@ -13,6 +13,18 @@ public class FinanceDealStateRepVO extends DataVO {
 	@FieldAlias("custtaxpay")
 	private Integer icusttaxpay;//一般纳税人数量
 	
+	@FieldAlias("newsmall")
+	private Integer inewsmall;//新增小规模数量
+	
+	@FieldAlias("stocksmall")
+	private Integer istocksmall;//存量小规模数量
+	
+	@FieldAlias("newtaxpay")
+	private Integer inewtaxpay;//新增一般纳税人数量
+	
+	@FieldAlias("stocktaxpay")
+	private Integer istocktaxpay;//存量一般纳税人数量
+	
 	@FieldAlias("custrates")
 	private DZFDouble icustratesmall;//客户占比-小规模
 	
@@ -24,6 +36,38 @@ public class FinanceDealStateRepVO extends DataVO {
 	
 	@FieldAlias("vouchernumt")
 	private Integer ivouchernumtaxpay;//凭证数量-一般纳税人
+
+	public Integer getInewsmall() {
+		return inewsmall;
+	}
+
+	public void setInewsmall(Integer inewsmall) {
+		this.inewsmall = inewsmall;
+	}
+
+	public Integer getIstocksmall() {
+		return istocksmall;
+	}
+
+	public void setIstocksmall(Integer istocksmall) {
+		this.istocksmall = istocksmall;
+	}
+
+	public Integer getInewtaxpay() {
+		return inewtaxpay;
+	}
+
+	public void setInewtaxpay(Integer inewtaxpay) {
+		this.inewtaxpay = inewtaxpay;
+	}
+
+	public Integer getIstocktaxpay() {
+		return istocktaxpay;
+	}
+
+	public void setIstocktaxpay(Integer istocktaxpay) {
+		this.istocktaxpay = istocktaxpay;
+	}
 
 	public Integer getIcustsmall() {
 		return icustsmall;

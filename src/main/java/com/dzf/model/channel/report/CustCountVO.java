@@ -2,6 +2,7 @@ package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDouble;
 
 @SuppressWarnings("rawtypes")
@@ -26,6 +27,17 @@ public class CustCountVO extends SuperVO {
 
 	private DZFDouble summny;
 	
+    @FieldAlias("isncust")
+    private DZFBoolean isncust;// 是否存量客户（Y是存量客户）
+	
+	public DZFBoolean getIsncust() {
+		return isncust;
+	}
+
+	public void setIsncust(DZFBoolean isncust) {
+		this.isncust = isncust;
+	}
+
 	public String getIndustrycode() {
 		return industrycode;
 	}

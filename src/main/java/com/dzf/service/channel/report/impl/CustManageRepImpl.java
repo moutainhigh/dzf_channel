@@ -14,7 +14,6 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.report.CustManageRepVO;
-import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QryParamVO;
@@ -26,8 +25,9 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SqlUtil;
+import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.ICustManageRep;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
 
 @Service("custmanagerepser")
 public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageRep {
@@ -35,95 +35,120 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 
-	@Autowired
-	private ICustNumMoneyRep custServ;
-
 	@Override
-	public List<CustManageRepVO> query(QryParamVO paramvo) throws DZFWarpException, IllegalAccessException, Exception {
-		List<CustManageRepVO> retlist = new ArrayList<CustManageRepVO>();
-		List<String> countcorplist = new ArrayList<String>();
-		HashMap<String, DataVO> map = queryCorps(paramvo,CustManageRepVO.class);
+	public List<CustManageRepVO> query(QryParamVO pamvo) throws DZFWarpException, IllegalAccessException, Exception {
+		
+		Map<String, DataVO> map = queryCorps(pamvo, CustManageRepVO.class);
 		List<String> corplist = null;
-		if(map!=null && !map.isEmpty()){
+		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
 			corplist = new ArrayList<String>(col);
 		}
+
 		if (corplist != null && corplist.size() > 0) {
-			List<CustCountVO> custlist = custServ.queryCustNum(paramvo, 1, corplist);// 查询客户数量
-			// 计算客户分类信息
-			Map<String, CustNumMoneyRepVO> custmap = custServ.countCustNumByType(custlist, 1, corplist, countcorplist);
-			CustNumMoneyRepVO custnumvo = null;
-			CustManageRepVO retvo = null;/////
-			List<String> codelist = qryIndustryCode(paramvo);// 排行前五行业主键
-			List<CustCountVO> custnumlist = qryIndustryNum(paramvo);
-			Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
-			codelist.add("others");
-			String[] industrys = new String[] { "小规模纳税人", "一般纳税人" };
-			CustCountVO industryvo = null;
-			DZFDouble rate = DZFDouble.ZERO_DBL;
-			Integer countnum = null;
-			CorpVO corpvo = null;
-			UserVO uservo = null;
-			DataVO data=null;/////
-			String key = "";
-			for (String pk_corp : corplist) {
-				data =map.get(pk_corp);
-				retvo = (CustManageRepVO)data;
-				retvo.setPk_corp(pk_corp);
-				corpvo = CorpCache.getInstance().get(null, pk_corp);
-				if (corpvo != null) {
-					retvo.setCorpname(corpvo.getUnitname());
-					retvo.setVprovname(corpvo.getCitycounty());
-				}
-				uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setUsername(uservo.getUser_name());
-				}
-				uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setCusername(uservo.getUser_name());
-				}
-				custnumvo = custmap.get(pk_corp);
-				if (custnumvo != null) {
-					retvo.setIcustsmall(custnumvo.getIstockcustsmall());
-					retvo.setIcusttaxpay(custnumvo.getIstockcusttaxpay());
-				}
-				// 获取各个行业的值
-				Integer custsum = 0;
-				if (codelist != null && codelist.size() > 0) {
-					for (int i = 0; i < codelist.size(); i++) {
-						for (int j = 0; j < industrys.length; j++) {
-							key = pk_corp + "" + codelist.get(i) + "" + industrys[j];
-							industryvo = industmap.get(key);
-							custsum = 0;
-							custsum = addInteger(retvo.getIcustsmall(), retvo.getIcusttaxpay());
-							if (industryvo != null) {
-								if (j == 0) {
-									retvo.setAttributeValue("icustsmall" + (i + 1), industryvo.getNum());
-									countnum = CommonUtil.getInteger(retvo.getAttributeValue("icustsmall" + (i + 1)));
-									rate = getCustRate(countnum, custsum);
-									// rate = getCustRate(countnum,
-									// retvo.getIcustsmall());
-									retvo.setAttributeValue("icustratesmall" + (i + 1), rate);
-								} else if (j == 1) {
-									retvo.setAttributeValue("icusttaxpay" + (i + 1), industryvo.getNum());
-									countnum = CommonUtil.getInteger(retvo.getAttributeValue("icusttaxpay" + (i + 1)));
-									rate = getCustRate(countnum, custsum);
-									// rate = getCustRate(countnum,
-									// retvo.getIcusttaxpay());
-									retvo.setAttributeValue("icustratetaxpay" + (i + 1), rate);
-								}
-							}
+			return getRetList(pamvo, corplist, map);
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取返回数据
+	 * @param pamvo
+	 * @param corplist
+	 * @param map
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<CustManageRepVO> getRetList(QryParamVO pamvo, List<String> corplist, Map<String, DataVO> map)
+			throws DZFWarpException {
+		List<CustManageRepVO> retlist = new ArrayList<CustManageRepVO>();
+		List<String> replist = new ArrayList<String>();
+		List<CustCountVO> list = queryCustNum(pamvo, corplist);
+		Map<String, CustManageRepVO> custmap = getCustMap(list, replist);
+		CustManageRepVO custnumvo = null;
+		CustManageRepVO retvo = null;//
+
+		List<String> codelist = qryIndustryCode(pamvo);// 排行前五行业主键
+		List<CustCountVO> custnumlist = qryIndustryNum(pamvo);
+		Map<String, CustCountVO> industmap = qryIndustryMap(custnumlist, codelist);
+		codelist.add("others");
+		String[] industrys = new String[] { "小规模纳税人", "一般纳税人" };
+
+		CorpVO corpvo = null;
+		UserVO uservo = null;
+		DataVO data = null;/////
+		for (String pk_corp : replist) {
+			data = map.get(pk_corp);
+			retvo = (CustManageRepVO) data;
+			retvo.setPk_corp(pk_corp);
+			corpvo = CorpCache.getInstance().get(null, pk_corp);
+			if (corpvo != null) {
+				retvo.setCorpname(corpvo.getUnitname());
+				retvo.setVprovname(corpvo.getCitycounty());
+			}
+			uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
+			if (uservo != null) {
+				retvo.setUsername(uservo.getUser_name());
+			}
+			uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
+			if (uservo != null) {
+				retvo.setCusername(uservo.getUser_name());
+			}
+			custnumvo = custmap.get(pk_corp);
+			if (custnumvo != null) {
+				retvo.setIcustsmall(custnumvo.getIcustsmall());
+				retvo.setIcusttaxpay(custnumvo.getIcusttaxpay());
+			}
+			// 获取各个行业的值
+			setIndustryNum(codelist, pk_corp, industrys, industmap, retvo);
+
+			if (retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null) {
+				continue;
+			}
+			retlist.add(retvo);
+		}
+		return retlist;
+	}
+	
+	/**
+	 * 获取各个行业的值
+	 * @param codelist
+	 * @param pk_corp
+	 * @param industrys
+	 * @param industmap
+	 * @param retvo
+	 * @throws DZFWarpException
+	 */
+	private void setIndustryNum(List<String> codelist, String pk_corp, String[] industrys,
+			Map<String, CustCountVO> industmap, CustManageRepVO retvo) throws DZFWarpException {
+		String key = "";
+		CustCountVO industryvo = null;
+		Integer countnum = null;
+		Integer custsum = 0;
+		DZFDouble rate = DZFDouble.ZERO_DBL;
+		if (codelist != null && codelist.size() > 0) {
+			for (int i = 0; i < codelist.size(); i++) {
+				for (int j = 0; j < industrys.length; j++) {
+					key = pk_corp + "" + codelist.get(i) + "" + industrys[j];
+					industryvo = industmap.get(key);
+					custsum = 0;
+					custsum = addInteger(retvo.getIcustsmall(), retvo.getIcusttaxpay());
+					if (industryvo != null) {
+						if (j == 0) {
+							retvo.setAttributeValue("icustsmall" + (i + 1), industryvo.getNum());
+							countnum = CommonUtil.getInteger(retvo.getAttributeValue("icustsmall" + (i + 1)));
+							rate = getCustRate(countnum, custsum);
+							retvo.setAttributeValue("icustratesmall" + (i + 1), rate);
+						} else if (j == 1) {
+							retvo.setAttributeValue("icusttaxpay" + (i + 1), industryvo.getNum());
+							countnum = CommonUtil.getInteger(retvo.getAttributeValue("icusttaxpay" + (i + 1)));
+							rate = getCustRate(countnum, custsum);
+							retvo.setAttributeValue("icustratetaxpay" + (i + 1), rate);
 						}
 					}
 				}
-				if (retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null) {
-					continue;
-				}
-				retlist.add(retvo);
 			}
 		}
-		return retlist;
 	}
 
 	/**
@@ -338,6 +363,89 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			}
 		}
 		return map;
+	}
+	
+	/**
+	 * 查询各类纳税人资格的客户
+	 * 
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustCountVO> queryCustNum(QryParamVO pamvo, List<String> corplist) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
+		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
+		sql.append("       COUNT(p.pk_corp) AS num  \n");
+		sql.append("  FROM bd_corp p  \n");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
+		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
+			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
+			spm.addParam(pamvo.getBeginperiod());
+		}
+		if (corplist != null && corplist.size() > 0) {
+			String filter = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+			sql.append(" AND ");
+			sql.append(filter);
+		}
+		if(pamvo.getCorps() != null && pamvo.getCorps().length > 0){
+			String filter = SqlUtil.buildSqlForIn("t.pk_corp", pamvo.getCorps());
+			sql.append(" AND ");
+			sql.append(filter);
+		}
+		sql.append(" GROUP BY t.pk_corp,  \n");
+		sql.append("          nvl(p.chargedeptname, '小规模纳税人') \n");
+		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustCountVO.class));
+	}
+	
+	/**
+	 * 获取按照纳税人资格汇总的客户数量
+	 * @param list
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String,CustManageRepVO> getCustMap(List<CustCountVO> list, List<String> replist) throws DZFWarpException {
+		Map<String,CustManageRepVO> custmap = new HashMap<String,CustManageRepVO>();
+		if(list != null && list.size() > 0){
+			for(CustCountVO vo : list){
+				CustManageRepVO repvo = null;
+				for(CustCountVO cvo : list){
+					if(!custmap.containsKey(cvo.getPk_corp())){
+						repvo = new CustManageRepVO();
+						repvo.setPk_corp(cvo.getPk_corp());
+						if("小规模纳税人".equals(cvo.getChargedeptname())){
+							repvo.setIcustsmall(cvo.getNum());
+						}else if("一般纳税人".equals(cvo.getChargedeptname())){
+							repvo.setIcusttaxpay(cvo.getNum());
+						}
+						if(!replist.contains(cvo.getPk_corp())){
+							replist.add(cvo.getPk_corp());
+						}
+						custmap.put(cvo.getPk_corp(), repvo);
+					}else{
+						repvo = custmap.get(cvo.getPk_corp());
+						if("小规模纳税人".equals(cvo.getChargedeptname())){
+							repvo.setIcustsmall(ToolsUtil.addInteger(repvo.getIcustsmall(), cvo.getNum()));
+						}else if("一般纳税人".equals(cvo.getChargedeptname())){
+							repvo.setIcusttaxpay(ToolsUtil.addInteger(repvo.getIcusttaxpay(), cvo.getNum()));
+						}
+						custmap.put(cvo.getPk_corp(), repvo);
+					}
+				}
+			}
+		}
+		return custmap;
 	}
 
 }

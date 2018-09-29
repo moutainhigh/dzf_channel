@@ -13,7 +13,9 @@ $(function() {
 	load();
 });
 
-//初始化
+/**
+ * 查询初始化
+ */
 function initQry(){
 	$("#jqj").html($("#qryperiod").datebox('getValue'));
 	// 下拉按钮的事件
@@ -26,6 +28,9 @@ function initQry(){
 	initChannel();
 }
 
+/**
+ * 查询期间改变事件
+ */
 function changeDate(){
 	$("#qryperiod").datebox({
 		onChange : function(n, o) {
@@ -38,9 +43,9 @@ function changeDate(){
  * 数据表格初始化
  */
 function load(){
-	var vince=$('#ovince').combobox('getValue');
-	if(isEmpty(vince)){
-		vince=-1;
+	var vince = $('#ovince').combobox('getValue');
+	if (isEmpty(vince)) {
+		vince = -1;
 	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/financedealstaterep!query.action",
@@ -65,20 +70,28 @@ function load(){
 		remoteSort:false,
 		columns : [ 
 		            [ 
-					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
-					{ field : 'aname',  title : '大区', width : 60,halign:'center',align:'left',rowspan:2},
-					{ field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
-					{ field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',rowspan:2}, 
-					{ field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
-					{ field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
-					{ field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
-					 { field : 'custsmall', title : '小规模数量', width:120,halign:'center',align:'right',rowspan:2},
-					 { field : 'custtaxpay', title : '一般纳税人数量', width:120,halign:'center',align:'right',rowspan:2},
+					{ field : 'pid', title : '会计公司主键', rowspan:2, hidden:true},
+					{ field : 'aname', title : '大区', width : 60, halign:'center', align:'left', rowspan:2},
+					{ field : 'uname', title : '区总', width : 90, halign:'center', align:'left', rowspan:2},
+					{ field : 'provname', title : '省份', width : 140, halign:'center', align:'left', rowspan:2}, 
+					{ field : 'incode', title : '加盟商编码', width : 120, halign:'center', align:'left', rowspan:2},
+					{ field : 'corpnm', title : '加盟商名称', width:180, halign:'center', align:'left', rowspan:2},
+					{ field : 'cuname', title : '会计运营经理', width : 120, halign:'center', align:'left', rowspan:2},
+					{ field : 'custsmall', title : '小规模数量', width:120, halign:'center', align:'right', rowspan:2, hidden:true},
+					{ field : 'custtaxpay', title : '一般纳税人数量', width:120, halign:'center', align:'right', rowspan:2, hidden:true},
+					
+					{ field : 'smallnum', title : '小规模数量', halign:'center',align:'center',colspan:2},
+		            { field : 'taxpaynum', title : '一般纳税人数量', halign:'center',align:'center',colspan:2},
 		             
-		             { field : 'cust', title : '客户占比(%)', halign:'center',align:'center',colspan:2},
-		             { field : 'voucher', title : '凭证数量', halign:'center',align:'center',colspan:2},
-		             ] ,
+		            { field : 'cust', title : '客户占比(%)', halign:'center',align:'center',colspan:2},
+		            { field : 'voucher', title : '凭证数量', halign:'center',align:'center',colspan:2},
+		           ] ,
         [
+			{ field : 'newsmall', title : '新增', width : 100, halign:'center',align:'right'}, 
+			{ field : 'stocksmall', title : '存量', width : 100, halign:'center',align:'right'},
+			{ field : 'newtaxpay', title : '新增', width : 100, halign:'center',align:'right'}, 
+			{ field : 'stocktaxpay', title : '存量', width : 100, halign:'center',align:'right'},
+         
             { field : 'custrates', title : '小规模', width : 100, formatter:formatMny, halign:'center',align:'right'}, 
             { field : 'custratet', title : '一般纳税人', width : 100, formatter:formatMny, halign:'center',align:'right'}, 
             { field : 'vouchernums', title : '小规模', width : 100, halign:'center',align:'right'}, 
@@ -122,18 +135,20 @@ function load(){
 /**
  * 查询
  */
-function reloadData(){
-	$('#grid').datagrid('options').url = DZF.contextPath + "/report/financedealstaterep!query.action";
+function reloadData() {
+	var url =  DZF.contextPath + "/report/financedealstaterep!query.action";
+	$('#grid').datagrid('options').url = url;
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	queryParams.period = $('#qryperiod').datebox('getValue');
 	queryParams.aname = $('#aname').combobox('getValue');
-	var vince=$('#ovince').combobox('getValue');
-	if(isEmpty(vince)){
-		vince=-1;
+	var vince = $('#ovince').combobox('getValue');
+	if (isEmpty(vince)) {
+		vince = -1;
 	}
 	queryParams.ovince = vince;
 	queryParams.uid = $('#uid').combobox('getValue');
 	queryParams.corps = $("#pk_account").val();
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
+	$("#qrydialog").css("visibility", "hidden");
 }
