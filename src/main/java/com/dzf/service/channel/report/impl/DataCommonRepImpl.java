@@ -92,24 +92,35 @@ public class DataCommonRepImpl {
 	 */
 	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla) {
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("  select a.areaname,a.userid,");
-		sql.append("  	   y.region_name vprovname,");
-		sql.append("       p.pk_corp, p.innercode, p.vprovince,b.ischarge,");
-		sql.append("       b.userid cuserid,b.pk_corp corpname");// ,
-																	// b.vprovince
-		sql.append("  from bd_account p");
-		sql.append("  left join ynt_area y on p.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
-		sql.append("  left join cn_chnarea_b b on p.vprovince = b.vprovince and b.type = 2 and nvl(b.dr, 0) = 0");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea and a.type = 2 and nvl(a.dr, 0) = 0");
-		sql.append(" where nvl(p.dr, 0) = 0");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'");
-		sql.append("   and nvl(p.ischannel,'N')='Y'");
-		sql.append("   and nvl(p.isseal,'N')='N'");
-		sql.append("   and p.vprovince is not null ");
+		SQLParameter spm = new SQLParameter();
+		sql.append("select a.areaname,  \n");
+		sql.append("       a.userid,  \n");
+		sql.append("       y.region_name vprovname,  \n");
+		sql.append("       p.pk_corp,  \n");
+		sql.append("       p.innercode,  \n");
+		sql.append("       p.vprovince,  \n");
+		sql.append("       b.ischarge,  \n");
+		sql.append("       b.userid cuserid,  \n");
+		sql.append("       b.pk_corp corpname  \n");
+		sql.append("  \n");
+		sql.append("  from bd_account p  \n");
+		sql.append("  left join ynt_area y on p.vprovince = y.region_id  \n");
+		sql.append("                      and y.parenter_id = 1  \n");
+		sql.append("                      and nvl(y.dr, 0) = 0  \n");
+		sql.append("  left join cn_chnarea_b b on p.vprovince = b.vprovince  \n");
+		sql.append("                          and b.type = 2  \n");
+		sql.append("                          and nvl(b.dr, 0) = 0  \n");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("                        and a.type = 2  \n");
+		sql.append("                        and nvl(a.dr, 0) = 0  \n");
+		sql.append(" where nvl(p.dr, 0) = 0  \n");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
+		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
+		sql.append("   and nvl(p.isseal, 'N') = 'N'  \n");
+		sql.append("   and p.vprovince is not null \n");
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
-			sp.addParam(new DZFDate().toString());
+			spm.addParam(new DZFDate().toString());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
@@ -122,15 +133,15 @@ public class DataCommonRepImpl {
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		if (level == 2) {// 区域总经理
 			sql.append(" and a.userid=? ");
-			sp.addParam(qvo.getUser_name());
+			spm.addParam(qvo.getUser_name());
 		}
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(qvo.getAreaname());
+			spm.addParam(qvo.getAreaname());
 		}
 		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
 			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(qvo.getVprovince());
+			spm.addParam(qvo.getVprovince());
 		}
 		Boolean isQuery = true;
 		if (!StringUtil.isEmpty(qvo.getCuserid())) {
@@ -143,9 +154,9 @@ public class DataCommonRepImpl {
 			} else {
 				sql.append(" and b.userid=? ");// 渠道经理
 			}
-			sp.addParam(qvo.getCuserid());
+			spm.addParam(qvo.getCuserid());
 		}
-		List<DataVO> list = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(cla));
+		List<DataVO> list = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
 		HashMap<String, DataVO> map = new HashMap<String, DataVO>();
 		if (list != null && list.size() > 0) {
 			Boolean isPut = true;
@@ -169,23 +180,46 @@ public class DataCommonRepImpl {
 		return map;
 	}
 
+	/**
+	 * 查询 是 省/市负责人相关的数据
+	 * 
+	 * @param qvo
+	 * @param cla
+	 * @return
+	 */
 	private List<DataVO> qryCharge(QryParamVO qvo, Class cla) {
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.userid ,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname,");
-		// sql.append(" (case when b.pk_corp is null then null else b.userid
-		// end) cuserid ");
-		sql.append(
-				" (case when b.pk_corp is null then null  when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
-		sql.append(" from bd_account p right join cn_chnarea_b b on  p.vprovince=b.vprovince  ");
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea ");
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2");
-		sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and b.userid=?");
-		sql.append(" and nvl(b.ischarge,'N')='Y' ");
-		sp.addParam(qvo.getUser_name());
+		SQLParameter spm = new SQLParameter();
+		sql.append("select p.pk_corp,  \n");
+		sql.append("       a.areaname,  \n");
+		sql.append("       a.userid,  \n");
+		sql.append("       b.vprovname,  \n");
+		sql.append("       b.vprovince,  \n");
+		sql.append("       p.innercode,  \n");
+		sql.append("       b.pk_corp corpname,  \n");
+		sql.append("       (case  \n");
+		sql.append("         when b.pk_corp is null then  \n");
+		sql.append("          null  \n");
+		sql.append("         when b.pk_corp != p.pk_corp then  \n");
+		sql.append("          null  \n");
+		sql.append("         else  \n");
+		sql.append("          b.userid  \n");
+		sql.append("       end) cuserid  \n");
+		sql.append("  from bd_account p  \n");
+		sql.append(" right join cn_chnarea_b b on p.vprovince = b.vprovince  \n");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append(" where nvl(b.dr, 0) = 0  \n");
+		sql.append("   and nvl(p.dr, 0) = 0  \n");
+		sql.append("   and nvl(a.dr, 0) = 0  \n");
+		sql.append("   and b.type = 2  \n");
+		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
+		sql.append("   and b.userid = ?  \n");
+		sql.append("   and nvl(b.ischarge, 'N') = 'Y' \n");
+		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
-			sp.addParam(new DZFDate());
+			spm.addParam(new DZFDate());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
@@ -198,34 +232,52 @@ public class DataCommonRepImpl {
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(qvo.getAreaname());
+			spm.addParam(qvo.getAreaname());
 		}
 		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
 			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(qvo.getVprovince());
+			spm.addParam(qvo.getVprovince());
 		}
-		List<DataVO> list = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(cla));
+		List<DataVO> list = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
 		return list;
 	}
 
+	/**
+	 * 查询 非 省/市负责人相关的数据
+	 * 
+	 * @param qvo
+	 * @param cla
+	 * @return
+	 */
 	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla) {
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append(
-				"select p.pk_corp ,a.areaname,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname ");
-		sql.append(" from bd_account p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp ");
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea ");
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=2");
-		sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' ");
+		SQLParameter spm = new SQLParameter();
+		sql.append("select p.pk_corp,  \n");
+		sql.append("       a.areaname,  \n");
+		sql.append("       a.userid,  \n");
+		sql.append("       b.userid cuserid,  \n");
+		sql.append("       b.vprovname,  \n");
+		sql.append("       b.vprovince,  \n");
+		sql.append("       p.innercode,  \n");
+		sql.append("       b.pk_corp corpname  \n");
+		sql.append("  from bd_account p  \n");
+		sql.append(" right join cn_chnarea_b b on p.pk_corp = b.pk_corp  \n");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append(" where nvl(b.dr, 0) = 0  \n");
+		sql.append("   and nvl(p.dr, 0) = 0  \n");
+		sql.append("   and nvl(a.dr, 0) = 0  \n");
+		sql.append("   and b.type = 2  \n");
+		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y' \n");
 		if (!StringUtil.isEmpty(qvo.getVqrysql())) {
 			sql.append(" and (" + qvo.getVqrysql() + " or b.userid=? ) ");
 		} else {
 			sql.append(" and b.userid=? ");
 		}
-		sp.addParam(qvo.getUser_name());
+		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
-			sp.addParam(new DZFDate());
+			spm.addParam(new DZFDate());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
@@ -239,13 +291,13 @@ public class DataCommonRepImpl {
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(qvo.getAreaname());
+			spm.addParam(qvo.getAreaname());
 		}
 		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
 			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(qvo.getVprovince());
+			spm.addParam(qvo.getVprovince());
 		}
-		List<DataVO> vos = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(cla));
+		List<DataVO> vos = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
 		return vos;
 	}
 
