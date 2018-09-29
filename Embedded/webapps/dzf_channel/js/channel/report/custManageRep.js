@@ -76,6 +76,7 @@ function load(){
 			$('#grid').datagrid('reloadFooter',fs);
 		},
 	});
+	$("#qrydialog").css("visibility", "hidden");
 }
 
 /**
