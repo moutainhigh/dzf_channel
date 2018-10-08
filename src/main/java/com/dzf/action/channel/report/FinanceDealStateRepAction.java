@@ -22,7 +22,7 @@ import com.dzf.service.channel.report.IFinanceDealStateRep;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 财务处理情况反馈
+ * 财务处理分析
  * 
  * @author zy
  *
