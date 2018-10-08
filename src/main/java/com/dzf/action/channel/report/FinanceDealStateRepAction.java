@@ -1,5 +1,6 @@
 package com.dzf.action.channel.report;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
+import com.dzf.model.channel.report.FinanceDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
@@ -60,8 +63,8 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 			int len = list == null ? 0 : list.size();
 			if (len > 0) {
 				grid.setTotal((long) (len));
-				grid.setRows(
-						Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new FinanceDealStateRepVO[0]), page, rows)));
+				SuperVO[] pageVOs = QueryUtil.getPagedVOs(list.toArray(new FinanceDealStateRepVO[0]), page, rows);
+				grid.setRows(Arrays.asList(pageVOs));
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_8.getValue(), "财务处理分析查询成功", ISysConstants.SYS_3);
@@ -74,6 +77,30 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 查询
+	 */
+	public void queryDetail() {
+		Grid grid = new Grid();
+		try {
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			int total = financeServ.queryDetailRow(paramvo);
+			if(total > 0){
+				List<FinanceDetailVO> workvos = financeServ.queryDetail(paramvo);
+				grid.setRows(workvos);
+			}else{
+				grid.setRows(new ArrayList<FinanceDetailVO>());
+			}
+			grid.setSuccess(true);
+			grid.setTotal((long) (total));
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+
 		writeJson(grid);
 	}
 
