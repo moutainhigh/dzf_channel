@@ -112,7 +112,7 @@ function dClickMans(rowTable){
  * 由别的界面（付款单余额明细）跳转待合同审核界面
  */
 function loadJumpData(){
-	debugger
+	
 	var obj = Public.getRequest();
 	var operate = obj.operate;
 	if(operate == "tocont"){

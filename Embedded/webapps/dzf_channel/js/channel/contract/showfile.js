@@ -1,5 +1,7 @@
 //附件items
 var arrachrows = null;
+
+var flowImgUrls = new Array();
 /**
  * 列表界面查看附件
  */
@@ -41,6 +43,12 @@ function viewattach(infoindex){
 						'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 						'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 						'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#attachs"));
+				
+				var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+				rows[i].doc_id + "&corp_id=" + rows[i].corp_id;
+				var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+				+ '" style="position: absolute;z-index: 1;left:50px;">';
+				flowImgUrls[i] = img;
 			}
 		}
 	});
@@ -75,8 +83,8 @@ function viewAttachCard(){
 		url : DZF.contextPath + "/contract/contractconf!getAttaches.action",
   		dataType : 'json',
   		data : para,
-  		processData : true,
-  		async : false,//异步传输
+  		processData : false,
+  		async : true,//异步传输
   		success : function(result) {
 			var rows = result.rows;
 			arrachrows = result.rows;
@@ -184,7 +192,7 @@ function doubleImage(i){
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
 		var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">';
+		+ '" style="position: absolute;z-index: 1;left:50px;">';
 //		parent.openFullViewDlg('<div style="text-align: center;padding-top:10px;"> '+
 //								'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
 //								'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div>'+
@@ -193,7 +201,7 @@ function doubleImage(i){
 //								'<img id="conturnid" alt="无法显示图片" src="' + src 
 //								+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">'+
 //								' </div>','原图')
-		parent.openFullViewDlg(img, '原图');
+		parent.openFullViewDlg(img, '原图', null, null, i, flowImgUrls);
 	}
 
 }

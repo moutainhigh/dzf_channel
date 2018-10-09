@@ -387,9 +387,10 @@ function savePsw(){
  * @param title   表体
  * @param billid  下载主键
  * @param downtype   下载类型
+ * @param index   图片下标
  */
 
-function openFullViewDlg (content,title, billid, downtype) {
+function openFullViewDlg (content,title, billid, downtype, index, flowImgUrls) {
 //	bid = billid;
 //	dtype = downtype;
 //	$("#fullViewContent").html(content);
@@ -403,13 +404,15 @@ function openFullViewDlg (content,title, billid, downtype) {
 //	$("#fullViewDlg").css("display","block");
 //	$("#fullViewDlg").dialog("center");
 	var simg = '<div style="text-align: center;padding-top:10px;"> '+
+	　'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="last">上一页</a>'+
 	'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
-	'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div>'+
-	'<div id="fullViewContent" '+
-	'style="text-align: center;padding-top:60px; margin: 0 auto;position:relative;">'+
+	'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>'+
+	　'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="next">下一页</a>'+
+	'</div>'+
+	'<div id="fullViewContent" style="text-align: center;padding-top:20px; margin: 0 auto;position:relative;width:84%;">'+
 	 content +
 	' </div>'
-	showImage(simg);
+	showImage(simg, index, flowImgUrls, 0);
 	initconturnid()
 	
 	
@@ -419,23 +422,83 @@ function openFullViewDlg (content,title, billid, downtype) {
  * layui展示图片
  * @param content
  */
-function showImage(content){
+function showImage(content, index, flowImgUrls, opertype){
 //	var img = "<img id='fullViewDlg' src=" + src + " style='position: absolute;z-index: 1;left:50px;top:50px;' />";  
-	layer.open({  
-	    type: 1,  
-	    shade: false,  
-	    title: '图片', //不显示标题  
-	    area:['auto','auto'],  
-	    area: ['90%','90%'],  
-	    content: content  , 
-	    maxmin: true,
-	    shadeClose: true,
-	    moveOut: true,
-	    cancel: function () {  
-	        //layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
-	    }  
-	});  
-	$(".layui-layer-content").attr("id","fullViewDlg");
+	if(opertype == 0){//初始化展示
+		layer.open({  
+			type: 1,  
+			shade: false,  
+			title: '图片', //不显示标题  
+			area:['auto','auto'],  
+			area: ['90%','90%'],  
+			content: content  , 
+			maxmin: true,
+			shadeClose: true,
+			moveOut: true,
+			cancel: function () {  
+				//layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
+			}  
+		});  
+		$(".layui-layer-content").attr("id","fullViewDlg");
+		
+		console.info("下标："+index);
+		findex = index;
+		flen = flowImgUrls.length;
+	　　$('.btn').on('click',function(){
+	　　　　if($(this).data('control') === "last"){
+//	　　　　　　findex = Math.max(0, --findex);
+				findex	= --findex;
+				if(findex < 0){
+					findex = flowImgUrls.length;
+				}
+	　　　　}else {
+//			   findex = Math.min(flen-1, ++findex);
+				findex	= ++findex;
+				if(findex > flowImgUrls.length){
+					findex = 0;			}
+	　　　　}
+
+//			$('#fullViewDlg').dialog('close');
+			showImage(flowImgUrls[findex], findex, flowImgUrls, 1);
+			
+			
+	　　});
+		
+	}else if(opertype == 1){//上一页、下一页展示
+		$('#fullViewContent').html(content);
+	}
+	
+//	flowImages(index, flowImgUrls);
+}
+
+/**
+ * 展示图片 上一页、下一页
+ */
+var findex = 0;
+var flen = 0;
+function flowImages(index, flowImgUrls){
+	console.info("下标："+index);
+	findex = index;
+	flen = flowImgUrls.length;
+　　$('.btn').on('click',function(){
+　　　　if($(this).data('control') === "last"){
+//　　　　　　findex = Math.max(0, --findex);
+			findex	= --findex;
+			if(findex < 0){
+				findex = flowImgUrls.length;
+			}
+　　　　}else {
+//		   findex = Math.min(flen-1, ++findex);
+			findex	= ++findex;
+			if(findex > flowImgUrls.length){
+				findex = 0;			}
+　　　　}
+
+//		$('#fullViewDlg').dialog('close');
+		showImage(flowImgUrls[findex], findex, flowImgUrls, 1);
+		
+		
+　　});
 }
 
 /**
