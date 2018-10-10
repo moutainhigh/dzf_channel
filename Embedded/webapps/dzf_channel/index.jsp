@@ -114,16 +114,15 @@ var SYSTEM = {
 var modulus = "<%=modulus%>";
 var exponent = "<%=exponent%>";
 
-var current = 0;
-function tranImg(trun){
-    var imgObj= document.getElementById('conturnid');
-    current = (current+trun)%360;
-    imgObj.style.transform = 'rotate('+current+'deg)';
-}
 </script>
 <style>
-#fullViewContent img{height:460px;}
-.zoomableContainer{margin:0 auto}
+#fullViewContent img {
+	height: 460px;
+}
+
+.zoomableContainer {
+	margin: 0 auto
+}
 </style>
 </head>
 
@@ -370,157 +369,25 @@ function tranImg(trun){
 	</div>
 </div>
 <form id="form" method="post">
-<div id="upsw" style="display:none;padding:10px 20px;">
-	<p style="margin-top:10px;">
-	输入初始密码：
-	<input id="user_password" name="data.user_password" type="password" class="easyui-textbox" style="width:210px;height:30px;border-color:#ffa8a8" data-options="required:true" />
-	</p>
-	<p style="margin-top:10px;">
-	请输入新密码：
-	<input id="psw2" name="psw2" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
-	</p>
-	<p style="margin-top:10px;">
-	再次输入密码：
-	<input id="psw3" name="psw3" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
-	<input name="data.user_name" id="user_name" type="hidden" value="<%=userVo.getUser_name()%>"/>
-	</p>
-</div>
+	<div id="upsw" style="display:none;padding:10px 20px;">
+		<p style="margin-top:10px;">
+		输入初始密码：
+		<input id="user_password" name="data.user_password" type="password" class="easyui-textbox" style="width:210px;height:30px;border-color:#ffa8a8" data-options="required:true" />
+		</p>
+		<p style="margin-top:10px;">
+		请输入新密码：
+		<input id="psw2" name="psw2" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+		</p>
+		<p style="margin-top:10px;">
+		再次输入密码：
+		<input id="psw3" name="psw3" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
+		<input name="data.user_name" id="user_name" type="hidden" value="<%=userVo.getUser_name()%>"/>
+		</p>
+	</div>
 </form>
 <div id="pwd_buttons" style="display:none" >
-<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="savePsw();" >确认</a> 
-<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
+	<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="savePsw();" >确认</a> 
+	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#upsw').dialog('close');" >取消</a>
 </div>
-<!-- 打开图片展示窗口 begin -->
-<!-- <div id="fullViewDlg" style="display: none;text-align: center;">	
-	<div style="text-align: center;">
-	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranLeft()">左转</a>
-	<a class="tranleft ui-btn ui-btn-xz" style="margin:6px 0 6px 0;" onclick="tranRight()">右转</a>
-	<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a>
-	<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>
-	</div>
-  	<div class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;">
-		<div class="entrance_block_tu" id="tpght" style="overflow;height:95%">
-			<ul class="tu_block" id="fullViewContent"></ul>
-		</div>
-	</div>
-	<div id="fullViewContent" style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">
-	</div>
-</div> -->
-<!-- 打开图片展示窗口 end -->
-<script>
-function addEvent(obj, sType, fn) {
-	if (obj.addEventListener) {
-		obj.addEventListener(sType, fn, false);
-	} else {
-		obj.attachEvent('on' + sType, fn);
-	}
-};
-function removeEvent(obj, sType, fn) {
-	if (obj.removeEventListener) {
-		obj.removeEventListener(sType, fn, false);
-	} else {
-		obj.detachEvent('on' + sType, fn);
-	}
-};
-function prEvent(ev) {
-	var oEvent = ev || window.event;
-	if (oEvent.preventDefault) {
-		oEvent.preventDefault();
-	}
-	return oEvent;
-}
-/*添加滑轮事件*/
-function addWheelEvent(obj, callback) {
-	if (window.navigator.userAgent.toLowerCase().indexOf('firefox') != -1) {
-		addEvent(obj, 'DOMMouseScroll', wheel);
-	} else {
-		addEvent(obj, 'mousewheel', wheel);
-	}
-	function wheel(ev) {
-		var oEvent = prEvent(ev),
-		delta = oEvent.detail ? oEvent.detail > 0 : oEvent.wheelDelta < 0;
-		callback && callback.call(oEvent, delta);
-		return false;
-	}
-};
-/*页面载入后*/
-function initconturnid() {
-	document.getElementById('conturnid').onload = function(){
-		var widths = document.getElementById("fullViewDlg").offsetWidth - 142 ;
-		 heights = document.getElementById("fullViewDlg").offsetHeight  -66 ;
-		 widthpx = widths+"px";
-		 heightpx = heights+"px";
-		$("#fullViewContent").css({"width":widthpx,"height":heightpx})
-		document.getElementById('conturnid').style.left = (widths - document.getElementById('conturnid').offsetWidth)/2 + "px"
-		document.getElementById('conturnid').style.top = (heights - document.getElementById('conturnid').offsetHeight)/2 + "px"
-
-	}
-	
-
-	var oImg = document.getElementById('conturnid');
-	/*拖拽功能*/
-	(function() {
-		addEvent(oImg, 'mousedown', function(ev) {
-			
-			var oEvent = prEvent(ev),
-			oParent = oImg.parentNode,
-			disX = oEvent.clientX,
-			disY = oEvent.clientY,
-			marginX =oImg.offsetLeft,
-			marginY =oImg.offsetTop,
-			startMove = function(ev) {
-				if (oParent.setCapture) {
-					oParent.setCapture();
-				}
-				var oEvent = ev || window.event,
-				l = oEvent.clientX - disX,
-				t = oEvent.clientY - disY;
-				oImg.style.left =marginX + l +'px';
-				oImg.style.top = marginY+ t +'px';
-				oParent.onselectstart = function() {
-					return false;
-				}
-			}, endMove = function(ev) {
-				if (oParent.releaseCapture) {
-					oParent.releaseCapture();
-				}
-				oParent.onselectstart = null;
-				removeEvent(oParent, 'mousemove', startMove);
-				removeEvent(oParent, 'mouseup', endMove);
-			};
-			addEvent(oParent, 'mousemove', startMove);
-			addEvent(oParent, 'mouseup', endMove);
-			return false;
-		});
-	})();
-	/*以鼠标位置为中心的滑轮放大功能*/
-	
-	(function() {
-		addWheelEvent(oImg, function(delta) {
-			
-			var ratioL = this.offsetX / oImg.offsetWidth,
-			ratioT = this.offsetY / oImg.offsetHeight,
-			qusX = oImg.offsetLeft + this.offsetX,
-			qusY = oImg.offsetTop + this.offsetY,
-			ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
-			
-			w = parseInt(oImg.offsetWidth * ratioDelta),
-			h = parseInt(oImg.offsetHeight * ratioDelta),
-	
-			l = Math.round(qusX - (w * ratioL)),
-			t = Math.round(qusY - (h * ratioT));
-			if(w < 150 || h<80){
-				return false
-			};
-			with(oImg.style) {
-				width = w +'px';
-				height = h +'px';
-				left = l +'px';
-				top = t +'px';
-			}
-		});
-	})();
-};
-</script>
 </body>
 </html>
