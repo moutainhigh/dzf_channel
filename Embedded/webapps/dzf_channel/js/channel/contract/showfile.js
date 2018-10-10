@@ -6,14 +6,6 @@ var flowImgUrls = new Array();
  * 列表界面查看附件
  */
 function viewattach(infoindex){
-//	var rows = $('#grid').datagrid('getSelections');
-//	if (rows == null) {
-//		$.messager.alert("提示", "请选择一行数据进行查看"); 
-//		return;
-//	}else if(rows && rows.length > 1){
-//		$.messager.alert("提示", "请选择一行数据进行查看"); 
-//		return;
-//	}
 	var row = $('#grid').datagrid('getData').rows[infoindex];
 	if (row == null) {
 		Public.tips({content:'请您先选择一行',type:2});
@@ -39,8 +31,10 @@ function viewattach(infoindex){
 				var srcpath = rows[i].fpath.replace(/\\/g, "/");
 				var attachImgUrl = getAttachImgUrl(rows[i]);
 				$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-						'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
-						'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+						'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + 
+							'\');" ><span><img src="' +attachImgUrl +  '" />'+
+						'<div id="reUpload' + i +
+							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 						'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 						'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#attachs"));
 				
@@ -64,6 +58,7 @@ function viewattach(infoindex){
 	$("#attachViewDlg").css("display","block");
 	$("#attachViewDlg").dialog("center");
 }
+
 /**
  * 详细界面查看附件
  */
@@ -93,9 +88,10 @@ function viewAttachCard(){
 				var srcpath = rows[i].fpath.replace(/\\/g, "/");
 				var attachImgUrl = getAttachImgUrl(rows[i]);
 				$('<li><a href="javascript:void(0)" onmouseover="showTips(' + i + ')" onmouseout="hideTips(' + i + ')" '+
-						'ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' + attachImgUrl +  '" />'+ '<div id="reUpload' + i +
-						'" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'
-						+'<h4><span id="tips'+i	+'"></span></h4></div></span>'+
+						'ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' + attachImgUrl +  '" />'+ 
+						'<div id="reUpload' + i +
+						'" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+						'<h4><span id="tips'+i	+'"></span></h4></div></span>'+
 						'<font>' + rows[i].doc_name + '</font></a></li>').appendTo($("#attachs"));
 			}
 		}
@@ -118,17 +114,16 @@ function viewAttachCard(){
  * @param attach
  * @returns {String}
  */
-function getAttachImgUrl(attach){
-	
+function getAttachImgUrl(attach) {
 	var ext = getFileExt(attach['doc_name']);
-	if("pdf"==ext.toLowerCase()){		
+	if ("pdf" == ext.toLowerCase()) {
 		return "../../images/typeicon/pdf.jpg";
-	}else if("txt"==ext.toLowerCase()){		
+	} else if ("txt" == ext.toLowerCase()) {
 		return "../../images/typeicon/txt.jpg";
 	}
-	
-	return DZF.contextPath + '/contract/contractconf!getAttachImage.action?doc_id=' + attach.doc_id 
-		+ '&corp_id=' + attach.corp_id ;	
+	return DZF.contextPath
+			+ '/contract/contractconf!getAttachImage.action?doc_id='
+			+ attach.doc_id + '&corp_id=' + attach.corp_id;
 }
 
 
@@ -137,7 +132,6 @@ function getAttachImgUrl(attach){
  * @param i
  */
 function showTips(i){
-
 	var div = "#reUpload"+i;
 	$(div).css("display","block");
 	
@@ -161,7 +155,6 @@ function hideTips(i){
  * @returns {String}
  */
 function getTipContents(i) {
-
 	var tips = "";
 	if (arrachrows && arrachrows[i]) {
 		var ext = getFileExt(arrachrows[i]['doc_name']);
@@ -171,11 +164,8 @@ function getTipContents(i) {
 			tips = "双击查看原图";
 		} else if ("pdf" == ext.toLowerCase()) {
 			tips = "双击预览";
-		} /*else {
-			tips = "双击下载";
-		}*/
+		}
 	}
-
 	return tips;
 }
 
@@ -183,71 +173,30 @@ function getTipContents(i) {
  * 双击显示大图
  * @param i
  */
-function doubleImage(i){
+function doubleImage(i) {
 	var ext = getFileExt(arrachrows[i]['doc_name']);
-	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
-		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
-	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
+	var src = DZF.contextPath
+			+ "/contract/contractconf!getAttachImage.action?doc_id="
+			+ arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
+	if ("png" == ext.toLowerCase() || "jpg" == ext.toLowerCase()
+			|| "jpeg" == ext.toLowerCase() || "bmp" == ext.toLowerCase()) {
 		$("#tpfd").empty();
 		var offset = $("#tpght").offset();
-		var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="position: absolute;z-index: 1;left:50px;">';
-//		parent.openFullViewDlg('<div style="text-align: center;padding-top:10px;"> '+
-//								'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
-//								'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a></div>'+
-//								'<div id="fullViewContent" '+
-//								'style="overflow: auto;width: 1200px; height:460px;text-align: center;padding-top:60px; margin: 0 auto;position:relative;">'+
-//								'<img id="conturnid" alt="无法显示图片" src="' + src 
-//								+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">'+
-//								' </div>','原图')
+		var img = '<img id="conturnid" alt="无法显示图片" src="' + src
+				+ '" style="position: absolute;z-index: 1;left:50px;">';
 		parent.openFullViewDlg(img, '原图', null, null, i, flowImgUrls);
 	}
-
 }
-
-//function doubleImage(i){
-//	var ext = getFileExt(arrachrows[i]['doc_name']);
-//	var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
-//		arrachrows[i].doc_id + "&corp_id=" + arrachrows[i].corp_id;
-//	if("png"==ext.toLowerCase()||"jpg"==ext.toLowerCase()
-//			||"jpeg"==ext.toLowerCase()||"bmp"==ext.toLowerCase()){
-//		$("#tpfd").empty();
-//		var offset = $("#tpght").offset();
-////		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
-////		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
-//		
-//		var img = "<img id='fullViewDlg' src=" + src + " style='position: absolute;z-index: 1;left:50px;top:50px;' />";  
-//		layer.open({  
-//		    type: 1,  
-//		    shade: false,  
-//		    title: '图片', //不显示标题  
-//		    area:['auto','auto'],  
-//		    area: ['99%','90%'],  
-//		    content: img + "<div id='fullViewContent' style='text-align: center;padding-top:10px;'><a class='ui-btn ui-btn-xz' onclick='tranImg(-90)'>左转</a><a class='ui-btn ui-btn-xz' onclick='tranImg(90)'>右转</a></div>", 
-//		    maxmin: true,
-//		    shadeClose: true,
-//		    cancel: function () {  
-//		        //layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
-//		    }  
-//		});  
-//	}
-//
-//}
-
-
 
 /**
  * 获取附件扩展
  * @param filename
  * @returns
  */
-function getFileExt(filename){
-	
-	var index1=filename.lastIndexOf(".")+1;
-	var index2=filename.length;
-	var ext=filename.substring(index1,index2);
-	
+function getFileExt(filename) {
+	var index1 = filename.lastIndexOf(".") + 1;
+	var index2 = filename.length;
+	var ext = filename.substring(index1, index2);
 	return ext;
 }
 
