@@ -27,8 +27,7 @@
 		request.getRequestDispatcher("/error_kj.jsp").forward(request, response);
 		return;
 	}
-	UserVO userVo = UserCache.getInstance().get(userid, corp);//()(UserVO)session.getAttribute(IGlobalConstants.login_user);
-	//String date = (String) session.getAttribute(IGlobalConstants.login_date);
+	UserVO userVo = UserCache.getInstance().get(userid, corp);
 	String date = AdminDateUtil.getServerDate();
 	String preDate = AdminDateUtil.getPreviousDate();
 	String preYear = AdminDateUtil.getPreviousYear();
@@ -71,11 +70,6 @@
 	String chatserver = ChatCommon.readchatServer();
 
 	String callUrl = request.getRequestURL().toString();
-
-	//"3004753485", "3004754158", "3004770986"
-	/* 	String qqline = (String)session.getAttribute("QQLINE");
-		String path = request.getContextPath(); 
-		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/"; */
 %>
 <!DOCTYPE html>
 <html><head>
@@ -119,13 +113,6 @@ var SYSTEM = {
 };
 var modulus = "<%=modulus%>";
 var exponent = "<%=exponent%>";
-
-/* var current = 0;
-function tranImg(trun){
-    var imgObj= document.getElementById('conturnid');
-    current = (current+trun)%360;
-    imgObj.style.transform = 'rotate('+current+'deg)';
-} */
 
 var current = 0;
 function tranImg(trun){
@@ -384,10 +371,6 @@ function tranImg(trun){
 </div>
 <form id="form" method="post">
 <div id="upsw" style="display:none;padding:10px 20px;">
-	<!-- <p style="margin-top:5px;">
-	是否补充密码信息
-	<input id="isEditInfo" name="isEditInfo" type="checkbox"/>
-	</p> -->
 	<p style="margin-top:10px;">
 	输入初始密码：
 	<input id="user_password" name="data.user_password" type="password" class="easyui-textbox" style="width:210px;height:30px;border-color:#ffa8a8" data-options="required:true" />
@@ -401,16 +384,6 @@ function tranImg(trun){
 	<input id="psw3" name="psw3" type="password" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
 	<input name="data.user_name" id="user_name" type="hidden" value="<%=userVo.getUser_name()%>"/>
 	</p>
-	<!-- <div id="editInof" style="display:none">
-		<p style="margin-top:10px;">
-		请输入手机号：
-		<input id="phone" name="phone" type="text" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
-		</p>
-		<p style="margin-top:10px;">
-		请输入邮箱&nbsp;&nbsp;&nbsp;：
-		<input id="uEmail" name="uEmail" type="text" class="easyui-textbox" style="width:210px;height:30px;" data-options="required:true" />
-		</p>
-	</div> -->
 </div>
 </form>
 <div id="pwd_buttons" style="display:none" >

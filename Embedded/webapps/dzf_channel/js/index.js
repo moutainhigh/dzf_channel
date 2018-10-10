@@ -26,111 +26,93 @@ $(function() {
 /**
  * 监听初始化
  */
-function initListener(){
-	 $('#main').tabs({
-		 width: $("#main").parent().width(),
-		 height:(document.body.clientHeight-58),
-		 tabHeight:30,
-		 onSelect:function(title,index){
-		 }
-	});
-	
-	$('.nav_li').hover(function(){
-		var backSpan = $(this).find("span");
-		var preClass = backSpan.attr("class");
-		backSpan.removeClass();
-		$(this).find("span").addClass("h" + preClass);
-       $(this).find("a").addClass("menu_1");
-		$("#" + $(this).attr("id") + "_sub").show();
-		document.getElementById($(this).attr("id")+"_sub").style.top = ($(this).offset().top)+"px";
-		if($("#"+$(this).attr("id")+"_sub").offset().top+$("#"+$(this).attr("id")+"_sub").height()>$(window).height()){
-			document.getElementById($(this).attr("id")+"_sub").style.top = $(window).height()-$("#"+$(this).attr("id")+"_sub").height()+"px";
-			$("#"+$(this).attr("id")+"_sub").find("em").css("top",$(this).offset().top - $("#"+$(this).attr("id")+"_sub").offset().top+25+"px");
-		}
-    }, function(){
-   	 var backSpan = $(this).find("span");
-		 var preClass = backSpan.attr("class");
-		 backSpan.removeClass();
-		 $(this).find("span").addClass(preClass.substr(1));
-   	 $(this).find("a").removeClass("menu_1");
-		 var subSta = true;
-		 $("#" + $(this).attr("id") + "_sub").hover(function(){
-			 $(this).show();
-			 subSta= false;
-		 },function(){
-			 $(this).hide();
-		 });
-		if(subSta)
-			$("#" + $(this).attr("id") + "_sub").hide();
-	 });
-	$(".sub_menu").hover(function(){
-		var oh = $(this).height();
-		$(this).find("div").height(oh);
-		var index = $(this).index();
-		$(".nav_li").eq(index).find("a").addClass("menu_1");
-	},function(){
-		var index = $(this).index();
-		$(".nav_li").eq(index).find("a").removeClass("menu_1");
-		$(this).hide();
-	});
-	
-	$(".sub_menu_div li").hover(function () {
-		$("#" + $(this).attr("id") + "_sub").show();
-	}, function () {
-		var subSta = true;		
-		 $("#" + $(this).attr("id") + "_sub").hover(function(){
-			 $(this).show();
-			 subSta= false;
-		 },function(){
-			 $(this).hide();
-		 });
-		if(subSta)
-			$("#" + $(this).attr("id") + "_sub").hide();
-		
-	});
-	
-//	$("dd .tz_row1").hover(function(){
-//		 var tzcon = $(this).find("a").attr("data-title");
-//		 var str = '<div class="tz-content">' + tzcon + "</div>"
-//		 $(this).append(str);
-//	}, function(){
-//		 $(this).find("div").remove();
-//	})
-  
-	 $("#main").tabs({
-		onContextMenu : function (e, title) {
-			e.preventDefault();
-			if(title != '首页'){
-				$('#tabsMenu').menu('show', {
-					left : e.pageX,
-					top : e.pageY
-				}).data("tabTitle", title);
-			}
-		},
-	});
-	
-	$("#tabsMenu").menu({
-		onClick : function (item) {
-			CloseTab(this, item.name);
-		}
-	});
-	
-	
-	
-	//判断是否要修改手机及邮箱信息
-//	$("#isEditInfo").change(function(){
-//		if($("#isEditInfo").prop("checked")){
-//			$("#upsw").dialog({
-//				height:350
-//			});	
-//			$("#editInof").show();
-//		}else{
-//			$("#upsw").dialog({
-//				height:270
-//			});		
-//			$("#editInof").hide();
-//		}
-//	});
+function initListener() {
+    $('#main').tabs({
+        width: $("#main").parent().width(),
+        height: (document.body.clientHeight - 58),
+        tabHeight: 30,
+        onSelect: function(title, index) {}
+    });
+
+    $('.nav_li').hover(function() {
+        var backSpan = $(this).find("span");
+        var preClass = backSpan.attr("class");
+        backSpan.removeClass();
+        $(this).find("span").addClass("h" + preClass);
+        $(this).find("a").addClass("menu_1");
+        $("#" + $(this).attr("id") + "_sub").show();
+        document.getElementById($(this).attr("id") + "_sub").style.top = 
+        	($(this).offset().top) + "px";
+        if ($("#" + $(this).attr("id") + "_sub").offset().top + 
+        		$("#" + $(this).attr("id") + "_sub").height() > $(window).height()) {
+            document.getElementById($(this).attr("id") + "_sub").style.top = $(window).height() - 
+            	$("#" + $(this).attr("id") + "_sub").height() + "px";
+            $("#" + $(this).attr("id") + "_sub").find("em").css("top", $(this).offset().top - 
+            		$("#" + $(this).attr("id") + "_sub").offset().top + 25 + "px");
+        }
+    },
+    function() {
+        var backSpan = $(this).find("span");
+        var preClass = backSpan.attr("class");
+        backSpan.removeClass();
+        $(this).find("span").addClass(preClass.substr(1));
+        $(this).find("a").removeClass("menu_1");
+        var subSta = true;
+        $("#" + $(this).attr("id") + "_sub").hover(function() {
+            $(this).show();
+            subSta = false;
+        },
+        function() {
+            $(this).hide();
+        });
+        if (subSta) $("#" + $(this).attr("id") + "_sub").hide();
+    });
+    $(".sub_menu").hover(function() {
+        var oh = $(this).height();
+        $(this).find("div").height(oh);
+        var index = $(this).index();
+        $(".nav_li").eq(index).find("a").addClass("menu_1");
+    },
+    function() {
+        var index = $(this).index();
+        $(".nav_li").eq(index).find("a").removeClass("menu_1");
+        $(this).hide();
+    });
+
+    $(".sub_menu_div li").hover(function() {
+        $("#" + $(this).attr("id") + "_sub").show();
+    },
+    function() {
+        var subSta = true;
+        $("#" + $(this).attr("id") + "_sub").hover(function() {
+            $(this).show();
+            subSta = false;
+        },
+        function() {
+            $(this).hide();
+        });
+        if (subSta) $("#" + $(this).attr("id") + "_sub").hide();
+
+    });
+
+    $("#main").tabs({
+        onContextMenu: function(e, title) {
+            e.preventDefault();
+            if (title != '首页') {
+                $('#tabsMenu').menu('show', {
+                    left: e.pageX,
+                    top: e.pageY
+                }).data("tabTitle", title);
+            }
+        },
+    });
+
+    $("#tabsMenu").menu({
+        onClick: function(item) {
+            CloseTab(this, item.name);
+        }
+    });
+
 }
 
 function showOpt(id, show){
@@ -186,7 +168,8 @@ function addTab(title, url){
 	if ($('#main').tabs('exists', title)){
 		$('#main').tabs('select', title);
 	} else {
-		var content = '<iframe scrolling="auto" name="win-iframe" frameborder="0"  src="'+url+'" style="width:100%;height:99%;"></iframe>';
+		var content = '<iframe scrolling="auto" name="win-iframe" frameborder="0"  src="'+url+
+			'" style="width:100%;height:99%;"></iframe>';
 		$('#main').tabs('add',{
 			title:title,
 			content:content,
@@ -199,7 +182,9 @@ function addTab(title, url){
 }
 
 function addTabNew(title, url,iframeId){ 
-	var content = '<iframe scrolling="auto" name="win-iframe" frameborder="0" name="' + title + '" ' + (iframeId ? " id=\"" + iframeId + "\" " : "") + ' src="'+url+'" style="width:100%;height:99%;"></iframe>';
+	var content = '<iframe scrolling="auto" name="win-iframe" frameborder="0" name="' + title + 
+		'" ' + (iframeId ? " id=\"" + iframeId + "\" " : "") + ' src="'+url+
+		'" style="width:100%;height:99%;"></iframe>';
 	if ($('#main').tabs('exists', title)){
 		var osrc = $("iframe[name=\"" + title + "\"]").attr("src");
 		if(osrc != url){
@@ -282,13 +267,10 @@ function initBusiData(){
 }
 
 function updatePsw(){
-//	$("#isEditInfo").removeAttr("checked");
 	$("#user_password").val("");
 	$("#psw2").val("");
 	$("#psw3").val("");
 	$("#upsw").show();
-//	$("#editInof").hide();
-	
 	$("#upsw").dialog({
 		modal:true,
 		title: '用户信息维护',
@@ -297,88 +279,82 @@ function updatePsw(){
 		buttons : '#pwd_buttons'
 	});
 }
+
 function checkUserPwd(){
 	$("#psw2,#psw3").blur(function(){
 		var value = $(this).val();
 		if(value != null && value != ""){
 			//字母和数字组成
-//			var strExp=/.*([0-9]+.*[A-Za-z]+|[A-Za-z]+.*[0-9]+).*/;
 			var strExp = /.*([0-9].*([a-zA-Z].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[a-zA-Z])|[a-zA-Z].*([0-9].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[0-9])|[~!@#$%^&*()<>?+=].*([0-9].*[a-zA-Z]|[a-zA-Z].*[0-9])).*/;
 			if(strExp.test(value)){
 				$("#"+$(this).attr("id")+"_ck").hide(); 
 				delete ckmap[$(this).attr("id")+"_ck"];
 			}else{
 				Public.tips({content:"提示：密码必须包含数字、字母、特殊字符！",type:1});
-				//$("#"+$(this).attr("id")+"_ck").html("<font size=2 color='red'>*密码必须包含数字、字母、特殊字符</font>").show();
-				//ckmap[$(this).attr("id")+"_ck"]="密码必须包含数字、字母、特殊字符";
 				return;
 			}
 		}else{
-			//$("#"+$(this).attr("id")+"_ck").html("<font size=2 color='red'>*请输入密码</font>").show();
+			
 		}
 	});
 }
-function savePsw(){
-	checkUserPwd();
-	if($("#psw2").val().length<8){
-		Public.tips({content:"提示：密码必须大于8位！",type:1});
-		return;
-	}
-	if($("#psw3").val().length<8){
-		Public.tips({content:"提示：密码必须大于8位！",type:1});
-		return;
-	}
-	if($("#psw3").val() != $("#psw2").val()){
-		Public.tips({content:"提示：两次密码不一致！",type:1});
-		return;
-	}
-	if(!$("#form").form('validate')){
-		return;
-	}
-	
-	//验证手机号码是否正确
-//	if($("#isEditInfo").prop("checked")){
-//		var value = $("#phone").val();
-//		//手机号码正则表达式
-//		var telReg = !!value.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
-//		if(telReg ==  false){
-//			Public.tips({content: "请输入正确的手机号码！",type:2});
-//			return ;
-//		}
-//		//邮箱正则表达式
-//		var mailValue = $("#uEmail").val();
-//		var mailReg = !!mailValue.match(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
-//		if(mailReg == false){
-//			Public.tips({content: "请输入正确的邮箱！",type:2});
-//			return ;
-//		}
-//	}
-	
-	var publicKey = RSAUtils.getKeyPair(exponent, '', modulus);
-	var dcpassword=RSAUtils.encryptedString(publicKey, $("#user_password").val());
-    var psw2=RSAUtils.encryptedString(publicKey, $("#psw2").val());
-    var psw3=RSAUtils.encryptedString(publicKey, $("#psw3").val());
+
+function savePsw() {
+    checkUserPwd();
+    if ($("#psw2").val().length < 8) {
+        Public.tips({
+            content: "提示：密码必须大于8位！",
+            type: 1
+        });
+        return;
+    }
+    if ($("#psw3").val().length < 8) {
+        Public.tips({
+            content: "提示：密码必须大于8位！",
+            type: 1
+        });
+        return;
+    }
+    if ($("#psw3").val() != $("#psw2").val()) {
+        Public.tips({
+            content: "提示：两次密码不一致！",
+            type: 1
+        });
+        return;
+    }
+    if (!$("#form").form('validate')) {
+        return;
+    }
+
+    var publicKey = RSAUtils.getKeyPair(exponent, '', modulus);
+    var dcpassword = RSAUtils.encryptedString(publicKey, $("#user_password").val());
+    var psw2 = RSAUtils.encryptedString(publicKey, $("#psw2").val());
+    var psw3 = RSAUtils.encryptedString(publicKey, $("#psw3").val());
     var url = DZF.contextPath + '/sys/sm_user!updatePsw.action';
-	
-	$.post(url, 
-			{
-				'data.user_name':$('#user_name').val(),
-				'data.user_password':dcpassword,
-				'psw2' : psw2,
-				'psw3' : psw3,
-//				'phonenum' : $("#phone").val(),
-//				'mail' : $("#uEmail").val()
-			},
-			   function(data){
-					if(data.success){
-						$('#upsw').dialog('close');
-						Public.tips({content:data.msg,type:0});
-						setTimeout('window.location.href= DZF.contextPath + "/login.jsp"', 2000 );
-					}else{
-						Public.tips({content:data.msg,type:1});
-						return;
-					}
-	}, "json");
+
+    $.post(url, {
+        'data.user_name': $('#user_name').val(),
+        'data.user_password': dcpassword,
+        'psw2': psw2,
+        'psw3': psw3,
+    },
+    function(data) {
+        if (data.success) {
+            $('#upsw').dialog('close');
+            Public.tips({
+                content: data.msg,
+                type: 0
+            });
+            setTimeout('window.location.href= DZF.contextPath + "/login.jsp"', 2000);
+        } else {
+            Public.tips({
+                content: data.msg,
+                type: 1
+            });
+            return;
+        }
+    },
+    "json");
 }
 
 /**
@@ -404,18 +380,17 @@ function openFullViewDlg (content,title, billid, downtype, index, flowImgUrls) {
 //	$("#fullViewDlg").css("display","block");
 //	$("#fullViewDlg").dialog("center");
 	var simg = '<div style="text-align: center;padding-top:10px;"> '+
-	　'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="last">上一页</a>'+
-	'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
-	'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>'+
-	　'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="next">下一页</a>'+
-	'</div>'+
-	'<div id="fullViewContent" style="text-align: center;padding-top:20px; margin: 0 auto;position:relative;width:84%;">'+
-	 content +
-	' </div>'
+		'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="last">上一页</a>'+
+		'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
+		'<a class="ui-btn ui-btn-xz" onclick="tranImg(90)">右转</a>'+
+	　	'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="next">下一页</a>'+
+	 	'</div>'+
+	 	'<div id="fullViewContent" '+
+	 		'style="text-align: center;padding-top:20px; margin: 0 auto;position:relative;width:84%;">'+
+	 		content +
+	 	'</div>'
 	showImage(simg, index, flowImgUrls, 0);
-	initconturnid()
-	
-	
+	initconturnid();
 }
 
 /**
@@ -423,7 +398,6 @@ function openFullViewDlg (content,title, billid, downtype, index, flowImgUrls) {
  * @param content
  */
 function showImage(content, index, flowImgUrls, opertype){
-//	var img = "<img id='fullViewDlg' src=" + src + " style='position: absolute;z-index: 1;left:50px;top:50px;' />";  
 	if(opertype == 0){//初始化展示
 		layer.open({  
 			type: 1,  
@@ -436,69 +410,31 @@ function showImage(content, index, flowImgUrls, opertype){
 			shadeClose: true,
 			moveOut: true,
 			cancel: function () {  
-				//layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
 			}  
 		});  
 		$(".layui-layer-content").attr("id","fullViewDlg");
 		
-		console.info("下标："+index);
 		findex = index;
 		flen = flowImgUrls.length;
-	　　$('.btn').on('click',function(){
-	　　　　if($(this).data('control') === "last"){
-//	　　　　　　findex = Math.max(0, --findex);
-				findex	= --findex;
-				if(findex < 0){
-					findex = flowImgUrls.length;
-				}
-	　　　　}else {
-//			   findex = Math.min(flen-1, ++findex);
-				findex	= ++findex;
-				if(findex > flowImgUrls.length){
-					findex = 0;			}
-	　　　　}
-
-//			$('#fullViewDlg').dialog('close');
-			showImage(flowImgUrls[findex], findex, flowImgUrls, 1);
-			
-			
-	　　});
+	　	$('.btn').on('click',function() {　　　　
+	　	    if ($(this).data('control') === "last") {
+	　	        findex = --findex;
+	　	        if (findex < 0) {
+	　	            findex = flowImgUrls.length;
+	　	        }　　　　
+	　	    } else {
+	　	        findex = ++findex;
+	　	        if (findex > flowImgUrls.length) {
+	　	            findex = 0;
+	　	        }　　　　
+	　	    }
+	　	    showImage(flowImgUrls[findex], findex, flowImgUrls, 1);
+	　	});
 		
 	}else if(opertype == 1){//上一页、下一页展示
 		$('#fullViewContent').html(content);
+		initconturnid();
 	}
-	
-//	flowImages(index, flowImgUrls);
-}
-
-/**
- * 展示图片 上一页、下一页
- */
-var findex = 0;
-var flen = 0;
-function flowImages(index, flowImgUrls){
-	console.info("下标："+index);
-	findex = index;
-	flen = flowImgUrls.length;
-　　$('.btn').on('click',function(){
-　　　　if($(this).data('control') === "last"){
-//　　　　　　findex = Math.max(0, --findex);
-			findex	= --findex;
-			if(findex < 0){
-				findex = flowImgUrls.length;
-			}
-　　　　}else {
-//		   findex = Math.min(flen-1, ++findex);
-			findex	= ++findex;
-			if(findex > flowImgUrls.length){
-				findex = 0;			}
-　　　　}
-
-//		$('#fullViewDlg').dialog('close');
-		showImage(flowImgUrls[findex], findex, flowImgUrls, 1);
-		
-		
-　　});
 }
 
 /**
