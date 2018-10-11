@@ -113,4 +113,9 @@ public interface IStatusConstant {
 	public static int ICONTRACTTYPE_3 = 3;
 	public static int ICONTRACTTYPE_4 = 4;
 	public static int ICONTRACTTYPE_5 = 5;
+	
+	/** 区域划分类型 1:渠道；2：培训；3：运营*/
+	public static int IQUDAO = 1;
+	public static int IPEIXUN = 2;
+	public static int IYUNYING = 3;
 }

@@ -26,6 +26,7 @@ import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -79,9 +80,9 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			int total = 0;
-			String condition = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname());
+			String condition = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
 			if (condition != null) {
-				if (!condition.equals("flg")) {
+				if (!condition.equals("alldata")) {
 					paramvo.setVprovname(condition);
 				}
 				total = invManagerService.queryTotalRow(paramvo);

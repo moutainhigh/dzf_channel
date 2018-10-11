@@ -366,13 +366,13 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	@Override
-	public String makeCondition(String cuserid, String areaname) throws DZFWarpException {
+	public String makeCondition(String cuserid, String areaname,int type) throws DZFWarpException {
 		Integer dataLevel = getDataLevel(cuserid);
 		String retstr = null;
 		if (dataLevel != null) {
 			StringBuffer sql = new StringBuffer();
 			if ((dataLevel == 1 && !StringUtil.isEmpty(areaname)) || (dataLevel == 2)) {
-				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname);
+				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
 				if (qryProvince != null && qryProvince.size() > 0) {
 					sql.append(" and ba.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
@@ -380,8 +380,8 @@ public class PubServiceImpl implements IPubService {
 					retstr = sql.toString();
 				}
 			} else if (dataLevel == 3) {
-				List<String> qryCorpIds = qryCorpIds(cuserid, areaname);
-				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname);
+				List<String> qryCorpIds = qryCorpIds(cuserid, areaname,type);
+				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
 				if (qryProvince != null && qryProvince.size() > 0 && qryCorpIds != null && qryCorpIds.size() > 0) {
 					sql.append(" and (ba.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
@@ -402,7 +402,7 @@ public class PubServiceImpl implements IPubService {
 					retstr = sql.toString();
 				}
 			} else {
-				retstr = "flg";
+				retstr = "alldata";
 			}
 		}
 		return retstr;
@@ -447,9 +447,10 @@ public class PubServiceImpl implements IPubService {
 	 * @param cuserid
 	 * @param flg
 	 * @param areaname
+	 * @param type(1:渠道；2：培训；3：运营)
 	 * @return
 	 */
-	private List<String> qryProvince(String cuserid, Integer dataLevel, String areaname) {
+	private List<String> qryProvince(String cuserid, Integer dataLevel, String areaname,int type) {
 		StringBuffer buf = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append("select distinct to_char(b.vprovince)");
@@ -457,7 +458,8 @@ public class PubServiceImpl implements IPubService {
 		buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
 		buf.append(" where nvl(b.dr, 0) = 0");
 		buf.append("   and nvl(a.dr, 0) = 0");
-		buf.append("   and b.type = 3 ");
+		buf.append("   and b.type =? ");
+		spm.addParam(type);
 		if (dataLevel != 1) {
 			buf.append("   and (a.userid = ? ");
 			buf.append("    or (b.ischarge = 'Y' and b.userid = ?))");
@@ -474,13 +476,12 @@ public class PubServiceImpl implements IPubService {
 
 	/**
 	 * 以渠道经理所选的加盟商（加盟商客户维度）
-	 * 
 	 * @param cuserid
-	 * @param flg
 	 * @param areaname
+	 * @param type(1:渠道；2：培训；3：运营)
 	 * @return
 	 */
-	private List<String> qryCorpIds(String cuserid, String areaname) {
+	private List<String> qryCorpIds(String cuserid, String areaname,int type) {
 		StringBuffer buf = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append("select distinct b.pk_corp");
@@ -488,8 +489,9 @@ public class PubServiceImpl implements IPubService {
 		buf.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
 		buf.append(" where nvl(b.dr, 0) = 0");
 		buf.append("   and nvl(a.dr, 0) = 0");
-		buf.append("   and b.type = 3 and b.ischarge = 'N' ");
+		buf.append("   and b.type = ? and b.ischarge = 'N' ");
 		buf.append("   and b.userid = ? ");
+		spm.addParam(type);
 		spm.addParam(cuserid);
 		if (!StringUtil.isEmpty(areaname)) {
 			buf.append("   and a.areaname = ? ");

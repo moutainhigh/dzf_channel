@@ -70,10 +70,11 @@ public interface IPubService {
 	 * 指定用户id,构造    获取其本身负责的加盟商客户  sql表达式
 	 * @param cuserid
 	 * @param areaname
+	 * @param type(1:渠道；2：培训；3：运营)
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public String makeCondition(String cuserid,String areaname) throws DZFWarpException;
+	public String makeCondition(String cuserid,String areaname,int type) throws DZFWarpException;
 	
 	/**
 	 * 获取当前登陆人，对应角色、最大数据权限

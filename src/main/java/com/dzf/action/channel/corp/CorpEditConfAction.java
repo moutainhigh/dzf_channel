@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.CorpNameEVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -77,9 +78,9 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
-			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
 			if (condition != null) {
-				if (!condition.equals("flg")) {
+				if (!condition.equals("alldata")) {
 					paramvo.setVqrysql(condition);
 				}
 				total = confser.queryTotalRow(paramvo, getLoginUserInfo());

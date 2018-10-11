@@ -22,6 +22,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChnPayBillVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -100,8 +101,8 @@ public class ChnPayServiceImpl implements IChnPayService {
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    querysql.append(" AND a.pk_corp in (").append(inSql).append(")");
 		}
-    	String condition = pubService.makeCondition(uservo.getCuserid(),chn.getAreaname());
-    	if(condition!=null && !condition.equals("flg")){
+    	String condition = pubService.makeCondition(uservo.getCuserid(),chn.getAreaname(),IStatusConstant.IYUNYING);
+    	if(condition!=null && !condition.equals("alldata")){
     		querysql.append(condition);
     	}else if(condition==null){
     		return null;

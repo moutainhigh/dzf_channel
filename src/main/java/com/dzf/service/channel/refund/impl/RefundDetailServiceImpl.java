@@ -39,9 +39,9 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	public List<RefundDetailVO> query(QryParamVO pamvo) throws DZFWarpException {
 		//1、根据登录人和选择大区进行过滤
 		StringBuffer addWhere = new StringBuffer();
-		String areafilter = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname());
+		String areafilter = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname(),IStatusConstant.IYUNYING);
 		if (!StringUtil.isEmpty(areafilter)) {
-			if(!areafilter.equals("flg")){//当返回为flg时，为最大查询权限
+			if(!areafilter.equals("alldata")){//当返回为alldata时，为最大查询权限
 				addWhere.append(areafilter);
 			}
 		}else{//当返回值为空时，说明没有查询权限

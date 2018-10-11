@@ -16,6 +16,7 @@ import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -62,8 +63,8 @@ public class BillingQueryServiceImpl implements IBillingQueryService{
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
 		}
-    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
-     	if(condition!=null && !condition.equals("flg")){
+    	String condition = pubService.makeCondition(paramvo.getCuserid(),paramvo.getAreaname(),IStatusConstant.IYUNYING);
+     	if(condition!=null && !condition.equals("alldata")){
     		sql.append(condition);
     	}else if(condition==null){
     		return new ArrayList<BillingInvoiceVO>();

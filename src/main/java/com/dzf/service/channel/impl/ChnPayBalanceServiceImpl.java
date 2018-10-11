@@ -61,10 +61,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		//2、根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		String areaname = paramvo.getAreaname();
-		String areaqry = pubService.makeCondition(paramvo.getCuserid(), areaname);
+		String areaqry = pubService.makeCondition(paramvo.getCuserid(), areaname,IStatusConstant.IYUNYING);
 		if (areaqry == null) {
 			return null;
-		} else if (areaqry.equals("flg")) {
+		} else if (areaqry.equals("alldata")) {
 			areaqry = null;
 		}
 		if(!StringUtil.isEmpty(areaqry)){

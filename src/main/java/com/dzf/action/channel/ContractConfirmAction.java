@@ -86,9 +86,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
 			//列表查询，根据登录人和选择区域进行过滤
-			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname());
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
 			if (condition != null ) {
-				if(!condition.equals("flg")){
+				if(!condition.equals("alldata")){
 					qsql.append(condition);
 				}
 				paramvo.setVqrysql(qsql.toString());

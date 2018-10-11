@@ -253,8 +253,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append("SELECT t.*,ba.vprovince FROM cn_rebate t \n") ;
 		sql.append(" LEFT JOIN bd_account ba on t.pk_corp = ba.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
-    	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname());
-    	if(condition!=null && !condition.equals("flg")){
+    	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname(),IStatusConstant.IYUNYING);
+    	if(condition!=null && !condition.equals("alldata")){
     		sql.append(condition);
     	}else if(condition==null){
     		return null;
