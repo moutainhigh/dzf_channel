@@ -228,7 +228,6 @@ function loginOut(){
  * 周、月业务数据初始化
  */
 function initBusiData(){
-	
 	$.ajax({
 		type: "post",
 		dataType: "json",
@@ -367,18 +366,6 @@ function savePsw() {
  */
 
 function openFullViewDlg (content,title, billid, downtype, index, flowImgUrls) {
-//	bid = billid;
-//	dtype = downtype;
-//	$("#fullViewContent").html(content);
-//	$("#fullViewDlg").dialog({
-//		width:$(window).width()-100,
-//		height:$(window).height()-50,
-//		closable:true,
-//		title: title,
-//		modal:true,
-//	});	
-//	$("#fullViewDlg").css("display","block");
-//	$("#fullViewDlg").dialog("center");
 	var simg = '<div style="text-align: center;padding-top:10px;"> '+
 		'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="last">上一页</a>'+
 		'<a class="ui-btn ui-btn-xz" onclick="tranImg(-90)">左转</a> '+
@@ -492,139 +479,33 @@ function checkPanelVisible (id) {
  * 更新日志 图片最大化
  * @param url
  */
-function loaduplogpic(url) {
-    var left, top;
-    if ($(window).width() - 1100 <= 0) {
-        left = 0;
-    } else {
-        left = Math.floor(($(window).width() - 1100) / 2);
-    }
-    if ($(window).height() - 500 <= 0) {
-        top = 0;
-    } else {
-        top = Math.floor(($(window).height() - 500) / 2);
-    }
-    layui.use('layer',
-    function() {
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 1,
-            area: ['1100px', '500px'],
-            offset: [top, left],
-            skin: 'layui-layer-nobg',
-            //没有背景色
-            shadeClose: true,
-            scrollbar: false,
-            content: '<div><img src="' + url + '"></div>'
-        });
-    });
+function loaduplogpic(url){
+	var left,top;
+	if($(window).width() -1100 <= 0){
+		left = 0;
+	}else{
+		left =  Math.floor(($(window).width() -1100)/2);
+	}
+	if($(window).height() -500 <=0){
+		top = 0;
+	}else{
+		top =  Math.floor(($(window).height() -500)/2);
+	}
+	layui.use('layer', function(){
+	 var layer = layui.layer;
+	 layer.open({
+		  type: 1,
+		  title: false,
+		  closeBtn: 1,
+		  area: ['1100px','500px'],
+		  offset: [top,left],
+		  skin: 'layui-layer-nobg', //没有背景色
+		  shadeClose: true,
+		  scrollbar :false,
+		  content: '<div><img src="'+url+'"></div>'
+		});
+	});
 }
-
-/**
- * 最大化图片（放大、缩小、左转、右转）事件
- */
-function initconturnid() {
-    document.getElementById('conturnid').onload = function() {
-        var widths = document.getElementById("fullViewDlg").offsetWidth - 142;
-        heights = document.getElementById("fullViewDlg").offsetHeight - 66;
-        widthpx = widths + "px";
-        heightpx = heights + "px";
-        $("#fullViewContent").css({
-            "width": widthpx,
-            "height": heightpx
-        });
-        document.getElementById('conturnid').style.left = 
-        	(widths - document.getElementById('conturnid').offsetWidth) / 2 + "px";
-        document.getElementById('conturnid').style.top = (heights - 
-        	document.getElementById('conturnid').offsetHeight) / 2 + "px";
-    }
-
-    var oImg = document.getElementById('conturnid');
-    /*拖拽功能*/
-    (function() {
-        addEvent(oImg, 'mousedown',
-        function(ev) {
-
-            var oEvent = prEvent(ev),
-            oParent = oImg.parentNode,
-            disX = oEvent.clientX,
-            disY = oEvent.clientY,
-            marginX = oImg.offsetLeft,
-            marginY = oImg.offsetTop,
-            startMove = function(ev) {
-                if (oParent.setCapture) {
-                    oParent.setCapture();
-                }
-                var oEvent = ev || window.event,
-                l = oEvent.clientX - disX,
-                t = oEvent.clientY - disY;
-                oImg.style.left = marginX + l + 'px';
-                oImg.style.top = marginY + t + 'px';
-                oParent.onselectstart = function() {
-                    return false;
-                }
-            },
-            endMove = function(ev) {
-                if (oParent.releaseCapture) {
-                    oParent.releaseCapture();
-                }
-                oParent.onselectstart = null;
-                removeEvent(oParent, 'mousemove', startMove);
-                removeEvent(oParent, 'mouseup', endMove);
-            };
-            addEvent(oParent, 'mousemove', startMove);
-            addEvent(oParent, 'mouseup', endMove);
-            return false;
-        });
-    })();
-    /*以鼠标位置为中心的滑轮放大功能*/
-    (function() {
-        addWheelEvent(oImg,
-        function(delta) {
-            var ratioL = this.offsetX / oImg.offsetWidth,
-            ratioT = this.offsetY / oImg.offsetHeight,
-            qusX = oImg.offsetLeft + this.offsetX,
-            qusY = oImg.offsetTop + this.offsetY,
-            ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
-
-            w = parseInt(oImg.offsetWidth * ratioDelta),
-            h = parseInt(oImg.offsetHeight * ratioDelta),
-
-            l = Math.round(qusX - (w * ratioL)),
-            t = Math.round(qusY - (h * ratioT));
-            if (w < 150 || h < 80) {
-                return false
-            };
-            with(oImg.style) {
-                width = w + 'px';
-                height = h + 'px';
-                left = l + 'px';
-                top = t + 'px';
-            }
-        });
-    })();
-};
-
-/**
- * 添加滑轮事件
- * @param obj
- * @param callback
- */
-function addWheelEvent(obj, callback) {
-    if (window.navigator.userAgent.toLowerCase().indexOf('firefox') != -1) {
-        addEvent(obj, 'DOMMouseScroll', wheel);
-    } else {
-        addEvent(obj, 'mousewheel', wheel);
-    }
-    function wheel(ev) {
-        var oEvent = prEvent(ev),
-        delta = oEvent.detail ? oEvent.detail > 0 : oEvent.wheelDelta < 0;
-        callback && callback.call(oEvent, delta);
-        return false;
-    }
-};
 
 /**
  * 添加事件
@@ -666,6 +547,106 @@ function prEvent(ev) {
 	}
 	return oEvent;
 }
+
+/**
+ * 添加滑轮事件
+ * @param obj
+ * @param callback
+ */
+function addWheelEvent(obj, callback) {
+	if (window.navigator.userAgent.toLowerCase().indexOf('firefox') != -1) {
+		addEvent(obj, 'DOMMouseScroll', wheel);
+	} else {
+		addEvent(obj, 'mousewheel', wheel);
+	}
+	function wheel(ev) {
+		var oEvent = prEvent(ev),
+		delta = oEvent.detail ? oEvent.detail > 0 : oEvent.wheelDelta < 0;
+		callback && callback.call(oEvent, delta);
+		return false;
+	}
+};
+
+/**
+ * 最大化图片（放大、缩小、左转、右转）事件
+ */
+function initconturnid() {
+	document.getElementById('conturnid').onload = function(){
+		var widths = document.getElementById("fullViewDlg").offsetWidth - 142 ;
+		 heights = document.getElementById("fullViewDlg").offsetHeight  -66 ;
+		 widthpx = widths+"px";
+		 heightpx = heights+"px";
+		$("#fullViewContent").css({"width":widthpx,"height":heightpx})
+		document.getElementById('conturnid').style.left = (widths - document.getElementById('conturnid').offsetWidth)/2 + "px"
+		document.getElementById('conturnid').style.top = (heights - document.getElementById('conturnid').offsetHeight)/2 + "px"
+
+	}
+	
+
+	var oImg = document.getElementById('conturnid');
+	/*拖拽功能*/
+	(function() {
+		addEvent(oImg, 'mousedown', function(ev) {
+			
+			var oEvent = prEvent(ev),
+			oParent = oImg.parentNode,
+			disX = oEvent.clientX,
+			disY = oEvent.clientY,
+			marginX =oImg.offsetLeft,
+			marginY =oImg.offsetTop,
+			startMove = function(ev) {
+				if (oParent.setCapture) {
+					oParent.setCapture();
+				}
+				var oEvent = ev || window.event,
+				l = oEvent.clientX - disX,
+				t = oEvent.clientY - disY;
+				oImg.style.left =marginX + l +'px';
+				oImg.style.top = marginY+ t +'px';
+				oParent.onselectstart = function() {
+					return false;
+				}
+			}, endMove = function(ev) {
+				if (oParent.releaseCapture) {
+					oParent.releaseCapture();
+				}
+				oParent.onselectstart = null;
+				removeEvent(oParent, 'mousemove', startMove);
+				removeEvent(oParent, 'mouseup', endMove);
+			};
+			addEvent(oParent, 'mousemove', startMove);
+			addEvent(oParent, 'mouseup', endMove);
+			return false;
+		});
+	})();
+	/*以鼠标位置为中心的滑轮放大功能*/
+	
+	(function() {
+		addWheelEvent(oImg, function(delta) {
+			
+			var ratioL = this.offsetX / oImg.offsetWidth,
+			ratioT = this.offsetY / oImg.offsetHeight,
+			qusX = oImg.offsetLeft + this.offsetX,
+			qusY = oImg.offsetTop + this.offsetY,
+			ratioDelta = !delta ? 1 + 0.1 : 1 - 0.1,
+			
+			w = parseInt(oImg.offsetWidth * ratioDelta),
+			h = parseInt(oImg.offsetHeight * ratioDelta),
+	
+			l = Math.round(qusX - (w * ratioL)),
+			t = Math.round(qusY - (h * ratioT));
+			if(w < 150 || h<80){
+				return false
+			};
+			with(oImg.style) {
+				width = w +'px';
+				height = h +'px';
+				left = l +'px';
+				top = t +'px';
+			}
+		});
+	})();
+};
 
 /**
  * 旋转图片
