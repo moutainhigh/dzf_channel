@@ -199,12 +199,12 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 			list.add("aname");
 			list.add("incode");
 			list.add("corpnm");
-//			list.add("num");
 			list.add("custnum");
 			list.add("zeronum");
 			list.add("dednum");
 			list.add("ptypenm");
 			list.add("propor");
+			list.add("mname");
 			PrintUtil<ChnPayBalanceAction> util = new PrintUtil<ChnPayBalanceAction>();
 			util.setIscross(DZFBoolean.TRUE);
 			util.printMultiColumn(array, "付款单余额", heads, fields, widths, 20, list, null);		
