@@ -5,7 +5,6 @@ var editIndex;
 $(function(){
 	load();
 	initRef();
-	initArea();//查询大区初始化
 	setQryData();
 	reloadData();
 });
@@ -139,24 +138,74 @@ function initRef(){
         }]
     });
 	
-	//查询-渠道经理参照初始化
-	$('#manager').textbox({
-        editable: false,
-        icons: [{
-            iconCls: 'icon-search',
-            handler: function(e) {
-                $("#manDlg").dialog({
-                    width: 600,
-                    height: 480,
-                    readonly: true,
-                    title: '选择渠道经理',
-                    modal: true,
-                    href: DZF.contextPath + '/ref/manager_select.jsp',
-                    buttons: '#manBtn'
-                });
-            }
-        }]
-    });
+	initArea();//查询大区初始化
+	changeArea();//查询大区改变事件
+	initManager({"qtype" :1});
+}
+
+/**
+ * 查询大区（渠道区域）-下拉初始化
+ */
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" : 1},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+/**
+ * 查询大区改变事件
+ */
+function changeArea() {
+	$("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData = {
+				"qtype" : 1
+			};
+			if (!isEmpty(n)) {
+				queryData = {
+					'aname' : n,
+					"qtype" : 1
+				};
+				$('#ovince').combobox('setValue', null);
+				$('#managerid').combobox('setValue', null);
+			}
+			initManager(queryData);
+		}
+	});
+}
+
+/**
+ * 区域经理-下拉初始化
+ * @param queryData
+ */
+function initManager(queryData){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
+		data : queryData,
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#managerid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
 }
 
 /**
@@ -203,72 +252,13 @@ function dClickCompany(rowTable){
 }
 
 /**
- * 渠道经理选择事件
- */
-function selectMans(){
-	var rows = $('#mgrid').datagrid('getSelections');
-	dClickMans(rows);
-}
-
-/**
- * 双击选择渠道经理
- * @param rowTable
- */
-function dClickMans(rowTable){
-	var unames = "";
-	var uids = [];
-	if(rowTable){
-		if (rowTable.length > 300) {
-			Public.tips({
-				content : "一次最多只能选择300个经理",
-				type : 2
-			});
-			return;
-		}
-		for(var i=0;i<rowTable.length;i++){
-			if(i == rowTable.length - 1){
-				unames += rowTable[i].uname;
-			}else{
-				unames += rowTable[i].uname+",";
-			}
-			uids.push(rowTable[i].uid);
-		}
-		$("#manager").textbox("setValue",unames);
-		$("#managerid").val(uids);
-	}
-	 $("#manDlg").dialog('close');
-}
-
-/**
- * 查询大区（渠道区域）初始化
- */
-function initArea(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
-		data : {"qtype" : 1},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#aname').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
-		}
-	});
-}
-
-/**
  * 查询框-清空
  */
 function clearParams(){
 	$('#qcorp').textbox("setValue",null);
 	$('#qcorpid').val(null);
 	$('#aname').combobox('setValue', null);
-	$('#manager').textbox("setValue",null);
-	$('#managerid').val(null);
+	$('#managerid').combobox('setValue', null);
 }
 
 /**
@@ -289,7 +279,7 @@ function reloadData(){
 		'enddate' : $('#edate').datebox('getValue'),
 		'cpid' : $("#qcorpid").val(),
 		'aname' : $("#aname").combobox("getValue"),
-		'mid' : $("#managerid").val(),
+		'mid' : $("#managerid").combobox("getValue"),
 	});
 	setQryData();
 	$('#grid').datagrid('unselectAll');

@@ -80,8 +80,12 @@
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">渠道经理：</label>
-				<input id="manager" class="easyui-textbox" style="width:281px;height:28px;" />
-				<input id="managerid" type="hidden">
+<!-- 				<input id="manager" class="easyui-textbox" style="width:281px;height:28px;" />
+				<input id="managerid" type="hidden"> -->
+				
+				<input id=managerid name="managerid" class="easyui-combobox" 
+					style="width:281px;height:28px;text-align:left"
+					data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" /> 
 			</div>
 		</form>
 		<p>
@@ -100,15 +104,6 @@
 			onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
 	</div>
 	<!-- 加盟商参照对话框及按钮 end -->
-	
-	<!-- 渠道经理参照对话框及按钮 begin -->
-	<div id="manDlg"></div>
-	<div id="manBtn" style="display:none;">
-		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
-		<a href="javascript:void(0)" class="easyui-linkbutton" 
-			onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
-	</div>
-	<!-- 渠道经理参照对话框及按钮 end -->
 	
 	<!-- 付款单余额明细begin -->
 	<div id="detail_dialog" class="easyui-dialog" title="退款明细" 
