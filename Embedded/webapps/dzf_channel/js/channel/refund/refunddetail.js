@@ -240,7 +240,7 @@ function dClickMans(rowTable){
 }
 
 /**
- * 查询大区初始化
+ * 查询大区（渠道区域）初始化
  */
 function initArea(){
 	$.ajax({

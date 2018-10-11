@@ -76,7 +76,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			RefundDetailVO refvo = null;
 			CorpVO corpvo = null;
 			UserVO uservo = null;
-			Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 1);//大区集合
+			Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 1);//渠道区域大区集合
 			Map<String,String> marmap = pubser.getManagerMap();//渠道经理
 			String manager = "";
 			for(String key : retmap.keySet()){
