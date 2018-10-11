@@ -154,7 +154,7 @@
 		 	</div>
 			</div>	
 			
-			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:98%;height:380px;padding:10px">
 				 <table id="gridh"></table>	
 			</div>
 		</div>
