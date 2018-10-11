@@ -904,10 +904,15 @@ function audit(){
 	var title = "";
 	if(rows[0].pstatus == 2){
 		title = "合同审核-小规模转一般人";
+		$('#oldinfo').css('height','auto');
+		$('#oldinfo').css('display','block');
     }else if(rows[0].pstatus == 5){
     	title = "合同审核-一般人转小规模";
+    	$('#oldinfo').css('height','auto');
+		$('#oldinfo').css('display','block');
     }else{
     	title = "合同审核";
+    	$('#oldinfo').css('display','none');
     }
 	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
 	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle',title);
@@ -925,7 +930,7 @@ function audit(){
     }else{
     	$("#issupple").hide();
     }
-	initdeductData(rows[0]);//初始化扣款数据
+	initdeductData(rows[0]);//初始化扣款数据，纳税人变更数据展示原合同信息
 	initFileDoc(rows[0]);//初始化附件
 	initRejectReason();
 }
@@ -1081,6 +1086,15 @@ function initdeductData(row){
                 if(row.isnconfirm == "Y" || row.isnconfirm == "是"){
                 	$('#isnconfirm').prop('checked',true);
                 }
+                //当纳税人信息变更时，展示原合同数据信息
+                if(row.bodys != null && row.bodys.length > 0){
+                	var bodys = row.bodys;
+                	$('#oldfrom').form('clear');
+                    $('#oldfrom').form('load', bodys[0]);
+                    if(bodys[0].isnconfirm == "Y" || bodys[0].isnconfirm == "是"){
+                    	$('#oisnconfirm').prop('checked',true);
+                    }
+                }
             }
         },
     });
@@ -1112,10 +1126,18 @@ function initFileDoc(row){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
 					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
-							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + 
+							'\');" ><span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +
+							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
+					
+					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+					rows[i].doc_id + "&corp_id=" + rows[i].corp_id;
+					var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+					+ '" style="position: absolute;z-index: 1;left:50px;">';
+					flowImgUrls[i] = img;
 				}
 			}
 		}

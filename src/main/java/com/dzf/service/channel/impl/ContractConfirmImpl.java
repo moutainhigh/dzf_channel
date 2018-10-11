@@ -500,6 +500,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				retvo.setChildren(rejeVOs);
 			}
 		}
+		//5、查询原合同信息
+		if(retvo.getPatchstatus() != null && (retvo.getPatchstatus() == 2 || retvo.getPatchstatus() == 5)){
+			ContractConfrimVO oldtvo = queryContractById(paramvo.getPk_source());
+			retvo.setBodys(new ContractConfrimVO[]{oldtvo});
+		}
 		return retvo;
 	}
 	

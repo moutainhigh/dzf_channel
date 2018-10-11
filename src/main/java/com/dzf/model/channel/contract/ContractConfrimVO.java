@@ -84,6 +84,9 @@ public class ContractConfrimVO extends SuperVO {
 
 	@FieldAlias("submitime")
 	private DZFDateTime dsubmitime;// 提交时间（不存库，取原合同）
+	
+	@FieldAlias("submitdate")
+	private DZFDateTime dsubmidate;// 提单日期（不存库，取原合同）
 
 	@FieldAlias("bperiod")
 	private String vbeginperiod;// 合同开始期间（不存库，取原合同）
@@ -105,7 +108,7 @@ public class ContractConfrimVO extends SuperVO {
 	private String vchangeperiod;// 补提交的变更期间（不存库，取原合同）
 
 	@FieldAlias("pstatus")
-	private Integer patchstatus;// 加盟合同类型（null正常合同；1：被补提交的合同；2：补提交的合同；3：变更合同）（不存库，取原合同）
+	private Integer patchstatus;// 加盟商合同类型（null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同）（不存库，取原合同）
 	// 补单字段end
 	
 	@FieldAlias("confreason")
@@ -265,8 +268,26 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省/市(获取加盟商的运营区域设置)
 	
+	private SuperVO[] bodys;
+	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public SuperVO[] getBodys() {
+		return bodys;
+	}
+
+	public void setBodys(SuperVO[] bodys) {
+		this.bodys = bodys;
+	}
+
+	public DZFDateTime getDsubmidate() {
+		return dsubmidate;
+	}
+
+	public void setDsubmidate(DZFDateTime dsubmidate) {
+		this.dsubmidate = dsubmidate;
+	}
+
 	public String getPk_source() {
 		return pk_source;
 	}
