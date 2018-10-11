@@ -1,4 +1,4 @@
-var contextPath = DZF.contextPath;
+ var contextPath = DZF.contextPath;
 var grid,gridh;
 //var loadrows = null;
 //var isenter = false;//是否快速查询
@@ -698,7 +698,14 @@ function load(){
 			title : '业务类型',
             halign:'center',
 			field : 'typeminm',
-		},     {
+		}, {
+			width : '120',
+			title : '作废/终止日期',
+			halign:'center',
+			align:'center',
+			field : 'changedate',
+			sortable:true,
+		}, {
 			width : '100',
 			title : '销售顾问',
 			field : 'adviser',
