@@ -76,7 +76,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			RefundDetailVO refvo = null;
 			CorpVO corpvo = null;
 			UserVO uservo = null;
-			Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 3);//大区集合
+			Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 1);//大区集合
 			Map<String,String> marmap = pubser.getManagerMap();//渠道经理
 			String manager = "";
 			for(String key : retmap.keySet()){
@@ -160,11 +160,11 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			spm.addParam(pamvo.getPk_corp());
 		}
 		if (pamvo.getBegdate() != null) {
-			sql.append(" AND substr(t.dchangetime,1,7) >= ? \n");
+			sql.append(" AND substr(t.dchangetime,1,10) >= ? \n");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if (pamvo.getEnddate() != null) {
-			sql.append(" AND substr(t.dchangetime,1,7) <= ? \n");
+			sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
 		sql.append(" GROUP BY ct.pk_corp, ba.vprovince \n");
@@ -320,7 +320,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ct.pk_corp, \n");
 		sql.append("       ct.pk_corpk, \n");
-		sql.append("       substr(t.dchangetime,1,7) AS drefunddate, \n");
+		sql.append("       substr(t.dchangetime,1,10) AS drefunddate, \n");
 		sql.append("       t.nretdedmny AS nreturnmny, \n");
 		sql.append("       ct.vcontcode AS vbillcode, \n");
 		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') AS vmemo  \n") ; 
@@ -338,11 +338,11 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("   AND ct.pk_corp = ? \n");
 		spm.addParam(pamvo.getPk_corp());
 		if (pamvo.getBegdate() != null) {
-			sql.append(" AND substr(t.dchangetime,1,7) >= ? \n");
+			sql.append(" AND substr(t.dchangetime,1,10) >= ? \n");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if (pamvo.getEnddate() != null) {
-			sql.append(" AND substr(t.dchangetime,1,7) <= ? \n");
+			sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
 		return (List<RefundDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,

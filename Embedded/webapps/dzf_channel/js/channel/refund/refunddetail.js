@@ -247,7 +247,7 @@ function initArea(){
 		type : 'POST',
 		async : false,
 		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
-		data : {"qtype" :3},
+		data : {"qtype" : 1},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');

@@ -10,7 +10,7 @@
 	String date = AdminDateUtil.getServerDate();
 	String btdate = AdminDateUtil.getPreviousNMonth(1);
 %>
-<title>退款单</title>
+<title>退款明细查询</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
