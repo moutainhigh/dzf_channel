@@ -102,7 +102,6 @@ public class DataCommonRepImpl {
 		sql.append("       b.ischarge,  \n");
 		sql.append("       b.userid cuserid,  \n");
 		sql.append("       b.pk_corp corpname  \n");
-		sql.append("  \n");
 		sql.append("  from bd_account p  \n");
 		sql.append("  left join ynt_area y on p.vprovince = y.region_id  \n");
 		sql.append("                      and y.parenter_id = 1  \n");
