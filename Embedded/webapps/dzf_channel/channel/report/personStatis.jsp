@@ -38,23 +38,23 @@
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 70px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 295px; height: 28px;" 
+					<label style="text-align:right;width: 100px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 260px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 70px;">省（市）：</label> 
-					<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 295px; height: 28px;" 
+					<label style="text-align:right;width: 100px;">省（市）：</label> 
+					<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 260px; height: 28px;" 
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width:70px;">会计运营经理：</label> 
-					<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
+					<label style="text-align:right;width:100px;">会计运营经理：</label> 
+					<input id="uid" name="uid" class="easyui-combobox" style="width:260px;height:28px;text-align:left"
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width:70px">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:295px;height:28px;" />
+					<label style="text-align:right;width:100px">加盟商：</label>
+					<input id="channel_select" class="easyui-textbox" style="width:260px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
 				<p>
