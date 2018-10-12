@@ -394,7 +394,7 @@
 									data-options="readonly:true,precision:2,groupSeparator:','"
 									style="width:56%;height:28px;text-align:left;">
 							</div>
-							<div id = "nbook" class="decan" style="width:24%;display:none;">
+							<div id="onbook" class="decan" style="width:24%;display:none;">
 								<label style="width:40%;text-align: right;">账本费：</label>
 								<input id="onbmny" name="nbmny" class="easyui-numberbox"  
 									data-options="readonly:true,precision:2,groupSeparator:','"

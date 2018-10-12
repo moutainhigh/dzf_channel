@@ -920,6 +920,10 @@ function audit(){
 	$('#nbook').css('display','none');
 	if(rows[0].pstatus != 5){
 		$('#nbook').css('display','inline-block');
+		$('#onbook').css('display','inline-block');
+	}else if(rows[0].pstatus == 5){
+		$('#nbook').css('display','none');
+		$('#onbook').css('display','none');
 	}
 	
 	$("#fileshow").hide();
