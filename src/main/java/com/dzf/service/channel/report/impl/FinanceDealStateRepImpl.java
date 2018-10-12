@@ -379,7 +379,6 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			}
 			vo.setVperiod(paramvo.getPeriod());
 		}
-//		Map<String, VouvherQryVO> vmap = qryVoucherNum(paramvo.getPk_corp(), paramvo.getPeriod());// 凭证数量
 		String status = null;
 		String inSql = SqlUtil.buildSqlConditionForIn(pk_corplist.toArray(new String[0]));
 		int qrytype = 1;// 查询月与当前月不相等
@@ -391,10 +390,14 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		HashMap<String, String> map = isQjsy(inSql, paramvo.getPeriod(), qrytype);// 查询是否期间损益
 		HashMap<String, String> mapV = isVoucher(inSql, paramvo.getPeriod(), qrytype);// 查询是否填制凭证
 		Map<String, String> gzmap = isGz(inSql, paramvo.getPeriod());
+		Map<String, StringBuffer> deptmap = qryDeptMap(inSql);
+		StringBuffer deptvalue = null;
+		String deptname = "";
 		for (FinanceDetailVO vo : list) {
+			//1、记账状态：
 			status = queryJzStatus(vo.getPk_corpk(), paramvo.getPeriod(), map, mapV, qrytype);
 			vo.setJzstatus(status);
-			//账务检查以查询月是否关账来统计：
+			//2、账务检查以查询月是否关账来统计：
 			if(gzmap != null && !gzmap.isEmpty()){
 				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corp()))){
 					vo.setIacctcheck(1);
@@ -404,7 +407,55 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			}else{
 				vo.setIacctcheck(0);
 			}
+			//3、客户所属部门：
+			if(deptmap != null && !deptmap.isEmpty()){
+				deptvalue = deptmap.get(vo.getPk_corpk());
+				if(deptvalue != null && deptvalue.length() > 0){
+					deptname = deptvalue.substring(0, deptvalue.length()-1);
+					vo.setVdeptname(deptname);
+				}
+			}
 		}
+	}
+	
+	/**
+	 * 查询客户所属部门
+	 * @param inSql
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, StringBuffer> qryDeptMap(String inSql) throws DZFWarpException {
+		Map<String, StringBuffer> deptmap = new HashMap<String, StringBuffer>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT sup.pk_corpk, t.deptname AS vdeptname \n");
+		sql.append("  FROM sm_user_corp sup  \n");
+		sql.append("  LEFT JOIN sm_user r ON r.cuserid = sup.cuserid  \n");
+		sql.append("  LEFT JOIN ynt_department t ON t.pk_department = r.pk_department  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(r.dr, 0) = 0  \n");
+		sql.append("   AND nvl(sup.dr, 0) = 0  \n");
+		sql.append("   AND t.deptname is not null \n");
+		if (!StringUtil.isEmpty(inSql)) {
+			sql.append(" AND sup.pk_corp in (").append(inSql).append(")");
+		}
+		List<FinanceDetailVO> deptlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(FinanceDetailVO.class));
+		StringBuffer value = null;
+		if(deptlist != null && deptlist.size() > 0){
+			for(FinanceDetailVO deptvo : deptlist){
+				if(!deptmap.containsKey(deptvo.getPk_corpk())){
+					value = new StringBuffer();
+					value.append(deptvo.getVdeptname()).append("，");
+					deptmap.put(deptvo.getPk_corpk(), value);
+				}else{
+					value = deptmap.get(deptvo.getPk_corpk());
+					value.append(deptvo.getVdeptname()).append("，");
+					deptmap.put(deptvo.getPk_corpk(), value);
+				}
+			}
+		}
+		return deptmap;
 	}
 
 	/**
