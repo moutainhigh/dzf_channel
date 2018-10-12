@@ -373,7 +373,7 @@ function openFullViewDlg (content,title, billid, downtype, index, flowImgUrls) {
 	　	'<a href="javascript:;" class="ui-btn ui-btn-xz btn" data-control="next">下一页</a>'+
 	 	'</div>'+
 	 	'<div id="fullViewContent" '+
-	 		'style="text-align: center;padding-top:20px; margin: 0 auto;position:relative;width:84%;">'+
+	 		'style="text-align: center;padding-top:20px; margin: 0 auto;position:relative;width:90%;overflow: auto;">'+
 	 		content +
 	 	'</div>'
 	showImage(simg, index, flowImgUrls, 0);
