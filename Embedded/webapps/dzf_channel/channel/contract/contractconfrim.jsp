@@ -357,7 +357,7 @@
 				<div id = "oldinfo" style="height:0;">
 					<form id = "oldfrom" method="post">
 						<div class="time_col time_colp11 heading">
-							<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">原合同信息</label>
+							<label style="width: 70px;text-align:center;color:#FFF;font-weight: bold;">原合同信息</label>
 						</div>
 						<div class="time_col time_colp11 ">
 							<div class="decan" style="width:48.4%;display: inline-block;">
