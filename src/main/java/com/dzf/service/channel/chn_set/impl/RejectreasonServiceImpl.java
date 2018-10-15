@@ -73,7 +73,7 @@ public class RejectreasonServiceImpl implements IRejectreasonService {
 			try {
 				LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_rejectreason(),uuid, 30);
 				singleObjectBO.update(data,
-						new String[] { "vreason", "vsuggest", "lastmodifypsnid", "updatets" });
+						new String[] { "vreason", "vsuggest", "lastmodifypsnid"});
 			} catch (Exception e) {
 	            if (e instanceof BusinessException)
 	                throw new BusinessException(e.getMessage());
