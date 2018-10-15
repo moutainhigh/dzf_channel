@@ -518,7 +518,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
 			List<String> strlist = new ArrayList<String>();
 			strlist.add("vstatus");
-			strlist.add("updatets");
 			if(itype == 1){
 				pamvo.setVstatus(IStatusConstant.IGOODSSTATUS_2);
 				pamvo.setUpdatets(new DZFDateTime());
