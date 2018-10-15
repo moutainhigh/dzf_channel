@@ -190,7 +190,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	    String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_refund(),uuid, 60);
-			String[] str = new String[]{"updatets", "drefunddate", "nrefyfkmny", "nrefbzjmny", "vmemo"};
+			String[] str = new String[]{"drefunddate", "nrefyfkmny", "nrefbzjmny", "vmemo"};
 			singleObjectBO.update(datavo, str);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -471,7 +471,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 				datavo.setDconfirmdate(null);
 				updateUnConfBalance(bmap, datavo, cuserid);
 			}
-			datavo.setUpdatets(new DZFDateTime());
+//			datavo.setUpdatets(new DZFDateTime());
 			String[] str = new String[]{"istatus","vconfirmid","dconfirmdate"};
 			singleObjectBO.update(datavo, str);
 		} catch (Exception e) {
