@@ -472,7 +472,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 				updateUnConfBalance(bmap, datavo, cuserid);
 			}
 			datavo.setUpdatets(new DZFDateTime());
-			String[] str = new String[]{"istatus","vconfirmid","dconfirmdate","updatets"};
+			String[] str = new String[]{"istatus","vconfirmid","dconfirmdate"};
 			singleObjectBO.update(datavo, str);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
