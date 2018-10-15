@@ -171,7 +171,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private GoodsBillVO updateSetOut(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_2);//已发货
 		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus", "updatets"});
+		singleObjectBO.update(pamvo, new String[]{"vstatus"});
 		
 		//订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
@@ -199,7 +199,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private GoodsBillVO updateCancel(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_4);//已取消
 		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus", "updatets"});
+		singleObjectBO.update(pamvo, new String[]{"vstatus"});
 		
 		//订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
@@ -312,7 +312,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);//待发货
 		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus", "updatets"});
+		singleObjectBO.update(pamvo, new String[]{"vstatus"});
 		
 		//订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
