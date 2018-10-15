@@ -657,14 +657,13 @@ public class InvManagerServiceImpl implements InvManagerService {
                 throw new BusinessException("已开票，不允许修改。");
             }
             String[] fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                    "bankcode", "email", "vmome","rusername","updatets" };
+                    "bankcode", "email", "vmome","rusername" };
             if(ovo.getInvstatus() == 3){
                 vo.setInvstatus(1);
                 fieldNames = new String[] { "taxnum", "invprice", "invtype", "corpaddr", "invphone", "bankname",
-                        "bankcode", "email", "vmome","rusername","invstatus","updatets" };
+                        "bankcode", "email", "vmome","rusername","invstatus" };
             }
             checkInvPrice(vo);
-            vo.setUpdatets(new DZFDateTime());
             singleObjectBO.update(vo, fieldNames);
         }catch(Exception e){
             if (e instanceof BusinessException)
