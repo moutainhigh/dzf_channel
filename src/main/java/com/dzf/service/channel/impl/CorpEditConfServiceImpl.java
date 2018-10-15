@@ -150,13 +150,12 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 				datavo.setIstatus(IStatusConstant.ICORPEDITSTATUS_3);
 				datavo.setVapprovenote(vreason);
 			}
-			datavo.setUpdatets(new DZFDateTime());
 			if (uservo != null) {
 				datavo.setVapproveid(uservo.getCuserid());
 				datavo.setVapprovename(uservo.getUser_name());
 			}
 			datavo.setTapprovetime(new DZFDateTime());
-			singleObjectBO.update(datavo, new String[] { "istatus", "updatets", "vapprovenote", "vapproveid",
+			singleObjectBO.update(datavo, new String[] { "istatus", "vapprovenote", "vapproveid",
 					"vapprovename", "tapprovetime" });
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
