@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var status;
 var editIndex;
+var flowImgUrls = new Array();
 $(function(){
 	load();
 	reloadData();
@@ -796,6 +797,7 @@ function showInfo(index){
  * 展示商品图片
  * @param row
  */
+var arrachrows = null;
 function viewImageInfo(row){
 	$.ajax({
 		type : "POST",
@@ -812,18 +814,25 @@ function viewImageInfo(row){
 			$("#span1").attr("data-id",'');
 			$("#img11").show();
 			if(rows && rows.length > 0){
+				arrachrows = rows;
 				var ret = 0;
 				for(var i = 0;i<rows.length;i++){
 					if(rows[i].fpath){
 						var url = getAttachImgUrl(rows[i]);
 						var htmlImg= '<div class="imgbox">'+
 										'<div class="imgnum">'+
-											'<a href="javascript:void(0)" ondblclick="doubleImage(\'' + rows[i].doc_id + '\');">'+
+											'<a href="javascript:void(0)" ondblclick="doubleImage(\'' + i + '\');">'+
 												'<img src="'+url+'" class="img2" />'+
 											'</a>'
 										'</div>'+
 									 '</div>';
 						$("#image2").append(htmlImg);
+						
+						var src = DZF.contextPath + "/dealmanage/goodsmanage!getAttachImage.action?&doc_id=" +
+							rows[i].doc_id ;
+						var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+						+ '" style="position: absolute;z-index: 1;left:50px;">';
+						flowImgUrls[i] = img;
 					}
 				} 
 				$('.filepath1').prop('disabled',true);
@@ -836,11 +845,12 @@ function viewImageInfo(row){
  * 双击显示大图
  * @param i
  */
-function doubleImage(doc_id){
-	var src = DZF.contextPath+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='	+ doc_id;
+function doubleImage(i){
+	var src = DZF.contextPath+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='	+ arrachrows[i].doc_id;
 	if(!isEmpty(src)){
-		parent.openFullViewDlg('<img id="conturnid" alt="无法显示图片" src="' + src 
-		+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">','原图')
+		var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+			+ '" style="position: absolute;z-index: 1;left:50px;top:50px;">';
+		parent.openFullViewDlg(img,'原图', null, null, i, flowImgUrls)
 	}
 
 }
