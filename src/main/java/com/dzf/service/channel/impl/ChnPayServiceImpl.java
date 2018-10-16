@@ -205,21 +205,15 @@ public class ChnPayServiceImpl implements IChnPayService {
 	 * @param corpvo
 	 */
 	private void makeCode(ChnPayBillVO vo) {
-		if(StringUtil.isEmpty(vo.getVbillcode())){
-			MaxCodeVO mcvo=new MaxCodeVO();
-			mcvo.setTbName(vo.getTableName());
-			mcvo.setFieldName("vbillcode");
-			mcvo.setPk_corp(vo.getPk_corp());
-			mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
-			mcvo.setDiflen(3);
-			String code = billCode.getDefaultCode(mcvo);
-			if (StringUtil.isEmpty(code)) {
-				throw new BusinessException("获取付款单据号失败,请手动输入");
-			}
-			vo.setVbillcode(code);
-		}else{
-			vo.setVbillcode(vo.getVbillcode().replaceAll(" ", ""));
-		}
+		MaxCodeVO mcvo=new MaxCodeVO();
+		mcvo.setTbName(vo.getTableName());
+		mcvo.setFieldName("vbillcode");
+		mcvo.setPk_corp(vo.getPk_corp());
+		mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
+		mcvo.setCorpIdField("pk_corp");
+		mcvo.setEntryCode(vo.getVbillcode().replaceAll(" ", ""));
+		mcvo.setDiflen(3);
+		vo.setVbillcode(billCode.getDefaultCode(mcvo));
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName()+vo.getPk_corp(), vo.getVbillcode(),uuid, 60);

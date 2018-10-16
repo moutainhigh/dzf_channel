@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -348,6 +349,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	private String getVbillcode() throws DZFWarpException {
+		String code;
 		DZFDate date = new DZFDate();
 		String year = String.valueOf(date.getYear());
 		String str = year + date.getStrMonth() + date.getStrDay();
@@ -356,9 +358,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		mcvo.setFieldName("vbillcode");
 		mcvo.setPk_corp("000001");
 		mcvo.setBillType(str);
+		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(4);
-		String code = billCodeSer.getDefaultCode(mcvo);
-		if (StringUtil.isEmpty(code)) {
+		try{
+			code = billCodeSer.getDefaultCode(mcvo);
+		}catch(Exception e) {
 			throw new BusinessException("获取单据编码失败");
 		}
 		return code;

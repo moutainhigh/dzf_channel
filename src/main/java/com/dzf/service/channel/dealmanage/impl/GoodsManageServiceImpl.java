@@ -211,6 +211,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	private String getVgoodscode() throws DZFWarpException {
+		String code;
 		DZFDate date = new DZFDate();
 		String year = String.valueOf(date.getYear());
 		String str = "SP" + year;
@@ -219,9 +220,11 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		mcvo.setFieldName("vgoodscode");
 		mcvo.setPk_corp("000001");
 		mcvo.setBillType(str);
+		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(4);
-		String code = billCodeSer.getDefaultCode(mcvo);
-		if (StringUtil.isEmpty(code)) {
+		try{
+			code = billCodeSer.getDefaultCode(mcvo);
+		}catch(Exception e) {
 			throw new BusinessException("获取商品编码失败");
 		}
 		return code;

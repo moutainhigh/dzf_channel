@@ -2,6 +2,7 @@ package com.dzf.service.pub.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -154,23 +155,70 @@ public class BillCodeServiceImpl implements IBillCodeService {
     }
 
     private String getCode(Jedis jedis,MaxCodeVO mcvo){
-    	if(jedis == null){
-    		return null;
-    	}
-        String code=jedis.hget(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType());//获取value
-        if(!StringUtil.isEmpty(code)){//从redis取值
-            code=addCode(code,mcvo.getDiflen());
-            jedis.hset(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType(),code);
-            Long l = jedis.setnx(code, code);
-            if(l == 0){
-                getCode(jedis,mcvo);
-            }
-            jedis.expire(code, 120);
-        }else{
-            code=makeCode(mcvo);
-            jedis.hset(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType(),code); 
+        if(jedis == null){
+            return null;
         }
-        return code;
+        String resultCode = null;
+        if(StringUtil.isEmpty(mcvo.getEntryCode())){
+            String code=jedis.hget(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType());//获取value
+            if(!StringUtil.isEmpty(code)){
+                code=addCode(code,mcvo.getDiflen());
+                setCodeToJedis(jedis, mcvo, code);
+            }else{
+                code=makeCode(mcvo);
+                setCodeToJedis(jedis, mcvo, code);
+            }
+            resultCode = code.toString();
+        }else if(checkIsCodeRule(mcvo)){
+        	String code=jedis.hget(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType());//获取value
+        	String maxCode=mcvo.getEntryCode();
+        	if(!StringUtil.isEmpty(code)){
+        		Integer hc=Integer.parseInt(code.substring(mcvo.getBillType().length()));//缓存里的流水号
+        		Integer sc=Integer.parseInt(mcvo.getEntryCode().substring(mcvo.getBillType().length()));//手动输入流水号
+        		if(hc>sc){
+        			maxCode=code;
+        		}
+        	}
+        	setCodeToJedis(jedis, mcvo, maxCode);
+            resultCode = mcvo.getEntryCode();
+        }else{
+        	resultCode = mcvo.getEntryCode();
+        }
+        return resultCode;
+    }
+    
+    /**
+     * 编码放入缓存
+     * @param jedis
+     * @param mcvo
+     * @param code
+     */
+	private void setCodeToJedis(Jedis jedis, MaxCodeVO mcvo, String code) {
+		jedis.hset(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType(),code);
+		Long l = jedis.setnx(code, code);
+		if(l == 0){
+		    getCode(jedis,mcvo);
+		}
+		jedis.expire(code, 60);
+	}
+    
+    /**
+     * 判断手动输入的编码，是否符合自动生成的编码规则；
+     */
+    private boolean checkIsCodeRule(MaxCodeVO mcvo){
+    	boolean flg=false;
+    	String code=mcvo.getEntryCode();
+    	String rule=mcvo.getBillType();
+    	if(code.startsWith(rule)){
+    		if(code.length()==rule.length()+mcvo.getDiflen()){
+    			code=code.substring(rule.length());
+    			Pattern pattern = Pattern.compile("[0-9]*");
+    			if(pattern.matcher(code).matches()){
+    				flg=true;
+    			}
+    		}
+    	}
+    	return flg;
     }
     
     /**
