@@ -405,7 +405,9 @@ function showImage(content, index, flowImgUrls, opertype){
 		$(".layui-layer-content").attr("id","fullViewDlg");
 		
 		findex = index;
-		flen = flowImgUrls.length;
+		if(flowImgUrls != null && flowImgUrls.length > 0){
+			flen = flowImgUrls.length;
+		}
 	　	$('.btn').on('click',function() {　　　　
 	　	    if ($(this).data('control') === "last") {
 	　	        findex = --findex;

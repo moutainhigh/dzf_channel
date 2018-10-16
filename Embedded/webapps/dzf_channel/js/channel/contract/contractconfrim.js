@@ -2,6 +2,7 @@
 var grid,gridh;
 //var loadrows = null;
 //var isenter = false;//是否快速查询
+var flowImgUrls = new Array();
 
 $(function() {
 	initQryDlg();
@@ -1948,6 +1949,12 @@ function initInfoFileDoc(row){
 							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#ifiledocs"));
+					
+					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
+						rows[i].doc_id + "&corp_id=" + rows[i].corp_id;
+					var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+						+ '" style="position: absolute;z-index: 1;left:50px;">';
+					flowImgUrls[i] = img;
 				}
 			}
 		}
