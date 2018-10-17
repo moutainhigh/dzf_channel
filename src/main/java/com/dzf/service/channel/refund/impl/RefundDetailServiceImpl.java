@@ -140,7 +140,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryContRefund(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ct.pk_corp, SUM(t.nretdedmny) AS nreturnmny, ba.vprovince  \n");
+		sql.append("SELECT ct.pk_corp, nvl(SUM(t.nretdedmny),0) AS nreturnmny, ba.vprovince  \n");
 		sql.append("  FROM ynt_contract ct  \n");
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n");
 		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n");
@@ -225,7 +225,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryRefund(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, SUM(t.nrefyfkmny) AS nreturnmny, ba.vprovince  \n") ; 
+		sql.append("SELECT t.pk_corp, nvl(SUM(t.nrefyfkmny),0) AS nreturnmny, ba.vprovince  \n") ; 
 		sql.append("  FROM cn_refund t  \n") ; 
 		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
@@ -321,7 +321,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("SELECT ct.pk_corp, \n");
 		sql.append("       ct.pk_corpk, \n");
 		sql.append("       substr(t.dchangetime,1,10) AS drefunddate, \n");
-		sql.append("       t.nretdedmny AS nreturnmny, \n");
+		sql.append("       nvl(t.nretdedmny,0) AS nreturnmny, \n");
 		sql.append("       ct.vcontcode AS vbillcode, \n");
 		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') AS vmemo  \n") ; 
 		sql.append("  FROM ynt_contract ct  \n");
@@ -400,7 +400,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp, \n") ; 
-		sql.append("       t.nrefyfkmny AS nreturnmny, \n") ; 
+		sql.append("       nvl(t.nrefyfkmny,0) AS nreturnmny, \n") ; 
 		sql.append("       t.dconfirmdate AS drefunddate, \n") ;
 		sql.append("       t.vbillcode, \n") ;
 		sql.append("       '退款单' AS vmemo  \n") ;
