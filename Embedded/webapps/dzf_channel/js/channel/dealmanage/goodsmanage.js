@@ -1,7 +1,7 @@
 var contextPath = DZF.contextPath;
 var status;
 var editIndex;
-var flowImgUrls = new Array();
+var flowImgUrls = null;
 $(function(){
 	load();
 	reloadData();
@@ -816,6 +816,7 @@ function viewImageInfo(row){
 			if(rows && rows.length > 0){
 				arrachrows = rows;
 				var ret = 0;
+				flowImgUrls = new Array();
 				for(var i = 0;i<rows.length;i++){
 					if(rows[i].fpath){
 						var url = getAttachImgUrl(rows[i]);

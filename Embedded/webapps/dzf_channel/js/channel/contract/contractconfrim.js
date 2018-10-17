@@ -2,7 +2,7 @@
 var grid,gridh;
 //var loadrows = null;
 //var isenter = false;//是否快速查询
-var flowImgUrls = new Array();
+var flowImgUrls = null;
 
 $(function() {
 	initQryDlg();
@@ -1125,6 +1125,7 @@ function initFileDoc(row){
 				$("#fileshow").show();
 				arrachrows = result.rows;
 				$("#filedocs").html('');
+				flowImgUrls = new Array();
 				for(var i = 0;i<rows.length;i++){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
@@ -1941,6 +1942,7 @@ function initInfoFileDoc(row){
 				$("#ifileshow").show();
 				arrachrows = result.rows;
 				$("#ifiledocs").html('');
+				flowImgUrls = new Array();
 				for(var i = 0;i<rows.length;i++){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);

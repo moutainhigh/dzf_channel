@@ -1,7 +1,7 @@
 //附件items
 var arrachrows = null;
 
-var flowImgUrls = new Array();
+var flowImgUrls = null;
 /**
  * 列表界面查看附件
  */
@@ -27,6 +27,7 @@ function viewattach(infoindex){
 			var rows = result.rows;
 			arrachrows = result.rows;
 			$("#attachs").html('');
+			flowImgUrls = new Array();
 			for(var i = 0;i<rows.length;i++){
 				var srcpath = rows[i].fpath.replace(/\\/g, "/");
 				var attachImgUrl = getAttachImgUrl(rows[i]);
