@@ -392,7 +392,6 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		Map<String, String> gzmap = isGz(inSql, paramvo.getPeriod());
 		Map<String, StringBuffer> deptmap = qryDeptMap(inSql);
 		StringBuffer deptvalue = null;
-		String deptname = "";
 		for (FinanceDetailVO vo : list) {
 			//1、记账状态：
 			status = queryJzStatus(vo.getPk_corpk(), paramvo.getPeriod(), map, mapV, qrytype);
@@ -411,8 +410,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			if(deptmap != null && !deptmap.isEmpty()){
 				deptvalue = deptmap.get(vo.getPk_corpk());
 				if(deptvalue != null && deptvalue.length() > 0){
-					deptname = deptvalue.substring(0, deptvalue.length()-1);
-					vo.setVdeptname(deptname);
+					vo.setVdeptname(deptvalue.toString());
 				}
 			}
 		}
@@ -446,12 +444,14 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			for(FinanceDetailVO deptvo : deptlist){
 				if(!deptmap.containsKey(deptvo.getPk_corpk())){
 					value = new StringBuffer();
-					value.append(deptvo.getVdeptname()).append("，");
+					value.append(deptvo.getVdeptname());
 					deptmap.put(deptvo.getPk_corpk(), value);
 				}else{
 					value = deptmap.get(deptvo.getPk_corpk());
-					value.append(deptvo.getVdeptname()).append("，");
-					deptmap.put(deptvo.getPk_corpk(), value);
+					if(value.indexOf(deptvo.getVdeptname()) != 0){
+						value.append("，").append(deptvo.getVdeptname());
+						deptmap.put(deptvo.getPk_corpk(), value);
+					}
 				}
 			}
 		}
