@@ -183,7 +183,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryContDeduct(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ct.pk_corp, abs(SUM(t.ndeductmny)) AS nreturnmny, ba.vprovince  \n") ;
+		sql.append("SELECT ct.pk_corp, nvl(abs(SUM(t.ndeductmny)),0) AS nreturnmny, ba.vprovince  \n") ;
 		sql.append("  FROM ynt_contract ct  \n") ; 
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n") ; 
@@ -362,7 +362,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("SELECT ct.pk_corp, \n");
 		sql.append("       ct.pk_corpk, \n");
 		sql.append("       deductdata AS drefunddate, \n");
-		sql.append("       abs(t.ndeductmny) AS nreturnmny, \n");
+		sql.append("       nvl(abs(t.ndeductmny),0) AS nreturnmny, \n");
 		sql.append("       ct.vcontcode AS vbillcode, \n");
 		sql.append("       '一般人转为小规模' AS vmemo  \n") ; 
 		sql.append("  FROM ynt_contract ct  \n") ; 
