@@ -418,30 +418,28 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 	private Map<String,CustManageRepVO> getCustMap(List<CustCountVO> list, List<String> replist) throws DZFWarpException {
 		Map<String,CustManageRepVO> custmap = new HashMap<String,CustManageRepVO>();
 		if(list != null && list.size() > 0){
-			for(CustCountVO vo : list){
-				CustManageRepVO repvo = null;
-				for(CustCountVO cvo : list){
-					if(!custmap.containsKey(cvo.getPk_corp())){
-						repvo = new CustManageRepVO();
-						repvo.setPk_corp(cvo.getPk_corp());
-						if("小规模纳税人".equals(cvo.getChargedeptname())){
-							repvo.setIcustsmall(cvo.getNum());
-						}else if("一般纳税人".equals(cvo.getChargedeptname())){
-							repvo.setIcusttaxpay(cvo.getNum());
-						}
-						if(!replist.contains(cvo.getPk_corp())){
-							replist.add(cvo.getPk_corp());
-						}
-						custmap.put(cvo.getPk_corp(), repvo);
-					}else{
-						repvo = custmap.get(cvo.getPk_corp());
-						if("小规模纳税人".equals(cvo.getChargedeptname())){
-							repvo.setIcustsmall(ToolsUtil.addInteger(repvo.getIcustsmall(), cvo.getNum()));
-						}else if("一般纳税人".equals(cvo.getChargedeptname())){
-							repvo.setIcusttaxpay(ToolsUtil.addInteger(repvo.getIcusttaxpay(), cvo.getNum()));
-						}
-						custmap.put(cvo.getPk_corp(), repvo);
+			CustManageRepVO repvo = null;
+			for(CustCountVO cvo : list){
+				if(!custmap.containsKey(cvo.getPk_corp())){
+					repvo = new CustManageRepVO();
+					repvo.setPk_corp(cvo.getPk_corp());
+					if("小规模纳税人".equals(cvo.getChargedeptname())){
+						repvo.setIcustsmall(cvo.getNum());
+					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+						repvo.setIcusttaxpay(cvo.getNum());
 					}
+					if(!replist.contains(cvo.getPk_corp())){
+						replist.add(cvo.getPk_corp());
+					}
+					custmap.put(cvo.getPk_corp(), repvo);
+				}else{
+					repvo = custmap.get(cvo.getPk_corp());
+					if("小规模纳税人".equals(cvo.getChargedeptname())){
+						repvo.setIcustsmall(ToolsUtil.addInteger(repvo.getIcustsmall(), cvo.getNum()));
+					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+						repvo.setIcusttaxpay(ToolsUtil.addInteger(repvo.getIcusttaxpay(), cvo.getNum()));
+					}
+					custmap.put(cvo.getPk_corp(), repvo);
 				}
 			}
 		}
