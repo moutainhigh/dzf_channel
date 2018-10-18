@@ -170,17 +170,16 @@ public class BillCodeServiceImpl implements IBillCodeService {
             }
             resultCode = code.toString();
         }else if(checkIsCodeRule(mcvo)){
-        	String code=jedis.hget(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType());//获取value
-        	String maxCode=mcvo.getEntryCode();
-        	if(!StringUtil.isEmpty(code)){
-        		Integer hc=Integer.parseInt(code.substring(mcvo.getBillType().length()));//缓存里的流水号
-        		Integer sc=Integer.parseInt(mcvo.getEntryCode().substring(mcvo.getBillType().length()));//手动输入流水号
-        		if(hc>sc){
-        			maxCode=code;
+        	String rCode=jedis.hget(mcvo.getTbName()+mcvo.getPk_corp(), mcvo.getBillType());//获取value
+        	String sCode=mcvo.getEntryCode().replaceAll(" ", "");
+        	if(!StringUtil.isEmpty(rCode)){
+        		Integer hc=Integer.parseInt(rCode.substring(mcvo.getBillType().length()));//缓存里的流水号
+        		Integer sc=Integer.parseInt(sCode.substring(mcvo.getBillType().length()));//手动输入流水号
+        		if(hc<sc){
+        			setCodeToJedis(jedis, mcvo, sCode);
         		}
         	}
-        	setCodeToJedis(jedis, mcvo, maxCode);
-            resultCode = mcvo.getEntryCode();
+            resultCode = sCode;
         }else{
         	resultCode = mcvo.getEntryCode();
         }
@@ -207,7 +206,8 @@ public class BillCodeServiceImpl implements IBillCodeService {
      */
     private boolean checkIsCodeRule(MaxCodeVO mcvo){
     	boolean flg=false;
-    	String code=mcvo.getEntryCode();
+    	String code=mcvo.getEntryCode().replaceAll(" ", "");
+    	mcvo.setEntryCode(code);
     	String rule=mcvo.getBillType();
     	if(code.startsWith(rule)){
     		if(code.length()==rule.length()+mcvo.getDiflen()){
