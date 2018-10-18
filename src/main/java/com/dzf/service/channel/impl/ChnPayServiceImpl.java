@@ -211,7 +211,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		mcvo.setPk_corp(vo.getPk_corp());
 		mcvo.setBillType("FK"+new DZFDate().getYear()+new DZFDate().getStrMonth());
 		mcvo.setCorpIdField("pk_corp");
-		mcvo.setEntryCode(vo.getVbillcode().replaceAll(" ", ""));
+//		mcvo.setEntryCode(vo.getVbillcode().replaceAll(" ", ""));
 		mcvo.setDiflen(3);
 		vo.setVbillcode(billCode.getDefaultCode(mcvo));
 		String uuid = UUID.randomUUID().toString();
