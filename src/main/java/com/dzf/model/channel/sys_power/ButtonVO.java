@@ -54,6 +54,7 @@ public class ButtonVO extends SuperVO {
 	@FieldAlias("rname")
 	private String role_name;//角色名称
 	
+	private String jms01;//机构负责人
 	private String jms02;//会计经理
 	private String jms03;//销售经理
 	private String jms04;//销售主管
@@ -110,6 +111,14 @@ public class ButtonVO extends SuperVO {
 
 	public String getJms03() {
 		return jms03;
+	}
+
+	public String getJms01() {
+		return jms01;
+	}
+
+	public void setJms01(String jms01) {
+		this.jms01 = jms01;
 	}
 
 	public void setJms03(String jms03) {

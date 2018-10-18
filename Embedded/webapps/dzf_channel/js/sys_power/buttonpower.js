@@ -1,7 +1,7 @@
 var contextPath=DZF.contextPath;
 var status="brows";
 var roleMap=new HashMap();//角色编码对应角主键
-var roleCode=["jms02","jms03","jms04","jms05","jms06","jms07","jms08","jms09","jms10","jms11"];
+var roleCode=["jms01","jms02","jms03","jms04","jms05","jms06","jms07","jms08","jms09","jms10","jms11"];
 //自适应边框
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -131,14 +131,14 @@ function getColumn(head){
 	var columnl1 = {};
 	columnl1["title"] = '';  
 	columnl1["field"] = 'fname';  
-	columnl1["width"] = '120'; 
+	columnl1["width"] = '100'; 
 	columnl1["halign"] = 'center'; 
 	columnl.push(columnl1);
 	
 	var columnl2 = {};
 	columnl2["title"] = '操作';  
 	columnl2["field"] = 'name';  
-	columnl2["width"] = '90'; 
+	columnl2["width"] = '70'; 
 	columnl2["halign"] = 'center'; 
 	columnl2["align"] = 'center'; 
 	columnl.push(columnl2);

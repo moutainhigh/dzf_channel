@@ -26,7 +26,7 @@ public class ButtonPowerServiceImpl implements IButtonPowerService {
 		sql.append(" select sr.pk_role, sr.role_name, sr.role_code \n");
 		sql.append("   from sm_role sr \n");
 		sql.append("  where sr.roletype = 8 \n");
-		sql.append("    and sr.role_code != 'jms01' \n");
+//		sql.append("    and sr.role_code != 'jms01' \n");
 		sql.append("    and nvl(sr.dr, 0) = 0 \n");
 		List<ButtonVO> list = (List<ButtonVO>) singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(ButtonVO.class));
 		return list;
