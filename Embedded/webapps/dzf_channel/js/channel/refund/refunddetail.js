@@ -379,8 +379,8 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		}, {
-			width : '90',
-			title : '退款日期',
+			width : '120',
+			title : '系统退款日期',
 			align:'center',
 			halign:'center',
 			field : 'refdate',

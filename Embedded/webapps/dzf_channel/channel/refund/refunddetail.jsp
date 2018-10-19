@@ -107,7 +107,7 @@
 	
 	<!-- 付款单余额明细begin -->
 	<div id="detail_dialog" class="easyui-dialog" title="退款明细" 
-		data-options="modal:true,closed:true" style="width:828px;height:500px;">
+		data-options="modal:true,closed:true" style="width:900px;height:500px;">
 		<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
 			<label style="text-align:right">查询：</label> 
 			<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
@@ -116,7 +116,7 @@
 		</div>	
 		
 		<div data-options="region:'center'" 
-			style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+			style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:94%;height:380px;padding:10px">
 			 <table id="gridh"></table>	
 		</div>
 	</div>
