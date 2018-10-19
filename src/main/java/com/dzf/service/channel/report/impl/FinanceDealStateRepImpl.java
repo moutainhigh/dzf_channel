@@ -368,6 +368,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	private void queryStatus(List<FinanceDetailVO> list, QryParamVO paramvo) throws DZFWarpException {
 		List<String> pk_corplist = new ArrayList<>();
 		CorpVO corpvo = null;
+		String pk_corp = list.get(0).getPk_corp();
 		for (FinanceDetailVO vo : list) {
 			if (!pk_corplist.contains(vo.getPk_corpk())) {
 				pk_corplist.add(vo.getPk_corpk());
@@ -390,7 +391,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		HashMap<String, String> map = isQjsy(inSql, paramvo.getPeriod(), qrytype);// 查询是否期间损益
 		HashMap<String, String> mapV = isVoucher(inSql, paramvo.getPeriod(), qrytype);// 查询是否填制凭证
 		Map<String, String> gzmap = isGz(inSql, paramvo.getPeriod());
-		Map<String, StringBuffer> deptmap = qryDeptMap(inSql);
+		Map<String, StringBuffer> deptmap = qryDeptMap(inSql, pk_corp);
 		StringBuffer deptvalue = null;
 		for (FinanceDetailVO vo : list) {
 			//1、记账状态：
@@ -423,21 +424,26 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, StringBuffer> qryDeptMap(String inSql) throws DZFWarpException {
+	private Map<String, StringBuffer> qryDeptMap(String inSql, String pk_corp) throws DZFWarpException {
 		Map<String, StringBuffer> deptmap = new HashMap<String, StringBuffer>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT sup.pk_corpk, t.deptname AS vdeptname \n");
-		sql.append("  FROM sm_user_corp sup  \n");
-		sql.append("  LEFT JOIN sm_user r ON r.cuserid = sup.cuserid  \n");
-		sql.append("  LEFT JOIN ynt_department t ON t.pk_department = r.pk_department  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND nvl(sup.dr, 0) = 0  \n");
-		sql.append("   AND t.deptname is not null \n");
+		SQLParameter spm = new SQLParameter();
+        sql.append(" select corp.pk_corp as pk_corpk,wm_concat(distinct dept.deptname) as vdeptname ");
+        sql.append(" from bd_corp corp");
+        sql.append(" left join sm_user_corp uc on uc.pk_corpk = corp.pk_corp");
+        sql.append(" left join sm_user su on su.cuserid = uc.cuserid");
+        sql.append(" left join ynt_department dept on dept.pk_department = su.pk_department");
+        sql.append(" where corp.fathercorp = ? ");
+        spm.addParam(pk_corp);
+		sql.append("   AND nvl(corp.dr, 0) = 0  \n");
+		sql.append("   AND nvl(uc.dr, 0) = 0  \n");
+		sql.append("   AND nvl(su.dr, 0) = 0  \n");
+		sql.append("   AND nvl(dept.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(inSql)) {
-			sql.append(" AND sup.pk_corp in (").append(inSql).append(")");
+			sql.append(" AND corp.pk_corp in (").append(inSql).append(")");
 		}
-		List<FinanceDetailVO> deptlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), null,
+		sql.append(" group by corp.pk_corp ");
+		List<FinanceDetailVO> deptlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
 		StringBuffer value = null;
 		if(deptlist != null && deptlist.size() > 0){
