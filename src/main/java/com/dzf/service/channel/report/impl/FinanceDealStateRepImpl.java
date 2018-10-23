@@ -450,13 +450,17 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			for(FinanceDetailVO deptvo : deptlist){
 				if(!deptmap.containsKey(deptvo.getPk_corpk())){
 					value = new StringBuffer();
-					value.append(deptvo.getVdeptname());
-					deptmap.put(deptvo.getPk_corpk(), value);
-				}else{
-					value = deptmap.get(deptvo.getPk_corpk());
-					if(value.indexOf(deptvo.getVdeptname()) != 0){
-						value.append("，").append(deptvo.getVdeptname());
+					if(!StringUtil.isEmpty(deptvo.getVdeptname())){
+						value.append(deptvo.getVdeptname());
 						deptmap.put(deptvo.getPk_corpk(), value);
+					}
+				}else{
+					if(!StringUtil.isEmpty(deptvo.getVdeptname())){
+						value = deptmap.get(deptvo.getPk_corpk());
+						if(value.indexOf(deptvo.getVdeptname()) != 0){
+							value.append("，").append(deptvo.getVdeptname());
+							deptmap.put(deptvo.getPk_corpk(), value);
+						}
 					}
 				}
 			}
