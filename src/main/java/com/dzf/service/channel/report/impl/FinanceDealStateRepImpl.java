@@ -552,13 +552,18 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			throw new BusinessException("查询失败");
 		}
 		StringBuffer strStatus = new StringBuffer();
-		String jzPeriod = map.get(pk_corp);
-
-		String vPeriod = mapV.get(pk_corp);
+		String jzPeriod = "";
+		if(map != null && !map.isEmpty()){
+			jzPeriod = map.get(pk_corp);
+		}
+		String vPeriod = "";
+		if(mapV != null && !mapV.isEmpty()){
+			vPeriod = mapV.get(pk_corp);
+		}
 		CorpVO cvo = null;
 		if (qrytype == 2) {
 			if (StringUtil.isEmpty(jzPeriod) && StringUtil.isEmpty(vPeriod)) {
-				cvo = CorpCache.getInstance().get(null, pk_corp);
+				cvo = queryCorp(pk_corp);
 				if (cvo != null && cvo.getBegindate() != null) {
 					strStatus.append(DateUtils.getPeriod(cvo.getBegindate())).append("未开始");
 				}
@@ -575,7 +580,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			}
 		} else {
 			if (StringUtil.isEmpty(jzPeriod) && StringUtil.isEmpty(vPeriod)) {
-				cvo = CorpCache.getInstance().get(null, pk_corp);
+				cvo = queryCorp(pk_corp);
 				if (cvo != null && cvo.getBegindate() != null) {
 					if (DateUtils.getPeriod(cvo.getBegindate()).compareTo(period) <= 0) {
 						strStatus.append("未开始");
@@ -592,6 +597,16 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			}
 		}
 		return strStatus.toString();
+	}
+	
+	/**
+	 * 查询客户信息
+	 * @param pk_corp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private CorpVO queryCorp(String pk_corp) throws DZFWarpException {
+		return (CorpVO) singleObjectBO.queryByPrimaryKey(CorpVO.class, pk_corp);
 	}
 	
 	/**
