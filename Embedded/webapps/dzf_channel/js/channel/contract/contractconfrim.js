@@ -1243,7 +1243,7 @@ function deductCancel(){
  */
 function bathAudit(){
 	var rows = $('#grid').datagrid('getSelections');
-	if (rows == null) {
+	if (rows == null || rows.length == 0) {
 		Public.tips({
 			content : "请选择需要处理的数据",
 			type : 2
