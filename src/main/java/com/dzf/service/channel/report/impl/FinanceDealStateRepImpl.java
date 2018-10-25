@@ -399,7 +399,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			vo.setJzstatus(status);
 			//2、账务检查以查询月是否关账来统计：
 			if(gzmap != null && !gzmap.isEmpty()){
-				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corp()))){
+				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))){
 					vo.setIacctcheck(1);
 				}else{
 					vo.setIacctcheck(0);
