@@ -228,9 +228,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
+		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
 			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
-			spm.addParam(pamvo.getBeginperiod());
+			spm.addParam(pamvo.getPeriod());
 		}
 		if (corplist != null && corplist.size() > 0) {
 			String filter = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
