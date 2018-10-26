@@ -26,6 +26,7 @@ function initQry(){
 	initQryCommbox();
 	changeDate();
 	initChannel();
+	initDetailGrid();//明细表格初始化
 }
 
 /**
@@ -147,7 +148,6 @@ function nameFormat(value, row, index){
  * @param index
  */
 function qryDetail(index){
-	initDetailGrid();//明细表格初始化
 	var rows = $('#grid').datagrid('getRows');
 	var row = rows[index];
 	$('#detail_dialog').dialog('open');
