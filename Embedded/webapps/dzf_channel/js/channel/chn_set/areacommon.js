@@ -350,7 +350,7 @@ function initCard(id){
 			editor : {
 				type: 'combobox',
                 options: {
-                	height: 35,
+                	height: 31,
                 	panelHeight: 160,
                 	showItemIcon: true,
                 	valueField: "name",
