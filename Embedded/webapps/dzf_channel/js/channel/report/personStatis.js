@@ -74,7 +74,7 @@ function load(){
 	                   	{ field : 'jms08', title : '记账会计', width : 70,align:'right' },
 	                   	{ field : 'jms09', title : '财税支持', width : 70,align:'right' },
 	                   	{ field : 'jms05', title : '外勤主管', width : 70,align:'right' },
-	                   	{ field : 'jms11', title : '外勤会计', width : 70,align:'right' },
+	                   	{ field : 'jms11', title : '助理会计', width : 70,align:'right' },
 	                   	
 	                   	{ field : 'jms03', title : '销售经理', width : 70,align:'right' },
 	                   	{ field : 'jms04', title : '销售主管', width : 70,align:'right' },
