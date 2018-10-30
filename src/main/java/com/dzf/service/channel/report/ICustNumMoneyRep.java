@@ -1,9 +1,7 @@
 package com.dzf.service.channel.report;
 
 import java.util.List;
-import java.util.Map;
 
-import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.report.CustNumMoneyRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
