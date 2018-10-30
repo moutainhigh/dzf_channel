@@ -115,7 +115,6 @@ public class DataCommonRepImpl {
 		sql.append(" where nvl(p.dr, 0) = 0  \n");
 		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
 		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
-		sql.append("   and nvl(p.isseal, 'N') = 'N'  \n");
 		sql.append("   and p.vprovince is not null \n");
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
