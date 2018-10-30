@@ -400,8 +400,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 				}
 			}
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);// 付款单状态 待确认
-			billvo.setVconfirmid(cuserid);// 取消确认人
-			billvo.setDconfirmtime(new DZFDateTime());// 取消确认时间
+			billvo.setVconfirmid(null);// 取消确认人
+			billvo.setDconfirmtime(null);// 取消确认时间
 			billvo.setTstamp(new DZFDateTime());// 操作时间
 			singleObjectBO.update(billvo, new String[] { "vstatus", "vconfirmid", "dconfirmtime", "tstamp" });
 //		} catch (Exception e) {
