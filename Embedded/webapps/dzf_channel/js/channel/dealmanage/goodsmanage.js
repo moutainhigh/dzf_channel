@@ -339,7 +339,8 @@ function dele(ths){
 						});
 					} else {
 						$('#grid').datagrid('clearSelections');
-						$('#grid').datagrid('deleteRow', Number(tindex)); 
+//						$('#grid').datagrid('deleteRow', Number(tindex)); 
+						$("#grid").datagrid("reload");
 						Public.tips({
 							content : data.msg,
 						});
