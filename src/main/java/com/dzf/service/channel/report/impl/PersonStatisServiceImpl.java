@@ -15,6 +15,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.PersonStatisVO;
 import com.dzf.model.channel.report.UserDetailVO;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -216,7 +217,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
         HashMap<String, Integer> map = queryUserCorps(paramvo.getPk_corp());
         if(list != null && list.size() > 0 && map != null){
             for(UserDetailVO uvo : list){
-                uvo.setCorpnum(map.get(uvo.getUserid()));
+                uvo.setCorpnum(CommonUtil.getInteger(map.get(uvo.getUserid())));
             }
         }
         return list;
@@ -231,8 +232,9 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
      */
     private HashMap<String, Integer> queryUserCorps(String pk_corp){
         StringBuffer sql = new StringBuffer();
-        sql.append(" select cuserid as userid,count(pk_corp) as corpnum from sm_user_corp where pk_corp = ? and nvl(dr,0) = 0 group by cuserid ");
+        sql.append(" select cuserid as userid,count(pk_corpk) as corpnum from sm_user_corp where pk_corp = ? and pk_corpk != ? and nvl(dr,0) = 0 group by cuserid ");
         SQLParameter parameter = new SQLParameter();
+        parameter.addParam(pk_corp);
         parameter.addParam(pk_corp);
         ArrayList<UserDetailVO> list = (ArrayList<UserDetailVO>) singleObjectBO.executeQuery(sql.toString(), parameter, new BeanListProcessor(UserDetailVO.class));
         HashMap<String, Integer> map = new HashMap<>();
