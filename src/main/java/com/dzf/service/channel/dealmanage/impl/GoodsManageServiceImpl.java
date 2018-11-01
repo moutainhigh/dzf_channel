@@ -307,8 +307,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 					throw new BusinessException("商品："+oldvo.getVgoodsname()+"已经下架  ");
 				}
 				if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_1){
-					
-				}throw new BusinessException("商品："+oldvo.getVgoodsname()+"未发布，不能下架  ");
+					throw new BusinessException("商品："+oldvo.getVgoodsname()+"未发布，不能下架  ");
+				}
 			}
 		}else{
 			throw new BusinessException("数据错误");
