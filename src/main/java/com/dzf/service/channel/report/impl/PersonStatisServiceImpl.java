@@ -19,6 +19,7 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
@@ -185,21 +186,64 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
     public List<UserDetailVO> queryUserDetail(QryParamVO paramvo) throws DZFWarpException {
         StringBuffer str = new StringBuffer();
         SQLParameter params = new SQLParameter();
-        str.append("SELECT deptname, user_code, user_name, ");
-        str.append(" LISTAGG(to_char(role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename, sum(corpnum) as corpnum");
-        str.append(" FROM ");
-        str.append(" (select distinct dept.deptname, us.user_code, us.user_name, sr.role_name, count(ur.pk_corp) as corpnum");
+//        str.append("SELECT deptname, user_code, user_name, ");
+//        str.append(" LISTAGG(to_char(role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename, sum(corpnum) as corpnum");
+//        str.append(" FROM ");
+//        str.append(" (select distinct dept.deptname, us.user_code, us.user_name, sr.role_name, count(uc.pk_corp) as corpnum");
+//        str.append("  from sm_user us");
+//        str.append("  left join ynt_department dept on dept.pk_department = us.pk_department");
+//        str.append("  left join sm_userole userr on userr.cuserid = us.cuserid");
+//        str.append("  left join sm_role sr on sr.pk_role = userr.pk_role");
+//        str.append("  left join sm_user_corp uc on uc.cuserid = us.cuserid  ");
+//        str.append("  where nvl(us.dr, 0) = 0 and nvl(sr.dr, 0) = 0 and nvl(dept.dr, 0) = 0");
+//        str.append("  and nvl(us.locked_tag,'N') = 'N' and us.pk_corp = ?");
+//        str.append("  group by dept.deptname, us.user_code, us.user_name, sr.role_name)");
+//        str.append(" group by deptname, user_code, user_name");
+//        str.append(" order by deptname");
+        
+        str.append("select distinct dept.deptname,us.user_code, us.user_name,us.cuserid as userid,");
+        str.append(" LISTAGG(to_char(sr.role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename");
         str.append("  from sm_user us");
-        str.append("  left join sm_user_role ur on us.cuserid = ur.cuserid");
-        str.append("  left join sm_role sr on sr.pk_role = ur.pk_role");
         str.append("  left join ynt_department dept on dept.pk_department = us.pk_department");
-        str.append("  where nvl(us.dr, 0) = 0 and nvl(ur.dr, 0) = 0 and nvl(sr.dr, 0) = 0 and nvl(dept.dr, 0) = 0");
+        str.append("  left join sm_userole userr on userr.cuserid = us.cuserid");
+        str.append("  left join sm_role sr on sr.pk_role = userr.pk_role  ");
+        str.append("  where nvl(us.dr, 0) = 0 and nvl(sr.dr, 0) = 0 and nvl(dept.dr, 0) = 0");
         str.append("  and nvl(us.locked_tag,'N') = 'N' and us.pk_corp = ?");
-        str.append("  group by dept.deptname, us.user_code, us.user_name, sr.role_name)");
-        str.append(" group by deptname, user_code, user_name");
-        str.append(" order by deptname");
+        str.append("  group by dept.deptname, us.user_code, us.user_name,us.cuserid order by dept.deptname");
         params.addParam(paramvo.getPk_corp());
-        return (List<UserDetailVO>) singleObjectBO.executeQuery(str.toString(), params, new BeanListProcessor(UserDetailVO.class));
+        List<UserDetailVO> list = (List<UserDetailVO>) singleObjectBO.executeQuery(str.toString(), params, new BeanListProcessor(UserDetailVO.class));
+        
+        HashMap<String, Integer> map = queryUserCorps(paramvo.getPk_corp());
+        if(list != null && list.size() > 0 && map != null){
+            for(UserDetailVO uvo : list){
+                uvo.setCorpnum(map.get(uvo.getUserid()));
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * 查询用户负责客户数
+     * @author gejw
+     * @time 下午3:04:57
+     * @param pk_corp
+     * @return
+     */
+    private HashMap<String, Integer> queryUserCorps(String pk_corp){
+        StringBuffer sql = new StringBuffer();
+        sql.append(" select cuserid as userid,count(pk_corp) as corpnum from sm_user_corp where pk_corp = ? and nvl(dr,0) = 0 group by cuserid ");
+        SQLParameter parameter = new SQLParameter();
+        parameter.addParam(pk_corp);
+        ArrayList<UserDetailVO> list = (ArrayList<UserDetailVO>) singleObjectBO.executeQuery(sql.toString(), parameter, new BeanListProcessor(UserDetailVO.class));
+        HashMap<String, Integer> map = new HashMap<>();
+        if(list != null && list.size() > 0){
+            for(UserDetailVO vo : list){
+                if(!StringUtil.isEmpty(vo.getUserid())){
+                    map.put(vo.getUserid(), vo.getCorpnum());
+                }
+            }
+        }
+        return map;
     }
 
 }
