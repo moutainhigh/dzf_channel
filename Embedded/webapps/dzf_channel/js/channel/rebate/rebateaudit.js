@@ -166,6 +166,7 @@ function load(){
 		pageList : DZF.pageList,
 		singleSelect : false,
 		idField : 'rebid',
+		showFooter:true,
 		frozenColumns :[[ { field : 'ck', checkbox : true },
 			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
@@ -189,8 +190,32 @@ function load(){
 		] ],
 		onLoadSuccess : function(data) {
 			$('#grid').datagrid("scrollTo",0);
+			calFooter();
 		}
 	});
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var debitmny = parseFloat(0);	
+    var basemny = parseFloat(0);	
+    var rebatemny = parseFloat(0);
+    for (var i = 0; i < rows.length; i++) {
+    	debitmny += getFloatValue(rows[i].debitmny);
+    	basemny += getFloatValue(rows[i].basemny);
+    	rebatemny += getFloatValue(rows[i].rebatemny);
+    }
+    footerData['corp'] = '合计';
+    footerData['debitmny'] = debitmny;
+    footerData['basemny'] = basemny;
+    footerData['rebatemny'] = rebatemny;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**
