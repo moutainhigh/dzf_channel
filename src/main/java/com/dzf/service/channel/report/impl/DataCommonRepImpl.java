@@ -90,6 +90,7 @@ public class DataCommonRepImpl {
 	 * @param type
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
