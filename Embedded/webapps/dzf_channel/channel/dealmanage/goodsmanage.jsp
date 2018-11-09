@@ -86,18 +86,25 @@
 				<input id="updatets" name="updatets" type="hidden">
 				<input id="gid" name="gid" type="hidden">
 				<div class="time_col time_colp10">
+				<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>商品分类：</label> 
+						<input class="easyui-combobox" data-options="required:true" style="width:66%; height: 28px; text-align: left"></input>
+					</div>
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 
 						<input class="easyui-textbox"  id="gcode" name="gcode" data-options="validType:'length[0,30]'" 
 							style="width:66%; height: 28px; text-align: left"> 
 					</div>
-					<div style="width:46%;display: inline-block;">
-						<label style="width:120px;text-align: right;"><i class="bisu">*</i>商品名称：</label>
-					    <input class="easyui-textbox" id="gname" name="gname" data-options="required:true,validType:'length[0,50]'"
-					    	style="width:66%;height:28px;" />
-					</div>
+					
 				</div>
-
+               	<div class="time_col time_colp10">
+               	<div style="width:100%;display: inline-block;">
+						<label style="width:119px;text-align: right;"><i class="bisu">*</i>商品名称：</label>
+					    <input class="easyui-textbox" id="gname" name="gname" data-options="required:true,validType:'length[0,50]'"
+					    	style="width:77%;height:28px;" />
+					</div>
+               	
+               	</div>
 				<div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>单价：</label> 
