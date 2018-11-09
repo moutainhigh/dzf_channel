@@ -225,7 +225,9 @@ function calFooter(){
  * @param index
  */
 function codeLink(value,row,index){
-	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+	if(!isEmpty(value)){
+		return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+	}
 }
 
 /**
