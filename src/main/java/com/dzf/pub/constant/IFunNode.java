@@ -213,4 +213,25 @@ public interface IFunNode {
      */
     public static final String CHANNEL_49  = "channel49";
     
+    /**
+     * 入库单
+     */
+    public static final String CHANNEL_50  = "channel50";
+    
+    /**
+     * 商品分类
+     */
+    public static final String CHANNEL_51  = "channel51";
+    
+    
+    /**
+     * 出库单
+     */
+    public static final String CHANNEL_52  = "channel52";
+    
+    /**
+     * 商品数量明细表
+     */
+    public static final String CHANNEL_53  = "channel53";
+    
 }

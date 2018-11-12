@@ -10,7 +10,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
-import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.stock.GoodsTypeVO;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.pub.BusinessException;
@@ -23,9 +22,6 @@ import com.dzf.service.pub.IBillCodeService;
 
 @Service("typeGoods")
 public class GoodsTypeServiceImpl implements IGoodsTypeService {
-	
-	@Autowired
-	private MultBodyObjectBO multBodyObjectBO;
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
@@ -72,9 +68,13 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_goodstype(), uuid, 60);
-			SQLParameter spm =new SQLParameter();
-			spm.addParam(vo.getPk_goodstype());
-			singleObjectBO.executeUpdate("delete from cn_goodstype  where pk_goodstype=? ", spm);
+			if(!checkIsQuote(vo)){
+				SQLParameter spm =new SQLParameter();
+				spm.addParam(vo.getPk_goodstype());
+				singleObjectBO.executeUpdate("delete from cn_goodstype  where pk_goodstype=? ", spm);
+			}else{
+				throw new BusinessException("该商品分类已被商品引用,不可删除!");
+			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -84,6 +84,7 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_goodstype(), uuid);
 		}	
 	}
+	
 	
 	/**
 	 * 校验商品分类是否唯一
@@ -107,6 +108,27 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		int num = Integer.valueOf(res);
 		if(num <= 0)
 			ret = true;
+		return ret;
+	}
+	
+	/**
+	 * 校验商品分类是否被商品引用
+	 * @param vo
+	 * @return
+	 */
+	private boolean checkIsQuote(GoodsTypeVO vo) {
+		boolean ret = true;
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select count(1) as count from cn_goods");
+		sql.append(" where nvl(dr,0) = 0 and pk_corp=? ");
+		sql.append(" and pk_goodstype != ?");
+		sp.addParam(vo.getPk_corp());
+		sp.addParam(vo.getPk_goodstype());
+		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
+		int num = Integer.valueOf(res);
+		if(num <= 0)
+			ret = false;
 		return ret;
 	}
 

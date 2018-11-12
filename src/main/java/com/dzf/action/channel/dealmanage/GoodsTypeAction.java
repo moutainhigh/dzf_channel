@@ -15,7 +15,7 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.StringUtil;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.service.channel.dealmanage.IGoodsTypeService;
 import com.dzf.service.pub.IPubService;
 
@@ -72,7 +72,7 @@ public class GoodsTypeAction extends BaseAction<GoodsTypeVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-//			pubService.checkFunnode(uservo, IFunNode.CHANNEL_44);
+			pubService.checkFunnode(uservo, IFunNode.CHANNEL_51);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
@@ -103,7 +103,7 @@ public class GoodsTypeAction extends BaseAction<GoodsTypeVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-//			pubService.checkFunnode(uservo, IFunNode.CHANNEL_44);
+			pubService.checkFunnode(uservo, IFunNode.CHANNEL_51);
 			GoodsTypeVO pamvo = new GoodsTypeVO();
 			pamvo = (GoodsTypeVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			pamvo.setPk_corp(getLogincorppk());
