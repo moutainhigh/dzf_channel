@@ -2,6 +2,7 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
@@ -10,6 +11,7 @@ import com.dzf.pub.lang.DZFDateTime;
  * @time 2018年11月9日 下午1:37:34
  *
  */
+@SuppressWarnings({ "rawtypes", "serial" })
 public class GoodsTypeVO extends SuperVO {
 
     private String pk_goodstype;
@@ -17,7 +19,7 @@ public class GoodsTypeVO extends SuperVO {
     private String vcode;
     private String vname;
     private String coperatorid;
-    private String doperatedate;
+    private DZFDate doperatedate;
 
     @FieldAlias("dr")
     private Integer dr;// 删除标记
@@ -65,11 +67,11 @@ public class GoodsTypeVO extends SuperVO {
         this.coperatorid = coperatorid;
     }
 
-    public String getDoperatedate() {
+    public DZFDate getDoperatedate() {
         return doperatedate;
     }
 
-    public void setDoperatedate(String doperatedate) {
+    public void setDoperatedate(DZFDate doperatedate) {
         this.doperatedate = doperatedate;
     }
 
