@@ -13,11 +13,22 @@ import com.dzf.pub.lang.DZFDateTime;
  */
 public class SupplierVO extends SuperVO {
 
+	@FieldAlias("suid")
     private String pk_supplier;
+    
+	@FieldAlias("corpid")
     private String pk_corp;
+    
+    @FieldAlias("code")
     private String vcode;
+    
+    @FieldAlias("name")
     private String vname;
+    
+    @FieldAlias("operid")
     private String coperatorid;
+    
+    @FieldAlias("operdate")
     private String doperatedate;
 
     @FieldAlias("dr")
