@@ -1,9 +1,7 @@
-
 @charset "utf-8";
 /* css reset */
 html, body {
 	height: 100%;
-	
 }
 
 * {
@@ -70,11 +68,10 @@ em, i {
 
 .wrapper {
 	background-color: #f4f4f4;
-	/* overflow: auto;  */
-	/* width: 100%; height: 100%; */
 }
 
-.:after {
+.
+:after {
 	content: ".";
 	display: block;
 	clear: both;
@@ -83,7 +80,6 @@ em, i {
 }
 
 .mod-toolbar-top {
-	/* margin:18px 18px; */
 	color: #555;
 	zoom: 1;
 }
@@ -92,7 +88,7 @@ em, i {
 	margin: 18px 0px;
 }
 
- .mod-toolbar-top .left {
+.mod-toolbar-top .left {
 	float: left;
 }
 
@@ -169,7 +165,6 @@ em, i {
 .h30 {
 	float: left;
 	line-height: 28px;
-	/* margin-right: 15px; */
 }
 
 .h30 label, .h30 span {
@@ -179,14 +174,13 @@ em, i {
 .h30 label {
 	vertical-align: middle;
 }
-/* .easyui-layout{margin:0 18px;} */
 
 /*按钮*/
 .ui-btn {
 	display: inline-block;
 	margin-bottom: 10px;
 	margin-right: 10px;
-	border-radius:5px !important;
+	border-radius: 5px !important;
 	padding: 0 10px;
 	height: 24px;
 	line-height: 24px;
@@ -652,7 +646,6 @@ em, i {
 	color: #fff
 }
 
-/*easyui style*/
 .datagrid-header-check, .datagrid-cell-check {
 	width: 39px;
 }
@@ -690,8 +683,6 @@ em, i {
 }
 
 .panel-tool-close {
-	/* background: url(../images/main_ico.png) no-repeat;
-	background-position: -187px -29px; */
 	background: url(../images/public.png) no-repeat;
 	background-position: -358px -77px
 }
@@ -703,7 +694,11 @@ em, i {
 .panel-tool a:hover {
 	background-color: #4297d9;
 }
-.panel-body{overflow:auto}
+
+.panel-body {
+	overflow: auto
+}
+
 .window-shadow {
 	box-shadow: 2px 2px 7px #777778;
 }
@@ -751,6 +746,7 @@ em, i {
 	padding: 0 10px;
 	color: #555
 }
+
 .l-btn {
 	filter: none;
 }
@@ -819,6 +815,7 @@ em, i {
 .messager-body {
 	padding: 10px 10px 20px 10px;
 }
+
 .mod-right {
 	padding-left: 10px;
 }
@@ -953,17 +950,21 @@ em, i {
 }
 
 .datebox .combo-arrow {
-/* 	background: url(../images/main_ico.png) no-repeat;
-	background-position: -169px 2px; */
-	width:24px !important;
+	width: 24px !important;
 	background: url(../images/public.png) no-repeat;
 	background-position: -115px -75px;
 }
-.user_menu li a{width:30px;height:20px;}
-.textbox .foxdate{
+
+.user_menu li a {
+	width: 30px;
+	height: 20px;
+}
+
+.textbox .foxdate {
 	background: url(../images/main_ico.png) no-repeat;
 	background-position: -169px 2px;
 }
+
 .easyui-validateboxs {
 	padding: 0px 30px 0 3px;
 }
@@ -973,9 +974,8 @@ em, i {
 	font-size: 14px;
 	margin-left: 8px;
 	text-align: left;
-	
 }
-/* .collect_shou .textbox .textbox-text{background:#FFF} */
+
 .combobox-item-selected {
 	background: #297fc2;
 }
@@ -1002,6 +1002,7 @@ em, i {
 .panel-with-icon {
 	color: #060606;
 }
+
 .panel-header {
 	padding: 10px 0;
 	filter: none;
@@ -1097,22 +1098,6 @@ em, i {
 #isItem input {
 	width: 190px;
 }
-
-/* .quick-add-link {
-	line-height: 30px;
-	padding-left: 20px;
-	position: relative;
-	color: #555;
-	cursor: pointer;
-	outline: 0;
-	text-decoration: none
-}
-
-.quick-add-link i {
-	left: 0;
-	position: absolute;
-	top: 1px
-} */
 
 .ui-droplist-wrap {
 	background: #fff;
@@ -1235,7 +1220,7 @@ em, i {
 	float: left;
 	width: 140px;
 	line-height: 28px;
- margin-top: 5px; 
+	margin-top: 5px;
 	font-size: 14px;
 	text-align: right;
 	padding-right: 10px;
@@ -1278,7 +1263,6 @@ em, i {
 .panel-body-noheader p {
 	padding: 0 5px;
 	margin: 0 -5px -1px;
-/* 	border-bottom: 1px solid #ddd; */
 	height: 34px;
 	line-height: 34px;
 	white-space: nowrap;
@@ -1286,46 +1270,9 @@ em, i {
 	text-overflow: ellipsis;
 }
 
-/*期末处理*/
-/* .position_box {
-	width: 330px;
-	height: 250px;
-	position: absolute;
-	top: 40px;
-	left: -11px;
-	padding: 20px 10px;
-}
-
-.position_box .s {
-	width: 0;
-	height: 0;
-	border-color: transparent transparent #d4d4d4 transparent;
-	border-style: dashed dashed solid dashed;
-	border-width: 10px;
-	position: absolute;
-	top: -20px;
-	left: 155px;
-}
-
-.position_box .s .i {
-	width: 0;
-	height: 0;
-	border-color: transparent transparent #fff transparent;
-	border-style: dashed dashed solid dashed;
-	border-width: 10px;
-	position: absolute;
-	top: -9px;
-	left: -10px;
-} */
-
 .top10 {
 	margin-top: 15px;
 }
-
-/*步骤*/
-/* .steps {
-	margin-right: 18px;
-} */
 
 /*错误提示页*/
 .error_div {
@@ -1351,205 +1298,6 @@ em, i {
 	height: 30px;
 }
 
-/*收款管理*/
-/* .ui-datebox-wrap {
-	display: inline-block;
-	vertical-align: middle;
-	zoom: 1;
-	margin-right: 10px;
-	background: #fff;
-	border: 1px solid #ddd;
-}
-
-.ui-datebox-wrap .ui-datebox {
-	outline: 0;
-	float: left;
-	width: 80px;
-	margin: 0;
-	height: 16px;
-	border: none;
-	line-height: 16px;
-	padding: 6px 5px;
-	color: #555;
-	border-right: 0;
-	font-family: Microsoft YaHei;
-}
- */
-/* .btn-wrap-date {
-	float: left;
-	width: 22px;
-	height: 22px;
-	margin: 4px;
-}
-
-.ui-datebox-wrap a {
-	display: block;
-	width: 22px;
-	height: 22px;
-	cursor: pointer;
-	background: url(../images/main_ico.png) no-repeat
-}
-
-.ui-datebox-wrap a.btn-left {
-	background-position: 0px -61px
-}
-
-.ui-datebox-wrap a.btn-right {
-	background-position: -22px -61px
-}
-
-.ui-datebox-wrap a.btn-left:hover {
-	background-position: -46px -61px
-}
-
-.ui-datebox-wrap a.btn-right:hover {
-	background-position: -68px -61px
-}
- */
-/* .ui-combo-wrap .trigger, .ui-spinbox-wrap a {
-	background: #fff url(../images/main_ico.png) no-repeat
-}
-
-.ui-spinbox-wrap {
-	display: inline-block;
-	vertical-align: middle;
-	zoom: 1;
-	margin-right: 10px;
-}
-
-.ui-spinbox-wrap .input-txt {
-	outline: 0;
-	float: left;
-	width: 76px;
-	margin: 0;
-	border: 1px solid #ddd;
-	height: 16px;
-	line-height: 16px;
-	padding: 6px 5px;
-	color: #555;
-	border-right: 0;
-	font-family: Microsoft YaHei;
-	font-size: 14px;;
-}
-
-.ui-spinbox-wrap .btn-wrap {
-	float: left;
-}
-
-.ui-spinbox-wrap a {
-	display: block;
-	font-size: 0;
-	height: 14px;
-	width: 16px;
-	overflow: hidden;
-	cursor: pointer;
-	border-right: 1px solid #ddd;
-	border-top: 1px solid #ddd;
-}
- */
-/* .ui-spinbox-wrap .btn-down {
-	height: 14px;
-	position: relative;
-	border-top: none;
-	border-bottom: 1px solid #ddd;
-} */
-
-/* .ui-spinbox-hover .btn-wrap-hover .btn-up {
-	background-position: -350px -24px
-}
-
-.ui-spinbox-hover .btn-wrap-hover .btn-down {
-	background-position: -350px -40px
-}
-
-.ui-spinbox-hover .btn-wrap-hover .btn-up:hover {
-	background-position: -366px -24px
-}
-
-.ui-spinbox-hover .btn-wrap-hover .btn-down:hover {
-	background-position: -366px -40px
-} */
-
-/* .ui-spinbox-txt {
-	outline: 0;
-	float: left;
-	text-align: center;
-	width: 76px;
-	margin: 0;
-	border: 1px solid #ddd;
-	height: 16px;
-	line-height: 16px;
-	padding: 6px 5px;
-	color: #555;
-	font-family: Microsoft YaHei;
-} */
-
-/*. ui-btnbox-wrap {
-	display: inline-block;
-	vertical-align: middle;
-	zoom: 1;
-	margin-right: 10px;
-}
-
-.ui-btnbox-wrap .btn-gl {
-	display: block;
-	font-size: 14px;
-	height: 21px;
-	line-height: 21px;
-	width: 55px;
-	overflow: hidden;
-	cursor: pointer;
-	background: url(../images/btn.png) no-repeat;
-	box-shadow: 0px 0px 2px 0px #d1d1d1;
-	border-radius: 3px;
-	color: #060606;
-	text-align: center;
-}
-
-.ui-btnbox-wrap .btn-gl:hover {
-	background-position: 0px -21px;
-} */
-/*合同修改*/
-/* .contract_modify {
-	position: absolute;
-	top: 100px;
-	left: 200px;
-	width: 900px;
-	margin: 0 auto;
-	padding: 20px 0;
-	background: #fff;
-}
-
-.contract_from {
-	margin-bottom: 18px;
-	margin-left: 10px;
-}
-
-.contract_from p {
-	margin: 0px auto;
-	text-align: center;
-}
-
-.contract_from label, .contract_from font {
-	vertical-align: middle;
-	margin: 0px 2px;
-	font-size: 14px;
-	position: relative;
-}
-
-.contract_from label {
-	margin: 0px 6px 0px 22px;
-	font-size: 14px;
-	color: #858585;
-}
-
-.contract_from em {
-	vertical-align: middle;
-	margin-left: 6px;
-	font-size: 14px;
-	position: relative;
-}
- */
 .ui-input-50 {
 	padding: 6px 5px;
 	height: 16px;
@@ -1563,84 +1311,6 @@ em, i {
 	font-family: Microsoft YaHei;
 	font-size: 14px;
 }
-
-/* .contract_from textarea {
-	width: 830px;
-	height: 80px;
-	border: 1px #e4e4e4 solid;
-	margin: 5px 0 20px 24px;
-}
-
-.contract_modify h1 {
-	color: #060606;
-	font-size: 18px;
-	margin: 0px 0px 10px 24px;
-	height: 30px;
-	line-height: 30px;
-}
-
-.contract-table {
-	width: 850px;
-	margin: 0 auto;
-	font-size: 14px;
-	border-right: 1px solid #d4d4d4;
-	border-bottom: 1px solid #d4d4d4;
-	border-collapse: collapse;
-	background: #fff;
-}
-
-.contract-table th {
-	padding: 0 5px;
-	height: 34px;
-	border-left: 1px solid #d4d4d4;
-	border-top: 1px solid #d4d4d4;
-	background-color: #e6e6e6;
-}
-
-.contract-table td {
-	padding: 0 5px;
-	height: 34px;
-	text-align: center;
-	border-left: 1px solid #d4d4d4;
-	border-top: 1px solid #d4d4d4;
-} */
-
-/*收款管理表格*/
-/* .proceeds {
-	margin: 0px 18px 0 0;
-	height: 90%;
-	overflow: auto;
-}
-
-.proceeds-table {
-	width: 100%;
-	font-size: 14px;
-	border-right: 1px solid #d4d4d4;
-	border-bottom: 1px solid #d4d4d4;
-	border-collapse: collapse;
-	background: #fff;
-}
-
-.proceeds-table th {
-	height: 34px;
-	color: #333;
-	border-left: 1px solid #d4d4d4;
-	border-top: 1px solid #d4d4d4;
-	background-color: #e6e6e6;
-}
-
-.proceeds-table td {
-	color: #5f5f5f;
-	padding: 15px 0;
-	border-left: 1px solid #d4d4d4;
-	vertical-align: middle;
-	border-top: 1px solid #d4d4d4;
-}
-
-.proceeds-table td div {
-	text-align: center;
-	margin: 0 auto;
-} */
 
 .xh {
 	width: 55px;
@@ -2151,16 +1821,21 @@ pre {
 
 @media screen and (max-width: 1175px) .qijian_box2 {
 	left
+	
+	
 	:
+	
 	 
+	
 	0
 	px
-	;
 	
-
+	
+	;
 }
 /* 自适应表格样式 */
 .keep {
+	
 }
 
 .dzf-skin .mod-toolbar-top {
@@ -2199,24 +1874,6 @@ pre {
 	text-align: right;
 	background: #EFF1F2;
 }
-
-/* .sty_header {
-	float: left;
-	font-size: 15px;
-	line-height: 40px;
-	padding-left: 16px;
-	font-weight: bold;
-} */
- /* 收款登记   退款登记 */
-/* .sys_toll label {
-	width: 7.4%;
-} 收款登记
-.sty_refer label {
-	width: 8.8%;
-} 收款查询  退款说明
-.sys_check label {
-	width: 9%;
-} 收款审核 */
 
 /*图片浏览*/
 .menu_entrances {
@@ -2308,23 +1965,23 @@ pre {
 .top-margin {
 	margin-top: 18px;
 }
-.money_del .window .layout-split-south .layout-body{
-	border:none;
+
+.money_del .window .layout-split-south .layout-body {
+	border: none;
 }
-.money_del .window .layout-split-north .datagrid-view{
-	border:1px solid #D4D4D4;
+
+.money_del .window .layout-split-north .datagrid-view {
+	border: 1px solid #D4D4D4;
 }
+
 @media screen and (min-width: 1367px) and (max-width:1920px) {
 	datagrid-body
 	.mod-toolbar-content {
 		padding: 14px 10px;
 		height: 32px;
 	}
-	/* .contract_xi  #List_panel .easyui-fluid {
-		height:804px !important;
-	} */
-	.sys_corp_cha .easyui-fluid #card_panel .mod-inner{
-		height:56% !important;
+	.sys_corp_cha .easyui-fluid #card_panel .mod-inner {
+		height: 56% !important;
 	}
 }
 
@@ -2333,119 +1990,111 @@ pre {
 		padding: 10px;
 		height: 32px;
 	}
-	/* .contract_xi  #List_panel .easyui-fluid{
-		height:492px !important;
-	} *//* 合同明细表 底部边框线缺失 */
-	.sys_corp_cha .easyui-fluid #card_panel .mod-inner{
-		height:52% !important;
+	.sys_corp_cha .easyui-fluid #card_panel .mod-inner {
+		height: 52% !important;
 	}
 }
 
- .datagrid-cell .dt{ border-radius: 5px;}
-.panel-title{color:black;}
+.datagrid-cell .dt {
+	border-radius: 5px;
+}
 
-  .numberbox .textbox-text {text-align: right;} 
+.panel-title {
+	color: black;
+}
 
-/* .panel-header{background: #EFF1F2;} 代理记账合同明细 
+.numberbox .textbox-text {
+	text-align: right;
+}
 
-.textbox-invalid {  border-color: #D4D4D4;}
- .datagrid-body .textbox{border:none}代理记合同  */
- 
-.time_col .textbox{border-radius:5px;}
-.add_price .header{float:left;font-size:15px;line-height:40px;padding-left:16px;font-weight: bold;}
- .datagrid-htable .datagrid-header-row{background:#e9edf3;}
- 
-/* .datagrid-cell-c6-bdate {width: 114px !important;}
-.datagrid-cell-c6-edate {width: 114px !important;} */
+.time_col .textbox {
+	border-radius: 5px;
+}
 
-.datagrid td {vertical-align: middle;}
-/* .picUp_1 a:link{text-decoration: none;color:#ffffff;}
-.picUp_1 a:visited{text-decoration: none;color:#ffffff;}
-.picUp_1 a:hover{color:#ffffff;text-decoration: none;}图片处理  */
+.add_price .header {
+	float: left;
+	font-size: 15px;
+	line-height: 40px;
+	padding-left: 16px;
+	font-weight: bold;
+}
 
-.info a:link{text-decoration: none;color:#000000;}
-.info a:visited{text-decoration: none;color:#000000;}
-.info a:hover{text-decoration: none;color:#000000;}
+.datagrid-htable .datagrid-header-row {
+	background: #e9edf3;
+}
 
-.datagrid-body .datagrid-editable td {text-align: center;}
-.window-mask{margin-top: 0;}panel-body panel-body-noheader panel-body-noborder
-.time_colp11 label{width:9%;}
-.dzf_sys_sorp .right{float:right;border:none;}
-.dzf_sys_sorp .ui-btn{margin-left:-4px;}
+.datagrid td {
+	vertical-align: middle;
+}
 
-/* .sys_corp_cha  .right{float:right;border:none;}
-.srveva_serve .datagrid-cell .dt{color:#FFF !important;}服务评价
+.info a:link {
+	text-decoration: none;
+	color: #000000;
+}
 
-.cwhzb_class tbody a{color: #0000cd;}
-.cwhzb_class .datagrid-header-inner{background: #e9edf3;}财务汇总表 
- */
-/* .deal_card_class{overflow:hidden;overflow-y:auto;}
-  .l-btn-left {
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  vertical-align: top;
-  height: 26px;
-} *//*业务查询卡片*/
-/* #sign{margin-left:30px;}代理记账合同明细  */
-/* .fileDocTable{
-		width:100%;
-		margin:0 auto;
-		border:1px solid #999999;
-		cellspacing:0;
-		cellpadding:0;
-		margin-top : 20px;
-		border-collapse:collapse;
-	}
-	.outerTD{
-		text-align:center;
-		border:1px solid #999999;
-		margin:0;
-		line-height : 50px;
-	}
-	.innerTable{
-		width : 100%;
-	}
-	.innerTD{
-		padding : 10px
-	} */
-	/*资料交接 */
-/* .panel-title{color:#FFF;} */
-/* .l-btn-text {
-    font-size: 12px;
-    line-height: 24px;
-} */
+.info a:visited {
+	text-decoration: none;
+	color: #000000;
+}
 
-/* .card_busi .header{float:left;font-size:16px;line-height:46px;padding-left:16px;color:#000;font-weight:normal;}
-.card_col{margin-bottom:12px;} 业务处理卡片  
-.ziliao_toggle .window .datagrid-view{border-top:1px solid #d4d4d4;}资料交接 
-.sys_busset .numberbox .textbox-text{text-align: left;}业务小类 
-.sys_product_s .numberbox .textbox-text{text-align: left;}业务大类 
-.pic_change .window #print_dialog{height:407px !important;}图片。处理 
-.dsdj_offer .mod-inner .datagrid-body td p{border:1px solid #ccc}代收代缴明细账
-.busimng-body .mod-inner #dataGrid .panel-body{width:99.8% !important}业务处理界面的 
-.send_mails #cardPanel .panel-body{overflow:auto;}群发邮件 
-.payment_fu #dataGridSub .textbox,.collect_shou #dataGridsub .textbox{height:29px !important;}付款凭证 */
- .header{float:left;font-size:15px;line-height:40px;padding-left:16px;font-weight: bold;}
- .datagrid-toolbar{border:0px 0px 0px 0px;}
- .datebox-button table{text-align: center;}
- /* 欠费统计 */
-/*  .dljzfmng-main{height:40px;line-height:40px;border-left:1px solid #ccc;border-right:1px solid #ccc;padding-left:14px;}
- .dljzfmng-left,.dljzfmng-center,.dljzfmng-right{float:left;margin-right:38px;    font-weight: bold; }
- .dljzfmng-left a,.dljzfmng-center a,.dljzfmng-right a{color:#f21210;} */
- /*发送内容  */
-/*  .sendcontent{height:65%;margin-top:10px;}
-.sendcontent .ke-container-default{height:100%}
-.sendcontent .ke-container-default .ke-edit{height:calc(100% - 27px)!important}
-.sendcontent .ke-container-default .ke-edit .ke-edit-iframe{height:100%!important} */
-/* .dzf-skin a.btn_disable  {
-   background: gray;
-} */
-.dzf-skin .ui-put{background:#b2b2b2;padding:2px 10px;display: inline-block;border-radius: 4px;}
+.info a:hover {
+	text-decoration: none;
+	color: #000000;
+}
+
+.datagrid-body .datagrid-editable td {
+	text-align: center;
+}
+
+.window-mask {
+	margin-top: 0;
+}
+
+panel-body panel-body-noheader panel-body-noborder
+.time_colp11 label {
+	width: 9%;
+}
+
+.dzf_sys_sorp .right {
+	float: right;
+	border: none;
+}
+
+.dzf_sys_sorp .ui-btn {
+	margin-left: -4px;
+}
+
+.header {
+	float: left;
+	font-size: 15px;
+	line-height: 40px;
+	padding-left: 16px;
+	font-weight: bold;
+}
+
+.datagrid-toolbar {
+	border: 0px 0px 0px 0px;
+}
+
+.datebox-button table {
+	text-align: center;
+}
+
+.dzf-skin .ui-put {
+	background: #b2b2b2;
+	padding: 2px 10px;
+	display: inline-block;
+	border-radius: 4px;
+}
+
 .dzf-skin .ui-put:hover {
-  background:#1675ca !important;
-  color: #FFF;
+	background: #1675ca !important;
+	color: #FFF;
 }
-.bisu{margin-right:6px;font-weight: bold;color:red;vertical-align: middle;}
+
+.bisu {
+	margin-right: 6px;
+	font-weight: bold;
+	color: red;
+	vertical-align: middle;
+}
