@@ -34,14 +34,13 @@ public class RebateCountServiceImpl implements IRebateCountService {
         sql.append(" acc.unitname as corpname,");
         sql.append(" area.region_name as vprovname,");
         sql.append(" sum(decode(reb.iseason,1,reb.nrebatemny)) as nmny1,");
-        sql.append(" sum(decode(reb.iseason,1,reb.nrebatemny)) as nmny1,");
         sql.append(" sum(decode(reb.iseason,2,reb.nrebatemny)) as nmny2, ");
         sql.append(" sum(decode(reb.iseason,3,reb.nrebatemny)) as nmny3,");
         sql.append(" sum(decode(reb.iseason,4,reb.nrebatemny)) as nmny4");
         sql.append(" from cn_rebate reb ");
         sql.append(" join bd_account acc on reb.pk_corp = acc.pk_corp ");
         sql.append(" join ynt_area area on area.region_id = acc.vprovince ");
-        sql.append(" where reb.fathercorp = ? and reb.vyear = ? and nvl(reb.dr,0) = 0");
+        sql.append(" where reb.fathercorp = ? and reb.vyear = ? and nvl(reb.dr,0) = 0 and reb.istatus = 3");
         sql.append(" group by reb.pk_corp,acc.innercode,acc.unitname,area.region_name");
         params.addParam(paramvo.getPk_corp());
         params.addParam(paramvo.getVyear());
