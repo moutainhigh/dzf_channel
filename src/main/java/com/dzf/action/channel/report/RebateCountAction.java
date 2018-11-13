@@ -56,7 +56,6 @@ public class RebateCountAction extends BaseAction<RebateCountVO> {
                 int page = paramvo == null ? 1 : paramvo.getPage();
                 int rows = paramvo == null ? 100000 : paramvo.getRows();
                 RebateCountVO[] rebatVOs = (RebateCountVO[]) QueryUtil.getPagedVOs(list.toArray(new RebateCountVO[0]), page, rows);
-                QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rebatVOs, 1);
                 grid.setRows(Arrays.asList(rebatVOs));
                 grid.setTotal((long) (list.size()));
             } else {

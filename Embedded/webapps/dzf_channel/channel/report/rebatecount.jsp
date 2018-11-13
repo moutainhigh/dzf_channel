@@ -31,7 +31,11 @@
 					</div>
 				</div>
 				<div class="left mod-crumb">
-					<span class="cur"></span>
+					<div class="h30 h30-arrow" id="filter">
+						<!-- <label class="mr5">加盟商：</label> -->
+						<input id="filter_value" style="height:28px;width:250px" class="easyui-textbox"  
+						prompt="请输入加盟商名称,按Enter键 "/> 
+					</div>
 				</div>
 			</div>
 		</div>

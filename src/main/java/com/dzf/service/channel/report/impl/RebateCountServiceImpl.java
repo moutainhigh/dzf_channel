@@ -1,5 +1,6 @@
 package com.dzf.service.channel.report.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.service.channel.report.IRebateCountService;
@@ -45,9 +47,11 @@ public class RebateCountServiceImpl implements IRebateCountService {
         params.addParam(paramvo.getVyear());
         List<RebateCountVO> list = (List<RebateCountVO>) singleObjectBO.executeQuery(sql.toString(), params, new BeanListProcessor(RebateCountVO.class));
         if(list != null && list.size() > 0){
+            QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 1);
             HashMap<String, String> map = queryChannelManger();
             UserVO uvo = null;
             String userid = null;
+            ArrayList<RebateCountVO> listFilter = new ArrayList<>();
             for(RebateCountVO rvo : list){
                 userid = map.get(rvo.getPk_corp());
                 if(!StringUtil.isEmpty(userid)){
@@ -56,6 +60,15 @@ public class RebateCountServiceImpl implements IRebateCountService {
                         rvo.setVmanagername(uvo.getUser_name());
                     }
                 }
+                if(!StringUtil.isEmpty(paramvo.getCorpkname())){
+                    if(rvo.getCorpname().indexOf(paramvo.getCorpkname()) > -1){
+                        listFilter.add(rvo);
+                    }
+                }
+                
+            }
+            if(listFilter != null && listFilter.size() > 0){
+                return listFilter;
             }
         }
         return list;
