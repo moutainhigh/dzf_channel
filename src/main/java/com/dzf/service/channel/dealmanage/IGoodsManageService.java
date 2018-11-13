@@ -99,4 +99,11 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public GoodsVO updateData(GoodsVO pamvo, Integer itype) throws DZFWarpException;
+	
+	/**
+	 * 查询商品下拉数据
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryComboBox() throws DZFWarpException;
 }

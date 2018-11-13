@@ -22,6 +22,7 @@ import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
+import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IStatusConstant;
@@ -413,6 +414,34 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 查询商品下拉
+	 */
+	public void queryComboBox() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			List<ComboBoxVO> vos = manser.queryComboBox();
+			if (vos == null || vos.size() == 0) {
+				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(vos);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
 	}
 	
 }

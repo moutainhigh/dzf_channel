@@ -549,5 +549,16 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 		return null;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ComboBoxVO> queryComboBox() throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pk_goods AS id, vgoodsname AS name  \n");
+		sql.append("  FROM cn_goods  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0 \n");
+		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(ComboBoxVO.class));
+	}
 	
 }
