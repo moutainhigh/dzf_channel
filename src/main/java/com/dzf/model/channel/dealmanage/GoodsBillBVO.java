@@ -21,6 +21,15 @@ public class GoodsBillBVO extends SuperVO {
 	@FieldAlias("gid")
 	private String pk_goods;//商品主键
 	
+	@FieldAlias("specid")
+	private String pk_goodsspec;//规格型号
+	
+	@FieldAlias("spec")
+	private String invspec;//规格
+	
+	@FieldAlias("type")
+	private String invtype;//型号
+	
 	@FieldAlias("corpid")
     private String pk_corp; // 所属公司
 	
@@ -89,6 +98,30 @@ public class GoodsBillBVO extends SuperVO {
 
 	public void setDeamount(Integer deamount) {
 		this.deamount = deamount;
+	}
+
+	public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
+
+	public String getInvspec() {
+		return invspec;
+	}
+
+	public void setInvspec(String invspec) {
+		this.invspec = invspec;
+	}
+
+	public String getInvtype() {
+		return invtype;
+	}
+
+	public void setInvtype(String invtype) {
+		this.invtype = invtype;
 	}
 
 	public void setPk_goodsdoc(String pk_goodsdoc) {
