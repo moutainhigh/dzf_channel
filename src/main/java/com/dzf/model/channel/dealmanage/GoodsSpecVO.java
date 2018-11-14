@@ -10,7 +10,7 @@ import com.dzf.pub.lang.DZFDateTime;
  *
  */
 @SuppressWarnings("rawtypes")
-public class GoodsSpec extends SuperVO {
+public class GoodsSpecVO extends SuperVO {
 
 	private static final long serialVersionUID = 934949279471144652L;
 	
