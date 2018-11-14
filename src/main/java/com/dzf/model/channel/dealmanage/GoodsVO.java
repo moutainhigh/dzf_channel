@@ -68,6 +68,17 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("gtype")
 	private String pk_goodstype;//商品类型
 	
+	@FieldAlias("gtypenm")
+	private String vgoodstypename;//商品类型名称
+	
+	public String getVgoodstypename() {
+		return vgoodstypename;
+	}
+
+	public void setVgoodstypename(String vgoodstypename) {
+		this.vgoodstypename = vgoodstypename;
+	}
+
 	public String getPk_goodstype() {
 		return pk_goodstype;
 	}

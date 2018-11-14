@@ -94,8 +94,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n") ;
+		sql.append("SELECT g.*, t.vname AS vgoodstypename \n") ;
 		sql.append("  FROM cn_goods g  \n") ; 
+		sql.append("  LEFT JOIN cn_goodstype t ON g.pk_goodstype = t.pk_goodstype \n");
 		sql.append(" WHERE nvl(g.dr, 0) = 0  \n") ; 
 		if(pamvo.getVstatus() != null && pamvo.getVstatus() != -1){
 			sql.append("   AND g.vstatus = ?  \n") ; 

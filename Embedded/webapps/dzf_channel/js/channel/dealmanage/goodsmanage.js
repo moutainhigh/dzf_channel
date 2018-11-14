@@ -42,9 +42,17 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		idField : 'gid',
-		frozenColumns :[[ { field : 'ck', checkbox : true },
-			              { field : 'operate', title : '操作列',width :'90',halign: 'center',align:'center',formatter:opermatter} ,
-		               ]],
+		frozenColumns : [ [ {
+			field : 'ck',
+			checkbox : true
+		}, {
+			field : 'operate',
+			title : '操作列',
+			width : '90',
+			halign : 'center',
+			align : 'center',
+			formatter : opermatter
+		}, ] ],
 		columns : [ [ {
 			width : '100',
 			title : '主键',
@@ -57,9 +65,15 @@ function load(){
 			hidden : true
 		}, {
 			width : '100',
+			title : '商品分类',
+			field : 'gtypenm',
+			align : 'left',
+            halign : 'center',
+		}, {
+			width : '100',
 			title : '商品编码',
 			field : 'gcode',
-			align : 'center',
+			align : 'left',
             halign : 'center',
 		}, {
 			width : '200',
