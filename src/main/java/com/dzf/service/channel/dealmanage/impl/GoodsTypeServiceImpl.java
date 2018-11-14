@@ -11,8 +11,10 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.stock.GoodsTypeVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFDate;
@@ -130,6 +132,18 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		if(num <= 0)
 			ret = false;
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ComboBoxVO> queryComboBox() throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pk_goodstype AS id, vname AS name \n");
+		sql.append("  FROM cn_goodstype  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append(" ORDER BY vcode DESC  \n");
+		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(ComboBoxVO.class));
 	}
 
 }

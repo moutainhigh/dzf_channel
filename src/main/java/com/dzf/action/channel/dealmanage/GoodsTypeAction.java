@@ -1,5 +1,6 @@
 package com.dzf.action.channel.dealmanage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -9,7 +10,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.channel.stock.GoodsTypeVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -116,5 +119,32 @@ public class GoodsTypeAction extends BaseAction<GoodsTypeVO> {
 		writeJson(json);
 	}
 	
+	/**
+	 * 查询商品分类下拉
+	 */
+	public void queryComboBox() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			List<ComboBoxVO> list = typeService.queryComboBox();
+			if(list != null && list.size() > 0){
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}else{
+				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
 	
 }

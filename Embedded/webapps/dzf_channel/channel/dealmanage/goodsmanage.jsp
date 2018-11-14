@@ -39,11 +39,16 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:190px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:220px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 			</h3>
+			<div class="time_col time_colp10">
+				<label style="width:85px;text-align:right">商品分类：</label>
+				<input id="qgtype" class="easyui-combobox" style="width:290px;height:28px;"
+					data-options="valueField:'id', textField:'name', panelHeight:'auto'" />
+			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品编码：</label>
 				<input id="qgcode" class="easyui-textbox" style="width:290px;height:28px;"/>
@@ -88,7 +93,9 @@
 				<div class="time_col time_colp10">
 				<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>商品分类：</label> 
-						<input class="easyui-combobox" data-options="required:true" style="width:66%; height: 28px; text-align: left"></input>
+						<input class="easyui-combobox" id="gtype" name="gtype" 
+							data-options="valueField:'id', textField:'name', panelHeight:'auto',required:true,"  
+							style="width:66%; height: 28px; text-align: left">
 					</div>
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;">商品编码：</label> 

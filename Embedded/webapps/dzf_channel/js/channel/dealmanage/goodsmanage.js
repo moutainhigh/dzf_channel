@@ -3,9 +3,28 @@ var status;
 var editIndex;
 var flowImgUrls = null;
 $(function(){
+	initGoodstyps();
 	load();
 	reloadData();
 });
+
+/**
+ * 查询/新增商品-初始化商品分类
+ */
+function initGoodstyps(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/goodstype!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#qgtype,#gtype").combobox("loadData",result.rows);
+			}
+		}
+	});
+}
 
 /**
  * 列表表格加载
@@ -126,7 +145,8 @@ function reloadData(){
 	$('#grid').datagrid('load', {
 		'gcode' : $("#qgcode").val(),
 		'gname' : $("#qgname").val(),
-		'status' :  $('#qstatus').combobox('getValue'),
+		'status' : $('#qstatus').combobox('getValue'),
+		'gtype' : $('#qgtype').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#qrydialog').hide();
@@ -138,6 +158,8 @@ function reloadData(){
 function clearParams(){
 	$("#qgcode").textbox('setValue',null);
 	$("#qgname").textbox('setValue',null);
+	$('#qgtype').combobox('setValue',null)
+	$('#qstatus').combobox('setValue',-1)
 }
 
 /**

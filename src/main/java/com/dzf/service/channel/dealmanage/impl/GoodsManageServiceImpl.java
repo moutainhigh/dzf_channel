@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
-import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.file.fastdfs.AppException;
@@ -109,6 +108,10 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		if(!StringUtil.isEmpty(pamvo.getVgoodsname())){
 			sql.append("   AND g.vgoodsname like ?  \n") ; 
 			spm.addParam("%"+pamvo.getVgoodsname()+"%");
+		}
+		if(!StringUtil.isEmpty(pamvo.getPk_goodstype())){
+			sql.append(" AND g.pk_goodstype = ? \n");
+			spm.addParam(pamvo.getPk_goodstype());
 		}
 		sql.append(" ORDER BY g.ts DESC \n");
 		qryvo.setSql(sql.toString());

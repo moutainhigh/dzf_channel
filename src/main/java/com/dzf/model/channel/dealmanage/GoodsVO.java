@@ -65,6 +65,17 @@ public class GoodsVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
+	@FieldAlias("gtype")
+	private String pk_goodstype;//商品类型
+	
+	public String getPk_goodstype() {
+		return pk_goodstype;
+	}
+
+	public void setPk_goodstype(String pk_goodstype) {
+		this.pk_goodstype = pk_goodstype;
+	}
+
 	public String getVstaname() {
 		return vstaname;
 	}
