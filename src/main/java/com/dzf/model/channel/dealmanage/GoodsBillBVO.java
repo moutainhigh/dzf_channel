@@ -33,7 +33,9 @@ public class GoodsBillBVO extends SuperVO {
 	@FieldAlias("price")
 	private String nprice; // 单价
 	
-	private String amount; // 数量
+	private Integer amount; // 数量
+	
+	private Integer deamount;//发货数量（目前逻辑：有值就是该订单该商品发货，无值就是该订单该商品没有发货）
 	
 	@FieldAlias("totalmny")
 	private String ntotalmny; //合计
@@ -79,6 +81,14 @@ public class GoodsBillBVO extends SuperVO {
 
 	public String getPk_goodsdoc() {
 		return pk_goodsdoc;
+	}
+
+	public Integer getDeamount() {
+		return deamount;
+	}
+
+	public void setDeamount(Integer deamount) {
+		this.deamount = deamount;
 	}
 
 	public void setPk_goodsdoc(String pk_goodsdoc) {
@@ -141,11 +151,11 @@ public class GoodsBillBVO extends SuperVO {
 		this.nprice = nprice;
 	}
 
-	public String getAmount() {
+	public Integer getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 
