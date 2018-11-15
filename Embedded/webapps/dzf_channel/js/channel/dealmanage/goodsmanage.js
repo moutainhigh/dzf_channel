@@ -1,7 +1,9 @@
 var contextPath = DZF.contextPath;
 var status;
 var editIndex;
+var etIndex;
 var flowImgUrls = null;
+var gid;
 $(function(){
 	initGoodstyps();
 	load();
@@ -48,7 +50,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '90',
+			width : '120',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter
@@ -201,8 +203,318 @@ function noteFormat(value){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
+	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
+	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+}
+
+/**
+ * 设置
+ */
+function setup(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+//	var row = queryByID(erow.gid, 0);
+//	if(isEmpty(row)){
+//		return;
+//	}
+	gid = row.gid;
+	$('#setDialog').dialog('open').dialog('center').dialog('setTitle', '商品规格设置');
+	initSetGrid();
+	
+	$('#setgrid').datagrid('appendRow', {
+		gid : gid,
+	});
+	
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/goodsmanage!queryGoodsSet.action',
+		dataTye : 'json',
+		data : {
+			"gid" :gid,
+		},
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				var rows = result.rows;
+				if(rows != null && rows.length > 0){
+					$('#setgrid').datagrid('loadData', rows);
+				}else{
+					etIndex = $('#setgrid').datagrid('getRows').length - 1;
+					$('#setgrid').datagrid('beginEdit',etIndex);
+				}
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+}
+
+/**
+ * 设置表格初始化
+ */
+function initSetGrid(){
+	$("#setgrid").datagrid({
+		height : 300,
+		width : "100%",
+		singleSelect : false,
+		columns : [ [ {
+			width : '100',
+			title : '主键',
+			field : 'specid',
+			hidden : true
+		}, {
+			width : '100',
+			title : '时间戳',
+			field : 'updatets',
+			hidden : true
+		}, {
+			field : 'gid',
+			title : '主表主键',
+			hidden : true,
+			editor : {
+				type : 'textbox',
+			}
+		}, {
+			field : 'spec',
+			title : '规格',
+			width : "180",
+			align : 'eft',
+			halign : 'center',
+			editor : {
+				type : 'textbox',
+				options : {
+					height : 31,
+					validType : [ 'length[0,25]' ],
+					invalidMessage : "规格最大长度不能超过25",
+				}
+			}
+		}, {
+			field : 'type',
+			title : '型号',
+			width : "180",
+			align : 'left',
+			halign : 'center',
+			editor : {
+				type : 'textbox',
+				options : {
+					height : 31,
+					validType : [ 'length[0,25]' ],
+					invalidMessage : "型号最大长度不能超过25",
+				}
+			}
+		}, {
+        	width : '100',
+			field : 'button',
+			title : '操作',
+        	formatter : operatorLink
+		},] ],
+		onDblClickRow : function(rowIndex, rowData) {
+			if(rowData.beused == "是"){
+				Public.tips({
+					content : "规格或型号已被入库单引用，不可修改",
+					type : 2
+				});
+			}else{
+				endBodyEdit();
+				if(isCanAdd()){
+					if (isEmpty(etIndex)) {
+						$("#setgrid").datagrid('beginEdit', rowIndex);
+						etIndex = rowIndex;
+					}  
+				}else{
+					Public.tips({
+						content : "规格和型号不能同时为空",
+						type : 2
+					});
+				}
+			}
+		},
+	});
+}
+
+/**
+ * 卡片grid按钮初始化
+ * @param val
+ * @param row
+ * @param index
+ * @returns {String}
+ */
+function operatorLink(val, row, index){  
+	var add = '<div><a href="javascript:void(0)" id="addBut" onclick="addRow()">'+
+		'<img title="增行" style="margin:0px 20% 0px 20%;" src="../../images/add.png" /></a>';
+	var del = '<a href="javascript:void(0)" id="delBut" onclick="delRow(this)">'+
+		'<img title="删行" src="../../images/del.png" /></a></div>';
+	if(row.beused == "是"){
+		return add;
+	}else{
+		return add + del;  
+	}
+}
+
+/**
+ * 设置-增行
+ */
+function addRow(){
+	endBodyEdit();
+	if(isCanAdd()){
+		$('#setgrid').datagrid('appendRow', {
+			gid : gid,
+		});
+		etIndex = $('#setgrid').datagrid('getRows').length - 1;
+		$('#setgrid').datagrid('beginEdit',etIndex);
+	}else{
+		Public.tips({
+			content : "规格和型号不能同时为空",
+			type : 2
+		});
+		return;
+	}
+}
+
+/**
+ * 行编辑结束事件
+ */
+function endBodyEdit(){
+    var rows = $("#setgrid").datagrid('getRows');
+ 	for ( var i = 0; i < rows.length; i++) {
+ 		$("#setgrid").datagrid('endEdit', i);
+ 	}
+};
+
+/**
+ * 能否增行
+ * @returns {Boolean}
+ */
+function isCanAdd() {
+    if (etIndex == undefined) {
+        return true;
+    }
+    var etRow = $('#setgrid').datagrid('getData').rows[etIndex];
+    if (isEmpty(etRow.spec) && isEmpty(etRow.type)) {
+    	return false;
+    } else {
+        $('#setgrid').datagrid('endEdit', etIndex);
+        etIndex = undefined;
+        return true;
+    }
+}
+
+/**
+ * 设置-删行
+ */
+function delRow(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	endBodyEdit();
+	if(tindex == etIndex){
+		var rows = $('#setgrid').datagrid('getRows');
+		if(rows && rows.length > 1){
+			$('#setgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
+		}
+	}else{
+		if(isCanAdd()){
+			var rows = $('#setgrid').datagrid('getRows');
+			if(rows && rows.length > 1){
+				$('#setgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
+			}
+		}else{
+			Public.tips({
+				content : "请先录入必输项",
+				type : 2
+			});
+			return;
+		}
+	}
+}
+
+/**
+ * 设置-保存
+ */
+function setSave(){
+	endBodyEdit();
+	
+	var postdata = new Object();
+	var adddata = "";
+	var deldata = "";
+	var upddata = "";
+	//新增数据		
+	var insRows = $('#setgrid').datagrid('getChanges', 'inserted');
+	if(insRows != null && insRows.length > 0){
+		for(var j = 0;j <insRows.length; j++){
+			adddata = adddata + JSON.stringify(insRows[j]);					
+		}
+	}
+	//删除数据	
+	var delRows = $('#setgrid').datagrid('getChanges', 'deleted');
+	if(delRows != null && delRows.length > 0){
+		for(var j = 0;j <delRows.length; j++){
+			deldata = deldata + JSON.stringify(delRows[j]);
+		}
+	}
+	//更新数据
+	var updRows = $('#setgrid').datagrid('getChanges', 'updated');
+	if(updRows != null && updRows.length > 0){
+		for(var j = 0;j< updRows.length; j++){
+			upddata = upddata + JSON.stringify(updRows[j]);
+		}			
+	}
+	
+	var body = "";
+	//界面数据
+	var rows = $('#setgrid').datagrid('getRows');
+	if(rows != null && rows.length > 0){
+		for(var j = 0;j< rows.length; j++){
+			body = body + JSON.stringify(rows[j]); 
+		}
+	}
+	
+	postdata["adddata"] = adddata;
+	postdata["deldata"] = deldata;
+	postdata["upddata"] = upddata;
+	postdata["body"] = body;
+	onSaveSet(postdata);
+}
+
+/**
+ * 设置-提交后台保存
+ * @param postdata
+ */
+function onSaveSet(postdata){
+	$.messager.progress({
+		text : '数据操作中....'
+	});
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + '/dealmanage/goodsmanage!saveSet.action',
+		data : postdata,
+		traditional : true,
+		async : false,
+		success : function(result) {
+			$.messager.progress('close');
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				});
+			} else {
+				Public.tips({
+					content : result.msg,
+				});
+				$('#setDialog').dialog('close');
+			}
+		},
+	});
+}
+
+/**
+ * 设置-取消
+ */
+function setCancel(){
+	$('#setDialog').dialog('close');
 }
 
 /**

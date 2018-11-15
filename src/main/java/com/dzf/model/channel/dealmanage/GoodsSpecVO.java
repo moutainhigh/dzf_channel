@@ -2,6 +2,7 @@ package com.dzf.model.channel.dealmanage;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
@@ -32,6 +33,17 @@ public class GoodsSpecVO extends SuperVO {
 	private Integer dr; // 删除标记
 
 	private DZFDateTime ts; // 时间
+	
+	@FieldAlias("beused")
+	private DZFBoolean isbeused;//是否被入库单引用
+
+	public DZFBoolean getIsbeused() {
+		return isbeused;
+	}
+
+	public void setIsbeused(DZFBoolean isbeused) {
+		this.isbeused = isbeused;
+	}
 
 	public String getPk_goodsspec() {
 		return pk_goodsspec;

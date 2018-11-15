@@ -2,8 +2,10 @@ package com.dzf.service.channel.dealmanage;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
+import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -106,4 +108,20 @@ public interface IGoodsManageService {
 	 * @throws DZFWarpException
 	 */
 	public List<ComboBoxVO> queryComboBox() throws DZFWarpException;
+	
+	/**
+	 * 保存商品设置
+	 * @param datamap
+	 * @param pk_corp
+	 * @throws DZFWarpException
+	 */
+	public void saveSet(Map<String, GoodsSpecVO[]> datamap, String pk_corp) throws DZFWarpException;
+	
+	/**
+	 * 查询商品设置
+	 * @param pk_goods
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<GoodsSpecVO> queryGoodsSet(String pk_goods) throws DZFWarpException;
 }

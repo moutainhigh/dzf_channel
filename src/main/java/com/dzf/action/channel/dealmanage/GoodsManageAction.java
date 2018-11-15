@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
+import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
@@ -444,4 +446,115 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		writeJson(grid);
 	}
 	
+	/**
+	 * 查询商品设置
+	 */
+	public void queryGoodsSet() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			String pk_goods = getRequest().getParameter("gid");
+			List<GoodsSpecVO> list = manser.queryGoodsSet(pk_goods);
+			if (list != null && list.size() > 0) {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			} else {
+				grid.setRows(new ArrayList<GoodsSpecVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 保存设置
+	 */
+	public void saveSet(){
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
+			Map<String, GoodsSpecVO[]> datamap = getDataMap();
+			manser.saveSet(datamap, getLogin_corp());
+			json.setSuccess(true);
+			json.setMsg("保存成功");
+			writeLogRecord(LogRecordEnum.OPE_ADMIN_ZLJJ.getValue(),"新增客户资料",ISysConstants.SYS_1);
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "保存失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 获取操作数据
+	 * @return
+	 */
+	private Map<String, GoodsSpecVO[]> getDataMap() {
+		String addfile = getRequest().getParameter("adddata"); // 新增数据
+		Map<String, GoodsSpecVO[]> bodymap = new HashMap<String, GoodsSpecVO[]>();
+		Map<String, String> bmapping = FieldMapping.getFieldMapping(new GoodsSpecVO());
+
+		GoodsSpecVO[] addBVOs = null;
+		GoodsSpecVO[] updBVOs = null;
+		GoodsSpecVO[] delBVOs = null;
+		if (!StringUtil.isEmpty(addfile)) {
+			addfile = addfile.replace("}{", "},{");
+			addfile = "[" + addfile + "]";
+			JSONArray addarray = (JSONArray) JSON.parseArray(addfile);
+			addBVOs = DzfTypeUtils.cast(addarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
+			if (addBVOs != null && addBVOs.length > 0) {
+				for (GoodsSpecVO bvo : addBVOs) {
+					bvo.setPk_corp(getLogin_corp());
+					bvo.setDr(0);
+					if(StringUtil.isEmpty(bvo.getPk_goods())){
+						throw new BusinessException("商品主键不能为空");
+					}
+				}
+			}
+			bodymap.put("addbvos", addBVOs);
+		}
+		String updfile = getRequest().getParameter("upddata"); // 更新数据
+		if (!StringUtil.isEmpty(updfile)) {
+			updfile = updfile.replace("}{", "},{");
+			updfile = "[" + updfile + "]";
+			JSONArray updarray = (JSONArray) JSON.parseArray(updfile);
+			updBVOs = DzfTypeUtils.cast(updarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
+			bodymap.put("updbvos", updBVOs);
+		}
+		String delfile = getRequest().getParameter("deldata"); // 删除数据
+		if (!StringUtil.isEmpty(delfile)) {
+			delfile = delfile.replace("}{", "},{");
+			delfile = "[" + delfile + "]";
+			JSONArray delarray = (JSONArray) JSON.parseArray(delfile);
+			delBVOs = DzfTypeUtils.cast(delarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
+			bodymap.put("delbvos", delBVOs);
+		}
+
+		String body = getRequest().getParameter("body"); // 新增数据
+		body = body.replace("}{", "},{");
+		body = "[" + body + "]";
+		JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+		GoodsSpecVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, GoodsSpecVO[].class,
+				JSONConvtoJAVA.getParserConfig());
+
+		if ((addBVOs == null || addBVOs.length == 0) && (updBVOs == null || updBVOs.length == 0)
+				&& (delBVOs == null || delBVOs.length == 0) && (bodyVOs == null || bodyVOs.length == 0)) {
+			throw new BusinessException("表体数据不能为空");
+		}
+		return bodymap;
+	}
 }

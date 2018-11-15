@@ -238,6 +238,19 @@
 		</div>
 		<!-- 详情对话框  end-->
 		
+		<!-- 设置对话框  begin-->
+		<div id="setDialog" class="easyui-dialog" style="width:480px;height:460px;padding-top:30px;" 
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+			<div id="dataGrid" style="width:100%;height:300px;display:inline-block;">
+				<table id="setgrid"></table>
+		    </div>
+			<div style="text-align:center;margin-top:40px;">
+			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="setSave()">保存</a> 
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="setCancel()">取消</a>
+			</div>
+		</div>
+		<!-- 设置对话框  end-->
+		
 	</div>
 </body>
 </html>

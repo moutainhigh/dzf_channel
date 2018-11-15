@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,10 @@ import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.file.fastdfs.AppException;
 import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
+import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
+import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
@@ -28,9 +31,11 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
@@ -563,6 +568,82 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		sql.append(" WHERE nvl(dr, 0) = 0 \n");
 		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(ComboBoxVO.class));
+	}
+
+	@Override
+	public void saveSet(Map<String, GoodsSpecVO[]> datamap, String pk_corp) throws DZFWarpException {
+		if (datamap == null || datamap.isEmpty()) {
+			throw new BusinessException("操作数据不能为空");
+		}
+		GoodsSpecVO[] addVOs = datamap.get("addbvos");
+		GoodsSpecVO[] updVOs = datamap.get("updbvos");
+		GoodsSpecVO[] delVOs = datamap.get("delbvos");
+		if (addVOs != null && addVOs.length > 0) {
+			singleObjectBO.insertVOArr(pk_corp, addVOs);
+		}
+		if (updVOs != null && updVOs.length > 0) {
+			singleObjectBO.updateAry(updVOs, new String[] { "invspec", "invtype" });
+		}
+		if(delVOs != null && delVOs.length > 0){
+			List<String> pklist = new ArrayList<String>();
+			for(GoodsSpecVO dvo: delVOs){
+				pklist.add(dvo.getPk_goodsspec());
+			}
+			StringBuffer sql = new StringBuffer();
+			sql.append(" DELETE FROM cn_goodsspec WHERE ");
+			String where = SqlUtil.buildSqlForIn("pk_goodsspec", pklist.toArray(new String[0]));
+			sql.append(where);
+			singleObjectBO.executeUpdate(sql.toString(), null);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GoodsSpecVO> queryGoodsSet(String pk_goods) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT *  \n");
+		sql.append("  FROM cn_goodsspec  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_goods = ? \n");
+		spm.addParam(pk_goods);
+		List<GoodsSpecVO> retlist = (List<GoodsSpecVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsSpecVO.class));
+		if(retlist != null && retlist.size() > 0){
+			List<String> pklist = queryBeUsedPk(pk_goods);
+			for(GoodsSpecVO cvo : retlist){
+				if(pklist.contains(cvo.getPk_goodsspec())){
+					cvo.setIsbeused(DZFBoolean.TRUE);
+				}
+			}
+		}
+		return retlist;
+	}
+	
+	/**
+	 * 查询被入库单子表引用的规格主键
+	 * @param pk_goods
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> queryBeUsedPk(String pk_goods) throws DZFWarpException {
+		List<String> list = new ArrayList<String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT DISTINCT pk_goodsspec  \n");
+		sql.append("  FROM cn_stockin_b  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_goods = ? \n");
+		spm.addParam(pk_goods);
+		List<StockInBVO> stlist = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockInBVO.class));
+		if (stlist != null && stlist.size() > 0) {
+			for (StockInBVO bvo : stlist) {
+				list.add(bvo.getPk_goodsspec());
+			}
+		}
+		return list;
 	}
 	
 }
