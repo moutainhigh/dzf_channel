@@ -70,13 +70,10 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_goodstype(), uuid, 60);
-			if(!checkIsQuote(vo)){
+			checkIsQuote(vo);
 				SQLParameter spm =new SQLParameter();
 				spm.addParam(vo.getPk_goodstype());
 				singleObjectBO.executeUpdate("delete from cn_goodstype  where pk_goodstype=? ", spm);
-			}else{
-				throw new BusinessException("该商品分类已被商品引用,不可删除!");
-			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -93,8 +90,7 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 	 * @param vo
 	 * @return
 	 */
-	private boolean checkIsOnly(GoodsTypeVO vo) {
-		boolean ret = false;
+	private void checkIsOnly(GoodsTypeVO vo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select count(1) as count from cn_goodstype");
@@ -108,9 +104,9 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		sp.addParam(vo.getVname());
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
-		if(num <= 0)
-			ret = true;
-		return ret;
+		if(num > 0){
+			throw new BusinessException("分类名称重复,请重新输入!");
+		}
 	}
 	
 	/**
@@ -118,8 +114,7 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 	 * @param vo
 	 * @return
 	 */
-	private boolean checkIsQuote(GoodsTypeVO vo) {
-		boolean ret = true;
+	private void checkIsQuote(GoodsTypeVO vo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select count(1) as count from cn_goods");
@@ -129,9 +124,9 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		sp.addParam(vo.getPk_goodstype());
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
-		if(num <= 0)
-			ret = false;
-		return ret;
+		if(num > 0){
+			throw new BusinessException("该商品分类已被商品引用,不可删除!");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
