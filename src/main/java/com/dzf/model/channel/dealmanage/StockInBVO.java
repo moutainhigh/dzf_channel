@@ -30,7 +30,7 @@ public class StockInBVO extends SuperVO {
 	@FieldAlias("wareid")
 	private String pk_warehouse;//仓库主键
 	
-	@FieldAlias("goodsid")
+	@FieldAlias("gid")
 	private String pk_goods;//商品主键
 	
 	@FieldAlias("specid")

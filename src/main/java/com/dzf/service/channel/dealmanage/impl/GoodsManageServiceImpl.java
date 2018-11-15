@@ -16,6 +16,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.file.fastdfs.AppException;
 import com.dzf.file.fastdfs.FastDfsUtil;
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
@@ -561,13 +562,19 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ComboBoxVO> queryComboBox() throws DZFWarpException {
+	public List<GoodsBoxVO> queryComboBox() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_goods AS id, vgoodsname AS name  \n");
-		sql.append("  FROM cn_goods  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0 \n");
-		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
-				new BeanListProcessor(ComboBoxVO.class));
+		sql.append("SELECT c.pk_goodsspec AS id,  \n") ;
+		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS name,  \n") ; 
+		sql.append("       c.pk_goods,  \n") ; 
+		sql.append("       c.invspec,  \n") ; 
+		sql.append("       c.invtype  \n") ; 
+		sql.append("  FROM cn_goodsspec c  \n") ; 
+		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods  \n") ; 
+		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0 \n");
+		return (List<GoodsBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(GoodsBoxVO.class));
 	}
 
 	@Override

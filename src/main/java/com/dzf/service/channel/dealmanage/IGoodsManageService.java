@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;
 import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
@@ -107,7 +108,7 @@ public interface IGoodsManageService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ComboBoxVO> queryComboBox() throws DZFWarpException;
+	public List<GoodsBoxVO> queryComboBox() throws DZFWarpException;
 	
 	/**
 	 * 保存商品设置
