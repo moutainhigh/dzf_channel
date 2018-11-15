@@ -2,6 +2,7 @@ package com.dzf.service.channel.dealmanage;
 
 import java.util.List;
 
+import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
 import com.dzf.model.channel.stock.SupplierVO;
 import com.dzf.model.pub.QryParamVO;
@@ -66,5 +67,12 @@ public interface IStockInService {
 	 * @throws DZFWarpException
 	 */
 	public StockInVO updateconfirm(StockInVO stvo, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 保存供应商
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	public void saveSupplier(StockInVO pamvo) throws DZFWarpException;
 
 }

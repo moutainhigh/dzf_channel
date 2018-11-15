@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
@@ -291,7 +292,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 	}
 	
 	/**
-	 * 确认出库
+	 * 确认入库
 	 */
 	public void confirmData() {
 		Json json = new Json();
@@ -344,6 +345,35 @@ public class StockInAction extends BaseAction<StockInVO> {
 			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 保存供应商
+	 */
+	public void saveSupplier() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
+			if (data == null) {
+				throw new BusinessException("数据信息不能为空");
+			}
+			data.setPk_corp(getLogincorppk());
+			data.setCoperatorid(getLoginUserid());
+			stockinser.saveSupplier(data);
+			json.setSuccess(true);
+			json.setMsg("保存成功");
+		} catch (Exception e) {
+			json.setSuccess(false);
+			json.setMsg("保存失败");
+			printErrorLog(json, log, e, "保存失败");
 		}
 		writeJson(json);
 	}

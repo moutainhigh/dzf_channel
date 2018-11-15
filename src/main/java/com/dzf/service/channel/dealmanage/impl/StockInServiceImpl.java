@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
+import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
 import com.dzf.model.channel.stock.StockNumVO;
@@ -369,7 +370,9 @@ public class StockInServiceImpl implements IStockInService {
 			}
 			stvo.setVstatus(IStatusConstant.ISTOCKINSTATUS_2);
 			stvo.setUpdatets(new DZFDateTime());
-			singleObjectBO.update(stvo, new String[]{"vstatus"});
+			stvo.setVconfirmid(cuserid);
+			stvo.setDconfirmtime(new DZFDateTime());
+			singleObjectBO.update(stvo, new String[]{"vstatus","vconfirmid","dconfirmtime"});
 			return stvo;
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -456,6 +459,82 @@ public class StockInServiceImpl implements IStockInService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_stocknum(), uuid);
 		}
+	}
+
+	@Override
+	public void saveSupplier(StockInVO pamvo) throws DZFWarpException {
+		String uuid = UUID.randomUUID().toString();
+		try {
+			boolean flag = isMeasExist(pamvo);
+			if(flag){
+				throw new BusinessException("供应商"+pamvo.getVmemo()+"已经存在");
+			}
+			LockUtil.getInstance().tryLockKey("cn_supplier", pamvo.getVmemo(), uuid, 120);
+			SupplierVO supvo = new SupplierVO();
+			supvo.setPk_corp(pamvo.getPk_corp());
+			supvo.setVname(pamvo.getVmemo());
+			supvo.setCoperatorid(pamvo.getCoperatorid());
+			supvo.setDoperatedate(new DZFDate());
+			supvo.setDr(0);
+			supvo.setVcode(getSupcode(supvo));
+			singleObjectBO.saveObject(pamvo.getPk_corp(), supvo);
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_supplier", pamvo.getVmemo(), uuid);
+		}
+	}
+	
+	/**
+	 * 获取供应商编码
+	 * @param hvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getSupcode(SupplierVO supvo) throws DZFWarpException {
+		String code;
+		String str = "gys";
+		MaxCodeVO mcvo = new MaxCodeVO();
+		mcvo.setTbName(supvo.getTableName());
+		mcvo.setFieldName(supvo.getVcode());
+		mcvo.setPk_corp(supvo.getPk_corp());
+		mcvo.setBillType(str);
+		mcvo.setCorpIdField("pk_corp");
+		mcvo.setDiflen(3);
+		try {
+			code = billCodeSer.getDefaultCode(mcvo);
+		} catch (Exception e) {
+			throw new BusinessException("获取单据编码失败");
+		}
+		return code;
+	}
+	
+	/**
+	 * 判断供应商是否存在
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean isMeasExist(StockInVO pamvo) throws DZFWarpException {
+		SQLParameter sp = new SQLParameter();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select vname from cn_supplier where nvl(dr,0) = 0 ");
+		if (!StringUtil.isEmptyWithTrim(pamvo.getVmemo())) {
+			sql.append(" and vname = ? ");
+			sp.addParam(pamvo.getVmemo());
+		} else {
+			throw new BusinessException("供应商名称不能为空");
+		}
+		List<GoodsVO> list = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(GoodsVO.class));
+		if (list != null && list.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

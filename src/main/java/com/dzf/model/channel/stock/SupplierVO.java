@@ -2,6 +2,7 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
@@ -29,7 +30,7 @@ public class SupplierVO extends SuperVO {
     private String coperatorid;
     
     @FieldAlias("operdate")
-    private String doperatedate;
+    private DZFDate doperatedate;
 
     @FieldAlias("dr")
     private Integer dr;// 删除标记
@@ -37,7 +38,15 @@ public class SupplierVO extends SuperVO {
     @FieldAlias("ts")
     private DZFDateTime ts;// 时间戳
 
-    public String getPk_supplier() {
+    public DZFDate getDoperatedate() {
+		return doperatedate;
+	}
+
+	public void setDoperatedate(DZFDate doperatedate) {
+		this.doperatedate = doperatedate;
+	}
+
+	public String getPk_supplier() {
         return pk_supplier;
     }
 
@@ -75,14 +84,6 @@ public class SupplierVO extends SuperVO {
 
     public void setCoperatorid(String coperatorid) {
         this.coperatorid = coperatorid;
-    }
-
-    public String getDoperatedate() {
-        return doperatedate;
-    }
-
-    public void setDoperatedate(String doperatedate) {
-        this.doperatedate = doperatedate;
     }
 
     public Integer getDr() {
