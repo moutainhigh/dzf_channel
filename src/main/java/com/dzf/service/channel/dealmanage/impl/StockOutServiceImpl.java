@@ -21,11 +21,13 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -61,10 +63,15 @@ public class StockOutServiceImpl implements IStockOutService{
 		List<StockOutVO> list = (List<StockOutVO>) multBodyObjectBO.queryDataPage(StockOutVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		UserVO uvo = null;
+		CorpVO cvo = null;
 		for (StockOutVO stockOutVO : list) {
 			uvo = UserCache.getInstance().get(stockOutVO.getCoperatorid(), null);
 			if (uvo != null) {
 				stockOutVO.setCoperatname(uvo.getUser_name());
+			}
+			cvo = CorpCache.getInstance().get(null, stockOutVO.getPk_corp());
+			if(cvo !=null){
+				stockOutVO.setCorpname(cvo.getUnitname());
 			}
 		}
 		return list;
@@ -78,8 +85,14 @@ public class StockOutServiceImpl implements IStockOutService{
 		}
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		corpsql.append("SELECT * FROM cn_stockout_b ");
-		corpsql.append(" where nvl(dr,0)= 0 and pk_stockout= ? ");
+		corpsql.append("SELECT c.vbillcode,g.vgoodsname,");
+		corpsql.append(" g.pk_goodsspec,g.invspec,g.invtype,");
+		corpsql.append(" s.nnum,s.nmny");
+		corpsql.append("  FROM cn_stockout_b s");
+		corpsql.append(" left join cn_goodsbill_b g on s.pk_goodsbill_b = g.pk_goodsbill_b ");
+		corpsql.append(" left join cn_goodsbill c on g.pk_goodsbill = c.pk_goodsbill");
+		corpsql.append(" where nvl(s.dr,0)= 0 and nvl(g.dr,0)=0 and nvl(c.dr,0)=0 ");
+		corpsql.append(" and pk_stockout= ? ");
 //		corpsql.append(" order by ts asc,pk_dealstep_b asc");
 		sp.addParam(soutid);
 		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
@@ -93,20 +106,20 @@ public class StockOutServiceImpl implements IStockOutService{
 		SQLParameter spm = new SQLParameter();
 		sql.append("select c.vbillcode, ");
 		sql.append("       b.pk_goodsbill_b, ");
-		sql.append("       b.pk_goods ");
+		sql.append("       b.pk_goods, ");
 		sql.append("       b.pk_goodsspec, ");
 		sql.append("       b.invspec, ");
 		sql.append("       b.invtype, ");
 		sql.append("       b.vgoodsname, ");
-		sql.append("       b.amount nnum");
-		sql.append("       b.nprice ");
+		sql.append("       b.amount nnum,");
+		sql.append("       b.nprice, ");
 		sql.append("       b.ntotalmny ");
 		sql.append("  from cn_goodsbill_b b ");
 		sql.append("  left join cn_goodsbill c on b.pk_goodsbill = c.pk_goodsbill ");
 		sql.append(" where nvl(b.dr, 0) = 0 ");
 		sql.append("   and nvl(c.dr, 0) = 0 ");
 		sql.append("   and c.vstatus in (1, 2, 3) ");
-		sql.append("   and nvl(b.deamount, 0) = 0 ");
+//		sql.append("   and nvl(b.deamount, 0) = 0 ");
 		sql.append("   and b.pk_corp = ? ");
 		spm.addParam(pk_corp);
 		List<StockOutBVO> vos=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
@@ -116,6 +129,7 @@ public class StockOutServiceImpl implements IStockOutService{
 	@Override
 	public void saveNew(StockOutVO vo) throws DZFWarpException {
 		vo.setVstatus(0);
+		vo.setDoperatedate(new DZFDateTime());
 		setDefaultCode(vo);
 		multBodyObjectBO.saveMultBObject(vo.getFathercorp(), vo);
 	}
@@ -308,8 +322,8 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("select c.vbillcode,");
 		sql.append("       c.pk_stockout,");
 		sql.append("       c.pk_corp,");
-		sql.append("       c.logsticcom,");
-		sql.append("       c.logsticnum,");
+		sql.append("       c.logisticsunit,");
+		sql.append("       c.fastcode,");
 		sql.append("       c.vmemo,");
 		sql.append("       c.vstatus,");
 		sql.append("       c.coperatorid,");

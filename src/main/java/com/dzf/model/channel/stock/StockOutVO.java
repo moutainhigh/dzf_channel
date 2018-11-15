@@ -238,7 +238,7 @@ public class StockOutVO extends MultSuperVO {
     
 	@Override
 	public String[] getTableCodes() {
-	    return new String[] { "pk_stockout_b"};
+	    return new String[] { "cn_stockout_b"};
 	}
 
 }

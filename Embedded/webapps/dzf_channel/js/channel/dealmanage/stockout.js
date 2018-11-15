@@ -85,10 +85,7 @@ function initCard(){
 		height : 220,
 		singleSelect : true,
 		columns : [ [ 
-  		 {
-   			field : 'ck',
-   			checkbox : true 
-		}, {
+		{
 			width : '100',
 			title : '订单编码',
 			field : 'vcode',
@@ -250,7 +247,7 @@ function load(){
             halign : 'center',
 			align : 'center',
 		}, {
-			width : '100',
+			width : '150',
 			title : '操作列',
 			field : 'operate',
             halign : 'center',
@@ -265,9 +262,9 @@ function load(){
 }
 
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + row.soutid + ')">编辑</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(' + row+ ')">删除</a>'+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="updateDeliver(' + row+ ')">确认收货</a>';
+	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a> '+
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="updateDeliver(\''+index+'\')">确认收货</a>';
 }
 
 function add(){
@@ -339,22 +336,22 @@ function addSave(){
 		return;
 	}
 	var nmny;
-	var body = "";
+	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
 	for (var i = 0; i < rows.length; i++) {
-		body = body + JSON.stringify(rows[i]);
+		childBody = childBody + JSON.stringify(rows[i]);
 		nmny =getFloatValue(rows[i].nmny*rows[i].nnum)
 	}
 	$("#nmny").numberbox('setValue',nmny);
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#stockout')));
-	postdata["body"] = childBody1;
+	postdata["body"] = childBody;
 	parent.$.messager.progress({
 		text : '保存中....'
 	});
 	$.ajax({
 		type : 'POST',
-		url :	contextPath + '/dealmanage/stockout!query.action',
+		url :	contextPath + '/dealmanage/stockout!save.action',
 		data : postdata,
 		dataType : 'json',
 		success : function(result) {
@@ -488,10 +485,11 @@ function commit(rows){
 	postdata["fcode"] = $("#fcode").textbox('getValue');
 	for(var i=0;i<rows.length;i++){
 		delete rows[i].tableCodes;
-		postdata["head"] = rows[i];
+		postdata["head"] = JSON.stringify(rows[i]);
 		updateCommit(postdata);
 	}
 	parent.$.messager.progress('close');
+	$('#logDialog').dialog('close');
 	if(failen==0){
 		Public.tips({
 			content :  "成功"+(rows.length)+"条",
@@ -523,7 +521,8 @@ function updateCommit(postdata){
 	});
 }
 
-function delOrder(row){
+function delOrder(index){
+	var row=$('#grid').datagrid('getRows')[index];
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -548,7 +547,8 @@ function delOrder(row){
 	});
 }
 
-function updateDeliver(row){
+function updateDeliver(index){
+	var row=$('#grid').datagrid('getRows')[index];
 	$.ajax({
 		type : 'POST',
 		async : false,

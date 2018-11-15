@@ -143,15 +143,15 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
 			StockOutVO headvo = requestDealStep(getRequest());
-			if (data == null) {
+			if (headvo == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
-			if(StringUtil.isEmpty(data.getPk_stockout())){
-				data.setPk_corp(getLogincorppk());
-				data.setCoperatorid(getLoginUserid());
-				stockOut.saveNew(data);
+			if(StringUtil.isEmpty(headvo.getPk_stockout())){
+				headvo.setFathercorp(getLogincorppk());
+				headvo.setCoperatorid(getLoginUserid());
+				stockOut.saveNew(headvo);
 			}else{
-				stockOut.saveEdit(data);
+				stockOut.saveEdit(headvo);
 			}
 			json.setSuccess(true);
 			json.setMsg("保存成功");
@@ -179,7 +179,6 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
 			StockOutVO pamvo = new StockOutVO();
 			pamvo = (StockOutVO) DzfTypeUtils.cast(getRequest(), pamvo);
-			pamvo.setPk_corp(getLogincorppk());
 			stockOut.delete(pamvo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");

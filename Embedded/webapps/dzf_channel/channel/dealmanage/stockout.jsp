@@ -101,7 +101,7 @@
 				<div class="time_col time_colp11">
 					<div style="width:100%;display: inline-block;">
 						<label style="text-align:right;width:11.2%;vertical-align:middle;">备注：</label>
-						<textarea id="vmemo" class="easyui-textbox" name="vmemo" data-options="multiline:true,validType:'length[0,50]'" style="width:84%;height:40px;"></textarea>
+						<textarea id="memo" class="easyui-textbox" name="memo" data-options="multiline:true,validType:'length[0,50]'" style="width:84%;height:40px;"></textarea>
 					</div>
 				</div>
 				<div class="grid-wrap" >
