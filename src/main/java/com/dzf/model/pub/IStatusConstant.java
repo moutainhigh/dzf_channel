@@ -118,4 +118,11 @@ public interface IStatusConstant {
 	public static int IQUDAO = 1;
 	public static int IPEIXUN = 2;
 	public static int IYUNYING = 3;
+	
+	/** 入库单状态  1：待确认；2：已确认 */
+	public static int ISTOCKINSTATUS_1 = 1;
+	public static int ISTOCKINSTATUS_2 = 2;
+	
+	/** 仓库主键 */
+	public static String CK_ID = "00000100000000000000CK01";
 }

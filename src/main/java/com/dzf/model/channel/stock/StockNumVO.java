@@ -2,6 +2,7 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
 /**
@@ -14,14 +15,24 @@ import com.dzf.pub.lang.DZFDateTime;
 public class StockNumVO extends SuperVO {
 
     private String pk_stocknum;
+    
     private String pk_corp;
+    
     private String pk_warehouse;
+    
     private String pk_goods;
+    
+    private String pk_goodsspec;//规格型号ID
+    
     private Integer istocknum;
+    
     private Integer ioutnum;
+    
     private Integer isellnum;
+    
     private String coperatorid;
-    private String doperatedate;
+    
+    private DZFDate doperatedate;
 
     @FieldAlias("dr")
     private Integer dr;// 删除标记
@@ -29,7 +40,15 @@ public class StockNumVO extends SuperVO {
     @FieldAlias("ts")
     private DZFDateTime ts;// 时间戳
 
-    public String getPk_stocknum() {
+    public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
+
+	public String getPk_stocknum() {
         return pk_stocknum;
     }
 
@@ -93,15 +112,15 @@ public class StockNumVO extends SuperVO {
         this.coperatorid = coperatorid;
     }
 
-    public String getDoperatedate() {
-        return doperatedate;
-    }
+    public DZFDate getDoperatedate() {
+		return doperatedate;
+	}
 
-    public void setDoperatedate(String doperatedate) {
-        this.doperatedate = doperatedate;
-    }
+	public void setDoperatedate(DZFDate doperatedate) {
+		this.doperatedate = doperatedate;
+	}
 
-    public Integer getDr() {
+	public Integer getDr() {
         return dr;
     }
 

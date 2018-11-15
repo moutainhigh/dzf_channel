@@ -40,7 +40,7 @@ public class StockInVO extends SuperVO {
 	@FieldAlias("conftime")
 	private DZFDateTime dconfirmtime;//确认时间
 	
-	@FieldAlias("coperid")
+	@FieldAlias("operid")
 	private String coperatorid;//录入人
 	
 	@FieldAlias("opertime")
