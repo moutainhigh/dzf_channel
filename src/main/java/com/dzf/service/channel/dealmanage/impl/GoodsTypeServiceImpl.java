@@ -124,7 +124,7 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 		SQLParameter sp = new SQLParameter();
 		sql.append("select count(1) as count from cn_goods");
 		sql.append(" where nvl(dr,0) = 0 and pk_corp=? ");
-		sql.append(" and pk_goodstype != ?");
+		sql.append(" and pk_goodstype = ?");
 		sp.addParam(vo.getPk_corp());
 		sp.addParam(vo.getPk_goodstype());
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
