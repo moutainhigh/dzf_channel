@@ -929,30 +929,30 @@ function confirm(){
 }
 
 /**
- * 添加单位
+ * 添加供应商
  */
-function addMeas(){
-	$('#jlDialog').dialog('open').dialog('center').dialog('setTitle', '商品计量单位');
-	$('#meas_add').form('clear');
+function addSupplier(){
+	$('#supDlg').dialog('open').dialog('center').dialog('setTitle', '新增供应商');
+	$('#supForm').form('clear');
 }
 
 /**
- * 计量单位-保存
+ * 新增供应商-保存
  */
 function measSave(){
-	if ($("#meas_add").form('validate')) {
+	if ($("#supForm").form('validate')) {
 		$.messager.progress({
 			text : '数据保存中，请稍后.....'
 		});
 		
-		$('#meas_add').form('submit', {
-			url : DZF.contextPath + '/dealmanage/goodsmanage!saveMeas.action',
+		$('#supForm').form('submit', {
+			url : DZF.contextPath + '/dealmanage/stockin!saveSupplier.action',
 			success : function(result) {
 				var result = eval('(' + result + ')');
 				$.messager.progress('close');
 				if (result.success) {
-					initMeas();
-					$('#jlDialog').dialog('close');
+					loadGsy();
+					$('#supDlg').dialog('close');
 				} else {
 					Public.tips({
 						content : result.msg,
@@ -971,10 +971,10 @@ function measSave(){
 }
 
 /**
- * 计量单位-取消
+ * 新增供应商-取消
  */
-function measCancel(){
-	$('#jlDialog').dialog('close');
+function supCancel(){
+	$('#supDlg').dialog('close');
 }
 
 
