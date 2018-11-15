@@ -221,10 +221,6 @@ function setup(index){
 	$('#setDialog').dialog('open').dialog('center').dialog('setTitle', '商品规格设置');
 	initSetGrid();
 	
-	$('#setgrid').datagrid('appendRow', {
-		gid : gid,
-	});
-	
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -239,9 +235,15 @@ function setup(index){
 				var rows = result.rows;
 				if(rows != null && rows.length > 0){
 					$('#setgrid').datagrid('loadData', rows);
+//					etIndex = $('#setgrid').datagrid('getRows').length - 1;
+//					$('#setgrid').datagrid('beginEdit',etIndex);
 				}else{
-					etIndex = $('#setgrid').datagrid('getRows').length - 1;
-					$('#setgrid').datagrid('beginEdit',etIndex);
+					$('#setgrid').datagrid('loadData',{ total:0, rows:[]});
+					$('#setgrid').datagrid('appendRow', {
+						gid : gid,
+					});
+					etIndex = 0;
+					$('#setgrid').datagrid('beginEdit', 0);
 				}
 			} else {
 				Public.tips({
