@@ -44,57 +44,17 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		idField : 'gid',
-		frozenColumns : [ [ {
-			field : 'ck',
-			checkbox : true
-		}, {
-			field : 'operate',
-			title : '操作列',
-			width : '120',
-			halign : 'center',
-			align : 'center',
-			formatter : opermatter
-		}, ] ],
-		columns : [ [ {
-			width : '100',
-			title : '主键',
-			field : 'gid',
-			hidden : true
-		}, {
-			width : '100',
-			title : '时间戳',
-			field : 'updatets',
-			hidden : true
-		}, {
-			width : '100',
-			title : '商品分类',
-			field : 'gtypenm',
-			align : 'left',
-            halign : 'center',
-		}, {
-			width : '100',
-			title : '商品编码',
-			field : 'gcode',
-			align : 'left',
-            halign : 'center',
-		}, {
-			width : '200',
-			title : '商品名称',
-			field : 'gname',
-			align : 'left',
-            halign : 'center',
-            formatter:namematter,
-		}, {
-			width : '100',
-			title : '单价',
-			align:'right',
-            halign:'center',
-			field : 'price',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			},
-		}, {
+		frozenColumns : [ [ 
+		    {field : 'ck',checkbox : true}, 
+		    {field : 'operate',title : '操作列',width : '120',halign : 'center',align : 'center',formatter : opermatter},
+		    ] ],
+		columns : [ [ 
+		    {width : '100',title : '主键',field : 'gid',hidden : true}, 
+		    {width : '100',title : '时间戳',field : 'updatets',hidden : true}, 
+		    {width : '100',title : '商品分类',field : 'gtypenm',align : 'left',halign : 'center',}, 
+		    {width : '100',title : '商品编码',field : 'gcode',align : 'left',halign : 'center',}, 
+		    {width : '200',title : '商品名称',field : 'gname',align : 'left',halign : 'center',formatter:namematter,}, 
+		    {
 			width : '60',
 			title : '单位',
 			field : 'mname',
@@ -263,43 +223,25 @@ function initSetGrid(){
 		height : 300,
 		width : "100%",
 		singleSelect : false,
-		columns : [ [ {
-			width : '100',
-			title : '主键',
-			field : 'specid',
-			hidden : true
-		}, {
-			width : '100',
-			title : '时间戳',
-			field : 'updatets',
-			hidden : true
-		}, {
-			field : 'gid',
-			title : '主表主键',
-			hidden : true,
-			editor : {
-				type : 'textbox',
-			}
-		}, {
-			field : 'spec',
-			title : '规格',
-			width : "120",
-			align : 'eft',
-			halign : 'center',
-			editor : {
-				type : 'textbox',
-				options : {
-					height : 31,
-					validType : [ 'length[0,25]' ],
-					invalidMessage : "规格最大长度不能超过25",
+		columns : [ [ 
+		   {width : '100',title : '主键',field : 'specid',hidden : true}, 
+		   {width : '100',title : '时间戳',field : 'updatets',hidden : true}, 
+		   {field : 'gid',title : '主表主键',hidden : true,
+			   editor : {
+				   type : 'textbox',
+			   }
+		   }, 
+		   {field : 'spec',title : '规格',width : "120",align : 'eft',halign : 'center',
+				editor : {
+					type : 'textbox',
+					options : {
+						height : 31,
+						validType : [ 'length[0,25]' ],
+						invalidMessage : "规格最大长度不能超过25",
+					}
 				}
-			}
-		}, {
-			field : 'type',
-			title : '型号',
-			width : "120",
-			align : 'left',
-			halign : 'center',
+		   }, 
+		   {field : 'type',title : '型号',width : "120",align : 'left',halign : 'center',
 			editor : {
 				type : 'textbox',
 				options : {
@@ -308,12 +250,7 @@ function initSetGrid(){
 					invalidMessage : "型号最大长度不能超过25",
 				}
 			}
-		}, {
-			width : '100',
-			title : '单价',
-			align:'right',
-            halign:'center',
-			field : 'price',
+		}, {width : '100',title : '单价',align:'right',halign:'center',field : 'price',
 			formatter : function(value,row,index){
 				if(value == 0)return "0.00";
 				return formatMny(value);
@@ -324,10 +261,7 @@ function initSetGrid(){
 					height : 31,
 				}
 			}
-		}, {
-        	width : '100',
-			field : 'button',
-			title : '操作',
+		}, {width : '100',field : 'button',title : '操作',
         	formatter : operatorLink
 		},] ],
 		onDblClickRow : function(rowIndex, rowData) {

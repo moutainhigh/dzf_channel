@@ -105,20 +105,27 @@
 					
 				</div>
                	<div class="time_col time_colp10">
-               	<div style="width:100%;display: inline-block;">
+               		<div style="width:46%;display: inline-block;">
 						<label style="width:119px;text-align: right;"><i class="bisu">*</i>商品名称：</label>
 					    <input class="easyui-textbox" id="gname" name="gname" data-options="required:true,validType:'length[0,50]'"
-					    	style="width:77%;height:28px;" />
+					    	style="width:66%;height:28px;" />
 					</div>
-               	
+               		<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>单位：</label> 
+						<input id="measid" name="measid" class="easyui-combobox" 
+							data-options="valueField:'id', textField:'name', panelHeight:'auto',editable:false,required:true," 
+							style="width:50%; height: 28px; text-align: left"></input>
+						<input id="mname" name="mname" type="hidden">
+						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="addMeas()">添加</a>
+					</div>
                	</div>
-				<div class="time_col time_colp10">
+				<!-- <div class="time_col time_colp10">
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>单价：</label> 
 						<input class="easyui-numberbox" id="price" name = "price" 
 							data-options="required:true,min:0.01,precision:2,groupSeparator:','"  
 							style="width:66%; height: 28px; text-align: left">
-					</div>
+					</div> 
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>单位：</label> 
 						<input id="measid" name="measid" class="easyui-combobox" 
@@ -127,7 +134,7 @@
 						<input id="mname" name="mname" type="hidden">
 						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="addMeas()">添加</a>
 					</div>
-				</div>
+				</div> -->
 				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
 					<div style="width:100%;display: inline-block;">
 						<label style="text-align:right;width:135px;vertical-align:top;">商品说明：</label>

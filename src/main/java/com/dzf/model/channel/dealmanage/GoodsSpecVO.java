@@ -40,8 +40,18 @@ public class GoodsSpecVO extends SuperVO {
 	
 	@FieldAlias("price")
     private DZFDouble nprice;//单价
+	
+	private DZFBoolean isdefault;
 
-	public DZFDouble getNprice() {
+	public DZFBoolean getIsdefault() {
+        return isdefault;
+    }
+
+    public void setIsdefault(DZFBoolean isdefault) {
+        this.isdefault = isdefault;
+    }
+
+    public DZFDouble getNprice() {
         return nprice;
     }
 
