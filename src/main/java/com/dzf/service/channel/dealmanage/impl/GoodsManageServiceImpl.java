@@ -592,6 +592,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				}else if(nprice.compareTo(svo.getNprice()) > 0){
 					nprice = svo.getNprice();
 				}
+				i++;
 			}
 		}
 		GoodsVO gvo = new GoodsVO();

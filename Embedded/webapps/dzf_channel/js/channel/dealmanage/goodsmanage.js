@@ -371,12 +371,14 @@ function delRow(ths){
 		if(rows && rows.length > 1){
 			$('#setgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 		}
+		etIndex = undefined;
 	}else{
 		if(isCanAdd()){
 			var rows = $('#setgrid').datagrid('getRows');
 			if(rows && rows.length > 1){
 				$('#setgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 			}
+			etIndex = undefined;
 		}else{
 			Public.tips({
 				content : "请先录入必输项",
