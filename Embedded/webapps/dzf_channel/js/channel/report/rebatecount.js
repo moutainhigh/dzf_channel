@@ -43,7 +43,9 @@ function initGrid(){
 				      { field : 'rebid', title : '主键', hidden:true},
 		] ],
 		onLoadSuccess : function(data) {
-			$('#grid').datagrid("scrollTo",0);
+//			$('#grid').datagrid("scrollTo",0);
+			$('#grid').datagrid("clearSelections");
+			
 		}
 	});
 }
