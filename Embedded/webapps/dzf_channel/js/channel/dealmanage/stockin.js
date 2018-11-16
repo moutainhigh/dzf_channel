@@ -939,7 +939,7 @@ function addSupplier(){
 /**
  * 新增供应商-保存
  */
-function measSave(){
+function supSave(){
 	if ($("#supForm").form('validate')) {
 		$.messager.progress({
 			text : '数据保存中，请稍后.....'
@@ -976,7 +976,3 @@ function measSave(){
 function supCancel(){
 	$('#supDlg').dialog('close');
 }
-
-
-
-

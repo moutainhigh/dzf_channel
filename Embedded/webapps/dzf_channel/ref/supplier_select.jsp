@@ -74,8 +74,19 @@
 	    }
 	}; 
 	
-	var rows = null;
 	$(function(){
+		loadGsy();
+		$('#stcode').bind('keypress', function(event) {
+			if (event.keyCode == "13") {//Enter 键事件
+				var params = new Object();
+				params["cpcode"] = $("#stcode").val();
+				grid.datagrid('load', params);
+			}
+		});
+	});
+	
+	//加载表格
+	function loadGsy(){
 		grid = $('#gysgrid').datagrid({
 		    url: DZF.contextPath + '/dealmanage/stockin!querySupplierRef.action',
 		    method: 'post',
@@ -83,10 +94,6 @@
 			idField:'suid',
 			rownumbers : true,
 			singleSelect : false,
-// 			pagination : true,
-// 			pageSize:10,
-// 		    pageList:[10,20,30,40,50],
-// 			showFooter : true,
 			height:330,
 			striped:true,
 		   
@@ -106,23 +113,16 @@
 				var retrows = $("#gysgrid").datagrid('getRows');
 			},
 		});
-
-		$('#stcode').bind('keypress', function(event) {
-			if (event.keyCode == "13") {//Enter 键事件
-				var params = new Object();
-				params["cpcode"] = $("#stcode").val();
-				grid.datagrid('load', params);
-			}
-		});
-	});
+	}
 </script>
 	<div  id="cardList">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
-				<div class="left mod-corp">
+				<div class="left search-crumb">
 					<input id="stcode" value="请输入供应商名称" 
 						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
 						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
+					<a href="javascript:void(0)" id="ok" class="easyui-linkbutton" onClick="addSupplier()">添加</a> 
 				</div>
 			</div>
 		</div>
