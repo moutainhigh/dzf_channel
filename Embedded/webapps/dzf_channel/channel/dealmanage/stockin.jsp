@@ -109,7 +109,7 @@
 								style="width:40%;height:28px;text-align:left"   />
 					    </div>
 					</div>
-					<div id="dataGrid" style="width:100%;height:600px;display:inline-block;">
+					<div id="dataGrid" style="width:100%;display:inline-block;">
 						<table id="stgrid"></table>
 				    </div>
 					

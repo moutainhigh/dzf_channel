@@ -308,7 +308,7 @@ function initCardGrid() {
 	});
 	
 	$("#stgrid").datagrid({
-		height : 300,
+		height : 420,
 		width : "100%",
 		singleSelect : false,
 		columns : [ [ {
@@ -386,7 +386,7 @@ function initCardGrid() {
 		}, {
 			field : 'spec',
 			title : '规格',
-			width : "120",
+			width : "110",
 			align : 'center',
 			halign : 'center',
 			editor : {
@@ -400,7 +400,7 @@ function initCardGrid() {
 		}, {
 			field : 'type',
 			title : '型号',
-			width : "120",
+			width : "110",
 			align : 'center',
 			halign : 'center',
 			editor : {
@@ -416,7 +416,7 @@ function initCardGrid() {
 		{
 			field : 'price',
 			title : '成本价',
-			width : "140",
+			width : "120",
 			align : 'right',
 			halign : 'center',
 			editor : {
@@ -443,7 +443,7 @@ function initCardGrid() {
 		}, {
 			field : 'num',
 			title : '入库数量',
-			width : "140",
+			width : "100",
 			align : 'right',
 			halign : 'center',
 			editor : {
@@ -469,7 +469,7 @@ function initCardGrid() {
 		}, {
 			field : 'mny',
 			title : '金额',
-			width : "120",
+			width : "100",
 			align : 'right',
 			halign : 'center',
 			editor : {
@@ -542,7 +542,7 @@ function initCardGrid() {
 function initSupplierRef(e){
 	$("#refdiv").dialog({
 		width : 500,
-		height : 500,
+		height : 480,
 		readonly : true,
 		title : '选择供应商',
 		cache: false,
