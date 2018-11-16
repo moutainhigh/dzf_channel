@@ -123,24 +123,5 @@
 	<!-- 供应商参照 -->
 	<div id = "refdiv"></div> 
 	
-	<!-- 计量单位对话框  begin-->
-	<div id="supDlg" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" 
-		data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
-		<form id="supForm" method="post">
-			<div class="time_col time_colp11">
-				<div style="display: inline-block;">
-					<label style="text-align:right;width:140px;">供应商名称：</label>
-					<input id="vmemo" name="memo" class="easyui-textbox" 
-						data-options="validType:'length[0,50]'" style="width:150px;height:25px;"/>
-				</div>
-			</div>
-		</form>
-		<div style="text-align:center;margin-top:40px;">
-		    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="supSave()">保存</a> 
-			<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" onclick="supCancel()">取消</a>
-		</div>
-	</div>
-	<!-- 计量单位对话框  end-->
-	
 </body>
 </html>
