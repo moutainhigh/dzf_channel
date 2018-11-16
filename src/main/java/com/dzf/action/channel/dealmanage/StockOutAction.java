@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -258,6 +259,7 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 		for (StockOutBVO stockOutBVO : bodyvos) {
 			stockOutBVO.setFathercorp(headvo.getFathercorp());
 			stockOutBVO.setPk_corp(headvo.getPk_corp());
+			stockOutBVO.setPk_warehouse(IStatusConstant.CK_ID);//仓库主键
 		}
 		headvo.setTableVO("cn_stockout_b", bodyvos);
 		return headvo;
