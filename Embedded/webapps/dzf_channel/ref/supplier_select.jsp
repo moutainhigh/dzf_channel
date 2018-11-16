@@ -15,7 +15,7 @@
 	margin: 4px auto;
 	text-align: center;
 }
-
+.search-crumb input{width:84%;}
 .mod-corp input {
 	border: 1px #ddd solid;
 	width: 87%;
