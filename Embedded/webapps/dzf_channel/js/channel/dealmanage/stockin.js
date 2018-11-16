@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var status;
 var editIndex;
+var status;
 $(function(){
 	initQry();
 	load();
@@ -80,6 +81,7 @@ function load(){
 			field : 'vcode',
 			align : 'left',
 			halign : 'center',
+			formatter : formatCodeLink,
 		}, {
 			width : '100',
 			title : '总金额',
@@ -136,6 +138,69 @@ function load(){
 }
 
 /**
+ * 超级链接-单据编码
+ * @param val
+ * @param row
+ * @param index
+ * @returns {String}
+ */
+function formatCodeLink(val, row, index){  
+    return '<a href="#" style="color:blue" onclick="showDetail('+index+')">'+row.vcode+'</a>';  
+}
+
+/**
+ * 展示详情
+ * @param index
+ */
+function showDetail(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+        type: "post",
+        dataType: "json",
+        url: contextPath + '/dealmanage/stockin!queryById.action',
+        data: row,
+        traditional: true,
+        async: false,
+        success: function(data, textStatus) {
+            if (!data.success) {
+            	Public.tips({content:data.msg,type:1});
+            } else {
+                var row = data.rows;
+                showCard();
+                $('#stform').form('load',row);
+                if(row.children != null && row.children.length > 0){
+                	$('#stgrid').datagrid('loadData',row.children);
+                }
+                status = "brows";
+                btnCtrl();
+                isItemEdit(true);
+            }
+        },
+    });
+	
+}
+
+/**
+ * 按钮显示控制
+ */
+function btnCtrl(){
+	if("add" == status || "edit" == status ){
+		$('#savebtn').show();//保存按钮
+	}else if("brows" == status){
+		$("#savebtn").hide();//保存按钮
+	}
+}
+
+/**
+ * 字段是否可编辑
+ * @param isedit
+ */
+function isItemEdit(isedit) {
+	//入库日志
+	$('#stdate').textbox("readonly",isedit);
+}
+
+/**
  * 查询数据
  */
 function reloadData(){
@@ -189,6 +254,8 @@ function add(){
 	$('#stgrid').datagrid('beginEdit',editIndex);
 	
 	status = "add";
+	btnCtrl();
+	isItemEdit(false);
 }
 
 /**
@@ -645,52 +712,12 @@ function edit(index){
                 	$('#stgrid').datagrid('loadData',row.children);
                 }
                 status == "edit";
+                btnCtrl();
+                isItemEdit(false);
             }
         },
     });
 }
-
-
-/**
- * 通过主键查询商品信息
- * 
- * @param contractid
- * @returns
- */
-function queryByID(gid, type){
-	var row;
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		traditional : true,
-		async : false,
-		url : contextPath + '/dealmanage/goodsmanage!queryByID.action',
-		data : {
-			"gid" : gid,
-			"type" : type,
-		},
-		success : function(data, textStatus) {
-			if (!data.success) {
-				Public.tips({
-					content :  data.msg,
-					type : 1
-				});	
-				return;
-			} else {
-				row = data.rows;
-			}
-		},
-	});
-	return row;
-}
-
-/**
- * 按钮显示控制
- */
-function btnCtrl(){
-	
-}
-
 
 /**
  * 删除
@@ -793,7 +820,7 @@ function onSave(){
 }
 
 /**
- * 商品-提交后台保存
+ * 入库单-提交后台保存
  */
 function onSaveSubmit(postdata){
 	if ($("#goods_add").form('validate')) {
@@ -819,7 +846,6 @@ function onSaveSubmit(postdata){
 //						});
 //						editIndex = null;
 //					}else if(status == "add"){
-//						showList();
 //						$('#grid').datagrid('appendRow',row);
 //					}
 					

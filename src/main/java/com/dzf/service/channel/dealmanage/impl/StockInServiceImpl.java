@@ -226,8 +226,7 @@ public class StockInServiceImpl implements IStockInService {
 	 * 
 	 * @param pk_stockin
 	 * @param pk_corp
-	 * @param qrytype
-	 *            0：详情查询（包含子表）；1：修改查询（包含子表）；2：普通查询（不包含子表）；
+	 * @param qrytype  1：详情查询修改查询（包含子表）；2：普通查询（不包含子表）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
