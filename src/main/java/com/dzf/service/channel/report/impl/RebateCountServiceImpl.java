@@ -74,7 +74,7 @@ public class RebateCountServiceImpl implements IRebateCountService {
     }
     
     private HashMap<String, String> queryChannelManger(){
-        String condition = " nvl(dr,0) = 0 and pk_corp is not null";
+        String condition = " nvl(dr,0) = 0 and type = 1 and pk_corp is not null";
         ChnAreaBVO[] vos = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, condition, null);
         HashMap<String, String> map = new HashMap<>();
         if(vos != null && vos.length > 0){
