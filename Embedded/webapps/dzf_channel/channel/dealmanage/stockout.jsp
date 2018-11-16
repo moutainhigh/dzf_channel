@@ -38,7 +38,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:260px;">
 			<s class="s"><i class="i"></i></s>
 			<h3>
 				<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
