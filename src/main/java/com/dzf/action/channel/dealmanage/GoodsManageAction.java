@@ -488,8 +488,9 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
-			Map<String, GoodsSpecVO[]> datamap = getDataMap();
-			manser.saveSet(datamap, getLogin_corp());
+			List<GoodsSpecVO> blist = getDataList();
+			GoodsVO retvo = manser.saveSet(blist, getLogincorppk());
+			json.setRows(retvo);
 			json.setSuccess(true);
 			json.setMsg("保存成功");
 			writeLogRecord(LogRecordEnum.OPE_ADMIN_ZLJJ.getValue(),"新增客户资料",ISysConstants.SYS_1);
@@ -503,45 +504,21 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 	 * 获取操作数据
 	 * @return
 	 */
-	private Map<String, GoodsSpecVO[]> getDataMap() {
-		String addfile = getRequest().getParameter("adddata"); // 新增数据
-		Map<String, GoodsSpecVO[]> bodymap = new HashMap<String, GoodsSpecVO[]>();
+	private List<GoodsSpecVO> getDataList() {
+		
+		List<GoodsSpecVO> list = new ArrayList<GoodsSpecVO>();
 		Map<String, String> bmapping = FieldMapping.getFieldMapping(new GoodsSpecVO());
-
-		GoodsSpecVO[] addBVOs = null;
-		GoodsSpecVO[] updBVOs = null;
-		GoodsSpecVO[] delBVOs = null;
-		if (!StringUtil.isEmpty(addfile)) {
-			addfile = addfile.replace("}{", "},{");
-			addfile = "[" + addfile + "]";
-			JSONArray addarray = (JSONArray) JSON.parseArray(addfile);
-			addBVOs = DzfTypeUtils.cast(addarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
-			if (addBVOs != null && addBVOs.length > 0) {
-				for (GoodsSpecVO bvo : addBVOs) {
-					bvo.setPk_corp(getLogin_corp());
-					bvo.setDr(0);
-					if(StringUtil.isEmpty(bvo.getPk_goods())){
-						throw new BusinessException("商品主键不能为空");
-					}
-				}
-			}
-			bodymap.put("addbvos", addBVOs);
-		}
-		String updfile = getRequest().getParameter("upddata"); // 更新数据
-		if (!StringUtil.isEmpty(updfile)) {
-			updfile = updfile.replace("}{", "},{");
-			updfile = "[" + updfile + "]";
-			JSONArray updarray = (JSONArray) JSON.parseArray(updfile);
-			updBVOs = DzfTypeUtils.cast(updarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
-			bodymap.put("updbvos", updBVOs);
-		}
+		
 		String delfile = getRequest().getParameter("deldata"); // 删除数据
 		if (!StringUtil.isEmpty(delfile)) {
 			delfile = delfile.replace("}{", "},{");
 			delfile = "[" + delfile + "]";
 			JSONArray delarray = (JSONArray) JSON.parseArray(delfile);
-			delBVOs = DzfTypeUtils.cast(delarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
-			bodymap.put("delbvos", delBVOs);
+			GoodsSpecVO[] delBVOs = DzfTypeUtils.cast(delarray, bmapping, GoodsSpecVO[].class, JSONConvtoJAVA.getParserConfig());
+			for(GoodsSpecVO bvo : delBVOs){
+				bvo.setDr(1);
+				list.add(bvo);
+			}
 		}
 
 		String body = getRequest().getParameter("body"); // 新增数据
@@ -550,11 +527,20 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
 		GoodsSpecVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, GoodsSpecVO[].class,
 				JSONConvtoJAVA.getParserConfig());
-
-		if ((addBVOs == null || addBVOs.length == 0) && (updBVOs == null || updBVOs.length == 0)
-				&& (delBVOs == null || delBVOs.length == 0) && (bodyVOs == null || bodyVOs.length == 0)) {
+		if(bodyVOs != null && bodyVOs.length > 0){
+			for (GoodsSpecVO bvo : bodyVOs) {
+				if(!StringUtil.isEmpty(bvo.getPk_goodsspec())){
+					bvo.setPk_corp(getLogin_corp());
+					bvo.setDr(0);
+					if(StringUtil.isEmpty(bvo.getPk_goods())){
+						throw new BusinessException("商品主键不能为空");
+					}
+				}
+				list.add(bvo);
+			}
+		}else{
 			throw new BusinessException("表体数据不能为空");
 		}
-		return bodymap;
+		return list;
 	}
 }

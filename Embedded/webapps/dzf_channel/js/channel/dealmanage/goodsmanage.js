@@ -1,9 +1,10 @@
 var contextPath = DZF.contextPath;
 var status;
 var editIndex;
-var etIndex;
+var etIndex = undefined;
 var flowImgUrls = null;
 var gid;
+var setIndex;
 $(function(){
 	initGoodstyps();
 	load();
@@ -213,6 +214,7 @@ function setup(index){
 			}
 		}
 	});
+	setIndex = index;
 }
 
 /**
@@ -259,6 +261,9 @@ function initSetGrid(){
 				type : 'numberbox',
 				options : {
 					height : 31,
+					required: true,
+ 					precision:2,
+ 					min:0,
 				}
 			}
 		}, {width : '100',field : 'button',title : '操作',
@@ -389,29 +394,14 @@ function setSave(){
 	endBodyEdit();
 	
 	var postdata = new Object();
-	var adddata = "";
 	var deldata = "";
-	var upddata = "";
-	//新增数据		
-	var insRows = $('#setgrid').datagrid('getChanges', 'inserted');
-	if(insRows != null && insRows.length > 0){
-		for(var j = 0;j <insRows.length; j++){
-			adddata = adddata + JSON.stringify(insRows[j]);					
-		}
-	}
+	
 	//删除数据	
 	var delRows = $('#setgrid').datagrid('getChanges', 'deleted');
 	if(delRows != null && delRows.length > 0){
 		for(var j = 0;j <delRows.length; j++){
 			deldata = deldata + JSON.stringify(delRows[j]);
 		}
-	}
-	//更新数据
-	var updRows = $('#setgrid').datagrid('getChanges', 'updated');
-	if(updRows != null && updRows.length > 0){
-		for(var j = 0;j< updRows.length; j++){
-			upddata = upddata + JSON.stringify(updRows[j]);
-		}			
 	}
 	
 	var body = "";
@@ -423,9 +413,7 @@ function setSave(){
 		}
 	}
 	
-	postdata["adddata"] = adddata;
 	postdata["deldata"] = deldata;
-	postdata["upddata"] = upddata;
 	postdata["body"] = body;
 	onSaveSet(postdata);
 }
@@ -456,7 +444,13 @@ function onSaveSet(postdata){
 				Public.tips({
 					content : result.msg,
 				});
+				var row = result.rows;
+				$('#grid').datagrid('updateRow', {
+					index : setIndex,
+					row : row
+				});
 				$('#setDialog').dialog('close');
+				etIndex = undefined;
 			}
 		},
 	});
@@ -467,6 +461,7 @@ function onSaveSet(postdata){
  */
 function setCancel(){
 	$('#setDialog').dialog('close');
+	etIndex = undefined;
 }
 
 /**

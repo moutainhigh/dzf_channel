@@ -112,11 +112,12 @@ public interface IGoodsManageService {
 	
 	/**
 	 * 保存商品设置
-	 * @param datamap
+	 * @param blist
 	 * @param pk_corp
+	 * @return
 	 * @throws DZFWarpException
 	 */
-	public void saveSet(Map<String, GoodsSpecVO[]> datamap, String pk_corp) throws DZFWarpException;
+	public GoodsVO saveSet(List<GoodsSpecVO> blist, String pk_corp) throws DZFWarpException;
 	
 	/**
 	 * 查询商品设置

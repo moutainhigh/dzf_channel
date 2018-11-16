@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,8 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
-import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
@@ -578,30 +577,58 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	}
 
 	@Override
-	public void saveSet(Map<String, GoodsSpecVO[]> datamap, String pk_corp) throws DZFWarpException {
-		if (datamap == null || datamap.isEmpty()) {
+	public GoodsVO saveSet(List<GoodsSpecVO> blist, String pk_corp) throws DZFWarpException {
+		if(blist == null || blist.size() == 0){
 			throw new BusinessException("操作数据不能为空");
 		}
-		GoodsSpecVO[] addVOs = datamap.get("addbvos");
-		GoodsSpecVO[] updVOs = datamap.get("updbvos");
-		GoodsSpecVO[] delVOs = datamap.get("delbvos");
-		if (addVOs != null && addVOs.length > 0) {
-			singleObjectBO.insertVOArr(pk_corp, addVOs);
-		}
-		if (updVOs != null && updVOs.length > 0) {
-			singleObjectBO.updateAry(updVOs, new String[] { "invspec", "invtype","nprice" });
-		}
-		if(delVOs != null && delVOs.length > 0){
-			List<String> pklist = new ArrayList<String>();
-			for(GoodsSpecVO dvo: delVOs){
-				pklist.add(dvo.getPk_goodsspec());
+		String pk_goods = blist.get(0).getPk_goods();
+		
+		DZFDouble nprice = DZFDouble.ZERO_DBL;
+		int i = 0;
+		for(GoodsSpecVO svo : blist){
+			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
+				if(i == 0){
+					nprice = svo.getNprice();
+				}else if(nprice.compareTo(svo.getNprice()) > 0){
+					nprice = svo.getNprice();
+				}
 			}
-			StringBuffer sql = new StringBuffer();
-			sql.append(" DELETE FROM cn_goodsspec WHERE ");
-			String where = SqlUtil.buildSqlForIn("pk_goodsspec", pklist.toArray(new String[0]));
-			sql.append(where);
-			singleObjectBO.executeUpdate(sql.toString(), null);
 		}
+		GoodsVO gvo = new GoodsVO();
+		gvo.setPk_goods(pk_goods);
+		
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(gvo.getTableName(), gvo.getPk_goods(), uuid, 120);
+			
+			gvo = queryByID(gvo, 1);
+			gvo.setNprice(nprice);
+			gvo.setChildren(blist.toArray(new GoodsSpecVO[0]));
+			gvo = (GoodsVO) singleObjectBO.saveObject(pk_corp, gvo);
+			String vstaname = "";
+			switch(gvo.getVstatus()){
+				case 1 :
+					vstaname = "已保存";
+					break;
+				case 2 :
+					vstaname = "已发布";
+					break;
+				case 3 :
+					vstaname = "已下架";
+					break;
+			}
+			gvo.setVstaname(vstaname);
+			return gvo;
+			
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(gvo.getTableName(), gvo.getPk_goods(), uuid);
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
