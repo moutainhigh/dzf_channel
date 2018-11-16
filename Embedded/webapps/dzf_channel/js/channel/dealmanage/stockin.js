@@ -470,14 +470,28 @@ function initCardGrid() {
 			field : 'mny',
 			title : '金额',
 			width : "120",
-			align : 'center',
+			align : 'right',
 			halign : 'center',
 			editor : {
 				type : 'textbox',
 				options : {
 					height : 31,
 					editable : false,
-					readonly : true
+					readonly : true,
+					precision : 2,
+					min : 0,
+					onChange : function(n, o) {
+						if(!isEmpty(n)){
+							var rows = $('#stgrid').datagrid('getRows');
+							if(rows != null && rows.length > 0){
+								var totalmny = parseFloat(n);
+								for(var j = 0;j< rows.length; j++){
+									totalmny = totalmny.add(getFloatValue(rows[j].mny));
+								}
+								$("#totalmny").numberbox("setValue", formatMny(totalmny));
+							}
+						}
+					}
 				}
 			}
 		}, {
