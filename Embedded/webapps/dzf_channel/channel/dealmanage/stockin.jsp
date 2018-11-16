@@ -52,11 +52,11 @@
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">单据编码：</label>
-				<input id="qvcode" class="easyui-textbox" style="width:290px;height:28px;"/>
+				<input id="qvcode" class="easyui-textbox" style="width:286px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">录入人：</label>
-				<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
+				<input id="uid" name="uid" class="easyui-combobox" style="width:286px;height:28px;text-align:left"
 					data-options="required:false,valueField:'uid',textField:'uname',panelHeight:200" /> 
 			</div>
 			<p>
