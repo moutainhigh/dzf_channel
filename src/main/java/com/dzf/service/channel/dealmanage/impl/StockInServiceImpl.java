@@ -110,6 +110,7 @@ public class StockInServiceImpl implements IStockInService {
 			sql.append(" AND vname like ? ");
 			spm.addParam("%" + pamvo.getCorpcode() + "%");
 		}
+		sql.append(" ORDER BY ts DESC");
 		return (List<SupplierVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(SupplierVO.class));
 	}
@@ -149,7 +150,7 @@ public class StockInServiceImpl implements IStockInService {
 		String code;
 		DZFDate date = new DZFDate();
 		String year = String.valueOf(date.getYear());
-		String str = "rk" + year + date.getStrMonth() + date.getStrDay();
+		String str = "rk" + year + date.getStrMonth();
 		MaxCodeVO mcvo = new MaxCodeVO();
 		mcvo.setTbName(hvo.getTableName());
 		mcvo.setFieldName("vbillcode");
