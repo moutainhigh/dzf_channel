@@ -86,25 +86,25 @@ function initCard(){
 		singleSelect : true,
 		columns : [ [ 
 		{
-			width : '100',
+			width : '200',
 			title : '订单编码',
 			field : 'vcode',
-			align : 'center',
-            halign : 'center',
+			halign : 'center',
+			align : 'left',
 		}, {
 			width : '200',
 			title : '商品',
 			field : 'gname',
+			halign : 'center',
 			align : 'left',
-            halign : 'center',
 		}, {
-			width : '100',
+			width : '150',
 			title : '规格',
 			field : 'invspec',
             halign : 'center',
 			align : 'left',
 		},{
-			width : '160',
+			width : '150',
 			title : '型号',
 			field : 'invtype',
             halign : 'center',
@@ -120,20 +120,25 @@ function initCard(){
 			title : '出库量',
 			field : 'nnum',
             halign : 'center',
-			align : 'center',
-		}, {
-			width : '100',
-			title : '金额',
-			field : 'nmny',
-			hidden : true
-		}, {
-			width : '100',
+			align : 'right',
+		},{
+			width : '60',
 			title : '操作列',
 			field : 'operate',
             halign : 'center',
 			align : 'center',
 			formatter:coperatorLink
-		} , 
+		},{
+			width : '100',
+			title : '销售价',
+			field : 'nprice',
+			hidden : true
+		},{
+			width : '100',
+			title : '总金额',
+			field : 'nmny',
+			hidden : true
+		}, 
 		] ],
 	});
 }
@@ -174,7 +179,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
-		idField : 'gid',
+		idField : 'soutid',
 		columns : [ [ 
   		 {
    			field : 'ck',
@@ -185,37 +190,40 @@ function load(){
 			field : 'updatets',
 			hidden : true
 		}, {
-			width : '100',
+			width : '120',
 			title : '单据编码',
 			field : 'vcode',
-			align : 'center',
-            halign : 'center',
+			halign : 'center',
+			align : 'left',
+            formatter : function(value, row, index) {
+    			return '<a href="javascript:void(0)"  style="color:blue" onclick="view(\''+row.soutid+'\')">' + value + '</a>';
+            }
 		}, {
 			width : '200',
 			title : '加盟商',
 			field : 'corpname',
+			halign : 'center',
 			align : 'left',
-            halign : 'center',
 		}, {
 			width : '100',
 			title : '物流公司',
-			field : 'logcom',
-			align:'right',
-            halign:'center',
+			field : 'logunit',
+			halign : 'center',
+			align : 'left',
 		}, {
 			width : '100',
 			title : '物流单号',
-			field : 'lognum',
-            halign : 'center',
+			field : 'fcode',
+			halign : 'center',
 			align : 'left',
 		},{
 			width : '160',
 			title : '备注',
 			field : 'memo',
-            halign : 'center',
+			halign : 'center',
 			align : 'left',
 		}, {
-			width : '100',
+			width : '80',
 			title : '单据状态',
 			field : 'vstatus',
             halign : 'center',
@@ -229,19 +237,19 @@ function load(){
 					return '已发货';
 			}
 		}, {
-			width : '100',
+			width : '80',
 			title : '录入人',
 			field : 'ctname',
-            halign : 'center',
-			align : 'center',
+			halign : 'center',
+			align : 'left',
 		}, {
-			width : '100',
+			width : '140',
 			title : '录入时间',
 			field : 'ctdate',
             halign : 'center',
 			align : 'center',
 		}, {
-			width : '100',
+			width : '140',
 			title : '出库时间',
 			field : 'contime',
             halign : 'center',
@@ -264,7 +272,7 @@ function load(){
 function opermatter(val, row, index) {
 	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a> '+
 	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="updateDeliver(\''+index+'\')">确认收货</a>';
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="updateDeliver(\''+index+'\')">确认发货</a>';
 }
 
 function add(){
@@ -335,12 +343,12 @@ function addSave(){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
 		return;
 	}
-	var nmny;
+	var nmny=0;
 	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
 	for (var i = 0; i < rows.length; i++) {
 		childBody = childBody + JSON.stringify(rows[i]);
-		nmny =getFloatValue(rows[i].nmny*rows[i].nnum)
+		nmny =getFloatValue(nmny)+getFloatValue(rows[i].nmny)
 	}
 	$("#nmny").numberbox('setValue',nmny);
 	var postdata = new Object();
@@ -392,12 +400,12 @@ function updateBtnState(){
 		$('#addSave').show();
 		$('#addCancel').show();
 		$('#corpid').combobox('readonly',false);
-		$('#vmemo').textbox('readonly',false);
+		$('#memo').textbox('readonly',false);
 	}else if("brows"==status){
 		$('#addSave').hide();
 		$('#addCancel').hide();
 		$('#corpid').combobox('readonly',true);
-		$('#vmemo').textbox('readonly',true);
+		$('#memo').textbox('readonly',true);
 	}	
 }
 

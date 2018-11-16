@@ -147,8 +147,6 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 				throw new BusinessException("数据信息不能为空");
 			}
 			if(StringUtil.isEmpty(headvo.getPk_stockout())){
-				headvo.setFathercorp(getLogincorppk());
-				headvo.setCoperatorid(getLoginUserid());
 				stockOut.saveNew(headvo);
 			}else{
 				stockOut.saveEdit(headvo);
@@ -229,6 +227,7 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 			StockOutVO vo = new StockOutVO();
 			vo = (StockOutVO) DzfTypeUtils.cast(getRequest(), vo);
 			vo.setVdeliverid(getLoginUserid());
+			vo.setFathercorp(getLogincorppk());
 			stockOut.updateDeliver(vo);
 			json.setSuccess(true);
 			json.setRows(vo);
@@ -250,12 +249,16 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 		Map<String, String> bodymapping = FieldMapping.getFieldMapping(new StockOutBVO());
 		
 		StockOutVO headvo = DzfTypeUtils.cast(headjs, headmaping, StockOutVO.class, JSONConvtoJAVA.getParserConfig());
+		headvo.setFathercorp(getLogincorppk());
 		if(StringUtil.isEmpty(headvo.getPk_stockout())){
 			headvo.setCoperatorid(getLoginUserInfo().getCuserid());
-			headvo.setFathercorp(getLogincorppk());
 		}
 		StockOutBVO[] bodyvos = DzfTypeUtils.cast(array, bodymapping, StockOutBVO[].class,
 				JSONConvtoJAVA.getParserConfig());
+		for (StockOutBVO stockOutBVO : bodyvos) {
+			stockOutBVO.setFathercorp(headvo.getFathercorp());
+			stockOutBVO.setPk_corp(headvo.getPk_corp());
+		}
 		headvo.setTableVO("cn_stockout_b", bodyvos);
 		return headvo;
 	}

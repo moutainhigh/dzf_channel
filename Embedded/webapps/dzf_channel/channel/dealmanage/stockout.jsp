@@ -85,7 +85,6 @@
 						<label style="text-align:right;width:35%;">加盟商：</label> 
 						<input id="corpid"  name="corpid" class="easyui-combobox" style="width:60%;height:28px;text-align:left"
 							data-options="required:true,panelHeight:200"/>  
-<!-- 						<input id="corpid" name="corpid" type="hidden" > -->
 					</div>
 					<div style="width:32%;display: inline-block;">
 						<label style="text-align:right;width:35%;">物流公司：</label> 
