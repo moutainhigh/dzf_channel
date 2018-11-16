@@ -15,7 +15,7 @@ function load(){
 		rownumbers : true,
 		fitColumns : false,
 		height : Public.setGrid().h,
-		singleSelect : false,
+		singleSelect : true,
 		showFooter:true,
 		idField : 'pk_goodstype',
 		columns : [ [ 
