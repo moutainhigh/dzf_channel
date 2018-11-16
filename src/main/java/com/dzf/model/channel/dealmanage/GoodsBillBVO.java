@@ -4,6 +4,7 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 商品购买订单明细
@@ -40,14 +41,14 @@ public class GoodsBillBVO extends SuperVO {
 	private String vmeasname; // 单位
  
 	@FieldAlias("price")
-	private String nprice; // 单价
+	private DZFDouble nprice; // 单价
 	
 	private Integer amount; // 数量
 	
 	private Integer deamount;//发货数量（目前逻辑：有值就是该订单该商品发货，无值就是该订单该商品没有发货）
 	
 	@FieldAlias("totalmny")
-	private String ntotalmny; //合计
+	private DZFDouble ntotalmny; //合计
 	
     @FieldAlias("opid")
     private String coperatorid; // 制单人
@@ -176,11 +177,11 @@ public class GoodsBillBVO extends SuperVO {
 		this.vmeasname = vmeasname;
 	}
 
-	public String getNprice() {
+	public DZFDouble getNprice() {
 		return nprice;
 	}
 
-	public void setNprice(String nprice) {
+	public void setNprice(DZFDouble nprice) {
 		this.nprice = nprice;
 	}
 
@@ -192,11 +193,11 @@ public class GoodsBillBVO extends SuperVO {
 		this.amount = amount;
 	}
 
-	public String getNtotalmny() {
+	public DZFDouble getNtotalmny() {
 		return ntotalmny;
 	}
 
-	public void setNtotalmny(String ntotalmny) {
+	public void setNtotalmny(DZFDouble ntotalmny) {
 		this.ntotalmny = ntotalmny;
 	}
 
