@@ -270,24 +270,24 @@ function initSetGrid(){
         	formatter : operatorLink
 		},] ],
 		onDblClickRow : function(rowIndex, rowData) {
-			if(rowData.beused == "是"){
+			endBodyEdit();
+			if(isCanAdd()){
+				if (isEmpty(etIndex)) {
+					$("#setgrid").datagrid('beginEdit', rowIndex);
+					etIndex = rowIndex;
+				}  
+			}else{
 				Public.tips({
-					content : "规格或型号已被入库单引用，不可修改",
+					content : "规格和型号不能同时为空",
 					type : 2
 				});
-			}else{
-				endBodyEdit();
-				if(isCanAdd()){
-					if (isEmpty(etIndex)) {
-						$("#setgrid").datagrid('beginEdit', rowIndex);
-						etIndex = rowIndex;
-					}  
-				}else{
-					Public.tips({
-						content : "规格和型号不能同时为空",
-						type : 2
-					});
-				}
+			}
+			if(rowData.beused == "是"){
+				var spec = $("#setgrid").datagrid('getEditor', {index:rowIndex,field:'spec'}); 
+				$(spec.target).textbox('readonly', true);
+				
+				var type = $("#setgrid").datagrid('getEditor', {index:rowIndex,field:'type'}); 
+				$(type.target).textbox('readonly', true);
 			}
 		},
 	});
@@ -410,6 +410,22 @@ function setSave(){
 	if(rows != null && rows.length > 0){
 		for(var j = 0;j< rows.length; j++){
 			body = body + JSON.stringify(rows[j]); 
+			
+			var datagrid = $("#setgrid").datagrid("validateRow", j);
+			if (!datagrid){
+				Public.tips({
+					content : "必输信息为空或格式不正确",
+					type : 2
+				});
+				return; 
+			}
+			if(isEmpty(rows[j].spec) && isEmpty(rows[j].type)){
+				Public.tips({
+					content : "规格和型号不能同时为空",
+					type : 2
+				});
+				return;
+			}
 		}
 	}
 	
