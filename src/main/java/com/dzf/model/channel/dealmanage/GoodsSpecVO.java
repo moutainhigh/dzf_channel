@@ -4,6 +4,7 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 商品规格型号
@@ -36,8 +37,19 @@ public class GoodsSpecVO extends SuperVO {
 	
 	@FieldAlias("beused")
 	private DZFBoolean isbeused;//是否被入库单引用
+	
+	@FieldAlias("price")
+    private DZFDouble nprice;//单价
 
-	public DZFBoolean getIsbeused() {
+	public DZFDouble getNprice() {
+        return nprice;
+    }
+
+    public void setNprice(DZFDouble nprice) {
+        this.nprice = nprice;
+    }
+
+    public DZFBoolean getIsbeused() {
 		return isbeused;
 	}
 

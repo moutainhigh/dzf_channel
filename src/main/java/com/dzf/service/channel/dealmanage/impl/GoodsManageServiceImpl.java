@@ -589,7 +589,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			singleObjectBO.insertVOArr(pk_corp, addVOs);
 		}
 		if (updVOs != null && updVOs.length > 0) {
-			singleObjectBO.updateAry(updVOs, new String[] { "invspec", "invtype" });
+			singleObjectBO.updateAry(updVOs, new String[] { "invspec", "invtype","nprice" });
 		}
 		if(delVOs != null && delVOs.length > 0){
 			List<String> pklist = new ArrayList<String>();

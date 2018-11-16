@@ -283,7 +283,7 @@ function initSetGrid(){
 		}, {
 			field : 'spec',
 			title : '规格',
-			width : "180",
+			width : "120",
 			align : 'eft',
 			halign : 'center',
 			editor : {
@@ -297,7 +297,7 @@ function initSetGrid(){
 		}, {
 			field : 'type',
 			title : '型号',
-			width : "180",
+			width : "120",
 			align : 'left',
 			halign : 'center',
 			editor : {
@@ -306,6 +306,22 @@ function initSetGrid(){
 					height : 31,
 					validType : [ 'length[0,25]' ],
 					invalidMessage : "型号最大长度不能超过25",
+				}
+			}
+		}, {
+			width : '100',
+			title : '单价',
+			align:'right',
+            halign:'center',
+			field : 'price',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			},
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
 				}
 			}
 		}, {
