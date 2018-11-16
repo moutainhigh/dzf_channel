@@ -17,6 +17,8 @@ import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.dealmanage.GoodsBillSVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
+import com.dzf.model.channel.dealmanage.StockInBVO;
+import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -132,7 +134,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	/**
 	 * 
 	 * @param pamvo
-	 * @param type   1：确认；2：取消订单；3：商品发货；
+	 * @param type   1：确认；2：取消订单；3：商品发货（此功能去掉，移动至出库单节点）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -146,9 +148,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				return updateConfirm(pamvo, cuserid);
 			}else if(type != null && type == 2){
 				return updateCancel(pamvo, cuserid);
-			}else if(type != null && type == 3){
+			}/*else if(type != null && type == 3){
 				return updateSetOut(pamvo, cuserid);
-			}
+			}*/
 
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -213,7 +215,89 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		bsvo.setDoperatetime(new DZFDateTime());
 		bsvo.setVnote(pamvo.getVrejereason());//处理说明
 		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
+		
+		//释放购买量
+		updateStockNum(pamvo);
+		
 		return pamvo;
+	}
+	
+	/**
+	 * 释放库存的购买量
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	private void updateStockNum(GoodsBillVO pamvo) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_goodsbill = ? AND pk_corp = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pamvo.getPk_goodsbill());
+		spm.addParam(pamvo.getPk_corp());
+		GoodsBillBVO[] bVOs = (GoodsBillBVO[]) singleObjectBO.queryByCondition(GoodsBillBVO.class, sql, spm);
+		if(bVOs != null && bVOs.length > 0){
+			for(GoodsBillBVO bvo : bVOs){
+				updateStockOffNum(bvo);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateStockOffNum(GoodsBillBVO bvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT *  \n");
+		sql.append("  FROM cn_stocknum  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_corp = ?  \n");
+		sql.append("   AND pk_warehouse = ?  \n");
+		sql.append("   AND pk_goods = ?  \n");
+		sql.append("   AND pk_goodsspec = ? \n");
+		spm.addParam(bvo.getPk_corp());
+		spm.addParam(IStatusConstant.CK_ID);//大账房默认团队
+		spm.addParam(bvo.getPk_goods());
+		spm.addParam(bvo.getPk_goodsspec());
+		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockNumVO.class));
+		if(list != null && list.size() > 0){
+			StockNumVO numvo = list.get(0);
+			updateStock(numvo, bvo);
+		}else if(list != null && list.size() > 1){
+			throw new BusinessException("库存商品数量错误，请先进行库存盘点");
+		}
+	}
+	
+	/**
+	 * 更新库存
+	 * @param numvo
+	 * @param bvo
+	 * @throws DZFWarpException
+	 */
+	private void updateStock(StockNumVO numvo, GoodsBillBVO bvo) throws DZFWarpException {
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_stocknum(), uuid, 120);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			
+			sql.append("UPDATE cn_stocknum \n");
+			sql.append("   SET istocknum = nvl(istocknum,0) - ?  \n");
+			spm.addParam(bvo.getAmount());
+			sql.append(" WHERE nvl(dr,0) = 0 \n");
+			sql.append("   AND pk_corp = ? \n");
+			spm.addParam(numvo.getPk_corp());
+			sql.append("   AND pk_stocknum = ?  \n");
+			spm.addParam(numvo.getPk_stocknum());
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res != 1) {
+				throw new BusinessException("入库单数量更新错误");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_stocknum(), uuid);
+		}
 	}
 	
 	/**

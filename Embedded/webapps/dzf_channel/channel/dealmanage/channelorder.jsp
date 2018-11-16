@@ -39,7 +39,7 @@
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancOrder()">取消订单</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="sendOut()">商品发货</a>
+					<!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="sendOut()">商品发货</a> -->
 				</div>
 			</div>
 		</div>
