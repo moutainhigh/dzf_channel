@@ -268,6 +268,7 @@ function opermatter(val, row, index) {
  */
 function add(){
 	showCard();
+	$("#stdate").datebox("setValue",parent.SYSTEM.LoginDate);
 	
 	$('#stgrid').datagrid('appendRow', {});
 	editIndex = $('#stgrid').datagrid('getRows').length - 1;
@@ -370,7 +371,7 @@ function initCardGrid() {
                 	panelHeight: 160,
                 	showItemIcon: true,
                 	valueField: "name",
-                	editable: false,
+                	editable: true,
                 	required : true,
                 	textField: "name",
                 	data: goods,
