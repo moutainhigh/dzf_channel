@@ -54,8 +54,8 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 		sql.append("        g.vgoodscode, ");
 		sql.append("        g.vgoodsname, ");
 		sql.append("        num.istocknum - nvl(num.ioutnum, 0) istocknum, ");
-		sql.append("        nvl(num.ioutnum, 0) - nvl(num.isellnum, 0) ilocknum, ");
-		sql.append("        num.istocknum+nvl(num.isellnum, 0) - 2*nvl(num.ioutnum, 0) iusenum");
+		sql.append("        nvl(num.isellnum, 0)-nvl(num.ioutnum, 0)  ilocknum, ");
+		sql.append("        num.istocknum  - nvl(num.isellnum, 0) iusenum");
 		sql.append("   from cn_stocknum num ");
 		sql.append("   left join cn_goods g on num.pk_goods = g.pk_goods ");
 		sql.append("                       and num.pk_goods = g.pk_goods ");
@@ -77,7 +77,7 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 			sql.append("and g.vgoodsname like ? ");
 			spm.addParam("%"+qvo.getVgoodsname()+"%");
 		}
-//		sql.append(" order by c.ts desc ");
+		sql.append(" order by t.vname,g.vgoodsname ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

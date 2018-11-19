@@ -57,7 +57,7 @@ function load(){
 			align : 'right',
 		}, {
 			width : '100',
-			title : '锁定数量',
+			title : '购买数量',
 			field : 'lock',
             halign : 'center',
 			align : 'right',
