@@ -848,8 +848,8 @@ function onSave(){
 	}
 	
 	postdata["adddata"] = adddata;
-	postdata["deldata"] = deldata;
 	postdata["upddata"] = upddata;
+	postdata["deldata"] = deldata;
 
 	onSaveSubmit(postdata);
 }
@@ -874,16 +874,6 @@ function onSaveSubmit(postdata){
 					$("#listPanel").show();
 					$("#cardPanel").hide();
 					reloadData();
-//					if(status == "edit"){
-//						$('#grid').datagrid('updateRow', {
-//							index : editIndex,
-//							row : row
-//						});
-//						editIndex = null;
-//					}else if(status == "add"){
-//						$('#grid').datagrid('appendRow',row);
-//					}
-					
 				} else {
 					Public.tips({
 						content : result.msg,
@@ -948,41 +938,7 @@ function confirm(){
 						content : result.msg,
 					});
 				}
-				$('#allotDialog').dialog('close');
-				var rerows = result.rows;
-				if(rerows != null && rerows.length > 0){
-					var map = new HashMap(); 
-					for(var i = 0; i < rerows.length; i++){
-						map.put(rerows[i].stid,rerows[i]);
-					}
-					var index;
-					var indexes = new Array();
-					for(var i = 0; i < rows.length; i++){
-						if(map.containsKey(rows[i].stid)){
-							index = $('#grid').datagrid('getRowIndex', rows[i]);
-							indexes.push(index);
-						}
-					}
-					for(var i in indexes){
-						if(type == 1){
-							$('#grid').datagrid('updateRow', {
-								index : indexes[i],
-								row : {
-									status : rerows[i].status,
-									updatets : rerows[i].updatets,
-								}
-							});
-						}else if(type == 2){
-							$('#grid').datagrid('updateRow', {
-								index : indexes[i],
-								row : {
-									status : rerows[i].status,
-									updatets : rerows[i].updatets,
-								}
-							});
-						}
-					}
-				}
+				reloadData();
 				$("#grid").datagrid('uncheckAll');
 			}
 		},

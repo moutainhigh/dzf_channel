@@ -150,7 +150,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 	}
 	
 	/**
-	 * 初始化
+	 * 计量单位下拉
 	 */
 	public void initMeasCombox() {
 		Grid grid = new Grid();
