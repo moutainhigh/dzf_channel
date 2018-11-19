@@ -44,6 +44,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
+		checkOnSelect:false,
 		idField : 'gid',
 		frozenColumns : [ [ 
 		    {field : 'ck',checkbox : true}, 
@@ -164,9 +165,15 @@ function noteFormat(value){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
-	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
-	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+	if (row.status != 1) {
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
+	}else{
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+	}
 }
 
 /**
@@ -882,15 +889,6 @@ function onSave(){
 					$('#cbDialog').dialog('close');
 					reloadData()
 					editIndex = null;
-//					if(status == "edit"){
-//						$('#grid').datagrid('updateRow', {
-//							index : editIndex,
-//							row : row
-//						});
-//						editIndex = null;
-//					}else if(status == "add"){
-//						$('#grid').datagrid('appendRow',row);
-//					}
 				} else {
 					Public.tips({
 						content : result.msg,
