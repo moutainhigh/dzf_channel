@@ -20,7 +20,7 @@
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
-					<div id="cxjs" class="h30 h30-arrow">
+					<div id="cxjs" class="h30 h30-arrow" style="margin-top: -2px;">
 						<label style="width: 90px;text-align:right">期间：</label>
 						<font>
 							<select id="qyear" name="qyear" class="easyui-combobox" 
