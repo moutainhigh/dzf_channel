@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var status="brows";
 var krows=null;//客户名称
+var selIndex;//确认收货，选中的index
 
 //数据表格随窗口大小改变
 $(window).resize(function() {
@@ -272,7 +273,7 @@ function load(){
 function opermatter(val, row, index) {
 	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a> '+
 	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="updateDeliver(\''+index+'\')">确认发货</a>';
+	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
 }
 
 function add(){
@@ -447,9 +448,9 @@ function loadData(qtype){
 }
 
 /**
- * 弹出物流信息对话框
+ * 确认出库
  */
-function tanLog(){
+function commit(){
 	var rows = $('#grid').datagrid('getSelections');
 	if(rows.length <= 0){
 		Public.tips({
@@ -458,46 +459,13 @@ function tanLog(){
 		});
 		return;
 	}
-	$('#logDialog').dialog({modal:true});
-    $('#logDialog').dialog('open').dialog('center').dialog('setTitle',"物流信息");
-    $('#logUpdate').form("clear");
-}
-
-function logCancel(){
-	$.messager.confirm("提示", "确定取消吗？", function(flag) {
-		if (flag) {
-			$('#logDialog').dialog('close');
-		} else {
-			return null;
-		}
-	});
-
-}
-
-function logCommit(){
-	var flag = $('#logUpdate').form('validate');
-	if(flag == false){
-		Public.tips({content:"必输信息为空或格式不正确",type:2});
-		return;
-	}
-	var rows = $('#grid').datagrid('getSelections');
-	commit(rows);
-}
-
-function commit(rows){
 	parent.$.messager.progress({text : '确认中....'});
 	failen=0;
 	failmsg="";
-	var postdata = new Object();
-	postdata["logunit"] = $("#logunit").textbox('getValue');
-	postdata["fcode"] = $("#fcode").textbox('getValue');
 	for(var i=0;i<rows.length;i++){
-		delete rows[i].tableCodes;
-		postdata["head"] = JSON.stringify(rows[i]);
-		updateCommit(postdata);
+		updateCommit(rows[i]);
 	}
 	parent.$.messager.progress('close');
-	$('#logDialog').dialog('close');
 	if(failen==0){
 		Public.tips({
 			content :  "成功"+(rows.length)+"条",
@@ -512,12 +480,12 @@ function commit(rows){
 	reloadData();
 }
 
-function updateCommit(postdata){
+function updateCommit(row){
 	$.ajax({
 		type : 'POST',
 		async : false,
 		url : contextPath + '/dealmanage/stockout!updateCommit.action',
-		data : postdata,
+		data : row,
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -555,15 +523,50 @@ function delOrder(index){
 	});
 }
 
-function updateDeliver(index){
-	var row=$('#grid').datagrid('getRows')[index];
+/**
+ * 弹出物流信息对话框
+ */
+function tanLog(index){
+	selIndex=index;
+	$('#logDialog').dialog({modal:true});
+    $('#logDialog').dialog('open').dialog('center').dialog('setTitle',"物流信息");
+    $('#logUpdate').form("clear");
+}
+
+function logCancel(){
+	$.messager.confirm("提示", "确定取消吗？", function(flag) {
+		if (flag) {
+			$('#logDialog').dialog('close');
+		} else {
+			return null;
+		}
+	});
+
+}
+
+function logCommit(){
+	var flag = $('#logUpdate').form('validate');
+	if(flag == false){
+		Public.tips({content:"必输信息为空或格式不正确",type:2});
+		return;
+	}
+	var row= $('#grid').datagrid('getSelections')[selIndex];
+	updateDeliver(row);
+}
+
+function updateDeliver(row){
+	var postdata = new Object();
+	postdata["head"] = JSON.stringify(row);
+	postdata["logunit"] = $("#logunit").textbox('getValue');
+	postdata["fcode"] = $("#fcode").textbox('getValue');
 	$.ajax({
 		type : 'POST',
 		async : false,
 		url : contextPath + '/dealmanage/stockout!updateDeliver.action',
-		data : row,
+		data : postdata,
 		dataTye : 'json',
 		success : function(result) {
+			$('#logDialog').dialog('close');
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				Public.tips({

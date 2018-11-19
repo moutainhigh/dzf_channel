@@ -33,7 +33,7 @@
 				</div>
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="add()">新增</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="tanLog()">确认出库</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="commit()">确认出库</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doPrint()">打印</a>
 				</div>
 			</div>

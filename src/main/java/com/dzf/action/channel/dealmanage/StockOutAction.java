@@ -197,17 +197,12 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 				throw new BusinessException("登陆用户错误");
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
-			String head = getRequest().getParameter("head");
-			JSON headjs = (JSON) JSON.parse(head);
-			Map<String, String> headmaping = FieldMapping.getFieldMapping(new StockOutVO());
-			StockOutVO headvo = DzfTypeUtils.cast(headjs, headmaping, StockOutVO.class, JSONConvtoJAVA.getParserConfig());
-			headvo.setLogisticsunit(getRequest().getParameter("logunit"));
-			headvo.setFastcode(getRequest().getParameter("fcode"));
-			headvo.setVconfirmid(getLoginUserid());
-			
-			stockOut.updateCommit(headvo);
+			StockOutVO vo = new StockOutVO();
+			vo = (StockOutVO) DzfTypeUtils.cast(getRequest(), vo);
+			vo.setVconfirmid(getLoginUserid());
+			stockOut.updateCommit(vo);
 			json.setSuccess(true);
-			json.setRows(headvo);
+			json.setRows(vo);
 			json.setMsg("操作成功!");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
@@ -225,13 +220,17 @@ public class StockOutAction extends PrintUtil<StockOutVO>{
 				throw new BusinessException("登陆用户错误");
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
-			StockOutVO vo = new StockOutVO();
-			vo = (StockOutVO) DzfTypeUtils.cast(getRequest(), vo);
-			vo.setVdeliverid(getLoginUserid());
-			vo.setFathercorp(getLogincorppk());
-			stockOut.updateDeliver(vo);
+			String head = getRequest().getParameter("head");
+			JSON headjs = (JSON) JSON.parse(head);
+			Map<String, String> headmaping = FieldMapping.getFieldMapping(new StockOutVO());
+			StockOutVO headvo = DzfTypeUtils.cast(headjs, headmaping, StockOutVO.class, JSONConvtoJAVA.getParserConfig());
+			headvo.setLogisticsunit(getRequest().getParameter("logunit"));
+			headvo.setFastcode(getRequest().getParameter("fcode"));
+			headvo.setVdeliverid(getLoginUserid());
+//			headvo.setFathercorp(getLogincorppk());
+			stockOut.updateDeliver(headvo);
 			json.setSuccess(true);
-			json.setRows(vo);
+			json.setRows(headvo);
 			json.setMsg("操作成功!");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
