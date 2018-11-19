@@ -492,7 +492,6 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			json.setRows(retvo);
 			json.setSuccess(true);
 			json.setMsg("保存成功");
-			writeLogRecord(LogRecordEnum.OPE_ADMIN_ZLJJ.getValue(),"新增客户资料",ISysConstants.SYS_1);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
