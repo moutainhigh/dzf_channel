@@ -272,23 +272,35 @@ function initSetGrid(){
 		},] ],
 		onDblClickRow : function(rowIndex, rowData) {
 			endBodyEdit();
-			if(isCanAdd()){
-				if (isEmpty(etIndex)) {
-					$("#setgrid").datagrid('beginEdit', rowIndex);
-					etIndex = rowIndex;
-				}  
+			if(isEmpty(etIndex)){
+				$("#setgrid").datagrid('beginEdit', rowIndex);
+				etIndex = rowIndex;
 			}else{
-				Public.tips({
-					content : "规格和型号不能同时为空",
-					type : 2
-				});
+				if(etIndex == rowIndex){
+					$("#setgrid").datagrid('beginEdit', etIndex);
+				}else{
+					if(isCanAdd()){
+						$("#setgrid").datagrid('beginEdit', rowIndex);
+						etIndex = rowIndex;
+					}else{
+						Public.tips({
+							content : "规格和型号不能同时为空",
+							type : 2
+						});
+					}
+				}
 			}
+			
 			if(rowData.beused == "是"){
 				var spec = $("#setgrid").datagrid('getEditor', {index:rowIndex,field:'spec'}); 
-				$(spec.target).textbox('readonly', true);
+				if(spec != undefined){
+					$(spec.target).textbox('readonly', true);
+				}
 				
 				var type = $("#setgrid").datagrid('getEditor', {index:rowIndex,field:'type'}); 
-				$(type.target).textbox('readonly', true);
+				if(type != undefined){
+					$(type.target).textbox('readonly', true);
+				}
 			}
 		},
 	});
@@ -329,6 +341,7 @@ function addRow(){
 			content : "规格和型号不能同时为空",
 			type : 2
 		});
+		$("#setgrid").datagrid('beginEdit', etIndex);
 		return;
 	}
 }
@@ -427,6 +440,8 @@ function setSave(){
 					content : "规格和型号不能同时为空",
 					type : 2
 				});
+				$("#setgrid").datagrid('beginEdit', j);
+				etIndex = j;
 				return;
 			}
 		}
