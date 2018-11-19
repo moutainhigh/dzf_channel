@@ -94,6 +94,10 @@ public class StockInServiceImpl implements IStockInService {
 			sql.append("   AND coperatorid like ? \n");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
 		}
+		if(pamvo.getQrytype() != null && pamvo.getQrytype() != -1){
+			sql.append("   AND vstatus = ? \n");
+			spm.addParam(pamvo.getQrytype());
+		}
 		sql.append(" ORDER BY ts DESC");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

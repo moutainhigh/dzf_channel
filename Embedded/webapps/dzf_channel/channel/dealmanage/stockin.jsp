@@ -29,7 +29,12 @@
 				<div class="left mod-crumb">
 					<span class="cur"></span>
 				</div>
-				
+				<div class="left mod-crumb">
+					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="loadData(1)">待确认</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="loadData(2)">已确认</a>
+					</div>
+				</div>
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="add()">新增</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认入库</a>

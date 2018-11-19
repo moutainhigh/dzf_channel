@@ -234,10 +234,15 @@ function closeCx(){
 
 /**
  * 快速查询
- * @param type
+ * @param type  1：待确认；2：已确认；
  */
 function loadData(type){
-	
+	var url = DZF.contextPath + '/dealmanage/stockin!query.action';
+	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('load', {
+		'qtype' : type,
+	});
+	$('#grid').datagrid('clearSelections');
 }
 
 /**
