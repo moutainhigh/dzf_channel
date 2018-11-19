@@ -180,6 +180,8 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
+		checkOnSelect:false,
+//		selectOnCheck:true,
 		idField : 'soutid',
 		columns : [ [ 
   		 {
@@ -211,18 +213,21 @@ function load(){
 			field : 'logunit',
 			halign : 'center',
 			align : 'left',
+			formatter :showTitle,
 		}, {
 			width : '100',
 			title : '物流单号',
 			field : 'fcode',
 			halign : 'center',
 			align : 'left',
+			formatter :showTitle,
 		},{
 			width : '160',
 			title : '备注',
 			field : 'memo',
 			halign : 'center',
 			align : 'left',
+			formatter :showTitle,
 		}, {
 			width : '80',
 			title : '单据状态',
@@ -270,10 +275,26 @@ function load(){
 	});
 }
 
+function showTitle(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
+}
+
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
+	if(row.vstatus==0){
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">确认发货</span>';
+	}else if(row.vstatus==1){
+		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
+	}else{
+		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">确认发货 </span>';
+	}
 }
 
 function add(){
@@ -447,11 +468,9 @@ function loadData(qtype){
 	$('#grid').datagrid('reload');
 }
 
-/**
- * 确认出库
- */
+
 function commit(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if(rows.length <= 0){
 		Public.tips({
 			content : '请至少选择一行数据',
@@ -459,6 +478,19 @@ function commit(){
 		});
 		return;
 	}
+	$.messager.confirm("提示", "确认出库吗？", function(flag) {
+		if (flag) {
+			commitConfirm(rows);
+		} else {
+			return null;
+		}
+	});
+}
+
+/**
+ * 确认出库
+ */
+function commitConfirm(rows){
 	parent.$.messager.progress({text : '确认中....'});
 	failen=0;
 	failmsg="";
@@ -541,7 +573,6 @@ function logCancel(){
 			return null;
 		}
 	});
-
 }
 
 function logCommit(){
@@ -550,15 +581,15 @@ function logCommit(){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
 		return;
 	}
-	var row= $('#grid').datagrid('getSelections')[selIndex];
+	var row= $('#grid').datagrid('getRows')[selIndex];
 	updateDeliver(row);
 }
 
 function updateDeliver(row){
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(row);
-	postdata["logunit"] = $("#logunit").textbox('getValue');
-	postdata["fcode"] = $("#fcode").textbox('getValue');
+	postdata["logunit"] = $("#slogunit").textbox('getValue');
+	postdata["fcode"] = $("#sfcode").textbox('getValue');
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -594,6 +625,6 @@ function doPrint(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(contextPath+ '/report/conReceive!print.action',{'strlist':JSON.stringify(datarows),
+	Business.getFile(contextPath+ '/dealmanage/stockout!print.action',{'strlist':JSON.stringify(datarows),
 		'columns':JSON.stringify(columns)}, true, true);
 }

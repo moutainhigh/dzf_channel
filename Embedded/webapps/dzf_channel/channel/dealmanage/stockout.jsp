@@ -118,10 +118,10 @@
 				<div class="time_col time_colp11">
 					<div style="display: inline-block;">
 						<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流公司</label>
-						<input id="logunit" name="logunit" class="easyui-textbox" 
+						<input id="slogunit" name="logunit" class="easyui-textbox" 
 							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
 							<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流单号</label>
-						<input id="fcode" name="fcode" class="easyui-textbox" 
+						<input id="sfcode" name="fcode" class="easyui-textbox" 
 							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
 					</div>
 				</div>

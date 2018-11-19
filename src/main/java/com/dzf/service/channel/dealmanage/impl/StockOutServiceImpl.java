@@ -309,19 +309,6 @@ public class StockOutServiceImpl implements IStockOutService{
 				sql.append(SqlUtil.buildSqlForIn("pk_goodsbill_b",billbs.toArray(new String[billbs.size()])));
 				singleObjectBO.executeUpdate(sql.toString(),null);
 			}
-			
-			//2、该出库单子表按照商品规格、商品、库存合并
-			sql = new StringBuffer();
-			sql.append(" select b.pk_goods, b.pk_goodsspec, sum(b.nnum) isellnum ");
-			sql.append("   from cn_stockout_b b ");
-			sql.append("  where nvl(b.dr, 0) = 0 ");
-			sql.append("    and b.pk_stockout = ? ");
-			sql.append("  group by b.pk_goods, b.pk_goodsspec ");
-			List<StockNumVO> numVOs=(List<StockNumVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockNumVO.class));
-//			//3、更新库存表 
-//			for (StockNumVO stockNumVO : numVOs) {
-//				updateSellNum(stockNumVO);
-//			}
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
 		        throw new BusinessException(e.getMessage());
@@ -332,33 +319,6 @@ public class StockOutServiceImpl implements IStockOutService{
 		}
 	}
 	
-//	/**
-//	 * 更新库存表 isellnum字段
-//	 * @param vo
-//	 * @throws DZFWarpException
-//	 */
-//	private void updateSellNum(StockNumVO vo) throws DZFWarpException {
-//		String uuid = UUID.randomUUID().toString();
-//		try {
-//			LockUtil.getInstance().tryLockKey("isellnum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid, 120);//同时确认同一规格和型号的商品出库；
-//			StringBuffer sql = new StringBuffer();
-//			SQLParameter spm = new SQLParameter();
-//			spm.addParam(vo.getIstocknum());
-//			spm.addParam(vo.getPk_goodsspec());
-//			spm.addParam(vo.getPk_goods());
-//			sql.append(" update cn_stocknum num ");
-//			sql.append("    set num.isellnum  = nvl(num.isellnum, 0) + ?");
-//			sql.append("  where num.pk_goodsspec =? and num.pk_goods=? ");
-//			singleObjectBO.executeUpdate(sql.toString(),spm);
-//		}catch (Exception e) {
-//		    if (e instanceof BusinessException)
-//		        throw new BusinessException(e.getMessage());
-//		    else
-//		        throw new WiseRunException(e);
-//		} finally {
-//			LockUtil.getInstance().unLock_Key("isellnum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid);
-//		}
-//	}
 
 	/**
 	 * 更新库存表 ioutnum字段
