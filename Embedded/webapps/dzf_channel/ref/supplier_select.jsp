@@ -107,7 +107,8 @@
 			singleSelect : false,
 			height:330,
 			striped:true,
-		   
+			singleSelect : true,
+			ctrlSelect : false,
 			columns : [ [ {
 						field : 'suid',
 						title : '主键id',
