@@ -174,10 +174,6 @@ function opermatter(val, row, index) {
  */
 function setup(index){
 	var row = $('#grid').datagrid('getData').rows[index];
-//	var row = queryByID(erow.gid, 0);
-//	if(isEmpty(row)){
-//		return;
-//	}
 	gid = row.gid;
 	$('#setDialog').dialog('open').dialog('center').dialog('setTitle', '商品规格设置');
 	initSetGrid();
@@ -196,8 +192,6 @@ function setup(index){
 				var rows = result.rows;
 				if(rows != null && rows.length > 0){
 					$('#setgrid').datagrid('loadData', rows);
-//					etIndex = $('#setgrid').datagrid('getRows').length - 1;
-//					$('#setgrid').datagrid('beginEdit',etIndex);
 				}else{
 					$('#setgrid').datagrid('loadData',{ total:0, rows:[]});
 					$('#setgrid').datagrid('appendRow', {
@@ -652,7 +646,6 @@ function dele(ths){
 						});
 					} else {
 						$('#grid').datagrid('clearSelections');
-//						$('#grid').datagrid('deleteRow', Number(tindex)); 
 						$("#grid").datagrid("reload");
 						Public.tips({
 							content : data.msg,
@@ -984,45 +977,7 @@ function operdata(type){
 						content : result.msg,
 					});
 				}
-				$('#allotDialog').dialog('close');
-				var rerows = result.rows;
-				if(rerows != null && rerows.length > 0){
-					var map = new HashMap(); 
-					for(var i = 0; i < rerows.length; i++){
-						map.put(rerows[i].gid,rerows[i]);
-					}
-					var index;
-					var indexes = new Array();
-					for(var i = 0; i < rows.length; i++){
-						if(map.containsKey(rows[i].gid)){
-							index = $('#grid').datagrid('getRowIndex', rows[i]);
-							indexes.push(index);
-						}
-					}
-					for(var i in indexes){
-						if(type == 1){
-							$('#grid').datagrid('updateRow', {
-								index : indexes[i],
-								row : {
-									status : rerows[i].status,
-									pubdate : rerows[i].pubdate,
-									dofdate : null,
-									updatets : rerows[i].updatets,
-								}
-							});
-						}else if(type == 2){
-							$('#grid').datagrid('updateRow', {
-								index : indexes[i],
-								row : {
-									status : rerows[i].status,
-									pubdate : rerows[i].pubdate,
-									dofdate : rerows[i].dofdate,
-									updatets : rerows[i].updatets,
-								}
-							});
-						}
-					}
-				}
+				reloadData();
 				$("#grid").datagrid('uncheckAll');
 			}
 		},
