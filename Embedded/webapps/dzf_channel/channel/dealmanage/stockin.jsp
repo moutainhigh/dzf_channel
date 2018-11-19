@@ -12,7 +12,9 @@
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/stockin.js");%> charset="UTF-8" type="text/javascript"></script>
-
+<script
+	src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js"
+	charset="UTF-8" type="text/javascript"></script>
 </head>
 <body>
 	<!-- 列表界面 begin -->

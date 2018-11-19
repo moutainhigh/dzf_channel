@@ -8,7 +8,65 @@ $(function(){
 	reloadData();
 	initUserRef();
 	initCardGrid();
+	//expendRow();
+	
 });
+
+function expendRow(){
+	 $('#grid').datagrid({
+         view: detailview,
+         detailFormatter:function(index,row){
+             return '<div style="padding:2px;position:relative;"><table class="ddv"></table></div>';
+         },
+         onExpandRow: function(index,row){
+             var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+             ddv.datagrid({
+            	 url: contextPath + '/dealmanage/stockin!queryById.action',
+//                 url:'datagrid22_getdetail.php?itemid='+row.itemid,
+            	 queryParams: {
+            		stid: row.stid,
+            	 },
+                 fitColumns:true,
+                 singleSelect:true,
+                 rownumbers:true,
+                 loadMsg:'',
+                 height:'auto',
+                 columns:[[
+                     {field:'goodsspe',title:'供应商',width:200},
+                     {field:'gname',title:'商品',width:100,},
+                     {field:'spec',title:'规格',width:100,},
+                     {field:'type',title:'型号',width:100,},
+                     {field:'price',title:'成本价',width:100,align:'right',
+                    	 formatter : function(value, row, index) {
+             				if (value == 0)
+             					return "0.00";
+             				return formatMny(value);
+             			},},
+                     {field:'num',title:'入库数量',width:100,align:'right'},
+                     {field:'mny',title:'金额',width:100,align:'right',
+                    	 formatter : function(value, row, index) {
+             				if (value == 0)
+             					return "0.00";
+             				return formatMny(value);
+             			},},
+                 ]],
+                 onResize:function(){
+                     $('#grid').datagrid('fixDetailRowHeight',index);
+                 },
+                 onLoadSuccess:function(data){
+                     setTimeout(function(){
+                         $('#grid').datagrid('fixDetailRowHeight',index);
+                     },0);
+                     var child = data.rows.children;
+                     if(child != null && child.length > 0){
+                    	 ddv.datagrid('loadData',child);
+                     }
+                 }
+             });
+             $('#grid').datagrid('fixDetailRowHeight',index);
+         }
+     });
+}
 
 /**
  * 查询初始化
