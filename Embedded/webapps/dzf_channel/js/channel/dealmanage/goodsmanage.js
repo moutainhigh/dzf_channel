@@ -880,15 +880,17 @@ function onSave(){
 					var row = result.rows;
 					initMeas();
 					$('#cbDialog').dialog('close');
-					if(status == "edit"){
-						$('#grid').datagrid('updateRow', {
-							index : editIndex,
-							row : row
-						});
-						editIndex = null;
-					}else if(status == "add"){
-						$('#grid').datagrid('appendRow',row);
-					}
+					reloadData()
+					editIndex = null;
+//					if(status == "edit"){
+//						$('#grid').datagrid('updateRow', {
+//							index : editIndex,
+//							row : row
+//						});
+//						editIndex = null;
+//					}else if(status == "add"){
+//						$('#grid').datagrid('appendRow',row);
+//					}
 				} else {
 					Public.tips({
 						content : result.msg,

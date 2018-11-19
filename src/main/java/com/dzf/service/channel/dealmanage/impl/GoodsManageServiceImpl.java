@@ -21,6 +21,7 @@ import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
+import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
@@ -36,6 +37,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
@@ -530,17 +532,18 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 60);
 			List<String> strlist = new ArrayList<String>();
 			strlist.add("vstatus");
-			if(itype == 1){
+			if(itype == 1){//发布
+				CheckStockNum(pamvo);
 				pamvo.setVstatus(IStatusConstant.IGOODSSTATUS_2);
 				pamvo.setUpdatets(new DZFDateTime());
 				pamvo.setDpublishdate(new DZFDate());
 				pamvo.setDoffdate(null);
 				strlist.add("dpublishdate");
 				strlist.add("doffdate");
-			}else if(itype == 2){
+			}else if(itype == 2){//下架
 				pamvo.setVstatus(IStatusConstant.IGOODSSTATUS_3);
 				pamvo.setUpdatets(new DZFDateTime());
 				pamvo.setDoffdate(new DZFDate());
@@ -555,8 +558,38 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goods(), uuid);
 		}
-
 		return null;
+	}
+	
+	/**
+	 * 发布前可售卖数量检查
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private void CheckStockNum(GoodsVO pamvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT istocknum, isellnum  \n");
+		sql.append("  FROM cn_stocknum m  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0 \n");
+		sql.append("   AND pk_goods = ? \n");
+		spm.addBlobParam(pamvo.getPk_goods());
+		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockNumVO.class));
+		if(list != null && list.size() > 0){
+			Integer restnum = 0;
+			Integer num = 0;
+			for(StockNumVO numvo : list){
+				num = ToolsUtil.subInteger(numvo.getIstocknum(), numvo.getIsellnum());
+				restnum = ToolsUtil.addInteger(restnum, num);
+			}
+			if(restnum == 0){
+				throw new BusinessException("商品"+pamvo.getVgoodsname()+"可售卖数量不足，请补充库存后，再发布！");
+			}
+		}else{
+			throw new BusinessException("商品"+pamvo.getVgoodsname()+"可售卖数量不足，请补充库存后，再发布！");
+		}
 	}
 
 	@SuppressWarnings("unchecked")

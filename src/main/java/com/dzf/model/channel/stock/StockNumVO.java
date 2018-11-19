@@ -24,11 +24,11 @@ public class StockNumVO extends SuperVO {
     
     private String pk_goodsspec;//规格型号ID
     
-    private Integer istocknum;
+    private Integer istocknum;//库存量
     
-    private Integer ioutnum;
+    private Integer ioutnum;//已出数量
     
-    private Integer isellnum;
+    private Integer isellnum;//已卖数量
     
     private String coperatorid;
     
