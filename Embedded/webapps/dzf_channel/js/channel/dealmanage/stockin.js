@@ -57,6 +57,7 @@ function load(){
 		fitColumns : false,
 		height : Public.setGrid().h,
 		singleSelect : false,
+		checkOnSelect : false,
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
@@ -196,7 +197,7 @@ function btnCtrl(){
  * @param isedit
  */
 function isItemEdit(isedit) {
-	//入库日志
+	//入库日期
 	$('#stdate').textbox("readonly",isedit);
 }
 
@@ -232,6 +233,14 @@ function closeCx(){
 }
 
 /**
+ * 快速查询
+ * @param type
+ */
+function loadData(type){
+	
+}
+
+/**
  * 列操作格式化
  * @param val
  * @param row
@@ -239,8 +248,14 @@ function closeCx(){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+	if(row.status != 1){
+		return '<span style="margin-bottom:0px;">编辑</span> '+
+		' <span style="margin-bottom:0px;margin-left:10px;">删除</span>';
+	}else{
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
+		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+	}
+	
 }
 
 /**
