@@ -66,7 +66,7 @@ public class RebateCountServiceImpl implements IRebateCountService {
                 }
                 
             }
-            if(listFilter != null && listFilter.size() > 0){
+            if(!StringUtil.isEmpty(paramvo.getCorpkname())){
                 return listFilter;
             }
         }
