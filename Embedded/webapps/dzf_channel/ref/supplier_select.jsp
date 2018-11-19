@@ -107,8 +107,7 @@
 			singleSelect : false,
 			height:330,
 			striped:true,
-			singleSelect : true,
-			ctrlSelect : false,
+		   
 			columns : [ [ {
 						field : 'suid',
 						title : '主键id',
@@ -181,7 +180,7 @@
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left search-crumb">
-					<input id="stcode" value="请输入供应商名称点击enter键查询" 
+					<input id="stcode" style="color: rgb(153, 153, 153);" value="请输入供应商名称点击Enter键查询" 
 						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
 						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
 					<a href="javascript:void(0)" id="ok" class="easyui-linkbutton" onClick="addSupplier()">添加</a> 
