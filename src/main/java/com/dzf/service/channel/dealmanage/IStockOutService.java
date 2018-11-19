@@ -78,4 +78,12 @@ public interface IStockOutService {
 	 */
 	public void updateDeliver(StockOutVO vo) throws DZFWarpException;
 	
+	/**
+	 * 查询打印数据明细
+	 * @param soutid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public StockOutVO queryForPrint(String soutid) throws DZFWarpException;
+	
 }

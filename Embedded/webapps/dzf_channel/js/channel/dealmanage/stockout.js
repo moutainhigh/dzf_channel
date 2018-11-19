@@ -283,7 +283,7 @@ function showTitle(value){
 
 function opermatter(val, row, index) {
 	if(row.vstatus==0){
-		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(\''+row.soutid+'\')">编辑</a>'+
+		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+row.soutid+'\')">编辑</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">确认发货</span>';
 	}else if(row.vstatus==1){
@@ -619,12 +619,15 @@ function updateDeliver(row){
  * 打印
  */
 function doPrint(){
-	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
+	var rows = $('#grid').datagrid('getChecked');
+	if(rows==undefined || rows.length != 1){
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	Business.getFile(contextPath+ '/dealmanage/stockout!print.action',{'strlist':JSON.stringify(datarows),
-		'columns':JSON.stringify(columns)}, true, true);
+	var id=rows[0].soutid;
+	Business.getFile(contextPath+ '/dealmanage/stockout!print.action',{
+		'id':id}, true, true);
 }

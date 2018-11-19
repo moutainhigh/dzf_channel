@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -88,7 +89,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT c.vbillcode,g.vgoodsname,");
 		corpsql.append(" g.pk_goodsspec,g.invspec,g.invtype,");
-		corpsql.append(" s.nnum,s.nmny");
+		corpsql.append(" s.nnum,s.nmny,s.nprice");
 		corpsql.append("  FROM cn_stockout_b s");
 		corpsql.append(" left join cn_goodsbill_b g on s.pk_goodsbill_b = g.pk_goodsbill_b ");
 		corpsql.append(" left join cn_goodsbill c on g.pk_goodsbill = c.pk_goodsbill");
@@ -493,6 +494,63 @@ public class StockOutServiceImpl implements IStockOutService{
 		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(3);
 		vo.setVbillcode(billCode.getDefaultCode(mcvo));
+	}
+
+	@Override
+	public StockOutVO queryForPrint(String soutid) throws DZFWarpException {
+		StockOutVO retvo = (StockOutVO) singleObjectBO.queryByPrimaryKey(StockOutVO.class, soutid);
+		if(retvo == null){
+			throw new BusinessException("很抱歉，该出库单已被删除!");
+		}
+		CorpVO cvo = CorpCache.getInstance().get(null, retvo.getPk_corp());
+		if(cvo !=null){
+			retvo.setCorpname(cvo.getUnitname());
+		}
+	
+		StringBuffer corpsql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		corpsql.append("SELECT c.vbillcode,g.vgoodsname,");
+		corpsql.append(" g.invspec,g.invtype,c.pk_goodsbill pk_goodsbill_b, ");
+		corpsql.append(" s.nnum,s.nmny");
+		corpsql.append("  FROM cn_stockout_b s");
+		corpsql.append(" left join cn_goodsbill_b g on s.pk_goodsbill_b = g.pk_goodsbill_b ");
+		corpsql.append(" left join cn_goodsbill c on g.pk_goodsbill = c.pk_goodsbill");
+		corpsql.append(" where nvl(s.dr,0)= 0 and nvl(g.dr,0)=0 and nvl(c.dr,0)=0 ");
+		corpsql.append(" and pk_stockout= ? ");
+//		corpsql.append(" order by ts asc,pk_dealstep_b asc");
+		sp.addParam(soutid);
+		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
+		
+		HashMap<String, List<StockOutBVO>> map = new HashMap<>();
+		List<StockOutBVO> list=new ArrayList<>();
+		String putID;
+		for (StockOutBVO stockOutBVO : bvos) {
+			putID=stockOutBVO.getPk_goodsbill_b();
+			if(!map.containsKey(putID)){
+				list=new ArrayList<>();
+			}else{
+				list= map.get(putID);
+			}
+			list.add(stockOutBVO);
+			map.put(putID, list);
+		}
+		
+		corpsql = new StringBuffer();
+		corpsql.append(" select b.pk_goodsbill,b.vreceivername,b.vreceiveaddress,b.phone ");
+		corpsql.append(" from cn_goodsbill b  where nvl(b.dr,0)=0  ");
+		
+		if(map!=null && map.keySet().size()>0){
+			corpsql.append(" and ");
+			corpsql.append(SqlUtil.buildSqlForIn("b.pk_goodsbill",map.keySet().toArray(new String[map.keySet().size()])));
+		}
+		List<GoodsBillVO> outbvos = (List<GoodsBillVO>) singleObjectBO.executeQuery(corpsql.toString(),null,
+				new BeanListProcessor(GoodsBillVO.class));
+		for (GoodsBillVO goodsBillVO : outbvos) {
+			list= map.get(goodsBillVO.getPk_goodsbill());
+			goodsBillVO.setChildren(list.toArray(new StockOutBVO[list.size()]));
+		}
+		retvo.setChildren(outbvos.toArray(new GoodsBillVO[outbvos.size()]));
+		return retvo;
 	}
 	
 }
