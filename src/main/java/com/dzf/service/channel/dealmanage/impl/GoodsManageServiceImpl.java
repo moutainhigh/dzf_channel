@@ -37,7 +37,6 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
-import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
@@ -570,21 +569,16 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	private void CheckStockNum(GoodsVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT istocknum, isellnum  \n");
-		sql.append("  FROM cn_stocknum m  \n");
+		sql.append("SELECT sum(nvl(istocknum,0) - nvl(isellnum,0)) AS istocknum \n");
+		sql.append("  FROM cn_stocknum \n");
 		sql.append(" WHERE nvl(dr, 0) = 0 \n");
 		sql.append("   AND pk_goods = ? \n");
-		spm.addBlobParam(pamvo.getPk_goods());
+		sql.append("   GROUP BY pk_goods \n");
+		spm.addParam(pamvo.getPk_goods());
 		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockNumVO.class));
 		if(list != null && list.size() > 0){
-			Integer restnum = 0;
-			Integer num = 0;
-			for(StockNumVO numvo : list){
-				num = ToolsUtil.subInteger(numvo.getIstocknum(), numvo.getIsellnum());
-				restnum = ToolsUtil.addInteger(restnum, num);
-			}
-			if(restnum == 0){
+			if(list.get(0).getIstocknum() == 0){
 				throw new BusinessException("商品"+pamvo.getVgoodsname()+"可售卖数量不足，请补充库存后，再发布！");
 			}
 		}else{
