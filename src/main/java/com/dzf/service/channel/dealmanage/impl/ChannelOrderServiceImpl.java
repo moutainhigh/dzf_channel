@@ -251,8 +251,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("   AND pk_warehouse = ?  \n");
 		sql.append("   AND pk_goods = ?  \n");
 		sql.append("   AND pk_goodsspec = ? \n");
-		spm.addParam(bvo.getPk_corp());
-		spm.addParam(IStatusConstant.CK_ID);//大账房默认团队
+		spm.addParam("000001");
+		spm.addParam(IStatusConstant.CK_ID);//大账房默认库存
 		spm.addParam(bvo.getPk_goods());
 		spm.addParam(bvo.getPk_goodsspec());
 		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -279,7 +279,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			SQLParameter spm = new SQLParameter();
 			
 			sql.append("UPDATE cn_stocknum \n");
-			sql.append("   SET istocknum = nvl(istocknum,0) - ?  \n");
+			sql.append("   SET isellnum = nvl(isellnum,0) - ?  \n");
 			spm.addParam(bvo.getAmount());
 			sql.append(" WHERE nvl(dr,0) = 0 \n");
 			sql.append("   AND pk_corp = ? \n");
