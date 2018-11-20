@@ -54,7 +54,7 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 		sql.append("        g.vgoodscode, ");
 		sql.append("        g.vgoodsname, ");
 		sql.append("        num.istocknum - nvl(num.ioutnum, 0) istocknum, ");
-		sql.append("        nvl(num.isellnum, 0)  ilocknum, ");
+		sql.append("        nvl(num.isellnum, 0) - nvl(num.ioutnum,0)  ilocknum, ");
 		sql.append("        num.istocknum  - nvl(num.isellnum, 0) iusenum");
 		sql.append("   from cn_stocknum num ");
 		sql.append("   left join cn_goods g on num.pk_goods = g.pk_goods ");
