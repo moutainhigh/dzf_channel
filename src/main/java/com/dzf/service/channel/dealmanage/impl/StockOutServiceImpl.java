@@ -496,7 +496,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vbillcode");
 		mcvo.setPk_corp(vo.getPk_corp());
-		mcvo.setBillType("ck"+now.getStrMonth()+now.getStrDay());
+		mcvo.setBillType("ck"+now.getYear()+now.getStrMonth());
 		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(3);
 		vo.setVbillcode(billCode.getDefaultCode(mcvo));

@@ -454,6 +454,10 @@ function logCancel(){
 }
 
 function logCommit(){
+	var slogunit = trimStr($('#slogunit').textbox('getValue'),"g");
+	$('#slogunit').textbox('setValue',slogunit);
+	var sfcode = trimStr($('#sfcode').textbox('getValue'),"g");
+	$('#sfcode').textbox('setValue',sfcode);
 	var flag = $('#logUpdate').form('validate');
 	if(flag == false){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
