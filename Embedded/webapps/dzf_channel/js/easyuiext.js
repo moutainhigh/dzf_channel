@@ -585,3 +585,11 @@ function checkBtnPower(btncode,funnode,callback){
         },
     });
 }
+
+/**
+ * 替换所有字符
+ */
+String.prototype.replaceAll = function (FindText, RepText) {
+    regExp = new RegExp(FindText, "g");
+    return this.replace(regExp, RepText);
+}

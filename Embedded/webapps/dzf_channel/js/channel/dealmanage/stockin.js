@@ -512,7 +512,7 @@ function initCardGrid() {
 	                		var mny = num.mul(n);
 	                		
 	                		var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});
-	                		$(mnycell.target).textbox('setValue', mny);
+	                		$(mnycell.target).textbox('setValue', formatMny(mny));
 						}
 					}
 				}
@@ -550,18 +550,21 @@ function initCardGrid() {
 			align : 'right',
 			halign : 'center',
 			editor : {
-				type : 'textbox',
+				type : 'numberbox',
 				options : {
 					height : 31,
 					editable : false,
 					readonly : true,
 					precision : 2,
 					min : 0,
+					groupSeparator:',',
 					onChange : function(n, o) {
 						if(!isEmpty(n)){
 							var rows = $('#stgrid').datagrid('getRows');
 							if(rows != null && rows.length > 0){
-								n = n.replace(',','');
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
 								var totalmny = getFloatValue(n);
 								for(var j = 0;j< rows.length; j++){
 									if(editIndex == j){
@@ -812,7 +815,7 @@ function edit(index){
                 if(row.children != null && row.children.length > 0){
                 	$('#stgrid').datagrid('loadData',row.children);
                 }
-                status == "edit";
+                status = "edit";
                 btnCtrl();
                 isItemEdit(false);
             }
@@ -887,7 +890,13 @@ function onSave(){
 				return; 
 			}
 			body = body + JSON.stringify(rows[j]); 
-			totalmny = totalmny.add(getFloatValue(rows[j].mny));
+			if(!isEmpty(rows[j].mny)){
+				var mny = rows[j].mny;
+				if(mny.indexOf(',') != -1){
+					mny = mny.replaceAll(',','');
+				}
+				totalmny = totalmny.add(getFloatValue(mny));
+			}
 		}
 		$("#totalmny").numberbox("setValue", formatMny(totalmny));
 	}

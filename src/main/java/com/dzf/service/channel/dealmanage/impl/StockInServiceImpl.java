@@ -30,7 +30,9 @@ import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.channel.dealmanage.IStockInService;
 import com.dzf.service.pub.IBillCodeService;
@@ -121,6 +123,7 @@ public class StockInServiceImpl implements IStockInService {
 
 	@Override
 	public StockInVO save(StockInVO hvo, String pk_corp) throws DZFWarpException {
+		CheckMnyBeforeSave(hvo);
 		if (StringUtil.isEmpty(hvo.getPk_stockin())) {
 			hvo.setVbillcode(getVbillcode(hvo));
 			hvo = (StockInVO) singleObjectBO.saveObject(pk_corp, hvo);
@@ -128,6 +131,25 @@ public class StockInServiceImpl implements IStockInService {
 			return hvo;
 		} else {
 			return saveEdit(hvo, pk_corp);
+		}
+	}
+	
+	/**
+	 * 保存前金额校验
+	 * @throws DZFWarpException
+	 */
+	private void CheckMnyBeforeSave(StockInVO hvo) throws DZFWarpException {
+		StockInBVO[] bVOs = (StockInBVO[]) hvo.getChildren();
+		if(bVOs != null && bVOs.length > 0){
+			DZFDouble ntotalmny = DZFDouble.ZERO_DBL;
+			for(StockInBVO bvo : bVOs){
+				ntotalmny = SafeCompute.add(ntotalmny, bvo.getNmny());
+			}
+			if(ntotalmny.compareTo(hvo.getNtotalmny()) != 0){
+				throw new BusinessException("总金额计算错误");
+			}
+		}else{
+			throw new BusinessException("总金额计算错误");
 		}
 	}
 
