@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -85,5 +86,12 @@ public interface IStockOutService {
 	 * @throws DZFWarpException
 	 */
 	public StockOutVO queryForPrint(String soutid) throws DZFWarpException;
+	
+	/**
+	 * 查询有订单的加盟商数据
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryChannel() throws DZFWarpException;
 	
 }

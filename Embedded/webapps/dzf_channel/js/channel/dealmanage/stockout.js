@@ -1,6 +1,5 @@
 var contextPath = DZF.contextPath;
 var status="brows";
-var krows=null;//客户名称
 var selIndex;//确认收货，选中的index
 var editIndex = undefined;
 
@@ -516,25 +515,37 @@ function initCorp(){
 		type : 'POST',
 		async : false,
 		url : DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
+		data: {'rows':10000},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
-				krows=result.rows;
+				$('#cpid').combobox('loadData',result.rows);
 			}
 		}
 	});
-	$('#cpid').combobox('loadData',krows);
 	
 	$("#corpid").combobox({
-	     valueField:'pk_gs',
-	     textField:'uname',
+	     valueField:'id',
+	     textField:'name',
 	     multiple: false,
 	     onSelect: function(rec){
-	    	 loadCardGrid(rec.pk_gs)
+	    	 loadCardGrid(rec.id)
 	     }
 	});
-	$("#corpid").combobox("loadData",krows);
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/stockout!queryChannel.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#corpid").combobox("loadData",result.rows);
+			}
+		}
+	});
+	
 }
 
 function initUser(){
