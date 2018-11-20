@@ -561,6 +561,7 @@ function initCardGrid() {
 						if(!isEmpty(n)){
 							var rows = $('#stgrid').datagrid('getRows');
 							if(rows != null && rows.length > 0){
+								n = n.replace(',','');
 								var totalmny = getFloatValue(n);
 								for(var j = 0;j< rows.length; j++){
 									if(editIndex == j){
@@ -877,6 +878,14 @@ function onSave(){
 	var rows = $('#stgrid').datagrid('getRows');
 	if(rows != null && rows.length > 0){
 		for(var j = 0;j< rows.length; j++){
+			var datagrid = $("#stgrid").datagrid("validateRow", j);
+			if (!datagrid){
+				Public.tips({
+					content : "必输信息为空或格式不正确",
+					type : 2
+				});
+				return; 
+			}
 			body = body + JSON.stringify(rows[j]); 
 			totalmny = totalmny.add(getFloatValue(rows[j].mny));
 		}

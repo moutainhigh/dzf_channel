@@ -466,15 +466,17 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Override
 	public void delete(GoodsVO pamvo) throws DZFWarpException {
 		checkDataStatus(pamvo, 2);
+		checkIsBeUsed(pamvo);
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 120);
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goods(), uuid, 60);
 			String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(pamvo.getPk_corp());
 			spm.addParam(pamvo.getPk_goods());
 			GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
 			if(docVOs != null && docVOs.length > 0){
+				//1、删除商品图片
 				for(GoodsDocVO docvo : docVOs){
 					if(StringUtil.isEmpty(docvo.getVfilepath())){
 						throw new BusinessException("商品图片错误");
@@ -485,6 +487,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 						throw new BusinessException("商品图片删除失败");
 					}
 				}
+				//2、删除商品图片信息
 				sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
 				spm = new SQLParameter();
 				spm.addParam(pamvo.getPk_corp());
@@ -494,11 +497,22 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 					throw new BusinessException("商品图片信息删除失败");
 				}
 			}
-			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
+			//3、删除商品规格型号
+			sql = " DELETE FROM cn_goodsspec WHERE pk_corp = ? AND pk_goods = ? ";
 			spm = new SQLParameter();
 			spm.addParam(pamvo.getPk_corp());
 			spm.addParam(pamvo.getPk_goods());
 			int res = singleObjectBO.executeUpdate(sql, spm);
+			if(res == 0){
+				throw new BusinessException("商品规格型号删除失败");
+			}
+			
+			//4、删除商品信息
+			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
+			spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_corp());
+			spm.addParam(pamvo.getPk_goods());
+			res = singleObjectBO.executeUpdate(sql, spm);
 			if(res == 0){
 				throw new BusinessException("商品信息删除失败");
 			}
@@ -509,6 +523,27 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goods(), uuid);
+		}
+	}
+	
+	/**
+	 * 检查商品是否被
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	private void checkIsBeUsed(GoodsVO pamvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_goods  \n") ;
+		sql.append("  FROM cn_stockin_b  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_goods = ?  \n");
+		spm.addParam(pamvo.getPk_goods());
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(pamvo.getPk_corp());
+		boolean flag = singleObjectBO.isExists(pamvo.getPk_corp(), sql.toString(), spm);
+		if(flag){
+			throw new BusinessException("商品"+pamvo.getVgoodsname()+"已经被入库单引用，不允许删除");
 		}
 	}
 
