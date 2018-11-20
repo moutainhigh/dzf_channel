@@ -277,7 +277,7 @@ function reloadData(){
  * 清除查询条件
  */
 function clearParams(){
-	$("#vcode").textbox('setValue',null);
+	$("#qvcode").textbox('setValue',null);
 	$("#uid").combobox('setValue',null);
 }
 
