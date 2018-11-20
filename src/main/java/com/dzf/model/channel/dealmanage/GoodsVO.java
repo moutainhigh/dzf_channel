@@ -2,6 +2,7 @@ package com.dzf.model.channel.dealmanage;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -71,6 +72,17 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("gtypenm")
 	private String vgoodstypename;//商品类型名称
 	
+	@FieldAlias("isin")
+	private DZFBoolean isstockin;//是否已经入库（仅作查询使用）
+	
+	public DZFBoolean getIsstockin() {
+		return isstockin;
+	}
+
+	public void setIsstockin(DZFBoolean isstockin) {
+		this.isstockin = isstockin;
+	}
+
 	public String getVgoodstypename() {
 		return vgoodstypename;
 	}

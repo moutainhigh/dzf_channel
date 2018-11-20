@@ -37,6 +37,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.spring.SpringUtils;
@@ -68,6 +69,15 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		if(list != null && list.size() > 0){
 			UserVO uservo = null;
 			String vstaname = "";
+			String where = "";
+			List<String> pklist = new ArrayList<String>();
+			for(GoodsVO gvo : list){
+				pklist.add(gvo.getPk_goods());
+			}
+			if(pklist != null && pklist.size() > 0){
+				where = SqlUtil.buildSqlForIn("pk_goods", pklist.toArray(new String[0]));
+			}
+			List<String> gslist = queryStockGoods(where);
 			for(GoodsVO vo : list){
 				uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
 				if(uservo != null){
@@ -85,6 +95,35 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 						break;
 				}
 				vo.setVstaname(vstaname);
+				if(gslist != null && gslist.size() > 0){
+					if(gslist.contains(vo.getPk_goods())){
+						vo.setIsstockin(DZFBoolean.TRUE);
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * 查询已入库的商品主键
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> queryStockGoods(String where) throws DZFWarpException {
+		List<String> list = new ArrayList<String>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT DISTINCT pk_goods  \n") ;
+		sql.append("  FROM cn_stockin_b  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		if(!StringUtil.isEmpty(where)){
+			sql.append("   AND  ").append(where);
+		}
+		List<GoodsVO> glist = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(GoodsVO.class));
+		if(glist != null && glist.size() > 0){
+			for(GoodsVO gvo : glist){
+				list.add(gvo.getPk_goods());
 			}
 		}
 		return list;
@@ -161,7 +200,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 		List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
 		for(int i = 0; i < files.length; i++){
-			String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
 			String filepath = "";
 			try {
 				filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
@@ -257,7 +295,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
 			if(files != null && files.length > 0){
 				for(int i = 0; i < files.length; i++){
-					String fname = System.nanoTime()  + filenames[i].substring(filenames[i].indexOf("."));
 					String filepath = "";
 					try {
 						filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[i], filenames[i], null);
@@ -401,6 +438,14 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				throw new BusinessException("该商品已经发布，不允许修改");
 			}
 		}
+		String where = " pk_goods = '" + oldvo.getPk_goods()+"'";
+		List<String> gslist = queryStockGoods(where);
+		if(gslist != null && gslist.size() > 0){
+			if(gslist.contains(oldvo.getPk_goods())){
+				oldvo.setIsstockin(DZFBoolean.TRUE);
+			}
+		}
+		
 		String vstaname = "";
 		switch(oldvo.getVstatus()){
 			case 1 :

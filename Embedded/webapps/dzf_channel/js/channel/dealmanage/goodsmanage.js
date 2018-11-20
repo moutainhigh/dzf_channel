@@ -53,6 +53,7 @@ function load(){
 		columns : [ [ 
 		    {width : '100',title : '主键',field : 'gid',hidden : true}, 
 		    {width : '100',title : '时间戳',field : 'updatets',hidden : true}, 
+		    {width : '100',title : '是否已入库',field : 'isin',hidden : true},
 		    {width : '100',title : '商品分类',field : 'gtypenm',align : 'left',halign : 'center',}, 
 		    {width : '100',title : '商品编码',field : 'gcode',align : 'left',halign : 'center',}, 
 		    {width : '200',title : '商品名称',field : 'gname',align : 'left',halign : 'center',formatter:namematter,}, 
@@ -165,14 +166,24 @@ function noteFormat(value){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	if (row.status != 1) {
+	if (row.status == 2) {//已发布
 		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
-	}else{
+	}else if(row.status == 3){//已下架
 		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
-		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+		'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
+	}else if(row.status == 1){//已保存
+		if(row.isin == 'Y' || row.isin == '是'){
+			return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
+			'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
+			'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
+		}else{
+			return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
+			'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
+			'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+		}
 	}
 }
 
@@ -508,6 +519,11 @@ function edit(index){
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '修改商品');
 	$('#gcode').textbox("readonly",true);
+	if(row.isin == 'Y' || row.isin == '是'){
+		$('#gtype').combobox("readonly",true);
+		$('#gname').textbox("readonly",true);
+		$('#measid').combobox("readonly",true);
+	}
 	$('#goods_add').form('clear');
 	initMeas();
 	initMeasSelect();
@@ -684,6 +700,9 @@ function add(){
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
 	$('#gcode').textbox("readonly",false);
+	$('#gtype').combobox("readonly",false);
+	$('#gname').textbox("readonly",false);
+	$('#measid').combobox("readonly",false);
 	$('#goods_add').form('clear');
 	$("#image1").html('');
 	var htmlImg = '<div class="imgbox">'+
