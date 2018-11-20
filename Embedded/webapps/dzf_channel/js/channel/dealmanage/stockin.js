@@ -517,8 +517,7 @@ function initCardGrid() {
 						}
 					}
 				}
-			},
-			formatter : formatMny
+			},formatter : formatMny,
 		}, {
 			field : 'num',
 			title : '入库数量',
@@ -540,7 +539,7 @@ function initCardGrid() {
 	                		var mny = price.mul(n);
 	                		
 	                		var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});
-	                		$(mnycell.target).textbox('setValue', mny);
+	                		$(mnycell.target).textbox('setValue', formatMny(mny));
 						}
 					}
 				}
@@ -563,8 +562,11 @@ function initCardGrid() {
 						if(!isEmpty(n)){
 							var rows = $('#stgrid').datagrid('getRows');
 							if(rows != null && rows.length > 0){
-								var totalmny = parseFloat(n);
+								var totalmny = getFloatValue(n);
 								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
 									totalmny = totalmny.add(getFloatValue(rows[j].mny));
 								}
 								$("#totalmny").numberbox("setValue", formatMny(totalmny));
@@ -572,7 +574,7 @@ function initCardGrid() {
 						}
 					}
 				}
-			}
+			},formatter:formatMny,
 		}, {
 			field : 'memo',
 			title : '备注',
@@ -715,6 +717,12 @@ function delRow(ths) {
 		if(rows && rows.length > 1){
 			$('#stgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 		}
+		var totalmny = parseFloat(0);
+		var length = rows.length;
+		for(var j = 0;j< length; j++){
+			totalmny = totalmny.add(getFloatValue(rows[j].mny));
+		}
+		$("#totalmny").numberbox("setValue", formatMny(totalmny));
 	}else{
 		if(isCanAdd()){
 			var rows = $('#stgrid').datagrid('getRows');
