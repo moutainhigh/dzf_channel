@@ -423,9 +423,7 @@ function initCardGrid() {
 					readonly : true
 				}
 			}
-		},
-
-		{
+		}, {
 			field : 'price',
 			title : '成本价',
 			width : "120",
@@ -438,6 +436,7 @@ function initCardGrid() {
 					required : true,
 					precision : 2,
 					min : 0,
+					max : 99999,
 					onChange : function(n, o) {
 						if(!isEmpty(n)){
 	                		var numcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
@@ -464,6 +463,7 @@ function initCardGrid() {
 					required : true,
 					precision : 0,
 					min : 0,
+					max : 9999,
 					onChange : function(n, o) {
 						if(!isEmpty(n)){
 	                		var pricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
