@@ -177,7 +177,24 @@ function add(){
     $('#cardGrid').datagrid('loadData', { total : 0, rows : [] });// 清楚缓存数据
     status="add";
     updateBtnState();
+    initCardCorp();
 };
+
+function initCardCorp(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/stockout!queryChannel.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#corpid").combobox("loadData",result.rows);
+			}
+		}
+	});
+}
+
 
 function edit(id){
 	var row = queryByID(id);
@@ -528,7 +545,6 @@ function initCorp(){
 			}
 		}
 	});
-	
 	$("#corpid").combobox({
 	     valueField:'id',
 	     textField:'name',
@@ -537,19 +553,6 @@ function initCorp(){
 	    	 loadCardGrid(rec.id)
 	     }
 	});
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/dealmanage/stockout!queryChannel.action',
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-				$("#corpid").combobox("loadData",result.rows);
-			}
-		}
-	});
-	
 }
 
 function initUser(){

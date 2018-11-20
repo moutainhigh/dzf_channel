@@ -495,7 +495,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		DZFDate now =new DZFDate();
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vbillcode");
-		mcvo.setPk_corp(vo.getPk_corp());
+		mcvo.setPk_corp(vo.getFathercorp());
 		mcvo.setBillType("ck"+now.getYear()+now.getStrMonth());
 		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(3);
