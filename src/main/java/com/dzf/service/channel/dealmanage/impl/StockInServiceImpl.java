@@ -130,8 +130,8 @@ public class StockInServiceImpl implements IStockInService {
 	}
 
 	@Override
-	public StockInVO save(StockInVO hvo, String pk_corp) throws DZFWarpException {
-		CheckMnyBeforeSave(hvo);
+	public StockInVO save(StockInVO hvo, String pk_corp, StockInBVO[] bodyVOs) throws DZFWarpException {
+		CheckMnyBeforeSave(hvo, bodyVOs);
 		if (StringUtil.isEmpty(hvo.getPk_stockin())) {
 			hvo.setVbillcode(getVbillcode(hvo));
 			hvo = (StockInVO) singleObjectBO.saveObject(pk_corp, hvo);
@@ -146,8 +146,7 @@ public class StockInServiceImpl implements IStockInService {
 	 * 保存前金额校验
 	 * @throws DZFWarpException
 	 */
-	private void CheckMnyBeforeSave(StockInVO hvo) throws DZFWarpException {
-		StockInBVO[] bVOs = (StockInBVO[]) hvo.getChildren();
+	private void CheckMnyBeforeSave(StockInVO hvo, StockInBVO[] bVOs) throws DZFWarpException {
 		if(bVOs != null && bVOs.length > 0){
 			DZFDouble ntotalmny = DZFDouble.ZERO_DBL;
 			for(StockInBVO bvo : bVOs){

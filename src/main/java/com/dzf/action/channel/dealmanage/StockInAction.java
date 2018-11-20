@@ -136,11 +136,23 @@ public class StockInAction extends BaseAction<StockInVO> {
 			StockInVO hvo = DzfTypeUtils.cast(headjs, headmaping, StockInVO.class, JSONConvtoJAVA.getParserConfig());
 			SetDefaultValue(hvo);
 			
-			List<StockInBVO> blist = getDataList();
+			Map<String, String> bmapping = FieldMapping.getFieldMapping(new StockInBVO());
+			String body = getRequest().getParameter("body"); // 界面数据
+			body = body.replace("}{", "},{");
+			body = "[" + body + "]";
+			JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+			StockInBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, StockInBVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			if (bodyVOs == null || bodyVOs.length == 0) {
+				throw new BusinessException("表体数据不能为空");
+			}
+			
+			
+			List<StockInBVO> blist = getDataList(bmapping);
 			if(blist != null && blist.size() > 0){
 				hvo.setChildren(blist.toArray(new StockInBVO[0]));
 			}
-			hvo = stockinser.save(hvo, getLogin_corp());
+			hvo = stockinser.save(hvo, getLogin_corp(), bodyVOs);
 			json.setSuccess(true);
 			json.setRows(hvo);
 			json.setMsg("保存成功");
@@ -169,11 +181,10 @@ public class StockInAction extends BaseAction<StockInVO> {
 	 * 获取操作数据
 	 * @return
 	 */
-	private List<StockInBVO> getDataList() {
+	private List<StockInBVO> getDataList(Map<String, String> bmapping) {
 		List<StockInBVO> list = new ArrayList<StockInBVO>();
 		
 		String addfile = getRequest().getParameter("adddata"); // 新增数据
-		Map<String, String> bmapping = FieldMapping.getFieldMapping(new StockInBVO());
 
 		StockInBVO[] addBVOs = null;
 		StockInBVO[] updBVOs = null;
@@ -217,18 +228,6 @@ public class StockInAction extends BaseAction<StockInVO> {
 			if(delBVOs != null && delBVOs.length > 0){
 				list.addAll(Arrays.asList(delBVOs));
 			}
-		}
-
-		String body = getRequest().getParameter("body"); // 新增数据
-		body = body.replace("}{", "},{");
-		body = "[" + body + "]";
-		JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
-		StockInBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, StockInBVO[].class,
-				JSONConvtoJAVA.getParserConfig());
-
-		if ((addBVOs == null || addBVOs.length == 0) && (updBVOs == null || updBVOs.length == 0)
-				&& (delBVOs == null || delBVOs.length == 0) && (bodyVOs == null || bodyVOs.length == 0)) {
-			throw new BusinessException("表体数据不能为空");
 		}
 		
 		return list;

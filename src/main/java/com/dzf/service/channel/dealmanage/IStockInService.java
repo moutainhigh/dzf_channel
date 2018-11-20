@@ -38,10 +38,11 @@ public interface IStockInService {
 	 * 保存
 	 * @param hvo
 	 * @param pk_corp
+	 * @param bodyVOs
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public StockInVO save(StockInVO hvo, String pk_corp) throws DZFWarpException;
+	public StockInVO save(StockInVO hvo, String pk_corp, StockInBVO[] bodyVOs) throws DZFWarpException;
 	
 	/**
 	 * 通过主键查询数据

@@ -1,7 +1,6 @@
 var contextPath = DZF.contextPath;
-var status;
 var editIndex;
-var status;
+var status = "brows";
 $(function(){
 	initQry();
 	load();
@@ -139,7 +138,6 @@ function load(){
 			field : 'vcode',
 			align : 'left',
 			halign : 'center',
-//			formatter : formatCodeLink,
 		}, {
 			width : '100',
 			title : '总金额',
@@ -193,69 +191,6 @@ function load(){
 			$('#grid').datagrid("scrollTo", 0);
 		},
 	});
-}
-
-/**
- * 超级链接-单据编码
- * @param val
- * @param row
- * @param index
- * @returns {String}
- */
-function formatCodeLink(val, row, index){  
-    return '<a href="#" style="color:blue" onclick="showDetail('+index+')">'+row.vcode+'</a>';  
-}
-
-/**
- * 展示详情
- * @param index
- */
-function showDetail(index){
-	var row = $('#grid').datagrid('getData').rows[index];
-	$.ajax({
-        type: "post",
-        dataType: "json",
-        url: contextPath + '/dealmanage/stockin!queryById.action',
-        data: row,
-        traditional: true,
-        async: false,
-        success: function(data, textStatus) {
-            if (!data.success) {
-            	Public.tips({content:data.msg,type:1});
-            } else {
-                var row = data.rows;
-                showCard();
-                $('#stform').form('load',row);
-                if(row.children != null && row.children.length > 0){
-                	$('#stgrid').datagrid('loadData',row.children);
-                }
-                status = "brows";
-                btnCtrl();
-                isItemEdit(true);
-            }
-        },
-    });
-	
-}
-
-/**
- * 按钮显示控制
- */
-function btnCtrl(){
-	if("add" == status || "edit" == status ){
-		$('#savebtn').show();//保存按钮
-	}else if("brows" == status){
-		$("#savebtn").hide();//保存按钮
-	}
-}
-
-/**
- * 字段是否可编辑
- * @param isedit
- */
-function isItemEdit(isedit) {
-	//入库日期
-	$('#stdate').textbox("readonly",isedit);
 }
 
 /**
@@ -332,8 +267,6 @@ function add(){
 	$('#stgrid').datagrid('beginEdit',editIndex);
 	
 	status = "add";
-	btnCtrl();
-	isItemEdit(false);
 }
 
 /**
@@ -817,8 +750,6 @@ function edit(index){
                 	$('#stgrid').datagrid('loadData',row.children);
                 }
                 status = "edit";
-                btnCtrl();
-                isItemEdit(false);
             }
         },
     });
@@ -892,7 +823,7 @@ function onSave(){
 			}
 			body = body + JSON.stringify(rows[j]); 
 			if(!isEmpty(rows[j].mny)){
-				var mny = rows[j].mny;
+				var mny = rows[j].mny+"";
 				if(mny.indexOf(',') != -1){
 					mny = mny.replaceAll(',','');
 				}
@@ -942,7 +873,7 @@ function onSave(){
  * 入库单-提交后台保存
  */
 function onSaveSubmit(postdata){
-	if ($("#goods_add").form('validate')) {
+	if ($("#stform").form('validate')) {
 		$.messager.progress({
 			text : '数据保存中，请稍后.....'
 		});
@@ -954,14 +885,15 @@ function onSaveSubmit(postdata){
 				var result = eval('(' + result + ')');
 				$.messager.progress('close');
 				if (result.success) {
-					var row = result.rows;
-					$("#listPanel").show();
-					$("#cardPanel").hide();
+					showList();
 					reloadData();
-				} else {
 					Public.tips({
 						content : result.msg,
-						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+						type : 1
 					});
 				}
 			}
