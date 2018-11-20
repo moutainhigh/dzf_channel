@@ -7,7 +7,7 @@ $(function(){
 	load();
 	reloadData();
 	initUserRef();
-	//expendRow();
+	expendRow();
 });
 
 function expendRow(){
@@ -31,22 +31,23 @@ function expendRow(){
                  height:'auto',
                  columns:[[
                      {field:'goodsspe',title:'供应商',width:200},
-                     {field:'gname',title:'商品',width:100,},
+                     {field:'gname',title:'商品',width:120,},
                      {field:'spec',title:'规格',width:100,},
                      {field:'type',title:'型号',width:100,},
-                     {field:'price',title:'成本价',width:100,align:'right',
+                     {field:'price',title:'成本价',width:80,align:'right',
                     	 formatter : function(value, row, index) {
              				if (value == 0)
              					return "0.00";
              				return formatMny(value);
              			},},
-                     {field:'num',title:'入库数量',width:100,align:'right'},
-                     {field:'mny',title:'金额',width:100,align:'right',
+                     {field:'num',title:'入库数量',width:80,align:'right'},
+                     {field:'mny',title:'金额',width:80,align:'right',
                     	 formatter : function(value, row, index) {
              				if (value == 0)
              					return "0.00";
              				return formatMny(value);
              			},},
+             		 {field:'memo',title:'备注',width:160,align:'right',},
                  ]],
                  onResize:function(){
                      $('#grid').datagrid('fixDetailRowHeight',index);
@@ -138,7 +139,7 @@ function load(){
 			field : 'vcode',
 			align : 'left',
 			halign : 'center',
-			formatter : formatCodeLink,
+//			formatter : formatCodeLink,
 		}, {
 			width : '100',
 			title : '总金额',

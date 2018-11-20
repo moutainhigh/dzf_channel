@@ -15,6 +15,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.PersonStatisVO;
 import com.dzf.model.channel.report.UserDetailVO;
+import com.dzf.model.jms.basicset.JMUserRoleVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -38,7 +39,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Override
 	public List<PersonStatisVO> query(QryParamVO paramvo) throws DZFWarpException, IllegalAccessException, Exception {
 		List<PersonStatisVO> retlist = new ArrayList<PersonStatisVO>();
-		List<String> countcorplist = new ArrayList<String>();
 		HashMap<String, DataVO> map = queryCorps(paramvo,PersonStatisVO.class);
 		List<String> corplist = null;
 		if(map!=null && !map.isEmpty()){
@@ -202,8 +202,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 //        str.append(" group by deptname, user_code, user_name");
 //        str.append(" order by deptname");
         
-        str.append("select distinct dept.deptname,us.user_code, us.user_name,us.cuserid as userid,");
-        str.append(" LISTAGG(to_char(sr.role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename");
+        str.append("select distinct dept.deptname,us.user_code, us.user_name,us.cuserid as userid ");
+//        str.append(" LISTAGG(to_char(sr.role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename");
         str.append("  from sm_user us");
         str.append("  left join ynt_department dept on dept.pk_department = us.pk_department");
         str.append("  left join sm_userole userr on userr.cuserid = us.cuserid");
@@ -215,9 +215,14 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
         List<UserDetailVO> list = (List<UserDetailVO>) singleObjectBO.executeQuery(str.toString(), params, new BeanListProcessor(UserDetailVO.class));
         
         HashMap<String, Integer> map = queryUserCorps(paramvo.getPk_corp());
+        HashMap<String, String> mapUR = queryUserRoles(paramvo.getPk_corp());
+        HashMap<String, Integer> mapC = queryUserCorpsNum(paramvo.getPk_corp());
         if(list != null && list.size() > 0 && map != null){
             for(UserDetailVO uvo : list){
                 uvo.setCorpnum(CommonUtil.getInteger(map.get(uvo.getUserid())));
+                uvo.setRolename(mapUR.get(uvo.getUserid()));
+                uvo.setCorpnum1(mapC.get(uvo.getUserid() + "_小规模纳税人"));
+                uvo.setCorpnum2(mapC.get(uvo.getUserid() + "_一般纳税人"));
             }
         }
         return list;
@@ -242,6 +247,63 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
             for(UserDetailVO vo : list){
                 if(!StringUtil.isEmpty(vo.getUserid())){
                     map.put(vo.getUserid(), vo.getCorpnum());
+                }
+            }
+        }
+        return map;
+    }
+    /**
+     * 查询用户负责的客户，区分小规模和一般纳税人
+     * @author gejw
+     * @time 上午10:54:59
+     * @param pk_corp
+     * @return
+     */
+    private HashMap<String, Integer> queryUserCorpsNum(String pk_corp){
+        StringBuffer sql = new StringBuffer();
+        sql.append(" select uc.cuserid as userid,corp.chargedeptname,");
+        sql.append(" decode(corp.chargedeptname,'小规模纳税人',count(uc.pk_corpk),count(uc.pk_corpk)) as corpnum1");
+        sql.append(" from sm_user_corp uc ");
+        sql.append(" join bd_corp corp on uc.pk_corpk = corp.pk_corp ");
+        sql.append(" where uc.pk_corp = ? and uc.pk_corpk != ? ");
+        sql.append(" and corp.chargedeptname is not null and nvl(uc.dr,0) = 0  ");
+        sql.append(" group by uc.cuserid,corp.chargedeptname ");
+        SQLParameter parameter = new SQLParameter();
+        parameter.addParam(pk_corp);
+        parameter.addParam(pk_corp);
+        ArrayList<UserDetailVO> list = (ArrayList<UserDetailVO>) singleObjectBO.executeQuery(sql.toString(), parameter, new BeanListProcessor(UserDetailVO.class));
+        HashMap<String, Integer> map = new HashMap<>();
+        if(list != null && list.size() > 0){
+            for(UserDetailVO vo : list){
+                if(!StringUtil.isEmpty(vo.getUserid())){
+                    map.put(vo.getUserid()+"_"+vo.getChargedeptname(), vo.getCorpnum1());
+                }
+            }
+        }
+        return map;
+    }
+    
+    private HashMap<String, String> queryUserRoles(String pk_corp){
+        StringBuffer sql = new StringBuffer();
+        sql.append("select distinct us.cuserid,sr.role_name from sm_user us");
+        sql.append(" join sm_userole ur on ur.cuserid = us.cuserid");
+        sql.append(" join sm_role sr on ur.pk_role = sr.pk_role");
+        sql.append(" where nvl(us.dr,0) = 0 and nvl(us.locked_tag,'N') = 'N' ");
+        sql.append(" and nvl(ur.dr,0) = 0 and us.pk_corp = ?");
+        SQLParameter params = new SQLParameter();
+        params.addParam(pk_corp);
+        ArrayList<JMUserRoleVO> vos = (ArrayList<JMUserRoleVO>) singleObjectBO.executeQuery(sql.toString(), params, new BeanListProcessor(JMUserRoleVO.class));
+        HashMap<String, String> map = new HashMap<>();
+        if(vos != null && vos.size() > 0){
+            String value = null;
+            for(JMUserRoleVO vo : vos){
+                String cuserid = vo.getCuserid();
+                if(!map.containsKey(cuserid)){
+                    map.put(cuserid, vo.getRole_name());
+                }else{
+                    value = map.get(cuserid);
+                    map.remove(cuserid);
+                    map.put(cuserid, value+","+vo.getRole_name());
                 }
             }
         }

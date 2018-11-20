@@ -21,9 +21,39 @@ public class UserDetailVO extends SuperVO {
     
     private String rolename;//角色名称
     
+    private String chargedeptname;
+    
     private Integer corpnum;//客户数
+    
+    private Integer corpnum1;//客户数--小规模纳税人
+    
+    private Integer corpnum2;//客户数--一般纳税人
 
-	public String getDeptname() {
+	public String getChargedeptname() {
+        return chargedeptname;
+    }
+
+    public void setChargedeptname(String chargedeptname) {
+        this.chargedeptname = chargedeptname;
+    }
+
+    public Integer getCorpnum1() {
+        return corpnum1;
+    }
+
+    public void setCorpnum1(Integer corpnum1) {
+        this.corpnum1 = corpnum1;
+    }
+
+    public Integer getCorpnum2() {
+        return corpnum2;
+    }
+
+    public void setCorpnum2(Integer corpnum2) {
+        this.corpnum2 = corpnum2;
+    }
+
+    public String getDeptname() {
         return deptname;
     }
 

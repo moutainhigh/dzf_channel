@@ -127,6 +127,18 @@ function initUserGrid(){
 			align:'right',
             halign:'center',
 			field : 'corpnum',
+		}, {
+			width : '80',
+			title : '小规模纳税人',
+			align:'right',
+            halign:'center',
+			field : 'corpnum1',
+		}, {
+			width : '80',
+			title : '一般纳税人',
+			align:'right',
+            halign:'center',
+			field : 'corpnum2',
 		}, ] ],
 		onLoadSuccess : function(data) {
 			
