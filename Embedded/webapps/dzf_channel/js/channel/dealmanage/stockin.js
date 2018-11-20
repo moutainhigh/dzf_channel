@@ -7,9 +7,7 @@ $(function(){
 	load();
 	reloadData();
 	initUserRef();
-	initCardGrid();
 	//expendRow();
-	
 });
 
 function expendRow(){
@@ -343,6 +341,7 @@ function add(){
 function showCard(){
 	$("#listPanel").hide();
 	$("#cardPanel").show();
+	initCardGrid();
 	clearForm();
 }
 
