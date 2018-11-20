@@ -478,11 +478,7 @@ function onSaveSet(postdata){
 				Public.tips({
 					content : result.msg,
 				});
-				var row = result.rows;
-				$('#grid').datagrid('updateRow', {
-					index : setIndex,
-					row : row
-				});
+				reloadData();
 				$('#setDialog').dialog('close');
 				etIndex = undefined;
 			}
@@ -902,7 +898,7 @@ function onSave(){
 					var row = result.rows;
 					initMeas();
 					$('#cbDialog').dialog('close');
-					reloadData()
+					reloadData();
 					editIndex = null;
 				} else {
 					Public.tips({
