@@ -2,6 +2,7 @@ var contextPath = DZF.contextPath;
 var status="brows";
 var krows=null;//客户名称
 var selIndex;//确认收货，选中的index
+var editIndex = undefined;
 
 //数据表格随窗口大小改变
 $(window).resize(function() {
@@ -19,7 +20,6 @@ $(function(){
 
 //初始化
 function initQry(){
-	// 下拉按钮的事件
 	$("#jqj").on("mouseover", function() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
@@ -31,132 +31,6 @@ function initQry(){
 	initCard();
 	initCorp();
 	initUser();
-}
-
-
-function initCorp(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-				krows=result.rows;
-			}
-		}
-	});
-	$('#cpid').combobox('loadData',krows);
-	
-	$("#corpid").combobox({
-	     valueField:'pk_gs',
-	     textField:'uname',
-	     multiple: false,
-	     onSelect: function(rec){
-	    	 loadCardGrid(rec.pk_gs)
-	     }
-	});
-	$("#corpid").combobox("loadData",krows);
-}
-
-function initUser(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/sys/chnUseract!query.action',
-		data : {"invalid":'N'},
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-			    $('#uid').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
-			}
-		}
-	});
-}
-
-function initCard(){
-	$('#cardGrid').datagrid({
-		striped : true,
-		rownumbers : true,
-		idField : 'pk_areab',
-		height : 220,
-		singleSelect : true,
-		columns : [ [ 
-		{
-			width : '200',
-			title : '订单编码',
-			field : 'vcode',
-			halign : 'center',
-			align : 'left',
-		}, {
-			width : '200',
-			title : '商品',
-			field : 'gname',
-			halign : 'center',
-			align : 'left',
-		}, {
-			width : '150',
-			title : '规格',
-			field : 'invspec',
-            halign : 'center',
-			align : 'left',
-		},{
-			width : '150',
-			title : '型号',
-			field : 'invtype',
-            halign : 'center',
-			align : 'left',
-//		}, {
-//			width : '100',
-//			title : '购买数量',
-//			field : 'nnum',
-//            halign : 'center',
-//			align : 'center',
-		}, {
-			width : '100',
-			title : '出库量',
-			field : 'nnum',
-            halign : 'center',
-			align : 'right',
-		},{
-			width : '60',
-			title : '操作列',
-			field : 'operate',
-            halign : 'center',
-			align : 'center',
-			formatter:coperatorLink
-		},{
-			width : '100',
-			title : '销售价',
-			field : 'nprice',
-			hidden : true
-		},{
-			width : '100',
-			title : '总金额',
-			field : 'nmny',
-			hidden : true
-		}, 
-		] ],
-	});
-}
-
-function coperatorLink(val,row,index){  
-    return '<div><a href="javascript:void(0)" id="delBut" onclick="delRow(this)"><img title="删行" src="../../images/del.png" /></a></div>';  
-}
-
-/**
- * 删行
- */
-function delRow(ths) {
-	if(status == 'brows') {
-		return ;
-	}
-	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
-	$('#cardGrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 }
 
 function loadCardGrid(corpid){
@@ -418,10 +292,15 @@ function addCancel(){
  * 卡片界面的按钮显示及隐藏
  */
 function updateBtnState(){
-	if("add"==status||"edit"==status){
+	if("add"==status){
 		$('#addSave').show();
 		$('#addCancel').show();
 		$('#corpid').combobox('readonly',false);
+		$('#memo').textbox('readonly',false);
+	}else if("edit"==status){
+		$('#addSave').show();
+		$('#addCancel').show();
+		$('#corpid').combobox('readonly',true);
 		$('#memo').textbox('readonly',false);
 	}else if("brows"==status){
 		$('#addSave').hide();
@@ -630,4 +509,302 @@ function doPrint(){
 	var id=rows[0].soutid;
 	Business.getFile(contextPath+ '/dealmanage/stockout!print.action',{
 		'id':id}, true, true);
+}
+
+function initCorp(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				krows=result.rows;
+			}
+		}
+	});
+	$('#cpid').combobox('loadData',krows);
+	
+	$("#corpid").combobox({
+	     valueField:'pk_gs',
+	     textField:'uname',
+	     multiple: false,
+	     onSelect: function(rec){
+	    	 loadCardGrid(rec.pk_gs)
+	     }
+	});
+	$("#corpid").combobox("loadData",krows);
+}
+
+function initUser(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/sys/chnUseract!query.action',
+		data : {"invalid":'N'},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#uid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+function initCard(){
+	$('#cardGrid').datagrid({
+		striped : true,
+		rownumbers : true,
+		idField : 'soutbid',
+		height : 220,
+		singleSelect : true,
+		columns : [ [ 
+		{
+			width : '200',
+			title : '订单编码',
+			field : 'vcode',
+			halign : 'center',
+			align : 'left',
+			editor : {
+				type : 'textbox',
+				options : {
+					height:31,
+					required : true,
+					editable:false,
+					icons: [{
+						iconCls:'icon-search',
+						handler: function(){
+							initChnBill();
+						}
+					}]
+				}
+			}
+		}, {
+			width : '200',
+			title : '商品',
+			field : 'gname',
+			halign : 'center',
+			align : 'left',
+		}, {
+			width : '150',
+			title : '规格',
+			field : 'invspec',
+            halign : 'center',
+			align : 'left',
+		},{
+			width : '150',
+			title : '型号',
+			field : 'invtype',
+            halign : 'center',
+			align : 'left',
+		}, {
+			width : '100',
+			title : '购买数量',
+			field : 'nnum',
+            halign : 'center',
+			align : 'right',
+		}, {
+			width : '100',
+			title : '出库数量',
+			field : 'nnum',
+            halign : 'center',
+			align : 'right',
+		},{
+			width : '60',
+			title : '操作列',
+			field : 'operate',
+            halign : 'center',
+			align : 'center',
+			formatter:coperatorLink
+		},{
+			width : '100',
+			title : '销售价',
+			field : 'nprice',
+			hidden : true
+		},{
+			width : '100',
+			title : '总金额',
+			field : 'nmny',
+			hidden : true
+		},{
+			width : '100',
+			title : '商品主键',
+			field : 'gid',
+			hidden : true
+		},{
+			width : '100',
+			title : '规格主键',
+			field : 'specid',
+			hidden : true
+		},{
+			width : '100',
+			title : '订单主键',
+			field : 'billid_b',
+			hidden : true
+		}, 
+		] ],
+		onClickRow :  function(index, row){
+			if(status == "brows"){
+				return;
+			}
+			endBodyEdit();
+			if($('#cardGrid').datagrid('validateRow', editIndex)){
+				if (index != undefined) {
+					$('#cardGrid').datagrid('beginEdit', index);
+					editIndex = index;
+				}           		
+			}else{
+				Public.tips({
+					content : "请先编辑必输项",
+					type : 2
+				});
+			}
+		} ,
+	});
+}
+
+function initChnBill(){
+	var corpid=$("#corpid").combobox('getValue');
+	if(isEmpty(corpid)){
+		Public.tips({
+			content : "请先选择加盟商",
+			type : 2
+		});
+	}
+	var rows=$('#cardGrid').datagrid('getRows');
+	var bills="";
+	for(var i=0;i<rows.length;i++){
+		if(!isEmpty(rows[i].billid_b)){
+			bills+="'"+rows[i].billid_b+"',";
+		}
+	}
+	$("#billDialog").dialog({
+		width : 700,
+		height : 400,
+		readonly : true,
+		title : '加盟商订单',
+		cache : false,
+		modal : true,
+		href : contextPath + '/ref/chnbill_select.jsp',
+		queryParams:{
+			"corpid" : corpid,
+			"bills" : bills,
+		},
+		buttons : [ {
+			text : '确认',
+			handler : function() {
+				var rows = $('#billTable').datagrid('getSelections');
+				if(rows && rows.length>0){
+					selectChnBills(rows);
+				}else{
+					Public.tips({
+						content : "请至少选择一行数据",
+						type : 2
+					});
+				}
+			}
+		}, {
+			text : '取消',
+			handler : function() {
+				$("#billDialog").dialog('close');
+			}
+		} ]
+	});
+}
+
+function selectChnBills(rows){
+	for(ro in rows){
+		editIndex = $('#cardGrid').datagrid('getRows').length - 1;
+		$('#cardGrid').datagrid('insertRow',{index:editIndex,row:rows[ro]});
+	}
+	$('#billDialog').dialog('close');
+}
+
+function coperatorLink(val,row,index){  
+	var add = '<div><a href="javascript:void(0)" id="addBut" onclick="addRow(arguments[0])"><img title="增行" style="margin:0px 20% 0px 20%;" src="../../images/add.png" /></a>';
+	var del = '<a href="javascript:void(0)" id="delBut" onclick="delRow(this)"><img title="删行" src="../../images/del.png" /></a></div>';
+    return add + del;  
+}
+
+/**
+ * 增行
+ */
+function addRow(e){
+	e.stopPropagation();
+	endBodyEdit();
+	if(status == 'brows') {
+		return ;
+	}
+	if(isCanAdd()){
+		$('#cardGrid').datagrid('appendRow',{});
+		editIndex = $('#cardGrid').datagrid('getRows').length - 1;
+		$('#cardGrid').datagrid('beginEdit',editIndex);
+	}else{
+		Public.tips({
+			content : "请先录入必输项",
+			type : 2
+		});
+		return;
+	}
+}
+
+/**
+ * 删行
+ */
+function delRow(ths) {
+	endBodyEdit();
+	if(status == 'brows') {
+		return ;
+	}
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	if(tindex == editIndex){
+		var rows = $('#cardGrid').datagrid('getRows');
+		if(rows && rows.length > 1){
+			$('#cardGrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
+		}
+	}else{
+		if(isCanAdd()){
+			var rows = $('#cardGrid').datagrid('getRows');
+			if(rows && rows.length > 1){
+				$('#cardGrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
+			}
+		}else{
+			Public.tips({
+				content : "请先录入必输项",
+				type : 2
+			});
+			return;
+		}
+	}
+}
+
+/**
+ * 行编辑结束事件
+ */
+function endBodyEdit(){
+    var rows = $("#cardGrid").datagrid('getRows');
+ 	for ( var i = 0; i < rows.length; i++) {
+ 		$("#cardGrid").datagrid('endEdit', i);
+ 	}
+};
+
+/**
+ * 能否增行
+ * @returns {Boolean}
+ */
+function isCanAdd() {
+    if (editIndex == undefined) {
+        return true;
+    }
+    if ($('#cardGrid').datagrid('validateRow', editIndex)) {
+        $('#cardGrid').datagrid('endEdit', editIndex);
+        editIndex = undefined;
+        return true;
+    } else {
+        return false;
+    }
 }

@@ -79,6 +79,7 @@
 				<div class="time_col time_colp11" style="display:none">
 					<input id="soutid" name="soutid" class="easyui-textbox"> 
 					<input id="nmny" name="nmny" class="easyui-numberbox"> 
+					<input id="updatets" name="updatets" class="easyui-textbox"> 
 				</div>
 				<div class="time_col time_colp11">
 					<div style="width:32%;display: inline-block;">
@@ -131,7 +132,7 @@
 				<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" onclick="logCancel()">取消</a>
 			</div>
 		</div>
-		
+		<div id="billDialog"></div>
 	</div>
 </body>
 </html>

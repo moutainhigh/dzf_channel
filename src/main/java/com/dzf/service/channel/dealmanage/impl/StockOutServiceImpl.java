@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		}
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		corpsql.append("SELECT c.vbillcode,g.vgoodsname,");
+		corpsql.append("SELECT c.vbillcode,g.vgoodsname,g.pk_goodsbill_b,g.pk_goods,");
 		corpsql.append(" g.pk_goodsspec,g.invspec,g.invtype,");
 		corpsql.append(" s.nnum,s.nmny,s.nprice");
 		corpsql.append("  FROM cn_stockout_b s");
@@ -103,7 +104,7 @@ public class StockOutServiceImpl implements IStockOutService{
 	}
 	
 	@Override
-	public List<StockOutBVO> queryOrders(String pk_corp)throws DZFWarpException {
+	public List<StockOutBVO> queryOrders(String pk_corp,String bills)throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_corp);
@@ -131,6 +132,9 @@ public class StockOutServiceImpl implements IStockOutService{
 		if(billbs!=null &&  billbs.size()>0){//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
 			sql.append(" and ");
 			sql.append(buildSqlForNotIn("b.pk_goodsbill_b",billbs));
+		}
+		if(!StringUtils.isEmpty(bills)){
+			sql.append(" and b.pk_goodsbill_b not in ").append(bills.substring(0, bills.length()-1));
 		}
 		List<StockOutBVO> vos=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
 		return vos;

@@ -115,10 +115,11 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 				throw new BusinessException("登陆用户错误");
 			}
 			String corpid = getRequest().getParameter("corpid");
+			String bills = getRequest().getParameter("bills");
 			if (StringUtil.isEmpty(corpid)) {
 				throw new BusinessException("请选择一个加盟商");
 			}
-			 List<StockOutBVO> vos = stockOut.queryOrders(corpid);
+			 List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills);
 			json.setSuccess(true);
 			json.setRows(vos);
 			json.setMsg("查询成功!");
@@ -258,6 +259,9 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		StockOutBVO[] bodyvos = DzfTypeUtils.cast(array, bodymapping, StockOutBVO[].class,
 				JSONConvtoJAVA.getParserConfig());
 		for (StockOutBVO stockOutBVO : bodyvos) {
+			if(!StringUtil.isEmpty(headvo.getPk_stockout())){
+				stockOutBVO.setPk_stockout(headvo.getPk_stockout());
+			}
 			stockOutBVO.setFathercorp(headvo.getFathercorp());
 			stockOutBVO.setPk_corp(headvo.getPk_corp());
 			stockOutBVO.setPk_warehouse(IStatusConstant.CK_ID);//仓库主键

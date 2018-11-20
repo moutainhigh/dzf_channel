@@ -40,7 +40,7 @@ public interface IStockOutService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<StockOutBVO> queryOrders(String pk_corp)throws DZFWarpException;
+	public List<StockOutBVO> queryOrders(String pk_corp,String bills)throws DZFWarpException;
 	
 	/**
 	 * 新增保存
