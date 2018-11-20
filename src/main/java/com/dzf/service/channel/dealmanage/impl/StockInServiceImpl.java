@@ -367,10 +367,10 @@ public class StockInServiceImpl implements IStockInService {
 			String sql = " DELETE FROM cn_stockin_b WHERE pk_corp = ? AND pk_stockin = ? ";
 			singleObjectBO.executeUpdate(sql, spm);
 			
-			 sql = " DELETE FROM cn_stockin WHERE pk_corp = ? AND pk_stockin = ? ";
+			sql = " DELETE FROM cn_stockin WHERE pk_corp = ? AND pk_stockin = ? ";
 			int res = singleObjectBO.executeUpdate(sql, spm);
 			if(res == 0){
-				throw new BusinessException("商品信息删除失败");
+				throw new BusinessException("入库单删除失败");
 			}
 			
 		} catch (Exception e) {

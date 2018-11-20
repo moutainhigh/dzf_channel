@@ -503,9 +503,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			spm.addParam(pamvo.getPk_corp());
 			spm.addParam(pamvo.getPk_goods());
 			int res = singleObjectBO.executeUpdate(sql, spm);
-			if(res == 0){
-				throw new BusinessException("商品规格型号删除失败");
-			}
 			
 			//4、删除商品信息
 			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
