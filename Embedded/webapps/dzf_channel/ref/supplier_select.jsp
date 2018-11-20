@@ -104,7 +104,7 @@
 			fitColumns: true,
 			idField:'suid',
 			rownumbers : true,
-			singleSelect : false,
+			singleSelect : true,
 			height:330,
 			striped:true,
 		   
