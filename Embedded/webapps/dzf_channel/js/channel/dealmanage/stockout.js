@@ -629,7 +629,7 @@ function initCard(){
             halign : 'center',
 			align : 'right',
 		},{
-			width : '60',
+			width : '100',
 			title : '操作列',
 			field : 'operate',
             halign : 'center',

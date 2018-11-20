@@ -75,7 +75,7 @@
 		</div>
 		
 		<div id="cardDialog" >
-			<form id="stockout" method="post" style="height:360px;width:1000px;overflow:hidden;padding-top:18px;">
+			<form id="stockout" method="post" style="height:360px;width:1100px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<input id="soutid" name="soutid" class="easyui-textbox"> 
 					<input id="nmny" name="nmny" class="easyui-numberbox"> 
@@ -121,13 +121,16 @@
 						<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流公司</label>
 						<input id="slogunit" name="logunit" class="easyui-textbox" 
 							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
-							<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流单号</label>
-						<input id="sfcode" name="fcode" class="easyui-textbox" 
-							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
+							
 					</div>
 				</div>
+				<div class="time_col time_colp11">
+					<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流单号</label>
+						<input id="sfcode" name="fcode" class="easyui-textbox" 
+							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
+				</div>
 			</form>
-			<div style="text-align:center;margin-top:40px;">
+			<div style="text-align:center;margin-top:30px;">
 			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="logCommit()">确定</a> 
 				<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" onclick="logCancel()">取消</a>
 			</div>
