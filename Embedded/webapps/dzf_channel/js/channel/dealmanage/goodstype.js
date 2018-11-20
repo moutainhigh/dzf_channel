@@ -35,6 +35,8 @@ function opermatter(val, row, index) {
 }
 
 function save(){
+	var vname = trimStr($('#vname').textbox('getValue'),"g");
+	$('#vname').textbox('setValue',vname)
 	if ($("#addForm").form('validate')) {
 		$.messager.progress({
 			text : '数据保存中，请稍后.....'
