@@ -100,6 +100,14 @@ public class StockInServiceImpl implements IStockInService {
 			sql.append("   AND vstatus = ? \n");
 			spm.addParam(pamvo.getQrytype());
 		}
+		if(pamvo.getBegdate() != null){
+			sql.append("   AND dstockdate >= ? \n");
+			spm.addParam(pamvo.getBegdate());
+		}
+		if(pamvo.getEnddate() != null ){
+			sql.append("   AND dstockdate <= ? \n");
+			spm.addParam(pamvo.getEnddate());
+		}
 		sql.append(" ORDER BY ts DESC");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
