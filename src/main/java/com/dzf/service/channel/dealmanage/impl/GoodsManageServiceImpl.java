@@ -35,7 +35,6 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
-import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
@@ -687,18 +686,18 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		String pk_goods = blist.get(0).getPk_goods();
 		
-		DZFDouble nprice = DZFDouble.ZERO_DBL;
-		int i = 0;
-		for(GoodsSpecVO svo : blist){
-			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
-				if(i == 0){
-					nprice = svo.getNprice();
-				}else if(nprice.compareTo(svo.getNprice()) > 0){
-					nprice = svo.getNprice();
-				}
-				i++;
-			}
-		}
+//		DZFDouble nprice = DZFDouble.ZERO_DBL;
+//		int i = 0;
+//		for(GoodsSpecVO svo : blist){
+//			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
+//				if(i == 0){
+//					nprice = svo.getNprice();
+//				}else if(nprice.compareTo(svo.getNprice()) > 0){
+//					nprice = svo.getNprice();
+//				}
+//				i++;
+//			}
+//		}
 		GoodsVO gvo = new GoodsVO();
 		gvo.setPk_goods(pk_goods);
 		
@@ -707,7 +706,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			LockUtil.getInstance().tryLockKey(gvo.getTableName(), gvo.getPk_goods(), uuid, 120);
 			
 			gvo = queryByID(gvo, 1);
-			gvo.setNprice(nprice);
+//			gvo.setNprice(nprice);
 			gvo.setChildren(blist.toArray(new GoodsSpecVO[0]));
 			gvo = (GoodsVO) singleObjectBO.saveObject(pk_corp, gvo);
 			String vstaname = "";
