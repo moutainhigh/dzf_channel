@@ -61,7 +61,7 @@ function load(){
 		title : '',
 		rownumbers : true,
 		height : Public.setGrid().h,
-		singleSelect : false,
+		singleSelect : true,
 		pagination : true, //显示分页
 		pageSize : 20, //默认20行
 		pageList : [ 20, 50, 100, 200 ],
@@ -204,21 +204,23 @@ function initDetailGrid(){
 	    		}
 			}
 		}, {
+            field: 'bdate',
+            title: '建账日期',
+            width: '100',
+            align: 'left',
+            halign:'center',
+        },{
             field: 'jzstatus',
             title: '记账状态',
             width: '150',
             align: 'left',
             halign:'center',
         }, {
-            field: 'accheck',
-            title: '账务检查',
-            width: '80',
-            align: 'center',
+            field: 'ckstatus',
+            title: '账务检查状态',
+            width: '120',
+            align: 'left',
             halign: 'center',
-            formatter: function(value, row, index) {
-                var checked = value == 1 ? "checked": "";
-                return '<input class=i type="checkbox" disabled ' + checked + '/>';
-            },
         },] ],
 		onLoadSuccess : function(data) {
 			if(data == undefined){
