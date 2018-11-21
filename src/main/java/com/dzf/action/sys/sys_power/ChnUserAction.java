@@ -60,12 +60,11 @@ public class ChnUserAction extends BaseAction<UserVO> {
 				UserVO uservo = getLoginUserInfo();
 				checkUser();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
-				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
-				vo.setPk_creatcorp(loginCorp);// 创建用户的公司
-				vo.setPk_corp(loginCorp);
+				data.setPk_creatcorp(loginCorp);// 创建用户的公司
+				data.setPk_corp(loginCorp);
 				data.setXsstyle(UTYPE);
-				if (vo.getPk_corp() == null)
+				if (data.getPk_corp() == null)
 					throw new BusinessException("所属公司不能为空");
 				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
 						.decKeyUtils(new String[] { "user_name" }, new UserVO[] { data }, 0);
@@ -94,13 +93,12 @@ public class ChnUserAction extends BaseAction<UserVO> {
 				UserVO uservo = getLoginUserInfo();
 				checkUser();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
-				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
-				UserVO user = UserCache.getInstance().get(vo.getCuserid(), vo.getPk_corp());
+				UserVO user = UserCache.getInstance().get(data.getCuserid(), null);
 				if (user == null) {
 					throw new BusinessException("该数据不存在或已删除！");
 				}
-				if (!loginCorp.equals(vo.getPk_corp())) {
+				if (!loginCorp.equals(user.getPk_corp())) {
 					throw new BusinessException("修改的用户不属于当前登陆公司，不允许修改。");
 				}
 				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
