@@ -874,8 +874,9 @@ function showInfo(index){
                 		showinfo = showinfo + "			<div class='pick_cost_A'>";
                 		showinfo = showinfo + "				<span>&nbsp;</span>";
                 		showinfo = showinfo + "			</div>";
-                		showinfo = showinfo + "			<div class='pick_cost_B'>"+goods[i].amount+"</div>";
-                		showinfo = showinfo + "			<div class='pick_cost_C'>¥"+goods[i].price+"</div>";
+                		showinfo = showinfo + "			<div class='pick_cost_B'>"+(goods[i].spec ? goods[i].spec : '') + (goods[i].type ? goods[i].type : '') +"</div>";
+                		showinfo = showinfo + "			<div class='pick_cost_C'>"+goods[i].amount+"</div>";
+                		showinfo = showinfo + "			<div class='pick_cost_D'>¥"+goods[i].price+"</div>";
                 		showinfo = showinfo + "		</div>";
                 		showinfo = showinfo + "	</div>";
                 		showinfo = showinfo + "</div>";

@@ -21,6 +21,7 @@
 
 .pick_cost {
 	font-size: 14px;
+	line-height:50px;
 }
 
 .pick_right {
@@ -30,7 +31,7 @@
 
 .pick_cost_A {
 	float: left;
-	width: 320px;
+	width: 200px;
 }
 
 .pick_cost_A span {
@@ -39,19 +40,23 @@
 
 .pick_cost_B {
 	float: left;
-	width: 80px;
-	text-align: center;
+	width: 140px;
+	text-align: right;
 }
 
 .pick_cost_C {
 	float: left;
-	width: 260px;
+	width: 140px;
+	text-align: right;
+}
+.pick_cost_D {
+	float: left;
+	width: 180px;
 	text-align: right;
 	color: red;
 	font-weight: bold;
 	font-size: 16px;
 }
-
 .shop_come {
 	height: 44px;
 	background: #e2e2e2;
