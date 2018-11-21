@@ -6,7 +6,6 @@ var flowImgUrls = null;
 var gid;
 var setIndex;
 $(function(){
-	initGoodstyps();
 	load();
 	reloadData();
 });
@@ -516,6 +515,7 @@ function edit(index){
 		return;
 	}
 	
+	initGoodstyps();
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '修改商品');
 	$('#gcode').textbox("readonly",true);
@@ -697,6 +697,7 @@ function dele(ths){
  * 新增
  */
 function add(){
+	initGoodstyps();
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
 	$('#gcode').textbox("readonly",false);
