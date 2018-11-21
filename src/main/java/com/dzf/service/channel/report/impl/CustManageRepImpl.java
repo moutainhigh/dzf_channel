@@ -76,10 +76,13 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 
 		CorpVO corpvo = null;
 		UserVO uservo = null;
-		DataVO data = null;/////
-		for (String pk_corp : replist) {
+		DataVO data = null;//
+		for (String pk_corp : corplist) {
 			data = map.get(pk_corp);
 			retvo = (CustManageRepVO) data;
+			if(retvo == null){
+				retvo = new CustManageRepVO();
+			}
 			retvo.setPk_corp(pk_corp);
 			corpvo = CorpCache.getInstance().get(null, pk_corp);
 			if (corpvo != null) {
@@ -102,9 +105,9 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			// 获取各个行业的值
 			setIndustryNum(codelist, pk_corp, industrys, industmap, retvo);
 
-			if (retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null) {
-				continue;
-			}
+//			if (retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null) {
+//				continue;
+//			}
 			retlist.add(retvo);
 		}
 		return retlist;

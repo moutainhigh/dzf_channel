@@ -90,13 +90,16 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		FinanceDealStateRepVO retvo = null;
 		FinanceDealStateRepVO showvo = null;
 		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(replist, pamvo.getPeriod());
-		if (replist != null && replist.size() > 0) {
+		if (corplist != null && corplist.size() > 0) {
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			Map<String, CustCountVO> voumap = null;
 			CustCountVO countvo = null;
-			for (String pk_corp : replist) {
+			for (String pk_corp : corplist) {
 				retvo = custmap.get(pk_corp);
+				if(retvo == null){
+					retvo = new FinanceDealStateRepVO();
+				}
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());

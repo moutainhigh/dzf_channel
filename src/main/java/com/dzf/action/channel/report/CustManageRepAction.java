@@ -1,5 +1,6 @@
 package com.dzf.action.channel.report;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_HYFX.getValue(), "行业分析查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
-				grid.setRows(list);
+				grid.setRows(new ArrayList<CustManageRepVO>());
 				grid.setSuccess(true);
 				grid.setMsg("查询结果为空");
 			}

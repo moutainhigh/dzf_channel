@@ -83,7 +83,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "业绩新增统计查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setTotal(Long.valueOf(0));
-				grid.setRows(list);
+				grid.setRows(new ArrayList<CustNumMoneyRepVO>());
 				grid.setSuccess(true);
 				grid.setMsg("查询结果为空");
 			}

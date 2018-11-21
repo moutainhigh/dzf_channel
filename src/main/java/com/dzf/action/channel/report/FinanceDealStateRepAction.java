@@ -70,7 +70,7 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_8.getValue(), "财务处理分析查询成功", ISysConstants.SYS_3);
 			} else {
 				grid.setTotal(Long.valueOf(0));
-				grid.setRows(list);
+				grid.setRows(new ArrayList<FinanceDealStateRepVO>());
 				grid.setSuccess(true);
 				grid.setMsg("查询结果为空");
 			}
