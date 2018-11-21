@@ -20,7 +20,7 @@ $(function(){
 	    url: DZF.contextPath + '/dealmanage/stockout!queryOrders.action',
 	    method: 'post',
 	    //fit:true,
-	    height:390,
+	    height:306,
 		fitColumns: true,
 // 		idField:'soutbid',
 		rownumbers: true,
