@@ -84,9 +84,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		List<String> replist = new ArrayList<String>();// 统计凭证的加盟商主键
 		List<CustCountVO> custlist = queryCustNum(pamvo, corplist);
 		Map<String, FinanceDealStateRepVO> custmap = getRetMap(custlist, replist);
-		if (custmap == null || custmap.isEmpty()) {
-			return null;
-		}
+//		if (custmap == null || custmap.isEmpty()) {
+//			return null;
+//		}
 		FinanceDealStateRepVO retvo = null;
 		FinanceDealStateRepVO showvo = null;
 		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(replist, pamvo.getPeriod());
@@ -99,6 +99,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 				retvo = custmap.get(pk_corp);
 				if(retvo == null){
 					retvo = new FinanceDealStateRepVO();
+					retvo.setPk_corp(pk_corp);
 				}
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
 				if (corpvo != null) {
