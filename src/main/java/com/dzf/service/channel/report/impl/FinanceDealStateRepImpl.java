@@ -404,11 +404,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			if(gzmap != null && !gzmap.isEmpty()){
 				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))){
 					vo.setVcheckstatus(paramvo.getPeriod()+"已关账");
-				}else{
-					vo.setVcheckstatus(paramvo.getPeriod()+"未关账");
 				}
-			}else{
-				vo.setVcheckstatus(paramvo.getPeriod()+"未关账");
 			}
 			//3、客户所属部门：
 			if(deptmap != null && !deptmap.isEmpty()){
