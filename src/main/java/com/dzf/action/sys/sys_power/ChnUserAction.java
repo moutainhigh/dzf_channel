@@ -58,11 +58,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
 		try {
 			if (data != null) {
 				UserVO uservo = getLoginUserInfo();
-				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-					throw new BusinessException("登陆用户错误");
-				} else if (uservo == null) {
-					throw new BusinessException("登陆用户错误");
-				}
+				checkUser();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
 				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
@@ -72,10 +68,10 @@ public class ChnUserAction extends BaseAction<UserVO> {
 				if (vo.getPk_corp() == null)
 					throw new BusinessException("所属公司不能为空");
 				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
-						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { data }, 0);
+						.decKeyUtils(new String[] { "user_name" }, new UserVO[] { data }, 0);
 				userService.save(datas[0]);
 				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils
-						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { datas[0] }, 1);
+						.decKeyUtils(new String[] { "user_name" }, new UserVO[] { datas[0] }, 1);
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("保存成功");
@@ -96,11 +92,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
 		try {
 			if (data != null) {
 				UserVO uservo = getLoginUserInfo();
-				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-					throw new BusinessException("登陆用户错误");
-				} else if (uservo == null) {
-					throw new BusinessException("登陆用户错误");
-				}
+				checkUser();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
 				UserVO vo = ((UserVO) data);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
@@ -112,10 +104,10 @@ public class ChnUserAction extends BaseAction<UserVO> {
 					throw new BusinessException("修改的用户不属于当前登陆公司，不允许修改。");
 				}
 				UserVO[] datas = (UserVO[]) QueryDeCodeUtils
-						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { data }, 0);
+						.decKeyUtils(new String[] { "user_name"}, new UserVO[] { data }, 0);
 				userService.update(datas[0]);
 				UserVO[] decdatas = (UserVO[]) QueryDeCodeUtils
-						.decKeyUtils(new String[] { "user_name", "corpnm", "crtcorp" }, new UserVO[] { datas[0] }, 1);
+						.decKeyUtils(new String[] { "user_name"}, new UserVO[] { datas[0] }, 1);
 				json.setSuccess(true);
 				json.setRows(decdatas[0]);
 				json.setMsg("更新成功");
@@ -135,12 +127,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
 		Grid grid = new Grid();
 		String loginCorp = IGlobalConstants.DefaultGroup;
 		try {
-			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser();
 			SysPowerConditVO qryVO = new SysPowerConditVO();
 			String ilock = getRequest().getParameter("ilock");
 			String invalid = getRequest().getParameter("invalid");// 失效
@@ -180,12 +167,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
         Grid grid = new Grid();
         String loginCorp = IGlobalConstants.DefaultGroup;
         try {
-            UserVO uservo = getLoginUserInfo();
-            if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-                throw new BusinessException("登陆用户错误");
-            } else if (uservo == null) {
-                throw new BusinessException("登陆用户错误");
-            }
+            checkUser();
             List<ComboBoxVO> list = chnUserService.queryCombobox(loginCorp);
             ComboBoxVO[] array = list.toArray(new ComboBoxVO[0]);
             array = (ComboBoxVO[]) QueryDeCodeUtils.decKeyUtils(new String[] { "name" }, array, 1);
@@ -203,5 +185,14 @@ public class ChnUserAction extends BaseAction<UserVO> {
             printErrorLog(grid, log, e, "查询失败");
         }
         writeJson(grid);
-	 }
+	}
+	
+	private void checkUser() throws Exception{
+	    UserVO uservo = getLoginUserInfo();
+        if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+            throw new BusinessException("登陆用户错误");
+        } else if (uservo == null) {
+            throw new BusinessException("登陆用户错误");
+        }
+	}
 }
