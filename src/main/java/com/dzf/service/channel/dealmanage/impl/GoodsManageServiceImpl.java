@@ -700,19 +700,31 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			throw new BusinessException("操作数据不能为空");
 		}
 		String pk_goods = blist.get(0).getPk_goods();
-		
+		List<String> onlylist = new ArrayList<String>();
 //		DZFDouble nprice = DZFDouble.ZERO_DBL;
 //		int i = 0;
-//		for(GoodsSpecVO svo : blist){
-//			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
+		String spec = "";
+		for(GoodsSpecVO svo : blist){
+			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
 //				if(i == 0){
 //					nprice = svo.getNprice();
 //				}else if(nprice.compareTo(svo.getNprice()) > 0){
 //					nprice = svo.getNprice();
 //				}
 //				i++;
-//			}
-//		}
+				spec = "";
+				if(!StringUtil.isEmptyWithTrim(svo.getInvspec())){
+					spec = spec + svo.getInvspec().trim();
+				}
+				if(!StringUtil.isEmptyWithTrim(svo.getInvtype())){
+					spec = spec + svo.getInvtype().trim();
+				}
+				if(onlylist.contains(spec)){
+					throw new BusinessException(spec+"重复");
+				}
+				onlylist.add(spec);
+			}
+		}
 		GoodsVO gvo = new GoodsVO();
 		gvo.setPk_goods(pk_goods);
 		
