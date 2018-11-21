@@ -88,8 +88,7 @@ function initUserRef(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/sys/chnUseract!query.action',
-		data : {"invalid":'N'},
+		url : DZF.contextPath + '/sys/chnUseract!queryCombobox.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
