@@ -10,6 +10,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.SysPowerConditVO;
@@ -21,6 +22,7 @@ import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.service.channel.sys_power.IChnUserService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -44,6 +46,9 @@ public class ChnUserAction extends BaseAction<UserVO> {
 
 	@Autowired
 	private IUserService userService;
+	
+	@Autowired
+	private IChnUserService chnUserService;
 
 	@Autowired
 	private IPubService pubser;
@@ -170,4 +175,33 @@ public class ChnUserAction extends BaseAction<UserVO> {
 		}
 		writeJson(grid);
 	}
+	
+	public void queryCombobox() throws Exception {
+        Grid grid = new Grid();
+        String loginCorp = IGlobalConstants.DefaultGroup;
+        try {
+            UserVO uservo = getLoginUserInfo();
+            if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+                throw new BusinessException("登陆用户错误");
+            } else if (uservo == null) {
+                throw new BusinessException("登陆用户错误");
+            }
+            List<ComboBoxVO> list = chnUserService.queryCombobox(loginCorp);
+            ComboBoxVO[] array = list.toArray(new ComboBoxVO[0]);
+            array = (ComboBoxVO[]) QueryDeCodeUtils.decKeyUtils(new String[] { "name" }, array, 1);
+            if (list != null && list.size() > 0) {
+                grid.setSuccess(true);
+                grid.setMsg("查询成功");
+                grid.setTotal((long) list.size());
+                grid.setRows(list);
+            } else {
+                grid.setRows(new ArrayList<ComboBoxVO>());
+                grid.setSuccess(false);
+                grid.setMsg("查询数据为空");
+            }
+        } catch (Exception e) {
+            printErrorLog(grid, log, e, "查询失败");
+        }
+        writeJson(grid);
+	 }
 }
