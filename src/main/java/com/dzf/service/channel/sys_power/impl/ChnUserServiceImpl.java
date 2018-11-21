@@ -49,7 +49,7 @@ public class ChnUserServiceImpl implements IChnUserService {
     private List<ComboBoxVO> queryJituanUser(String loginCorpID){
         StringBuffer sql = new StringBuffer();
         SQLParameter sp=new SQLParameter();
-        sql.append(" select distinct us.cuserid as id,us.user_name as name from sm_user us");
+        sql.append(" select distinct us.cuserid as id,us.user_name as name, us.user_code as code from sm_user us");
         sql.append(" join sm_user_role ur on us.cuserid = ur.cuserid");
         sql.append(" join sm_role sr on ur.pk_role = sr.pk_role");
         sql.append(" where sr.roletype = ? and us.pk_corp = ? and us.xsstyle is null");
@@ -57,7 +57,7 @@ public class ChnUserServiceImpl implements IChnUserService {
         sql.append(" and nvl(us.locked_tag,'N')= 'N' ");
         sp.addParam(IRoleConstants.ROLE_7);
         sp.addParam(loginCorpID);
-        sql.append(" order by user_code asc");
+        sql.append(" order by us.user_code asc");
         List<ComboBoxVO> listVo = (ArrayList<ComboBoxVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ComboBoxVO.class));
         return listVo;
     
