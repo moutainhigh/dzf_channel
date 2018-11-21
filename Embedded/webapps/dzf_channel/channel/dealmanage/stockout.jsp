@@ -61,7 +61,7 @@
 			<div class="time_col time_colp10">
 				<label style="text-align:right;width:70px;">录入人：</label> 
 				<input id="uid" name="uid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
-					data-options="required:false,valueField:'uid',textField:'uname',panelHeight:200" />  
+					data-options="required:false,valueField:'id',textField:'name',panelHeight:200" />  
 			</div>
 			<p>
 				<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 

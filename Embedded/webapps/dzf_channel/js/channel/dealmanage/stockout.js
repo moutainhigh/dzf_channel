@@ -337,6 +337,7 @@ function reloadData(){
 		'enddate' : $("#enddate").datebox('getValue'),
 		'ucode' : $("#ucode").textbox('getValue'),
 		'cpid' :  $('#cpid').combobox('getValue'),
+		'uid' :  $('#uid').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#qrydialog').hide();
@@ -559,8 +560,7 @@ function initUser(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/sys/chnUseract!query.action',
-		data : {"invalid":'N'},
+		url : DZF.contextPath + '/sys/chnUseract!queryCombobox.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
