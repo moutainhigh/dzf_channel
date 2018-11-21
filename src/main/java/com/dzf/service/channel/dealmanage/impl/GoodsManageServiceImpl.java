@@ -52,7 +52,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	
 	@Autowired
 	private IBillCodeService billCodeSer;
-
+	
 	@Override
 	public Integer queryTotalRow(GoodsVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
@@ -425,42 +425,57 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GoodsVO queryByID(GoodsVO pamvo, Integer itype) throws DZFWarpException {
 		// itype 0：修改查询；1：详情查询；
-		GoodsVO oldvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, pamvo.getPk_goods());
-		if(oldvo == null){
+		GoodsVO oldvo = null;
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT s.*, t.vname AS vgoodstypename  \n");
+		sql.append("  FROM cn_goods s  \n");
+		sql.append("  LEFT JOIN cn_goodstype t ON s.pk_goodstype = t.pk_goodstype  \n");
+		sql.append(" WHERE nvl(s.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND s.pk_goods = ? \n");
+		spm.addParam(pamvo.getPk_goods());
+		List<GoodsVO> list = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsVO.class));
+		if(list != null && list.size() > 0){
+			oldvo = list.get(0);
+		}
+		if (oldvo == null) {
 			throw new BusinessException("数据错误");
 		}
-		if(itype == 0){//修改查询
-			if(oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2){
+		if (itype == 0) {// 修改查询
+			if (oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2) {
 				throw new BusinessException("该商品已经发布，不允许修改");
 			}
 		}
-		String where = " pk_goods = '" + oldvo.getPk_goods()+"'";
+		String where = " pk_goods = '" + oldvo.getPk_goods() + "'";
 		List<String> gslist = queryStockGoods(where);
-		if(gslist != null && gslist.size() > 0){
-			if(gslist.contains(oldvo.getPk_goods())){
+		if (gslist != null && gslist.size() > 0) {
+			if (gslist.contains(oldvo.getPk_goods())) {
 				oldvo.setIsstockin(DZFBoolean.TRUE);
 			}
 		}
-		
+
 		String vstaname = "";
-		switch(oldvo.getVstatus()){
-			case 1 :
-				vstaname = "已保存";
-				break;
-			case 2 :
-				vstaname = "已发布";
-				break;
-			case 3 :
-				vstaname = "已下架";
-				break;
+		switch (oldvo.getVstatus()) {
+		case 1:
+			vstaname = "已保存";
+			break;
+		case 2:
+			vstaname = "已发布";
+			break;
+		case 3:
+			vstaname = "已下架";
+			break;
 		}
 		oldvo.setVstaname(vstaname);
 		return oldvo;
 	}
-
+	
 	@Override
 	public GoodsDocVO[] getAttatches(GoodsVO pamvo) throws DZFWarpException {
 		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND pk_goods = ? ";

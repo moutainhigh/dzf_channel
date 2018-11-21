@@ -127,6 +127,7 @@ function reloadData(){
 		'gtype' : $('#qgtype').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 	$('#qrydialog').hide();
 }
 
@@ -1085,7 +1086,7 @@ function showInfo(index){
 	if(isEmpty(row)){
 		return;
 	}
-	
+	initGoodstyps();
 	$('#infoDlg').dialog('open').dialog('center').dialog('setTitle', '商品详情');
 	$('#goods_info').form('clear');
 	$('#goods_info').form('load', row);
