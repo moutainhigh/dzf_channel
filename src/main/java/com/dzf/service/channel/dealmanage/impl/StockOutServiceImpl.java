@@ -136,7 +136,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			sql.append(buildSqlForNotIn("b.pk_goodsbill_b",billbs));
 		}
 		if(!StringUtils.isEmpty(bills)){
-			sql.append(" and b.pk_goodsbill_b not in ").append(bills.substring(0, bills.length()-1));
+			sql.append(" and b.pk_goodsbill_b not in ( ").append(bills.substring(0, bills.length()-1)).append(")");
 		}
 		List<StockOutBVO> vos=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
 		return vos;

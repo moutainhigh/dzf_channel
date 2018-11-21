@@ -11,7 +11,6 @@
 </style>
 <body>
 <%
-	String bills = request.getParameter("bills");
 	String corpid = request.getParameter("corpid");
 %>
 <script>
@@ -27,7 +26,7 @@ $(function(){
 		singleSelect: false,
 		showFooter: true,
 		striped:true,
-		queryParams: {"corpid": "<%=corpid%>", "bills":  "<%=bills%>"},
+		queryParams: {"corpid": "<%=corpid%>", "bills": bills},
 		columns : [ [ 
 		{
 			width : '160',

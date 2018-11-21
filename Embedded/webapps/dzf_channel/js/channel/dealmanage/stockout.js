@@ -2,6 +2,8 @@ var contextPath = DZF.contextPath;
 var status="brows";
 var selIndex;//确认收货，选中的index
 var editIndex = undefined;
+var corpVOs;//查询框的加盟商
+var bills;
 
 //数据表格随窗口大小改变
 $(window).resize(function() {
@@ -181,6 +183,14 @@ function add(){
 };
 
 function initCardCorp(){
+	$("#corpid").combobox({
+	     valueField:'id',
+	     textField:'name',
+	     multiple: false,
+	     onSelect: function(rec){
+	    	 loadCardGrid(rec.id)
+	     }
+	});
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -201,6 +211,12 @@ function edit(id){
 	if(isEmpty(row)){
 		return;
 	}
+	 $("#corpid").combobox({
+    	 valueField:'pk_gs',
+ 	     textField:'uname',
+	     multiple: false,
+	});
+    $("#corpid").combobox("loadData",corpVOs);
     $('#cardDialog').dialog({modal:true});
     $('#cardDialog').dialog('open').dialog('center').dialog('setTitle',"出库单修改");
     $('#stockout').form("clear");
@@ -215,6 +231,12 @@ function view(id){
 	if(isEmpty(row)){
 		return;
 	}
+    $("#corpid").combobox({
+	     valueField:'pk_gs',
+	     textField:'uname',
+	     multiple: false,
+	});
+    $("#corpid").combobox("loadData",corpVOs);
     $('#cardDialog').dialog({modal:true});
     $('#cardDialog').dialog('open').dialog('center').dialog('setTitle',"出库单查看");
     $('#stockout').form("clear");
@@ -250,6 +272,12 @@ function queryByID(id){
 
 
 function addSave(){
+	var rows=$('#cardGrid').datagrid('getRows');
+	if(rows&&rows.length>0){
+		if(isEmpty(rows[rows.length-1].billid_b)){
+			$('#cardGrid').datagrid('deleteRow',rows.length-1);
+		}
+	}
 	var flag = $('#stockout').form('validate');
 	if(flag == false){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
@@ -340,6 +368,7 @@ function reloadData(){
 		'uid' :  $('#uid').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 	$('#qrydialog').hide();
 }
 
@@ -542,17 +571,10 @@ function initCorp(){
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
+				corpVOs=result.rows;
 				$('#cpid').combobox('loadData',result.rows);
 			}
 		}
-	});
-	$("#corpid").combobox({
-	     valueField:'id',
-	     textField:'name',
-	     multiple: false,
-	     onSelect: function(rec){
-	    	 loadCardGrid(rec.id)
-	     }
 	});
 }
 
@@ -671,7 +693,7 @@ function initCard(){
 			}
 			endBodyEdit();
 			if($('#cardGrid').datagrid('validateRow', editIndex)){
-				if (index != undefined) {
+				if (index != undefined && isEmpty(row.billid_b)) {
 					$('#cardGrid').datagrid('beginEdit', index);
 					editIndex = index;
 				}           		
@@ -694,7 +716,7 @@ function initChnBill(){
 		});
 	}
 	var rows=$('#cardGrid').datagrid('getRows');
-	var bills="";
+	bills="";
 	for(var i=0;i<rows.length;i++){
 		if(!isEmpty(rows[i].billid_b)){
 			bills+="'"+rows[i].billid_b+"',";
@@ -708,10 +730,7 @@ function initChnBill(){
 		cache : false,
 		modal : true,
 		href : contextPath + '/ref/chnbill_select.jsp',
-		queryParams:{
-			"corpid" : corpid,
-			"bills" : bills,
-		},
+		queryParams:{"corpid" : corpid},
 		buttons : [ {
 			text : '确认',
 			handler : function() {
