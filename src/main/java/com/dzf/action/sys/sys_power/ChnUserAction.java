@@ -176,7 +176,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
                 grid.setRows(list);
             } else {
                 grid.setRows(new ArrayList<ComboBoxVO>());
-                grid.setSuccess(false);
+                grid.setSuccess(true);
                 grid.setMsg("查询数据为空");
             }
         } catch (Exception e) {
