@@ -345,7 +345,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("       unitname as corpkname,  \n");
 		sql.append("       pk_corp as pk_corpk,  \n");
 		sql.append("       ishasaccount as ishasaccount,  \n");
-		sql.append("       begindate as period,  \n");
+		sql.append("       begindate,  \n");
 		sql.append("       fathercorp as pk_corp  \n");
 		sql.append("  from bd_corp \n");
 		sql.append(" where nvl(dr,0) = 0   \n");
@@ -403,12 +403,12 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			//2、账务检查以查询月是否关账来统计：
 			if(gzmap != null && !gzmap.isEmpty()){
 				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))){
-					vo.setIacctcheck(1);
+					vo.setVcheckstatus(paramvo.getPeriod()+"已关账");
 				}else{
-					vo.setIacctcheck(0);
+					vo.setVcheckstatus(paramvo.getPeriod()+"未关账");
 				}
 			}else{
-				vo.setIacctcheck(0);
+				vo.setVcheckstatus(paramvo.getPeriod()+"未关账");
 			}
 			//3、客户所属部门：
 			if(deptmap != null && !deptmap.isEmpty()){

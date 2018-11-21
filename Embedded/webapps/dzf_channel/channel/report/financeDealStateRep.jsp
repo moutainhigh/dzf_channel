@@ -104,7 +104,7 @@
 			
 			<!-- 明细begin -->
 			<div id="detail_dialog" class="easyui-dialog" title="客户明细" 
-				data-options="modal:true,closed:true" style="width:840px;height:500px;">
+				data-options="modal:true,closed:true" style="width:1000px;height:500px;">
 				<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
 					<label style="text-align:right">查询：</label> 
 					<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>

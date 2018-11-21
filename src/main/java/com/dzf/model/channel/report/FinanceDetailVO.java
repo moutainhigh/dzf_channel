@@ -2,6 +2,7 @@ package com.dzf.model.channel.report;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 
 /**
  * 财务处理分析明细VO
@@ -36,8 +37,27 @@ public class FinanceDetailVO extends SuperVO {
 	
 	private String jzstatus;//记账状态
 	
-	@FieldAlias("accheck")
-	private Integer iacctcheck;//账务检查： 0：未勾选；  1勾选；
+	@FieldAlias("bdate")
+	private DZFDate begindate;//建账日期
+	
+	@FieldAlias("ckstatus")
+	private String vcheckstatus;//账务检查状态
+
+	public String getVcheckstatus() {
+		return vcheckstatus;
+	}
+
+	public void setVcheckstatus(String vcheckstatus) {
+		this.vcheckstatus = vcheckstatus;
+	}
+
+	public DZFDate getBegindate() {
+		return begindate;
+	}
+
+	public void setBegindate(DZFDate begindate) {
+		this.begindate = begindate;
+	}
 
 	public String getPk_corp() {
 		return pk_corp;
@@ -101,14 +121,6 @@ public class FinanceDetailVO extends SuperVO {
 
 	public void setJzstatus(String jzstatus) {
 		this.jzstatus = jzstatus;
-	}
-
-	public Integer getIacctcheck() {
-		return iacctcheck;
-	}
-
-	public void setIacctcheck(Integer iacctcheck) {
-		this.iacctcheck = iacctcheck;
 	}
 
 	@Override
