@@ -434,7 +434,7 @@ function initCardGrid() {
 					height : 31,
 					required : true,
 					precision : 2,
-					min : 0,
+					min : 1,
 					max : 99999,
 					onChange : function(n, o) {
 						if(!isEmpty(n)){
@@ -461,7 +461,7 @@ function initCardGrid() {
 					height : 31,
 					required : true,
 					precision : 0,
-					min : 0,
+					min : 1,
 					max : 9999,
 					onChange : function(n, o) {
 						if(!isEmpty(n)){
