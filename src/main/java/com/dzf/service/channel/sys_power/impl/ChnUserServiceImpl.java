@@ -11,6 +11,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IRoleConstants;
 import com.dzf.service.channel.sys_power.IChnUserService;
 
 @Service("chnUserService")
@@ -33,7 +34,32 @@ public class ChnUserServiceImpl implements IChnUserService {
         sp.addParam(UTYPE);
         sql.append(" order by user_code asc");
         List<ComboBoxVO> listVo = (ArrayList<ComboBoxVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ComboBoxVO.class));
+        List<ComboBoxVO> list = queryJituanUser(loginCorpID);
+        listVo.addAll(list);
         return listVo;
     }
 
+    /**
+     * 查询集团创建的用户，需要登录加盟商系统
+     * @author gejw
+     * @time 上午10:22:45
+     * @param loginCorpID
+     * @return
+     */
+    private List<ComboBoxVO> queryJituanUser(String loginCorpID){
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp=new SQLParameter();
+        sql.append("select distinct us.* from sm_user us");
+        sql.append("join sm_user_role ur on us.cuserid = ur.cuserid");
+        sql.append("join sm_role sr on ur.pk_role = sr.pk_role");
+        sql.append("where sr.roletype = ? and us.pk_corp = ? and xsstyle is null");
+        sql.append(" and u.xsstyle = ?");
+        sp.addParam(IRoleConstants.ROLE_7);
+        sp.addParam(loginCorpID);
+        sp.addParam(UTYPE);
+        sql.append(" order by user_code asc");
+        List<ComboBoxVO> listVo = (ArrayList<ComboBoxVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ComboBoxVO.class));
+        return listVo;
+    
+    }
 }
