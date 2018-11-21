@@ -2098,3 +2098,5 @@ panel-body panel-body-noheader panel-body-noborder
 	color: red;
 	vertical-align: middle;
 }
+.textbox-readonly .textbox-text{    background: #f4f4f4;}
+.textbox-readonly{    background: #f4f4f4;}
