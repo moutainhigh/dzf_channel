@@ -12,11 +12,12 @@
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/dealmanage/goodsmanage.css");%> rel="stylesheet" />
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/validate.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%> charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript">
 	var maxsize = 1*1024*1024;//10M
 	var errMsg = "上传的图片不能超过1M！！！";
-	var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过1M，建议使用IE、FireFox、Chrome浏览器。";
+	/* var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过1M，建议使用IE、FireFox、Chrome浏览器。"; */
 	var  browserCfg = {};
 	var ua = window.navigator.userAgent;
 	if (ua.indexOf("MSIE")>=1){
