@@ -61,11 +61,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			pamvo.setPk_corp(getLogincorppk());
@@ -93,11 +89,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			List<SupplierVO> list = stockinser.querySupplierRef(pamvo);
@@ -123,11 +115,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
 			
 			String head = getRequest().getParameter("head");
@@ -243,11 +231,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			
 			StockInVO qryvo = (StockInVO) DzfTypeUtils.cast(getRequest(), new StockInVO());
 			StockInVO retvo = stockinser.queryById(qryvo.getPk_stockin(), getLogincorppk(), 1);
@@ -268,11 +252,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		json.setSuccess(false);
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
 			
 			StockInVO pamvo = new StockInVO();
@@ -296,11 +276,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
@@ -354,11 +330,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
@@ -374,5 +346,17 @@ public class StockInAction extends BaseAction<StockInVO> {
 			printErrorLog(json, log, e, "保存失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 登录用户校验
+	 * @throws DZFWarpException
+	 */
+	private void checkUser(UserVO uservo) throws DZFWarpException {
+		if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			throw new BusinessException("登陆用户错误");
+		}else if(uservo == null){
+			throw new BusinessException("登陆用户错误");
+		}
 	}
 }

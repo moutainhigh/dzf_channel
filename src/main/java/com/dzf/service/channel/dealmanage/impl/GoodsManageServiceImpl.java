@@ -756,53 +756,54 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			throw new BusinessException("操作数据不能为空");
 		}
 		String pk_goods = blist.get(0).getPk_goods();
-		List<String> onlylist = new ArrayList<String>();
 		
-		Map<String,String> cmap = queryStockGoodspec(pk_goods);
-		String spec = "";
-		String value = "";
-		for(GoodsSpecVO svo : blist){
-			spec = "";
-			if(!StringUtil.isEmptyWithTrim(svo.getInvspec())){
-				spec = spec + svo.getInvspec().trim();
-			}else{
-				spec = spec + "null";
-			}
-			if(!StringUtil.isEmptyWithTrim(svo.getInvtype())){
-				spec = spec + "," +svo.getInvtype().trim();
-			}else{
-				spec = spec + ",null";
-			}
-			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
-				if(onlylist.contains(spec)){
-					throw new BusinessException(spec+"重复");
-				}
-				onlylist.add(spec);
-				if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
-					if(cmap.containsKey(svo.getPk_goodsspec())){
-						value = cmap.get(svo.getPk_goodsspec());
-						if(!value.equals(spec)){
-							throw new BusinessException(value+"已经有入库单，不允许修改");
-						}
-					}
-				}
-			}else{
-				if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
-					if(cmap.containsKey(svo.getPk_goodsspec())){
-						value = cmap.get(svo.getPk_goodsspec());
-						if(value.equals(spec)){
-							throw new BusinessException(value+"已经有入库单，不允许删除");
-						}
-					}
-				}
-			}
-		}
 		GoodsVO gvo = new GoodsVO();
 		gvo.setPk_goods(pk_goods);
 		
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(gvo.getTableName(), gvo.getPk_goods(), uuid, 120);
+			
+			List<String> onlylist = new ArrayList<String>();
+			Map<String,String> cmap = queryStockGoodspec(pk_goods);
+			String spec = "";
+			String value = "";
+			for(GoodsSpecVO svo : blist){
+				spec = "";
+				if(!StringUtil.isEmptyWithTrim(svo.getInvspec())){
+					spec = spec + svo.getInvspec().trim();
+				}else{
+					spec = spec + "null";
+				}
+				if(!StringUtil.isEmptyWithTrim(svo.getInvtype())){
+					spec = spec + "," +svo.getInvtype().trim();
+				}else{
+					spec = spec + ",null";
+				}
+				if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
+					if(onlylist.contains(spec)){
+						throw new BusinessException(spec+"重复");
+					}
+					onlylist.add(spec);
+					if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
+						if(cmap.containsKey(svo.getPk_goodsspec())){
+							value = cmap.get(svo.getPk_goodsspec());
+							if(!value.equals(spec)){
+								throw new BusinessException(value+"已经有入库单，不允许修改");
+							}
+						}
+					}
+				}else{
+					if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
+						if(cmap.containsKey(svo.getPk_goodsspec())){
+							value = cmap.get(svo.getPk_goodsspec());
+							if(value.equals(spec)){
+								throw new BusinessException(value+"已经有入库单，不允许删除");
+							}
+						}
+					}
+				}
+			}
 			
 			gvo = queryByID(gvo, 1);
 			gvo.setChildren(blist.toArray(new GoodsSpecVO[0]));

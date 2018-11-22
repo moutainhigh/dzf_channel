@@ -58,12 +58,20 @@ public class StockInBVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
-	@FieldAlias("goodsspe")
-	private String vgoodsspename;//供应商名称
-	
 	@FieldAlias("gname")
 	private String vgoodsname;//商品名称
 	
+	@FieldAlias("supname")
+	private String vsuppliername;//供应商名称
+	
+	public String getVsuppliername() {
+		return vsuppliername;
+	}
+
+	public void setVsuppliername(String vsuppliername) {
+		this.vsuppliername = vsuppliername;
+	}
+
 	public String getPk_goodsspec() {
 		return pk_goodsspec;
 	}
@@ -78,14 +86,6 @@ public class StockInBVO extends SuperVO {
 
 	public void setVgoodsname(String vgoodsname) {
 		this.vgoodsname = vgoodsname;
-	}
-
-	public String getVgoodsspename() {
-		return vgoodsspename;
-	}
-
-	public void setVgoodsspename(String vgoodsspename) {
-		this.vgoodsspename = vgoodsspename;
 	}
 
 	public String getPk_stockin_b() {

@@ -12,7 +12,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
@@ -159,6 +158,23 @@ public class StockInServiceImpl implements IStockInService {
 			throw new BusinessException("总金额计算错误");
 		}
 	}
+	
+	/**
+	 * 获取商品信息
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private Map<String,String> getGoodsMap() throws DZFWarpException {
+		Map<String,String> map = new HashMap<String,String>();
+		String sql = " nvl(dr,0) = 0 ";
+		GoodsVO[] gdVOs = (GoodsVO[]) singleObjectBO.queryByCondition(GoodsVO.class, sql, null);
+		if(gdVOs != null){
+			for(GoodsVO gdvo : gdVOs){
+				map.put(gdvo.getPk_goods(), gdvo.getVgoodsname());
+			}
+		}
+		return map;
+	}
 
 	/**
 	 * 设置显示名称
@@ -237,16 +253,12 @@ public class StockInServiceImpl implements IStockInService {
 			if (oldvo.getUpdatets().compareTo(hvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 			}
-			if(opertype == 1){
-				if(IStatusConstant.ISTOCKINSTATUS_2 == hvo.getVstatus()){
+			if(IStatusConstant.ISTOCKINSTATUS_2 == hvo.getVstatus()){
+				if(opertype == 1){
 					throw new BusinessException("该入库单已经确认，不允许修改");
-				}
-			}else if(opertype == 2){
-				if(IStatusConstant.ISTOCKINSTATUS_2 == hvo.getVstatus()){
+				}else if(opertype == 2){
 					throw new BusinessException("该入库单已经确认，不允许删除");
-				}
-			}else if(opertype == 3){
-				if(IStatusConstant.ISTOCKINSTATUS_2 == hvo.getVstatus()){
+				}else if(opertype == 3){
 					throw new BusinessException("该入库单已经确认，不允许再次确认");
 				}
 			}
@@ -297,67 +309,31 @@ public class StockInServiceImpl implements IStockInService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
+	@SuppressWarnings("unchecked")
 	private StockInBVO[] queryBody(String pk_stockin, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("   nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_stockin = ? \n");
+		sql.append("SELECT b.*,  \n");
+		sql.append("       r.vname AS vsuppliername,  \n");
+		sql.append("       s.vgoodsname || ' ' || '(' || c.invspec || c.invtype || ')' AS vgoodsname  \n");
+		sql.append("  FROM cn_stockin_b b  \n");
+		sql.append("  LEFT JOIN cn_supplier r ON b.pk_supplier = r.pk_supplier  \n");
+		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
+		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec  \n");
+		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
+		sql.append("   AND nvl(r.dr, 0) = 0  \n");
+		sql.append("   AND nvl(s.dr, 0) = 0  \n");
+		sql.append("   AND nvl(c.dr, 0) = 0  \n");
+		sql.append("   AND b.pk_stockin = ? \n");
 		spm.addParam(pk_stockin);
-		sql.append("   AND pk_corp = ? \n");
+		sql.append("   AND b.pk_corp = ? \n");
 		spm.addParam(pk_corp);
-		StockInBVO[] bVOs = (StockInBVO[]) singleObjectBO.queryByCondition(StockInBVO.class, sql.toString(), spm);
-		if(bVOs != null && bVOs.length > 0){
-			Map<String, String> map = querySupplier(pk_corp);
-			Map<String, String> specmap = querySpec(pk_corp);
-			for(StockInBVO bvo : bVOs){
-				if(map != null && !map.isEmpty()){
-					bvo.setVgoodsspename(map.get(bvo.getPk_supplier()));
-				}
-				if(specmap != null && !specmap.isEmpty()){
-					bvo.setVgoodsname(specmap.get(bvo.getPk_goodsspec()));
-				}
-			}
+		List<StockInBVO> list = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockInBVO.class));
+		if (list != null && list.size() > 0) {
+			return list.toArray(new StockInBVO[0]);
 		}
-		return bVOs;
-	}
-
-	/**
-	 * 查询所有供应商信息
-	 * 
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private Map<String, String> querySupplier(String pk_corp) throws DZFWarpException {
-		Map<String, String> map = new HashMap<String, String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("   nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ? \n");
-		spm.addParam(pk_corp);
-		SupplierVO[] supVOs = (SupplierVO[]) singleObjectBO.queryByCondition(SupplierVO.class, sql.toString(), spm);
-		if (supVOs != null && supVOs.length > 0) {
-			for (SupplierVO svo : supVOs) {
-				map.put(svo.getPk_supplier(), svo.getVname());
-			}
-		}
-		return map;
-	}
-	
-	/**
-	 * 查询商品规格及型号信息
-	 * @param pk_corp
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private Map<String, String> querySpec(String pk_corp) throws DZFWarpException {
-		Map<String, String> map = new HashMap<String, String>();
-		List<GoodsBoxVO> list = manser.queryComboBox();
-		if(list != null && list.size() > 0){
-			for(GoodsBoxVO bvo : list){
-				map.put(bvo.getId(), bvo.getName());
-			}
-		}
-		return map;
+		return null;
 	}
 
 	@Override
@@ -443,7 +419,7 @@ public class StockInServiceImpl implements IStockInService {
 			StockNumVO numvo = list.get(0);
 			updateStock(numvo, bvo);
 		}else if(list != null && list.size() > 1){
-			throw new BusinessException("库存商品数量错误，请先进行库存盘点");
+			throw new BusinessException("库存商品数量错误");
 		}else{
 			StockNumVO numvo = new StockNumVO();
 			numvo.setPk_corp(bvo.getPk_corp());

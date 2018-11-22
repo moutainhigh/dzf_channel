@@ -29,7 +29,7 @@ function expendRow(){
                  loadMsg:'',
                  height:'auto',
                  columns:[[
-                     {field:'goodsspe',title:'供应商',width:200},
+                     {field:'supname',title:'供应商',width:200},
                      {field:'gname',title:'商品',width:120,},
                      {field:'spec',title:'规格',width:100,},
                      {field:'type',title:'型号',width:100,},
@@ -323,7 +323,7 @@ function initCardGrid() {
 		width : "100%",
 		singleSelect : false,
 		columns : [ [ {
-			field : 'goodsspe',
+			field : 'supname',
 			title : '供应商',
 			width : "180",
 			align : 'center',
@@ -599,9 +599,9 @@ function chooseSupplier(){
  */
 function dClickSupplier(row){
 	if (row) {
-		var goodsspe = $('#stgrid').datagrid('getEditor', {index : editIndex,field : 'goodsspe'});
+		var supname = $('#stgrid').datagrid('getEditor', {index : editIndex,field : 'supname'});
 		var supid = $('#stgrid').datagrid('getEditor', {index : editIndex,field : 'supid'});
-		$(goodsspe.target).textbox('setValue', row.name);
+		$(supname.target).textbox('setValue', row.name);
 		$(supid.target).textbox('setValue', row.suid);
 	}
 	$("#refdiv").dialog('close');
