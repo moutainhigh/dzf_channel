@@ -55,7 +55,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
-		checkOnSelect:false,
+		checkOnSelect:true,
 //		selectOnCheck:true,
 		idField : 'soutid',
 		columns : [ [ 
