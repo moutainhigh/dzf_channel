@@ -209,6 +209,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				throw new BusinessException("图片上传错误");
 			}
 			GoodsDocVO docvo = new GoodsDocVO();
+			if(i == 0){
+				docvo.setIsfirst(DZFBoolean.TRUE);
+			}
 			docvo.setPk_corp(datavo.getPk_corp());
 			docvo.setPk_goods(datavo.getPk_goods());
 			docvo.setDocName(filenames[i]);
@@ -512,6 +515,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			if(res != 1){
 				throw new BusinessException("商品图片删除失败");
 			}
+			
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());

@@ -503,7 +503,7 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									var mny = rows[j].mny;
+									var mny = rows[j].mny+"";
 									if(mny.indexOf(',') != -1){
 										mny = mny.replaceAll(',','');
 									}
@@ -657,22 +657,14 @@ function delRow(ths) {
 		if(rows && rows.length > 1){
 			$('#stgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 		}
-		var totalmny = parseFloat(0);
-		var length = rows.length;
-		for(var j = 0;j< length; j++){
-			var mny = rows[j].mny;
-			if(mny.indexOf(',') != -1){
-				mny = mny.replaceAll(',','');
-			}
-			totalmny = totalmny.add(getFloatValue(mny));
-		}
-		$("#totalmny").numberbox("setValue", formatMny(totalmny));
+		countMny(rows);
 	}else{
 		if(isCanAdd()){
 			var rows = $('#stgrid').datagrid('getRows');
 			if(rows && rows.length > 1){
 				$('#stgrid').datagrid('deleteRow', Number(tindex));   //将索引转为int型，否则，删行后，剩余行的索引不重新排列
 			}
+			countMny(rows);
 		}else{
 			Public.tips({
 				content : "请先录入必输项",
@@ -681,6 +673,22 @@ function delRow(ths) {
 			return;
 		}
 	}
+}
+
+/**
+ * 计算表头总金额
+ */
+function countMny(rows){
+	var totalmny = parseFloat(0);
+	var length = rows.length;
+	for(var j = 0;j< length; j++){
+		var mny = rows[j].mny+"";
+		if(mny.indexOf(',') != -1){
+			mny = mny.replaceAll(',','');
+		}
+		totalmny = totalmny.add(getFloatValue(mny));
+	}
+	$("#totalmny").numberbox("setValue", formatMny(totalmny));
 }
 
 /**
@@ -829,15 +837,8 @@ function onSave(){
 				return; 
 			}
 			body = body + JSON.stringify(rows[j]); 
-			if(!isEmpty(rows[j].mny)){
-				var mny = rows[j].mny+"";
-				if(mny.indexOf(',') != -1){
-					mny = mny.replaceAll(',','');
-				}
-				totalmny = totalmny.add(getFloatValue(mny));
-			}
 		}
-		$("#totalmny").numberbox("setValue", formatMny(totalmny));
+		countMny(rows);
 	}
 	
 	postdata["body"] = body;

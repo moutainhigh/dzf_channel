@@ -147,7 +147,6 @@ public class StockInAction extends BaseAction<StockInVO> {
 				throw new BusinessException("表体数据不能为空");
 			}
 			
-			
 			List<StockInBVO> blist = getDataList(bmapping);
 			if(blist != null && blist.size() > 0){
 				hvo.setChildren(blist.toArray(new StockInBVO[0]));
@@ -226,7 +225,10 @@ public class StockInAction extends BaseAction<StockInVO> {
 			JSONArray delarray = (JSONArray) JSON.parseArray(delfile);
 			delBVOs = DzfTypeUtils.cast(delarray, bmapping, StockInBVO[].class, JSONConvtoJAVA.getParserConfig());
 			if(delBVOs != null && delBVOs.length > 0){
-				list.addAll(Arrays.asList(delBVOs));
+				for(StockInBVO bvo : delBVOs){
+					bvo.setDr(1);
+					list.add(bvo);
+				}
 			}
 		}
 		
