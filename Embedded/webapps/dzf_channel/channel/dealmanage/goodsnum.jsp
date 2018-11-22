@@ -36,7 +36,7 @@
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品分类：</label>
 				  <input id="vname" class="easyui-combobox" style="width:290px;height:28px;"
-						data-options="valueField:'id', textField:'name', panelHeight:'auto'" style="width:290px;height:28px;"/>
+						data-options="valueField:'id', textField:'name', panelHeight:'200'" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品编码：</label>
