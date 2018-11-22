@@ -503,7 +503,11 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									totalmny = totalmny.add(getFloatValue(rows[j].mny));
+									var mny = rows[j].mny;
+									if(mny.indexOf(',') != -1){
+										mny = mny.replaceAll(',','');
+									}
+									totalmny = totalmny.add(getFloatValue(mny));
 								}
 								$("#totalmny").numberbox("setValue", formatMny(totalmny));
 							}
@@ -656,7 +660,11 @@ function delRow(ths) {
 		var totalmny = parseFloat(0);
 		var length = rows.length;
 		for(var j = 0;j< length; j++){
-			totalmny = totalmny.add(getFloatValue(rows[j].mny));
+			var mny = rows[j].mny;
+			if(mny.indexOf(',') != -1){
+				mny = mny.replaceAll(',','');
+			}
+			totalmny = totalmny.add(getFloatValue(mny));
 		}
 		$("#totalmny").numberbox("setValue", formatMny(totalmny));
 	}else{
