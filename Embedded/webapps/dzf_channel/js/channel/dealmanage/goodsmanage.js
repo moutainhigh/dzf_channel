@@ -840,9 +840,11 @@ function checkfile(ths){
 	 		obj_img.dynsrc = ths.files[0].value;
 	 		filesize = obj_img.fileSize;
 	 	}else{
-	 		Public.tips({content : tipMsg, type : 2});
-	 		return;
+//	 		Public.tips({content : tipMsg, type : 2});
+//	 		return;
+	 		filesize = ths.files[0].size;
 	 	}
+	 	console.info(filesize);
 	 	if(filesize == -1){
 	 		Public.tips({content : tipMsg, type : 2});
 	 		return;

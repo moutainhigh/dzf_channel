@@ -16,7 +16,7 @@
 <script type="text/javascript">
 	var maxsize = 1*1024*1024;//10M
 	var errMsg = "上传的图片不能超过1M！！！";
-	var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过3M，建议使用IE、FireFox、Chrome浏览器。";
+	var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过1M，建议使用IE、FireFox、Chrome浏览器。";
 	var  browserCfg = {};
 	var ua = window.navigator.userAgent;
 	if (ua.indexOf("MSIE")>=1){
