@@ -104,7 +104,8 @@
 
 .shift {
 	overflow: auto;
-	height: 430px;
+	height: 354px;
+	margin-bottom:44px;
 }
 
 .flow {

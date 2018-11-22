@@ -132,7 +132,7 @@
 		<!-- 发货列表end -->
 
 		<!-- 订单详情begin -->
-		<div id="infoDlg" class="easyui-dialog" style="width: 830px; height: 530px; padding-top: 10px; font-size: 14px;"
+		<div id="infoDlg" class="easyui-dialog" style="width: 830px; height: 450px; padding-top: 10px; font-size: 14px;"
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<div class="shift">
 				<div style="margin-bottom: 20px;">
