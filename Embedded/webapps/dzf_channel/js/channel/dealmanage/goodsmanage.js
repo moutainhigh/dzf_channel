@@ -948,13 +948,15 @@ function onSave(){
 	
 	if ($("#goods_add").form('validate')) {
 		var gcode = $('#gcode').val();
-		var flag = isLetterAndNum(gcode);
-		if(!flag){
-			Public.tips({
-				content : "商品编码只能含有数字和字母",
-				type : 2
-			});
-			return;
+		if(!isEmpty(gcode)){
+			var flag = isLetterAndNum(gcode);
+			if(!flag){
+				Public.tips({
+					content : "商品编码只能含有数字和字母",
+					type : 2
+				});
+				return;
+			}
 		}
 		
 		$.messager.progress({
