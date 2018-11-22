@@ -663,7 +663,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				StringBuffer sql = new StringBuffer();
 				SQLParameter spm = new SQLParameter();
 				sql.append("UPDATE cn_packagedef f \n") ;
-				sql.append("   SET f.iusenum = f.iusenum + ? \n") ; 
+				sql.append("   SET f.iusenum = nvl(f.iusenum,0) + ? \n") ; 
 				spm.addParam(1);
 				sql.append(" WHERE f.pk_packagedef = ? \n") ; 
 				spm.addParam(packvo.getPk_packagedef());
