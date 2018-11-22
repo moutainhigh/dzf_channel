@@ -847,7 +847,7 @@ function showInfo(index){
                 	showinfo = showinfo + "	<div class='shop_pick'>快递信息</div>";
                 	showinfo = showinfo + "</div>";
                 	showinfo = showinfo + "<div style='margin-left: 40px;'>";
-                	showinfo = showinfo + "	<div class='order'>";
+                	showinfo = showinfo + "	<div class='order' title='"+row.logunit+"'>";
                 	showinfo = showinfo + "		<label>物流公司：</label> <span>"+row.logunit+"</span>";
                 	showinfo = showinfo + " </div>";
                 	showinfo = showinfo + " <div class='order'>";
@@ -869,10 +869,10 @@ function showInfo(index){
                 		showinfo = showinfo + "		<img src='"+ url +"'/>";
                 		showinfo = showinfo + "	</div>";
                 		showinfo = showinfo + "	<div class='pick_right'>";
-                		showinfo = showinfo + "		<div>"+goods[i].gname+"</div>";
+                	/*	showinfo = showinfo + "		<div>"+goods[i].gname+"</div>";*/
                 		showinfo = showinfo + "		<div class='pick_cost'>";
                 		showinfo = showinfo + "			<div class='pick_cost_A'>";
-                		showinfo = showinfo + "				<span>&nbsp;</span>";
+                		showinfo = showinfo + "				<div>"+goods[i].gname+"</div>";
                 		showinfo = showinfo + "			</div>";
                 		showinfo = showinfo + "			<div class='pick_cost_B'>"+(goods[i].spec ? goods[i].spec : '') + (goods[i].type ? goods[i].type : '') +"</div>";
                 		showinfo = showinfo + "			<div class='pick_cost_C'>"+goods[i].amount+"</div>";

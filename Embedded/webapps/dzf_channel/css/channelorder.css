@@ -26,7 +26,7 @@
 
 .pick_right {
 	float: left;
-	margin: 6px 0px;
+	margin:18px 0px;
 }
 
 .pick_cost_A {
@@ -136,7 +136,11 @@
 
 .order {
 	width: 34%;
-	display: inline-block
+	display: inline-block;
+	    overflow: hidden;
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .order label {
