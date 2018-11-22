@@ -793,6 +793,8 @@ function initFileEvent(){
 	        Public.tips({ content : "请上传后缀名为jpg、png、jpeg的图片", type : 2 });
 	        return;
 	    }
+	    checkfile(this);
+	    
 		var srcs = getObjectURL(this.files[0]);   //获取路径
 		var imgsrc = $(this).nextAll(".img2").attr("src"); 
 	    //this指的是input
@@ -818,6 +820,41 @@ function initFileEvent(){
 	   		deleteImageFile(data_id);
 	   	}
 	});
+}
+
+/**
+ * 检查图片大小，不能超过1M
+ * @param index
+ */
+function checkfile(ths){
+	try{
+	 	if(ths.files[0].value == ""){
+	 		Public.tips({content : '请先选择上传文件', type : 1});
+	 		return;
+	 	}
+	 	var filesize = 0;
+	 	if(browserCfg.firefox || browserCfg.chrome ){
+	 		filesize = ths.files[0].size;
+	 	}else if(browserCfg.ie){
+	 		var obj_img = document.getElementById('tempimg');
+	 		obj_img.dynsrc = ths.files[0].value;
+	 		filesize = obj_img.fileSize;
+	 	}else{
+	 		Public.tips({content : tipMsg, type : 2});
+	 		return;
+	 	}
+	 	if(filesize == -1){
+	 		Public.tips({content : tipMsg, type : 2});
+	 		return;
+	 	}else if(filesize > maxsize){
+	 		ths.value = ''; 
+//	 		$('#filename'+index).html('');
+	 		Public.tips({content : errMsg, type : 1});
+	 		return;
+		}
+	}catch(e){
+		Public.tips({content : e, type : 2});
+	}
 }
 
 /**
