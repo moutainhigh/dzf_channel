@@ -266,10 +266,6 @@ function initSetGrid(){
 				}
 			}
 		}, {width : '100',title : '单价',align:'right',halign:'center',field : 'price',
-			formatter : function(value,row,index){
-				if(value == 0)return "0.00";
-				return formatMny(value);
-			},
 			editor : {
 				type : 'numberbox',
 				options : {
@@ -277,8 +273,13 @@ function initSetGrid(){
 					required: true,
  					precision:2,
  					min:0,
+ 					max:99999,
 				}
-			}
+			},
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			},
 		}, {width : '100',field : 'button',title : '操作',
         	formatter : operatorLink
 		},] ],
