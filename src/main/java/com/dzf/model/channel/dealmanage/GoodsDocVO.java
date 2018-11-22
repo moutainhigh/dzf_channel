@@ -2,6 +2,7 @@ package com.dzf.model.channel.dealmanage;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
@@ -46,6 +47,17 @@ public class GoodsDocVO extends SuperVO {
 	private Integer dr; // 删除标记
 	
 	private DZFDateTime ts; // 时间
+	
+	@FieldAlias("first")
+	private DZFBoolean isfirst;//是否第一张图片
+
+	public DZFBoolean getIsfirst() {
+		return isfirst;
+	}
+
+	public void setIsfirst(DZFBoolean isfirst) {
+		this.isfirst = isfirst;
+	}
 
 	public String getPk_goodsdoc() {
 		return pk_goodsdoc;

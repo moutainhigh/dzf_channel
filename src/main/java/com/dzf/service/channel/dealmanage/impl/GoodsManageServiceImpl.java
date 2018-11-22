@@ -209,9 +209,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				throw new BusinessException("图片上传错误");
 			}
 			GoodsDocVO docvo = new GoodsDocVO();
-//			if(i == 0){
-//				docvo.setIsfirst(DZFBoolean.TRUE);
-//			}
+			if(i == 0){
+				docvo.setIsfirst(DZFBoolean.TRUE);
+			}
 			docvo.setPk_corp(datavo.getPk_corp());
 			docvo.setPk_goods(datavo.getPk_goods());
 			docvo.setDocName(filenames[i]);
@@ -295,6 +295,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_goods(), uuid, 120);
 			datavo = (GoodsVO) singleObjectBO.saveObject(datavo.getPk_corp(), datavo);
 			List<GoodsDocVO> doclist = new ArrayList<GoodsDocVO>();
+			boolean hasother = isHasOtherImage(datavo);
 			if(files != null && files.length > 0){
 				for(int i = 0; i < files.length; i++){
 					String filepath = "";
@@ -307,6 +308,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 						throw new BusinessException("图片上传错误");
 					}
 					GoodsDocVO docvo = new GoodsDocVO();
+					if(i == 0 && !hasother){
+						docvo.setIsfirst(DZFBoolean.TRUE);
+					}
 					docvo.setPk_corp(datavo.getPk_corp());
 					docvo.setPk_goods(datavo.getPk_goods());
 					docvo.setDocName(filenames[i]);
@@ -333,6 +337,23 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		
 		return datavo;
+	}
+	
+	/**
+	 * 查询该商品是否有别的图片
+	 * @param datavo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private boolean isHasOtherImage(GoodsVO datavo) throws DZFWarpException {
+		String sql = " nvl(dr,0) = 0 AND pk_goods = ? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(datavo.getPk_goods());
+		GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm); 
+		if(docVOs != null && docVOs.length > 0){
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -502,20 +523,44 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			}
 			pk_goods = oldvo.getPk_goods();
 			LockUtil.getInstance().tryLockKey("cn_goods", pk_goods, uuid, 120);
+			
+			StringBuffer usql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			usql.append("UPDATE cn_goodsdoc  \n") ;
+			usql.append("   SET isfirst = 'Y'  \n") ; 
+			usql.append(" WHERE pk_goods = (SELECT pk_goods  \n") ; 
+			usql.append("                     FROM cn_goodsdoc  \n") ; 
+			usql.append("                    WHERE nvl(dr, 0) = 0  \n") ; 
+			usql.append("                      AND pk_goodsdoc = ?)  \n") ; 
+			spm.addParam(pamvo.getPk_goodsdoc());
+			usql.append("   AND doctime = (SELECT MIN(doctime)  \n") ; 
+			usql.append("                    FROM cn_goodsdoc  \n") ; 
+			usql.append("                   WHERE nvl(dr, 0) = 0  \n") ; 
+			usql.append("                     AND pk_goods = (SELECT pk_goods  \n") ; 
+			usql.append("                                       FROM cn_goodsdoc  \n") ; 
+			usql.append("                                      WHERE nvl(dr, 0) = 0  \n") ; 
+			usql.append("                                        AND pk_goodsdoc = ?)  \n") ; 
+			spm.addParam(pamvo.getPk_goodsdoc());
+			usql.append("                     AND pk_goodsdoc != ?) \n");
+			spm.addParam(pamvo.getPk_goodsdoc());
+			int res = singleObjectBO.executeUpdate(usql.toString(), spm);
+			
+			String sql = " delete from cn_goodsdoc where pk_goodsdoc = ? and pk_corp = ? ";
+			spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_goodsdoc());
+			spm.addParam(pamvo.getPk_corp());
+			res = singleObjectBO.executeUpdate(sql, spm);
+			if(res != 1){
+				throw new BusinessException("商品图片删除失败");
+			}
+			
 			try {
 				((FastDfsUtil) SpringUtils.getBean("connectionPool")).deleteFile(oldvo.getVfilepath());
 			} catch (AppException e) {
 				throw new BusinessException("商品图片删除失败");
 			}
-			String sql = " delete from cn_goodsdoc where pk_goodsdoc = ? and pk_corp = ? ";
-			SQLParameter spm = new SQLParameter();
-			spm.addParam(pamvo.getPk_goodsdoc());
-			spm.addParam(pamvo.getPk_corp());
-			int res = singleObjectBO.executeUpdate(sql, spm);
-			if(res != 1){
-				throw new BusinessException("商品图片删除失败");
-			}
 			
+
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
