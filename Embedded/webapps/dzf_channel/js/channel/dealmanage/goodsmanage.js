@@ -8,6 +8,7 @@ var setIndex;
 $(function(){
 	load();
 	reloadData();
+	initMeasSelect();
 });
 
 /**
@@ -527,7 +528,7 @@ function edit(index){
 	}
 	$('#goods_add').form('clear');
 	initMeas();
-	initMeasSelect();
+//	initMeasSelect();
 	$('#goods_add').form('load', row);
 	$("#measid").combobox("setValue",row.measid);
 	viewImageFiles(row);
@@ -718,7 +719,7 @@ function add(){
 				  '</div>';
 	$("#image1").html(htmlImg);
 	initMeas();
-	initMeasSelect();
+//	initMeasSelect();
 	
 	initClick();
 	initIdDelClick();
@@ -755,8 +756,8 @@ function initEvent(){
  */
 function initMeasSelect(){
 	$("#measid").combobox({
-		onChange : function(n, o) {
-			$('#mname').val($('#measid').combobox('getText'));
+		onSelect : function(record) {
+			$('#mname').val(record.name);
 		}
 	});
 }

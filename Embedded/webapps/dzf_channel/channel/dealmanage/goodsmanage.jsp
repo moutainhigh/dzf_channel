@@ -60,7 +60,7 @@
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品分类：</label>
 				<input id="qgtype" class="easyui-combobox" style="width:290px;height:28px;"
-					data-options="valueField:'id', textField:'name', panelHeight:'auto'" />
+					data-options="valueField:'id', textField:'name', panelHeight:'200px'" />
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品编码：</label>
@@ -108,7 +108,7 @@
 					<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>商品分类：</label> 
 						<input class="easyui-combobox" id="gtype" name="gtype" 
-							data-options="valueField:'id', textField:'name', panelHeight:'auto',required:true,"  
+							data-options="valueField:'id', textField:'name', panelHeight:'200px',required:true,"  
 							style="width:66%; height: 28px; text-align: left">
 					</div>
 					<div style="width: 46%; display: inline-block;">
@@ -127,7 +127,7 @@
                		<div style="width: 46%; display: inline-block;">
 						<label style="text-align: right; width: 120px;"><i class="bisu">*</i>单位：</label> 
 						<input id="measid" name="measid" class="easyui-combobox" 
-							data-options="valueField:'id', textField:'name', panelHeight:'auto',editable:false,required:true," 
+							data-options="valueField:'id', textField:'name', panelHeight:'200px',required:true," 
 							style="width:50%; height: 28px; text-align: left"></input>
 						<input id="mname" name="mname" type="hidden">
 						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="addMeas()">添加</a>
