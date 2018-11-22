@@ -109,11 +109,6 @@ public class StockOutServiceImpl implements IStockOutService{
 	public List<StockOutBVO> queryOrders(String pk_corp,String bills)throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		spm.addParam(pk_corp);
-		sql.append("  select sb.pk_goodsbill_b from cn_stockout_b sb ");
-		sql.append("   where nvl(sb.dr,0)=0 and sb.pk_corp=? ");
-		List<String> billbs = (List<String>)singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor("pk_goodsbill_b"));
-		sql = new StringBuffer();
 		sql.append("select c.vbillcode, ");
 		sql.append("       b.pk_goodsbill_b, ");
 		sql.append("       b.pk_goods, ");
@@ -131,10 +126,12 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("   and c.vstatus in (1, 2, 3) ");
 		sql.append("   and nvl(b.deamount, 0) = 0 ");
 		sql.append("   and b.pk_corp = ? ");
-		if(billbs!=null &&  billbs.size()>0){//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
-			sql.append(" and ");
-			sql.append(buildSqlForNotIn("b.pk_goodsbill_b",billbs));
-		}
+		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
+		sql.append("   	select sb.pk_goodsbill_b from cn_stockout_b sb");
+		sql.append("   	inner join  cn_stockout s on sb.pk_stockout=s.pk_stockout ");
+		sql.append("   	where s.vstatus!=2 and s.pk_corp=? )");
+		spm.addParam(pk_corp);
+		spm.addParam(pk_corp);
 		if(!StringUtils.isEmpty(bills)){
 			sql.append(" and b.pk_goodsbill_b not in ( ").append(bills.substring(0, bills.length()-1)).append(")");
 		}
@@ -142,19 +139,6 @@ public class StockOutServiceImpl implements IStockOutService{
 		return vos;
 	}
 	
-	private String buildSqlForNotIn(String str, List<String> billbs) {
-		StringBuffer sql = new StringBuffer();
-		sql.append(str);
-		sql.append(" NOT IN( ");
-		for(int i=0;i<billbs.size();i++){
-			sql.append("'").append(billbs.get(i)).append("'");
-			if(i!=billbs.size()-1){
-				sql.append(",");
-			}
-		}
-		sql.append(" ) ");
-		return sql.toString();
-	}
 
 	@Override
 	public void saveNew(StockOutVO vo) throws DZFWarpException {
@@ -562,10 +546,6 @@ public class StockOutServiceImpl implements IStockOutService{
 	@Override
 	public List<ComboBoxVO> queryChannel() throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
-        sql.append("  select sb.pk_goodsbill_b from cn_stockout_b sb ");
-		sql.append("   where nvl(sb.dr,0)=0 ");
-		List<String> billbs = (List<String>)singleObjectBO.executeQuery(sql.toString(), null, new ColumnListProcessor("pk_goodsbill_b"));
-		sql = new StringBuffer();
 		sql.append("select distinct b.pk_corp id,t.unitname name,t.innercode");
 		sql.append("  from cn_goodsbill_b b ");
 		sql.append("  left join cn_goodsbill c on b.pk_goodsbill = c.pk_goodsbill ");
@@ -577,10 +557,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("   and nvl(t.ischannel,'N') = 'Y' ");
 		sql.append("   and c.vstatus in (1, 2, 3) ");
 		sql.append("   and nvl(b.deamount, 0) = 0 ");
-		if(billbs!=null &&  billbs.size()>0){//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
-			sql.append(" and ");
-			sql.append(buildSqlForNotIn("b.pk_goodsbill_b",billbs));
-		}
+		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
+		sql.append("   	select sb.pk_goodsbill_b from cn_stockout_b sb");
+		sql.append("   	inner join  cn_stockout s on sb.pk_stockout=s.pk_stockout ");
+		sql.append("   	where s.vstatus!=2 )");
         sql.append(" order by t.innercode ");
         List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
                 new BeanListProcessor(ComboBoxVO.class));
