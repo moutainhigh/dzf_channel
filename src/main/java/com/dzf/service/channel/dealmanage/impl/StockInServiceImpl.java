@@ -13,13 +13,11 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
-import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
 import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.channel.stock.SupplierVO;
-import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
@@ -402,7 +400,6 @@ public class StockInServiceImpl implements IStockInService {
 			StockInBVO[] bVOs = queryBody(stvo.getPk_stockin(), stvo.getPk_corp());
 			for(StockInBVO bvo : bVOs){
 				updateStockNum(bvo, cuserid);
-				updateGoodsPrice(bvo);
 			}
 			stvo.setVstatus(IStatusConstant.ISTOCKINSTATUS_2);
 			stvo.setUpdatets(new DZFDateTime());
@@ -417,37 +414,6 @@ public class StockInServiceImpl implements IStockInService {
 				throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(stvo.getTableName(), stvo.getPk_stockin(), uuid);
-		}
-	}
-	
-	/**
-	 * 更新商品售价
-	 * @throws DZFWarpException
-	 */
-	private void updateGoodsPrice(StockInBVO bvo) throws DZFWarpException {
-		GoodsVO gdvo = (GoodsVO) singleObjectBO.queryByPrimaryKey(GoodsVO.class, bvo.getPk_goods());
-		GoodsSpecVO gdpvo = (GoodsSpecVO) singleObjectBO.queryByPrimaryKey(GoodsSpecVO.class, bvo.getPk_goodsspec());
-		if(gdvo == null){
-			throw new BusinessException("商品信息错误");
-		}
-		if(gdpvo == null){
-			throw new BusinessException("商品规格型号信息错误");
-		}
-		//商品售价为空/零，或者入库规格型号价格小于商品售价，则更新商品售价为最新的低价格
-		if(CommonUtil.getDZFDouble(gdvo.getNprice()).compareTo(DZFDouble.ZERO_DBL) == 0 
-				|| SafeCompute.sub(gdpvo.getNprice(), gdvo.getNprice()).compareTo(DZFDouble.ZERO_DBL) < 0){
-			StringBuffer sql = new StringBuffer();
-			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_goods  \n") ;
-			sql.append("   SET nprice = ?  \n") ; 
-			spm.addParam(gdpvo.getNprice());
-			sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-			sql.append("   AND pk_goods = ? \n");
-			spm.addParam(bvo.getPk_goods());
-			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-			if(res != 1){
-				throw new BusinessException("商品售价更新错误");
-			}
 		}
 	}
 	
