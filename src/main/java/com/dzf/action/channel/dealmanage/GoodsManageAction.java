@@ -70,11 +70,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			GoodsVO paramvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), new GoodsVO());
 			int total = manser.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
@@ -99,11 +95,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
@@ -156,11 +148,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			List<ComboBoxVO> list = manser.queryMeasCombox(getLogincorppk());
 			grid.setMsg("查询成功");
 			grid.setSuccess(true);
@@ -178,11 +166,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
@@ -208,11 +192,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			GoodsVO pamvo = new GoodsVO();
 			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (StringUtil.isEmpty(pamvo.getPk_goods())) {
@@ -302,11 +282,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		json.setSuccess(false);
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			GoodsDocVO pamvo = new GoodsDocVO();
 			pamvo = (GoodsDocVO) DzfTypeUtils.cast(getRequest(), pamvo);
@@ -330,11 +306,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		json.setSuccess(false);
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
-				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			GoodsVO pamvo = new GoodsVO();
 			pamvo = (GoodsVO) DzfTypeUtils.cast(getRequest(), pamvo);
@@ -359,11 +331,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			String data = getRequest().getParameter("data");
 			if (StringUtil.isEmpty(data)) {
@@ -424,11 +392,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			List<GoodsBoxVO> vos = manser.queryComboBox();
 			if (vos == null || vos.size() == 0) {
 				grid.setRows(new ArrayList<GoodsBoxVO>());
@@ -451,12 +415,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 	public void queryGoodsSet() {
 		Grid grid = new Grid();
 		try {
-			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(getLoginUserInfo());
 			String pk_goods = getRequest().getParameter("gid");
 			List<GoodsSpecVO> list = manser.queryGoodsSet(pk_goods);
 			if (list != null && list.size() > 0) {
@@ -481,11 +440,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_44);
 			List<GoodsSpecVO> blist = getDataList();
 			GoodsVO retvo = manser.saveSet(blist, getLogincorppk());
@@ -540,5 +495,17 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			throw new BusinessException("表体数据不能为空");
 		}
 		return list;
+	}
+	
+	/**
+	 * 登录用户校验
+	 * @throws DZFWarpException
+	 */
+	private void checkUser(UserVO uservo) throws DZFWarpException {
+		if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			throw new BusinessException("登陆用户错误");
+		}else if(uservo == null){
+			throw new BusinessException("登陆用户错误");
+		}
 	}
 }
