@@ -527,8 +527,8 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 				JSONConvtoJAVA.getParserConfig());
 		if(bodyVOs != null && bodyVOs.length > 0){
 			for (GoodsSpecVO bvo : bodyVOs) {
-				if(!StringUtil.isEmpty(bvo.getPk_goodsspec())){
-					bvo.setPk_corp(getLogin_corp());
+				if(StringUtil.isEmpty(bvo.getPk_goodsspec())){
+					bvo.setPk_corp(getLogincorppk());
 					bvo.setDr(0);
 					if(StringUtil.isEmpty(bvo.getPk_goods())){
 						throw new BusinessException("商品主键不能为空");

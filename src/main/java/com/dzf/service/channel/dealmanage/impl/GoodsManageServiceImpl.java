@@ -3,7 +3,9 @@ package com.dzf.service.channel.dealmanage.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -583,8 +585,36 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			spm.addParam(pamvo.getPk_corp());
 			spm.addParam(pamvo.getPk_goods());
 			GoodsDocVO[] docVOs = (GoodsDocVO[]) singleObjectBO.queryByCondition(GoodsDocVO.class, sql, spm);
+			
+			//1、删除商品规格型号
+			sql = " DELETE FROM cn_goodsspec WHERE pk_corp = ? AND pk_goods = ? ";
+			spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_corp());
+			spm.addParam(pamvo.getPk_goods());
+			int res = singleObjectBO.executeUpdate(sql, spm);
+			
+			//2、删除商品信息
+			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
+			spm = new SQLParameter();
+			spm.addParam(pamvo.getPk_corp());
+			spm.addParam(pamvo.getPk_goods());
+			res = singleObjectBO.executeUpdate(sql, spm);
+			if(res == 0){
+				throw new BusinessException("商品信息删除失败");
+			}
+			
 			if(docVOs != null && docVOs.length > 0){
-				//1、删除商品图片
+				//3、删除商品图片信息
+				sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
+				spm = new SQLParameter();
+				spm.addParam(pamvo.getPk_corp());
+				spm.addParam(pamvo.getPk_goods());
+				res = singleObjectBO.executeUpdate(sql, spm);
+				if(res == 0){
+					throw new BusinessException("商品图片信息删除失败");
+				}
+				
+				//4、删除商品图片
 				for(GoodsDocVO docvo : docVOs){
 					if(StringUtil.isEmpty(docvo.getVfilepath())){
 						throw new BusinessException("商品图片错误");
@@ -595,32 +625,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 						throw new BusinessException("商品图片删除失败");
 					}
 				}
-				//2、删除商品图片信息
-				sql = " DELETE FROM cn_goodsdoc WHERE pk_corp = ? AND pk_goods = ? ";
-				spm = new SQLParameter();
-				spm.addParam(pamvo.getPk_corp());
-				spm.addParam(pamvo.getPk_goods());
-				int res = singleObjectBO.executeUpdate(sql, spm);
-				if(res == 0){
-					throw new BusinessException("商品图片信息删除失败");
-				}
+				
 			}
-			//3、删除商品规格型号
-			sql = " DELETE FROM cn_goodsspec WHERE pk_corp = ? AND pk_goods = ? ";
-			spm = new SQLParameter();
-			spm.addParam(pamvo.getPk_corp());
-			spm.addParam(pamvo.getPk_goods());
-			int res = singleObjectBO.executeUpdate(sql, spm);
-			
-			//4、删除商品信息
-			sql = " DELETE FROM cn_goods WHERE pk_corp = ? AND pk_goods = ? ";
-			spm = new SQLParameter();
-			spm.addParam(pamvo.getPk_corp());
-			spm.addParam(pamvo.getPk_goods());
-			res = singleObjectBO.executeUpdate(sql, spm);
-			if(res == 0){
-				throw new BusinessException("商品信息删除失败");
-			}
+
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -750,28 +757,44 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}
 		String pk_goods = blist.get(0).getPk_goods();
 		List<String> onlylist = new ArrayList<String>();
-//		DZFDouble nprice = DZFDouble.ZERO_DBL;
-//		int i = 0;
+		
+		Map<String,String> cmap = queryStockGoodspec(pk_goods);
 		String spec = "";
+		String value = "";
 		for(GoodsSpecVO svo : blist){
+			spec = "";
+			if(!StringUtil.isEmptyWithTrim(svo.getInvspec())){
+				spec = spec + svo.getInvspec().trim();
+			}else{
+				spec = spec + "null";
+			}
+			if(!StringUtil.isEmptyWithTrim(svo.getInvtype())){
+				spec = spec + "," +svo.getInvtype().trim();
+			}else{
+				spec = spec + ",null";
+			}
 			if(svo.getDr() == null || (svo.getDr() != null && svo.getDr() == 0)){
-//				if(i == 0){
-//					nprice = svo.getNprice();
-//				}else if(nprice.compareTo(svo.getNprice()) > 0){
-//					nprice = svo.getNprice();
-//				}
-//				i++;
-				spec = "";
-				if(!StringUtil.isEmptyWithTrim(svo.getInvspec())){
-					spec = spec + svo.getInvspec().trim();
-				}
-				if(!StringUtil.isEmptyWithTrim(svo.getInvtype())){
-					spec = spec + svo.getInvtype().trim();
-				}
 				if(onlylist.contains(spec)){
 					throw new BusinessException(spec+"重复");
 				}
 				onlylist.add(spec);
+				if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
+					if(cmap.containsKey(svo.getPk_goodsspec())){
+						value = cmap.get(svo.getPk_goodsspec());
+						if(!value.equals(spec)){
+							throw new BusinessException(value+"已经有入库单，不允许修改");
+						}
+					}
+				}
+			}else{
+				if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
+					if(cmap.containsKey(svo.getPk_goodsspec())){
+						value = cmap.get(svo.getPk_goodsspec());
+						if(value.equals(spec)){
+							throw new BusinessException(value+"已经有入库单，不允许删除");
+						}
+					}
+				}
 			}
 		}
 		GoodsVO gvo = new GoodsVO();
@@ -782,7 +805,6 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			LockUtil.getInstance().tryLockKey(gvo.getTableName(), gvo.getPk_goods(), uuid, 120);
 			
 			gvo = queryByID(gvo, 1);
-//			gvo.setNprice(nprice);
 			gvo.setChildren(blist.toArray(new GoodsSpecVO[0]));
 			gvo = (GoodsVO) singleObjectBO.saveObject(pk_corp, gvo);
 			String vstaname = "";
@@ -808,7 +830,43 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(gvo.getTableName(), gvo.getPk_goods(), uuid);
 		}
-		
+	}
+	
+	/**
+	 * 查询已入库的商品规格设置
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, String> queryStockGoodspec(String pk_goods) throws DZFWarpException {
+		Map<String, String> map = new HashMap<String, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT DISTINCT pk_goodsspec, invspec, invtype \n");
+		sql.append("  FROM cn_stockin_b  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_goods = ? ");
+		spm.addParam(pk_goods);
+		List<StockInBVO> stblist = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockInBVO.class));
+		if (stblist != null && stblist.size() > 0) {
+			String value = "";
+			for (StockInBVO bvo : stblist) {
+				value = "";
+				if(!StringUtil.isEmptyWithTrim(bvo.getInvspec())){
+					value = value + bvo.getInvspec().trim();
+				}else{
+					value = value + "null";
+				}
+				if(!StringUtil.isEmptyWithTrim(bvo.getInvtype())){
+					value = value + "," +  bvo.getInvtype().trim();
+				}else{
+					value = value + ",null";
+				}
+				map.put(bvo.getPk_goodsspec(), value);
+			}
+		}
+		return map;
 	}
 
 	@SuppressWarnings("unchecked")
