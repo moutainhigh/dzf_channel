@@ -585,7 +585,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 				updateContract(datavo, opertype, cuserid, pk_corp);
 				//9、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
-						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2)){
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
 					updateSerPackage(packvo);
 				}
 				//10、回写我的客户“纳税人性质  、是否存量客户”：
