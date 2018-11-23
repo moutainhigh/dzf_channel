@@ -55,9 +55,6 @@ function load(){
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
-		showFooter:true,
-		checkOnSelect:true,
-//		selectOnCheck:true,
 		idField : 'soutid',
 		columns : [ [ 
   		 {
