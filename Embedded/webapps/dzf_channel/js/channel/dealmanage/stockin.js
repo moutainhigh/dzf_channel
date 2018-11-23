@@ -118,6 +118,9 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter : true,
 		idField : 'stid',
+		sortName : "vcode",
+		sortOrder : "desc",
+		remoteSort : false,
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
@@ -137,6 +140,7 @@ function load(){
 			field : 'vcode',
 			align : 'left',
 			halign : 'center',
+			sortable : true,
 		}, {
 			width : '100',
 			title : '总金额',
