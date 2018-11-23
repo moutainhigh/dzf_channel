@@ -148,14 +148,16 @@ public class StockInServiceImpl implements IStockInService {
 			Map<String,GoodsVO> gmap = getGoodsMap();
 			GoodsVO gdvo = null;
 			for(StockInBVO bvo : bVOs){
-				//1、校验商品是否发生变化（商品的规格、型号修改，也会更新主表时间戳）
-				if(gmap.containsKey(bvo.getPk_goods())){
-					gdvo = gmap.get(bvo.getPk_goods());
-					if(gdvo.getUpdatets().compareTo(bvo.getTstamp()) != 0){
+				if(bvo.getTstamp() != null){
+					//1、新增时，校验商品是否发生变化（商品的规格、型号修改，也会更新主表时间戳）
+					if(gmap.containsKey(bvo.getPk_goods())){
+						gdvo = gmap.get(bvo.getPk_goods());
+						if(gdvo.getUpdatets().compareTo(bvo.getTstamp()) != 0){
+							throw new BusinessException("商品"+bvo.getVgoodsname()+"发生变化，请刷新界面后，重新操作");
+						}
+					}else{
 						throw new BusinessException("商品"+bvo.getVgoodsname()+"发生变化，请刷新界面后，重新操作");
 					}
-				}else{
-					throw new BusinessException("商品"+bvo.getVgoodsname()+"发生变化，请刷新界面后，重新操作");
 				}
 				
 				//2、总金额汇总计算
