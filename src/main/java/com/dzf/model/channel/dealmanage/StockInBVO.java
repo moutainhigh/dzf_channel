@@ -58,12 +58,27 @@ public class StockInBVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
+	//仅作数据传递和展示使用begin*****************
+	
 	@FieldAlias("gname")
 	private String vgoodsname;//商品名称
 	
 	@FieldAlias("supname")
 	private String vsuppliername;//供应商名称
 	
+	@FieldAlias("tstp")
+	private DZFDateTime tstamp;//商品最新时间戳
+	
+	//仅作数据传递和展示使用end*******************
+	
+	public DZFDateTime getTstamp() {
+		return tstamp;
+	}
+
+	public void setTstamp(DZFDateTime tstamp) {
+		this.tstamp = tstamp;
+	}
+
 	public String getVsuppliername() {
 		return vsuppliername;
 	}

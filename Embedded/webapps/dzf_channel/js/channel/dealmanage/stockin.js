@@ -377,12 +377,23 @@ function initCardGrid() {
                 		
                 		var type = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'type'});
                 		$(type.target).textbox('setValue', rec.type);
+                		
+                		var tstp = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tstp'});
+                		$(tstp.target).textbox('setValue', rec.tstp);
+                		
                 	}
 				}
 			},
 		}, {
 			field : 'gid',
 			title : '商品主键',
+			hidden : true,
+			editor : {
+				type : 'textbox'
+			}
+		}, {
+			field : 'tstp',
+			title : '商品最新时间戳',
 			hidden : true,
 			editor : {
 				type : 'textbox'

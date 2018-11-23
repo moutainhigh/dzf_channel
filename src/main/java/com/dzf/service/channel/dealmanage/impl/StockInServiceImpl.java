@@ -32,7 +32,6 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
-import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.channel.dealmanage.IStockInService;
 import com.dzf.service.pub.IBillCodeService;
 
@@ -48,9 +47,6 @@ public class StockInServiceImpl implements IStockInService {
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
 	
-	@Autowired
-	private IGoodsManageService manser;
-
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(pamvo);
@@ -148,12 +144,27 @@ public class StockInServiceImpl implements IStockInService {
 	private void CheckMnyBeforeSave(StockInVO hvo, StockInBVO[] bVOs) throws DZFWarpException {
 		if(bVOs != null && bVOs.length > 0){
 			DZFDouble ntotalmny = DZFDouble.ZERO_DBL;
+			
+			Map<String,GoodsVO> gmap = getGoodsMap();
+			GoodsVO gdvo = null;
 			for(StockInBVO bvo : bVOs){
+				//1、校验商品是否发生变化（商品的规格、型号修改，也会更新主表时间戳）
+				if(gmap.containsKey(bvo.getPk_goods())){
+					gdvo = gmap.get(bvo.getPk_goods());
+					if(gdvo.getUpdatets().compareTo(bvo.getTstamp()) != 0){
+						throw new BusinessException("商品"+bvo.getVgoodsname()+"发生变化，请刷新界面后，重新操作");
+					}
+				}else{
+					throw new BusinessException("商品"+bvo.getVgoodsname()+"发生变化，请刷新界面后，重新操作");
+				}
+				
+				//2、总金额汇总计算
 				ntotalmny = SafeCompute.add(ntotalmny, bvo.getNmny());
 			}
 			if(ntotalmny.compareTo(hvo.getNtotalmny()) != 0){
 				throw new BusinessException("总金额计算错误");
 			}
+			
 		}else{
 			throw new BusinessException("总金额计算错误");
 		}
@@ -164,18 +175,18 @@ public class StockInServiceImpl implements IStockInService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String,String> getGoodsMap() throws DZFWarpException {
-		Map<String,String> map = new HashMap<String,String>();
+	private Map<String,GoodsVO> getGoodsMap() throws DZFWarpException {
+		Map<String,GoodsVO> map = new HashMap<String,GoodsVO>();
 		String sql = " nvl(dr,0) = 0 ";
 		GoodsVO[] gdVOs = (GoodsVO[]) singleObjectBO.queryByCondition(GoodsVO.class, sql, null);
 		if(gdVOs != null){
 			for(GoodsVO gdvo : gdVOs){
-				map.put(gdvo.getPk_goods(), gdvo.getVgoodsname());
+				map.put(gdvo.getPk_goods(), gdvo);
 			}
 		}
 		return map;
 	}
-
+	
 	/**
 	 * 设置显示名称
 	 * 

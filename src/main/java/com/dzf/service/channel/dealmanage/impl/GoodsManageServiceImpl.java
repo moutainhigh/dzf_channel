@@ -741,7 +741,8 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS name,  \n") ; 
 		sql.append("       c.pk_goods,  \n") ; 
 		sql.append("       c.invspec,  \n") ; 
-		sql.append("       c.invtype  \n") ; 
+		sql.append("       c.invtype,  \n") ; 
+		sql.append("       s.updatets AS tstamp  \n") ; 
 		sql.append("  FROM cn_goodsspec c  \n") ; 
 		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods  \n") ; 
 		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
