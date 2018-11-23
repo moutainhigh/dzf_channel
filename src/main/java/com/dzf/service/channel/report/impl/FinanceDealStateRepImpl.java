@@ -181,7 +181,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("  LEFT JOIN bd_corp p ON h.pk_corp = p.pk_corp \n");
 		sql.append(" WHERE nvl(h.dr, 0) = 0 and h.period = ? \n");
 		sql.append("   AND nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", countcorplist.toArray(new String[0]));
 		sql.append(" AND ").append(where);
 		sql.append(" GROUP BY (p.chargedeptname, p.fathercorp)");
@@ -231,8 +233,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
 		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
 			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
 			spm.addParam(pamvo.getPeriod());
@@ -351,11 +354,11 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("       fathercorp as pk_corp  \n");
 		sql.append("  from bd_corp \n");
 		sql.append(" where nvl(dr,0) = 0   \n");
-		sql.append("   and nvl(isaccountcorp, 'N') = 'N'   \n");
-		sql.append(" and fathercorp = ? \n");
+		sql.append("   and fathercorp = ? \n");
 		spm.addParam(paramvo.getPk_corp());
-		sql.append(" and nvl(ishasaccount,'N') = 'Y' \n");
-		sql.append(" and nvl(isseal,'N') = 'N' \n");
+		sql.append("   AND nvl(ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(isseal, 'N') = 'N'\n"); // 未封存客户
+		sql.append("   AND nvl(isaccountcorp,'N') = 'N' \n");//非分支机构
 
 		sql.append(" order by innercode ");
 		spvo.setSql(sql.toString());
