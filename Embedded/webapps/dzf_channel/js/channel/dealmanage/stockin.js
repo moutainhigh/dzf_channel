@@ -205,6 +205,7 @@ function reloadData(){
 		'uid' :  $('#uid').combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 	$('#qrydialog').hide();
 }
 
