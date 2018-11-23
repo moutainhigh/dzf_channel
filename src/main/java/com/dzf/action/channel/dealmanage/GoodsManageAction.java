@@ -393,13 +393,13 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			List<GoodsBoxVO> vos = manser.queryComboBox();
-			if (vos == null || vos.size() == 0) {
+			List<GoodsBoxVO> list = manser.queryComboBox();
+			if (list == null || list.size() == 0) {
 				grid.setRows(new ArrayList<GoodsBoxVO>());
 				grid.setSuccess(true);
 				grid.setMsg("查询数据为空");
 			} else {
-				grid.setRows(vos);
+				grid.setRows(list);
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
 			}

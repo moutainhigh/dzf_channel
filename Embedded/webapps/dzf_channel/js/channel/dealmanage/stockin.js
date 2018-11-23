@@ -381,6 +381,9 @@ function initCardGrid() {
                 		var tstp = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tstp'});
                 		$(tstp.target).textbox('setValue', rec.tstp);
                 		
+                		var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
+                		$(price.target).textbox('setValue', rec.price);
+                		
                 	}
 				}
 			},
@@ -445,7 +448,7 @@ function initCardGrid() {
 					height : 31,
 					required : true,
 					precision : 2,
-					min : 1,
+					min : 0,
 					max : 99999,
 					onChange : function(n, o) {
 						if(!isEmpty(n)){

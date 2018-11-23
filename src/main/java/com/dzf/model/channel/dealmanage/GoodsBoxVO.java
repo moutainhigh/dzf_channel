@@ -3,6 +3,7 @@ package com.dzf.model.channel.dealmanage;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 商品管理
@@ -29,6 +30,17 @@ public class GoodsBoxVO extends SuperVO {
 	
 	@FieldAlias("tstp")
 	private DZFDateTime tstamp;//商品最新时间戳
+	
+	@FieldAlias("price")
+	private DZFDouble nprice;//售价
+
+	public DZFDouble getNprice() {
+		return nprice;
+	}
+
+	public void setNprice(DZFDouble nprice) {
+		this.nprice = nprice;
+	}
 
 	public DZFDateTime getTstamp() {
 		return tstamp;
