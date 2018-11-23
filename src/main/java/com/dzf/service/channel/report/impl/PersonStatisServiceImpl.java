@@ -171,7 +171,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		sql.append("   where ");
 		sql.append(SqlUtil.buildSqlForIn("a.pk_corp", corplist.toArray(new String[corplist.size()])));
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
-		DZFDouble lzTmp=new DZFDouble().ZERO_DBL;
+		DZFDouble lzTmp = DZFDouble.ZERO_DBL;
 		for (PersonStatisVO personStatisVO : list) {
 			if(personStatisVO.getLznum()!=null){
 				lzTmp=new DZFDouble(personStatisVO.getLznum());
