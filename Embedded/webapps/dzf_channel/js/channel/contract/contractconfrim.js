@@ -389,7 +389,8 @@ function reloadData(){
 		$('#querydate').html(bperiod + ' 至 ' + eperiod);
 	}
     $('#qrydialog').hide();
-    $('#grid').datagrid('unselectAll');
+	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 }
 
 /**
@@ -422,6 +423,7 @@ function load(){
 		fitColumns : false,
 		height : Public.setGrid().h,
 		singleSelect : false,
+		checkOnSelect : false,
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
