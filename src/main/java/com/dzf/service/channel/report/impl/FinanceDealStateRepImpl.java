@@ -18,6 +18,7 @@ import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.channel.report.FinanceDetailVO;
+import com.dzf.model.jms.basicset.JMUserRoleVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
@@ -395,8 +396,8 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		HashMap<String, String> map = isQjsy(inSql, paramvo.getPeriod(), qrytype);// 查询是否期间损益
 		HashMap<String, String> mapV = isVoucher(inSql, paramvo.getPeriod(), qrytype);// 查询是否填制凭证
 		Map<String, String> gzmap = isGz(inSql, paramvo.getPeriod());
-		Map<String, StringBuffer> deptmap = qryDeptMap(inSql, pk_corp);
-		StringBuffer deptvalue = null;
+		Map<String, String> deptmap = qryDeptMap(inSql, pk_corp);
+		String deptvalue = null;
 		for (FinanceDetailVO vo : list) {
 			//1、记账状态：
 			status = queryJzStatus(vo.getPk_corpk(), paramvo.getPeriod(), map, mapV, qrytype);
@@ -411,7 +412,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			if(deptmap != null && !deptmap.isEmpty()){
 				deptvalue = deptmap.get(vo.getPk_corpk());
 				if(deptvalue != null && deptvalue.length() > 0){
-					vo.setVdeptname(deptvalue.toString());
+					vo.setVdeptname(deptvalue);
 				}
 			}
 		}
@@ -424,47 +425,35 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, StringBuffer> qryDeptMap(String inSql, String pk_corp) throws DZFWarpException {
-		Map<String, StringBuffer> deptmap = new HashMap<String, StringBuffer>();
+	private Map<String, String> qryDeptMap(String inSql, String pk_corp) throws DZFWarpException {
+		Map<String, String> deptmap = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-        sql.append(" select corp.pk_corp as pk_corpk,wm_concat(distinct dept.deptname) as vdeptname ");
-        sql.append(" from bd_corp corp");
-        sql.append(" left join sm_user_corp uc on uc.pk_corpk = corp.pk_corp");
-        sql.append(" left join sm_user su on su.cuserid = uc.cuserid");
-        sql.append(" left join ynt_department dept on dept.pk_department = su.pk_department");
-        sql.append(" where corp.fathercorp = ? ");
-        spm.addParam(pk_corp);
-		sql.append("   AND nvl(corp.dr, 0) = 0  \n");
-		sql.append("   AND nvl(uc.dr, 0) = 0  \n");
-		sql.append("   AND nvl(su.dr, 0) = 0  \n");
-		sql.append("   AND nvl(dept.dr, 0) = 0  \n");
-		if (!StringUtil.isEmpty(inSql)) {
-			sql.append(" AND corp.pk_corp in (").append(inSql).append(")");
-		}
-		sql.append(" group by corp.pk_corp ");
-		List<FinanceDetailVO> deptlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(FinanceDetailVO.class));
-		StringBuffer value = null;
-		if(deptlist != null && deptlist.size() > 0){
-			for(FinanceDetailVO deptvo : deptlist){
-				if(!deptmap.containsKey(deptvo.getPk_corpk())){
-					value = new StringBuffer();
-					if(!StringUtil.isEmpty(deptvo.getVdeptname())){
-						value.append(deptvo.getVdeptname());
-						deptmap.put(deptvo.getPk_corpk(), value);
-					}
+		sql.append("select distinct uc.pk_corpk as pk_corp, dept.deptname  \n") ;
+		sql.append("  from sm_user_corp uc  \n") ; 
+		sql.append("  join sm_user su on su.cuserid = uc.cuserid  \n") ; 
+		sql.append("  join ynt_department dept on dept.pk_department = su.pk_department  \n") ; 
+		sql.append(" where uc.pk_corp = ?  \n") ; 
+		sql.append("   and nvl(uc.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(su.dr, 0) = 0  \n");
+		spm.addParam(pk_corp);
+		List<JMUserRoleVO> collect = (List<JMUserRoleVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(JMUserRoleVO.class));
+		if (collect != null && collect.size() > 0) {
+			String deptname = null;
+			String corpid = null;
+			for(JMUserRoleVO vo : collect){
+				corpid = vo.getPk_corp();
+				if(deptmap.containsKey(corpid)){
+					deptname = deptmap.get(corpid) + "," + vo.getDeptname();
+					deptmap.remove(corpid);
+					deptmap.put(corpid, deptname);
 				}else{
-					if(!StringUtil.isEmpty(deptvo.getVdeptname())){
-						value = deptmap.get(deptvo.getPk_corpk());
-						if(value.indexOf(deptvo.getVdeptname()) != 0){
-							value.append("，").append(deptvo.getVdeptname());
-							deptmap.put(deptvo.getPk_corpk(), value);
-						}
-					}
+					deptmap.put(corpid, vo.getDeptname());
 				}
 			}
-		}
+		} 
+		
 		return deptmap;
 	}
 
