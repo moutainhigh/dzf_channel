@@ -45,7 +45,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		showFooter:true,
-/*		checkOnSelect:false,*/
+		checkOnSelect:false,
 		idField : 'gid',
 		frozenColumns : [ [ 
 		    {field : 'ck',checkbox : true}, 
