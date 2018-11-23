@@ -238,7 +238,16 @@ function opermatter(val, row, index) {
 function setup(index){
 	var row = $('#grid').datagrid('getData').rows[index];
 	gid = row.gid;
-	$('#setDialog').dialog('open').dialog('center').dialog('setTitle', '商品规格设置');
+	
+	$("#setDialog").dialog({
+		title : '商品规格设置',
+		modal : true,
+		align:'center',
+		onClose: function () {
+			etIndex = undefined;
+		}
+	}).dialog('open').dialog("center");
+	
 	initSetGrid();
 	
 	$.ajax({
