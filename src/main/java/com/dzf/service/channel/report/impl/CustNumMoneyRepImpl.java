@@ -245,7 +245,9 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
-		sql.append("   AND nvl(p.isncust, 'N') = 'N'  \n");
+		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (corplist != null && corplist.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ");
@@ -268,8 +270,11 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 			sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 			sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
 			sql.append("   AND nvl(p.dr, 0) = 0  \n");
-			sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");
+			sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+			sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+			sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 			if (corplist != null && corplist.size() > 0) {
 				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
 				sql.append(" AND ");
@@ -387,8 +392,11 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
+		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
 		sql.append("   AND nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");
+		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (corplist != null && corplist.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ");
@@ -474,7 +482,10 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(acc.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.isncust, 'N') = 'N'\n");
+		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'\n");
+		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (corplist != null && corplist.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ");
@@ -543,9 +554,14 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("          FROM cn_contract t \n");
 		sql.append("         INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
+		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp   \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0 \n");
 		sql.append("           AND nvl(ct.dr, 0) = 0 \n");
 		sql.append("           AND nvl(ct.isncust,'N')='N' \n");// 不统计存量客户
+		sql.append("   AND nvl(p.dr, 0) = 0  \n");
+		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (corplist != null && corplist.size() > 0) {
 			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
 			sql.append(" and ");
@@ -607,8 +623,13 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		sql.append("          FROM cn_contract t\n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp \n");
+		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp   \n");
 		sql.append("         WHERE nvl(t.dr, 0) = 0\n");
 		sql.append("           AND nvl(ct.dr, 0) = 0\n");
+		sql.append("   AND nvl(p.dr, 0) = 0  \n");
+		sql.append("   AND nvl(p.isncust, 'N') = 'N' \n");//非存量客户
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		if (corplist != null && corplist.size() > 0) {
 			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
 			sql.append(" and ");
@@ -706,122 +727,5 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		DZFDouble num = num1.sub(num2);
 		return num.div(num2).multiply(100);
 	}
-
-//	/**
-//	 * 查询客户数量
-//	 * 
-//	 * @param paramvo
-//	 * @param qrytype
-//	 *            1:存量客户查询；2：新增客户查询；
-//	 * @return
-//	 * @throws DZFWarpException
-//	 */
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<CustCountVO> queryCustNum(QryParamVO paramvo, Integer qrytype, List<String> corplist)
-//			throws DZFWarpException {
-//		StringBuffer sql = new StringBuffer();
-//		SQLParameter spm = new SQLParameter();
-//		sql.append("SELECT p.fathercorp as pk_corp,\n");
-//		sql.append("       p.chargedeptname as chargedeptname,\n");
-//		sql.append("       count(p.pk_corp) as num \n");
-//		sql.append("  FROM bd_corp p \n");
-//		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
-//		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-//		if (corplist != null && corplist.size() > 0) {
-//			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
-//			sql.append(" and ");
-//			sql.append(condition);
-//		}
-//		sql.append("   AND nvl(t.dr, 0) = 0 \n");
-//		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n"); // 渠道客户
-//		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
-//		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-//		sql.append("   AND p.chargedeptname is not null \n");// 纳税人性质不能为空
-//		sql.append("   AND p.fathercorp NOT IN \n");
-//		sql.append("       (SELECT f.pk_corp \n");
-//		sql.append("          FROM ynt_franchisee f \n");
-//		sql.append("         WHERE nvl(dr, 0) = 0 \n");
-//		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-//		if (qrytype == 1) {
-//			if (paramvo.getBegdate() != null) {
-//				sql.append("   AND p.createdate <= ? \n");
-//				spm.addParam(paramvo.getBegdate());
-//			}
-//		} else if (qrytype == 2) {
-//			sql.append("   AND p.createdate <= ? \n");
-//			spm.addParam(paramvo.getBegdate());
-//			sql.append("   AND p.createdate >= ? \n");
-//			DZFDate date = new DZFDate();
-//			spm.addParam(date.getYear() + "-" + date.getStrMonth() + "-01");
-//		}
-//		sql.append(" GROUP BY (p.fathercorp, p.chargedeptname)");
-//		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-//				new BeanListProcessor(CustCountVO.class));
-//	}
-
-//	/**
-//	 * 计算客户分类信息
-//	 * 
-//	 * @param stocklist
-//	 * @param corplist
-//	 * @return
-//	 * @throws DZFWarpException
-//	 */
-//	@Override
-//	public Map<String, CustNumMoneyRepVO> countCustNumByType(List<CustCountVO> custlist, Integer qrytype,
-//			List<String> corplist, List<String> countcorplist) throws DZFWarpException {
-//		Map<String, CustNumMoneyRepVO> custmap = new HashMap<String, CustNumMoneyRepVO>();
-//		CustNumMoneyRepVO countvo = null;
-//		countcorplist.clear();
-//		for (CustCountVO vo : custlist) {
-//			if (!corplist.contains(vo.getPk_corp())) {
-//				corplist.add(vo.getPk_corp());
-//			}
-//			if (!countcorplist.contains(vo.getPk_corp())) {
-//				countcorplist.add(vo.getPk_corp());
-//			}
-//			if (!custmap.containsKey(vo.getPk_corp())) {
-//				countvo = new CustNumMoneyRepVO();
-//				countvo.setPk_corp(vo.getPk_corp());
-//				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-//					if (qrytype == 1) {
-//						countvo.setIstockcustsmall(vo.getNum());// 存量客户-小规模
-//					} else if (qrytype == 2) {
-//						countvo.setInewcustsmall(vo.getNum());// 新增客户-小规模
-//					}
-//				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-//					if (qrytype == 1) {
-//						countvo.setIstockcusttaxpay(vo.getNum());// 存量客户-一般纳税人
-//					} else if (qrytype == 2) {
-//						countvo.setInewcusttaxpay(vo.getNum());// 新增客户-一般纳税人
-//					}
-//				}
-//				countvo.setIcustsum(vo.getNum());// 客户合计
-//				custmap.put(vo.getPk_corp(), countvo);
-//			} else {
-//				countvo = custmap.get(vo.getPk_corp());
-//				if ("小规模纳税人".equals(vo.getChargedeptname())) {
-//					if (qrytype == 1) {
-//						// 存量客户-小规模
-//						countvo.setIstockcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
-//					} else if (qrytype == 2) {
-//						// 新增客户-小规模
-//						countvo.setInewcustsmall(ToolsUtil.addInteger(countvo.getIstockcustsmall(), vo.getNum()));
-//					}
-//				} else if ("一般纳税人".equals(vo.getChargedeptname())) {
-//					if (qrytype == 1) {
-//						// 存量客户-一般纳税人
-//						countvo.setIstockcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
-//					} else if (qrytype == 2) {
-//						// 新增客户-一般纳税人
-//						countvo.setInewcusttaxpay(ToolsUtil.addInteger(countvo.getIstockcusttaxpay(), vo.getNum()));
-//					}
-//				}
-//				countvo.setIcustsum(ToolsUtil.addInteger(countvo.getIcustsum(), vo.getNum()));// 客户合计
-//			}
-//		}
-//		return custmap;
-//	}
 
 }
