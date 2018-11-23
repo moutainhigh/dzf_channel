@@ -14,6 +14,9 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/validate.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%> charset="UTF-8" type="text/javascript"></script>
+<script
+	src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js"
+	charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript">
 	var maxsize = 1*1024*1024;//10M
 	var errMsg = "上传的图片不能超过1M！！！";
@@ -28,6 +31,7 @@
 		browserCfg.chrome = true;
 	}
 </script>
+
 </head>
 <body>
 	<div id="List_panel" class="wrapper" data-options="closed:false">

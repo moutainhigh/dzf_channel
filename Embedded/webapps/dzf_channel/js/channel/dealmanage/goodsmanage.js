@@ -9,6 +9,7 @@ $(function(){
 	load();
 	reloadData();
 	initMeasSelect();
+	expendRow()
 });
 
 /**
@@ -114,6 +115,49 @@ function load(){
 		},
 	});
 }
+
+function expendRow(){
+	 $('#grid').datagrid({
+        view: detailview,
+        detailFormatter:function(index,row){
+            return '<div style="padding:2px;position:relative;"><table class="ddv"></table></div>';
+        },
+        onExpandRow: function(index,row){
+            var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+            ddv.datagrid({
+	           	url: contextPath + '/dealmanage/goodsmanage!queryGoodsSet.action',
+	           	queryParams: {
+	           		gid: row.gid,
+	           	},
+//	            fitColumns:true,
+	            singleSelect:true,
+	            rownumbers:true,
+	            loadMsg:'',
+	            height:'auto',
+                columns:[[
+                    {field:'spec',title:'规格',width:150,},
+                    {field:'type',title:'型号',width:150,},
+                    {field:'price',title:'成本价',width:100,align:'right',
+                   	 formatter : function(value, row, index) {
+            				if (value == 0)
+            					return "0.00";
+            				return formatMny(value);
+            			},},
+                ]],
+                onResize:function(){
+                    $('#grid').datagrid('fixDetailRowHeight',index);
+                },
+                onLoadSuccess:function(data){
+                    setTimeout(function(){
+                        $('#grid').datagrid('fixDetailRowHeight',index);
+                    },0);
+                }
+            });
+            $('#grid').datagrid('fixDetailRowHeight',index);
+        }
+    });
+}
+
 
 /**
  * 查询数据
