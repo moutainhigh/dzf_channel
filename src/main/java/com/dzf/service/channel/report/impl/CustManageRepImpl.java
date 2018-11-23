@@ -249,9 +249,13 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
 		sql.append("           AND nvl(t.dr, 0) = 0 \n");
-		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n");
-		sql.append("           AND nvl(p.ishasaccount, 'N') = 'Y'\n"); // 已建账
-		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n");
+		
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		
+		
 		sql.append("           AND p.fathercorp NOT IN \n");
 		sql.append("               (SELECT f.pk_corp \n");
 		sql.append("                  FROM ynt_franchisee f \n");
@@ -309,9 +313,12 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
 		sql.append("           AND nvl(t.dr, 0) = 0 \n");
-		sql.append("           AND nvl(p.isseal, 'N') = 'N'\n");
-		sql.append("           AND nvl(p.ishasaccount, 'N') = 'Y'\n");
-		sql.append("           AND nvl(t.ischannel, 'N') = 'Y'\n");
+		
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		
 		sql.append("           AND p.fathercorp NOT IN \n");
 		sql.append("               (SELECT f.pk_corp \n");
 		sql.append("                  FROM ynt_franchisee f \n");
@@ -388,7 +395,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
