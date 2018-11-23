@@ -227,6 +227,7 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new StockOutVO());
 			StockOutVO headvo = DzfTypeUtils.cast(headjs, headmaping, StockOutVO.class, JSONConvtoJAVA.getParserConfig());
 			headvo.setLogisticsunit(getRequest().getParameter("logunit"));
+			headvo.setPk_logistics(getRequest().getParameter("logid"));
 			headvo.setFastcode(getRequest().getParameter("fcode"));
 			headvo.setVdeliverid(getLoginUserid());
 //			headvo.setFathercorp(getLogincorppk());
@@ -325,5 +326,25 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		}
 		writeJson(grid);
 	}
+	
+	public void queryLogist() {
+		Grid grid = new Grid();
+		try {
+			List<ComboBoxVO> list = stockOut.queryLogist();
+			if(list != null && list.size() > 0){
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}else{
+				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
 	
 }

@@ -32,6 +32,7 @@ function initQry(){
 	initCard();
 	initCorp();
 	initUser();
+	initLogist();
 }
 
 function loadCardGrid(corpid){
@@ -501,8 +502,6 @@ function logCancel(){
 }
 
 function logCommit(){
-	var slogunit = trimStr($('#slogunit').textbox('getValue'),"g");
-	$('#slogunit').textbox('setValue',slogunit);
 	var sfcode = trimStr($('#sfcode').textbox('getValue'),"g");
 	$('#sfcode').textbox('setValue',sfcode);
 	var flag = $('#logUpdate').form('validate');
@@ -517,7 +516,8 @@ function logCommit(){
 function updateDeliver(row){
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(row);
-	postdata["logunit"] = $("#slogunit").textbox('getValue');
+	postdata["logid"] = $("#slogid").combobox('getValue');
+	postdata["logunit"] = $("#slogid").combobox('getText');
 	postdata["fcode"] = $("#sfcode").textbox('getValue');
 	$.ajax({
 		type : 'POST',
@@ -593,6 +593,25 @@ function initUser(){
 			}
 		}
 	});
+}
+
+function initLogist(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/stockout!queryLogist.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#slogid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+
+	
 }
 
 function initCard(){

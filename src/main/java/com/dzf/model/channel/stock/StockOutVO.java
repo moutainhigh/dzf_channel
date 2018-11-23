@@ -26,8 +26,8 @@ public class StockOutVO extends MultSuperVO {
 	@FieldAlias("nmny")
 	private DZFDouble ntotalmny;//销售总金额
 	
-//	private String   dstockdate    ;
-//	private String   ddatetime     ;
+	@FieldAlias("logid")
+	private String pk_logistics;//物流档案id
 	
 	@FieldAlias("logunit")
 	private String logisticsunit; //物流公司
@@ -87,6 +87,14 @@ public class StockOutVO extends MultSuperVO {
 
 	public String getFathercorp() {
 		return fathercorp;
+	}
+
+	public String getPk_logistics() {
+		return pk_logistics;
+	}
+
+	public void setPk_logistics(String pk_logistics) {
+		this.pk_logistics = pk_logistics;
 	}
 
 	public void setFathercorp(String fathercorp) {

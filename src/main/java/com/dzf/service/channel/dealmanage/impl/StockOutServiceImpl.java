@@ -267,7 +267,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			//1、更新出库单主表
 			vo.setVstatus(2);
 			vo.setDdelivertime(new DZFDateTime());
-			singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode"});
+			singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","pk_logistics"});
 			vo=(StockOutVO)singleObjectBO.queryByPrimaryKey(StockOutVO.class, vo.getPk_stockout());
 			
 			//2、查询出库单的子表对应的未发货订单
@@ -364,6 +364,7 @@ public class StockOutServiceImpl implements IStockOutService{
 				bsvo.setDoperatedate(new DZFDate());
 				bsvo.setDoperatetime(new DZFDateTime());
 				bsvo.setLogisticsunit(vo.getLogisticsunit());//物流公司
+				bsvo.setPk_logistics(vo.getPk_logistics());//物理档案id
 				bsvo.setFastcode(vo.getFastcode());//物流单号
 				singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
 			}
@@ -567,6 +568,18 @@ public class StockOutServiceImpl implements IStockOutService{
         for (ComboBoxVO comboBoxVO : list) {
         	comboBoxVO.setName(CodeUtils1.deCode(comboBoxVO.getName()));
 		}
+		return list;
+	}
+
+	@Override
+	public List<ComboBoxVO> queryLogist() throws DZFWarpException {
+        StringBuffer sql = new StringBuffer();
+		sql.append("select pk_logistics id,vname name");
+		sql.append("  from cn_logistics ");
+		sql.append(" where nvl(dr, 0) = 0 ");
+        sql.append(" order by iorder ");
+        List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+                new BeanListProcessor(ComboBoxVO.class));
 		return list;
 	}
 	

@@ -94,4 +94,11 @@ public interface IStockOutService {
 	 */
 	public List<ComboBoxVO> queryChannel() throws DZFWarpException;
 	
+	/**
+	 * 查询物流公司档案
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> queryLogist() throws DZFWarpException;
+	
 }

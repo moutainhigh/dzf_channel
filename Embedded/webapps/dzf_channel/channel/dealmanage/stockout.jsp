@@ -119,9 +119,8 @@
 				<div class="time_col time_colp11">
 					<div style="display: inline-block;">
 						<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流公司</label>
-						<input id="slogunit" name="logunit" class="easyui-textbox" 
-							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
-							
+						<input id="slogid"  name="logid" class="easyui-combobox" style="width:150px;height:25px;" 
+							data-options="required:true,valueField:'id',textField:'name',panelHeight:200"/>  
 					</div>
 				</div>
 				<div class="time_col time_colp11">

@@ -29,6 +29,9 @@ public class GoodsBillSVO extends SuperVO {
 	@FieldAlias("describe")
 	private String vsdescribe;//状态说明
 	
+	@FieldAlias("logid")
+	private String pk_logistics;//物流档案id
+	
 	@FieldAlias("logunit")
 	private String logisticsunit; //物流公司
 	
@@ -68,6 +71,14 @@ public class GoodsBillSVO extends SuperVO {
 
 	public void setPk_goodsbill_s(String pk_goodsbill_s) {
 		this.pk_goodsbill_s = pk_goodsbill_s;
+	}
+
+	public String getPk_logistics() {
+		return pk_logistics;
+	}
+
+	public void setPk_logistics(String pk_logistics) {
+		this.pk_logistics = pk_logistics;
 	}
 
 	public String getPk_corp() {
