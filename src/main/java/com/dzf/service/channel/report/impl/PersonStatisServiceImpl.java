@@ -187,23 +187,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
     public List<UserDetailVO> queryUserDetail(QryParamVO paramvo) throws DZFWarpException {
         StringBuffer str = new StringBuffer();
         SQLParameter params = new SQLParameter();
-//        str.append("SELECT deptname, user_code, user_name, ");
-//        str.append(" LISTAGG(to_char(role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename, sum(corpnum) as corpnum");
-//        str.append(" FROM ");
-//        str.append(" (select distinct dept.deptname, us.user_code, us.user_name, sr.role_name, count(uc.pk_corp) as corpnum");
-//        str.append("  from sm_user us");
-//        str.append("  left join ynt_department dept on dept.pk_department = us.pk_department");
-//        str.append("  left join sm_userole userr on userr.cuserid = us.cuserid");
-//        str.append("  left join sm_role sr on sr.pk_role = userr.pk_role");
-//        str.append("  left join sm_user_corp uc on uc.cuserid = us.cuserid  ");
-//        str.append("  where nvl(us.dr, 0) = 0 and nvl(sr.dr, 0) = 0 and nvl(dept.dr, 0) = 0");
-//        str.append("  and nvl(us.locked_tag,'N') = 'N' and us.pk_corp = ?");
-//        str.append("  group by dept.deptname, us.user_code, us.user_name, sr.role_name)");
-//        str.append(" group by deptname, user_code, user_name");
-//        str.append(" order by deptname");
-        
         str.append("select distinct dept.deptname,us.user_code, us.user_name,us.cuserid as userid ");
-//        str.append(" LISTAGG(to_char(sr.role_name), ';') WITHIN GROUP(ORDER BY role_name) AS rolename");
         str.append("  from sm_user us");
         str.append("  left join ynt_department dept on dept.pk_department = us.pk_department");
         str.append("  left join sm_userole userr on userr.cuserid = us.cuserid");
@@ -237,7 +221,11 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
      */
     private HashMap<String, Integer> queryUserCorps(String pk_corp){
         StringBuffer sql = new StringBuffer();
-        sql.append(" select cuserid as userid,count(pk_corpk) as corpnum from sm_user_corp where pk_corp = ? and pk_corpk != ? and nvl(dr,0) = 0 group by cuserid ");
+        sql.append(" select uc.cuserid as userid,count(uc.pk_corpk) as corpnum from sm_user_corp uc ");
+        sql.append(" join bd_corp corp on corp.pk_corp = uc.pk_corpk");
+        sql.append(" where uc.pk_corp = ? and uc.pk_corpk != ? and nvl(uc.dr,0) = 0 ");
+        sql.append(" and nvl(corp.isseal,'N') = 'N' and nvl(corp.isaccountcorp,'N') = 'N'");
+        sql.append(" group by uc.cuserid ");
         SQLParameter parameter = new SQLParameter();
         parameter.addParam(pk_corp);
         parameter.addParam(pk_corp);
@@ -266,6 +254,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
         sql.append(" from sm_user_corp uc ");
         sql.append(" join bd_corp corp on uc.pk_corpk = corp.pk_corp ");
         sql.append(" where uc.pk_corp = ? and uc.pk_corpk != ? ");
+        sql.append(" and nvl(corp.isseal,'N') = 'N' and nvl(corp.isaccountcorp,'N') = 'N'");
         sql.append(" and corp.chargedeptname is not null and nvl(uc.dr,0) = 0  ");
         sql.append(" group by uc.cuserid,corp.chargedeptname ");
         SQLParameter parameter = new SQLParameter();
