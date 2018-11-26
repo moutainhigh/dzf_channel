@@ -579,6 +579,10 @@ function edit(index){
 		$('#gtype').combobox("readonly",true);
 		$('#gname').textbox("readonly",true);
 		$('#measid').combobox("readonly",true);
+	}else{
+		$('#gtype').combobox("readonly",false);
+		$('#gname').textbox("readonly",false);
+		$('#measid').combobox("readonly",false);
 	}
 	$('#goods_add').form('clear');
 	initMeas();
