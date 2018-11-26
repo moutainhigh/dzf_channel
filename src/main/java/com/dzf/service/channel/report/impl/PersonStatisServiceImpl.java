@@ -114,7 +114,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		sql.append("                              and nvl(su.locked_tag,'N')= 'N'");
 		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp where");
 		sql.append(SqlUtil.buildSqlForIn("su.pk_corp", corplist.toArray(new String[corplist.size()])));
-		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0   ");
+		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0 and nvl(su.dr,0)=0  ");
 		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode");
 		sql.append(" order by ba.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
