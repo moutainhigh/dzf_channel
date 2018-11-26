@@ -1243,17 +1243,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 			
 		}
 
-		// 3、套餐发布个数校验
-		PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
-				confrimvo.getPk_packagedef());
-		if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
-			Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
-			Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
-			if (num.compareTo(pulishnum) == 0) {
-				errmsg = "合同号：" + confrimvo.getVcontcode() + "对应套餐发布个数已经用完；";
-				throw new BusinessException(errmsg);
+		// 3、套餐发布个数校验（补提交的合同不校验套餐数量）
+		if(confrimvo.getPatchstatus() == null || (confrimvo.getPatchstatus() != null 
+				&& confrimvo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
+				&& confrimvo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
+			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
+					confrimvo.getPk_packagedef());
+			if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+				Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
+				Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
+				if (num.compareTo(pulishnum) == 0) {
+					errmsg = "合同号：" + confrimvo.getVcontcode() + "对应套餐发布个数已经用完；";
+					throw new BusinessException(errmsg);
+				}
+				map.put("package", packvo);
 			}
-			map.put("package", packvo);
 		}
 		return map;
 	}
