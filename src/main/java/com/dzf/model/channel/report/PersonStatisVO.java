@@ -29,6 +29,9 @@ public class PersonStatisVO extends DataVO{
 	private DZFDouble xtotal;//销售人员
 	private Integer total;//总用户
 	
+	private Integer knum;//会计人员用户总数
+	private Integer xnum;//销售人员用户总数
+	
 	public Integer getLznum() {
 		return lznum;
 	}
@@ -47,6 +50,18 @@ public class PersonStatisVO extends DataVO{
 	}
 	public void setJms01(Integer jms01) {
 		this.jms01 = jms01;
+	}
+	public Integer getKnum() {
+		return knum;
+	}
+	public void setKnum(Integer knum) {
+		this.knum = knum;
+	}
+	public Integer getXnum() {
+		return xnum;
+	}
+	public void setXnum(Integer xnum) {
+		this.xnum = xnum;
 	}
 	public Integer getJms02() {
 		return jms02;

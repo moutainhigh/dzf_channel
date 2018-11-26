@@ -55,11 +55,15 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			String pk_corp =null;
+			
+			HashMap<String,Integer> Tmap = new HashMap<String,Integer>();
+
 			for (PersonStatisVO personStatisVO : list) {
 				if(retlist==null ||retlist.size()==0 || !retlist.contains(personStatisVO)){
 					pk_corp=personStatisVO.getPk_corp();
 					data =map.get(pk_corp);
 					setVO = (PersonStatisVO)data;
+					
 					corpvo = CorpCache.getInstance().get(null, pk_corp);
 					if (corpvo != null) {
 						setVO.setCorpname(corpvo.getUnitname());
@@ -73,19 +77,26 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					if (uservo != null) {
 						setVO.setCusername(uservo.getUser_name());
 					}
+					
 					getvo= queryEmployNum.get(pk_corp);
 					if(getvo!=null){
 						setVO.setLtotal(getvo.getLtotal());
 						setVO.setLznum(getvo.getLznum());
 					}
-					setVO.setAttributeValue(personStatisVO.getAreaname(), personStatisVO.getTotal());
 					setVO.setTotal(queryUserNum.get(pk_corp));
-					setZhanBi(setVO,personStatisVO.getTotal(),personStatisVO.getAreaname());
+					
+					setVO.setAttributeValue(personStatisVO.getAreaname(),1);
+					setZhanBi(setVO,Tmap,personStatisVO);
 					retlist.add(setVO);
 				}else{
 					getvo= retlist.get(retlist.indexOf(personStatisVO));
-					setZhanBi(setVO,personStatisVO.getTotal(),personStatisVO.getAreaname());
-					getvo.setAttributeValue(personStatisVO.getAreaname(), personStatisVO.getTotal());
+					Integer value = (Integer)getvo.getAttributeValue(personStatisVO.getAreaname());
+					if(value!=null){
+						getvo.setAttributeValue(personStatisVO.getAreaname(),value+1);
+					}else{
+						getvo.setAttributeValue(personStatisVO.getAreaname(), 1);
+					}
+					setZhanBi(getvo,Tmap,personStatisVO);
 				}
 			}
 		}
@@ -95,8 +106,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	
 	private List<PersonStatisVO> queryPersonStatis(List<String> corplist) {
 		StringBuffer sql = new StringBuffer();
-		sql.append("select count(w.cuserid) total, w.role_code areaname, w.pk_corp, w.innercode");
-		sql.append("  from (select sur.cuserid, sr.role_code, su.pk_corp, ba.innercode");
+		sql.append(" select sur.cuserid userid, sr.role_code areaname, su.pk_corp, ba.innercode");
 		sql.append("          from sm_user_role sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
@@ -105,29 +115,44 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp where");
 		sql.append(SqlUtil.buildSqlForIn("su.pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0   ");
-		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode) w");
-		sql.append(" group by w.role_code, w.pk_corp, w.innercode");
-		sql.append(" order by w.innercode");
+		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode");
+		sql.append(" order by ba.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		return list;
 	}
 	
 	/**
-	 * 设置团队占比
+	 * 计算团队占比
 	 * @param setVO
-	 * @param tmp
-	 * @param areaname
+	 * @param Tmap
+	 * @param cuserid
 	 */
-	private void setZhanBi(PersonStatisVO setVO,Integer tmp, String areaname) {
-		DZFDouble tem_total=null;
-		if(Arrays.asList(str).contains(areaname)){
-			tem_total=setVO.getXtotal()==null? DZFDouble.ZERO_DBL : setVO.getXtotal();
-			DZFDouble xtotal = tmp == null ? DZFDouble.ZERO_DBL : new DZFDouble(tmp);
-			setVO.setXtotal(tem_total.add(xtotal.div(setVO.getTotal()).multiply(100)));
-		}else if(!"jms01".equals(areaname)){
-			tem_total=setVO.getKtotal()==null? DZFDouble.ZERO_DBL : setVO.getKtotal();
-			DZFDouble ktotal = tmp == null ? DZFDouble.ZERO_DBL : new DZFDouble(tmp);
-			setVO.setKtotal(tem_total.add(ktotal.div(setVO.getTotal()).multiply(100)));
+	private void setZhanBi(PersonStatisVO setVO,HashMap<String,Integer> Tmap,PersonStatisVO vo) {
+		String key=null;
+		if(Arrays.asList(str).contains(vo.getAreaname())){
+			key=setVO.getPk_corp()+"xs"+vo.getUserid();
+			if(Tmap==null ||Tmap.isEmpty()){
+				Tmap.put(key,1);
+				setVO.setXnum(1);
+			}else if(!Tmap.containsKey(key)){
+				Tmap.put(key,1);
+				setVO.setXnum((setVO.getXnum()==null?0:setVO.getXnum())+1);
+			}
+		}else if(!"jms01".equals(vo.getAreaname())){
+			key=setVO.getPk_corp()+"kj"+vo.getUserid();
+			if(Tmap==null ||Tmap.isEmpty()){
+				Tmap.put(key,1);
+				setVO.setKnum(1);
+			}else if(!Tmap.containsKey(key)){
+				Tmap.put(key,1);
+				setVO.setKnum((setVO.getKnum()==null?0:setVO.getKnum())+1);
+			}
+		}
+		if(setVO.getXnum()!=null && setVO.getXnum()>0){
+			setVO.setXtotal(new DZFDouble(setVO.getXnum()).div(setVO.getTotal()).multiply(100));
+		}
+		if(setVO.getKnum()!=null && setVO.getKnum()>0){
+			setVO.setKtotal(new DZFDouble(setVO.getKnum()).div(setVO.getTotal()).multiply(100));
 		}
 	}
 
