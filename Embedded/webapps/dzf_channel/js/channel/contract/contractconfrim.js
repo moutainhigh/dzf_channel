@@ -1557,7 +1557,7 @@ function setChangeMny(opertype){
 	var sndesummny = getFloatValue($('#sndesummny').numberbox('getValue'));//原扣款金额
 	if(opertype == 1){//终止
 		var sntlmny = getFloatValue($('#sntlmny').numberbox('getValue'));//原合同金额
-		//退回扣款 = （原扣款金额/原收款期间）*（原开始期间到终止期间的期数）
+		//退回扣款 = 原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
 		//变更后合同金额 = 原月代账费 *（原开始期间到终止期间的期数）+ 账本费
 		//变更后扣款金额 = 原扣款金额-退回扣款
 		var sbperiod = $("#sbperiod").val();//开始期间
@@ -1596,7 +1596,10 @@ function setChangeMny(opertype){
  * @param endperiod  ****-**
  * @returns
  */
-function getMonthNum(endperiod, begperiod){    
+function getMonthNum(endperiod, begperiod){  
+	if(endperiod < begperiod){
+		return -1;
+	}
 	begperiod = begperiod.split('-');
 	// 得到月数
 	begperiod = parseInt(begperiod[0]) * 12 + parseInt(begperiod[1]);
