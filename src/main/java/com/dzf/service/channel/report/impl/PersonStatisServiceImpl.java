@@ -46,7 +46,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			corplist = new ArrayList<String>(col);
 		}
 		if (corplist != null && corplist.size() > 0) {
-			HashMap<String, PersonStatisVO> queryEmployNum = queryEmployNum(corplist);
+			List<PersonStatisVO> queryEmployNum = queryEmployNum(corplist);
 			HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
 			List<PersonStatisVO> list = queryPersonStatis(corplist);
 			PersonStatisVO setVO=new PersonStatisVO();
@@ -78,13 +78,12 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 						setVO.setCusername(uservo.getUser_name());
 					}
 					
-					getvo= queryEmployNum.get(pk_corp);
-					if(getvo!=null){
-						setVO.setLtotal(getvo.getLtotal());
-						setVO.setLznum(getvo.getLznum());
-					}
 					setVO.setTotal(queryUserNum.get(pk_corp));
-					
+					if(queryEmployNum!=null && queryEmployNum.indexOf(setVO)>=0){
+						getvo=queryEmployNum.get(queryEmployNum.indexOf(setVO));
+						setVO.setLznum(getvo.getLznum());
+						setVO.setLtotal(new DZFDouble(getvo.getLznum()).div(setVO.getTotal()+getvo.getLznum()).multiply(100));
+					}
 					setVO.setAttributeValue(personStatisVO.getAreaname(),1);
 					setZhanBi(setVO,Tmap,personStatisVO);
 					retlist.add(setVO);
@@ -179,32 +178,19 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param corplist
 	 * @return
 	 */
-	private HashMap<String, PersonStatisVO> queryEmployNum(List<String> corplist) {
+	private List<PersonStatisVO> queryEmployNum(List<String> corplist) {
 		HashMap<String, PersonStatisVO> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("select a.total total, nvl(b.total, 0) lznum, a.pk_corp pk_corp");
-		sql.append("  from (select count(pk_employee) total, pk_corp");
-		sql.append("          from ynt_employee");
-		sql.append("         where nvl(dr, 0) = 0");
-		sql.append("         group by pk_corp) a");
-		sql.append("  left join");
-		sql.append(" (select count(pk_employee) total, pk_corp");
-		sql.append("    from ynt_employee");
-		sql.append("   where istatus = 2");
-		sql.append("     and nvl(dr, 0) = 0");
-		sql.append("   group by pk_corp) b on a.pk_corp = b.pk_corp");
-		sql.append("   where ");
-		sql.append(SqlUtil.buildSqlForIn("a.pk_corp", corplist.toArray(new String[corplist.size()])));
+		sql.append(" select count(u.pk_employee) lznum, u.pk_corp");
+		sql.append(" 	from sm_user u left join ynt_employee e");
+		sql.append("   	on  e.pk_employee = u.pk_employee ");
+		sql.append("   where e.istatus = 2");
+		sql.append("     and nvl(e.dr, 0) = 0");
+		sql.append("     and nvl(u.dr, 0) = 0 and ");
+		sql.append(SqlUtil.buildSqlForIn("u.pk_corp", corplist.toArray(new String[corplist.size()])));
+		sql.append("    group by u.pk_corp ");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
-		DZFDouble lzTmp = DZFDouble.ZERO_DBL;
-		for (PersonStatisVO personStatisVO : list) {
-			if(personStatisVO.getLznum()!=null){
-				lzTmp=new DZFDouble(personStatisVO.getLznum());
-			}
-			personStatisVO.setLtotal(lzTmp.div(personStatisVO.getTotal()).multiply(100d));
-			map.put(personStatisVO.getPk_corp(), personStatisVO);
-		} 
-		return map;
+		return list;
 	}
 
 
