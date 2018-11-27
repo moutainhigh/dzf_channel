@@ -430,7 +430,7 @@ public class ManagerServiceImpl implements IManagerService {
 	private StringBuffer getSql(String[] pks,Integer type) {
 		StringBuffer buf=new StringBuffer();
 		if(type==2){
-			buf.append("  select wm_concat(w.pk_corp) as pk_corp,sum(w.rnum) as rnum,");
+			buf.append("  select sum(w.rnum) as rnum,");
 			buf.append("  sum(w.rntotalmny) as rntotalmny,w.vprovince as vprovince from ( ");
 			buf.append("  select c.pk_corp,b.vprovince, ");
 		}else{
