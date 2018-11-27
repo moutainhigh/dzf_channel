@@ -393,7 +393,7 @@ function onEdit(){
 	$('#editDlg').dialog({
 		modal:true
 	});//设置dig属性
-	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','返点单修改');
+	$('#editDlg').dialog('open').dialog('center').dialog('setTitle','退款单修改');
 	$('#editForm').form('clear');
 	$('#editForm').form('load', row);
 }
