@@ -158,8 +158,8 @@
 				</div>
 				
 				<div style="float:right;margin-top:40px;margin-right:76px;">
-				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="onSave()">保存</a> 
-					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="onCancel()">取消</a>
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
+					<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
 				</div>
 			</form>
 		</div>
@@ -178,8 +178,8 @@
 				</div>
 			</form>
 			<div style="text-align:center;margin-top:40px;">
-			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="measSave()">保存</a> 
-				<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="measCancel()">取消</a>
+			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="measSave()">保存</a> 
+				<a href="javascript:void(0)"  class="ui-btn ui-btn-xz" onclick="measCancel()">取消</a>
 			</div>
 		</div>
 		<!-- 计量单位对话框  end-->
