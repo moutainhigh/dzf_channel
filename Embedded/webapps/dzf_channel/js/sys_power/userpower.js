@@ -17,7 +17,8 @@ $(function(){
 	$('#grid').datagrid({
 		url : contextPath + '/sys/chnUseract!query.action',
 		rownumbers : true,
-		height : Public.setGrid(0,'dataGrid').h,
+		/*height : Public.setGrid(0,'dataGrid').h,*/
+		height:'100%',
 		singleSelect : true,
 		idField : 'uid',
 		columns : [ [
