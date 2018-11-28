@@ -139,7 +139,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 			if(blist != null && blist.size() > 0){
 				hvo.setChildren(blist.toArray(new StockInBVO[0]));
 			}
-			hvo = stockinser.save(hvo, getLogin_corp(), bodyVOs);
+			hvo = stockinser.save(hvo, getLogincorppk(), bodyVOs);
 			json.setSuccess(true);
 			json.setRows(hvo);
 			json.setMsg("保存成功");
@@ -183,7 +183,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 			addBVOs = DzfTypeUtils.cast(addarray, bmapping, StockInBVO[].class, JSONConvtoJAVA.getParserConfig());
 			if (addBVOs != null && addBVOs.length > 0) {
 				for (StockInBVO bvo : addBVOs) {
-					bvo.setPk_corp(getLogin_corp());
+					bvo.setPk_corp(getLogincorppk());
 					bvo.setDr(0);
 					bvo.setPk_warehouse(IStatusConstant.CK_ID);//仓库主键
 					if(StringUtil.isEmpty(bvo.getPk_goods())){
