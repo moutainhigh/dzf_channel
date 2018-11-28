@@ -258,8 +258,8 @@
 				<table id="setgrid"></table>
 		    </div>
 			<div style="text-align:center;margin-top:40px;">
-			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="Ctrl+S" onclick="setSave()">保存</a> 
-				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" title="CTRL+Z" onclick="setCancel()">取消</a>
+			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="setSave()">保存</a> 
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="setCancel()">取消</a>
 			</div>
 		</div>
 		<!-- 设置对话框  end-->
