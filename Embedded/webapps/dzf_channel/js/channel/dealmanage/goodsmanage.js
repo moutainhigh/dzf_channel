@@ -10,6 +10,7 @@ $(function(){
 	reloadData();
 	initMeasSelect();
 	expendRow()
+	initGoodstyps();
 });
 
 /**
@@ -571,7 +572,6 @@ function edit(index){
 		return;
 	}
 	
-	initGoodstyps();
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '修改商品');
 	$('#gcode').textbox("readonly",true);
@@ -586,7 +586,6 @@ function edit(index){
 	}
 	$('#goods_add').form('clear');
 	initMeas();
-//	initMeasSelect();
 	$('#goods_add').form('load', row);
 	$("#measid").combobox("setValue",row.measid);
 	viewImageFiles(row);
@@ -757,7 +756,6 @@ function dele(ths){
  * 新增
  */
 function add(){
-	initGoodstyps();
 	initFileEvent();
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增商品');
 	$('#gcode').textbox("readonly",false);
@@ -1195,7 +1193,6 @@ function showInfo(index){
 	if(isEmpty(row)){
 		return;
 	}
-	initGoodstyps();
 	$('#infoDlg').dialog('open').dialog('center').dialog('setTitle', '商品详情');
 	$('#goods_info').form('clear');
 	$('#goods_info').form('load', row);
