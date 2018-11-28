@@ -4,7 +4,6 @@ var editIndex;
 var etIndex = undefined;
 var flowImgUrls = null;
 var gid;
-var setIndex;
 $(function(){
 	load();
 	reloadData();
@@ -281,7 +280,6 @@ function setup(index){
 			}
 		}
 	});
-	setIndex = index;
 }
 
 /**
