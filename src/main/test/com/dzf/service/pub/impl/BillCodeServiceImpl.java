@@ -227,23 +227,24 @@ public class BillCodeServiceImpl implements IBillCodeService {
      * @return
      */
 	private String makeCode(MaxCodeVO mcvo) {
-		String code;
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		Integer len=mcvo.getBillType().length();
-		sql.append("select max("+mcvo.getFieldName()+") as count from "+mcvo.getTbName());
-		sql.append(" where pk_corp=? and nvl(dr,0) = 0  and substr("+mcvo.getFieldName()+",0,"+len+")= ? ");
-		sp.addParam(mcvo.getPk_corp());
-		sp.addParam(mcvo.getBillType());
-		String maxcode=null;
-		try {
-			 maxcode = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
-		} catch (NullPointerException e) {
-			code=mcvo.getBillType()+String.format("%0"+mcvo.getDiflen()+"d", 1);
-			return code;
-		}
-		return addCode(maxcode,mcvo.getDiflen());
-	}
+        String code;
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        Integer len=mcvo.getBillType().length();
+        sql.append("select max("+mcvo.getFieldName()+") as count from "+mcvo.getTbName());
+        sql.append(" where ").append(mcvo.getCorpIdField()).append(" = ?");
+        sql.append(" and nvl(dr,0) = 0  and substr("+mcvo.getFieldName()+",0,"+len+")= ? ");
+        sp.addParam(mcvo.getPk_corp());
+        sp.addParam(mcvo.getBillType());
+        String maxcode=null;
+        try {
+             maxcode = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
+        } catch (NullPointerException e) {
+            code=mcvo.getBillType()+String.format("%0"+mcvo.getDiflen()+"d", 1);
+            return code;
+        }
+        return addCode(maxcode,mcvo.getDiflen());
+    }
 	
 	/**
 	 * 在上一个编码上加1
