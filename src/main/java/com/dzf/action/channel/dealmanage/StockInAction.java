@@ -159,9 +159,9 @@ public class StockInAction extends BaseAction<StockInVO> {
 			hvo.setPk_corp(getLogincorppk());
 			hvo.setCoperatorid(getLogin_userid());
 			hvo.setDoperatedate(new DZFDateTime());
-			hvo.setDr(0);
 			hvo.setVstatus(IStatusConstant.ISTOCKINSTATUS_1);
 		}
+		hvo.setDr(0);
 	}
 	
 	/**
