@@ -757,7 +757,11 @@ function showInfo(index){
         type: "post",
         dataType: "json",
         url: contextPath + '/dealmanage/channelorder!qryOrderDet.action',
-        data: qrow,
+        data: {
+        	"billcode" : qrow.billcode,
+        	"corpid" : qrow.corpid,
+        	"billid" : qrow.billid,
+        },
         traditional: true,
         async: false,
         success: function(data, textStatus) {
