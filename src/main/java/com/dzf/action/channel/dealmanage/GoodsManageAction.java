@@ -489,6 +489,8 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 						throw new BusinessException("商品主键不能为空");
 					}
 				}
+				bvo.setInvspec(bvo.getInvspec().replaceAll(" ", ""));
+				bvo.setInvtype(bvo.getInvtype().replaceAll(" ", ""));
 				list.add(bvo);
 			}
 		}else{
