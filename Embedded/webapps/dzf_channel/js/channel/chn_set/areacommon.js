@@ -269,7 +269,7 @@ function save() {
 		data : postdata,
 		dataType : 'json',
 		success : function(result) {
-			$.messager.progress('close');
+			parent.$.messager.progress('close');
 			if (result.success) {
 				$('#cardDialog').dialog('close');
 				Public.tips({
