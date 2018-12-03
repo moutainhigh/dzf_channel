@@ -239,4 +239,14 @@ public interface IFunNode {
      */
     public static final String CHANNEL_55  = "channel55";
     
+    /**
+     * 渠道业绩统计
+     */
+    public static final String CHANNEL_56  = "channel56";
+    
+    /**
+     * 渠道数据统计
+     */
+    public static final String CHANNEL_57  = "channel57";
+    
 }
