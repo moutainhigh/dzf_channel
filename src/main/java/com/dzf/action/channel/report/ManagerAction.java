@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.ChnPayBalanceAction;
 import com.dzf.model.channel.report.ManagerVO;
-import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IButtonName;
 import com.dzf.pub.BusinessException;
@@ -71,7 +70,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			qvo.setUserid(getLoginUserid());
 			List<ManagerVO> vos = manager.query(qvo,type);
 			if(vos==null||vos.size()==0){
-				grid.setRows(new ArrayList<ChnAreaVO>());
+				grid.setRows(new ArrayList<ManagerVO>());
 				grid.setMsg("查询数据为空!");
 			}else{
 				grid.setRows(vos);
