@@ -69,14 +69,14 @@ function load() {
 			halign : 'center',
 			align : 'left',
 		}, {
-			width : '60',
-			title : '新增',
+			width : '80',
+			title : '新增(%)',
 			field : 'nrate',
 			halign : 'center',
 			align : 'center',
 		}, {
-			width : '60',
-			title : '续费',
+			width : '80',
+			title : '续费(%)',
 			field : 'rnrate',
 			halign : 'center',
 			align : 'center',

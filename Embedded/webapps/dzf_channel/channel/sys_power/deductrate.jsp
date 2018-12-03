@@ -84,12 +84,12 @@
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:100px;">新增：</label>
 					<input class="easyui-numberbox" id ="enrate" name ="nrate" style="width:150px;height:25px;"
-						data-options ="required:true,min:0, max:100"/>
+						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:100px;">续费：</label>
 					<input class="easyui-numberbox" id ="ernrate" name ="rnrate" style="width:150px;height:25px;" 
-						data-options ="required:true,min:0, max:100"/>
+						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div style="text-align:center;margin-top:40px;">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">确定</a> 
@@ -107,12 +107,12 @@
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:100px;">新增：</label>
 					<input class="easyui-numberbox" id ="snrate" name ="nrate" style="width:150px;height:25px;"
-						data-options ="required:true,min:0, max:100"/>
+						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:100px;">续费：</label>
 					<input class="easyui-numberbox" id ="srnrate" name ="rnrate" style="width:150px;height:25px;" 
-						data-options ="required:true,min:0, max:100"/>
+						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div style="text-align:center;margin-top:40px;">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onBatchSave()">确定</a> 
