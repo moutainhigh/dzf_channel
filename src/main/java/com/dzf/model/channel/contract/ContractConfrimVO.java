@@ -101,7 +101,10 @@ public class ContractConfrimVO extends SuperVO {
 	private DZFDate denddate; // 结束日期（不存库，取原合同）合同变更使用
 	
 	@FieldAlias("signdate")
-	private DZFDate dsigndate;// 签订合同日期（直接删除）
+	private DZFDate dsigndate;// 签订合同日期（不存库，取原合同）
+	
+    @FieldAlias("xq")
+    private DZFBoolean isxq; // 是否续签（不存库，取原合同）
 
 	// 补单字段begin：
 	@FieldAlias("cperiod")
@@ -272,6 +275,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public DZFBoolean getIsxq() {
+		return isxq;
+	}
+
+	public void setIsxq(DZFBoolean isxq) {
+		this.isxq = isxq;
+	}
+
 	public SuperVO[] getBodys() {
 		return bodys;
 	}
