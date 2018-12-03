@@ -238,20 +238,13 @@ function onShowLog(index){
 		queryParams : {
 			"id" : row.rateid,
 		},
-//		striped : true,
-//		title : '',
-//		width : '100%',
-//		fitColumns : true,
-		
 		border : true,
 		striped : true,
 		rownumbers : true,
 		fitColumns : false,		
-		singleSelect : false,
+		singleSelect : true,
 		idField : 'corpid',
 		
-		rownumbers : true,
-		singleSelect : true,
 		columns : [ [ {
 			width :  '60',
 			title : '新增',
