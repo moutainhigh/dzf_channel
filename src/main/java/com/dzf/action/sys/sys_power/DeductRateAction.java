@@ -23,19 +23,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.sale.SaleSetVO;
 import com.dzf.model.channel.sys_power.DeductRateLogVO;
 import com.dzf.model.channel.sys_power.DeductRateVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.ExportDeductRateExcel;
@@ -43,6 +45,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.sys_power.IDeductRateService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 扣款率设置Action
@@ -132,6 +135,13 @@ public class DeductRateAction extends BaseAction<DeductRateVO> {
 			json.setSuccess(true);
 			json.setRows(hvo);
 			json.setMsg("保存成功");
+			
+			String corpname = "";
+			CorpVO corpvo = CorpCache.getInstance().get(null, hvo.getPk_corp());
+			if(corpvo != null){
+				corpname = corpvo.getUnitname();
+			}
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_44.getValue(), "修改"+corpname+"扣款率", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
@@ -191,6 +201,9 @@ public class DeductRateAction extends BaseAction<DeductRateVO> {
 				if (rignum > 0) {
 					json.setRows(rightlist);
 				}
+			}
+			if(rignum > 0){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_44.getValue(), "批量设置"+rignum+"条扣款率", ISysConstants.SYS_3);
 			}
 			
 		} catch (Exception e) {

@@ -24,12 +24,14 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.ICommonContstant;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.ExcelComMethod;
 import com.dzf.service.channel.sys_power.IDeductRateService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 扣款率导入Action
@@ -123,6 +125,9 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 				if (rignum > 0) {
 					json.setRows(rightlist);
 				}
+			}
+			if(rignum > 0){
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_44.getValue(), "导入更新"+rignum+"条扣款率", ISysConstants.SYS_3);
 			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "导入失败");
