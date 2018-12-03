@@ -18,11 +18,13 @@ import com.dzf.model.channel.sys_power.DeductRateVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.AccountVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
@@ -151,37 +153,51 @@ public class DeductRateServiceImpl implements IDeductRateService {
 			String cuserid) throws DZFWarpException {
 		if (map != null && !map.isEmpty()) {
 			String pk_corp = map.get(ratevo.getCorpcode());
-			UserVO uservo = UserCache.getInstance().get(cuserid, null);
 			if (!StringUtil.isEmpty(pk_corp)) {
-				DeductRateVO rvo = queryDeductByField("pk_corp", pk_corp);
-				if(rvo == null){
+				DeductRateVO oldvo = queryDeductByField("pk_corp", pk_corp);
+				if(oldvo == null){
 					ratevo.setPk_corp(pk_corp);
 					ratevo.setCoperatorid(cuserid);
 					ratevo.setDoperatedate(new DZFDateTime());
 					ratevo.setLastmodifypsnid(cuserid);
-					if(uservo != null){
-						ratevo.setLastmodifypsn(uservo.getUser_name());
-					}
 					ratevo.setLastmodifydate(new DZFDateTime());
 					ratevo.setFathercorp(fathercorp);
 					ratevo.setDr(0);
-					return saveData(ratevo, fathercorp, cuserid);
+					ratevo =  saveData(ratevo, fathercorp, cuserid);
+					setShowName(ratevo);
+					return ratevo;
 				}else{
-					rvo.setInewrate(ratevo.getInewrate());
-					rvo.setIrenewrate(ratevo.getIrenewrate());
-					rvo.setLastmodifypsnid(cuserid);
-					if(uservo != null){
-						ratevo.setLastmodifypsn(uservo.getUser_name());
-					}
-					rvo.setLastmodifydate(new DZFDateTime());
-					ratevo.setFathercorp(fathercorp);
-					return saveData(rvo, fathercorp, cuserid);
+					oldvo.setInewrate(ratevo.getInewrate());
+					oldvo.setIrenewrate(ratevo.getIrenewrate());
+					oldvo.setLastmodifypsnid(cuserid);
+					oldvo.setLastmodifydate(new DZFDateTime());
+					oldvo.setFathercorp(fathercorp);
+					oldvo = saveData(oldvo, fathercorp, cuserid);
+					setShowName(oldvo);
+					return oldvo;
 				}
 			} else {
 				throw new BusinessException("加盟商" + ratevo.getCorpcode() + "信息错误");
 			}
 		} else {
 			throw new BusinessException("加盟商信息错误");
+		}
+	}
+	
+	/**
+	 * 设置显示名称
+	 * @param ratevo
+	 * @throws DZFWarpException
+	 */
+	private void setShowName(DeductRateVO ratevo) throws DZFWarpException {
+		UserVO uservo = UserCache.getInstance().get(ratevo.getLastmodifypsnid(), null);
+		if(uservo != null){
+			ratevo.setLastmodifypsn(uservo.getUser_name());
+		}
+		CorpVO corpvo = CorpCache.getInstance().get(null, ratevo.getPk_corp());
+		if(corpvo != null){
+			ratevo.setCorpcode(corpvo.getInnercode());
+			ratevo.setCorpname(corpvo.getUnitname());
 		}
 	}
 	
@@ -307,6 +323,33 @@ public class DeductRateServiceImpl implements IDeductRateService {
 			}
 		}
 		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DeductRateLogVO> queryLog(String fathercorp, String pk_deductrate) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT inewrate, irenewrate, coperatorid, doperatedate  \n");
+		sql.append("  FROM cn_deductratelog  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND fathercorp = ?  \n");
+		spm.addParam(fathercorp);
+		sql.append("   AND pk_deductrate = ? \n");
+		spm.addParam(pk_deductrate);
+		sql.append(" ORDER BY ts DESC");
+		List<DeductRateLogVO> list = (List<DeductRateLogVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(DeductRateLogVO.class));
+		if(list != null && list.size() > 0){
+			UserVO uservo = null;
+			for(DeductRateLogVO logvo : list){
+				uservo = UserCache.getInstance().get(logvo.getCoperatorid(), null);
+				if(uservo != null){
+					logvo.setCoperator(uservo.getUser_name());
+				}
+			}
+		}
+		return list;
 	}
 
 }

@@ -120,8 +120,14 @@
 						onclick="javascript:$('#setDlg').dialog('close')">取消</a>
 				</div>
 			</form>
-		 </div>
-		 <!-- 批量设置对话框 end -->
+		</div>
+		<!-- 批量设置对话框 end -->
+		 
+		<!-- 变更记录 begin -->
+ 		<div id="logDlg" class="easyui-dialog" style="width:460px;height:500px;" data-options="closed:true">
+			<table id="loggrid" style="height:98%;"></table>
+		</div>
+		<!-- 变更记录 end -->
 		
 	</div>
 </body>

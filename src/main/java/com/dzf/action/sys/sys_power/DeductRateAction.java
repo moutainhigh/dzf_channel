@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.sale.SaleSetVO;
+import com.dzf.model.channel.sys_power.DeductRateLogVO;
 import com.dzf.model.channel.sys_power.DeductRateVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
@@ -198,9 +200,33 @@ public class DeductRateAction extends BaseAction<DeductRateVO> {
 	}
 	
 	/**
+	 * 查询变更记录
+	 */
+	public void queryLog() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			
+			QryParamVO pamvo = new QryParamVO();
+			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			List<DeductRateLogVO> list = rateser.queryLog(getLogincorppk(), pamvo.getPk_bill());
+			grid.setSuccess(true);
+			grid.setMsg("查询成功");
+			grid.setRows(list);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
 	 * Excel导出方法
 	 */
 	public void exportExcel() {
+		UserVO uservo = getLoginUserInfo();
+		checkUser(uservo);
+		
 		String strlist = getRequest().getParameter("strlist");
 		if (strlist == null) {
 			return;

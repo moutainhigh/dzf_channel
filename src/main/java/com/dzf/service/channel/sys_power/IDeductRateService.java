@@ -3,6 +3,7 @@ package com.dzf.service.channel.sys_power;
 import java.util.List;
 import java.util.Map;
 
+import com.dzf.model.channel.sys_power.DeductRateLogVO;
 import com.dzf.model.channel.sys_power.DeductRateVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
@@ -75,5 +76,14 @@ public interface IDeductRateService {
 	 * @throws DZFWarpException
 	 */
 	public DeductRateVO save(DeductRateVO ratevo, String fathercorp, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 查询变更记录
+	 * @param fathercorp
+	 * @param pk_deductrate
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<DeductRateLogVO> queryLog(String fathercorp, String pk_deductrate) throws DZFWarpException;
 
 }

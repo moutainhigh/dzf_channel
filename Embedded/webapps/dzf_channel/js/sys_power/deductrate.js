@@ -69,13 +69,13 @@ function load() {
 			halign : 'center',
 			align : 'left',
 		}, {
-			width : '100',
+			width : '60',
 			title : '新增',
 			field : 'nrate',
 			halign : 'center',
 			align : 'center',
 		}, {
-			width : '100',
+			width : '60',
 			title : '续费',
 			field : 'rnrate',
 			halign : 'center',
@@ -114,8 +114,14 @@ function load() {
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="onEdit(' + index + ')">修改</a> '+
-	' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onShowLog(' + index + ')">变更记录</a>';
+	if(isEmpty(row.rateid)){
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="onEdit(' + index + ')">修改</a> '+
+		' <a href="#" style="margin-bottom:0px;margin-left:10px;" >变更记录</a>';
+
+	}else{
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="onEdit(' + index + ')">修改</a> '+
+		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onShowLog(' + index + ')">变更记录</a>';
+	}
 }
 
 /**
@@ -214,7 +220,64 @@ function onSave(){
  * @param index
  */
 function onShowLog(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	if (row == null) {
+		Public.tips({
+			content : '请您先选择一行！',
+			type : 2
+		});
+		return;
+	}
 	
+	$('#logDlg').dialog({
+		modal : true
+	});// 设置dig属性
+	$('#logDlg').dialog('open').dialog('center').dialog('setTitle', '变更记录');
+	$('#loggrid').datagrid({
+		url : DZF.contextPath + '/sys/deductrate!queryLog.action',
+		queryParams : {
+			"id" : row.rateid,
+		},
+//		striped : true,
+//		title : '',
+//		width : '100%',
+//		fitColumns : true,
+		
+		border : true,
+		striped : true,
+		rownumbers : true,
+		fitColumns : false,		
+		singleSelect : false,
+		idField : 'corpid',
+		
+		rownumbers : true,
+		singleSelect : true,
+		columns : [ [ {
+			width :  '60',
+			title : '新增',
+			field : 'nrate',
+			halign : 'center',
+			align : 'center',
+		}, {
+			width : '60',
+			title : '续费',
+			field : 'rnrate',
+			halign : 'center',
+			align : 'center',
+		}, {
+			width : '120',
+			title : '操作人',
+			field : 'copter',
+			halign : 'center',
+			align : 'left',
+		}, {
+			width : '150',
+			title : '操作时间',
+			field : 'ddate',
+			halign : 'center',
+			align : 'left',
+		},] ],
+	});
 }
 
 /**
