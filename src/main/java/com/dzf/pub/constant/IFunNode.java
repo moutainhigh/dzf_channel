@@ -234,4 +234,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_53  = "channel53";
     
+    /**
+     * 扣款率设置
+     */
+    public static final String CHANNEL_55  = "channel55";
+    
 }
