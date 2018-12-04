@@ -19,9 +19,8 @@ import com.dzf.service.channel.report.IChannelStatisService;
 import com.dzf.service.pub.IPubService;
 
 /**
- * 加盟商人员统计
+ * 渠道业绩统计
  * 
- *
  */
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
@@ -47,6 +46,7 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_56);
 			ManagerVO qvo = new ManagerVO();
 			qvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), qvo);
+			qvo.setCuserid(uservo.getCuserid());
 			List<ManagerVO> list = chnStatis.query(qvo);
 			if(list==null||list.size()==0){
 				grid.setRows(new ArrayList<ManagerVO>());

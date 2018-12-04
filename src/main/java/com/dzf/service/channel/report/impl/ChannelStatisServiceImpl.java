@@ -1,5 +1,6 @@
 package com.dzf.service.channel.report.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,25 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IChannelStatisService;
+import com.dzf.service.pub.IPubService;
 
 @Service("statisChannel")
 public class ChannelStatisServiceImpl implements IChannelStatisService{
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+    @Autowired
+    private IPubService pubService;
 
 	@Override
 	public List<ManagerVO> query(ManagerVO vo) throws DZFWarpException{
+		Integer level = pubService.getDataLevel(vo.getCuserid());
+		if(level==null){
+			return new ArrayList<ManagerVO>();
+		}else if(level==1){
+			vo.setCuserid(null);
+		}
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(vo.getDbegindate());
 		spm.addParam(vo.getDenddate());
@@ -40,22 +51,22 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("select sum( ");
 		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
 		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
-		buf.append("         when 1 then  nvl(t.ndeductmny,0) ");
-		buf.append("         else 0 end + ");
+		buf.append("         when 1 then  0 ");
+		buf.append("         else nvl(t.ndeductmny,0) end + ");
 		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
 		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
-		buf.append("         when 1 then nvl(t.nsubdeductmny,0) ");
-		buf.append("         else 0 end) as ndeductmny,");
+		buf.append("         when 1 then 0");
+		buf.append("         else nvl(t.nsubdeductmny,0)  end) as ndeductmny,");
 		
 		buf.append("	 sum( ");
 		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
 		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
-		buf.append("         when 1 then  nvl(t.ndedrebamny,0) ");
-		buf.append("         else 0 end + ");
+		buf.append("         when 1 then 0 ");
+		buf.append("         else nvl(t.ndedrebamny,0) end + ");
 		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
 		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
-		buf.append("         when 1 then nvl(t.nsubdedrebamny,0) ");
-		buf.append("         else 0 end) as ndedrebamny,");
+		buf.append("         when 1 then 0 ");
+		buf.append("         else nvl(t.nsubdedrebamny,0) end) as ndedrebamny,");
 		buf.append("     yt.pk_corp,yt.vchannelid as userid");
 		buf.append("  from cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
@@ -67,6 +78,10 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		if(!StringUtil.isEmpty(vo.getUserid())){
 			buf.append("   and yt.vchannelid=? ");
 			spm.addParam(vo.getUserid());
+		}
+		if(!StringUtil.isEmpty(vo.getCuserid())){
+			buf.append("   and yt.vchannelid=? ");
+			spm.addParam(vo.getCuserid());
 		}
 		if(!StringUtil.isEmpty(vo.getPk_corp())){
 		    String[] strs = vo.getPk_corp().split(",");
