@@ -51,6 +51,7 @@ public class RebateCountAction extends BaseAction<RebateCountVO> {
             QryParamVO paramvo = new QryParamVO();
             paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
             paramvo.setPk_corp(getLogincorppk());
+            paramvo.setCuserid(getLoginUserid());
             List<RebateCountVO> list = rebateCountSer.query(paramvo);
             if (list != null && list.size() > 0) {
                 int page = paramvo == null ? 1 : paramvo.getPage();
