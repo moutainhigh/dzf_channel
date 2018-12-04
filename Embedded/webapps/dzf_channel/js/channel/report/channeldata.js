@@ -2,7 +2,7 @@ var contextPath = DZF.contextPath;
 
 $(function() {
 	initQry();
-	lineQry();//线状图初始化并查询数据
+	load();//初始化并查询数据
 	initListen();
 });
 
@@ -44,7 +44,7 @@ function initListen(){
 			}else if(n == 3){
 				$("#qyear").show();
 			}
-			lineQry();
+			load();
 		}
 	});
 }
@@ -53,7 +53,7 @@ function initListen(){
 /**
  * 线状图查询
  */
-function lineQry(){
+function load(){
 	var qrytype = $('#qrytype').combobox('getValue');
 	var bperiod = "";
 	var eperiod = "";
@@ -83,7 +83,7 @@ function lineQry(){
 			if(result.success){
 				var row = result.rows;
 				if(row != null){
-					initBarChart(row);
+					initChart(row);
 				}
 			}else{
 				Public.tips({
@@ -97,13 +97,12 @@ function lineQry(){
 
 
 /**
- * 柱状图初始化
+ * 图表初始化
  */
-function initBarChart(row){
+function initChart(row){
 	var myChart = echarts.init(document.getElementById('main'));
 	var option = {
 	    color: ['#5b9bd5', '#ed7d31'],
-
 	    tooltip: {
 	        trigger: 'axis',
 	        axisPointer: { // 坐标轴指示器，坐标轴触发有效

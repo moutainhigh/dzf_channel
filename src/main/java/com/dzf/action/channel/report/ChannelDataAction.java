@@ -1,8 +1,5 @@
 package com.dzf.action.channel.report;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -11,15 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.AchievementVO;
-import com.dzf.model.channel.report.ManagerVO;
-import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.service.channel.report.IChannelDataService;
-import com.dzf.service.channel.report.IChannelStatisService;
 import com.dzf.service.pub.IPubService;
 
 /**

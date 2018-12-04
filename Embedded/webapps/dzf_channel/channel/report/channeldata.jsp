@@ -35,21 +35,10 @@
 <head>
 <title>渠道数据统计 </title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
-<link
-	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
-	rel="stylesheet">
-<script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
-	charset="UTF-8" type="text/javascript"></script>
-<script
-	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/channeldata.js");%>
-	charset="UTF-8" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/echarts.common.min.js" ></script>
-<style type="text/css">
-.panel-body {
-	overflow: auto
-}
-</style>
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/channeldata.js");%>charset="UTF-8" type="text/javascript"></script>
+<script type="text/javascript" src="../../js/echarts.common.min.js" ></script>
 </head>
 <body>
 	<div class="wrapper" style="overflow:auto;height:100%;">
@@ -122,7 +111,6 @@
 			</div>
 		    <div id="main" style="width: 100%;height:300px;"></div>
 	    </div>
-        
 	</div>
 </body>
 </html>

@@ -77,8 +77,7 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 					}else{
 						getVO= map.get(season);
 						getVO.setNdedsummny(SafeCompute.add(getVO.getNdedsummny(), zvo.getNdedsummny()));
-						getVO.setNdedsummny(SafeCompute.add(getVO.getNaccountmny(), zvo.getNaccountmny()));
-//						map.put(season,getVO);
+						getVO.setNaccountmny(SafeCompute.add(getVO.getNaccountmny(), zvo.getNaccountmny()));
 					}
 				}else{
 					map.put(zvo.getVperiod(), zvo);
@@ -94,11 +93,14 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 					}else{
 						getVO= map.get(season);
 						getVO.setNdedsummny(SafeCompute.add(getVO.getNdedsummny(), fvo.getNdedsummny()));
-						getVO.setNdedsummny(SafeCompute.add(getVO.getNaccountmny(), fvo.getNaccountmny()));
-//						map.put(season,getVO);
+						getVO.setNaccountmny(SafeCompute.add(getVO.getNaccountmny(), fvo.getNaccountmny()));
 					}
-				}else{
+				}else if(!map.containsKey(fvo.getVperiod())){
 					map.put(fvo.getVperiod(), fvo);
+				}else{
+					getVO= map.get(fvo.getVperiod());
+					getVO.setNdedsummny(SafeCompute.add(getVO.getNdedsummny(), fvo.getNdedsummny()));
+					getVO.setNaccountmny(SafeCompute.add(getVO.getNaccountmny(), fvo.getNaccountmny()));
 				}
 			}
 		}
