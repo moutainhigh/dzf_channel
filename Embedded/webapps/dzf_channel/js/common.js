@@ -19,7 +19,27 @@ $(document).ready(function (){
 			parent.$(parent.document).trigger("click");
 	    });
 	}
+	setSkin();
 });
+function setSkin(){
+	var title = document.title;
+	if(title == "大账房"){
+		return;
+	}
+	var hrefStr = DZF.contextPath + '/css/lan_skin.css';
+	if($("#parent-skin").length > 0){
+		$("#parent-skin").attr("href",hrefStr);
+        $("body").addClass("dzf-skin");
+	}else{
+		if($("#child-skin").length > 0){
+			$("#child-skin").attr("href",hrefStr);
+		}else{
+			$("head").append('<link id="child-skin" rel="stylesheet" href="' + hrefStr + '">');
+			$("body").addClass('dzf-skin');
+
+		}
+	}
+}
 // 设置表格宽高
 Public.setGrid = function(adjust,objId) {
 	var adjust = adjust || 0;
