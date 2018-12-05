@@ -11,6 +11,30 @@ import com.dzf.pub.lang.DZFDouble;
  */
 @SuppressWarnings({ "rawtypes", "serial" })
 public class DebitQueryVO extends SuperVO {
+	
+    @FieldAlias("acode")
+    private String areacode;//大区编码
+	
+	@FieldAlias("aname")
+    public String areaname;//大区名称
+	
+	@FieldAlias("uid")
+	public String userid; // 用户主键（大区总经理）
+    
+    @FieldAlias("uname")
+    public String username; // 用户名称（大区总经理）
+    
+	@FieldAlias("provname")
+	public String vprovname;// 省市名称
+	
+	@FieldAlias("ovince")
+	public Integer vprovince;// 地区
+	
+	@FieldAlias("cuid")
+	public String cuserid; // 用户主键（渠道）
+	
+    @FieldAlias("cuname")
+    public String cusername; // 用户名称（渠道））
 
 	@FieldAlias("bdate")
 	private String dbegindate; // 开始日期
@@ -113,6 +137,70 @@ public class DebitQueryVO extends SuperVO {
 
 	public String getPk_corp() {
 		return pk_corp;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
+	public String getAreacode() {
+		return areacode;
+	}
+
+	public void setAreacode(String areacode) {
+		this.areacode = areacode;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getUserid() {
+		return userid;
+	}
+
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
+	}
+
+	public String getCuserid() {
+		return cuserid;
+	}
+
+	public void setCuserid(String cuserid) {
+		this.cuserid = cuserid;
+	}
+
+	public String getCusername() {
+		return cusername;
+	}
+
+	public void setCusername(String cusername) {
+		this.cusername = cusername;
 	}
 
 	public String getHead() {

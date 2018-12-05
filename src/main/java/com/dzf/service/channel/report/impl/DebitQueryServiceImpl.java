@@ -2,6 +2,8 @@ package com.dzf.service.channel.report.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,9 +14,11 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DebitQueryVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
@@ -84,37 +88,23 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 			cal.add(Calendar.DATE, -1);
 			paramvo.setDenddate(new DZFDate(cal.getTime()).toString());
 		}
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append(" select a.pk_corp,a.innercode as corpcode,a.unitname as corpname,a.djoindate as chndate,a.channeltype,");
-		sql.append(" balance.outymny, balance.outfmny");
-		sql.append(" from bd_account a");
-        sql.append(" left join (select pk_corp,sum(decode(ipaytype,2,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outymny,");
-        sql.append("   			 sum(decode(ipaytype,3,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outfmny");
-        sql.append("   			from cn_balance where ipaytype!=1 and nvl(dr,0)=0 group by pk_corp) balance ");
-        sql.append(" 	on a.pk_corp = balance.pk_corp");
-        sql.append(" left join cn_contract contract on a.pk_corp = contract.pk_corp ");
-        sql.append(" and (contract.vstatus = 1 or contract.vstatus = 9 or contract.vstatus = 10) ");//
-        sql.append(" where nvl(contract.dr, 0) = 0 ");
-        if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
-            String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-            sql.append(" and a.pk_corp  in (" + corpIdS + ")");
-        }
-        sql.append(" group by a.pk_corp,a.innercode ,a.unitname,a.djoindate,a.channeltype,balance.outymny,balance.outfmny");
-        sql.append(" order by a.innercode ");
-		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		HashMap<String, List<DebitQueryVO>> map = queryDetail(paramvo,length);
+		
 		List<DebitQueryVO> shlist = new ArrayList<DebitQueryVO>();
-		if(list != null && list.size() > 0){
-			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, list, 2);
+		if(!map.isEmpty()){
 			String[] str={"one","two","three","four","five","six","seven",
 				        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
 			List<DebitQueryVO> retlist = new ArrayList<DebitQueryVO>();
+			paramvo.setCorps(map.keySet().toArray(new String[0]));
+			List<DebitQueryVO> list =qryChannel(paramvo);
+			HashMap<String, DebitQueryVO> qrySumMny = qrySumMny(paramvo);
+			DebitQueryVO getVO= null;
 		    for(DebitQueryVO bvo : list){
+		    	bvo.setCorpname(CodeUtils1.deCode(bvo.getCorpname()));
+		    	getVO = qrySumMny.get(bvo.getPk_corp());
+		    	bvo.setOutfmny(getVO.getOutfmny());
+		    	bvo.setOutymny(getVO.getOutymny());
 		    	List<DebitQueryVO> vos = map.get(bvo.getPk_corp());
-		    	if(vos==null){
-		    		continue;
-		    	}
 		    	HashMap<String, DebitQueryVO> map1=new HashMap<>();
 		        DZFDouble umny=DZFDouble.ZERO_DBL;
 		        DZFDouble rmny=DZFDouble.ZERO_DBL;
@@ -144,6 +134,35 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		    }
 		}
 		return shlist;
+	}
+	
+	/**
+	 * 查询加盟商查询期间内的汇总金额
+	 * @param paramvo
+	 * @return
+	 */
+	private HashMap<String,DebitQueryVO> qrySumMny(DebitQueryVO paramvo) {
+		HashMap<String,DebitQueryVO> map =new HashMap<>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append(" select contract.pk_corp,balance.outymny, balance.outfmny");
+		sql.append(" from cn_contract contract ");
+        sql.append(" left join (select pk_corp,sum(decode(ipaytype,2,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outymny,");
+        sql.append("   			 sum(decode(ipaytype,3,nvl(npaymny,0) - nvl(nusedmny,0),0)) as outfmny");
+        sql.append("   			from cn_balance where ipaytype!=1 and nvl(dr,0)=0 group by pk_corp) balance ");
+        sql.append(" 	on contract.pk_corp = balance.pk_corp");
+        sql.append(" where nvl(contract.dr, 0) = 0 ");
+        sql.append(" and (contract.vstatus = 1 or contract.vstatus = 9 or contract.vstatus = 10) ");
+        if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+            String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+            sql.append(" and contract.pk_corp  in (" + corpIdS + ")");
+        }
+        sql.append(" group by contract.pk_corp,balance.outymny,balance.outfmny");
+		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
+		for (DebitQueryVO debitQueryVO : list) {
+			map.put(debitQueryVO.getPk_corp(),debitQueryVO);
+		}
+		return map;
 	}
 	
 	/**
@@ -215,4 +234,135 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         }
         return map;
 	}
+	
+	/**
+	 * 查询出，有扣款数据的加盟商————————————(这有机会，能抽取出来公共方法)
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<DebitQueryVO> qryChannel(DebitQueryVO paramvo) throws DZFWarpException {
+		List<String> ids =new ArrayList<>();
+		List<DebitQueryVO>  nlist = qryNChannel(paramvo,ids);
+		List<DebitQueryVO>  Ylist = qryYChannel(paramvo,ids);
+		if(nlist != null && nlist.size() > 0){
+			nlist.addAll(Ylist);
+		}
+        if(nlist != null && nlist.size() > 0){
+            Collections.sort(nlist, new Comparator<DebitQueryVO>(){
+                @Override
+                public int compare(DebitQueryVO o1, DebitQueryVO o2) {
+					int sort=0;
+					if(o1.getAreacode()!=null && o2.getAreacode()!=null){
+						if(o1.getAreacode().equals(o2.getAreacode())){
+							sort=o1.getVprovince().compareTo(o2.getVprovince());
+						}else{
+							sort=o1.getAreacode().compareTo(o2.getAreacode());
+						}
+					}else if(o1.getAreacode()==null && o2.getAreacode()!=null){
+						sort=1;
+					}else if(o2.getAreacode()==null && o1.getAreacode()!=null){
+						sort=-1;
+					}else{
+						sort=o1.getVprovince().compareTo(o2.getVprovince());
+					}
+					return sort;
+				}
+            }
+           );
+        }
+		return nlist;
+	}
+	
+	/**
+	 * 查询 非省市负责人的加盟商
+	 */
+	private List<DebitQueryVO> qryNChannel(DebitQueryVO paramvo,List<String> ids) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append(" select ba.pk_corp, \n");
+		sql.append("        ba.innercode as corpcode, \n");
+		sql.append("        ba.unitname as corpname, \n");
+		sql.append("        ba.djoindate as chndate, \n");
+		sql.append("        ba.channeltype, \n");
+		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
+		sql.append("        cn.areacode,cb.vprovince, \n");
+		sql.append("        cb.userid   as cuserid \n");
+		sql.append("   from bd_account ba \n");
+		sql.append("	left join cn_chnarea_b cb on ba.pk_corp=cb.pk_corp \n");
+		sql.append("    left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
+		sql.append("      where nvl(ba.dr,0)=0 and nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
+		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='N'  \n");
+        if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+            String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+            sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
+        }
+        if(!StringUtil.isEmpty(paramvo.getCuserid())){
+        	sql.append(" and cb.userid=?   \n");
+        	sp.addParam(paramvo.getCuserid());
+        }
+		sql.append(" order by cn.areacode ,ba.innercode \n");
+		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
+		UserVO uvo = null;
+		for (DebitQueryVO debitQueryVO : list) {
+			uvo = UserCache.getInstance().get(debitQueryVO.getCuserid(), null);
+			if(uvo!=null){
+				debitQueryVO.setCusername(uvo.getUser_name());
+			}
+			uvo = UserCache.getInstance().get(debitQueryVO.getUserid(), null);
+			if(uvo!=null){
+				debitQueryVO.setUsername(uvo.getUser_name());
+			}
+			ids.add(debitQueryVO.getPk_corp());
+		}
+		return list;
+	}
+	
+	/**
+	 * 查询 是省市负责人的加盟商(不包含已查询出来的非省市负责人的加盟商)
+	 */
+	private List<DebitQueryVO> qryYChannel(DebitQueryVO paramvo,List<String> ids) {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append(" select ba.pk_corp, \n");
+		sql.append("        ba.innercode as corpcode, \n");
+		sql.append("        ba.unitname as corpname, \n");
+		sql.append("        ba.djoindate as chndate, \n");
+		sql.append("        ba.channeltype, \n");
+		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
+		sql.append("        cn.areacode,cb.vprovince, \n");
+		sql.append("        case  when cb.pk_corp is null then null else cb.userid end as cuserid \n");
+		sql.append("   from bd_account ba \n");
+		sql.append("   left join cn_chnarea_b cb on ba.vprovince=cb.vprovince \n");
+		sql.append("   left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
+		sql.append("      where nvl(ba.dr,0)=0 and nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
+		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='Y'  \n");
+        if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
+            String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
+            sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
+        }
+        if(ids!=null && ids.size()>0){
+        	  String corpIdS = SqlUtil.buildSqlConditionForIn(ids.toArray(new String[ids.size()]));
+              sql.append(" and ba.pk_corp not in (" + corpIdS + ")");
+        }
+        if(!StringUtil.isEmpty(paramvo.getCuserid())){
+        	sql.append(" and cb.userid=?   \n");
+        	sp.addParam(paramvo.getCuserid());
+        }
+		sql.append(" order by cn.areacode ,ba.innercode \n");
+		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
+		UserVO uvo = null;
+		for (DebitQueryVO debitQueryVO : list) {
+			uvo = UserCache.getInstance().get(debitQueryVO.getCuserid(), null);
+			if(uvo!=null){
+				debitQueryVO.setCusername(uvo.getUser_name());
+			}
+			uvo = UserCache.getInstance().get(debitQueryVO.getUserid(), null);
+			if(uvo!=null){
+				debitQueryVO.setUsername(uvo.getUser_name());
+			}
+		}
+		return list;
+	}
+	
 }

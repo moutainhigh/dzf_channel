@@ -107,6 +107,14 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			List<String> columnkeys = new ArrayList<String>();
 			int len=headlist.size();
 			Map<String, String> name = null;
+			columnames.add("大区");
+			columnkeys.add("areaname");
+			columnames.add("区总");
+			columnkeys.add("username");
+			columnames.add("省（市）");
+			columnkeys.add("vprovname");
+			columnames.add("渠道经理");
+			columnkeys.add("cusername");
 			columnames.add("加盟商编码");
 			columnkeys.add("corpcode");
 			columnames.add("加盟商名称");
@@ -115,7 +123,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			columnkeys.add("channeltype");
 			columnames.add("加盟日期");
 			columnkeys.add("chndate");
-			for (int i = 4 ; i< len; i ++) {
+			for (int i = 8 ; i< len; i ++) {
 				 name=(Map<String, String>) headlist.get(i);
 				 columnames.add(name.get("title"));
 			}
@@ -129,7 +137,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			columnkeys.add("ndedrebamny");
 			String[] str={"one","two","three","four","five","six","seven",
 			        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
-			for(int i = 0 ; i< len-6; i ++){
+			for(int i = 0 ; i< len-10; i ++){
 				columnames.add("预付款");
 				columnkeys.add(str[i]+"1");
 				columnames.add("返点");
@@ -152,7 +160,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
  			for(int i=0;i<columnames.size();i++){
 				ColumnCellAttr attr = new ColumnCellAttr();
 				attr.setColumname(columnames.get(i));
-				if(i<4){
+				if(i<8){
 					attr.setRowspan(2);
 					size[i]=3;
 				}else if(i<len){
@@ -193,7 +201,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		}
 		for (int i = 0 ; i< headlist1.size(); i ++) {
 			 name=(Map<String, String>) headlist1.get(i);
-			 if(i<4){
+			 if(i<8){
 				 fieldslist.add(name.get("field"));
 				 heads.add(name.get("title"));
 			 }else{
@@ -218,6 +226,10 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
 			List<String> fieldlist = new ArrayList<String>();
+			fieldlist.add("aname");
+			fieldlist.add("uname");
+			fieldlist.add("provname");
+			fieldlist.add("cuname");
 			fieldlist.add("ccode");
 			fieldlist.add("cname");
 			fieldlist.add("chtype");

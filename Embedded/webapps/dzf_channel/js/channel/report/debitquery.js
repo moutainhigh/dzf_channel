@@ -309,12 +309,24 @@ function load(queryData) {
 	var columns=new Array();
 	var columns1=new Array();
 	var columns2=new Array();
-	columns1[0]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
-	columns1[1]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
-	columns1[2]={width : '100',title : '加盟商类型',field : 'chtype',align:'left', rowspan:2,formatter :ftype};
-	columns1[3]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
-	columns1[4]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
-	columns1[5]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
+	
+	columns1[0]= {width : '130',title : '大区',field : 'aname',align:'left',rowspan:2}; 
+	columns1[1]={width : '100',title : '区总',field : 'uname',align:'left',rowspan:2};
+	columns1[2]={width : '110',title : '省（市）',field : 'provname',align:'left',rowspan:2};
+	columns1[3]={width : '100',title : '渠道经理',field : 'cuname',align:'left',rowspan:2}; 
+	columns1[4]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
+	columns1[5]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
+	columns1[6]={width : '100',title : '加盟商类型',field : 'chtype',align:'left', rowspan:2,formatter :ftype};
+	columns1[7]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
+	columns1[8]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
+	columns1[9]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
+	
+//	columns1[0]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
+//	columns1[1]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
+//	columns1[2]={width : '100',title : '加盟商类型',field : 'chtype',align:'left', rowspan:2,formatter :ftype};
+//	columns1[3]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
+//	columns1[4]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};
+//	columns1[5]={width : '200',title : '扣款合计',field : 'double2',align:'right',colspan:2};
 	
 	columns2[0]={width : '100',title : '预付款',field : 'outymny',align:'right',formatter: fny},
 	columns2[1]={width : '100',title : '返点',field : 'outfmny',align:'right',formatter: fny},
@@ -336,7 +348,7 @@ function load(queryData) {
 			} else {
 				var rows=data.rows;
 				for(var i=0;i<rows[0].num;i++){
-					columns1[6+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
+					columns1[10+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
 				}
 				var j=4;
 				for(var i=0;i<rows[0].num;i++){
