@@ -49,7 +49,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
+			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:270px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -82,9 +82,14 @@
 					</font>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:60px;text-align:right">加盟商：</label>
+					<label style="width:70px;text-align:right">加盟商：</label>
 					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
 					<input id="pk_account" type="hidden">	
+				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:right;width:70px;">渠道经理：</label> 
+					<input id="cuid" name="cuid" class="easyui-combobox" style="width:219px;height:28px;text-align:left"
+						data-options="valueField:'id',textField:'name'"/>  
 				</div>
 				</form>
 				<p>

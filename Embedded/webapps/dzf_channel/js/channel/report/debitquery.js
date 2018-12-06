@@ -15,7 +15,26 @@ $(function() {
 	load(queryData);//加载列表
 	initChannel();//初始化加盟商
 	quickfiltet();
+	initManager();
 });
+
+function initManager(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
+		data : {"qtype" :1},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#cuid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
 
 
 //初始化
@@ -159,6 +178,7 @@ function closeCx() {
 function clearCondition(){
 	$("#pk_account").val(null);
 	$("#channel_select").textbox("setValue",null);
+	$("#cuid").combobox("setValue",null);
 }
 
 //初始化加盟商
@@ -301,6 +321,7 @@ function getQueryData(){
 		"bdate" : bdate,
 		"edate" : edate,
 		"corps" : $("#pk_account").val(),
+		"cuid" : $("#cuid").combobox('getValue'),
 	};
 	return queryData;
 }

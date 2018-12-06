@@ -243,13 +243,17 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	 */
 	private List<DebitQueryVO> qryChannel(DebitQueryVO paramvo) throws DZFWarpException {
 		List<String> ids =new ArrayList<>();
+		List<DebitQueryVO>  list = new ArrayList<>();
 		List<DebitQueryVO>  nlist = qryNChannel(paramvo,ids);
 		List<DebitQueryVO>  Ylist = qryYChannel(paramvo,ids);
 		if(nlist != null && nlist.size() > 0){
-			nlist.addAll(Ylist);
+			list.addAll(nlist);
 		}
-        if(nlist != null && nlist.size() > 0){
-            Collections.sort(nlist, new Comparator<DebitQueryVO>(){
+		if(Ylist != null && Ylist.size() > 0){
+			list.addAll(Ylist);
+		}
+        if(list != null && list.size() > 0){
+            Collections.sort(list, new Comparator<DebitQueryVO>(){
                 @Override
                 public int compare(DebitQueryVO o1, DebitQueryVO o2) {
 					int sort=0;
@@ -271,7 +275,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
             }
            );
         }
-		return nlist;
+		return list;
 	}
 	
 	/**
@@ -331,7 +335,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append("        ba.channeltype, \n");
 		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
 		sql.append("        cn.areacode,cb.vprovince, \n");
-		sql.append("        case  when cb.pk_corp is null then null else cb.userid end as cuserid \n");
+		sql.append("        case when cb.pk_corp=ba.pk_corp then cb.userid else null end as cuserid \n");
 		sql.append("   from bd_account ba \n");
 		sql.append("   left join cn_chnarea_b cb on ba.vprovince=cb.vprovince \n");
 		sql.append("   left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
