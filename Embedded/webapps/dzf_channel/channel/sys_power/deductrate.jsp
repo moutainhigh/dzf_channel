@@ -82,12 +82,12 @@
   					<input type="hidden" name="corpid" id="corpid">
   					<input type="hidden" name="fcorpid" id="fcorpid">
 				<div class="time_col time_colp11">
-					<label style="text-align:right;width:100px;">新增：</label>
+					<label style="text-align:right;width:100px;"><i class="bisu">*</i>新增：</label>
 					<input class="easyui-numberbox" id ="enrate" name ="nrate" style="width:150px;height:25px;"
 						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div class="time_col time_colp11">
-					<label style="text-align:right;width:100px;">续费：</label>
+					<label style="text-align:right;width:100px;"><i class="bisu">*</i>续费：</label>
 					<input class="easyui-numberbox" id ="ernrate" name ="rnrate" style="width:150px;height:25px;" 
 						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
@@ -105,12 +105,12 @@
 			data-options="closed:true" >
 			<form id="setform" method="post" style="padding: 0px 30px;">
 				<div class="time_col time_colp11">
-					<label style="text-align:right;width:100px;">新增：</label>
+					<label style="text-align:right;width:100px;"><i class="bisu">*</i>新增：</label>
 					<input class="easyui-numberbox" id ="snrate" name ="nrate" style="width:150px;height:25px;"
 						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
 				<div class="time_col time_colp11">
-					<label style="text-align:right;width:100px;">续费：</label>
+					<label style="text-align:right;width:100px;"><i class="bisu">*</i>续费：</label>
 					<input class="easyui-numberbox" id ="srnrate" name ="rnrate" style="width:150px;height:25px;" 
 						data-options ="required:true,min:0, max:100"/>(%)
 				</div>
