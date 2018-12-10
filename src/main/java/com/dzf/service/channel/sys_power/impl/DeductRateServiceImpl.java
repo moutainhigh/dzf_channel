@@ -131,13 +131,15 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		if(list != null && list.size() > 0){
 			for(DeductRateVO rvo : list){
 				rvo.setCorpname(CodeUtils1.deCode(rvo.getCorpname()));
-				//1：普通加盟商；2：金牌加盟商；
-				if(rvo.getChanneltype() != null && rvo.getChanneltype() == 1){
-					rvo.setInewrate(10);
-					rvo.setIrenewrate(8);
-				}else if(rvo.getChanneltype() != null && rvo.getChanneltype() == 2){
-					rvo.setInewrate(5);
-					rvo.setIrenewrate(5);
+				if(StringUtil.isEmpty(rvo.getPk_deductrate())){
+					//1：普通加盟商；2：金牌加盟商；
+					if(rvo.getChanneltype() != null && rvo.getChanneltype() == 1){
+						rvo.setInewrate(10);
+						rvo.setIrenewrate(8);
+					}else if(rvo.getChanneltype() != null && rvo.getChanneltype() == 2){
+						rvo.setInewrate(5);
+						rvo.setIrenewrate(5);
+					}
 				}
 				if(rvo.getCorpcode().indexOf(pamvo.getCorpcode()) != -1 
 						|| rvo.getCorpname().indexOf(pamvo.getCorpcode()) != -1){
