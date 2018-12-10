@@ -145,6 +145,9 @@ public class DeductRateServiceImpl implements IDeductRateService {
 				}
 			}
 		}
+		if (retlist != null && retlist.size() > 0) {
+			setShowName(retlist);
+		}
 		return retlist;
 	}
 
