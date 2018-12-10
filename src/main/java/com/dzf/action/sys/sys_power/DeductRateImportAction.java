@@ -221,6 +221,7 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 
 				if (excelvo != null && isdatarow) {
 					checkIsNotEmpty(excelvo, iBegin + 1);
+					checkData(excelvo, iBegin + 1);
 					clist.add(excelvo);
 				}
 			}
@@ -233,6 +234,27 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 			throw new BusinessException("解析Excel失败");
 		}
 		return vos;
+	}
+	
+	/**
+	 * 最大最小值校验
+	 * @param excelvo
+	 * @param iBegin
+	 * @throws DZFWarpException
+	 */
+	private void checkData(DeductRateVO excelvo, int iBegin) throws DZFWarpException {
+		if(excelvo.getInewrate().compareTo(0) < 0){
+			throw new BusinessException("第" + iBegin + "行新增不能小于0");
+		}
+		if(excelvo.getInewrate().compareTo(100) > 0){
+			throw new BusinessException("第" + iBegin + "行新增不能大于100");
+		}
+		if(excelvo.getIrenewrate().compareTo(0) < 0){
+			throw new BusinessException("第" + iBegin + "行续费不能小于0");
+		}
+		if(excelvo.getIrenewrate().compareTo(100) > 0){
+			throw new BusinessException("第" + iBegin + "行续费不能大于100");
+		}
 	}
 
 	/**
@@ -249,7 +271,7 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 			throw new BusinessException("第" + iBegin + "行加盟商名称不能为空");
 		}
 		if (excelvo.getInewrate() == null) {
-			throw new BusinessException("第" + iBegin + "行加新增不能为空");
+			throw new BusinessException("第" + iBegin + "行新增不能为空");
 		}
 		if (excelvo.getIrenewrate() == null) {
 			throw new BusinessException("第" + iBegin + "行续费不能为空");
