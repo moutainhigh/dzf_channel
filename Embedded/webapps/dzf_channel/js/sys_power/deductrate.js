@@ -305,6 +305,14 @@ function onBatchSave() {
 		});
 		return;
 	}
+	
+	if(!$('#setform').form('validate')){
+		Public.tips({
+			content : '必输信息为空或格式不正确',
+			type : 2
+		});
+		return;
+	}
 
 	var postdata = new Object();
 	postdata["data"] = JSON.stringify(serializeObject($('#setform')));
