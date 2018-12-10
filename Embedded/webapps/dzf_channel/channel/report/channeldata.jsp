@@ -105,7 +105,7 @@
 					</div>
 					<!-- 年度查询条件 end -->
 					<div style="margin-left:20px;display:inline">
-					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick='lineQry()'>查询</a>
+					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" style="margin-bottom: 0px; " onclick='load()'>查询</a>
 					</div>
 				</div>
 			</div>

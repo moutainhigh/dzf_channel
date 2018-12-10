@@ -12,18 +12,18 @@ $(function() {
 function initQry(){
 	initPeriod("#bperiod");
 	initPeriod("#eperiod");
-	//线状图 季度查询条件初始化
+	//季度查询条件初始化
 	$('#byear').combobox('setValue',$('#year').val());
 	$('#eyear').combobox('setValue',$('#year').val());
 	$('#bjd').combobox('setValue',$('#bjdv').val());
 	$('#ejd').combobox('setValue',$('#ejdv').val());
-	//线状图 年度查询条件初始化
+	//年度查询条件初始化
 	$('#bqyear').combobox('setValue',$('#year').val());
 	$('#eqyear').combobox('setValue',$('#year').val());
 }
 
 /**
- * 线状图监听事件
+ * 监听事件
  */
 function initListen(){
 	$("#month").show();
@@ -51,7 +51,7 @@ function initListen(){
 
 
 /**
- * 线状图查询
+ * 查询
  */
 function load(){
 	var qrytype = $('#qrytype').combobox('getValue');
