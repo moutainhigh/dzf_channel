@@ -57,8 +57,8 @@
 				<form id = "qryfrom">
 				<div class="sel_time">
 					<div class="time_col">
-						<input id="qj" type="radio" name="seledate" checked="true" value="qj"/>
-						<label style="width:45px;" for='qj'>期间：</label> 
+						
+						<label style="width:72px;text-align: right;" for='qj'><input id="qj" type="radio" name="seledate" checked="true" value="qj"/>&ensp;期间：</label> 
 						<font> 
 							<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28"  />
 						</font> 
@@ -69,8 +69,8 @@
 					</div>
 				</div>
 				<div class="time_col time_colp10">
-					<input id="rq" type="radio"  name="seledate" value="rq"/>
-					<label style="width:45px;" for='rq'>日期：</label> 
+				
+					<label style="width:69px;text-align: right;" for='rq'><input id="rq" type="radio"  name="seledate" value="rq"/>&ensp;日期：</label> 
 					<font>
 						<input id="bdate" name="bdate"  class="easyui-datebox" 
 							data-options="required:true,width:137,height:28,validType:'checkdate'" value=<%=last%>/>
@@ -83,12 +83,12 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:70px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
+					<input id="channel_select" class="easyui-textbox" style="width:296px;height:28px;" />
 					<input id="pk_account" type="hidden">	
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:70px;">渠道经理：</label> 
-					<input id="cuid" name="cuid" class="easyui-combobox" style="width:219px;height:28px;text-align:left"
+					<input id="cuid" name="cuid" class="easyui-combobox" style="width:296px;height:28px;text-align:left"
 						data-options="valueField:'id',textField:'name'"/>  
 				</div>
 				</form>
