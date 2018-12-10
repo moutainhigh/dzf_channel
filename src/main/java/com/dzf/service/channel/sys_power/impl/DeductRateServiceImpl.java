@@ -112,6 +112,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		sql.append("  LEFT JOIN cn_deductrate d ON t.pk_corp = d.pk_corp  \n"); 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n"); 
 		sql.append("   AND nvl(d.dr, 0) = 0  \n"); 
+		sql.append("   AND t.fathercorp = '000001'  \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n"); 
 		sql.append("   AND (t.drelievedate IS NULL OR t.drelievedate > ?)");
 		spm.addParam(String.valueOf(new DZFDate()));
