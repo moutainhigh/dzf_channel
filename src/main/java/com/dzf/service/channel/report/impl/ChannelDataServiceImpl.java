@@ -245,7 +245,7 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 			String period;
 			ContQryVO getVO; 
 			for(int i = 0; i < showdate.size(); i++){
-				period = ToolsUtil.getSeason(showdate.get(i));
+				period = showdate.get(i);
 				getVO= map.get(period);
 				if(getVO==null){
 					ndeductmny.add(submny);
