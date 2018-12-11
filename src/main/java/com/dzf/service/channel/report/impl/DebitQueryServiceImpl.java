@@ -356,7 +356,15 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append(" order by cn.areacode ,ba.innercode \n");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
+		HashMap<String, DebitQueryVO> map =new HashMap<>();
 		for (DebitQueryVO debitQueryVO : list) {
+			if(map.isEmpty() || !map.containsKey(debitQueryVO.getPk_corp())){
+				map.put(debitQueryVO.getPk_corp(), debitQueryVO);
+			}else if(!StringUtil.isEmpty(debitQueryVO.getCuserid())){
+				map.put(debitQueryVO.getPk_corp(), debitQueryVO);
+			}else{
+				continue;
+			}
 			uvo = UserCache.getInstance().get(debitQueryVO.getCuserid(), null);
 			if(uvo!=null){
 				debitQueryVO.setCusername(uvo.getUser_name());
@@ -366,7 +374,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 				debitQueryVO.setUsername(uvo.getUser_name());
 			}
 		}
-		return list;
+		return new ArrayList<DebitQueryVO>(map.values());
 	}
 	
 }
