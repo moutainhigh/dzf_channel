@@ -182,6 +182,14 @@ function onEdit(index) {
  * 修改-保存
  */
 function onSave(){
+	if(!$('#editform').form('validate')){
+		Public.tips({
+			content : '必输信息为空或格式不正确',
+			type : 2
+		});
+		return;
+	}
+	
 	var postdata = new Object();
 	postdata["data"] = JSON.stringify(serializeObject($('#editform')));
 	
