@@ -140,15 +140,15 @@ function load() {
 		showFooter:true,
 		columns : [ [ 
 		    {width: '140', title: '渠道经理id', field: 'uid', hidden: true},
-		 	{width : '100',title : '渠道经理',field : 'uname',align:'left'}, 
-		 	{width : '100',title : '加盟商编码',field : 'corpid',align:'left'}, 
-			{width : '250',title : '加盟商名称',field : 'corpnm',align:'left'}, 
-		    {width : '100',title : '预付款扣款',field : 'ndemny',align:'right',
+		 	{width : '180',title : '渠道经理',field : 'uname',align:'left'}, 
+		 	{width : '180',title : '加盟商编码',field : 'corpid',align:'left'}, 
+			{width : '280',title : '加盟商名称',field : 'corpnm',align:'left'}, 
+		    {width : '180',title : '预付款扣款',field : 'ndemny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
-			{width : '100',title : '返点扣款',field : 'nderebmny',align:'right',
+			{width : '180',title : '返点扣款',field : 'nderebmny',align:'right',
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
