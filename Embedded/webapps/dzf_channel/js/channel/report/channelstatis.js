@@ -160,8 +160,8 @@ function load() {
 	});
 }
 
-
 function insertData(data){
+	debugger
     var sndemny = 0;	
     var snderebmny = 0;	
     var j=0;
@@ -171,7 +171,7 @@ function insertData(data){
 		if(i==0 || (row.uid!=data.rows[i-1].uid && j==0)){
 			sndemny=parseFloat(row.ndemny);
 			snderebmny=parseFloat(row.nderebmny);
-			j=0;
+			j++;
 		}else if(row.uid == data.rows[i-1].uid){
 			sndemny+= parseFloat(row.ndemny);
 			snderebmny+= parseFloat(row.nderebmny);
@@ -190,4 +190,17 @@ function insertData(data){
 			j=0;
 		}
 　	}
+	if(data.rows!=null && data.rows.length>0){
+		$('#grid').datagrid('insertRow',{
+			index: data.rows.length,
+			row: {
+				uid: '',
+				uname: '合计',
+				ndemny	:	sndemny,
+				nderebmny 	:	snderebmny ,
+			}
+		});
+		$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
+	}
 }
+
