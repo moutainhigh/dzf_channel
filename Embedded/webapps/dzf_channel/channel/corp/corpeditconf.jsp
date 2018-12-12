@@ -52,18 +52,18 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="channel_select" class="easyui-textbox" style="width:282px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 80px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 290px; height: 28px;" 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 282px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">审核状态：</label>
 					<select id="qtype" class="easyui-combobox" data-options="panelHeight:'auto'" 
-						style="width:130px;height:28px;">
+						style="width:282px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">待审核</option>
 						<option value="2">已审核</option>
