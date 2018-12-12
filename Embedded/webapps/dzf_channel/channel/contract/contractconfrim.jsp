@@ -303,13 +303,7 @@
 					</form>
 				</div>
 				<!-- 原合同信息end -->
-					
-				<!-- 附件信息begin -->
-				<div id ="fileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
-					<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
-						<ul class="tu_block" id="filedocs"></ul>
-					</div>
-				</div>
+			
 				<form id = "deductfrom" method="post">
 					<!-- 扣款信息begin -->
 					<div class="time_col time_colp11 heading">
@@ -460,7 +454,13 @@
                 <!-- 驳回历史begin -->
                 <div id="rejereson"></div>
 				<!-- 驳回历史 -->
-				
+						
+				<!-- 附件信息begin -->
+				<div id ="fileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
+					<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
+						<ul class="tu_block" id="filedocs"></ul>
+					</div>
+				</div>
 				<!-- 附件信息begin -->
 				<div id="filedoc"></div>
 				<!-- 附件信息end -->
