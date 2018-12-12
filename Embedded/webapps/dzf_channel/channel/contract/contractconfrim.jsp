@@ -208,7 +208,63 @@
 							style="width:55%; height:28px; text-align:left;">
 					</div>
 				</div>
-						
+						<!-- 扣款信息begin -->
+					<div class="time_col time_colp11 heading">
+						<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">扣款</label>
+					</div>
+					<div class="time_col time_colp11 " style="margin-top:10px;">
+						<input id="contractid" name="contractid" type="hidden">
+						<input id="tstp" name="tstp" type="hidden">
+						<input id="area" name="area" type="hidden">
+						<input id="corpid" name="corpid" type="hidden">
+						<input id="pid" name="pid" type="hidden">
+						<input id="corpkid" name="corpkid" type="hidden">
+						<input id="corpkna" name="corpkna" type="hidden">
+						<input id="bdate" name="bdate" type="hidden">
+						<input id="edate" name="edate" type="hidden">
+						<input id="typemin" name="typemin" type="hidden">
+						<input id="corpnm" name="corpnm" type="hidden">
+						<input id="adviser" name="adviser" type="hidden">
+						<input id="submitime" name="submitime" type="hidden">
+						<input id="isncust" name="isncust" type="hidden">
+						<input id="sourid" name="sourid" type="hidden">
+						<input id="pstatus" name="pstatus" type="hidden">
+						<input id="cperiod" name="cperiod" type="hidden">
+						<div style="width:24%;display: inline-block;">
+							<label style="width:35%;text-align: right;">扣款比例：</label>
+							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,readonly:false"
+								style="width:50%;height:28px;text-align:left; ">%
+						</div>
+						<div  style="width:24%;display: inline-block;">
+							<label style="width:35%;text-align: right;">扣款金额：</label>
+							<input id="ndesummny" name="ndesummny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
+								data-options="readonly:true,precision:2,groupSeparator:','" >
+						</div>
+						<div style="width:24%;display: inline-block;">
+							<label style="width:35%;text-align: right;">扣费日期：</label>
+							<input id="dedate" name="dedate" class="easyui-datebox"  data-options="readonly:true" 
+								style="width:60%;height:28px;text-align:left"></input>
+						</div>
+						<div class="decan" style="width:24%;display: inline-block;">
+							<label style="width:35%;text-align: right;">经办人：</label>
+							<input id="vopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
+								style="width:60%;height:28px;text-align:left; ">
+							<input id="voper" name="voper" type="hidden">
+						</div>
+					</div>
+					<div class="time_col time_colp11 ">
+						&emsp;&emsp;<input id="debit" name="opertype" type="radio" value="1" checked />
+						<label>扣款</label>
+						<input name="opertype" type="radio" value="2" />
+						<label>驳回</label>
+						<label style="text-align: right;width:94px;">驳回原因：</label>
+						<textarea id="confreason" name="confreason" class="easyui-textbox"  
+							data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
+							style="height:33px; width:60%;border-radius: 5px;">
+						</textarea>
+						<input id="confreasonid" name="confreasonid" type="hidden">
+					</div>
+					<!-- 扣款信息end -->	
 				<!-- 原合同信息begin -->
 				<div id = "oldinfo" style="height:0;">
 					<form id = "oldfrom" method="post">
@@ -305,63 +361,7 @@
 				<!-- 原合同信息end -->
 			
 				<form id = "deductfrom" method="post">
-					<!-- 扣款信息begin -->
-					<div class="time_col time_colp11 heading">
-						<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">扣款</label>
-					</div>
-					<div class="time_col time_colp11 " style="margin-top:10px;">
-						<input id="contractid" name="contractid" type="hidden">
-						<input id="tstp" name="tstp" type="hidden">
-						<input id="area" name="area" type="hidden">
-						<input id="corpid" name="corpid" type="hidden">
-						<input id="pid" name="pid" type="hidden">
-						<input id="corpkid" name="corpkid" type="hidden">
-						<input id="corpkna" name="corpkna" type="hidden">
-						<input id="bdate" name="bdate" type="hidden">
-						<input id="edate" name="edate" type="hidden">
-						<input id="typemin" name="typemin" type="hidden">
-						<input id="corpnm" name="corpnm" type="hidden">
-						<input id="adviser" name="adviser" type="hidden">
-						<input id="submitime" name="submitime" type="hidden">
-						<input id="isncust" name="isncust" type="hidden">
-						<input id="sourid" name="sourid" type="hidden">
-						<input id="pstatus" name="pstatus" type="hidden">
-						<input id="cperiod" name="cperiod" type="hidden">
-						<div style="width:24%;display: inline-block;">
-							<label style="width:35%;text-align: right;">扣款比例：</label>
-							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,readonly:false"
-								style="width:50%;height:28px;text-align:left; ">%
-						</div>
-						<div  style="width:24%;display: inline-block;">
-							<label style="width:35%;text-align: right;">扣款金额：</label>
-							<input id="ndesummny" name="ndesummny" class="easyui-numberbox" style="width:60%;height:28px;text-align:left;"
-								data-options="readonly:true,precision:2,groupSeparator:','" >
-						</div>
-						<div style="width:24%;display: inline-block;">
-							<label style="width:35%;text-align: right;">扣费日期：</label>
-							<input id="dedate" name="dedate" class="easyui-datebox"  data-options="readonly:true" 
-								style="width:60%;height:28px;text-align:left"></input>
-						</div>
-						<div class="decan" style="width:24%;display: inline-block;">
-							<label style="width:35%;text-align: right;">经办人：</label>
-							<input id="vopernm" name="vopernm" class="easyui-textbox" data-options="readonly:true" 
-								style="width:60%;height:28px;text-align:left; ">
-							<input id="voper" name="voper" type="hidden">
-						</div>
-					</div>
-					<div class="time_col time_colp11 ">
-						&emsp;&emsp;<input id="debit" name="opertype" type="radio" value="1" checked />
-						<label>扣款</label>
-						<input name="opertype" type="radio" value="2" />
-						<label>驳回</label>
-						<label style="text-align: right;width:94px;">驳回原因：</label>
-						<textarea id="confreason" name="confreason" class="easyui-textbox"  
-							data-options="readonly:true,multiline:true,validType:'length[0,200]'" 
-							style="height:33px; width:60%;border-radius: 5px;">
-						</textarea>
-						<input id="confreasonid" name="confreasonid" type="hidden">
-					</div>
-					<!-- 扣款信息end -->
+				
 				
 					<!-- 合同信息 begin -->
 					<div class="time_col time_colp11 heading">
