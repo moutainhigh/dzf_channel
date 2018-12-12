@@ -90,17 +90,17 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:97px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
+					<input id="channel_select" class="easyui-textbox" style="width:282px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 97px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 219px; height: 28px;" 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 282px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:97px;text-align:right">发票状态：</label>
-					<select id="istatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:219px;height:28px;">
+					<select id="istatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">待开票</option>
 						<option value="2">已开票</option>
@@ -110,7 +110,7 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:97px;text-align:right">发票类型：</label>
-					<select id="itype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:219px;height:28px;">
+					<select id="itype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="0">专用发票</option>
 						<option value="1">普通发票</option>
