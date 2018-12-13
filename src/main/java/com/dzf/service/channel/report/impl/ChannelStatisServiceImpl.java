@@ -10,6 +10,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
@@ -31,12 +32,10 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 
 	@Override
 	public List<ManagerVO> query(ManagerVO vo) throws DZFWarpException{
-		Integer level = pubService.getDataLevel(vo.getCuserid());
-		if(level==null){
-			return new ArrayList<ManagerVO>();
-		}else if(level==1){
-			vo.setCuserid(null);
-		}
+	   	String condition = pubService.makeCondition(vo.getCuserid(),null,IStatusConstant.IQUDAO);
+    	if(condition==null){
+    		return new ArrayList<ManagerVO>();
+    	}
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(vo.getDbegindate());
 		spm.addParam(vo.getDenddate());
@@ -70,18 +69,18 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("     yt.pk_corp,yt.vchannelid as userid");
 		buf.append("  from cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
+		buf.append(" LEFT JOIN  bd_account ba on t.pk_corp = ba.pk_corp ");
 		buf.append(" where nvl(yt.isncust, 'N') = 'N' ");
 		buf.append("   and nvl(t.dr, 0) = 0 ");
 		buf.append("   and nvl(yt.dr, 0) = 0 ");
 		buf.append("   and (yt.vstatus = 1 or yt.vstatus = 9 or yt.vstatus = 10) ");
 		buf.append("   and yt.vchannelid is not null ");
+     	if(!condition.equals("alldata")){
+     		buf.append(condition);
+    	}
 		if(!StringUtil.isEmpty(vo.getUserid())){
 			buf.append("   and yt.vchannelid=? ");
 			spm.addParam(vo.getUserid());
-		}
-		if(!StringUtil.isEmpty(vo.getCuserid())){
-			buf.append("   and yt.vchannelid=? ");
-			spm.addParam(vo.getCuserid());
 		}
 		if(!StringUtil.isEmpty(vo.getPk_corp())){
 		    String[] strs = vo.getPk_corp().split(",");
