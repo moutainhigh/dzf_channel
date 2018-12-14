@@ -113,7 +113,7 @@
 						<option value="8">服务到期</option>
 						<option value="7">已驳回</option>
 					</select>
-					<label style="width:80px;text-align:right">客户类型：</label>
+					<label style="width:74px;text-align:right">客户类型：</label>
 					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:100px;height:28px;">
 						<option value="">全部</option>
@@ -123,17 +123,17 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:290px;height:28px;"/>
+					<input id="channel_select" class="easyui-textbox" style="width:284px;height:28px;"/>
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">客户：</label>
-					<input id="corpkna_ae" class="easyui-textbox" style="width:290px;height:28px;"/>
+					<input id="corpkna_ae" class="easyui-textbox" style="width:284px;height:28px;"/>
 					<input id="corpkid_ae" name="corpkid" type="hidden"> 
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">渠道经理：</label>
-					<input id="manager" class="easyui-textbox" style="width:290px;height:28px;" />
+					<input id="manager" class="easyui-textbox" style="width:284px;height:28px;" />
 					<input id="managerid" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
