@@ -63,7 +63,7 @@ function initDataGrid(){
 		idField : 'id',
 		pagination : true,
 		pageSize : 20,
-		pageList : [ 20, 50, 100, 200 ],
+		pageList : [ 20, 50, 100, 200, 1000 ],
 		showFooter:true,
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
 		            {width : '140',title : '大区',field : 'aname',align : 'left'},
