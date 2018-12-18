@@ -38,6 +38,8 @@ public class ChnPayBalExcelField implements IExceport<ChnBalanceRepVO>{
 			new Fieldelement("vpaytypename", "付款类型",false,0,false),
 			new Fieldelement("initbalance", "期初余额",true,2,false),
 			new Fieldelement("npaymny", "本期付款金额",true,2,false),
+			new Fieldelement("ncondedmny", "合同扣款",true,2,false),
+			new Fieldelement("nbuymny", "商品购买",true,2,false),
 			new Fieldelement("nusedmny","本期已用金额",true,2,false),
 			new Fieldelement("nbalance", "期末余额",true,2,false),
 	};
