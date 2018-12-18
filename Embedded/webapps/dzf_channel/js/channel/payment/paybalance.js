@@ -25,7 +25,7 @@ function load(){
 		singleSelect : true,
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
-		pageList : DZF.pageList,
+		pageList : [100, 200, 300, 400, 500, 1000],
 		showFooter:true,
 		columns : [ [{
 			width : '140',
