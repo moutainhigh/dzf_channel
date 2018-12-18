@@ -192,6 +192,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					}
 				}
 
+				//期初余额
 				if (initmap != null && !initmap.isEmpty()) {
 					vo = initmap.get(pk);
 					if (vo != null) {
@@ -204,6 +205,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 						}
 					}
 				}
+				
+				//使用金额
 				if (datamap != null && !datamap.isEmpty()) {
 					vo = datamap.get(pk);
 					if (vo != null) {
@@ -213,10 +216,14 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
+							repvo.setNcondedmny(vo.getNyfhtmny());
+							repvo.setNbuymny(vo.getNyfspmny());
 						} else if (paytype == 3) {
 							repvo.setNpaymny(vo.getNpaymny());
 							repvo.setNusedmny(vo.getNusedmny());
 							repvo.setIdeductpropor(vo.getIdeductpropor());
+							repvo.setNcondedmny(vo.getNfdhtmny());
+							repvo.setNbuymny(vo.getNfdspmny());
 						}
 					}
 				}
@@ -544,11 +551,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT a.pk_corp, \n") ;
 		sql.append("       a.ipaytype, \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; //保证金
 		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0), 0)) AS charge, \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0), 0)) AS charge, \n") ; //预付款
 		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; 
+		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; //返点
 		sql.append("  FROM cn_detail a \n") ; 
 		sql.append("  LEFT JOIN bd_account ba on a.pk_corp = ba.pk_corp ");
 		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0) = 0 \n") ; 
@@ -597,8 +604,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("SELECT a.pk_corp, \n") ;
 		sql.append("       a.ipaytype, \n") ; 
 		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0) ,3 , nvl(a.npaymny,0),0)) AS npaymny, \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0),3 , nvl(a.nusedmny,0),0)) AS nusedmny, \n") ; 
+		sql.append("       SUM(nvl(a.npaymny,0)) AS npaymny, \n") ; 
+		sql.append("       SUM(nvl(a.nusedmny,0)) AS nusedmny, \n") ; 
+		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfhtmny, \n");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfspmny, \n");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdhtmny, \n");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdspmny, \n");
 		sql.append("       MIN(CASE a.ideductpropor WHEN 0 THEN NULL ELSE a.ideductpropor END) AS ideductpropor \n") ; 
 		sql.append("  FROM cn_detail a \n") ; 
 		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");

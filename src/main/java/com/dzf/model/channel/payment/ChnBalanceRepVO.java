@@ -82,7 +82,73 @@ public class ChnBalanceRepVO extends SuperVO{
 	
 	@FieldAlias("mname")
 	private String vmanagername; // 渠道经理（只做界面展示）
+	
+	@FieldAlias("condedmny")
+    private DZFDouble ncondedmny;//合同扣款
+	
+	@FieldAlias("buymny")
+    private DZFDouble nbuymny;//商品购买
+	
+	@FieldAlias("yfhtmny")
+	private DZFDouble nyfhtmny;//预付合同扣款
+	
+	@FieldAlias("yfspmny")
+	private DZFDouble nyfspmny;//预付商品扣款
+	
+	@FieldAlias("fdhtmny")
+	private DZFDouble nfdhtmny;//返点合同扣款
+	
+	@FieldAlias("fdspmny")
+	private DZFDouble nfdspmny;//返点商品扣款
     
+	public DZFDouble getNyfhtmny() {
+		return nyfhtmny;
+	}
+
+	public void setNyfhtmny(DZFDouble nyfhtmny) {
+		this.nyfhtmny = nyfhtmny;
+	}
+
+	public DZFDouble getNyfspmny() {
+		return nyfspmny;
+	}
+
+	public void setNyfspmny(DZFDouble nyfspmny) {
+		this.nyfspmny = nyfspmny;
+	}
+
+	public DZFDouble getNfdhtmny() {
+		return nfdhtmny;
+	}
+
+	public void setNfdhtmny(DZFDouble nfdhtmny) {
+		this.nfdhtmny = nfdhtmny;
+	}
+
+	public DZFDouble getNfdspmny() {
+		return nfdspmny;
+	}
+
+	public void setNfdspmny(DZFDouble nfdspmny) {
+		this.nfdspmny = nfdspmny;
+	}
+
+	public DZFDouble getNcondedmny() {
+		return ncondedmny;
+	}
+
+	public void setNcondedmny(DZFDouble ncondedmny) {
+		this.ncondedmny = ncondedmny;
+	}
+
+	public DZFDouble getNbuymny() {
+		return nbuymny;
+	}
+
+	public void setNbuymny(DZFDouble nbuymny) {
+		this.nbuymny = nbuymny;
+	}
+
 	public String getVmanagername() {
 		return vmanagername;
 	}

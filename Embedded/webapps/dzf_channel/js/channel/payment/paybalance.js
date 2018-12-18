@@ -127,6 +127,26 @@ function load(){
 			}
 		}, {
 			width : '100',
+			title : '合同扣款',
+			align:'right',
+            halign:'center',
+			field : 'condedmny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '100',
+			title : '商品购买',
+			align:'right',
+            halign:'center',
+			field : 'buymny',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			}
+		},{
+			width : '100',
 			title : '本期已用金额',
 			align:'right',
             halign:'center',
