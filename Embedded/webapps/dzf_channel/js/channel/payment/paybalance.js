@@ -739,7 +739,7 @@ function getQueryData(cpname){
 		cpname = null
 	}
 	var aname = $("#aname").combobox('getValue');
-	var qtype = $("input[name='seletype']:checked").val();
+	var qtype = $("#qtype").combobox('getValue');
 	var mid = $("#managerid").val();
 	var queryData = {
 		"bperiod" : bperiod,

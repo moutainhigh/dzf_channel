@@ -71,41 +71,40 @@
 			<div class="sel_time">
 				<div class="time_col">
 					<input id="da" type="radio" name="seledate" checked value="da"/>
-					<label for="da">日期：</label> 
+					<label style="width:51px;" for="da">日期：</label> 
 					<font> 
 						<input id="begdate" type="text" class="easyui-datebox" data-options="validType:'checkdate'"
-							style="width:137px;height:30px;" value="<%=lastDate%>" />
+							style="width:135px;height:30px;" value="<%=lastDate%>" />
 					</font> 
 					<font>-</font> 
 					<font> 
 						<input id="enddate" type="text"  class="easyui-datebox" data-options="validType:'checkdate'"
-							style="width:137px;height:30px;" value="<%=nowDate%>"/>
+							style="width:135px;height:30px;" value="<%=nowDate%>"/>
 					</font>
 				</div>
 			</div>
 			<div class="time_col time_colp10">
 				<input id="pe" type="radio"  name="seledate" value="pe"/>
-				<label style="width:70px;" for="pe">期间：</label> 
+				<label style="width:51px;" for="pe">期间：</label> 
 				<font>
 					<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=pym%> />
+						style="width:135px;height:30px;" value=<%=pym%> />
 				</font>
 				<font>-</font>
 				<font>
 					<input type="text" id="endperiod" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=ym%> />
+						style="width:135px;height:30px;" value=<%=ym%> />
 				</font>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;">付款类型：</label> 
-				<input id="yfk" type="radio"  name="seletype" checked value="2"/>
-				<label style="width:60px;" for='yfk'>预付款</label> 
-				<input id="fd" type="radio"  name="seletype" value="3"/>
-				<label style="width:45px;" for='fd'>返点</label> 
-				<input id="bzj" type="radio"  name="seletype" value="1"/>
-				<label style="width:60px;" for='bzj'>保证金</label> 
-				<input id="all" type="radio"  name="seletype" value="-1"/>
-				<label style="width:60px;" for='all'>全部</label> 
+				<select id="qtype" class="easyui-combobox" 
+					data-options ="editable:false,panelHeight:100" style="width:290px; height:28px;">
+					<option value="2" selected="selected">预付款</option>
+					<option value="3">返点</option>
+					<option value="1">保证金</option>
+					<option value="-1">预付款+返点</option>
+				</select>
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">渠道经理：</label>

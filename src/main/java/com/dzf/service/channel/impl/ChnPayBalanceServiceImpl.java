@@ -569,6 +569,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND a.ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
+		}else{
+			sql.append(" AND a.ipaytype in (2, 3) \n");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
@@ -624,6 +626,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			sql.append(" AND a.ipaytype = ? \n");
 			spm.addParam(paramvo.getQrytype());
+		}else{
+			sql.append(" AND a.ipaytype in (2, 3) \n");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
