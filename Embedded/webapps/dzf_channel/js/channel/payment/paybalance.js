@@ -337,7 +337,7 @@ function qryDetail(index){
 	var row= rows[index];
 	var qtype = null;
 	if(row.iptype == 2){
-		qtype = $("input[name='seletype']:checked").val();
+		qtype = $("#qtype").combobox('getValue');
 	}else{
 		qtype = row.iptype;
 	}
