@@ -281,6 +281,8 @@ function calFooter(){
     var npmny = 0;	
     var usemny = 0;	
     var balmny = 0;	
+    var condedmny = 0;
+    var buymny = 0;
     for (var i = 0; i < rows.length; i++) {
     	custnum += getFloatValue(rows[i].custnum);
     	zeronum += getFloatValue(rows[i].zeronum);
@@ -291,6 +293,8 @@ function calFooter(){
     	npmny += getFloatValue(rows[i].npmny);
     	usemny += getFloatValue(rows[i].usemny);
     	balmny += getFloatValue(rows[i].balmny); 
+    	condedmny += getFloatValue(rows[i].condedmny);
+    	buymny += getFloatValue(rows[i].buymny);
     }
     footerData['incode'] = '合计';
     footerData['custnum'] = custnum;
@@ -300,6 +304,8 @@ function calFooter(){
     footerData['namny'] = namny;
     footerData['initbal'] = initbal;
     footerData['npmny'] = npmny;
+    footerData['condedmny'] = condedmny;
+    footerData['buymny'] = buymny;
     footerData['usemny'] = usemny;
     footerData['balmny'] = balmny;
     var fs=new Array(1);
