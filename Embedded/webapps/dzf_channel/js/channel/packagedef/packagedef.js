@@ -1,5 +1,5 @@
 var parentRow;
-
+var grid;
 //自适应边框
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -13,7 +13,7 @@ $(function() {
 });
 
 function initGrid(){
-	$('#grid').datagrid({
+	grid = $('#grid').datagrid({
 		url : DZF.contextPath + '/channel/packageDef!query.action',
 		striped : true,
 		width: "auto",
@@ -73,7 +73,8 @@ function initGrid(){
                     	},{
                     		value: '小规模纳税人',
                     		text: '小规模纳税人'
-                    	},]
+                    	},],
+                    	required:true,
                     }
                 }
     		},{
@@ -94,6 +95,7 @@ function initGrid(){
                     	precision: 2,
                     	groupSeparator:',',
                     	validType:'length[1,8]',
+                    	required:true,
                     }
                 }
     		}, {
@@ -109,6 +111,7 @@ function initGrid(){
                     	precision: 0,
                     	min:0,
                     	validType:'length[1,2]',
+                    	required:true,
                     }
                 }
     		}, {
@@ -124,6 +127,7 @@ function initGrid(){
                     	precision: 0,
                     	min:0,
                     	validType:'length[1,6]',
+                    	required:true,
                     }
                 }
     		}, {
@@ -231,6 +235,14 @@ function addType () {
 }
 
 function save () {
+	var flag = endEdit(grid);
+	if(!flag){
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
+	}
 	var submitData = getSubmitData($("#grid"));
 	$.ajax({
 		type: "POST",
@@ -354,7 +366,7 @@ function reload() {
 }
 var editIndex = 0;
 function modify() {
-	var grid = $("#grid");
+//	var grid = $("#grid");
 	var rows = grid.datagrid("getChecked");
 	if(rows){
 		if(rows.length > 1){
@@ -394,9 +406,16 @@ function cancel () {
 
 function endEdit (grid) {
 	var len = grid.datagrid("getRows").length;
+	var datagrid;
 	for (var i = 0; i < len; i++) {
-		grid.datagrid("endEdit", i);
+		datagrid = grid.datagrid('validateRow', i);
+		if (!datagrid){
+			return false;
+		}else{
+			grid.datagrid("endEdit", i);
+		}
 	}
+	return true;
 }
 
 function showButtons(type) {
@@ -420,8 +439,22 @@ function showButtons(type) {
 }
 
 function getSubmitData (grid) {
-	endEdit(grid);
-	var newRows = grid.datagrid("getChanges", "inserted");
+//	endEdit(grid);
+	var newRows = $('#grid').datagrid("getChanges", "inserted");
+	var datagrid;
+	if(newRows != null && newRows.length > 0){
+		for (var i = 0; i < newRows.length; i++) {
+			datagrid = $("#grid").datagrid("validateRow", i);
+			if (!datagrid){
+				Public.tips({
+					content : "必输信息为空或格式不正确",
+					type : 2
+				});
+				return; 
+			}
+		}
+	}
+	
 	var deleteRows = grid.datagrid("getChanges", "deleted");
 	var updateRows = grid.datagrid("getChanges", "updated");
 	
