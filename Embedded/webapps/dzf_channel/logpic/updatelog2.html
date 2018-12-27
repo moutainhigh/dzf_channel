@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.181227"><cite>V1.181227</cite></a></li>';
 res = res+'<li><a href="#V1.181129"><cite>V1.181129</cite></a></li>';
 res = res+'<li><a href="#V1.181101"><cite>V1.181101</cite></a></li>';
 res = res+'<li><a href="#V1.180905"><cite>V1.180905</cite></a></li>';
@@ -67,16 +68,99 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2018年11月29日重磅更新
+	 &nbsp;2018年12月27日重磅更新
     </blockquote>
     <ul class="layui-timeline">
-    
+        <li class="layui-timeline-item">
+            <a name="V1.181227"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.181227&nbsp;&nbsp;<span class="layui-badge-rim">2018-12-27</span></h2>
+                </div>
+                <ul>
+                    <li>
+                        <h3>1.新增扣款率设置表</h3>
+                        <ul>
+                            <!-- <a target="_blank" href="./20180627/image001.png" >#查看图片</a> -->
+                            <li>可修改/批量修改加盟商合同扣款率，也可导出至Excel表修改再导入至系统中更新加盟商合同扣款率<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image01.png')" src="./20181227/image01.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>2.加盟商新增/续费逻辑更改</h3>
+                        <ul>
+                            <li>合同收费周期合计不满12个月，该客户再次提交加盟商合同该合同仍为新增合同，合同收费周期合计满12月，再次提交加盟商合同，该合同为续费合同
+                                <br>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>3.新增渠道数据统计表</h3>
+                        <ul>
+                            <li>统计所有加盟商的合同扣款金额合计额，分为预付款扣款与返点扣款。可按月度/季度/年进行查询
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image02.png')"  src="./20181227/image02.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>4.付款余额查询表优化</h3>
+                        <ul>
+                            <li>列表增加商品购买、合同扣款两个字段。
+                                <br>
+                                查询框付款类型支持预付款与返点同时查询。
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image03.png')"  src="./20181227/image03.png">
+                                <br>
+                                列表查看数增大至1000
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>5.返点金额统计表读取渠道区域设置</h3>
+                        <ul>
+                            <li>渠道经理可看到自己负责的加盟商数据，区总可查看自己负责大区的加盟商数据
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image04.png')"  src="./20181227/image04.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>6.新增渠道业绩统计表</h3>
+                        <ul>
+                            <li>统计表可查看渠道经理的实际业绩数据，合同的扣款金额计入合同保存时的渠道经理业绩数据
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image05.png')"  src="./20181227/image05.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>7.其他优化</h3>
+                        <ul>
+                            <li>纳税人资格变更合同审核界面原合同信息调整至扣款率上面
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image06.png')"  src="./20181227/image06.png">
+                                <br>
+                                加盟商扣款查询增加渠道经理，可按渠道经理查询数据
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181227/image07.png')"  src="./20181227/image07.png">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
      <li class="layui-timeline-item">
         <a name="V1.181129"></a>
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
         <div class="layui-timeline-content layui-text">
           <div class="layui-timeline-title" >
-            <h2 style="color: #FF5722;">V1.181129&nbsp;&nbsp;<span class="layui-badge-rim">2018-11-29</span></h2>
+            <h2 >V1.181129&nbsp;&nbsp;<span class="layui-badge-rim">2018-11-29</span></h2>
           </div>
           <ul>
             <li>
@@ -149,7 +233,7 @@ $(document).ready(function (){
                 <br>
                 <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20181127/image010.png')"  src="./20181127/image010.png">
                 </li>
-                
+
               </ul>
             </li>
             <li>
@@ -172,8 +256,8 @@ $(document).ready(function (){
           </ul>
         </div>
       </li>
-    
-         
+
+
          <li class="layui-timeline-item">
         <a name="V1.181101"></a>
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
@@ -273,7 +357,7 @@ $(document).ready(function (){
           </ul>
         </div>
       </li>
-    
+
         <li class="layui-timeline-item">
         <a name="V1.180905"></a>
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
@@ -284,7 +368,7 @@ $(document).ready(function (){
 	            <ul>
 					<li>
 		              <h3>1.新增交易管理模块</h3>
-					
+
 		              <ul>
 		                <li>商品管理：可新增商品，对已有商品进行发布、下架<br>
 		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image001.png')" src="./20180830/image001.png">
@@ -293,14 +377,14 @@ $(document).ready(function (){
 		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image002.png')" src="./20180830/image002.png">
 		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image003.png')" src="./20180830/image003.png">
 		                </li>
-						
+
 		              </ul>
 		            </li>
 					<li>
 						<h3>2.首页数据更新</h3>
 						<ul>
 						<li>用户拥有的数据权限不同，首页显示的数据也不同<br>
-		                	
+
 							<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image004.png')" src="./20180830/image004.png">
 		                </li>
 						</ul>
@@ -314,10 +398,10 @@ $(document).ready(function (){
 	  		                 <li>加盟商人员统计列表增加“离职数”“流失率”，统计加盟商员工离职情况<br>
 	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image006.png')" src="./20180830/image006.png">
 	  		                </li>
-							
+
 						</ul>
 					</li>
-				
+
 					<li>
 						<h3>4.加盟商开票查询优化</h3>
 						<ul>
@@ -346,7 +430,7 @@ $(document).ready(function (){
 							<li>业绩统计、财务处理分析、行业分析列表字段长度调整 <br>业绩统计、财务处理分析、行业分析、加盟商人员统计增加加盟商查询<br>
 	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image011.png')" src="./20180830/image011.png">
 	  		                </li>
-	  		                
+
 						</ul>
 					</li>
 					 <li>
@@ -361,16 +445,16 @@ $(document).ready(function (){
 	  		                <li>退款单列表界面增加合计行<br>
 	  		                	<img class="logimg" onclick ="parent.loaduplogpic('./logpic/20180830/image014.png')" src="./20180830/image014.png">
 	  		                </li>
-	  		                
+
 						</ul>
 					</li>
-				
-				
+
+
 				</ul>
             </div>
         </li>
-        
-   
+
+
 
       <li class="layui-timeline-item">
         <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
