@@ -89,7 +89,7 @@ public class RefundExcelField implements IExceport<RefundBillVO> {
 
 	@Override
 	public String getExceportHeadName() {
-		return "返点单";
+		return "退款单";
 	}
 
 	@Override
