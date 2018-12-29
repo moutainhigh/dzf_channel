@@ -469,7 +469,9 @@ public class ExportExcel<T> {
 			JSONArray array, OutputStream out, String pattern, List<String> fieldlist) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
-			int index =8;
+			int index =4;
+			int num=8;
+			
 			HSSFSheet sheet = workbook.createSheet(title);
 			// 行宽
 			sheet.setDefaultColumnWidth(15);
@@ -512,7 +514,6 @@ public class ExportExcel<T> {
 			style1.setFont(f);
 			style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
 			style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
-																		// 、
 
 			int headerlength = headers.size();
 			int fieldlength = fields.size();
@@ -532,66 +533,39 @@ public class ExportExcel<T> {
 				HSSFCell celltitle1m = rowtitle1m.createCell(i);
 				celltitle1m.setCellStyle(style);
 			}
-			for (int i = 0; i * 2 < fieldlength - 8; i++) {
-				HSSFCell celltitle1m = rowtitle1m.createCell(i * 2 + 8);
+			
+			for (int i = 0; i * 2 < fieldlength - num; i++) {
+				HSSFCell celltitle1m = rowtitle1m.createCell(num + 2 * i);
 				celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
 				celltitle1m.setCellStyle(style); // 居中
-				sheet.addMergedRegion(new CellRangeAddress(3, 3, (i * 2 + 8), (i * 2 + 9)));
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 2 * i, num + 1 + 2 * i));
 			}
-
-			HSSFCell celltitle1m = rowtitle1m.createCell(0);
-			HSSFCell celltitle2m = rowtitle1m.createCell(1);
-			HSSFCell celltitle3m = rowtitle1m.createCell(2);
-			HSSFCell celltitle4m = rowtitle1m.createCell(3);
-			
-			HSSFCell celltitle5m = rowtitle1m.createCell(4);
-			HSSFCell celltitle6m = rowtitle1m.createCell(5);
-			HSSFCell celltitle7m = rowtitle1m.createCell(6);
-			HSSFCell celltitle8m = rowtitle1m.createCell(7);
-			celltitle1m.setCellValue(new HSSFRichTextString(headers.get(0)));
-			celltitle2m.setCellValue(new HSSFRichTextString(headers.get(1)));
-			celltitle3m.setCellValue(new HSSFRichTextString(headers.get(2)));
-			celltitle4m.setCellValue(new HSSFRichTextString(headers.get(3)));
-			
-			celltitle5m.setCellValue(new HSSFRichTextString(headers.get(4)));
-			celltitle6m.setCellValue(new HSSFRichTextString(headers.get(5)));
-			celltitle7m.setCellValue(new HSSFRichTextString(headers.get(6)));
-			celltitle8m.setCellValue(new HSSFRichTextString(headers.get(7)));
 			HSSFCellStyle stylegsm = workbook.createCellStyle();// 表头样式
 			stylegsm.cloneStyleFrom(style);
 			stylegsm.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-			celltitle1m.setCellStyle(stylegsm);
-			celltitle2m.setCellStyle(stylegsm);
-			celltitle3m.setCellStyle(stylegsm);
-			celltitle4m.setCellStyle(stylegsm);
-			celltitle5m.setCellStyle(stylegsm);
-			celltitle6m.setCellStyle(stylegsm);
-			celltitle7m.setCellStyle(stylegsm);
-			celltitle8m.setCellStyle(stylegsm);
+			for (int i = 0; i < num; i++) {
+				int j = i;
+				if (i >= num) {
+					j = i + 4;
+				}
+				HSSFCell celltitle1m = rowtitle1m.createCell(j);
+				celltitle1m.setCellValue(new HSSFRichTextString(headers.get(j)));
+				celltitle1m.setCellStyle(style); // 居中
+				sheet.addMergedRegion(new CellRangeAddress(3, 4, j, j));
+			}
 
 			if (headerlength != fieldlength) {
 				index++;
 				row2 = sheet.createRow(index);
 			}
 			for (int i = 0; i < headerlength; i++) {
-				{
-					HSSFCell cell1 = row.createCell(i);
-					cell1.setCellValue(new HSSFRichTextString(headers.get(i)));
-					cell1.setCellStyle(style);
-				}
+				HSSFCell cell1 = row.createCell(i);
+				cell1.setCellValue(new HSSFRichTextString(headers.get(i)));
+				cell1.setCellStyle(style);
 			}
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 0, 0));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 1, 1));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 2, 2));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 3, 3));
-			
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 4, 4));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 5, 5));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 6, 6));
-			sheet.addMergedRegion(new CellRangeAddress(3, 4, 7, 7));
 
 			for (int i = 0; i < array.size(); i++) {
-				HSSFRow row1 = sheet.createRow(i + 4 + 1);
+				HSSFRow row1 = sheet.createRow(i + index + 1);
 				Map<String, Object> map = (Map<String, Object>) array.get(i);
 				int count = 0;
 				for (String key : fields) {
@@ -637,7 +611,7 @@ public class ExportExcel<T> {
 					}
 				}
 				if (i == array.size()) {
-					sheet.addMergedRegion(new CellRangeAddress(i + 4 + 1, i + 4 + 1, 0, 1));
+					sheet.addMergedRegion(new CellRangeAddress(i + index + 1, i + index + 1, 0, 1));
 				}
 			}
 			try {

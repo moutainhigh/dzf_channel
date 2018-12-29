@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
@@ -187,6 +188,9 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 	 */
 	public void exportExcel(){
 		String strlist =getRequest().getParameter("strlist");
+		if (StringUtil.isEmpty(strlist)) {
+			throw new BusinessException("导出数据不能为空!");
+		}
 		String columns =getRequest().getParameter("columns");//最底下一行
 		String dateColumns =getRequest().getParameter("dateColumns");//最上面一行
 		JSONArray array = (JSONArray) JSON.parseArray(strlist);
@@ -196,12 +200,10 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		List<String> heads1 = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> name = null;
-		if(strlist==null){
-			return;
-		}
+		int num=8;
 		for (int i = 0 ; i< headlist1.size(); i ++) {
 			 name=(Map<String, String>) headlist1.get(i);
-			 if(i<8){
+			 if(i<num){
 				 fieldslist.add(name.get("field"));
 				 heads.add(name.get("title"));
 			 }else{
