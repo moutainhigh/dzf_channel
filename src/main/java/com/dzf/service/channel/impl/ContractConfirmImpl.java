@@ -670,6 +670,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
 						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
 						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
+					packvo.setIusenum(1);
 					updateSerPackage(packvo);
 				}
 				//10、回写我的客户“纳税人性质  、是否存量客户”：
@@ -735,7 +736,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 	
 	/**
-	 * 更新套餐使用个数
+	 * 更新套餐使用个数(iusenum=1:使用个数+1(合同审核)；iusenum=-1:使用个数-1(合同作废))
 	 * @param packvo
 	 * @throws DZFWarpException
 	 */
@@ -747,16 +748,21 @@ public class ContractConfirmImpl implements IContractConfirm {
 				StringBuffer sql = new StringBuffer();
 				SQLParameter spm = new SQLParameter();
 				sql.append("UPDATE cn_packagedef f \n") ;
-				sql.append("   SET f.iusenum = nvl(f.iusenum,0) + ? \n") ; 
+				sql.append("   SET f.iusenum = nvl(f.iusenum,0) \n") ; 
+				if(packvo.getIusenum().equals(1) ){
+					sql.append(" + ? ");
+				}else{
+					sql.append(" - ? ");
+				}
 				spm.addParam(1);
 				sql.append(" WHERE f.pk_packagedef = ? \n") ; 
 				spm.addParam(packvo.getPk_packagedef());
-				if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+				if(packvo.getIusenum().equals(1) && packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
 					sql.append("   AND nvl(f.ipublishnum, 0) - nvl(f.iusenum, 0) >= ? \n");
 					spm.addParam(1);
 				}
 				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-				if(res != 1){
+				if(packvo.getIusenum().equals(1) && res != 1){
 					throw new BusinessException(packvo.getVbusitypename()+"套餐发布个数已经用完");
 				}
 			} catch (Exception e) {
@@ -1386,7 +1392,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		try {
 			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);//锁合同原表，既锁变更，又锁合同收款
 			//1、变更前校验：
-			checkBeforeChange(datavo);
+			ContractConfrimVO oldConfrim=checkBeforeChange(datavo);
 			//2、相关字段赋值：
 			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1544,6 +1550,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			vmemo.append(datavo.getVcontcode());
 			updateChangeBalMny(datavo, cuserid, vmemo.toString());
+			if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
+				//10、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
+					PackageDefVO def=new PackageDefVO();
+					def.setPk_packagedef(oldConfrim.getPk_packagedef());
+					def.setIusenum(-1);
+					updateSerPackage(def);
+				}
+			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -1561,7 +1578,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private void checkBeforeChange(ContractConfrimVO paramvo) throws DZFWarpException {
+	private ContractConfrimVO checkBeforeChange(ContractConfrimVO paramvo) throws DZFWarpException {
 		ContractConfrimVO oldvo = null;
 		QryParamVO pavo = new QryParamVO();
 		pavo.setPk_bill(paramvo.getPk_confrim());
@@ -1631,6 +1648,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				throw new BusinessException("变更后扣款金额计算错误");
 			}
 		}
+		return oldvo;
 	}
 	
 	/**
