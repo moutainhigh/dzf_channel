@@ -757,6 +757,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				spm.addParam(1);
 				sql.append(" WHERE f.pk_packagedef = ? \n") ; 
 				spm.addParam(packvo.getPk_packagedef());
+				//促销套餐使用量更新时，有剩余量校验
 				if(packvo.getIusenum().equals(1) && packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
 					sql.append("   AND nvl(f.ipublishnum, 0) - nvl(f.iusenum, 0) >= ? \n");
 					spm.addParam(1);
