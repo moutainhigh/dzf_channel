@@ -46,7 +46,7 @@ import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 付款单
+ * 退款单
  * @author zy
  *
  */
