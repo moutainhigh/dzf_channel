@@ -670,8 +670,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
 						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
 						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
-					packvo.setIusenum(1);
-					updateSerPackage(packvo);
+					//只有促销的套餐，才更新套餐使用数量；非促销的套餐，不做已使用数量更新；
+					if(packvo != null && packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+						packvo.setIusenum(1);
+						updateSerPackage(packvo);
+					}
 				}
 				//10、回写我的客户“纳税人性质  、是否存量客户”：
 				updateCorp(datavo);
@@ -1393,7 +1396,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		try {
 			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(),uuid, 120);//锁合同原表，既锁变更，又锁合同收款
 			//1、变更前校验：
-			ContractConfrimVO oldConfrim=checkBeforeChange(datavo);
+			ContractConfrimVO oldConfrim = checkBeforeChange(datavo);
 			//2、相关字段赋值：
 			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1551,15 +1554,18 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			vmemo.append(datavo.getVcontcode());
 			updateChangeBalMny(datavo, cuserid, vmemo.toString());
-			if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){
-				//10、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
-				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
+			if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {
+				// 10、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
+				if (datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null
 						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_2
-						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
-					PackageDefVO def=new PackageDefVO();
-					def.setPk_packagedef(oldConfrim.getPk_packagedef());
-					def.setIusenum(-1);
-					updateSerPackage(def);
+						&& datavo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)) {
+					PackageDefVO defvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
+							oldConfrim.getPk_packagedef());
+					//只有促销的套餐，作废时，才释放套餐数量
+					if(defvo != null && defvo.getIspromotion() != null && defvo.getIspromotion().booleanValue()){
+						defvo.setIusenum(-1);
+						updateSerPackage(defvo);
+					}
 				}
 			}
 		} catch (Exception e) {
