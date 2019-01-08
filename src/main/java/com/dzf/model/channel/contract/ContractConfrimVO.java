@@ -122,6 +122,9 @@ public class ContractConfrimVO extends SuperVO {
 	
     @FieldAlias("sourid")
     private String pk_source;//来源合同主键（不存库，取原合同）
+    
+    @FieldAlias("ictype")
+    private Integer ichargetype;//扣费类型    1或null：新增扣费； 2：续费扣款；
 
 	// 取原合同或缓存字段 end***************************
 
@@ -275,6 +278,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public Integer getIchargetype() {
+		return ichargetype;
+	}
+
+	public void setIchargetype(Integer ichargetype) {
+		this.ichargetype = ichargetype;
+	}
+
 	public DZFBoolean getIsxq() {
 		return isxq;
 	}

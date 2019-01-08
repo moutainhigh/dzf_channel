@@ -76,7 +76,7 @@ function initManagerRef(){
  * 渠道经理选择事件
  */
 function selectMans(){
-	var rows = $('#mgrid').datagrid('getSelections');
+	var rows = $('#mgrid').datagrid('getChecked');
 	dClickMans(rows);
 }
 
@@ -225,7 +225,7 @@ function dClickCompany(rowTable){
 }
 
 function selectCorps(){
-	var rows = $('#gsTable').datagrid('getSelections');
+	var rows = $('#gsTable').datagrid('getChecked');
 	dClickCompany(rows);
 }
 
@@ -423,7 +423,7 @@ function load(){
 		fitColumns : false,
 		height : Public.setGrid().h,
 		singleSelect : false,
-		checkOnSelect : false,
+		checkOnSelect : true,
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
@@ -889,7 +889,7 @@ function qryData(type){
  * 单条审核
  */
 function audit(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null || rows.length != 1) {
 		Public.tips({
 			content : '请选择一行数据',
@@ -1244,7 +1244,7 @@ function deductCancel(){
  * 批量审核
  */
 function bathAudit(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null || rows.length == 0) {
 		Public.tips({
 			content : "请选择需要处理的数据",
@@ -1285,7 +1285,7 @@ function initRedioListener(){
  * 批量审核-确认
  */
 function bathconf(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null) {
 		Public.tips({
 			content : "请选择需要处理的数据",
@@ -1408,7 +1408,7 @@ function bathcanc(){
  * 合同变更
  */
 function change(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null || rows.length != 1) {
 		Public.tips({
 			content : '请选择一行数据',
@@ -1737,7 +1737,7 @@ function initClick(){
  * 变更保存
  */
 function changeConfri(){
-	var rows = $('#grid').datagrid('getSelections');
+	var rows = $('#grid').datagrid('getChecked');
 	if (rows == null || rows.length != 1) {
 		Public.tips({
 			content : '请选择一行数据',
@@ -1992,7 +1992,7 @@ function initRejectReason(){
 					href : contextPath+ '/ref/rejectreason_select.jsp',
 					buttons : [{text : '确认',
 								handler : function() {
-									var rows = $('#rgrid').datagrid('getSelections');
+									var rows = $('#rgrid').datagrid('getChecked');
 									dClickReje(rows);
 								}
 								},

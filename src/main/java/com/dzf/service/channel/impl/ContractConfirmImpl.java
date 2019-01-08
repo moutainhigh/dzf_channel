@@ -249,6 +249,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		
 		confvo.setNchangetotalmny(null);//变更后合同金额
 		confvo.setIscanedit(DZFBoolean.FALSE);
+		//纳税人性质变更的合同取来源合同扣款率设置
 		if(confvo.getPatchstatus() != null && (confvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_2 ||
 				confvo.getPatchstatus() == IStatusConstant.ICONTRACTTYPE_5)){
 			//3：小规模转一般人；  5： 一般人转小规模 扣款率设置
@@ -274,13 +275,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-							confvo.setIdeductpropor(8);
-						}else{
-							confvo.setIdeductpropor(10);
-						}
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(8);
+//						}else{
+//							confvo.setIdeductpropor(10);
+//						}
+						confvo.setIdeductpropor(10);
 					}else{
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(ratevo.getIrenewrate());
+//						}else{
+//							confvo.setIdeductpropor(ratevo.getInewrate());
+//						}
+						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
 							confvo.setIdeductpropor(ratevo.getInewrate());
@@ -294,13 +301,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-							confvo.setIdeductpropor(5);
-						}else{
-							confvo.setIdeductpropor(5);
-						}
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(5);
+//						}else{
+//							confvo.setIdeductpropor(5);
+//						}
+						confvo.setIdeductpropor(10);
 					}else{
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(ratevo.getIrenewrate());
+//						}else{
+//							confvo.setIdeductpropor(ratevo.getInewrate());
+//						}
+						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
 							confvo.setIdeductpropor(ratevo.getInewrate());
@@ -314,13 +327,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-							confvo.setIdeductpropor(8);
-						}else{
-							confvo.setIdeductpropor(10);
-						}
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(8);
+//						}else{
+//							confvo.setIdeductpropor(10);
+//						}
+						confvo.setIdeductpropor(10);
 					}else{
-						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
+//							confvo.setIdeductpropor(ratevo.getIrenewrate());
+//						}else{
+//							confvo.setIdeductpropor(ratevo.getInewrate());
+//						}
+						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
 							confvo.setIdeductpropor(ratevo.getInewrate());
@@ -383,6 +402,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.dsigndate,  \n") ; 
 		sql.append("       t.vadviser,  \n") ; 
 		sql.append("       t.pk_source,  \n") ; //来源合同主键
+		sql.append("       t.ichargetype,  \n") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
 		sql.append("       cn.pk_confrim,  \n") ; 
 		sql.append("       cn.tstamp,  \n") ; 
 		sql.append("       cn.deductdata,  \n") ; 
@@ -904,10 +924,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 			datavo.setNdeductmny(paybalance);//预付款扣款金额
 			datavo.setNdedrebamny(SafeCompute.sub(ndedsummny, paybalance));//返点款扣款金额
 		}else if(paybalance.compareTo(DZFDouble.ZERO_DBL) <= 0 
-				&& rebbalance.compareTo(ndedsummny) > 0){
+				&& rebbalance.compareTo(ndedsummny) >= 0){
 			//3、预付款余额=0，则全扣返点余额
 			datavo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款金额
 			datavo.setNdedrebamny(ndedsummny);//返点款扣款金额
+		}else{
+			throw new BusinessException("分项扣款金额计算错误");
 		}
 	}
 	

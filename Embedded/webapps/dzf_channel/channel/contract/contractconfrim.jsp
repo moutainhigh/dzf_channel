@@ -209,7 +209,7 @@
 					</div>
 				</div>
 				
-								<!-- 原合同信息begin -->
+				<!-- 原合同信息begin -->
 				<div id = "oldinfo" style="height:0;">
 					<form id = "oldfrom" method="post">
 						<div class="time_col time_colp11 heading">
@@ -309,7 +309,7 @@
 					<div class="time_col time_colp11 heading">
 						<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">扣款</label>
 					</div>
-					<div class="time_col time_colp11 " style="margin-top:10px;">
+					<div class="time_col time_colp11" style="margin-top:10px;">
 						<input id="contractid" name="contractid" type="hidden">
 						<input id="tstp" name="tstp" type="hidden">
 						<input id="area" name="area" type="hidden">
@@ -327,6 +327,7 @@
 						<input id="sourid" name="sourid" type="hidden">
 						<input id="pstatus" name="pstatus" type="hidden">
 						<input id="cperiod" name="cperiod" type="hidden">
+						<input id="ictype" name="ictype" type="hidden">
 						<div style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,readonly:false"
