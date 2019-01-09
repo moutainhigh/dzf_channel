@@ -73,6 +73,13 @@ public interface IStockOutService {
 	
 	
 	/**
+	 * 取消确认出库
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	public void updateCancel(StockOutVO vo) throws DZFWarpException;
+	
+	/**
 	 * 确认发货
 	 * @param vo
 	 * @throws DZFWarpException

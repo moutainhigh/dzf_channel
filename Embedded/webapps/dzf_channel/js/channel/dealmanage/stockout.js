@@ -1,6 +1,6 @@
 var contextPath = DZF.contextPath;
 var status="brows";
-var selIndex;//确认收货，选中的index
+var tanIndex;//弹出框对应的index(确认发货)
 var editIndex = undefined;
 var corpVOs;//查询框的加盟商
 var bills;
@@ -134,7 +134,7 @@ function load(){
             halign : 'center',
 			align : 'center',
 		}, {
-			width : '150',
+			width : '210',
 			title : '操作列',
 			field : 'operate',
             halign : 'center',
@@ -158,14 +158,17 @@ function opermatter(val, row, index) {
 	if(row.vstatus==0){
 		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+row.soutid+'\')">编辑</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="delOrder(\''+index+'\')">删除</a>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">取消确认 </span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">确认发货</span>';
 	}else if(row.vstatus==1){
 		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanCancel(\''+index+'\')">取消确认</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
 	}else{
 		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
+		'<span style="margin-bottom:0px;margin-left:10px;">取消确认 </span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">确认发货 </span>';
 	}
 }
@@ -391,7 +394,9 @@ function loadData(qtype){
 	$('#grid').datagrid('reload');
 }
 
-
+/**
+ * 确认出库
+ */
 function commit(){
 	var rows = $('#grid').datagrid('getChecked');
 	if(rows.length <= 0){
@@ -404,6 +409,33 @@ function commit(){
 	$.messager.confirm("提示", "确认出库吗？", function(flag) {
 		if (flag) {
 			commitConfirm(rows);
+		} else {
+			return null;
+		}
+	});
+}
+
+/**
+ * 取消确认出库
+ */
+function tanCancel(index){
+	$.messager.confirm("提示", "确认取消确认吗？", function(flag) {
+		if (flag) {
+			var row= $('#grid').datagrid('getRows')[index];
+			$.ajax({
+				type : 'POST',
+				async : false,
+				url : contextPath + '/dealmanage/stockout!updateCancel.action',
+				data : row,
+				dataTye : 'json',
+				success : function(result) {
+					Public.tips({
+						content :  "操作成功",
+						type : 0
+					});	
+					reloadData();
+				}
+			});
 		} else {
 			return null;
 		}
@@ -482,20 +514,14 @@ function delOrder(index){
  * 弹出物流信息对话框
  */
 function tanLog(index){
-	selIndex=index;
+	tanIndex=index;
 	$('#logDialog').dialog({modal:true});
     $('#logDialog').dialog('open').dialog('center').dialog('setTitle',"物流信息");
     $('#logUpdate').form("clear");
 }
 
 function logCancel(){
-	$.messager.confirm("提示", "确定取消吗？", function(flag) {
-		if (flag) {
-			$('#logDialog').dialog('close');
-		} else {
-			return null;
-		}
-	});
+	$('#logDialog').dialog('close');
 }
 
 function logCommit(){
@@ -506,7 +532,7 @@ function logCommit(){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
 		return;
 	}
-	var row= $('#grid').datagrid('getRows')[selIndex];
+	var row= $('#grid').datagrid('getRows')[tanIndex];
 	updateDeliver(row);
 }
 

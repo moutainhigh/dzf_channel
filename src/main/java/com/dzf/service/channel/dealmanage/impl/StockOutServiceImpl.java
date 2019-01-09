@@ -245,7 +245,47 @@ public class StockOutServiceImpl implements IStockOutService{
 			List<StockNumVO> vos=(List<StockNumVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockNumVO.class));
 			//3、更新库存表 
 			for (StockNumVO stockNumVO : vos) {
-				updateOutNum(stockNumVO);
+				updateOutNum(stockNumVO,1);
+			}
+		}catch (Exception e) {
+		    if (e instanceof BusinessException)
+		        throw new BusinessException(e.getMessage());
+		    else
+		        throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_stockout(),uuid);
+		}
+	}
+	
+	@Override
+	public void updateCancel(StockOutVO vo) throws DZFWarpException {
+		checkStatus(",不能取消确认;",vo);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			boolean lockKey = LockUtil.getInstance().addLockKey(vo.getTableName(), vo.getPk_stockout(),uuid, 120);
+			if(!lockKey){
+				String message="单据编码："+vo.getVbillcode()+",其他用户正在操作此数据;<br>";
+				throw new BusinessException(message);
+			}
+			checkData(vo);
+			//1、更新出库单主表
+			vo.setVstatus(0);
+			vo.setDconfirmtime(null);
+			vo.setVconfirmid(null);
+			singleObjectBO.update(vo, new String[]{"vstatus","vconfirmid","dconfirmtime"});
+			//2、该出库单子表按照商品规格、商品、库存合并
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(vo.getPk_stockout());
+			sql.append(" select b.pk_goods, b.pk_goodsspec, sum(b.nnum) istocknum ");
+			sql.append("   from cn_stockout_b b ");
+			sql.append("  where nvl(b.dr, 0) = 0 ");
+			sql.append("    and b.pk_stockout = ? ");
+			sql.append("  group by b.pk_goods, b.pk_goodsspec ");
+			List<StockNumVO> vos=(List<StockNumVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockNumVO.class));
+			//3、更新库存表 
+			for (StockNumVO stockNumVO : vos) {
+				updateOutNum(stockNumVO,2);
 			}
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
@@ -312,21 +352,26 @@ public class StockOutServiceImpl implements IStockOutService{
 	
 
 	/**
-	 * 更新库存表 ioutnum字段
+	 * 更新库存表 ioutnum字段(type,1:确认；2：取消确认)
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
-	private void updateOutNum(StockNumVO vo) throws DZFWarpException {
+	private void updateOutNum(StockNumVO vo,int type) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey("ioutnum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid, 120);//同时确认同一规格和型号的商品出库；
+			LockUtil.getInstance().tryLockKey("cn_stocknum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid, 120);//同时确认同一规格和型号的商品出库；
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(vo.getIstocknum());
 			spm.addParam(vo.getPk_goodsspec());
 			spm.addParam(vo.getPk_goods());
 			sql.append(" update cn_stocknum num ");
-			sql.append("    set num.ioutnum  = nvl(num.ioutnum, 0) + ?");
+			sql.append("    set num.ioutnum  = nvl(num.ioutnum, 0) ");
+			if(type==1){
+				sql.append("+ ?");
+			}else{
+				sql.append("- ?");
+			}
 			sql.append("  where num.pk_goodsspec =? and num.pk_goods=? ");
 			singleObjectBO.executeUpdate(sql.toString(),spm);
 		}catch (Exception e) {
@@ -335,7 +380,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		    else
 		        throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key("ioutnum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid);
+			LockUtil.getInstance().unLock_Key("cn_stocknum",vo.getPk_goods()+vo.getPk_goodsspec(),uuid);
 		}
 	}
 	
@@ -461,6 +506,11 @@ public class StockOutServiceImpl implements IStockOutService{
 		String message="订单编号："+vo.getVbillcode()+"是"+map.get(vo.getVstatus())+msg+"<br>";
 		if(msg.equals(",不能确认出库;")){
 			if(vo.getVstatus()!=0){
+				throw new BusinessException(message);
+			}
+		}
+		if(msg.equals(",不能取消确认;")){
+			if(vo.getVstatus()!=1){
 				throw new BusinessException(message);
 			}
 		}

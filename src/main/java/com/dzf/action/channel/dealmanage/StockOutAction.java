@@ -212,6 +212,29 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		writeJson(json);
 	}
 	
+	public void updateCancel(){
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
+			StockOutVO vo = new StockOutVO();
+			vo = (StockOutVO) DzfTypeUtils.cast(getRequest(), vo);
+			vo.setVconfirmid(getLoginUserid());
+			stockOut.updateCancel(vo);
+			json.setSuccess(true);
+			json.setRows(vo);
+			json.setMsg("操作成功!");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
 	public void updateDeliver(){
 		Json json = new Json();
 		try {
