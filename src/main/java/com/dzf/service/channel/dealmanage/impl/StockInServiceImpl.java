@@ -263,11 +263,17 @@ public class StockInServiceImpl implements IStockInService {
 	 * 操作前校验
 	 * @param hvo
 	 * @param pk_corp
-	 * @param opertype  1：修改保存；2：删除；3：确认入库；
+	 * @param opertype  1：修改保存；2：删除（需要返回主子信息）；3：确认入库（需要返回主子信息）；4：取消确认入库（需要返回主子信息）；
 	 * @throws DZFWarpException
 	 */
-	private void checkBeforeOperate(StockInVO hvo, String pk_corp, Integer opertype) throws DZFWarpException {
-		StockInVO oldvo = queryById(hvo.getPk_stockin(), pk_corp, 1);
+	private StockInVO checkBeforeOperate(StockInVO hvo, String pk_corp, Integer opertype) throws DZFWarpException {
+		StockInVO oldvo = null;
+		if(opertype == 1 || opertype == 2){
+			oldvo = queryById(hvo.getPk_stockin(), pk_corp, 2);//不查询子表
+		}else if(opertype == 3 || opertype == 4){
+			oldvo = queryById(hvo.getPk_stockin(), pk_corp, 1);//查询子表
+		}
+		
 		if (oldvo != null) {
 			if (oldvo.getUpdatets().compareTo(hvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
@@ -284,6 +290,7 @@ public class StockInServiceImpl implements IStockInService {
 		} else {
 			throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 		}
+		return oldvo;
 	}
 
 	/**
@@ -391,8 +398,8 @@ public class StockInServiceImpl implements IStockInService {
 		try {
 			LockUtil.getInstance().tryLockKey(stvo.getTableName(), stvo.getPk_stockin(), uuid, 120);
 			
-			checkBeforeOperate(stvo, stvo.getPk_corp(), 3);
-			StockInBVO[] bVOs = queryBody(stvo.getPk_stockin(), stvo.getPk_corp());
+			stvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 3);
+			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
 			for(StockInBVO bvo : bVOs){
 				updateStockNum(bvo, cuserid);
 			}
@@ -629,12 +636,12 @@ public class StockInServiceImpl implements IStockInService {
 
 	@Override
 	public StockInVO updateCancelConf(StockInVO stvo, String cuserid) throws DZFWarpException {
-		StockInVO oldvo = queryById(stvo.getPk_stockin(), stvo.getPk_corp(), 1);
+//		StockInVO oldvo = queryById(stvo.getPk_stockin(), stvo.getPk_corp(), 1);
+		StockInVO oldvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 4);
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(oldvo.getTableName(), oldvo.getPk_stockin(), uuid, 60);
-			checkBeforeCancel(stvo, oldvo);//取消确认前数据校验
-			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
+			StockInBVO[] bVOs = (StockInBVO[]) oldvo.getChildren();
 			if(bVOs == null || bVOs.length == 0 ){
 				throw new BusinessException("入库单表体数据为空");
 			}
@@ -672,25 +679,6 @@ public class StockInServiceImpl implements IStockInService {
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * 取消确认前数据校验
-	 * @param stvo
-	 * @param oldvo
-	 * @throws DZFWarpException
-	 */
-	private void checkBeforeCancel(StockInVO stvo, StockInVO oldvo) throws DZFWarpException {
-		if (oldvo != null) {
-			if (oldvo.getUpdatets().compareTo(stvo.getUpdatets()) != 0) {
-				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
-			}
-			if(IStatusConstant.ISTOCKINSTATUS_2 != oldvo.getVstatus()){
-				throw new BusinessException("该入库单状态不为已确认，不允许取消确认");
-			}
-		} else {
-			throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
-		}
 	}
 
 }
