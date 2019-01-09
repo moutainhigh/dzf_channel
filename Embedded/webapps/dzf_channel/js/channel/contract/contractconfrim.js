@@ -23,28 +23,28 @@ $(function() {
  * 查询框监听事件
  */
 function initQryLitener(){
-	$("#begdate").datebox("readonly", false);
-	$("#enddate").datebox("readonly", false);
-	$('#bperiod').textbox({"readonly" : true});
-	$('#eperiod').textbox({"readonly" : true});
+	$("#bdate").datebox("readonly", false);
+	$("#edate").datebox("readonly", false);
+	$('#bperiod').datebox("readonly", true);
+	$('#eperiod').datebox("readonly", true);
     $('input:radio[name="seledate"]').change( function(){  
-		var ischeck = $('#da').is(':checked');
+		var ischeck = $('#tddate').is(':checked');
 		if(ischeck){
-			var sdv = $('#begdate').datebox('getValue');
-			var edv = $('#enddate').datebox('getValue');
+			var sdv = $('#bdate').datebox('getValue');
+			var edv = $('#edate').datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
-			$("#begdate").datebox("readonly", false);
-			$("#enddate").datebox("readonly", false);
-			$('#bperiod').textbox({"readonly" : true});
-			$('#eperiod').textbox({"readonly" : true});
+			$("#bdate").datebox("readonly", false);
+			$("#edate").datebox("readonly", false);
+			$('#bperiod').datebox("readonly", true);
+			$('#eperiod').datebox("readonly", true);
 		}else{
 			var sdv = $("#bperiod").val();
 			var edv = $("#eperiod").val();
 			$('#jqj').html(sdv + ' 至 ' + edv);
-			$("#begdate").datebox("readonly", true);
-			$("#enddate").datebox("readonly", true);
-			$('#bperiod').textbox({"readonly" : false});
-			$('#eperiod').textbox({"readonly" : false});
+			$("#bdate").datebox("readonly", true);
+			$("#edate").datebox("readonly", true);
+			$('#bperiod').datebox("readonly", false);
+			$('#eperiod').datebox("readonly", false);
 		}
 	});
 }
