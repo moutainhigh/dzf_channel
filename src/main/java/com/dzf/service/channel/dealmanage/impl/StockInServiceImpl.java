@@ -521,7 +521,7 @@ public class StockInServiceImpl implements IStockInService {
 			sql.append("   AND pk_goodsspec = ? ");
 			spm.addParam(bvo.getPk_goodsspec());
 			
-			sql.append("   AND nvl(istocknum,0) - nvl(num.isellnum,0) >= ?");
+			sql.append("   AND nvl(istocknum,0) - nvl(isellnum,0) >= ?");
 			spm.addParam(bvo.getNnum());
 			
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -636,12 +636,11 @@ public class StockInServiceImpl implements IStockInService {
 
 	@Override
 	public StockInVO updateCancelConf(StockInVO stvo, String cuserid) throws DZFWarpException {
-//		StockInVO oldvo = queryById(stvo.getPk_stockin(), stvo.getPk_corp(), 1);
-		StockInVO oldvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 4);
+		stvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 4);
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(oldvo.getTableName(), oldvo.getPk_stockin(), uuid, 60);
-			StockInBVO[] bVOs = (StockInBVO[]) oldvo.getChildren();
+			LockUtil.getInstance().tryLockKey(stvo.getTableName(), stvo.getPk_stockin(), uuid, 60);
+			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
 			if(bVOs == null || bVOs.length == 0 ){
 				throw new BusinessException("入库单表体数据为空");
 			}
@@ -669,16 +668,22 @@ public class StockInServiceImpl implements IStockInService {
 				updateSubStock(stbvo);
 			}
 			
+			stvo.setVstatus(IStatusConstant.ISTOCKINSTATUS_1);
+			stvo.setUpdatets(new DZFDateTime());
+			stvo.setVconfirmid(null);
+			stvo.setDconfirmtime(null);
+			singleObjectBO.update(stvo, new String[]{"vstatus","vconfirmid","dconfirmtime"});
+			
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(oldvo.getTableName(), oldvo.getPk_stockin(), uuid);
+			LockUtil.getInstance().unLock_Key(stvo.getTableName(), stvo.getPk_stockin(), uuid);
 		}
 		
-		return null;
+		return stvo;
 	}
 
 }
