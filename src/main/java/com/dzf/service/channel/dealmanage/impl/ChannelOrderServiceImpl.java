@@ -36,48 +36,50 @@ import com.dzf.service.channel.dealmanage.IChannelOrderService;
 
 @Service("channelorderser")
 public class ChannelOrderServiceImpl implements IChannelOrderService {
-	
+
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
-	
+
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 
 	@Override
 	public Integer queryTotalRow(GoodsBillVO pamvo) throws DZFWarpException {
-		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
-		return multBodyObjectBO.queryDataTotal(GoodsBillVO.class,sqpvo.getSql(), sqpvo.getSpm());
+		QrySqlSpmVO sqpvo = getQrySqlSpm(pamvo);
+		return multBodyObjectBO.queryDataTotal(GoodsBillVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GoodsBillVO> query(GoodsBillVO pamvo) throws DZFWarpException {
-		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
-		List<GoodsBillVO> list = (List<GoodsBillVO>) multBodyObjectBO.queryDataPage(GoodsBillVO.class, 
-				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		if(list != null && list.size() > 0){
+		QrySqlSpmVO sqpvo = getQrySqlSpm(pamvo);
+		List<GoodsBillVO> list = (List<GoodsBillVO>) multBodyObjectBO.queryDataPage(GoodsBillVO.class, sqpvo.getSql(),
+				sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
+		if (list != null && list.size() > 0) {
 			setShowValue(list);
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 设置显示名称
+	 * 
 	 * @throws DZFWarpException
 	 */
 	private void setShowValue(List<GoodsBillVO> list) throws DZFWarpException {
 		CorpVO corpvo = null;
-		for(GoodsBillVO bvo : list){
+		for (GoodsBillVO bvo : list) {
 			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
-			if(corpvo != null){
+			if (corpvo != null) {
 				bvo.setCorpcode(corpvo.getInnercode());
 				bvo.setCorpname(corpvo.getUnitname());
 			}
 		}
 	}
-	
+
 	/**
 	 * 获取查询条件
+	 * 
 	 * @param pamvo
 	 * @return
 	 * @throws DZFWarpException
@@ -86,62 +88,62 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT l.pk_goodsbill,  \n") ;
-		sql.append("       l.vbillcode,  \n") ; 
-		sql.append("       l.vreceivername,  \n") ; 
-		sql.append("       l.phone,  \n") ; 
-		sql.append("       l.vzipcode,  \n") ; 
-		sql.append("       l.vreceiveaddress,  \n") ; 
-		sql.append("       l.pk_corp,  \n") ; 
-		sql.append("       l.ndedsummny,  \n") ; 
-		sql.append("       l.ndeductmny,  \n") ; 
-		sql.append("       l.ndedrebamny,  \n") ; 
-		sql.append("       l.vstatus,  \n") ; 
-		sql.append("       l.updatets,  \n") ; 
-		sql.append("       t.logisticsunit,  \n") ; 
-		sql.append("       t.fastcode,  \n") ; 
-		sql.append("       s.doperatetime AS dsubmittime,  \n") ; 
-		sql.append("       u.doperatedate AS dconfdate  \n") ; 
-		sql.append("  FROM cn_goodsbill l  \n") ; 
-		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n") ; 
-		sql.append("                            AND s.vstatus = 0  \n") ; 
-		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n") ; 
-		sql.append("                            AND t.vstatus = 2  \n") ; 
-		sql.append("  LEFT JOIN cn_goodsbill_s u ON l.pk_goodsbill = u.pk_goodsbill  \n") ; 
-		sql.append("                            AND u.vstatus = 1  \n") ; 
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0  \n") ;
-		sql.append("   AND nvl(u.dr, 0) = 0  \n") ;
-		if(!StringUtil.isEmpty(pamvo.getVbillcode())){
-			sql.append("   AND l.vbillcode = ?  \n") ; 
+		sql.append("SELECT l.pk_goodsbill,  \n");
+		sql.append("       l.vbillcode,  \n");
+		sql.append("       l.vreceivername,  \n");
+		sql.append("       l.phone,  \n");
+		sql.append("       l.vzipcode,  \n");
+		sql.append("       l.vreceiveaddress,  \n");
+		sql.append("       l.pk_corp,  \n");
+		sql.append("       l.ndedsummny,  \n");
+		sql.append("       l.ndeductmny,  \n");
+		sql.append("       l.ndedrebamny,  \n");
+		sql.append("       l.vstatus,  \n");
+		sql.append("       l.updatets,  \n");
+		sql.append("       t.logisticsunit,  \n");
+		sql.append("       t.fastcode,  \n");
+		sql.append("       s.doperatetime AS dsubmittime,  \n");
+		sql.append("       u.doperatedate AS dconfdate  \n");
+		sql.append("  FROM cn_goodsbill l  \n");
+		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
+		sql.append("                            AND s.vstatus = 0  \n");
+		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n");
+		sql.append("                            AND t.vstatus = 2  \n");
+		sql.append("  LEFT JOIN cn_goodsbill_s u ON l.pk_goodsbill = u.pk_goodsbill  \n");
+		sql.append("                            AND u.vstatus = 1  \n");
+		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
+		sql.append("   AND nvl(s.dr, 0) = 0  \n");
+		sql.append("   AND nvl(u.dr, 0) = 0  \n");
+		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
+			sql.append("   AND l.vbillcode = ?  \n");
 			spm.addParam(pamvo.getVbillcode());
 		}
-		if(!StringUtil.isEmpty(pamvo.getPk_corp())){
-			sql.append("   AND l.pk_corp = ?  \n") ; 
+		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
+			sql.append("   AND l.pk_corp = ?  \n");
 			spm.addParam(pamvo.getPk_corp());
 		}
-		if(pamvo.getVstatus() != null && pamvo.getVstatus() != -1){
+		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
 			sql.append("   AND l.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
-		if(!StringUtil.isEmpty(pamvo.getPk_goodsbill())){
+		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
 			sql.append(" AND l.pk_goodsbill = ? ");
 			spm.addParam(pamvo.getPk_goodsbill());
 		}
-		if(pamvo.getBegdate() != null){
-			sql.append("                            AND s.doperatedate >= ?  \n") ; 
+		if (pamvo.getBegdate() != null) {
+			sql.append(" AND s.doperatedate >= ?  \n");
 			spm.addParam(pamvo.getBegdate());
 		}
-		if(pamvo.getEnddate() != null){
-			sql.append("                            AND s.doperatedate <= ?  \n") ; 
+		if (pamvo.getEnddate() != null) {
+			sql.append(" AND s.doperatedate <= ?  \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		if(pamvo.getBbegdate() != null){
-			sql.append("                            AND u.doperatedate >= ?  \n") ; 
+		if (pamvo.getBbegdate() != null) {
+			sql.append(" AND u.doperatedate >= ?  \n");
 			spm.addParam(pamvo.getBbegdate());
 		}
-		if(pamvo.getEenddate() != null){
-			sql.append("                            AND u.doperatedate <= ?  \n") ; 
+		if (pamvo.getEenddate() != null) {
+			sql.append(" AND u.doperatedate <= ?  \n");
 			spm.addParam(pamvo.getEenddate());
 		}
 		sql.append(" ORDER BY s.doperatetime DESC");
@@ -153,7 +155,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	/**
 	 * 
 	 * @param pamvo
-	 * @param type   1：确认；2：取消订单；3：商品发货（此功能去掉，移动至出库单节点）；
+	 * @param type
+	 *            1：确认；2：取消订单；3：商品发货（此功能去掉，移动至出库单节点）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -163,14 +166,11 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		try {
 			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid, 120);
 			checkData(pamvo, type);
-			if(type != null && type == 1){
+			if (type != null && type == 1) {
 				return updateConfirm(pamvo, cuserid);
-			}else if(type != null && type == 2){
+			} else if (type != null && type == 2) {
 				return updateCancel(pamvo, cuserid);
-			}/*else if(type != null && type == 3){
-				return updateSetOut(pamvo, cuserid);
-			}*/
-
+			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -181,68 +181,42 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}
 		return pamvo;
 	}
-	
-	/**
-	 * 更新商品发货信息
-	 * @param pamvo
-	 * @param cuserid
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private GoodsBillVO updateSetOut(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_2);//已发货
-		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus"});
-		
-		//订单购买详情
-		GoodsBillSVO bsvo = new GoodsBillSVO();
-		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
-		bsvo.setPk_corp(pamvo.getPk_corp());
-		bsvo.setVsaction(IStatusConstant.IORDERACTION_2);
-		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_2);
-		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_2);//状态描述
-		bsvo.setCoperatorid(cuserid);
-		bsvo.setDoperatedate(new DZFDate());
-		bsvo.setDoperatetime(new DZFDateTime());
-		bsvo.setLogisticsunit(pamvo.getLogisticsunit());//物流公司
-		bsvo.setFastcode(pamvo.getFastcode());//物流单号
-		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
-		return pamvo;
-	}
-	
+
 	/**
 	 * 更新取消订单数据
+	 * 
 	 * @param pamvo
 	 * @param cuserid
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateCancel(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_4);//已取消
+		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_4);// 已取消
 		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus"});
-		
-		//订单购买详情
+		singleObjectBO.update(pamvo, new String[] { "vstatus" });
+
+		// 订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
 		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
 		bsvo.setPk_corp(pamvo.getPk_corp());
 		bsvo.setVsaction(IStatusConstant.IORDERACTION_4);
 		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_4);
-		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_4);//状态描述
+		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_4);// 状态描述
 		bsvo.setCoperatorid(cuserid);
 		bsvo.setDoperatedate(new DZFDate());
 		bsvo.setDoperatetime(new DZFDateTime());
-		bsvo.setVnote(pamvo.getVrejereason());//处理说明
+		bsvo.setVnote(pamvo.getVrejereason());// 处理说明
 		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
-		
-		//释放购买量
+
+		// 释放购买量
 		updateStockNum(pamvo);
-		
+
 		return pamvo;
 	}
-	
+
 	/**
 	 * 释放库存的购买量
+	 * 
 	 * @param pamvo
 	 * @throws DZFWarpException
 	 */
@@ -252,13 +226,13 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		spm.addParam(pamvo.getPk_goodsbill());
 		spm.addParam(pamvo.getPk_corp());
 		GoodsBillBVO[] bVOs = (GoodsBillBVO[]) singleObjectBO.queryByCondition(GoodsBillBVO.class, sql, spm);
-		if(bVOs != null && bVOs.length > 0){
-			for(GoodsBillBVO bvo : bVOs){
+		if (bVOs != null && bVOs.length > 0) {
+			for (GoodsBillBVO bvo : bVOs) {
 				updateStockOffNum(bvo);
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void updateStockOffNum(GoodsBillBVO bvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -271,21 +245,22 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("   AND pk_goods = ?  \n");
 		sql.append("   AND pk_goodsspec = ? \n");
 		spm.addParam("000001");
-		spm.addParam(IStatusConstant.CK_ID);//大账房默认库存
+		spm.addParam(IStatusConstant.CK_ID);// 大账房默认库存
 		spm.addParam(bvo.getPk_goods());
 		spm.addParam(bvo.getPk_goodsspec());
 		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockNumVO.class));
-		if(list != null && list.size() > 0){
+		if (list != null && list.size() > 0) {
 			StockNumVO numvo = list.get(0);
 			updateStock(numvo, bvo);
-		}else if(list != null && list.size() > 1){
+		} else if (list != null && list.size() > 1) {
 			throw new BusinessException("库存商品数量错误，请先进行库存盘点");
 		}
 	}
-	
+
 	/**
 	 * 更新库存
+	 * 
 	 * @param numvo
 	 * @param bvo
 	 * @throws DZFWarpException
@@ -296,7 +271,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_stocknum(), uuid, 120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			
+
 			sql.append("UPDATE cn_stocknum \n");
 			sql.append("   SET isellnum = nvl(isellnum,0) - ?  \n");
 			spm.addParam(bvo.getAmount());
@@ -318,21 +293,22 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_stocknum(), uuid);
 		}
 	}
-	
+
 	/**
 	 * 更新确认数据
+	 * 
 	 * @param pamvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
-		if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){//返点扣款
+		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {// 返点扣款
 			ChnBalanceVO balvo = map.get("rebate");
 			String uuid = UUID.randomUUID().toString();
 			try {
-				LockUtil.getInstance().tryLockKey("cn_balance",
-						balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid, 120);
+				LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3,
+						uuid, 120);
 				StringBuffer sql = new StringBuffer();
 				SQLParameter spm = new SQLParameter();
 				sql.append("UPDATE cn_balance l  \n");
@@ -351,7 +327,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					detvo.setNusedmny(pamvo.getNdedrebamny());
 					detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);// 返点款
 					detvo.setPk_bill(pamvo.getPk_goodsbill());
-					detvo.setVmemo("商品购买："+pamvo.getVbillcode());
+					detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
 					detvo.setCoperatorid(cuserid);
 					detvo.setDoperatedate(new DZFDate());
 					detvo.setDr(0);
@@ -366,16 +342,16 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				else
 					throw new WiseRunException(e);
 			} finally {
-				LockUtil.getInstance().unLock_Key("cn_balance",
-						balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid);
+				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3,
+						uuid);
 			}
 		}
-		if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){//预付款扣款
+		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0) {// 预付款扣款
 			ChnBalanceVO balvo = map.get("payment");
 			String uuid = UUID.randomUUID().toString();
 			try {
-				LockUtil.getInstance().tryLockKey("cn_balance",
-						balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid, 120);
+				LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
+						uuid, 120);
 				StringBuffer sql = new StringBuffer();
 				SQLParameter spm = new SQLParameter();
 				sql.append("UPDATE cn_balance l  \n");
@@ -394,7 +370,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					detvo.setNusedmny(pamvo.getNdeductmny());
 					detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);// 预付款
 					detvo.setPk_bill(pamvo.getPk_goodsbill());
-					detvo.setVmemo("商品购买："+pamvo.getVbillcode());
+					detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
 					detvo.setCoperatorid(cuserid);
 					detvo.setDoperatedate(new DZFDate());
 					detvo.setDr(0);
@@ -409,31 +385,32 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				else
 					throw new WiseRunException(e);
 			} finally {
-				LockUtil.getInstance().unLock_Key("cn_balance",
-						balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid);
+				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
+						uuid);
 			}
 		}
-		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);//待发货
+		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);// 待发货
 		pamvo.setUpdatets(new DZFDateTime());
-		singleObjectBO.update(pamvo, new String[]{"vstatus"});
-		
-		//订单购买详情
+		singleObjectBO.update(pamvo, new String[] { "vstatus" });
+
+		// 订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
 		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
 		bsvo.setPk_corp(pamvo.getPk_corp());
 		bsvo.setVsaction(IStatusConstant.IORDERACTION_1);
 		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_1);
-		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_1);//状态描述
+		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_1);// 状态描述
 		bsvo.setCoperatorid(cuserid);
 		bsvo.setDoperatedate(new DZFDate());
 		bsvo.setDoperatetime(new DZFDateTime());
-		bsvo.setVnote("");//处理说明
+		bsvo.setVnote("");// 处理说明
 		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
 		return pamvo;
 	}
-	
+
 	/**
 	 * 获取余额信息
+	 * 
 	 * @param pamvo
 	 * @return
 	 * @throws DZFWarpException
@@ -448,60 +425,61 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		ChnBalanceVO[] balVOs = (ChnBalanceVO[]) singleObjectBO.queryByCondition(ChnBalanceVO.class, yesql, yespm);
 		String corpname = "";
 		CorpVO corpvo = CorpCache.getInstance().get(null, pamvo.getPk_corp());
-		if(corpvo != null){
+		if (corpvo != null) {
 			corpname = corpvo.getUnitname();
 		}
 		if (balVOs != null && balVOs.length > 0) {
 			DZFDouble balance = DZFDouble.ZERO_DBL;
-			for(ChnBalanceVO balvo : balVOs){
+			for (ChnBalanceVO balvo : balVOs) {
 				balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
-				if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3){
-					if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0){
-						if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0){
-							throw new BusinessException("确认失败！加盟商"+corpname+"账户返点余额不足");
+				if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3) {
+					if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
+						if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0) {
+							throw new BusinessException("确认失败！加盟商" + corpname + "账户返点余额不足");
 						}
 						map.put("rebate", balvo);
 					}
-				}else if(balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2){
-					if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0){
-						if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0){
-							throw new BusinessException("确认失败！加盟商"+corpname+"账户预付款余额不足");
+				} else if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2) {
+					if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
+						if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0) {
+							throw new BusinessException("确认失败！加盟商" + corpname + "账户预付款余额不足");
 						}
 						map.put("payment", balvo);
 					}
 				}
 			}
 		} else {
-			throw new BusinessException("确认失败！加盟商"+corpname+"账户余额不足");
+			throw new BusinessException("确认失败！加盟商" + corpname + "账户余额不足");
 		}
-		
+
 		return map;
 	}
-	
-	
+
 	/**
 	 * 操作前数据校验
+	 * 
 	 * @param pamvo
-	 * @param type   1：确认；2：取消订单；3：商品发货；
+	 * @param type
+	 *            1：确认；2：取消订单；3：商品发货；
 	 * @throws DZFWarpException
 	 */
 	private void checkData(GoodsBillVO pamvo, Integer type) throws DZFWarpException {
 		GoodsBillVO oldvo = (GoodsBillVO) singleObjectBO.queryByPrimaryKey(GoodsBillVO.class, pamvo.getPk_goodsbill());
-		if(oldvo != null){
-			if(pamvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0){
+		if (oldvo != null) {
+			if (pamvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 			}
-			if(type != null && (type == 1 || type == 2) ){
-				if(oldvo.getVstatus() != null && oldvo.getVstatus() != 0){
-					throw new BusinessException("订单：【"+pamvo.getVbillcode()+"】状态不为待确认");
+			if (type != null && (type == 1 || type == 2)) {
+				if (oldvo.getVstatus() != null && oldvo.getVstatus() != 0) {
+					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待确认");
 				}
-			}else if(type != null && type == 3){
-				if(oldvo.getVstatus() != null && oldvo.getVstatus() != 1){
-					throw new BusinessException("订单：【"+pamvo.getVbillcode()+"】状态不为待发货");
+			} else if (type != null && type == 3) {
+				if (oldvo.getVstatus() != null && oldvo.getVstatus() != 1) {
+					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待发货");
 				}
 			}
-		}else{
-			throw new BusinessException("订单：【"+pamvo.getVbillcode()+"】数据错误");
+		} else {
+			throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】数据错误");
 		}
 	}
 
@@ -509,21 +487,21 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	@Override
 	public GoodsBillVO qryOrderDet(GoodsBillVO pamvo) throws DZFWarpException {
 		GoodsBillVO gvo = null;
-		List<GoodsBillVO> list = query(pamvo); 
-		if(list != null && list.size() > 0){
+		List<GoodsBillVO> list = query(pamvo);
+		if (list != null && list.size() > 0) {
 			gvo = list.get(0);
-		}else{
+		} else {
 			throw new BusinessException("商品订单信息错误");
 		}
-		//查询订单流程详情
+		// 查询订单流程详情
 		String qsql = " nvl(dr,0) = 0 AND pk_goodsbill = ? ORDER BY ts ASC";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pamvo.getPk_goodsbill());
 		GoodsBillSVO[] sVOs = (GoodsBillSVO[]) singleObjectBO.queryByCondition(GoodsBillSVO.class, qsql, spm);
-		if(sVOs != null && sVOs.length > 0){
+		if (sVOs != null && sVOs.length > 0) {
 			gvo.setDetail(sVOs);
 		}
-		//查询订单商品详情
+		// 查询订单商品详情
 		StringBuffer sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("select b.*,ss.pk_goodsdoc,ss.vnote,ss.vfilepath ");
@@ -538,7 +516,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		spm.addParam(pamvo.getPk_goodsbill());
 		List<GoodsBillBVO> blist = (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsBillBVO.class));
-		if(blist != null && blist.size() > 0){
+		if (blist != null && blist.size() > 0) {
 			gvo.setGoods(blist.toArray(new GoodsBillBVO[0]));
 		}
 		return gvo;
