@@ -98,10 +98,10 @@ function load(){
 			align : 'left',
             halign : 'center',
 		}, {
-			width : '150',
+			width : '140',
 			title : '提交时间',
 			field : 'submtime',
-			align : 'left',
+			align : 'center',
             halign : 'center',
 		}, {
 			width : '150',
@@ -163,7 +163,13 @@ function load(){
 				if (value == '4')
 					return '已取消';
 			}
-		} ] ],
+		}, {
+			width : '100',
+			title : '确认时间',
+			field : 'confdate',
+			align : 'center',
+            halign : 'center',
+		}] ],
 		onLoadSuccess : function(data) {
 			parent.$.messager.progress('close');
 			var rows = $('#grid').datagrid('getRows');

@@ -79,8 +79,19 @@ public class GoodsBillVO extends MultSuperVO {
 	
 	private GoodsBillBVO[] goods;//商品明细
 	
+	@FieldAlias("confdate")
+	private DZFDate dconfdate; //确认时间（仅作数据展示）
+	
 	//仅作展示用字段end
-    
+
+	public DZFDate getDconfdate() {
+		return dconfdate;
+	}
+
+	public void setDconfdate(DZFDate dconfdate) {
+		this.dconfdate = dconfdate;
+	}
+
 	public String getPk_goodsbill() {
 		return pk_goodsbill;
 	}

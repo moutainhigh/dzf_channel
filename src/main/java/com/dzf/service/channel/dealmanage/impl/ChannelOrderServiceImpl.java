@@ -101,14 +101,18 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.updatets,  \n") ; 
 		sql.append("       t.logisticsunit,  \n") ; 
 		sql.append("       t.fastcode,  \n") ; 
-		sql.append("       s.doperatetime AS dsubmittime  \n") ; 
+		sql.append("       s.doperatetime AS dsubmittime,  \n") ; 
+		sql.append("       u.doperatedate AS dconfdate  \n") ; 
 		sql.append("  FROM cn_goodsbill l  \n") ; 
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n") ; 
 		sql.append("                            AND s.vstatus = 0  \n") ; 
 		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n") ; 
 		sql.append("                            AND t.vstatus = 2  \n") ; 
+		sql.append("  LEFT JOIN cn_goodsbill_s u ON l.pk_goodsbill = u.pk_goodsbill  \n") ; 
+		sql.append("                            AND u.vstatus = 1  \n") ; 
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0  \n") ;
+		sql.append("   AND nvl(u.dr, 0) = 0  \n") ;
 		if(!StringUtil.isEmpty(pamvo.getVbillcode())){
 			sql.append("   AND l.vbillcode = ?  \n") ; 
 			spm.addParam(pamvo.getVbillcode());
