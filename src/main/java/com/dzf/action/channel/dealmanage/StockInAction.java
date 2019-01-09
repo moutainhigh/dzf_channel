@@ -222,7 +222,6 @@ public class StockInAction extends BaseAction<StockInVO> {
 		
 		return list;
 	}
-
 	
 	/**
 	 * 通过主表信息查询主子表信息
@@ -344,6 +343,31 @@ public class StockInAction extends BaseAction<StockInVO> {
 			json.setSuccess(false);
 			json.setMsg("保存失败");
 			printErrorLog(json, log, e, "保存失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 取消确认
+	 */
+	public void cancelConf() {
+		Json json = new Json();
+		json.setSuccess(false);
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_50);
+			
+			StockInVO pamvo = new StockInVO();
+			pamvo = (StockInVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if (StringUtil.isEmpty(pamvo.getPk_corp())) {
+				pamvo.setPk_corp(getLogincorppk());
+			}
+			stockinser.updateCancelConf(pamvo, getLogin_userid());
+			json.setSuccess(true);
+			json.setMsg("取消确认成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "取消确认失败");
 		}
 		writeJson(json);
 	}

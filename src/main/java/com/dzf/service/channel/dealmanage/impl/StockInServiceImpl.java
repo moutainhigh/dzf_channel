@@ -12,6 +12,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
@@ -32,6 +33,8 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
+import com.dzf.pub.util.ToolsUtil;
+import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.channel.dealmanage.IStockInService;
 import com.dzf.service.pub.IBillCodeService;
 
@@ -46,6 +49,9 @@ public class StockInServiceImpl implements IStockInService {
 
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
+	
+	@Autowired
+	private IGoodsManageService manser;
 	
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
@@ -261,7 +267,7 @@ public class StockInServiceImpl implements IStockInService {
 	 * @throws DZFWarpException
 	 */
 	private void checkBeforeOperate(StockInVO hvo, String pk_corp, Integer opertype) throws DZFWarpException {
-		StockInVO oldvo = queryById(hvo.getPk_stockin(), pk_corp, 0);
+		StockInVO oldvo = queryById(hvo.getPk_stockin(), pk_corp, 1);
 		if (oldvo != null) {
 			if (oldvo.getUpdatets().compareTo(hvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
@@ -285,7 +291,7 @@ public class StockInServiceImpl implements IStockInService {
 	 * 
 	 * @param pk_stockin
 	 * @param pk_corp
-	 * @param qrytype  1：详情查询修改查询（包含子表）；2：普通查询（不包含子表）；
+	 * @param qrytype  1：详情查询、修改查询（包含子表）；2：普通查询（不包含子表）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -430,7 +436,7 @@ public class StockInServiceImpl implements IStockInService {
 				new BeanListProcessor(StockNumVO.class));
 		if(list != null && list.size() > 0){
 			StockNumVO numvo = list.get(0);
-			updateStock(numvo, bvo);
+			updateAddStock(numvo, bvo);
 		}else if(list != null && list.size() > 1){
 			throw new BusinessException("库存商品数量错误");
 		}else{
@@ -449,15 +455,15 @@ public class StockInServiceImpl implements IStockInService {
 	}
 	
 	/**
-	 * 更新库存
+	 * 更新库存（增加）
 	 * @param numvo
 	 * @param bvo
 	 * @throws DZFWarpException
 	 */
-	private void updateStock(StockNumVO numvo, StockInBVO bvo) throws DZFWarpException {
+	private void updateAddStock(StockNumVO numvo, StockInBVO bvo) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_stocknum(), uuid, 120);
+			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_goods() + "" + numvo.getPk_goodsspec(), uuid, 60);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			
@@ -479,8 +485,70 @@ public class StockInServiceImpl implements IStockInService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_stocknum(), uuid);
+			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_goods() + "" + numvo.getPk_goodsspec(), uuid);
 		}
+	}
+	
+	/**
+	 * 更新库存（减少）
+	 * @param bvo
+	 * @throws DZFWarpException
+	 */
+	private void updateSubStock(StockInBVO bvo) throws DZFWarpException {
+		Map<String,String> namemap = getGoodsName();
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_stocknum", bvo.getPk_goods() + "" + bvo.getPk_goodsspec(), uuid, 60);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			
+			sql.append("UPDATE cn_stocknum \n");
+			sql.append("   SET istocknum = nvl(istocknum,0) - ?  \n");
+			spm.addParam(bvo.getNnum());
+			sql.append(" WHERE nvl(dr,0) = 0 \n");
+			sql.append("   AND pk_corp = ? \n");
+			spm.addParam(bvo.getPk_corp());
+			
+			sql.append("   AND pk_goods = ? ");
+			spm.addParam(bvo.getPk_goods());
+			sql.append("   AND pk_goodsspec = ? ");
+			spm.addParam(bvo.getPk_goodsspec());
+			
+			sql.append("   AND nvl(istocknum,0) - nvl(num.isellnum,0) >= ?");
+			spm.addParam(bvo.getNnum());
+			
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res != 1) {
+				String name = namemap.get(bvo.getPk_goods() + "" + bvo.getPk_goodsspec());
+				throw new BusinessException("商品【"+name+"】可取消入库数量不足，请检查订单后重试；");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_stocknum", bvo.getPk_goods() + "" + bvo.getPk_goodsspec(), uuid);
+		}
+	}
+	
+	/**
+	 * 查询商品名称
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@Override
+	public Map<String,String> getGoodsName() throws DZFWarpException {
+		Map<String,String> map = new HashMap<String,String>();
+		List<GoodsBoxVO> list = manser.queryComboBox();
+		if(list != null && list.size() > 0){
+			String key = "";
+			for(GoodsBoxVO bvo : list){
+				key = bvo.getPk_goods() + "" + bvo.getId();
+				map.put(key, bvo.getName());
+			}
+		}
+		return map;
 	}
 
 	@Override
@@ -557,6 +625,72 @@ public class StockInServiceImpl implements IStockInService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public StockInVO updateCancelConf(StockInVO stvo, String cuserid) throws DZFWarpException {
+		StockInVO oldvo = queryById(stvo.getPk_stockin(), stvo.getPk_corp(), 1);
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(oldvo.getTableName(), oldvo.getPk_stockin(), uuid, 60);
+			checkBeforeCancel(stvo, oldvo);//取消确认前数据校验
+			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
+			if(bVOs == null || bVOs.length == 0 ){
+				throw new BusinessException("入库单表体数据为空");
+			}
+			Map<String, StockInBVO> map = new HashMap<String, StockInBVO>();
+			String key = "";
+			StockInBVO countvo = null;
+			for(StockInBVO bvo : bVOs){
+				key = bvo.getPk_goods() + "" + bvo.getPk_goodsspec();
+				if(!map.containsKey(key)){
+					countvo = new StockInBVO();
+					countvo.setPk_corp(bvo.getPk_corp());
+					countvo.setPk_goods(bvo.getPk_goods());
+					countvo.setPk_goodsspec(bvo.getPk_goodsspec());
+					countvo.setNnum(bvo.getNnum());
+					map.put(key, countvo);
+				}else{
+					countvo = map.get(key);
+					countvo.setNnum(ToolsUtil.addInteger(countvo.getNnum(), bvo.getNnum()));
+					map.put(key, countvo);
+				}
+			}
+			StockInBVO stbvo = null;
+			for(String pk_goods_spec : map.keySet()){
+				stbvo = map.get(pk_goods_spec);
+				updateSubStock(stbvo);
+			}
+			
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(oldvo.getTableName(), oldvo.getPk_stockin(), uuid);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 取消确认前数据校验
+	 * @param stvo
+	 * @param oldvo
+	 * @throws DZFWarpException
+	 */
+	private void checkBeforeCancel(StockInVO stvo, StockInVO oldvo) throws DZFWarpException {
+		if (oldvo != null) {
+			if (oldvo.getUpdatets().compareTo(stvo.getUpdatets()) != 0) {
+				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
+			}
+			if(IStatusConstant.ISTOCKINSTATUS_2 != oldvo.getVstatus()){
+				throw new BusinessException("该入库单状态不为已确认，不允许取消确认");
+			}
+		} else {
+			throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
+		}
 	}
 
 }

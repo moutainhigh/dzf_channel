@@ -1,6 +1,7 @@
 package com.dzf.service.channel.dealmanage;
 
 import java.util.List;
+import java.util.Map;
 
 import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.dealmanage.StockInVO;
@@ -48,7 +49,7 @@ public interface IStockInService {
 	 * 通过主键查询数据
 	 * @param pk_stockin
 	 * @param pk_corp
-	 * @param qrytype  0：详情查询（包含子表）；1：修改查询（包含子表）；2：普通查询（不包含子表）；
+	 * @param qrytype   1：详情查询、修改查询（包含子表）；2：普通查询（不包含子表）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -75,5 +76,21 @@ public interface IStockInService {
 	 * @throws DZFWarpException
 	 */
 	public void saveSupplier(StockInVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 取消确认
+	 * @param stvo
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public StockInVO updateCancelConf(StockInVO stvo, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 获取商品名称
+	 * @return Map<商品主键+商品规格型号主键,商品名称（规格型号）>
+	 * @throws DZFWarpException
+	 */
+	public Map<String,String> getGoodsName() throws DZFWarpException;
 
 }
