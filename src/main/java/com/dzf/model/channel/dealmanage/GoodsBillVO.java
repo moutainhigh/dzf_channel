@@ -80,9 +80,53 @@ public class GoodsBillVO extends MultSuperVO {
 	private GoodsBillBVO[] goods;//商品明细
 	
 	@FieldAlias("confdate")
-	private DZFDate dconfdate; //确认时间（仅作数据展示）
+	private DZFDate dconfdate; //确认日期（仅作数据展示）
+	
+	@FieldAlias("bdate")
+	private DZFDate begdate;// 开始日期（查询使用）
+
+	@FieldAlias("edate")
+	private DZFDate enddate;// 结束日期（查询使用）
+	
+	@FieldAlias("bbdate")
+	private DZFDate bbegdate;// 开始日期（查询使用）
+
+	@FieldAlias("eedate")
+	private DZFDate eenddate;// 结束日期（查询使用）
 	
 	//仅作展示用字段end
+
+	public DZFDate getBegdate() {
+		return begdate;
+	}
+
+	public void setBegdate(DZFDate begdate) {
+		this.begdate = begdate;
+	}
+
+	public DZFDate getEnddate() {
+		return enddate;
+	}
+
+	public void setEnddate(DZFDate enddate) {
+		this.enddate = enddate;
+	}
+
+	public DZFDate getBbegdate() {
+		return bbegdate;
+	}
+
+	public void setBbegdate(DZFDate bbegdate) {
+		this.bbegdate = bbegdate;
+	}
+
+	public DZFDate getEenddate() {
+		return eenddate;
+	}
+
+	public void setEenddate(DZFDate eenddate) {
+		this.eenddate = eenddate;
+	}
 
 	public DZFDate getDconfdate() {
 		return dconfdate;

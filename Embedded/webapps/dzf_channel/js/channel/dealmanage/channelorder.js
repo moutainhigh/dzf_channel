@@ -5,7 +5,55 @@ $(function(){
 	load();
 	initRef();
 	loadData();//加载数据
+	initQueryData();
+	initQryLitener();
 });
+
+/**
+ * 查询初始化
+ */
+function initQueryData(){
+	$("#querydate").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+	
+	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#eperiod").datebox("setValue", parent.SYSTEM.LoginDate);
+}
+
+/**
+ * 查询框监听事件
+ */
+function initQryLitener(){
+	$("#bdate").datebox("readonly", false);
+	$("#edate").datebox("readonly", false);
+	$('#bperiod').datebox("readonly", true);
+	$('#eperiod').datebox("readonly", true);
+    $('input:radio[name="seledate"]').change( function(){  
+		var ischeck = $('#tddate').is(':checked');
+		if(ischeck){
+			var sdv = $('#bdate').datebox('getValue');
+			var edv = $('#edate').datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#bdate").datebox("readonly", false);
+			$("#edate").datebox("readonly", false);
+			$('#bperiod').datebox("readonly", true);
+			$('#eperiod').datebox("readonly", true);
+		}else{
+			var sdv = $("#bperiod").val();
+			var edv = $("#eperiod").val();
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#bdate").datebox("readonly", true);
+			$("#edate").datebox("readonly", true);
+			$('#bperiod').datebox("readonly", false);
+			$('#eperiod').datebox("readonly", false);
+		}
+	});
+}
 
 /**
  * 加载数据
@@ -165,7 +213,7 @@ function load(){
 			}
 		}, {
 			width : '100',
-			title : '确认时间',
+			title : '确认日期',
 			field : 'confdate',
 			align : 'center',
             halign : 'center',
@@ -274,12 +322,67 @@ function dClickCompany(rowTable){
  * 查询数据
  */
 function reloadData(){
+	var bdate = null;//提单开始日期
+	var edate = null;//提单结束日期
+	var bperiod = null;//扣款开始日期
+	var eperiod = null;//扣款结束日期
+	var ischeck = $('#tddate').is(':checked');
+	if(ischeck){
+		bdate = $('#bdate').datebox('getValue'); 
+		edate = $('#edate').datebox('getValue'); 
+		if(isEmpty(bdate)){
+			Public.tips({
+				content : '提交日期开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(edate)){
+			Public.tips({
+				content : '提交日期结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bdate) && !isEmpty(edate)){
+			if(!checkdate1("bdate","edate")){
+				return;
+			}		
+		}
+	}else{
+		bperiod = $('#bperiod').datebox('getValue');
+		eperiod = $('#eperiod').datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : '确认日期开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : '确认日期结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bperiod) && !isEmpty(eperiod)){
+			if(!checkdate1("bperiod","eperiod")){
+				return;
+			}		
+		}
+	}
+	
 	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'billcode' : $("#qbcode").val(),
 		'corpid' : $("#qcpid").val(),
 		'vstatus' :  $('#qstatus').combobox('getValue'),
+		'bdate' : bdate,
+		'edate' : edate,
+		'bbdate' : bperiod,
+		'eedate' : eperiod,
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#qrydialog').hide();

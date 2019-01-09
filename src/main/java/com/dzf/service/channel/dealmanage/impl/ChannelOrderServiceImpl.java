@@ -17,7 +17,6 @@ import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.dealmanage.GoodsBillSVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
-import com.dzf.model.channel.dealmanage.StockInBVO;
 import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
@@ -128,6 +127,22 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		if(!StringUtil.isEmpty(pamvo.getPk_goodsbill())){
 			sql.append(" AND l.pk_goodsbill = ? ");
 			spm.addParam(pamvo.getPk_goodsbill());
+		}
+		if(pamvo.getBegdate() != null){
+			sql.append("                            AND s.doperatedate >= ?  \n") ; 
+			spm.addParam(pamvo.getBegdate());
+		}
+		if(pamvo.getEnddate() != null){
+			sql.append("                            AND s.doperatedate <= ?  \n") ; 
+			spm.addParam(pamvo.getEnddate());
+		}
+		if(pamvo.getBbegdate() != null){
+			sql.append("                            AND u.doperatedate >= ?  \n") ; 
+			spm.addParam(pamvo.getBbegdate());
+		}
+		if(pamvo.getEenddate() != null){
+			sql.append("                            AND u.doperatedate <= ?  \n") ; 
+			spm.addParam(pamvo.getEenddate());
 		}
 		sql.append(" ORDER BY s.doperatetime DESC");
 		qryvo.setSql(sql.toString());
