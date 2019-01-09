@@ -185,7 +185,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '90',
+			width : '150',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter
@@ -200,6 +200,8 @@ function load(){
  * 查询数据
  */
 function reloadData(){
+	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 	var url = DZF.contextPath + '/dealmanage/stockin!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
@@ -208,8 +210,6 @@ function reloadData(){
 		'vcode' : $("#qvcode").val(),
 		'uid' :  $('#uid').combobox('getValue'),
 	});
-	$('#grid').datagrid('clearSelections');
-	$('#grid').datagrid('clearChecked');
 	$('#qrydialog').hide();
 }
 
@@ -233,12 +233,13 @@ function closeCx(){
  * @param type  1：待确认；2：已确认；
  */
 function loadData(type){
+	$('#grid').datagrid('clearSelections');
+	$('#grid').datagrid('clearChecked');
 	var url = DZF.contextPath + '/dealmanage/stockin!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'qtype' : type,
 	});
-	$('#grid').datagrid('clearSelections');
 }
 
 /**
@@ -249,14 +250,59 @@ function loadData(type){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	if(row.status != 1){
+	if(row.status == 2){//2：已确认；
 		return '<span style="margin-bottom:0px;">编辑</span> '+
-		' <span style="margin-bottom:0px;margin-left:10px;">删除</span>';
-	}else{
+		' <span style="margin-bottom:0px;margin-left:10px;">删除</span>'+
+		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+	}else if(row.status == 1){// 1：待确认
 		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
-		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>';
+		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="dele(this)">删除</a>'+
+		' <span style="margin-bottom:0px;margin-left:10px;">取消确认</span>';
 	}
 	
+}
+
+/**
+ * 取消确认
+ */
+function cancelConf(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	var row = $('#grid').datagrid('getData').rows[tindex];
+	if (row.status != 2) {
+		Public.tips({
+			content : '该记录不是已确认状态，不允许取消确认',
+			type : 2
+		});
+		return;
+	}
+	
+	$.messager.confirm("提示", "你确定取消确认吗？", function(flag) {
+		if (flag) {
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : contextPath + '/dealmanage/stockin!cancelConf.action',
+				data : row,
+				traditional : true,
+				async : false,
+				success : function(data, textStatus) {
+					if (!data.success) {
+						Public.tips({
+							content : data.msg,
+							type : 1
+						});
+					} else {
+						reloadData();
+						Public.tips({
+							content : data.msg,
+						});
+					}
+				},
+			});
+		} else {
+			return null;
+		}
+	});
 }
 
 /**
@@ -819,7 +865,6 @@ function dele(ths){
 							type : 1
 						});
 					} else {
-						$('#grid').datagrid('clearSelections');
 						reloadData();
 						Public.tips({
 							content : data.msg,
@@ -982,7 +1027,6 @@ function confirm(){
 					});
 				}
 				reloadData();
-				$("#grid").datagrid('uncheckAll');
 			}
 		},
 	});
