@@ -2,8 +2,6 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
 
 /**
  * 商品数量明细表VO
@@ -12,31 +10,33 @@ import com.dzf.pub.lang.DZFDateTime;
  */
 @SuppressWarnings("rawtypes")
 public class GoodsNumVO extends SuperVO {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	private String pk_goodstype;
-    
-    private String vname;//商品分类
-	
+
+	private String vname;// 商品分类
+
 	@FieldAlias("gcode")
-	private String vgoodscode;//商品编码
+	private String vgoodscode;// 商品编码
 
 	@FieldAlias("gname")
-	private String vgoodsname;//商品名称
-	
+	private String vgoodsname;// 商品名称
+
 	@FieldAlias("spec")
-	private String invspec;//规格
-	
+	private String invspec;// 规格
+
 	@FieldAlias("type")
-	private String invtype;//型号
+	private String invtype;// 型号
 
 	@FieldAlias("stock")
-    private Integer istocknum;//库存数量
-    
+	private Integer istocknum;// 库存数量
+
 	@FieldAlias("lock")
-    private Integer ilocknum;//锁定数量
-    
+	private Integer ilocknum;// 锁定数量
+
 	@FieldAlias("use")
-    private Integer iusenum;//可用数量
+	private Integer iusenum;// 可用数量
 
 	public String getVname() {
 		return vname;
@@ -112,19 +112,16 @@ public class GoodsNumVO extends SuperVO {
 
 	@Override
 	public String getParentPKFieldName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getPKFieldName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getTableName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
