@@ -303,7 +303,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 */
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
-		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {// 返点扣款
+		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			ChnBalanceVO balvo = map.get("rebate");
 			String uuid = UUID.randomUUID().toString();
 			try {
@@ -345,8 +345,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3,
 						uuid);
 			}
+		}else if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0){
+			throw new BusinessException("返点扣款错误");
 		}
-		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0) {// 预付款扣款
+		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款扣款
 			ChnBalanceVO balvo = map.get("payment");
 			String uuid = UUID.randomUUID().toString();
 			try {
@@ -388,6 +390,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
 						uuid);
 			}
+		}else if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0){
+			throw new BusinessException("预付款扣款错误");
 		}
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);// 待发货
 		pamvo.setUpdatets(new DZFDateTime());
