@@ -4,9 +4,9 @@ var editIndex = undefined;
 $(function(){
 	load();
 	initRef();
-	loadData();//加载数据
 	initQueryData();
 	initQryLitener();
+	loadData();//加载数据
 });
 
 /**
@@ -64,19 +64,15 @@ function loadData(){
 	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
 	$('#grid').datagrid('options').url = url;
 	if(operate == "toorder"){
+		$('#grid').datagrid('unselectAll');
+		$('#grid').datagrid('clearSelections');
 		var billid = obj.billid;
 		$('#grid').datagrid('load', {
 			'billid' : billid,
 		});
 	}else{
-		$('#grid').datagrid('load', {
-			'billcode' : $("#qbcode").val(),
-			'corpid' : $("#qcpid").val(),
-			'vstatus' :  $('#qstatus').combobox('getValue'),
-		});
+		reloadData();
 	}
-	$('#grid').datagrid('unselectAll');
-	$('#grid').datagrid('clearSelections');
 }
 
 /**
@@ -217,6 +213,13 @@ function load(){
 			field : 'confdate',
 			align : 'center',
             halign : 'center',
+		}, {
+			field : 'operate',
+			title : '操作',
+			width : '100',
+			halign : 'center',
+			align : 'center',
+			formatter : opermatter,
 		}] ],
 		onLoadSuccess : function(data) {
 			parent.$.messager.progress('close');
@@ -244,6 +247,70 @@ function load(){
 			fs[0] = footerData;
 			$('#grid').datagrid('reloadFooter', fs);
 		},
+	});
+}
+
+/**
+ * 列操作格式化
+ * @param val
+ * @param row
+ * @param index
+ * @returns {String}
+ */
+function opermatter(val, row, index) {
+	if(row.vstatus == 1){//1：待发货；
+		return '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+	}else{
+		return '<span style="margin-bottom:0px;">取消确认</span> ';
+	}
+	
+}
+
+/**
+ * 取消确认
+ */
+function cancelConf(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	var row = $('#grid').datagrid('getData').rows[tindex];
+	if (row.status != 2) {
+		Public.tips({
+			content : '该记录不是已确认状态，不允许取消确认',
+			type : 2
+		});
+		return;
+	}
+	
+	$.messager.confirm("提示", "你确定取消确认吗？", function(flag) {
+		if (flag) {
+//			$.ajax({
+//				type : "post",
+//				dataType : "json",
+//				url : contextPath + '/dealmanage/channelorder!operData.action',
+//				data : row,
+//				traditional : true,
+//				async : false,
+//				success : function(data, textStatus) {
+//					if (!data.success) {
+//						Public.tips({
+//							content : data.msg,
+//							type : 1
+//						});
+//					} else {
+//						reloadData();
+//						Public.tips({
+//							content : data.msg,
+//						});
+//					}
+//				},
+//			});
+			var postdata = new Object();
+			var data = JSON.stringify(row);
+			postdata["data"] = data;
+			postdata["type"] = 3;
+			operdata(postdata, 3);
+		} else {
+			return null;
+		}
 	});
 }
 

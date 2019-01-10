@@ -93,19 +93,21 @@ public interface IStatusConstant {
 	public static int IORDERSTATUS_3 = 3;
 	public static int IORDERSTATUS_4 = 4;
 	
-	/** 商品订单操作动作 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单*/
+	/** 商品订单操作动作 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单；5：取消确认；*/
 	public static String IORDERACTION_0 = "create";
 	public static String IORDERACTION_1 = "confirm";
 	public static String IORDERACTION_2 = "send";
 	public static String IORDERACTION_3 = "receive";
 	public static String IORDERACTION_4 = "cancel";
+	public static String IORDERACTION_5 = "cancelConf";
 	
-	/** 商品订单操作说明 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单*/
+	/** 商品订单操作说明 0：订单创建；1：订单确认；2：商品发货；3：已收货；4：取消订单；5：取消确认；*/
 	public static String IORDERDESCRIBE_0 = "订单创建";
 	public static String IORDERDESCRIBE_1 = "订单确认";
 	public static String IORDERDESCRIBE_2 = "商品发货";
 	public static String IORDERDESCRIBE_3 = "已收货";
 	public static String IORDERDESCRIBE_4 = "取消订单";
+	public static String IORDERDESCRIBE_5 = "取消确认";
 	
 	/** 加盟商合同类型 null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同*/
 	public static int ICONTRACTTYPE_1 = 1;

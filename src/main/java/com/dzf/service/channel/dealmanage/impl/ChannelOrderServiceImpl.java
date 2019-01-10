@@ -164,15 +164,15 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	public GoodsBillVO updateData(GoodsBillVO pamvo, Integer type, String cuserid) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid, 120);
+			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid, 60);
 			checkData(pamvo, type);
-			if(type != null){
+			if (type != null) {
 				if (type == 1) {
 					return updateConfirm(pamvo, cuserid);
 				} else if (type == 2) {
 					return updateCancel(pamvo, cuserid);
-				} else if(type == 3) {
-					
+				} else if (type == 3) {
+					return updateCancelConf(pamvo, cuserid);
 				}
 			}
 		} catch (Exception e) {
@@ -273,7 +273,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_goods() + "" + numvo.getPk_goodsspec(),
-					uuid, 120);
+					uuid, 60);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 
@@ -301,6 +301,34 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	}
 
 	/**
+	 * 更新取消确认数据
+	 * 
+	 * @param pamvo
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private GoodsBillVO updateCancelConf(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
+		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
+		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
+			updateRebBanlanceSub(pamvo, map, cuserid);
+		} else if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
+			throw new BusinessException("返点扣款错误");
+		}
+		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款扣款
+			updateDedBanlanceSub(pamvo, map, cuserid);
+		} else if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
+			throw new BusinessException("预付款扣款错误");
+		}
+		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);// 待发货
+		pamvo.setUpdatets(new DZFDateTime());
+		singleObjectBO.update(pamvo, new String[] { "vstatus" });
+
+		saveOperDetailSub(pamvo, cuserid);
+		return pamvo;
+	}
+
+	/**
 	 * 更新确认数据
 	 * 
 	 * @param pamvo
@@ -311,12 +339,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			updateRebBanlanceAdd(pamvo, map, cuserid);
-		}else if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0){
+		} else if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
 			throw new BusinessException("返点扣款错误");
 		}
 		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款扣款
 			updateDedBanlanceAdd(pamvo, map, cuserid);
-		}else if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0){
+		} else if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
 			throw new BusinessException("预付款扣款错误");
 		}
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);// 待发货
@@ -326,9 +354,32 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		saveOperDetailAdd(pamvo, cuserid);
 		return pamvo;
 	}
-	
+
 	/**
 	 * 保存操作详情
+	 * 
+	 * @param pamvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveOperDetailSub(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
+		// 订单购买详情
+		GoodsBillSVO bsvo = new GoodsBillSVO();
+		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
+		bsvo.setPk_corp(pamvo.getPk_corp());
+		bsvo.setVsaction(IStatusConstant.IORDERACTION_5);
+		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_0);
+		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_5);// 状态描述
+		bsvo.setCoperatorid(cuserid);
+		bsvo.setDoperatedate(new DZFDate());
+		bsvo.setDoperatetime(new DZFDateTime());
+		bsvo.setVnote("");// 处理说明
+		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
+	}
+
+	/**
+	 * 保存操作详情
+	 * 
 	 * @param pamvo
 	 * @param cuserid
 	 * @throws DZFWarpException
@@ -347,21 +398,77 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		bsvo.setVnote("");// 处理说明
 		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
 	}
-	
+
+	/**
+	 * 更新预付款余额（退款）
+	 * 
+	 * @param pamvo
+	 * @param map
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void updateDedBanlanceSub(GoodsBillVO pamvo, Map<String, ChnBalanceVO> map, String cuserid)
+			throws DZFWarpException {
+		ChnBalanceVO balvo = map.get("payment");
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid,
+					120);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			sql.append("UPDATE cn_balance l  \n");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+			spm.addParam(pamvo.getNdeductmny());
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			spm.addParam(IStatusConstant.IPAYTYPE_2);
+			sql.append("   AND l.pk_corp = ?  \n");
+			spm.addParam(pamvo.getPk_corp());
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res == 1) {
+				sql = new StringBuffer();
+				spm = new SQLParameter();
+				sql.append("DELETE FROM cn_detail  \n");
+				sql.append(" WHERE nvl(dr, 0) = 0  \n");
+				sql.append("   AND pk_corp = ?  \n");
+				spm.addParam(pamvo.getPk_corp());
+				sql.append("   AND ipaytype = ?  \n");
+				spm.addParam(IStatusConstant.IPAYTYPE_2);// 预付款
+				sql.append("   AND pk_bill = ?  \n");
+				spm.addParam(pamvo.getPk_goodsbill());
+				sql.append("   AND iopertype = ?  \n");
+				spm.addParam(IStatusConstant.IDETAILTYPE_5);// 商品购买
+				res = singleObjectBO.executeUpdate(sql.toString(), spm);
+				if (res != 1) {
+					throw new BusinessException("付款余额表-明细表更新错误");
+				}
+			} else {
+				throw new BusinessException("付款余额表-预付款余额不足");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid);
+		}
+	}
+
 	/**
 	 * 更新预付款余额（扣款）
+	 * 
 	 * @param pamvo
 	 * @param map
 	 * @param cuserid
 	 * @throws DZFWarpException
 	 */
 	private void updateDedBanlanceAdd(GoodsBillVO pamvo, Map<String, ChnBalanceVO> map, String cuserid)
-			throws DZFWarpException{
+			throws DZFWarpException {
 		ChnBalanceVO balvo = map.get("payment");
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
-					uuid, 120);
+			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid,
+					120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			sql.append("UPDATE cn_balance l  \n");
@@ -395,13 +502,68 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
-					uuid);
+			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid);
 		}
 	}
-	
+
+	/**
+	 * 更新返点余额（退款）
+	 * 
+	 * @param pamvo
+	 * @param map
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void updateRebBanlanceSub(GoodsBillVO pamvo, Map<String, ChnBalanceVO> map, String cuserid)
+			throws DZFWarpException {
+		ChnBalanceVO balvo = map.get("rebate");
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid,
+					120);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			sql.append("UPDATE cn_balance l  \n");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+			spm.addParam(pamvo.getNdedrebamny());
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			spm.addParam(IStatusConstant.IPAYTYPE_3);
+			sql.append("   AND l.pk_corp = ?  \n");
+			spm.addParam(pamvo.getPk_corp());
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res == 1) {
+				sql = new StringBuffer();
+				spm = new SQLParameter();
+				sql.append("DELETE FROM cn_detail  \n");
+				sql.append(" WHERE nvl(dr, 0) = 0  \n");
+				sql.append("   AND pk_corp = ?  \n");
+				spm.addParam(pamvo.getPk_corp());
+				sql.append("   AND ipaytype = ?  \n");
+				spm.addParam(IStatusConstant.IPAYTYPE_3);// 返点款
+				sql.append("   AND pk_bill = ?  \n");
+				spm.addParam(pamvo.getPk_goodsbill());
+				sql.append("   AND iopertype = ?  \n");
+				spm.addParam(IStatusConstant.IDETAILTYPE_5);// 商品购买
+				res = singleObjectBO.executeUpdate(sql.toString(), spm);
+				if (res != 1) {
+					throw new BusinessException("付款余额表-明细表更新错误");
+				}
+			} else {
+				throw new BusinessException("付款余额表-返点款余额不足");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid);
+		}
+	}
+
 	/**
 	 * 更新返点余额（扣款）
+	 * 
 	 * @param pamvo
 	 * @param map
 	 * @param cuserid
