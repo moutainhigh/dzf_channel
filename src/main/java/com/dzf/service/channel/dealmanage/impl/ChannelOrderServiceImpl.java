@@ -156,7 +156,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * 
 	 * @param pamvo
 	 * @param type
-	 *            1：确认；2：取消订单；3：商品发货（此功能去掉，移动至出库单节点）；
+	 *            1：确认；2：取消订单；3：取消确认；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -166,10 +166,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		try {
 			LockUtil.getInstance().tryLockKey(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid, 120);
 			checkData(pamvo, type);
-			if (type != null && type == 1) {
-				return updateConfirm(pamvo, cuserid);
-			} else if (type != null && type == 2) {
-				return updateCancel(pamvo, cuserid);
+			if(type != null){
+				if (type == 1) {
+					return updateConfirm(pamvo, cuserid);
+				} else if (type == 2) {
+					return updateCancel(pamvo, cuserid);
+				} else if(type == 3) {
+					
+				}
 			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -254,7 +258,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			StockNumVO numvo = list.get(0);
 			updateStock(numvo, bvo);
 		} else if (list != null && list.size() > 1) {
-			throw new BusinessException("库存商品数量错误，请先进行库存盘点");
+			throw new BusinessException("库存商品数量错误");
 		}
 	}
 
@@ -268,7 +272,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private void updateStock(StockNumVO numvo, GoodsBillBVO bvo) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_stocknum(), uuid, 120);
+			LockUtil.getInstance().tryLockKey(numvo.getTableName(), numvo.getPk_goods() + "" + numvo.getPk_goodsspec(),
+					uuid, 120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 
@@ -290,7 +295,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_stocknum(), uuid);
+			LockUtil.getInstance().unLock_Key(numvo.getTableName(), numvo.getPk_goods() + "" + numvo.getPk_goodsspec(),
+					uuid);
 		}
 	}
 
@@ -304,92 +310,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
-			ChnBalanceVO balvo = map.get("rebate");
-			String uuid = UUID.randomUUID().toString();
-			try {
-				LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3,
-						uuid, 120);
-				StringBuffer sql = new StringBuffer();
-				SQLParameter spm = new SQLParameter();
-				sql.append("UPDATE cn_balance l  \n");
-				sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
-				spm.addParam(pamvo.getNdedrebamny());
-				sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
-				spm.addParam(IStatusConstant.IPAYTYPE_3);
-				sql.append("   AND l.pk_corp = ?  \n");
-				spm.addParam(pamvo.getPk_corp());
-				sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
-				spm.addParam(pamvo.getNdedrebamny());
-				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-				if (res == 1) {
-					ChnDetailVO detvo = new ChnDetailVO();
-					detvo.setPk_corp(pamvo.getPk_corp());
-					detvo.setNusedmny(pamvo.getNdedrebamny());
-					detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);// 返点款
-					detvo.setPk_bill(pamvo.getPk_goodsbill());
-					detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
-					detvo.setCoperatorid(cuserid);
-					detvo.setDoperatedate(new DZFDate());
-					detvo.setDr(0);
-					detvo.setIopertype(IStatusConstant.IDETAILTYPE_5);// 商品购买
-					singleObjectBO.saveObject("000001", detvo);
-				} else {
-					throw new BusinessException("付款余额表-返点款余额不足");
-				}
-			} catch (Exception e) {
-				if (e instanceof BusinessException)
-					throw new BusinessException(e.getMessage());
-				else
-					throw new WiseRunException(e);
-			} finally {
-				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3,
-						uuid);
-			}
+			updateRebBanlanceAdd(pamvo, map, cuserid);
 		}else if(CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0){
 			throw new BusinessException("返点扣款错误");
 		}
 		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款扣款
-			ChnBalanceVO balvo = map.get("payment");
-			String uuid = UUID.randomUUID().toString();
-			try {
-				LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
-						uuid, 120);
-				StringBuffer sql = new StringBuffer();
-				SQLParameter spm = new SQLParameter();
-				sql.append("UPDATE cn_balance l  \n");
-				sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
-				spm.addParam(pamvo.getNdeductmny());
-				sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
-				spm.addParam(IStatusConstant.IPAYTYPE_2);
-				sql.append("   AND l.pk_corp = ?  \n");
-				spm.addParam(pamvo.getPk_corp());
-				sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
-				spm.addParam(pamvo.getNdeductmny());
-				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-				if (res == 1) {
-					ChnDetailVO detvo = new ChnDetailVO();
-					detvo.setPk_corp(pamvo.getPk_corp());
-					detvo.setNusedmny(pamvo.getNdeductmny());
-					detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);// 预付款
-					detvo.setPk_bill(pamvo.getPk_goodsbill());
-					detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
-					detvo.setCoperatorid(cuserid);
-					detvo.setDoperatedate(new DZFDate());
-					detvo.setDr(0);
-					detvo.setIopertype(IStatusConstant.IDETAILTYPE_5);// 商品购买
-					singleObjectBO.saveObject("000001", detvo);
-				} else {
-					throw new BusinessException("付款余额表-预付款余额不足");
-				}
-			} catch (Exception e) {
-				if (e instanceof BusinessException)
-					throw new BusinessException(e.getMessage());
-				else
-					throw new WiseRunException(e);
-			} finally {
-				LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
-						uuid);
-			}
+			updateDedBanlanceAdd(pamvo, map, cuserid);
 		}else if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0){
 			throw new BusinessException("预付款扣款错误");
 		}
@@ -397,6 +323,17 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		pamvo.setUpdatets(new DZFDateTime());
 		singleObjectBO.update(pamvo, new String[] { "vstatus" });
 
+		saveOperDetailAdd(pamvo, cuserid);
+		return pamvo;
+	}
+	
+	/**
+	 * 保存操作详情
+	 * @param pamvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveOperDetailAdd(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		// 订单购买详情
 		GoodsBillSVO bsvo = new GoodsBillSVO();
 		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
@@ -409,7 +346,109 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		bsvo.setDoperatetime(new DZFDateTime());
 		bsvo.setVnote("");// 处理说明
 		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
-		return pamvo;
+	}
+	
+	/**
+	 * 更新预付款余额（扣款）
+	 * @param pamvo
+	 * @param map
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void updateDedBanlanceAdd(GoodsBillVO pamvo, Map<String, ChnBalanceVO> map, String cuserid)
+			throws DZFWarpException{
+		ChnBalanceVO balvo = map.get("payment");
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
+					uuid, 120);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			sql.append("UPDATE cn_balance l  \n");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+			spm.addParam(pamvo.getNdeductmny());
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			spm.addParam(IStatusConstant.IPAYTYPE_2);
+			sql.append("   AND l.pk_corp = ?  \n");
+			spm.addParam(pamvo.getPk_corp());
+			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+			spm.addParam(pamvo.getNdeductmny());
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res == 1) {
+				ChnDetailVO detvo = new ChnDetailVO();
+				detvo.setPk_corp(pamvo.getPk_corp());
+				detvo.setNusedmny(pamvo.getNdeductmny());
+				detvo.setIpaytype(IStatusConstant.IPAYTYPE_2);// 预付款
+				detvo.setPk_bill(pamvo.getPk_goodsbill());
+				detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
+				detvo.setCoperatorid(cuserid);
+				detvo.setDoperatedate(new DZFDate());
+				detvo.setDr(0);
+				detvo.setIopertype(IStatusConstant.IDETAILTYPE_5);// 商品购买
+				singleObjectBO.saveObject("000001", detvo);
+			} else {
+				throw new BusinessException("付款余额表-预付款余额不足");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2,
+					uuid);
+		}
+	}
+	
+	/**
+	 * 更新返点余额（扣款）
+	 * @param pamvo
+	 * @param map
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void updateRebBanlanceAdd(GoodsBillVO pamvo, Map<String, ChnBalanceVO> map, String cuserid)
+			throws DZFWarpException {
+		ChnBalanceVO balvo = map.get("rebate");
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid,
+					120);
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			sql.append("UPDATE cn_balance l  \n");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+			spm.addParam(pamvo.getNdedrebamny());
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			spm.addParam(IStatusConstant.IPAYTYPE_3);
+			sql.append("   AND l.pk_corp = ?  \n");
+			spm.addParam(pamvo.getPk_corp());
+			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+			spm.addParam(pamvo.getNdedrebamny());
+			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res == 1) {
+				ChnDetailVO detvo = new ChnDetailVO();
+				detvo.setPk_corp(pamvo.getPk_corp());
+				detvo.setNusedmny(pamvo.getNdedrebamny());
+				detvo.setIpaytype(IStatusConstant.IPAYTYPE_3);// 返点款
+				detvo.setPk_bill(pamvo.getPk_goodsbill());
+				detvo.setVmemo("商品购买：" + pamvo.getVbillcode());
+				detvo.setCoperatorid(cuserid);
+				detvo.setDoperatedate(new DZFDate());
+				detvo.setDr(0);
+				detvo.setIopertype(IStatusConstant.IDETAILTYPE_5);// 商品购买
+				singleObjectBO.saveObject("000001", detvo);
+			} else {
+				throw new BusinessException("付款余额表-返点款余额不足");
+			}
+		} catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key("cn_balance", balvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid);
+		}
 	}
 
 	/**

@@ -99,7 +99,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			String type = getRequest().getParameter("type");
 			Integer itype = Integer.parseInt(type);
 			Map<String, String> maping = FieldMapping.getFieldMapping(new GoodsBillVO());
-			if(itype == 1){//1：确认；
+			if(itype == 1 || itype == 3){//1：确认；3：取消确认；
 				//单条数据
 				JSON djson = (JSON) JSON.parse(data);
 				GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
