@@ -165,7 +165,7 @@ public class UrlFilter implements Filter {
 		boolean returnBoolean =false;
 		Iterator<Integer> iterator=powerMap.iterator();
 		while(iterator.hasNext()){
-			String powerUrl=NodeUrlConst.getInstance().getUrlMap().get(iterator.next());
+			String powerUrl=NodeUrlConst.getInstance().getUrlMap(IGlobalConstants.DZF_CHANNEL).get(iterator.next());
 			if(powerUrl!=null){
 				returnBoolean=powerUrl.contains(url);
 				if(returnBoolean){
