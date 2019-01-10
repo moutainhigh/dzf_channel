@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
@@ -97,15 +98,45 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			}
 			String type = getRequest().getParameter("type");
 			Integer itype = Integer.parseInt(type);
-			
-			JSON djson = (JSON) JSON.parse(data);
 			Map<String, String> maping = FieldMapping.getFieldMapping(new GoodsBillVO());
-			GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
-					JSONConvtoJAVA.getParserConfig());
+			if(itype == 1){//1：确认；
+				//单条数据
+				JSON djson = (JSON) JSON.parse(data);
+				GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
+						JSONConvtoJAVA.getParserConfig());
+				orderser.updateData(ordervo, itype, getLoginUserid());
+				
+			}else if(itype == 2){//2：取消订单；
+				//多条数据
+				data = data.replace("}{", "},{");
+				data = "[" + data + "]";
+				JSONArray arrayJson = (JSONArray) JSON.parseArray(data);
+				GoodsBillVO[] bVOs = DzfTypeUtils.cast(arrayJson, maping, GoodsBillVO[].class,
+						JSONConvtoJAVA.getParserConfig());
+				int rightnum = 0;
+				int errornum = 0;
+				StringBuffer errmsg = new StringBuffer();
+				for(GoodsBillVO bvo : bVOs){
+					try {
+						orderser.updateData(bvo, itype, getLoginUserid());
+						rightnum ++;
+					} catch (Exception e) {
+						errmsg.append(e.getMessage());
+						errornum ++;
+					}
+				}
+				
+				if(errornum > 0){
+					json.setMsg("成功" + rightnum + "条，失败" + errornum + "条，失败原因：" + errmsg.toString());
+					json.setStatus(-1);
+				}else{
+					json.setMsg("成功" + rightnum + "条");
+				}
+			}
 			
-			ordervo = orderser.updateData(ordervo, itype, getLoginUserid());
+			
 			json.setSuccess(true);
-			json.setRows(ordervo);
+//			json.setRows(ordervo);
 			json.setMsg("操作成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
