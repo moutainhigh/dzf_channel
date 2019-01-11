@@ -29,15 +29,6 @@
 	}
 	</style>
 	<script>
-		/* $(document).ready(function(){
-			$(document).on('keypress', function(e) {
-				 if(e.keyCode == 13 && e.target.type!== 'submit'&&e.target.type!=='text') {
-					var rowindex= $("#rgrid").datagrid('getRowIndex',$("#rgrid").datagrid('getSelected'));
-					$('#rgrid').datagrid('unselectRow',rowindex);
-					$('#rgrid').datagrid('selectRow',rowindex+1);
-				 }
-				});
-		});//enter 键代替tab键换行        end */
 		
 		var JPlaceHolder = {
 		    //检测
@@ -73,7 +64,6 @@
 		        });
 		    }
 		}; 
-		/* var rows = null; */
 		
 		$(function(){
 			var params = new Object();
@@ -110,26 +100,10 @@
 			   		}
 				}
 			});
-		
-			/*  $('#mcode').bind('keypress',function(event){
-			       if(event.keyCode == "13") {//Enter 键事件
-			    	   var filtername = $("#mcode").val(); ; 
-			      		var params = new Object();
-			      		params["ucode"] = filtername;
-			      		grid.datagrid('load',params); 
-			       }
-			   });  */
 		});
 	</script>
 	<div  id="cardList">
 		<div class="mod-toolbar-top">
-		<!-- 	<div class="mod-toolbar-content">
-				<div class="left mod-corp">
-					<input id="mcode" value="请输入编码或名称" 
-						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
-						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
-				</div>
-			</div> -->
 		</div>
 		<div class="mod-inner">
 			<div id="dataGrid" class="grid-wrap">
