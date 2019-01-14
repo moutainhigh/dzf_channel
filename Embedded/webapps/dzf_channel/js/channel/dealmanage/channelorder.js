@@ -215,7 +215,7 @@ function load(){
             halign : 'center',
 		}, {
 			field : 'operate',
-			title : '操作',
+			title : '操作列',
 			width : '100',
 			halign : 'center',
 			align : 'center',
@@ -258,12 +258,13 @@ function load(){
  * @returns {String}
  */
 function opermatter(val, row, index) {
-	if(row.vstatus == 1){//1：待发货；
-		return '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-	}else{
-		return '<span style="margin-bottom:0px;">取消确认</span> ';
+	if(row.vstatus != null){
+		if(row.vstatus == 1){//1：待发货；
+			return '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+		}else{
+			return '<span style="margin-bottom:0px;margin-left:10px;">取消确认</span> ';
+		}
 	}
-	
 }
 
 /**
@@ -272,9 +273,9 @@ function opermatter(val, row, index) {
 function cancelConf(ths){
 	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
 	var row = $('#grid').datagrid('getData').rows[tindex];
-	if (row.status != 2) {
+	if (row.vstatus != 1) {
 		Public.tips({
-			content : '该记录不是已确认状态，不允许取消确认',
+			content : '该记录不是代发货状态，不允许取消确认',
 			type : 2
 		});
 		return;
@@ -282,27 +283,6 @@ function cancelConf(ths){
 	
 	$.messager.confirm("提示", "你确定取消确认吗？", function(flag) {
 		if (flag) {
-//			$.ajax({
-//				type : "post",
-//				dataType : "json",
-//				url : contextPath + '/dealmanage/channelorder!operData.action',
-//				data : row,
-//				traditional : true,
-//				async : false,
-//				success : function(data, textStatus) {
-//					if (!data.success) {
-//						Public.tips({
-//							content : data.msg,
-//							type : 1
-//						});
-//					} else {
-//						reloadData();
-//						Public.tips({
-//							content : data.msg,
-//						});
-//					}
-//				},
-//			});
 			var postdata = new Object();
 			var data = JSON.stringify(row);
 			postdata["data"] = data;
