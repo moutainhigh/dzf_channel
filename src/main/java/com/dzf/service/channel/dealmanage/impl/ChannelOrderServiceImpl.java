@@ -320,7 +320,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		} else if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
 			throw new BusinessException("预付款扣款错误");
 		}
-		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_1);// 待发货
+		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_0);// 待确认
 		pamvo.setUpdatets(new DZFDateTime());
 		singleObjectBO.update(pamvo, new String[] { "vstatus" });
 
@@ -363,18 +363,36 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private void saveOperDetailSub(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		// 订单购买详情
-		GoodsBillSVO bsvo = new GoodsBillSVO();
-		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
-		bsvo.setPk_corp(pamvo.getPk_corp());
-		bsvo.setVsaction(IStatusConstant.IORDERACTION_5);
-		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_0);
-		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_5);// 状态描述
-		bsvo.setCoperatorid(cuserid);
-		bsvo.setDoperatedate(new DZFDate());
-		bsvo.setDoperatetime(new DZFDateTime());
-		bsvo.setVnote("");// 处理说明
-		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
+		// 订单取消确认详情
+//		GoodsBillSVO bsvo = new GoodsBillSVO();
+//		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
+//		bsvo.setPk_corp(pamvo.getPk_corp());
+//		bsvo.setVsaction(IStatusConstant.IORDERACTION_5);
+//		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_0);
+//		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_5);// 状态描述
+//		bsvo.setCoperatorid(cuserid);
+//		bsvo.setDoperatedate(new DZFDate());
+//		bsvo.setDoperatetime(new DZFDateTime());
+//		bsvo.setVnote("");// 处理说明
+//		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
+		
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("DELETE FROM cn_goodsbill_s \n") ;
+		sql.append(" WHERE pk_goodsbill = ? \n") ; 
+		spm.addParam(pamvo.getPk_goodsbill());
+		sql.append("   AND pk_corp = ? \n") ; 
+		spm.addParam(pamvo.getPk_corp());
+		sql.append("   AND vsaction = ? \n") ; 
+		spm.addParam(IStatusConstant.IORDERACTION_1);
+		sql.append("   AND vstatus = ? \n") ; 
+		spm.addParam(IStatusConstant.IORDERSTATUS_1);
+		sql.append("   AND vsdescribe = ? \n");
+		spm.addParam(IStatusConstant.IORDERDESCRIBE_1);
+		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+		if(res != 1){
+			throw new BusinessException("商品订单操作详情记录错误");
+		}
 	}
 
 	/**
