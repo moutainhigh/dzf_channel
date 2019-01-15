@@ -24,6 +24,9 @@
 				<div class="left mod-crumb">
 					<span class="cur"></span>
 				</div>
+				<div class="right">
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
+				</div>
 			</div>
 		</div>
 		
@@ -33,6 +36,11 @@
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 			</h3>
+			<div class="time_col time_colp10">
+				<label style="text-align:right; width: 85px;">截止日期：</label> 
+				<input id="nowdate" name="nowdate" type="text" class="easyui-datebox" 
+						 data-options="width:137,height:27" />
+			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品分类：</label>
 				  <input id="vname" class="easyui-combobox" style="width:290px;height:28px;"

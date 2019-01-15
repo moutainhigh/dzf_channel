@@ -43,6 +43,7 @@ public class GoodsBillBVO extends SuperVO {
 	@FieldAlias("price")
 	private DZFDouble nprice; // 单价
 	
+	@FieldAlias("amount")
 	private Integer amount; // 数量
 	
 	private Integer deamount;//发货数量（目前逻辑：有值就是该订单该商品发货，无值就是该订单该商品没有发货）

@@ -9,6 +9,10 @@ import com.dzf.pub.lang.DZFDouble;
  * 出库单VO
  *
  */
+/**
+ * @author admin
+ *
+ */
 @SuppressWarnings({ "serial" })
 public class StockOutVO extends MultSuperVO {
 	
@@ -44,7 +48,10 @@ public class StockOutVO extends MultSuperVO {
 	private DZFDateTime doperatedate;
 	
 	@FieldAlias("conid")
-	private String vconfirmid;//确认出库人
+	private String vconfirmid;//确认出库人id
+	
+	@FieldAlias("conname")
+	private String vconfirmname;//确认出库人
 	
 	@FieldAlias("contime")
 	private DZFDateTime dconfirmtime;//确认出库时间
@@ -69,7 +76,15 @@ public class StockOutVO extends MultSuperVO {
 	
 	private String corpname;//加盟商名称
 
-    public String getPk_stockout() {
+    public String getVconfirmname() {
+		return vconfirmname;
+	}
+
+	public void setVconfirmname(String vconfirmname) {
+		this.vconfirmname = vconfirmname;
+	}
+
+	public String getPk_stockout() {
 		return pk_stockout;
 	}
 

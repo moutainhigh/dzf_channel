@@ -24,6 +24,7 @@ public class GoodsBillSVO extends SuperVO {
 	@FieldAlias("action")
 	private String vsaction;//状态动作   订单创建
 	
+	@FieldAlias("vstatus")
 	private Integer vstatus;//状态   0：订单创建
 	
 	@FieldAlias("describe")

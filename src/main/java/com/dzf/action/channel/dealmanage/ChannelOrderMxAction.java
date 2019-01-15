@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,42 +20,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.GoodsNumAuditExcelField;
+import com.dzf.action.channel.expfield.ChannelOrderMxAuditExcelField;
 import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.stock.GoodsNumVO;
-import com.dzf.model.channel.stock.StockOutVO;
+import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
+import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
+import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.service.channel.dealmanage.IGoodsNumService;
+import com.dzf.service.channel.dealmanage.IChannelOrderMxService;
+import com.dzf.service.channel.dealmanage.IChannelOrderService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 商品分类
+ * 加盟商订单
+ * @author yy
  *
  */
-@SuppressWarnings("serial")
 @ParentPackage("basePackage")
 @Namespace("/dealmanage")
-@Action(value = "goodsnum")
-public class GoodsNumAction extends BaseAction<GoodsNumVO> {
+@Action(value = "channelordermx")
+public class ChannelOrderMxAction extends BaseAction<GoodsBillMxVO> {
 
+	private static final long serialVersionUID = -3903910761366206337L;
+	
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private IGoodsNumService goodsNum;
+	private IChannelOrderMxService orderser;
 	
+	@Autowired
+	private IPubService pubser;
+
 	/**
-	 * 查询
+	 * 查询明细O
 	 */
-	public void query() {
+	public void querymx() {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
@@ -63,19 +75,17 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			GoodsNumVO qvo = new GoodsNumVO();
-			qvo = (GoodsNumVO) DzfTypeUtils.cast(getRequest(), qvo);
-			int total = goodsNum.queryTotalRow(qvo);
+			GoodsBillMxVO paramvo = (GoodsBillMxVO) DzfTypeUtils.cast(getRequest(), new GoodsBillMxVO());
+			int total = orderser.queryTotalRowMx(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){
-				List<GoodsNumVO> clist = goodsNum.query(qvo);
+				List<GoodsBillMxVO> clist = orderser.querymx(paramvo);
 				grid.setRows(clist);
-				grid.setMsg("查询成功!");
 			}else{
-				grid.setRows(new ArrayList<StockOutVO>());
-				grid.setMsg("查询数据为空!");
+				grid.setRows(new ArrayList<GoodsBillMxVO>());
 			}
 			grid.setSuccess(true);
+			grid.setMsg("操作成功");
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");
 		}
@@ -83,7 +93,30 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 	}
 	
 	/**
-	 * 商品数量明细表导出
+	 * 查询商品下拉
+	 */
+	public void queryComboBox() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			List<GoodsBoxVO> list = orderser.queryComboBox();
+			if (list == null || list.size() == 0) {
+				grid.setRows(new ArrayList<GoodsBoxVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 订单明细表导出
 	 */
 	public void exportAuditExcel(){
 		String strlist =getRequest().getParameter("strlist");
@@ -92,11 +125,11 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			throw new BusinessException("导出数据不能为空!");
 		}	
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new GoodsNumVO());
-		GoodsNumVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,GoodsNumVO[].class, JSONConvtoJAVA.getParserConfig());
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new GoodsBillMxVO());
+		GoodsBillMxVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,GoodsBillMxVO[].class, JSONConvtoJAVA.getParserConfig());
 		HttpServletResponse response = getResponse();
-		Excelexport2003<GoodsNumVO> ex = new Excelexport2003<>();
-		GoodsNumAuditExcelField fields = new GoodsNumAuditExcelField();
+		Excelexport2003<GoodsBillMxVO> ex = new Excelexport2003<>();
+		ChannelOrderMxAuditExcelField fields = new ChannelOrderMxAuditExcelField();
 		fields.setVos(expVOs);
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
@@ -111,7 +144,7 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出商品数量明细", ISysConstants.SYS_3);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出订单明细", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {

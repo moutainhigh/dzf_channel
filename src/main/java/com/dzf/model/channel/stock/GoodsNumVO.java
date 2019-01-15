@@ -2,6 +2,8 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 
 /**
  * 商品数量明细表VO
@@ -10,119 +12,208 @@ import com.dzf.pub.Field.FieldAlias;
  */
 @SuppressWarnings("rawtypes")
 public class GoodsNumVO extends SuperVO {
+    
+    private String pk_goodstype;
+    
+    private String vname;//商品分类
+    
+    @FieldAlias("gcode")
+    private String vgoodscode;//商品编码
 
-	private static final long serialVersionUID = 1L;
+    @FieldAlias("gname")
+    private String vgoodsname;//商品名称
+    
+    @FieldAlias("spec")
+    private String invspec;//规格
+    
+    @FieldAlias("type")
+    private String invtype;//型号
+    
+    @FieldAlias("unit")
+    private String goodsunit;//单位
+    
+    @FieldAlias("price")
+    private String goodsprice;//单价
 
-	private String pk_goodstype;
+    @FieldAlias("stock")
+    private Integer istocknum;//库存数量
+    
+    @FieldAlias("stockin")
+    private Integer istockinnum;//累计入库数量
+    
+    @FieldAlias("stockmny")
+    private Integer isstockmny;//累计入库成本
+    
+    @FieldAlias("outnum")
+    private Integer ioutnum;//累计出库数量
+    
+    @FieldAlias("nosendnum")
+    private Integer nsendnum;//未发货数量
+    
+    @FieldAlias("lock")
+    private Integer ilocknum;//锁定数量
+    
+    @FieldAlias("use")
+    private Integer iusenum;//可用数量
+    
+    @FieldAlias("buy")
+    private Integer ibuynum;//可购买数量
+    
+    @FieldAlias("nowdate")
+    private Integer nowdate;//当前日期
 
-	private String vname;// 商品分类
+    public Integer getIstockinnum() {
+        return istockinnum;
+    }
 
-	@FieldAlias("gcode")
-	private String vgoodscode;// 商品编码
+    public void setIstockinnum(Integer istockinnum) {
+        this.istockinnum = istockinnum;
+    }
 
-	@FieldAlias("gname")
-	private String vgoodsname;// 商品名称
+    public Integer getNowdate() {
+        return nowdate;
+    }
 
-	@FieldAlias("spec")
-	private String invspec;// 规格
+    public void setNowdate(Integer nowdate) {
+        this.nowdate = nowdate;
+    }
 
-	@FieldAlias("type")
-	private String invtype;// 型号
+    public String getVname() {
+        return vname;
+    }
 
-	@FieldAlias("stock")
-	private Integer istocknum;// 库存数量
+    public void setVname(String vname) {
+        this.vname = vname;
+    }
 
-	@FieldAlias("lock")
-	private Integer ilocknum;// 锁定数量
+    public String getVgoodscode() {
+        return vgoodscode;
+    }
 
-	@FieldAlias("use")
-	private Integer iusenum;// 可用数量
+    public void setVgoodscode(String vgoodscode) {
+        this.vgoodscode = vgoodscode;
+    }
 
-	public String getVname() {
-		return vname;
-	}
+    public String getVgoodsname() {
+        return vgoodsname;
+    }
 
-	public void setVname(String vname) {
-		this.vname = vname;
-	}
+    public void setVgoodsname(String vgoodsname) {
+        this.vgoodsname = vgoodsname;
+    }
 
-	public String getVgoodscode() {
-		return vgoodscode;
-	}
+    public String getInvspec() {
+        return invspec;
+    }
 
-	public void setVgoodscode(String vgoodscode) {
-		this.vgoodscode = vgoodscode;
-	}
+    public void setInvspec(String invspec) {
+        this.invspec = invspec;
+    }
 
-	public String getVgoodsname() {
-		return vgoodsname;
-	}
+    public String getPk_goodstype() {
+        return pk_goodstype;
+    }
 
-	public void setVgoodsname(String vgoodsname) {
-		this.vgoodsname = vgoodsname;
-	}
+    public void setPk_goodstype(String pk_goodstype) {
+        this.pk_goodstype = pk_goodstype;
+    }
 
-	public String getInvspec() {
-		return invspec;
-	}
+    public String getInvtype() {
+        return invtype;
+    }
 
-	public void setInvspec(String invspec) {
-		this.invspec = invspec;
-	}
+    public void setInvtype(String invtype) {
+        this.invtype = invtype;
+    }
 
-	public String getPk_goodstype() {
-		return pk_goodstype;
-	}
+    public Integer getIstocknum() {
+        return istocknum;
+    }
 
-	public void setPk_goodstype(String pk_goodstype) {
-		this.pk_goodstype = pk_goodstype;
-	}
+    public void setIstocknum(Integer istocknum) {
+        this.istocknum = istocknum;
+    }
 
-	public String getInvtype() {
-		return invtype;
-	}
+    public Integer getIlocknum() {
+        return ilocknum;
+    }
 
-	public void setInvtype(String invtype) {
-		this.invtype = invtype;
-	}
+    public void setIlocknum(Integer ilocknum) {
+        this.ilocknum = ilocknum;
+    }
 
-	public Integer getIstocknum() {
-		return istocknum;
-	}
+    public Integer getIusenum() {
+        return iusenum;
+    }
 
-	public void setIstocknum(Integer istocknum) {
-		this.istocknum = istocknum;
-	}
+    public void setIusenum(Integer iusenum) {
+        this.iusenum = iusenum;
+    }
+    
+    public String getGoodsunit() {
+        return goodsunit;
+    }
 
-	public Integer getIlocknum() {
-		return ilocknum;
-	}
+    public void setGoodsunit(String goodsunit) {
+        this.goodsunit = goodsunit;
+    }
 
-	public void setIlocknum(Integer ilocknum) {
-		this.ilocknum = ilocknum;
-	}
+    public Integer getIsstockmny() {
+        return isstockmny;
+    }
 
-	public Integer getIusenum() {
-		return iusenum;
-	}
+    public void setIsstockmny(Integer isstockmny) {
+        this.isstockmny = isstockmny;
+    }
 
-	public void setIusenum(Integer iusenum) {
-		this.iusenum = iusenum;
-	}
+    public Integer getIoutnum() {
+        return ioutnum;
+    }
 
-	@Override
-	public String getParentPKFieldName() {
-		return null;
-	}
+    public void setIoutnum(Integer ioutnum) {
+        this.ioutnum = ioutnum;
+    }
 
-	@Override
-	public String getPKFieldName() {
-		return null;
-	}
+    public Integer getNsendnum() {
+        return nsendnum;
+    }
 
-	@Override
-	public String getTableName() {
-		return null;
-	}
+    public void setNsendnum(Integer nsendnum) {
+        this.nsendnum = nsendnum;
+    }
+
+    public Integer getIbuynum() {
+        return ibuynum;
+    }
+
+    public void setIbuynum(Integer ibuynum) {
+        this.ibuynum = ibuynum;
+    }
+    
+    public String getGoodsprice() {
+        return goodsprice;
+    }
+
+    public void setGoodsprice(String goodsprice) {
+        this.goodsprice = goodsprice;
+    }
+
+    @Override
+    public String getParentPKFieldName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getPKFieldName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getTableName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

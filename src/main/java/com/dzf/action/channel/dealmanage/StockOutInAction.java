@@ -19,10 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.GoodsNumAuditExcelField;
+import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
 import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.stock.GoodsNumVO;
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
+import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -33,24 +34,20 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
-import com.dzf.service.channel.dealmanage.IGoodsNumService;
+import com.dzf.service.channel.dealmanage.IStockOutInService;
 import com.dzf.service.pub.LogRecordEnum;
 
-/**
- * 商品分类
- *
- */
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
 @Namespace("/dealmanage")
-@Action(value = "goodsnum")
-public class GoodsNumAction extends BaseAction<GoodsNumVO> {
-
+@Action(value = "stockoutin")
+public class StockOutInAction extends BaseAction<StockOutInMVO>{
+	
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private IGoodsNumService goodsNum;
-	
+	private IStockOutInService stockoutin;
+
 	/**
 	 * 查询
 	 */
@@ -63,16 +60,21 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
 			}
-			GoodsNumVO qvo = new GoodsNumVO();
-			qvo = (GoodsNumVO) DzfTypeUtils.cast(getRequest(), qvo);
-			int total = goodsNum.queryTotalRow(qvo);
-			grid.setTotal((long)(total));
-			if(total > 0){
-				List<GoodsNumVO> clist = goodsNum.query(qvo);
+			StockOutInMVO qvo = new StockOutInMVO();
+			qvo = (StockOutInMVO) DzfTypeUtils.cast(getRequest(), qvo);
+			List<Long> total = stockoutin.queryTotalRow(qvo);
+			long totals=0;
+			for (Long l : total) {
+				totals+=l;
+			}
+			grid.setTotal(totals);
+			if(totals > 0){
+				List<StockOutInMVO> clist = stockoutin.query(qvo);
+				
 				grid.setRows(clist);
 				grid.setMsg("查询成功!");
 			}else{
-				grid.setRows(new ArrayList<StockOutVO>());
+				grid.setRows(new ArrayList<StockOutInMVO>());
 				grid.setMsg("查询数据为空!");
 			}
 			grid.setSuccess(true);
@@ -83,7 +85,7 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 	}
 	
 	/**
-	 * 商品数量明细表导出
+	 * 出入库明细表导出
 	 */
 	public void exportAuditExcel(){
 		String strlist =getRequest().getParameter("strlist");
@@ -92,11 +94,11 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			throw new BusinessException("导出数据不能为空!");
 		}	
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new GoodsNumVO());
-		GoodsNumVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,GoodsNumVO[].class, JSONConvtoJAVA.getParserConfig());
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new StockOutInMVO());
+		StockOutInMVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,StockOutInMVO[].class, JSONConvtoJAVA.getParserConfig());
 		HttpServletResponse response = getResponse();
-		Excelexport2003<GoodsNumVO> ex = new Excelexport2003<>();
-		GoodsNumAuditExcelField fields = new GoodsNumAuditExcelField();
+		Excelexport2003<StockOutInMVO> ex = new Excelexport2003<>();
+		StockOutInAuditExcelField fields = new StockOutInAuditExcelField();
 		fields.setVos(expVOs);
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
@@ -111,7 +113,7 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出商品数量明细", ISysConstants.SYS_3);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出出入库明细", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
@@ -131,6 +133,29 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 查询商品下拉
+	 */
+	public void queryComboBox() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			List<GoodsBoxVO> list = stockoutin.queryComboBox();
+			if (list == null || list.size() == 0) {
+				grid.setRows(new ArrayList<GoodsBoxVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
 	}
 	
 }
