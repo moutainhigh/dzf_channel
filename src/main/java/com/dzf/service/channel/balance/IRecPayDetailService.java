@@ -22,5 +22,4 @@ public interface IRecPayDetailService {
 	 */
 	public List<ChnDetailRepVO> queryRecDetail(QryParamVO paramvo) throws DZFWarpException;
 	
-	public int queryRecDetailTotal(QryParamVO paramvo) throws DZFWarpException;
 }

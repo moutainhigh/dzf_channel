@@ -91,6 +91,11 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("vcmemo")
 	private String vchangememo;//换票说明
 	
+	@FieldAlias("isourtype")
+	private Integer isourcetype;//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+	
+	@FieldAlias("sourceid")
+	private String pk_source;//来源主键
 	
 	/******以下字段不存库*********/
     private String bdate;//查询开始时间
@@ -116,7 +121,23 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
     
-    public DZFDate getDchangedate() {
+    public String getPk_source() {
+		return pk_source;
+	}
+
+	public void setPk_source(String pk_source) {
+		this.pk_source = pk_source;
+	}
+
+	public Integer getIsourcetype() {
+		return isourcetype;
+	}
+
+	public void setIsourcetype(Integer isourcetype) {
+		this.isourcetype = isourcetype;
+	}
+
+	public DZFDate getDchangedate() {
         return dchangedate;
     }
 

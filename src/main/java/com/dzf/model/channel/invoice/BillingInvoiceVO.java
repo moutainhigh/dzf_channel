@@ -23,13 +23,28 @@ public class BillingInvoiceVO extends SuperVO{
 	@FieldAlias("cname")
 	private String corpname;//单位名称
 	
-	@FieldAlias("dtotalmny")
-	private DZFDouble debittotalmny;//累计扣款金额
+//	@FieldAlias("dtotalmny")
+//	private DZFDouble debittotalmny;//累计扣款金额
 	
-    @FieldAlias("btotalmny")
-    private DZFDouble billtotalmny;//累计开票金额
+	@FieldAlias("dconmny")
+	private DZFDouble debitconmny;//累计合同扣款金额
+	
+	@FieldAlias("dbuymny")
+	private DZFDouble debitbuymny;//累计商品扣款金额
+	
+//    @FieldAlias("btotalmny")
+//    private DZFDouble billtotalmny;//累计开票金额
     
-    private DZFDouble noticketmny;//未开票金额
+    @FieldAlias("bconmny")
+    private DZFDouble billconmny;//累计合同开票金额
+    
+    @FieldAlias("bbuymny")
+    private DZFDouble billbuymny;//累计商品开票金额
+    
+    private DZFDouble noticketmny;//未开票金额 (合同扣款未开票金额)
+    
+    @FieldAlias("notbmny")
+    private DZFDouble notbuymny;//商品购买未开票金额
 	
     private String[] corps;//渠道商ids
     
@@ -47,6 +62,46 @@ public class BillingInvoiceVO extends SuperVO{
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
 
+	public DZFDouble getBillconmny() {
+		return billconmny;
+	}
+
+	public void setBillconmny(DZFDouble billconmny) {
+		this.billconmny = billconmny;
+	}
+
+	public DZFDouble getBillbuymny() {
+		return billbuymny;
+	}
+
+	public void setBillbuymny(DZFDouble billbuymny) {
+		this.billbuymny = billbuymny;
+	}
+
+	public DZFDouble getNotbuymny() {
+		return notbuymny;
+	}
+
+	public void setNotbuymny(DZFDouble notbuymny) {
+		this.notbuymny = notbuymny;
+	}
+
+	public DZFDouble getDebitconmny() {
+		return debitconmny;
+	}
+
+	public void setDebitconmny(DZFDouble debitconmny) {
+		this.debitconmny = debitconmny;
+	}
+
+	public DZFDouble getDebitbuymny() {
+		return debitbuymny;
+	}
+
+	public void setDebitbuymny(DZFDouble debitbuymny) {
+		this.debitbuymny = debitbuymny;
+	}
+
 	public String getBdate() {
         return bdate;
     }
@@ -61,10 +116,6 @@ public class BillingInvoiceVO extends SuperVO{
 
     public void setCorps(String[] corps) {
         this.corps = corps;
-    }
-
-    public DZFDouble getDebittotalmny() {
-        return debittotalmny;
     }
 
     public String getCuserid() {
@@ -98,18 +149,6 @@ public class BillingInvoiceVO extends SuperVO{
 	public void setVprovince(Integer vprovince) {
 		this.vprovince = vprovince;
 	}
-
-	public void setDebittotalmny(DZFDouble debittotalmny) {
-        this.debittotalmny = debittotalmny;
-    }
-
-    public DZFDouble getBilltotalmny() {
-        return billtotalmny;
-    }
-
-    public void setBilltotalmny(DZFDouble billtotalmny) {
-        this.billtotalmny = billtotalmny;
-    }
 
     public DZFDouble getNoticketmny() {
         return noticketmny;

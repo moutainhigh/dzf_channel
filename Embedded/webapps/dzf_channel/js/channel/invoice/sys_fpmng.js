@@ -33,6 +33,7 @@ function queryLink(obj){
     	corps : obj.corpid,
         edate: obj.edate,
         qrytype : 1,
+        isourtype : obj.isourtype,
     });
     $('#grid').datagrid('unselectAll');
     $('#querydate').html(obj.edate);

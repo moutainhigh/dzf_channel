@@ -11,7 +11,7 @@ $(window).resize(function() {
 
 $(function(){
 	initListener();
-	initDataGrid();
+	load();
 	initArea();
 	initChannel();
 //	reloadData();
@@ -63,7 +63,8 @@ function fastQry(){
 function closeCx(){
 	$("#qrydialog").hide();
 }
-function initDataGrid(){
+
+function load(){
 	$('#grid').datagrid({
 		//url : contextPath + '/order/orderact!query.action',
 		striped : true,
@@ -82,23 +83,78 @@ function initDataGrid(){
 		            {width : '140',title : '地区',field : 'provname',align : 'left'},
 		            {width : '150',title : '加盟商编码',field : 'ccode',align:'left'},
 		            {width : '260',title : '加盟商名称',field : 'cname',align:'left'},
-		            {width : '120',title : '累计扣款金额',field : 'dtotalmny',align:'right',
+//		            {width : '120',title : '累计扣款金额',field : 'dtotalmny',align:'right',
+//		            	formatter: function(value,row,index){
+//							if (value == 0) {
+//								return "0.00";
+//							}
+////							return formatMny(value);
+//							return "<a href='javascript:void(0)' style='color:blue' onclick=\"payDetail('"+index+"')\">" + formatMny(value) + "</a>";
+//		            }},
+		            {width : '140',title : '累计合同扣款金额',field : 'dconmny',align:'right',
 		            	formatter: function(value,row,index){
 							if (value == 0) {
 								return "0.00";
 							}
-//							return formatMny(value);
-							return "<a href='javascript:void(0)' style='color:blue' onclick=\"payDetail('"+index+"')\">" + formatMny(value) + "</a>";
+							if(!isEmpty(row.cname)){
+								return "<a href='javascript:void(0)' style='color:blue' onclick=\"payDetail('"+index+"',1)\">" 
+								+ formatMny(value) + "</a>";
+							}else{
+								return formatMny(value);
+							}
 		            }},
-		            {width : '120',title : '累计开票金额',field : 'btotalmny',align:'right',
+		            {width : '140',title : '累计商品扣款金额',field : 'dbuymny',align:'right',
 		            	formatter: function(value,row,index){
 							if (value == 0) {
 								return "0.00";
 							}
-//							return formatMny(value);
-							return "<a href='javascript:void(0)' style='color:blue' onclick=\"invDetail('"+index+"')\">" + formatMny(value) + "</a>";
+							if(!isEmpty(row.cname)){
+								return "<a href='javascript:void(0)' style='color:blue' onclick=\"payDetail('"+index+"',2)\">" 
+								+ formatMny(value) + "</a>";
+							}else{
+								return formatMny(value);
+							}
 		            }},
-		            {width : '120',title : '未开票金额',field : 'noticketmny',align:'right',
+//		            {width : '120',title : '累计开票金额',field : 'btotalmny',align:'right',
+//		            	formatter: function(value,row,index){
+//							if (value == 0) {
+//								return "0.00";
+//							}
+////							return formatMny(value);
+//							return "<a href='javascript:void(0)' style='color:blue' onclick=\"invDetail('"+index+"')\">" + formatMny(value) + "</a>";
+//		            }},
+		            {width : '130',title : '累计合同开票金额',field : 'bconmny',align:'right',
+		            	formatter: function(value,row,index){
+							if (value == 0) {
+								return "0.00";
+							}
+							if(!isEmpty(row.cname)){
+								return "<a href='javascript:void(0)' style='color:blue' onclick=\"invDetail('"+index+"', 1)\">" 
+								+ formatMny(value) + "</a>";
+							}else{
+								return formatMny(value);
+							}
+		            }},
+		            {width : '130',title : '累计商品开票金额',field : 'bbuymny',align:'right',
+		            	formatter: function(value,row,index){
+							if (value == 0) {
+								return "0.00";
+							}
+							if(!isEmpty(row.cname)){
+								return "<a href='javascript:void(0)' style='color:blue' onclick=\"invDetail('"+index+"', 2)\">" 
+								+ formatMny(value) + "</a>";
+							}else{
+								return formatMny(value);
+							}
+		            }},
+		            {width : '140',title : '合同扣款未开票金额',field : 'noticketmny',align:'right',
+		            	formatter: function(value,row,index){
+							if (value == 0) {
+								return "0.00";
+							}
+							return formatMny(value);
+		            }},
+		            {width : '140',title : '商品购买未开票金额',field : 'notbmny',align:'right',
 		            	formatter: function(value,row,index){
 							if (value == 0) {
 								return "0.00";
@@ -129,18 +185,39 @@ function initDataGrid(){
 function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
-    var dtotalmny = 0;	
-    var btotalmny = 0;	
-    var noticketmny = 0;	
+//    var dtotalmny = parseFloat(0);	
+//    var btotalmny = parseFloat(0);	
+    var noticketmny = parseFloat(0);	
+    
+    var dconmny = parseFloat(0);//累计合同扣款金额
+    var dbuymny = parseFloat(0);//累计商品扣款金额
+    var bconmny = parseFloat(0);//累计合同开票金额
+    var bbuymny = parseFloat(0);//累计商品开票金额
+    
+    var notbmny = parseFloat(0);//商品购买未开票金额
     for (var i = 0; i < rows.length; i++) {
-    	dtotalmny += parseFloat(rows[i].dtotalmny == undefined ? 0 : rows[i].dtotalmny);
-    	btotalmny += parseFloat(rows[i].btotalmny == undefined ? 0 : rows[i].btotalmny);
-    	noticketmny += parseFloat(rows[i].noticketmny==undefined ? 0 : rows[i].noticketmny);
+//    	dtotalmny = dtotalmny.add(getFloatValue(rows[i].dtotalmny));
+//    	btotalmny = btotalmny.add(getFloatValue(rows[i].btotalmny));
+    	noticketmny = noticketmny.add(getFloatValue(rows[i].noticketmny));
+    	
+    	dconmny = dconmny.add(getFloatValue(rows[i].dconmny));
+    	dbuymny = dbuymny.add(getFloatValue(rows[i].dbuymny));
+    	bconmny = bconmny.add(getFloatValue(rows[i].bconmny));
+    	bbuymny = bbuymny.add(getFloatValue(rows[i].bbuymny));
+    	notbmny = notbmny.add(getFloatValue(rows[i].notbmny));
+    	
     }
     footerData['ccode'] = '合计';
-    footerData['dtotalmny'] = dtotalmny;
-    footerData['btotalmny'] = btotalmny;
+//    footerData['dtotalmny'] = dtotalmny;
+//    footerData['btotalmny'] = btotalmny;
     footerData['noticketmny'] = noticketmny;
+    
+    footerData['dconmny'] = dconmny;
+    footerData['dbuymny'] = dbuymny;
+    footerData['bconmny'] = bconmny;
+    footerData['bbuymny'] = bbuymny;
+    footerData['notbmny'] = notbmny;
+    
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
@@ -164,8 +241,9 @@ function initArea(){
 	});
 }
 
-
-//初始化加盟商
+/**
+ * 初始化加盟商
+ */
 function initChannel(){
     $('#channel_select').textbox({
         editable: false,
@@ -189,21 +267,10 @@ function initChannel(){
     });
 }
 
-function reloadData(){
-	loadrows = null;
-	$('#grid').datagrid('options').url = DZF.contextPath + '/invoice/billingquery!query.action';
-	var bdate = $('#bdate').datebox('getValue'); //开始日期
-    $('#grid').datagrid('load', {
-    	corps : $("#pk_account").val(),
-        bdate: bdate,
-        aname: $("#aname").combobox('getValue'),
-    });
-    $('#qrydialog').hide();
-    $('#grid').datagrid('unselectAll');
-    $("#querydate").html(bdate);
-}
-
-//双击选择公司
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
@@ -224,6 +291,23 @@ function dClickCompany(rowTable){
 		$("#pk_account").val(corpIds);
 	}
 	 $("#kj_dialog").dialog('close');
+}
+
+/**
+ * 查询
+ */
+function reloadData(){
+	loadrows = null;
+	$('#grid').datagrid('options').url = DZF.contextPath + '/invoice/billingquery!query.action';
+	var bdate = $('#bdate').datebox('getValue'); //开始日期
+    $('#grid').datagrid('load', {
+    	corps : $("#pk_account").val(),
+        bdate: bdate,
+        aname: $("#aname").combobox('getValue'),
+    });
+    $('#qrydialog').hide();
+    $('#grid').datagrid('unselectAll');
+    $("#querydate").html(bdate);
 }
 
 function clearParams(){
@@ -255,6 +339,9 @@ function onExport(){
 	checkBtnPower('export','channel22',callback);
 }
 
+/**
+ * 开票
+ */
 function onBilling(){
 	var rows = $('#grid').datagrid("getSelections");
 	if(rows == null || rows.length == 0){
@@ -294,7 +381,7 @@ function onBilling(){
  * 扣款明细联查
  * @param index
  */
-function payDetail(index){
+function payDetail(index, qtype){
 	var qrydate = $("#bdate").datebox("getValue");
 	var rows = $('#grid').datagrid('getRows');
 	var row= rows[index];
@@ -304,10 +391,14 @@ function payDetail(index){
 	$('#payDetail').dialog('open');
     $('#gridp').datagrid('load', {
     	begdate : qrydate,
-		cpid:row.corpid,
+		cpid: row.corpid,
+		qtype : qtype,
     });
 }
 
+/**
+ * 扣款明细列表
+ */
 function initGridP(){
 	gridh = $('#gridp').datagrid({
 		border : true,
@@ -402,9 +493,19 @@ function initGridP(){
 
 function useFormat(value,row,index){
 	if(row.ddate != "合计"){
-		var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
-		return ss ;
+		if(row.opertype == 2){
+			var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"
+				+formatMny(value)+"</a>";
+			return ss ;
+		}else if(row.opertype == 5){
+			var url = 'channel/dealmanage/channelorder.jsp?operate=toorder&billid='+row.billid;
+			var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('加盟商订单','"+url+"');\">"
+				+formatMny(value)+"</a>";
+			return ss ;
+		}else{
+			return formatMny(value);
+		}
 	}else{
 		return formatMny(value);
 	}
@@ -449,9 +550,10 @@ function onRecExport(){
  * 累计开票明细
  * @param index
  */
-function invDetail(index){
+function invDetail(index, isourtype){
 	var qrydate = $("#bdate").datebox("getValue");
 	var rows = $('#grid').datagrid('getRows');
 	var row= rows[index];
-	parent.addTabNew('发票管理','channel/invoice/sys_fpmng.jsp?operate=linkqry&corpid='+row.corpid+'&edate='+qrydate);
+	var url = 'channel/invoice/sys_fpmng.jsp?operate=linkqry&corpid='+row.corpid+'&edate='+qrydate+'&isourtype='+isourtype;
+	parent.addTabNew('发票管理', url);
 }

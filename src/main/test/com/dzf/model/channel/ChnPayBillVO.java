@@ -66,7 +66,7 @@ public class ChnPayBillVO extends SuperVO {
 	private Integer ipaymode;// 1:银行转账；2:支付宝；3：微信
 	
 	@FieldAlias("iptype")
-	private Integer ipaytype;// 1:加盟费；2：预付款
+	private Integer ipaytype;// 1:保证金；2：预付款
 	
 	@FieldAlias("status")
 	private Integer vstatus;// 1：待提交； 2：待确认（修改为待审核）；3：已确认；4：已驳回；5:待确认；
@@ -131,7 +131,7 @@ public class ChnPayBillVO extends SuperVO {
 	private DZFDateTime dapprovetime;// 审核时间
 	
 	@FieldAlias("rejectype")
-	private Integer irejectype;//驳回类型  1：审核驳回；2：确认驳回；
+	private Integer irejectype;//驳回类型  1：审批驳回；2：确认驳回；
 
 	public String getVapproveid() {
 		return vapproveid;
