@@ -114,6 +114,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 					opername.append(ordervo.getVbillcode());
 					writeLogRecord(LogRecordEnum.OPE_CHANNEL_43.getValue(),  opername.toString(), ISysConstants.SYS_3);
 				}
+				json.setMsg("操作成功");
 			}else if(itype == 2){//2：取消订单；
 				//多条数据
 				data = data.replace("}{", "},{");
@@ -141,11 +142,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 					json.setMsg("成功" + rightnum + "条");
 				}
 			}
-			
-			
 			json.setSuccess(true);
-//			json.setRows(ordervo);
-			json.setMsg("操作成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "操作失败");
 		}
