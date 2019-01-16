@@ -430,6 +430,7 @@ function reloadData(){
 	var edate = null;//提单结束日期
 	var bperiod = null;//扣款开始日期
 	var eperiod = null;//扣款结束日期
+	var querydate;
 	var ischeck = $('#tddate').is(':checked');
 	if(ischeck){
 		bdate = $('#bdate').datebox('getValue'); 
@@ -453,6 +454,7 @@ function reloadData(){
 				return;
 			}		
 		}
+		querydate = bdate + ' 至 ' + edate;
 	}else{
 		bperiod = $('#bperiod').datebox('getValue');
 		eperiod = $('#eperiod').datebox('getValue');
@@ -475,6 +477,7 @@ function reloadData(){
 				return;
 			}		
 		}
+		querydate = bperiod + ' 至 ' + eperiod;
 	}
 	
 	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
@@ -490,6 +493,8 @@ function reloadData(){
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#qrydialog').hide();
+	
+	$('#querydate').html(querydate);
 }
 
 /**
