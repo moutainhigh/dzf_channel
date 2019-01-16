@@ -419,7 +419,7 @@ function commit(){
  * 取消确认出库
  */
 function tanCancel(index){
-	$.messager.confirm("提示", "确认取消确认吗？", function(flag) {
+	$.messager.confirm("提示", "你确认取消确认吗？", function(flag) {
 		if (flag) {
 			var row= $('#grid').datagrid('getRows')[index];
 			$.ajax({
