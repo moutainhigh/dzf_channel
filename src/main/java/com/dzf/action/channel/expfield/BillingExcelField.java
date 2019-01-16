@@ -29,9 +29,12 @@ public class BillingExcelField implements IExceport<BillingInvoiceVO>{
 			new Fieldelement("vprovname", "地区",false,0,false),
 			new Fieldelement("corpcode", "加盟商编码",false,0,false),
 			new Fieldelement("corpname", "加盟商名称",false,0,false),
-			new Fieldelement("debittotalmny", "累计扣款金额",true,2,false),
-			new Fieldelement("billtotalmny","累计开票金额",true,2,false),
-			new Fieldelement("noticketmny", "未开票金额",true,2,false),
+			new Fieldelement("debitconmny", "累计合同扣款金额",true,2,false),
+			new Fieldelement("debitbuymny", "累计商品扣款金额",true,2,false),
+			new Fieldelement("billconmny","累计合同开票金额",true,2,false),
+			new Fieldelement("billbuymny","累计商品开票金额",true,2,false),
+			new Fieldelement("noticketmny", "合同扣款未开票金额",true,2,false),
+			new Fieldelement("notbuymny", "商品购买未开票金额",true,2,false),
 	};
 	
 

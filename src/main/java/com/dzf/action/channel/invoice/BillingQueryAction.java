@@ -158,7 +158,6 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		Excelexport2003<BillingInvoiceVO> ex = new Excelexport2003<BillingInvoiceVO>();
 		BillingExcelField fields = new BillingExcelField();
 		fields.setVos(explist.toArray(new BillingInvoiceVO[0]));
-		;
 		fields.setQj(bdate);
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
