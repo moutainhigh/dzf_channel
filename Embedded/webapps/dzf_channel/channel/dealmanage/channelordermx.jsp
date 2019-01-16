@@ -36,7 +36,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:285px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -68,6 +68,7 @@
 					<option value="1">待发货</option>
 					<option value="2">已发货</option>
 					<option value="3">已收货</option>
+					<option value="4">已取消</option>
 				</select>
 			</div>
 			<div class="time_col time_colp10">
@@ -76,7 +77,7 @@
 				<input id="qcpid" type="hidden">
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:85px;text-align:right">单据编码：</label>
+				<label style="width:85px;text-align:right">订单编码：</label>
 				<input id="qbcode" class="easyui-textbox" style="width:290px;height:28px;"/>
 			</div>
 			<div class="time_col time_colp10">

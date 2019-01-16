@@ -29,17 +29,17 @@ public class ChannelOrderMxAuditExcelField implements IExceport<GoodsBillMxVO> {
 			new Fieldelement("corpcode", "加盟商编码",false,0,false),
 			new Fieldelement("corpname", "加盟商名称",false,0,false),
 			new Fieldelement("vbillcode", "订单编码",false,0,false),
-			new Fieldelement("ndedsummny", "订单金额",false,0,false),
-			new Fieldelement("ndeductmny", "预付款扣款",false,0,false),
-			new Fieldelement("ndedrebamny", "返点扣款",false,0,false),
+			new Fieldelement("ndedsummny", "订单金额",true,2,false),
+			new Fieldelement("ndeductmny", "预付款扣款",true,2,false),
+			new Fieldelement("ndedrebamny", "返点扣款",true,2,false),
 			new Fieldelement("vgoodsname", "商品",false,0,false),
 			new Fieldelement("invspec", "规格",false,0,false),
 			new Fieldelement("invtype", "型号",false,0,false),
-			new Fieldelement("amount", "购买数量",false,0,false),
-			new Fieldelement("nprice", "单价",false,0,false),
-			new Fieldelement("ntotalmny","金额",false,0,false),
-			new Fieldelement("vstatus","订单状态",false,0,false,new String[]{"","待确认","待发货","已发货","已收货"}),
-			new Fieldelement("dconfirmtime","确认日期",false,0,false),
+			new Fieldelement("amount", "数量",false,0,false),
+			new Fieldelement("nprice", "单价",true,2,false),
+			new Fieldelement("ntotalmny","金额",true,2,false),
+			new Fieldelement("vstatus","订单状态",false,0,false,new String[]{"待确认","待发货","已发货","已收货","已取消"}),
+			new Fieldelement("dconfirmtime","扣款日期",false,0,false),
 			new Fieldelement("dsubmittime","提交日期",false,0,false),
 			new Fieldelement("dsendtime","发货日期",false,0,false),
 	};
@@ -82,17 +82,17 @@ public class ChannelOrderMxAuditExcelField implements IExceport<GoodsBillMxVO> {
 
 	@Override
 	public String getExcelport2003Name() {
-		return "订单明细" + now + ".xls";
+		return "订单明细表" + now + ".xls";
 	}
 
 	@Override
 	public String getExcelport2007Name() {
-		return "订单明细" + now + ".xlsx";
+		return "订单明细表" + now + ".xlsx";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "订单明细";
+		return "订单明细表";
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class ChannelOrderMxAuditExcelField implements IExceport<GoodsBillMxVO> {
 
 	@Override
 	public String getSheetName() {
-		return "订单明细";
+		return "订单明细表";
 	}
 
 	@Override

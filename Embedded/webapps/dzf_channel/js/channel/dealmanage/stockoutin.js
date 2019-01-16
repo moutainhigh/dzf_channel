@@ -121,6 +121,10 @@ function load(){
 			width : '90',
 			halign : 'center',
 			align : 'right',
+			formatter : function(value,row,index){
+					if(value == 0)return "0.00";
+					return formatMny(value);
+				},
 		}, {
 			field : 'num',
 			title : '数量',
@@ -148,12 +152,20 @@ function load(){
 			width : '90',
 			halign : 'center',
 			align : 'right',
+			formatter : function(value,row,index){
+					if(value == 0)return "0.00";
+					return formatMny(value);
+				},
 		},  {
 			field : 'nmny',
 			title : '金额',
 			width : '90',
 			halign : 'center',
 			align : 'right',
+			formatter : function(value,row,index){
+					if(value == 0)return "0.00";
+					return formatMny(value);
+				},
 			
 		},  {
 			field : 'conname',
@@ -200,6 +212,11 @@ function calFooter(){
 			num -= getFloatValue(rows[i].num);
 		}
 	  
+	}
+	if(num>0){
+		num+="+";
+	}else{
+		num+="-";
 	}
 	 footerData['itype'] = '合计';
 	 footerData['num'] = num;

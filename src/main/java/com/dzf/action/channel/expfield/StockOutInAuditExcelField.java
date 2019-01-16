@@ -31,10 +31,10 @@ public class StockOutInAuditExcelField implements IExceport<StockOutInMVO> {
 			new Fieldelement("invspec", "规格",false,0,false),
 			new Fieldelement("invtype", "型号",false,0,false),
 			new Fieldelement("vitype", "类型",false,0,false,new String[]{"","入库","出库"}),
-			new Fieldelement("nprice", "成本价",false,0,false),
+			new Fieldelement("nprice", "成本价",true,2,false),
 			new Fieldelement("nnum", "数量",false,0,false),
-			new Fieldelement("sprice", "售价",false,0,false),
-			new Fieldelement("totalmny", "金额",false,0,false),
+			new Fieldelement("sprice", "售价",true,2,false),
+			new Fieldelement("totalmny", "金额",true,2,false),
 			new Fieldelement("vconfirmname", "操作人",false,0,false),
 			new Fieldelement("dconfirmtime","入库（出库）时间",false,0,false),
 	};

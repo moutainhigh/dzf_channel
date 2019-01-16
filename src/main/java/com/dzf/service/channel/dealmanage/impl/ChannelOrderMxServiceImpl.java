@@ -114,7 +114,6 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 		sql.append("   where nvl(gill.dr,0) =0  \n");
 		sql.append("  and nvl(gbill.dr,0) =0  \n");
 		sql.append("  and nvl(gsillt.dr,0) =0  \n");
-		sql.append("  and gill.vstatus!=4  \n");
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			sql.append(" AND gill.vbillcode like ? \n");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");

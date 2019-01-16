@@ -88,6 +88,10 @@ function load(){
 			field : 'stockmny',
             halign : 'center',
 			align : 'right',
+			formatter : function(value,row,index){
+				if(value == 0)return "0.00";
+				return formatMny(value);
+			},
 		},{
 			width : '100',
 			title : '订单购买数量',

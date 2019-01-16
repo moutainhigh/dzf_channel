@@ -38,7 +38,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:190px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:218px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>

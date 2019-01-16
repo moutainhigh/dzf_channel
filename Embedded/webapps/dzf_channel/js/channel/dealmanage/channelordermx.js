@@ -140,7 +140,7 @@ function load(){
 			width : '100',
 			title : '商品',
 			field : 'gname',
-			align:'left',
+			align:   'left',
             halign:'center',
 		}, {
 			width : '100',
@@ -195,6 +195,8 @@ function load(){
 					return '已发货';
 				if (value == '3')
 					return '已收货';
+				if (value == '4')
+					return '已取消';
 			}
 		},{
 			width : '110',
