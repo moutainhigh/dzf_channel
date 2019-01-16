@@ -77,17 +77,17 @@ public class StockOutInAuditExcelField implements IExceport<StockOutInMVO> {
 
 	@Override
 	public String getExcelport2003Name() {
-		return "出入库明细" + now + ".xls";
+		return "出入库明细表" + now + ".xls";
 	}
 
 	@Override
 	public String getExcelport2007Name() {
-		return "出入库明细" + now + ".xlsx";
+		return "出入库明细表" + now + ".xlsx";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "出入库明细";
+		return "出入库明细表";
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class StockOutInAuditExcelField implements IExceport<StockOutInMVO> {
 
 	@Override
 	public String getSheetName() {
-		return "出入库明细";
+		return "出入库明细表";
 	}
 
 	@Override

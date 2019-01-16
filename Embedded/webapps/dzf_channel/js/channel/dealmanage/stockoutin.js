@@ -69,7 +69,7 @@ function load(){
 		idField : 'sid',
 		columns : [ [ {
 			width : '120',
-			title : '关联单据',
+			title : '单据编码',
 			field : 'vcode',
 			align : 'left',
 			halign : 'center',
@@ -214,9 +214,7 @@ function calFooter(){
 	  
 	}
 	if(num>0){
-		num+="+";
-	}else{
-		num+="-";
+		num="+"+num;
 	}
 	 footerData['itype'] = '合计';
 	 footerData['num'] = num;
