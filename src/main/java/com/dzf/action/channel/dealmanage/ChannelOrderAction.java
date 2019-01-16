@@ -78,7 +78,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 	}
 	
 	/**
-	 * 操作数据（确认、取消订单）
+	 * 操作数据（确认、取消订单、取消确认、发票申请）
 	 */
 	public void operData() {
 		Json json = new Json();

@@ -19,6 +19,7 @@ import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.dealmanage.GoodsBillSVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.channel.stock.StockNumVO;
+import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -353,7 +354,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateCancelConf(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
+		checkStockOut(pamvo);
+		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 2);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			updateRebBanlanceSub(pamvo, map, cuserid);
 		} else if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
@@ -370,6 +372,37 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		saveOperDetailSub(pamvo, cuserid);
 		return pamvo;
 	}
+	
+	/**
+	 * 取消确认前，订单商品出库状态校验
+	 * @param pamvo
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private void checkStockOut(GoodsBillVO pamvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.* \n");
+		sql.append("  FROM cn_stockout t \n");
+		sql.append("  LEFT JOIN cn_stockout_b b ON t.pk_stockout = b.pk_stockout \n");
+		sql.append(" INNER JOIN cn_goodsbill_b g ON b.pk_goodsbill_b = g.pk_goodsbill_b \n");
+		sql.append("  lEFT JOIN cn_goodsbill l ON g.pk_goodsbill = l.pk_goodsbill \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(b.dr, 0) = 0 \n");
+		sql.append("   AND nvl(g.dr, 0) = 0 \n");
+		sql.append("   AND nvl(l.dr, 0) = 0 \n");
+		sql.append("   AND l.pk_goodsbill = ? \n");
+		spm.addParam(pamvo.getPk_goodsbill());
+		List<StockOutVO> list = (List<StockOutVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(StockOutVO.class));
+		if(list != null && list.size() > 0){
+			for(StockOutVO vo : list){
+				if(vo.getVstatus() != null && vo.getVstatus() != 0){
+					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】已有商品发货，不允许取消确认；");
+				}
+			}
+		}
+	}
 
 	/**
 	 * 更新确认数据
@@ -379,7 +412,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo);
+		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 1);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			updateRebBanlanceAdd(pamvo, map, cuserid);
 		} else if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
@@ -676,12 +709,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	/**
 	 * 获取余额信息
-	 * 
 	 * @param pamvo
+	 * @param checktype  1:扣款；2：退款；
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String, ChnBalanceVO> getBanlanceMap(GoodsBillVO pamvo) throws DZFWarpException {
+	private Map<String, ChnBalanceVO> getBanlanceMap(GoodsBillVO pamvo, Integer checktype) throws DZFWarpException {
 		Map<String, ChnBalanceVO> map = new HashMap<String, ChnBalanceVO>();
 		String yesql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype in (?,?) ";
 		SQLParameter yespm = new SQLParameter();
@@ -700,15 +733,19 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
 				if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3) {
 					if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
-						if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0) {
-							throw new BusinessException("确认失败！加盟商" + corpname + "账户返点余额不足");
+						if(checktype == 1){
+							if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0) {
+								throw new BusinessException("确认失败！加盟商" + corpname + "账户返点余额不足");
+							}
 						}
 						map.put("rebate", balvo);
 					}
 				} else if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2) {
 					if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
-						if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0) {
-							throw new BusinessException("确认失败！加盟商" + corpname + "账户预付款余额不足");
+						if(checktype == 1){
+							if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0) {
+								throw new BusinessException("确认失败！加盟商" + corpname + "账户预付款余额不足");
+							}
 						}
 						map.put("payment", balvo);
 					}
