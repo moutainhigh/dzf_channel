@@ -201,6 +201,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			cvo.setIpaytype(0);
 			cvo.setInvcorp(2);
 			cvo.setRusername(avo.getLinkman2());
+			cvo.setIsourcetype(1);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
 			singleObjectBO.saveObject(vo.getPk_corp(), cvo);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
