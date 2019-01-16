@@ -10,7 +10,7 @@ $(window).resize(function() {
 
 $(function(){
 	initListener();
-	initDataGrid();
+	load();
 	initArea();
 	initChannel();
 	var obj = Public.getRequest();
@@ -52,7 +52,10 @@ function closeCx(){
 	$("#qrydialog").hide();
 }
 
-function initDataGrid(){
+/**
+ * 列表表格初始化
+ */
+function load(){
 	$('#grid').datagrid({
 		//url : contextPath + '/order/orderact!query.action',
 		striped : true,
