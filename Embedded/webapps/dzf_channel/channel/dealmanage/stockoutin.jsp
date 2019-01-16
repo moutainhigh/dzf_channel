@@ -65,7 +65,7 @@
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">商品：</label>
 				<input id="goodsname" name="goodsname" class="easyui-combobox" editable="false" style="width:286px;height:28px;text-align:left"
-					data-options="required:false,valueField:'id',textField:'name',multiple:true,panelHeight:200" /> 
+			       data-options="required:false,valueField:'id',textField:'name',multiple:true,panelHeight:200" /> 
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">单据编码：</label>

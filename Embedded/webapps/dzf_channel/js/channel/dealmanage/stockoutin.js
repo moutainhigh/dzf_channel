@@ -1,13 +1,13 @@
 var contextPath = DZF.contextPath;
 var editIndex;
 var status = "brows";
+
 $(function(){
 	initQry();
+	initCombobox();
 	load();
 	reloadData();
-	initType();
 });
-
 
 /**
  * 查询初始化
@@ -24,10 +24,19 @@ function initQry(){
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 }
 
+function initCombobox(){
+	$("#goodsname").combobox({
+		onShowPanel: function () {
+			initType();
+        }
+    })
+}
+
 /**
  * 查询出入库类别下拉
  * 查询商品下拉
  */
+
 function initType(){
 	$.ajax({
 		type : 'POST',
@@ -43,9 +52,7 @@ function initType(){
 			}
 		}
 	});
-	
-	
-}
+};
 
 /**
  * 列表表格加载

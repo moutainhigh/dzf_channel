@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.druid.sql.visitor.functions.Left;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.multbs.MultBodyObjectBO;
@@ -75,7 +76,8 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
         sql.append("  nvl(num.isellnum, 0) ilocknum,  ");
         sql.append("  nvl(stockbill.nsendnum,0) nsendnum,   ");
-        sql.append("  nvl(num.istocknum,0) -nvl( num.ioutnum,0)-nvl(stockbill.nsendnum,0) ibuynum  ");
+        //sql.append("  nvl(num.istocknum,0) -nvl( num.ioutnum,0)-nvl(stockbill.nsendnum,0) ibuynum  ");
+        sql.append("  nvl(num.istocknum, 0) - nvl(num.isellnum,0) ibuynum");
         sql.append("  from cn_stocknum num  ");
         sql.append("  left join (select sib.pk_goods, sib.pk_goodsspec, sum(sib.nmny) nmny  ");
         sql.append("  from cn_stockin_b sib");
@@ -93,6 +95,7 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         sql.append("  where so.vstatus = 1  and nvl(so.dr, 0) = 0 and nvl(sob.dr, 0) = 0");
         sql.append("   group by sob.pk_goods, sob.pk_goodsspec) stockbill on num.pk_goods = stockbill.pk_goods  ");
         sql.append("   and num.pk_goodsspec = stockbill.pk_goodsspec    ");
+       // sql.append(" left join cn_goodsbill_b gbill on num.pk_goods=gbill.pk_goods");
         sql.append("  where nvl(g.dr, 0) = 0    ");
         sql.append("    and nvl(num.dr, 0) = 0  ");
         sql.append("    and nvl(t.dr, 0) = 0    ");
