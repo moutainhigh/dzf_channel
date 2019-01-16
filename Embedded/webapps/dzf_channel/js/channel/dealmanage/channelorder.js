@@ -260,31 +260,31 @@ function load(){
 function opermatter(val, row, index) {
 	if(row.vstatus != null){
 		var url;
-//		if(row.vstatus == 1){//1：待发货；
-//			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-//		}else{
-//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span> ';
-//		}
-		
-		//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
-		if(row.vstatus == 0 || row.vstatus == 4){
-			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>' +
-			'<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-		}else if(row.vstatus == 1){
+		if(row.vstatus == 1){//1：待发货；
 			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-			if(row.tistatus == 2){//已开票
-				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-			}else{
-				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
-			}
-		}else if(row.vstatus == 2 || row.vstatus == 3){
-			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>';
-			if(row.tistatus == 2){//已开票
-				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-			}else{
-				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
-			}
+		}else{
+			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span> ';
 		}
+		
+//		//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
+//		if(row.vstatus == 0 || row.vstatus == 4){
+//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>' +
+//			'<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+//		}else if(row.vstatus == 1){
+//			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+//			if(row.tistatus == 2){//已开票
+//				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+//			}else{
+//				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
+//			}
+//		}else if(row.vstatus == 2 || row.vstatus == 3){
+//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>';
+//			if(row.tistatus == 2){//已开票
+//				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+//			}else{
+//				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
+//			}
+//		}
 		
 		return url;
 	}
