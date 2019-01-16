@@ -55,7 +55,10 @@ public class GoodsBillVO extends MultSuperVO {
 
     private DZFDateTime ts; // 时间戳
     
-    //仅作展示用字段begin
+    @FieldAlias("tistatus")
+    private Integer vtistatus;//开票状态 1：未开票；2：已开票；
+    
+    //&&&&&&&&&&&&&&&&&仅作展示用字段begin&&&&&&&&&&&&&&&
     
 	@FieldAlias("pcode")
     private String corpcode; // 公司编码（仅作数据展示）
@@ -94,7 +97,15 @@ public class GoodsBillVO extends MultSuperVO {
 	@FieldAlias("eedate")
 	private DZFDate eenddate;// 结束日期（查询使用）
 	
-	//仅作展示用字段end
+	//&&&&&&&&&&&&&&&&&仅作展示用字段end&&&&&&&&&&&&&&&
+
+	public Integer getVtistatus() {
+		return vtistatus;
+	}
+
+	public void setVtistatus(Integer vtistatus) {
+		this.vtistatus = vtistatus;
+	}
 
 	public DZFDate getBegdate() {
 		return begdate;

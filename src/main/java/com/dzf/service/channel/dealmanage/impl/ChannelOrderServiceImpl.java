@@ -12,6 +12,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.dealmanage.GoodsBillBVO;
@@ -21,12 +22,14 @@ import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -173,6 +176,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					return updateCancel(pamvo, cuserid);
 				} else if (type == 3) {
 					return updateCancelConf(pamvo, cuserid);
+				} else if(type == 4){
+					saveBillData(pamvo, cuserid);
 				}
 			}
 		} catch (Exception e) {
@@ -184,6 +189,45 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			LockUtil.getInstance().unLock_Key(pamvo.getTableName(), pamvo.getPk_goodsbill(), uuid);
 		}
 		return pamvo;
+	}
+	
+	/**
+	 * 发票申请
+	 * @param pamvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveBillData(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
+		AccountVO accvo = (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, pamvo.getPk_corp());
+		if(accvo == null){
+			throw new BusinessException("会计贵公司信息错误！");
+		}
+		if (StringUtil.isEmpty(accvo.getTaxcode())) {
+			throw new BusinessException("开票信息【税号】为空。");
+		}
+		ChInvoiceVO cvo = new ChInvoiceVO();
+		cvo.setPk_corp(pamvo.getPk_corp());
+		cvo.setInvprice(pamvo.getNdeductmny());// 开票金额 = 订单预付款扣款
+		cvo.setInvnature(0);// 发票性质
+		cvo.setCorpname(CodeUtils1.deCode(accvo.getUnitname()));
+		cvo.setTaxnum(accvo.getTaxcode());// 税号
+		cvo.setInvtype(accvo.getInvtype() == null ? 2 : accvo.getInvtype());// 发票类型
+		cvo.setCorpaddr(accvo.getPostaddr());// 公司地址
+		cvo.setInvphone(CodeUtils1.deCode(accvo.getPhone1()));
+		cvo.setBankcode(accvo.getVbankcode());// 开户账户
+		cvo.setBankname(accvo.getVbankname());// 开户行
+		cvo.setEmail(accvo.getEmail1());// 邮箱
+		cvo.setApptime(new DZFDate().toString());// 申请日期
+		cvo.setInvstatus(1);// 状态
+		cvo.setIpaytype(0);
+		cvo.setInvcorp(2);
+		cvo.setRusername(accvo.getLinkman2());
+		cvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		cvo.setPk_source(pamvo.getPk_goodsbill());
+		singleObjectBO.saveObject(pamvo.getPk_corp(), cvo);
+		
+		pamvo.setVtistatus(2);//已开票
+		singleObjectBO.update(pamvo, new String[] { "vtistatus" });
 	}
 
 	/**
@@ -321,7 +365,6 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			throw new BusinessException("预付款扣款错误");
 		}
 		pamvo.setVstatus(IStatusConstant.IORDERSTATUS_0);// 待确认
-		pamvo.setUpdatets(new DZFDateTime());
 		singleObjectBO.update(pamvo, new String[] { "vstatus" });
 
 		saveOperDetailSub(pamvo, cuserid);
@@ -683,7 +726,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * 
 	 * @param pamvo
 	 * @param type
-	 *            1：确认；2：取消订单；3：商品发货；
+	 *            1：确认；2：取消订单；3：取消确认；4：发票申请；
 	 * @throws DZFWarpException
 	 */
 	private void checkData(GoodsBillVO pamvo, Integer type) throws DZFWarpException {
@@ -692,14 +735,31 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			if (pamvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 			}
-			if (type != null && (type == 1 || type == 2)) {
-				if (oldvo.getVstatus() != null && oldvo.getVstatus() != 0) {
-					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待确认");
+			if(type != null){
+				if (type == 1 || type == 2) {
+					if (oldvo.getVstatus() != null && oldvo.getVstatus() != 0) {
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待确认；");
+					}
+				} else if (type == 3) {
+					if (oldvo.getVstatus() != null && oldvo.getVstatus() != 1) {
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待发货；");
+					}
+					if(oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2){
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】开票状态为已开票，不允许取消确认；");
+					}
+				} else if(type == 4){
+					if(oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2){
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】开票状态为已开票，不允许再次开票；");
+					}
+					if (oldvo.getVstatus() != null && oldvo.getVstatus() == 0) {
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态为待确认，不能开票；");
+					}
+					if (oldvo.getVstatus() != null && oldvo.getVstatus() == 4) {
+						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态为已取消，不能开票；");
+					}
 				}
-			} else if (type != null && type == 3) {
-				if (oldvo.getVstatus() != null && oldvo.getVstatus() != 1) {
-					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待发货");
-				}
+			} else {
+				throw new BusinessException("操作类型不能为空");
 			}
 		} else {
 			throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】数据错误");

@@ -97,21 +97,23 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			String type = getRequest().getParameter("type");
 			Integer itype = Integer.parseInt(type);
 			Map<String, String> maping = FieldMapping.getFieldMapping(new GoodsBillVO());
-			if(itype == 1 || itype == 3){//1：确认订单；3：取消确认；
+			if(itype == 1 || itype == 3 || itype == 4){//1：确认订单；3：取消确认；4：发票申请；
 				//单条数据
 				JSON djson = (JSON) JSON.parse(data);
 				GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
 						JSONConvtoJAVA.getParserConfig());
 				orderser.updateData(ordervo, itype, getLoginUserid());
-				StringBuffer opername = new StringBuffer();
 				
-				if (itype == 1) {
-					opername.append("确认订单：");
-				}else if(itype == 3){
-					opername.append("取消确认：");
+				if(itype == 1 || itype == 3){
+					StringBuffer opername = new StringBuffer();
+					if (itype == 1) {
+						opername.append("确认订单：");
+					}else if(itype == 3){
+						opername.append("取消确认：");
+					}
+					opername.append(ordervo.getVbillcode());
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_43.getValue(),  opername.toString(), ISysConstants.SYS_3);
 				}
-				opername.append(ordervo.getVbillcode());
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_43.getValue(),  opername.toString(), ISysConstants.SYS_3);
 			}else if(itype == 2){//2：取消订单；
 				//多条数据
 				data = data.replace("}{", "},{");

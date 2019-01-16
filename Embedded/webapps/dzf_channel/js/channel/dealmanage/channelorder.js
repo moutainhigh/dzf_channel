@@ -216,7 +216,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '100',
+			width : '140',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter,
@@ -259,12 +259,69 @@ function load(){
  */
 function opermatter(val, row, index) {
 	if(row.vstatus != null){
-		if(row.vstatus == 1){//1：待发货；
-			return '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-		}else{
-			return '<span style="margin-bottom:0px;margin-left:10px;">取消确认</span> ';
+		var url;
+//		if(row.vstatus == 1){//1：待发货；
+//			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+//		}else{
+//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span> ';
+//		}
+		
+		//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
+		if(row.vstatus == 0 || row.vstatus == 4){
+			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>' +
+			'<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+		}else if(row.vstatus == 1){
+			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
+			if(row.tistatus == 2){//已开票
+				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+			}else{
+				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
+			}
+		}else if(row.vstatus == 2 || row.vstatus == 3){
+			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>';
+			if(row.tistatus == 2){//已开票
+				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
+			}else{
+				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
+			}
 		}
+		
+		return url;
 	}
+}
+
+/**
+ * 发票申请
+ */
+function onBilling(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	var row = $('#grid').datagrid('getData').rows[tindex];
+	if (row.vstatus != 1) {
+		Public.tips({
+			content : '该记录不是待发货状态，不允许开票',
+			type : 2
+		});
+		return;
+	}
+	if (row.tistatus == 2) {
+		Public.tips({
+			content : '该记录开票状态是已开票，不能再次开票',
+			type : 2
+		});
+		return;
+	}
+	
+	$.messager.confirm("提示", "你确定开票吗？", function(flag) {
+		if (flag) {
+			var postdata = new Object();
+			var data = JSON.stringify(row);
+			postdata["data"] = data;
+			postdata["type"] = 4;
+			operdata(postdata, 4);
+		} else {
+			return null;
+		}
+	});
 }
 
 /**
@@ -275,7 +332,7 @@ function cancelConf(ths){
 	var row = $('#grid').datagrid('getData').rows[tindex];
 	if (row.vstatus != 1) {
 		Public.tips({
-			content : '该记录不是代发货状态，不允许取消确认',
+			content : '该记录不是待发货状态，不允许取消确认',
 			type : 2
 		});
 		return;
