@@ -255,14 +255,14 @@ public class StockOutServiceImpl implements IStockOutService{
 					throw new BusinessException(message);
 				}
 				if(!bills.contains(goodsBillBVO.getPk_goodsbill())){
-					lockKey = LockUtil.getInstance().addLockKey(goodsBillBVO.getTableName(), goodsBillBVO.getPk_goodsbill(),uuid, 60);
+					lockKey = LockUtil.getInstance().addLockKey("cn_goodsbill", goodsBillBVO.getPk_goodsbill(),uuid, 60);
 					bills.add(goodsBillBVO.getPk_goodsbill());
 				}
 				if(!lockKey){
 					message="单据编码："+vo.getVbillcode()+"里的订单编码为"+goodsBillBVO.getVfilepath()+",其他用户正在操作此数据;<br>";
 					throw new BusinessException(message);
 				}
-				if(goodsBillBVO.getDeamount()!=1){
+				if(goodsBillBVO.getDeamount()==0 || goodsBillBVO.getDeamount()==4){
 					message="单据编码："+vo.getVbillcode()+"里的订单编码为"+goodsBillBVO.getVfilepath()+",已失效;<br>";
 					throw new BusinessException(message);
 				}
