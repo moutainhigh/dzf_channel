@@ -48,7 +48,10 @@ public class GoodsNumVO extends SuperVO {
     private Integer ioutnum;//累计出库数量
     
     @FieldAlias("nosendnum")
-    private Integer nsendnum;//未发货数量
+    private Integer nsendnum;//待发货数量
+    
+    @FieldAlias("nooutnum")
+    private Integer noutnum;//待出库数量
     
     @FieldAlias("lock")
     private Integer ilocknum;//锁定数量
@@ -62,7 +65,15 @@ public class GoodsNumVO extends SuperVO {
     @FieldAlias("nowdate")
     private Integer nowdate;//当前日期
 
-    public Integer getIstockinnum() {
+    public Integer getNoutnum() {
+		return noutnum;
+	}
+
+	public void setNoutnum(Integer noutnum) {
+		this.noutnum = noutnum;
+	}
+
+	public Integer getIstockinnum() {
         return istockinnum;
     }
 

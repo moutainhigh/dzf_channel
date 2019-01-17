@@ -106,7 +106,13 @@ function load(){
 			align : 'right',
 		},{
 			width : '100',
-			title : '未发货数量',
+			title : '待出库数量',
+			field : 'nooutnum',
+            halign : 'center',
+			align : 'right',
+		},{
+			width : '100',
+			title : '待发货数量',
 			field : 'nosendnum',
             halign : 'center',
 			align : 'right',
