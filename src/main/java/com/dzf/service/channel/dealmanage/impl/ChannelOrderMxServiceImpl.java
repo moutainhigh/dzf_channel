@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,8 +128,12 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 			//sql.append(" AND gill.vstatus = ? \n");
 			//spm.addParam(pamvo.getVstatus());
 			 String[] strs = pamvo.getVstatus().toString().split(",");
+			if(Arrays.asList(strs).contains("-1")){
+				
+			}else{
 			 String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			 sql.append(" AND gill.vstatus in (").append(inSql).append(")");
+			}
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
 			sql.append(" AND gill.pk_goodsbill = ? ");
