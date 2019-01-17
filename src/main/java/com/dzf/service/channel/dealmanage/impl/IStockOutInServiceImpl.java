@@ -52,14 +52,20 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			return total;
 		}
 		// 全部
-		QrySqlSpmVO sqpvoin = getQrySqlSpmIn(qvo);
+		/*QrySqlSpmVO sqpvoin = getQrySqlSpmIn(qvo);
 		long queryDataTotalIn = multBodyObjectBO.queryDataTotal(StockOutInMVO.class, sqpvoin.getSql(),
 				sqpvoin.getSpm());
 		total.add(queryDataTotalIn);
 		QrySqlSpmVO sqpvoout = getQrySqlSpmOut(qvo);
 		long queryDataTotalOut = multBodyObjectBO.queryDataTotal(StockOutInMVO.class, sqpvoout.getSql(),
 				sqpvoout.getSpm());
-		total.add(queryDataTotalOut);
+		total.add(queryDataTotalOut);*/
+		
+		//全部
+		QrySqlSpmVO sqpvoall = getQrySqlSpmAll(qvo);
+		long queryDataTotalAll = multBodyObjectBO.queryDataTotal(StockOutInMVO.class, sqpvoall.getSql(),
+				sqpvoall.getSpm());
+		total.add(queryDataTotalAll);
 		return total;
 
 	}
@@ -93,9 +99,10 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			return queryOut;
 		}
 		// 全部
-		List<StockOutInMVO> queryIn = queryIn(qvo, totalList);
-		List<StockOutInMVO> queryOut = queryOut(qvo, totalList);
-
+		/*List<StockOutInMVO> queryIn = queryIn(qvo, totalList);
+		List<StockOutInMVO> queryOut = queryOut(qvo, totalList);*/
+		
+		List<StockOutInMVO> queryAll = queryAll(qvo, totalList);
 		for (StockOutInMVO stockOutInMVO : totalList) {
 			uvo = UserCache.getInstance().get(stockOutInMVO.getVconfirmid(), null);
 			if (uvo != null) {
@@ -138,6 +145,117 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			totalList.add(stockOutInMVO);
 		}
 		return totalList;
+	}
+	
+	/**
+	 * 查询全部
+	 * @param qvo
+	 * @param totalList
+	 * @return
+	 */
+	private List<StockOutInMVO> queryAll(StockOutInMVO qvo, List<StockOutInMVO> totalList) {
+		QrySqlSpmVO sqpvoall = getQrySqlSpmAll(qvo);
+		@SuppressWarnings("unchecked")
+		List<StockOutInMVO> listall = (List<StockOutInMVO>) multBodyObjectBO.queryDataPage(StockOutInMVO.class,
+				sqpvoall.getSql(), sqpvoall.getSpm(), qvo.getPage(), qvo.getRows(), null);
+		for (StockOutInMVO stockOutInMVO : listall) {
+			totalList.add(stockOutInMVO);
+		}
+		return totalList;
+	}
+	
+	
+	/**
+	 * 查询全部——获取查询条件
+	 * @param qvo
+	 * @return
+	 */
+	private QrySqlSpmVO getQrySqlSpmAll(StockOutInMVO qvo) {
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		
+		sql.append(" select s.* from  ");
+		sql.append(" (select 1 vitype, ");
+		sql.append("  cg.vgoodscode, cg.vgoodsname, cg.pk_goods, ");
+		sql.append("   si.vbillcode,  si.vconfirmid,  si.dconfirmtime,");
+		sql.append("  sib.invspec,  sib.invtype, sib.nprice, nvl(sib.nnum, 0) nnum, ");
+		sql.append(" gs.nprice sprice,  gs.nprice * nvl(sib.nnum, 0) totalmny ");
+		sql.append("    from cn_goods cg ");
+		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
+		sql.append("    left join cn_stockin_b sib on gs.pk_goods=sib.pk_goods");
+		sql.append("    and sib.pk_goodsspec=gs.pk_goodsspec");
+		sql.append("    left join cn_stockin si on si.pk_stockin=sib.pk_stockin ");
+		sql.append("  where nvl(cg.dr, 0) = 0 ");
+		sql.append("    and nvl(si.dr, 0) = 0 ");
+		sql.append("    and nvl(sib.dr, 0) = 0 ");
+		sql.append("    and nvl(gs.dr, 0) = 0 ");
+		sql.append("    and si.vstatus = 2 ");
+		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
+			sql.append("   AND si.vbillcode like ? \n");
+			spm.addParam("%" + qvo.getVbillcode() + "%");
+		}
+
+		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
+			
+			String[] strs = qvo.getPk_goods().split(",");
+			 String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			 sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
+		}
+		if (qvo.getBegdate() != null) {
+			sql.append("   AND substr(si.dconfirmtime,0,10) >= ? \n");
+			spm.addParam(qvo.getBegdate());
+		}
+		if (qvo.getEnddate() != null) {
+			sql.append("   AND substr(si.dconfirmtime,0,10) <= ? \n");
+			spm.addParam(qvo.getEnddate());
+		}
+		sql.append("  union  ");
+		sql.append(" select 2 vitype, ");
+		sql.append("  cg.vgoodscode, cg.vgoodsname, ");
+		sql.append("  cg.pk_goods,  so.vbillcode, ");
+		sql.append("  so.vconfirmid,  so.dconfirmtime, ");
+		sql.append("  gs.invspec, gs.invtype, ");
+		sql.append("  sib.nprice,  nvl(sob.nnum, 0) nnum,");
+		sql.append("  sob.nprice sprice, ");
+		sql.append(" nvl(sob.nnum, 0) * sob.nprice totalmny ");
+		sql.append("    from cn_goods cg ");
+		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
+		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
+		sql.append("    and sob.pk_goodsspec = gs.pk_goodsspec");
+		sql.append("    left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
+		sql.append("    left join cn_stockin_b sib on sob.pk_goods = sib.pk_goods ");
+		sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
+		sql.append("  where nvl(cg.dr, 0) = 0 ");
+		sql.append("    and nvl(sib.dr, 0) = 0 ");
+		sql.append("    and nvl(gs.dr, 0) = 0 ");
+		sql.append("    and nvl(sob.dr, 0) = 0 ");
+		sql.append("    and nvl(so.dr, 0) = 0 ");
+		sql.append("    and so.vstatus = 1 ");
+		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
+			sql.append("   AND so.vbillcode like ? \n");
+			spm.addParam("%" + qvo.getVbillcode() + "%");
+		}
+
+		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
+			
+			String[] strs = qvo.getPk_goods().split(",");
+			 String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			 sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
+		}
+		if (qvo.getBegdate() != null) {
+			sql.append("   AND substr(so.dconfirmtime,0,10) >= ? \n");
+			spm.addParam(qvo.getBegdate());
+		}
+		if (qvo.getEnddate() != null) {
+			sql.append("   AND substr(so.dconfirmtime,0,10) <= ? \n");
+			spm.addParam(qvo.getEnddate());
+		}
+		sql.append(" ) s ");
+		sql.append("  order by s.vbillcode ");
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
 	}
 
 	/**
@@ -195,6 +313,8 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
+	
+	
 
 	/**
 	 * 入库——获取查询条件
