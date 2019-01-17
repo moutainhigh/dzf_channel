@@ -154,16 +154,6 @@ function load(){
 				
 			}
 		},  {
-			field : 'sprice',
-			title : '售价',
-			width : '90',
-			halign : 'center',
-			align : 'right',
-			formatter : function(value,row,index){
-					if(value == 0)return "0.00";
-					return formatMny(value);
-				},
-		},  {
 			field : 'nmny',
 			title : '金额',
 			width : '90',

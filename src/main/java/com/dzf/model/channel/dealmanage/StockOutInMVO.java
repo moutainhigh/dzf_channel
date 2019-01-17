@@ -45,9 +45,6 @@ public class StockOutInMVO extends SuperVO {
 	@FieldAlias("num")
 	private Integer nnum;// 数量
 
-	@FieldAlias("sprice")
-	private DZFDouble sprice;// 售价
-
 	@FieldAlias("nmny")
 	private DZFDouble totalmny;// 金额
 
@@ -171,14 +168,6 @@ public class StockOutInMVO extends SuperVO {
 
 	public void setNnum(Integer nnum) {
 		this.nnum = nnum;
-	}
-
-	public DZFDouble getSprice() {
-		return sprice;
-	}
-
-	public void setSprice(DZFDouble sprice) {
-		this.sprice = sprice;
 	}
 
 	public DZFDouble getTotalmny() {

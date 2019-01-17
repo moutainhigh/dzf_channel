@@ -180,7 +180,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  cg.vgoodscode, cg.vgoodsname, cg.pk_goods, ");
 		sql.append("   si.vbillcode,  si.vconfirmid,  si.dconfirmtime,");
 		sql.append("  sib.invspec,  sib.invtype, sib.nprice, nvl(sib.nnum, 0) nnum, ");
-		sql.append(" gs.nprice sprice,  gs.nprice * nvl(sib.nnum, 0) totalmny ");
+		sql.append("  sib.nprice * nvl(sib.nnum, 0) totalmny ");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockin_b sib on gs.pk_goods=sib.pk_goods");
@@ -217,8 +217,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  so.vconfirmid,  so.dconfirmtime, ");
 		sql.append("  gs.invspec, gs.invtype, ");
 		sql.append("  sib.nprice,  nvl(sob.nnum, 0) nnum,");
-		sql.append("  sob.nprice sprice, ");
-		sql.append(" nvl(sob.nnum, 0) * sob.nprice totalmny ");
+		sql.append("  nvl(sob.nnum, 0) * sib.nprice totalmny ");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
@@ -274,7 +273,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname, cg.pk_goods,");
 		sql.append("        gs.invspec, gs.invtype, ");
 		sql.append("        sib.nprice ,");
-		sql.append("        nvl(sob.nnum,0) nnum, sob.nprice sprice, nvl(sob.nnum,0) * sob.nprice totalmny");
+		sql.append("        nvl(sob.nnum,0) nnum, nvl(sob.nnum,0) * sib.nprice totalmny");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
@@ -331,7 +330,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append(" select 1 vitype, cg.vgoodscode, cg.vgoodsname, cg.pk_goods, ");
 		sql.append(" 		si.vbillcode, si.vconfirmid, si.dconfirmtime, ");
 		sql.append("        sib.invspec, sib.invtype, sib.nprice, nvl(sib.nnum,0) nnum, ");
-		sql.append("        gs.nprice sprice, gs.nprice * nvl(sib.nnum,0) totalmny");
+		sql.append("         sib.nprice * nvl(sib.nnum,0) totalmny");
 
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
