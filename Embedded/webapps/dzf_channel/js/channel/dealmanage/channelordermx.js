@@ -22,13 +22,21 @@ function reloadData(){
 		strgids+=","+gids[i];
 	}
 	strgids=strgids.substring(1);
+	
+	var orderstatus=$('#qstatus').combobox('getValues');
+	var strstatus="";
+	for(i=0;i<orderstatus.length;i++){
+		strstatus+=","+orderstatus[i];
+	}
+	strstatus=strstatus.substring(1);
+	
 	if(ischeck){
 		bdate = $('#submitbegdate').datebox('getValue'); 
 		edate = $('#submitenddate').datebox('getValue'); 
 		$('#grid').datagrid('load', {
 			'billcode' : $("#qbcode").val(),
 			'corpid' : $("#qcpid").val(),
-			'vstatus' :  $('#qstatus').combobox('getValue'),
+			'vstatus' : strstatus,
 			'submitbegin' : bdate,
 			'submitend' : edate,
 			'gid' :  strgids,
@@ -39,7 +47,7 @@ function reloadData(){
 		$('#grid').datagrid('load', {
 			'billcode' : $("#qbcode").val(),
 			'corpid' : $("#qcpid").val(),
-			'vstatus' :  $('#qstatus').combobox('getValue'),
+			'vstatus' :  strstatus,
 			'kbegin' : bperiod,
 			'kend' : eperiod,
 			'gid' :  strgids,
@@ -102,7 +110,6 @@ function load(){
 			width : '160',
 			title : '订单编码',
 			field : 'billcode',
-			//formatter:codeLink,
 			align : 'left',
             halign : 'center',
             sortable : true,
@@ -348,6 +355,7 @@ function clearParams(){
 	$("#qcpname").textbox('setValue',null);
 	$("#qcpid").val(null);
 	$("#goodsname").combobox('clear');
+	$("#qstatus").combobox('clear');
 }
 
 /**

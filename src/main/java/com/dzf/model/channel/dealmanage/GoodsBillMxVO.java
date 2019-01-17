@@ -23,7 +23,7 @@ public class GoodsBillMxVO extends MultSuperVO {
 	@FieldAlias("billcode")
 	private String vbillcode;//订单号
 	
-	private Integer vstatus;//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
+	private String vstatus;//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
 	
 	@FieldAlias("rename")
 	private String vreceivername;//收货人
@@ -313,11 +313,11 @@ public class GoodsBillMxVO extends MultSuperVO {
 		this.vbillcode = vbillcode;
 	}
 
-	public Integer getVstatus() {
+	public String getVstatus() {
 		return vstatus;
 	}
 
-	public void setVstatus(Integer vstatus) {
+	public void setVstatus(String vstatus) {
 		this.vstatus = vstatus;
 	}
 

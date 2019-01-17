@@ -123,9 +123,12 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 			 String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			 sql.append(" AND gill.pk_corp in (").append(inSql).append(")");
 		}
-		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
-			sql.append(" AND gill.vstatus = ? \n");
-			spm.addParam(pamvo.getVstatus());
+		if ( pamvo.getVstatus() != null && !pamvo.getVstatus().equals("-1")) {
+			//sql.append(" AND gill.vstatus = ? \n");
+			//spm.addParam(pamvo.getVstatus());
+			 String[] strs = pamvo.getVstatus().toString().split(",");
+			 String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			 sql.append(" AND gill.vstatus in (").append(inSql).append(")");
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
 			sql.append(" AND gill.pk_goodsbill = ? ");
