@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
@@ -37,6 +38,7 @@ import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.piaotong.IPiaoTongConstant;
@@ -617,10 +619,15 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(
-				"select nvl(sum(nvl(invprice,0)),0) price from cn_invoice where nvl(dr,0) = 0 and pk_corp = ? and invstatus = 1 and ipaytype = ?");
+		sql.append("select nvl(sum(nvl(invprice, 0)), 0) price  \n") ;
+		sql.append("  from cn_invoice  \n") ; 
+		sql.append(" where nvl(dr, 0) = 0  \n") ; 
+		sql.append("   and pk_corp = ?  \n") ; 
+		sql.append("   and invstatus = 1  \n") ; 
+		sql.append("   and ipaytype = ?  \n");
 		sp.addParam(pk_corp);
 		sp.addParam(ipaytype);
+		sql.append("   and isourcetype = 1 \n");//发票来源类型  1：合同扣款开票；
 		String price = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("price")).toString();
 		DZFDouble nprice = new DZFDouble(price);
 		if (!StringUtil.isEmpty(invprice)) {
@@ -629,20 +636,46 @@ public class InvManagerServiceImpl implements InvManagerService {
 		return nprice;
 	}
 
+	@SuppressWarnings("unchecked")
 	private DZFDouble queryTicketPrice(String pk_corp, int ipaytype) {
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select nvl(sum(nvl(nusedmny,0))-sum(nvl(nticketmny,0)),0) as nticketmny from cn_balance ");
-		sql.append("where nvl(dr,0)=0 and pk_corp = ? and ipaytype = ?");
-		sp.addParam(pk_corp);
-		if (ipaytype == 0) {
+		SQLParameter spm = new SQLParameter();
+		//1、查询合同扣款金额
+		sql.append("SELECT SUM(nvl(nusedmny, 0)) AS nusedmny  \n") ;//合同扣款金额
+		sql.append("  FROM cn_detail  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_corp = ?  \n") ; 
+		spm.addParam(pk_corp);
+		sql.append("   AND ipaytype = 2  \n") ; 
+		sql.append("   AND iopertype = 2  \n");
+		ArrayList<Object> res = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
+		DZFDouble usedmny = DZFDouble.ZERO_DBL;
+		if (res != null && !res.isEmpty()) {
+			Object[] obj = (Object[]) res.get(0);
+			usedmny = CommonUtil.getDZFDouble(obj[0]);
+		}
+		
+		//2、查询合同扣款开票金额
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("select sum(nvl(nticketmny, 0)) as nticketmny \n") ;//合同扣款开票金额
+		sql.append("  from cn_balance  \n") ; 
+		sql.append(" where nvl(dr, 0) = 0  \n") ; 
+		sql.append("   and pk_corp = ?  \n") ; 
+		sql.append("   and ipaytype = ?  \n");
+		spm.addParam(pk_corp);
+		if(ipaytype == 0){
 			ipaytype = 2;
 		}
-		sp.addParam(ipaytype);
-		String nticketmny = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("nticketmny"))
-				.toString();
-		DZFDouble price = new DZFDouble(nticketmny);
-		return price;
+		spm.addParam(ipaytype);
+		res = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
+		DZFDouble ticketmny = DZFDouble.ZERO_DBL;
+		if (res != null && !res.isEmpty()) {
+			Object[] obj = (Object[]) res.get(0);
+			ticketmny = CommonUtil.getDZFDouble(obj[0]);
+		}
+		
+		return SafeCompute.sub(usedmny, ticketmny);
 	}
 
 	@Override
