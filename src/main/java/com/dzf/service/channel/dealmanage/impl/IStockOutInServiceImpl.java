@@ -231,7 +231,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
-		sql.append("    and so.vstatus = 1 ");
+		sql.append("    and so.vstatus = 1 or so.vstatus = 2");
 		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
 			sql.append("   AND so.vbillcode like ? \n");
 			spm.addParam("%" + qvo.getVbillcode() + "%");
