@@ -575,14 +575,18 @@ function cancOrder(){
 		});
 		return;
 	} 
+	var errmsg = "";
 	for(var i = 0; i<rows.length; i++ ){
 		if (rows[i].vstatus != 0) {
-			Public.tips({
-				content : '订单编码'+rows[i].billcode+'状态不为待确认',
-				type : 2
-			});
-			return;
+			errmsg = errmsg + '订单编码'+rows[i].billcode+'状态不为待确认；<br>';
 		}
+	}
+	if(!isEmpty(errmsg)){
+		Public.tips({
+			content : errmsg,
+			type : 2
+		});
+		return;
 	}
 	$('#cancelDlg').dialog('open').dialog('center').dialog('setTitle', '选择取消原因');
 	$('#cancfrom').form('clear');
