@@ -178,9 +178,9 @@
 						</div>
 						<div class="time_col time_colp11">
 							<label style="text-align:right;width:10.8%;">开户行：</label>
-							<input id="bname" name="bname" class="easyui-textbox" data-options="required:true" style="width:36%;height:28px;text-align:left">
+							<input id="bname" name="bname" class="easyui-textbox" style="width:36%;height:28px;text-align:left">
 							<label style="text-align:right;width:10.8%;">开户账号：</label>
-							<input id="bcode" name="bcode" class="easyui-textbox" data-options="required:true" style="width:37%;height:28px;text-align:left">
+							<input id="bcode" name="bcode" class="easyui-textbox" style="width:37%;height:28px;text-align:left">
 						</div>
 						<div class="time_col time_colp11">
 							<div style="width:32%;display: inline-block">
