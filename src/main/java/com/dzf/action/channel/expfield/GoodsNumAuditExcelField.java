@@ -32,11 +32,13 @@ public class GoodsNumAuditExcelField implements IExceport<GoodsNumVO> {
 			new Fieldelement("invspec", "规格",false,0,false),
 			new Fieldelement("invtype", "型号",false,0,false),
 			new Fieldelement("goodsunit", "单位",false,0,false),
+			new Fieldelement("goodsprice", "单价",true,2,false),
 			new Fieldelement("istockinnum", "累计入库数量",false,0,false),
-			new Fieldelement("isstockmny", "累计入库成本",false,0,false),
+			new Fieldelement("isstockmny", "累计入库成本",true,2,false),
 			new Fieldelement("ilocknum", "订单购买数量",false,0,false),
 			new Fieldelement("ioutnum", "累计出库数量",false,0,false),
-			new Fieldelement("nsendnum", "未发货数量",false,0,false),
+			new Fieldelement("noutnum", "待出库数量",false,0,false),
+			new Fieldelement("nsendnum", "待发货数量",false,0,false),
 			new Fieldelement("istocknum","实际库存数量",false,0,false),
 			new Fieldelement("ibuynum","可购买数量",false,0,false),
 	};
@@ -79,17 +81,17 @@ public class GoodsNumAuditExcelField implements IExceport<GoodsNumVO> {
 
 	@Override
 	public String getExcelport2003Name() {
-		return "商品数量明细" + now + ".xls";
+		return "商品数量明细表" + now + ".xls";
 	}
 
 	@Override
 	public String getExcelport2007Name() {
-		return "商品数量明细" + now + ".xlsx";
+		return "商品数量明细表" + now + ".xlsx";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "商品数量明细";
+		return "商品数量明细表";
 	}
 
 	@Override
@@ -104,7 +106,7 @@ public class GoodsNumAuditExcelField implements IExceport<GoodsNumVO> {
 
 	@Override
 	public String getSheetName() {
-		return "商品数量明细";
+		return "商品数量明细表";
 	}
 
 	@Override

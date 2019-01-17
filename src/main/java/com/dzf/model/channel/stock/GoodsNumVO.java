@@ -4,6 +4,7 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 商品数量明细表VO
@@ -33,7 +34,7 @@ public class GoodsNumVO extends SuperVO {
     private String goodsunit;//单位
     
     @FieldAlias("price")
-    private String goodsprice;//单价
+    private DZFDouble goodsprice;//单价
 
     @FieldAlias("stock")
     private Integer istocknum;//库存数量
@@ -42,7 +43,7 @@ public class GoodsNumVO extends SuperVO {
     private Integer istockinnum;//累计入库数量
     
     @FieldAlias("stockmny")
-    private Integer isstockmny;//累计入库成本
+    private DZFDouble isstockmny;//累计入库成本
     
     @FieldAlias("outnum")
     private Integer ioutnum;//累计出库数量
@@ -169,15 +170,23 @@ public class GoodsNumVO extends SuperVO {
         this.goodsunit = goodsunit;
     }
 
-    public Integer getIsstockmny() {
-        return isstockmny;
-    }
+    public DZFDouble getGoodsprice() {
+		return goodsprice;
+	}
 
-    public void setIsstockmny(Integer isstockmny) {
-        this.isstockmny = isstockmny;
-    }
+	public void setGoodsprice(DZFDouble goodsprice) {
+		this.goodsprice = goodsprice;
+	}
 
-    public Integer getIoutnum() {
+	public DZFDouble getIsstockmny() {
+		return isstockmny;
+	}
+
+	public void setIsstockmny(DZFDouble isstockmny) {
+		this.isstockmny = isstockmny;
+	}
+
+	public Integer getIoutnum() {
         return ioutnum;
     }
 
@@ -201,14 +210,7 @@ public class GoodsNumVO extends SuperVO {
         this.ibuynum = ibuynum;
     }
     
-    public String getGoodsprice() {
-        return goodsprice;
-    }
-
-    public void setGoodsprice(String goodsprice) {
-        this.goodsprice = goodsprice;
-    }
-
+    
     @Override
     public String getParentPKFieldName() {
         // TODO Auto-generated method stub
