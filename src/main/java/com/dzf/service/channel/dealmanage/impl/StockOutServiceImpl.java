@@ -147,7 +147,6 @@ public class StockOutServiceImpl implements IStockOutService{
 		vo.setDoperatedate(new DZFDateTime());
 		setDefaultCode(vo);
 		multBodyObjectBO.saveMultBObject(vo.getFathercorp(), vo);
-		throw new BusinessException("验证是否打上补丁");
 	}
 	
 	@Override
@@ -176,7 +175,6 @@ public class StockOutServiceImpl implements IStockOutService{
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			//3、插入子表	
 			singleObjectBO.insertVOArr(vo.getFathercorp(), (SuperVO[]) vo.getTableVO("cn_stockout_b"));
-			throw new BusinessException("验证是否打上补丁");
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
 		        throw new BusinessException(e.getMessage());
@@ -277,7 +275,6 @@ public class StockOutServiceImpl implements IStockOutService{
 		        throw new WiseRunException(e);
 		} finally {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_stockout(),uuid);
-			bills = new ArrayList<String>();
 			for (String string : bills) {
 				LockUtil.getInstance().unLock_Key("cn_goodsbill", string,uuid);
 			}
