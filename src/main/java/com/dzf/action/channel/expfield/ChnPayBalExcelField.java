@@ -26,6 +26,7 @@ public class ChnPayBalExcelField implements IExceport<ChnBalanceRepVO>{
 	
 	private Fieldelement[] fields = new Fieldelement[]{
 			new Fieldelement("areaname", "大区",false,0,false),
+			new Fieldelement("vmanagername", "渠道经理",false,0,false),
 			new Fieldelement("innercode", "加盟商编码",false,0,false),
 			new Fieldelement("corpname", "加盟商名称",false,0,false),
 //			new Fieldelement("num", "合同数",false,0,false),
