@@ -91,7 +91,7 @@ Public.postAjax = function(url, params, callback, $dom) {
 		if ($dom.hasClass('ui-btn-dis')) {
 			Public.tips({
 				type : 2,
-				content : '正在处理，请稍后...'
+				content : '正在处理，请稍候...'
 			});
 			return;
 		} else {

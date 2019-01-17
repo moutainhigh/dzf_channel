@@ -337,7 +337,7 @@ function onSave(){
  */
 function saveSubmit(postdata, type) {
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	var ele;
 	if(type == 1){

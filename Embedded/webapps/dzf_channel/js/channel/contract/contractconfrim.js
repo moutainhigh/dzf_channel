@@ -1198,7 +1198,7 @@ function deductConfri(){
 	postdata["opertype"] = opertype;
 	
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#deductfrom').form('submit', {
 		url : contextPath + '/contract/contractconf!updateDeductData.action',

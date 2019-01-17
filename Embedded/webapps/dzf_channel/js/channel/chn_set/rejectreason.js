@@ -89,7 +89,7 @@ function save(){
 	}
 	
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#dataform').form('submit', {
 		url : contextPath + '/chn_set/rejectreason!save.action',

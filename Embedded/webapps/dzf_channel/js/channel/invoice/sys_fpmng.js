@@ -355,7 +355,7 @@ function onAutoBill(){
 	$.messager.confirm('提示',msg,
 	  function(conf){
 		if(conf){
-			$.messager.progress({text : '开票中，请稍后.....'});
+			$.messager.progress({text : '开票中，请稍候.....'});
 			for(var i = 0; i < rows.length; i++){
 				ids.push(rows[i].id);
 			}

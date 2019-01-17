@@ -194,7 +194,7 @@ function onSave(){
 	postdata["data"] = JSON.stringify(serializeObject($('#editform')));
 	
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#editform').form('submit', {
 		url : DZF.contextPath + '/sys/deductrate!save.action',
@@ -332,7 +332,7 @@ function onBatchSave() {
 	postdata["body"] = body;
 	
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#setform').form('submit', {
 		url : DZF.contextPath + '/sys/deductrate!saveBatchSet.action',

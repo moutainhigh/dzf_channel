@@ -615,7 +615,7 @@ function onSave(){
  */
 function saveSubmit(isadd, postdata) {
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#addForm').form('submit', {
 		url : contextPath + '/rebate/rebateinput!save.action',
@@ -845,7 +845,7 @@ function onEditSave(){
 		return; 
 	}
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#editForm').form('submit', {
 		url : contextPath + '/rebate/rebateinput!save.action',

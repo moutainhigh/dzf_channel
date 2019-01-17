@@ -586,7 +586,7 @@ function onConfirm(){
 	}
 	
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#commitForm').form('submit', {
 		url : contextPath + '/rebate/rebateconf!updateConf.action',

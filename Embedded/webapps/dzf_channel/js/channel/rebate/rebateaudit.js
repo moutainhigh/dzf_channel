@@ -628,7 +628,7 @@ function onAuditCommit(confstatus){
 		return; 
 	}
 	$.messager.progress({
-		text : '数据保存中，请稍后.....'
+		text : '数据保存中，请稍候.....'
 	});
 	$('#commitForm').form('submit', {
 		url : contextPath + '/rebate/rebateaudit!updateAudit.action',

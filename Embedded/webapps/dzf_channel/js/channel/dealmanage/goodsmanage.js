@@ -1013,7 +1013,7 @@ function onSave(){
 		}
 		
 		$.messager.progress({
-			text : '数据保存中，请稍后.....'
+			text : '数据保存中，请稍候.....'
 		});
 		$('#goods_add').form('submit', {
 			url : DZF.contextPath + '/dealmanage/goodsmanage!save.action',
@@ -1135,7 +1135,7 @@ function addMeas(){
 function measSave(){
 	if ($("#meas_add").form('validate')) {
 		$.messager.progress({
-			text : '数据保存中，请稍后.....'
+			text : '数据保存中，请稍候.....'
 		});
 		
 		$('#meas_add').form('submit', {
