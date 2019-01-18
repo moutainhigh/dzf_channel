@@ -210,7 +210,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			sql.append("   AND substr(si.dconfirmtime,0,10) <= ? \n");
 			spm.addParam(qvo.getEnddate());
 		}
-		sql.append("  union  ");
+		sql.append("  union all");
 		sql.append(" select 2 vitype, ");
 		sql.append("  cg.vgoodscode, cg.vgoodsname, ");
 		sql.append("  cg.pk_goods,  so.vbillcode, ");
@@ -230,7 +230,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
-		sql.append("    and so.vstatus = 1 or so.vstatus = 2");
+		sql.append("    and (so.vstatus = 1 or so.vstatus = 2) ");
 		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
 			sql.append("   AND so.vbillcode like ? \n");
 			spm.addParam("%" + qvo.getVbillcode() + "%");
@@ -286,7 +286,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
-		sql.append("    and so.vstatus = 1 ");
+		sql.append("    and so.vstatus = 1 or so.vstatus = 2");
 		
 		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
 			sql.append("   AND so.vbillcode like ? \n");
