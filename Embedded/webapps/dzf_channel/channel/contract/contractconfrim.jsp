@@ -749,12 +749,13 @@
 		
 		<!-- 合同详情 begin  -->
 		<div id="info_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
-			<div class="time_col time_colp11 Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
-				<div style="width:14%;display: inline-block;float: right;margin-top:10px;">
-					<a class="ui-btn ui-btn-xz" onclick="$('#info_Dialog').dialog('close');">返回</a>
+
+			<div style="height: 100%; overflow: auto;">
+				<div class="time_col time_colp11 Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
+					<div style="width:14%;display: inline-block;float: right;margin-top:10px;">
+						<a class="ui-btn ui-btn-xz" onclick="$('#info_Dialog').dialog('close');">返回</a>
+					</div>
 				</div>
-			</div>
-			<div style="height:92%; overflow: auto;">
 				<form id = "infofrom" method="post" enctype="multipart/form-data">
 				
 					<!-- 变更信息 begin -->
