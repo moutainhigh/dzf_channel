@@ -446,6 +446,10 @@
 							<label style="width:38.6%;text-align: right;">存量客户：</label>
 							<input type="checkbox" id="isncust" name="isncust" value="是" onclick="return false;">
 						</div>
+						<div class="decan" style="width:25%;display: inline-block;">
+							<label style="width:38.6%;text-align: right;">续费合同：</label>
+							<input type="checkbox" id="chargetype" name="chargetype" value="是" onclick="return false;">
+						</div>
 					</div>
 					<!-- 合同信息 end -->
 				</form>

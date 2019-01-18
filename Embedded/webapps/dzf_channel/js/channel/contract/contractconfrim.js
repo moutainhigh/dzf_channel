@@ -1096,6 +1096,9 @@ function initdeductData(row){
                 if(row.isnconfirm == "Y" || row.isnconfirm == "是"){
                 	$('#isnconfirm').prop('checked',true);
                 }
+                if(row.ictype == 2){//扣费类型    1或null：新增扣费； 2：续费扣款；
+                	$('#chargetype').prop('checked',true);
+                }
                 //当纳税人信息变更时，展示原合同数据信息
                 if(row.bodys != null && row.bodys.length > 0){
                 	var bodys = row.bodys;
