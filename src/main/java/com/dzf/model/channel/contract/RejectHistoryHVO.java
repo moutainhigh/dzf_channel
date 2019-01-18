@@ -38,6 +38,17 @@ public class RejectHistoryHVO extends SuperVO {
 
     @FieldAlias("ts")
     private DZFDateTime ts; // 时间戳
+    
+    @FieldAlias("operator")
+    private String coperator; // 录入人姓名
+
+	public String getCoperator() {
+		return coperator;
+	}
+
+	public void setCoperator(String coperator) {
+		this.coperator = coperator;
+	}
 
 	public String getPk_rejecthistory_h() {
 		return pk_rejecthistory_h;

@@ -40,6 +40,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.Logger;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
@@ -617,11 +618,24 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
+	@SuppressWarnings("unchecked")
 	private RejectHistoryHVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
-		String sql = " nvl(dr,0) = 0 AND pk_contract = ? ORDER BY ts DESC";
+		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT h.*, r.user_name AS coperator \n");
+		sql.append("  FROM cn_rejecthistory_h h  \n");
+		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid  \n");
+		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
+		sql.append("   AND nvl(r.dr, 0) = 0  \n");
+		sql.append("   AND h.pk_contract = ?  \n");
 		spm.addParam(pk_contract);
-		return (RejectHistoryHVO[]) singleObjectBO.queryByCondition(RejectHistoryHVO.class, sql, spm);
+		List<RejectHistoryHVO> list = (List<RejectHistoryHVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(RejectHistoryHVO.class));
+		if(list != null && list.size() > 0){
+			QueryDeCodeUtils.decKeyUtils(new String[]{"coperator"}, list, 1);
+			return list.toArray(new RejectHistoryHVO[0]);
+		}
+		return null;
 	}
 
 	/**

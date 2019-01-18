@@ -965,7 +965,7 @@ function showRejectReason(row){
 		showinfo = showinfo + "  </div>"; 
 		showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
 		showinfo = showinfo + "    <div  class='dot'>"; 
-		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>"; 
+		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[0].operator+"</font>"; 
 		showinfo = showinfo + "    </div>"; 
 		showinfo = showinfo + "  </div>"; 
 		showinfo = showinfo + "</div>";
@@ -983,7 +983,7 @@ function showRejectReason(row){
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
 				showinfo = showinfo + "    <div  class='dot'>"; 
-				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>"; 
+				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[i].operator+"</font>"; 
 				showinfo = showinfo + "    </div>"; 
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "</div>";
@@ -1888,7 +1888,7 @@ function showRejReason(row){
 		showinfo = showinfo + "  </div>"; 
 		showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
 		showinfo = showinfo + "    <div  class='dot'>"; 
-		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>"; 
+		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[0].operator+"</font>"; 
 		showinfo = showinfo + "    </div>"; 
 		showinfo = showinfo + "  </div>"; 
 		showinfo = showinfo + "</div>";
@@ -1906,7 +1906,7 @@ function showRejReason(row){
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
 				showinfo = showinfo + "    <div  class='dot'>"; 
-				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>"; 
+				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[i].operator+"</font>"; 
 				showinfo = showinfo + "    </div>"; 
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "</div>";
