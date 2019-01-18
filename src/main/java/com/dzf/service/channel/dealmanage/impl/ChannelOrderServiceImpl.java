@@ -36,6 +36,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IChannelOrderService;
 
 @Service("channelorderser")
@@ -123,8 +124,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			spm.addParam(pamvo.getVbillcode());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
-			sql.append("   AND l.pk_corp = ?  \n");
-			spm.addParam(pamvo.getPk_corp());
+			String[] strs = pamvo.getPk_corp().split(",");
+			String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
 			sql.append("   AND l.vstatus = ? \n");
