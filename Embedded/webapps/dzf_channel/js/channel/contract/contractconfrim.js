@@ -505,6 +505,11 @@ function load(){
 			halign:'center',
 			field : 'submitime',
 			sortable:true,
+			styler: function (value, row, index) {//扣款方式为续费
+                if (row.ictype == 2) {
+                    return 'background:url(../../images/adde.png) no-repeat 132px 2px;';
+                }
+            }
 		}, {
 			width : '140',
 			title : '大区',
