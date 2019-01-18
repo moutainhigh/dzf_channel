@@ -355,7 +355,6 @@ function clearParams(){
 	$("#qcpname").textbox('setValue',null);
 	$("#qcpid").val(null);
 	$("#goodsname").combobox('clear');
-	$("#qstatus").combobox('clear');
 }
 
 /**
