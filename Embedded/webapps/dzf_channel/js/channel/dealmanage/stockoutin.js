@@ -1,3 +1,4 @@
+
 var contextPath = DZF.contextPath;
 var editIndex;
 var status = "brows";
@@ -129,8 +130,13 @@ function load(){
 			halign : 'center',
 			align : 'right',
 			formatter : function(value,row,index){
-					if(value == 0)return "0.00";
-					return formatMny(value);
+				    if(row.itype=='2')
+				    	return value='';
+				    else{
+				    	if(value == 0)return "0.00";
+						return formatMny(value);
+				    }
+					
 				},
 		}, {
 			field : 'num',
@@ -160,8 +166,13 @@ function load(){
 			halign : 'center',
 			align : 'right',
 			formatter : function(value,row,index){
-					if(value == 0)return "0.00";
-					return formatMny(value);
+				    if(row.itype=='2')
+			    	return value='';
+				    else{
+				    	if(value == 0)return "0.00";
+						return formatMny(value);
+				    }
+					
 				},
 			
 		},  {
