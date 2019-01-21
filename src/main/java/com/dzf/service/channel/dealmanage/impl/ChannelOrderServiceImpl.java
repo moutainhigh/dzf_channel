@@ -128,9 +128,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
-		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
-			sql.append("   AND l.vstatus = ? \n");
-			spm.addParam(pamvo.getVstatus());
+//		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
+//			sql.append("   AND l.vstatus = ? \n");
+//			spm.addParam(pamvo.getVstatus());
+//		}
+		if(!StringUtil.isEmpty(pamvo.getLogisticsunit())){
+			String[] strs = pamvo.getLogisticsunit().split(",");
+			String where = SqlUtil.buildSqlForIn("l.vstatus", strs);
+			sql.append(" AND ").append(where);
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
 			sql.append(" AND l.pk_goodsbill = ? ");

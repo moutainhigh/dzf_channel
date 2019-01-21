@@ -480,12 +480,20 @@ function reloadData(){
 		querydate = bperiod + ' 至 ' + eperiod;
 	}
 	
+	var qstatus = $('#qstatus').combobox('getValues');
+	var vstatus = "";
+	for( i= 0; i < qstatus.length; i++){
+		vstatus+=","+qstatus[i];
+	}
+	vstatus = vstatus.substring(1);
+	
 	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		'billcode' : $("#qbcode").val(),
 		'corpid' : $("#qcpid").val(),
-		'vstatus' :  $('#qstatus').combobox('getValue'),
+//		'vstatus' :  $('#qstatus').combobox('getValue'),
+		'logunit' : vstatus,
 		'bdate' : bdate,
 		'edate' : edate,
 		'bbdate' : bperiod,
