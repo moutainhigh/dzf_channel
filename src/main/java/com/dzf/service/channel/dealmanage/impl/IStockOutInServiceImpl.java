@@ -218,9 +218,9 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  so.vconfirmid,  so.dconfirmtime, ");
 		sql.append("  gs.invspec, gs.invtype, ");
 		//sql.append("  sib.nprice, ");
-		sql.append("        so.ntotalmny,");//不显示  只充数使用
-		sql.append("        so.vstatus, ");//不显示  只充数使用
-		sql.append("   nvl(sob.nnum, 0) nnum");
+		sql.append("       0,");//不显示  只充数使用
+		sql.append("   nvl(sob.nnum, 0) nnum,");
+		sql.append("       0");//不显示  只充数使用
 		//sql.append("  nvl(sob.nnum, 0) * sib.nprice totalmny ");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
