@@ -181,6 +181,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("   si.vbillcode,  si.vconfirmid,  si.dconfirmtime,");
 		sql.append("  sib.invspec,  sib.invtype, sib.nprice, nvl(sib.nnum, 0) nnum, ");
 		sql.append("  sib.nprice * nvl(sib.nnum, 0) totalmny ");
+		
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockin_b sib on gs.pk_goods=sib.pk_goods");
@@ -216,17 +217,20 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  cg.pk_goods,  so.vbillcode, ");
 		sql.append("  so.vconfirmid,  so.dconfirmtime, ");
 		sql.append("  gs.invspec, gs.invtype, ");
-		sql.append("  sib.nprice,  nvl(sob.nnum, 0) nnum,");
-		sql.append("  nvl(sob.nnum, 0) * sib.nprice totalmny ");
+		//sql.append("  sib.nprice, ");
+		sql.append("        so.ntotalmny,");//不显示  只充数使用
+		sql.append("        so.vstatus, ");//不显示  只充数使用
+		sql.append("   nvl(sob.nnum, 0) nnum");
+		//sql.append("  nvl(sob.nnum, 0) * sib.nprice totalmny ");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
 		sql.append("    and sob.pk_goodsspec = gs.pk_goodsspec");
 		sql.append("    left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
-		sql.append("    left join cn_stockin_b sib on sob.pk_goods = sib.pk_goods ");
-		sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
+		//sql.append("    left join cn_stockin_b sib on sob.pk_goods = sib.pk_goods ");
+		//sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
 		sql.append("  where nvl(cg.dr, 0) = 0 ");
-		sql.append("    and nvl(sib.dr, 0) = 0 ");
+		//sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
@@ -271,18 +275,18 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 
 		sql.append(" select 2 vitype, so.vbillcode, so.vconfirmid, so.dconfirmtime, ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname, cg.pk_goods,");
-		sql.append("        gs.invspec, gs.invtype, ");
-		sql.append("        sib.nprice ,");
-		sql.append("        nvl(sob.nnum,0) nnum, nvl(sob.nnum,0) * sib.nprice totalmny");
+		sql.append("        gs.invspec, gs.invtype ,");
+		//sql.append("        sib.nprice ,");
+		//sql.append("        nvl(sob.nnum,0) nnum, nvl(sob.nnum,0) * sib.nprice totalmny");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
 		sql.append("    and sob.pk_goodsspec = gs.pk_goodsspec");
 		sql.append("    left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
-		sql.append("    left join cn_stockin_b sib on sob.pk_goods = sib.pk_goods ");
-		sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
+		//sql.append("    left join cn_stockin_b sib on sob.pk_goods = sib.pk_goods ");
+		//sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
 		sql.append("  where nvl(cg.dr, 0) = 0 ");
-		sql.append("    and nvl(sib.dr, 0) = 0 ");
+		//sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
