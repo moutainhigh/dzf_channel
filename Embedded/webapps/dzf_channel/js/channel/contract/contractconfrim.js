@@ -38,8 +38,8 @@ function initQryLitener(){
 			$('#bperiod').datebox("readonly", true);
 			$('#eperiod').datebox("readonly", true);
 		}else{
-			var sdv = $("#bperiod").val();
-			var edv = $("#eperiod").val();
+			var sdv = $("#bperiod").datebox('getValue');
+			var edv = $("#eperiod").datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
 			$("#bdate").datebox("readonly", true);
 			$("#edate").datebox("readonly", true);

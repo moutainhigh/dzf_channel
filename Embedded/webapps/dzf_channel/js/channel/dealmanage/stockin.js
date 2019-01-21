@@ -3,6 +3,7 @@ var editIndex;
 var status = "brows";
 $(function(){
 	initQry();
+	initQryLitener();
 	load();
 	reloadData();
 	initUserRef();
@@ -75,10 +76,41 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
-	queryBoxChange('#begdate','#enddate');
 	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
+	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);
+}
+
+/**
+ * 查询框监听事件
+ */
+function initQryLitener(){
+	$("#begdate").datebox("readonly", false);
+	$("#enddate").datebox("readonly", false);
+	$('#bperiod').datebox("readonly", true);
+	$('#eperiod').datebox("readonly", true);
+    $('input:radio[name="seledate"]').change( function(){  
+		var ischeck = $('#tddate').is(':checked');
+		if(ischeck){
+			var sdv = $('#begdate').datebox('getValue');
+			var edv = $('#enddate').datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", false);
+			$("#enddate").datebox("readonly", false);
+			$('#bperiod').datebox("readonly", true);
+			$('#eperiod').datebox("readonly", true);
+		}else{
+			var sdv = $("#bperiod").datebox('getValue');
+			var edv = $("#eperiod").datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#begdate").datebox("readonly", true);
+			$("#enddate").datebox("readonly", true);
+			$('#bperiod').datebox("readonly", false);
+			$('#eperiod').datebox("readonly", false);
+		}
+	});
 }
 
 /**
@@ -183,6 +215,12 @@ function load(){
 			halign : 'center',
 			align : 'center',
 		}, {
+			width : '150',
+			title : '确认时间',
+			field : 'conftime',
+			halign : 'center',
+			align : 'center',
+		}, {
 			field : 'operate',
 			title : '操作列',
 			width : '150',
@@ -200,13 +238,67 @@ function load(){
  * 查询数据
  */
 function reloadData(){
+	var begdate = null;//提单开始日期
+	var enddate = null;//提单结束日期
+	var bperiod = null;//扣款开始日期
+	var eperiod = null;//扣款结束日期
+	var ischeck = $('#tddate').is(':checked');
+	if(ischeck){
+		begdate = $('#begdate').datebox('getValue'); 
+		enddate = $('#enddate').datebox('getValue'); 
+		if(isEmpty(begdate)){
+			Public.tips({
+				content : '提单开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(enddate)){
+			Public.tips({
+				content : '提单结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(begdate) && !isEmpty(enddate)){
+			if(!checkdate1("begdate","enddate")){
+				return;
+			}		
+		}
+	}else{
+		bperiod = $('#bperiod').datebox('getValue');
+		eperiod = $('#eperiod').datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : '扣款开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : '扣款结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bperiod) && !isEmpty(eperiod)){
+			if(!checkdate1("bperiod","eperiod")){
+				return;
+			}		
+		}
+	}
+	
+	
 	$('#grid').datagrid('clearSelections');
 	$('#grid').datagrid('clearChecked');
 	var url = DZF.contextPath + '/dealmanage/stockin!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
-		'begdate' : $("#begdate").datebox('getValue'),
-		'enddate' : $("#enddate").datebox('getValue'),
+		'begdate' : begdate,
+		'enddate' : enddate,
+		'bperiod' : bperiod,
+		'eperiod' : eperiod,
 		'vcode' : $("#qvcode").val(),
 		'uid' :  $('#uid').combobox('getValue'),
 	});
