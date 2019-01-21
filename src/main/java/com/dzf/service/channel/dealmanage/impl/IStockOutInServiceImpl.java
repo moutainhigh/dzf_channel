@@ -275,9 +275,10 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 
 		sql.append(" select 2 vitype, so.vbillcode, so.vconfirmid, so.dconfirmtime, ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname, cg.pk_goods,");
-		sql.append("        gs.invspec, gs.invtype ,");
+		sql.append("        nvl(sob.nnum,0) nnum,");
+		sql.append("        gs.invspec, gs.invtype ");
 		//sql.append("        sib.nprice ,");
-		//sql.append("        nvl(sob.nnum,0) nnum, nvl(sob.nnum,0) * sib.nprice totalmny");
+		//sql.append("         nvl(sob.nnum,0) * sib.nprice totalmny");
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on cg.pk_goods=gs.pk_goods ");
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
