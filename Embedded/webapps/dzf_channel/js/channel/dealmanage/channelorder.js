@@ -524,6 +524,7 @@ function clearParams(){
 	$("#qbcode").textbox('setValue',null);
 	$("#qcpname").textbox('setValue',null);
 	$("#qcpid").val(null);
+	$('#qstatus').combobox('setValue',null);
 }
 
 /**
