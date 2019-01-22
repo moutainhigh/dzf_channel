@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.190124"><cite>V1.190124</cite></a></li>';
 res = res+'<li><a href="#V1.181227"><cite>V1.181227</cite></a></li>';
 res = res+'<li><a href="#V1.181129"><cite>V1.181129</cite></a></li>';
 res = res+'<li><a href="#V1.181101"><cite>V1.181101</cite></a></li>';
@@ -68,15 +69,106 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2018年12月27日重磅更新
+	 &nbsp;2019年01月24日重磅更新
     </blockquote>
     <ul class="layui-timeline">
+    
+        <li class="layui-timeline-item">
+            <a name="V1.190124"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.190124&nbsp;&nbsp;<span class="layui-badge-rim">2019-01-24</span></h2>
+                </div>
+                <ul>
+                    <li>
+                        <h3>1.入库单支持取消确认入库</h3>
+                        <ul>
+                            <!-- <a target="_blank" href="./20180627/image001.png" >#查看图片</a> -->
+                            <li>取消确认需满足待取消的入库单所含商品对应的可取消入库的数量>=待取消入库单所含商品的数量<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image01.png')" src="./20190124/image01.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>2.新增出入库明细表</h3>
+                        <ul>
+                            <li>可按商品、期间查询商品的出入库明细，支持导出明细
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image02.png')" src="./20190124/image02.png">
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>3.加盟商订单优化</h3>
+                        <ul>
+                        	<li>加盟商订单支持按提交时间、确认时间查询</br>
+                        		加盟商订单状态为待发货或有出库单但出库单未确认的订单支持取消确认</br>
+                            	支持批量取消订单
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image03.png')"  src="./20190124/image03.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>4.新增订单明细表</h3>
+                        <ul>
+                            <li>支持按日期、订单状态（支持多选）、加盟商、编码、商品（支持多选）查询加盟商订单明细，支持导出明细
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image04.png')"  src="./20190124/image04.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>5.出库单支持取消确认出库</h3>
+                        <ul>
+                            <li>已确认待发货的出库单支持取消确认
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image05.png')"  src="./20190124/image05.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>6.商品数量明细表增加统计字段</h3>
+                        <ul>
+                        	<li>查询条件增加截止日期</br>
+                            	列表增加累计入库、累计入库成本、订单购买、累计出库、待出库、待发货、实际库存、可购买数量统计字段，支持导出明细
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image06.png')"  src="./20190124/image06.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>7.加盟商开票查询优化</h3>
+                        <ul>
+                            <li>加盟商合同扣款与商品购买预付款扣款分开统计</br>
+                            	【开票】仅支持合同扣款金额提交开票申请
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image07.png')"  src="./20190124/image07.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>8.合同审核增加续费扣款合同标识</h3>
+                        <ul>
+                            <li>列表增加续费标识，合同审核界面增加续费标识，有续费标识的需按续费扣款率扣款
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190124/image08.png')"  src="./20190124/image08.png">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    
+    
         <li class="layui-timeline-item">
             <a name="V1.181227"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
             <div class="layui-timeline-content layui-text">
                 <div class="layui-timeline-title" >
-                    <h2 style="color: #FF5722;">V1.181227&nbsp;&nbsp;<span class="layui-badge-rim">2018-12-27</span></h2>
+                    <h2>V1.181227&nbsp;&nbsp;<span class="layui-badge-rim">2018-12-27</span></h2>
                 </div>
                 <ul>
                     <li>
