@@ -56,7 +56,7 @@ function load(){
 		                { field : 'incode',  title : '加盟商编码', width : 140,halign:'center',align:'left',rowspan:2},
 		                { field : 'corpnm', title : '加盟商名称', width:240,halign:'center',align:'left',rowspan:2,
 		                	formatter: function(value,row,index){
-								return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
+		                		return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
 			            }},
 		                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
@@ -80,7 +80,84 @@ function load(){
 	                   	{ field : 'jms04', title : '销售主管', width : 70,align:'right' },
 	                   	{ field : 'jms10', title : '销售', width : 70,align:'right' },
 	                ]],
-		onLoadSuccess : function(data) {},
+		onLoadSuccess : function(data) {
+			var rows = $('#grid').datagrid('getRows');
+			var footerData = new Object();
+			var jms01 = 0;	// 
+			var jms02 = 0;	// 
+			var jms06 = 0;	// 
+			var jms07 = 0;	// 
+			var jms08 = 0;	// 
+			var jms09 = 0;	// 
+			var jms05 = 0;	// 
+			var jms11 = 0;	// 
+			var jms03 = 0;	// 
+			var jms04 = 0;	// 
+			var jms10 = 0;	// 
+			var lznum = 0;	// 
+			var total = 0;	// 
+
+			for (var i = 0; i < rows.length; i++) {
+				if(rows[i].jms01 != undefined && rows[i].jms01 != null){
+					jms01 += parseFloat(rows[i].jms01);
+				}
+				if(rows[i].jms02 != undefined && rows[i].jms02 != null){
+					jms02 += parseFloat(rows[i].jms02);
+				}
+				if(rows[i].jms06 != undefined && rows[i].jms06 != null){
+					jms06 += parseFloat(rows[i].jms06);
+				}
+				if(rows[i].jms07 != undefined && rows[i].jms07 != null){
+					jms07 += parseFloat(rows[i].jms07);
+				}
+				if(rows[i].jms08 != undefined && rows[i].jms08 != null){
+					jms08 += parseFloat(rows[i].jms08);
+				}
+				if(rows[i].jms09 != undefined && rows[i].jms09 != null){
+					jms09 += parseFloat(rows[i].jms09);
+				}
+				if(rows[i].jms05 != undefined && rows[i].jms05 != null){
+					jms05 += parseFloat(rows[i].jms05);
+				}
+				if(rows[i].jms11 != undefined && rows[i].jms11 != null){
+					jms11 += parseFloat(rows[i].jms11);
+				}
+				if(rows[i].jms03 != undefined && rows[i].jms03 != null){
+					jms03 += parseFloat(rows[i].jms03);
+				}
+				if(rows[i].jms04 != undefined && rows[i].jms04 != null){
+					jms04 += parseFloat(rows[i].jms04);
+				}
+				if(rows[i].jms10 != undefined && rows[i].jms10 != null){
+					jms10 += parseFloat(rows[i].jms10);
+				}
+				if(rows[i].lznum != undefined && rows[i].lznum != null){
+					lznum += parseFloat(rows[i].lznum);
+				}
+				if(rows[i].total != undefined && rows[i].total != null){
+					total += parseFloat(rows[i].total);
+				}
+			}
+			var footerData = new Object();
+			footerData['incode'] = '合计';
+			footerData['corpnm'] = "";
+			footerData['jms01'] = jms01;
+			footerData['jms02'] = jms02;
+			footerData['jms06'] = jms06;
+			footerData['jms07'] = jms07;
+			footerData['jms08'] = jms08;
+			footerData['jms09'] = jms09;
+			footerData['jms05'] = jms05;
+			footerData['jms11'] = jms11;
+			footerData['jms03'] = jms03;
+			footerData['jms04'] = jms04;
+			footerData['jms10'] = jms10;
+			footerData['lznum'] = lznum;
+			footerData['total'] = total;
+			var fs=new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter',fs);
+		},
 	});
 }
 
