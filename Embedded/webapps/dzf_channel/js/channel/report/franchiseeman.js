@@ -302,7 +302,7 @@ function insertData(data){
 		     xgmNum1 =data.rows[i].xgmNum;
 		     ybrNum1 =data.rows[i].ybrNum;
 		     rnum1 = data.rows[i].rnum;
-		     rntlmny1 =data.rows[i].rntlmny;	
+		     anum1 =data.rows[i].anum;	
 		     rntlmny1 = data.rows[i].rntlmny;
 		     antlmny1 =data.rows[i].antlmny;
 		     ndemny1 = data.rows[i].ndemny;	
@@ -346,7 +346,7 @@ function insertData(data){
 		     xgmNum2 =data.rows[i].xgmNum;
 		     ybrNum2 =data.rows[i].ybrNum;
 		     rnum2 = data.rows[i].rnum;
-		     rntlmny2 =data.rows[i].rntlmny;	
+		     anum2 =data.rows[i].anum;	
 		     rntlmny2 = data.rows[i].rntlmny;
 		     antlmny2 =data.rows[i].antlmny;
 		     ndemny2 = data.rows[i].ndemny;	
