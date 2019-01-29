@@ -473,11 +473,11 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		if (oldvo == null) {
 			throw new BusinessException("数据错误");
 		}
-		if (itype == 0) {// 修改查询
-			if (oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2) {
-				throw new BusinessException("该商品已经发布，不允许修改");
-			}
-		}
+//		if (itype == 0) {// 修改查询
+//			if (oldvo.getVstatus() == IStatusConstant.IGOODSSTATUS_2) {
+//				throw new BusinessException("该商品已经发布，不允许修改");
+//			}
+//		}
 		String where = " pk_goods = '" + oldvo.getPk_goods() + "'";
 		List<String> gslist = queryStockGoods(where);
 		if (gslist != null && gslist.size() > 0) {
