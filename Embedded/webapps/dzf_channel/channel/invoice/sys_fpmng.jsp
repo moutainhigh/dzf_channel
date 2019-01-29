@@ -151,7 +151,8 @@
 							</div>
 								<div style="width:32%;display: inline-block">
 								<label style="text-align:right;width:34%;">开票金额：</label>
-								<input id="iprice" name="iprice" class="easyui-numberbox" data-options="required:true,min:0,max:9999999999,precision:2,groupSeparator:','" style="width:62%;height:28px;text-align:left">
+								<input id="iprice" name="iprice" class="easyui-numberbox" style="width:62%;height:28px;text-align:left"
+									data-options="required:true,min:0,max:9999999999,precision:2,groupSeparator:','" >
 							</div>
 						</div>
 						<div class="time_col time_colp11">

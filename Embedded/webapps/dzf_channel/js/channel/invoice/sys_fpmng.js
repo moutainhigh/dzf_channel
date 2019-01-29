@@ -600,7 +600,14 @@ function onEdit(){
 //	$('#ipaytype').combobox('setValue',row.paytype);
 	$('#fp_form').form('load', row);
 	$('#tempprice').val(row.iprice);
-	getTotalPrice(row.iprice,row.corpid);
+	//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+	if(row.isourtype == 1){
+		$("#iprice").numberbox("readonly",false);//开票金额
+		getTotalPrice(row.iprice,row.corpid);//可开票金额
+	}else if(row.isourtype == 2){
+		$("#iprice").numberbox("readonly",true);//开票金额
+		$("#tprice").numberbox('setValue', row.iprice);//可开票金额
+	}
 }
 
 //可开票金额
