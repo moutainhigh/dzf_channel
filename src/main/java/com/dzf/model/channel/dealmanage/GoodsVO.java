@@ -75,6 +75,17 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("isin")
 	private DZFBoolean isstockin;//是否已经入库（仅作查询使用）
 	
+	@FieldAlias("taxcode")
+	private String vtaxclasscode;//税收分类编码
+	
+	public String getVtaxclasscode() {
+		return vtaxclasscode;
+	}
+
+	public void setVtaxclasscode(String vtaxclasscode) {
+		this.vtaxclasscode = vtaxclasscode;
+	}
+
 	public DZFBoolean getIsstockin() {
 		return isstockin;
 	}

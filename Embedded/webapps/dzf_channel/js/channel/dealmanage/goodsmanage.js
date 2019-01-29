@@ -58,13 +58,19 @@ function load(){
 		    {width : '100',title : '商品分类',field : 'gtypenm',align : 'left',halign : 'center',}, 
 		    {width : '100',title : '商品编码',field : 'gcode',align : 'left',halign : 'center',}, 
 		    {width : '200',title : '商品名称',field : 'gname',align : 'left',halign : 'center',formatter:namematter,}, 
-		    {
+		{
 			width : '60',
 			title : '单位',
 			field : 'mname',
             halign : 'center',
 			align : 'left',
-		},{
+		}, {
+			width : '150',
+			title : '税收分类编码',
+			field : 'taxcode',
+            halign : 'center',
+			align : 'left',
+		}, {
 			width : '160',
 			title : '商品说明',
 			field : 'note',
@@ -213,14 +219,15 @@ function noteFormat(value){
 function opermatter(val, row, index) {
 	if (row.status == 2) {//已发布
 		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
-		'<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
+//		'<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
 	}else if(row.status == 3){//已下架
 		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';
 	}else if(row.status == 1){//已保存
-		if(row.isin == 'Y' || row.isin == '是'){
+		if(row.isin == 'Y' || row.isin == '是'){//是否已经入库
 			return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="setup(' + index + ')">设置</a>'+
 			'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="edit(' + index + ')">编辑</a>'+
 			'<span style="margin-bottom:0px;margin-left:10px;">删除</span>';

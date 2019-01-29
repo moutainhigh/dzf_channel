@@ -138,6 +138,13 @@
 						<a href="javascript:void(0)" style="margin-bottom:0px;" class="ui-btn ui-btn-xz"  onclick="addMeas()">添加</a>
 					</div>
                	</div>
+               	<div class="time_col time_colp10">
+               		<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">税收分类编码：</label> 
+						<input class="easyui-textbox"  id="taxcode" name="taxcode" data-options="validType:'length[0,30]'" 
+							style="width:66%; height: 28px; text-align: left"> 
+					</div>
+               	</div>
 				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
 					<div style="width:100%;display: inline-block;">
 						<label style="text-align:right;width:135px;vertical-align:top;">商品说明：</label>
