@@ -317,7 +317,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 						} catch (BusinessException e) {
 							// msg.append("合同号：").append(cvo.getVcontcode()).append(",失败原因：").append(e.getMessage()).append("<br>");
 						} catch (Exception e) {
-							log.error("审批失败", e);
+							log.error("删除失败", e);
 						}
 					}
 					StringBuffer str = new StringBuffer();
@@ -330,7 +330,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			} else {
 				json.setSuccess(false);
 				json.setRows(0);
-				json.setMsg("请选择审批数据");
+				json.setMsg("请选择删除数据");
 			}
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "删除失败");

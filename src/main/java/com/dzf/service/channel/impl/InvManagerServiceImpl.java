@@ -588,7 +588,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 				if (chvo.getInvstatus() == 2) {
 					throw new BusinessException("发票状态为【已开票】，不能删除！");
 				}
-				singleObjectBO.deleteObject(vo);
+				if(chvo.getIsourcetype() != null && chvo.getIsourcetype() == 2){//商品扣款开票
+					updateGoodsBillStatus(chvo);
+				}
+				singleObjectBO.deleteObject(chvo);
 			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -599,6 +602,25 @@ public class InvManagerServiceImpl implements InvManagerService {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
 		}
 
+	}
+	
+	/**
+	 * 更新订单状态
+	 * @param ivo
+	 * @throws DZFWarpException
+	 */
+	private void updateGoodsBillStatus(ChInvoiceVO ivo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("UPDATE cn_goodsbill  \n") ;
+		sql.append("   SET vtistatus = 1  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_goodsbill = ?  \n");
+		spm.addParam(ivo.getPk_source());
+		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+		if(res != 1){
+			throw new BusinessException("订单状态更新错误");
+		}
 	}
 
 	@Override
