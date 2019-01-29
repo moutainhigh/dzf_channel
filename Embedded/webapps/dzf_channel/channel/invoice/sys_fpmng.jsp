@@ -110,7 +110,7 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:97px;text-align:right">发票类型：</label>
-					<select id="itype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
+					<select id="qitype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="0">专用发票</option>
 						<option value="1">普通发票</option>
@@ -140,14 +140,17 @@
 						<div class="time_col time_colp11">
 							<div style="width: 32%;display: inline-block">
 								<label style="text-align:right;width:34%;">付款类型：</label>
-								<select id="paytype" name="paytype" class="easyui-combobox" data-options="editable:false,readonly:true,panelHeight:50" style="width:62%;height:28px;text-align:left">
+								<select id="paytype" name="paytype" class="easyui-combobox" style="width:62%;height:28px;text-align:left"
+									data-options="editable:false,readonly:true,panelHeight:75">
 									<option value="0">预付款</option>
 									<option value="1">加盟费</option>
+									<option value="2">预付款+返点</option>
 								</select>
 							</div>
 							<div style="width: 32%;display: inline-block">
 								<label style="text-align:right;width:34%;">可开票金额：</label>
-								<input id="tprice" name="tprice" class="easyui-numberbox" data-options="required:true,min:0,precision:2,readonly:true,groupSeparator:','" style="width:62%;height:28px;text-align:left">
+								<input id="tprice" name="tprice" class="easyui-numberbox" style="width:62%;height:28px;text-align:left"
+									data-options="required:true,min:0,precision:2,readonly:true,groupSeparator:','" >
 							</div>
 								<div style="width:32%;display: inline-block">
 								<label style="text-align:right;width:34%;">开票金额：</label>
@@ -158,7 +161,8 @@
 						<div class="time_col time_colp11">
 								<div style="width: 32%;display: inline-block">
 									<label style="text-align:right;width:34%;">发票类型：</label>
-									<select id="itype" name="itype" class="easyui-combobox" data-options="editable:false,panelHeight:75" style="width:62%;height:28px;text-align:left">
+									<select id="itype" name="itype" class="easyui-combobox" style="width:62%;height:28px;text-align:left"
+										data-options="editable:false,panelHeight:75" >
 										<option value="0">专用发票</option>
 										<option value="1">普通发票</option>
 										<option value="2">电子发票</option>

@@ -76,9 +76,11 @@ function load(){
 						formatter: function(value,row,index){
 			          		if (value == 0){
 								return '预付款';
-							} else if(value ==1){
+							} else if(value == 1){
 								return '加盟费';
-							} 
+							} else if(value == 2){
+								return '预付款+返点';
+							}  
 		            }}, 
 		            /*{width : '80',title : '发票性质',field : 'nature',align:'left',
 						formatter: function(value,row,index){
@@ -250,7 +252,7 @@ function reloadData(){
         bdate: bdate,
         edate: edate,
         istatus : $('#istatus').combobox('getValue'),
-        itype : $('#itype').combobox('getValue'),
+        itype : $('#qitype').combobox('getValue'),
         qrytype : qrytype,
         aname　: $("#aname").combobox('getValue')
     });
@@ -604,9 +606,11 @@ function onEdit(){
 	if(row.isourtype == 1){
 		$("#iprice").numberbox("readonly",false);//开票金额
 		getTotalPrice(row.iprice,row.corpid);//可开票金额
+		$('#itype').combobox("readonly",false);//发票类型
 	}else if(row.isourtype == 2){
 		$("#iprice").numberbox("readonly",true);//开票金额
 		$("#tprice").numberbox('setValue', row.iprice);//可开票金额
+		$('#itype').combobox("readonly",true);//发票类型
 	}
 }
 
