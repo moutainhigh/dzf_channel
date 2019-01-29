@@ -36,9 +36,29 @@ function initQry(){
 }
 
 function loadCardGrid(corpid){
-	var url = contextPath + '/dealmanage/stockout!queryOrders.action';
-	$('#cardGrid').datagrid('options').url = url;
-	$('#cardGrid').datagrid('load', {'corpid' : corpid});
+//	var url = contextPath + '/dealmanage/stockout!queryOrders.action';
+//	$('#cardGrid').datagrid('options').url = url;
+//	$('#cardGrid').datagrid('load', {'corpid' : corpid});
+	$.ajax({
+		type : 'POST',
+		async : false,
+		data:  {'corpid' : corpid},  
+		url : contextPath + '/dealmanage/stockout!queryOrders.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$('#cardGrid').datagrid("loadData",result.rows);
+				var address = result.data;
+				$('#rename').textbox("setValue",address.rename);
+				$('#phone').textbox("setValue",address.phone);
+				$('#readdress').textbox("setValue",address.readdress);
+				if(!isEmpty(address.recode)){
+					$('#recode').textbox("setValue",address.recode);
+				}
+			}
+		}
+	});
 }
 
 /**
@@ -342,16 +362,31 @@ function updateBtnState(){
 		$('#addCancel').show();
 		$('#corpid').combobox('readonly',false);
 		$('#memo').textbox('readonly',false);
+		
+		$('#rename').textbox('readonly',false);
+		$('#phone').textbox('readonly',false);
+		$('#recode').textbox('readonly',false);
+		$('#readdress').textbox('readonly',false);
 	}else if("edit"==status){
 		$('#addSave').show();
 		$('#addCancel').show();
 		$('#corpid').combobox('readonly',true);
 		$('#memo').textbox('readonly',false);
+		
+		$('#rename').textbox('readonly',false);
+		$('#phone').textbox('readonly',false);
+		$('#recode').textbox('readonly',false);
+		$('#readdress').textbox('readonly',false);
 	}else if("brows"==status){
 		$('#addSave').hide();
 		$('#addCancel').hide();
 		$('#corpid').combobox('readonly',true);
 		$('#memo').textbox('readonly',true);
+		
+		$('#rename').textbox('readonly',true);
+		$('#phone').textbox('readonly',true);
+		$('#recode').textbox('readonly',true);
+		$('#readdress').textbox('readonly',true);
 	}	
 }
 

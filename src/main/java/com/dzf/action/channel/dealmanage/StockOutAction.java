@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
@@ -121,7 +122,11 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 			if (StringUtil.isEmpty(corpid)) {
 				throw new BusinessException("请选择一个加盟商");
 			}
-			 List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills);
+			List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills);
+			if(StringUtils.isEmpty(bills) && vos!=null && vos.size()>0){
+				GoodsBillVO address = stockOut.qryGoodsBill(vos.get(0).getVbillcode());
+				json.setData(address);
+			}
 			json.setSuccess(true);
 			json.setRows(vos);
 			json.setMsg("查询成功!");

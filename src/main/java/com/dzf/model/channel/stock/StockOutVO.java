@@ -2,6 +2,7 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.model.pub.MultSuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
@@ -64,11 +65,25 @@ public class StockOutVO extends MultSuperVO {
 	
 	@FieldAlias("memo")
 	private String vmemo;//备注
+	
+	
+	@FieldAlias("rename")
+	private String vreceivername;//收货人
+	
+	private String phone;//联系方式
+	
+	@FieldAlias("recode")
+	private String vzipcode;//收货邮编
+	
+	@FieldAlias("readdress")
+	private String vreceiveaddress;//收货地址
+	
+	private DZFDate getdate;//领取日期
+	
+	private Integer itype;//null商品购买；1：内部损耗
 
-    @FieldAlias("dr")
     private Integer dr;// 删除标记
     
-	@FieldAlias("ts")
     private DZFDateTime ts;// 时间戳
 	
 	@FieldAlias("ctname")
@@ -122,6 +137,54 @@ public class StockOutVO extends MultSuperVO {
 
 	public String getCorpname() {
 		return corpname;
+	}
+
+	public String getVreceivername() {
+		return vreceivername;
+	}
+
+	public void setVreceivername(String vreceivername) {
+		this.vreceivername = vreceivername;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getVzipcode() {
+		return vzipcode;
+	}
+
+	public void setVzipcode(String vzipcode) {
+		this.vzipcode = vzipcode;
+	}
+
+	public String getVreceiveaddress() {
+		return vreceiveaddress;
+	}
+
+	public void setVreceiveaddress(String vreceiveaddress) {
+		this.vreceiveaddress = vreceiveaddress;
+	}
+
+	public Integer getItype() {
+		return itype;
+	}
+
+	public DZFDate getGetdate() {
+		return getdate;
+	}
+
+	public void setGetdate(DZFDate getdate) {
+		this.getdate = getdate;
+	}
+
+	public void setItype(Integer itype) {
+		this.itype = itype;
 	}
 
 	public void setCorpname(String corpname) {

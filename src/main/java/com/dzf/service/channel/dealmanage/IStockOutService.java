@@ -2,6 +2,7 @@ package com.dzf.service.channel.dealmanage;
 
 import java.util.List;
 
+import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -100,5 +101,13 @@ public interface IStockOutService {
 	 * @throws DZFWarpException
 	 */
 	public List<ComboBoxVO> queryLogist() throws DZFWarpException;
+	
+	/**
+	 * 根据订单编号，获取订单地址
+	 * @param code
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public GoodsBillVO qryGoodsBill(String code) throws DZFWarpException;
 	
 }

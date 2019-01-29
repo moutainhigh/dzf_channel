@@ -178,12 +178,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			}
 			checkData(vo);
 			//1、更新主表；
-			String[] str ={"pk_corp"};
-			if (!StringUtil.isEmpty(vo.getVmemo())) {
-				String[] str1 = { "vmemo" };
-				str = (String[]) ArrayUtils.addAll(str, str1);
-			}
-			singleObjectBO.update(vo,str);
+			singleObjectBO.update(vo,new String[]{"pk_corp","vmemo","vreceivername","phone","vzipcode","vreceiveaddress" });
 			//2、删除子表
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
@@ -613,45 +608,18 @@ public class StockOutServiceImpl implements IStockOutService{
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT c.vbillcode,g.vgoodsname,");
 		corpsql.append(" g.invspec,g.invtype,c.pk_goodsbill pk_goodsbill_b, ");
-		corpsql.append(" s.nnum,s.nmny");
+		corpsql.append(" s.nnum,s.nmny,");
+		corpsql.append(" b.vreceivername,b.vreceiveaddress,b.phone");
 		corpsql.append("  FROM cn_stockout_b s");
+		corpsql.append(" left join cn_stockout b on s.pk_stockout = b.pk_stockout ");
 		corpsql.append(" left join cn_goodsbill_b g on s.pk_goodsbill_b = g.pk_goodsbill_b ");
 		corpsql.append(" left join cn_goodsbill c on g.pk_goodsbill = c.pk_goodsbill");
 		corpsql.append(" where nvl(s.dr,0)= 0 and nvl(g.dr,0)=0 and nvl(c.dr,0)=0 ");
-		corpsql.append(" and pk_stockout= ? ");
+		corpsql.append(" and s.pk_stockout= ? ");
 //		corpsql.append(" order by ts asc,pk_dealstep_b asc");
 		sp.addParam(soutid);
 		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
-		
-		HashMap<String, List<StockOutBVO>> map = new HashMap<>();
-		List<StockOutBVO> list=new ArrayList<>();
-		String putID;
-		for (StockOutBVO stockOutBVO : bvos) {
-			putID=stockOutBVO.getPk_goodsbill_b();
-			if(!map.containsKey(putID)){
-				list=new ArrayList<>();
-			}else{
-				list= map.get(putID);
-			}
-			list.add(stockOutBVO);
-			map.put(putID, list);
-		}
-		
-		corpsql = new StringBuffer();
-		corpsql.append(" select b.pk_goodsbill,b.vreceivername,b.vreceiveaddress,b.phone ");
-		corpsql.append(" from cn_goodsbill b  where nvl(b.dr,0)=0  ");
-		
-		if(map!=null && map.keySet().size()>0){
-			corpsql.append(" and ");
-			corpsql.append(SqlUtil.buildSqlForIn("b.pk_goodsbill",map.keySet().toArray(new String[map.keySet().size()])));
-		}
-		List<GoodsBillVO> outbvos = (List<GoodsBillVO>) singleObjectBO.executeQuery(corpsql.toString(),null,
-				new BeanListProcessor(GoodsBillVO.class));
-		for (GoodsBillVO goodsBillVO : outbvos) {
-			list= map.get(goodsBillVO.getPk_goodsbill());
-			goodsBillVO.setChildren(list.toArray(new StockOutBVO[list.size()]));
-		}
-		retvo.setChildren(outbvos.toArray(new GoodsBillVO[outbvos.size()]));
+		retvo.setChildren(bvos.toArray(new StockOutBVO[bvos.size()]));
 		return retvo;
 	}
 
@@ -692,6 +660,18 @@ public class StockOutServiceImpl implements IStockOutService{
         List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
                 new BeanListProcessor(ComboBoxVO.class));
 		return list;
+	}
+
+	@Override
+	public GoodsBillVO qryGoodsBill(String code) throws DZFWarpException {
+        StringBuffer sql = new StringBuffer();
+        SQLParameter sp = new SQLParameter();
+        sp.addParam(code);
+		sql.append("select vreceivername,phone,vzipcode,vreceiveaddress ");
+		sql.append("  from cn_goodsbill where nvl(dr, 0) = 0 and vbillcode= ? ");
+		List<GoodsBillVO> list = (List<GoodsBillVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+	                new BeanListProcessor(GoodsBillVO.class));
+		return list.get(0);
 	}
 	
 }

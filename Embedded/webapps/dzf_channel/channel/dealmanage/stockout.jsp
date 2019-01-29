@@ -75,7 +75,7 @@
 		</div>
 		
 		<div id="cardDialog" >
-			<form id="stockout" method="post" style="height:360px;width:1100px;overflow:hidden;padding-top:18px;">
+			<form id="stockout" method="post" style="height:440px;width:1100px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<input id="soutid" name="soutid" class="easyui-textbox"> 
 					<input id="nmny" name="nmny" class="easyui-numberbox"> 
@@ -102,6 +102,29 @@
 					<div style="width:100%;display: inline-block;">
 						<label style="text-align:right;width:11.2%;vertical-align:middle;">备注：</label>
 						<textarea id="memo" class="easyui-textbox" name="memo" data-options="multiline:true,validType:'length[0,50]'" style="width:84%;height:40px;"></textarea>
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:32%;display: inline-block;">
+						<label style="text-align:right;width:35%;">收货人：</label> 
+						<input id="rename"  name="rename" class="easyui-textbox" style="width:60%;height:28px;text-align:left"
+							data-options="required:true"/>  
+					</div>
+					<div style="width:32%;display: inline-block;">
+						<label style="text-align:right;width:35%;">联系方式：</label> 
+						<input id='phone'  name="phone" class="easyui-textbox"   style="width:60%;height:28px;text-align:left"
+							data-options="validType:'phone[\'#p1\']',required:true" ></input>
+					</div>
+					<div style="width:32%;display: inline-block;" >
+						<label style="text-align:right;width:35%;">邮政编码：</label> 
+						<input id="recode" name="recode" class="easyui-textbox" style="width:60%;height:28px;text-align:left;"
+							data-options="validType:'length[0,10]'"> 
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:100%;display: inline-block;">
+						<label style="text-align:right;width:11.2%;vertical-align:middle;">收货地址：</label>
+						<textarea id="readdress" class="easyui-textbox" name="readdress" data-options="multiline:true,validType:'length[0,100]',required:true" style="width:84%;height:40px;"></textarea>
 					</div>
 				</div>
 				<div class="grid-wrap" >

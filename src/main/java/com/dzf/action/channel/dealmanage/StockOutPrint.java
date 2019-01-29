@@ -10,7 +10,6 @@ import javax.servlet.ServletOutputStream;
 import org.apache.log4j.Logger;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.ColumnCellAttr;
@@ -90,28 +89,26 @@ public class StockOutPrint<T> extends BaseAction<T> {
 				document.add(corpname);
 				document.add(stocktime);
 				
-				GoodsBillVO[] children =(GoodsBillVO[]) headvo.getChildren();
-				StockOutBVO[] grandson =null;
-				PdfPTable table = null;
-				for (GoodsBillVO goodsBillVO : children) {
-					grandson =(StockOutBVO[]) goodsBillVO.getChildren();
-					document.add(getTable(grandson));
-					Phrase person = new Phrase();
-					person.add(new Chunk("收件人：", tableHeadFonts));
-					person.add(new Chunk( goodsBillVO.getVreceivername(), tableHeadFonts));
-					Phrase phone = new Phrase();
-					phone.add(new Chunk("      联系方式：", tableHeadFonts));
-					phone.add(new Chunk(goodsBillVO.getPhone(), tableHeadFonts));
-					Phrase address = new Phrase();
-					address.add(new Chunk("地址：", tableHeadFonts));
-					address.add(new Chunk(goodsBillVO.getVreceiveaddress(), tableHeadFonts));
-					document.add(Chunk.NEWLINE);
-					document.add(person);
-					document.add(phone);
-					document.add(Chunk.NEWLINE);
-					document.add(address);
-				}
-
+				StockOutBVO[] children =(StockOutBVO[]) headvo.getChildren();
+				document.add(getTable(children));
+				
+				Phrase person = new Phrase();
+				person.add(new Chunk("收件人：", tableHeadFonts));
+				content = headvo.getVreceivername() == null ? "" : headvo.getVreceivername().toString();
+				person.add(new Chunk( content, tableHeadFonts));
+				Phrase phone = new Phrase();
+				phone.add(new Chunk("      联系方式：", tableHeadFonts));
+				content = headvo.getPhone() == null ? "" : headvo.getPhone().toString();
+				phone.add(new Chunk(content, tableHeadFonts));
+				Phrase address = new Phrase();
+				address.add(new Chunk("地址：", tableHeadFonts));
+				content = headvo.getVreceiveaddress() == null ? "" : headvo.getVreceiveaddress().toString();
+				address.add(new Chunk(content, tableHeadFonts));
+				document.add(Chunk.NEWLINE);
+				document.add(person);
+				document.add(phone);
+				document.add(Chunk.NEWLINE);
+				document.add(address);
 			}
         } catch (Exception e) {
             log.error("打印出错", e);
