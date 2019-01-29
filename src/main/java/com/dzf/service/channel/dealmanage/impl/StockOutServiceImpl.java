@@ -107,7 +107,7 @@ public class StockOutServiceImpl implements IStockOutService{
 	}
 	
 	@Override
-	public List<StockOutBVO> queryOrders(String pk_corp,String bills)throws DZFWarpException {
+	public List<StockOutBVO> queryOrders(String pk_corp,String bills,String billid)throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select c.vbillcode, ");
@@ -126,6 +126,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("   and nvl(c.dr, 0) = 0 ");
 		sql.append("   and c.vstatus in (1, 2, 3) ");
 		sql.append("   and nvl(b.deamount, 0) = 0 ");
+		if(!StringUtil.isEmpty(billid)){
+			sql.append("   and c.pk_goodsbill = ? ");
+			spm.addParam(billid);
+		}
 		sql.append("   and b.pk_corp = ? ");
 		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
 		sql.append("   	select sb.pk_goodsbill_b from cn_stockout_b sb");

@@ -6,6 +6,7 @@ $(function(){
 	initRef();
 	initQueryData();
 	initQryLitener();
+	initStockOut();
 	loadData();//加载数据
 });
 
@@ -208,7 +209,7 @@ function load(){
 					return '已取消';
 			}
 		}, {
-			width : '100',
+			width : '80',
 			title : '开票状态',
 			field : 'tistatus',
             halign : 'center',
@@ -228,7 +229,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '80',
+			width : '160',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter,
@@ -275,8 +276,185 @@ function opermatter(val, row, index) {
 		if(row.vstatus == 1 && row.tistatus != 2){//待发货且未开票，可以取消确认；其他状态均不可以取消确认；
 			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
 		}
+		if(row.vstatus == 1){//1：待发货；
+			url += 	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="stockOut(\''+index+'\')">出库</a>';
+		}else{
+			url += '<span style="margin-bottom:0px;margin-left:10px;">出库</span>';
+		}
 		return url;
 	}
+}
+
+/**
+ * 出库
+ */
+function stockOut(index){
+	var row=$('#grid').datagrid('getRows')[index];
+	$.ajax({
+		type : 'POST',
+		async : false,
+		data:  {'corpid' : row.corpid,'billid':row.billid},  
+		url : contextPath + '/dealmanage/stockout!queryOrders.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				if(!isEmpty(result.rows)){
+				    $('#cardDialog').dialog({modal:true});
+				    $('#cardDialog').dialog('open').dialog('center').dialog('setTitle',"出库单新增");
+				    $('#stockout').form("clear");
+				    $('#cardGrid').datagrid('loadData', { total : 0, rows : [] });// 清楚缓存数据
+					
+					$('#cardGrid').datagrid("loadData",result.rows);
+					
+					$('#corpname').textbox("setValue",row.pname);
+					$('#corpid').textbox("setValue",row.corpid);
+					$('#rename').textbox("setValue",row.rename);
+					$('#phone').textbox("setValue",row.phone);
+					$('#readdress').textbox("setValue",row.readdress);
+					if(!isEmpty(row.recode)){
+						$('#recode').textbox("setValue",row.recode);
+					}
+				}else{
+					Public.tips({content:"该订单都已出库",type:2});
+				}
+			}
+		}
+	});
+}
+
+function addSave(){
+	var rows=$('#cardGrid').datagrid('getRows');
+	if(rows&&rows.length>0){
+		if(isEmpty(rows[rows.length-1].billid_b)){
+			$('#cardGrid').datagrid('deleteRow',rows.length-1);
+		}
+	}
+	var flag = $('#stockout').form('validate');
+	if(flag == false){
+		Public.tips({content:"必输信息为空或格式不正确",type:2});
+		return;
+	}
+	var nmny=0;
+	var childBody = "";
+	var rows = $("#cardGrid").datagrid('getRows');
+	for (var i = 0; i < rows.length; i++) {
+		childBody = childBody + JSON.stringify(rows[i]);
+		nmny =getFloatValue(nmny)+getFloatValue(rows[i].nmny)
+	}
+	$("#nmny").numberbox('setValue',nmny);
+	var postdata = new Object();
+	postdata["head"] = JSON.stringify(serializeObject($('#stockout')));
+	postdata["body"] = childBody;
+	parent.$.messager.progress({
+		text : '保存中....'
+	});
+	$.ajax({
+		type : 'POST',
+		url :	contextPath + '/dealmanage/stockout!save.action',
+		data : postdata,
+		dataType : 'json',
+		success : function(result) {
+			parent.$.messager.progress('close');
+			if (result.success) {
+				$('#cardDialog').dialog('close');
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+				reloadData();
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+}
+
+function addCancel(){
+	$.messager.confirm("提示", "确定取消吗？", function(flag) {
+		if (flag) {
+			$('#cardDialog').dialog('close');
+		} else {
+			return null;
+		}
+	});
+}
+
+function initStockOut(){
+	$('#cardGrid').datagrid({
+		striped : true,
+		rownumbers : true,
+		idField : 'soutbid',
+		height : 220,
+		singleSelect : true,
+		columns : [ [ 
+		{
+			width : '200',
+			title : '订单编码',
+			field : 'vcode',
+			halign : 'center',
+			align : 'left',
+		}, {
+			width : '200',
+			title : '商品',
+			field : 'gname',
+			halign : 'center',
+			align : 'left',
+		}, {
+			width : '150',
+			title : '规格',
+			field : 'invspec',
+            halign : 'center',
+			align : 'left',
+		},{
+			width : '150',
+			title : '型号',
+			field : 'invtype',
+            halign : 'center',
+			align : 'left',
+		}, {
+			width : '100',
+			title : '购买数量',
+			field : 'nnum',
+            halign : 'center',
+			align : 'right',
+		}, {
+			width : '100',
+			title : '出库数量',
+			field : 'nnum',
+            halign : 'center',
+			align : 'right',
+		},{
+			width : '100',
+			title : '销售价',
+			field : 'nprice',
+			hidden : true
+		},{
+			width : '100',
+			title : '总金额',
+			field : 'nmny',
+			hidden : true
+		},{
+			width : '100',
+			title : '商品主键',
+			field : 'gid',
+			hidden : true
+		},{
+			width : '100',
+			title : '规格主键',
+			field : 'specid',
+			hidden : true
+		},{
+			width : '100',
+			title : '订单主键',
+			field : 'billid_b',
+			hidden : true
+		}, 
+		] ],
+	});
 }
 
 /**

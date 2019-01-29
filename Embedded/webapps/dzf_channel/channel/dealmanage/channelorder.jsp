@@ -204,7 +204,59 @@
 			</div>
 		</div>
 		<!-- 订单详情end -->
-
+		
+		<!-- 新增出库单 start-->
+		<div id="cardDialog" >
+			<form id="stockout" method="post" style="height:440px;width:1100px;overflow:hidden;padding-top:18px;">
+				<div class="time_col time_colp11" style="display:none">
+					<input id="corpid" name="corpid" class="easyui-textbox"> 
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:32%;display: inline-block;">
+						<label style="text-align:right;width:35%;">加盟商：</label> 
+						<input id="corpname"  name="corpname" class="easyui-textbox" style="width:60%;height:28px;text-align:left"
+							data-options="readonly:true"/>  
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:100%;display: inline-block;">
+						<label style="text-align:right;width:11.2%;vertical-align:middle;">备注：</label>
+						<textarea id="memo" class="easyui-textbox" name="memo" data-options="multiline:true,validType:'length[0,50]'" style="width:84%;height:40px;"></textarea>
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:32%;display: inline-block;">
+						<label style="text-align:right;width:35%;">收货人：</label> 
+						<input id="rename"  name="rename" class="easyui-textbox" style="width:60%;height:28px;text-align:left"
+							data-options="required:true"/>  
+					</div>
+					<div style="width:32%;display: inline-block;">
+						<label style="text-align:right;width:35%;">联系方式：</label> 
+						<input id='phone'  name="phone" class="easyui-textbox"   style="width:60%;height:28px;text-align:left"
+							data-options="validType:'phone[\'#p1\']',required:true" ></input>
+					</div>
+					<div style="width:32%;display: inline-block;" >
+						<label style="text-align:right;width:35%;">邮政编码：</label> 
+						<input id="recode" name="recode" class="easyui-textbox" style="width:60%;height:28px;text-align:left;"
+							data-options="validType:'length[0,10]'"> 
+					</div>
+				</div>
+				<div class="time_col time_colp11">
+					<div style="width:100%;display: inline-block;">
+						<label style="text-align:right;width:11.2%;vertical-align:middle;">收货地址：</label>
+						<textarea id="readdress" class="easyui-textbox" name="readdress" data-options="multiline:true,validType:'length[0,100]',required:true" style="width:84%;height:40px;"></textarea>
+					</div>
+				</div>
+				<div class="grid-wrap" >
+					<table id="cardGrid"></table>
+				</div> 
+				<div style="float:right;margin-top:20px;margin-right:20px;">
+				    <a href="javascript:void(0)" id="addSave" class="ui-btn ui-btn-xz" onclick="addSave()">确定</a> 
+					<a href="javascript:void(0)" id="addCancel" class="ui-btn ui-btn-xz"  onclick="addCancel()">取消</a>
+				</div>
+			</form>
+		</div>
+	<!-- 新增出库单 end-->
 	</div>
 </body>
 </html>

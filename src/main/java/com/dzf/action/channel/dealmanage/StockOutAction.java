@@ -118,12 +118,13 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 				throw new BusinessException("登陆用户错误");
 			}
 			String corpid = getRequest().getParameter("corpid");
-			String bills = getRequest().getParameter("bills");
+			String bills = getRequest().getParameter("bills");//订单子表
+			String billid = getRequest().getParameter("billid");//订单主表
 			if (StringUtil.isEmpty(corpid)) {
 				throw new BusinessException("请选择一个加盟商");
 			}
-			List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills);
-			if(StringUtils.isEmpty(bills) && vos!=null && vos.size()>0){
+			List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills,billid);
+			if(StringUtils.isEmpty(bills) && !StringUtil.isEmpty(billid) && vos!=null && vos.size()>0 ){
 				GoodsBillVO address = stockOut.qryGoodsBill(vos.get(0).getVbillcode());
 				json.setData(address);
 			}
@@ -270,7 +271,7 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		String head = request.getParameter("head");
 		String body = request.getParameter("body");
 		if(StringUtils.isEmpty(body)){
-			throw new BusinessException("");
+			throw new BusinessException("请选择订单信息");
 		}
 		body = body.replace("}{", "},{");
 		body = "[" + body+ "]";
