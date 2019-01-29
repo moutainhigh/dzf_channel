@@ -72,8 +72,19 @@ public class GoodsBillBVO extends SuperVO {
 	@FieldAlias("fpath")
 	private String vfilepath;// 文件存储路径　
 	
+	@FieldAlias("taxcode")
+	private String vtaxclasscode;//税收分类编码
+	
 	//仅作数据展示end
 	
+	public String getVtaxclasscode() {
+		return vtaxclasscode;
+	}
+
+	public void setVtaxclasscode(String vtaxclasscode) {
+		this.vtaxclasscode = vtaxclasscode;
+	}
+
 	public String getVfilepath() {
 		return vfilepath;
 	}

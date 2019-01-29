@@ -18,6 +18,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChInvoiceVO;
+import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.piaotong.PiaoTongInvBVO;
 import com.dzf.model.piaotong.PiaoTongInvVO;
@@ -315,34 +316,48 @@ public class InvManagerServiceImpl implements InvManagerService {
 		if (cvos == null || cvos.length == 0) {
 			throw new BusinessException("请选择数据。");
 		}
+		
+		List<String> pklist = new ArrayList<String>();
+		Map<String, List<GoodsBillBVO>> bmap = null;
 		for (ChInvoiceVO vo : cvos) {
 			if (vo.getInvtype() != 2) {
 				throw new BusinessException("您好！只有申请开具电子发票的开票申请才可提交电子发票自动开票接口，请知悉并重新选择数据。");
 			}
+			if(!StringUtil.isEmpty(vo.getPk_source())){
+				pklist.add(vo.getPk_source());
+			}
 		}
+		if(pklist != null && pklist.size() > 0){
+			bmap = queryGoodsBill(pklist);
+		}
+		
 		for (ChInvoiceVO vo : cvos) {
 			String uuid = UUID.randomUUID().toString();
 			try {
 				LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
-				DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
-				DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
 				if (vo.getInvstatus() != 1 && vo.getInvstatus() != 3) {
 					vo.setMsg("要确认开票的单据不是待开票状态");
 					listError.add(vo);
 					continue;
 				}
-				DZFDouble invprice = new DZFDouble(vo.getInvprice());
-				if (invprice.compareTo(umny.sub(invmny)) > 0) {
-					StringBuffer msg = new StringBuffer();
-					msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
-							.append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
-					vo.setMsg(msg.toString());
-					listError.add(vo);
-					continue;
+				
+				if(vo.getIsourcetype() != null && vo.getIsourcetype() == 1){//1：合同扣款开票；
+					DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));
+					DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
+					DZFDouble invprice = new DZFDouble(vo.getInvprice());
+					if (invprice.compareTo(umny.sub(invmny)) > 0) {
+						StringBuffer msg = new StringBuffer();
+						msg.append("你本次要确认开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
+						.append(umny.sub(invmny).setScale(2, DZFDouble.ROUND_HALF_UP)).append("元，请确认。");
+						vo.setMsg(msg.toString());
+						listError.add(vo);
+						continue;
+					}
 				}
+				
 				lists.add(vo);
 				vo.setInvperson(uvo.getCuserid());
-				PiaoTongResVO resvo = savePiaoTong(vo, uvo);
+				PiaoTongResVO resvo = savePiaoTong(vo, uvo, bmap);
 				if (resvo == null) {
 					vo.setMsg("票通未返回接收数据结果。");
 					listError.add(vo);
@@ -371,7 +386,8 @@ public class InvManagerServiceImpl implements InvManagerService {
 		return (ChInvoiceVO[]) singleObjectBO.queryByCondition(ChInvoiceVO.class, sql.toString(), null);
 	}
 
-	private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo) {
+	private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo, Map<String, List<GoodsBillBVO>> bmap) 
+			throws DZFWarpException {
 		PiaoTongInvVO hvo = new PiaoTongInvVO();
 		// 销方信息
 		// hvo.setTaxpayerNum("91110108397823696Y");//大账房
@@ -404,17 +420,25 @@ public class InvManagerServiceImpl implements InvManagerService {
 		hvo.setTakerTel(cvo.getInvphone());
 
 		// 开票项目信息
-		PiaoTongInvBVO bvo = new PiaoTongInvBVO();
-		bvo.setGoodsName("技术服务费");
-		bvo.setTaxClassificationCode("3040203000000000000");// 对 应 税 收 分 类编码
-															// ---信息技术服务
-		bvo.setQuantity("1.00");// 数量
-		bvo.setIncludeTaxFlag("1");// 含税标志
-		bvo.setUnitPrice(cvo.getInvprice().toString());// 单价
-		bvo.setInvoiceAmount(cvo.getInvprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
-		bvo.setTaxRateValue("0.06");// 税率
 		List<PiaoTongInvBVO> itemList = new ArrayList<>();
-		itemList.add(bvo);
+//		PiaoTongInvBVO bvo = new PiaoTongInvBVO();
+//		bvo.setGoodsName("技术服务费");
+//		// 对 应 税 收 分 类编码---信息技术服务
+//		bvo.setTaxClassificationCode("3040203000000000000");
+//		bvo.setQuantity("1.00");// 数量
+//		bvo.setIncludeTaxFlag("1");// 含税标志
+//		bvo.setUnitPrice(cvo.getInvprice().toString());// 单价
+//		bvo.setInvoiceAmount(cvo.getInvprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
+//		bvo.setTaxRateValue("0.06");// 税率
+//		itemList.add(bvo);
+		
+		////发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1){
+			itemList = getContItemList(cvo);
+		}else if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 2){
+			itemList = getBillItemList(cvo, bmap);
+		}
+		
 		hvo.setItemList(itemList);
 
 		PiaoTongBill bill = new PiaoTongBill();
@@ -422,11 +446,116 @@ public class InvManagerServiceImpl implements InvManagerService {
 		updateSendBack(resvo, cvo);
 		return resvo;
 	}
+	
+	/**
+	 * 开票项目信息（合同扣款开票）
+	 * @param cvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<PiaoTongInvBVO> getContItemList(ChInvoiceVO cvo) throws DZFWarpException {
+		List<PiaoTongInvBVO> itemList = new ArrayList<>();
+		PiaoTongInvBVO bvo = new PiaoTongInvBVO();
+		bvo.setGoodsName("技术服务费");
+		// 对应税收分类编码---信息技术服务
+		bvo.setTaxClassificationCode("3040203000000000000");
+		bvo.setQuantity("1.00");// 数量
+		bvo.setIncludeTaxFlag("1");// 含税标志
+		bvo.setUnitPrice(cvo.getInvprice().toString());// 单价
+		bvo.setInvoiceAmount(cvo.getInvprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
+		bvo.setTaxRateValue("0.06");// 税率
+		itemList.add(bvo);
+		return itemList;
+	}
+	
+	/**
+	 * 开票项目信息（商品购买开票）
+	 * @param cvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<PiaoTongInvBVO> getBillItemList(ChInvoiceVO cvo, Map<String, List<GoodsBillBVO>> bmap)
+			throws DZFWarpException {
+		List<PiaoTongInvBVO> itlist = new ArrayList<PiaoTongInvBVO>();
+		List<GoodsBillBVO> list = bmap.get(cvo.getPk_source());
+		if (list != null && list.size() > 0) {
+			PiaoTongInvBVO bvo = null;
+			for (GoodsBillBVO blvo : list) {
+				bvo = new PiaoTongInvBVO();
+				bvo.setGoodsName(blvo.getVgoodsname());
+				if(!StringUtil.isEmpty(blvo.getVtaxclasscode())){
+					// 对应税收分类编码
+					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
+				}else{
+					throw new BusinessException("商品名称【"+blvo.getVgoodsname()+"】税收分类编码异常！");
+				}
+				bvo.setQuantity(String.valueOf(blvo.getAmount())+".00");// 数量
+				bvo.setIncludeTaxFlag("1");// 含税标志
+				bvo.setUnitPrice(blvo.getNprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 单价
+				bvo.setInvoiceAmount(blvo.getNtotalmny().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
+				bvo.setTaxRateValue("0.16");// 税率
+				bvo.setSpecificationModel(blvo.getInvspec()+""+blvo.getInvtype());//规格型号
+				bvo.setMeteringUnit(blvo.getVmeasname());//单位
+				itlist.add(bvo);
+			}
+		}
 
+		return itlist;
+	}
+	
+	/**
+	 * 查询订单明细信息
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, List<GoodsBillBVO>> queryGoodsBill(List<String> pklist) throws DZFWarpException {
+		Map<String, List<GoodsBillBVO>> retmap = new HashMap<String, List<GoodsBillBVO>>();
+		if(pklist != null && pklist.size() > 0){
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			sql.append("SELECT b.*, s.vtaxclasscode  \n");
+			sql.append("  FROM cn_goodsbill_b b  \n");
+			sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
+			sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
+			sql.append("   AND nvl(s.dr, 0) = 0  \n");
+			String where = SqlUtil.buildSqlForIn("b.pk_goodsbill", pklist.toArray(new String[0]));
+			sql.append(" AND ").append(where);
+			List<GoodsBillBVO> list =(List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+					new BeanListProcessor(GoodsBillBVO.class));
+			if(list != null && list.size() > 0){
+				List<GoodsBillBVO> newlist = null;
+				List<GoodsBillBVO> oldlist = null;
+				String pk_goodsbill = "";
+				for(GoodsBillBVO bvo : list){
+					pk_goodsbill = bvo.getPk_goodsbill();
+					if(!retmap.containsKey(pk_goodsbill)){
+						newlist = new ArrayList<GoodsBillBVO>();
+						newlist.add(bvo);
+						retmap.put(pk_goodsbill, newlist);
+					}else{
+						oldlist = retmap.get(pk_goodsbill);
+						oldlist.add(bvo);
+						retmap.put(pk_goodsbill, oldlist);
+					}
+				}
+			}
+		}
+		
+		return retmap;
+	}
+
+	/**
+	 * 调用票通接口开票成功后，回写发票信息
+	 * @param resvo
+	 * @param cvo
+	 */
 	private void updateSendBack(PiaoTongResVO resvo, ChInvoiceVO cvo) {
 		if (resvo != null && IPiaoTongConstant.SUCCESS.equals(resvo.getCode())) {
 			updatePtInvoice(resvo, cvo);
-			updateTicketPrice(cvo);
+			if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1){
+				updateTicketPrice(cvo);
+			}
 		} else if (resvo == null || StringUtil.isEmpty(resvo.getCode()) || StringUtil.isEmpty(resvo.getMsg())) {
 			updatePtNotInv(resvo, cvo);
 		} else if (!IPiaoTongConstant.SUCCESS.equals(resvo.getCode())) {
@@ -536,7 +665,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 	}
 
 	/**
-	 * 更新开票金额
+	 * 更新（合同扣款开票金额）开票金额
 	 */
 	private void updateTicketPrice(ChInvoiceVO vo) {
 		StringBuffer sql = new StringBuffer();
