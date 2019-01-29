@@ -550,7 +550,7 @@ function onBilling(){
 					});
 					return;
 				}else{
-					if(row.tistatus == 2){
+					if(rows[i].tistatus == 2){
 						Public.tips({
 							content : '订单编码'+rows[i].billcode+'状态为待确认',
 							type : 2
