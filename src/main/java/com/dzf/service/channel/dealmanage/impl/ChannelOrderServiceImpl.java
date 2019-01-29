@@ -104,6 +104,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndeductmny,  \n");
 		sql.append("       l.ndedrebamny,  \n");
 		sql.append("       l.vstatus,  \n");
+		sql.append("       nvl(l.vtistatus,1) AS vtistatus, \n");
 		sql.append("       l.updatets,  \n");
 		sql.append("       t.logisticsunit,  \n");
 		sql.append("       t.fastcode,  \n");
@@ -128,14 +129,18 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
-		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {
+		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {//订单状态，界面快速查询
 			sql.append("   AND l.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
-		if(!StringUtil.isEmpty(pamvo.getLogisticsunit())){
+		if(!StringUtil.isEmpty(pamvo.getLogisticsunit())){//订单状态，下拉多选查询
 			String[] strs = pamvo.getLogisticsunit().split(",");
 			String where = SqlUtil.buildSqlForIn("l.vstatus", strs);
 			sql.append(" AND ").append(where);
+		}
+		if (pamvo.getVtistatus() != null && pamvo.getVtistatus() != -1) {//开票状态
+			sql.append("   AND nvl(l.vtistatus,1) = ? \n");
+			spm.addParam(pamvo.getVtistatus());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
 			sql.append(" AND l.pk_goodsbill = ? ");
@@ -227,7 +232,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		cvo.setEmail(accvo.getEmail1());// 邮箱
 		cvo.setApptime(new DZFDate().toString());// 申请日期
 		cvo.setInvstatus(1);// 状态
-		cvo.setIpaytype(0);
+		cvo.setIpaytype(2);//付款类型  0：预付款；   1：加盟费；2：预付款+发点
 		cvo.setInvcorp(2);
 		cvo.setRusername(accvo.getLinkman2());
 		cvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；

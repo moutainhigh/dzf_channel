@@ -39,12 +39,13 @@
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancOrder()">取消订单</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="onBilling()">发票申请</a>
 				</div>
 			</div>
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:280px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -86,6 +87,16 @@
 					<option value="2">已发货</option>
 					<option value="3">已收货</option>
 					<option value="4">已取消</option>
+				</select>
+			</div>
+			<div class="time_col time_colp10">
+				<label style="width:85px;text-align:right">开票状态：</label>
+				<select id="tistatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+					editable="false" style="width:290px;height:28px;">
+					<!-- 状态  1：未开票；2：已开票； -->
+					<option value="-1">全部</option>
+					<option value="1">未开票</option>
+					<option value="2">已开票</option>
 				</select>
 			</div>
 			<p>

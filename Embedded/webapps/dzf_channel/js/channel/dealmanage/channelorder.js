@@ -209,6 +209,18 @@ function load(){
 			}
 		}, {
 			width : '100',
+			title : '开票状态',
+			field : 'tistatus',
+            halign : 'center',
+			align : 'center',
+			formatter : function(value) {
+				if (value == '1')
+					return '未开票';
+				if (value == '2')
+					return '已开票';
+			}
+		}, {
+			width : '100',
 			title : '确认日期',
 			field : 'confdate',
 			align : 'center',
@@ -216,7 +228,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '140',
+			width : '80',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter,
@@ -259,69 +271,12 @@ function load(){
  */
 function opermatter(val, row, index) {
 	if(row.vstatus != null){
-		var url;
-		if(row.vstatus == 1){//1：待发货；
+		var url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span> ';;
+		if(row.vstatus == 1 && row.tistatus != 2){//待发货且未开票，可以取消确认；其他状态均不可以取消确认；
 			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-		}else{
-			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span> ';
 		}
-		
-//		//状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消；
-//		if(row.vstatus == 0 || row.vstatus == 4){
-//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>' +
-//			'<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-//		}else if(row.vstatus == 1){
-//			url = '<a href="#" style="margin-bottom:0px;margin-left:0px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
-//			if(row.tistatus == 2){//已开票
-//				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-//			}else{
-//				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
-//			}
-//		}else if(row.vstatus == 2 || row.vstatus == 3){
-//			url = '<span style="margin-bottom:0px;margin-left:0px;">取消确认</span>';
-//			if(row.tistatus == 2){//已开票
-//				url = url + '<span style="margin-bottom:0px;margin-left:10px;">发票申请</span>';
-//			}else{
-//				url = url + '<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(this)">发票申请</a>';
-//			}
-//		}
-		
 		return url;
 	}
-}
-
-/**
- * 发票申请
- */
-function onBilling(ths){
-	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
-	var row = $('#grid').datagrid('getData').rows[tindex];
-	if (row.vstatus != 1) {
-		Public.tips({
-			content : '该记录不是待发货状态，不允许开票',
-			type : 2
-		});
-		return;
-	}
-	if (row.tistatus == 2) {
-		Public.tips({
-			content : '该记录开票状态是已开票，不能再次开票',
-			type : 2
-		});
-		return;
-	}
-	
-	$.messager.confirm("提示", "你确定开票吗？", function(flag) {
-		if (flag) {
-			var postdata = new Object();
-			var data = JSON.stringify(row);
-			postdata["data"] = data;
-			postdata["type"] = 4;
-			operdata(postdata, 4);
-		} else {
-			return null;
-		}
-	});
 }
 
 /**
@@ -492,7 +447,7 @@ function reloadData(){
 	$('#grid').datagrid('load', {
 		'billcode' : $("#qbcode").val(),
 		'corpid' : $("#qcpid").val(),
-//		'vstatus' :  $('#qstatus').combobox('getValue'),
+		'tistatus' :  $('#tistatus').combobox('getValue'),
 		'logunit' : vstatus,
 		'bdate' : bdate,
 		'edate' : edate,
@@ -565,6 +520,54 @@ function confirm(){
 			postdata["data"] = data;
 			postdata["type"] = 1;
 			operdata(postdata, 1);
+		} else {
+			return null;
+		}
+	});
+}
+
+/**
+ * 发票申请
+ */
+function onBilling(){
+	$.messager.confirm("提示", "你确定开票吗？", function(flag) {
+		if (flag) {
+			var rows = $("#grid").datagrid("getChecked");
+			if (rows == null || rows.length == 0) {
+				Public.tips({
+					content : '请选择需要处理的数据',
+					type : 2
+				});
+				return;
+			} 
+			
+			var data = "";
+			for(var i = 0; i<rows.length; i++ ){
+				if (rows[i].vstatus == 0) {
+					Public.tips({
+						content : '订单编码'+rows[i].billcode+'状态为待确认',
+						type : 2
+					});
+					return;
+				}else{
+					if(row.tistatus == 2){
+						Public.tips({
+							content : '订单编码'+rows[i].billcode+'状态为待确认',
+							type : 2
+						});
+						return;
+					}else{
+						rows[i].reason = reason;
+						data = data + JSON.stringify(rows[i]);
+					}
+				}
+			}
+		
+			var postdata = new Object();
+			postdata["data"] = data;
+			postdata["type"] = 4;
+			operdata(postdata, 4);
+			
 		} else {
 			return null;
 		}

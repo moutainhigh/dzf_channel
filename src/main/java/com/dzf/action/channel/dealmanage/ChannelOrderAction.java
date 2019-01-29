@@ -97,7 +97,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			String type = getRequest().getParameter("type");
 			Integer itype = Integer.parseInt(type);
 			Map<String, String> maping = FieldMapping.getFieldMapping(new GoodsBillVO());
-			if(itype == 1 || itype == 3 || itype == 4){//1：确认订单；3：取消确认；4：发票申请；
+			if(itype == 1 || itype == 3){//1：确认订单；3：取消确认；
 				//单条数据
 				JSON djson = (JSON) JSON.parse(data);
 				GoodsBillVO ordervo = DzfTypeUtils.cast(djson, maping, GoodsBillVO.class,
@@ -115,7 +115,7 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 					writeLogRecord(LogRecordEnum.OPE_CHANNEL_43.getValue(),  opername.toString(), ISysConstants.SYS_3);
 				}
 				json.setMsg("操作成功");
-			}else if(itype == 2){//2：取消订单；
+			}else if(itype == 2 || itype == 4){//2：取消订单；4：发票申请；
 				//多条数据
 				data = data.replace("}{", "},{");
 				data = "[" + data + "]";
