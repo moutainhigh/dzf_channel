@@ -325,11 +325,6 @@ function stockOut(index){
 
 function addSave(){
 	var rows=$('#cardGrid').datagrid('getRows');
-	if(rows&&rows.length>0){
-		if(isEmpty(rows[rows.length-1].billid_b)){
-			$('#cardGrid').datagrid('deleteRow',rows.length-1);
-		}
-	}
 	var flag = $('#stockout').form('validate');
 	if(flag == false){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
