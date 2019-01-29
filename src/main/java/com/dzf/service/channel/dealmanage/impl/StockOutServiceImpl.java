@@ -142,15 +142,33 @@ public class StockOutServiceImpl implements IStockOutService{
 	
 
 	@Override
-	public void saveNew(StockOutVO vo) throws DZFWarpException {
-		vo.setVstatus(0);
-		vo.setDoperatedate(new DZFDateTime());
-		setDefaultCode(vo);
-		multBodyObjectBO.saveMultBObject(vo.getFathercorp(), vo);
+	public void save(StockOutVO vo,List<String> billids) throws DZFWarpException {
+		String uuid = UUID.randomUUID().toString();
+		try {//一个加盟商，在一个时间断内，只能并发保存一个出库单
+			boolean lockKey = LockUtil.getInstance().addLockKey(vo.getTableName(), vo.getPk_corp(),uuid, 60);
+			if(!lockKey){
+				throw new BusinessException("有其他用户正在操作此加盟商的出库单,请取消之后再操作!");
+			}
+			if(StringUtil.isEmpty(vo.getPk_stockout())){//新增
+				checkBillIsQuote(vo.getPk_corp(),billids);
+				vo.setVstatus(0);
+				vo.setDoperatedate(new DZFDateTime());
+				setDefaultCode(vo);
+				multBodyObjectBO.saveMultBObject(vo.getFathercorp(), vo);
+			}else{//修改
+				saveEdit(vo, billids);
+			}
+		}catch (Exception e) {
+		    if (e instanceof BusinessException)
+		        throw new BusinessException(e.getMessage());
+		    else
+		        throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_corp(),uuid);
+		}	
 	}
 	
-	@Override
-	public void saveEdit(StockOutVO vo) throws DZFWarpException {
+	private void saveEdit(StockOutVO vo,List<String> billids) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(vo.getTableName(), vo.getPk_stockout(),uuid, 120);
@@ -173,6 +191,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			sql.append(" WHERE  pk_stockout = ? \n") ; 
 			spm.addParam(vo.getPk_stockout());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
+			checkBillIsQuote(vo.getPk_corp(),billids);
 			//3、插入子表	
 			singleObjectBO.insertVOArr(vo.getFathercorp(), (SuperVO[]) vo.getTableVO("cn_stockout_b"));
 		}catch (Exception e) {
@@ -185,6 +204,23 @@ public class StockOutServiceImpl implements IStockOutService{
 		}	
 	}
 	
+	/**
+	 * 判断出库单保存的订单子表，是否被其它出库单引用
+	 * @param billids
+	 */
+	private void checkBillIsQuote(String pk_corp,List<String> billids) throws DZFWarpException {
+		SQLParameter sp = new SQLParameter();
+		sp.addParam(pk_corp);
+		StringBuffer sql =new StringBuffer();
+		sql.append("select 1 from cn_stockout_b where nvl(dr, 0) = 0 and pk_corp = ? and  ") ; 
+		String condition = SqlUtil.buildSqlForIn("pk_goodsbill_b",billids.toArray(new String[billids.size()]));
+		sql.append(condition);
+		boolean b = singleObjectBO.isExists(pk_corp, sql.toString(), sp);
+		if(b){
+			throw new BusinessException("出库单里的订单已被其它出库单引用,请取消之后再操作!");
+		}
+	}
+
 	@Override
 	public void delete(StockOutVO vo) throws DZFWarpException {
 		if(vo.getVstatus()!=0){

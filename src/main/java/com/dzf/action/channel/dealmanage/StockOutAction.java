@@ -145,15 +145,12 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 				throw new BusinessException("登陆用户错误");
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
-			StockOutVO headvo = requestDealStep(getRequest());
+			List<String> billids = new ArrayList<String>();
+			StockOutVO headvo = requestDealStep(getRequest(),billids);
 			if (headvo == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
-			if(StringUtil.isEmpty(headvo.getPk_stockout())){
-				stockOut.saveNew(headvo);
-			}else{
-				stockOut.saveEdit(headvo);
-			}
+			stockOut.save(headvo,billids);
 			json.setSuccess(true);
 			json.setMsg("保存成功");
 		} catch (Exception e) {
@@ -264,7 +261,7 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		writeJson(json);
 	}
 	
-	private StockOutVO requestDealStep(HttpServletRequest request) {
+	private StockOutVO requestDealStep(HttpServletRequest request,List<String> billids) {
 		String head = request.getParameter("head");
 		String body = request.getParameter("body");
 		if(StringUtils.isEmpty(body)){
@@ -285,6 +282,7 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		StockOutBVO[] bodyvos = DzfTypeUtils.cast(array, bodymapping, StockOutBVO[].class,
 				JSONConvtoJAVA.getParserConfig());
 		for (StockOutBVO stockOutBVO : bodyvos) {
+			billids.add(stockOutBVO.getPk_goodsbill_b());
 			if(!StringUtil.isEmpty(headvo.getPk_stockout())){
 				stockOutBVO.setPk_stockout(headvo.getPk_stockout());
 			}

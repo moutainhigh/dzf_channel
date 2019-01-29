@@ -44,18 +44,11 @@ public interface IStockOutService {
 	public List<StockOutBVO> queryOrders(String pk_corp,String bills)throws DZFWarpException;
 	
 	/**
-	 * 新增保存
+	 * 新增保存;修改保存
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
-	public void saveNew(StockOutVO vo) throws DZFWarpException;
-	
-	/**
-	 * 修改保存
-	 * @param vo
-	 * @throws DZFWarpException
-	 */
-	public void saveEdit(StockOutVO vo) throws DZFWarpException;
+	public void save(StockOutVO vo,List<String> billids) throws DZFWarpException;
 	
 	/**
 	 * 删除出库单
