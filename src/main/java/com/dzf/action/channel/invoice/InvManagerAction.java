@@ -150,7 +150,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	}
 
 	/**
-	 * 开票
+	 * 开票（纸质票确认）
 	 */
 	public void onBilling() {
 		Json json = new Json();
