@@ -58,6 +58,21 @@ public class StockInBVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
+	@FieldAlias("itype")
+	private Integer iinvoicetype;//发票类型  1：增值税专用发票；2：增值税普通发票；
+	
+	@FieldAlias("uprice")
+	private DZFDouble nunitprice;//单价
+	
+	@FieldAlias("taxrate")
+	private Integer itaxrate;//税率
+	
+	@FieldAlias("taxamount")
+	private DZFDouble ntaxamount;//税额
+	
+	@FieldAlias("totalmny")
+	private DZFDouble ntotalmny;//价税合计
+	
 	//仅作数据传递和展示使用begin*****************
 	
 	@FieldAlias("gname")
@@ -71,6 +86,46 @@ public class StockInBVO extends SuperVO {
 	
 	//仅作数据传递和展示使用end*******************
 	
+	public Integer getIinvoicetype() {
+		return iinvoicetype;
+	}
+
+	public void setIinvoicetype(Integer iinvoicetype) {
+		this.iinvoicetype = iinvoicetype;
+	}
+
+	public DZFDouble getNunitprice() {
+		return nunitprice;
+	}
+
+	public void setNunitprice(DZFDouble nunitprice) {
+		this.nunitprice = nunitprice;
+	}
+
+	public Integer getItaxrate() {
+		return itaxrate;
+	}
+
+	public void setItaxrate(Integer itaxrate) {
+		this.itaxrate = itaxrate;
+	}
+
+	public DZFDouble getNtaxamount() {
+		return ntaxamount;
+	}
+
+	public void setNtaxamount(DZFDouble ntaxamount) {
+		this.ntaxamount = ntaxamount;
+	}
+
+	public DZFDouble getNtotalmny() {
+		return ntotalmny;
+	}
+
+	public void setNtotalmny(DZFDouble ntotalmny) {
+		this.ntotalmny = ntotalmny;
+	}
+
 	public DZFDateTime getTstamp() {
 		return tstamp;
 	}
