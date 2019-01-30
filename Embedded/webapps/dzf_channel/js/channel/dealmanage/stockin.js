@@ -343,7 +343,7 @@ function loadData(type){
  */
 function opermatter(val, row, index) {
 	if(row.status == 2){//2：已确认；
-		return '<span style="margin-bottom:0px;">编辑</span> '+
+		return '<a href="#" style="margin-bottom:0px;color:blue;" onclick="edit(' + index + ')">编辑</a> '+
 		' <span style="margin-bottom:0px;margin-left:10px;">删除</span>'+
 		' <a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="cancelConf(this)">取消确认</a>';
 	}else if(row.status == 1){// 1：待确认
@@ -648,9 +648,11 @@ function initCardGrid() {
 		            				if(iitype == 1){//增值税专用发票
 		            					taxamount = mny.mul(getFloatValue(0.16));
 		            				}else if(iitype == 2){//增值税普通发票
-		            					var nprice = nprice.div(getFloatValue(1.03));
-		            					var taxamount = nprice.mul(nnum).mul(getFloatValue(0.03));
+		            					var nnprice = nprice.div(getFloatValue(1.03));
+		            					mny = nnprice.mul(n);
+		            					var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 		            				}
+		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 		            				$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
 		            				totalmny = mny.add(taxamount);
 		            				$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
@@ -700,18 +702,18 @@ function initCardGrid() {
 	                			var pricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
 	                			var price = getFloatValue($(pricell.target).textbox('getValue'));//成本价
 	                			
-	                			
 	                			var mny = nprice.mul(nnum);
-	                			$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                			
 	                			var taxamount = getFloatValue(0);//税额
 	                			var totalmny = getFloatValue(0);//价税合计
 	                			if(iitype == 1){//增值税专用发票
 	                				taxamount = mny.mul(getFloatValue(0.16));
 	                			}else if(iitype == 2){//增值税普通发票
-	                				var nnprice = price.div(getFloatValue(1.03));
+	                				var nnprice = getFloatValue(n).div(getFloatValue(1.03));
+	                				mny = nnprice.mul(nnum);
 	                				var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 	                			}
+	                			$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                			$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
 	                			totalmny = mny.add(taxamount);
 	                			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
@@ -786,16 +788,18 @@ function initCardGrid() {
 						var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
 						if(!isEmpty(n)){
 	                		var mny = nprice.mul(n);
-	                		$(mnycell.target).textbox('setValue', formatMny(mny));//金额
+	                		
 	                		
 	                		var taxamount = getFloatValue(0);//税额
 	                		var totalmny = getFloatValue(0);//价税合计
 	                		if(iitype == 1){//增值税专用发票
 	                			taxamount = mny.mul(getFloatValue(0.16));
 	                		}else if(iitype == 2){//增值税普通发票
-	                			var nnprice = price.div(getFloatValue(1.03));
+	                			var nnprice = uprice.div(getFloatValue(1.03));
+	                			mny = nnprice.mul(n);
 	                			var taxamount = nnprice.mul(n).mul(getFloatValue(0.03));
 	                		}
+	                		$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                		$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
                 			totalmny = mny.add(taxamount);
                 			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
@@ -1143,10 +1147,10 @@ function edit(index){
             } else {
                 var row = data.rows;
                 if(row.status == 2){
-            		Public.tips({
-            			content : "该入库单状态为已确认，不允许修改！",
-            			type : 2
-            		});
+//            		Public.tips({
+//            			content : "该入库单状态为已确认，不允许修改！",
+//            			type : 2
+//            		});
             		$('#grid').datagrid('updateRow', {
             			index : index,
             			row : {
