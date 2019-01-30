@@ -172,7 +172,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * 
 	 * @param pamvo
 	 * @param type
-	 *            1：确认；2：取消订单；3：取消确认；
+	 *            1：确认；2：取消订单；3：取消确认；4：发票申请；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -220,7 +220,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}
 		ChInvoiceVO cvo = new ChInvoiceVO();
 		cvo.setPk_corp(pamvo.getPk_corp());
-		cvo.setInvprice(pamvo.getNdeductmny());// 开票金额 = 订单预付款扣款
+		cvo.setInvprice(pamvo.getNdedsummny());// 开票金额 = 订单扣款总金额
 		cvo.setInvnature(0);// 发票性质
 		cvo.setCorpname(CodeUtils1.deCode(accvo.getUnitname()));
 		cvo.setTaxnum(accvo.getTaxcode());// 税号
