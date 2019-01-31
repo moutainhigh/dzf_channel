@@ -55,6 +55,17 @@ public class StockInVO extends SuperVO {
 	
 	@FieldAlias("opername")
 	private String coperatorname;//录入人姓名
+	
+	@FieldAlias("totalcost")
+	private DZFDouble ntotalcost;//总成本
+
+	public DZFDouble getNtotalcost() {
+		return ntotalcost;
+	}
+
+	public void setNtotalcost(DZFDouble ntotalcost) {
+		this.ntotalcost = ntotalcost;
+	}
 
 	public String getCoperatorname() {
 		return coperatorname;

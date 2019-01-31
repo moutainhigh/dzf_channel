@@ -119,8 +119,14 @@
 								style="width:40%;height:28px;"  data-options="required:true" />
 					    </div>
 					    <div style="width: 25%;display: inline-block;">
-							<label style="text-align:right;width: 35%;">总金额：</label>
+							<label style="text-align:right;width: 35%;">总采购金额：</label>
 							<input id="totalmny" name="totalmny" class="easyui-numberbox" 
+								data-options ="readonly:true,min:0,precision:2,groupSeparator:',' "  
+								style="width:40%;height:28px;text-align:left"   />
+					    </div>
+					    <div style="width: 25%;display: inline-block;">
+							<label style="text-align:right;width: 35%;">总成本：</label>
+							<input id="totalcost" name="totalcost" class="easyui-numberbox" 
 								data-options ="readonly:true,min:0,precision:2,groupSeparator:',' "  
 								style="width:40%;height:28px;text-align:left"   />
 					    </div>

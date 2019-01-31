@@ -639,6 +639,7 @@ function initCardGrid() {
 		            				var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 		            				var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
 		            				var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+		            				var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
 		            				
 		            				var mny = nprice.mul(nnum);
 		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
@@ -652,6 +653,8 @@ function initCardGrid() {
 		            					mny = nnprice.mul(n);
 		            					var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 		            				}
+		            				var tmny = uprice.mul(nnum);
+		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
 		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 		            				$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
 		            				totalmny = mny.add(taxamount);
@@ -665,7 +668,7 @@ function initCardGrid() {
 			},
 		}, {
 			field : 'uprice',
-			title : '单价',
+			title : '采购价',
 			width : "120",
 			align : 'right',
 			halign : 'center',
@@ -682,6 +685,8 @@ function initCardGrid() {
 						var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
 						var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
+						
 						if(!isEmpty(n)){
 	                		var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});
 	                		var iitype = $(itype.target).textbox('getValue');
@@ -713,16 +718,20 @@ function initCardGrid() {
 	                				mny = nnprice.mul(nnum);
 	                				var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 	                			}
+	                			var tmny = getFloatValue(n).mul(nnum);
+	                			
 	                			$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                			$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
 	                			totalmny = mny.add(taxamount);
 	                			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
+	                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
 	                		}
 						}else{
 							$(price.target).textbox('setValue', null);//成本价
 							$(mnycell.target).textbox('setValue', null);//金额
 							$(taxatcell.target).textbox('setValue', null);//税额
 							$(totcell.target).textbox('setValue', null);//价税合计
+							$(tmnycell.target).textbox('setValue', null);//采购金额
 						}
 					}
 				}
@@ -786,9 +795,12 @@ function initCardGrid() {
 						
 						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
 						var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+						
+						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
+						var tmny = getFloatValue(0);
+						
 						if(!isEmpty(n)){
 	                		var mny = nprice.mul(n);
-	                		
 	                		
 	                		var taxamount = getFloatValue(0);//税额
 	                		var totalmny = getFloatValue(0);//价税合计
@@ -799,14 +811,19 @@ function initCardGrid() {
 	                			mny = nnprice.mul(n);
 	                			var taxamount = nnprice.mul(n).mul(getFloatValue(0.03));
 	                		}
+	                		
+	                		tmny = uprice.mul(n);
+	                		
 	                		$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                		$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
                 			totalmny = mny.add(taxamount);
                 			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
+                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
 						}else{
 							$(mnycell.target).textbox('setValue', null);//金额
 							$(taxatcell.target).textbox('setValue', null);//税额
 							$(totcell.target).textbox('setValue', null);//价税合计
+							$(tmnycell.target).textbox('setValue', null);//采购金额
 						}
 					}
 				}
@@ -826,41 +843,41 @@ function initCardGrid() {
 					precision : 2,
 					min : 0,
 					groupSeparator:',',
-					onChange : function(n, o) {
-						var rows = $('#stgrid').datagrid('getRows');
-						if(!isEmpty(n)){
-							if(rows != null && rows.length > 0){
-								if(n.indexOf(',') != -1){
-									n = n.replaceAll(',','');
-								}
-								var totalmny = getFloatValue(n);
-								for(var j = 0;j< rows.length; j++){
-									if(editIndex == j){
-										continue;
-									}
-									var mny = rows[j].mny+"";
-									if(mny.indexOf(',') != -1){
-										mny = mny.replaceAll(',','');
-									}
-									totalmny = totalmny.add(getFloatValue(mny));
-								}
-								$("#totalmny").numberbox("setValue", formatMny(totalmny));
-							}
-						}else{
-							var totalmny = getFloatValue(0);
-							for(var j = 0;j< rows.length; j++){
-								if(editIndex == j){
-									continue;
-								}
-								var mny = rows[j].mny+"";
-								if(mny.indexOf(',') != -1){
-									mny = mny.replaceAll(',','');
-								}
-								totalmny = totalmny.add(getFloatValue(mny));
-							}
-							$("#totalmny").numberbox("setValue", formatMny(totalmny));
-						}
-					}
+//					onChange : function(n, o) {
+//						var rows = $('#stgrid').datagrid('getRows');
+//						if(!isEmpty(n)){
+//							if(rows != null && rows.length > 0){
+//								if(n.indexOf(',') != -1){
+//									n = n.replaceAll(',','');
+//								}
+//								var totalmny = getFloatValue(n);
+//								for(var j = 0;j< rows.length; j++){
+//									if(editIndex == j){
+//										continue;
+//									}
+//									var mny = rows[j].mny+"";
+//									if(mny.indexOf(',') != -1){
+//										mny = mny.replaceAll(',','');
+//									}
+//									totalmny = totalmny.add(getFloatValue(mny));
+//								}
+//								$("#totalmny").numberbox("setValue", formatMny(totalmny));
+//							}
+//						}else{
+//							var totalmny = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var mny = rows[j].mny+"";
+//								if(mny.indexOf(',') != -1){
+//									mny = mny.replaceAll(',','');
+//								}
+//								totalmny = totalmny.add(getFloatValue(mny));
+//							}
+//							$("#totalmny").numberbox("setValue", formatMny(totalmny));
+//						}
+//					}
 				}
 			},formatter:formatMny,
 		}, {
@@ -929,6 +946,59 @@ function initCardGrid() {
 				}
 			}
 		}, {
+			field : 'tmny',
+			title : '采购金额',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			hidden : true,
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+					onChange : function(n, o) {
+						var rows = $('#stgrid').datagrid('getRows');
+						if(!isEmpty(n)){
+							if(rows != null && rows.length > 0){
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
+								var totalmny = getFloatValue(n);
+								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
+									var tmny = rows[j].tmny+"";
+									if(tmny.indexOf(',') != -1){
+										tmny = tmny.replaceAll(',','');
+									}
+									totalmny = totalmny.add(getFloatValue(tmny));
+								}
+								$("#totalmny").numberbox("setValue", formatMny(totalmny));
+							}
+						}else{
+							var totalmny = getFloatValue(0);
+							for(var j = 0;j< rows.length; j++){
+								if(editIndex == j){
+									continue;
+								}
+								var mny = rows[j].tmny+"";
+								if(tmny.indexOf(',') != -1){
+									tmny = tmny.replaceAll(',','');
+								}
+								totalmny = totalmny.add(getFloatValue(tmny));
+							}
+							$("#totalmny").numberbox("setValue", formatMny(totalmny));
+						}
+					}
+				}
+			},formatter:formatMny,
+		},{
         	width : '80',
 			field : 'button',
 			title : '操作',
@@ -1146,21 +1216,21 @@ function edit(index){
             	Public.tips({content:data.msg,type:1});
             } else {
                 var row = data.rows;
-                if(row.status == 2){
+//                if(row.status == 2){
 //            		Public.tips({
 //            			content : "该入库单状态为已确认，不允许修改！",
 //            			type : 2
 //            		});
-            		$('#grid').datagrid('updateRow', {
-            			index : index,
-            			row : {
-            				status : row.status,
-            				updatets : row.updatets,
-            			}
-            		});
-            		status = "brows";// 页面状态=浏览态
-            		return;
-            	}
+//            		$('#grid').datagrid('updateRow', {
+//            			index : index,
+//            			row : {
+//            				status : row.status,
+//            				updatets : row.updatets,
+//            			}
+//            		});
+//            		status = "brows";// 页面状态=浏览态
+//            		return;
+//            	}
                 showCard();
                 $('#stform').form('load',row);
                 if(row.children != null && row.children.length > 0){
