@@ -58,6 +58,8 @@ public class StockOutBVO extends SuperVO {
 	
 	@FieldAlias("gname")
 	private String vgoodsname; // 商品名称
+	
+	private Integer usenum;//可用数量
 
     public String getPk_stockout_b() {
 		return pk_stockout_b;
@@ -85,6 +87,14 @@ public class StockOutBVO extends SuperVO {
 
 	public String getPk_goodsbill_b() {
 		return pk_goodsbill_b;
+	}
+
+	public Integer getUsenum() {
+		return usenum;
+	}
+
+	public void setUsenum(Integer usenum) {
+		this.usenum = usenum;
 	}
 
 	public String getVgoodsname() {
