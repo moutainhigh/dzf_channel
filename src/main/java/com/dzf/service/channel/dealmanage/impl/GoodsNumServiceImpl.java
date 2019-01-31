@@ -74,8 +74,8 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         sql.append("  siib.nmny isstockmny,");
         sql.append("  nvl(num.ioutnum,0) ioutnum,  nvl(num.istocknum,0) istockinnum,    ");
         sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
-        sql.append("  nvl(num.isellnum, 0) ilocknum,  ");
-        sql.append("  nvl(stockbill.nsendnum,0) nsendnum,   ");
+        sql.append("  nvl(num.isellnum, 0) - nvl(sh.nnum,0) ilocknum,  ");
+        sql.append("  nvl(stockbill.nsendnum,0) - nvl(sh.nnum,0) nsendnum,   ");
         sql.append("  nvl(stockbill.noutnum,0) noutnum,  ");
         sql.append("  nvl(num.istocknum, 0) - nvl(num.isellnum,0) ibuynum");
         sql.append("  from cn_stocknum num  ");
@@ -94,8 +94,12 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         sql.append(" from cn_stockout so   ");
         sql.append(" left join cn_stockout_b sob on sob.pk_stockout =  so.pk_stockout    ");
         sql.append("  where (so.vstatus = 0 or so.vstatus = 1)  and nvl(so.dr, 0) = 0 and nvl(sob.dr, 0) = 0");
-        sql.append("   group by sob.pk_goods, sob.pk_goodsspec) stockbill on num.pk_goods = stockbill.pk_goods  ");
-        sql.append("   and num.pk_goodsspec = stockbill.pk_goodsspec    ");
+        sql.append("   group by sob.pk_goods, sob.pk_goodsspec) stockbill   ");
+        sql.append("   on num.pk_goods = stockbill.pk_goods and num.pk_goodsspec = stockbill.pk_goodsspec ");
+        sql.append(" left join (select pk_goods,pk_goodsspec,sum(nnum) nnum from cn_stockout_b");
+        sql.append(" 	 where nvl(dr,0)=0 and pk_corp is null and pk_goodsbill_b is null");
+        sql.append(" 	 group by pk_goods,pk_goodsspec)sh  ");
+        sql.append(" 	on num.pk_goods = sh.pk_goods and num.pk_goodsspec = sh.pk_goodsspec   ");
         sql.append("  where nvl(g.dr, 0) = 0    ");
         sql.append("    and nvl(num.dr, 0) = 0  ");
         sql.append("    and nvl(t.dr, 0) = 0    ");
