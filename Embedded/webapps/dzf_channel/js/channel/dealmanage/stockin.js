@@ -652,29 +652,27 @@ function initCardGrid() {
 		            				
 		            				var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 		            				var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
-		            				var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+		            				var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
 		            				var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
 		            				var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
 		            				
-		            				var mny = nprice.mul(nnum);
-		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
-		            				
+		            				var mny = nprice.mul(nnum);//金额
 		            				var taxamount = getFloatValue(0);//税额
-		            				var totalmny = getFloatValue(0);//价税合计
+		            				
 		            				if(iitype == 1){//增值税专用发票
 		            					taxamount = mny.mul(getFloatValue(0.16));
 		            				}else if(iitype == 2){//增值税普通发票
 		            					var nnprice = nprice.div(getFloatValue(1.03));
 		            					mny = nnprice.mul(n);
-		            					var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
+		            					taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 		            				}
-		            				var tmny = uprice.mul(nnum);
-		            				var tcost = nprice.mul(nnum);
-		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
+		            				var pricetax = pricetax = mny.add(taxamount);//价税合计
 		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 		            				$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
-		            				totalmny = mny.add(taxamount);
-		            				$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
+		            				$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+		            				var tmny = uprice.mul(nnum);//采购金额
+		            				var tcost = nprice.mul(nnum);//成本金额
+		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
 		            				$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
 		            			}
 							}
@@ -701,7 +699,7 @@ function initCardGrid() {
 						var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
 						var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
-						var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+						var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
 						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
 						var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
 						
@@ -725,11 +723,9 @@ function initCardGrid() {
 	                			var pricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
 	                			var price = getFloatValue($(pricell.target).textbox('getValue'));//成本价
 	                			
-	                			var mny = nprice.mul(nnum);
-	                			var tcost = nprice.mul(nnum);
-	                			
+	                			var mny = nprice.mul(nnum);//金额
 	                			var taxamount = getFloatValue(0);//税额
-	                			var totalmny = getFloatValue(0);//价税合计
+	                			
 	                			if(iitype == 1){//增值税专用发票
 	                				taxamount = mny.mul(getFloatValue(0.16));
 	                			}else if(iitype == 2){//增值税普通发票
@@ -737,23 +733,26 @@ function initCardGrid() {
 	                				mny = nnprice.mul(nnum);
 	                				var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
 	                			}
-	                			var tmny = getFloatValue(n).mul(nnum);
 	                			
+	                			var pricetax = mny.add(taxamount);//价税合计
 	                			$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                			$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
-	                			totalmny = mny.add(taxamount);
-	                			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
+	                			$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+	                			
+	                			var tmny = getFloatValue(n).mul(nnum);//采购金额
+	                			var tcost = nprice.mul(nnum);//成本金额
 	                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
 	                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
 	                		}
-						}else{
-							$(price.target).textbox('setValue', null);//成本价
-							$(mnycell.target).textbox('setValue', null);//金额
-							$(taxatcell.target).textbox('setValue', null);//税额
-							$(totcell.target).textbox('setValue', null);//价税合计
-							$(tmnycell.target).textbox('setValue', null);//采购金额
-							$(tcostcell.target).textbox('setValue', null);//成本金额
 						}
+//						if(isEmpty(n) && !isEmpty(o)){
+//							$(price.target).textbox('setValue', null);//成本价
+//							$(mnycell.target).textbox('setValue', null);//金额
+//							$(taxatcell.target).textbox('setValue', null);//税额
+//							$(ptaxcell.target).textbox('setValue', null);//价税合计
+//							$(tmnycell.target).textbox('setValue', null);//采购金额
+//							$(tcostcell.target).textbox('setValue', null);//成本金额
+//						}
 					}
 				}
 			},formatter : formatMny,
@@ -815,40 +814,41 @@ function initCardGrid() {
 						var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 						
 						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
-						var totcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'totalmny'});//价税合计
+						var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
 						
 						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
 						var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
 						
 						if(!isEmpty(n)){
-	                		var mny = nprice.mul(n);
+	                		var mny = nprice.mul(n);//金额
 	                		
 	                		var taxamount = getFloatValue(0);//税额
-	                		var totalmny = getFloatValue(0);//价税合计
 	                		if(iitype == 1){//增值税专用发票
 	                			taxamount = mny.mul(getFloatValue(0.16));
 	                		}else if(iitype == 2){//增值税普通发票
 	                			var nnprice = uprice.div(getFloatValue(1.03));
 	                			mny = nnprice.mul(n);
-	                			var taxamount = nnprice.mul(n).mul(getFloatValue(0.03));
+	                			taxamount = nnprice.mul(n).mul(getFloatValue(0.03));
 	                		}
 	                		
-	                		var tmny = uprice.mul(n);
-	                		var tcost = nprice.mul(n);
 	                		
+	                		var pricetax = mny.add(taxamount);
 	                		$(mnycell.target).textbox('setValue', formatMny(mny));//金额
 	                		$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
-                			totalmny = mny.add(taxamount);
-                			$(totcell.target).textbox('setValue', formatMny(totalmny));//价税合计
+                			$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+                			
+                			var tmny = uprice.mul(n);
+                			var tcost = nprice.mul(n);
                 			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
                 			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
-						}else{
-							$(mnycell.target).textbox('setValue', null);//金额
-							$(taxatcell.target).textbox('setValue', null);//税额
-							$(totcell.target).textbox('setValue', null);//价税合计
-							$(tmnycell.target).textbox('setValue', null);//采购金额
-							$(tcostcell.target).textbox('setValue', null);//成本金额
 						}
+//						if(isEmpty(n) && !isEmpty(o)){
+//							$(mnycell.target).textbox('setValue', null);//金额
+//							$(taxatcell.target).textbox('setValue', null);//税额
+//							$(ptaxcell.target).textbox('setValue', null);//价税合计
+//							$(tmnycell.target).textbox('setValue', null);//采购金额
+//							$(tcostcell.target).textbox('setValue', null);//成本金额
+//						}
 					}
 				}
 			},
@@ -939,7 +939,7 @@ function initCardGrid() {
 				}
 			},formatter:formatMny,
 		}, {
-			field : 'totalmny',
+			field : 'pricetax',
 			title : '价税合计',
 			width : "100",
 			align : 'right',
@@ -1006,21 +1006,22 @@ function initCardGrid() {
 								}
 								$("#totalmny").numberbox("setValue", formatMny(totalmny));
 							}
-						}else{
-							var totalmny = getFloatValue(0);
-							for(var j = 0;j< rows.length; j++){
-								if(editIndex == j){
-									continue;
-								}
-								var tmny = getFloatValue(rows[j].tmny);
-								tmny = tmny+"";
-								if(tmny.indexOf(',') != -1){
-									tmny = tmny.replaceAll(',','');
-								}
-								totalmny = totalmny.add(getFloatValue(tmny));
-							}
-							$("#totalmny").numberbox("setValue", formatMny(totalmny));
 						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalmny = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tmny = getFloatValue(rows[j].tmny);
+//								tmny = tmny+"";
+//								if(tmny.indexOf(',') != -1){
+//									tmny = tmny.replaceAll(',','');
+//								}
+//								totalmny = totalmny.add(getFloatValue(tmny));
+//							}
+//							$("#totalmny").numberbox("setValue", formatMny(totalmny));
+//						}
 					}
 				}
 			},formatter:formatMny,
@@ -1061,21 +1062,22 @@ function initCardGrid() {
 								}
 								$("#totalcost").numberbox("setValue", formatMny(totalcost));
 							}
-						}else{
-							var totalcost = getFloatValue(0);
-							for(var j = 0;j< rows.length; j++){
-								if(editIndex == j){
-									continue;
-								}
-								var tcost = getFloatValue(rows[j].tcost);
-								var tcost = tcost+"";
-								if(tcost.indexOf(',') != -1){
-									tcost = tcost.replaceAll(',','');
-								}
-								totalcost = totalcost.add(getFloatValue(tcost));
-							}
-							$("#totalcost").numberbox("setValue", formatMny(totalcost));
 						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalcost = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tcost = getFloatValue(rows[j].tcost);
+//								var tcost = tcost+"";
+//								if(tcost.indexOf(',') != -1){
+//									tcost = tcost.replaceAll(',','');
+//								}
+//								totalcost = totalcost.add(getFloatValue(tcost));
+//							}
+//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
+//						}
 					}
 				}
 			},formatter:formatMny,

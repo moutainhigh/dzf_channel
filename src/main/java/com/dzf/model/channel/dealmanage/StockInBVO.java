@@ -70,8 +70,14 @@ public class StockInBVO extends SuperVO {
 	@FieldAlias("taxamount")
 	private DZFDouble ntaxamount;//税额
 	
-	@FieldAlias("totalmny")
-	private DZFDouble ntotalmny;//价税合计
+	@FieldAlias("pricetax")
+	private DZFDouble npricetax;//价税合计
+	
+	@FieldAlias("tmny")
+	private DZFDouble ntotalmny;//采购金额
+	
+	@FieldAlias("tcost")
+	private DZFDouble ntotalcost;//成本金额
 	
 	//仅作数据传递和展示使用begin*****************
 	
@@ -86,6 +92,22 @@ public class StockInBVO extends SuperVO {
 	
 	//仅作数据传递和展示使用end*******************
 	
+	public DZFDouble getNpricetax() {
+		return npricetax;
+	}
+
+	public void setNpricetax(DZFDouble npricetax) {
+		this.npricetax = npricetax;
+	}
+
+	public DZFDouble getNtotalcost() {
+		return ntotalcost;
+	}
+
+	public void setNtotalcost(DZFDouble ntotalcost) {
+		this.ntotalcost = ntotalcost;
+	}
+
 	public Integer getIinvoicetype() {
 		return iinvoicetype;
 	}
