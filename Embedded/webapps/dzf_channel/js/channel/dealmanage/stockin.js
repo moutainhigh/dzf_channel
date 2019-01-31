@@ -175,7 +175,7 @@ function load(){
 			sortable : true,
 		}, {
 			width : '100',
-			title : '总金额',
+			title : '采购总金额',
 			align : 'right',
 			halign : 'center',
 			field : 'totalmny',
@@ -417,10 +417,16 @@ function add() {
 /**
  * 卡片显示
  */
-function showCard(){
+function showCard(row){
 	$("#listPanel").hide();
 	$("#cardPanel").show();
-	initCardGrid();
+	if(row != null && row.status == 2){
+		$("#stdate").datebox("readonly", true);
+		initConfGrid();
+	}else{
+		$("#stdate").datebox("readonly", false);
+		initCardGrid();
+	}
 	clearForm();
 }
 
@@ -464,7 +470,7 @@ function itypeFormatter(value, rowData, rowIndex){
 }
 
 /**
- * 入库明细初始化
+ * 入库明细初始化（新增或未确认状态修改）
  */
 function initCardGrid() {
 	var goods = null;
@@ -962,7 +968,10 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									var tmny = getFloatValue(rows[j].tmny);
+									var tmny = rows[j].tmny;
+									if(isEmpty(tmny)){
+										tmny = 0;
+									}
 									tmny = tmny+"";
 									if(tmny.indexOf(',') != -1){
 										tmny = tmny.replaceAll(',','');
@@ -978,7 +987,10 @@ function initCardGrid() {
 //								if(editIndex == j){
 //									continue;
 //								}
-//								var tmny = getFloatValue(rows[j].tmny);
+//								var tmny = rows[j].tmny;
+//								if(isEmpty(tmny)){
+//									tmny = 0;
+//								}
 //								tmny = tmny+"";
 //								if(tmny.indexOf(',') != -1){
 //									tmny = tmny.replaceAll(',','');
@@ -1018,8 +1030,11 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									var tcost = getFloatValue(rows[j].tcost);
-									var tcost = tcost+"";
+									var tcost = rows[j].tcost;
+									if(isEmpty(tcost)){
+										tcost = 0;
+									}
+									tcost = tcost+"";
 									if(tcost.indexOf(',') != -1){
 										tcost = tcost.replaceAll(',','');
 									}
@@ -1034,7 +1049,10 @@ function initCardGrid() {
 //								if(editIndex == j){
 //									continue;
 //								}
-//								var tcost = getFloatValue(rows[j].tcost);
+//								var tcost = rows[j].tcost;
+//								if(isEmpty(tcost)){
+//									tcost = 0;
+//								}
 //								var tcost = tcost+"";
 //								if(tcost.indexOf(',') != -1){
 //									tcost = tcost.replaceAll(',','');
@@ -1052,6 +1070,625 @@ function initCardGrid() {
 			title : '操作',
         	formatter : operatorLink
 		},] ],
+		onDblClickRow : function(rowIndex, rowData) {
+        	if(status == "brows"){
+        		return;
+        	}
+        	endBodyEdit();
+        	if($('#stgrid').datagrid('validateRow', editIndex)){
+        		if (rowIndex != undefined) {
+        			editIndex = rowIndex;
+        			$("#stgrid").datagrid('beginEdit', editIndex);
+        		}           		
+        	}else{
+        		Public.tips({
+        			content : "请先编辑必输项",
+        			type : 2
+        		});
+        	}
+		},
+	});
+}
+
+/**
+ * 入库明细初始化
+ */
+function initConfGrid() {
+	var goods = null;
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/dealmanage/goodsmanage!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				goods = result.rows;
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+	
+	$("#stgrid").datagrid({
+		height : 420,
+		width : "100%",
+		singleSelect : false,
+		columns : [ [ {
+			field : 'supname',
+			title : '供应商',
+			width : "180",
+			align : 'center',
+			halign : 'center',
+			editor: { type: 'textbox',
+        		options:{
+        			height:31,
+					editable:false,
+					required: true,
+					readonly: true,
+					icons: [{
+						iconCls:'icon-search',
+						handler: function(e){
+							initSupplierRef(e);
+						}
+					}]
+        		}
+        	}
+		}, {
+			field : 'supid',
+			title : '供应商主键',
+			hidden : true,
+			editor : {
+				type : 'textbox'
+			}
+		}, {
+			field : 'gname',
+			title : '商品',
+			width : "180",
+			align : 'center',
+			halign : 'center',
+			editor : {
+				type : 'combobox',
+				options : {
+					height: 31,
+                	panelHeight: 160,
+                	showItemIcon: true,
+                	editable: true,
+                	required : true,
+                	readonly: true,
+                	valueField: "name",
+                	textField: "name",
+                	data: goods,
+                	onSelect: function (rec) { 
+                		var gid = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'gid'});
+                		$(gid.target).textbox('setValue', rec.gid);
+                		
+                		var specid = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'specid'});
+                		$(specid.target).textbox('setValue', rec.id);
+                		
+                		var spec = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'spec'});
+                		$(spec.target).textbox('setValue', rec.spec);
+                		
+                		var type = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'type'});
+                		$(type.target).textbox('setValue', rec.type);
+                		
+                		var tstp = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tstp'});
+                		$(tstp.target).textbox('setValue', rec.tstp);
+                		
+//                		var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
+//                		$(price.target).textbox('setValue', rec.price);
+                		
+                	}
+				}
+			},
+		}, {
+			field : 'gid',
+			title : '商品主键',
+			hidden : true,
+			editor : {
+				type : 'textbox'
+			}
+		}, {
+			field : 'tstp',
+			title : '商品最新时间戳',
+			hidden : true,
+			editor : {
+				type : 'textbox'
+			}
+		}, {
+			field : 'specid',
+			title : '商品规格主键',
+			hidden : true,
+			editor : {
+				type : 'textbox'
+			}
+		}, {
+			field : 'spec',
+			title : '规格',
+			width : "110",
+			align : 'center',
+			halign : 'center',
+			editor : {
+				type : 'textbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true
+				}
+			}
+		}, {
+			field : 'type',
+			title : '型号',
+			width : "110",
+			align : 'center',
+			halign : 'center',
+			editor : {
+				type : 'textbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true
+				}
+			}
+		}, {
+			field : 'itype',
+			title : '发票类型',
+			width : "135",
+			align : 'center',
+			halign : 'center',
+			editor : {
+				type : 'combobox',
+				options : {
+					height : 31,
+					data : itypedata,
+					valueField : "value",
+					textField : "text",
+					panelHeight : 'auto',
+					required : true,
+					onChange : function(n, o) {
+						if(!isEmpty(n)){
+							//发票类型  1：增值税专用发票；2：增值税普通发票；
+							var taxrate = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxrate'});
+							if (n == "1") { 
+								$(taxrate.target).textbox('setValue', 16);
+							}else if(n == "2"){
+								$(taxrate.target).textbox('setValue', 3);
+							}
+							
+							var upricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'uprice'});
+							var uprice = getFloatValue($(upricell.target).textbox('getValue'));//单价
+							
+							var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});
+	                		var iitype = $(itype.target).textbox('getValue');
+							if(!isEmpty(uprice)){
+								var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
+								
+								var nprice = getFloatValue(0);//成本价
+		                		if(iitype == 1){
+		                			nprice = getFloatValue(uprice).div(getFloatValue(1.16));
+		                		}else if(iitype == 2){
+		                			nprice = getFloatValue(uprice);
+		                		}
+		                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+		                		
+		                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
+		            			var nnum = $(num.target).textbox('getValue');//数量
+		            			
+		            			if(!isEmpty(nnum)){
+		            				
+		            				var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
+		            				var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
+		            				var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
+		            				var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
+		            				var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
+		            				
+		            				var mny = nprice.mul(nnum);//金额
+		            				var taxamount = getFloatValue(0);//税额
+		            				
+		            				if(iitype == 1){//增值税专用发票
+		            					taxamount = mny.mul(getFloatValue(0.16));
+		            				}else if(iitype == 2){//增值税普通发票
+		            					var nnprice = nprice.div(getFloatValue(1.03));
+		            					mny = nnprice.mul(n);
+		            					taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
+		            				}
+		            				var pricetax = pricetax = mny.add(taxamount);//价税合计
+		            				$(mnycell.target).textbox('setValue', formatMny(mny));//金额
+		            				$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
+		            				$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+		            				var tmny = uprice.mul(nnum);//采购金额
+		            				var tcost = nprice.mul(nnum);//成本金额
+		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
+		            				$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+		            			}
+							}
+						}
+					}
+				}
+			},
+			formatter : itypeFormatter,
+		}, {
+			field : 'uprice',
+			title : '采购价',
+			width : "120",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					required : true,
+					precision : 2,
+					min : 0,
+					max : 99999,
+					onChange : function(n, o) {
+						var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
+						var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
+						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
+						var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
+						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
+						var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
+						
+						if(!isEmpty(n)){
+	                		var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});
+	                		var iitype = $(itype.target).textbox('getValue');
+	                		var nprice = getFloatValue(0);//成本价
+	                		if(iitype == 1){
+	                			nprice = getFloatValue(n).div(getFloatValue(1.16));
+	                		}else if(iitype == 2){
+	                			nprice = getFloatValue(n);
+	                		}
+	                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+	                		
+	                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
+	                		var nnum = $(num.target).textbox('getValue');
+	                		if(!isEmpty(nnum)){
+	                			var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});//发票类型
+	                			var iitype = $(itype.target).textbox('getValue');
+	                			
+	                			var pricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});
+	                			var price = getFloatValue($(pricell.target).textbox('getValue'));//成本价
+	                			
+	                			var mny = nprice.mul(nnum);//金额
+	                			var taxamount = getFloatValue(0);//税额
+	                			
+	                			if(iitype == 1){//增值税专用发票
+	                				taxamount = mny.mul(getFloatValue(0.16));
+	                			}else if(iitype == 2){//增值税普通发票
+	                				var nnprice = getFloatValue(n).div(getFloatValue(1.03));
+	                				mny = nnprice.mul(nnum);
+	                				var taxamount = nnprice.mul(nnum).mul(getFloatValue(0.03));
+	                			}
+	                			
+	                			var pricetax = mny.add(taxamount);//价税合计
+	                			$(mnycell.target).textbox('setValue', formatMny(mny));//金额
+	                			$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
+	                			$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+	                			
+	                			var tmny = getFloatValue(n).mul(nnum);//采购金额
+	                			var tcost = nprice.mul(nnum);//成本金额
+	                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
+	                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+	                		}
+						}
+//						if(isEmpty(n) && !isEmpty(o)){
+//							$(price.target).textbox('setValue', null);//成本价
+//							$(mnycell.target).textbox('setValue', null);//金额
+//							$(taxatcell.target).textbox('setValue', null);//税额
+//							$(ptaxcell.target).textbox('setValue', null);//价税合计
+//							$(tmnycell.target).textbox('setValue', null);//采购金额
+//							$(tcostcell.target).textbox('setValue', null);//成本金额
+//						}
+					}
+				}
+			},formatter : formatMny,
+		}, {
+			field : 'price',
+			title : '成本价',
+			width : "120",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					max : 99999,
+					onChange : function(n, o) {
+						if(!isEmpty(n)){
+	                		var numcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
+	                		var num = getFloatValue($(numcell.target).textbox('getValue'));
+	                		
+	                		var mny = num.mul(n);
+	                		
+	                		var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});
+	                		$(mnycell.target).textbox('setValue', formatMny(mny));
+						}
+					}
+				}
+			},formatter : formatMny,
+		}, {
+			field : 'num',
+			title : '入库数量',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					required : true,
+					readonly: true,
+					precision : 0,
+					min : 1,
+					max : 9999,
+					onChange : function(n, o) {
+						var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});//发票类型
+                		var iitype = $(itype.target).textbox('getValue');
+						
+                		var upricell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'uprice'});
+                		var uprice = getFloatValue($(upricell.target).textbox('getValue'));//单价
+                		
+                		var nprice = getFloatValue(0);//成本价
+                		if(iitype == 1){
+                			nprice = getFloatValue(uprice).div(getFloatValue(1.16));
+                		}else if(iitype == 2){
+                			nprice = getFloatValue(uprice);
+                		}
+                		
+						var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
+						
+						var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
+						var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
+						
+						var tmnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tmny'});//采购金额
+						var tcostcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'tcost'});//成本金额
+						
+						if(!isEmpty(n)){
+	                		var mny = nprice.mul(n);//金额
+	                		
+	                		var taxamount = getFloatValue(0);//税额
+	                		if(iitype == 1){//增值税专用发票
+	                			taxamount = mny.mul(getFloatValue(0.16));
+	                		}else if(iitype == 2){//增值税普通发票
+	                			var nnprice = uprice.div(getFloatValue(1.03));
+	                			mny = nnprice.mul(n);
+	                			taxamount = nnprice.mul(n).mul(getFloatValue(0.03));
+	                		}
+	                		
+	                		
+	                		var pricetax = mny.add(taxamount);
+	                		$(mnycell.target).textbox('setValue', formatMny(mny));//金额
+	                		$(taxatcell.target).textbox('setValue', formatMny(taxamount));//税额
+                			$(ptaxcell.target).textbox('setValue', formatMny(pricetax));//价税合计
+                			
+                			var tmny = uprice.mul(n);
+                			var tcost = nprice.mul(n);
+                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
+                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+						}
+//						if(isEmpty(n) && !isEmpty(o)){
+//							$(mnycell.target).textbox('setValue', null);//金额
+//							$(taxatcell.target).textbox('setValue', null);//税额
+//							$(ptaxcell.target).textbox('setValue', null);//价税合计
+//							$(tmnycell.target).textbox('setValue', null);//采购金额
+//							$(tcostcell.target).textbox('setValue', null);//成本金额
+//						}
+					}
+				}
+			},
+		}, {
+			field : 'mny',
+			title : '金额',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+				}
+			},formatter:formatMny,
+		}, {
+			field : 'taxrate',
+			title : '税率(%)',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 0,
+					min : 0,
+					groupSeparator:',',
+				}
+			},formatter:formatMny,
+		}, {
+			field : 'taxamount',
+			title : '税额',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+				}
+			},formatter:formatMny,
+		}, {
+			field : 'pricetax',
+			title : '价税合计',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+				}
+			},formatter:formatMny,
+		}, {
+			field : 'memo',
+			title : '备注',
+			width : "180",
+			align : 'left',
+			halign : 'center',
+			editor : {
+				type : 'textbox',
+				options : {
+					height : 31,
+					validType : [ 'length[0,50]' ],
+					invalidMessage : "收款说明最大长度不能超过50",
+				}
+			}
+		}, {
+			field : 'tmny',
+			title : '采购金额',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			hidden : true,
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+					onChange : function(n, o) {
+						var rows = $('#stgrid').datagrid('getRows');
+						if(!isEmpty(n)){
+							if(rows != null && rows.length > 0){
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
+								var totalmny = getFloatValue(n);
+								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
+									var tmny = rows[j].tmny;
+									if(isEmpty(tmny)){
+										tmny = 0;
+									}
+									tmny = tmny+"";
+									if(tmny.indexOf(',') != -1){
+										tmny = tmny.replaceAll(',','');
+									}
+									totalmny = totalmny.add(getFloatValue(tmny));
+								}
+								$("#totalmny").numberbox("setValue", formatMny(totalmny));
+							}
+						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalmny = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tmny = rows[j].tmny;
+//								if(isEmpty(tmny)){
+//									tmny = 0;
+//								}
+//						        tmny = tmny+"";
+//								if(tmny.indexOf(',') != -1){
+//									tmny = tmny.replaceAll(',','');
+//								}
+//								totalmny = totalmny.add(getFloatValue(tmny));
+//							}
+//							$("#totalmny").numberbox("setValue", formatMny(totalmny));
+//						}
+					}
+				}
+			},formatter:formatMny,
+		}, {
+			field : 'tcost',
+			title : '成本金额',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			hidden : true,
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+					onChange : function(n, o) {
+						var rows = $('#stgrid').datagrid('getRows');
+						if(!isEmpty(n)){
+							if(rows != null && rows.length > 0){
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
+								var totalcost = getFloatValue(n);
+								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
+									var tcost = rows[j].tcost;
+									if(isEmpty(tcost)){
+										tcost = 0;
+									}
+									tcost = tcost+"";
+									if(tcost.indexOf(',') != -1){
+										tcost = tcost.replaceAll(',','');
+									}
+									totalcost = totalcost.add(getFloatValue(tcost));
+								}
+								$("#totalcost").numberbox("setValue", formatMny(totalcost));
+							}
+						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalcost = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tcost = rows[j].tcost;
+//								if(isEmpty(tcost)){
+//									tcost = 0;
+//								}
+//						        tcost = tcost+"";
+//								if(tcost.indexOf(',') != -1){
+//									tcost = tcost.replaceAll(',','');
+//								}
+//								totalcost = totalcost.add(getFloatValue(tcost));
+//							}
+//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
+//						}
+					}
+				}
+			},formatter:formatMny,
+		}, ] ],
 		onDblClickRow : function(rowIndex, rowData) {
         	if(status == "brows"){
         		return;
@@ -1203,14 +1840,20 @@ function countMny(rows){
 	var totalcost = parseFloat(0);//总成本
 	var length = rows.length;
 	for(var j = 0;j< length; j++){
-		var tmny = getFloatValue(rows[j].tmny);
+		var tmny = rows[j].tmny;
+		if(isEmpty(tmny)){
+			tmny = 0;
+		}
 		tmny = tmny+"";
 		if(tmny.indexOf(',') != -1){
 			tmny = tmny.replaceAll(',','');
 		}
 		totalmny = totalmny.add(getFloatValue(tmny));
 		
-		var tcost = getFloatValue(rows[j].tcost);
+		var tcost = rows[j].tcost;
+		if(isEmpty(tcost)){
+			tcost = 0;
+		}
 		tcost = tcost+"";
 		if(tcost.indexOf(',') != -1){
 			tcost = tcost.replaceAll(',','');
@@ -1289,7 +1932,7 @@ function edit(index){
 //            		status = "brows";// 页面状态=浏览态
 //            		return;
 //            	}
-                showCard();
+                showCard(row);
                 $('#stform').form('load',row);
                 if(row.children != null && row.children.length > 0){
                 	$('#stgrid').datagrid('loadData',row.children);

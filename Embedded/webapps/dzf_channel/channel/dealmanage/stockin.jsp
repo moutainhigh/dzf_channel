@@ -112,6 +112,9 @@
   					<input type="hidden" name="opertime" id="opertime">
   					<input type="hidden" name="status" id="status">
   					<input type="hidden" name="corpid" id="corpid">
+  					
+  					<input type="hidden" name="confid" id="confid">
+  					<input type="hidden" name="conftime" id="conftime">
 					<div class="time_col time_colp11">
 					    <div style="width: 25%;display: inline-block;">
 							<label style="text-align:right;width:35%;">入库日期：</label>

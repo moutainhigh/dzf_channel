@@ -292,9 +292,7 @@ public class StockInServiceImpl implements IStockInService {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 			}
 			if(IStatusConstant.ISTOCKINSTATUS_2 == hvo.getVstatus()){
-				if(opertype == 1){
-					throw new BusinessException("该入库单已经确认，不允许修改");
-				}else if(opertype == 2){
+				if(opertype == 2){
 					throw new BusinessException("该入库单已经确认，不允许删除");
 				}else if(opertype == 3){
 					throw new BusinessException("该入库单已经确认，不允许再次确认");
