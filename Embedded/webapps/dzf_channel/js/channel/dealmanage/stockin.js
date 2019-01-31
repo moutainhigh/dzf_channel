@@ -441,6 +441,28 @@ function clearForm(){
 	$("#stgrid").datagrid('loadData',{ total:0, rows:[]});
 }
 
+var itypedata = [ {
+	"value" : "1",
+	"text" : "增值税专用发票"
+}, {
+	"value" : "2",
+	"text" : "增值税普通发票"
+} ];
+
+/**
+ * 发票类型格式化
+ * @param value
+ * @param rowData
+ * @param rowIndex
+ */
+function itypeFormatter(value, rowData, rowIndex){
+	for (var i = 0; i < itypedata.length; i++) {
+		if (itypedata[i].value == value) {
+			return itypedata[i].text;
+		}
+	}
+}
+
 /**
  * 入库明细初始化
  */
@@ -463,14 +485,6 @@ function initCardGrid() {
 			}
 		}
 	});
-	
-	var itypedata = [ {
-		"value" : "1",
-		"text" : "增值税专用发票"
-	}, {
-		"value" : "2",
-		"text" : "增值税普通发票"
-	} ];
 	
 	$("#stgrid").datagrid({
 		height : 420,
@@ -668,6 +682,7 @@ function initCardGrid() {
 					}
 				}
 			},
+			formatter : itypeFormatter,
 		}, {
 			field : 'uprice',
 			title : '采购价',
@@ -982,7 +997,8 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									var tmny = rows[j].tmny+"";
+									var tmny = getFloatValue(rows[j].tmny);
+									tmny = tmny+"";
 									if(tmny.indexOf(',') != -1){
 										tmny = tmny.replaceAll(',','');
 									}
@@ -996,7 +1012,8 @@ function initCardGrid() {
 								if(editIndex == j){
 									continue;
 								}
-								var tmny = rows[j].tmny+"";
+								var tmny = getFloatValue(rows[j].tmny);
+								tmny = tmny+"";
 								if(tmny.indexOf(',') != -1){
 									tmny = tmny.replaceAll(',','');
 								}
@@ -1035,7 +1052,8 @@ function initCardGrid() {
 									if(editIndex == j){
 										continue;
 									}
-									var tcost = rows[j].tcost+"";
+									var tcost = getFloatValue(rows[j].tcost);
+									var tcost = tcost+"";
 									if(tcost.indexOf(',') != -1){
 										tcost = tcost.replaceAll(',','');
 									}
@@ -1049,7 +1067,8 @@ function initCardGrid() {
 								if(editIndex == j){
 									continue;
 								}
-								var tcost = rows[j].tcost+"";
+								var tcost = getFloatValue(rows[j].tcost);
+								var tcost = tcost+"";
 								if(tcost.indexOf(',') != -1){
 									tcost = tcost.replaceAll(',','');
 								}
