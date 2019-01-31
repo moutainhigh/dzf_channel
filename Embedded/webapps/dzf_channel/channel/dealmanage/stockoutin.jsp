@@ -51,17 +51,18 @@
 						data-options="width:137,height:27" />
 			</div>
 			
-			<div class="time_col time_colp10">
+			/*<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">类型：</label>
 			<!--  	<input id="itype" name="itype" class="easyui-combobox" style="width:286px;height:28px;text-align:left"
 					data-options="required:false,valueField:'id',textField:'name',panelHeight:200" /> -->
 					<select id="itype" name="itype" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					editable="false" style="width:286px;height:28px;">
 					<option value="0">全部</option>
-					<option value="1">入库</option>
-					<option value="2">出库</option>
+					<option value="1">商品入库</option>
+					<option value="2">销售出库</option>
+					<option value="3">其他出库</option>
 				</select>
-			</div>
+			</div>*/
 			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">商品：</label>
 				<input id="goodsname" name="goodsname" class="easyui-combobox" editable="false" style="width:286px;height:28px;text-align:left"
