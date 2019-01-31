@@ -867,41 +867,6 @@ function initCardGrid() {
 					precision : 2,
 					min : 0,
 					groupSeparator:',',
-//					onChange : function(n, o) {
-//						var rows = $('#stgrid').datagrid('getRows');
-//						if(!isEmpty(n)){
-//							if(rows != null && rows.length > 0){
-//								if(n.indexOf(',') != -1){
-//									n = n.replaceAll(',','');
-//								}
-//								var totalmny = getFloatValue(n);
-//								for(var j = 0;j< rows.length; j++){
-//									if(editIndex == j){
-//										continue;
-//									}
-//									var mny = rows[j].mny+"";
-//									if(mny.indexOf(',') != -1){
-//										mny = mny.replaceAll(',','');
-//									}
-//									totalmny = totalmny.add(getFloatValue(mny));
-//								}
-//								$("#totalmny").numberbox("setValue", formatMny(totalmny));
-//							}
-//						}else{
-//							var totalmny = getFloatValue(0);
-//							for(var j = 0;j< rows.length; j++){
-//								if(editIndex == j){
-//									continue;
-//								}
-//								var mny = rows[j].mny+"";
-//								if(mny.indexOf(',') != -1){
-//									mny = mny.replaceAll(',','');
-//								}
-//								totalmny = totalmny.add(getFloatValue(mny));
-//							}
-//							$("#totalmny").numberbox("setValue", formatMny(totalmny));
-//						}
-//					}
 				}
 			},formatter:formatMny,
 		}, {
@@ -1231,19 +1196,29 @@ function delRow(ths) {
 }
 
 /**
- * 计算表头总金额
+ * 计算表头总采购金额、总成本
  */
 function countMny(rows){
-	var totalmny = parseFloat(0);
+	var totalmny = parseFloat(0);//总采购金额
+	var totalcost = parseFloat(0);//总成本
 	var length = rows.length;
 	for(var j = 0;j< length; j++){
-		var mny = rows[j].mny+"";
-		if(mny.indexOf(',') != -1){
-			mny = mny.replaceAll(',','');
+		var tmny = getFloatValue(rows[j].tmny);
+		tmny = tmny+"";
+		if(tmny.indexOf(',') != -1){
+			tmny = tmny.replaceAll(',','');
 		}
-		totalmny = totalmny.add(getFloatValue(mny));
+		totalmny = totalmny.add(getFloatValue(tmny));
+		
+		var tcost = getFloatValue(rows[j].tcost);
+		tcost = tcost+"";
+		if(tcost.indexOf(',') != -1){
+			tcost = tcost.replaceAll(',','');
+		}
+		totalcost = totalcost.add(getFloatValue(tcost));
 	}
 	$("#totalmny").numberbox("setValue", formatMny(totalmny));
+	$("#totalcost").numberbox("setValue", formatMny(totalcost));
 }
 
 /**

@@ -158,7 +158,7 @@ public class StockInServiceImpl implements IStockInService {
 	private void checkMnyBeforeSave(StockInVO hvo, StockInBVO[] bVOs) throws DZFWarpException {
 		if(bVOs != null && bVOs.length > 0){
 			DZFDouble ntotalmny = DZFDouble.ZERO_DBL;
-			
+			DZFDouble ntotalcost = DZFDouble.ZERO_DBL;
 			Map<String,GoodsVO> gmap = getGoodsMap();
 			GoodsVO gdvo = null;
 			for(StockInBVO bvo : bVOs){
@@ -174,15 +174,20 @@ public class StockInServiceImpl implements IStockInService {
 					}
 				}
 				
-				//2、总金额汇总计算
-				ntotalmny = SafeCompute.add(ntotalmny, bvo.getNmny());
+				//2、采购总金额汇总计算
+				ntotalmny = SafeCompute.add(ntotalmny, bvo.getNtotalmny());
+				
+				//3、总成本汇总计算
+				ntotalcost = SafeCompute.add(ntotalcost, bvo.getNtotalcost());
 			}
 			if(ntotalmny.compareTo(hvo.getNtotalmny()) != 0){
-				throw new BusinessException("总金额计算错误");
+				throw new BusinessException("采购总金额计算错误");
 			}
-			
+			if(ntotalcost.compareTo(hvo.getNtotalcost()) != 0){
+				throw new BusinessException("总成本计算错误");
+			}
 		}else{
-			throw new BusinessException("总金额计算错误");
+			throw new BusinessException("表体数据不能为空");
 		}
 	}
 	
