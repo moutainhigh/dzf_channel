@@ -507,7 +507,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.dconfirmtime,");
 		sql.append("       c.updatets");
 		sql.append("  from cn_stockout c");
-		sql.append(" where nvl(c.dr,0)=0 ");
+		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and substr(c.doperatedate,0,10)>=? ");
 			spm.addParam(pamvo.getBegdate());
@@ -549,6 +549,9 @@ public class StockOutServiceImpl implements IStockOutService{
 		}
 		if(!vo.getUpdatets().equals(qryvo.getUpdatets())){
 			throw new BusinessException("单据编码："+vo.getVbillcode()+",数据已发生变化;<br>");
+		}
+		if(vo.getItype()!=null){
+			throw new BusinessException("对不起,非法操作!");
 		}
 	}
 	
