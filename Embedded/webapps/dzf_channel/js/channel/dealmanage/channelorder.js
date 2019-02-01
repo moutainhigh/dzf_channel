@@ -730,7 +730,6 @@ function onBilling(){
 						});
 						return;
 					}else{
-						rows[i].reason = reason;
 						data = data + JSON.stringify(rows[i]);
 					}
 				}
@@ -740,7 +739,6 @@ function onBilling(){
 			postdata["data"] = data;
 			postdata["type"] = 4;
 			operdata(postdata, 4);
-			
 		} else {
 			return null;
 		}
