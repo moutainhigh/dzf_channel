@@ -234,6 +234,11 @@
 					    <input class="easyui-textbox" id="istaname" name="staname" data-options="readonly:true"
 					    	style="width:66%;height:28px;" />
 					</div>
+					<div style="width: 46%; display: inline-block;">
+						<label style="text-align: right; width: 120px;">税收分类编码：</label> 
+						<input class="easyui-textbox"  id="itaxcode" name="taxcode" data-options="readonly:true" 
+							style="width:66%; height: 28px; text-align: left"> 
+					</div>
 				</div>
 				
 				<div class="time_col time_colp11" style="margin-bottom:0px; padding-bottom:5px;">
