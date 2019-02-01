@@ -892,8 +892,7 @@ function initCardGrid() {
 				type : 'numberbox',
 				options : {
 					height : 31,
-					editable : false,
-					readonly : true,
+//					editable : false,
 					precision : 0,
 					min : 0,
 					max : 100,
@@ -1493,6 +1492,7 @@ function initConfGrid() {
 				options : {
 					height : 31,
 					required : true,
+					readonly : true,
 					precision : 0,
 					min : 1,
 					max : 9999,
@@ -1581,8 +1581,7 @@ function initConfGrid() {
 				type : 'numberbox',
 				options : {
 					height : 31,
-					editable : false,
-					readonly : true,
+//					editable : false,
 					precision : 0,
 					min : 0,
 					max : 100,
