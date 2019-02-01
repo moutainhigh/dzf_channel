@@ -271,7 +271,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 				}
 				lists.add(vo);
 				vo.setInvperson(userid);
-				updateContTicketMny(vo);
+				if(vo.getIsourcetype() != null && vo.getIsourcetype() == 1){
+					updateContTicketMny(vo);
+				}else if(vo.getIsourcetype() != null && vo.getIsourcetype() == 2){
+					updateBillTicketMny(vo);
+				}
 				updateInvoice(vo, invtime);
 
 			} catch (Exception e) {
