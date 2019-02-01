@@ -907,6 +907,7 @@ function initCardGrid() {
 					precision : 0,
 					min : 0,
 					max : 100,
+					required : true,
 					onChange : function(n, o) {
 						var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});//发票类型
                 		var iitype = $(itype.target).textbox('getValue');
@@ -1600,6 +1601,7 @@ function initConfGrid() {
 					precision : 0,
 					min : 0,
 					max : 100,
+					required : true,
 					onChange : function(n, o) {
 						var itype = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'itype'});//发票类型
                 		var iitype = $(itype.target).textbox('getValue');
