@@ -186,6 +186,17 @@ function load(){
 			},
 		}, {
 			width : '100',
+			title : '总成本',
+			align : 'right',
+			halign : 'center',
+			field : 'totalcost',
+			formatter : function(value, row, index) {
+				if (value == 0)
+					return "0.00";
+				return formatMny(value);
+			},
+		}, {
+			width : '100',
 			title : '入库日期',
 			field : 'stdate',
 			halign : 'center',

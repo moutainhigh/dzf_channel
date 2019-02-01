@@ -26,7 +26,7 @@ public class StockInVO extends SuperVO {
 	private String vbillcode;//入库单号
 	
 	@FieldAlias("totalmny")
-	private DZFDouble ntotalmny;//总金额
+	private DZFDouble ntotalmny;//采购总金额
 	
 	@FieldAlias("stdate")
 	private DZFDate dstockdate;//入库日期
