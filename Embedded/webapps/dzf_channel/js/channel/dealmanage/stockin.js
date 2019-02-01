@@ -917,7 +917,7 @@ function initCardGrid() {
 								}else if(iitype == 2){
 									nprice = getFloatValue(uprice);
 								}
-								if(isEmpty(nnum)){
+								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 									var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
 									var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
@@ -1606,7 +1606,7 @@ function initConfGrid() {
 								}else if(iitype == 2){
 									nprice = getFloatValue(uprice);
 								}
-								if(isEmpty(nnum)){
+								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 									var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
 									var ptaxcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'pricetax'});//价税合计
