@@ -928,6 +928,10 @@ function initCardGrid() {
 								}else if(iitype == 2){
 									nprice = getFloatValue(uprice);
 								}
+								
+								var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
+								$(price.target).textbox('setValue', formatMny(nprice));//成本价
+								
 								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 									var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
@@ -1617,6 +1621,10 @@ function initConfGrid() {
 								}else if(iitype == 2){
 									nprice = getFloatValue(uprice);
 								}
+								
+								var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
+								$(price.target).textbox('setValue', formatMny(nprice));//成本价
+								
 								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
 									var taxatcell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'taxamount'});//税额
