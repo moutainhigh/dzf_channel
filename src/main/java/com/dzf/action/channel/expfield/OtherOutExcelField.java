@@ -29,7 +29,7 @@ public class OtherOutExcelField implements IExceport<StockOutVO> {
 			new Fieldelement("getdate", "领取日期",false,0,false),
 			//状态   0：待确认；1：已确认；
 			new Fieldelement("vstatus", "单据状态",false,0,false,new String[]{"待确认","已确认"}),
-			new Fieldelement("voperator", "录入人",false,0,false),
+			new Fieldelement("coperatname", "录入人",false,0,false),
 			new Fieldelement("doperatedate", "录入时间",false,0,false),
 			new Fieldelement("dconfirmtime", "确认时间",false,0,false),
 	};
