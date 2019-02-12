@@ -102,12 +102,30 @@ public class OtherOutAction extends BaseAction<StockOutVO>{
 			if (StringUtil.isEmpty(soutid)) {
 				throw new BusinessException("请选择一个订单");
 			}
-			String itype = getRequest().getParameter("itype");
-			Integer type=1;
-			if(!StringUtil.isEmpty(itype)){
-				type = Integer.valueOf(itype);
+			StockOutVO retvo = otherOut.queryByID(soutid);
+			json.setSuccess(true);
+			json.setRows(retvo);
+			json.setMsg("查询成功!");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	public void queryForLook() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
 			}
-			StockOutVO retvo = otherOut.queryByID(soutid,type);
+			String soutid = getRequest().getParameter("soutid");
+			if (StringUtil.isEmpty(soutid)) {
+				throw new BusinessException("请选择一个订单");
+			}
+			StockOutVO retvo = otherOut.queryForLook(soutid);
 			json.setSuccess(true);
 			json.setRows(retvo);
 			json.setMsg("查询成功!");
@@ -282,7 +300,7 @@ public class OtherOutAction extends BaseAction<StockOutVO>{
     		if(StringUtils.isEmpty(soutid)){
     			throw new BusinessException("请选择一行数据");
     		}
-    		StockOutVO headvo = otherOut.queryByID(soutid,3);
+    		StockOutVO headvo = otherOut.queryForLook(soutid);
     		OtherOutPrint<StockOutVO> print = new OtherOutPrint<StockOutVO>();
             print.printFileTrans(headvo);
         } catch (Exception e) {

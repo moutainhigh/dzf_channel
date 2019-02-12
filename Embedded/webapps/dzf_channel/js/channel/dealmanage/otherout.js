@@ -253,14 +253,20 @@ function view(id){
 }
 
 function queryByID(id,type){
+	var urlText=contextPath;
+	if(type==1){
+		urlText+='/dealmanage/otherout!queryByID.action';
+	}else{
+		urlText+='/dealmanage/otherout!queryForLook.action';
+	}
 	var row;
 	$.ajax({
 		type : "post",
 		dataType : "json",
 		traditional : true,
 		async : false,
-		url : contextPath + '/dealmanage/otherout!queryByID.action',
-		data : {"soutid" : id,"itype" : type},
+		url :  urlText ,
+		data : {"soutid" : id},
 		success : function(data, textStatus) {
 			if (!data.success) {
 				Public.tips({
@@ -699,10 +705,10 @@ function initCard(){
 					height : 31,
 					required : true,
 					precision :0,
-					min : 0,
+					min : 1,
 					max : 99999,
 					onChange : function(n, o) {
-						if(!isEmpty(n)){
+						if(!isEmpty(n) && !isEmpty(o)){
 	                		var usenumcell = $('#cardGrid').datagrid('getEditor', {index:editIndex,field:'usenum'});
 	                		var usenum = getFloatValue($(usenumcell.target).textbox('getValue'));
 	                		if(n>usenum){

@@ -27,13 +27,20 @@ public interface IOtherOutService {
 	public List<StockOutVO> query(QryParamVO pamvo) throws DZFWarpException;
 	
 	/**
-	 * 查询出库单明细
+	 * 查询出库单明细(修改用的)
 	 * @param soutid
-	 * @param type(1:修改；2：查看;3:打印)
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public StockOutVO queryByID(String soutid,Integer type) throws DZFWarpException;
+	public StockOutVO queryByID(String soutid) throws DZFWarpException;
+	
+	/**
+	 * 查询出库单明细(查看;打印)
+	 * @param soutid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public StockOutVO queryForLook(String soutid) throws DZFWarpException;
 	
 	/**
 	 * 查询可购买商品（为了新增出库单）

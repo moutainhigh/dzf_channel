@@ -17,13 +17,11 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -67,7 +65,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 	}
 	
 	@Override
-	public StockOutVO queryByID(String soutid,Integer type) throws DZFWarpException {
+	public StockOutVO queryByID(String soutid) throws DZFWarpException {
 		StockOutVO retvo = (StockOutVO) singleObjectBO.queryByPrimaryKey(StockOutVO.class, soutid);
 		if(retvo == null){
 			throw new BusinessException("很抱歉，该出库单已被删除!");
@@ -76,30 +74,40 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT b.nnum,b.nmny,b.nprice,b.pk_stockout_b,");
 		corpsql.append(" g.pk_goods,s.pk_goodsspec,s.invspec,s.invtype,");
-		if(type==1){
-			corpsql.append(" g.vgoodsname ||' '|| '(' || s.invspec || s.invtype || ')' AS vgoodsname,");
-			corpsql.append(" nvl(n.istocknum,0)-nvl(n.isellnum,0) AS usenum ");
-		}else{
-			corpsql.append(" g.vgoodsname");
-		}
+		corpsql.append(" g.vgoodsname ||' '|| '(' || s.invspec || s.invtype || ')' AS vgoodsname,");
+		corpsql.append(" nvl(n.istocknum,0)-nvl(n.isellnum,0)+b.nnum AS usenum ");
 		corpsql.append("  FROM cn_stockout_b b");
 		corpsql.append("  LEFT JOIN cn_goods g ON b.pk_goods= g.pk_goods");
 		corpsql.append("  LEFT JOIN cn_goodsspec s ON b.pk_goodsspec= s.pk_goodsspec");
-		if(type==1){
-			corpsql.append("  LEFT JOIN cn_stocknum n ON b.pk_goods = n.pk_goods and b.pk_goodsspec=n.pk_goodsspec \n") ;
-		}
-		corpsql.append(" where nvl(s.dr,0)= 0  and pk_stockout= ? ");
-		if(type==1){
-			corpsql.append(" and nvl(n.dr,0)=0 and n.istocknum > 0");
-		}
+		corpsql.append("  LEFT JOIN cn_stocknum n ON b.pk_goods = n.pk_goods and b.pk_goodsspec=n.pk_goodsspec \n") ;
+		corpsql.append(" where nvl(b.dr,0)=0 and b.pk_stockout= ?  ");
+//		and nvl(n.istocknum,0)>nvl(n.isellnum,0) )
 		sp.addParam(soutid);
 		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
-		retvo.setChildren(bvos.toArray(new StockOutBVO[0]));
-		if(type==3){
-			UserVO uvo= UserCache.getInstance().get(retvo.getCoperatorid(), null);
-			if (uvo != null) {
-				retvo.setCoperatname(uvo.getUser_name());
-			}
+		retvo.setChildren(bvos.toArray(new StockOutBVO[bvos.size()]));
+		return retvo;
+	}
+	
+	@Override
+	public StockOutVO queryForLook(String soutid) throws DZFWarpException {
+		StockOutVO retvo = (StockOutVO) singleObjectBO.queryByPrimaryKey(StockOutVO.class, soutid);
+		if(retvo == null){
+			throw new BusinessException("很抱歉，该出库单已被删除!");
+		}
+		StringBuffer corpsql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		corpsql.append("SELECT b.nnum,b.nmny,b.nprice,b.pk_stockout_b,");
+		corpsql.append(" g.pk_goods,s.pk_goodsspec,s.invspec,s.invtype, g.vgoodsname");
+		corpsql.append("  FROM cn_stockout_b b");
+		corpsql.append("  LEFT JOIN cn_goods g ON b.pk_goods= g.pk_goods");
+		corpsql.append("  LEFT JOIN cn_goodsspec s ON b.pk_goodsspec= s.pk_goodsspec");
+		corpsql.append(" where nvl(b.dr,0)= 0  and b.pk_stockout= ? ");
+		sp.addParam(soutid);
+		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
+		retvo.setChildren(bvos.toArray(new StockOutBVO[bvos.size()]));
+		UserVO uvo= UserCache.getInstance().get(retvo.getCoperatorid(), null);
+		if (uvo != null) {
+			retvo.setCoperatname(uvo.getUser_name());
 		}
 		return retvo;
 	}
@@ -121,6 +129,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(s.dr, 0) = 0 \n");
 		sql.append("   AND nvl(n.dr, 0) = 0 \n");
+		sql.append("   AND nvl(n.istocknum,0)>nvl(n.isellnum,0) \n");
 		List<StockOutBVO> vos=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
 		return vos;
 	}
@@ -174,6 +183,9 @@ public class OtherOutServiceImpl implements IOtherOutService{
 					getVO.setPk_goods(stockOutBVO.getPk_goods());
 					getVO.setPk_goodsspec(stockOutBVO.getPk_goodsspec());
 					getVO.setNnum(stockOutBVO.getNnum());
+					getVO.setVgoodsname(stockOutBVO.getVgoodsname());
+					getVO.setInvspec(stockOutBVO.getInvspec());
+					getVO.setInvtype(stockOutBVO.getInvtype());
 					map.put(mapKey, getVO);
 				}else{
 					getVO=map.get(mapKey);
@@ -189,6 +201,9 @@ public class OtherOutServiceImpl implements IOtherOutService{
 					getVO.setPk_goods(stockOutBVO.getPk_goods());
 					getVO.setPk_goodsspec(stockOutBVO.getPk_goodsspec());
 					getVO.setNnum(-stockOutBVO.getNnum());
+					getVO.setVgoodsname(stockOutBVO.getVgoodsname());
+					getVO.setInvspec(stockOutBVO.getInvspec());
+					getVO.setInvtype(stockOutBVO.getInvtype());
 					map.put(mapKey, getVO);
 				}else{
 					getVO=map.get(mapKey);
