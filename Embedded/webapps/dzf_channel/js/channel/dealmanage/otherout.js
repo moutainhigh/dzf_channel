@@ -27,6 +27,7 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	queryBoxChange(); // 绑定时间对
 	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
@@ -60,6 +61,33 @@ function initQryLitener(){
 			$("#enddate").datebox("readonly", true);
 			$('#bperiod').datebox("readonly", false);
 			$('#eperiod').datebox("readonly", false);
+		}
+	});
+}
+
+function queryBoxChange(){
+	$("#begdate").datebox({
+		onChange: function(newValue, oldValue){
+			var edv = $("#enddate").datebox('getValue');
+			$('#jqj').text(newValue + ' 至 ' + edv);
+		}
+	});
+	$("#enddate").datebox({
+		onChange: function(newValue, oldValue){
+			var sdv = $("#begdate").datebox('getValue');
+			$('#jqj').text(sdv + ' 至 ' + newValue);
+		}
+	});
+	$('#bperiod').datebox({
+		onChange: function(newValue, oldValue){
+			var edv = $('#eperiod').datebox('getValue');
+			$('#jqj').text(newValue + ' 至 ' + edv);
+		}
+	});
+	$('#eperiod').datebox({
+		onChange: function(newValue, oldValue){
+			var sdv = $('#bperiod').datebox('getValue');
+			$('#jqj').text(sdv + ' 至 ' + newValue);
 		}
 	});
 }
@@ -120,7 +148,7 @@ function load(){
 				if (value == '0')
 					return '待确认';
 				if (value == '1')
-					return '待发货';
+					return '已确认';
 			}
 		}, {
 			width : '100',
