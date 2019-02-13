@@ -1039,10 +1039,10 @@ public class ExportExcel<T> {
 				celltitle1m.setCellStyle(style);
 			}
 			for (int i = 0; i < headers1.size(); i++) {
-				HSSFCell celltitle1m = rowtitle1m.createCell(num + 2 * i);
+				HSSFCell celltitle1m = rowtitle1m.createCell(num + 3 * i);
 				celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
 				celltitle1m.setCellStyle(style); // 居中
-				sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 2 * i, num + 1 + 2 * i));
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 3 * i, num + 2 + 3 * i));
 			}
 			HSSFCellStyle stylegsm = workbook.createCellStyle();// 表头样式
 			stylegsm.cloneStyleFrom(style);
@@ -1071,7 +1071,7 @@ public class ExportExcel<T> {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
 				Map<String, Object> map = (Map<String, Object>) array.get(i);
 				int count = 0;
-				for (String key : fields) {
+				for (String key : fieldlist) {
 					try {
 						HSSFRichTextString richString;
 						HSSFCell cell = row1.createCell(count);
