@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
+import com.dzf.model.sys.sys_power.UserVO;
 
 public interface IStockOutInService {
 

@@ -120,7 +120,8 @@ function load(){
 		            	             if (row.itype == '0'){
 		            	               return $("#begdate").datebox('getValue');
 		            	           }else{
-		            	             return value;
+		            	        	   value=value.substring(0,10);
+		            	               return value;
 		            	           }
 		            	         }
 		            	      }
@@ -187,13 +188,13 @@ function load(){
 		             ] ,
         [
             { field : 'numin', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{ if(row.itype=='1'){return value;} }}}}, 
-            { field : 'pricein', title : '成本价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}}, 
+            { field : 'pricein', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}}, 
             { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}},
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(row.itype!='2'){return '';}else{ if(row.itype=='2'){return value;} }}}}, 
-            { field : 'priceout', title : '成本价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'){return formatMny(value);} }}}},
+            { field : 'priceout', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'){return formatMny(value);} }}}},
             { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'){return formatMny(value);} }}}},
             { field : 'numb', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) {if(!isEmpty(row.gid)){if(value=='0'){return "0";}else{return value;}}}}, 
-            { field : 'priceb', title : '成本价', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(value=='0'){return "0.00";}return formatMny(value);}}}, 
+            { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(value=='0'||value==null){return "0.00";}return formatMny(value);}}}, 
             { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(value=='0'){return "0.00";}return formatMny(value);}}}, 
             
         ] ],
@@ -306,11 +307,12 @@ function doExport(){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-	var columns = $('#grid').datagrid("options").columns[0];
-	var qj = $('#begdate').datebox('getValue') + '至' + $('#enddate').datebox('getValue');
-	Business.getFile(DZF.contextPath+ '/dealmanage/stockoutin!exportAuditExcel.action',
-			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
-}
+	
+		var columns = $('#grid').datagrid("options").columns[0];
+		var qj = $('#begdate').datebox('getValue') + '至' + $('#enddate').datebox('getValue');
+		Business.getFile(DZF.contextPath+ '/dealmanage/stockoutin!exportAuditExcel.action',
+				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'qj':qj,}, true, true);
 
+}
 
 

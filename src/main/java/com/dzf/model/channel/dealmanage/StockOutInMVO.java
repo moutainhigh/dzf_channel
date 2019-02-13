@@ -4,7 +4,6 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
-import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 出入库明细表VO
@@ -43,26 +42,8 @@ public class StockOutInMVO extends SuperVO {
 	@FieldAlias("itype")
 	private Integer vitype;// 业务类型
 
-//	@FieldAlias("nprice")
-//	private DZFDouble nprice;// 成本价
-//
-//	@FieldAlias("num")
-//	private Integer nnum;// 数量
-
-//	@FieldAlias("nmny")
-//	private DZFDouble totalmny;// 金额
-
-//	@FieldAlias("conid")
-//	private String vconfirmid;// 确认出入库人id
-//
-//	@FieldAlias("conname")
-//	private String vconfirmname;// 确认出入库人姓名
-	
 	@FieldAlias("contime")
 	private DZFDateTime dconfirmtime;// 确认出入库时间
-
-//	@FieldAlias("ctname")
-//	private String coperatname;// 录入人名称
 
 	@FieldAlias("begdate")
 	private DZFDate begdate;// 开始日期
@@ -74,29 +55,28 @@ public class StockOutInMVO extends SuperVO {
 	private  Integer balanceNum;// 结存数量
 	
 	@FieldAlias("priceb")
-	private  Integer balancePrice;// 结存成本价
+	private  Double balancePrice;// 结存成本价
 	
 	@FieldAlias("moneyb")
-	private  Integer totalmoneyb;// 结存金额
+	private  Double totalmoneyb;// 结存金额
 	
 	@FieldAlias("numin")
 	private Integer nnumin;// 入库数量
 	
 	@FieldAlias("pricein")
-	private Integer npricein;// 入库成本价
+	private Double npricein;// 入库成本价
 	
 	@FieldAlias("moneyin")
-	private  Integer totalmoneyin;// 入库金额
+	private  Double totalmoneyin;// 入库金额
 	
 	@FieldAlias("numout")
 	private Integer nnumout;// 出库数量
 	
 	@FieldAlias("priceout")
-	private Integer npriceout;// 出库成本价
+	private Double npriceout;// 出库成本价
 	
 	@FieldAlias("moneyout")
-	private  Integer totalmoneyout;// 出库金额
-	
+	private  Double totalmoneyout;// 出库金额
 	
 	/**
 	 * 只作为前台显示属性
@@ -224,14 +204,7 @@ public class StockOutInMVO extends SuperVO {
 		this.balanceNum = balanceNum;
 	}
 
-	public Integer getBalancePrice() {
-		return balancePrice;
-	}
-
-	public void setBalancePrice(Integer balancePrice) {
-		this.balancePrice = balancePrice;
-	}
-
+	
 	public Integer getNnumin() {
 		return nnumin;
 	}
@@ -240,13 +213,7 @@ public class StockOutInMVO extends SuperVO {
 		this.nnumin = nnumin;
 	}
 
-	public Integer getNpricein() {
-		return npricein;
-	}
-
-	public void setNpricein(Integer npricein) {
-		this.npricein = npricein;
-	}
+	
 
 	public Integer getNnumout() {
 		return nnumout;
@@ -256,13 +223,7 @@ public class StockOutInMVO extends SuperVO {
 		this.nnumout = nnumout;
 	}
 
-	public Integer getNpriceout() {
-		return npriceout;
-	}
-
-	public void setNpriceout(Integer npriceout) {
-		this.npriceout = npriceout;
-	}
+	
 
 	public Integer getBalance() {
 		return balance;
@@ -288,32 +249,54 @@ public class StockOutInMVO extends SuperVO {
 		this.outstock = outstock;
 	}
 
-	public Integer getTotalmoneyb() {
+	public Double getBalancePrice() {
+		return balancePrice;
+	}
+
+	public void setBalancePrice(Double balancePrice) {
+		this.balancePrice = balancePrice;
+	}
+
+	public Double getTotalmoneyb() {
 		return totalmoneyb;
 	}
 
-	public void setTotalmoneyb(Integer totalmoneyb) {
+	public void setTotalmoneyb(Double totalmoneyb) {
 		this.totalmoneyb = totalmoneyb;
 	}
 
-	public Integer getTotalmoneyin() {
+	public Double getNpricein() {
+		return npricein;
+	}
+
+	public void setNpricein(Double npricein) {
+		this.npricein = npricein;
+	}
+
+	public Double getTotalmoneyin() {
 		return totalmoneyin;
 	}
 
-	public void setTotalmoneyin(Integer totalmoneyin) {
+	public void setTotalmoneyin(Double totalmoneyin) {
 		this.totalmoneyin = totalmoneyin;
 	}
 
-	public Integer getTotalmoneyout() {
+	public Double getNpriceout() {
+		return npriceout;
+	}
+
+	public void setNpriceout(Double npriceout) {
+		this.npriceout = npriceout;
+	}
+
+	public Double getTotalmoneyout() {
 		return totalmoneyout;
 	}
 
-	public void setTotalmoneyout(Integer totalmoneyout) {
+	public void setTotalmoneyout(Double totalmoneyout) {
 		this.totalmoneyout = totalmoneyout;
 	}
-	
-	
-	
+
 	
 	
 }
