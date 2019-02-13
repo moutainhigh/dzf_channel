@@ -1094,11 +1094,37 @@ public class ExportExcel<T> {
 									cell.setCellValue(((String) map.get(key)).substring(0,10));
 								}
 								
+							} else if(key.contains("price")||key.contains("money")){
+								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
+								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
+								cell.setCellValue(doublevalue.toString());
+								if(key.equals("pricein")||key.equals("priceout")||
+										key.equals("moneyin")||key.equals("moneyout")){
+									if(!map.get(key).equals(0)) {
+										DZFDouble doublevalue2 = new DZFDouble(map.get(key).toString());
+										doublevalue2 = doublevalue2.setScale(2, DZFDouble.ROUND_HALF_UP);
+										cell.setCellValue(doublevalue2.toString());
+									}else{
+										cell.setCellValue("");
+									}
+									
+								}
+							}else if(key.contains("in")||key.contains("out")){
+								if(!map.get(key).equals(0)) {
+									String value = map.get(key).toString();
+									richString = new HSSFRichTextString(value);
+									cell.setCellValue(richString);
+								}else{
+									cell.setCellValue("");
+								}
+								
+							
 							} else {
 								String value = map.get(key).toString();
 								richString = new HSSFRichTextString(value);
 								cell.setCellValue(richString);
 							}
+							
 						} else {
 							cell.setCellValue("");
 						}
