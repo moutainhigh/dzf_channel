@@ -647,7 +647,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
 		sql.append("   	select sb.pk_goodsbill_b from cn_stockout_b sb");
 		sql.append("   	inner join  cn_stockout s on sb.pk_stockout=s.pk_stockout ");
-		sql.append("   	where s.vstatus!=2 )");
+		sql.append("   	where s.vstatus!=2 and s.pk_corp is not null )");
         sql.append(" order by t.innercode ");
         List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
                 new BeanListProcessor(ComboBoxVO.class));
