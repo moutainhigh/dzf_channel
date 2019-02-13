@@ -286,7 +286,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append(" union all ");
 		sql.append("  select cg.vgoodscode, cg.vgoodsname, cg.pk_goods,  ");
 		sql.append(" 		 gs.invspec, gs.invtype,");
-		sql.append("   null as dconfirmtime,");
+		sql.append("   '1999-01-01' as dconfirmtime,");
 		sql.append("  0 vitype,");
 		sql.append("   '' as vode,");
 		sql.append("   0 as nnumin,");// 只作为显示

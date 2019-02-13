@@ -973,7 +973,6 @@ public class ExportExcel<T> {
 	 */
 	public byte[] exportOutInExcel(String title, String qj,List<String> headers, List<String> headers1, List<String> fields,
 			JSONArray array, OutputStream out, String pattern, List<String> fieldlist, Integer num) {
-		System.out.println(qj+"----------------------");
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
@@ -1022,7 +1021,7 @@ public class ExportExcel<T> {
 																		// 、
 
 			int headerlength = headers.size();
-			int fieldlength = fields.size();
+			int fieldlength = fieldlist.size();
 			// 合并标题
 			HSSFRow rowtitle = sheet.createRow(0);
 			HSSFCell celltitle = rowtitle.createCell(0);
@@ -1089,7 +1088,7 @@ public class ExportExcel<T> {
 								 }
 								
 							} else if (key.equals("contime")) {
-								if(map.get(key)==null) {
+								if(map.get(key).equals("1999-01-01 00:00:00")) {
 									cell.setCellValue(qj.substring(0,10));
 								}else{
 									cell.setCellValue(((String) map.get(key)).substring(0,10));

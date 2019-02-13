@@ -148,11 +148,11 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportOutInExcel("业绩新增统计", qj,heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
+			byte[] length = ex.exportOutInExcel("出入库明细表", qj,heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
 					num);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩新增统计表", ISysConstants.SYS_3);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出出入库明细表", ISysConstants.SYS_3);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
