@@ -180,7 +180,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("  union all");
-		sql.append(" select");
+		sql.append(" select distinct");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append("        gs.invspec, gs.invtype, ");
 		sql.append("       so.dconfirmtime,2 vitype,  so.vbillcode,");
