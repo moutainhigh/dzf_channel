@@ -124,7 +124,7 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 				throw new BusinessException("请选择一个加盟商");
 			}
 			List<StockOutBVO> vos = stockOut.queryOrders(corpid,bills,billid);
-			if(StringUtils.isEmpty(bills) && !StringUtil.isEmpty(billid) && vos!=null && vos.size()>0 ){
+			if(StringUtils.isEmpty(bills) && vos!=null && vos.size()>0 ){
 				GoodsBillVO address = stockOut.qryGoodsBill(vos.get(0).getVbillcode());
 				json.setData(address);
 			}
