@@ -90,7 +90,8 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         sql.append(" left join cn_goodstype t on g.pk_goodstype = t.pk_goodstype    ");
         sql.append(" left join cn_goodsspec s on num.pk_goodsspec = s.pk_goodsspec  ");
         sql.append(" left join (select sob.pk_goods, sob.pk_goodsspec, sum(case so.vstatus when 0 then sob.nnum else 0 end) as noutnum, ");
-        sql.append("  sum(case so.vstatus when 1 then sob.nnum else 0 end) as nsendnum");
+//        sql.append("  sum(case so.vstatus when 1 then sob.nnum else 0 end) as nsendnum");
+        sql.append("  sum(case when so.vstatus=1 and sob.pk_goodsbill_b is not null then sob.nnum else 0 end) as nsendnum");
         sql.append(" from cn_stockout so   ");
         sql.append(" left join cn_stockout_b sob on sob.pk_stockout =  so.pk_stockout    ");
         sql.append("  where (so.vstatus = 0 or so.vstatus = 1)  and nvl(so.dr, 0) = 0 and nvl(sob.dr, 0) = 0");
