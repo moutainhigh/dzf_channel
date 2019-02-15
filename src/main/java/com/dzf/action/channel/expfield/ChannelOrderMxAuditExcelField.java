@@ -36,7 +36,7 @@ public class ChannelOrderMxAuditExcelField implements IExceport<GoodsBillMxVO> {
 			new Fieldelement("invspec", "规格",false,0,false),
 			new Fieldelement("invtype", "型号",false,0,false),
 			new Fieldelement("amount", "数量",false,0,false),
-			new Fieldelement("nprice", "单价",true,2,false),
+			new Fieldelement("nprice", "售价",true,2,false),
 			new Fieldelement("ntotalmny","金额",true,2,false),
 			new Fieldelement("vstatus","订单状态",false,0,false,new String[]{"待确认","待发货","已发货","已收货","已取消"}),
 			new Fieldelement("dconfirmtime","扣款日期",false,0,false),

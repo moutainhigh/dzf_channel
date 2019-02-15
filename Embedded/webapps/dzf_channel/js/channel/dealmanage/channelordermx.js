@@ -169,7 +169,7 @@ function load(){
             halign:'center',
 		}, {
 			width : '100',
-			title : '单价',
+			title : '售价',
 			field : 'price',
 			align:'right',
             halign:'center',

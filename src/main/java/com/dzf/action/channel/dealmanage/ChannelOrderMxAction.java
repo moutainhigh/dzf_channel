@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,26 +20,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChannelOrderMxAuditExcelField;
-import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
-import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
-import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
 import com.dzf.model.pub.Grid;
-import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.dealmanage.IChannelOrderMxService;
-import com.dzf.service.channel.dealmanage.IChannelOrderService;
-import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
@@ -59,9 +51,6 @@ public class ChannelOrderMxAction extends BaseAction<GoodsBillMxVO> {
 	
 	@Autowired
 	private IChannelOrderMxService orderser;
-	
-	@Autowired
-	private IPubService pubser;
 
 	/**
 	 * 查询明细O
@@ -98,7 +87,6 @@ public class ChannelOrderMxAction extends BaseAction<GoodsBillMxVO> {
 	public void queryComboBox() {
 		Grid grid = new Grid();
 		try {
-			UserVO uservo = getLoginUserInfo();
 			List<GoodsBoxVO> list = orderser.queryComboBox();
 			if (list == null || list.size() == 0) {
 				grid.setRows(new ArrayList<GoodsBoxVO>());
