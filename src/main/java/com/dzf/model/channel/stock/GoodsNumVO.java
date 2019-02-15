@@ -2,8 +2,6 @@ package com.dzf.model.channel.stock;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
@@ -41,9 +39,6 @@ public class GoodsNumVO extends SuperVO {
     
     @FieldAlias("stockin")
     private Integer istockinnum;//累计入库数量
-    
-    @FieldAlias("stockmny")
-    private DZFDouble isstockmny;//累计入库成本
     
     @FieldAlias("outnum")
     private Integer ioutnum;//累计出库数量
@@ -176,14 +171,6 @@ public class GoodsNumVO extends SuperVO {
 
 	public void setGoodsprice(DZFDouble goodsprice) {
 		this.goodsprice = goodsprice;
-	}
-
-	public DZFDouble getIsstockmny() {
-		return isstockmny;
-	}
-
-	public void setIsstockmny(DZFDouble isstockmny) {
-		this.isstockmny = isstockmny;
 	}
 
 	public Integer getIoutnum() {

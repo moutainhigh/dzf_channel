@@ -2,8 +2,6 @@ package com.dzf.action.channel.expfield;
 
 import java.util.Date;
 
-import com.dzf.model.channel.ChnPayBillVO;
-import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.stock.GoodsNumVO;
 import com.dzf.pub.Fieldelement;
 import com.dzf.pub.IExceport;
@@ -13,7 +11,7 @@ import com.dzf.pub.lang.DZFDate;
  * 商品数量明细表导出配置
  *
  */
-public class GoodsNumAuditExcelField implements IExceport<GoodsNumVO> {
+public class GoodsNumExcelField implements IExceport<GoodsNumVO> {
 	
 	private GoodsNumVO[] vos = null;
 	
@@ -32,9 +30,8 @@ public class GoodsNumAuditExcelField implements IExceport<GoodsNumVO> {
 			new Fieldelement("invspec", "规格",false,0,false),
 			new Fieldelement("invtype", "型号",false,0,false),
 			new Fieldelement("goodsunit", "单位",false,0,false),
-			new Fieldelement("goodsprice", "单价",true,2,false),
+			new Fieldelement("goodsprice", "售价",true,2,false),
 			new Fieldelement("istockinnum", "累计入库数量",false,0,false),
-			new Fieldelement("isstockmny", "累计入库成本",true,2,false),
 			new Fieldelement("ilocknum", "订单购买数量",false,0,false),
 			new Fieldelement("ioutnum", "累计出库数量",false,0,false),
 			new Fieldelement("noutnum", "待出库数量",false,0,false),

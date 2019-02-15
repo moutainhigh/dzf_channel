@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.GoodsNumAuditExcelField;
+import com.dzf.action.channel.expfield.GoodsNumExcelField;
 import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.stock.GoodsNumVO;
@@ -96,7 +96,7 @@ public class GoodsNumAction extends BaseAction<GoodsNumVO> {
 		GoodsNumVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,GoodsNumVO[].class, JSONConvtoJAVA.getParserConfig());
 		HttpServletResponse response = getResponse();
 		Excelexport2003<GoodsNumVO> ex = new Excelexport2003<>();
-		GoodsNumAuditExcelField fields = new GoodsNumAuditExcelField();
+		GoodsNumExcelField fields = new GoodsNumExcelField();
 		fields.setVos(expVOs);
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
