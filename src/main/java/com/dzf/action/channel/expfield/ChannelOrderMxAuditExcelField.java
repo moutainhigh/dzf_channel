@@ -2,9 +2,7 @@ package com.dzf.action.channel.expfield;
 
 import java.util.Date;
 
-import com.dzf.model.channel.ChnPayBillVO;
 import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
-import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.pub.Fieldelement;
 import com.dzf.pub.IExceport;
 import com.dzf.pub.lang.DZFDate;
