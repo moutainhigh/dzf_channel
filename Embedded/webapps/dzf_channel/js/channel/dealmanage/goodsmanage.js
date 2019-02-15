@@ -143,7 +143,7 @@ function expendRow(){
                 columns:[[
                     {field:'spec',title:'规格',width:150,},
                     {field:'type',title:'型号',width:150,},
-                    {field:'price',title:'单价',width:100,align:'right',
+                    {field:'price',title:'售价',width:100,align:'right',
                    	 formatter : function(value, row, index) {
             				if (value == 0)
             					return "0.00";
