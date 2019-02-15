@@ -25,11 +25,12 @@
 					<div class="h30 h30-arrow" id="cxjs">
 						<label class="mr5">日期：</label>
 						<input id="begdate" name="begdate" type="text" class="easyui-datebox" 
-							 data-options="width:137,height:27" />  - 
-					    <input id="enddate" name="enddate" type="text" class="easyui-datebox" 
-							data-options="width:137,height:27" />
+							 data-options="width:137,height:27" />  -
+							 <input id="enddate" name="enddate" type="text" class="easyui-datebox" 
+							data-options="width:137,height:27" />  
+					   
 					</div>
-						<a class="ui-btn save_input" onclick="reloadData()">查询</a>
+						<a class="ui-btn save_input" onclick="reloadData()" style="height:21px;margin-top:2px;margin-left:9px">查询</a>
 				</div>
 				<div class="left mod-crumb">
 					<span class="cur"></span>

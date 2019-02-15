@@ -160,10 +160,6 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(num.dr, 0) = 0 ");
 		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and si.vstatus = 2 ");
-		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
-			sql.append("   AND si.vbillcode like ? \n");
-			spm.addParam("%" + qvo.getVbillcode() + "%");
-		}
 
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 
@@ -211,10 +207,6 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and (so.vstatus = 1 or so.vstatus = 2) ");
 		sql.append("    and nvl(so.itype,0) = 0 ");
-		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
-			sql.append("   AND so.vbillcode like ? \n");
-			spm.addParam("%" + qvo.getVbillcode() + "%");
-		}
 
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 
@@ -231,7 +223,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("  union all ");
-		sql.append(" select");
+		sql.append(" select distinct");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append("        gs.invspec, gs.invtype, ");
 		sql.append("       so.dconfirmtime,3 vitype,  so.vbillcode,");
@@ -262,11 +254,6 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and (so.vstatus = 1 or so.vstatus = 2) ");
 		sql.append("    and so.itype = 1");
-
-		if (!StringUtil.isEmpty(qvo.getVbillcode())) {
-			sql.append("   AND so.vbillcode like ? \n");
-			spm.addParam("%" + qvo.getVbillcode() + "%");
-		}
 
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 
@@ -342,7 +329,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		}
 
 		sql.append(" ) s ");
-		sql.append("  order by s.pk_goods,s.invspec,s.invtype,s.vitype,s.dconfirmtime");
+		sql.append("  order by s.pk_goods,s.invspec,s.invtype,s.dconfirmtime");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
