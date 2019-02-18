@@ -5,6 +5,7 @@ var status = "brows";
 
 $(function(){
 	initQry();
+	initCombobox();
 	load();
 	reloadData();
 });
@@ -21,7 +22,37 @@ function initQry(){
 	queryBoxChange('#begdate','#enddate');
 	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
+	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
+	
 }
+
+function initCombobox(){
+	$("#goodsname").combobox({
+		onShowPanel: function () {
+			initType();
+        }
+    })
+}
+
+/**
+ * 查询商品下拉
+ */
+function initType(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/dealmanage/stockoutin!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$('#goodsname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+};
 
 /**
  * 列表表格加载
@@ -33,7 +64,7 @@ function load(){
 		    rownumbers : true,
 		    fitColumns : false,
 		    height : Public.setGrid().h,
-		    singleSelect : false,
+		    singleSelect : true,
 		    checkOnSelect : false,
 		    pagination : true,// 分页工具栏显示
 		    pageSize : DZF.pageSize,
@@ -61,6 +92,9 @@ function load(){
 		            	      halign : 'center',
 		            	      align : 'left',
 		            	      rowspan:2,
+		            	      formatter : function(value, row, index) {
+		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toRenew()">' + value + '</a>';
+		                      }
 		            	    }, {
 		            	      width : '100',
 		            	      title : '规格',
@@ -188,10 +222,17 @@ String.prototype.startWith=function(str){
 function reloadData(){
 	var url = DZF.contextPath + '/dealmanage/stocksum!query.action';
 	$('#grid').datagrid('options').url = url;
+	var gids=$('#goodsname').combobox('getValues');
+	var strgids="";
+	for(i=0;i<gids.length;i++){
+		strgids+=","+gids[i];
+	}
+	strgids=strgids.substring(1);
 	
 	$('#grid').datagrid('load', {
 		'begdate' : $("#begdate").datebox('getValue'),
 		'enddate' : $("#enddate").datebox('getValue'),
+		'gid' :  strgids,
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#grid').datagrid('clearChecked');
@@ -199,9 +240,26 @@ function reloadData(){
 }
 
 /**
+ * 清除查询条件
+ */
+function clearParams(){
+	$("#qvcode").textbox('setValue',null);
+	$("#goodsname").combobox('clear');
+}
+
+
+/**
  * 取消
  */
 function closeCx(){
 	$("#qrydialog").hide();
+}
+
+/**
+ * 跳转到出入库明细表页面
+ */
+function toRenew(){
+	var url = 'channel/dealmanage/stockoutin.jsp?operate=toRenew';
+	parent.addTabNew('出入库明细表', url);
 }
 
