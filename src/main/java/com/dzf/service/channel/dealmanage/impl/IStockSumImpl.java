@@ -92,12 +92,14 @@ public class IStockSumImpl implements IStockSumService {
 			sql.append("   where substr(si.dconfirmtime,0,10) < ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
+		sql.append("     and nvl(ib.dr,0)=0");
 		sql.append("    group by pk_goodsspec, pk_goods) sib1 on sib1.pk_goods =  num.pk_goods ");
 		sql.append("    and sib1.pk_goodsspec = num.pk_goodsspec");
 		
 		sql.append("    left join (select sum(nmny) mny,sum(nnum) num,pk_goodsspec,pk_goods");
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin = ib.pk_stockin ");
+		
 		if (qvo.getBegdate() != null) {
 			sql.append("   where substr(si.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
@@ -106,6 +108,7 @@ public class IStockSumImpl implements IStockSumService {
 			sql.append("   and  substr(si.dconfirmtime,0,10) <= ? \n");
 			spm.addParam(qvo.getEnddate());
 		}
+		sql.append("     and nvl(ib.dr,0)=0");
 		sql.append("     group by pk_goodsspec, pk_goods) sib2 on sib2.pk_goods =num.pk_goods");
 		sql.append("     and sib2.pk_goodsspec = num.pk_goodsspec");
 		sql.append("     left join (select sum(nnum) num, sum(nmny) mny, pk_goodsspec,pk_goods");
@@ -119,6 +122,7 @@ public class IStockSumImpl implements IStockSumService {
 			sql.append("   and substr(so.dconfirmtime,0,10) <= ?  \n ");
 			spm.addParam(qvo.getEnddate());
 		}
+		sql.append("     and nvl(ob.dr,0)=0");
 		sql.append("     group by pk_goodsspec, pk_goods) sob on sob.pk_goods =num.pk_goods");
 		sql.append("     and sob.pk_goodsspec = ");
 		sql.append("     num.pk_goodsspec");

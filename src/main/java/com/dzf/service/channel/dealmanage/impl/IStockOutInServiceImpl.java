@@ -299,7 +299,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("     where nvl(ob.dr, 0) = 0");
 		sql.append("     and nvl(so.dr, 0) = 0");
 		if (qvo.getBegdate() != null) {
-			sql.append("     AND substr(so.dconfirmtime, 0, 10) <= ?  \n");
+			sql.append("     AND substr(so.dconfirmtime, 0, 10) < ?  \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("     group by pk_goodsspec, pk_goods, invspec, invtype) sob on sob.pk_goods = ");
