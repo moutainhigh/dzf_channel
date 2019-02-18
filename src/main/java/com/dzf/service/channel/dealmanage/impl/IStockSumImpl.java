@@ -74,12 +74,11 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    nvl(sib1.num,0)  nnumstart,");
 		sql.append("    decode( nvl(sib1.num,0), 0, 0, sib1.mny /nvl(sib1.num,0) )  npricestart,");
 		sql.append("    sib1.mny totalmoneys, ");
-		sql.append("    ((nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) + nvl(sib2.num, 0) - ");
-		sql.append("    nvl(sib3.num, 0)) nnumend, ");
+		sql.append("   ( (nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0))) nnumend, ");
 		sql.append("    (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0)) totalmoneye, ");
-		sql.append("    decode(((  nvl(sib3.num,0) + nvl(sib2.num, 0) - nvl(sob.num, 0)) ),0,0,");
+		sql.append("    decode((( nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0) ) ),0,0,");
 		sql.append("    ( (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0))   /");
-		sql.append("    ( (  nvl(sib3.num, 0) + nvl(sib2.num, 0) - nvl(sob.num, 0)) )) ) npriceend");
+		sql.append("    ( (  nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0)) )) ) npriceend");
 		
 		sql.append("    from cn_goods cg");
 		sql.append("    left join cn_goodsspec spec on cg.pk_goods = spec.pk_goods ");
@@ -90,25 +89,11 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin =ib.pk_stockin ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   where substr(si.dconfirmtime,0,10) <= ? \n");
+			sql.append("   where substr(si.dconfirmtime,0,10) < ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("    group by pk_goodsspec, pk_goods) sib1 on sib1.pk_goods =  num.pk_goods ");
 		sql.append("    and sib1.pk_goodsspec = num.pk_goodsspec");
-		
-		
-		sql.append("    left join (select sum(nmny) mny,sum(nnum) num, ");
-		sql.append("    pk_goodsspec, pk_goods ");
-		sql.append("    from cn_stockin_b ib ");
-		sql.append("    left join cn_stockin si on si.pk_stockin =ib.pk_stockin ");
-		if (qvo.getEnddate()!= null) {
-			sql.append("   where substr(si.dconfirmtime,0,10) <= ? \n");
-			spm.addParam(qvo.getEnddate());
-		}
-		sql.append("    group by pk_goodsspec, pk_goods) sib3 on sib3.pk_goods =  num.pk_goods ");
-		sql.append("    and sib3.pk_goodsspec = num.pk_goodsspec");
-		
-		
 		
 		sql.append("    left join (select sum(nmny) mny,sum(nnum) num,pk_goodsspec,pk_goods");
 		sql.append("    from cn_stockin_b ib ");

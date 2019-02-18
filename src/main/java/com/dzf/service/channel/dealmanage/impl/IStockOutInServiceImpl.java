@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,10 +86,13 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 				 {
 					 //销售出库和其他出库
 					 if(balanceNum!=0){
-						 stockOutInMVO.setNpriceout(totalmoneyb / balanceNum);//出库成本价
+						 stockOutInMVO.setNpriceout((totalmoneyb / balanceNum));//出库成本价
 					 }
-					 stockOutInMVO.setTotalmoneyout(stockOutInMVO.getNpriceout()*stockOutInMVO.getNnumout());
 					//出库金额
+					 DecimalFormat df = new DecimalFormat("#.00");
+					 Double npriceout=stockOutInMVO.getNpriceout();
+					 stockOutInMVO.setTotalmoneyout(Double.parseDouble(df.format(npriceout)) *stockOutInMVO.getNnumout());
+					
 					 stockOutInMVO.setBalanceNum(balanceNum-stockOutInMVO.getNnumout());//结存数量
 					 stockOutInMVO.setTotalmoneyb(totalmoneyb-stockOutInMVO.getTotalmoneyout());//结存金额
 					 if( stockOutInMVO.getBalanceNum()!=0){//结存成本价
