@@ -65,7 +65,6 @@ public class IStockSumImpl implements IStockSumService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-
 		sql.append("    select cg.pk_goods, cg.vgoodscode, cg.vgoodsname, ");
 		sql.append("    spec.invspec,spec.invtype, ");
 		sql.append("    sib2.num nnumin,");
@@ -76,11 +75,11 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    decode( nvl(sib1.num,0), 0, 0, sib1.mny /nvl(sib1.num,0) )  npricestart,");
 		sql.append("    sib1.mny totalmoneys, ");
 		sql.append("    ((nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) + nvl(sib2.num, 0) - ");
-		sql.append("    nvl(sob.num, 0)) nnumend, ");
+		sql.append("    nvl(sib3.num, 0)) nnumend, ");
 		sql.append("    (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0)) totalmoneye, ");
-		sql.append("    decode(((nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) + nvl(sib2.num, 0) - nvl(sob.num, 0)) ,0,0,");
+		sql.append("    decode(((  nvl(sib3.num,0) + nvl(sib2.num, 0) - nvl(sob.num, 0)) ),0,0,");
 		sql.append("    ( (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0))   /");
-		sql.append("    ( (nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) + nvl(sib2.num, 0) - nvl(sob.num, 0)) ) ) npriceend");
+		sql.append("    ( (  nvl(sib3.num, 0) + nvl(sib2.num, 0) - nvl(sob.num, 0)) )) ) npriceend");
 		
 		sql.append("    from cn_goods cg");
 		sql.append("    left join cn_goodsspec spec on cg.pk_goods = spec.pk_goods ");
@@ -91,20 +90,35 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin =ib.pk_stockin ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   where si.dconfirmtime <= ? \n");
+			sql.append("   where substr(si.dconfirmtime,0,10) <= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("    group by pk_goodsspec, pk_goods) sib1 on sib1.pk_goods =  num.pk_goods ");
 		sql.append("    and sib1.pk_goodsspec = num.pk_goodsspec");
+		
+		
+		sql.append("    left join (select sum(nmny) mny,sum(nnum) num, ");
+		sql.append("    pk_goodsspec, pk_goods ");
+		sql.append("    from cn_stockin_b ib ");
+		sql.append("    left join cn_stockin si on si.pk_stockin =ib.pk_stockin ");
+		if (qvo.getEnddate()!= null) {
+			sql.append("   where substr(si.dconfirmtime,0,10) <= ? \n");
+			spm.addParam(qvo.getEnddate());
+		}
+		sql.append("    group by pk_goodsspec, pk_goods) sib3 on sib3.pk_goods =  num.pk_goods ");
+		sql.append("    and sib3.pk_goodsspec = num.pk_goodsspec");
+		
+		
+		
 		sql.append("    left join (select sum(nmny) mny,sum(nnum) num,pk_goodsspec,pk_goods");
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin = ib.pk_stockin ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   where si.dconfirmtime >= ? \n");
+			sql.append("   where substr(si.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		if (qvo.getEnddate() != null) {
-			sql.append("   and  si.dconfirmtime <= ? \n");
+			sql.append("   and  substr(si.dconfirmtime,0,10) <= ? \n");
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("     group by pk_goodsspec, pk_goods) sib2 on sib2.pk_goods =num.pk_goods");
@@ -113,16 +127,16 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("     from cn_stockout_b ob");
 		sql.append("     left join cn_stockout so on ob.pk_stockout = so.pk_stockout");
 		if (qvo.getBegdate() != null) {
-			sql.append("   where so.dconfirmtime >= ? \n");
+			sql.append("   where substr(so.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		if (qvo.getEnddate() != null) {
-			sql.append("   and so.dconfirmtime <= ?  \n ");
+			sql.append("   and substr(so.dconfirmtime,0,10) <= ?  \n ");
 			spm.addParam(qvo.getEnddate());
 		}
-		sql.append("     group by pk_goodsspec, pk_goods) sob on sob.pk_goods =sib2.pk_goods");
+		sql.append("     group by pk_goodsspec, pk_goods) sob on sob.pk_goods =num.pk_goods");
 		sql.append("     and sob.pk_goodsspec = ");
-		sql.append("     sib2.pk_goodsspec");
+		sql.append("     num.pk_goodsspec");
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 
 			String[] strs = qvo.getPk_goods().split(",");
