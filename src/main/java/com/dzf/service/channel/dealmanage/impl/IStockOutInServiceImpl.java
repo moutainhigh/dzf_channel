@@ -300,7 +300,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("     left join cn_stockin si on si.pk_stockin = b.pk_stockin");
 		sql.append("     where nvl(b.dr, 0) = 0 and nvl(si.dr, 0) = 0    ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   AND substr(si.dconfirmtime,0,10) <= ? \n");
+			sql.append("   AND substr(si.dconfirmtime,0,10) < ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("     group by pk_goodsspec, pk_goods, invspec, invtype) sib");
