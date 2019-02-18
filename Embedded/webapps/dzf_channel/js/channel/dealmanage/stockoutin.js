@@ -34,7 +34,6 @@ function initCombobox(){
 }
 
 /**
- * 查询出入库类别下拉
  * 查询商品下拉
  */
 
@@ -65,7 +64,7 @@ function load(){
 		    rownumbers : true,
 		    fitColumns : false,
 		    height : Public.setGrid().h,
-		    singleSelect : false,
+		    singleSelect : true,
 		    checkOnSelect : false,
 		    pagination : true,// 分页工具栏显示
 		    pageSize : DZF.pageSize,

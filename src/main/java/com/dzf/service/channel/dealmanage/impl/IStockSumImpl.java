@@ -3,6 +3,7 @@ package com.dzf.service.channel.dealmanage.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.Security.SecQOPPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,8 +72,8 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    spec.pk_goodsspec, ");
 		sql.append("    sib2.mny totalmoneyin, ");
 		sql.append("    sob.num nnumout,  sob.mny totalmoneyout,");
-		sql.append("    (nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) nnumstart,");
-		sql.append("    decode(sib1.num, 0, 0, sib1.mny / sib1.num) npricestart,");
+		sql.append("    nvl(sib1.num,0)  nnumstart,");
+		sql.append("    decode( nvl(sib1.num,0), 0, 0, sib1.mny /nvl(sib1.num,0) )  npricestart,");
 		sql.append("    sib1.mny totalmoneys, ");
 		sql.append("    ((nvl(num.istocknum, 0) - nvl(num.ioutnum, 0)) + nvl(sib2.num, 0) - ");
 		sql.append("    nvl(sob.num, 0)) nnumend, ");
@@ -90,7 +91,7 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin =ib.pk_stockin ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   and si.dconfirmtime <= ? \n");
+			sql.append("   where si.dconfirmtime <= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("    group by pk_goodsspec, pk_goods) sib1 on sib1.pk_goods =  num.pk_goods ");
@@ -99,7 +100,7 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin = ib.pk_stockin ");
 		if (qvo.getBegdate() != null) {
-			sql.append("   and si.dconfirmtime >= ? \n");
+			sql.append("   where si.dconfirmtime >= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		if (qvo.getEnddate() != null) {
@@ -112,17 +113,22 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("     from cn_stockout_b ob");
 		sql.append("     left join cn_stockout so on ob.pk_stockout = so.pk_stockout");
 		if (qvo.getBegdate() != null) {
-			sql.append("   and so.dconfirmtime >= ? \n");
+			sql.append("   where so.dconfirmtime >= ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
 		if (qvo.getEnddate() != null) {
-			sql.append("   and so.dconfirmtime <= ?  \n");
+			sql.append("   and so.dconfirmtime <= ?  \n ");
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("     group by pk_goodsspec, pk_goods) sob on sob.pk_goods =sib2.pk_goods");
 		sql.append("     and sob.pk_goodsspec = ");
 		sql.append("     sib2.pk_goodsspec");
-		
+		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
+
+			String[] strs = qvo.getPk_goods().split(",");
+			String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			sql.append(" where cg.pk_goods in (").append(inSql).append(")");
+		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
