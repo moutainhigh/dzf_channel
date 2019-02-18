@@ -324,7 +324,7 @@ function initSetGrid(){
 					invalidMessage : "型号最大长度不能超过25",
 				}
 			}
-		}, {width : '100',title : '单价',align:'right',halign:'center',field : 'price',
+		}, {width : '100',title : '售价',align:'right',halign:'center',field : 'price',
 			editor : {
 				type : 'numberbox',
 				options : {
