@@ -484,6 +484,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		List<GoodsBillBVO> list = bmap.get(cvo.getPk_source());
 		if (list != null && list.size() > 0) {
 			PiaoTongInvBVO bvo = null;
+			StringBuffer spectype = null;
 			for (GoodsBillBVO blvo : list) {
 				bvo = new PiaoTongInvBVO();
 				bvo.setGoodsName(blvo.getVgoodsname());
@@ -498,7 +499,16 @@ public class InvManagerServiceImpl implements InvManagerService {
 				bvo.setUnitPrice(blvo.getNprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 单价
 				bvo.setInvoiceAmount(blvo.getNtotalmny().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
 				bvo.setTaxRateValue("0.16");// 税率
-				bvo.setSpecificationModel(blvo.getInvspec()+""+blvo.getInvtype());//规格型号
+				spectype = new StringBuffer();
+				if(!StringUtil.isEmpty(blvo.getInvspec())){
+					spectype.append(blvo.getInvspec());
+				}
+				if(!StringUtil.isEmpty(blvo.getInvtype())){
+					spectype.append(blvo.getInvtype());
+				}
+				if(spectype != null && spectype.length() > 0){
+					bvo.setSpecificationModel(spectype.toString());//规格型号
+				}
 				bvo.setMeteringUnit(blvo.getVmeasname());//单位
 				itlist.add(bvo);
 			}
