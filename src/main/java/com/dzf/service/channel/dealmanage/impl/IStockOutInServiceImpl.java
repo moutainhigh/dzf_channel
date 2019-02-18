@@ -156,12 +156,9 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("     on gs.pk_goods=sib.pk_goods");
 		sql.append("     and sib.pk_goodsspec=gs.pk_goodsspec");
 		sql.append("     left join cn_stockin si on si.pk_stockin=sib.pk_stockin  ");
-		sql.append("     left join cn_stocknum num on sib.pk_goods = num.pk_goods and");
-		sql.append("     sib.pk_goodsspec =  num.pk_goodsspec");
 		sql.append("  where nvl(cg.dr, 0) = 0 ");
 		sql.append("    and nvl(si.dr, 0) = 0 ");
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
-		sql.append("    and nvl(num.dr, 0) = 0 ");
 		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and si.vstatus = 2 ");
 
@@ -180,7 +177,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("  union all");
-		sql.append(" select distinct");
+		sql.append(" select ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append("        gs.invspec, gs.invtype, ");
 		sql.append("       so.dconfirmtime,2 vitype,  so.vbillcode,");
@@ -198,17 +195,11 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
 		sql.append("    and sob.pk_goodsspec = gs.pk_goodsspec");
 		sql.append("    left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
-		sql.append("    left join cn_stockin_b sib");
-		sql.append("    on sob.pk_goods = sib.pk_goods");
-		sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
-		sql.append("     left join cn_stocknum num on num.pk_goods=sib.pk_goods and num.pk_goodsspec=sib.pk_goodsspec");
 
 		sql.append("  where nvl(cg.dr, 0) = 0 ");
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
-		sql.append("    and nvl(num.dr, 0) = 0 ");
-		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and (so.vstatus = 1 or so.vstatus = 2) ");
 		sql.append("    and nvl(so.itype,0) = 0 ");
 
@@ -227,7 +218,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			spm.addParam(qvo.getEnddate());
 		}
 		sql.append("  union all ");
-		sql.append(" select distinct");
+		sql.append(" select ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append("        gs.invspec, gs.invtype, ");
 		sql.append("       so.dconfirmtime,3 vitype,  so.vbillcode,");
@@ -245,17 +236,11 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("    left join cn_stockout_b sob on sob.pk_goods= gs.pk_goods ");
 		sql.append("    and sob.pk_goodsspec = gs.pk_goodsspec");
 		sql.append("    left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
-		sql.append("    left join cn_stockin_b sib");
-		sql.append("    on sob.pk_goods = sib.pk_goods");
-		sql.append("    and sib.pk_goodsspec = sob.pk_goodsspec");
-		sql.append("     left join cn_stocknum num on num.pk_goods=sib.pk_goods and num.pk_goodsspec=sib.pk_goodsspec");
 
 		sql.append("  where nvl(cg.dr, 0) = 0 ");
 		sql.append("    and nvl(gs.dr, 0) = 0 ");
 		sql.append("    and nvl(sob.dr, 0) = 0 ");
 		sql.append("    and nvl(so.dr, 0) = 0 ");
-		sql.append("    and nvl(num.dr, 0) = 0 ");
-		sql.append("    and nvl(sib.dr, 0) = 0 ");
 		sql.append("    and (so.vstatus = 1 or so.vstatus = 2) ");
 		sql.append("    and so.itype = 1");
 
