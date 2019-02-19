@@ -254,7 +254,8 @@ function reloadData(){
         istatus : $('#istatus').combobox('getValue'),
         itype : $('#qitype').combobox('getValue'),
         qrytype : qrytype,
-        aname　: $("#aname").combobox('getValue')
+        aname　: $("#aname").combobox('getValue'),
+        paytype : $('#qpaytype').combobox('getValue'),
     });
     
     $('#qrydialog').hide();

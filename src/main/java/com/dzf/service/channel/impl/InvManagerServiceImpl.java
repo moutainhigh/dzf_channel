@@ -161,6 +161,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 			sql.append(" and a.corpname like ?");
 			spm.addParam("%" + paramvo.getCorpname() + "%");
 		}
+		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
+			sql.append(" and a.ipaytype = ?");
+			spm.addParam(paramvo.getIpaytype());
+		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

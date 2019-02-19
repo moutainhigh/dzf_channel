@@ -64,7 +64,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 290px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 320px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -115,6 +115,14 @@
 						<option value="0">专用发票</option>
 						<option value="1">普通发票</option>
 						<option value="2">电子发票</option>
+					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:97px;text-align:right">付款类型：</label>
+					<select id="qpaytype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="0">预付款</option>
+						<option value="2">预付款+返点</option>
 					</select>
 				</div>
 			</form>
