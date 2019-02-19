@@ -77,7 +77,7 @@ public class StockInBVO extends SuperVO {
 	private DZFDouble ntotalmny;//采购金额
 	
 	@FieldAlias("tcost")
-	private DZFDouble ntotalcost;//成本金额
+	private DZFDouble ntotalcost;//成本合计
 	
 	//仅作数据传递和展示使用begin*****************
 	
