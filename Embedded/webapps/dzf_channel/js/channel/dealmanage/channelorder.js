@@ -611,9 +611,16 @@ function reloadData(){
 	var qstatus = $('#qstatus').combobox('getValues');
 	var vstatus = "";
 	for( i= 0; i < qstatus.length; i++){
-		vstatus+=","+qstatus[i];
+		if(qstatus[i] == -1){
+			vstatus = "";
+			break;
+		}else{
+			vstatus+=","+qstatus[i];
+		}
 	}
-	vstatus = vstatus.substring(1);
+	if(vstatus != ""){
+		vstatus = vstatus.substring(1);
+	}
 	
 	var url = DZF.contextPath + '/dealmanage/channelorder!query.action';
 	$('#grid').datagrid('options').url = url;
@@ -649,10 +656,11 @@ function qryData(){
  * 清除查询条件
  */
 function clearParams(){
-	$("#qbcode").textbox('setValue',null);
-	$("#qcpname").textbox('setValue',null);
+	$("#qbcode").textbox('setValue', null);
+	$("#qcpname").textbox('setValue', null);
 	$("#qcpid").val(null);
-	$('#qstatus').combobox('clear');
+	$('#qstatus').combobox('setValue', -1);
+	$('#tistatus').combobox('setValue',-1);
 }
 
 /**

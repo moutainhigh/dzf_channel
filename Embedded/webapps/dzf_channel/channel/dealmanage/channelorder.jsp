@@ -82,6 +82,7 @@
 				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto',multiple:true" 
 					editable="false" style="width:290px;height:28px;">
 					<!-- 状态  0：待确认；1：待发货；2：已发货；3：已收货；4：已取消； -->
+					<option value="-1">全部</option>
 					<option value="0">待确认</option>
 					<option value="1">待发货</option>
 					<option value="2">已发货</option>
