@@ -1086,15 +1086,17 @@ function showInfo(index){
  * @returns {String}
  */
 function getImgUrl(row) {
-	var ext = getFileExt(row['fpath']);
-	if ("pdf" == ext.toLowerCase()) {
-		return "../../images/typeicon/pdf.jpg";
-	} else if ("txt" == ext.toLowerCase()) {
-		return "../../images/typeicon/txt.jpg";
+	if(!isEmpty(row['fpath'])){
+		var ext = getFileExt(row['fpath']);
+		if ("pdf" == ext.toLowerCase()) {
+			return "../../images/typeicon/pdf.jpg";
+		} else if ("txt" == ext.toLowerCase()) {
+			return "../../images/typeicon/txt.jpg";
+		}
+		return DZF.contextPath
+		+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='
+		+ row.doc_id;
 	}
-	return DZF.contextPath
-			+ '/dealmanage/goodsmanage!getAttachImage.action?&doc_id='
-			+ row.doc_id;
 }
 
 /**
