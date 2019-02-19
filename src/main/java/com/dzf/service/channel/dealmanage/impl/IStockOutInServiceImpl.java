@@ -16,6 +16,7 @@ import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IStockOutInService;
 
@@ -51,7 +52,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		String idString0="";
 		String idString1="";
 		Integer balanceNum = null;
-		Double totalmoneyb=null;
+		DZFDouble totalmoneyb=null;
 		for (StockOutInMVO stockOutInMVO : totalList) {
 			 
               if(stockOutInMVO.getVitype()==0)
@@ -61,46 +62,50 @@ public class IStockOutInServiceImpl implements IStockOutInService {
             	  //期初数量
      			 balanceNum = stockOutInMVO.getBalanceNum();
      			  //期初金额
-     			totalmoneyb = stockOutInMVO.getTotalmoneyb();
+     			 totalmoneyb = stockOutInMVO.getTotalmoneyb();
 			 }else {
 				 String vgoodscode=stockOutInMVO.getVgoodscode();
 				 String invspec=stockOutInMVO.getInvspec();
 				 String invtype=stockOutInMVO.getInvtype();
 				 String pk_goods=stockOutInMVO.getPk_goods();
 				 idString1=pk_goods+vgoodscode+invspec+invtype;
-//				 
+			 
 				 if(idString0.equals(idString1)&&stockOutInMVO.getVitype()==1) 
 				 {
 					 //商品入库
 					 stockOutInMVO.setBalanceNum(balanceNum+stockOutInMVO.getNnumin());//结存数量
-					 stockOutInMVO.setTotalmoneyb(totalmoneyb+stockOutInMVO.getTotalmoneyin());//结存金额
-					 if( stockOutInMVO.getBalanceNum()!=0){//结存成本价
-						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb() / stockOutInMVO.getBalanceNum());
+					 if(stockOutInMVO.getTotalmoneyin()!=null){
+						 stockOutInMVO.setTotalmoneyb(totalmoneyb.add(stockOutInMVO.getTotalmoneyin()));//结存金额
+					 }
+					 if(stockOutInMVO.getBalanceNum()!=0){//结存单价
+						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()) );
 					 }
 					 
 					 balanceNum=balanceNum+stockOutInMVO.getNnumin();
-					 totalmoneyb=totalmoneyb+stockOutInMVO.getTotalmoneyin();
+					 if(stockOutInMVO.getTotalmoneyin()!=null){
+						 totalmoneyb=totalmoneyb.add(stockOutInMVO.getTotalmoneyin());
+					 }
 				 }
 				 if(idString0.equals(idString1)&&(stockOutInMVO.getVitype()==2
 						            ||stockOutInMVO.getVitype()==3)) 
 				 {
 					 //销售出库和其他出库
 					 if(balanceNum!=0){
-						 stockOutInMVO.setNpriceout((totalmoneyb / balanceNum));//出库成本价
+						 stockOutInMVO.setNpriceout(totalmoneyb.div(balanceNum));//出库单价
 					 }
 					//出库金额
 					 DecimalFormat df = new DecimalFormat("#.00");
-					 Double npriceout=stockOutInMVO.getNpriceout();
-					 stockOutInMVO.setTotalmoneyout(Double.parseDouble(df.format(npriceout)) *stockOutInMVO.getNnumout());
-					
+					 DZFDouble npriceout=stockOutInMVO.getNpriceout();
+					// stockOutInMVO.setTotalmoneyout(Double.parseDouble(df.format(npriceout)) *stockOutInMVO.getNnumout());
+					 stockOutInMVO.setTotalmoneyout(npriceout.setScale(0, 2).multiply(stockOutInMVO.getNnumout()));
 					 stockOutInMVO.setBalanceNum(balanceNum-stockOutInMVO.getNnumout());//结存数量
-					 stockOutInMVO.setTotalmoneyb(totalmoneyb-stockOutInMVO.getTotalmoneyout());//结存金额
-					 if( stockOutInMVO.getBalanceNum()!=0){//结存成本价
-						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb() / stockOutInMVO.getBalanceNum());
+					 stockOutInMVO.setTotalmoneyb(totalmoneyb.sub(stockOutInMVO.getTotalmoneyout()));//结存金额
+					 if( stockOutInMVO.getBalanceNum()!=0){//结存单价
+					 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
 					 }
 					//出库金额
 					 balanceNum=balanceNum-stockOutInMVO.getNnumout();
-					 totalmoneyb=totalmoneyb-stockOutInMVO.getTotalmoneyout();
+					 totalmoneyb=totalmoneyb.sub(stockOutInMVO.getTotalmoneyout());
 				 }
 				 
 			 }
@@ -142,7 +147,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  (select cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append(
 				"         gs.invspec, gs.invtype,si.dconfirmtime,1 vitype,si.vbillcode,nvl(sib.nnum,0) nnumin, sib.nprice npricein,");
-		sql.append("        sib.nprice * nvl(sib.nnum,0) totalmoneyin, ");
+		sql.append("        sib.ntotalcost totalmoneyin, ");
 		sql.append("   0 as nnumout,");// 只作为显示
 		sql.append("   0 as npriceout,");
 		sql.append("   0 as totalmoneyout,");

@@ -4,6 +4,7 @@ import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 出入库明细表VO
@@ -55,28 +56,28 @@ public class StockOutInMVO extends SuperVO {
 	private  Integer balanceNum;// 结存数量
 	
 	@FieldAlias("priceb")
-	private  Double balancePrice;// 结存成本价
+	private  DZFDouble balancePrice;// 结存成本价
 	
 	@FieldAlias("moneyb")
-	private  Double totalmoneyb;// 结存金额
+	private  DZFDouble totalmoneyb;// 结存金额
 	
 	@FieldAlias("numin")
 	private Integer nnumin;// 入库数量
 	
 	@FieldAlias("pricein")
-	private Double npricein;// 入库成本价
+	private DZFDouble npricein;// 入库成本价
 	
 	@FieldAlias("moneyin")
-	private  Double totalmoneyin;// 入库金额
+	private  DZFDouble totalmoneyin;// 入库金额
 	
 	@FieldAlias("numout")
 	private Integer nnumout;// 出库数量
 	
 	@FieldAlias("priceout")
-	private Double npriceout;// 出库成本价
+	private DZFDouble npriceout;// 出库成本价
 	
 	@FieldAlias("moneyout")
-	private  Double totalmoneyout;// 出库金额
+	private  DZFDouble totalmoneyout;// 出库金额
 	
 	/**
 	 * 只作为前台显示属性
@@ -249,51 +250,51 @@ public class StockOutInMVO extends SuperVO {
 		this.outstock = outstock;
 	}
 
-	public Double getBalancePrice() {
+	public DZFDouble getBalancePrice() {
 		return balancePrice;
 	}
 
-	public void setBalancePrice(Double balancePrice) {
+	public void setBalancePrice(DZFDouble balancePrice) {
 		this.balancePrice = balancePrice;
 	}
 
-	public Double getTotalmoneyb() {
+	public DZFDouble getTotalmoneyb() {
 		return totalmoneyb;
 	}
 
-	public void setTotalmoneyb(Double totalmoneyb) {
+	public void setTotalmoneyb(DZFDouble totalmoneyb) {
 		this.totalmoneyb = totalmoneyb;
 	}
 
-	public Double getNpricein() {
+	public DZFDouble getNpricein() {
 		return npricein;
 	}
 
-	public void setNpricein(Double npricein) {
+	public void setNpricein(DZFDouble npricein) {
 		this.npricein = npricein;
 	}
 
-	public Double getTotalmoneyin() {
+	public DZFDouble getTotalmoneyin() {
 		return totalmoneyin;
 	}
 
-	public void setTotalmoneyin(Double totalmoneyin) {
+	public void setTotalmoneyin(DZFDouble totalmoneyin) {
 		this.totalmoneyin = totalmoneyin;
 	}
 
-	public Double getNpriceout() {
+	public DZFDouble getNpriceout() {
 		return npriceout;
 	}
 
-	public void setNpriceout(Double npriceout) {
+	public void setNpriceout(DZFDouble npriceout) {
 		this.npriceout = npriceout;
 	}
 
-	public Double getTotalmoneyout() {
+	public DZFDouble getTotalmoneyout() {
 		return totalmoneyout;
 	}
 
-	public void setTotalmoneyout(Double totalmoneyout) {
+	public void setTotalmoneyout(DZFDouble totalmoneyout) {
 		this.totalmoneyout = totalmoneyout;
 	}
 

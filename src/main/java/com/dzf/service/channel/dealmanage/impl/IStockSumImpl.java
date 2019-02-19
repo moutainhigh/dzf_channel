@@ -69,15 +69,15 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    spec.invspec,spec.invtype, ");
 		sql.append("    sib2.num nnumin,");
 		sql.append("    spec.pk_goodsspec, ");
-		sql.append("    sib2.mny totalmoneyin, ");
+		sql.append("    sib2.total totalmoneyin, ");
 		sql.append("    sob.num nnumout,  sob.mny totalmoneyout,");
 		sql.append("    nvl(sib1.num,0)  nnumstart,");
 		sql.append("    decode( nvl(sib1.num,0), 0, 0, sib1.mny /nvl(sib1.num,0) )  npricestart,");
 		sql.append("    sib1.mny totalmoneys, ");
 		sql.append("   ( (nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0))) nnumend, ");
-		sql.append("    (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0)) totalmoneye, ");
+		sql.append("    (nvl(sib1.mny,0) + nvl(sib2.total,0) - nvl(sob.mny,0)) totalmoneye, ");
 		sql.append("    decode((( nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0) ) ),0,0,");
-		sql.append("    ( (nvl(sib1.mny,0) + nvl(sib2.mny,0) - nvl(sob.mny,0))   /");
+		sql.append("    ( (nvl(sib1.mny,0) + nvl(sib2.total,0) - nvl(sob.mny,0))   /");
 		sql.append("    ( (  nvl(sib1.num,0)+nvl(sib2.num,0)-nvl(sob.num,0)) )) ) npriceend");
 		
 		sql.append("    from cn_goods cg");
@@ -96,7 +96,7 @@ public class IStockSumImpl implements IStockSumService {
 		sql.append("    group by pk_goodsspec, pk_goods) sib1 on sib1.pk_goods =  num.pk_goods ");
 		sql.append("    and sib1.pk_goodsspec = num.pk_goodsspec");
 		
-		sql.append("    left join (select sum(nmny) mny,sum(nnum) num,pk_goodsspec,pk_goods");
+		sql.append("    left join (select sum(ib.ntotalcost) total,sum(nnum) num,pk_goodsspec,pk_goods");
 		sql.append("    from cn_stockin_b ib ");
 		sql.append("    left join cn_stockin si on si.pk_stockin = ib.pk_stockin ");
 		
