@@ -54,13 +54,17 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		sql.append("       ba.vprovince, \n");
 		sql.append("       ba.citycounty as vprovname, \n");
 //		sql.append("       sum(nvl(detail.nusedmny, 0)) as debittotalmny, \n");
-		sql.append("       sum(decode(detail.iopertype, 2, nvl(detail.nusedmny,0), 0)) AS debitconmny, \n");
-		sql.append("       sum(decode(detail.iopertype, 5, nvl(detail.nusedmny,0), 0)) AS debitbuymny \n");
+//		sql.append("       sum(decode(detail.iopertype, 2, nvl(detail.nusedmny,0), 0)) AS debitconmny, \n");//累计合同扣款金额
+//		sql.append("       sum(decode(detail.iopertype, 5, nvl(detail.nusedmny,0), 0)) AS debitbuymny \n");//累计商品扣款金额
+		sql.append("       SUM(CASE WHEN detail.ipaytype = 2 AND detail.iopertype = 2 THEN nvl(detail.nusedmny,0) \n");
+		sql.append("       			ELSE 0 END) AS debitconmny, \n");
+		sql.append("       SUM(CASE WHEN detail.iopertype = 5 THEN nvl(detail.nusedmny,0) \n");
+		sql.append("       			ELSE 0 END) AS debitbuymny \n");
 		sql.append("  from bd_account ba \n");
 		sql.append("  left join cn_detail detail on ba.pk_corp = detail.pk_corp \n");
 		sql.append("                            and nvl(detail.dr, 0) = 0 \n");
-		sql.append("                            and detail.iopertype in (2, 5) \n");
-		sql.append("                            and detail.ipaytype = 2 \n");
+		sql.append("                            and detail.iopertype in (2, 5) \n");//操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；5：商品购买；
+		sql.append("                            and detail.ipaytype in (2,3) \n");//付款类型   1：加盟费；2：预付款；3：返点；
 
 		if (!StringUtil.isEmpty(paramvo.getBdate())) {
 			sql.append(" and detail.doperatedate <= ?");
