@@ -716,23 +716,24 @@ function onBilling(){
 			
 			var data = "";
 			for(var i = 0; i<rows.length; i++ ){
-				if (rows[i].vstatus == 0) {
-					Public.tips({
-						content : '订单编码'+rows[i].billcode+'状态为待确认',
-						type : 2
-					});
-					return;
-				}else{
-					if(rows[i].tistatus == 2){
-						Public.tips({
-							content : '订单编码'+rows[i].billcode+'状态为待确认',
-							type : 2
-						});
-						return;
-					}else{
-						data = data + JSON.stringify(rows[i]);
-					}
-				}
+//				if (rows[i].vstatus == 0) {
+//					Public.tips({
+//						content : '订单编码'+rows[i].billcode+'状态为待确认',
+//						type : 2
+//					});
+//					return;
+//				}else{
+//					if(rows[i].tistatus == 2){
+//						Public.tips({
+//							content : '订单编码'+rows[i].billcode+'状态为待确认',
+//							type : 2
+//						});
+//						return;
+//					}else{
+//						data = data + JSON.stringify(rows[i]);
+//					}
+//				}
+				data = data + JSON.stringify(rows[i]);
 			}
 		
 			var postdata = new Object();
