@@ -1008,6 +1008,67 @@ function initCardGrid() {
 				}
 			},formatter:formatMny,
 		}, {
+			field : 'tcost',
+			title : '成本合计',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+					onChange : function(n, o) {
+						var rows = $('#stgrid').datagrid('getRows');
+						if(!isEmpty(n)){
+							if(rows != null && rows.length > 0){
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
+								var totalcost = getFloatValue(n);
+								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
+									var tcost = rows[j].tcost;
+									if(isEmpty(tcost)){
+										tcost = 0;
+									}
+									tcost = tcost+"";
+									if(tcost.indexOf(',') != -1){
+										tcost = tcost.replaceAll(',','');
+									}
+									totalcost = totalcost.add(getFloatValue(tcost));
+								}
+								$("#totalcost").numberbox("setValue", formatMny(totalcost));
+							}
+						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalcost = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tcost = rows[j].tcost;
+//								if(isEmpty(tcost)){
+//									tcost = 0;
+//								}
+//								var tcost = tcost+"";
+//								if(tcost.indexOf(',') != -1){
+//									tcost = tcost.replaceAll(',','');
+//								}
+//								totalcost = totalcost.add(getFloatValue(tcost));
+//							}
+//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
+//						}
+					}
+				}
+			},formatter:formatMny,
+		}, {
 			field : 'memo',
 			title : '备注',
 			width : "180",
@@ -1084,68 +1145,6 @@ function initCardGrid() {
 				}
 			},formatter:formatMny,
 		}, {
-			field : 'tcost',
-			title : '成本金额',
-			width : "100",
-			align : 'right',
-			halign : 'center',
-			hidden : true,
-			editor : {
-				type : 'numberbox',
-				options : {
-					height : 31,
-					editable : false,
-					readonly : true,
-					precision : 2,
-					min : 0,
-					groupSeparator:',',
-					onChange : function(n, o) {
-						var rows = $('#stgrid').datagrid('getRows');
-						if(!isEmpty(n)){
-							if(rows != null && rows.length > 0){
-								if(n.indexOf(',') != -1){
-									n = n.replaceAll(',','');
-								}
-								var totalcost = getFloatValue(n);
-								for(var j = 0;j< rows.length; j++){
-									if(editIndex == j){
-										continue;
-									}
-									var tcost = rows[j].tcost;
-									if(isEmpty(tcost)){
-										tcost = 0;
-									}
-									tcost = tcost+"";
-									if(tcost.indexOf(',') != -1){
-										tcost = tcost.replaceAll(',','');
-									}
-									totalcost = totalcost.add(getFloatValue(tcost));
-								}
-								$("#totalcost").numberbox("setValue", formatMny(totalcost));
-							}
-						}
-//						if(isEmpty(n) && isEmpty(o)){
-//							var totalcost = getFloatValue(0);
-//							for(var j = 0;j< rows.length; j++){
-//								if(editIndex == j){
-//									continue;
-//								}
-//								var tcost = rows[j].tcost;
-//								if(isEmpty(tcost)){
-//									tcost = 0;
-//								}
-//								var tcost = tcost+"";
-//								if(tcost.indexOf(',') != -1){
-//									tcost = tcost.replaceAll(',','');
-//								}
-//								totalcost = totalcost.add(getFloatValue(tcost));
-//							}
-//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
-//						}
-					}
-				}
-			},formatter:formatMny,
-		}, {
         	width : '80',
 			field : 'button',
 			title : '操作',
@@ -1172,7 +1171,7 @@ function initCardGrid() {
 }
 
 /**
- * 入库明细初始化
+ * 入库明细初始化（已确认状态修改）
  */
 function initConfGrid() {
 	var goods = null;
@@ -1702,6 +1701,67 @@ function initConfGrid() {
 				}
 			},formatter:formatMny,
 		}, {
+			field : 'tcost',
+			title : '成本合计',
+			width : "100",
+			align : 'right',
+			halign : 'center',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 31,
+					editable : false,
+					readonly : true,
+					precision : 2,
+					min : 0,
+					groupSeparator:',',
+					onChange : function(n, o) {
+						var rows = $('#stgrid').datagrid('getRows');
+						if(!isEmpty(n)){
+							if(rows != null && rows.length > 0){
+								if(n.indexOf(',') != -1){
+									n = n.replaceAll(',','');
+								}
+								var totalcost = getFloatValue(n);
+								for(var j = 0;j< rows.length; j++){
+									if(editIndex == j){
+										continue;
+									}
+									var tcost = rows[j].tcost;
+									if(isEmpty(tcost)){
+										tcost = 0;
+									}
+									tcost = tcost+"";
+									if(tcost.indexOf(',') != -1){
+										tcost = tcost.replaceAll(',','');
+									}
+									totalcost = totalcost.add(getFloatValue(tcost));
+								}
+								$("#totalcost").numberbox("setValue", formatMny(totalcost));
+							}
+						}
+//						if(isEmpty(n) && isEmpty(o)){
+//							var totalcost = getFloatValue(0);
+//							for(var j = 0;j< rows.length; j++){
+//								if(editIndex == j){
+//									continue;
+//								}
+//								var tcost = rows[j].tcost;
+//								if(isEmpty(tcost)){
+//									tcost = 0;
+//								}
+//								var tcost = tcost+"";
+//								if(tcost.indexOf(',') != -1){
+//									tcost = tcost.replaceAll(',','');
+//								}
+//								totalcost = totalcost.add(getFloatValue(tcost));
+//							}
+//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
+//						}
+					}
+				}
+			},formatter:formatMny,
+		}, {
 			field : 'memo',
 			title : '备注',
 			width : "180",
@@ -1773,68 +1833,6 @@ function initConfGrid() {
 //								totalmny = totalmny.add(getFloatValue(tmny));
 //							}
 //							$("#totalmny").numberbox("setValue", formatMny(totalmny));
-//						}
-					}
-				}
-			},formatter:formatMny,
-		}, {
-			field : 'tcost',
-			title : '成本金额',
-			width : "100",
-			align : 'right',
-			halign : 'center',
-			hidden : true,
-			editor : {
-				type : 'numberbox',
-				options : {
-					height : 31,
-					editable : false,
-					readonly : true,
-					precision : 2,
-					min : 0,
-					groupSeparator:',',
-					onChange : function(n, o) {
-						var rows = $('#stgrid').datagrid('getRows');
-						if(!isEmpty(n)){
-							if(rows != null && rows.length > 0){
-								if(n.indexOf(',') != -1){
-									n = n.replaceAll(',','');
-								}
-								var totalcost = getFloatValue(n);
-								for(var j = 0;j< rows.length; j++){
-									if(editIndex == j){
-										continue;
-									}
-									var tcost = rows[j].tcost;
-									if(isEmpty(tcost)){
-										tcost = 0;
-									}
-									tcost = tcost+"";
-									if(tcost.indexOf(',') != -1){
-										tcost = tcost.replaceAll(',','');
-									}
-									totalcost = totalcost.add(getFloatValue(tcost));
-								}
-								$("#totalcost").numberbox("setValue", formatMny(totalcost));
-							}
-						}
-//						if(isEmpty(n) && isEmpty(o)){
-//							var totalcost = getFloatValue(0);
-//							for(var j = 0;j< rows.length; j++){
-//								if(editIndex == j){
-//									continue;
-//								}
-//								var tcost = rows[j].tcost;
-//								if(isEmpty(tcost)){
-//									tcost = 0;
-//								}
-//								var tcost = tcost+"";
-//								if(tcost.indexOf(',') != -1){
-//									tcost = tcost.replaceAll(',','');
-//								}
-//								totalcost = totalcost.add(getFloatValue(tcost));
-//							}
-//							$("#totalcost").numberbox("setValue", formatMny(totalcost));
 //						}
 					}
 				}
