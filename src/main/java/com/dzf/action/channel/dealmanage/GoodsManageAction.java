@@ -100,6 +100,9 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
+			if (StringUtil.isEmpty(data.getPk_corp())) {
+				data.setPk_corp(getLogincorppk());
+			}
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
 			if (StringUtil.isEmpty(data.getPk_goods()) && (files == null || files.length == 0)) {
@@ -109,9 +112,6 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 				if((resvos == null || resvos.length == 0) && (files == null || files.length == 0)){
 					throw new BusinessException("商品图片不能为空");
 				}
-			}
-			if (StringUtil.isEmpty(data.getPk_corp())) {
-				data.setPk_corp(getLogincorppk());
 			}
 			String operat = "";
 			if(!StringUtil.isEmpty(data.getPk_goods())){
