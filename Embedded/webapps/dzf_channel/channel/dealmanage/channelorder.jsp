@@ -39,7 +39,7 @@
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="confirm()">确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="cancOrder()">取消订单</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="onBilling()">发票申请</a>
+					<!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="onBilling()">发票申请</a> -->
 				</div>
 			</div>
 		</div>
