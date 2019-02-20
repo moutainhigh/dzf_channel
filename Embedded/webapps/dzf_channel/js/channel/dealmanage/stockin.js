@@ -748,7 +748,7 @@ function initCardGrid() {
 	                			var taxamount = getFloatValue(0);//税额
 	                			
 	                			if(iitype == 1){//增值税专用发票
-	                				taxamount = mny.mul(getFloatValue(1).add(taxrate));
+	                				taxamount = mny.mul(getFloatValue(taxrate));
 	                			}else if(iitype == 2){//增值税普通发票
 	                				var nnprice = getFloatValue(n).div(getFloatValue(1).add(taxrate));
 	                				mny = nnprice.mul(nnum);
@@ -1171,7 +1171,7 @@ function initCardGrid() {
 }
 
 /**
- * 入库明细初始化（已确认状态修改）
+ * 入库明细初始化（已确认状态修改，供应商、商品不可编辑，无增行、删行操作）
  */
 function initConfGrid() {
 	var goods = null;
@@ -1440,7 +1440,7 @@ function initConfGrid() {
 	                			var taxamount = getFloatValue(0);//税额
 	                			
 	                			if(iitype == 1){//增值税专用发票
-	                				taxamount = mny.mul(getFloatValue(1).add(taxrate));
+	                				taxamount = mny.mul(getFloatValue(taxrate));
 	                			}else if(iitype == 2){//增值税普通发票
 	                				var nnprice = getFloatValue(n).div(getFloatValue(1).add(taxrate));
 	                				mny = nnprice.mul(nnum);
@@ -1507,7 +1507,6 @@ function initConfGrid() {
 				options : {
 					height : 31,
 					required : true,
-					readonly : true,
 					precision : 0,
 					min : 1,
 					max : 9999,
@@ -1837,7 +1836,7 @@ function initConfGrid() {
 					}
 				}
 			},formatter:formatMny,
-		}] ],
+		}, ] ],
 		onDblClickRow : function(rowIndex, rowData) {
         	if(status == "brows"){
         		return;
