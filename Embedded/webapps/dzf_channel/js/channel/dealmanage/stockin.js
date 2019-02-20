@@ -1171,7 +1171,7 @@ function initCardGrid() {
 }
 
 /**
- * 入库明细初始化（已确认状态修改，供应商、商品不可编辑，无增行、删行操作）
+ * 入库明细初始化（已确认状态修改，供应商、商品、入库数量不可编辑，无增行、删行操作）
  */
 function initConfGrid() {
 	var goods = null;
@@ -1507,6 +1507,7 @@ function initConfGrid() {
 				options : {
 					height : 31,
 					required : true,
+					readonly : true,
 					precision : 0,
 					min : 1,
 					max : 9999,
