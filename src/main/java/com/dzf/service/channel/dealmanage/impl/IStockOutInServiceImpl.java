@@ -97,7 +97,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 					 }
 					//出库金额
 					 DZFDouble npriceout=stockOutInMVO.getNpriceout();
-					 stockOutInMVO.setTotalmoneyout(npriceout.setScale(0, 2).multiply(stockOutInMVO.getNnumout()));
+					 stockOutInMVO.setTotalmoneyout(npriceout.multiply(stockOutInMVO.getNnumout()));
 					
 					 if(balanceNum==stockOutInMVO.getNnumout()){
 						 //上一次的结存数量和这次的出库数量

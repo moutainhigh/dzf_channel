@@ -7,7 +7,6 @@ $(function(){
 	initQry();
 	initCombobox();
 	load();
-	reloadData();
 	loadJumpData();
 });
 
@@ -361,6 +360,8 @@ function loadJumpData() {
 			$("#begdate").datebox("setValue", begdate);
 			$("#enddate").datebox("setValue",enddate);
 			$("#jqj").html(begdate+" 至  "+enddate);
+	 }else{
+		 reloadData();
 	 }
 }
 
