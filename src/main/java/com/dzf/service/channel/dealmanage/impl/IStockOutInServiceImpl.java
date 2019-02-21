@@ -1,7 +1,5 @@
 package com.dzf.service.channel.dealmanage.impl;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
-import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
@@ -32,113 +29,92 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 	private SingleObjectBO singleObjectBO;
 
 	@Override
-	public List<Long> queryTotalRow(StockOutInMVO qvo) {
-		List<Long> total = new ArrayList<Long>();
-		
-		// 全部
+	public Integer queryTotalRow(StockOutInMVO qvo) {
 		QrySqlSpmVO sqpvoall = getQrySqlSpmAll(qvo);
-		long queryDataTotalAll = multBodyObjectBO.queryDataTotal(StockOutInMVO.class, sqpvoall.getSql(),
-				sqpvoall.getSpm());
-		total.add(queryDataTotalAll);
-		return total;
-
+		return multBodyObjectBO.queryDataTotal(StockOutInMVO.class, sqpvoall.getSql(),sqpvoall.getSpm());
 	}
-	
 	
 	@Override
 	public List<StockOutInMVO> query(StockOutInMVO qvo) {
-
-		List<StockOutInMVO> totalList = new ArrayList<StockOutInMVO>();
-		
-		List<StockOutInMVO> queryAll = queryAll(qvo, totalList);
+		List<StockOutInMVO> totalList = queryAll(qvo);
 		String idString0="";
 		String idString1="";
 		Integer balanceNum = null;
 		DZFDouble totalmoneyb=null;
 		for (StockOutInMVO stockOutInMVO : totalList) {
-			 
-              if(stockOutInMVO.getVitype()==0)
-              {   //期初的唯一标识
-            	  idString0=stockOutInMVO.getPk_goods()+stockOutInMVO.getVgoodscode()+
-            			  stockOutInMVO.getInvspec()+stockOutInMVO.getInvtype();
-            	  //期初数量
-     			 balanceNum = stockOutInMVO.getBalanceNum();
-     			  //期初金额
-     			 totalmoneyb = stockOutInMVO.getTotalmoneyb();
-			 }else {
-				 String vgoodscode=stockOutInMVO.getVgoodscode();
-				 String invspec=stockOutInMVO.getInvspec();
-				 String invtype=stockOutInMVO.getInvtype();
-				 String pk_goods=stockOutInMVO.getPk_goods();
-				 idString1=pk_goods+vgoodscode+invspec+invtype;
-			 
-				 if(idString0.equals(idString1)&&stockOutInMVO.getVitype()==1) 
-				 {
-					 //商品入库
-					 stockOutInMVO.setBalanceNum(balanceNum+stockOutInMVO.getNnumin());//结存数量
-					 if(stockOutInMVO.getTotalmoneyin()!=null){
-						 stockOutInMVO.setTotalmoneyb(totalmoneyb.add(stockOutInMVO.getTotalmoneyin()));//结存金额
-					 }
-					 if(stockOutInMVO.getBalanceNum()!=0){//结存单价
-						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()) );
-					 }
-					 
-					 balanceNum=balanceNum+stockOutInMVO.getNnumin();
-					 if(stockOutInMVO.getTotalmoneyin()!=null){
-						 totalmoneyb=totalmoneyb.add(stockOutInMVO.getTotalmoneyin());
-					 }
-				 }
-				 if(idString0.equals(idString1)&&(stockOutInMVO.getVitype()==2
-						            ||stockOutInMVO.getVitype()==3)) 
-				 {
-					 //销售出库和其他出库
-					 if(balanceNum!=0){
-						 stockOutInMVO.setNpriceout(totalmoneyb.div(balanceNum));//出库单价
-					 }
-					//出库金额
-					 DZFDouble npriceout=stockOutInMVO.getNpriceout();
-					 stockOutInMVO.setTotalmoneyout(npriceout.multiply(stockOutInMVO.getNnumout()));
-					
-					 if(balanceNum==stockOutInMVO.getNnumout()){
-						 //上一次的结存数量和这次的出库数量
-						 stockOutInMVO.setNnumout(balanceNum);
-						 stockOutInMVO.setNpriceout(totalmoneyb.setScale(0, 2).div(balanceNum));
-						 stockOutInMVO.setTotalmoneyout(totalmoneyb);
-					 }else{
-						 stockOutInMVO.setBalanceNum(balanceNum-stockOutInMVO.getNnumout());//结存数量
-						 stockOutInMVO.setTotalmoneyb(totalmoneyb.sub(stockOutInMVO.getTotalmoneyout()));//结存金额
-						 if( stockOutInMVO.getBalanceNum()!=0){//结存单价
-						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
-						 }
-					 }
-					 
-					 balanceNum=balanceNum-stockOutInMVO.getNnumout();
-					 totalmoneyb=totalmoneyb.sub(stockOutInMVO.getTotalmoneyout());
-				 }
-				 
-			 }
+			if (stockOutInMVO.getVitype() == 0) { // 期初的唯一标识
+				idString0 = stockOutInMVO.getPk_goods() + stockOutInMVO.getVgoodscode() + stockOutInMVO.getInvspec()
+						+ stockOutInMVO.getInvtype();
+				// 期初数量
+				balanceNum = stockOutInMVO.getBalanceNum();
+				// 期初金额
+				totalmoneyb = stockOutInMVO.getTotalmoneyb();
+			} else {
+				String vgoodscode = stockOutInMVO.getVgoodscode();
+				String invspec = stockOutInMVO.getInvspec();
+				String invtype = stockOutInMVO.getInvtype();
+				String pk_goods = stockOutInMVO.getPk_goods();
+				idString1 = pk_goods + vgoodscode + invspec + invtype;
+
+				if (idString0.equals(idString1) && stockOutInMVO.getVitype() == 1) {
+					// 商品入库
+					stockOutInMVO.setBalanceNum(balanceNum + stockOutInMVO.getNnumin());// 结存数量
+					if (stockOutInMVO.getTotalmoneyin() != null) {
+						stockOutInMVO.setTotalmoneyb(totalmoneyb.add(stockOutInMVO.getTotalmoneyin()));// 结存金额
+					}
+					if (stockOutInMVO.getBalanceNum() != 0) {// 结存单价
+						stockOutInMVO
+								.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
+					}
+
+					balanceNum = balanceNum + stockOutInMVO.getNnumin();
+					if (stockOutInMVO.getTotalmoneyin() != null) {
+						totalmoneyb = totalmoneyb.add(stockOutInMVO.getTotalmoneyin());
+					}
+				}
+				if (idString0.equals(idString1) && (stockOutInMVO.getVitype() == 2 || stockOutInMVO.getVitype() == 3)) {
+					// 销售出库和其他出库
+					if (balanceNum != 0) {
+						stockOutInMVO.setNpriceout(totalmoneyb.div(balanceNum));// 出库单价
+					}
+					// 出库金额
+					DZFDouble npriceout = stockOutInMVO.getNpriceout();
+					stockOutInMVO.setTotalmoneyout(npriceout.multiply(stockOutInMVO.getNnumout()));
+
+					if (balanceNum == stockOutInMVO.getNnumout()) {
+						// 上一次的结存数量和这次的出库数量
+						stockOutInMVO.setNnumout(balanceNum);
+						stockOutInMVO.setNpriceout(totalmoneyb.setScale(0, 2).div(balanceNum));
+						stockOutInMVO.setTotalmoneyout(totalmoneyb);
+					} else {
+						stockOutInMVO.setBalanceNum(balanceNum - stockOutInMVO.getNnumout());// 结存数量
+						stockOutInMVO.setTotalmoneyb(totalmoneyb.sub(stockOutInMVO.getTotalmoneyout()));// 结存金额
+						if (stockOutInMVO.getBalanceNum() != 0) {// 结存单价
+							stockOutInMVO
+									.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
+						}
+					}
+					balanceNum = balanceNum - stockOutInMVO.getNnumout();
+					totalmoneyb = totalmoneyb.sub(stockOutInMVO.getTotalmoneyout());
+				}
+			}
 		}
-		
 		return totalList;
 	}
 
 	
 	/**
 	 * 查询全部
-	 * 
 	 * @param qvo
 	 * @param totalList
 	 * @return
 	 */
-	private List<StockOutInMVO> queryAll(StockOutInMVO qvo, List<StockOutInMVO> totalList) {
+	@SuppressWarnings("unchecked")
+	private List<StockOutInMVO> queryAll(StockOutInMVO qvo) {
 		QrySqlSpmVO sqpvoall = getQrySqlSpmAll(qvo);
-		@SuppressWarnings("unchecked")
 		List<StockOutInMVO> listall = (List<StockOutInMVO>) multBodyObjectBO.queryDataPage(StockOutInMVO.class,
 				sqpvoall.getSql(), sqpvoall.getSpm(), qvo.getPage(), qvo.getRows(), null);
-		for (StockOutInMVO stockOutInMVO : listall) {
-			totalList.add(stockOutInMVO);
-		}
-		return totalList;
+		return listall;
 	}
 
 	/**
@@ -147,7 +123,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 	 * @param qvo
 	 * @return
 	 */
-	private QrySqlSpmVO getQrySqlSpmAll(StockOutInMVO qvo) {
+	private  QrySqlSpmVO getQrySqlSpmAll(StockOutInMVO qvo) {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -305,7 +281,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		
 		sql.append("    from cn_goods cg ");
 		sql.append("    left join cn_goodsspec gs on gs.pk_goods=cg.pk_goods");
-		sql.append("    left join (select sum(nmny) mny, sum(nnum) num, ");
+		sql.append("    left join (select sum(b.ntotalcost) mny, sum(nnum) num, ");
 		sql.append("     pk_goodsspec, pk_goods, invspec, invtype");
 		sql.append("     from cn_stockin_b b");
 		sql.append("     left join cn_stockin si on si.pk_stockin = b.pk_stockin");

@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
-import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.DZFWarpException;
 
 public interface IStockOutInService {
 
-	List<Long> queryTotalRow(StockOutInMVO qvo);
+	Integer queryTotalRow(StockOutInMVO qvo) throws DZFWarpException;
 
-	List<StockOutInMVO> query(StockOutInMVO qvo);
+	List<StockOutInMVO> query(StockOutInMVO qvo) throws DZFWarpException;
 
-	List<GoodsBoxVO> queryComboBox();
-
+	List<GoodsBoxVO> queryComboBox() throws DZFWarpException;
+	
 }

@@ -3,7 +3,6 @@ package com.dzf.action.channel.dealmanage;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,25 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
-import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
-import com.dzf.model.channel.report.CustNumMoneyRepVO;
-import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.Grid;
-import com.dzf.model.pub.IButtonName;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.constant.IFunNode;
-import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.DateUtils;
-import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.dealmanage.IStockOutInService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
@@ -68,15 +58,10 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 			}
 			StockOutInMVO qvo = new StockOutInMVO();
 			qvo = (StockOutInMVO) DzfTypeUtils.cast(getRequest(), qvo);
-			List<Long> total = stockoutin.queryTotalRow(qvo);
-			long totals=0;
-			for (Long l : total) {
-				totals+=l;
-			}
-			grid.setTotal(totals);
-			if(totals > 0){
+			Integer total = stockoutin.queryTotalRow(qvo);
+			grid.setTotal((long)total);
+			if(total > 0){
 				List<StockOutInMVO> clist = stockoutin.query(qvo);
-				
 				grid.setRows(clist);
 				grid.setMsg("查询成功!");
 			}else{
