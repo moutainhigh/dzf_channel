@@ -8,6 +8,7 @@ $(function(){
 	initCombobox();
 	load();
 	reloadData();
+	loadJumpData();
 });
 
 /**
@@ -74,6 +75,7 @@ function load(){
 		    sortOrder : "asc",
 		    remoteSort : false,
 		    idField : 'sid',
+		    showFooter: true,
 		columns : [ 
 		            [ 
 		            	 {
@@ -158,7 +160,10 @@ function load(){
 		            	             else{
 		            	            	 return value;
 		            	             }
+		            	           }else{
+		            	        	   return "合计"; 
 		            	           }
+		            	           
 		            	         }
 			              },{
 			                   width : '100',
@@ -185,18 +190,19 @@ function load(){
 		            	    
 		             ] ,
         [
-            { field : 'numin', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{ if(row.itype=='1'){return value;} }}}}, 
+            { field : 'numin', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{ if(row.itype=='1'){return value;} }} else{return value}}}, 
             { field : 'pricein', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}}, 
-            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}},
-            { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(row.itype!='2'&& row.itype!='3'){return '';}else{ if(row.itype=='2'||row.itype=='3'){return value;} }}}}, 
+            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }} else{return formatMny(value)}}},
+            { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(row.itype!='2'&& row.itype!='3'){return '';}else{ if(row.itype=='2'||row.itype=='3'){return value;} }} else{return value}}}, 
             { field : 'priceout', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }}}},
-            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }}}},
+            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gid)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }} else{return formatMny(value)}}},
             { field : 'numb', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) {if(!isEmpty(row.gid)){if(value=='0'){return "0";}else{return value;}}}}, 
             { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(value=='0'||value==null){return "0.00";}return formatMny(value);}}}, 
             { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gid)){if(value=='0'){return "0.00";}return formatMny(value);}}}, 
             
         ] ],
         onLoadSuccess : function(data) {
+        	calFooter();
         	var rows = $('#grid').datagrid('getRows');
         	var numin = 0;	
         	var pricein = 0;	
@@ -245,6 +251,33 @@ function load(){
 	});
 }
 
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+	var numin = 0;	
+	var moneyin = 0;
+	var numout = 0;	
+	var moneyout = 0;
+	for (var i = 0; i < rows.length; i++) {
+		numin += getFloatValue(rows[i].numin);
+		moneyin += getFloatValue(rows[i].moneyin);
+		numout += getFloatValue(rows[i].numout);
+		moneyout += getFloatValue(rows[i].moneyout);
+	  
+	}
+
+	 footerData['numin'] = numin;
+	 footerData['moneyin'] = moneyin;
+	 footerData['numout'] = numout;
+	 footerData['moneyout'] = moneyout;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
 
 String.prototype.startWith=function(str){
 	var reg=new RegExp("^"+str);
@@ -258,22 +291,17 @@ String.prototype.startWith=function(str){
 function reloadData(){
 	var url = DZF.contextPath + '/dealmanage/stockoutin!query.action';
 	$('#grid').datagrid('options').url = url;
-	//var itype=$('#itype').combobox('getValue');
 	var gids=$('#goodsname').combobox('getValues');
 	var strgids="";
 	for(i=0;i<gids.length;i++){
 		strgids+=","+gids[i];
 	}
 	strgids=strgids.substring(1);
-	/*if(isEmpty(itype)){
-		itype=111;
-	}*/
 	$('#grid').datagrid('load', {
 		'begdate' : $("#begdate").datebox('getValue'),
 		'enddate' : $("#enddate").datebox('getValue'),
 		'vcode' : $("#qvcode").val(),
 		'gid' :  strgids,
-		//'itype' :  itype,
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#grid').datagrid('clearChecked');
@@ -286,7 +314,6 @@ function reloadData(){
 function clearParams(){
 	$("#qvcode").textbox('setValue',null);
 	$("#goodsname").combobox('clear');
-	//$("#itype").combobox('setValue',null);
 }
 
 /**
@@ -313,4 +340,27 @@ function doExport(){
 
 }
 
+/**
+ * 跳转到此页面
+ */
+function loadJumpData() {
+	 var obj = Public.getRequest();
+	 var id=obj.id;
+	 var pk_goodsspec=obj.pk_goodsspec;
+	 var begdate=obj.begdate;
+	 var enddate=obj.enddate;
+	 var operate = obj.operate;
+	 if (operate == "toRenew"){
+		 $('#grid').datagrid('options').url = DZF.contextPath + "/dealmanage/stockoutin!query.action";
+			$('#grid').datagrid('load', 
+										{"id" : id,
+										"begdate" : begdate,
+										"enddate" : enddate,
+										"pk_goodsspec" :pk_goodsspec,
+								        });
+			$("#begdate").datebox("setValue", begdate);
+			$("#enddate").datebox("setValue",enddate);
+			$("#jqj").html(begdate+" 至  "+enddate);
+	 }
+}
 

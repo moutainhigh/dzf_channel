@@ -70,19 +70,32 @@ function load(){
 		    pageSize : DZF.pageSize,
 		    pageList : DZF.pageList,
 		    showFooter : false,
-//		    sortName : "gcode",
-//		    sortOrder : "asc",
 		    remoteSort : false,
 		    idField : 'sid',
 		columns : [ 
-		            [ 
-		            	 {
+		            [     
+		                 {   width : '100',
+		                	 title : '商品id',
+		                	 align : 'left',
+		                	 halign : 'center',
+		                	 field : 'gid',
+		                	 rowspan:2,
+		                	 hidden : true,
+	            	     }, {   
+	            	    	 width : '100',
+		                	 title : '规格型号id',
+		                	 align : 'left',
+		                	 halign : 'center',
+		                	 field : 'pk_goodsspec',
+		                	 rowspan:2,
+		                	 hidden : true,
+	            	     },
+		            	  {
 		            	      width : '100',
 		            	      title : '商品编码',
 		            	      align : 'left',
 		            	      halign : 'center',
 		            	      field : 'gcode',
-//		            	      sortable : true,
 		            	      rowspan:2,
 		            	      
 		            	    }, {
@@ -93,7 +106,10 @@ function load(){
 		            	      align : 'left',
 		            	      rowspan:2,
 		            	      formatter : function(value, row, index) {
-		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toRenew()">' + value + '</a>';
+		            	    	  var id=row.gid;
+		            	    	  var pk_goodsspec=row.pk_goodsspec;
+		            	    	  
+		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toRenew(\''+id+'\',\''+pk_goodsspec+'\')">' + value + '</a>';
 		                      }
 		            	    }, {
 		            	      width : '100',
@@ -147,7 +163,7 @@ function load(){
             { field : 'numin', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}} },
             { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null)return formatMny(value);}},
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}}},
-            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null)return formatMny(value);}},
+            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null&&row.numout!=null){return formatMny(value);}   }},
             { field : 'numend', title : '数量', width : 100, halign:'center',align:'right'},
             { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',formatter : function(value,row){if(value == null)return "0.00";return formatMny(value);}},
             { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){if(value == null)return "0.00";return formatMny(value);}},
@@ -258,8 +274,11 @@ function closeCx(){
 /**
  * 跳转到出入库明细表页面
  */
-function toRenew(){
-	var url = 'channel/dealmanage/stockoutin.jsp?operate=toRenew';
+function toRenew(id,pk_goodsspec){
+	var begdate=$("#begdate").datebox('getValue');
+	var enddate=$("#enddate").datebox('getValue');
+	
+	var url = 'channel/dealmanage/stockoutin.jsp?operate=toRenew&id='+id+'&pk_goodsspec='+pk_goodsspec+'&begdate='+begdate+'&enddate='+enddate;
 	parent.addTabNew('出入库明细表', url);
 }
 

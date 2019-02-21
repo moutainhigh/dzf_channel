@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChnPayAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
+import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.dealmanage.StockSumVO;
 import com.dzf.model.channel.dealmanage.StockSumVO;
 import com.dzf.model.channel.stock.GoodsNumVO;

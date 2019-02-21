@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
+import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
@@ -42,7 +43,8 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		return total;
 
 	}
-
+	
+	
 	@Override
 	public List<StockOutInMVO> query(StockOutInMVO qvo) {
 
@@ -94,22 +96,29 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 						 stockOutInMVO.setNpriceout(totalmoneyb.div(balanceNum));//出库单价
 					 }
 					//出库金额
-					 DecimalFormat df = new DecimalFormat("#.00");
 					 DZFDouble npriceout=stockOutInMVO.getNpriceout();
-					// stockOutInMVO.setTotalmoneyout(Double.parseDouble(df.format(npriceout)) *stockOutInMVO.getNnumout());
 					 stockOutInMVO.setTotalmoneyout(npriceout.setScale(0, 2).multiply(stockOutInMVO.getNnumout()));
-					 stockOutInMVO.setBalanceNum(balanceNum-stockOutInMVO.getNnumout());//结存数量
-					 stockOutInMVO.setTotalmoneyb(totalmoneyb.sub(stockOutInMVO.getTotalmoneyout()));//结存金额
-					 if( stockOutInMVO.getBalanceNum()!=0){//结存单价
-					 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
+					
+					 if(balanceNum==stockOutInMVO.getNnumout()){
+						 //上一次的结存数量和这次的出库数量
+						 stockOutInMVO.setNnumout(balanceNum);
+						 stockOutInMVO.setNpriceout(totalmoneyb.setScale(0, 2).div(balanceNum));
+						 stockOutInMVO.setTotalmoneyout(totalmoneyb);
+					 }else{
+						 stockOutInMVO.setBalanceNum(balanceNum-stockOutInMVO.getNnumout());//结存数量
+						 stockOutInMVO.setTotalmoneyb(totalmoneyb.sub(stockOutInMVO.getTotalmoneyout()));//结存金额
+						 if( stockOutInMVO.getBalanceNum()!=0){//结存单价
+						 stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
+						 }
 					 }
-					//出库金额
+					 
 					 balanceNum=balanceNum-stockOutInMVO.getNnumout();
 					 totalmoneyb=totalmoneyb.sub(stockOutInMVO.getTotalmoneyout());
 				 }
 				 
 			 }
 		}
+		
 		return totalList;
 	}
 
@@ -146,7 +155,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append(" select s.* from  ");
 		sql.append("  (select cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
 		sql.append(
-				"         gs.invspec, gs.invtype,si.dconfirmtime,1 vitype,si.vbillcode,nvl(sib.nnum,0) nnumin, sib.nprice npricein,");
+				"         gs.invspec, gs.invtype,gs.pk_goodsspec,si.dconfirmtime,1 vitype,si.vbillcode,nvl(sib.nnum,0) nnumin, sib.nprice npricein,");
 		sql.append("        sib.ntotalcost totalmoneyin, ");
 		sql.append("   0 as nnumout,");// 只作为显示
 		sql.append("   0 as npriceout,");
@@ -173,6 +182,11 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
 		}
+		if(!StringUtil.isEmpty(qvo.getPk_goodsspec())){
+			sql.append("   AND gs.pk_goodsspec = ? ");
+			spm.addParam(qvo.getPk_goodsspec());
+		}
+		
 		if (qvo.getBegdate() != null) {
 			sql.append("   AND substr(si.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
@@ -184,7 +198,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  union all");
 		sql.append(" select ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
-		sql.append("        gs.invspec, gs.invtype, ");
+		sql.append("        gs.invspec, gs.invtype,gs.pk_goodsspec, ");
 		sql.append("       so.dconfirmtime,2 vitype,  so.vbillcode,");
 		sql.append("   0 as nnumin,");// 只作为显示
 		sql.append("   0 as npricein,");
@@ -214,6 +228,10 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
 		}
+		if(!StringUtil.isEmpty(qvo.getPk_goodsspec())){
+			sql.append("   AND gs.pk_goodsspec = ? ");
+			spm.addParam(qvo.getPk_goodsspec());
+		}
 		if (qvo.getBegdate() != null) {
 			sql.append("   AND substr(so.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
@@ -225,7 +243,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("  union all ");
 		sql.append(" select ");
 		sql.append(" 		cg.vgoodscode, cg.vgoodsname,cg.pk_goods, ");
-		sql.append("        gs.invspec, gs.invtype, ");
+		sql.append("        gs.invspec, gs.invtype,gs.pk_goodsspec, ");
 		sql.append("       so.dconfirmtime,3 vitype,  so.vbillcode,");
 		sql.append("   0 as nnumin,");// 只作为显示
 		sql.append("   0 as npricein,");
@@ -255,6 +273,10 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
 		}
+		if(!StringUtil.isEmpty(qvo.getPk_goodsspec())){
+			sql.append("   AND gs.pk_goodsspec = ? ");
+			spm.addParam(qvo.getPk_goodsspec());
+		}
 		if (qvo.getBegdate() != null) {
 			sql.append("   AND substr(so.dconfirmtime,0,10) >= ? \n");
 			spm.addParam(qvo.getBegdate());
@@ -266,7 +288,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 
 		sql.append(" union all ");
 		sql.append("  select cg.vgoodscode, cg.vgoodsname, cg.pk_goods,  ");
-		sql.append(" 		 gs.invspec, gs.invtype,");
+		sql.append(" 		 gs.invspec, gs.invtype,gs.pk_goodsspec,");
 		sql.append("   '1999-01-01' as dconfirmtime,");
 		sql.append("  0 vitype,");
 		sql.append("   '' as vode,");
@@ -282,8 +304,7 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 		sql.append("          nvl(sib.mny,0) totalmoneyb");
 		
 		sql.append("    from cn_goods cg ");
-		sql.append("    left join cn_stocknum num on cg.pk_goods = num.pk_goods");
-		sql.append("    left join cn_goodsspec gs on gs.pk_goodsspec =num.pk_goodsspec");
+		sql.append("    left join cn_goodsspec gs on gs.pk_goods=cg.pk_goods");
 		sql.append("    left join (select sum(nmny) mny, sum(nnum) num, ");
 		sql.append("     pk_goodsspec, pk_goods, invspec, invtype");
 		sql.append("     from cn_stockin_b b");
@@ -293,9 +314,10 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			sql.append("   AND substr(si.dconfirmtime,0,10) < ? \n");
 			spm.addParam(qvo.getBegdate());
 		}
+		
 		sql.append("     group by pk_goodsspec, pk_goods, invspec, invtype) sib");
-		sql.append("     on sib.pk_goods = num.pk_goods");
-		sql.append("     and sib.pk_goodsspec =  num.pk_goodsspec");
+		sql.append("     on sib.pk_goods = gs.pk_goods");
+		sql.append("     and sib.pk_goodsspec =  gs.pk_goodsspec");
 		
 		sql.append("     left join (select sum(nnum) num, sum(nmny) mny,");
 		sql.append("     pk_goodsspec,pk_goods,invspec,invtype");
@@ -308,18 +330,22 @@ public class IStockOutInServiceImpl implements IStockOutInService {
 			spm.addParam(qvo.getBegdate());
 		}
 		sql.append("     group by pk_goodsspec, pk_goods, invspec, invtype) sob on sob.pk_goods = ");
-		sql.append("     num.pk_goods");
+		sql.append("     gs.pk_goods");
 		sql.append("     and sob.pk_goodsspec =");
-		sql.append("     num.pk_goodsspec");
+		sql.append("     gs.pk_goodsspec");
 		
 		sql.append("     where nvl(cg.dr, 0) = 0");
-		sql.append("     and nvl(num.dr, 0) = 0");
+		sql.append("     and nvl(gs.dr, 0) = 0");
 
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 
 			String[] strs = qvo.getPk_goods().split(",");
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND cg.pk_goods in (").append(inSql).append(")");
+		}
+		if(!StringUtil.isEmpty(qvo.getPk_goodsspec())){
+			sql.append("   AND gs.pk_goodsspec = ? ");
+			spm.addParam(qvo.getPk_goodsspec());
 		}
 
 		sql.append(" ) s ");

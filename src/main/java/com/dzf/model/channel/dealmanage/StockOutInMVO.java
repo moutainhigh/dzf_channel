@@ -30,6 +30,9 @@ public class StockOutInMVO extends SuperVO {
 	
 	@FieldAlias("gid")
 	private String pk_goods;// 商品名称id
+	
+	@FieldAlias("pk_goodsspec")
+	private String pk_goodsspec;// 规格型号id
 
 	@FieldAlias("gcode")
 	private String vgoodscode;// 商品编码
@@ -297,6 +300,16 @@ public class StockOutInMVO extends SuperVO {
 	public void setTotalmoneyout(DZFDouble totalmoneyout) {
 		this.totalmoneyout = totalmoneyout;
 	}
+
+	public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
+	
+	
 
 	
 	
