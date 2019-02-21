@@ -34,19 +34,35 @@ function expendRow(){
                      {field:'gname',title:'商品',width:120,},
                      {field:'spec',title:'规格',width:100,},
                      {field:'type',title:'型号',width:100,},
+                     {field:'uprice',title:'采购价',width:80,align:'right',
+                    	 formatter : function(value, row, index) {
+             				if (value == 0)
+             					return "0.00";
+             				return formatMny(value);
+             			 },
+             		 },
                      {field:'price',title:'成本价',width:80,align:'right',
                     	 formatter : function(value, row, index) {
              				if (value == 0)
              					return "0.00";
              				return formatMny(value);
-             			},},
+             			 },
+             		 },
                      {field:'num',title:'入库数量',width:80,align:'right'},
-                     {field:'mny',title:'金额',width:80,align:'right',
+                     {field:'pricetax',title:'价税合计',width:80,align:'right',
                     	 formatter : function(value, row, index) {
              				if (value == 0)
              					return "0.00";
              				return formatMny(value);
-             			},},
+             			 },
+             		 },
+             		 {field:'tcost',title:'成本合计',width:80,align:'right',
+                    	 formatter : function(value, row, index) {
+             				if (value == 0)
+             					return "0.00";
+             				return formatMny(value);
+             			 },
+             		 },
              		 {field:'memo',title:'备注',width:160,align:'right',},
                  ]],
                  onResize:function(){
