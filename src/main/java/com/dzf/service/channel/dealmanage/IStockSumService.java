@@ -12,6 +12,4 @@ public interface IStockSumService {
 
 	List<StockSumVO> query(StockSumVO qvo);
 
-	List<GoodsBoxVO> queryComboBox();
-
 }
