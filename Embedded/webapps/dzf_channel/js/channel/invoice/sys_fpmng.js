@@ -255,7 +255,7 @@ function reloadData(){
         itype : $('#qitype').combobox('getValue'),
         qrytype : qrytype,
         aname　: $("#aname").combobox('getValue'),
-        paytype : $('#qpaytype').combobox('getValue'),
+//        paytype : $('#qpaytype').combobox('getValue'),
     });
     
     $('#qrydialog').hide();
