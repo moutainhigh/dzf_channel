@@ -58,16 +58,10 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 			}
 			StockOutInMVO qvo = new StockOutInMVO();
 			qvo = (StockOutInMVO) DzfTypeUtils.cast(getRequest(), qvo);
-			Integer total = stockoutin.queryTotalRow(qvo);
-			grid.setTotal((long)total);
-			if(total > 0){
-				List<StockOutInMVO> clist = stockoutin.query(qvo);
-				grid.setRows(clist);
-				grid.setMsg("查询成功!");
-			}else{
-				grid.setRows(new ArrayList<StockOutInMVO>());
-				grid.setMsg("查询数据为空!");
-			}
+			List<StockOutInMVO> list = stockoutin.query(qvo);
+			grid.setRows(list);
+			grid.setTotal((long)list.size());
+			grid.setMsg("查询成功!");
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");

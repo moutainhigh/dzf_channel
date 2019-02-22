@@ -8,7 +8,6 @@ import com.dzf.pub.DZFWarpException;
 
 public interface IStockOutInService {
 
-	Integer queryTotalRow(StockOutInMVO qvo) throws DZFWarpException;
 
 	List<StockOutInMVO> query(StockOutInMVO qvo) throws DZFWarpException;
 
