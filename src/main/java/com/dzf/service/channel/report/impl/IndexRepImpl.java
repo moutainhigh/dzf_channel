@@ -453,6 +453,7 @@ public class IndexRepImpl implements IIndexRep {
 		map.put("corpqdyyjl", 3);//渠道运营经理-->运营区域设置
 		map.put("cwb-kp", 0);//财务部-财务开票
 		map.put("cwb-zj", 0);//财务部-财务总监
+		map.put("zjb-gl", 0);//总经办-管理
 		return map;
 	}
 }
