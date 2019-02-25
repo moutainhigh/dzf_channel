@@ -3,8 +3,8 @@ package com.dzf.action.channel.dealmanage;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.action.channel.expfield.StockOutInAuditExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
@@ -28,10 +29,11 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.dealmanage.IStockOutInService;
 import com.dzf.service.pub.LogRecordEnum;
-import com.dzf.service.pub.report.ExportExcel;
 
 @SuppressWarnings("serial")
 @ParentPackage("basePackage")
@@ -58,10 +60,21 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 			}
 			StockOutInMVO qvo = new StockOutInMVO();
 			qvo = (StockOutInMVO) DzfTypeUtils.cast(getRequest(), qvo);
-			List<StockOutInMVO> list = stockoutin.query(qvo);
-			grid.setRows(list);
-			grid.setTotal((long)list.size());
-			grid.setMsg("查询成功!");
+			List<Long> total = stockoutin.queryTotalRow(qvo);
+			long totals=0;
+			for (Long l : total) {
+				totals+=l;
+			}
+			grid.setTotal(totals);
+			if(totals > 0){
+				List<StockOutInMVO> clist = stockoutin.query(qvo);
+				
+				grid.setRows(clist);
+				grid.setMsg("查询成功!");
+			}else{
+				grid.setRows(new ArrayList<StockOutInMVO>());
+				grid.setMsg("查询数据为空!");
+			}
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");
@@ -73,88 +86,52 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 	 * 出入库明细表导出
 	 */
 	public void exportAuditExcel(){
-		String strlist = getRequest().getParameter("strlist");
+		String strlist =getRequest().getParameter("strlist");
 		String qj = getRequest().getParameter("qj");
-		if (StringUtil.isEmpty(strlist)) {
+		if(StringUtil.isEmpty(strlist)){
 			throw new BusinessException("导出数据不能为空!");
-		}
+		}	
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		String columns = getRequest().getParameter("columns");
-		JSONArray headlist = (JSONArray) JSON.parseArray(columns);
-		List<String> heads = new ArrayList<String>();
-		List<String> heads1 = new ArrayList<String>();
-		List<String> fieldslist = new ArrayList<String>();
-		Map<String, String> name = null;
-		List<String> fieldlist = new ArrayList<String>();
-		int num = 7;
-		fieldlist.add("gcode");
-		fieldlist.add("gname");
-		fieldlist.add("spec");
-		fieldlist.add("type");
-		fieldlist.add("contime");
-		fieldlist.add("itype");
-		fieldlist.add("vcode");
-		fieldlist.add("numin");
-		fieldlist.add("pricein");
-		fieldlist.add("moneyin");
-		fieldlist.add("numout");
-		fieldlist.add("priceout");
-		fieldlist.add("moneyout");
-		fieldlist.add("numb");
-		fieldlist.add("priceb");
-		fieldlist.add("moneyb");
-		for (int i = 0; i < headlist.size(); i++) {
-			name = (Map<String, String>) headlist.get(i);
-			if (i >= num) {
-				heads.add("数量");
-				heads.add("单价");
-				heads.add("金额");
-				heads1.add(name.get("title"));
-			} else {
-				heads.add(name.get("title"));
-				fieldslist.add(name.get("field"));
-			}
-		}
-		
-		ExportExcel<StockOutInMVO> ex = new ExportExcel<StockOutInMVO>();
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new StockOutInMVO());
+		StockOutInMVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,StockOutInMVO[].class, JSONConvtoJAVA.getParserConfig());
+		HttpServletResponse response = getResponse();
+		Excelexport2003<StockOutInMVO> ex = new Excelexport2003<>();
+		StockOutInAuditExcelField fields = new StockOutInAuditExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
-			HttpServletResponse response = getResponse();
 			response.reset();
-			String date = DateUtils.getDate(new Date());
-			response.addHeader("Content-Disposition", "attachment;filename=" + new String(date + ".xls"));
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+	        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
-			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportOutInExcel("出入库明细表", qj,heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
-					num);
-			String srt2 = new String(length, "UTF-8");
-			response.addHeader("Content-Length", srt2);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出出入库明细表", ISysConstants.SYS_3);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		} finally {
-			if (toClient != null) {
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出出入库明细", ISysConstants.SYS_3);
+		} catch (Exception e) {
+			log.error("导出失败",e);
+		}  finally {
+			if(toClient != null){
 				try {
-					toClient.flush();
 					toClient.close();
 				} catch (IOException e) {
-					log.error(e);
+					log.error("导出失败",e);
 				}
 			}
-			if (servletOutputStream != null) {
+			if(servletOutputStream != null){
 				try {
 					servletOutputStream.flush();
 					servletOutputStream.close();
 				} catch (IOException e) {
-					log.error(e);
+					log.error("导出失败",e);
 				}
 			}
 		}
 	}
-	
-	
 	
 	/**
 	 * 查询商品下拉
