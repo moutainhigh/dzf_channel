@@ -167,6 +167,33 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 		writeJson(json);
 	}
 	
+	public void saveCommit() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				throw new BusinessException("登陆用户错误");
+			}else if(uservo == null){
+				throw new BusinessException("登陆用户错误");
+			}
+			pubService.checkFunnode(uservo, IFunNode.CHANNEL_52);
+			List<String> billids = new ArrayList<String>();
+			StockOutVO headvo = requestDealStep(getRequest(),billids);
+			if (headvo == null) {
+				throw new BusinessException("数据信息不能为空");
+			}
+			headvo.setVconfirmid(getLoginUserid());
+			stockOut.saveCommit(headvo,billids);
+			json.setSuccess(true);
+			json.setMsg("保存成功");
+		} catch (Exception e) {
+			json.setSuccess(false);
+			json.setMsg("保存失败");
+			printErrorLog(json, log, e, "保存失败");
+		}
+		writeJson(json);
+	}
+	
 	/**
 	 * 删除商品
 	 */

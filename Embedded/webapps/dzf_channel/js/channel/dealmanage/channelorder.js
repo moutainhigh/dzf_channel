@@ -346,7 +346,7 @@ function addSave(){
 	});
 	$.ajax({
 		type : 'POST',
-		url :	contextPath + '/dealmanage/stockout!save.action',
+		url :	contextPath + '/dealmanage/stockout!saveCommit.action',
 		data : postdata,
 		dataType : 'json',
 		success : function(result) {

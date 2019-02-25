@@ -52,6 +52,14 @@ public interface IStockOutService {
 	public void save(StockOutVO vo,List<String> billids) throws DZFWarpException;
 	
 	/**
+	 * 保存+确认出库（订单出库保存）
+	 * @param vo
+	 * @param billids
+	 * @throws DZFWarpException
+	 */
+	public void saveCommit(StockOutVO vo,List<String> billids) throws DZFWarpException;
+	
+	/**
 	 * 删除出库单
 	 * @param vo
 	 * @throws DZFWarpException

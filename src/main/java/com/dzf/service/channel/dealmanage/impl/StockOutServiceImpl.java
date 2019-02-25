@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -252,6 +251,70 @@ public class StockOutServiceImpl implements IStockOutService{
 		} finally {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_stockout(),uuid);
 		}
+	}
+	
+
+	@Override
+	public void saveCommit(StockOutVO vo,List<String> billids) throws DZFWarpException {
+		String uuid = UUID.randomUUID().toString();
+		String message;
+		boolean lockKey;
+		List<String> bills = new ArrayList<String>();
+		try {//一个加盟商，在一个时间断内，只能并发保存一个出库单
+			lockKey = LockUtil.getInstance().addLockKey(vo.getTableName(), vo.getPk_corp(),uuid, 60);
+			if(!lockKey){
+				throw new BusinessException("有其他用户正在操作此加盟商的出库单,请取消之后再操作!");
+			}
+			checkBillIsQuote(vo.getPk_corp(),billids);
+			vo.setDoperatedate(new DZFDateTime());
+			setDefaultCode(vo);
+			vo.setVstatus(1);
+			vo.setDconfirmtime(new DZFDateTime());
+			multBodyObjectBO.saveMultBObject(vo.getFathercorp(), vo);
+			
+			
+			//2、该出库单子表按照商品规格、商品、库存合并
+			StringBuffer sql = new StringBuffer();
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(vo.getPk_stockout());
+			sql.append(" select b.pk_goods, b.pk_goodsspec,b.nnum amount,");
+			sql.append("   g.vbillcode vfilepath,g.vstatus deamount,g.pk_goodsbill");
+			sql.append("   from cn_stockout_b b ");
+			sql.append("   left join cn_goodsbill_b gb on b.pk_goodsbill_b=gb.pk_goodsbill_b ");
+			sql.append("   left join cn_goodsbill g on g.pk_goodsbill=gb.pk_goodsbill ");
+			sql.append("  where nvl(b.dr, 0) = 0 and  nvl(gb.dr, 0) = 0 and nvl(g.dr, 0) = 0");
+			sql.append("    and b.pk_stockout = ? ");
+			List<GoodsBillBVO> vos=(List<GoodsBillBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(GoodsBillBVO.class));
+			for (GoodsBillBVO goodsBillBVO : vos) {
+				if(StringUtil.isEmpty(goodsBillBVO.getPk_goodsbill())){
+					message="单据编码："+vo.getVbillcode()+"里的订单,已失效;<br>";
+					throw new BusinessException(message);
+				}
+				if(!bills.contains(goodsBillBVO.getPk_goodsbill())){
+					lockKey = LockUtil.getInstance().addLockKey("cn_goodsbill", goodsBillBVO.getPk_goodsbill(),uuid, 60);
+					bills.add(goodsBillBVO.getPk_goodsbill());
+				}
+				if(!lockKey){
+					message="单据编码："+vo.getVbillcode()+"里的订单编码为"+goodsBillBVO.getVfilepath()+",其他用户正在操作此数据;<br>";
+					throw new BusinessException(message);
+				}
+				if(goodsBillBVO.getDeamount()==0 || goodsBillBVO.getDeamount()==4){
+					message="单据编码："+vo.getVbillcode()+"里的订单编码为"+goodsBillBVO.getVfilepath()+",已失效;<br>";
+					throw new BusinessException(message);
+				}
+				updateOutNum(goodsBillBVO.getPk_goods(),goodsBillBVO.getPk_goodsspec(),goodsBillBVO.getAmount(),1);//3、更新库存表 
+			}
+		}catch (Exception e) {
+		    if (e instanceof BusinessException)
+		        throw new BusinessException(e.getMessage());
+		    else
+		        throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_corp(),uuid);
+			for (String string : bills) {
+				LockUtil.getInstance().unLock_Key("cn_goodsbill", string,uuid);
+			}
+		}	
 	}
 
 	@Override
