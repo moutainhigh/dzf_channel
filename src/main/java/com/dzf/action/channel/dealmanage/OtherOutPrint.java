@@ -73,7 +73,7 @@ public class OtherOutPrint<T> extends BaseAction<T> {
 				
 				Phrase date = new Phrase();
 				date.add(new Chunk("  领取日期：", tableHeadFonts));
-				date.add(new Chunk(headvo.getGetdate().toString(), tableHeadFonts));
+				date.add(new Chunk(headvo.getVgetdate().toString(), tableHeadFonts));
 				
 				Phrase corpname = new Phrase();
 				corpname.add(new Chunk("  录入人：", tableHeadFonts));

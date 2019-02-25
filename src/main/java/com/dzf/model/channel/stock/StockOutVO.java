@@ -78,7 +78,8 @@ public class StockOutVO extends MultSuperVO {
 	@FieldAlias("readdress")
 	private String vreceiveaddress;//收货地址
 	
-	private DZFDate getdate;//领取日期
+	@FieldAlias("getdate")
+	private DZFDate vgetdate;//领取日期
 	
 	private Integer itype;//null商品购买；1：内部损耗
 
@@ -175,12 +176,12 @@ public class StockOutVO extends MultSuperVO {
 		return itype;
 	}
 
-	public DZFDate getGetdate() {
-		return getdate;
+	public DZFDate getVgetdate() {
+		return vgetdate;
 	}
 
-	public void setGetdate(DZFDate getdate) {
-		this.getdate = getdate;
+	public void setVgetdate(DZFDate vgetdate) {
+		this.vgetdate = vgetdate;
 	}
 
 	public void setItype(Integer itype) {

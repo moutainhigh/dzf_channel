@@ -217,7 +217,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 			}
 			
 			//1、更新主表；
-			singleObjectBO.update(vo,new String[]{"getdate","vmemo"});
+			singleObjectBO.update(vo,new String[]{"vgetdate","vmemo"});
 			//2、删除子表
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
@@ -463,7 +463,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		SQLParameter spm = new SQLParameter();
 		sql.append("select c.vbillcode,");
 		sql.append("       c.pk_stockout,");
-		sql.append("       c.getdate,");
+		sql.append("       c.vgetdate,");
 		sql.append("       c.vmemo,");
 		sql.append("       c.vstatus,");
 		sql.append("       c.coperatorid,");
@@ -474,11 +474,11 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		sql.append("  from cn_stockout c");
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=1 ");
 		if(pamvo.getBegdate()!=null){
-			sql.append("and getdate >=? ");
+			sql.append("and vgetdate >=? ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate()!=null){
-			sql.append("and getdate <= ? ");
+			sql.append("and vgetdate <= ? ");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
