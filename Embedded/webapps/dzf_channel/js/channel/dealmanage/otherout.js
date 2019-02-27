@@ -449,11 +449,14 @@ function tanCancel(index){
 				data : row,
 				dataTye : 'json',
 				success : function(result) {
-					Public.tips({
-						content :  "操作成功",
-						type : 0
-					});	
-					reloadData();
+					var result = eval('(' + result + ')');
+					if (result.success) {
+						Public.tips({content :  "操作成功",type : 0});	
+						reloadData();
+					} else {
+						Public.tips({content : result.msg,type : 2});
+						return;
+					}
 				}
 			});
 		} else {
