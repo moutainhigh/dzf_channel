@@ -401,13 +401,13 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sql.append("                and so.itype = 1 ");
 		sql.append("                AND substr(so.dconfirmtime, 0, "+subLen+") < ? ");
 		sql.append("              group by sob.pk_goods, sob.pk_goodsspec) other on gs.pk_goodsspec =other.pk_goodsspec ");
+		sql.append("   order by cg.vgoodscode ");
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(byTime);
 		spm.addParam(byTime);
 		spm.addParam(byTime);
 		List<StockOutInMVO> list = (List<StockOutInMVO>)singleObjectBO.executeQuery(sql.toString(),
 				spm,new BeanListProcessor(StockOutInMVO.class));
-		
 		return list;
 	}
 

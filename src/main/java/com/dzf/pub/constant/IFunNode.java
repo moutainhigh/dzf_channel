@@ -254,4 +254,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_60  = "channel60";
     
+    /**
+     * 期末结转
+     */
+    public static final String CHANNEL_62  = "channel62";
+    
 }
