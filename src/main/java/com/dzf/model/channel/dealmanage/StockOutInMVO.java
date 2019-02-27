@@ -8,7 +8,7 @@ import com.dzf.pub.lang.DZFDouble;
 
 /**
  * 出入库明细表VO
- * 
+ * 出入库汇总表VO
  * @author yy
  */
 
@@ -26,6 +26,9 @@ public class StockOutInMVO extends SuperVO {
 	
 	@FieldAlias("gid")
 	private String pk_goods;// 商品名称id
+	
+	@FieldAlias("pk_goodsspec")
+	private String pk_goodsspec;// 规格型号id
 
 	@FieldAlias("gcode")
 	private String vgoodscode;// 商品编码
@@ -37,34 +40,63 @@ public class StockOutInMVO extends SuperVO {
 	private String invtype;//型号
 
 	@FieldAlias("itype")
-	private Integer vitype;// 类型
+	private Integer vitype;// 业务类型
 
-	@FieldAlias("nprice")
-	private DZFDouble nprice;// 成本价
-
-	@FieldAlias("num")
-	private Integer nnum;// 数量
-
-	@FieldAlias("nmny")
-	private DZFDouble totalmny;// 金额
-
-	@FieldAlias("conid")
-	private String vconfirmid;// 确认出入库人id
-
-	@FieldAlias("conname")
-	private String vconfirmname;// 确认出入库人姓名
-	
 	@FieldAlias("contime")
 	private DZFDateTime dconfirmtime;// 确认出入库时间
 
-	@FieldAlias("ctname")
-	private String coperatname;// 录入人名称
-	
 	@FieldAlias("begdate")
 	private DZFDate begdate;// 开始日期
 
 	@FieldAlias("enddate")
 	private DZFDate enddate;// 结束日期
+	
+	@FieldAlias("numin")
+	private Integer nnumin;// 入库数量
+	
+	@FieldAlias("pricein")
+	private DZFDouble npricein;// 入库成本价
+	
+	@FieldAlias("moneyin")
+	private  DZFDouble totalmoneyin;// 入库金额
+	
+	@FieldAlias("numout")
+	private Integer nnumout;// 出库数量
+	
+	@FieldAlias("priceout")
+	private DZFDouble npriceout;// 出库成本价
+	
+	@FieldAlias("moneyout")
+	private  DZFDouble totalmoneyout;// 出库金额
+	
+	@FieldAlias("numb")
+	private  Integer balanceNum;// 结存数量
+	
+	@FieldAlias("priceb")
+	private  DZFDouble balancePrice;// 结存成本价
+	
+	@FieldAlias("moneyb")
+	private  DZFDouble totalmoneyb;// 结存金额
+	
+	
+	@FieldAlias("numstart")
+	private  Integer nnumstart;// 期初数量
+	
+	@FieldAlias("pricestart")
+	private  DZFDouble npricestart;// 期初单价
+	
+	@FieldAlias("moneystart")
+	private  DZFDouble totalmoneys;// 期初金额
+	
+	@FieldAlias("numend")
+	private  Integer nnumend;// 期末数量
+	
+	@FieldAlias("priceend")
+	private  DZFDouble npriceend;//期末单价
+	
+	@FieldAlias("moneyend")
+	private  DZFDouble totalmoneye;// 期末金额
+	
 	
 	public String getPk_goods() {
 		return pk_goods;
@@ -72,14 +104,6 @@ public class StockOutInMVO extends SuperVO {
 
 	public void setPk_goods(String pk_goods) {
 		this.pk_goods = pk_goods;
-	}
-
-	public String getVconfirmname() {
-		return vconfirmname;
-	}
-
-	public void setVconfirmname(String vconfirmname) {
-		this.vconfirmname = vconfirmname;
 	}
 
 	public DZFDate getBegdate() {
@@ -154,38 +178,6 @@ public class StockOutInMVO extends SuperVO {
 		this.invtype = invtype;
 	}
 
-	public DZFDouble getNprice() {
-		return nprice;
-	}
-
-	public void setNprice(DZFDouble nprice) {
-		this.nprice = nprice;
-	}
-
-	public Integer getNnum() {
-		return nnum;
-	}
-
-	public void setNnum(Integer nnum) {
-		this.nnum = nnum;
-	}
-
-	public DZFDouble getTotalmny() {
-		return totalmny;
-	}
-
-	public void setTotalmny(DZFDouble totalmny) {
-		this.totalmny = totalmny;
-	}
-
-	public String getVconfirmid() {
-		return vconfirmid;
-	}
-
-	public void setVconfirmid(String vconfirmid) {
-		this.vconfirmid = vconfirmid;
-	}
-
 	public DZFDateTime getDconfirmtime() {
 		return dconfirmtime;
 	}
@@ -194,14 +186,6 @@ public class StockOutInMVO extends SuperVO {
 		this.dconfirmtime = dconfirmtime;
 	}
 	
-	public String getCoperatname() {
-		return coperatname;
-	}
-
-	public void setCoperatname(String coperatname) {
-		this.coperatname = coperatname;
-	}
-
 	@Override
 	public String getPKFieldName() {
 		return null;
@@ -217,4 +201,137 @@ public class StockOutInMVO extends SuperVO {
 		return null;
 	}
 
+	public Integer getBalanceNum() {
+		return balanceNum;
+	}
+
+	public void setBalanceNum(Integer balanceNum) {
+		this.balanceNum = balanceNum;
+	}
+
+	
+	public Integer getNnumin() {
+		return nnumin;
+	}
+
+	public void setNnumin(Integer nnumin) {
+		this.nnumin = nnumin;
+	}
+
+	public Integer getNnumout() {
+		return nnumout;
+	}
+
+	public void setNnumout(Integer nnumout) {
+		this.nnumout = nnumout;
+	}
+
+	public DZFDouble getBalancePrice() {
+		return balancePrice;
+	}
+
+	public Integer getNnumstart() {
+		return nnumstart;
+	}
+
+	public void setNnumstart(Integer nnumstart) {
+		this.nnumstart = nnumstart;
+	}
+
+	public DZFDouble getNpricestart() {
+		return npricestart;
+	}
+
+	public void setNpricestart(DZFDouble npricestart) {
+		this.npricestart = npricestart;
+	}
+
+	public DZFDouble getTotalmoneys() {
+		return totalmoneys;
+	}
+
+	public void setTotalmoneys(DZFDouble totalmoneys) {
+		this.totalmoneys = totalmoneys;
+	}
+
+	public Integer getNnumend() {
+		return nnumend;
+	}
+
+	public void setNnumend(Integer nnumend) {
+		this.nnumend = nnumend;
+	}
+
+	public DZFDouble getNpriceend() {
+		return npriceend;
+	}
+
+	public void setNpriceend(DZFDouble npriceend) {
+		this.npriceend = npriceend;
+	}
+
+	public DZFDouble getTotalmoneye() {
+		return totalmoneye;
+	}
+
+	public void setTotalmoneye(DZFDouble totalmoneye) {
+		this.totalmoneye = totalmoneye;
+	}
+
+	public void setBalancePrice(DZFDouble balancePrice) {
+		this.balancePrice = balancePrice;
+	}
+
+	public DZFDouble getTotalmoneyb() {
+		return totalmoneyb;
+	}
+
+	public void setTotalmoneyb(DZFDouble totalmoneyb) {
+		this.totalmoneyb = totalmoneyb;
+	}
+
+	public DZFDouble getNpricein() {
+		return npricein;
+	}
+
+	public void setNpricein(DZFDouble npricein) {
+		this.npricein = npricein;
+	}
+
+	public DZFDouble getTotalmoneyin() {
+		return totalmoneyin;
+	}
+
+	public void setTotalmoneyin(DZFDouble totalmoneyin) {
+		this.totalmoneyin = totalmoneyin;
+	}
+
+	public DZFDouble getNpriceout() {
+		return npriceout;
+	}
+
+	public void setNpriceout(DZFDouble npriceout) {
+		this.npriceout = npriceout;
+	}
+
+	public DZFDouble getTotalmoneyout() {
+		return totalmoneyout;
+	}
+
+	public void setTotalmoneyout(DZFDouble totalmoneyout) {
+		this.totalmoneyout = totalmoneyout;
+	}
+
+	public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
+	
+	
+
+	
+	
 }

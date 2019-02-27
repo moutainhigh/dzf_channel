@@ -38,7 +38,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:218px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:155px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -52,25 +52,11 @@
 			</div>
 			
 			<div class="time_col time_colp10">
-				<label style="width:70px;text-align:right">类型：</label>
-			<!--  	<input id="itype" name="itype" class="easyui-combobox" style="width:286px;height:28px;text-align:left"
-					data-options="required:false,valueField:'id',textField:'name',panelHeight:200" /> -->
-					<select id="itype" name="itype" class="easyui-combobox" data-options="panelHeight:'auto'" 
-					editable="false" style="width:286px;height:28px;">
-					<option value="0">全部</option>
-					<option value="1">入库</option>
-					<option value="2">出库</option>
-				</select>
-			</div>
-			<div class="time_col time_colp10">
 				<label style="width:70px;text-align:right">商品：</label>
 				<input id="goodsname" name="goodsname" class="easyui-combobox" editable="false" style="width:286px;height:28px;text-align:left"
 			       data-options="required:false,valueField:'id',textField:'name',multiple:true,panelHeight:200" /> 
 			</div>
-			<div class="time_col time_colp10">
-				<label style="width:70px;text-align:right">单据编码：</label>
-				<input id="qvcode" class="easyui-textbox" style="width:286px;height:28px;"/>
-			</div>
+			
 			<p>
 				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
 				<a class="ui-btn save_input" onclick="reloadData()">确定</a>
