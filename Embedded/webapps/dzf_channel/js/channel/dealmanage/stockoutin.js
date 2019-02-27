@@ -86,7 +86,7 @@ function load(){
 		            	      rowspan:2,
 		            	      
 		            	    }, {
-		            	      width : '100',
+		            	      width : '150',
 		            	      title : '商品',
 		            	      field : 'gname',
 		            	      halign : 'center',

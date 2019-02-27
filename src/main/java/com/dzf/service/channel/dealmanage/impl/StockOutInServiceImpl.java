@@ -37,7 +37,7 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		List<StockOutInMVO>  retList = new ArrayList<StockOutInMVO>();
 		//1、获取期初余额
 		HashMap<String, StockOutInMVO> balMap = new HashMap<>();
-		List<StockOutInMVO> balList = carryover.queryBalanceByTime(qvo.getBegdate().toString());
+		List<StockOutInMVO> balList = carryover.queryBalanceByTime(qvo.getBegdate().toString(),qvo.getPk_goods());
 		String key;
 		for (StockOutInMVO stockOutInMVO : balList) {
 			key = stockOutInMVO.getPk_goods()+stockOutInMVO.getPk_goodsspec();
@@ -81,6 +81,7 @@ public class StockOutInServiceImpl implements IStockOutInService {
 				oldId=newId;
 			}else{
 				stockOutInMVO=calBalance(stockOutInMVO,lastVO);
+				lastVO=stockOutInMVO;
 				retList.add(stockOutInMVO);
 			}
 		}
@@ -96,12 +97,13 @@ public class StockOutInServiceImpl implements IStockOutInService {
 			nowVO.setBalanceNum(lastVO.getBalanceNum() + nowVO.getNnumin());// 结存数量
 			nowVO.setTotalmoneyb(lastVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()));// 结存金额
 		}else{// 销售出库和其他出库
-			nowVO.setNpriceout(lastVO.getBalancePrice());// 出库单价（上一次结存单价）
-			nowVO.setTotalmoneyout(lastVO.getBalancePrice().multiply(nowVO.getNnumout()));// 出库金额（单价x数量）
+//			nowVO.setNpriceout(lastVO.getBalancePrice());// 出库单价（上一次结存单价）
+//			nowVO.setTotalmoneyout(lastVO.getBalancePrice().multiply(nowVO.getNnumout()));// 出库金额（单价x数量）
+			nowVO.setTotalmoneyout(nowVO.getNpriceout().multiply(nowVO.getNnumout()));// 出库金额（单价x数量）
 			Integer num = lastVO.getBalanceNum() ;
 			nowVO.setBalanceNum(num - nowVO.getNnumout());// 结存数量
 			DZFDouble toatal =lastVO.getTotalmoneyb();
-			nowVO.setTotalmoneyb(toatal.sub(lastVO.getTotalmoneyout()));// 结存金额
+			nowVO.setTotalmoneyb(toatal.sub(nowVO.getTotalmoneyout()));// 结存金额
 		}
 		if (nowVO.getTotalmoneyb().compareTo(DZFDouble.ZERO_DBL)>0) {
 			nowVO.setBalancePrice(nowVO.getTotalmoneyb().div(nowVO.getBalanceNum()));
@@ -192,7 +194,9 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		sql.append("                and so.itype = 1) hz on hz.pk_goods = gs.pk_goods ");
 		sql.append("                                    and hz.pk_goodsspec = gs.pk_goodsspec ");
 		sql.append(" where nvl(cg.dr, 0) = 0 and nvl(gs.dr, 0) = 0 ");
+		sql.append(" 		and substr(hz.dconfirmtime, 0, 10) >= ? ");
 		sql.append(" 		and substr(hz.dconfirmtime, 0, 10) <= ? ");
+		spm.addParam(qvo.getBegdate());
 		spm.addParam(qvo.getEnddate());
 		if (!StringUtil.isEmpty(qvo.getPk_goods())) {
 			String[] strs = qvo.getPk_goods().split(",");

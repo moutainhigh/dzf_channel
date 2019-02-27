@@ -28,6 +28,6 @@ public interface ICarryOverService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<StockOutInMVO> queryBalanceByTime(String byTime) throws DZFWarpException;
+	public List<StockOutInMVO> queryBalanceByTime(String byTime,String gids) throws DZFWarpException;
 	
 }

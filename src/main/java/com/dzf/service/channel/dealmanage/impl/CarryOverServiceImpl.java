@@ -18,6 +18,7 @@ import com.dzf.model.channel.stock.CarryOverVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
@@ -25,6 +26,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
 
 @Service("carryOver")
@@ -37,6 +39,9 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	public List<CarryOverVO> query(QryParamVO qvo){
 		if(qvo.getBeginperiod().compareTo("2018-12")<0){
 			qvo.setBeginperiod("2018-12");
+		}
+		if(qvo.getEndperiod().compareTo(new DZFDate().toString().substring(0, 7))>0){
+			qvo.setEndperiod(new DZFDate().toString().substring(0, 7));
 		}
 		List<CarryOverVO> retlist = new ArrayList<>();
 		StringBuffer sql = new StringBuffer();
@@ -109,7 +114,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	private void addPrice(CarryOverVO vo) throws DZFWarpException{
 		//1、获取期初余额
 		HashMap<String, StockOutInMVO> balMap = new HashMap<>();
-		List<StockOutInMVO> balList = queryBalanceByTime(vo.getPeriod());
+		List<StockOutInMVO> balList = queryBalanceByTime(vo.getPeriod(),null);
 		String key;
 		for (StockOutInMVO stockOutInMVO : balList) {
 			key = stockOutInMVO.getPk_goods()+stockOutInMVO.getPk_goodsspec();
@@ -347,7 +352,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 	
 	@Override
-	public List<StockOutInMVO> queryBalanceByTime(String byTime) throws DZFWarpException {
+	public List<StockOutInMVO> queryBalanceByTime(String byTime,String gids) throws DZFWarpException {
 		int subLen = byTime.length();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select cg.vgoodscode, ");
@@ -401,7 +406,12 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sql.append("                and so.itype = 1 ");
 		sql.append("                AND substr(so.dconfirmtime, 0, "+subLen+") < ? ");
 		sql.append("              group by sob.pk_goods, sob.pk_goodsspec) other on gs.pk_goodsspec =other.pk_goodsspec ");
-		sql.append("   order by cg.vgoodscode ");
+		if (!StringUtil.isEmpty(gids)) {
+			String[] strs = gids.split(",");
+			String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			sql.append(" 	where cg.pk_goods in (").append(inSql).append(")");
+		}
+		sql.append("   order by cg.vgoodscode,gs.pk_goodsspec desc");
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(byTime);
 		spm.addParam(byTime);
