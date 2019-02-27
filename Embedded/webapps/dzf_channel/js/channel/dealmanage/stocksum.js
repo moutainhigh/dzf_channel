@@ -66,9 +66,9 @@ function load(){
 		    height : Public.setGrid().h,
 		    singleSelect : true,
 		    checkOnSelect : false,
-		    pagination : true,// 分页工具栏显示
-		    pageSize : DZF.pageSize,
-		    pageList : DZF.pageList,
+//		    pagination : true,// 分页工具栏显示
+//		    pageSize : DZF.pageSize,
+//		    pageList : DZF.pageList,
 		    showFooter : false,
 		    remoteSort : false,
 		    idField : 'sid',
@@ -99,17 +99,14 @@ function load(){
 		            	      rowspan:2,
 		            	      
 		            	    }, {
-		            	      width : '100',
+		            	      width : '150',
 		            	      title : '商品',
 		            	      field : 'gname',
 		            	      halign : 'center',
 		            	      align : 'left',
 		            	      rowspan:2,
 		            	      formatter : function(value, row, index) {
-		            	    	  var id=row.gid;
-		            	    	  var pk_goodsspec=row.pk_goodsspec;
-		            	    	  
-		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toRenew(\''+id+'\',\''+pk_goodsspec+'\')">' + value + '</a>';
+		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toDetail(\''+row.gid+'\',\''+row.pk_goodsspec+'\')">' + value + '</a>';
 		                      }
 		            	    }, {
 		            	      width : '100',
@@ -141,7 +138,7 @@ function load(){
 			                   colspan:2,
 			              },{
 			                   width : '100',
-			                   title : '本期出库',
+			                   title : '本期卖出',
 			                   field : 'outstock',
 			                   halign : 'center',
 			                   align : 'center',
@@ -274,11 +271,11 @@ function closeCx(){
 /**
  * 跳转到出入库明细表页面
  */
-function toRenew(id,pk_goodsspec){
+function toDetail(gid,pk_goodsspec){
 	var begdate=$("#begdate").datebox('getValue');
 	var enddate=$("#enddate").datebox('getValue');
 	
-	var url = 'channel/dealmanage/stockoutin.jsp?operate=toRenew&id='+id+'&pk_goodsspec='+pk_goodsspec+'&begdate='+begdate+'&enddate='+enddate;
+	var url = 'channel/dealmanage/stockoutin.jsp?operate=toDetail&gid='+gid+'&pk_goodsspec='+pk_goodsspec+'&begdate='+begdate+'&enddate='+enddate;
 	parent.addTabNew('出入库明细表', url);
 }
 
