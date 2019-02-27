@@ -39,17 +39,23 @@ public class GoodsBillBVO extends SuperVO {
  
 	@FieldAlias("mname")
 	private String vmeasname; // 单位
- 
+	
+	private Integer deamount;//发货数量（目前逻辑：有值就是该订单该商品发货，无值就是该订单该商品没有发货）
+	
 	@FieldAlias("price")
 	private DZFDouble nprice; // 单价
+	
+	@FieldAlias("totalmny")
+	private DZFDouble ntotalmny; //合计
 	
 	@FieldAlias("amount")
 	private Integer amount; // 数量
 	
-	private Integer deamount;//发货数量（目前逻辑：有值就是该订单该商品发货，无值就是该订单该商品没有发货）
+	@FieldAlias("cost")
+	private DZFDouble ncost; //成本价
 	
-	@FieldAlias("totalmny")
-	private DZFDouble ntotalmny; //合计
+	@FieldAlias("totalcost")
+	private DZFDouble ntotalcost;//成本合计
 	
     @FieldAlias("opid")
     private String coperatorid; // 制单人
@@ -95,6 +101,22 @@ public class GoodsBillBVO extends SuperVO {
 
 	public String getVnote() {
 		return vnote;
+	}
+
+	public DZFDouble getNcost() {
+		return ncost;
+	}
+
+	public void setNcost(DZFDouble ncost) {
+		this.ncost = ncost;
+	}
+
+	public DZFDouble getNtotalcost() {
+		return ntotalcost;
+	}
+
+	public void setNtotalcost(DZFDouble ntotalcost) {
+		this.ntotalcost = ntotalcost;
 	}
 
 	public void setVnote(String vnote) {

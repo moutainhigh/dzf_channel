@@ -34,11 +34,17 @@ public class StockOutBVO extends SuperVO {
 	
 	private String invtype;//型号
 	
-	private DZFDouble nprice;//销售价
+	private DZFDouble nprice;//销售价   
 	
-	private Integer nnum;//数量
+	private Integer nnum;//数量		
 	
-	private DZFDouble nmny;//金额
+	private DZFDouble nmny;//金额	
+	
+	@FieldAlias("cost")
+	private DZFDouble ncost; //成本价  其它出库单
+	
+	@FieldAlias("totalcost") 
+	private DZFDouble ntotalcost;//成本合计 其它出库单
 	
 	@FieldAlias("corpid")
 	private String pk_corp;
@@ -79,6 +85,22 @@ public class StockOutBVO extends SuperVO {
 
 	public String getPk_warehouse() {
 		return pk_warehouse;
+	}
+
+	public DZFDouble getNcost() {
+		return ncost;
+	}
+
+	public void setNcost(DZFDouble ncost) {
+		this.ncost = ncost;
+	}
+
+	public DZFDouble getNtotalcost() {
+		return ntotalcost;
+	}
+
+	public void setNtotalcost(DZFDouble ntotalcost) {
+		this.ntotalcost = ntotalcost;
 	}
 
 	public void setPk_warehouse(String pk_warehouse) {
