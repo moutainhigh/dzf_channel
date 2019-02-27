@@ -336,7 +336,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select count(1) as count from cn_carryover");
-		sql.append(" where nvl(dr,0) = 0 nvl(iscarryover,'N')='Y' ");
+		sql.append(" where nvl(dr,0) = 0 and nvl(iscarryover,'N')='Y' ");
 		sql.append(" and period = ?");
 		sp.addParam(confirmTime.toString().substring(0, 7));
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();

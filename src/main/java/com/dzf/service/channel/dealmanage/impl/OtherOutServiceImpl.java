@@ -26,6 +26,7 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IOtherOutService;
 import com.dzf.service.pub.IBillCodeService;
 
@@ -40,6 +41,9 @@ public class OtherOutServiceImpl implements IOtherOutService{
 	
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO= null;
+	
+	@Autowired
+	private ICarryOverService  carryover;
 	
 
 	@Override
@@ -378,6 +382,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 				throw new BusinessException(message);
 			}
 			checkData(vo);
+			carryover.checkIsCancel(vo.getDconfirmtime());
 			//1、更新出库单主表
 			vo.setVstatus(0);
 			vo.setDconfirmtime(null);

@@ -37,6 +37,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
+import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IChannelOrderService;
 
 @Service("channelorderser")
@@ -47,6 +48,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private ICarryOverService carryover;
 
 	@Override
 	public Integer queryTotalRow(GoodsBillVO pamvo) throws DZFWarpException {
@@ -366,6 +370,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateCancelConf(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
+		carryover.checkIsCancel(new DZFDateTime(pamvo.getDconfdate().getMillis()));
 		checkStockOut(pamvo);
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 2);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款

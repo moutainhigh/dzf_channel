@@ -34,6 +34,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.ToolsUtil;
+import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.channel.dealmanage.IStockInService;
 import com.dzf.service.pub.IBillCodeService;
@@ -52,6 +53,9 @@ public class StockInServiceImpl implements IStockInService {
 	
 	@Autowired
 	private IGoodsManageService manser;
+	
+	@Autowired
+	private ICarryOverService  carryover;
 	
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
@@ -655,6 +659,7 @@ public class StockInServiceImpl implements IStockInService {
 			if(bVOs == null || bVOs.length == 0 ){
 				throw new BusinessException("入库单表体数据为空");
 			}
+			carryover.checkIsCancel(stvo.getDconfirmtime());
 			Map<String, StockInBVO> map = new HashMap<String, StockInBVO>();
 			String key = "";
 			StockInBVO countvo = null;
