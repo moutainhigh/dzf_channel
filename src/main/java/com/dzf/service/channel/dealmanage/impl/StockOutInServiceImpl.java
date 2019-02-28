@@ -181,8 +181,8 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		sql.append("                    0 as npricein, ");
 		sql.append("                    0 as totalmoneyin, ");
 		sql.append("                    nvl(sob.nnum, 0) nnumout, ");
-		sql.append("                    0 as npriceout, ");
-		sql.append("                    0 as totalmoneyout, ");
+		sql.append("                    nvl(sob.ncost, 0) as npriceout, ");
+		sql.append("                    nvl(sob.ntotalcost, 0) as totalmoneyout,");
 		sql.append("                    0 as balanceNum, ");
 		sql.append("                    0 as balancePrice, ");
 		sql.append("                    0 as totalmoneyb ");

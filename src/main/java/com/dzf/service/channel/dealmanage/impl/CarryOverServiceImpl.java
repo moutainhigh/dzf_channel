@@ -178,7 +178,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sql.append("       sob.pk_goodsspec, ");
 		sql.append("       so.dconfirmtime, ");
 		sql.append("       3 vitype, ");
-		sql.append("       so.vbillcode, ");
+		sql.append("       sob.pk_stockout_b pk_stockoutin, ");
 		sql.append("       0 as nnumin, ");
 		sql.append("       0 as npricein, ");
 		sql.append("       0 as totalmoneyin, ");
@@ -243,12 +243,12 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			spm.addParam(nowVO.getPk_stockoutin());
 			StringBuffer sql = new StringBuffer();
 			if(nowVO.getVitype() == 2){
-				sql.append("update cn_stockout_b set ncost = ?, ntotalcost = ?");
-				sql.append("  where nvl(dr, 0) = 0 and pk_stockout_b =?");
-				singleObjectBO.executeUpdate(sql.toString(), spm);
-			}else if(nowVO.getVitype() == 3){						
 				sql.append("update cn_goodsbill_b set ncost = ?, ntotalcost = ?");
 				sql.append("  where nvl(dr, 0) = 0 and pk_goodsbill_b =?");
+				singleObjectBO.executeUpdate(sql.toString(), spm);
+			}else if(nowVO.getVitype() == 3){						
+				sql.append("update cn_stockout_b set ncost = ?, ntotalcost = ?");
+				sql.append("  where nvl(dr, 0) = 0 and pk_stockout_b =?");
 				singleObjectBO.executeUpdate(sql.toString(), spm);
 			}
 		}
