@@ -188,10 +188,28 @@ function load(){
 		             ] ,
         [
             { field : 'numin', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='1'){return '';}else{ if(row.itype=='1'){return value;} }} else{return value}}}, 
-            { field : 'pricein', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }}}}, 
+            { field : 'pricein', title : '单价', width : 100,halign:'center',align:'right',
+            	formatter : function(value,row) {
+            		if(!isEmpty(row.gcode)){
+            			if(isEmpty(row.itype) && row.itype!='1'){
+            				return '';
+            			}else{
+            				return formFourMny(value);
+        				}
+            		}
+            	}}, 
             { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }} else{return formatMny(value)}}},
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{ if(row.itype=='2'||row.itype=='3'){return value;} }} else{return value}}}, 
-            { field : 'priceout', title : '单价', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }}}},
+            { field : 'priceout', title : '单价', width : 100,halign:'center',align:'right',
+            	formatter : function(value,row) {
+            		if(!isEmpty(row.gcode)){
+            			if(row.itype=='1' || isEmpty(row.itype)){
+            				return '';
+            			}else {
+            				return formFourMny(value);
+        				}
+            		}
+            	}},             
             { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }} else{return formatMny(value)}}},
             { field : 'numb', title : '数量', width : 100, halign:'center',align:'right',
             	formatter : function(value,row) {
@@ -203,7 +221,16 @@ function load(){
             			}
             		}
             }}, 
-            { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(value=='0'||value==null){return "0.00";}return formatMny(value);}}}, 
+            { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',
+            	formatter : function(value,row) {
+            		if(!isEmpty(row.gcode)){
+            			if(value=='0'||value==null){
+            				return '';
+            			}else{
+            				return formFourMny(value);
+        				}
+            		}
+            	}},  
             { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(value=='0'){return "0.00";}return formatMny(value);}}}, 
             
         ] ],
@@ -255,6 +282,15 @@ function load(){
         	}
         },
 	});
+}
+
+//金额，保留小数点后4位
+function formFourMny(value) {
+	if(value == '0'){
+		return "0.0000";
+	}else{
+		return value.toFixed(4);
+	}
 }
 
 /**
