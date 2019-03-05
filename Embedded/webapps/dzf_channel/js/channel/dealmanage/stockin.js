@@ -408,7 +408,7 @@ function cancelConf(ths){
 					if (!data.success) {
 						Public.tips({
 							content : data.msg,
-							type : 1
+							type : 2
 						});
 					} else {
 						reloadData();

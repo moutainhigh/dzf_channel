@@ -294,7 +294,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			spm.addParam(date.toString().substring(0, 7));
 			CarryOverVO[] vos = (CarryOverVO[]) singleObjectBO.queryByCondition(CarryOverVO.class, sql, spm);
 			if(vos == null || vos.length<1){
-				throw new BusinessException("上一个月的成本未结转");
+				throw new BusinessException("当月成本已结转，请取消结转后重新操作");
 			}
 		} else if (!vo.getIscarryover().booleanValue()) {
 			long millis = DateUtils.getNextMonth(date.getMillis());// 反结转（看下个月是否结转）提醒报错
@@ -303,7 +303,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			spm.addParam(date.toString().substring(0, 7));
 			CarryOverVO[] vos = (CarryOverVO[]) singleObjectBO.queryByCondition(CarryOverVO.class, sql, spm);
 			if (vos != null && vos.length > 0) {
-				throw new BusinessException("下一个月的成本未反结转");
+				throw new BusinessException("不可跨月取消结转");
 			}
 		} else {
 			return;
@@ -334,7 +334,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 	
 	@Override
-	public void checkIsCancel(DZFDateTime confirmTime) throws DZFWarpException{
+	public void checkIsOper(DZFDateTime confirmTime,Integer type) throws DZFWarpException{
 		if(confirmTime==null){
 			throw new BusinessException("非法操作!");
 		}
@@ -346,8 +346,11 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sp.addParam(confirmTime.toString().substring(0, 7));
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
-		if(num > 0){
-			throw new BusinessException("该月已成本结转，不可取消确认");
+		String msg = "该月已成本结转，不可";
+		if(num > 0 && type==1){
+			throw new BusinessException(msg+"确认!");
+		}else if(num > 0){
+			throw new BusinessException(msg+"取消确认!");
 		}
 	}
 	

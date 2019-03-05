@@ -351,6 +351,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 				throw new BusinessException("单据编码："+vo.getVbillcode()+",其他用户正在操作此数据;<br>");
 			}
 			checkData(vo);
+			carryover.checkIsOper(vo.getDconfirmtime(),1);
 			//1、更新出库单主表
 			vo.setVstatus(1);
 			vo.setDconfirmtime(new DZFDateTime());
@@ -382,7 +383,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 				throw new BusinessException(message);
 			}
 			checkData(vo);
-			carryover.checkIsCancel(vo.getDconfirmtime());
+			carryover.checkIsOper(vo.getDconfirmtime(),2);
 			//1、更新出库单主表
 			vo.setVstatus(0);
 			vo.setDconfirmtime(null);

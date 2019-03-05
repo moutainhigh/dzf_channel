@@ -412,8 +412,8 @@ public class StockInServiceImpl implements IStockInService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(stvo.getTableName(), stvo.getPk_stockin(), uuid, 120);
-			
 			stvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 3);
+			carryover.checkIsOper(stvo.getDconfirmtime(),1);
 			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
 			for(StockInBVO bvo : bVOs){
 				updateStockNum(bvo, cuserid);
@@ -659,7 +659,7 @@ public class StockInServiceImpl implements IStockInService {
 			if(bVOs == null || bVOs.length == 0 ){
 				throw new BusinessException("入库单表体数据为空");
 			}
-			carryover.checkIsCancel(stvo.getDconfirmtime());
+			carryover.checkIsOper(stvo.getDconfirmtime(),2);
 			Map<String, StockInBVO> map = new HashMap<String, StockInBVO>();
 			String key = "";
 			StockInBVO countvo = null;
