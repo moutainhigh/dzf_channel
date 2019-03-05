@@ -484,7 +484,7 @@ function commitConfirm(rows){
 	}else{
 		Public.tips({
 			content :  "成功"+(rows.length-failen)+"条，失败"+failen+"条，其中："+failmsg,
-			type : 1
+			type : 2
 		});	
 	}
 	reloadData();

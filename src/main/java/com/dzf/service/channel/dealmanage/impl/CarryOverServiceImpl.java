@@ -346,11 +346,10 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sp.addParam(confirmTime.toString().substring(0, 7));
 		String res = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("count")).toString();
 		int num = Integer.valueOf(res);
-		String msg = "该月已成本结转，不可";
 		if(num > 0 && type==1){
-			throw new BusinessException(msg+"确认!");
+			throw new BusinessException("当月成本已结转，请取消结转后重新操作");
 		}else if(num > 0){
-			throw new BusinessException(msg+"取消确认!");
+			throw new BusinessException("当月成本已结转，请取消结转后重新操作");
 		}
 	}
 	

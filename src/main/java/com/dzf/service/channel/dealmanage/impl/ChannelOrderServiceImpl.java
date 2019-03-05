@@ -429,7 +429,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		carryover.checkIsOper(new DZFDateTime(pamvo.getDconfdate().getMillis()),1);
+		carryover.checkIsOper(new DZFDateTime(),1);
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 1);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			updateRebBanlanceAdd(pamvo, map, cuserid);

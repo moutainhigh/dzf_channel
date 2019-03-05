@@ -413,7 +413,7 @@ public class StockInServiceImpl implements IStockInService {
 		try {
 			LockUtil.getInstance().tryLockKey(stvo.getTableName(), stvo.getPk_stockin(), uuid, 120);
 			stvo = checkBeforeOperate(stvo, stvo.getPk_corp(), 3);
-			carryover.checkIsOper(stvo.getDconfirmtime(),1);
+			carryover.checkIsOper(new DZFDateTime(),1);
 			StockInBVO[] bVOs = (StockInBVO[]) stvo.getChildren();
 			for(StockInBVO bvo : bVOs){
 				updateStockNum(bvo, cuserid);
