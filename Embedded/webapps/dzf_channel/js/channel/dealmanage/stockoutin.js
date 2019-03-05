@@ -191,14 +191,23 @@ function load(){
             { field : 'pricein', title : '单价', width : 100,halign:'center',align:'right',
             	formatter : function(value,row) {
             		if(!isEmpty(row.gcode)){
-            			if(isEmpty(row.itype) && row.itype!='1'){
+            			if(isEmpty(row.itype) || row.itype!='1'){
             				return '';
             			}else{
             				return formFourMny(value);
         				}
             		}
             	}}, 
-            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='1'){return '';}else{if(value == '0')return "0.00";if(row.itype=='1'){return formatMny(value);} }} else{return formatMny(value)}}},
+            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',
+                	formatter : function(value,row) {
+                		if(!isEmpty(row.gcode)){
+                			if(isEmpty(row.itype) || row.itype!='1'){
+                				return '';
+                			}else{
+                				return formFourMny(value);
+            				}
+                		}
+                	}}, 
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{ if(row.itype=='2'||row.itype=='3'){return value;} }} else{return value}}}, 
             { field : 'priceout', title : '单价', width : 100,halign:'center',align:'right',
             	formatter : function(value,row) {
@@ -210,7 +219,16 @@ function load(){
         				}
             		}
             	}},             
-            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row) { if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{if(value == '0')return "0.00";if(row.itype=='2'||row.itype=='3'){return formatMny(value);} }} else{return formatMny(value)}}},
+            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',
+                   	formatter : function(value,row) {
+                		if(!isEmpty(row.gcode)){
+                			if(isEmpty(row.itype) || row.itype!='1'){
+                				return '';
+                			}else{
+                				return formFourMny(value);
+            				}
+                		}
+                	}}, 
             { field : 'numb', title : '数量', width : 100, halign:'center',align:'right',
             	formatter : function(value,row) {
             		if(!isEmpty(row.gcode)){
@@ -231,8 +249,16 @@ function load(){
         				}
             		}
             	}},  
-            { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(value=='0'){return "0.00";}return formatMny(value);}}}, 
-            
+            { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',
+                	formatter : function(value,row) {
+                		if(!isEmpty(row.gcode)){
+                			if(value=='0'||value==null){
+                				return '';
+                			}else{
+                				return formFourMny(value);
+            				}
+                		}
+                	}},  
         ] ],
         onLoadSuccess : function(data) {
         	calFooter();

@@ -163,7 +163,15 @@ function load(){
             			return value.toFixed(4);
             		}
             	}},           
-            { field : 'moneystart', title : '金额', width : 100, halign:'center',align:'right', formatter : function(value,row){if(value == null)return "0.00";return formatMny(value);}},
+            { field : 'moneystart', title : '金额', width : 100, halign:'center',align:'right', 
+            		formatter : function(value,row){
+            			if(value == null){
+            				return "0.00";
+            			}else{
+            				return value.toFixed(4);
+            			}
+            		}
+            	},
             { field : 'numin', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}} },
             { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null)return formatMny(value);}},
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}}},
@@ -172,12 +180,20 @@ function load(){
             { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',
             	formatter : function(value,row){
             		if(isEmpty(value)){
-            			return "0.0000"
+            			return "0.0000";
             		}else{
             			return value.toFixed(4);
             		}
             	}},
-            { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',formatter : function(value,row){if(value == null)return "0.00";return formatMny(value);}},
+            { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',
+            		formatter : function(value,row){
+            			if(value == null){
+            				return "0.00";
+            			}else{
+            				return value.toFixed(4);
+            			}
+            		}
+            	},
             
         ] ],
         
