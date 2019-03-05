@@ -222,7 +222,7 @@ function load(){
             { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',
                    	formatter : function(value,row) {
                 		if(!isEmpty(row.gcode)){
-                			if(isEmpty(row.itype) || row.itype!='1'){
+                			if(isEmpty(row.itype) || row.itype=='1'){
                 				return '';
                 			}else{
                 				return formFourMny(value);
@@ -240,25 +240,9 @@ function load(){
             		}
             }}, 
             { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',
-            	formatter : function(value,row) {
-            		if(!isEmpty(row.gcode)){
-            			if(value=='0'||value==null){
-            				return '';
-            			}else{
-            				return formFourMny(value);
-        				}
-            		}
-            	}},  
+            	formatter :formFourMny},  
             { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',
-                	formatter : function(value,row) {
-                		if(!isEmpty(row.gcode)){
-                			if(value=='0'||value==null){
-                				return '';
-                			}else{
-                				return formFourMny(value);
-            				}
-                		}
-                	}},  
+                formatter : formFourMny},  
         ] ],
         onLoadSuccess : function(data) {
         	calFooter();
@@ -312,7 +296,7 @@ function load(){
 
 //金额，保留小数点后4位
 function formFourMny(value) {
-	if(value == '0'){
+	if(isEmpty(value)){
 		return "0.0000";
 	}else{
 		return value.toFixed(4);

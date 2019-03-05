@@ -155,45 +155,15 @@ function load(){
 		             ] ,
         [
             { field : 'numstart', title : '数量', width : 100, halign:'center',align:'right'},
-            { field : 'pricestart', title : '单价', width : 100, halign:'center',align:'right', 
-            	formatter : function(value,row){
-            		if(isEmpty(value)){
-            			return "0.0000"
-            		}else{
-            			return value.toFixed(4);
-            		}
-            	}},           
-            { field : 'moneystart', title : '金额', width : 100, halign:'center',align:'right', 
-            		formatter : function(value,row){
-            			if(value == null){
-            				return "0.00";
-            			}else{
-            				return value.toFixed(4);
-            			}
-            		}
-            	},
+            { field : 'pricestart', title : '单价', width : 100, halign:'center',align:'right',formatter : formFourMny},
+            { field : 'moneystart', title : '金额', width : 100, halign:'center',align:'right',formatter : formFourMny},
             { field : 'numin', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}} },
-            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null)return formatMny(value);}},
+            { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : formFourMny},
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}}},
-            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : function(value,row){if(value!=null&&row.numout!=null){return formatMny(value);}   }},
+            { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : formFourMny},            
             { field : 'numend', title : '数量', width : 100, halign:'center',align:'right'},
-            { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',
-            	formatter : function(value,row){
-            		if(isEmpty(value)){
-            			return "0.0000";
-            		}else{
-            			return value.toFixed(4);
-            		}
-            	}},
-            { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',
-            		formatter : function(value,row){
-            			if(value == null){
-            				return "0.00";
-            			}else{
-            				return value.toFixed(4);
-            			}
-            		}
-            	},
+            { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',formatter : formFourMny},
+            { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',formatter : formFourMny},
             
         ] ],
         
@@ -252,6 +222,15 @@ function load(){
 	});
 }
 
+
+//金额，保留小数点后4位
+function formFourMny(value) {
+	if(value == null || value=='0'){
+		return "0.0000";
+	}else{
+		return value.toFixed(4);
+	}
+}
 
 String.prototype.startWith=function(str){
 	var reg=new RegExp("^"+str);
