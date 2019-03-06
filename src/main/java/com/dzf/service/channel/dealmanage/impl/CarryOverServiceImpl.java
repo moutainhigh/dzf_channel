@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -222,6 +223,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 
 	private StockOutInMVO updateAndCalBalance(StockOutInMVO nowVO, StockOutInMVO qcVO) throws DZFWarpException{
+		DecimalFormat df = new DecimalFormat("#.0000");
 		if(nowVO.getVitype() == 1){// 商品入库
 			qcVO.setBalanceNum(qcVO.getBalanceNum() + nowVO.getNnumin());// 结存数量
 			qcVO.setTotalmoneyb(qcVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()));// 结存金额
@@ -238,8 +240,8 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		
 		if(qcVO.getBalancePrice().compareTo(DZFDouble.ZERO_DBL)>0){
 			SQLParameter spm = new SQLParameter();
-			spm.addParam(nowVO.getNpriceout());
-			spm.addParam(nowVO.getTotalmoneyout());
+			spm.addParam(df.format(nowVO.getNpriceout()));
+			spm.addParam(df.format(nowVO.getTotalmoneyout()));
 			spm.addParam(nowVO.getPk_stockoutin());
 			StringBuffer sql = new StringBuffer();
 			if(nowVO.getVitype() == 2){
