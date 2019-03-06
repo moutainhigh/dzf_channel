@@ -677,7 +677,7 @@ function initCardGrid() {
 		                		}else if(iitype == 2){
 		                			nprice = getFloatValue(uprice);
 		                		}
-		                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+		                		$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 		                		
 		                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
 		            			var nnum = $(num.target).textbox('getValue');//数量
@@ -707,7 +707,7 @@ function initCardGrid() {
 		            				var tmny = uprice.mul(nnum);//采购金额
 		            				var tcost = nprice.mul(nnum);//成本金额
 		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-		            				$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+		            				$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 		            			}
 							}
 						}
@@ -1369,7 +1369,7 @@ function initConfGrid() {
 		                		}else if(iitype == 2){
 		                			nprice = getFloatValue(uprice);
 		                		}
-		                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+		                		$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 		                		
 		                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});
 		            			var nnum = $(num.target).textbox('getValue');//数量
@@ -1442,7 +1442,7 @@ function initConfGrid() {
 	                		}else if(iitype == 2){
 	                			nprice = getFloatValue(n);
 	                		}
-	                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+	                		$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 	                		
 	                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});//数量
 	                		var nnum = $(num.target).textbox('getValue');
