@@ -292,6 +292,7 @@ function reloadData(){
 				return;
 			}		
 		}
+		$('#jqj').html(begdate + ' 至 ' + enddate);
 	}else{
 		bperiod = $('#bperiod').datebox('getValue');
 		eperiod = $('#eperiod').datebox('getValue');
@@ -314,6 +315,7 @@ function reloadData(){
 				return;
 			}		
 		}
+		$('#jqj').html(bperiod + ' 至 ' + eperiod);
 	}
 	
 	
