@@ -70,8 +70,6 @@ function load(){
 //		    pageSize : DZF.pageSize,
 //		    pageList : DZF.pageList,
 		    showFooter : false,
-		    sortName : "gcode",
-		    sortOrder : "asc",
 		    remoteSort : false,
 		    showFooter: true,
 		columns : [ 
