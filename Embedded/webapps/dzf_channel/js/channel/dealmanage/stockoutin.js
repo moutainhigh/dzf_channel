@@ -80,9 +80,7 @@ function load(){
 		            	      align : 'left',
 		            	      halign : 'center',
 		            	      field : 'gcode',
-		            	      sortable : true,
 		            	      rowspan:2,
-		            	      
 		            	    }, {
 		            	      width : '150',
 		            	      title : '商品',
@@ -262,6 +260,7 @@ function load(){
 
 //金额，保留小数点后4位
 function formFourMny(value) {
+	value=getFloatValue(value);
 	if(isEmpty(value)){
 		return "0.0000";
 	}else{
