@@ -206,6 +206,8 @@ function load(){
                 			}else{
                 				return formFourMny(value);
             				}
+                		}else{
+                			return formFourMny(value);
                 		}
                 	}}, 
             { field : 'numout', title : '数量', width : 100, halign:'center',align:'right',formatter : function(value,row){ if(!isEmpty(row.gcode)){if(row.itype!='2'&& row.itype!='3'){return '';}else{ if(row.itype=='2'||row.itype=='3'){return value;} }} else{return value}}}, 
@@ -227,6 +229,8 @@ function load(){
                 			}else{
                 				return formFourMny(value);
             				}
+                		}else{
+                			return formFourMny(value);
                 		}
                 	}}, 
             { field : 'numb', title : '数量', width : 100, halign:'center',align:'right',
@@ -240,56 +244,20 @@ function load(){
             		}
             }}, 
             { field : 'priceb', title : '单价', width : 100, halign:'center',align:'right',
-            	formatter :formFourMny},  
+               	formatter : function(value,row) {
+            		if(!isEmpty(row.gcode)){
+            			return formFourMny(value);
+            		}
+            	}}, 
             { field : 'moneyb', title : '金额', width : 100, halign:'center',align:'right',
-                formatter : formFourMny},  
+                   	formatter : function(value,row) {
+                		if(!isEmpty(row.gcode)){
+                			return formFourMny(value);
+                		}
+                	}}, 
         ] ],
         onLoadSuccess : function(data) {
         	calFooter();
-        	var rows = $('#grid').datagrid('getRows');
-        	var numin = 0;	
-        	var pricein = 0;	
-        	var moneyin = 0;
-        	
-        	var numout = 0;	
-        	var priceout = 0;	
-        	var moneyout = 0;
-        	
-        	var numb = 0;	
-        	var priceb = 0;	
-        	var moneyb = 0;	
-        	
-        	for (var i = 0; i < rows.length; i++) {
-        		if(rows[i].numin != undefined && rows[i].numin != null){
-        			numin += parseFloat(rows[i].numin);
-        		}
-        		if(rows[i].pricein != undefined && rows[i].pricein != null){
-        			pricein += parseFloat(rows[i].pricein);
-        		}
-        		if(rows[i].moneyin != undefined && rows[i].moneyin != null){
-        			moneyin += parseFloat(rows[i].moneyin);
-        		}
-        		
-        		if(rows[i].numout != undefined && rows[i].numout != null){
-        			numout += parseFloat(rows[i].numout);
-        		}
-        		if(rows[i].priceout != undefined && rows[i].priceout != null){
-        			priceout += parseFloat(rows[i].priceout);
-        		}
-        		if(rows[i].moneyout != undefined && rows[i].moneyout != null){
-        			moneyout += parseFloat(rows[i].moneyout);
-        		}
-        		
-        		if(rows[i].numb != undefined && rows[i].numb != null){
-        			numb += parseFloat(rows[i].numb);
-        		}
-        		if(rows[i].priceb != undefined && rows[i].priceb != null){
-        			priceb += parseFloat(rows[i].priceb);
-        		}
-        		if(rows[i].moneyb != undefined && rows[i].moneyb != null){
-        			moneyb += parseFloat(rows[i].moneyb);
-        		}
-        	}
         },
 	});
 }
@@ -311,6 +279,7 @@ function calFooter(){
 	var footerData = new Object();
 	var numin = 0;	
 	var moneyin = 0;
+	
 	var numout = 0;	
 	var moneyout = 0;
 	for (var i = 0; i < rows.length; i++) {
