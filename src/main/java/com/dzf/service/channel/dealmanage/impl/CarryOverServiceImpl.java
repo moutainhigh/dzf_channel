@@ -223,25 +223,24 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 
 	private StockOutInMVO updateAndCalBalance(StockOutInMVO nowVO, StockOutInMVO qcVO) throws DZFWarpException{
-		DecimalFormat df = new DecimalFormat("#.0000");
 		if(nowVO.getVitype() == 1){// 商品入库
 			qcVO.setBalanceNum(qcVO.getBalanceNum() + nowVO.getNnumin());// 结存数量
-			qcVO.setTotalmoneyb(qcVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()));// 结存金额
+			qcVO.setTotalmoneyb(qcVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()).setScale(4, DZFDouble.ROUND_HALF_UP));// 结存金额
 		}else{// 订单和其他出库
-			nowVO.setNpriceout(qcVO.getBalancePrice());// 出库单价（上一次结存单价）
-			nowVO.setTotalmoneyout(qcVO.getBalancePrice().multiply(nowVO.getNnumout()));// 出库金额（单价x数量）
+			nowVO.setNpriceout(qcVO.getBalancePrice().setScale(4, DZFDouble.ROUND_HALF_UP));// 出库单价（上一次结存单价）
+			nowVO.setTotalmoneyout(qcVO.getBalancePrice().multiply(nowVO.getNnumout()).setScale(4, DZFDouble.ROUND_HALF_UP));// 出库金额（单价x数量）
 			
 			nowVO.setBalanceNum(qcVO.getBalanceNum() - nowVO.getNnumout());// 结存数量
-			nowVO.setTotalmoneyb(qcVO.getTotalmoneyb().sub(nowVO.getTotalmoneyout()));// 结存金额
+			nowVO.setTotalmoneyb(qcVO.getTotalmoneyb().sub(nowVO.getTotalmoneyout()).setScale(4, DZFDouble.ROUND_HALF_UP));// 结存金额
 		}
 		if (qcVO.getBalanceNum()>0) {
-			qcVO.setBalancePrice(qcVO.getTotalmoneyb().div(qcVO.getBalanceNum()));
+			qcVO.setBalancePrice(qcVO.getTotalmoneyb().div(qcVO.getBalanceNum()).setScale(4, DZFDouble.ROUND_HALF_UP));
 		}
 		
 		if(qcVO.getBalancePrice().compareTo(DZFDouble.ZERO_DBL)>0){
 			SQLParameter spm = new SQLParameter();
-			spm.addParam(df.format(nowVO.getNpriceout()));
-			spm.addParam(df.format(nowVO.getTotalmoneyout()));
+			spm.addParam(nowVO.getNpriceout());
+			spm.addParam(nowVO.getTotalmoneyout());
 			spm.addParam(nowVO.getPk_stockoutin());
 			StringBuffer sql = new StringBuffer();
 			if(nowVO.getVitype() == 2){
