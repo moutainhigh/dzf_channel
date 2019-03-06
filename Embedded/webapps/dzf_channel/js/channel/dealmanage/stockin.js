@@ -42,11 +42,7 @@ function expendRow(){
              			 },
              		 },
                      {field:'price',title:'成本价',width:80,align:'right',
-                    	 formatter : function(value, row, index) {
-             				if (value == 0)
-             					return "0.00";
-             				return formatMny(value);
-             			 },
+                    	 formatter : formFourMny,
              		 },
                      {field:'num',title:'入库数量',width:80,align:'right'},
                      {field:'pricetax',title:'价税合计',width:80,align:'right',
@@ -57,11 +53,7 @@ function expendRow(){
              			 },
              		 },
              		 {field:'tcost',title:'成本合计',width:80,align:'right',
-                    	 formatter : function(value, row, index) {
-             				if (value == 0)
-             					return "0.00";
-             				return formatMny(value);
-             			 },
+                    	 formatter : formFourMny,
              		 },
              		 {field:'memo',title:'备注',width:160,align:'right',},
                  ]],
@@ -82,6 +74,17 @@ function expendRow(){
          }
      });
 }
+
+//金额，保留小数点后4位
+function formFourMny(value) {
+	value=getFloatValue(value);
+	if(value==0){
+		return "0.0000";
+	}else{
+		return value.toFixed(4);
+	}
+}
+
 
 /**
  * 查询初始化
@@ -206,11 +209,7 @@ function load(){
 			align : 'right',
 			halign : 'center',
 			field : 'totalcost',
-			formatter : function(value, row, index) {
-				if (value == 0)
-					return "0.00";
-				return formatMny(value);
-			},
+			formatter : formFourMny,
 		}, {
 			width : '100',
 			title : '入库日期',
@@ -751,7 +750,7 @@ function initCardGrid() {
 	                		}else if(iitype == 2){
 	                			nprice = getFloatValue(n);
 	                		}
-	                		$(price.target).textbox('setValue', formatMny(nprice));//成本价
+	                		$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 	                		
 	                		var num = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'num'});//数量
 	                		var nnum = $(num.target).textbox('getValue');
@@ -781,7 +780,7 @@ function initCardGrid() {
 	                			var tmny = getFloatValue(n).mul(nnum);//采购金额
 	                			var tcost = nprice.mul(nnum);//成本金额
 	                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-	                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+	                			$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 	                		}
 						}
 //						if(isEmpty(n) && !isEmpty(o)){
@@ -806,7 +805,7 @@ function initCardGrid() {
 				options : {
 					height : 31,
 					readonly : true,
-					precision : 2,
+					precision : 4,
 					min : 0,
 					max : 99999,
 					onChange : function(n, o) {
@@ -821,7 +820,7 @@ function initCardGrid() {
 						}
 					}
 				}
-			},formatter : formatMny,
+			},formatter : formFourMny,
 		}, {
 			field : 'num',
 			title : '入库数量',
@@ -882,7 +881,7 @@ function initCardGrid() {
                 			var tmny = uprice.mul(n);
                 			var tcost = nprice.mul(n);
                 			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+                			$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 						}
 //						if(isEmpty(n) && !isEmpty(o)){
 //							$(mnycell.target).textbox('setValue', null);//金额
@@ -949,7 +948,7 @@ function initCardGrid() {
 								}
 								
 								var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
-								$(price.target).textbox('setValue', formatMny(nprice));//成本价
+								$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 								
 								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
@@ -977,7 +976,7 @@ function initCardGrid() {
 									var tmny = uprice.mul(nnum);
 									var tcost = nprice.mul(nnum);
 									$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-									$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+									$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 								}
 							}
 						}
@@ -1037,7 +1036,7 @@ function initCardGrid() {
 					height : 31,
 					editable : false,
 					readonly : true,
-					precision : 2,
+					precision : 4,
 					min : 0,
 					groupSeparator:',',
 					onChange : function(n, o) {
@@ -1062,7 +1061,7 @@ function initCardGrid() {
 									}
 									totalcost = totalcost.add(getFloatValue(tcost));
 								}
-								$("#totalcost").numberbox("setValue", formatMny(totalcost));
+								$("#totalcost").numberbox("setValue", formFourMny(totalcost));
 							}
 						}
 //						if(isEmpty(n) && isEmpty(o)){
@@ -1085,7 +1084,7 @@ function initCardGrid() {
 //						}
 					}
 				}
-			},formatter:formatMny,
+			},formatter:formFourMny,
 		}, {
 			field : 'memo',
 			title : '备注',
@@ -1400,7 +1399,7 @@ function initConfGrid() {
 		            				var tmny = uprice.mul(nnum);//采购金额
 		            				var tcost = nprice.mul(nnum);//成本金额
 		            				$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-		            				$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+		            				$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 		            			}
 							}
 						}
@@ -1473,7 +1472,7 @@ function initConfGrid() {
 	                			var tmny = getFloatValue(n).mul(nnum);//采购金额
 	                			var tcost = nprice.mul(nnum);//成本金额
 	                			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-	                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+	                			$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 	                		}
 						}
 //						if(isEmpty(n) && !isEmpty(o)){
@@ -1498,7 +1497,7 @@ function initConfGrid() {
 				options : {
 					height : 31,
 					readonly : true,
-					precision : 2,
+					precision : 4,
 					min : 0,
 					max : 99999,
 					onChange : function(n, o) {
@@ -1513,7 +1512,7 @@ function initConfGrid() {
 						}
 					}
 				}
-			},formatter : formatMny,
+			},formatter : formFourMny,
 		}, {
 			field : 'num',
 			title : '入库数量',
@@ -1575,7 +1574,7 @@ function initConfGrid() {
                 			var tmny = uprice.mul(n);
                 			var tcost = nprice.mul(n);
                 			$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-                			$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+                			$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 						}
 //						if(isEmpty(n) && !isEmpty(o)){
 //							$(mnycell.target).textbox('setValue', null);//金额
@@ -1642,7 +1641,7 @@ function initConfGrid() {
 								}
 								
 								var price = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'price'});//成本价
-								$(price.target).textbox('setValue', formatMny(nprice));//成本价
+								$(price.target).textbox('setValue', formFourMny(nprice));//成本价
 								
 								if(!isEmpty(nnum)){
 									var mnycell = $('#stgrid').datagrid('getEditor', {index:editIndex,field:'mny'});//金额
@@ -1670,7 +1669,7 @@ function initConfGrid() {
 									var tmny = uprice.mul(nnum);
 									var tcost = nprice.mul(nnum);
 									$(tmnycell.target).textbox('setValue', formatMny(tmny));//采购金额
-									$(tcostcell.target).textbox('setValue', formatMny(tcost));//成本金额
+									$(tcostcell.target).textbox('setValue', formFourMny(tcost));//成本金额
 								}
 							}
 						}
@@ -1730,7 +1729,7 @@ function initConfGrid() {
 					height : 31,
 					editable : false,
 					readonly : true,
-					precision : 2,
+					precision : 4,
 					min : 0,
 					groupSeparator:',',
 					onChange : function(n, o) {
@@ -1755,7 +1754,7 @@ function initConfGrid() {
 									}
 									totalcost = totalcost.add(getFloatValue(tcost));
 								}
-								$("#totalcost").numberbox("setValue", formatMny(totalcost));
+								$("#totalcost").numberbox("setValue", formFourMny(totalcost));
 							}
 						}
 //						if(isEmpty(n) && isEmpty(o)){
@@ -1778,7 +1777,7 @@ function initConfGrid() {
 //						}
 					}
 				}
-			},formatter:formatMny,
+			},formatter:formFourMny,
 		}, {
 			field : 'memo',
 			title : '备注',
@@ -2027,7 +2026,7 @@ function countMny(rows){
 		totalcost = totalcost.add(getFloatValue(tcost));
 	}
 	$("#totalmny").numberbox("setValue", formatMny(totalmny));
-	$("#totalcost").numberbox("setValue", formatMny(totalcost));
+	$("#totalcost").numberbox("setValue", formFourMny(totalcost));
 }
 
 /**
