@@ -1098,11 +1098,11 @@ public class ExportExcel<T> {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
 								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(doublevalue.toString());
-								if(key.equals("pricein")||key.equals("priceout")||
-										key.equals("moneyin")||key.equals("moneyout")){
+								if(key.equals("pricein")||key.equals("priceout")||key.equals("priceb")||
+										key.equals("moneyin")||key.equals("moneyout")|| key.equals("moneyb")){
 									if(!map.get(key).equals(0)) {
 										DZFDouble doublevalue2 = new DZFDouble(map.get(key).toString());
-										doublevalue2 = doublevalue2.setScale(2, DZFDouble.ROUND_HALF_UP);
+										doublevalue2 = doublevalue2.setScale(4, DZFDouble.ROUND_HALF_UP);
 										cell.setCellValue(doublevalue2.toString());
 									}else{
 										cell.setCellValue("");

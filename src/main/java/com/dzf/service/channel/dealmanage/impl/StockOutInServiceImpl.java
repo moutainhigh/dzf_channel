@@ -15,6 +15,7 @@ import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
@@ -45,6 +46,7 @@ public class StockOutInServiceImpl implements IStockOutInService {
 				stockOutInMVO.setBalancePrice(stockOutInMVO.getTotalmoneyb().div(stockOutInMVO.getBalanceNum()));
 			}
 			stockOutInMVO.setVitype(0);
+			stockOutInMVO.setDconfirmtime(new DZFDateTime("1999-01-01 00:00:00"));
 			balMap.put(key, stockOutInMVO);
 		}
 		

@@ -162,7 +162,6 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 	public void queryComboBox() {
 		Grid grid = new Grid();
 		try {
-			UserVO uservo = getLoginUserInfo();
 			List<GoodsBoxVO> list = stockoutin.queryComboBox();
 			if (list == null || list.size() == 0) {
 				grid.setRows(new ArrayList<GoodsBoxVO>());
