@@ -260,11 +260,11 @@ function load(){
 
 //金额，保留小数点后4位
 function formFourMny(value) {
-	value=getFloatValue(value);
-	if(isEmpty(value)){
+	var num = new Number(value);
+	if(num==0){
 		return "0.0000";
 	}else{
-		return value.toFixed(4);
+		return num.toFixed(4);
 	}
 }
 

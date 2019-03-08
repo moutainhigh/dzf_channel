@@ -1,6 +1,5 @@
 package com.dzf.service.channel.dealmanage.impl;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -223,18 +222,23 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 
 	private StockOutInMVO updateAndCalBalance(StockOutInMVO nowVO, StockOutInMVO qcVO) throws DZFWarpException{
+		DZFDouble mny = new DZFDouble();
 		if(nowVO.getVitype() == 1){// 商品入库
 			qcVO.setBalanceNum(qcVO.getBalanceNum() + nowVO.getNnumin());// 结存数量
-			qcVO.setTotalmoneyb(qcVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()).setScale(4, DZFDouble.ROUND_HALF_UP));// 结存金额
+			qcVO.setTotalmoneyb(qcVO.getTotalmoneyb().add(nowVO.getTotalmoneyin()));// 结存金额
 		}else{// 订单和其他出库
-			nowVO.setNpriceout(qcVO.getBalancePrice().setScale(4, DZFDouble.ROUND_HALF_UP));// 出库单价（上一次结存单价）
-			nowVO.setTotalmoneyout(qcVO.getBalancePrice().multiply(nowVO.getNnumout()).setScale(4, DZFDouble.ROUND_HALF_UP));// 出库金额（单价x数量）
+			nowVO.setNpriceout(qcVO.getBalancePrice());// 出库单价（上一次结存单价）
 			
-			nowVO.setBalanceNum(qcVO.getBalanceNum() - nowVO.getNnumout());// 结存数量
-			nowVO.setTotalmoneyb(qcVO.getTotalmoneyb().sub(nowVO.getTotalmoneyout()).setScale(4, DZFDouble.ROUND_HALF_UP));// 结存金额
+			mny=qcVO.getBalancePrice().multiply(nowVO.getNnumout()).setScale(4, DZFDouble.ROUND_HALF_UP);
+			nowVO.setTotalmoneyout(mny);// 出库金额（单价x数量）
+			
+			qcVO.setBalanceNum(qcVO.getBalanceNum() - nowVO.getNnumout());// 结存数量
+			mny=qcVO.getTotalmoneyb().sub(nowVO.getTotalmoneyout()).setScale(4, DZFDouble.ROUND_HALF_UP);
+			qcVO.setTotalmoneyb(mny);// 结存金额
 		}
 		if (qcVO.getBalanceNum()>0) {
-			qcVO.setBalancePrice(qcVO.getTotalmoneyb().div(qcVO.getBalanceNum()).setScale(4, DZFDouble.ROUND_HALF_UP));
+			mny=qcVO.getTotalmoneyb().div(qcVO.getBalanceNum()).setScale(4, DZFDouble.ROUND_HALF_UP);
+			qcVO.setBalancePrice(mny);
 		}
 		
 		if(qcVO.getBalancePrice().compareTo(DZFDouble.ZERO_DBL)>0){
