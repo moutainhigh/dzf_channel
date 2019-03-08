@@ -120,6 +120,7 @@ function clearParams(){
 	$('#status').combobox('setValue', '-1');
 	$('#iptype').combobox('setValue', '-1');
 	$('#ipmode').combobox('setValue', '-1');
+	$('#stype').combobox('setValue', '-1');
 }
 
 /**
@@ -135,6 +136,7 @@ function reloadData(){
 	queryParams.enddate = edate;
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
+	queryParams.stype = $('#stype').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;
@@ -187,6 +189,17 @@ function load(){
 					return '保证金';
 				if (value == '2')
 					return '预付款';
+			}
+		}, {
+			width : '70',
+			title : '充值类型',
+            halign:'center',
+			field : 'ictype',
+			formatter : function(value) {
+				if (value == '1')
+					return '首次充值';
+				if (value == '2')
+					return '后续充值';
 			}
 		}, {
 			width : '100',
@@ -513,6 +526,7 @@ function operatData(postdata, rows){
 									vcid : null,
 									dctime : null,
 									tstp : rerows[i].tstp,
+									ictype : null,
 									vcname : null,
 								}
 							});

@@ -132,6 +132,9 @@ public class ChnPayBillVO extends SuperVO {
 	
 	@FieldAlias("rejectype")
 	private Integer irejectype;//驳回类型  1：审批驳回；2：确认驳回；
+	
+    @FieldAlias("ictype")
+    private Integer ichargetype;//1:首次充值;2:后续充值
 
 	public String getVapproveid() {
 		return vapproveid;
@@ -151,6 +154,14 @@ public class ChnPayBillVO extends SuperVO {
 
 	public DZFDate getDapprovedate() {
 		return dapprovedate;
+	}
+
+	public Integer getIchargetype() {
+		return ichargetype;
+	}
+
+	public void setIchargetype(Integer ichargetype) {
+		this.ichargetype = ichargetype;
 	}
 
 	public void setDapprovedate(DZFDate dapprovedate) {

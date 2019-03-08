@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
@@ -107,6 +108,10 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
             sql.append(" AND t.ipaymode = ? \n");
             spm.addParam(paramvo.getIpaymode());
         }
+		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
+		    sql.append(" AND t.ichargetype = ? \n");
+            spm.addParam(paramvo.getSeletype());
+		}
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
 		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
             spm.addParam(paramvo.getBegdate());
@@ -294,12 +299,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			upstr.add("vconfirmid");
 			upstr.add("dconfirmtime");
 			upstr.add("tstamp");
+			upstr.add("ichargetype");
 			if(billvo.getIrejectype() != null && billvo.getIrejectype() == 2){//确认驳回
 				billvo.setIrejectype(null);//清空驳回类型
 				billvo.setVreason(null);//清空驳回原因
 				upstr.add("irejectype");
 				upstr.add("vreason");
 			}
+			setChargeType(billvo);
 			singleObjectBO.update(billvo, upstr.toArray(new String[0]));
 //		} catch (Exception e) {
 //			if (e instanceof BusinessException)
@@ -316,7 +323,52 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		return billvo;
 	}
 	
+	/**
+	 * 设置付款类型为预付款，是首次充值，还是后续充值
+	 * @param billvo
+	 */
+	private void setChargeType(ChnPayBillVO billvo) throws DZFWarpException {
+		if(billvo.getIpaytype()==2){
+			billvo.setIchargetype(1);
+			SQLParameter sp = new SQLParameter();
+			sp.addParam(billvo.getPk_corp());
+			sp.addParam(IStatusConstant.IPAYTYPE_2);
+			sp.addParam(IStatusConstant.IPAYSTATUS_3);
+			StringBuffer sql =new StringBuffer();
+			sql.append(" select 1 from cn_paybill ") ; 
+			sql.append(" where nvl(dr, 0) = 0 and pk_corp = ? ");
+			sql.append("  and ipaytype=? and vstatus=?");
+			boolean b = singleObjectBO.isExists(billvo.getPk_corp(), sql.toString(), sp);
+			if(b){
+				billvo.setIchargetype(2);
+			}
+		}
+	}
 	
+	/**
+	 * 判断是否可以取消，该预付款付款单
+	 * @param billvo
+	 */
+	private void checkIsCancel(ChnPayBillVO billvo) throws DZFWarpException {
+		if(billvo.getIpaytype()==2){
+			SQLParameter sp = new SQLParameter();
+			sp.addParam(billvo.getPk_corp());
+			sp.addParam(IStatusConstant.IPAYTYPE_2);
+			sp.addParam(IStatusConstant.IPAYSTATUS_3);
+			sp.addParam(billvo.getDconfirmtime());
+			sp.addParam(billvo.getPk_paybill());
+			StringBuffer sql =new StringBuffer();
+			sql.append(" select vbillcode from cn_paybill ") ; 
+			sql.append(" where nvl(dr, 0) = 0 and pk_corp = ? ");
+			sql.append("  and ipaytype=? and vstatus=? ");
+			sql.append("  and dconfirmtime>? and pk_paybill!=? ");
+			List<ChnPayBillVO> vos=	(List<ChnPayBillVO>)singleObjectBO.executeQuery(sql.toString(),sp, new BeanListProcessor(ChnPayBillVO.class));
+			if(vos!=null && vos.size()>0){
+				throw new BusinessException("请先取消 "+vos.get(0).getVbillcode()+"付款单");
+			}
+		}
+	}
+
 	/**
 	 * 取消确认
 	 * @param billvo
@@ -336,6 +388,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			if (billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_3) {
 				throw new BusinessException("单据号" + billvo.getVbillcode() + "状态不为【已确认】");
 			}
+			checkIsCancel(billvo);
 			ChnBalanceVO balvo = null;
 			String sql = " nvl(dr,0) = 0 and pk_corp = ? and ipaytype = ? ";
 			SQLParameter spm = new SQLParameter();
@@ -402,8 +455,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			billvo.setVstatus(IStatusConstant.IPAYSTATUS_5);// 付款单状态 待确认
 			billvo.setVconfirmid(null);// 取消确认人
 			billvo.setDconfirmtime(null);// 取消确认时间
+			billvo.setIchargetype(null);// 付款单充值类型
 			billvo.setTstamp(new DZFDateTime());// 操作时间
-			singleObjectBO.update(billvo, new String[] { "vstatus", "vconfirmid", "dconfirmtime", "tstamp" });
+			singleObjectBO.update(billvo, new String[] { "vstatus", "vconfirmid", "dconfirmtime", "tstamp","ichargetype" });
 //		} catch (Exception e) {
 //			if (e instanceof BusinessException)
 //				throw new BusinessException(e.getMessage());
