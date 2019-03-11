@@ -1086,28 +1086,24 @@ public class ExportExcel<T> {
 								 }else{
 									 cell.setCellValue("其他出库");
 								 }
-								
 							} else if (key.equals("contime")) {
 								if(map.get(key).equals("1999-01-01 00:00:00")) {
 									cell.setCellValue(qj.substring(0,10));
 								}else{
 									cell.setCellValue(((String) map.get(key)).substring(0,10));
 								}
-								
 							} else if(key.contains("price")||key.contains("money")){
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
 								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(doublevalue.toString());
-								if(key.equals("pricein")||key.equals("priceout")||key.equals("priceb")||
-										key.equals("moneyin")||key.equals("moneyout")|| key.equals("moneyb")){
-									if(!map.get(key).equals(0)) {
-										DZFDouble doublevalue2 = new DZFDouble(map.get(key).toString());
-										doublevalue2 = doublevalue2.setScale(4, DZFDouble.ROUND_HALF_UP);
-										cell.setCellValue(doublevalue2.toString());
-									}else{
-										cell.setCellValue("");
-									}
-									
+								if(!map.get(key).equals(0)) {
+									DZFDouble doublevalue2 = new DZFDouble(map.get(key).toString());
+									doublevalue2 = doublevalue2.setScale(4, DZFDouble.ROUND_HALF_UP);
+									cell.setCellValue(doublevalue2.toString());
+								}else if(map.get(key).equals(0) &&(key.equals("moneyb") || key.equals("priceb"))){
+									cell.setCellValue("0.0000");
+								}else{
+									cell.setCellValue("");
 								}
 							}else if(key.contains("in")||key.contains("out")){
 								if(!map.get(key).equals(0)) {
@@ -1117,14 +1113,11 @@ public class ExportExcel<T> {
 								}else{
 									cell.setCellValue("");
 								}
-								
-							
 							} else {
 								String value = map.get(key).toString();
 								richString = new HSSFRichTextString(value);
 								cell.setCellValue(richString);
 							}
-							
 						} else {
 							cell.setCellValue("");
 						}
