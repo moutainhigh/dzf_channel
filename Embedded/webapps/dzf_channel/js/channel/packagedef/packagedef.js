@@ -77,6 +77,37 @@ function initGrid(){
                     	required:true,
                     }
                 }
+    		},
+    		 {
+    			field : 'comptype',
+    			title : '公司类型',
+    			width : 150,
+    			halign : 'center',
+    			align : 'left',
+    			formatter : function(value,row,index){
+    				if (value == '20')
+    					return '个体工商户';
+    				return "非个体工商户";
+    			},
+    			editor: {
+    				type: 'combobox',
+                    options: {
+                    	height: 35,
+                    	panelHeight: 80,
+                    	showItemIcon: true,
+                    	valueField: "value",
+                    	editable: false,
+                    	textField: "text",
+                    	data: [{
+                    		value: '20',
+                    		text: '个体工商户'
+                    	},{
+                    		value: '99',
+                    		text: '非个体工商户'
+                    	},],
+                    	required:true,
+                    }
+                }
     		},{
     			field : 'nmsmny',
     			title : '月服务费',
