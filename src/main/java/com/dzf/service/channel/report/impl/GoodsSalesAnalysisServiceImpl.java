@@ -108,7 +108,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 				for (String key : map.keySet()) {
 					rvo = map.get(key);
 					if (costmap != null && !costmap.isEmpty()) {
-						rvo.setNcost(costmap.get(rvo.getPk_goodsspec()));
+						rvo.setNcost(costmap.get(rvo.getPk_goodsspec()).setScale(4, DZFDouble.ROUND_HALF_UP));
 						rvo.setNtotalcost(
 								SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount())));
 					}
@@ -127,13 +127,13 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 						}
 
 					});
-					//4、计算合计行
+					// 4、计算合计行
 					List<String> pklist = new ArrayList<String>();
 					GoodsSalesAnalysisVO sumvo = null;
 					int num = 0;
-					for(GoodsSalesAnalysisVO revo : totalist){
-						if(!pklist.contains(revo.getPk_corp())){
-							if(sumvo != null){
+					for (GoodsSalesAnalysisVO revo : totalist) {
+						if (!pklist.contains(revo.getPk_corp())) {
+							if (sumvo != null) {
 								retlist.add(sumvo);
 							}
 							sumvo = new GoodsSalesAnalysisVO();
@@ -146,15 +146,15 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 							sumvo.setNdedsummny(revo.getNdedsummny());
 							retlist.add(revo);
 							pklist.add(revo.getPk_corp());
-						}else{
+						} else {
 							sumvo.setNtotalcost(SafeCompute.add(sumvo.getNtotalcost(), revo.getNtotalcost()));
 							sumvo.setNdeductmny(SafeCompute.add(sumvo.getNdeductmny(), revo.getNdeductmny()));
 							sumvo.setNdedrebamny(SafeCompute.add(sumvo.getNdedrebamny(), revo.getNdedrebamny()));
 							sumvo.setNdedsummny(SafeCompute.add(sumvo.getNdedsummny(), revo.getNdedsummny()));
 							retlist.add(revo);
 						}
-						num ++;
-						if(num == totalist.size()){
+						num++;
+						if (num == totalist.size()) {
 							retlist.add(sumvo);
 						}
 					}
@@ -191,7 +191,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 		if (calist != null && calist.size() > 0) {
 			DZFDouble costmny = null;
 			for (StockOutInMVO svo : calist) {
-				if(!StringUtil.isEmpty(svo.getPk_goodsspec())){
+				if (!StringUtil.isEmpty(svo.getPk_goodsspec())) {
 					costmny = SafeCompute.div(svo.getTotalmoneyb(), CommonUtil.getDZFDouble(svo.getBalanceNum()));
 					costmap.put(svo.getPk_goodsspec(), costmny);
 				}
@@ -217,7 +217,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 		DZFDouble ndedrebamny = SafeCompute.multiply(goodsmny, rebpropor);// 返点款
 		svo.setNdeductmny(ndeductmny.setScale(2, DZFDouble.ROUND_HALF_UP));
 		svo.setNdedrebamny(ndedrebamny.setScale(2, DZFDouble.ROUND_HALF_UP));
-		svo.setNdedsummny(goodsmny);
+		svo.setNdedsummny(goodsmny.setScale(2, DZFDouble.ROUND_HALF_UP));
 		return svo;
 	}
 
@@ -260,10 +260,10 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 			sql.append("   AND SUBSTR(s.doperatedate, 0, 7) = ?  \n");
 			spm.addParam(pamvo.getPeriod());
 		}
-		if(!StringUtil.isEmpty(pamvo.getPk_corp())){
-		    String[] strs = pamvo.getPk_corp().split(",");
-		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-		    sql.append(" AND l.pk_corp in (").append(inSql).append(")");
+		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
+			String[] strs = pamvo.getPk_corp().split(",");
+			String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
 		sql.append("   ORDER BY l.pk_corp  \n");
 		return (List<GoodsSalesCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,

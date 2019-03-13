@@ -156,22 +156,22 @@ function load(){
 			align : 'right',
 			halign : 'center',
 			field : 'cost',
-			formatter : function(value, row, index) {
-				if (value == 0)
-					return "0.00";
-				return formatMny(value);
-			},
+//			formatter : function(value, row, index) {
+//				if (value == 0)
+//					return "0.00";
+//				return formatMny(value);
+//			},
 		}, {
 			width : '100',
 			title : '成本合计',
 			align : 'right',
 			halign : 'center',
 			field : 'totalcost',
-			formatter : function(value, row, index) {
-				if (value == 0)
-					return "0.00";
-				return formatMny(value);
-			},
+//			formatter : function(value, row, index) {
+//				if (value == 0)
+//					return "0.00";
+//				return formatMny(value);
+//			},
 			styler : cellStyler,
 		}, {
 			width : '100',
