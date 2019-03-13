@@ -86,13 +86,14 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 				}
 				pk_key = retvo.getPk_corp() + "&" + retvo.getPk_goodsspec();
 				if (!map.containsKey(pk_key)) {
-					map.put(retvo.getPk_goodsspec(), retvo);
+					map.put(pk_key, retvo);
 				} else {
 					oldvo = map.get(pk_key);
 					oldvo.setNdeductmny(SafeCompute.add(oldvo.getNdeductmny(), retvo.getNdeductmny()));
 					oldvo.setNdedrebamny(SafeCompute.add(oldvo.getNdedrebamny(), retvo.getNdedrebamny()));
 					oldvo.setNdedsummny(SafeCompute.add(oldvo.getNdedsummny(), retvo.getNdedsummny()));
-					map.put(detvo.getPk_goodsspec(), oldvo);
+					oldvo.setAmount(ToolsUtil.addInteger(oldvo.getAmount(), retvo.getAmount()));
+					map.put(pk_key, oldvo);
 				}
 			}
 
