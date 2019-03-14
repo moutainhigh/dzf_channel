@@ -787,15 +787,15 @@ public class InvManagerServiceImpl implements InvManagerService {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
 			ChInvoiceVO chvo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, vo.getPk_invoice());
 			if (chvo != null) {
-				// if (chvo.getInvstatus() != 3) {
-				// if (chvo.getInvcorp() != 2) {
-				// throw new BusinessException("加盟商提交的开票申请不能删除。");
-				// }
-				// }
 				if (chvo.getInvstatus() == 2) {
 					throw new BusinessException("发票状态为【已开票】，不能删除！");
 				}
 				if(chvo.getIsourcetype() != null && chvo.getIsourcetype() == 2){//商品扣款开票
+					//如果订单扣款为预付款扣款，则只需更新订单开票状态
+					//如果订单扣款为预付款扣款和订单扣款，则需要删除发票相关信息后，更新订单开发状态
+					if(chvo.getIdatatype() == 2){
+						deleteOrderInvoice(chvo);
+					}
 					updateGoodsBillStatus(chvo);
 				}
 				singleObjectBO.deleteObject(chvo);
@@ -808,7 +808,18 @@ public class InvManagerServiceImpl implements InvManagerService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
 		}
-
+	}
+	
+	/**
+	 * 删除订单发票信息
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void deleteOrderInvoice(ChInvoiceVO vo) throws DZFWarpException {
+		String sql = " DELETE FROM cn_invoice_b WHERE nvl(dr,0) = 0 AND pk_invoice = ?";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(vo.getPk_invoice());
+		singleObjectBO.executeUpdate(sql, spm);
 	}
 	
 	/**

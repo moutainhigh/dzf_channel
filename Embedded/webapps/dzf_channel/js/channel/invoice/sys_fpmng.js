@@ -598,6 +598,10 @@ function onEdit(){
 		Public.tips({content : "已开票，不允许修改",type : 2});
 		return;
 	}
+	if(row.isourtype == 2){
+		Public.tips({content : "加盟商订单开票，不允许修改",type : 2});
+		return;
+	}
 	$('#fp_dialog').dialog('open');
 	$('#fp_form').form('clear');
 //	$('#ipaytype').combobox('setValue',row.paytype);
@@ -608,11 +612,11 @@ function onEdit(){
 		$("#iprice").numberbox("readonly",false);//开票金额
 		getTotalPrice(row.iprice,row.corpid);//可开票金额
 		$('#itype').combobox("readonly",false);//发票类型
-	}else if(row.isourtype == 2){
+	}/*else if(row.isourtype == 2){
 		$("#iprice").numberbox("readonly",true);//开票金额
 		$("#tprice").numberbox('setValue', row.iprice);//可开票金额
 		$('#itype').combobox("readonly",true);//发票类型
-	}
+	}*/
 }
 
 //可开票金额

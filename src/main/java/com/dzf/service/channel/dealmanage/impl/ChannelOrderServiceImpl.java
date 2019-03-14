@@ -1034,7 +1034,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		hvo.setIpaytype(0);//付款类型  0：预付款；   1：加盟费；
 		hvo.setInvcorp(2);
 		hvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-		hvo.setIdatatype(1);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
+		hvo.setIdatatype(2);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
 		
 		ChInvoiceBVO[] bVOs = (ChInvoiceBVO[]) hvo.getChildren();
 		for(ChInvoiceBVO bvo : bVOs){
