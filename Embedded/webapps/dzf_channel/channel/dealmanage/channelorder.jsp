@@ -271,7 +271,7 @@
 		                <div class="basic_title">
 		                    <label style="width:100px;text-align:right">订单编号：</label>
 		                    <font>
-		                    	<input id="dl_billcode" name="billcode" class="fp_title easyui-textbox" 
+		                    	<input id="dl_invcode" name="invcode" class="fp_title easyui-textbox" 
 		                    		data-options="readonly:true" style="width:137px; height:24px;"/> 
 		                    </font>
 		                </div>
@@ -284,25 +284,32 @@
 		                        <td class="basic_pur" style="width:691px;">
 		                            <div style="margin-top:2px;">
 		                            	<lable style="text-align:right">名称：</lable>
-		                            	<input id="dl_cname" name="cname" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_cname" name="cname" class="easyui-textbox" 
+		                            		data-options="required:true,readonly:true," style="width:230px;"/>
 		                            	<lable style="text-align:right">纳税人识别号：</lable>
-		                            	<input id="dl_taxnum" name="taxnum" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_taxnum" name="taxnum" class="easyui-textbox" style="width:230px;"
+		                            		data-options="required:true,validType:['length[0,20]'],invalidMessage:'录入长度不能超过20'"/>
 		                            </div>
 		                            <div>
 		                            	<lable style="text-align:right">地址：</lable>
-		                            	<input id="dl_caddr" name="caddr" class="easyui-textbox" style="width:566px;"/>
+		                            	<input id="dl_caddr" name="caddr" class="easyui-textbox" style="width:566px;"
+		                            		data-options="validType:['length[0,50]'],invalidMessage:'录入长度不能超过50'"/>
 		                            </div>
 		                            <div>
 		                            	<lable style="text-align:right">开户行：</lable>
-		                            	<input id="dl_bname" name="bname" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_bname" name="bname" class="easyui-textbox" style="width:230px;"
+		                            		data-options="validType:['length[0,30]'],invalidMessage:'录入长度不能超过30'"/>
 		                            	<lable style="text-align:right">电话：</lable>
-		                            	<input id="dl_phone" name="phone" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_phone" name="phone" class="easyui-textbox" 
+		                            		data-options="required:true,validType:'phoneNum'," style="width:230px;"/>
 		                            </div>
 		                            <div>
 		                            	<lable style="text-align:right">开户账号：</lable>
-		                            	<input id="dl_bcode" name="bcode" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_bcode" name="bcode" class="easyui-textbox" style="width:230px;"
+		                            		data-options="validType:['length[0,30]'],invalidMessage:'录入长度不能超过30'"/>
 		                            	<lable style="text-align:right">邮箱：</lable>
-		                            	<input id="dl_email" name="email" class="easyui-textbox" style="width:230px;"/>
+		                            	<input id="dl_email" name="email" class="easyui-textbox" 
+		                            		data-options="required:true,validType:'email'," style="width:230px;"/>
 		                            </div>
 		                        </td>
 		                    	<td class="basic_pur" style="width:214px;">
@@ -361,6 +368,9 @@
 		                <td style="width:100px;">
 		                	<input class="bspmc" name="bse" readonly unselectable="on">
 		                </td>
+		                <td style="display:none;">
+							<input class="bspmc" name="sourceid" readonly unselectable="on">
+						</td>
 		            </tr>
 		        </table>
 		        <div class="goodslist" >
@@ -377,6 +387,7 @@
 		                    <td style="width:100px;">金额</td>
 		                    <td style="width:60px;">税率(%)</td>
 		                    <td style="width:100px;">税额</td>
+		                    <td style="display:none;">来源主键</td>
 		                </tr>
 		                <tr class="goodsbody">
 		                    <td colspan="8" style="border:none;">
@@ -413,6 +424,9 @@
 										</td>
 										<td style="width:100px;">
 											<input class="bspmc" name="bse" readonly unselectable="on">
+										</td>
+										<td style="display:none;">
+											<input class="bspmc" name="sourceid" readonly unselectable="on">
 										</td>
 									</tr>
 		                        </table>

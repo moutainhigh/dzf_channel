@@ -54,4 +54,12 @@ public interface IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	public ChInvoiceVO queryInvoiceInfo(GoodsBillVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 保存订单发票信息
+	 * @param hvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	public void saveInvoice(ChInvoiceVO hvo, String cuserid) throws DZFWarpException;
 }

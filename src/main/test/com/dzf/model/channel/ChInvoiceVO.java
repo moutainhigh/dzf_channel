@@ -109,6 +109,9 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("ndemny")
 	private DZFDouble ndeductmny;// 扣款金额-预付款（预付款金额）
 	
+	@FieldAlias("datatype")
+	private Integer idatatype;//数据类型（1：商品扣款全扣预付款；2：商品扣款扣预付款和返点）
+	
 	/******以下字段不存库*********/
     private String bdate;//查询开始时间
     
@@ -133,7 +136,15 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
     
-    public String getVbillcode() {
+    public Integer getIdatatype() {
+		return idatatype;
+	}
+
+	public void setIdatatype(Integer idatatype) {
+		this.idatatype = idatatype;
+	}
+
+	public String getVbillcode() {
 		return vbillcode;
 	}
 

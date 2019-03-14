@@ -40,7 +40,7 @@ $(document).ready(function(){
 	$("input",$(".basic_info .basic_title:first-child  label").next("font")).blur(function(e){  
 		var snumber = e.target.value;
 		var value = snumber.replace(/[^0-9]/ig,""); 
-		$("#dl_billcode").textbox('setValue', value);
+		$("#dl_invcode").textbox('setValue', value);
     });  
 	
 	$("input",$(".basic_info .basic_title:nth-child(2)  label").next("font")).blur(function(e){  
@@ -189,20 +189,6 @@ $(function(){
     		var bse = bje.mul(parseFloat(0.16));
     		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bse"]').val(bse.toFixed(2));
     		
-//    		dbje = getFloatValue(dbje);
-//    		//金额
-//    		var bje = $("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bje"]').val();
-//    		bje = getFloatValue(bje);
-//    		bje = bje.add(dbje);
-//    		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bje"]').val(bje.toFixed(2));
-//    		//数量
-//    		var bnum = $("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bnum"]').val();
-//    		bnum = getFloatValue(bnum);
-//    		var bdj = bje.div(bnum);
-//    		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bdj"]').val(bdj.toFixed(pricePrecision));
-//    		//税额
-//    		var bse = bje.mul(parseFloat(0.16));
-//    		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bse"]').val(bse.toFixed(2));
     	}
     	
     	
@@ -391,7 +377,7 @@ function outputcents4(amount) {
 function cleanValue(){
 	
 //	//购买方信息：
-	$('#dl_billcode').textbox('setValue', null);
+	$('#dl_invcode').textbox('setValue', null);
 	$('#dl_cname').textbox('setValue', null);
 	$('#dl_taxnum').textbox('setValue', null);
 	$('#dl_caddr').textbox('setValue', null);
@@ -427,18 +413,18 @@ function addInvoce(index) {
     $.post(url,  {"billid": row.billid, "corpid": row.corpid, "updatets": row.updatets},
     function(res) {
         if(res.success) {
-//        	var hiddenstr = "<input type='hidden' id='pk_id' name='id' value='" + res.data.id + "' />"+
-//        	"<input type='hidden' id='updatets' name='updatets' value='" + res.data.updatets + "' />";
-//            $("#table_header").append(hiddenstr);
-//            $('#oid').val(res.data.oid);
-//            $('#corpid').val(res.data.corpid);
+        	var hiddenstr = "<input type='hidden' id='sourceid' name='sourceid' value='" + res.data.sourceid + "' />"+
+        	"<input type='hidden' id='updatets' name='updatets' value='" + res.data.updatets + "' />"+
+        	"<input type='hidden' id='runame' name='runame' value='" + res.data.runame + "' />"+
+        	"<input type='hidden' id='corpid' name='corpid' value='" + res.data.corpid + "' />";
+            $("#table_header").append(hiddenstr);
             
             $.each(res.data,function (row, item) {
             	var type = typeof item;
             	
 				if($("#dl_" + row).length > 0) {
 					try {
-						 $("#dl_" + row).textbox('setValue',item);
+						$("#dl_" + row).textbox('setValue',item);
 					} catch (e) {
 						$("#dl_" + row).val(item);
 					}
@@ -494,167 +480,117 @@ function addInvoce(index) {
 }
 
 /**
- * 验证进行数据行
- * @param line
- * @param data
- * @returns {Boolean}
- */
-function validateJXLine(line,data){
-	if(data.bje === '' || data.bje === 'bse'){
-		 Public.tips({
-            content : (line ? '第' + line + '行,' : '') + '金额、税额不能为空,请检查',
-            type : 2
-        });
-        return false;
-	}
-	if (isNaN(Number(data.bje.split(',').join(''))) || isNaN(Number(data.bse.split(',').join('')))) {
-		 Public.tips({
-            content : (line ? '第' + line + '行,' : '') + '金额、税额数值不正确,请检查',
-            type : 2
-        });
-        return false;
-	}
-	return true;
-}
-
-/**
  * 新增保存
  * @param type
  * @returns {Boolean}
  */
 function onSave(type) {
-	
-    var parseJSON = function (ele) {
-        var arrJson = ele.serializeArray();
-        var obj = {};
-        for (var item in arrJson) {
-            obj[arrJson[item].name] = arrJson[item].value;
-        }
-        return obj;
-    }
+	if ($("#tablediaForm").form('validate')) {
+		var parseJSON = function (ele) {
+	        var arrJson = ele.serializeArray();
+	        var obj = {};
+	        for (var item in arrJson) {
+	            obj[arrJson[item].name] = arrJson[item].value;
+	        }
+	        return obj;
+	    }
 
-    var parseHeaderJSON = function (ele) {
-        var obj = {};
-        $.each(ele, function (idx, item) {
-            if (item.name == 'iszh' || item.name == 'id' || item.name == 'corpid') {
-                obj[item.name] = item.value;
-            }else {
-                if($(item).parent().find('.textbox-text').val() != '' && item.name != ''){
-                    obj[item.name] = $(item).parent().find('.textbox-text').val();
-                }
-            }
-        })
-        return obj;
-    }
-    var paraHeader, paraBody = [];
-    var ph = parseHeaderJSON($("#table_header :input , #table_footer :input , textarea" ));
-	
-	if(isEmpty(ph.fpdm)){
-		 Public.tips({
-            content : '发票代码不能为空,请检查',
-            type : 2
-        });
-        return false;
-	}
-	if(isEmpty(ph.fphm)){
-		 Public.tips({
-            content : '发票号码不能为空,请检查',
-            type : 2
-        });
-        return false;
-	}
-	if(isEmpty(ph.skprj)){
-		 Public.tips({
-            content : '开票日期不能为空,请检查',
-            type : 2
-        });
-        return false;
-	}
-	if(isEmpty(ph.corpid)){
-		 Public.tips({
-           content : '销售方名称不能为空,请检查',
-           type : 2
-       });
-       return false;
-	}
-
-    if (window.getBLen(ph.ghfdzdh || '') > 200) {
-        Public.tips({
-            content: '购买方 地址、电话应该0-100汉字之间',
-            type: 2
-        });
-        return false;
-    }
-    if (window.getBLen(ph.xhfdzdh || '') > 200) {
-        Public.tips({
-            content: '销售方 地址、电话应该0-100汉字之间',
-            type: 2
-        });
-        return false;
-    }
-
-    paraHeader = JSON.stringify(ph);
-    $.each($("#table_body tr"), function (idx, item) { paraBody.push(parseJSON($(item).find('input')));})
-
-	//数据验证
-	var paraBodyLineNum = 0;
-	for(var t=0;t<paraBody.length;t++){
-		for(var key in paraBody[t]){
-			if(paraBody[t][key] !== ''){
-				paraBodyLineNum++;
-				//需要验证
-				if(!validateJXLine(t+1,paraBody[t])){
-					return;
-				}
+	    var parseHeaderJSON = function (ele) {
+	        var obj = {};
+	        $.each(ele, function (idx, item) {
+	            if (item.name == 'sourceid' || item.name == 'updatets' || item.name == 'runame'
+	            	|| item.name == 'corpid') {
+	                obj[item.name] = item.value;
+	            }else {
+	                if($(item).parent().find('.textbox-text').val() != '' && item.name != ''){
+	                    obj[item.name] = $(item).parent().find('.textbox-text').val();
+	                }
+	            }
+	        })
+	        return obj;
+	    }
+	    
+	    var paraHeader, paraBody = [];
+	    var ph = parseHeaderJSON($("#table_header :input , #table_footer :input , textarea" ));
+		
+	    paraHeader = JSON.stringify(ph);
+		$.each($("#table_body tr"), function(idx, item) {
+			if(!isEmpty($(item).find('[name="bje"]').val())){
+				paraBody.push(parseJSON($(item).find('input')));
 			}
-        } 
-	}
-	if(paraBodyLineNum <= 0){
-		 Public.tips({
-            content : '表体至少录入一条数据',
-            type : 2
-        });
-        return false;
+		})
+		
+		paraBody = JSON.stringify(paraBody);
+		
+		var postdata = new Object();
+		postdata["head"] = paraHeader;
+		postdata["body"] = paraBody;
+	    
+		$.messager.progress({
+			text : '数据操作中....'
+		});
+		$.ajax({
+			type : "post",
+			dataType : "json",
+			url : contextPath + '/dealmanage/channelorder!saveInvoice.action',
+			data : postdata,
+			traditional : true,
+			async : false,
+			success : function(data, textStatus) {
+				$.messager.progress('close');
+				if (!data.success) {
+					Public.tips({
+						content : data.msg,
+						type : 2
+					});
+				} else {
+					$('#tablediaForm').form('reset');
+		            $.messager.progress('close');
+
+		            tablediaWin.dialog('close');
+		            reloadData();
+				}
+			},
+		});
+		
+	} else {
+		Public.tips({
+			content : "必输信息为空或格式不正确",
+			type : 2
+		});
+		return; 
 	}
 	
-    paraBody = JSON.stringify(paraBody);
-    var url = contextPath + "/financetax/orderInvoiceAct!onUpdate.action";
-    $.messager.progress({
-        text : '数据保存中，请稍候.....'
-    });
     
-    $.post(url, {
-        "adddoc": {
-            "header": paraHeader,
-            "body": paraBody
-        }
-    },
-    function(result) {
-        if (result.success) {
-            Public.tips({
-                content: '操作成功',
-                type: 0
-            });
-            $('#tablediaForm').form('reset');
-            $.messager.progress('close');
-
-            if (type == '2') {
-                tablediaWin.dialog('close');
-            }
-            if (type == '1') {
-                $("#tabledia").dialog('close');
-                onAdd();
-            }
-            reloadData();
-        } else {
-            Public.tips({
-                content: result.msg,
-                type: 1
-            });
-            $.messager.progress('close');
-        }
-    },
-    'json');
-	 
-    return false;
-};
+//	var url = contextPath + "/financetax/orderInvoiceAct!onUpdate.action";
+//    $.messager.progress({
+//        text : '数据保存中，请稍候.....'
+//    });
+//    
+//    $.post(url, {
+//        "adddoc": {
+//            "header": paraHeader,
+//            "body": paraBody
+//        }
+//    },
+//    function(result) {
+//        if (result.success) {
+//            Public.tips({
+//                content: '操作成功',
+//                type: 0
+//            });
+//            $('#tablediaForm').form('reset');
+//            $.messager.progress('close');
+//
+//            tablediaWin.dialog('close');
+//            reloadData();
+//        } else {
+//            Public.tips({
+//                content: result.msg,
+//                type: 1
+//            });
+//            $.messager.progress('close');
+//        }
+//    },
+//    'json');
+}

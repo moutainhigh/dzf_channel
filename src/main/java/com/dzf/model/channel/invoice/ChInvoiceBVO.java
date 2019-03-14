@@ -21,9 +21,6 @@ public class ChInvoiceBVO extends SuperVO {
 	@FieldAlias("pid")
 	private String pk_invoice;// 主表主键
 	
-	@FieldAlias("rowno")
-	private Integer rowno;// 序号
-	
 	@FieldAlias("bspmc")
 	private String bspmc;// 商品名称
 	
@@ -106,14 +103,6 @@ public class ChInvoiceBVO extends SuperVO {
 
 	public void setPk_invoice(String pk_invoice) {
 		this.pk_invoice = pk_invoice;
-	}
-
-	public Integer getRowno() {
-		return rowno;
-	}
-
-	public void setRowno(Integer rowno) {
-		this.rowno = rowno;
 	}
 
 	public String getBspmc() {

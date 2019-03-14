@@ -1,0 +1,231 @@
+/*销项发票*/
+/* .icon-invoicez {
+	background: url('../../img/zhuan.png') no-repeat center center;
+}
+
+.icon-invoicep {
+	background: url('../../img/pu.png') no-repeat center center;
+} */
+
+.textbox-readonly {
+    background: #f4f4f4;
+    border: none;
+}
+
+.goodsgrid .combo {
+	border: 0;
+	margin: 0;
+}
+
+.goodsgrid .combo .validatebox-text {
+	padding-top: 0 !important;
+	text-align: left;
+}
+
+.tooltip .tooltip-content {
+	max-width: 400px;
+}
+
+.datagrid-sort-icon-display {
+	display: inline;
+	padding: 0 13px 0 0;
+	background: url('../../images/datagrid_icons.png') no-repeat -16px center;
+}
+
+.h30-arrow font .textbox {
+	width: 88px !important;
+	border-radius: 4px;
+	padding-left: 0px;
+}
+
+.datagrid-cell.datagrid-cell-c2-calcmode span.datagrid-sort-icon {
+	display: inline;
+	padding: 0 15px 0 0;
+	background: url('../../images/helptool.png') no-repeat center;
+}
+
+.selecticon {
+    background: url(../../img/add_lan.png) no-repeat;
+}
+
+#tabledia {
+	padding: 0 20px;
+	font-size: 12px;
+}
+
+.selecct_waper {
+	width: 100%;
+	height: 40px;
+	text-align: center;
+	margin-top: 5px;
+}
+
+.basic_info {
+	height: 30px;
+}
+
+.basic_info .basic_title {
+	display: inline-block;
+	margin-right: 20px;
+	font-size: 12px;
+	color: #000;
+	margin-top: 2px;
+}
+
+#tabledia .purchaser table {
+	border: 1px solid #ccc;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12px;
+}
+
+#tabledia .purchaser tr {
+	height: 100px;
+	display: flex;
+}
+
+#tabledia .purchaser tr td {
+	border-right: 1px solid #ccc;
+}
+
+#tabledia .purchaser table .basic_pur {
+	display: flex;
+	flex-direction: column;
+}
+
+#tabledia .purchaser table .basic_pur div {
+	flex: 1;
+	margin-left: 10px;
+}
+
+#tabledia .purchaser table .basic_pur div lable {
+	width: 100px;
+	display: inline-block;
+}
+
+#tabledia .purchaser table .basic_pur div input {
+	width: 300px;
+}
+
+.goodslist table {
+	width: 100%;
+	text-align: center;
+	border-collapse: collapse;
+	table-layout: fixed;
+	word-break: break-all;
+	font-size: 12px;
+}
+
+.goodslist table td {
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	height: 30px;
+}
+
+.goodsgrid {
+	border: none;
+}
+
+.goodsgrid td input {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.goodsbody td, .goodsbody input, .goodsfoot td, .goodsfoot input {
+	text-align: right
+}
+
+#goodslist .delicon {
+	width: 16px;
+	height: 16px;
+	margin-top: 1px;
+	background: url(../../images/main_ico.png) no-repeat;
+	background-position: -49px -27px;
+	float: left;
+}
+
+.removeAdd {
+	margin-left: -20px;
+	width: 20px;
+	height: 30px;
+	float: left;
+	display: none;
+}
+
+.removeAdd .iconAdd, .removeAdd .iconRemove {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+.removeAdd .iconAdd {
+	background: url(../../images/main_ico.png) no-repeat;
+	background-position: -33px -27px;
+}
+
+.removeAdd .iconRemove {
+	background: url(../../images/main_ico.png) no-repeat;
+	background-position: -49px -27px;
+}
+
+.auto_word_wrap {
+	white-space: normal;
+}
+
+.bisu {
+	margin-right: 6px;
+	font-weight: bold;
+	color: red;
+	vertical-align: middle;
+	font-size: 16px;
+}
+/* 帮助的提示按钮 */
+.helptools {
+	width: 20px;
+	height: 30px;
+	position: relative;
+}
+
+.helptools .easyui-tooltip {
+	width: 18px;
+	height: 18px;
+	position: absolute;
+	top: 50%;
+	margin-top: -9px;
+}
+
+.calendar-period {
+	display: inline-block;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.calendar-period span {
+	display: inline-block;
+	line-height: 26px;
+	height: 26px;
+}
+
+.calendar-period .show-period {
+	padding: 0 5px;
+	margin-right: -3px;
+	background-color: #fff;
+	border-radius: 5px 0 0 5px;
+}
+
+.calendar-period .combo-arrow {
+	background-color: #229cda;
+	border-radius: 0 5px 5px 0;
+}
+
+.km_search_div {
+	position: absolute;
+	right: 30px;
+	top: 8px;
+	z-index: 10;
+	float: right;
+	width: 90px;
+}
