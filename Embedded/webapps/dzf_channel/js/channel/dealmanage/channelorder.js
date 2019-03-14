@@ -229,7 +229,7 @@ function load(){
 		}, {
 			field : 'operate',
 			title : '操作列',
-			width : '160',
+			width : '170',
 			halign : 'center',
 			align : 'center',
 			formatter : opermatter,
@@ -280,6 +280,11 @@ function opermatter(val, row, index) {
 			url += 	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="stockOut(\''+index+'\')">出库</a>';
 		}else{
 			url += '<span style="margin-bottom:0px;margin-left:10px;">出库</span>';
+		}
+		if((row.vstatus == 1 || row.vstatus == 2 || row.vstatus == 3) && row.tistatus != 2){
+			url += 	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(\''+index+'\')">开票申请</a>';
+		}else{
+			url += '<span style="margin-bottom:0px;margin-left:10px;">开票申请</span>';
 		}
 		return url;
 	}
@@ -710,44 +715,29 @@ function confirm(){
 /**
  * 发票申请
  */
-function onBilling(){
+function onBilling(index){
 	$.messager.confirm("提示", "你确定开票吗？", function(flag) {
 		if (flag) {
-			var rows = $("#grid").datagrid("getChecked");
-			if (rows == null || rows.length == 0) {
+			var row = $('#grid').datagrid('getRows')[index];
+			if(getFloatValue(row.ndemny) == parseFloat(0)){//预付款扣款 == 0
 				Public.tips({
-					content : '请选择需要处理的数据',
+					content : '返点订单不允许票',
 					type : 2
 				});
 				return;
-			} 
-			
-			var data = "";
-			for(var i = 0; i<rows.length; i++ ){
-//				if (rows[i].vstatus == 0) {
-//					Public.tips({
-//						content : '订单编码'+rows[i].billcode+'状态为待确认',
-//						type : 2
-//					});
-//					return;
-//				}else{
-//					if(rows[i].tistatus == 2){
-//						Public.tips({
-//							content : '订单编码'+rows[i].billcode+'状态为待确认',
-//							type : 2
-//						});
-//						return;
-//					}else{
-//						data = data + JSON.stringify(rows[i]);
-//					}
-//				}
-				data = data + JSON.stringify(rows[i]);
 			}
-		
-			var postdata = new Object();
-			postdata["data"] = data;
-			postdata["type"] = 4;
-			operdata(postdata, 4);
+			//预付款扣款 != 0 && 返点扣款 != 0，弹出框
+			else if(getFloatValue(row.ndemny) != parseFloat(0) 
+					&& getFloatValue(row.nderebmny) != parseFloat(0)){
+				addInvoce(index);
+			} else {
+				var data = data + JSON.stringify(row);
+				var postdata = new Object();
+				postdata["data"] = data;
+				postdata["type"] = 4;
+				operdata(postdata, 4);
+			}
+			
 		} else {
 			return null;
 		}
@@ -890,11 +880,6 @@ function operdata(postdata, type){
 					type : 2
 				});
 			} else {
-//				$('#grid').datagrid('clearSelections');
-//				$('#grid').datagrid('updateRow', {
-//					index : index,
-//					row : data.rows
-//				});
 				reloadData();
 				if(type == 2){
 					$('#cancelDlg').dialog('close');

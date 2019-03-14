@@ -18,6 +18,7 @@ import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.dealmanage.GoodsBillBVO;
 import com.dzf.model.channel.dealmanage.GoodsBillSVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
+import com.dzf.model.channel.invoice.ChInvoiceBVO;
 import com.dzf.model.channel.stock.StockNumVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.CommonUtil;
@@ -27,6 +28,7 @@ import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
@@ -858,6 +860,122 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			gvo.setGoods(blist.toArray(new GoodsBillBVO[0]));
 		}
 		return gvo;
+	}
+
+	@Override
+	public ChInvoiceVO queryInvoiceInfo(GoodsBillVO pamvo) throws DZFWarpException {
+		//1、查询前校验
+		checkData(pamvo, 4);
+		
+		//2、组织发票信息
+		ChInvoiceVO hvo = queryHeadInfo(pamvo);
+		if(hvo == null){
+			throw new BusinessException("订单信息错误");
+		}
+		String[] str = new String[]{"corpname", "invphone"};
+		QueryDeCodeUtils.decKeyUtil(str, hvo,1);
+		//3、组织子发票信息
+		ChInvoiceBVO[] bVOs = queryBodyInfo(hvo, pamvo); 
+		hvo.setChildren(bVOs);
+
+		return hvo;
+	}
+	
+	/**
+	 * 查询订单发票子表信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private ChInvoiceBVO[] queryBodyInfo(ChInvoiceVO hvo, GoodsBillVO pamvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_goodsbill_b,  \n");
+		sql.append("       vgoodsname AS bspmc,  \n");
+		sql.append("       invspec || invtype AS invspec,  \n");
+		sql.append("       vmeasname AS measurename,  \n");
+		sql.append("       16 AS bspsl,  \n");
+		sql.append("       amount AS bnum,  \n");
+		sql.append("       ntotalmny  \n");
+		sql.append("  FROM cn_goodsbill_b  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(pamvo.getPk_corp());
+		sql.append("   AND pk_goodsbill = ?  \n");
+		spm.addParam(pamvo.getPk_goodsbill());
+		sql.append("   ORDER BY ntotalmny DESC \n");
+		List<ChInvoiceBVO> blist = (List<ChInvoiceBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChInvoiceBVO.class));
+		DZFDouble ndeductmny = CommonUtil.getDZFDouble(hvo.getNdeductmny());
+		if(blist != null && blist.size() > 0){
+			DZFDouble bhjje = DZFDouble.ZERO_DBL;//不含税金额
+			DZFDouble bprice = DZFDouble.ZERO_DBL;//不含税单价
+			DZFDouble bspse  = DZFDouble.ZERO_DBL;// 税额
+			for(ChInvoiceBVO bvo : blist){
+				if(ndeductmny.compareTo(DZFDouble.ZERO_DBL) > 0){//预付款金额 > 0
+					if(ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) >= 0){
+						bvo.setNcountmny(bvo.getNtotalmny());
+						ndeductmny = SafeCompute.sub(ndeductmny, bvo.getNtotalmny());
+					}else if(ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) < 0){
+						bvo.setNcountmny(ndeductmny);
+						ndeductmny = DZFDouble.ZERO_DBL;
+					}
+					//不含税金额  = 含税金额/(1+0.16)
+					//不含税单价   = 不含税金额/数量
+					//税额   = 不含税金额 * 0.16    
+					bhjje = SafeCompute.div(bvo.getNcountmny(), new DZFDouble(1.16));
+					bprice = SafeCompute.div(bhjje, bvo.getBnum());
+					bspse = SafeCompute.multiply(bhjje, new DZFDouble(0.16));
+					bvo.setBhjje(bhjje.setScale(2, DZFDouble.ROUND_HALF_UP));
+					bvo.setBprice(bprice.setScale(4, DZFDouble.ROUND_HALF_UP));
+					bvo.setBspse(bspse.setScale(2, DZFDouble.ROUND_HALF_UP));
+				}else{
+					break;
+				}
+			}
+			return blist.toArray(new ChInvoiceBVO[0]);
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询订单发票主表信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private ChInvoiceVO queryHeadInfo(GoodsBillVO pamvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT l.pk_goodsbill AS pk_source,  \n");
+		sql.append("       l.vbillcode AS invcode,  \n");
+		sql.append("       t.unitname AS corpname,  \n");
+		sql.append("       t.taxcode AS taxnum,  \n");
+		sql.append("       t.postaddr AS corpaddr,  \n");
+		sql.append("       t.vbankname AS bankname,  \n");
+		sql.append("       t.vbankcode AS bankcode,  \n");
+		sql.append("       t.phone1 AS invphone,  \n");
+		sql.append("       t.email1 AS email,  \n");
+		sql.append("       l.ndedsummny,  \n");
+		sql.append("       l.ndedrebamny,  \n");
+		sql.append("       l.ndeductmny,  \n");
+		sql.append("       l.pk_corp  \n");
+		sql.append("  FROM cn_goodsbill l  \n");
+		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp  \n");
+		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND l.pk_corp = ? \n");
+		spm.addParam(pamvo.getPk_corp());
+		sql.append("   AND l.pk_goodsbill = ? \n");
+		spm.addParam(pamvo.getPk_goodsbill());
+		List<ChInvoiceVO> list = (List<ChInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChInvoiceVO.class));
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		return null;
 	}
 
 }

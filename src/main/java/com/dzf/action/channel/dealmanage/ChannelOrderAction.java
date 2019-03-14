@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
@@ -230,6 +231,32 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 			}
 			GoodsBillVO detvo = orderser.qryOrderDet(pamvo);
 			json.setRows(detvo);
+			json.setSuccess(true);
+			json.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+	}
+	
+	/**
+	 * 查询订单发票表信息
+	 */
+	public void queryInvoiceInfo() {
+		Json json = new Json();
+		try {
+			GoodsBillVO pamvo = (GoodsBillVO) DzfTypeUtils.cast(getRequest(), new GoodsBillVO());
+//			if (StringUtil.isEmptyWithTrim(pamvo.getPk_corp())) {
+//				pamvo.setPk_corp(getLoginCorpInfo().getPk_corp());
+//			}
+			UserVO uservo = getLoginUserInfo();
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
+			}
+			ChInvoiceVO detvo = orderser.queryInvoiceInfo(pamvo);
+			json.setData(detvo);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
 		} catch (Exception e) {

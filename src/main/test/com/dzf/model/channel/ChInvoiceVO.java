@@ -97,6 +97,18 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("sourceid")
 	private String pk_source;//来源主键
 	
+	@FieldAlias("billcode")
+	private String vbillcode;//订单编号
+	
+	@FieldAlias("ndesummny")
+	private DZFDouble ndedsummny;// 扣款总金额（订单金额）
+
+	@FieldAlias("nderebmny")
+	private DZFDouble ndedrebamny;// 扣款金额-返点款（返点金额）
+	
+	@FieldAlias("ndemny")
+	private DZFDouble ndeductmny;// 扣款金额-预付款（预付款金额）
+	
 	/******以下字段不存库*********/
     private String bdate;//查询开始时间
     
@@ -121,7 +133,39 @@ public class ChInvoiceVO extends SuperVO{
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
     
-    public String getPk_source() {
+    public String getVbillcode() {
+		return vbillcode;
+	}
+
+	public void setVbillcode(String vbillcode) {
+		this.vbillcode = vbillcode;
+	}
+
+	public DZFDouble getNdedsummny() {
+		return ndedsummny;
+	}
+
+	public void setNdedsummny(DZFDouble ndedsummny) {
+		this.ndedsummny = ndedsummny;
+	}
+
+	public DZFDouble getNdedrebamny() {
+		return ndedrebamny;
+	}
+
+	public void setNdedrebamny(DZFDouble ndedrebamny) {
+		this.ndedrebamny = ndedrebamny;
+	}
+
+	public DZFDouble getNdeductmny() {
+		return ndeductmny;
+	}
+
+	public void setNdeductmny(DZFDouble ndeductmny) {
+		this.ndeductmny = ndeductmny;
+	}
+
+	public String getPk_source() {
 		return pk_source;
 	}
 

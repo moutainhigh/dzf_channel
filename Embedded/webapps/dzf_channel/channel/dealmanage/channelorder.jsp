@@ -11,8 +11,10 @@
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/channelorder.css");%> rel="stylesheet">
+<link href=<%UpdateGradeVersion.outversion(out, "../../css/dealmanage/channelorderinvoice.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorder.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorderinvoice.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 <body>
 	<div id="List_panel" class="wrapper" data-options="closed:false">
@@ -258,7 +260,193 @@
 				</div>
 			</form>
 		</div>
-	<!-- 新增出库单 end-->
+		<!-- 新增出库单 end-->
+		
+		<!-- 开票申请界面 begin -->
+		<div id="tabledia" class="easyui-dialog" style="overflow: scroll;" data-options="closed:true">
+		    <form id="tablediaForm">
+		        <div id="table_header">
+		
+		            <div class="basic_info" style="height:30px;">
+		                <div class="basic_title">
+		                    <label style="width:100px;text-align:right">订单编号：</label>
+		                    <font>
+		                    	<input id="dl_billcode" name="billcode" class="fp_title easyui-textbox" 
+		                    		data-options="readonly:true" style="width:137px; height:24px;"/> 
+		                    </font>
+		                </div>
+		            </div>
+		            <div class="purchaser">
+		                <table>
+		                    <tbody>
+		                    <tr>
+		                        <td style="width:32px;text-align:center;padding-top:18px;">购<br/>买<br/>方</td>
+		                        <td class="basic_pur" style="width:691px;">
+		                            <div style="margin-top:2px;">
+		                            	<lable style="text-align:right">名称：</lable>
+		                            	<input id="dl_cname" name="cname" class="easyui-textbox" style="width:230px;"/>
+		                            	<lable style="text-align:right">纳税人识别号：</lable>
+		                            	<input id="dl_taxnum" name="taxnum" class="easyui-textbox" style="width:230px;"/>
+		                            </div>
+		                            <div>
+		                            	<lable style="text-align:right">地址：</lable>
+		                            	<input id="dl_caddr" name="caddr" class="easyui-textbox" style="width:566px;"/>
+		                            </div>
+		                            <div>
+		                            	<lable style="text-align:right">开户行：</lable>
+		                            	<input id="dl_bname" name="bname" class="easyui-textbox" style="width:230px;"/>
+		                            	<lable style="text-align:right">电话：</lable>
+		                            	<input id="dl_phone" name="phone" class="easyui-textbox" style="width:230px;"/>
+		                            </div>
+		                            <div>
+		                            	<lable style="text-align:right">开户账号：</lable>
+		                            	<input id="dl_bcode" name="bcode" class="easyui-textbox" style="width:230px;"/>
+		                            	<lable style="text-align:right">邮箱：</lable>
+		                            	<input id="dl_email" name="email" class="easyui-textbox" style="width:230px;"/>
+		                            </div>
+		                        </td>
+		                    	<td class="basic_pur" style="width:214px;">
+			                    	<div style="margin-top:2px;">
+		                            	<lable style="width:76px;text-align:right;">订单金额：</lable>
+		                            	<input id="dl_ndesummny" name="ndesummny" class="easyui-numberbox" 
+		                            		data-options="readonly:true" style="width:100px;"/>
+		                            </div>
+		                            <div>
+		                            	<lable style="width:76px;text-align:right;">返点金额：</lable>
+		                            	<input id="dl_nderebmny" name="nderebmny" class="easyui-numberbox" 
+		                            		data-options="readonly:true" style="width:100px;"/>
+		                            </div>
+		                            <div>
+		                            	<lable style="width:76px;text-align:right;color:red;">预付款金额：</lable>
+		                            	<input id="dl_ndemny" name="ndemny" class="easyui-numberbox" 
+		                            		data-options="readonly:true" style="width:100px;"/>
+		                            </div>
+		                    	</td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+		            </div>
+		        </div>
+		        <table style="display: none">
+		            <tr id = 'trTM' style="display: none">
+		                <td style="width:333px;">
+		                    <div class="removeAdd">
+		                        <div class="iconRemove" onclick="removeTr(this)"></div>
+		                    </div>
+		                    <input style="text-align:left;" class="bspmc" name="bspmc" readonly unselectable="on">
+	                    </td>
+		                <td style="width:90px;">
+		                	<input style="text-align:left;" class="gg" name="gg" readonly unselectable="on">
+		                </td>
+		                <td style="width:60px;">
+		                	<input style="text-align:left;" class="bspmc" name="jldw" readonly unselectable="on">
+		                </td>
+		                <td style="width:90px;">
+		                	<input class="bspmc" name="bnum" 
+		                		onchange="trOnchange(this,'bnum')" onkeyup="trKeyup(this,'bnum')" >
+		                </td>
+		                <td style="width:100px;">
+		                	<input class="bspmc" name="bdj" readonly unselectable="on">
+		                </td>
+		                <td style="display:none;">
+							<input class="bspmc" name="cmny" readonly unselectable="on">
+						</td>
+		                <td style="width:100px;">
+		                	<input class="bspmc" name="bje" readonly unselectable="on">
+		                </td>
+		                <td style="width:60px;">
+		                	<input style="text-align:center;" class="bspmc" name="bsl" 
+		                		readonly unselectable="on">
+		                </td>
+		                <td style="width:100px;">
+		                	<input class="bspmc" name="bse" readonly unselectable="on">
+		                </td>
+		            </tr>
+		        </table>
+		        <div class="goodslist" >
+		
+		            <table id="goodslist">
+		                <tbody>
+		                <tr style="background:#f6f6f6;border:none;">
+		                    <td style="width:333px;">货物或应税劳务名称</td>
+		                    <td style="width:90px;">规格型号</td>
+		                    <td style="width:60px;">单位</td>
+		                    <td style="width:90px;">数量</td>
+		                    <td style="width:100px;">单价</td>
+		                    <td style="display:none;">含税金额</td>
+		                    <td style="width:100px;">金额</td>
+		                    <td style="width:60px;">税率(%)</td>
+		                    <td style="width:100px;">税额</td>
+		                </tr>
+		                <tr class="goodsbody">
+		                    <td colspan="8" style="border:none;">
+		                        <table class="goodsgrid" id="table_body">
+		
+									<tr id="id0">
+		                                <td style="width:333px;">
+		                                    <div class="removeAdd">
+		                                        <div class="iconRemove"></div>
+		                                    </div>
+		                                    <input style="text-align:left;" class="bspmc" name="bspmc" readonly unselectable="on">
+		                                </td>
+										<td style="width:90px;">
+											<input style="text-align:left;" class="gg" name="gg" readonly unselectable="on">
+										</td>
+										<td style="width:60px;">
+											<input style="text-align:left;" class="bspmc" name="jldw" readonly unselectable="on">
+										</td>
+										<td style="width:90px;">
+											<input onchange="trOnchange(this,'bnum')" onkeyup="trKeyup(this,'bnum')" class="bspmc" name="bnum">
+										</td>
+										<td style="width:100px;">
+											<input class="bspmc" name="bdj" readonly unselectable="on">
+										</td>
+										<td style="display:none;">
+											<input class="bspmc" name="cmny" readonly unselectable="on">
+										</td>
+										<td style="width:100px">
+											<input class="bspmc" name="bje" readonly unselectable="on">
+										</td>
+										<td style="width:60px;">
+											<input style="text-align:center;" 
+												class="bspmc" name="bsl" readonly unselectable="on">
+										</td>
+										<td style="width:100px;">
+											<input class="bspmc" name="bse" readonly unselectable="on">
+										</td>
+									</tr>
+		                        </table>
+		
+		                    </td>
+		                </tr>
+		
+		                <tr class="goodsfoot">
+		                    <td>合计</td>
+		                    <td></td>
+		                    <td></td>
+		                    <td></td>
+		                    <td></td>
+		                    <td>￥<span id="concatje"></span></td>
+		                    <td></td>
+		                    <td>￥<span id="concatse"></span></td>
+		                </tr>
+		                <tr>
+		                    <td>价税合计 (大写)</td>
+		                    <td colspan="8">
+		                    	<span style="float:left;margin-left:30px;">
+		                    		<div class="delicon"></div> 
+		                    		<span id="content"></span>
+		                    	</span>
+		                    	<span style="float:right;margin-right:150px;">(小写)  ￥<span id="content2"></span>
+		                    	</span>
+		                    </td>
+		                </tr>
+		                </tbody>
+		            </table>
+		        </div >
+		    </form>
+		</div>
+		<!-- 开票申请界面 end -->
 	</div>
 </body>
 </html>

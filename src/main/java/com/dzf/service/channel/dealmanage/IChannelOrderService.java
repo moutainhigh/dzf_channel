@@ -2,6 +2,7 @@ package com.dzf.service.channel.dealmanage;
 
 import java.util.List;
 
+import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -46,4 +47,11 @@ public interface IChannelOrderService {
 	 */
 	public GoodsBillVO qryOrderDet(GoodsBillVO pamvo) throws DZFWarpException;
 	
+	/**
+	 * 查询订单发票信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ChInvoiceVO queryInvoiceInfo(GoodsBillVO pamvo) throws DZFWarpException;
 }
