@@ -105,12 +105,15 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 				List<GoodsSalesAnalysisVO> totalist = new ArrayList<GoodsSalesAnalysisVO>();
 				GoodsSalesAnalysisVO rvo = null;
 				CorpVO corpvo = null;
+				DZFDouble ncost = DZFDouble.ZERO_DBL;
+				DZFDouble ntotalcost = DZFDouble.ZERO_DBL;
 				for (String key : map.keySet()) {
 					rvo = map.get(key);
 					if (costmap != null && !costmap.isEmpty()) {
-						rvo.setNcost(costmap.get(rvo.getPk_goodsspec()).setScale(4, DZFDouble.ROUND_HALF_UP));
-						rvo.setNtotalcost(
-								SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount())));
+						ncost = CommonUtil.getDZFDouble(costmap.get(rvo.getPk_goodsspec()));
+						rvo.setNcost(ncost.setScale(4, DZFDouble.ROUND_HALF_UP));
+						ntotalcost = SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount()));
+						rvo.setNtotalcost(ntotalcost);
 					}
 					corpvo = CorpCache.getInstance().get(null, rvo.getPk_corp());
 					if (corpvo != null) {
