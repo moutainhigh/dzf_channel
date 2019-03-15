@@ -328,6 +328,7 @@
 						<input id="pstatus" name="pstatus" type="hidden">
 						<input id="cperiod" name="cperiod" type="hidden">
 						<input id="ictype" name="ictype" type="hidden">
+						<input id="comptype" name="comptype" type="hidden">
 						<div style="width:24%;display: inline-block;">
 							<label style="width:35%;text-align: right;">扣款比例：</label>
 							<input id="propor" name="propor" class="easyui-numberbox" data-options="min:0,max:100,required:true,readonly:false"
@@ -449,6 +450,11 @@
 						<div class="decan" style="width:25%;display: inline-block;">
 							<label style="width:38.6%;text-align: right;">续费合同：</label>
 							<input type="checkbox" id="chargetype" name="chargetype" value="是" onclick="return false;">
+						</div>
+						<div class="decan" style="width:24%;display: inline-block;">
+							<label style="width:31.6%;text-align: right;">公司类型：</label>
+							<input id="comptypenm" name="comptypenm" class="easyui-textbox"data-options="readonly:true"
+								style="text-align:left"></input>
 						</div>
 					</div>
 					<!-- 合同信息 end -->

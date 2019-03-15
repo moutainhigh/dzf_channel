@@ -398,12 +398,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.dbegindate,  \n") ; 
 		sql.append("       t.denddate,  \n") ; 
 		sql.append("       t.vchangeperiod,  \n") ; 
-		sql.append("       t.patchstatus,  \n") ; //加盟商合同类型：null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同
+		//加盟商合同类型：null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同
+		sql.append("       t.patchstatus,  \n") ; 
 		sql.append("       t.vconfreason,  \n") ; 
 		sql.append("       t.dsigndate,  \n") ; 
 		sql.append("       t.vadviser,  \n") ; 
 		sql.append("       t.pk_source,  \n") ; //来源合同主键
 		sql.append("       t.ichargetype,  \n") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
+		sql.append("       t.icompanytype,  \n") ;// 公司类型 20-个体工商户，99-非个体户；
+		sql.append("       CASE t.icompanytype WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename, \n ");
 		sql.append("       cn.pk_confrim,  \n") ; 
 		sql.append("       cn.tstamp,  \n") ; 
 		sql.append("       cn.deductdata,  \n") ; 
@@ -710,7 +713,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 						updateSerPackage(packvo);
 					}
 				}
-				//10、回写我的客户“纳税人性质  、是否存量客户”：
+				//10、回写我的客户“纳税人性质  、是否存量客户、公司类型”：
 				updateCorp(datavo);
 				//11、发送消息：
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
@@ -758,6 +761,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 						&& (datavo.getIsncust() != null && datavo.getIsncust().booleanValue())) {
 					corpvo.setIsncust(datavo.getIsncust());
 					uplist.add("isncust");
+				}
+				//3、审核时，如果合同“公司类型”为“个体工商”，则更新我的客户“公司类型”为“个体工商”
+				if(datavo.getIcompanytype() != null && datavo.getIcompanytype() == 20){
+					corpvo.setIcompanytype(20);
+					uplist.add("icompanytype");
 				}
 				singleObjectBO.update(corpvo, uplist.toArray(new String[0]));
 				CorpCache.getInstance().remove(datavo.getPk_corpk());

@@ -125,6 +125,9 @@ public class ContractConfrimVO extends SuperVO {
     
     @FieldAlias("ictype")
     private Integer ichargetype;//扣费类型    1或null：新增扣费； 2：续费扣款；
+    
+    @FieldAlias("comptype")
+    private Integer icompanytype;// 公司类型 20-个体工商，99-非个体工商；
 
 	// 取原合同或缓存字段 end***************************
 
@@ -276,8 +279,27 @@ public class ContractConfrimVO extends SuperVO {
 	
 	private SuperVO[] bodys;
 	
+	@FieldAlias("comptypenm")
+	private String vcomptypename;//公司类型名称
+	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public String getVcomptypename() {
+		return vcomptypename;
+	}
+
+	public void setVcomptypename(String vcomptypename) {
+		this.vcomptypename = vcomptypename;
+	}
+
+	public Integer getIcompanytype() {
+		return icompanytype;
+	}
+
+	public void setIcompanytype(Integer icompanytype) {
+		this.icompanytype = icompanytype;
+	}
+
 	public Integer getIchargetype() {
 		return ichargetype;
 	}
