@@ -721,7 +721,7 @@ function onBilling(index){
 			var row = $('#grid').datagrid('getRows')[index];
 			if(getFloatValue(row.ndemny) == parseFloat(0)){//预付款扣款 == 0
 				Public.tips({
-					content : '返点订单不允许票',
+					content : '返点订单不允许开票',
 					type : 2
 				});
 				return;
@@ -731,7 +731,7 @@ function onBilling(index){
 					&& getFloatValue(row.nderebmny) != parseFloat(0)){
 				addInvoce(index);
 			} else {
-				var data = data + JSON.stringify(row);
+				var data = JSON.stringify(row);
 				var postdata = new Object();
 				postdata["data"] = data;
 				postdata["type"] = 4;
