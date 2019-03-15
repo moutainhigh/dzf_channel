@@ -1259,7 +1259,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
 			throw new BusinessException("数据发生变化");
 		}
-		//1、发票状态校验  0：待提交 ；1：待开票；2：已开票；3：开票失败；9：已换票；
+		//1、发票状态校验  0：待提交 ；1：待开票；2：已开票；3：开票失败；
 		if(oldvo.getInvstatus() != null && oldvo.getInvstatus() != 1 &&  oldvo.getInvstatus() != 3){
 			throw new BusinessException("发票状态不是待开票状态");
 		}

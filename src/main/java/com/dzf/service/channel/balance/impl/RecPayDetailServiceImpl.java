@@ -33,6 +33,7 @@ public class RecPayDetailServiceImpl implements IRecPayDetailService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
+		//1：合同扣款查询；2：商品扣款查询；
 		if(pamvo.getQrytype() != null && pamvo.getQrytype() == 1){
 			sql.append("select dl.doperatedate, \n");
 			sql.append("       dl.vmemo, \n");
@@ -55,7 +56,7 @@ public class RecPayDetailServiceImpl implements IRecPayDetailService {
 			sql.append("   and dl.doperatedate <= ? \n");
 			spm.addParam(pamvo.getBegdate());
 			sql.append(" order by dl.doperatedate desc \n");
-		}else{
+		}else if(pamvo.getQrytype() != null && pamvo.getQrytype() == 2){
 			sql.append("select dl.doperatedate, \n");
 			sql.append("       dl.vmemo, \n");
 			sql.append("       dl.iopertype, \n");

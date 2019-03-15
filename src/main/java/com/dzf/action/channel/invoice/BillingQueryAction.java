@@ -42,6 +42,7 @@ import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.balance.IRecPayDetailService;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 import com.dzf.service.pub.LogRecordEnum;
@@ -82,7 +83,6 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 			}
 			paramvo.setCuserid(getLoginUserid());
 			List<BillingInvoiceVO> rows = billingQueryServiceImpl.query(paramvo);
-			// QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setMsg("查询成功！");
 			grid.setSuccess(true);
 			grid.setRows(rows);
@@ -212,8 +212,8 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 			}
 			List<ChnDetailRepVO> list = recPayDetailService.queryRecDetail(pamvo);
 			if (list != null && list.size() > 0) {
-				ChnDetailRepVO[] vos = getPagedVOs(list.toArray(new ChnDetailRepVO[0]), pamvo.getPage(),
-						pamvo.getRows());
+				ChnDetailRepVO[] vos = list.toArray(new ChnDetailRepVO[0]);
+				vos = (ChnDetailRepVO[]) QueryUtil.getPagedVOs(vos, pamvo.getPage(), pamvo.getRows());
 				grid.setRows(vos);
 				grid.setTotal((long) list.size());
 			} else {
@@ -230,16 +230,9 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		writeJson(grid);
 	}
 
-	private ChnDetailRepVO[] getPagedVOs(ChnDetailRepVO[] cvos, int page, int rows) {
-		int beginIndex = rows * (page - 1);
-		int endIndex = rows * page;
-		if (endIndex >= cvos.length) {// 防止endIndex数组越界
-			endIndex = cvos.length;
-		}
-		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
-		return cvos;
-	}
-
+	/**
+	 * 打印
+	 */
 	public void onRecPrint() {
 		try {
 			String strlist = getRequest().getParameter("strlist");
@@ -283,6 +276,9 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		}
 	}
 
+	/**
+	 * 导出
+	 */
 	public void onRecExport() {
 		String strlist = getRequest().getParameter("strlist");
 		String columns = getRequest().getParameter("columns");
