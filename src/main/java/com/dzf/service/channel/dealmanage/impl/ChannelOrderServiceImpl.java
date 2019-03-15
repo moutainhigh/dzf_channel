@@ -244,6 +244,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		cvo.setRusername(accvo.getLinkman2());
 		cvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
 		cvo.setIdatatype(1);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
+		cvo.setVmome(pamvo.getVbillcode());
 		cvo.setPk_source(pamvo.getPk_goodsbill());
 		singleObjectBO.saveObject(pamvo.getPk_corp(), cvo);
 		
