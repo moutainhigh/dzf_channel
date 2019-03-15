@@ -148,8 +148,8 @@ public class InvManagerServiceImpl implements InvManagerService {
 			}
 		}
 		
-		//来源数据类型
-		if(paramvo.getIsourcetype() != null){
+		//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		if(paramvo.getIsourcetype() != null && paramvo.getIsourcetype() != -1){
 			sql.append(" and a.isourcetype = ?");
 			spm.addParam(paramvo.getIsourcetype());
 		}
