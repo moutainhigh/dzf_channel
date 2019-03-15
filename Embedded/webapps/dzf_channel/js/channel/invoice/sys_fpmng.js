@@ -289,6 +289,10 @@ function clearParams(){
 	$("#pk_account").val(null);
 	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
+	
+	$('#istatus').combobox('setValue', -1);
+	$('#qitype').combobox('setValue', -1);
+	$('#qsourtype').combobox('setValue', -1);
 }
 
 function selectCorps(){
