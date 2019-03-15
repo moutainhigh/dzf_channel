@@ -21,6 +21,12 @@ public class ChInvoiceBVO extends SuperVO {
 	@FieldAlias("pid")
 	private String pk_invoice;// 主表主键
 	
+	@FieldAlias("gid")
+	private String pk_goods;//商品主键
+	
+	@FieldAlias("specid")
+	private String pk_goodsspec;//规格型号
+	
 	@FieldAlias("bspmc")
 	private String bspmc;// 商品名称
 	
@@ -31,7 +37,7 @@ public class ChInvoiceBVO extends SuperVO {
 	private String measurename;// 单位
 	
 	@FieldAlias("bnum")
-	private DZFDouble bnum;// 数量
+	private Integer bnum;// 数量
 	
 	@FieldAlias("bdj")
 	private DZFDouble bprice;// 单价（不含税）
@@ -51,11 +57,14 @@ public class ChInvoiceBVO extends SuperVO {
 	@FieldAlias("sourceid")
 	private String pk_source;//来源主键（订单子表主键）
 	
+	@FieldAlias("billid")
+	private String pk_goodsbill;//订单主表主键
+	
 	private Integer dr;
 
 	private DZFDateTime ts;
 	
-	//*******************仅作计算使用begin
+	//*******************仅作计算、展示使用begin
 	
 	@FieldAlias("tmny")
 	private DZFDouble ntotalmny; //金额（含税）
@@ -63,7 +72,42 @@ public class ChInvoiceBVO extends SuperVO {
 	@FieldAlias("cmny")
 	private DZFDouble ncountmny; //分配金额
 	
-	//*******************仅作计算使用end
+	@FieldAlias("taxcode")
+	private String vtaxclasscode;//税收分类编码
+	
+	//*******************仅作计算、展示使用end
+
+	public String getPk_goodsbill() {
+		return pk_goodsbill;
+	}
+
+	public void setPk_goodsbill(String pk_goodsbill) {
+		this.pk_goodsbill = pk_goodsbill;
+	}
+
+	public String getVtaxclasscode() {
+		return vtaxclasscode;
+	}
+
+	public void setVtaxclasscode(String vtaxclasscode) {
+		this.vtaxclasscode = vtaxclasscode;
+	}
+
+	public String getPk_goods() {
+		return pk_goods;
+	}
+
+	public void setPk_goods(String pk_goods) {
+		this.pk_goods = pk_goods;
+	}
+
+	public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
 
 	public DZFDouble getNtotalmny() {
 		return ntotalmny;
@@ -129,11 +173,11 @@ public class ChInvoiceBVO extends SuperVO {
 		this.measurename = measurename;
 	}
 
-	public DZFDouble getBnum() {
+	public Integer getBnum() {
 		return bnum;
 	}
 
-	public void setBnum(DZFDouble bnum) {
+	public void setBnum(Integer bnum) {
 		this.bnum = bnum;
 	}
 

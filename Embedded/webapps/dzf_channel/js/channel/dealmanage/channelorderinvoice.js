@@ -40,7 +40,7 @@ $(document).ready(function(){
 	$("input",$(".basic_info .basic_title:first-child  label").next("font")).blur(function(e){  
 		var snumber = e.target.value;
 		var value = snumber.replace(/[^0-9]/ig,""); 
-		$("#dl_invcode").textbox('setValue', value);
+		$("#dl_billcode").textbox('setValue', value);
     });  
 	
 	$("input",$(".basic_info .basic_title:nth-child(2)  label").next("font")).blur(function(e){  
@@ -238,7 +238,7 @@ $(function(){
             $('#tabledia :input').val('');
             $("#table_header").find('#pk_id').remove();
             $("#tabledia").parent().find(".dialog-button a:eq(0)").show();
-            $("#tabledia").parent().find(".dialog-button a:eq(1)").find('.l-btn-text').text('保存');
+            $("#tabledia").parent().find(".dialog-button a:eq(1)").find('.l-btn-text').text('取消');
             $('#tablediaForm').form('reset');
             $("#table_body .add-tr").remove();
             $('#concatje').html('');
@@ -376,8 +376,8 @@ function outputcents4(amount) {
  */
 function cleanValue(){
 	
-//	//购买方信息：
-	$('#dl_invcode').textbox('setValue', null);
+	//购买方信息：
+	$('#dl_billcode').textbox('setValue', null);
 	$('#dl_cname').textbox('setValue', null);
 	$('#dl_taxnum').textbox('setValue', null);
 	$('#dl_caddr').textbox('setValue', null);
@@ -480,11 +480,11 @@ function addInvoce(index) {
 }
 
 /**
- * 新增保存
+ * 保存
  * @param type
  * @returns {Boolean}
  */
-function onSave(type) {
+function onSave() {
 	if ($("#tablediaForm").form('validate')) {
 		var parseJSON = function (ele) {
 	        var arrJson = ele.serializeArray();
@@ -560,37 +560,4 @@ function onSave(type) {
 		});
 		return; 
 	}
-	
-    
-//	var url = contextPath + "/financetax/orderInvoiceAct!onUpdate.action";
-//    $.messager.progress({
-//        text : '数据保存中，请稍候.....'
-//    });
-//    
-//    $.post(url, {
-//        "adddoc": {
-//            "header": paraHeader,
-//            "body": paraBody
-//        }
-//    },
-//    function(result) {
-//        if (result.success) {
-//            Public.tips({
-//                content: '操作成功',
-//                type: 0
-//            });
-//            $('#tablediaForm').form('reset');
-//            $.messager.progress('close');
-//
-//            tablediaWin.dialog('close');
-//            reloadData();
-//        } else {
-//            Public.tips({
-//                content: result.msg,
-//                type: 1
-//            });
-//            $.messager.progress('close');
-//        }
-//    },
-//    'json');
 }

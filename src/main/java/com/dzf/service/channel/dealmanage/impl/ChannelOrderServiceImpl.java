@@ -899,6 +899,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       vmeasname AS measurename,  \n");
 		sql.append("       16 AS bspsl,  \n");
 		sql.append("       amount AS bnum,  \n");
+		sql.append("       pk_goods,  \n");
+		sql.append("       pk_goodsspec,  \n");
+		sql.append("       pk_goodsbill,  \n");
 		sql.append("       ntotalmny  \n");
 		sql.append("  FROM cn_goodsbill_b  \n");
 		sql.append(" WHERE nvl(dr, 0) = 0  \n");
@@ -927,7 +930,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					//不含税单价   = 不含税金额/数量
 					//税额   = 不含税金额 * 0.16    
 					bhjje = SafeCompute.div(bvo.getNcountmny(), new DZFDouble(1.16));
-					bprice = SafeCompute.div(bhjje, bvo.getBnum());
+					bprice = SafeCompute.div(bhjje, CommonUtil.getDZFDouble(bvo.getBnum()));
 					bspse = SafeCompute.multiply(bhjje, new DZFDouble(0.16));
 					bvo.setBhjje(bhjje.setScale(2, DZFDouble.ROUND_HALF_UP));
 					bvo.setBprice(bprice.setScale(4, DZFDouble.ROUND_HALF_UP));
@@ -952,7 +955,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT l.pk_goodsbill AS pk_source,  \n");
-		sql.append("       l.vbillcode AS invcode,  \n");
+		sql.append("       l.vbillcode,  \n");
 		sql.append("       t.unitname AS corpname,  \n");
 		sql.append("       t.taxcode AS taxnum,  \n");
 		sql.append("       t.postaddr AS corpaddr,  \n");
@@ -1036,9 +1039,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		hvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
 		hvo.setIdatatype(2);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
 		
+		hvo.setDr(0);
+		
 		ChInvoiceBVO[] bVOs = (ChInvoiceBVO[]) hvo.getChildren();
 		for(ChInvoiceBVO bvo : bVOs){
 			bvo.setPk_corp(hvo.getPk_corp());
+			bvo.setDr(0);
 		}
 	}
 	

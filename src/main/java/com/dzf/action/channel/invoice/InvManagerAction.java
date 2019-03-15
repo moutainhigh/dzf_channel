@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
@@ -38,6 +40,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.InvManagerService;
@@ -60,7 +63,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	private Logger log = Logger.getLogger(getClass());
 
 	@Autowired
-	private InvManagerService invManagerService;
+	private InvManagerService invManagerSer;
 
 	@Autowired
 	private IPubService pubser;
@@ -85,10 +88,10 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 				if (!condition.equals("alldata")) {
 					paramvo.setVprovname(condition);
 				}
-				total = invManagerService.queryTotalRow(paramvo);
+				total = invManagerSer.queryTotalRow(paramvo);
 			}
 			if (total > 0) {
-				List<ChInvoiceVO> rows = invManagerService.query(paramvo);
+				List<ChInvoiceVO> rows = invManagerSer.query(paramvo);
 				grid.setRows(rows);
 			} else {
 				grid.setRows(new ArrayList<ChInvoiceVO>());
@@ -121,7 +124,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			if(paramvo != null){
 				paramvo.setEmail(getLoginUserid());
 			}
-			List<CorpVO> list = invManagerService.queryChannel(paramvo);
+			List<CorpVO> list = invManagerSer.queryChannel(paramvo);
 			if (list != null && list.size() > 0) {
 				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
 				grid.setRows(Arrays.asList(corpvos));
@@ -166,7 +169,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String pk_invoices = getRequest().getParameter("pk_invoices");
 			String invtime = getRequest().getParameter("invtime");
 			String[] pkArry = pkinvoicesToArray(pk_invoices);
-			List<ChInvoiceVO> listError = invManagerService.onBilling(pkArry, uid, invtime);
+			List<ChInvoiceVO> listError = invManagerSer.onBilling(pkArry, uid, invtime);
 			int errorNum = listError == null ? 0 : listError.size();
 			int success = pkArry.length - errorNum;
 			StringBuffer msg = new StringBuffer();
@@ -203,28 +206,100 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
-			ChInvoiceVO paramvo = new ChInvoiceVO();
-			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			String pk_invoices = getRequest().getParameter("ids");
-			String[] pkArry = pkinvoicesToArray(pk_invoices);
-			List<ChInvoiceVO> listError = invManagerService.onAutoBill(pkArry, getLoginUserInfo());
-			int errorNum = listError == null ? 0 : listError.size();
-			int success = pkArry.length - errorNum;
-			StringBuffer msg = new StringBuffer();
-			msg.append("成功").append(success).append("条");
-			if (listError != null && errorNum > 0) {
-				msg.append("，失败").append(errorNum).append("条<br>");
-				for (ChInvoiceVO vo : listError) {
-					msg.append("加盟商：").append(vo.getCorpname()).append(",失败原因：").append(vo.getMsg()).append("<br>");
+			
+//			ChInvoiceVO paramvo = new ChInvoiceVO();
+//			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
+//			
+//			String pk_invoices = getRequest().getParameter("ids");
+//			String[] pkArry = pkinvoicesToArray(pk_invoices);
+//			
+//			List<ChInvoiceVO> listError = invManagerService.onAutoBill(pkArry, getLoginUserInfo());
+//			int errorNum = listError == null ? 0 : listError.size();
+//			int success = pkArry.length - errorNum;
+//			StringBuffer msg = new StringBuffer();
+//			msg.append("成功").append(success).append("条");
+//			if (listError != null && errorNum > 0) {
+//				msg.append("，失败").append(errorNum).append("条<br>");
+//				for (ChInvoiceVO vo : listError) {
+//					msg.append("加盟商：").append(vo.getCorpname()).append(",失败原因：").append(vo.getMsg()).append("<br>");
+//				}
+//			}
+//			json.setMsg(msg.toString());
+			
+			checkBeforeAutoBill(uservo);
+
+			HashMap<String, DZFDouble> useMap = invManagerSer.queryUsedMny();
+			ChInvoiceVO[] chiVOs = getOperateData();
+			int rignum = 0;
+			int errnum = 0;
+			List<ChInvoiceVO> rightlist = new ArrayList<ChInvoiceVO>();
+			StringBuffer errmsg = new StringBuffer();
+			for (ChInvoiceVO cvo : chiVOs) {
+				try {
+					cvo = invManagerSer.updateAutoBill(cvo, uservo, useMap);
+					if (!StringUtil.isEmpty(cvo.getMsg())) {
+						errnum++;
+						errmsg.append(cvo.getMsg()).append("<br>");
+					} else {
+						rignum++;
+						rightlist.add(cvo);
+					}
+				} catch (Exception e) {
+					errnum++;
+					errmsg.append(e.getMessage()).append("<br>");
 				}
 			}
-			json.setMsg(msg.toString());
+
 			json.setSuccess(true);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "成功开具电子发票" + success+"张",ISysConstants.SYS_3);
+			if (errnum > 0) {
+				json.setMsg("成功" + rignum + "条，失败" + errnum + "条，失败原因：" + errmsg.toString());
+				json.setStatus(-1);
+				if (rignum > 0) {
+					json.setRows(rightlist);
+				}
+			} else {
+				json.setRows(rightlist);
+				json.setMsg("成功" + rignum + "条");
+			}
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "成功开具电子发票" + rignum + "张", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "开票失败");
 		}
 		writeJson(json);
+	}
+	
+	/**
+	 * 电子票据开具前校验
+	 * @param uservo
+	 * @throws DZFWarpException
+	 */
+	private void checkBeforeAutoBill(UserVO uservo) throws DZFWarpException {
+		if (uservo.getUser_name().length() > 8) {
+			throw new BusinessException("操作用户名称长度不能大于8");
+		} 
+		boolean flag = invManagerSer.hasDigit(uservo.getUser_name());
+		if (flag) {
+			throw new BusinessException("操作用户名称不能包含数字");
+		}
+	}
+	
+	/**
+	 * 获取操作数据
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private ChInvoiceVO[] getOperateData() throws DZFWarpException {
+		String date = getRequest().getParameter("data"); // 审核数据
+		if (StringUtil.isEmpty(date)) {
+			throw new BusinessException("数据不能为空");
+		}
+		date = date.replace("}{", "},{");
+		date = "[" + date + "]";
+		JSONArray array = (JSONArray) JSON.parseArray(date);
+		Map<String, String> maping = FieldMapping.getFieldMapping(new ChInvoiceVO());
+		ChInvoiceVO[] chiVOs = DzfTypeUtils.cast(array, maping, ChInvoiceVO[].class,
+				JSONConvtoJAVA.getParserConfig());
+		return chiVOs;
 	}
 
 	/**
@@ -243,7 +318,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			InvInfoResBVO[] vos = invManagerService.queryInvRepertoryInfo();
+			InvInfoResBVO[] vos = invManagerSer.queryInvRepertoryInfo();
 			json.setMsg("电子票余量查询成功");
 			json.setSuccess(true);
 			json.setRows(vos);
@@ -278,7 +353,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
-			invManagerService.save(data);
+			invManagerSer.save(data);
 			json.setSuccess(true);
 			json.setMsg("保存成功!");
 			writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "发票申请修改：" + data.getCorpname(),
@@ -312,7 +387,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 				if (vos != null && length > 0) {
 					for (ChInvoiceVO cvo : vos) {
 						try {
-							invManagerService.delete(cvo);
+							invManagerSer.delete(cvo);
 							len++;
 						} catch (BusinessException e) {
 							// msg.append("合同号：").append(cvo.getVcontcode()).append(",失败原因：").append(e.getMessage()).append("<br>");
@@ -354,7 +429,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String ipaytype = getRequest().getParameter("ipaytype");
 			String invprice = StringUtil.isEmpty(getRequest().getParameter("invprice")) ? ""
 					: getRequest().getParameter("invprice");
-			ChInvoiceVO vo = invManagerService.queryTotalPrice(pk_corp, Integer.valueOf(ipaytype), invprice);
+			ChInvoiceVO vo = invManagerSer.queryTotalPrice(pk_corp, Integer.valueOf(ipaytype), invprice);
 			json.setSuccess(true);
 			json.setMsg("获取可开票金额成功!");
 			json.setRows(vo);
@@ -385,7 +460,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			cvo.setDchangedate(new DZFDate(dcdate));
 			cvo.setVchangememo(vcmemo);
 			cvo.setPk_corp(getLogincorppk());
-			invManagerService.onChange(cvo);
+			invManagerSer.onChange(cvo);
 			json.setMsg("换票成功");
 			json.setSuccess(true);
 

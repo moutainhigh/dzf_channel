@@ -271,7 +271,7 @@
 		                <div class="basic_title">
 		                    <label style="width:100px;text-align:right">订单编号：</label>
 		                    <font>
-		                    	<input id="dl_invcode" name="invcode" class="fp_title easyui-textbox" 
+		                    	<input id="dl_billcode" name="billcode" class="fp_title easyui-textbox" 
 		                    		data-options="readonly:true" style="width:137px; height:24px;"/> 
 		                    </font>
 		                </div>
@@ -371,6 +371,15 @@
 		                <td style="display:none;">
 							<input class="bspmc" name="sourceid" readonly unselectable="on">
 						</td>
+						<td style="display:none;">
+							<input class="bspmc" name="gid" readonly unselectable="on">
+						</td>
+						<td style="display:none;">
+							<input class="bspmc" name="specid" readonly unselectable="on">
+						</td>
+						<td style="display:none;">
+							<input class="bspmc" name="billid" readonly unselectable="on">
+						</td>
 		            </tr>
 		        </table>
 		        <div class="goodslist" >
@@ -387,7 +396,10 @@
 		                    <td style="width:100px;">金额</td>
 		                    <td style="width:60px;">税率(%)</td>
 		                    <td style="width:100px;">税额</td>
-		                    <td style="display:none;">来源主键</td>
+		                    <td style="display:none;">订单子表主键</td>
+		                    <td style="display:none;">商品主键</td>
+		                    <td style="display:none;">规格型号主键</td>
+		                    <td style="display:none;">订单主表主键</td>
 		                </tr>
 		                <tr class="goodsbody">
 		                    <td colspan="8" style="border:none;">
@@ -427,6 +439,15 @@
 										</td>
 										<td style="display:none;">
 											<input class="bspmc" name="sourceid" readonly unselectable="on">
+										</td>
+										<td style="display:none;">
+											<input class="bspmc" name="gid" readonly unselectable="on">
+										</td>
+										<td style="display:none;">
+											<input class="bspmc" name="specid" readonly unselectable="on">
+										</td>
+										<td style="display:none;">
+											<input class="bspmc" name="billid" readonly unselectable="on">
 										</td>
 									</tr>
 		                        </table>

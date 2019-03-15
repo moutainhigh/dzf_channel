@@ -344,30 +344,42 @@ function onBill(){
 	});
 }
 
-
+/**
+ * 电子票-开票
+ */
 function onAutoBill(){
 
 	var rows = $('#grid').datagrid("getSelections");
 	if(rows == null || rows.length == 0){
-		Public.tips({content : "请选择需要处理的数据!" ,type:2});
+		Public.tips({content : "请选择需要处理的数据" ,type:2});
 		return;
 	}
 	
-	var ids = [];
-	var msg = '已选中'+rows.length+'张开票申请，请确认电票余量充足，传自动开票接口后不可取消，请慎重操作！'
+//	var ids = [];
+	var msg = '已选中'+rows.length+'张开票申请，请确认电票余量充足，传自动开票接口后不可取消，请慎重操作';
 	$.messager.confirm('提示',msg,
 	  function(conf){
 		if(conf){
 			$.messager.progress({text : '开票中，请稍候.....'});
+			
+//			for(var i = 0; i < rows.length; i++){
+//				ids.push(rows[i].id);
+//			}
+			
+			var data = "";
 			for(var i = 0; i < rows.length; i++){
-				ids.push(rows[i].id);
+				data = data + JSON.stringify(rows[i]);
 			}
+			var postdata = new Object();
+			postdata["data"] = data;
+			
 			$.ajax({
 				type : 'post',
 				url : DZF.contextPath + '/sys/sys_inv_manager!onAutoBill.action',
-				data : {
-					"ids" : JSON.stringify(ids)
-				},
+//				data : {
+//					"ids" : JSON.stringify(ids)
+//				},
+				data : postdata,
 				dataType : 'json',
 				success: function(result){
 					if(result.success){
@@ -375,8 +387,8 @@ function onAutoBill(){
 						Public.tips({content : result.msg ,type:0});
 						$.messager.progress('close');
 					}else{
-//						Public.tips({content : result.msg ,type:2});
-						$.messager.alert('提示',result.msg); 
+						Public.tips({content : result.msg ,type:2});
+//						$.messager.alert('提示',result.msg); 
 						$.messager.progress('close');
 					}
 				}

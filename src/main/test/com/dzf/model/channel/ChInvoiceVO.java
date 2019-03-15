@@ -48,7 +48,7 @@ public class ChInvoiceVO extends SuperVO{
 	private String apptime;//申请时间
 	
 	@FieldAlias("istatus")
-	private Integer invstatus;//发票状态  0：待提交 、1：待开票、2：已开票
+	private Integer invstatus;//发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；9：已换票；
 	
 	private String invtime;//开票日期
 	
@@ -95,7 +95,7 @@ public class ChInvoiceVO extends SuperVO{
 	private Integer isourcetype;//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
 	
 	@FieldAlias("sourceid")
-	private String pk_source;//来源主键
+	private String pk_source;//来源主键（商品订单主键）
 	
 	@FieldAlias("billcode")
 	private String vbillcode;//订单编号
