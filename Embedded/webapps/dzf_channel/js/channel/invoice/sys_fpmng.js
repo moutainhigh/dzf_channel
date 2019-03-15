@@ -78,9 +78,7 @@ function load(){
 								return '预付款';
 							} else if(value == 1){
 								return '加盟费';
-							} else if(value == 2){
-								return '预付款+返点';
-							}  
+							}
 		            }}, 
 		            /*{width : '80',title : '发票性质',field : 'nature',align:'left',
 						formatter: function(value,row,index){
