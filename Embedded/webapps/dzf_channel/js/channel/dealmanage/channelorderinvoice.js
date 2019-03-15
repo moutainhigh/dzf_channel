@@ -135,12 +135,14 @@ $(function(){
           	concatse = concatse.add(getFloatValue(item.value));
           }
         });
-
+        
+        var sum = concatje.add(concatse);
+        
         $('#concatje').text(comdify(concatje.toFixed(2)));
         $('#concatse').text(comdify(concatse.toFixed(2)));
 
-        $('#content2').text(comdify((concatse + concatje).toFixed(2)));
-        $('#content').text(DX(((concatse + concatje).toFixed(2) + '')));
+        $('#content2').text(comdify(sum.toFixed(2)));
+        $('#content').text(DX((sum.toFixed(2) + '')));
 
         $.each($tr.find('[name="bdj"], [name="bje"], [name="bse"]'), function (idx, item) {
             this.value = comdify(valFormat(this.value));
@@ -207,11 +209,12 @@ $(function(){
             }
         });
 
+        var sum = concatje.add(concatse);
         $('#concatje').text(comdify(concatje));
         $('#concatse').text(comdify(concatse));
 
-        $('#content2').text(comdify(concatse + concatje));
-        $('#content').text(DX(((concatse + concatje).toFixed(2) + '')));
+        $('#content2').text(comdify(sum.toFixed(2)));
+        $('#content').text(DX((sum.toFixed(2) + '')));
     };
 
     tablediaWin = $("#tabledia").dialog({
