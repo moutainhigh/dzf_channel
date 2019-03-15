@@ -1040,6 +1040,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		hvo.setIdatatype(2);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
 		
 		hvo.setDr(0);
+		hvo.setVmome(hvo.getVbillcode());//备注记录订单编号
 		
 		ChInvoiceBVO[] bVOs = (ChInvoiceBVO[]) hvo.getChildren();
 		for(ChInvoiceBVO bvo : bVOs){
