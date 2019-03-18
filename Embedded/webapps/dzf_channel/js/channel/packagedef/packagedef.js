@@ -87,7 +87,7 @@ function initGrid(){
     			formatter : function(value,row,index){
     				if (value == '20')
     					return '个体工商户';
-    				return "非个体工商户";
+    				return "非个体户";
     			},
     			editor: {
     				type: 'combobox',
@@ -103,7 +103,7 @@ function initGrid(){
                     		text: '个体工商户'
                     	},{
                     		value: '99',
-                    		text: '非个体工商户'
+                    		text: '非个体户'
                     	},],
                     	required:true,
                     }
