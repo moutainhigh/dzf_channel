@@ -55,7 +55,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 	 * @throws DZFWarpException
 	 */
 	private List<GoodsSalesAnalysisVO> getReturnData(QryParamVO pamvo) throws DZFWarpException {
-		List<GoodsSalesAnalysisVO> retlist = new ArrayList<GoodsSalesAnalysisVO>();
+		
 		List<GoodsSalesCountVO> detlist = queryDetailData(pamvo);
 		Map<String, GoodsSalesAnalysisVO> map = new HashMap<String, GoodsSalesAnalysisVO>();
 		if (detlist != null && detlist.size() > 0) {
@@ -101,64 +101,101 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 			Map<String, DZFDouble> costmap = getCostMap(ids, pamvo);
 
 			// 3、获取返回数据
-			if (map != null && !map.isEmpty()) {
-				List<GoodsSalesAnalysisVO> totalist = new ArrayList<GoodsSalesAnalysisVO>();
-				GoodsSalesAnalysisVO rvo = null;
-				CorpVO corpvo = null;
-				DZFDouble ncost = DZFDouble.ZERO_DBL;
-				DZFDouble ntotalcost = DZFDouble.ZERO_DBL;
-				for (String key : map.keySet()) {
-					rvo = map.get(key);
-					if (costmap != null && !costmap.isEmpty()) {
-						ncost = CommonUtil.getDZFDouble(costmap.get(rvo.getPk_goodsspec()));
-						rvo.setNcost(ncost.setScale(4, DZFDouble.ROUND_HALF_UP));
-						ntotalcost = SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount()));
-						rvo.setNtotalcost(ntotalcost);
-					}
-					corpvo = CorpCache.getInstance().get(null, rvo.getPk_corp());
-					if (corpvo != null) {
-						rvo.setCorpname(corpvo.getUnitname());
-					}
-					totalist.add(rvo);
+			return getRetList(map, costmap);
+
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取返回数据
+	 * @param map
+	 * @param costmap
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<GoodsSalesAnalysisVO> getRetList(Map<String, GoodsSalesAnalysisVO> map, Map<String, DZFDouble> costmap)
+			throws DZFWarpException {
+		List<GoodsSalesAnalysisVO> retlist = new ArrayList<GoodsSalesAnalysisVO>();
+		if (map != null && !map.isEmpty()) {
+			GoodsSalesAnalysisVO rvo = null;
+			CorpVO corpvo = null;
+			DZFDouble ncost = DZFDouble.ZERO_DBL;
+			DZFDouble ntotalcost = DZFDouble.ZERO_DBL;
+			Map<String, List<GoodsSalesAnalysisVO>> cpmap = new HashMap<String, List<GoodsSalesAnalysisVO>>();
+			List<GoodsSalesAnalysisVO> newlist = null;
+			List<GoodsSalesAnalysisVO> oldlist = null;
+			String pk_corp = "";
+			for (String key : map.keySet()) {
+				rvo = map.get(key);
+				// 1、计算成本和成本合计
+				if (costmap != null && !costmap.isEmpty()) {
+					ncost = CommonUtil.getDZFDouble(costmap.get(rvo.getPk_goodsspec()));
+					rvo.setNcost(ncost.setScale(4, DZFDouble.ROUND_HALF_UP));
+					ntotalcost = SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount()));
+					rvo.setNtotalcost(ntotalcost);
 				}
-				if (totalist != null && totalist.size() > 0) {
-					Collections.sort(totalist, new Comparator<GoodsSalesAnalysisVO>() {
+				corpvo = CorpCache.getInstance().get(null, rvo.getPk_corp());
+				if (corpvo != null) {
+					rvo.setCorpname(corpvo.getUnitname());
+				}
+				//2、同一公司的商品放在一起，为实现同一公司同样的商品放在一起
+				pk_corp = key.substring(0, key.indexOf('&'));
+				if(!cpmap.containsKey(pk_corp)){
+					newlist = new ArrayList<GoodsSalesAnalysisVO>();
+					newlist.add(rvo);
+					cpmap.put(pk_corp, newlist);
+				}else{
+					oldlist = cpmap.get(pk_corp);
+					oldlist.add(rvo);
+					cpmap.put(pk_corp, oldlist);
+				}
+			}
+			
+			if(cpmap != null && !cpmap.isEmpty()){
+				List<GoodsSalesAnalysisVO> cplist = null;
+				//同一公司的商品放在一起，并计算合计行
+				for(String key : cpmap.keySet()){
+					cplist = cpmap.get(key);
+					if(cplist != null && cplist.size() > 0){
+						Collections.sort(cplist, new Comparator<GoodsSalesAnalysisVO>() {
 
-						@Override
-						public int compare(GoodsSalesAnalysisVO o1, GoodsSalesAnalysisVO o2) {
-							return o1.getPk_corp().compareTo(o2.getPk_corp());
-						}
-
-					});
-					// 4、计算合计行
-					List<String> pklist = new ArrayList<String>();
-					GoodsSalesAnalysisVO sumvo = null;
-					int num = 0;
-					for (GoodsSalesAnalysisVO revo : totalist) {
-						if (!pklist.contains(revo.getPk_corp())) {
-							if (sumvo != null) {
+							@Override
+							public int compare(GoodsSalesAnalysisVO o1, GoodsSalesAnalysisVO o2) {
+								return o1.getPk_goods().compareTo(o2.getPk_goods());
+							}
+						});
+						
+						// 2、计算合计行
+						List<String> pklist = new ArrayList<String>();
+						GoodsSalesAnalysisVO sumvo = null;
+						int num = 0;
+						for (GoodsSalesAnalysisVO revo : cplist) {
+							if (!pklist.contains(revo.getPk_corp())) {
+								if (sumvo != null) {
+									retlist.add(sumvo);
+								}
+								sumvo = new GoodsSalesAnalysisVO();
+								sumvo.setPk_corp(revo.getPk_corp());
+								sumvo.setCorpname(revo.getCorpname());
+								sumvo.setVgoodsname("合计");
+								sumvo.setNtotalcost(revo.getNtotalcost());
+								sumvo.setNdeductmny(revo.getNdeductmny());
+								sumvo.setNdedrebamny(revo.getNdedrebamny());
+								sumvo.setNdedsummny(revo.getNdedsummny());
+								retlist.add(revo);
+								pklist.add(revo.getPk_corp());
+							} else {
+								sumvo.setNtotalcost(SafeCompute.add(sumvo.getNtotalcost(), revo.getNtotalcost()));
+								sumvo.setNdeductmny(SafeCompute.add(sumvo.getNdeductmny(), revo.getNdeductmny()));
+								sumvo.setNdedrebamny(SafeCompute.add(sumvo.getNdedrebamny(), revo.getNdedrebamny()));
+								sumvo.setNdedsummny(SafeCompute.add(sumvo.getNdedsummny(), revo.getNdedsummny()));
+								retlist.add(revo);
+							}
+							num++;
+							if (num == cplist.size()) {
 								retlist.add(sumvo);
 							}
-							sumvo = new GoodsSalesAnalysisVO();
-							sumvo.setPk_corp(revo.getPk_corp());
-							sumvo.setCorpname(revo.getCorpname());
-							sumvo.setVgoodsname("合计");
-							sumvo.setNtotalcost(revo.getNtotalcost());
-							sumvo.setNdeductmny(revo.getNdeductmny());
-							sumvo.setNdedrebamny(revo.getNdedrebamny());
-							sumvo.setNdedsummny(revo.getNdedsummny());
-							retlist.add(revo);
-							pklist.add(revo.getPk_corp());
-						} else {
-							sumvo.setNtotalcost(SafeCompute.add(sumvo.getNtotalcost(), revo.getNtotalcost()));
-							sumvo.setNdeductmny(SafeCompute.add(sumvo.getNdeductmny(), revo.getNdeductmny()));
-							sumvo.setNdedrebamny(SafeCompute.add(sumvo.getNdedrebamny(), revo.getNdedrebamny()));
-							sumvo.setNdedsummny(SafeCompute.add(sumvo.getNdedsummny(), revo.getNdedsummny()));
-							retlist.add(revo);
-						}
-						num++;
-						if (num == totalist.size()) {
-							retlist.add(sumvo);
 						}
 					}
 				}
