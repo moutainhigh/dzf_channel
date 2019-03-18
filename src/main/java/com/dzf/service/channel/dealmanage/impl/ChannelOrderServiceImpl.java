@@ -239,7 +239,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		cvo.setEmail(accvo.getEmail1());// 邮箱
 		cvo.setApptime(new DZFDate().toString());// 申请日期
 		cvo.setInvstatus(1);// 状态
-		cvo.setIpaytype(2);//付款类型  0：预付款；   1：加盟费；2：预付款+发点
+		cvo.setIpaytype(0);//付款类型  0：预付款；   1：加盟费；
 		cvo.setInvcorp(2);
 		cvo.setRusername(accvo.getLinkman2());
 		cvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
