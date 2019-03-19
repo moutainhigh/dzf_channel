@@ -284,6 +284,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public DZFBoolean getIsnconfirm() {
+		return isnconfirm;
+	}
+
+	public void setIsnconfirm(DZFBoolean isnconfirm) {
+		this.isnconfirm = isnconfirm;
+	}
+
 	public String getVcomptypename() {
 		return vcomptypename;
 	}
@@ -372,10 +380,6 @@ public class ContractConfrimVO extends SuperVO {
 		this.dsigndate = dsigndate;
 	}
 
-	public DZFBoolean getIsnconfirm() {
-		return isnconfirm;
-	}
-
 	public String getVconfreasonid() {
 		return vconfreasonid;
 	}
@@ -414,10 +418,6 @@ public class ContractConfrimVO extends SuperVO {
 
 	public void setAreaname(String areaname) {
 		this.areaname = areaname;
-	}
-
-	public void setIsnconfirm(DZFBoolean isnconfirm) {
-		this.isnconfirm = isnconfirm;
 	}
 
 	public String getVconfreason() {

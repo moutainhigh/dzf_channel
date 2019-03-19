@@ -654,6 +654,7 @@ function load(){
 			align:'center',
 			field : 'isnconfirm',
 			formatter:isnformat,
+			hidden : true
 		}, {
 			width : '120',
 			title : '开始日期',
@@ -1093,9 +1094,9 @@ function initdeductData(row){
                 	$('#rejereson').css('display','block');
                 	showRejectReason(row);
                 }
-                if(row.isnconfirm == "Y" || row.isnconfirm == "是"){
-                	$('#isnconfirm').prop('checked',true);
-                }
+//                if(row.isnconfirm == "Y" || row.isnconfirm == "是"){
+//                	$('#isnconfirm').prop('checked',true);
+//                }
                 if(row.ictype == 2){//扣费类型    1或null：新增扣费； 2：续费扣款；
                 	$('#chargetype').prop('checked',true);
                 }
@@ -1104,9 +1105,9 @@ function initdeductData(row){
                 	var bodys = row.bodys;
                 	$('#oldfrom').form('clear');
                     $('#oldfrom').form('load', bodys[0]);
-                    if(bodys[0].isnconfirm == "Y" || bodys[0].isnconfirm == "是"){
-                    	$('#oisnconfirm').prop('checked',true);
-                    }
+//                    if(bodys[0].isnconfirm == "Y" || bodys[0].isnconfirm == "是"){
+//                    	$('#oisnconfirm').prop('checked',true);
+//                    }
                 }
             }
         },
@@ -1462,30 +1463,42 @@ function change(){
 	initFileEvent();
 	initChangeListener();
 	$("#end").prop({"disabled":false});
-	if(rows[0].isnconfirm == "Y" || rows[0].isnconfirm == "是"){
-		document.getElementById("nullify").checked="true";
-		$("#end").prop({"disabled":true});
-		$('#cisnconfirm').prop('checked',true);
-		setChangeMny(2);
-		
-		$("#addclass").attr("class", "decan");
-		$("#stperiod").datebox("readonly", true);
-		$("#remny").numberbox("readonly", true);
-		$("#nchtlmny").numberbox("readonly", true);
-		$("#nchsumny").numberbox("readonly", true);
-		$("#changetype").val(2);
-	}else{
-		document.getElementById("end").checked="true";
-		$('#cisnconfirm').prop('checked',false);
-		setChangeMny(1);
-		
-		$("#addclass").removeClass("decan");
-		$("#stperiod").datebox("readonly", false);
-		$("#remny").numberbox("readonly", false);
-		$("#nchtlmny").numberbox("readonly", false);
-		$("#nchsumny").numberbox("readonly", false);
-		$("#changetype").val(1);
-	}
+	
+	document.getElementById("end").checked="true";
+	$('#cisnconfirm').prop('checked',false);
+	setChangeMny(1);
+	
+	$("#addclass").removeClass("decan");
+	$("#stperiod").datebox("readonly", false);
+	$("#remny").numberbox("readonly", false);
+	$("#nchtlmny").numberbox("readonly", false);
+	$("#nchsumny").numberbox("readonly", false);
+	$("#changetype").val(1);
+	
+//	if(rows[0].isnconfirm == "Y" || rows[0].isnconfirm == "是"){
+//		document.getElementById("nullify").checked="true";
+//		$("#end").prop({"disabled":true});
+//		$('#cisnconfirm').prop('checked',true);
+//		setChangeMny(2);
+//		
+//		$("#addclass").attr("class", "decan");
+//		$("#stperiod").datebox("readonly", true);
+//		$("#remny").numberbox("readonly", true);
+//		$("#nchtlmny").numberbox("readonly", true);
+//		$("#nchsumny").numberbox("readonly", true);
+//		$("#changetype").val(2);
+//	}else{
+//		document.getElementById("end").checked="true";
+//		$('#cisnconfirm').prop('checked',false);
+//		setChangeMny(1);
+//		
+//		$("#addclass").removeClass("decan");
+//		$("#stperiod").datebox("readonly", false);
+//		$("#remny").numberbox("readonly", false);
+//		$("#nchtlmny").numberbox("readonly", false);
+//		$("#nchsumny").numberbox("readonly", false);
+//		$("#changetype").val(1);
+//	}
 }
 
 

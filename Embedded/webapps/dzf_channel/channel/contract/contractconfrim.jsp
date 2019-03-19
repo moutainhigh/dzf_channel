@@ -277,11 +277,11 @@
 									 	style="width:70px; height: 28px;">
 								</div>
 							</div>
-							<div class="decan" style="width:24%;display:inline-block;">
+							<!-- <div class="decan" style="width:24%;display:inline-block;">
 								<label for="isnconfirm" style="text-align:right;width:57%;">
 									<input type="checkbox" id="oisnconfirm" name="isnconfirm" value="是" onclick="return false;">&nbsp;未确定服务期限
 								</label>
-							</div>
+							</div> -->
 						</div>
 						<div class="time_col time_colp11 ">
 							<div class="decan" style="width:24%;display: inline-block;">
@@ -431,11 +431,11 @@
 								 	style="width:70px; height: 28px;">
 							</div>
 						</div>
-						<div class="decan" style="width:24%;display:inline-block;">
+						<!-- <div class="decan" style="width:24%;display:inline-block;">
 							<label for="isnconfirm" style="text-align:right;width:57%;">
 								<input type="checkbox" id="isnconfirm" name="isnconfirm" value="是" onclick="return false;">&nbsp;未确定服务期限
 							</label>
-						</div>
+						</div> -->
 					</div>
 					<div class="time_col time_colp11 ">
 						<div class="decan" style="width:24%;display: inline-block;">
