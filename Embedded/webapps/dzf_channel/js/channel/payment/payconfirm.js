@@ -471,6 +471,7 @@ function canConfirm(){
  * 操作数据(收款确认、确认驳回、取消确认)
  */
 function operatData(postdata, rows){
+	debugger
 	$.messager.progress({
 		text : '数据处理中....'
 	});
@@ -541,6 +542,7 @@ function operatData(postdata, rows){
 										vcid : rerows[i].vcid,
 										dctime : rerows[i].dctime,
 										tstp : rerows[i].tstp,
+										ictype : rerows[i].ictype,
 										vcname : rerows[i].vcname,
 									}
 								});
@@ -554,6 +556,7 @@ function operatData(postdata, rows){
 										vcid : rerows[i].vcid,
 										dctime : rerows[i].dctime,
 										tstp : rerows[i].tstp,
+										ictype : rerows[i].ictype,
 										vcname : rerows[i].vcname,
 									}
 								});
