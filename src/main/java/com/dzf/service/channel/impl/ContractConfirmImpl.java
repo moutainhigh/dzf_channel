@@ -1525,6 +1525,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append(" , icontractcycle = ? , ntotalmny = ? \n") ;
 				spm.addParam(changenum);
 				spm.addParam(datavo.getNchangetotalmny());
+				if(datavo.getIreceivcycle().compareTo(changenum) > 0){
+					sql.append(" , ireceivcycle = ? \n");
+					spm.addParam(changenum);
+				}
 				DZFDate denddate = null;
 				String vendperiod = "";
 				try {
