@@ -1,7 +1,10 @@
 var contextPath = DZF.contextPath;
 var isenter = false;//是否快速查询
-var hstr=["one","two","three","four","five","six","seven",
-        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
+var len;//期间/日期长度
+var hstr=["one","two","three","four","five","six","seven","eight","nine","ten",
+          "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen",
+          "twenty","twenty1","twenty2","twenty3","twenty4","twenty5","twenty6","twenty7","twenty8","twenty9",
+          "thirty","thirty1","thirty2","thirty3","thirty4","thirty5","thirty6","thirty7"];
 $(function() {
 	initQry();//初始化查询框
 	var queryData = getQueryData();
@@ -239,6 +242,7 @@ function checkQueryDate(){
 		if(diff>36){
 			errMsg="查询期间不能超过36个月"
 		}
+		$('#jqj').text(begperiod + ' 至 ' + endperiod);
 	}else{
 		var bdate = $("#bdate").datebox("getValue");
 		var edate = $("#edate").datebox("getValue");
@@ -255,6 +259,7 @@ function checkQueryDate(){
 				errMsg="查询日期不能超过1个月"
 			}
 		}
+		$('#jqj').text(bdate + ' 至 ' + edate);
 	}
 	return errMsg;
 }
@@ -357,11 +362,12 @@ function load(queryData) {
 				});	
 			} else {
 				var rows=data.rows;
-				for(var i=0;i<rows[0].num;i++){
+				len = rows[0].num;
+				for(var i=0;i<len;i++){
 					columns1[10+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
 				}
 				var j=4;
-				for(var i=0;i<rows[0].num;i++){
+				for(var i=0;i<len;i++){
 					columns2[j]={width : "100",title : "预付款",field : hstr[i]+"1",align:"right",formatter: fny}
 					j++;
 					columns2[j]={width : "100",title : "返点",field : hstr[i]+"2",align:"right",formatter: fny}
@@ -427,7 +433,7 @@ function calFooter(){
     	ndemny += parseFloat(rows[i].ndemny == undefined ? 0 : rows[i].ndemny);
     	nderebmny += parseFloat(rows[i].nderebmny == undefined ? 0 : rows[i].nderebmny);
     	var w=0;
-    	for(var j = 0; j <15; j++){
+    	for(var j = 0; j <len; j++){
     		var num1=hstr[j]+"1";
     		var num2=hstr[j]+"2";
     		custsum['custsum'+w]+= parseFloat(rows[i][num1] == undefined ? 0 : rows[i][num1]);
@@ -442,7 +448,7 @@ function calFooter(){
     footerData['ndemny'] = ndemny;
     footerData['nderebmny'] = nderebmny;
     var w=0;
-    for(var i = 0; i <15; i++){
+    for(var i = 0; i <len; i++){
     	var num1=hstr[i]+"1";
 		var num2=hstr[i]+"2";
  		footerData[num1] = custsum['custsum'+w];
@@ -459,7 +465,7 @@ function calFooter(){
 /**
  * 打印
  */
-function doPrint(){
+/*function doPrint(){
 	var datarows = $('#grid').datagrid("getRows");
 	if(datarows == null || datarows.length == 0){
 		Public.tips({content:'当前界面数据为空',type:2});
@@ -469,7 +475,7 @@ function doPrint(){
 	var qj =$('#jqj').html();
 	Business.getFile(contextPath+ '/report/debitquery!print.action',{'strlist':JSON.stringify(datarows),
 		'columns':JSON.stringify(columns),'qj':qj}, true, true);
-}
+}*/
 
 /**
  * 导出

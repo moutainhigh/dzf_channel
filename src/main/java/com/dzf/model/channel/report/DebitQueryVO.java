@@ -91,6 +91,30 @@ public class DebitQueryVO extends SuperVO {
 	private DZFDouble thirteen1;
 	private DZFDouble fourteen1;
 	private DZFDouble fifteen1;
+	private DZFDouble sixteen1;
+	private DZFDouble seventeen1;
+	private DZFDouble eighteen1;
+	private DZFDouble nineteen1;
+	private DZFDouble twenty1;
+	private DZFDouble twenty11;
+	private DZFDouble twenty21;
+	private DZFDouble twenty31;
+	private DZFDouble twenty41;
+	private DZFDouble twenty51;
+	private DZFDouble twenty61;
+	private DZFDouble twenty71;
+	private DZFDouble twenty81;
+	private DZFDouble twenty91;
+	private DZFDouble thirty1;
+	private DZFDouble thirty11;
+	private DZFDouble thirty21;
+	private DZFDouble thirty31;
+	private DZFDouble thirty41;
+	private DZFDouble thirty51;
+	private DZFDouble thirty61;
+	private DZFDouble thirty71;
+
+	
 	
 	private DZFDouble one2;
 	private DZFDouble two2;
@@ -107,7 +131,28 @@ public class DebitQueryVO extends SuperVO {
 	private DZFDouble thirteen2;
 	private DZFDouble fourteen2;
 	private DZFDouble fifteen2;
-	
+	private DZFDouble sixteen2;
+	private DZFDouble seventeen2;
+	private DZFDouble eighteen2;
+	private DZFDouble nineteen2;
+	private DZFDouble twenty2;
+	private DZFDouble twenty12;
+	private DZFDouble twenty22;
+	private DZFDouble twenty32;
+	private DZFDouble twenty42;
+	private DZFDouble twenty52;
+	private DZFDouble twenty62;
+	private DZFDouble twenty72;
+	private DZFDouble twenty82;
+	private DZFDouble twenty92;
+	private DZFDouble thirty2;
+	private DZFDouble thirty12;
+	private DZFDouble thirty22;
+	private DZFDouble thirty32;
+	private DZFDouble thirty42;
+	private DZFDouble thirty52;
+	private DZFDouble thirty62;
+	private DZFDouble thirty72;
 
 	@Override
 	public String getPKFieldName() {
@@ -153,6 +198,358 @@ public class DebitQueryVO extends SuperVO {
 
 	public void setAreacode(String areacode) {
 		this.areacode = areacode;
+	}
+
+	public DZFDouble getSixteen1() {
+		return sixteen1;
+	}
+
+	public void setSixteen1(DZFDouble sixteen1) {
+		this.sixteen1 = sixteen1;
+	}
+
+	public DZFDouble getSeventeen1() {
+		return seventeen1;
+	}
+
+	public void setSeventeen1(DZFDouble seventeen1) {
+		this.seventeen1 = seventeen1;
+	}
+
+	public DZFDouble getEighteen1() {
+		return eighteen1;
+	}
+
+	public void setEighteen1(DZFDouble eighteen1) {
+		this.eighteen1 = eighteen1;
+	}
+
+	public DZFDouble getNineteen1() {
+		return nineteen1;
+	}
+
+	public DZFDouble getThirty71() {
+		return thirty71;
+	}
+
+	public void setThirty71(DZFDouble thirty71) {
+		this.thirty71 = thirty71;
+	}
+
+	public DZFDouble getThirty72() {
+		return thirty72;
+	}
+
+	public void setThirty72(DZFDouble thirty72) {
+		this.thirty72 = thirty72;
+	}
+
+	public void setNineteen1(DZFDouble nineteen1) {
+		this.nineteen1 = nineteen1;
+	}
+
+	public DZFDouble getTwenty1() {
+		return twenty1;
+	}
+
+	public void setTwenty1(DZFDouble twenty1) {
+		this.twenty1 = twenty1;
+	}
+
+	public DZFDouble getTwenty11() {
+		return twenty11;
+	}
+
+	public void setTwenty11(DZFDouble twenty11) {
+		this.twenty11 = twenty11;
+	}
+
+	public DZFDouble getTwenty21() {
+		return twenty21;
+	}
+
+	public void setTwenty21(DZFDouble twenty21) {
+		this.twenty21 = twenty21;
+	}
+
+	public DZFDouble getTwenty31() {
+		return twenty31;
+	}
+
+	public void setTwenty31(DZFDouble twenty31) {
+		this.twenty31 = twenty31;
+	}
+
+	public DZFDouble getTwenty41() {
+		return twenty41;
+	}
+
+	public void setTwenty41(DZFDouble twenty41) {
+		this.twenty41 = twenty41;
+	}
+
+	public DZFDouble getTwenty51() {
+		return twenty51;
+	}
+
+	public void setTwenty51(DZFDouble twenty51) {
+		this.twenty51 = twenty51;
+	}
+
+	public DZFDouble getTwenty61() {
+		return twenty61;
+	}
+
+	public void setTwenty61(DZFDouble twenty61) {
+		this.twenty61 = twenty61;
+	}
+
+	public DZFDouble getTwenty71() {
+		return twenty71;
+	}
+
+	public void setTwenty71(DZFDouble twenty71) {
+		this.twenty71 = twenty71;
+	}
+
+	public DZFDouble getTwenty81() {
+		return twenty81;
+	}
+
+	public void setTwenty81(DZFDouble twenty81) {
+		this.twenty81 = twenty81;
+	}
+
+	public DZFDouble getTwenty91() {
+		return twenty91;
+	}
+
+	public void setTwenty91(DZFDouble twenty91) {
+		this.twenty91 = twenty91;
+	}
+
+	public DZFDouble getThirty1() {
+		return thirty1;
+	}
+
+	public void setThirty1(DZFDouble thirty1) {
+		this.thirty1 = thirty1;
+	}
+
+	public DZFDouble getThirty11() {
+		return thirty11;
+	}
+
+	public void setThirty11(DZFDouble thirty11) {
+		this.thirty11 = thirty11;
+	}
+
+	public DZFDouble getThirty21() {
+		return thirty21;
+	}
+
+	public void setThirty21(DZFDouble thirty21) {
+		this.thirty21 = thirty21;
+	}
+
+	public DZFDouble getThirty31() {
+		return thirty31;
+	}
+
+	public void setThirty31(DZFDouble thirty31) {
+		this.thirty31 = thirty31;
+	}
+
+	public DZFDouble getThirty41() {
+		return thirty41;
+	}
+
+	public void setThirty41(DZFDouble thirty41) {
+		this.thirty41 = thirty41;
+	}
+
+	public DZFDouble getThirty51() {
+		return thirty51;
+	}
+
+	public void setThirty51(DZFDouble thirty51) {
+		this.thirty51 = thirty51;
+	}
+
+	public DZFDouble getThirty61() {
+		return thirty61;
+	}
+
+	public void setThirty61(DZFDouble thirty61) {
+		this.thirty61 = thirty61;
+	}
+
+	public DZFDouble getSixteen2() {
+		return sixteen2;
+	}
+
+	public void setSixteen2(DZFDouble sixteen2) {
+		this.sixteen2 = sixteen2;
+	}
+
+	public DZFDouble getSeventeen2() {
+		return seventeen2;
+	}
+
+	public void setSeventeen2(DZFDouble seventeen2) {
+		this.seventeen2 = seventeen2;
+	}
+
+	public DZFDouble getEighteen2() {
+		return eighteen2;
+	}
+
+	public void setEighteen2(DZFDouble eighteen2) {
+		this.eighteen2 = eighteen2;
+	}
+
+	public DZFDouble getNineteen2() {
+		return nineteen2;
+	}
+
+	public void setNineteen2(DZFDouble nineteen2) {
+		this.nineteen2 = nineteen2;
+	}
+
+	public DZFDouble getTwenty2() {
+		return twenty2;
+	}
+
+	public void setTwenty2(DZFDouble twenty2) {
+		this.twenty2 = twenty2;
+	}
+
+	public DZFDouble getTwenty12() {
+		return twenty12;
+	}
+
+	public void setTwenty12(DZFDouble twenty12) {
+		this.twenty12 = twenty12;
+	}
+
+	public DZFDouble getTwenty22() {
+		return twenty22;
+	}
+
+	public void setTwenty22(DZFDouble twenty22) {
+		this.twenty22 = twenty22;
+	}
+
+	public DZFDouble getTwenty32() {
+		return twenty32;
+	}
+
+	public void setTwenty32(DZFDouble twenty32) {
+		this.twenty32 = twenty32;
+	}
+
+	public DZFDouble getTwenty42() {
+		return twenty42;
+	}
+
+	public void setTwenty42(DZFDouble twenty42) {
+		this.twenty42 = twenty42;
+	}
+
+	public DZFDouble getTwenty52() {
+		return twenty52;
+	}
+
+	public void setTwenty52(DZFDouble twenty52) {
+		this.twenty52 = twenty52;
+	}
+
+	public DZFDouble getTwenty62() {
+		return twenty62;
+	}
+
+	public void setTwenty62(DZFDouble twenty62) {
+		this.twenty62 = twenty62;
+	}
+
+	public DZFDouble getTwenty72() {
+		return twenty72;
+	}
+
+	public void setTwenty72(DZFDouble twenty72) {
+		this.twenty72 = twenty72;
+	}
+
+	public DZFDouble getTwenty82() {
+		return twenty82;
+	}
+
+	public void setTwenty82(DZFDouble twenty82) {
+		this.twenty82 = twenty82;
+	}
+
+	public DZFDouble getTwenty92() {
+		return twenty92;
+	}
+
+	public void setTwenty92(DZFDouble twenty92) {
+		this.twenty92 = twenty92;
+	}
+
+	public DZFDouble getThirty2() {
+		return thirty2;
+	}
+
+	public void setThirty2(DZFDouble thirty2) {
+		this.thirty2 = thirty2;
+	}
+
+	public DZFDouble getThirty12() {
+		return thirty12;
+	}
+
+	public void setThirty12(DZFDouble thirty12) {
+		this.thirty12 = thirty12;
+	}
+
+	public DZFDouble getThirty22() {
+		return thirty22;
+	}
+
+	public void setThirty22(DZFDouble thirty22) {
+		this.thirty22 = thirty22;
+	}
+
+	public DZFDouble getThirty32() {
+		return thirty32;
+	}
+
+	public void setThirty32(DZFDouble thirty32) {
+		this.thirty32 = thirty32;
+	}
+
+	public DZFDouble getThirty42() {
+		return thirty42;
+	}
+
+	public void setThirty42(DZFDouble thirty42) {
+		this.thirty42 = thirty42;
+	}
+
+	public DZFDouble getThirty52() {
+		return thirty52;
+	}
+
+	public void setThirty52(DZFDouble thirty52) {
+		this.thirty52 = thirty52;
+	}
+
+	public DZFDouble getThirty62() {
+		return thirty62;
+	}
+
+	public void setThirty62(DZFDouble thirty62) {
+		this.thirty62 = thirty62;
 	}
 
 	public String getAreaname() {

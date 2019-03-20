@@ -44,7 +44,7 @@
 						<input style="height:28px;width:220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称或编码回车定位 "/> 
 					</div>
 					<div class="right">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doPrint()">打印</a>
+<!-- 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doPrint()">打印</a> -->
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport()">导出</a>
 					</div>
 				</div>

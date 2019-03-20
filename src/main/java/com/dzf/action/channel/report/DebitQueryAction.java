@@ -23,16 +23,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IButtonName;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IDebitQueryService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 import com.dzf.service.pub.report.PrintUtil;
@@ -50,6 +53,9 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 
 	@Autowired
 	private IDebitQueryService debitquery;
+	
+	@Autowired
+	private IPubService pubService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 	
@@ -191,6 +197,7 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		if (StringUtil.isEmpty(strlist)) {
 			throw new BusinessException("导出数据不能为空!");
 		}
+		pubService.checkButton(getLoginUserInfo(),IFunNode.CHANNEL_23,IButtonName.BTN_EXPORT);
 		String columns =getRequest().getParameter("columns");//最底下一行
 		String dateColumns =getRequest().getParameter("dateColumns");//最上面一行
 		JSONArray array = (JSONArray) JSON.parseArray(strlist);

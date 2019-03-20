@@ -92,8 +92,10 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		
 		List<DebitQueryVO> shlist = new ArrayList<DebitQueryVO>();
 		if(!map.isEmpty()){
-			String[] str={"one","two","three","four","five","six","seven",
-				        "eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"};
+		  String[] str={"one","two","three","four","five","six","seven","eight","nine","ten",
+			          "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen",
+			          "twenty","twenty1","twenty2","twenty3","twenty4","twenty5","twenty6","twenty7","twenty8","twenty9",
+			          "thirty","thirty1","thirty2","thirty3","thirty4","thirty5","thirty6","thirty7"};
 			List<DebitQueryVO> retlist = new ArrayList<DebitQueryVO>();
 			paramvo.setCorps(map.keySet().toArray(new String[0]));
 			List<DebitQueryVO> list =qryChannel(paramvo);
