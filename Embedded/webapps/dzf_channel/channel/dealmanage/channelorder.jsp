@@ -212,8 +212,8 @@
 		<div id="cardDialog" >
 			<form id="stockout" method="post" style="height:440px;width:1100px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
-					<input id="corpid" name="corpid" class="easyui-textbox"> 
-					<input id="nmny" name="nmny" class="easyui-numberbox"> 
+					<input id="ocorpid" name="corpid" type="hidden"> 
+					<input id="onmny" name="nmny" type="hidden"> 
 				</div>
 				<div class="time_col time_colp11">
 					<div style="width:32%;display: inline-block;">

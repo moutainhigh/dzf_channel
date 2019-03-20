@@ -313,7 +313,7 @@ function stockOut(index){
 					$('#cardGrid').datagrid("loadData",result.rows);
 					
 					$('#corpname').textbox("setValue",row.pname);
-					$('#corpid').textbox("setValue",row.corpid);
+					$('#ocorpid').val(row.corpid);
 					$('#rename').textbox("setValue",row.rename);
 					$('#phone').textbox("setValue",row.phone);
 					$('#readdress').textbox("setValue",row.readdress);
@@ -335,14 +335,14 @@ function addSave(){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
 		return;
 	}
-	var nmny=0;
+	var nmny = parseFloat(0);
 	var childBody = "";
 	var rows = $("#cardGrid").datagrid('getRows');
 	for (var i = 0; i < rows.length; i++) {
 		childBody = childBody + JSON.stringify(rows[i]);
-		nmny =getFloatValue(nmny)+getFloatValue(rows[i].nmny)
+		nmny = nmny.add(getFloatValue(rows[i].nmny));
 	}
-	$("#nmny").numberbox('setValue',nmny);
+	$("#onmny").val(nmny);
 	var postdata = new Object();
 	postdata["head"] = JSON.stringify(serializeObject($('#stockout')));
 	postdata["body"] = childBody;
