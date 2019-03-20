@@ -292,20 +292,23 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	private void checkIsSave(CarryOverVO vo)  throws DZFWarpException{
 		DZFDate date = new DZFDate(vo.getPeriod() + "-01");
 		String sql = " period=? and nvl(dr,0)=0 and nvl(iscarryover,'N')='Y' ";
+		String dateStr;
 		if (vo.getIscarryover().booleanValue() && vo.getPeriod().compareTo("2018-12") != 0) {// 结转（看前一个月是否结转）
 			long millis = DateUtils.getPreviousMonth(date.getMillis());
 			date = new DZFDate(millis);
 			SQLParameter spm = new SQLParameter();
-			spm.addParam(date.toString().substring(0, 7));
+			dateStr = date.toString().substring(0, 7);
+			spm.addParam(dateStr);
 			CarryOverVO[] vos = (CarryOverVO[]) singleObjectBO.queryByCondition(CarryOverVO.class, sql, spm);
 			if(vos == null || vos.length<1){
-				throw new BusinessException("当月成本已结转，请取消结转后重新操作");
+				throw new BusinessException(dateStr+"成本未结转");
 			}
 		} else if (!vo.getIscarryover().booleanValue()) {
 			long millis = DateUtils.getNextMonth(date.getMillis());// 反结转（看下个月是否结转）提醒报错
 			date = new DZFDate(millis);
 			SQLParameter spm = new SQLParameter();
-			spm.addParam(date.toString().substring(0, 7));
+			dateStr = date.toString().substring(0, 7);
+			spm.addParam(dateStr);
 			CarryOverVO[] vos = (CarryOverVO[]) singleObjectBO.queryByCondition(CarryOverVO.class, sql, spm);
 			if (vos != null && vos.length > 0) {
 				throw new BusinessException("不可跨月取消结转");
