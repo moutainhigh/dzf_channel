@@ -60,11 +60,11 @@
 						
 						<label style="width:72px;text-align: right;" for='qj'><input id="qj" type="radio" name="seledate" checked="true" value="qj"/>&ensp;期间：</label> 
 						<font> 
-							<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28"  />
+							<input id="begperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28"  />
 						</font> 
 						<font>-</font> 
 						<font> 
-							<input type="text" id="endperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28" />
+							<input id="endperiod" class="easyui-textbox" data-options="editable:false,width:137,height:28" />
 						</font>
 					</div>
 				</div>

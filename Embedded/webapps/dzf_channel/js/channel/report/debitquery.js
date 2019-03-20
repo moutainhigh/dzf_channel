@@ -49,17 +49,21 @@ function initQry(){
 		$("#livediv").remove();
     	$("#qrydialog").css("visibility","hidden");
 	});
+	
+	initPeriod("#begperiod");
+	initPeriod("#endperiod");
+	
 	var beginShow=parent.SYSTEM.LoginDate.substring(0,4)+"-01";
 	var endShow=parent.SYSTEM.LoginDate.substring(0,7);
 	$("#begperiod").textbox('setValue',beginShow);
 	$("#endperiod").textbox('setValue',endShow);
 	$("#jqj").html(beginShow+" 至  "+endShow);
+	
 	queryBoxChange1('#begperiod','#endperiod');
 	$("#begperiod").textbox({"readonly" : false});
 	$("#endperiod").textbox({"readonly" : false});
 	$("#bdate").datebox('readonly',true);
 	$("#edate").datebox('readonly',true);
-	initQryPeroid();
 	changeRadio();
 }
 
@@ -76,7 +80,7 @@ function changeRadio(){
 			$("#bdate").datebox('readonly',true);
 			$("#edate").datebox('readonly',true);
 		}else{
-			queryBoxChange2('#bdate','#edate');
+			queryBoxChange1('#bdate','#edate');
 			var sdv = $('#bdate').datebox('getValue');
 			var edv = $('#edate').datebox('getValue');
 			$('#jqj').html(sdv + ' 至 ' + edv);
@@ -105,66 +109,6 @@ function queryBoxChange1(start,end){
 		onChange: function(newValue, oldValue){
 			var sdv = $(start).textbox('getValue');
 			$('#jqj').text(sdv + ' 至 ' + newValue);
-		}
-	});
-}
-
-/**
- * 查询框时间改变事件(为日期年月日)
- * @param start
- * @param end
- */
-function queryBoxChange2(){
-	$('#bdate').datebox({
-		onChange: function(newValue, oldValue){
-			var edv = $('#edate').datebox('getValue');
-			var start=new Date(newValue).getTime();
-			var end=new Date(edv).getTime();
-			var time=end-start;
-			if(time<0){
-				Public.tips({
-					content : "起始时间不能大于结束时间",
-					type : 2
-				});
-				$('#bdate').datebox('setValue',oldValue);
-				$('#jqj').text(oldValue + ' 至 ' + edv);
-			}else if(Math.floor(time / 86400000) > 14){
-				Public.tips({
-					content : "起始时间与结束时间间隔最大为14天",
-					type : 2
-				});
-				$('#bdate').datebox('setValue',oldValue);
-				$('#jqj').text(oldValue + ' 至 ' + edv);
-			}else{
-				$('#bdate').datebox('setValue',newValue);
-				$('#jqj').text(newValue + ' 至 ' + edv);
-			}
-		}
-	});
-	$('#edate').datebox({
-		onChange: function(newValue, oldValue){
-			var sdv = $('#bdate').datebox('getValue');
-			var start=new Date(sdv).getTime();
-			var end=new Date(newValue).getTime();
-			var time=end-start;
-			if(time<0){
-				Public.tips({
-					content : "起始时间不能大于结束时间",
-					type : 2
-				});
-				$('#edate').datebox('setValue',oldValue);
-				$('#jqj').text(sdv + ' 至 ' + oldValue);
-			}else if(Math.floor(time / 86400000) > 14){
-				Public.tips({
-					content : "起始时间与结束时间间隔最大为14天",
-					type : 2
-				});
-				$('#edate').datebox('setValue',oldValue);
-				$('#jqj').text(sdv + ' 至 ' + oldValue);
-			}else{
-				$('#edate').datebox('setValue',newValue);
-				$('#jqj').text(sdv + ' 至 ' + newValue);
-			}
 		}
 	});
 }
@@ -258,6 +202,15 @@ function quickfiltet(){
 }
 
 function reloadData(){
+	var errMsg = checkQueryDate();
+	if(!isEmpty(errMsg)){
+		Public.tips({
+			content : errMsg,
+			type : 2
+		});
+		return;
+	}
+	
 	var queryData = getQueryData();
 	if(isEmpty(queryData)){
 		Public.tips({
@@ -268,6 +221,42 @@ function reloadData(){
 	}
 	load(queryData);
 	$('#grid').datagrid('unselectAll');
+}
+
+/**
+ * 校验查询
+ * @param type
+ */
+function checkQueryDate(){
+	var errMsg="";
+	if($('#qj').is(':checked')){
+		var begperiod = $("#begperiod").datebox("getValue");
+		var endperiod = $("#endperiod").datebox("getValue");
+		if(begperiod>endperiod){
+			errMsg="开始期间不能大于结束期间"
+		}
+		var diff= MonthDiff(endperiod,begperiod);
+		if(diff>36){
+			errMsg="查询期间不能超过36个月"
+		}
+	}else{
+		var bdate = $("#bdate").datebox("getValue");
+		var edate = $("#edate").datebox("getValue");
+		if(bdate>edate){
+			errMsg="开始日期不能大于结束日期"
+		}
+		var diff= MonthDiff(bdate,edate);
+		if(diff>1){
+			errMsg="查询日期不能超过1个月"
+		}else if(diff==1){
+			var b=bdate.split('-')[2];
+			var e=edate.split('-')[2];
+			if(b<e){
+				errMsg="查询日期不能超过1个月"
+			}
+		}
+	}
+	return errMsg;
 }
 
 //双击选择公司
@@ -500,146 +489,3 @@ function doExport(){
 	}
 	checkBtnPower('export','channel23',callback);
 }
-
-/**
- * 查询期间初始化
- */
-function initQryPeroid(){
-	var begperiod = $('#begperiod').textbox('getValue');
-	var year = "";
-	var month = "";
-	if(!isEmpty(begperiod)){
-		year = begperiod.substring(0,4);
-		month = begperiod.substring(5);
-		month = parseInt(month) - 1;
-	}
-	$('#begperiod').textbox({
-		icons: [{
-			iconCls:'foxdate',
-			handler: function(e){
-				click_icon(150, 100, begperiod, year, month, function(val){
-					if(!isEmpty(val)){
-						var second = $('#endperiod').textbox('getValue');
-						if(!isEmpty(second)){
-							var syears = second.substr(0, second.indexOf('-'));
-							var smonth = second.substr(second.indexOf('-')+1);
-							var fyears = val.substr(0, val.indexOf('-'));
-							var fmonth = val.substr(val.indexOf('-')+1);
-							if(fyears > syears){
-								Public.tips({
-									content : "起始年份不能大于结束年份",
-									type : 2
-								});
-								return;
-							}else if(fyears == syears && fmonth > smonth){
-								Public.tips({
-									content : "起始月份不能大于结束月份",
-									type : 2
-								});
-								return;
-							}
-							var ifyears = parseInt(fyears);
-							var ifmonth = parseInt(fmonth);
-							var isyears = parseInt(syears);
-							var ismonth = parseInt(smonth);
-							if(isyears - ifyears > 1){
-								Public.tips({
-									content : "查询结束期间不能超过12个月",
-									type : 2
-								});
-								return;
-							}
-							var begin = ifyears * 12 + ifmonth;
-							var end = isyears * 12 + ismonth;
-							if((end - begin + 1) > 12){
-								Public.tips({
-									content : "查询结束期间不能超过12个月",
-									type : 2
-								});
-								return;
-							}
-							$('#begperiod').textbox('setValue', val);
-						}
-					}else{
-						$('#begperiod').textbox('setValue', val);
-					}
-					begperiod = val;
-					if(!isEmpty(begperiod)){
-						year = begperiod.substring(0,4);
-						month = begperiod.substring(5);
-						month = parseInt(month) - 1;
-					}
-				})
-			}
-		}]
-	});
-	var endperiod = $('#endperiod').textbox('getValue');
-	var eyear = "";
-	var emonth = "";
-	if(!isEmpty(endperiod)){
-		eyear = endperiod.substring(0,4);
-		emonth = endperiod.substring(5);
-		emonth = parseInt(emonth) - 1;
-	}
-	$('#endperiod').textbox({
-		icons: [{
-			iconCls:'foxdate',
-			handler: function(e){
-				click_icon(150, 250, endperiod, eyear, emonth, function(val){
-					if(!isEmpty(val)){
-						var first = $('#begperiod').textbox('getValue');
-						if(!isEmpty(first)){
-							var fyears = first.substr(0, first.indexOf('-'));
-							var fmonth = first.substr(first.indexOf('-')+1);
-							var syears = val.substr(0, val.indexOf('-'));
-							var smonth = val.substr(val.indexOf('-')+1);
-							if(fyears > syears){
-								Public.tips({
-									content : "起始年份不能大于结束年份",
-									type : 2
-								});
-								return;
-							}else if(fyears == syears && fmonth > smonth){
-								Public.tips({
-									content : "起始月份不能大于结束月份",
-									type : 2
-								});
-								return;
-							}
-							var ifyears = parseInt(fyears);
-							var ifmonth = parseInt(fmonth);
-							var isyears = parseInt(syears);
-							var ismonth = parseInt(smonth);
-							if(isyears - ifyears > 1){
-								Public.tips({
-									content : "查询期间不能超过12个月",
-									type : 2
-								});
-								return;
-							}
-							var begin = ifyears * 12 + ifmonth;
-							var end = isyears * 12 + ismonth;
-							if((end - begin + 1) > 12){
-								Public.tips({
-									content : "查询期间不能超过12个月",
-									type : 2
-								});
-								return;
-							}
-							$('#endperiod').textbox('setValue', val);
-						}
-					}else{
-						$('#endperiod').textbox('setValue', val);
-					}
-					endperiod = val;
-					if(!isEmpty(endperiod)){
-						eyear = endperiod.substring(0,4);
-						emonth = endperiod.substring(5);
-						emonth = parseInt(emonth) - 1;
-					}
-				})
-			}
-		}]
-	});
-}
-

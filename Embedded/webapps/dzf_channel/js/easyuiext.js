@@ -593,3 +593,12 @@ String.prototype.replaceAll = function (FindText, RepText) {
     regExp = new RegExp(FindText, "g");
     return this.replace(regExp, RepText);
 }
+
+//计算日期或期间相差几个月(格式2017-12  或者 2018-02-12)
+function  MonthDiff(date1,  date2){
+	date1 = date1.split('-');
+	date1 = parseInt(date1[0]) * 12 + parseInt(date1[1]);
+	date2 = date2.split('-');
+	date2 = parseInt(date2[0]) * 12 + parseInt(date2[1]);
+    return Math.abs(date1 - date2); 
+}
