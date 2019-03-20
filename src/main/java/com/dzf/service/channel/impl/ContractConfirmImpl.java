@@ -406,7 +406,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.pk_source,  \n") ; //来源合同主键
 		sql.append("       t.ichargetype,  \n") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
 		sql.append("       t.icompanytype,  \n") ;// 公司类型 20-个体工商户，99-非个体户；
-		sql.append("       CASE t.icompanytype WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename, \n ");
+		sql.append("       CASE nvl(t.icompanytype,99) WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename, \n ");
 		sql.append("       cn.pk_confrim,  \n") ; 
 		sql.append("       cn.tstamp,  \n") ; 
 		sql.append("       cn.deductdata,  \n") ; 
