@@ -151,7 +151,6 @@ function nameFormat(value, row, index){
 function qryDetail(index){
 	var rows = $('#grid').datagrid('getRows');
 	var row = rows[index];
-	$('#detail_dialog').dialog('open');
 	var url = DZF.contextPath + "/report/financedealstaterep!queryDetail.action";
 	$('#gridh').datagrid('options').url = url;
 	$('#gridh').datagrid('load', {
@@ -234,9 +233,12 @@ function initDetailGrid(){
 				return;
 			}
 			if(data.rows && data.rows.length > 0){
+				$('#detail_dialog').dialog('open');
 				$('#qrydate').html(data.rows[0].period);
 				$('#corpnm').html(data.rows[0].corpnm);
 				$('#gridh').datagrid("scrollTo",0);
+			}else{
+				Public.tips({content :"暂无明细",type : 2});
 			}
 		},
 	});
