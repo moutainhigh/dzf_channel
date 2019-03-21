@@ -29,6 +29,9 @@ public class FinanceDetailVO extends SuperVO {
 	@FieldAlias("corpknm")
 	private String corpkname;//客户名称
 	
+	@FieldAlias("cdate")
+    public DZFDate createdate;// 录入日期
+	
 	@FieldAlias("period")
 	private String vperiod;//查询期间
 	
@@ -69,6 +72,14 @@ public class FinanceDetailVO extends SuperVO {
 
 	public String getCorpname() {
 		return corpname;
+	}
+
+	public DZFDate getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(DZFDate createdate) {
+		this.createdate = createdate;
 	}
 
 	public void setCorpname(String corpname) {

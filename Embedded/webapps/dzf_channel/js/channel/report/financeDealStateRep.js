@@ -176,7 +176,7 @@ function initDetailGrid(){
 		pageList : [ 20, 50, 100, 200 ],
 		showRefresh : false,// 不显示分页的刷新按钮
 		columns : [ [ {
-			width : '172',
+			width : '120',
 			title : '部门',
 			align:'left',
 			halign:'center',
@@ -204,15 +204,21 @@ function initDetailGrid(){
 	    		}
 			}
 		}, {
+            field: 'cdate',
+            title: '录入日期',
+            width: '90',
+            align: 'left',
+            halign:'center',
+        },{
             field: 'bdate',
             title: '建账日期',
-            width: '100',
+            width: '90',
             align: 'left',
             halign:'center',
         },{
             field: 'jzstatus',
             title: '记账状态',
-            width: '150',
+            width: '130',
             align: 'left',
             halign:'center',
         }, {

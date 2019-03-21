@@ -350,6 +350,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("       unitname as corpkname,  \n");
 		sql.append("       pk_corp as pk_corpk,  \n");
 		sql.append("       ishasaccount as ishasaccount,  \n");
+		sql.append("       createdate,  \n");
 		sql.append("       begindate,  \n");
 		sql.append("       fathercorp as pk_corp  \n");
 		sql.append("  from bd_corp \n");
