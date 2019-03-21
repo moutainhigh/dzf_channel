@@ -120,6 +120,7 @@ function load(){
 		fitColumns : false,
 		height : Public.setGrid().h,
 		singleSelect : true,
+		showFooter:true,
 		columns : [ [ {
 			width : '160',
 			title : '加盟商',
@@ -156,22 +157,12 @@ function load(){
 			align : 'right',
 			halign : 'center',
 			field : 'cost',
-//			formatter : function(value, row, index) {
-//				if (value == 0)
-//					return "0.00";
-//				return formatMny(value);
-//			},
 		}, {
 			width : '100',
 			title : '成本合计',
 			align : 'right',
 			halign : 'center',
 			field : 'totalcost',
-//			formatter : function(value, row, index) {
-//				if (value == 0)
-//					return "0.00";
-//				return formatMny(value);
-//			},
 			styler : cellStyler,
 		}, {
 			width : '100',
@@ -223,9 +214,29 @@ function load(){
 		} ] ],
 		onLoadSuccess : function(data) {
 			$('#grid').datagrid("scrollTo", 0);
+			calFooter();
 			$("#grid").datagrid("autoMergeCells", ['pname']);
 		},
 	});
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+    var totalcost = parseFloat(0);	
+    for (var i = 0; i < rows.length; i++) {
+    	if(rows[i].gname != "小计"){
+    		totalcost = totalcost.add(getFloatValue(rows[i].totalcost));
+    	}
+    }
+    footerData['gname'] = '合计';
+    footerData['totalcost'] = totalcost;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**
@@ -250,7 +261,7 @@ function onExport(){
  * @returns {String}
  */
 function cellStyler(value, row, index) {
-	if (row.gname == "合计") {
+	if (row.gname == "小计") {
 		return 'color:green;';
 	}
 }

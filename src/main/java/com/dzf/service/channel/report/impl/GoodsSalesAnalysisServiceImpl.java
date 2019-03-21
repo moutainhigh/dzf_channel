@@ -178,7 +178,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 								sumvo = new GoodsSalesAnalysisVO();
 								sumvo.setPk_corp(revo.getPk_corp());
 								sumvo.setCorpname(revo.getCorpname());
-								sumvo.setVgoodsname("合计");
+								sumvo.setVgoodsname("小计");
 								sumvo.setNtotalcost(revo.getNtotalcost());
 								sumvo.setNdeductmny(revo.getNdeductmny());
 								sumvo.setNdedrebamny(revo.getNdedrebamny());
