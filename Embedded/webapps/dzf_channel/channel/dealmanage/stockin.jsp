@@ -91,7 +91,7 @@
 	<!-- 列表界面 end -->
 	
 	<!-- 卡片界面 begin -->
-	<div id="cardPanel" style="height:100%; width: 100%; overflow:auto;">
+	<div id="cardPanel" style="height:100%; width: 100%; overflow:auto; overflow-x: hidden">
 		<div class="mod-toolbar-top">
 	        <div class="mod-toolbar-content">
 		        <div class="right">
