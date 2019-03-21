@@ -11,6 +11,7 @@ $(function(){
 function initQryDate(){
 	initPeriod("#qryperiod");
 	$("#qryperiod").datebox("setValue", parent.SYSTEM.LoginDate);
+	$("#jqj").html(parent.SYSTEM.LoginDate);
 }
 
 /**
@@ -24,6 +25,7 @@ function reloadData(){
 		"cpid" : $("#pk_account").val(),
 	});
 	$('#qrydialog').hide();
+	$("#jqj").html($("#qryperiod").datebox("getValue"));
 }
 
 /**
