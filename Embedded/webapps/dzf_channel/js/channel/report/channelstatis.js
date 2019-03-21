@@ -161,7 +161,6 @@ function load() {
 }
 
 function insertData(data){
-	debugger
     var sndemny = 0;	
     var snderebmny = 0;	
     var j=0;
