@@ -99,6 +99,7 @@ public class DataCommonRepImpl {
 		sql.append("       y.region_name vprovname,  \n");
 		sql.append("       p.pk_corp,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.djoindate chndate, \n");
 		sql.append("       p.vprovince,  \n");
 		sql.append("       b.ischarge,  \n");
 		sql.append("       b.userid cuserid,  \n");
@@ -195,6 +196,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,  \n");
 		sql.append("       b.vprovince,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname,  \n");
 		sql.append("       (case  \n");
 		sql.append("         when b.pk_corp is null then  \n");
@@ -258,6 +260,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,  \n");
 		sql.append("       b.vprovince,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname  \n");
 		sql.append("  from bd_account p  \n");
 		sql.append(" right join cn_chnarea_b b on p.pk_corp = b.pk_corp  \n");

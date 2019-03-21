@@ -3,6 +3,7 @@ package com.dzf.model.channel.report;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFBoolean;
+import com.dzf.pub.lang.DZFDate;
 
 /**
  * 数据权限vo(目前只是用在数据运营管理报表的三个节点)
@@ -31,6 +32,9 @@ public class DataVO extends SuperVO {
     
     @FieldAlias("incode")
     public String innercode;//加盟商编码
+    
+	@FieldAlias("chndate")
+	private DZFDate chndate;//加盟商时间
 	
 	@FieldAlias("corpid")
 	public String pk_corp;//会计公司主键
@@ -55,6 +59,14 @@ public class DataVO extends SuperVO {
 
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+
+	public DZFDate getChndate() {
+		return chndate;
+	}
+
+	public void setChndate(DZFDate chndate) {
+		this.chndate = chndate;
 	}
 
 	public String getUsername() {

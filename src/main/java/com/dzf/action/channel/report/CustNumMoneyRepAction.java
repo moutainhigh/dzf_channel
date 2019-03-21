@@ -109,12 +109,13 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();
-		int num = 6;
+		int num = 7;
 		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_46, IButtonName.BTN_EXPORT);
 		fieldlist.add("aname");
 		fieldlist.add("uname");
 		fieldlist.add("provname");
 		fieldlist.add("incode");
+		fieldlist.add("chndate");
 		fieldlist.add("corpnm");
 		fieldlist.add("cuname");
 		fieldlist.add("stockcusts");

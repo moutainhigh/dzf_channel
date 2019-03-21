@@ -110,6 +110,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 				}
 				showvo = (FinanceDealStateRepVO) map.get(pk_corp);
 				if (showvo != null) {
+					retvo.setChndate(showvo.getChndate());
 					retvo.setAreaname(showvo.getAreaname());// 大区
 					uservo = UserCache.getInstance().get(showvo.getUserid(), pk_corp);
 					if (uservo != null) {
