@@ -390,7 +390,7 @@ function load(queryData) {
 	      showFooter:true,
 	      columns : columns,
 	      onLoadSuccess : function(data) {
-				$.messager.progress('close');
+//				$.messager.progress('close');
 				$("#qrydialog").hide();
 				calFooter();
 			}
@@ -424,7 +424,7 @@ function calFooter(){
     var ndemny = 0;	
     var nderebmny = 0;	
     var custsum = {};
-    for(var i = 0; i <30; i++){
+    for(var i = 0; i <len*2; i++){
     	custsum['custsum'+i] = 0;
     }
     for (var i = 0; i < rows.length; i++) {
@@ -436,9 +436,11 @@ function calFooter(){
     	for(var j = 0; j <len; j++){
     		var num1=hstr[j]+"1";
     		var num2=hstr[j]+"2";
-    		custsum['custsum'+w]+= parseFloat(rows[i][num1] == undefined ? 0 : rows[i][num1]);
+    		custsum['custsum'+w]+=parseFloat(rows[i][num1] == undefined ? 0 : rows[i][num1]);
+    		console.log(custsum['custsum'+w]);
     		w++;
     		custsum['custsum'+w]+= parseFloat(rows[i][num2] == undefined ? 0 : rows[i][num2]);
+    		console.log(custsum['custsum'+w]);
     		w++;
     	}
     }
