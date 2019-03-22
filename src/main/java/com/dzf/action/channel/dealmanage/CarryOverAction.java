@@ -79,7 +79,8 @@ public class CarryOverAction extends BaseAction<CarryOverVO> {
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
-			data.setCoperatorid(getLoginUserid());
+			data.setCoperatorid(uservo.getCuserid());
+			data.setPk_corp(uservo.getPk_corp());
 			carryover.save(data);
 			json.setSuccess(true);
 			json.setMsg("保存成功");

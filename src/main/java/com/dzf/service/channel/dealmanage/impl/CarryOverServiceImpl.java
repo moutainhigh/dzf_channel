@@ -13,6 +13,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
+import com.dzf.model.channel.dealmanage.GoodsCostVO;
 import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.stock.CarryOverVO;
 import com.dzf.model.pub.QryParamVO;
@@ -36,7 +37,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	private SingleObjectBO singleObjectBO;
 	
 	@Override
-	public List<CarryOverVO> query(QryParamVO qvo){
+	public List<CarryOverVO> query(QryParamVO qvo) throws DZFWarpException{
 		if(qvo.getBeginperiod().compareTo("2018-12")<0){
 			qvo.setBeginperiod("2018-12");
 		}
@@ -83,7 +84,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 	
 	@Override
-	public void save(CarryOverVO vo){
+	public void save(CarryOverVO vo) throws DZFWarpException{
 		String uuid = UUID.randomUUID().toString();
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPeriod(), uuid, 60);
@@ -91,15 +92,16 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			checkIsSave(vo);
 			if(isNew){//新增
 				vo.setDoperatedate(new DZFDate());
-				vo.setPk_corp("000001");
 				singleObjectBO.insertVO(vo.getPk_corp(), vo);
 			}else{//修改
 				singleObjectBO.update(vo,new String[]{"iscarryover"});
 			}
-			if(vo.getIscarryover().booleanValue()){//新增价格，存储在（订单子表+其他出库单子表）
-				addPrice(vo);
-			}else{//清除价格
-				deletePrice(vo);
+			if(vo.getIscarryover().booleanValue()){
+				addItemCost(vo);
+				adddMonthCost(vo);
+			}else{
+				deleteItemCost(vo);
+				deleteMonthCost(vo);
 			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -111,7 +113,61 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		}		
 	}
 	
-	private void addPrice(CarryOverVO vo) throws DZFWarpException{
+	/**
+	 * 生成，商品成本（按照每笔加权平均）
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void adddMonthCost(CarryOverVO vo){
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(vo.getPeriod());
+		sql.append("  select sum(nvl(sib.nnum, 0)) nnum, ");//汇总此时间之前，入库确认数量，入库确认总金额
+		sql.append("         sum(nvl(sib.ntotalcost, 0)) ntotalcost, ");
+		sql.append("         sib.pk_goods, ");
+		sql.append("         sib.pk_goodsspec ");
+		sql.append("    from cn_stockin_b sib ");
+		sql.append("   left join cn_stockin si on si.pk_stockin = sib.pk_stockin ");
+		sql.append("    where nvl(si.dr, 0) = 0 ");
+		sql.append("         and nvl(sib.dr, 0) = 0 ");
+		sql.append("         and si.vstatus = 2 ");
+		sql.append("         AND substr(si.dconfirmtime, 0, 7) <= ? ");
+		sql.append("       group by sib.pk_goods, sib.pk_goodsspec");
+		List<GoodsCostVO> list=(List<GoodsCostVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsCostVO.class));
+		String period = vo.getPeriod();
+		DZFDouble cost = new DZFDouble();
+		for (GoodsCostVO goodsCostVO : list) {
+			goodsCostVO.setPeriod(period);
+			if(goodsCostVO.getNnum()==0){
+				cost = DZFDouble.ZERO_DBL;
+			}else{
+				cost = goodsCostVO.getNtotalcost().div(goodsCostVO.getNnum()).setScale(4, DZFDouble.ROUND_HALF_UP);
+			}
+			goodsCostVO.setNcost(cost);
+			singleObjectBO.insertVO(vo.getPk_corp(), goodsCostVO);
+		}
+	}
+	
+	/**
+	 * 生成，商品成本（按照每笔加权平均）
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void deleteMonthCost(CarryOverVO vo){
+		String sql = "delete from cn_goodscost where period=? ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(vo.getPeriod());
+		singleObjectBO.executeUpdate(sql, spm);
+	}
+
+
+	/**
+	 * 生成，商品成本（按照每笔加权平均）
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void addItemCost(CarryOverVO vo){
 		//1、获取期初余额
 		HashMap<String, StockOutInMVO> balMap = new HashMap<>();
 		List<StockOutInMVO> balList = queryBalanceByTime(vo.getPeriod(),null);
@@ -220,6 +276,40 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			}
 		}
 	}
+	
+	/**
+	 * 清除，商品成本（按照每笔加权平均）
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void deleteItemCost(CarryOverVO vo) throws DZFWarpException{
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(vo.getPeriod());
+		StringBuffer sql = new StringBuffer();
+		//1、清除其它出库单上的数据
+		sql.append("update (select b.* ");
+		sql.append("          from cn_stockout_b b ");
+		sql.append("          left join cn_stockout o on b.pk_stockout = o.pk_stockout ");
+		sql.append("         where nvl(b.dr, 0) = 0 ");
+		sql.append("           and nvl(o.itype, 0) = 1 ");
+//		sql.append("           and o.vstatus=1 ");//待确认
+		sql.append("           and substr(o.dconfirmtime, 0, 7) =? ) ");
+		sql.append("   set ncost = null, ntotalcost = null ");
+		singleObjectBO.executeUpdate(sql.toString(), spm);
+		//2、清除订单上的数据
+		sql = new StringBuffer();
+		sql.append("update cn_goodsbill_b b ");
+		sql.append("   set b.ncost = null, b.ntotalcost = null ");
+		sql.append(" where b.pk_goodsbill in ");
+		sql.append("       (select gb.pk_goodsbill ");
+		sql.append("          from cn_goodsbill_b gb ");
+		sql.append("          left join cn_goodsbill_s gs on gb.pk_goodsbill = gs.pk_goodsbill ");
+		sql.append("         where gs.vstatus = 1 ");
+		sql.append("           and substr(gs.doperatetime, 0, 7) =? ");
+		sql.append("           and nvl(gb.dr, 0) = 0 ");
+		sql.append("           and nvl(gs.dr, 0) = 0) ");
+		singleObjectBO.executeUpdate(sql.toString(), spm);
+	}
 
 	private StockOutInMVO updateAndCalBalance(StockOutInMVO nowVO, StockOutInMVO qcVO) throws DZFWarpException{
 		DZFDouble mny = new DZFDouble();
@@ -258,35 +348,6 @@ public class CarryOverServiceImpl implements ICarryOverService {
 			}
 		}
 		return qcVO;
-	}
-
-	private void deletePrice(CarryOverVO vo) throws DZFWarpException{
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(vo.getPeriod());
-		StringBuffer sql = new StringBuffer();
-		//1、清除其它出库单上的数据
-		sql.append("update (select b.* ");
-		sql.append("          from cn_stockout_b b ");
-		sql.append("          left join cn_stockout o on b.pk_stockout = o.pk_stockout ");
-		sql.append("         where nvl(b.dr, 0) = 0 ");
-		sql.append("           and nvl(o.itype, 0) = 1 ");
-//		sql.append("           and o.vstatus=1 ");//待确认
-		sql.append("           and substr(o.dconfirmtime, 0, 7) =? ) ");
-		sql.append("   set ncost = null, ntotalcost = null ");
-		singleObjectBO.executeUpdate(sql.toString(), spm);
-		//2、清除订单上的数据
-		sql = new StringBuffer();
-		sql.append("update cn_goodsbill_b b ");
-		sql.append("   set b.ncost = null, b.ntotalcost = null ");
-		sql.append(" where b.pk_goodsbill in ");
-		sql.append("       (select gb.pk_goodsbill ");
-		sql.append("          from cn_goodsbill_b gb ");
-		sql.append("          left join cn_goodsbill_s gs on gb.pk_goodsbill = gs.pk_goodsbill ");
-		sql.append("         where gs.vstatus = 1 ");
-		sql.append("           and substr(gs.doperatetime, 0, 7) =? ");
-		sql.append("           and nvl(gb.dr, 0) = 0 ");
-		sql.append("           and nvl(gs.dr, 0) = 0) ");
-		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 
 	private void checkIsSave(CarryOverVO vo)  throws DZFWarpException{
