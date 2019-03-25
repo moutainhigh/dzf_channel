@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.report.GoodsSalesAnalysisVO;
 import com.dzf.model.channel.report.GoodsSalesCountVO;
 import com.dzf.model.pub.CommonUtil;
@@ -23,12 +22,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.report.IGoodsSalesAnalysisService;
 
 @Service("goodsSalesAnalysisSer")
@@ -36,9 +33,6 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-
-	@Autowired
-	private ICarryOverService carryover;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -75,6 +69,10 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 				retvo.setAmount(detvo.getAmount());
 				retvo.setNprice(detvo.getNprice());
 				retvo.setVgoodsname(detvo.getVgoodsname());
+				
+				retvo.setNcost(detvo.getNcost());
+				retvo.setNtotalcost(detvo.getNcost().multiply(detvo.getAmount()));
+				
 				if (ids.indexOf(detvo.getPk_goods()) != -1) {
 					ids.append(detvo.getPk_goods()).append(",");
 				}
@@ -97,11 +95,8 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 				}
 			}
 
-			// 2、计算商品不同规格型号的成本
-			Map<String, DZFDouble> costmap = getCostMap(ids, pamvo);
-
-			// 3、获取返回数据
-			return getRetList(map, costmap);
+			// 2、获取返回数据
+			return getRetList(map);
 
 		}
 		return null;
@@ -114,7 +109,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private List<GoodsSalesAnalysisVO> getRetList(Map<String, GoodsSalesAnalysisVO> map, Map<String, DZFDouble> costmap)
+	private List<GoodsSalesAnalysisVO> getRetList(Map<String, GoodsSalesAnalysisVO> map)
 			throws DZFWarpException {
 		List<GoodsSalesAnalysisVO> retlist = new ArrayList<GoodsSalesAnalysisVO>();
 		if (map != null && !map.isEmpty()) {
@@ -129,12 +124,9 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 			for (String key : map.keySet()) {
 				rvo = map.get(key);
 				// 1、计算成本和成本合计
-				if (costmap != null && !costmap.isEmpty()) {
-					ncost = CommonUtil.getDZFDouble(costmap.get(rvo.getPk_goodsspec()));
-					rvo.setNcost(ncost.setScale(4, DZFDouble.ROUND_HALF_UP));
-					ntotalcost = SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount()));
-					rvo.setNtotalcost(ntotalcost);
-				}
+				ntotalcost = SafeCompute.multiply(rvo.getNcost(), CommonUtil.getDZFDouble(rvo.getAmount()));
+				rvo.setNtotalcost(ntotalcost);
+				
 				corpvo = CorpCache.getInstance().get(null, rvo.getPk_corp());
 				if (corpvo != null) {
 					rvo.setCorpname(corpvo.getUnitname());
@@ -206,41 +198,6 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 	}
 
 	/**
-	 * 获取商品不同规格型号的成本
-	 * 
-	 * @param ids
-	 * @param pamvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private Map<String, DZFDouble> getCostMap(StringBuffer ids, QryParamVO pamvo) throws DZFWarpException {
-		Map<String, DZFDouble> costmap = new HashMap<String, DZFDouble>();
-		String gids = "";
-		if (ids != null && ids.length() > 0) {
-			gids = ids.toString().substring(0, ids.length() - 1);
-		}
-		String qryperiod = "";
-		try {
-			String qrydate = ToolsUtil.getDateAfterNum(new DZFDate(pamvo.getPeriod() + "-01"), 2);
-			DZFDate date = new DZFDate(qrydate);
-			qryperiod = date.getYear() + "-" + date.getStrMonth();
-		} catch (Exception e) {
-			log.error("查询日期转换异常：" + e.getMessage());
-		}
-		List<StockOutInMVO> calist = carryover.queryBalanceByTime(qryperiod, gids);
-		if (calist != null && calist.size() > 0) {
-			DZFDouble costmny = null;
-			for (StockOutInMVO svo : calist) {
-				if (!StringUtil.isEmpty(svo.getPk_goodsspec())) {
-					costmny = SafeCompute.div(svo.getTotalmoneyb(), CommonUtil.getDZFDouble(svo.getBalanceNum()));
-					costmap.put(svo.getPk_goodsspec(), costmny);
-				}
-			}
-		}
-		return costmap;
-	}
-
-	/**
 	 * 计算订单单个商品相关金额
 	 * 
 	 * @param detvo
@@ -283,18 +240,22 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 		sql.append("       b.amount,  \n"); // 数量
 		sql.append("       c.nprice,  \n");
 		sql.append("       b.nprice AS nbprice,  \n");
-		sql.append("       g.vgoodsname  \n");
+		sql.append("       g.vgoodsname,  \n");
+		sql.append("       nvl(co.ncost,0) AS ncost  \n");
 		sql.append("  FROM cn_goodsbill_b b  \n");
 		sql.append("  LEFT JOIN cn_goods g ON b.pk_goods = g.pk_goods  \n");
 		sql.append("  LEFT JOIN cn_goodsbill l ON b.pk_goodsbill = l.pk_goodsbill  \n");
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
 		sql.append("                            AND s.vstatus = 1  \n");
 		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec  \n");
+		sql.append("  LEFT JOIN cn_goodscost co on b.pk_goodsspec = co.pk_goodsspec \n");
+		sql.append("  							AND substr(s.doperatetime, 0, 7)=co.period \n");
 		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(g.dr, 0) = 0  \n");
 		sql.append("   AND nvl(l.dr, 0) = 0  \n");
 		sql.append("   AND nvl(s.dr, 0) = 0  \n");
 		sql.append("   AND nvl(c.dr, 0) = 0  \n");
+		sql.append("   AND nvl(co.dr, 0) = 0  \n");
 		sql.append("   AND l.vstatus IN (1, 2, 3)  \n");
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
 			sql.append("   AND SUBSTR(s.doperatedate, 0, 7) = ?  \n");

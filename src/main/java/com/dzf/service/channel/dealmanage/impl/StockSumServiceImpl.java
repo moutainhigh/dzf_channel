@@ -27,8 +27,8 @@ public class StockSumServiceImpl implements IStockSumService {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<StockOutInMVO> query(StockOutInMVO qvo) throws DZFWarpException {
-		List<StockOutInMVO> begList = carryover.queryBalanceByTime(qvo.getBegdate().toString(),qvo.getPk_goods());//开始日期的期初余额
-		List<StockOutInMVO> endList = carryover.queryBalanceByTime(qvo.getEnddate().getDateAfter(1).toString(),qvo.getPk_goods());//结束日期的下一天的期初余额
+		List<StockOutInMVO> begList = carryover.queryBalanceMonth(qvo.getBegdate().toString(),qvo.getPk_goods());//开始日期的期初余额
+		List<StockOutInMVO> endList = carryover.queryBalanceMonth(qvo.getEnddate().getDateAfter(1).toString(),qvo.getPk_goods());//结束日期的下一天的期初余额
 		HashMap<String, StockOutInMVO> map = getStockIn(qvo);
 		
 		StockOutInMVO getVO = new StockOutInMVO();

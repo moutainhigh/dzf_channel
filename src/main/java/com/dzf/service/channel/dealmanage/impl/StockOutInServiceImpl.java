@@ -38,7 +38,7 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		List<StockOutInMVO>  retList = new ArrayList<StockOutInMVO>();
 		//1、获取期初余额
 		HashMap<String, StockOutInMVO> balMap = new HashMap<>();
-		List<StockOutInMVO> balList = carryover.queryBalanceByTime(qvo.getBegdate().toString(),qvo.getPk_goods());
+		List<StockOutInMVO> balList = carryover.queryBalanceMonth(qvo.getBegdate().toString(),qvo.getPk_goods());
 		String key;
 		for (StockOutInMVO stockOutInMVO : balList) {
 			key = stockOutInMVO.getPk_goods()+stockOutInMVO.getPk_goodsspec();
@@ -160,17 +160,21 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		sql.append("                    0 as npricein, ");
 		sql.append("                    0 as totalmoneyin, ");
 		sql.append("                    nvl(gb.amount, 0) nnumout, ");
-		sql.append("                    nvl(gb.ncost, 0) as npriceout, ");
-		sql.append("                    nvl(gb.ntotalcost, 0) as totalmoneyout, ");
+//		sql.append("                    nvl(gb.ncost, 0) as npriceout, ");
+		sql.append("                    nvl(co.ncost,0) as npriceout, ");
+//		sql.append("                    nvl(gb.ntotalcost, 0) as totalmoneyout, ");
+		sql.append("                    0 as totalmoneyout, ");
 		sql.append("                    0 as balanceNum, ");
 		sql.append("                    0 as balancePrice, ");
 		sql.append("                    0 as totalmoneyb ");
 		sql.append("  			  from cn_goodsbill cg ");
 		sql.append("  			  left join cn_goodsbill_b gb on cg.pk_goodsbill = gb.pk_goodsbill ");
 		sql.append("  			  left join cn_goodsbill_s gs on cg.pk_goodsbill = gs.pk_goodsbill and gs.vstatus = 1 ");
+		sql.append("  			  left join cn_goodscost   co on gb.pk_goodsspec = co.pk_goodsspec and substr(gs.doperatetime, 0, 7)=co.period");
 		sql.append(" 			where nvl(cg.dr, 0) = 0 ");
 		sql.append("  				and nvl(gb.dr, 0) = 0 ");
 		sql.append("   				and nvl(gs.dr, 0) = 0 ");
+		sql.append("   				and nvl(co.dr, 0) = 0 ");
 		sql.append("   				and cg.vstatus != 0 ");
 		sql.append("   				and cg.vstatus != 4 ");
 		sql.append("             union all ");//3、其它出库单
@@ -183,13 +187,16 @@ public class StockOutInServiceImpl implements IStockOutInService {
 		sql.append("                    0 as npricein, ");
 		sql.append("                    0 as totalmoneyin, ");
 		sql.append("                    nvl(sob.nnum, 0) nnumout, ");
-		sql.append("                    nvl(sob.ncost, 0) as npriceout, ");
-		sql.append("                    nvl(sob.ntotalcost, 0) as totalmoneyout,");
+//		sql.append("                    nvl(sob.ncost, 0) as npriceout, ");
+		sql.append("                    nvl(co.ncost,0) as npriceout, ");
+//		sql.append("                    nvl(sob.ntotalcost, 0) as totalmoneyout,");
+		sql.append("                    0 as totalmoneyout,");
 		sql.append("                    0 as balanceNum, ");
 		sql.append("                    0 as balancePrice, ");
 		sql.append("                    0 as totalmoneyb ");
 		sql.append("               from cn_stockout_b sob ");
 		sql.append("               left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
+		sql.append("               left join cn_goodscost co on sob.pk_goodsspec = co.pk_goodsspec and substr(so.dconfirmtime, 0, 7)=co.period");
 		sql.append("              where nvl(sob.dr, 0) = 0 ");
 		sql.append("                and nvl(so.dr, 0) = 0 ");
 		sql.append("                and (so.vstatus = 1 or so.vstatus = 2) ");

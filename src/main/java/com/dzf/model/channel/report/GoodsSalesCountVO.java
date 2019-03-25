@@ -41,6 +41,9 @@ public class GoodsSalesCountVO extends SuperVO {
 	@FieldAlias("bprice")
 	private DZFDouble nbprice; // 售价（订单明细）
 	
+	@FieldAlias("cost")
+	private DZFDouble ncost; //成本价
+	
 	@FieldAlias("ndesummny")
 	private DZFDouble ndedsummny;// 扣款总金额
 
@@ -72,6 +75,14 @@ public class GoodsSalesCountVO extends SuperVO {
 
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
+	}
+
+	public DZFDouble getNcost() {
+		return ncost;
+	}
+
+	public void setNcost(DZFDouble ncost) {
+		this.ncost = ncost;
 	}
 
 	public String getPk_goods() {
