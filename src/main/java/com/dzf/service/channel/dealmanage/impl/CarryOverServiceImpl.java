@@ -119,9 +119,11 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	 * @throws DZFWarpException
 	 */
 	private void adddMonthCost(CarryOverVO vo){
+		String period = vo.getPeriod();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		spm.addParam(vo.getPeriod());
+		spm.addParam(period);
+//		spm.addParam("00000100000001xgKtbh000B");
 		sql.append("  select sum(nvl(sib.nnum, 0)) nnum, ");//汇总此时间之前，入库确认数量，入库确认总金额
 		sql.append("         sum(nvl(sib.ntotalcost, 0)) ntotalcost, ");
 		sql.append("         sib.pk_goods, ");
@@ -131,21 +133,44 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sql.append("    where nvl(si.dr, 0) = 0 ");
 		sql.append("         and nvl(sib.dr, 0) = 0 ");
 		sql.append("         and si.vstatus = 2 ");
-		sql.append("         AND substr(si.dconfirmtime, 0, 7) <= ? ");
+//		sql.append("         AND substr(si.dconfirmtime, 0, 7) = ? and sib.pk_goods=?");
+		sql.append("         AND substr(si.dconfirmtime, 0, 7) = ? ");
 		sql.append("       group by sib.pk_goods, sib.pk_goodsspec");
 		List<GoodsCostVO> list=(List<GoodsCostVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsCostVO.class));
-		String period = vo.getPeriod();
-		DZFDouble cost = new DZFDouble();
+		HashMap<String, GoodsCostVO> map = new HashMap<>();
 		for (GoodsCostVO goodsCostVO : list) {
-			goodsCostVO.setPeriod(period);
-			if(goodsCostVO.getNnum()==0){
-				cost = DZFDouble.ZERO_DBL;
+			map.put(goodsCostVO.getPk_goodsspec(), goodsCostVO);
+		}
+		DZFDouble cost = new DZFDouble();
+		DZFDouble total = new DZFDouble();
+		int num;
+//		List<StockOutInMVO> mlist = queryBalanceMonth(period, "00000100000001xgKtbh000B");
+		List<StockOutInMVO> mlist = queryBalanceMonth(period, null);
+		GoodsCostVO getvo = new GoodsCostVO();
+		for (StockOutInMVO stockOutInMVO : mlist) {
+			if(!map.containsKey(stockOutInMVO.getPk_goodsspec())){
+				getvo = new GoodsCostVO();
+				getvo.setPeriod(period);
+				getvo.setPk_goods(stockOutInMVO.getPk_goods());
+				getvo.setPk_goodsspec(stockOutInMVO.getPk_goodsspec());
+				total = DZFDouble.ZERO_DBL;
+				num = 0;
 			}else{
-				cost = goodsCostVO.getNtotalcost().div(goodsCostVO.getNnum()).setScale(4, DZFDouble.ROUND_HALF_UP);
+				getvo=map.get(stockOutInMVO.getPk_goodsspec());
+				getvo.setPeriod(period);
+				total = getvo.getNtotalcost();
+				num = getvo.getNnum();
 			}
-			goodsCostVO.setNcost(cost);
-			singleObjectBO.insertVO(vo.getPk_corp(), goodsCostVO);
+			num += stockOutInMVO.getBalanceNum();
+			total = total.add(stockOutInMVO.getTotalmoneyb());
+			getvo.setNnum(num);
+			getvo.setNtotalcost(total);
+			if(num>0){
+				cost = total.div(num).setScale(4, DZFDouble.ROUND_HALF_UP);
+				getvo.setNcost(cost);
+			}
+			singleObjectBO.insertVO(vo.getPk_corp(), getvo);
 		}
 	}
 	
@@ -170,7 +195,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	private void addItemCost(CarryOverVO vo){
 		//1、获取期初余额
 		HashMap<String, StockOutInMVO> balMap = new HashMap<>();
-		List<StockOutInMVO> balList = queryBalanceByTime(vo.getPeriod(),null);
+		List<StockOutInMVO> balList = queryBalanceItem(vo.getPeriod(),null);
 		String key;
 		for (StockOutInMVO stockOutInMVO : balList) {
 			key = stockOutInMVO.getPk_goods()+stockOutInMVO.getPk_goodsspec();
@@ -423,7 +448,7 @@ public class CarryOverServiceImpl implements ICarryOverService {
 	}
 	
 	@Override
-	public List<StockOutInMVO> queryBalanceByTime(String byTime,String gids) throws DZFWarpException {
+	public List<StockOutInMVO> queryBalanceItem(String byTime,String gids) throws DZFWarpException {
 		int subLen = byTime.length();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select cg.vgoodscode, ");
@@ -473,6 +498,81 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		sql.append("               left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
 		sql.append("              where nvl(sob.dr, 0) = 0 ");
 		sql.append("                and nvl(so.dr, 0) = 0 ");
+		sql.append("                and (so.vstatus = 1 or so.vstatus = 2) ");
+		sql.append("                and so.itype = 1 ");
+		sql.append("                AND substr(so.dconfirmtime, 0, "+subLen+") < ? ");
+		sql.append("              group by sob.pk_goods, sob.pk_goodsspec) other on gs.pk_goodsspec =other.pk_goodsspec ");
+		if (!StringUtil.isEmpty(gids)) {
+			String[] strs = gids.split(",");
+			String inSql = SqlUtil.buildSqlConditionForIn(strs);
+			sql.append(" 	where cg.pk_goods in (").append(inSql).append(")");
+		}
+		sql.append("   order by cg.vgoodscode,gs.pk_goodsspec desc");
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(byTime);
+		spm.addParam(byTime);
+		spm.addParam(byTime);
+		List<StockOutInMVO> list = (List<StockOutInMVO>)singleObjectBO.executeQuery(sql.toString(),
+				spm,new BeanListProcessor(StockOutInMVO.class));
+		return list;
+	}
+	
+	
+	@Override
+	public List<StockOutInMVO> queryBalanceMonth(String byTime,String gids) throws DZFWarpException {
+		int subLen = byTime.length();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select cg.vgoodscode, ");
+		sql.append("       cg.vgoodsname, ");
+		sql.append("       cg.pk_goods, ");
+		sql.append("       gs.invspec, ");
+		sql.append("       gs.invtype, ");
+		sql.append("       gs.pk_goodsspec, ");
+		sql.append("       ((nvl(ru.nnum, 0) - nvl(ding.nnum, 0) - nvl(other.nnum, 0))) balanceNum, ");
+		sql.append("       0 as balancePrice, ");
+		sql.append("       (nvl(ru.ntotalcost, 0) - nvl(ding.ntotalcost, 0) - nvl(other.ntotalcost, 0)) totalmoneyb ");
+		sql.append("  from cn_goods cg ");
+		sql.append("  left join cn_goodsspec gs on gs.pk_goods = cg.pk_goods ");
+		
+		sql.append("  left join (select sum(nvl(sib.nnum, 0)) nnum, ");//汇总此时间之前，入库确认数量，入库确认总金额
+		sql.append("                    sum(nvl(sib.ntotalcost, 0)) ntotalcost, ");
+		sql.append("                    sib.pk_goods, ");
+		sql.append("                    sib.pk_goodsspec ");
+		sql.append("               from cn_stockin_b sib ");
+		sql.append("               left join cn_stockin si on si.pk_stockin = sib.pk_stockin ");
+		sql.append("              where nvl(si.dr, 0) = 0 ");
+		sql.append("                and nvl(sib.dr, 0) = 0 ");
+		sql.append("                and si.vstatus = 2 ");
+		sql.append("                AND substr(si.dconfirmtime, 0, "+subLen+") < ? ");
+		sql.append("              group by sib.pk_goods, sib.pk_goodsspec) ru on  gs.pk_goodsspec = ru.pk_goodsspec ");
+		
+		sql.append("  left join (select sum(nvl(gb.amount, 0)) nnum, ");//汇总此时间之前，订单确认数量，订单确认总金额
+		sql.append("                    sum(nvl(gb.amount, 0)*nvl(co.ncost,0)) ntotalcost, ");
+		sql.append("                    gb.pk_goods, ");
+		sql.append("                    gb.pk_goodsspec ");
+		sql.append("               from cn_goodsbill cg ");
+		sql.append("               left join cn_goodsbill_b gb on cg.pk_goodsbill = gb.pk_goodsbill ");
+		sql.append("               left join cn_goodsbill_s gs on cg.pk_goodsbill = gs.pk_goodsbill and gs.vstatus = 1 ");
+		sql.append("  			  left join cn_goodscost  co on gb.pk_goodsspec = co.pk_goodsspec and substr(gs.doperatetime, 0, 7)=co.period");
+		sql.append("              where nvl(cg.dr, 0) = 0 ");
+		sql.append("                and nvl(gb.dr, 0) = 0 ");
+		sql.append("                and nvl(gs.dr, 0) = 0 ");
+		sql.append("   				and nvl(co.dr, 0) = 0 ");
+		sql.append("                and cg.vstatus != 0 ");
+		sql.append("                and cg.vstatus != 4 ");
+		sql.append("                AND substr(gs.doperatetime, 0,"+subLen+") < ? ");
+		sql.append("              group by gb.pk_goods, gb.pk_goodsspec) ding on  gs.pk_goodsspec = ding.pk_goodsspec ");
+		
+		sql.append("  left join (select sum(nvl(sob.nnum, 0)) nnum, ");//汇总此时间之前，其他出库单确认数量，其他出库单确认总金额
+		sql.append("                    sum(nvl(sob.nnum, 0)*nvl(co.ncost,0)) ntotalcost, ");
+		sql.append("                    sob.pk_goods, ");
+		sql.append("                    sob.pk_goodsspec ");
+		sql.append("               from cn_stockout_b sob ");
+		sql.append("               left join cn_stockout so on so.pk_stockout = sob.pk_stockout ");
+		sql.append("               left join cn_goodscost co on sob.pk_goodsspec = co.pk_goodsspec and substr(so.dconfirmtime, 0, 7)=co.period");
+		sql.append("              where nvl(sob.dr, 0) = 0 ");
+		sql.append("                and nvl(so.dr, 0) = 0 ");
+		sql.append("   				and nvl(co.dr, 0) = 0 ");
 		sql.append("                and (so.vstatus = 1 or so.vstatus = 2) ");
 		sql.append("                and so.itype = 1 ");
 		sql.append("                AND substr(so.dconfirmtime, 0, "+subLen+") < ? ");

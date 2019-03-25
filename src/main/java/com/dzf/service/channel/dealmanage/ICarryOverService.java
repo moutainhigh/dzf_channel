@@ -25,11 +25,19 @@ public interface ICarryOverService {
 	public void checkIsOper(DZFDateTime confirmTime,Integer type) throws DZFWarpException;
 	
 	/**
-	 * 获取某个时间的期初余额
+	 * 获取某个时间的期初余额  按照月
 	 * @param byTime(截止)
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<StockOutInMVO> queryBalanceByTime(String byTime,String gids) throws DZFWarpException;
+	public List<StockOutInMVO> queryBalanceMonth(String byTime,String gids) throws DZFWarpException;
+	
+	/**
+	 * 获取某个时间的期初余额  按照条
+	 * @param byTime(截止)
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<StockOutInMVO> queryBalanceItem(String byTime,String gids) throws DZFWarpException;
 	
 }
