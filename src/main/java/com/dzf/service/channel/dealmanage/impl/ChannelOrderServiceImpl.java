@@ -51,7 +51,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-	
+
 	@Autowired
 	private ICarryOverService carryover;
 
@@ -136,16 +136,16 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
-		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {//订单状态，界面快速查询
+		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {// 订单状态，界面快速查询
 			sql.append("   AND l.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
-		if(!StringUtil.isEmpty(pamvo.getLogisticsunit())){//订单状态，下拉多选查询
+		if (!StringUtil.isEmpty(pamvo.getLogisticsunit())) {// 订单状态，下拉多选查询
 			String[] strs = pamvo.getLogisticsunit().split(",");
 			String where = SqlUtil.buildSqlForIn("l.vstatus", strs);
 			sql.append(" AND ").append(where);
 		}
-		if (pamvo.getVtistatus() != null && pamvo.getVtistatus() != -1) {//开票状态
+		if (pamvo.getVtistatus() != null && pamvo.getVtistatus() != -1) {// 开票状态
 			sql.append("   AND nvl(l.vtistatus,1) = ? \n");
 			spm.addParam(pamvo.getVtistatus());
 		}
@@ -196,7 +196,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					return updateCancel(pamvo, cuserid);
 				} else if (type == 3) {
 					return updateCancelConf(pamvo, cuserid);
-				} else if(type == 4){
+				} else if (type == 4) {
 					saveBillData(pamvo, cuserid);
 				}
 			}
@@ -210,16 +210,18 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}
 		return pamvo;
 	}
-	
+
 	/**
 	 * 发票申请
+	 * 
 	 * @param pamvo
 	 * @param cuserid
 	 * @throws DZFWarpException
 	 */
 	private void saveBillData(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
+		checkOpenInvoice(pamvo.getPk_goodsbill(), pamvo.getPk_corp());
 		AccountVO accvo = (AccountVO) singleObjectBO.queryByPrimaryKey(AccountVO.class, pamvo.getPk_corp());
-		if(accvo == null){
+		if (accvo == null) {
 			throw new BusinessException("会计贵公司信息错误！");
 		}
 		if (StringUtil.isEmpty(accvo.getTaxcode())) {
@@ -239,16 +241,16 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		cvo.setEmail(accvo.getEmail1());// 邮箱
 		cvo.setApptime(new DZFDate().toString());// 申请日期
 		cvo.setInvstatus(1);// 状态
-		cvo.setIpaytype(0);//付款类型  0：预付款；   1：加盟费；
+		cvo.setIpaytype(0);// 付款类型 0：预付款； 1：加盟费；
 		cvo.setInvcorp(2);
 		cvo.setRusername(accvo.getLinkman2());
-		cvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-		cvo.setIdatatype(1);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
+		cvo.setIsourcetype(2);// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
+		cvo.setIdatatype(1);// 1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
 		cvo.setVmome(pamvo.getVbillcode());
 		cvo.setPk_source(pamvo.getPk_goodsbill());
 		singleObjectBO.saveObject(pamvo.getPk_corp(), cvo);
-		
-		pamvo.setVtistatus(2);//已开票
+
+		pamvo.setVtistatus(2);// 已开票
 		singleObjectBO.update(pamvo, new String[] { "vtistatus" });
 	}
 
@@ -375,7 +377,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateCancelConf(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		carryover.checkIsOper(new DZFDateTime(pamvo.getDconfdate().getMillis()),2);
+		carryover.checkIsOper(new DZFDateTime(pamvo.getDconfdate().getMillis()), 2);
 		checkStockOut(pamvo);
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 2);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
@@ -394,9 +396,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		saveOperDetailSub(pamvo, cuserid);
 		return pamvo;
 	}
-	
+
 	/**
 	 * 取消确认前，订单商品出库状态校验
+	 * 
 	 * @param pamvo
 	 * @throws DZFWarpException
 	 */
@@ -417,9 +420,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		spm.addParam(pamvo.getPk_goodsbill());
 		List<StockOutVO> list = (List<StockOutVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockOutVO.class));
-		if(list != null && list.size() > 0){
-			for(StockOutVO vo : list){
-				if(vo.getVstatus() != null && vo.getVstatus() != 0){
+		if (list != null && list.size() > 0) {
+			for (StockOutVO vo : list) {
+				if (vo.getVstatus() != null && vo.getVstatus() != 0) {
 					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】已有商品出库，不允许取消确认；");
 				}
 			}
@@ -434,7 +437,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	private GoodsBillVO updateConfirm(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
-		carryover.checkIsOper(new DZFDateTime(),1);
+		carryover.checkIsOper(new DZFDateTime(), 1);
 		Map<String, ChnBalanceVO> map = getBanlanceMap(pamvo, 1);
 		if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 返点扣款
 			updateRebBanlanceAdd(pamvo, map, cuserid);
@@ -463,33 +466,33 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 */
 	private void saveOperDetailSub(GoodsBillVO pamvo, String cuserid) throws DZFWarpException {
 		// 订单取消确认详情
-//		GoodsBillSVO bsvo = new GoodsBillSVO();
-//		bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
-//		bsvo.setPk_corp(pamvo.getPk_corp());
-//		bsvo.setVsaction(IStatusConstant.IORDERACTION_5);
-//		bsvo.setVstatus(IStatusConstant.IORDERSTATUS_0);
-//		bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_5);// 状态描述
-//		bsvo.setCoperatorid(cuserid);
-//		bsvo.setDoperatedate(new DZFDate());
-//		bsvo.setDoperatetime(new DZFDateTime());
-//		bsvo.setVnote("");// 处理说明
-//		singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
-		
+		// GoodsBillSVO bsvo = new GoodsBillSVO();
+		// bsvo.setPk_goodsbill(pamvo.getPk_goodsbill());
+		// bsvo.setPk_corp(pamvo.getPk_corp());
+		// bsvo.setVsaction(IStatusConstant.IORDERACTION_5);
+		// bsvo.setVstatus(IStatusConstant.IORDERSTATUS_0);
+		// bsvo.setVsdescribe(IStatusConstant.IORDERDESCRIBE_5);// 状态描述
+		// bsvo.setCoperatorid(cuserid);
+		// bsvo.setDoperatedate(new DZFDate());
+		// bsvo.setDoperatetime(new DZFDateTime());
+		// bsvo.setVnote("");// 处理说明
+		// singleObjectBO.saveObject(bsvo.getPk_corp(), bsvo);
+
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("DELETE FROM cn_goodsbill_s \n") ;
-		sql.append(" WHERE pk_goodsbill = ? \n") ; 
+		sql.append("DELETE FROM cn_goodsbill_s \n");
+		sql.append(" WHERE pk_goodsbill = ? \n");
 		spm.addParam(pamvo.getPk_goodsbill());
-		sql.append("   AND pk_corp = ? \n") ; 
+		sql.append("   AND pk_corp = ? \n");
 		spm.addParam(pamvo.getPk_corp());
-		sql.append("   AND vsaction = ? \n") ; 
+		sql.append("   AND vsaction = ? \n");
 		spm.addParam(IStatusConstant.IORDERACTION_1);
-		sql.append("   AND vstatus = ? \n") ; 
+		sql.append("   AND vstatus = ? \n");
 		spm.addParam(IStatusConstant.IORDERSTATUS_1);
 		sql.append("   AND vsdescribe = ? \n");
 		spm.addParam(IStatusConstant.IORDERDESCRIBE_1);
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-		if(res != 1){
+		if (res != 1) {
 			throw new BusinessException("商品订单操作详情记录错误");
 		}
 	}
@@ -732,8 +735,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	/**
 	 * 获取余额信息
+	 * 
 	 * @param pamvo
-	 * @param checktype  1:扣款；2：退款；
+	 * @param checktype
+	 *            1:扣款；2：退款；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -756,7 +761,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				balance = SafeCompute.sub(balvo.getNpaymny(), balvo.getNusedmny());
 				if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_3) {
 					if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
-						if(checktype == 1){
+						if (checktype == 1) {
 							if (CommonUtil.getDZFDouble(pamvo.getNdedrebamny()).compareTo(balance) > 0) {
 								throw new BusinessException("确认失败！加盟商" + corpname + "账户返点余额不足");
 							}
@@ -765,7 +770,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					}
 				} else if (balvo.getIpaytype() != null && balvo.getIpaytype() == IStatusConstant.IPAYTYPE_2) {
 					if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) != 0) {
-						if(checktype == 1){
+						if (checktype == 1) {
 							if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(balance) > 0) {
 								throw new BusinessException("确认失败！加盟商" + corpname + "账户预付款余额不足");
 							}
@@ -795,7 +800,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			if (pamvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0) {
 				throw new BusinessException("界面数据发生变化，请刷新后再次尝试");
 			}
-			if(type != null){
+			if (type != null) {
 				if (type == 1 || type == 2) {
 					if (oldvo.getVstatus() != null && oldvo.getVstatus() != 0) {
 						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待确认；");
@@ -804,11 +809,11 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					if (oldvo.getVstatus() != null && oldvo.getVstatus() != 1) {
 						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】状态不为待发货；");
 					}
-					if(oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2){
+					if (oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2) {
 						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】开票状态为已开票，不允许取消确认；");
 					}
-				} else if(type == 4){
-					if(oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2){
+				} else if (type == 4) {
+					if (oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2) {
 						throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】开票状态为已开票，不允许再次开票；");
 					}
 					if (oldvo.getVstatus() != null && oldvo.getVstatus() == 0) {
@@ -867,25 +872,26 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	@Override
 	public ChInvoiceVO queryInvoiceInfo(GoodsBillVO pamvo) throws DZFWarpException {
-		//1、查询前校验
+		// 1、查询前校验
 		checkData(pamvo, 4);
 		
-		//2、组织发票信息
+		// 2、组织发票信息
 		ChInvoiceVO hvo = queryHeadInfo(pamvo);
-		if(hvo == null){
+		if (hvo == null) {
 			throw new BusinessException("订单信息错误");
 		}
-		String[] str = new String[]{"corpname", "invphone"};
-		QueryDeCodeUtils.decKeyUtil(str, hvo,1);
-		//3、组织子发票信息
-		ChInvoiceBVO[] bVOs = queryBodyInfo(hvo, pamvo); 
+		String[] str = new String[] { "corpname", "invphone" };
+		QueryDeCodeUtils.decKeyUtil(str, hvo, 1);
+		// 3、组织子发票信息
+		ChInvoiceBVO[] bVOs = queryBodyInfo(hvo, pamvo);
 		hvo.setChildren(bVOs);
 
 		return hvo;
 	}
-	
+
 	/**
 	 * 查询订单发票子表信息
+	 * 
 	 * @param pamvo
 	 * @return
 	 * @throws DZFWarpException
@@ -914,29 +920,29 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		List<ChInvoiceBVO> blist = (List<ChInvoiceBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChInvoiceBVO.class));
 		DZFDouble ndeductmny = CommonUtil.getDZFDouble(hvo.getNdeductmny());
-		if(blist != null && blist.size() > 0){
-			DZFDouble bhjje = DZFDouble.ZERO_DBL;//不含税金额
-			DZFDouble bprice = DZFDouble.ZERO_DBL;//不含税单价
-			DZFDouble bspse  = DZFDouble.ZERO_DBL;// 税额
-			for(ChInvoiceBVO bvo : blist){
-				if(ndeductmny.compareTo(DZFDouble.ZERO_DBL) > 0){//预付款金额 > 0
-					if(ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) >= 0){
+		if (blist != null && blist.size() > 0) {
+			DZFDouble bhjje = DZFDouble.ZERO_DBL;// 不含税金额
+			DZFDouble bprice = DZFDouble.ZERO_DBL;// 不含税单价
+			DZFDouble bspse = DZFDouble.ZERO_DBL;// 税额
+			for (ChInvoiceBVO bvo : blist) {
+				if (ndeductmny.compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款金额 > 0
+					if (ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) >= 0) {
 						bvo.setNcountmny(bvo.getNtotalmny());
 						ndeductmny = SafeCompute.sub(ndeductmny, bvo.getNtotalmny());
-					}else if(ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) < 0){
+					} else if (ndeductmny.compareTo(CommonUtil.getDZFDouble(bvo.getNtotalmny())) < 0) {
 						bvo.setNcountmny(ndeductmny);
 						ndeductmny = DZFDouble.ZERO_DBL;
 					}
-					//不含税金额  = 含税金额/(1+0.16)
-					//不含税单价   = 不含税金额/数量
-					//税额   = 不含税金额 * 0.16    
+					// 不含税金额 = 含税金额/(1+0.16)
+					// 不含税单价 = 不含税金额/数量
+					// 税额 = 不含税金额 * 0.16
 					bhjje = SafeCompute.div(bvo.getNcountmny(), new DZFDouble(1.16));
 					bprice = SafeCompute.div(bhjje, CommonUtil.getDZFDouble(bvo.getBnum()));
 					bspse = SafeCompute.multiply(bhjje, new DZFDouble(0.16));
 					bvo.setBhjje(bhjje.setScale(2, DZFDouble.ROUND_HALF_UP));
 					bvo.setBprice(bprice.setScale(4, DZFDouble.ROUND_HALF_UP));
 					bvo.setBspse(bspse.setScale(2, DZFDouble.ROUND_HALF_UP));
-				}else{
+				} else {
 					break;
 				}
 			}
@@ -944,9 +950,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 查询订单发票主表信息
+	 * 
 	 * @param pamvo
 	 * @return
 	 * @throws DZFWarpException
@@ -980,7 +987,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		spm.addParam(pamvo.getPk_goodsbill());
 		List<ChInvoiceVO> list = (List<ChInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChInvoiceVO.class));
-		if(list != null && list.size() > 0){
+		if (list != null && list.size() > 0) {
 			return list.get(0);
 		}
 		return null;
@@ -992,25 +999,28 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		try {
 			LockUtil.getInstance().tryLockKey("cn_goodsbill", hvo.getPk_source(), uuid, 60);
 			setDefaultValue(hvo);
-			//1、保存前校验
-			checkBeforeSaveInvoce(hvo);
+			// 1、保存前校验
+			checkBeforeSaveInvoice(hvo);
 			
-			//2、保存订单发票
+			// 2、开票校验
+			checkOpenInvoice(hvo.getPk_source(), hvo.getPk_corp());
+
+			// 2、保存订单发票
 			singleObjectBO.saveObject(IDefaultValue.DefaultGroup, hvo);
-			
-			//3、更新订单状态
+
+			// 3、更新订单状态
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_goodsbill  \n") ;
-			sql.append("   set vtistatus = 2  \n") ; 
-			sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+			sql.append("UPDATE cn_goodsbill  \n");
+			sql.append("   set vtistatus = 2  \n");
+			sql.append(" WHERE nvl(dr, 0) = 0  \n");
 			sql.append("   AND pk_goodsbill = ?  \n");
 			spm.addParam(hvo.getPk_source());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-			if(res != 1){
+			if (res != 1) {
 				throw new BusinessException("订单状态更新错误");
 			}
-			
+
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -1019,12 +1029,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		} finally {
 			LockUtil.getInstance().unLock_Key("cn_goodsbill", hvo.getPk_source(), uuid);
 		}
-		
-		
+
 	}
 
 	/**
 	 * 设置订单发票默认值
+	 * 
 	 * @param hvo
 	 * @throws DZFWarpException
 	 */
@@ -1032,36 +1042,37 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		hvo.setInvprice(hvo.getNdeductmny());// 开票金额 = 订单扣款预付款金额
 		hvo.setInvnature(0);// 发票性质
 		hvo.setInvtype(2);// 发票类型：默认电子普通发票
-		
+
 		hvo.setApptime(new DZFDate().toString());// 申请日期
 		hvo.setInvstatus(1);// 状态
-		hvo.setIpaytype(0);//付款类型  0：预付款；   1：加盟费；
+		hvo.setIpaytype(0);// 付款类型 0：预付款； 1：加盟费；
 		hvo.setInvcorp(2);
-		hvo.setIsourcetype(2);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-		hvo.setIdatatype(2);//1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
-		
+		hvo.setIsourcetype(2);// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
+		hvo.setIdatatype(2);// 1：商品扣款全扣预付款；2：商品扣款扣预付款和返点
+
 		hvo.setDr(0);
-		hvo.setVmome(hvo.getVbillcode());//备注记录订单编号
-		
+		hvo.setVmome(hvo.getVbillcode());// 备注记录订单编号
+
 		ChInvoiceBVO[] bVOs = (ChInvoiceBVO[]) hvo.getChildren();
-		for(ChInvoiceBVO bvo : bVOs){
+		for (ChInvoiceBVO bvo : bVOs) {
 			bvo.setPk_corp(hvo.getPk_corp());
 			bvo.setDr(0);
 		}
 	}
-	
+
 	/**
 	 * 保存发票前校验
+	 * 
 	 * @param hvo
 	 * @throws DZFWarpException
 	 */
-	private void checkBeforeSaveInvoce(ChInvoiceVO hvo)throws DZFWarpException {
+	private void checkBeforeSaveInvoice(ChInvoiceVO hvo) throws DZFWarpException {
 		GoodsBillVO oldvo = (GoodsBillVO) singleObjectBO.queryByPrimaryKey(GoodsBillVO.class, hvo.getPk_source());
 		if (oldvo != null) {
 			if (hvo.getUpdatets().compareTo(oldvo.getUpdatets()) != 0) {
 				throw new BusinessException("订单：【" + hvo.getVbillcode() + "】数据发生变化，请刷新后再次尝试");
 			}
-			if(oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2){
+			if (oldvo.getVtistatus() != null && oldvo.getVtistatus() == 2) {
 				throw new BusinessException("订单：【" + hvo.getVbillcode() + "】开票状态为已开票，不允许再次开票；");
 			}
 			if (oldvo.getVstatus() != null && oldvo.getVstatus() == 0) {
@@ -1074,4 +1085,26 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			throw new BusinessException("订单：【" + hvo.getVbillcode() + "】数据错误");
 		}
 	}
+
+	/**
+	 * 校验此订单是否已经开票发票
+	 * @param hvo
+	 * @throws DZFWarpException
+	 */
+	private void checkOpenInvoice(String pk_goodsbill, String pk_corp) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_source  \n") ;
+		sql.append("  FROM cn_invoice  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_source = ?  \n") ; 
+		spm.addParam(pk_goodsbill);
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(pk_corp);
+		boolean isexists = singleObjectBO.isExists(pk_corp, sql.toString(), spm);
+		if(isexists){
+			throw new BusinessException("该订单已经开票");
+		}
+	}
+	
 }
