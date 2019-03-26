@@ -364,7 +364,7 @@ function load(queryData) {
 				var rows=data.rows;
 				len = rows[0].num;
 				for(var i=0;i<len;i++){
-					columns1[10+i]={width : "200",title :rows[i].head,field : hstr[i],align:"right",colspan:2 }
+					columns1[10+i]={width : "200",title :rows[i].head,field : hstr[i]+"0",align:"right",colspan:2 }
 				}
 				var j=4;
 				for(var i=0;i<len;i++){
@@ -437,10 +437,8 @@ function calFooter(){
     		var num1=hstr[j]+"1";
     		var num2=hstr[j]+"2";
     		custsum['custsum'+w]+=parseFloat(rows[i][num1] == undefined ? 0 : rows[i][num1]);
-    		console.log(custsum['custsum'+w]);
     		w++;
     		custsum['custsum'+w]+= parseFloat(rows[i][num2] == undefined ? 0 : rows[i][num2]);
-    		console.log(custsum['custsum'+w]);
     		w++;
     	}
     }
