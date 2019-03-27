@@ -398,7 +398,7 @@ function showImage(content, index, flowImgUrls, opertype){
 			content: content  , 
 			maxmin: true,
 			shadeClose: true,
-			moveOut: true,
+			moveOut: false,
 			cancel: function () {  
 			}  
 		});  
