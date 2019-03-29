@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +71,11 @@ public class GoodsSalesAnalysisAction extends BaseAction<GoodsSalesAnalysisVO> {
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			List<GoodsSalesAnalysisVO> list = analysisSer.query(pamvo);
-			grid.setRows(list);
+			if(list != null && list.size() > 0){
+				grid.setRows(list);
+			}else{
+				grid.setRows(new ArrayList<GoodsSalesAnalysisVO>());
+			}
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "操作失败");
