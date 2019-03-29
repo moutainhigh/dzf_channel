@@ -2,7 +2,6 @@ package com.dzf.service.channel.dealmanage;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.dealmanage.GoodsDocVO;

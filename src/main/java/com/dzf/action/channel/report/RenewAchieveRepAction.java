@@ -123,13 +123,22 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldlist.add("stockcustt");
 		fieldlist.add("renewcusts");
 		fieldlist.add("renewcustt");
+		
+		fieldlist.add("yrenewnum");
+		fieldlist.add("renewnum");
 		for (int i = 0; i < headlist.size(); i++) {
 			name = (Map<String, String>) headlist.get(i);
 			if (i >= num) {
-				heads.add("小规模");
-				heads.add("一般纳税人");
-				heads1.add(name.get("title"));
-			} else {
+				if(i == headlist.size() - 1){
+					heads.add("应续签");
+					heads.add("已续签");
+					heads1.add(name.get("title"));
+				}else{
+					heads.add("小规模");
+					heads.add("一般纳税人");
+					heads1.add(name.get("title"));
+				}
+			}else {
 				heads.add(name.get("title"));
 				fieldslist.add(name.get("field"));
 			}
@@ -146,6 +155,9 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldslist.add("renewcustratet");
 		fieldslist.add("renewcontrates");
 		fieldslist.add("renewcontratet");
+		
+		fieldslist.add("yrenewnum");
+		fieldslist.add("renewnum");
 		ExportExcel<CustNumMoneyRepVO> ex = new ExportExcel<CustNumMoneyRepVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;

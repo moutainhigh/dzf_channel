@@ -147,6 +147,8 @@
 				<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
 				<label style="text-align:right">付款类型：</label> 
 				<span id ="ptypenm" style="vertical-align: middle;font-size:14px;"></span>
+				<label style="text-align:right">渠道经理：</label> 
+				<span id ="mname" style="vertical-align: middle;font-size:14px;"></span>
 			<div class="right" style="float: right;display: inline-block;"> 
 				<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDetPrint()">打印</a>
 				<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onDetExport()">导出</a>

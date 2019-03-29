@@ -9,11 +9,24 @@
 <head>
 <title>商品管理</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
-<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<link href=<%UpdateGradeVersion.outversion(out, "../../css/dealmanage/goodsmanage.css");%> rel="stylesheet" />
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/validate.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%> charset="UTF-8" type="text/javascript"></script>
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
+	rel="stylesheet">
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/dealmanage/goodsmanage.css");%>
+	rel="stylesheet" />
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/validate.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodsmanage.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/goodspackage.js");%>
+	charset="UTF-8" type="text/javascript"></script>
 <script
 	src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js"
 	charset="UTF-8" type="text/javascript"></script>
@@ -51,6 +64,7 @@
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="add()">新增</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="publish()">发布</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="off()">下架</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="setPackage()">套餐设置</a>
 				</div>
 			</div>
 		</div>
@@ -274,6 +288,28 @@
 			</div>
 		</div>
 		<!-- 设置对话框  end-->
+		
+		<!-- 套餐设置begin -->
+		<div id="package_dialog" class="easyui-dialog" title="套餐设置" style="width:1020px;height:500px;"
+			data-options="modal:true,closed:true">
+			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+				<div class="right" style="float: right;display: inline-block;"> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="addP()">新增</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="editBtn" onclick="editP()">修改</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="publishBtn" onclick="publishP()">发布</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="offBtn" onclick="offP()">下架</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="delBtn" onclick="delP()">删除</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="saveBtn" onclick="saveP()">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="cancelBtn" onclick="cancelP()">取消</a> 
+			 	</div>
+			</div>	
+			
+			<div data-options="region:'center'" 
+				style="overflow-x:auto;overflow-y:auto;margin:0 auto;width:98%;height:380px;padding:10px">
+				 <table id="gridp"></table>	
+			</div>
+		</div>
+		<!-- 套餐设置end -->
 		
 	</div>
 </body>

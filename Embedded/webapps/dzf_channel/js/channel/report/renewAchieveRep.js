@@ -72,6 +72,7 @@ function load(){
 		            { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
 		            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
 		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
+		            
 		            { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
 		            { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
 		            { field : 'renewcust', title : '续费客户数量', halign:'center',align:'center',colspan:2},
@@ -79,6 +80,8 @@ function load(){
 		             
 		            { field : 'renewcustrate', title : '续费客户占比(%)', width:100,halign:'center',align:'right',colspan:2},
 		            { field : 'renewcontrate', title : '续费合同占比(%)', width:100,halign:'center',align:'right',colspan:2},
+		            
+		            { field : 'xqnum', title : '续签客户数', width:100,halign:'center',align:'right',colspan:2},
 		           ] ,
         [
             { field : 'stockcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
@@ -95,6 +98,9 @@ function load(){
             { field : 'renewcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
             { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
             
+            { field : 'yrenewnum', title : '应续签', width : 100, halign:'center',align:'center'},
+            { field : 'renewnum', title : '已续签', width : 100, halign:'center',align:'center',},
+            
         ] ],
         onLoadSuccess : function(data) {
         	var rows = $('#grid').datagrid('getRows');
@@ -108,31 +114,41 @@ function load(){
         	var renewcustt = 0;	//
         	var renewconts = 0;	//
         	var renewcontt = 0;	//
+        	
+        	var yrenewnum = 0;
+        	var renewnum = 0;
         	for (var i = 0; i < rows.length; i++) {
-        		if(rows[i].stockcusts != undefined && rows[i].stockcusts != null){
+        		if(!isEmpty(rows[i].stockcusts)){
         			stockcusts += parseFloat(rows[i].stockcusts);
         		}
-        		if(rows[i].stockcustt != undefined && rows[i].stockcustt != null){
+        		if(!isEmpty(rows[i].stockcustt)){
         			stockcustt += parseFloat(rows[i].stockcustt);
         		}
-        		if(rows[i].stockconts != undefined && rows[i].stockconts != null){
+        		if(!isEmpty(rows[i].stockconts)){
         			stockconts += parseFloat(rows[i].stockconts);
         		}
-        		if(rows[i].stockcontt != undefined && rows[i].stockcontt != null){
+        		if(!isEmpty(rows[i].stockcontt)){
         			stockcontt += parseFloat(rows[i].stockcontt);
         		}
         		
-        		if(rows[i].renewcusts != undefined && rows[i].renewcusts != null){
+        		if(!isEmpty(rows[i].renewcusts)){
         			renewcusts += parseFloat(rows[i].renewcusts);
         		}
-        		if(rows[i].renewcustt != undefined && rows[i].renewcustt != null){
+        		if(!isEmpty(rows[i].renewcustt)){
         			renewcustt += parseFloat(rows[i].renewcustt);
         		}
-        		if(rows[i].renewconts != undefined && rows[i].renewconts != null){
+        		if(!isEmpty(rows[i].renewconts)){
         			renewconts += parseFloat(rows[i].renewconts);
         		}
-        		if(rows[i].renewcontt != undefined && rows[i].renewcontt != null){
+        		if(!isEmpty(rows[i].renewcontt)){
         			renewcontt += parseFloat(rows[i].renewcontt);
+        		}
+        		
+        		if(!isEmpty(rows[i].yrenewnum)){
+        			yrenewnum += parseFloat(rows[i].yrenewnum);
+        		}
+        		if(!isEmpty(rows[i].renewnum)){
+        			renewnum += parseFloat(rows[i].renewnum);
         		}
 
         	}
@@ -146,6 +162,9 @@ function load(){
         	footerData['renewcustt'] = renewcustt;
         	footerData['renewconts'] = renewconts;
         	footerData['renewcontt'] = renewcontt;
+        	
+        	footerData['yrenewnum'] = yrenewnum;
+        	footerData['renewnum'] = renewnum;
         	
         	var fs=new Array(1);
         	fs[0] = footerData;

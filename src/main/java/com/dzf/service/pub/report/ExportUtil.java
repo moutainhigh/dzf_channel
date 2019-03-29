@@ -100,9 +100,11 @@ public class ExportUtil<T> {
 				HSSFCell celltitle1 = rowtitle1.createCell(0);
 				HSSFCell celltitle2 = rowtitle1.createCell(2);
 				HSSFCell celltitle3 = rowtitle1.createCell(4);
+				HSSFCell celltitle4 = rowtitle1.createCell(6);
 				celltitle1.setCellValue(submap.get("查询"));
 				celltitle2.setCellValue(submap.get("加盟商"));
 				celltitle3.setCellValue(submap.get("付款类型"));
+				celltitle4.setCellValue(submap.get("渠道经理"));
 				
 				HSSFCellStyle style3 = workbook.createCellStyle();
 				style3.setFont(font);
@@ -115,10 +117,14 @@ public class ExportUtil<T> {
 				
 				HSSFCellStyle style4 = workbook.createCellStyle();
 				style4.setFont(font);
-				style4.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+				style4.setAlignment(HSSFCellStyle.ALIGN_LEFT);
 				style4.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				
 				celltitle3.setCellStyle(style4);
-				sheet.addMergedRegion(new CellRangeAddress(3, 3, 4, 4));
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, 4, 5));
+				
+				celltitle4.setCellStyle(style4);
+				sheet.addMergedRegion(new CellRangeAddress(3, 3, 6, 7));
 			}
 			// end 合并期间、公司行
 

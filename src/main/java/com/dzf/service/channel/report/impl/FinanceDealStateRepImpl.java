@@ -85,9 +85,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		List<String> replist = new ArrayList<String>();// 统计凭证的加盟商主键
 		List<CustCountVO> custlist = queryCustNum(pamvo, corplist);
 		Map<String, FinanceDealStateRepVO> custmap = getRetMap(custlist, replist);
-//		if (custmap == null || custmap.isEmpty()) {
-//			return null;
-//		}
+		// if (custmap == null || custmap.isEmpty()) {
+		// return null;
+		// }
 		FinanceDealStateRepVO retvo = null;
 		FinanceDealStateRepVO showvo = null;
 		Map<String, Map<String, CustCountVO>> retmap = queryVoucher(replist, pamvo.getPeriod());
@@ -98,7 +98,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			CustCountVO countvo = null;
 			for (String pk_corp : corplist) {
 				retvo = custmap.get(pk_corp);
-				if(retvo == null){
+				if (retvo == null) {
 					retvo = new FinanceDealStateRepVO();
 					retvo.setPk_corp(pk_corp);
 				}
@@ -184,7 +184,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("   AND nvl(p.dr, 0) = 0 \n");
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");// 非分支机构
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", countcorplist.toArray(new String[0]));
 		sql.append(" AND ").append(where);
 		sql.append(" GROUP BY (p.chargedeptname, p.fathercorp)");
@@ -236,7 +236,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");// 非分支机构
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
 			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
 			spm.addParam(pamvo.getPeriod());
@@ -320,35 +320,43 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FinanceDetailVO> queryDetail(QryParamVO paramvo) throws DZFWarpException {
-		QrySqlSpmVO spvo = getSqlSpm(paramvo);
+	public List<FinanceDetailVO> queryDetail(QryParamVO pamvo) throws DZFWarpException {
+		QrySqlSpmVO spvo = getSqlSpm(pamvo);
 		List<FinanceDetailVO> retlist = (List<FinanceDetailVO>) multBodyObjectBO.queryDataPage(FinanceDetailVO.class,
-				spvo.getSql(), spvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+				spvo.getSql(), spvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if (retlist != null && retlist.size() > 0) {
-			queryStatus(retlist, paramvo);
+			return queryStatus(retlist, pamvo);
 		}
-		return retlist;
+		return null;
 	}
 
 	@Override
-	public Integer queryDetailRow(QryParamVO paramvo) throws DZFWarpException {
-		QrySqlSpmVO spvo = getSqlSpm(paramvo);
+	public Integer queryDetailRow(QryParamVO pamvo) throws DZFWarpException {
+		QrySqlSpmVO spvo = getSqlSpm(pamvo);
 		return multBodyObjectBO.queryDataTotal(QryParamVO.class, spvo.getSql(), spvo.getSpm());
 	}
 
 	/**
 	 * 获取查询条件
 	 * 
-	 * @param paramvo
+	 * @param pamvo
 	 * @param uservo
 	 * @return
 	 */
-	private QrySqlSpmVO getSqlSpm(QryParamVO paramvo) throws DZFWarpException {
+	private QrySqlSpmVO getSqlSpm(QryParamVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO spvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select innercode as corpkcode,  \n");
 		sql.append("       unitname as corpkname,  \n");
+		sql.append("       CASE chargedeptname  \n");
+		sql.append("         WHEN '一般纳税人' THEN  \n");
+		sql.append("          '一般人'  \n");
+		sql.append("         WHEN '小规模纳税人' THEN  \n");
+		sql.append("          '小规模'  \n");
+		sql.append("         ELSE  \n");
+		sql.append("          ''  \n");
+		sql.append("       END AS chargedeptname,  \n");
 		sql.append("       pk_corp as pk_corpk,  \n");
 		sql.append("       ishasaccount as ishasaccount,  \n");
 		sql.append("       createdate,  \n");
@@ -357,10 +365,10 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("  from bd_corp \n");
 		sql.append(" where nvl(dr,0) = 0   \n");
 		sql.append("   and fathercorp = ? \n");
-		spm.addParam(paramvo.getPk_corp());
+		spm.addParam(pamvo.getPk_corp());
 		sql.append("   AND nvl(ishasaccount,'N') = 'Y' \n");// 已建账
 		sql.append("   AND nvl(isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(isaccountcorp,'N') = 'N' \n");//非分支机构
+		sql.append("   AND nvl(isaccountcorp,'N') = 'N' \n");// 非分支机构
 
 		sql.append(" order by innercode ");
 		spvo.setSql(sql.toString());
@@ -372,11 +380,18 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 * 状态查询
 	 * 
 	 * @param list
-	 * @param paramvo
+	 * @param pamvo
 	 * @param uservo
 	 */
-	private void queryStatus(List<FinanceDetailVO> list, QryParamVO paramvo) throws DZFWarpException {
-		List<String> pk_corplist = new ArrayList<>();
+	private List<FinanceDetailVO> queryStatus(List<FinanceDetailVO> list, QryParamVO pamvo) throws DZFWarpException {
+		List<String> pk_corplist = new ArrayList<String>();
+
+		List<FinanceDetailVO> retlist = null;
+		if ((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
+				|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)) {
+			retlist = new ArrayList<FinanceDetailVO>();
+		}
+
 		CorpVO corpvo = null;
 		String pk_corp = list.get(0).getPk_corp();
 		for (FinanceDetailVO vo : list) {
@@ -388,43 +403,74 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			if (corpvo != null) {
 				vo.setCorpname(corpvo.getUnitname());
 			}
-			vo.setVperiod(paramvo.getPeriod());
+			vo.setVperiod(pamvo.getPeriod());
 		}
 		String status = null;
 		String inSql = SqlUtil.buildSqlConditionForIn(pk_corplist.toArray(new String[0]));
+		if (StringUtil.isEmpty(inSql)) {
+			return null;
+		}
 		int qrytype = 1;// 查询月与当前月不相等
 		String nperiod = DateUtils.getPeriod(new DZFDate());
-		if (nperiod.equals(paramvo.getPeriod())) {
+		if (nperiod.equals(pamvo.getPeriod())) {
 			qrytype = 2;// 查询月与当前月相等
 		}
 
-		HashMap<String, String> map = isQjsy(inSql, paramvo.getPeriod(), qrytype);// 查询是否期间损益
-		HashMap<String, String> mapV = isVoucher(inSql, paramvo.getPeriod(), qrytype);// 查询是否填制凭证
-		Map<String, String> gzmap = isGz(inSql, paramvo.getPeriod());
+		HashMap<String, String> map = isQjsy(inSql, pamvo.getPeriod(), qrytype);// 查询是否期间损益
+		HashMap<String, String> mapV = isVoucher(inSql, pamvo.getPeriod(), qrytype);// 查询是否填制凭证
+		Map<String, String> gzmap = isGz(inSql, pamvo.getPeriod());
 		Map<String, String> deptmap = qryDeptMap(inSql, pk_corp);
 		String deptvalue = null;
 		for (FinanceDetailVO vo : list) {
-			//1、记账状态：
-			status = queryJzStatus(vo.getPk_corpk(), paramvo.getPeriod(), map, mapV, qrytype);
+			// 1、记账状态：
+			status = queryJzStatus(vo.getPk_corpk(), pamvo.getPeriod(), map, mapV, qrytype);
 			vo.setJzstatus(status);
-			//2、账务检查以查询月是否关账来统计：
-			if(gzmap != null && !gzmap.isEmpty()){
-				if(!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))){
-					vo.setVcheckstatus(paramvo.getPeriod()+"已关账");
+			if (pamvo.getQrytype() != null && pamvo.getQrytype() != -1) {
+				if (pamvo.getQrytype() == 1 && vo.getJzstatus().indexOf("未开始") != -1) {
+					retlist.add(vo);
+				} else if (pamvo.getQrytype() == 2 && vo.getJzstatus().indexOf("进行中") != -1) {
+					retlist.add(vo);
+				} else if (pamvo.getQrytype() == 3 && vo.getJzstatus().indexOf("已完成") != -1) {
+					retlist.add(vo);
 				}
 			}
-			//3、客户所属部门：
-			if(deptmap != null && !deptmap.isEmpty()){
+
+			// 2、账务检查以查询月是否关账来统计：
+			if (gzmap != null && !gzmap.isEmpty()) {
+				if (!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))) {
+					vo.setVcheckstatus(pamvo.getPeriod() + "已关账");
+				}
+			}
+
+			if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
+				if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
+						&& vo.getVcheckstatus().indexOf("已关账") != -1) {
+					retlist.add(vo);
+				} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
+					retlist.add(vo);
+				}
+			}
+
+			// 3、客户所属部门：
+			if (deptmap != null && !deptmap.isEmpty()) {
 				deptvalue = deptmap.get(vo.getPk_corpk());
-				if(deptvalue != null && deptvalue.length() > 0){
+				if (deptvalue != null && deptvalue.length() > 0) {
 					vo.setVdeptname(deptvalue);
 				}
 			}
 		}
+		
+		if((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
+				|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)){
+			return retlist;
+		}else{
+			return list;
+		}
 	}
-	
+
 	/**
 	 * 查询客户所属部门
+	 * 
 	 * @param inSql
 	 * @return
 	 * @throws DZFWarpException
@@ -434,31 +480,31 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		Map<String, String> deptmap = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select distinct uc.pk_corpk as pk_corp, dept.deptname  \n") ;
-		sql.append("  from sm_user_corp uc  \n") ; 
-		sql.append("  join sm_user su on su.cuserid = uc.cuserid  \n") ; 
-		sql.append("  join ynt_department dept on dept.pk_department = su.pk_department  \n") ; 
-		sql.append(" where uc.pk_corp = ?  \n") ; 
-		sql.append("   and nvl(uc.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(su.dr, 0) = 0  \n");
+		sql.append("select distinct uc.pk_corpk as pk_corp, dept.deptname  \n");
+		sql.append("  from sm_user_corp uc  \n");
+		sql.append("  join sm_user su on su.cuserid = uc.cuserid  \n");
+		sql.append("  join ynt_department dept on dept.pk_department = su.pk_department  \n");
+		sql.append(" where uc.pk_corp = ?  \n");
 		spm.addParam(pk_corp);
+		sql.append("   and nvl(uc.dr, 0) = 0  \n");
+		sql.append("   and nvl(su.dr, 0) = 0  \n");
+		sql.append("   and uc.pk_corpk in (").append(inSql).append(")");
 		List<JMUserRoleVO> collect = (List<JMUserRoleVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(JMUserRoleVO.class));
 		if (collect != null && collect.size() > 0) {
 			String deptname = null;
 			String corpid = null;
-			for(JMUserRoleVO vo : collect){
+			for (JMUserRoleVO vo : collect) {
 				corpid = vo.getPk_corp();
-				if(deptmap.containsKey(corpid)){
+				if (deptmap.containsKey(corpid)) {
 					deptname = deptmap.get(corpid) + "," + vo.getDeptname();
 					deptmap.remove(corpid);
 					deptmap.put(corpid, deptname);
-				}else{
+				} else {
 					deptmap.put(corpid, vo.getDeptname());
 				}
 			}
-		} 
-		
+		}
 		return deptmap;
 	}
 
@@ -472,22 +518,25 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 */
 	@SuppressWarnings("unchecked")
 	private HashMap<String, String> isQjsy(String inSql, String period, int qrytype) throws DZFWarpException {
-		HashMap<String, String> map = new HashMap<>();
-		StringBuffer qmclsql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sp.addParam(period);
-		qmclsql.append(" select max(q.period) as vperiod,q.pk_corp as pk_corpk from ynt_qmcl q ");
-		qmclsql.append(" where nvl(q.isqjsyjz,'N') = 'Y' and q.pk_corp in (").append(inSql).append(")");
+		HashMap<String, String> map = new HashMap<String, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT max(period) AS vperiod, pk_corp AS pk_corpk  \n");
+		sql.append("  FROM ynt_qmcl  \n");
+		sql.append(" WHERE nvl(isqjsyjz, 'N') = 'Y'  \n");
+		sql.append("   AND pk_corp in ( \n");
+		sql.append(inSql).append(" ) \n");
 		if (qrytype == 2) {
-			qmclsql.append(" and q.period <= ? ");
+			sql.append(" AND period <= ? ");
 		} else {
-			qmclsql.append(" and q.period = ? ");
+			sql.append(" AND period = ? ");
 		}
-		qmclsql.append(" group by q.pk_corp ");
-		List<FinanceDetailVO> qmclvos = (List<FinanceDetailVO>) singleObjectBO.executeQuery(qmclsql.toString(), sp,
+		spm.addParam(period);
+		sql.append(" GROUP BY pk_corp ");
+		List<FinanceDetailVO> list = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
-		if (qmclvos != null && qmclvos.size() > 0) {
-			for (FinanceDetailVO vo : qmclvos) {
+		if (list != null && list.size() > 0) {
+			for (FinanceDetailVO vo : list) {
 				String key = vo.getPk_corpk();
 				map.put(key, vo.getVperiod());
 			}
@@ -506,18 +555,21 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	@SuppressWarnings("unchecked")
 	public HashMap<String, String> isVoucher(String inSql, String period, int qrytype) {
 		HashMap<String, String> map = new HashMap<>();
-		StringBuffer tzpzsql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sp.addParam(period);
-		tzpzsql.append(" select max(pz.period) as vperiod,pz.pk_corp as pk_corpk from ynt_tzpz_h pz ");
-		tzpzsql.append(" where nvl(pz.dr,0) =0 and pz.pk_corp in (").append(inSql).append(")");
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(period);
+		sql.append("SELECT max(period) AS vperiod, pk_corp AS pk_corpk  \n");
+		sql.append("  FROM ynt_tzpz_h  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_corp in ( \n");
+		sql.append(inSql).append(" ) \n");
 		if (qrytype == 2) {
-			tzpzsql.append(" and pz.period <= ? ");
+			sql.append(" AND period <= ? ");
 		} else {
-			tzpzsql.append(" and pz.period = ? ");
+			sql.append(" AND period = ? ");
 		}
-		tzpzsql.append(" group by pz.pk_corp ");
-		List<FinanceDetailVO> list = (List<FinanceDetailVO>) singleObjectBO.executeQuery(tzpzsql.toString(), sp,
+		sql.append(" GROUP BY pk_corp ");
+		List<FinanceDetailVO> list = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
 		if (list != null && list.size() > 0) {
 			for (FinanceDetailVO vo : list) {
@@ -547,11 +599,11 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		}
 		StringBuffer strStatus = new StringBuffer();
 		String jzPeriod = "";
-		if(map != null && !map.isEmpty()){
+		if (map != null && !map.isEmpty()) {
 			jzPeriod = map.get(pk_corp);
 		}
 		String vPeriod = "";
-		if(mapV != null && !mapV.isEmpty()){
+		if (mapV != null && !mapV.isEmpty()) {
 			vPeriod = mapV.get(pk_corp);
 		}
 		CorpVO cvo = null;
@@ -592,9 +644,10 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		}
 		return strStatus.toString();
 	}
-	
+
 	/**
 	 * 查询客户信息
+	 * 
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
@@ -602,9 +655,10 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	private CorpVO queryCorp(String pk_corp) throws DZFWarpException {
 		return (CorpVO) singleObjectBO.queryByPrimaryKey(CorpVO.class, pk_corp);
 	}
-	
+
 	/**
 	 * 查询是否关账
+	 * 
 	 * @param inSql
 	 * @param pk_corp
 	 * @param period
@@ -614,18 +668,21 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	@SuppressWarnings("unchecked")
 	private HashMap<String, String> isGz(String inSql, String period) throws DZFWarpException {
 		HashMap<String, String> map = new HashMap<>();
-		StringBuffer qmclsql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		qmclsql.append(" select max(q.period) as vperiod, q.pk_corp as pk_corpk from ynt_qmcl q ");
-		qmclsql.append(" where nvl(q.isgz,'N') = 'Y' and q.pk_corp in (").append(inSql).append(")");
-		//只关注查询月是否关账
-		qmclsql.append(" and q.period = ? ");
-		sp.addParam(period);
-		qmclsql.append(" group by q.pk_corp ");
-		List<FinanceDetailVO> qmclvos = (List<FinanceDetailVO>) singleObjectBO.executeQuery(qmclsql.toString(), sp,
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT MAX(period) AS vperiod, pk_corp AS pk_corpk  \n");
+		sql.append("  FROM ynt_qmcl  \n");
+		sql.append(" WHERE nvl(isgz, 'N') = 'Y'  \n");
+		sql.append("   AND pk_corp in ( \n");
+		sql.append(inSql).append(" ) \n");
+		// 只关注查询月是否关账
+		sql.append(" AND period = ? ");
+		spm.addParam(period);
+		sql.append(" GROUP BY pk_corp ");
+		List<FinanceDetailVO> list = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
-		if (qmclvos != null && qmclvos.size() > 0) {
-			for (FinanceDetailVO vo : qmclvos) {
+		if (list != null && list.size() > 0) {
+			for (FinanceDetailVO vo : list) {
 				String key = vo.getPk_corpk();
 				map.put(key, vo.getVperiod());
 			}

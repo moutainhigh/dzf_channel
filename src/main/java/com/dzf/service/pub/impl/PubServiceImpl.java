@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
-import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
@@ -27,7 +26,7 @@ import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
-import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.ISysFunnodeService;
@@ -208,55 +207,53 @@ public class PubServiceImpl implements IPubService {
 		return null;
 	}
 
-	// @SuppressWarnings("unchecked")
-	// @Override
-	// public String getManagerName(String pk_corp) throws DZFWarpException {
-	// String qsql = " nvl(dr,0) = 0 AND pk_corp = ? AND nvl(type,0) = 1 ";
-	// SQLParameter spm = new SQLParameter();
-	// spm.addParam(pk_corp);
-	// ChnAreaBVO[] bVOs = (ChnAreaBVO[])
-	// singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
-	// if (bVOs != null && bVOs.length > 0) {
-	// String userid = bVOs[0].getUserid();
-	// if (!StringUtil.isEmpty(userid)) {
-	// UserVO uservo = UserCache.getInstance().get(userid, null);
-	// if (uservo != null) {
-	// return uservo.getUser_name();
-	// }
-	// }
-	// } else {
-	// StringBuffer sql = new StringBuffer();
-	// sql.append("SELECT * \n");
-	// sql.append(" FROM cn_chnarea_b \n");
-	// sql.append(" WHERE vprovince = (SELECT vprovince \n");
-	// sql.append(" FROM bd_account \n");
-	// sql.append(" WHERE nvl(dr, 0) = 0 \n");
-	// sql.append(" AND nvl(ischannel, 'N') = 'Y' \n");
-	// sql.append(" AND nvl(isaccountcorp, 'N') = 'Y' \n");
-	// sql.append(" AND pk_corp = ? ) \n");
-	// sql.append(" AND nvl(isCharge, 'N') = 'Y' \n");
-	// sql.append(" AND nvl(type,0) = 1 \n");
-	// sql.append(" AND nvl(dr,0) = 0 \n");
-	// spm = new SQLParameter();
-	// spm.addParam(pk_corp);
-	// List<ChnAreaBVO> blist = (List<ChnAreaBVO>)
-	// singleObjectBO.executeQuery(sql.toString(), spm,
-	// new BeanListProcessor(ChnAreaBVO.class));
-	// if(blist != null && blist.size() > 0){
-	// String userid = blist.get(0).getUserid();
-	// if (!StringUtil.isEmpty(userid)) {
-	// UserVO uservo = UserCache.getInstance().get(userid, null);
-	// if (uservo != null) {
-	// return uservo.getUser_name();
-	// }
-	// }
-	// }
-	// }
-	// return null;
-	// }
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getManagerName(String pk_corp) throws DZFWarpException {
+		String qsql = " nvl(dr,0) = 0 AND pk_corp = ? AND nvl(type,0) = 1 ";
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(pk_corp);
+		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, qsql, spm);
+		if (bVOs != null && bVOs.length > 0) {
+			String userid = bVOs[0].getUserid();
+			if (!StringUtil.isEmpty(userid)) {
+				UserVO uservo = UserCache.getInstance().get(userid, null);
+				if (uservo != null) {
+					return uservo.getUser_name();
+				}
+			}
+		} else {
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT * \n");
+			sql.append(" FROM cn_chnarea_b \n");
+			sql.append(" WHERE vprovince = (SELECT vprovince \n");
+			sql.append(" FROM bd_account \n");
+			sql.append(" WHERE nvl(dr, 0) = 0 \n");
+			sql.append(" AND nvl(ischannel, 'N') = 'Y' \n");
+			sql.append(" AND nvl(isaccountcorp, 'N') = 'Y' \n");
+			sql.append(" AND pk_corp = ? ) \n");
+			sql.append(" AND nvl(isCharge, 'N') = 'Y' \n");
+			sql.append(" AND nvl(type,0) = 1 \n");
+			sql.append(" AND nvl(dr,0) = 0 \n");
+			spm = new SQLParameter();
+			spm.addParam(pk_corp);
+			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+					new BeanListProcessor(ChnAreaBVO.class));
+			if (blist != null && blist.size() > 0) {
+				String userid = blist.get(0).getUserid();
+				if (!StringUtil.isEmpty(userid)) {
+					UserVO uservo = UserCache.getInstance().get(userid, null);
+					if (uservo != null) {
+						return uservo.getUser_name();
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
-	 * 获取加盟商对应的渠道经理
+	 * 获取加盟商直接对应的渠道经理(非省/市负责人)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -289,7 +286,7 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	/**
-	 * 查询省所对应的渠道经理
+	 * 查询省所对应的渠道经理(省/市负责人)
 	 * 
 	 * @return
 	 * @throws DZFWarpException

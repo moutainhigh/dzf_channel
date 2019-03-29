@@ -28,6 +28,7 @@ function load() {
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		pagination : true,
+		showFooter:true,
 		columns : [ [ 
 		    {field : 'ck',checkbox : true}, 
 			{width : '140',title : '大区',field : 'aname'}, 
@@ -90,8 +91,25 @@ function load() {
 		  	{title : 'tstp',field : 'tstp',hidden : true}, 
 			]],
 		onLoadSuccess : function(data) {
+			calFooter();
 		}
 	});
+}
+
+/**
+ * 添加合计行
+ */
+function calFooter() {
+	var rows = $('#chn_grid').datagrid('getRows');
+	var footerData = new Object();
+	var npmny = 0;
+	for (var i = 0; i < rows.length; i++) {
+		npmny += getFloatValue(rows[i].npmny);
+	}
+	footerData['npmny'] = npmny;
+	var fs = new Array(1);
+	fs[0] = footerData;
+	$('#chn_grid').datagrid('reloadFooter', fs);
 }
 
 /**

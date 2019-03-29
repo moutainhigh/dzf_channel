@@ -72,6 +72,7 @@ function load(){
 		            { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
 		            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
 		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
+		            { field : 'contnum',  title : '提单量', width : 120,halign:'center',align:'right',rowspan:2},
 		            { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
 		            { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
 		            { field : 'newcust', title : '新增客户数量', halign:'center',align:'center',colspan:2},
@@ -99,6 +100,8 @@ function load(){
         onLoadSuccess : function(data) {
         	var rows = $('#grid').datagrid('getRows');
         	var footerData = new Object();
+        	
+        	var contnum = 0;
         	var stockcusts = 0;	//
         	var stockcustt = 0;	//
         	var stockconts = 0;	//
@@ -109,34 +112,38 @@ function load(){
         	var newconts = 0;	//
         	var newcontt = 0;	//
         	for (var i = 0; i < rows.length; i++) {
-        		if(rows[i].stockcusts != undefined && rows[i].stockcusts != null){
+        		if(!isEmpty(rows[i].contnum)){
+        			contnum += rows[i].contnum;
+        		}
+        		if(!isEmpty(rows[i].stockcusts)){
         			stockcusts += parseFloat(rows[i].stockcusts);
         		}
-        		if(rows[i].stockcustt != undefined && rows[i].stockcustt != null){
+        		if(!isEmpty(rows[i].stockcustt)){
         			stockcustt += parseFloat(rows[i].stockcustt);
         		}
-        		if(rows[i].stockconts != undefined && rows[i].stockconts != null){
+        		if(!isEmpty(rows[i].stockconts)){
         			stockconts += parseFloat(rows[i].stockconts);
         		}
-        		if(rows[i].stockcontt != undefined && rows[i].stockcontt != null){
+        		if(!isEmpty(rows[i].stockcontt)){
         			stockcontt += parseFloat(rows[i].stockcontt);
         		}
         		
-        		if(rows[i].newcusts != undefined && rows[i].newcusts != null){
+        		if(!isEmpty(rows[i].newcusts)){
         			newcusts += parseFloat(rows[i].newcusts);
         		}
-        		if(rows[i].newcustt != undefined && rows[i].newcustt != null){
+        		if(!isEmpty(rows[i].newcustt)){
         			newcustt += parseFloat(rows[i].newcustt);
         		}
-        		if(rows[i].newconts != undefined && rows[i].newconts != null){
+        		if(!isEmpty(rows[i].newconts)){
         			newconts += parseFloat(rows[i].newconts);
         		}
-        		if(rows[i].newcontt != undefined && rows[i].newcontt != null){
+        		if(!isEmpty(rows[i].newcontt)){
         			newcontt += parseFloat(rows[i].newcontt);
         		}
         		
         	}
         	footerData['pname'] = '合计';
+        	footerData['contnum'] = contnum;
         	footerData['stockcusts'] = stockcusts;
         	footerData['stockcustt'] = stockcustt;
         	footerData['stockconts'] = stockconts;

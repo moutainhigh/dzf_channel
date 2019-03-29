@@ -381,6 +381,7 @@ function qryDetail(index){
 				$('#corpnm').html(res[0].corpnm);
 				$('#ptypenm').html(res[0].ptypenm);
 				$('#qrydate').html(qrydate);
+				$('#mname').html(res[0].mname);
 				$('#detail_dialog').dialog('open');
 				$('#gridh').datagrid('loadData',res);
 			}
@@ -407,10 +408,21 @@ function initDetailGrid(){
 			halign:'center',
 			field : 'ddate',
 		}, {
-			width : '160',
+			width : '80',
 			title : '摘要',
             halign:'center',
 			field : 'memo',
+			formatter : function(value) {
+	    		if(value!=undefined){
+	    			return "<span title='" + value + "'>" + value + "</span>";
+	    		}
+			}
+		}, {
+			width : '150',
+			title : '原客户名称',
+			align:'left',
+            halign:'center',
+			field : 'oldname',
 			formatter : function(value) {
 	    		if(value!=undefined){
 	    			return "<span title='" + value + "'>" + value + "</span>";
@@ -449,7 +461,7 @@ function initDetailGrid(){
 				return formatMny(value);
 			}
 		}, {
-			width : '70',
+			width : '60',
 			title : '账本费',
 			align:'right',
             halign:'center',
@@ -472,14 +484,14 @@ function initDetailGrid(){
 				}
 			}
 		}, {
-			width : '90',
+			width : '80',
 			title : '付款金额',
 			align:'right',
             halign:'center',
 			field : 'npmny',
 			formatter : npFormat
 		}, {
-			width : '80',
+			width : '70',
 			title : '扣款金额',
 			align:'right',
             halign:'center',
@@ -831,9 +843,10 @@ function onDetPrint(){
 	var qrydate = $("#qrydate").text();
 	var corpnm = $("#corpnm").text();
 	var ptypenm = $("#ptypenm").text();
+	var mname = $("#mname").text();
 	
 	Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetPrint.action',{'strlist':JSON.stringify(datarows),
-		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+		'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm,'mname':mname}, true, true);
 }
 
 /**
@@ -850,8 +863,10 @@ function onDetExport(){
  		var qrydate = $("#qrydate").text();
  		var corpnm = $("#corpnm").text();
  		var ptypenm = $("#ptypenm").text();
+ 		var mname = $("#mname").text();
+ 		
  		Business.getFile(contextPath+ '/chnpay/chnpaybalance!onDetExport.action',{'strlist':JSON.stringify(datarows),
- 			'columns':JSON.stringify(columns),'qrydate':qrydate,'corpnm':corpnm,'ptypenm':ptypenm}, true, true);
+ 			'columns':JSON.stringify(columns),'qrydate':qrydate,'ptypenm':ptypenm,'corpnm':corpnm,'mname':mname}, true, true);
 	}
 	checkBtnPower('export','channel3',callback);
 }

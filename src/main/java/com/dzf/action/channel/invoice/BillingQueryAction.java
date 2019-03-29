@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,9 +65,10 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 	private Logger log = Logger.getLogger(getClass());
 
 	@Autowired
-	private IBillingQueryService billingQueryServiceImpl;
+	private IBillingQueryService billingQuerySer;
+
 	@Autowired
-	private IRecPayDetailService recPayDetailService;
+	private IRecPayDetailService recPayDetailSer;
 
 	/**
 	 * 查询
@@ -82,7 +82,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 				paramvo.setBdate(new DZFDate().toString());
 			}
 			paramvo.setCuserid(getLoginUserid());
-			List<BillingInvoiceVO> rows = billingQueryServiceImpl.query(paramvo);
+			List<BillingInvoiceVO> rows = billingQuerySer.query(paramvo);
 			grid.setMsg("查询成功！");
 			grid.setSuccess(true);
 			grid.setRows(rows);
@@ -113,19 +113,19 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 				if (vos != null && length > 0) {
 					for (BillingInvoiceVO cvo : vos) {
 						try {
-							billingQueryServiceImpl.insertBilling(cvo);
+							billingQuerySer.insertBilling(cvo);
 							len++;
 						} catch (BusinessException e) {
-							msg.append("加盟商：").append(cvo.getCorpname()).append(",失败原因：").append(e.getMessage())
-									.append("<br>");
+							msg.append("加盟商：").append(cvo.getCorpname());
+							msg.append(",失败原因：").append(e.getMessage()).append("<br>");
 						} catch (Exception e) {
 							log.error("开票失败", e);
 						}
 					}
 				}
-				json.setMsg("成功生成" + len + "张单据，失败" + (length - len) + "张单据<br>  " + msg.toString());
+				json.setMsg("开票成功" + len + "条，失败" + (length - len) + "条<br>  " + msg.toString());
 				json.setSuccess(true);
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(), "开票成功" + len + "张", ISysConstants.SYS_3);
+				writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(), "开票成功" + len + "条", ISysConstants.SYS_3);
 			} else {
 				json.setSuccess(false);
 				json.setRows(0);
@@ -210,7 +210,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 			if (pamvo.getBegdate() == null) {
 				pamvo.setBegdate(new DZFDate());
 			}
-			List<ChnDetailRepVO> list = recPayDetailService.queryRecDetail(pamvo);
+			List<ChnDetailRepVO> list = recPayDetailSer.queryRecDetail(pamvo);
 			if (list != null && list.size() > 0) {
 				ChnDetailRepVO[] vos = list.toArray(new ChnDetailRepVO[0]);
 				vos = (ChnDetailRepVO[]) QueryUtil.getPagedVOs(vos, pamvo.getPage(), pamvo.getRows());

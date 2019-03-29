@@ -37,7 +37,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 
 	@Override
 	public List<CustManageRepVO> query(QryParamVO pamvo) throws DZFWarpException, IllegalAccessException, Exception {
-		
+
 		Map<String, DataVO> map = queryCorps(pamvo, CustManageRepVO.class);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
@@ -50,9 +50,10 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 获取返回数据
+	 * 
 	 * @param pamvo
 	 * @param corplist
 	 * @param map
@@ -80,7 +81,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		for (String pk_corp : corplist) {
 			data = map.get(pk_corp);
 			retvo = (CustManageRepVO) data;
-			if(retvo == null){
+			if (retvo == null) {
 				retvo = new CustManageRepVO();
 			}
 			retvo.setPk_corp(pk_corp);
@@ -105,16 +106,14 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			// 获取各个行业的值
 			setIndustryNum(codelist, pk_corp, industrys, industmap, retvo);
 
-//			if (retvo.getIcustsmall() == null && retvo.getIcusttaxpay() == null) {
-//				continue;
-//			}
 			retlist.add(retvo);
 		}
 		return retlist;
 	}
-	
+
 	/**
 	 * 获取各个行业的值
+	 * 
 	 * @param codelist
 	 * @param pk_corp
 	 * @param industrys
@@ -249,13 +248,12 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
 		sql.append("           AND nvl(t.dr, 0) = 0 \n");
-		
+
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-		
-		
+
 		sql.append("           AND p.fathercorp NOT IN \n");
 		sql.append("               (SELECT f.pk_corp \n");
 		sql.append("                  FROM ynt_franchisee f \n");
@@ -313,12 +311,12 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
 		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
 		sql.append("           AND nvl(t.dr, 0) = 0 \n");
-		
+
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-		
+
 		sql.append("           AND p.fathercorp NOT IN \n");
 		sql.append("               (SELECT f.pk_corp \n");
 		sql.append("                  FROM ynt_franchisee f \n");
@@ -374,7 +372,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		}
 		return map;
 	}
-	
+
 	/**
 	 * 查询各类纳税人资格的客户
 	 * 
@@ -395,7 +393,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");//非分支机构
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
@@ -407,7 +405,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			sql.append(" AND ");
 			sql.append(filter);
 		}
-		if(pamvo.getCorps() != null && pamvo.getCorps().length > 0){
+		if (pamvo.getCorps() != null && pamvo.getCorps().length > 0) {
 			String filter = SqlUtil.buildSqlForIn("t.pk_corp", pamvo.getCorps());
 			sql.append(" AND ");
 			sql.append(filter);
@@ -417,36 +415,38 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 	}
-	
+
 	/**
 	 * 获取按照纳税人资格汇总的客户数量
+	 * 
 	 * @param list
 	 * @param corplist
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private Map<String,CustManageRepVO> getCustMap(List<CustCountVO> list, List<String> replist) throws DZFWarpException {
-		Map<String,CustManageRepVO> custmap = new HashMap<String,CustManageRepVO>();
-		if(list != null && list.size() > 0){
+	private Map<String, CustManageRepVO> getCustMap(List<CustCountVO> list, List<String> replist)
+			throws DZFWarpException {
+		Map<String, CustManageRepVO> custmap = new HashMap<String, CustManageRepVO>();
+		if (list != null && list.size() > 0) {
 			CustManageRepVO repvo = null;
-			for(CustCountVO cvo : list){
-				if(!custmap.containsKey(cvo.getPk_corp())){
+			for (CustCountVO cvo : list) {
+				if (!custmap.containsKey(cvo.getPk_corp())) {
 					repvo = new CustManageRepVO();
 					repvo.setPk_corp(cvo.getPk_corp());
-					if("小规模纳税人".equals(cvo.getChargedeptname())){
+					if ("小规模纳税人".equals(cvo.getChargedeptname())) {
 						repvo.setIcustsmall(cvo.getNum());
-					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+					} else if ("一般纳税人".equals(cvo.getChargedeptname())) {
 						repvo.setIcusttaxpay(cvo.getNum());
 					}
-					if(!replist.contains(cvo.getPk_corp())){
+					if (!replist.contains(cvo.getPk_corp())) {
 						replist.add(cvo.getPk_corp());
 					}
 					custmap.put(cvo.getPk_corp(), repvo);
-				}else{
+				} else {
 					repvo = custmap.get(cvo.getPk_corp());
-					if("小规模纳税人".equals(cvo.getChargedeptname())){
+					if ("小规模纳税人".equals(cvo.getChargedeptname())) {
 						repvo.setIcustsmall(ToolsUtil.addInteger(repvo.getIcustsmall(), cvo.getNum()));
-					}else if("一般纳税人".equals(cvo.getChargedeptname())){
+					} else if ("一般纳税人".equals(cvo.getChargedeptname())) {
 						repvo.setIcusttaxpay(ToolsUtil.addInteger(repvo.getIcusttaxpay(), cvo.getNum()));
 					}
 					custmap.put(cvo.getPk_corp(), repvo);

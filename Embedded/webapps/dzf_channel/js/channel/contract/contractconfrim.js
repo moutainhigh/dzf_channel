@@ -17,6 +17,15 @@ $(function() {
 	initArea();
 	$('#confreason').textbox('textbox').attr('maxlength', 200);
 	loadJumpData();
+	
+	$(document).on("mouseover", ".right_menu", function (e) {
+		$(this).removeClass("rt_menu").addClass("rt_menu2");
+		$(this).find(".more_div").show();
+    });
+    $(document).on("mouseout", ".right_menu", function (e) {
+        $(this).removeClass("rt_menu2").addClass("rt_menu");
+        $(this).find(".more_div").hide();
+    });
 });
 
 /**
@@ -2011,21 +2020,26 @@ function initRejectReason(){
 					title : '选择原因',
 					modal : true,
 					href : contextPath+ '/ref/rejectreason_select.jsp',
-					buttons : [{text : '确认',
-								handler : function() {
-									var rows = $('#rgrid').datagrid('getChecked');
-									dClickReje(rows);
-								}
-								},
-							{text : '取消',
-								handler : function() {
-									$('#rejeDlg').dialog('close');
-								}
-								} ]
+					buttons : [{text : '新增驳回原因',
+									handler : function() {
+										addReje();
+									}
+							   },
+							   {text : '确认',
+									handler : function() {
+										var rows = $('#rgrid').datagrid('getChecked');
+										dClickReje(rows);
+									}
+							   },
+							   {text : '取消',
+									handler : function() {
+										$('#rejeDlg').dialog('close');
+									}
+								}]
 				});
 			}
-		} ]
-});
+	  } ]
+	});
 }
 
 /**
@@ -2036,13 +2050,6 @@ function dClickReje(rowTable){
 	var reasons = "";
 	var rids = [];
 	if(rowTable){
-//		if (rowTable.length > 300) {
-//			Public.tips({
-//				content : "一次最多只能选择300个经理",
-//				type : 2
-//			});
-//			return;
-//		}
 		for(var i = 0; i<rowTable.length; i++){
 			if(i == rowTable.length - 1){
 				reasons += rowTable[i].reason;
@@ -2066,10 +2073,99 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var callback=function(){
+	var callback = function(){
 		var columns = $('#grid').datagrid("options").columns[0];
     	Business.getFile(DZF.contextPath+ '/contract/contractconf!onExport.action',
     			{'strlist':JSON.stringify(datarows),'qj' : $('#querydate').html()}, true, true);
+	}
+	checkBtnPower('export','channel4',callback);
+}
+
+/**
+ * 全部导出
+ */
+function onExportAll(){
+	var bdate = null;//提单开始日期
+	var edate = null;//提单结束日期
+	var bperiod = null;//扣款开始日期
+	var eperiod = null;//扣款结束日期
+	var ischeck = $('#tddate').is(':checked');
+	if(ischeck){
+		bdate = $('#bdate').datebox('getValue'); 
+		edate = $('#edate').datebox('getValue'); 
+		if(isEmpty(bdate)){
+			Public.tips({
+				content : '提单开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(edate)){
+			Public.tips({
+				content : '提单结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bdate) && !isEmpty(edate)){
+			if(!checkdate1("bdate","edate")){
+				return;
+			}		
+		}
+	}else{
+		bperiod = $('#bperiod').datebox('getValue');
+		eperiod = $('#eperiod').datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : '扣款开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : '扣款结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bperiod) && !isEmpty(eperiod)){
+			if(!checkdate1("bperiod","eperiod")){
+				return;
+			}		
+		}
+	}
+	
+    var qtype;
+	if ($("#normal").is(':checked') && !$("#supple").is(':checked')) {
+		qtype = 1;
+	} else if(!$("#normal").is(':checked') && $("#supple").is(':checked')) {
+		qtype = 2;
+	} else if(!$("#normal").is(':checked') && !$("#supple").is(':checked')) {
+		Public.tips({
+			content : '合同类型不能为空',
+			type : 2
+		});
+		return;
+	}
+	var isncust = $('#isncust').combobox('getValue');
+	
+	var callback = function(){
+    	Business.getFile(
+			DZF.contextPath+ '/contract/contractconf!onExportAll.action',
+			{'qj' : $('#querydate').html(),
+			 'begdate' : bdate,
+			 'enddate' : edate,
+			 'bperiod' : bperiod,
+			 'eperiod' : eperiod,
+			 'destatus' : $('#destatus').combobox('getValue'),
+			 'isncust' : isncust,
+			 'cpid' : $("#pk_account").val(),
+			 'cpkid' : $("#corpkid_ae").val(),
+			 'mid' : $("#managerid").val(),
+			 'corptype' : $('#corptype').combobox('getValue'),
+			 'aname' : $("#aname").combobox('getValue'),
+			}, true, true);
 	}
 	checkBtnPower('export','channel4',callback);
 }

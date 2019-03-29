@@ -445,6 +445,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			throw new BusinessException("返点扣款错误");
 		}
 		if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {// 预付款扣款
+			if(CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(new DZFDouble(10000)) > 0){
+				throw new BusinessException("该订单预付款扣款已大于 1 万");
+			}
 			updateDedBanlanceAdd(pamvo, map, cuserid);
 		} else if (CommonUtil.getDZFDouble(pamvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
 			throw new BusinessException("预付款扣款错误");

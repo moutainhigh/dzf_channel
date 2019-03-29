@@ -28,9 +28,9 @@ function initQry(){
  */
 function load(){
 	var columns = getArrayColumns();
-	var vince=$('#ovince').combobox('getValue');
+	var vince = $('#ovince').combobox('getValue');
 	if(isEmpty(vince)){
-		vince=-1;
+		vince = -1;
 	}
 	$('#grid').datagrid({
 		url : DZF.contextPath + "/report/custmanagerep!query.action",
@@ -52,6 +52,14 @@ function load(){
 		showFooter : true,
 		border : true,
 		remoteSort:false,
+		frozenColumns:[[
+						{ field : 'pid',    title : '会计公司主键', hidden : true},
+						{ field : 'aname',  title : '大区', width :60,halign:'center',align:'left'},
+						{ field : 'uname',  title : '区总', width : 90,halign:'center',align:'left'},
+						{ field : 'provname',  title : '省份', width : 100,halign:'center',align:'left'}, 
+						{ field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left'},
+						{ field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left'},
+		        	]],
 		columns : columns,
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
@@ -95,61 +103,81 @@ function getArrayColumns(){
 			if (data.success) {
 				var rows = data.rows;
 				if(rows != null && rows.length > 0){
-					var columnsh =new Array();
-					var columnsh =[{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
-	                { field : 'aname',  title : '大区', width :60,halign:'center',align:'left',rowspan:2},
-	                { field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
-	                { field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',rowspan:2}, 
-	                { field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
-	                { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
+					var columnsh = new Array();
+					var columnsh = [
+					{ field : 'pid',    title : '会计公司主键', hidden : true,rowspan:2},
+					{ field : 'aname',  title : '大区', width :60,halign:'center',align:'left',rowspan:2},
+					{ field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
+					{ field : 'provname',  title : '省份', width : 100,halign:'center',align:'left',rowspan:2}, 
+					{ field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
+					{ field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
+					                
 	                { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
-	                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2}]; 
+	                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2}
+	                ]; 
 					var column = {};
 					column["title"] = '客户纳税人类型分层';  
 					column["field"] = 'col';  
-					column["width"] = '200'; 
+					column["width"] = '160'; 
 					column["colspan"] = 2; 
 					columnsh.push(column); 
 					for(var i = 0; i < rows.length; i++){
 						var column = {};
 						column["title"] = rows[i].industryname+"占比(%)";  
 						column["field"] = 'col';  
-						column["width"] = '200'; 
-						column["colspan"] = 2; 
+						column["width"] = '160'; 
+						column["colspan"] = 4; 
 						columnsh.push(column); 
 					}
 					var columnsb = new Array(); 
 					var column1 = {};
 					column1["title"] = '小规模';  
 					column1["field"] = 'custsmall';  
-					column1["width"] = '100'; 
+					column1["width"] = '80'; 
 					column1["halign"] = 'center'; 
 					column1["align"] = 'right'; 
 					columnsb.push(column1); 
 					var column2 = {};
-					column2["title"] = '一般纳税人';  
+					column2["title"] = '一般人';  
 					column2["field"] = 'custtaxpay';  
-					column2["width"] = '100'; 
+					column2["width"] = '80'; 
 					column2["halign"] = 'center'; 
 					column2["align"] = 'right'; 
 					columnsb.push(column2); 
 					for(var i = 0; i < rows.length; i++){
+						var column0 = {};
+						column0["title"] = '小规模数量';  
+						column0["field"] = 'custs'+(i+1);  
+						column0["width"] = '80'; 
+						column0["halign"] = 'center'; 
+						column0["align"] = 'right'; 
+						columnsb.push(column0); 
+						
 						var column1 = {};
-						column1["title"] = '小规模';  
+						column1["title"] = '小规模占比';  
 						column1["field"] = 'rates'+(i+1);  
-						column1["width"] = '100'; 
+						column1["width"] = '80'; 
 						column1["halign"] = 'center'; 
 						column1["align"] = 'right'; 
 						column1["formatter"] = formatMny;
 						columnsb.push(column1); 
+						
 						var column2 = {};
-						column2["title"] = '一般纳税人';  
-						column2["field"] = 'ratet'+(i+1);  
-						column2["width"] = '100'; 
+						column2["title"] = '一般人数量';  
+						column2["field"] = 'custt'+(i+1);  
+						column2["width"] = '80'; 
 						column2["halign"] = 'center'; 
 						column2["align"] = 'right'; 
-						column2["formatter"] = formatMny;
-						columnsb.push(column2); 
+						columnsb.push(column2);
+						
+						var column3 = {};
+						column3["title"] = '一般人占比';  
+						column3["field"] = 'ratet'+(i+1);  
+						column3["width"] = '80'; 
+						column3["halign"] = 'center'; 
+						column3["align"] = 'right'; 
+						column3["formatter"] = formatMny;
+						columnsb.push(column3); 
 					}
 					columns.push(columnsh);
 					columns.push(columnsb);

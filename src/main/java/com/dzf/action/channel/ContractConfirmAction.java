@@ -50,6 +50,7 @@ import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 合同确认
+ * 
  * @author zy
  *
  */
@@ -59,46 +60,47 @@ import com.dzf.service.pub.LogRecordEnum;
 public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 
 	private static final long serialVersionUID = 8503727157432036048L;
-	
+
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private IContractConfirm contractconfser;
-	
+
 	@Autowired
 	private IPubService pubser;
-	
+
 	/**
 	 * 查询方法
 	 */
 	public void query() {
 		Grid grid = new Grid();
 		try {
-		    QryParamVO paramvo = new QryParamVO();
+			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-			StringBuffer qsql = new StringBuffer();//附加查询条件
-			if(!StringUtil.isEmpty(paramvo.getVmanager())){//渠道经理查询条件
+			StringBuffer qsql = new StringBuffer();// 附加查询条件
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {// 渠道经理查询条件
 				String sql = contractconfser.getQrySql(paramvo.getVmanager());
-				if(!StringUtil.isEmpty(sql)){
+				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
 			}
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
-			//列表查询，根据登录人和选择区域进行过滤
-			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
-			if (condition != null ) {
-				if(!condition.equals("alldata")){
+			// 列表查询，根据登录人和选择区域进行过滤
+			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),
+					IStatusConstant.IYUNYING);
+			if (condition != null) {
+				if (!condition.equals("alldata")) {
 					qsql.append(condition);
 				}
 				paramvo.setVqrysql(qsql.toString());
 				total = contractconfser.queryTotalRow(paramvo);
 			}
-			grid.setTotal((long)(total));
-			if(total > 0){
+			grid.setTotal((long) (total));
+			if (total > 0) {
 				List<ContractConfrimVO> list = contractconfser.query(paramvo);
 				grid.setRows(list);
-			}else{
+			} else {
 				grid.setRows(new ArrayList<ContractConfrimVO>());
 			}
 			grid.setSuccess(true);
@@ -108,11 +110,11 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * 查询待扣款数据
 	 */
-	public void queryDeductData(){
+	public void queryDeductData() {
 		Json json = new Json();
 		try {
 			ContractConfrimVO qryvo = (ContractConfrimVO) DzfTypeUtils.cast(getRequest(), new ContractConfrimVO());
@@ -125,39 +127,40 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 审核
 	 */
-	public void updateDeductData(){
+	public void updateDeductData() {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_4);
-			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
-			}else if(uservo == null){
+			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
 			String type = getRequest().getParameter("opertype");
-			Integer opertype = Integer.parseInt(type);//操作类型
-			
+			Integer opertype = Integer.parseInt(type);// 操作类型
+
 			String head = getRequest().getParameter("head");
 			JSON headjs = (JSON) JSON.parse(head);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new ContractConfrimVO());
 			ContractConfrimVO datavo = new ContractConfrimVO();
 			datavo = DzfTypeUtils.cast(headjs, headmaping, ContractConfrimVO.class, JSONConvtoJAVA.getParserConfig());
-			
-			if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
-				if(StringUtil.isEmpty(datavo.getVconfreasonid())){
+
+			if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
+				if (StringUtil.isEmpty(datavo.getVconfreasonid())) {
 					throw new BusinessException("驳回原因不能为空");
 				}
 			}
-			
-			if(datavo == null){
+
+			if (datavo == null) {
 				throw new BusinessException("单个审核-获取审核数据为空");
 			}
-			datavo = contractconfser.updateAuditData(datavo, null, opertype, getLoginUserid(), getLogincorppk(), "single");
+			datavo = contractconfser.updateAuditData(datavo, null, opertype, getLoginUserid(), getLogincorppk(),
+					"single");
 			json.setRows(datavo);
 			if (datavo != null) {
 				if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 审核
@@ -166,7 +169,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 					if (corpvo != null) {
 						corpcode = corpvo.getInnercode();
 					}
-					if (datavo.getPatchstatus() != null && (IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus() 
+					if (datavo.getPatchstatus() != null && (IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()
 							|| IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus())) {
 						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(),
 								"纳税人变更：客户编码[" + corpcode + "] 合同编码[" + datavo.getVcontcode() + "]",
@@ -187,7 +190,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 批量审核
 	 */
@@ -237,8 +240,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 						log.info("批量审核-获取审核数据为空");
 					} else {
 						try {
-							if(IStatusConstant.IDEDUCTYPE_1 == opertype && datavo.getPatchstatus() != null 
-									&& IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
+							if (IStatusConstant.IDEDUCTYPE_1 == opertype && datavo.getPatchstatus() != null
+									&& IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()) {
 								throw new BusinessException("一般人转小规模合同，不允许批量审核");
 							}
 							datavo = contractconfser.updateAuditData(datavo, paramvo, opertype, getLoginUserid(),
@@ -275,25 +278,25 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 获取附件列表
 	 */
-	public void getAttaches(){
+	public void getAttaches() {
 		Json json = new Json();
 		json.setSuccess(false);
 		try {
 			ContractDocVO paramvo = new ContractDocVO();
 			paramvo = (ContractDocVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if(StringUtil.isEmpty(paramvo.getPk_corp())){
+			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			ContractDocVO[] resvos = contractconfser.getAttatches(paramvo);
-			if(resvos!=null){
+			if (resvos != null) {
 				json.setRows(Arrays.asList(resvos));
-			}else{
+			} else {
 				json.setRows(0);
-			}			
+			}
 			json.setSuccess(true);
 			json.setMsg("获取附件成功");
 		} catch (Exception e) {
@@ -301,7 +304,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 获取附件显示图片
 	 */
@@ -321,10 +324,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				isexists = false;
 			}
 			String fpath = "";
-			if(resvos != null && resvos.length > 0){
+			if (resvos != null && resvos.length > 0) {
 				fpath = resvos[0].getVfilepath();
 			}
-			if(StringUtil.isEmpty(fpath)){
+			if (StringUtil.isEmpty(fpath)) {
 				throw new BusinessException("附件路径不能为空");
 			}
 			File afile = new File(fpath);
@@ -390,24 +393,26 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
 			try {
-				if(files == null || files.length == 0){
+				if (files == null || files.length == 0) {
 					throw new BusinessException("变更附件不能为空");
 				}
 				ContractConfrimVO retvo = contractconfser.saveChange(data, getLoginUserid(), files, filenames);
-				if(retvo != null){
-					if(data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){//终止
-						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "终止合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
-					}else if(data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2){//作废
-						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "作废合同：合同编码："+retvo.getVcontcode(), ISysConstants.SYS_3);
+				if (retvo != null) {
+					if (data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {// 终止
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "终止合同：合同编码：" + retvo.getVcontcode(),
+								ISysConstants.SYS_3);
+					} else if (data.getIchangetype() == IStatusConstant.ICONCHANGETYPE_2) {// 作废
+						writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "作废合同：合同编码：" + retvo.getVcontcode(),
+								ISysConstants.SYS_3);
 					}
 				}
 				json.setRows(retvo);
-				json.setSuccess(true);	
+				json.setSuccess(true);
 				json.setMsg("变更成功");
 			} catch (Exception e) {
 				printErrorLog(json, log, e, "变更失败");
 			}
-		}else{
+		} else {
 			json.setSuccess(false);
 			json.setMsg("变更失败");
 		}
@@ -422,9 +427,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		if (data != null) {
 			try {
 				UserVO uservo = getLoginUserInfo();
-				if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 					throw new BusinessException("登陆用户错误");
-				}else if(uservo == null){
+				} else if (uservo == null) {
 					throw new BusinessException("登陆用户错误");
 				}
 				ContractConfrimVO retvo = contractconfser.queryInfoById(data);
@@ -439,57 +444,136 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 导出
 	 */
-	public void onExport(){
-        String strlist =getRequest().getParameter("strlist");
-        String qj = getRequest().getParameter("qj");
-        if(StringUtil.isEmpty(strlist)){
-            throw new BusinessException("导出数据不能为空!");
-        }   
-        JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-        Map<String, String> mapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
-        ContractConfrimVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,ContractConfrimVO[].class, JSONConvtoJAVA.getParserConfig());
-        HttpServletResponse response = getResponse();
-        Excelexport2003<ContractConfrimVO> ex = new Excelexport2003<ContractConfrimVO>();
-        ContractConExcelField fields = new ContractConExcelField();
-        fields.setVos(expVOs);
-        fields.setQj(qj);
-        ServletOutputStream servletOutputStream = null;
-        OutputStream toClient = null;
-        try {
-            response.reset();
-            // 设置response的Header
-            String filename = fields.getExcelport2003Name();
-            String formattedName = URLEncoder.encode(filename, "UTF-8");
-            response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
-            servletOutputStream = response.getOutputStream();
-            toClient = new BufferedOutputStream(servletOutputStream);
-            response.setContentType("applicationnd.ms-excel;charset=gb2312");
-            ex.exportExcel(fields, toClient);
-            writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "导出合同列表", ISysConstants.SYS_3);
-        } catch (Exception e) {
-            log.error("导出失败",e);
-        }  finally {
-            if(toClient != null){
-                try {
-                    toClient.flush();
-                    toClient.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-            if(servletOutputStream != null){
-                try {
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-        }
+	public void onExport() {
+		String strlist = getRequest().getParameter("strlist");
+		String qj = getRequest().getParameter("qj");
+		if (StringUtil.isEmpty(strlist)) {
+			throw new BusinessException("导出数据不能为空!");
+		}
+		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new ContractConfrimVO());
+		ContractConfrimVO[] expVOs = DzfTypeUtils.cast(exparray, mapping, ContractConfrimVO[].class,
+				JSONConvtoJAVA.getParserConfig());
+		HttpServletResponse response = getResponse();
+		Excelexport2003<ContractConfrimVO> ex = new Excelexport2003<ContractConfrimVO>();
+		ContractConExcelField fields = new ContractConExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "导出合同列表", ISysConstants.SYS_3);
+		} catch (Exception e) {
+			log.error("导出失败", e);
+		} finally {
+			if (toClient != null) {
+				try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+		}
 	}
 	
+	/**
+	 * 导出全部
+	 */
+	public void onExportAll() {
+		QryParamVO pamvo = new QryParamVO();
+		pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+		StringBuffer qsql = new StringBuffer();// 附加查询条件
+		if (!StringUtil.isEmpty(pamvo.getVmanager())) {// 渠道经理查询条件
+			String sql = contractconfser.getQrySql(pamvo.getVmanager());
+			if (!StringUtil.isEmpty(sql)) {
+				qsql.append(sql);
+			}
+		}
+		pamvo.setCuserid(getLoginUserid());
+		// 列表查询，根据登录人和选择区域进行过滤
+		String condition = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname(),
+				IStatusConstant.IYUNYING);
+		if (condition != null) {
+			if (!condition.equals("alldata")) {
+				qsql.append(condition);
+			}
+			pamvo.setVqrysql(qsql.toString());
+		}
+		
+		pamvo.setRows(1000000);
+		List<ContractConfrimVO> list = contractconfser.query(pamvo);
+		ContractConfrimVO[] expVOs = null;
+		if(list != null && list.size() > 0){
+			expVOs = list.toArray(new ContractConfrimVO[0]);
+		}else{
+			throw new BusinessException("查询数据为空");
+		}
+		
+		
+		String qj = getRequest().getParameter("qj");
+		
+		HttpServletResponse response = getResponse();
+		Excelexport2003<ContractConfrimVO> ex = new Excelexport2003<ContractConfrimVO>();
+		ContractConExcelField fields = new ContractConExcelField();
+		fields.setVos(expVOs);
+		fields.setQj(qj);
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_4.getValue(), "导出查询合同列表", ISysConstants.SYS_3);
+		} catch (Exception e) {
+			log.error("导出失败", e);
+		} finally {
+			if (toClient != null) {
+				try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+		}
+	}
+
 }

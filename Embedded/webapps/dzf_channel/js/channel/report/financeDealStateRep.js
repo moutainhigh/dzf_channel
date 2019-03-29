@@ -149,8 +149,7 @@ function nameFormat(value, row, index){
  * @param index
  */
 function qryDetail(index){
-	var rows = $('#grid').datagrid('getRows');
-	var row = rows[index];
+	var row = $('#grid').datagrid('getData').rows[index];
 	var url = DZF.contextPath + "/report/financedealstaterep!queryDetail.action";
 	$('#gridh').datagrid('options').url = url;
 	$('#gridh').datagrid('load', {
@@ -158,6 +157,20 @@ function qryDetail(index){
 		"period" : $('#qryperiod').datebox('getValue'),
 	});
 	
+}
+
+/**
+ * 查询明细
+ */
+function queryDetail(){
+	var url = DZF.contextPath + "/report/financedealstaterep!queryDetail.action";
+	$('#gridh').datagrid('options').url = url;
+	$('#gridh').datagrid('load', {
+		"cpid" : $("#corpid").val(),
+		"period" : $("#qrydate").text(),
+		"qtype" : $("#jzstatus").combobox('getValue'),
+		"stype" : $("#zwstatus").combobox('getValue'),
+	});
 }
 
 /**
@@ -176,7 +189,7 @@ function initDetailGrid(){
 		pageList : [ 20, 50, 100, 200 ],
 		showRefresh : false,// 不显示分页的刷新按钮
 		columns : [ [ {
-			width : '120',
+			width : '80',
 			title : '部门',
 			align:'left',
 			halign:'center',
@@ -204,22 +217,28 @@ function initDetailGrid(){
 	    		}
 			}
 		}, {
+            field: 'chname',
+            title: '纳税人资格',
+            width: '80',
+            align: 'center',
+            halign:'center',
+        },{
             field: 'cdate',
             title: '录入日期',
-            width: '90',
-            align: 'left',
+            width: '80',
+            align: 'center',
             halign:'center',
         },{
             field: 'bdate',
             title: '建账日期',
-            width: '90',
-            align: 'left',
+            width: '80',
+            align: 'center',
             halign:'center',
         },{
             field: 'jzstatus',
             title: '记账状态',
-            width: '130',
-            align: 'left',
+            width: '110',
+            align: 'center',
             halign:'center',
         }, {
             field: 'ckstatus',
@@ -236,6 +255,8 @@ function initDetailGrid(){
 				$('#detail_dialog').dialog('open');
 				$('#qrydate').html(data.rows[0].period);
 				$('#corpnm').html(data.rows[0].corpnm);
+				
+				$('#corpid').val(data.rows[0].corpid);
 				$('#gridh').datagrid("scrollTo",0);
 			}else{
 				Public.tips({content :"暂无明细",type : 2});

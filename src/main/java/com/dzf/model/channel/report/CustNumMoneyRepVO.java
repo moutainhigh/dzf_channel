@@ -100,6 +100,39 @@ public class CustNumMoneyRepVO extends DataVO {
 	
 	@FieldAlias("custsum")
 	private Integer icustsum;//客户合计
+	
+	@FieldAlias("contnum")
+	private Integer icontnum;//提单数
+	
+	@FieldAlias("yrenewnum")
+	private Integer iyrenewnum;//应续签客户数
+	
+	@FieldAlias("renewnum")
+	private Integer irenewnum;//已续签客户数
+
+	public Integer getIyrenewnum() {
+		return iyrenewnum;
+	}
+
+	public void setIyrenewnum(Integer iyrenewnum) {
+		this.iyrenewnum = iyrenewnum;
+	}
+
+	public Integer getIrenewnum() {
+		return irenewnum;
+	}
+
+	public void setIrenewnum(Integer irenewnum) {
+		this.irenewnum = irenewnum;
+	}
+
+	public Integer getIcontnum() {
+		return icontnum;
+	}
+
+	public void setIcontnum(Integer icontnum) {
+		this.icontnum = icontnum;
+	}
 
 	public Integer getIcustsum() {
 		return icustsum;

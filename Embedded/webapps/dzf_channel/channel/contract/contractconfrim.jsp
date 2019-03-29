@@ -14,9 +14,18 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/contractconfrim.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/showfile.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/contract/rejectreason_select.js");%> charset="UTF-8" type="text/javascript"></script>
 
 <script src=<%UpdateGradeVersion.outversion(out, "../../jslib/build/layer.js");%> charset="UTF-8" type="text/javascript"></script>
-
+<style type="text/css">
+    .right_menu {
+        display:inline-block;position:relative;
+    }
+    .right_menu .more_div a {
+        padding: 1px 5px;
+        text-align: center;
+    }
+</style>
 </head>
 <%
 	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);
@@ -59,10 +68,19 @@
 					</div>
 				</div> -->
 				<div class="right">
+			        
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">合同审核</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="bathAudit()">批量审核</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="change()">合同变更</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="onExport()">导出</a>
+					
+					<div class="right_menu">
+			              <a href="javascript:void(0);" class="ui-btn menu-btn" onclick="onExport()">导出<em></em></a>
+			              <s class="middle_info"></s>
+			              <ul class="more_div position_more" style="display:none; width:95px;left:-15px;">
+			                  <li><a href="javascript:void(0);" onclick="onExportAll()">全部导出</a></li>
+			              </ul>
+			        </div>
+					
 				</div>
 			</div>
 		</div>
@@ -983,6 +1001,35 @@
 		<!-- 驳回原因参照初始化 begin -->
 		<div id="rejeDlg"></div>
 		<!-- 驳回原因参照初始化 end -->
+		
+		<!-- 新增或修改对话框 begin -->
+		<div id="datadlg" style="padding:10px 20px;width:500px;height:340px;" class="easyui-dialog" data-options="closed:true">
+			<form id="dataform" method="post">
+				<div style="margin-top:10px;vertical-align: top;">
+					<label style="display: inline-block;vertical-align: top;">驳回原因：</label>
+					<textarea class="easyui-textbox" style="width:350px;height:80px;resize: none;" 
+					    data-options="required:true,validType:['length[0,20]'],multiline:true" 
+					 	autocomplete="off" id="reason" name="reason">
+					</textarea>
+				</div>
+				<div style="margin-top:10px;vertical-align: top;">
+					<label style="display:inline-block;vertical-align:top;">修改建议：</label>
+					<textarea class="easyui-textbox" style="width:350px;height:80px;resize: none;"
+						data-options="required:true,validType:['length[0,100]'],multiline:true" 
+					 	autocomplete="off" id="suggest" name="suggest">
+					</textarea>
+				</div>
+				<input id="reid" name="reid" type="hidden">
+				<input id="corpid" name="corpid" type="hidden">
+				<input id="updatets" name="updatets" type="hidden">
+			</form>
+			<div style="text-align: center;margin-top:20px;">
+				<a class="ui-btn ui-btn-xz" href="javascript:void(0)" onclick="save()">保存</a>
+				<a class="ui-btn ui-btn-xz" style="margin-right: 0px;" href="javascript:void(0)" 
+					onclick="cancel()" >取消</a>
+			</div>
+		</div>
+		<!-- 新增或修改对话框 end -->
 		
 	</div>
 	

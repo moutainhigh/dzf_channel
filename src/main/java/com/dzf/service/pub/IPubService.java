@@ -41,7 +41,7 @@ public interface IPubService {
 	public String[] getManagerCorp(String userids) throws DZFWarpException;
 	
 	/**
-	 * 获取加盟会计公司所对应的渠道经理
+	 * 获取加盟商直接对应的渠道经理(非省/市负责人)
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
@@ -128,5 +128,14 @@ public interface IPubService {
      * @throws DZFWarpException
      */
     public String getPowerSql(String cuserid, Integer datatype) throws DZFWarpException;
+    
+    /**
+     * 查询加盟商对应的渠道经理
+     * (如果有直接对应对的渠道经理，则取；否则，取省(直辖市)负责人)
+     * @param pk_corp
+     * @return
+     * @throws DZFWarpException
+     */
+    public String getManagerName(String pk_corp) throws DZFWarpException;
     
 }

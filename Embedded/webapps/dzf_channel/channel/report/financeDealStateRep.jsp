@@ -110,6 +110,25 @@
 					<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
 					<label style="text-align:right">加盟商：</label> 
 					<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
+					<input id="corpid" name="corpid" type="hidden">
+					
+					<label style="width:85px;text-align:right;margin-left:200px;">记账状态：</label>
+					<select id="jzstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:80px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">未开始</option>
+						<option value="2">进行中</option>
+						<option value="3">已完成</option>
+					</select>
+					<label style="width:85px;text-align:right;">账务检查：</label>
+					<select id="zwstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:80px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">已关账</option>
+						<option value="2">未关账</option>
+					</select>
+					
+					<a class="ui-btn save_input" style ="margin-top: 10px;" onclick="queryDetail()">查询</a>
 				</div>	
 				
 				<div data-options="region:'center'" 

@@ -29,6 +29,9 @@ public class FinanceDetailVO extends SuperVO {
 	@FieldAlias("corpknm")
 	private String corpkname;//客户名称
 	
+    @FieldAlias("chname")
+    public String chargedeptname;// 纳税人资格
+	
 	@FieldAlias("cdate")
     public DZFDate createdate;// 录入日期
 	
@@ -45,6 +48,14 @@ public class FinanceDetailVO extends SuperVO {
 	
 	@FieldAlias("ckstatus")
 	private String vcheckstatus;//账务检查状态
+
+	public String getChargedeptname() {
+		return chargedeptname;
+	}
+
+	public void setChargedeptname(String chargedeptname) {
+		this.chargedeptname = chargedeptname;
+	}
 
 	public String getVcheckstatus() {
 		return vcheckstatus;

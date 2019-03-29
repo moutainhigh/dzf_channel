@@ -95,6 +95,28 @@ public class ChnDetailRepVO extends SuperVO {
 	
 	@FieldAlias("isncust")
 	private DZFBoolean isncust;// 是否存量客户
+	
+	@FieldAlias("oldname")
+	private String voldname;//原客户名称
+	
+	@FieldAlias("mname")
+	private String vmanagername; // 渠道经理（只做界面展示）
+
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
+	}
+
+	public String getVoldname() {
+		return voldname;
+	}
+
+	public void setVoldname(String voldname) {
+		this.voldname = voldname;
+	}
 
 	public DZFBoolean getIsncust() {
 		return isncust;

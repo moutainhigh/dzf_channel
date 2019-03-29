@@ -24,6 +24,7 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
@@ -666,6 +667,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO sqpvo = getDetailQry(paramvo);
 		List<ChnDetailRepVO> list = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
+		if(list != null && list.size() > 0){
+			//2.1、对原客户名称进行解密
+			QueryDeCodeUtils.decKeyUtils(new String[]{"voldname"}, list.toArray(new ChnDetailRepVO[0]), 1);
+		}
 		
 		//3、查询零扣款数据
 		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
@@ -685,6 +690,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					&& (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
 				contmap = queryConDetail(paramvo);
 			}
+			
 			for (ChnDetailRepVO repvo : orderlist) {
 				corpvo = CorpCache.getInstance().get(null, repvo.getPk_corp());
 				if (corpvo != null) {
@@ -703,6 +709,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				coutbal = repvo.getNbalance();
 				retlist.add(repvo);
 			}
+		}
+		if(retlist != null && retlist.size() > 0){
+			//设置渠道经理显示
+			ChnDetailRepVO firstvo = retlist.get(0);
+			String manager = pubService.getManagerName(firstvo.getPk_corp());
+			firstvo.setVmanagername(manager);
 		}
 		return retlist;
 	}
@@ -1297,19 +1309,22 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-//		sql.append("SELECT * FROM cn_detail WHERE nvl(dr,0) = 0 and pk_corp = ? \n");
 		sql.append("SELECT l.*, \n") ;
 		sql.append("       ct.patchstatus, \n");
 		sql.append("       ct.vcontcode, \n");
 		sql.append("       ct.pk_corpk, \n");
 		sql.append("       ct.vstatus, \n");
-		sql.append("       ct.isncust \n");
+		sql.append("       ct.isncust, \n");
+		sql.append("       e.voldname  \n");
 		sql.append("  FROM cn_detail l  \n") ; 
 		sql.append("  LEFT JOIN cn_contract t ON l.pk_bill = t.pk_confrim  \n") ; 
 		sql.append("  LEFT JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append("  LEFT JOIN cn_corpnameedit e ON t.pk_corpk = e.pk_corp \n");
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(e.dr, 0) = 0  \n") ; 
+		sql.append("   AND e.istatus = 2 \n");//客户名称修改已审核通过
 		sql.append("   AND l.pk_corp = ? \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){

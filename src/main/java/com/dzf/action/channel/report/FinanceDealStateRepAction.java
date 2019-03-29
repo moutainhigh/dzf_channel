@@ -86,17 +86,36 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 	public void queryDetail() {
 		Grid grid = new Grid();
 		try {
-			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			int total = financeServ.queryDetailRow(paramvo);
-			if(total > 0){
-				List<FinanceDetailVO> workvos = financeServ.queryDetail(paramvo);
-				grid.setRows(workvos);
+			QryParamVO pamvo = new QryParamVO();
+			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if ((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
+					|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)) {
+				int page = pamvo == null ? 1 : pamvo.getPage();
+				int rows = pamvo == null ? 10000 : pamvo.getRows();
+				pamvo.setRows(10000);
+				List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);
+				int len = detlist == null ? 0 : detlist.size();
+				if (len > 0) {
+					grid.setTotal((long) (len));
+					SuperVO[] pageVOs = QueryUtil.getPagedVOs(detlist.toArray(new FinanceDetailVO[0]), page, rows);
+					grid.setRows(Arrays.asList(pageVOs));
+				} else {
+					grid.setTotal(Long.valueOf(0));
+					grid.setRows(new ArrayList<FinanceDetailVO>());
+				}
+
 			}else{
-				grid.setRows(new ArrayList<FinanceDetailVO>());
+				int total = financeServ.queryDetailRow(pamvo);
+				if (total > 0) {
+					List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);
+					grid.setRows(detlist);
+				} else {
+					grid.setRows(new ArrayList<FinanceDetailVO>());
+				}
+				grid.setTotal((long) (total));
 			}
+
 			grid.setSuccess(true);
-			grid.setTotal((long) (total));
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}

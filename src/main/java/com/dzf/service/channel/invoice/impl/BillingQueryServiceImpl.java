@@ -188,25 +188,8 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			if (StringUtil.isEmpty(avo.getTaxcode())) {
 				throw new BusinessException("开票信息【税号】为空。");
 			}
-			ChInvoiceVO cvo = new ChInvoiceVO();
-			cvo.setPk_corp(vo.getPk_corp());
-			cvo.setCorpname(vo.getCorpname());
-			cvo.setInvnature(0);// 发票性质
-			cvo.setTaxnum(avo.getTaxcode());// 税号
-			cvo.setInvprice(vo.getNoticketmny());// 开票金额
-			cvo.setInvtype(avo.getInvtype() == null ? 2 : avo.getInvtype());// 发票类型
-			cvo.setCorpaddr(avo.getPostaddr());// 公司地址
-			cvo.setInvphone(CodeUtils1.deCode(avo.getPhone1()));
-			cvo.setBankcode(avo.getVbankcode());// 开户账户
-			cvo.setBankname(avo.getVbankname());// 开户行
-			cvo.setEmail(avo.getEmail1());// 邮箱
-			cvo.setApptime(new DZFDate().toString());// 申请日期
-			cvo.setInvstatus(1);// 状态
-			cvo.setIpaytype(0);
-			cvo.setInvcorp(2);
-			cvo.setRusername(avo.getLinkman2());
-			cvo.setIsourcetype(1);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-			singleObjectBO.saveObject(vo.getPk_corp(), cvo);
+			
+			saveChinvoice(vo, avo);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -215,6 +198,78 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(tablename, vo.getPk_corp(), uuid);
 		}
+	}
+	
+	/**
+	 * 发票保存
+	 * @param vo
+	 * @param avo
+	 * @throws DZFWarpException
+	 */
+	private void saveChinvoice(BillingInvoiceVO vo, AccountVO avo) throws DZFWarpException{
+		if(vo.getNoticketmny().compareTo(new DZFDouble(10000)) > 0){
+			List<ChInvoiceVO> list = new ArrayList<ChInvoiceVO>();
+			list = getChinvoiceList(vo, avo, list);
+			singleObjectBO.insertVOArr(vo.getPk_corp(), list.toArray(new ChInvoiceVO[0]));
+		}else{
+			ChInvoiceVO cvo = getChinvoiceVO(vo, avo, vo.getNoticketmny());
+			singleObjectBO.saveObject(vo.getPk_corp(), cvo);
+		}
+	}
+	
+	/**
+	 * 当开票金额大于 1万时，递归组装小于等于 1万的多条发票
+	 * @param vo
+	 * @param avo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<ChInvoiceVO> getChinvoiceList(BillingInvoiceVO vo, AccountVO avo, List<ChInvoiceVO> list)
+			throws DZFWarpException {
+		ChInvoiceVO cvo = null;
+		if (vo.getNoticketmny().compareTo(new DZFDouble(10000)) > 0) {
+			cvo = getChinvoiceVO(vo, avo, new DZFDouble(10000));
+			list.add(cvo);
+			DZFDouble noticketmny = SafeCompute.sub(vo.getNoticketmny(), new DZFDouble(10000));
+			vo.setNoticketmny(noticketmny);
+			getChinvoiceList(vo, avo, list);
+		} else if (vo.getNoticketmny().compareTo(new DZFDouble(10000)) < 0
+				&& vo.getNoticketmny().compareTo(new DZFDouble(0)) > 0) {
+			cvo = getChinvoiceVO(vo, avo, vo.getNoticketmny());
+			list.add(cvo);
+			vo.setNoticketmny(DZFDouble.ZERO_DBL);
+		}
+		return list;
+	}
+	
+	/**
+	 * 构造开票vo
+	 * @param vo
+	 * @param avo
+	 * @param noticketmny
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private ChInvoiceVO getChinvoiceVO(BillingInvoiceVO vo, AccountVO avo, DZFDouble noticketmny) throws DZFWarpException{
+		ChInvoiceVO cvo = new ChInvoiceVO();
+		cvo.setPk_corp(vo.getPk_corp());
+		cvo.setCorpname(vo.getCorpname());
+		cvo.setInvnature(0);// 发票性质
+		cvo.setTaxnum(avo.getTaxcode());// 税号
+		cvo.setInvprice(noticketmny);// 开票金额
+		cvo.setInvtype(avo.getInvtype() == null ? 2 : avo.getInvtype());// 发票类型
+		cvo.setCorpaddr(avo.getPostaddr());// 公司地址
+		cvo.setInvphone(CodeUtils1.deCode(avo.getPhone1()));
+		cvo.setBankcode(avo.getVbankcode());// 开户账户
+		cvo.setBankname(avo.getVbankname());// 开户行
+		cvo.setEmail(avo.getEmail1());// 邮箱
+		cvo.setApptime(new DZFDate().toString());// 申请日期
+		cvo.setInvstatus(1);// 状态
+		cvo.setIpaytype(0);
+		cvo.setInvcorp(2);
+		cvo.setRusername(avo.getLinkman2());
+		cvo.setIsourcetype(1);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		return cvo;
 	}
 
 	/**

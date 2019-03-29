@@ -58,6 +58,9 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			UserVO uservo = null;
 			CustCountVO custvo = null;
 			CustNumMoneyRepVO retvo = null;
+			
+			//4、查询合同提单量
+			Map<String, Integer> cmap = queryContNum(paramvo, corplist);
 
 			for (String pk_corp : corplist) {
 				retvo = (CustNumMoneyRepVO) map.get(pk_corp);
@@ -107,6 +110,11 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				retvo.setInewcustratetaxpay(getCustRate(retvo.getInewcusttaxpay(), retvo.getIlastnewcusttaxpay()));
 				retvo.setInewcontratesmall(getContRate(retvo.getInewcontsmall(), retvo.getIlastnewcontsmall()));
 				retvo.setInewcontratetaxpay(getContRate(retvo.getInewconttaxpay(), retvo.getIlastnewconttaxpay()));
+				// 5、合同数量
+				if(cmap != null && !cmap.isEmpty()){
+					retvo.setIcontnum(cmap.get(pk_corp));
+				}
+				
 				retlist.add(retvo);
 			}
 		}
@@ -147,6 +155,10 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			CustNumMoneyRepVO retvo = null;
 			
 			Integer counum = null;
+			
+			// 4、查询续签客户数
+			Map<String, CustNumMoneyRepVO> xqmap = queryXqNum(paramvo, corplist);
+			CustNumMoneyRepVO xqvo = null;
 
 			for (String pk_corp : corplist) {
 				retvo = (CustNumMoneyRepVO) map.get(pk_corp);
@@ -214,10 +226,68 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				retvo.setIrenewcontratesmall(getContRate(retvo.getIrenewcontsmall(), retvo.getIlastrenewcontsmall()));
 				retvo.setIrenewcontratetaxpay(
 						getContRate(retvo.getIrenewconttaxpay(), retvo.getIlastrenewconttaxpay()));
+				
+				// 5、续签客户数
+				if(xqmap != null && !xqmap.isEmpty()){
+					xqvo = xqmap.get(pk_corp);
+					if(xqvo != null){
+						retvo.setIyrenewnum(xqvo.getIyrenewnum());//应续签客户数
+						retvo.setIrenewnum(xqvo.getIrenewnum());//已续签客户数
+					}
+				}
+				
 				retlist.add(retvo);
 			}
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 查询续签客户数
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, CustNumMoneyRepVO> queryXqNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
+		Map<String, CustNumMoneyRepVO> xqmap = new HashMap<String, CustNumMoneyRepVO>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp,  \n");
+		sql.append("       COUNT(CASE  \n");
+		sql.append("               WHEN nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
+		sql.append("                1  \n");
+		sql.append("               ELSE  \n");
+		sql.append("                0  \n");
+		sql.append("             END) AS iyrenewnum,  \n");
+		sql.append("       COUNT(CASE  \n");
+		sql.append("               WHEN nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND  \n");
+		sql.append("                    nvl(ct.isxq, 'N') = 'Y' THEN  \n");
+		sql.append("                1  \n");
+		sql.append("               ELSE  \n");
+		sql.append("                0  \n");
+		sql.append("             END) AS irenewnum  \n");
+		sql.append("  FROM cn_contract t  \n");
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
+		sql.append("   AND ct.icontracttype = 2  \n");
+		sql.append("   AND ct.icosttype = 0  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
+		sql.append("   AND ct.vendperiod = ?  \n");
+		spm.addParam(paramvo.getPeriod());
+		sql.append("   AND t.vdeductstatus = ?  \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		sql.append(" GROUP BY t.pk_corp  \n");
+		List<CustNumMoneyRepVO> list = (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustNumMoneyRepVO.class));
+		if(list != null && list.size() > 0){
+			for(CustNumMoneyRepVO repvo : list){
+				xqmap.put(repvo.getPk_corp(), repvo);
+			}
+		}
+		return xqmap;
 	}
 
 	/**
@@ -726,6 +796,65 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		}
 		DZFDouble num = num1.sub(num2);
 		return num.div(num2).multiply(100);
+	}
+	
+	/**
+	 * 查询合同提单量
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Integer> queryContNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
+		Map<String, Integer> cmap = new HashMap<String, Integer>();
+
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp, \n");
+		// 合同数量去掉补提单合同数
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
+		sql.append("                  AND SUBSTR(t.deductdata, 1, 7) = ? THEN  \n");
+		spm.addParam(paramvo.getPeriod());
+		sql.append("              1  \n");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
+		sql.append("                  AND t.vdeductstatus = 10 AND SUBSTR(t.dchangetime, 1, 7) = ? THEN  \n");
+		spm.addParam(paramvo.getPeriod());
+		sql.append("              -1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) AS num  \n");
+		sql.append("  FROM cn_contract t \n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0 \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N' \n");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+
+		if (corplist != null && corplist.size() > 0) {
+			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
+			sql.append(" and ");
+			sql.append(condition);
+		}
+
+		sql.append("   AND ( SUBSTR(t.deductdata, 1, 7) = ? OR  \n");
+		sql.append("         SUBSTR(t.dchangetime, 1, 7) = ? )  \n");
+		spm.addParam(paramvo.getPeriod());
+		spm.addParam(paramvo.getPeriod());
+
+		sql.append("   GROUP BY t.pk_corp \n");
+		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustCountVO.class));
+		if (list != null && list.size() > 0) {
+			for (CustCountVO cvo : list) {
+				cmap.put(cvo.getPk_corp(), cvo.getNum());
+			}
+		}
+		return cmap;
 	}
 
 }
