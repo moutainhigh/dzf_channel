@@ -398,7 +398,12 @@ function showImage(content, index, flowImgUrls, opertype){
 			content: content  , 
 			maxmin: true,
 			shadeClose: true,
-			moveOut: false,
+			moveOut: true,
+            moveEnd: function(layero){
+				if ($(window.document).height() - $(layero).offset().top < 43) {
+                    $(layero).offset({top: $(window.document).height() - 43})
+				}
+			},
 			cancel: function () {  
 			}  
 		});  
