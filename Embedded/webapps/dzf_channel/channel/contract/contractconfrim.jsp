@@ -150,9 +150,13 @@
 					<input id="corpkid_ae" name="corpkid" type="hidden"> 
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:85px;text-align:right">渠道经理：</label>
-					<input id="manager" class="easyui-textbox" style="width:284px;height:28px;" />
+					<label style="width:75px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:105px;height:28px;" />
 					<input id="managerid" type="hidden">
+					
+					<label style="width:75px;text-align:right">渠道运营：</label>
+					<input id="operater" class="easyui-textbox" style="width:105px;height:28px;" />
+					<input id="operaterid" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">纳税人资格：</label>
@@ -997,6 +1001,15 @@
 				onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
 		</div>
 		<!-- 渠道经理参照对话框及按钮 end -->
+		
+		<!-- 渠道运营参照对话框及按钮 begin -->
+		<div id="operDlg"></div>
+		<div id="operBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道运营参照对话框及按钮 end -->
 		
 		<!-- 驳回原因参照初始化 begin -->
 		<div id="rejeDlg"></div>
