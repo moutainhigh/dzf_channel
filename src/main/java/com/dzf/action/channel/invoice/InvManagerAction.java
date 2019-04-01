@@ -86,26 +86,30 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			StringBuffer qsql = new StringBuffer();// 附加查询条件
 			// 1、渠道经理查询条件
 			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
-				String sql = invManagerSer.getQrySql(paramvo.getVmanager(), 1);
+				String sql = invManagerSer.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
 			}
 			// 2、渠道运营查询条件
 			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
-				String sql = invManagerSer.getQrySql(paramvo.getVoperater(), 3);
+				String sql = invManagerSer.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
 			}
 			
 			int total = 0;
+			// 3、根据登录人和选择区域进行过滤
 			String where = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
-			if(!StringUtil.isEmpty(where) && !"alldata".equals(where)){
-				qsql.append(where);
+			if (where != null) {
+				if (!where.equals("alldata")) {
+					qsql.append(where);
+					paramvo.setVprovname(qsql.toString());
+				}
+				total = invManagerSer.queryTotalRow(paramvo);
 			}
-			paramvo.setVprovname(qsql.toString());
-			total = invManagerSer.queryTotalRow(paramvo);
+			
 			if (total > 0) {
 				List<ChInvoiceVO> rows = invManagerSer.query(paramvo);
 				grid.setRows(rows);

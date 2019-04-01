@@ -80,14 +80,14 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			StringBuffer qsql = new StringBuffer();// 附加查询条件
 			// 1、渠道经理查询条件
 			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
-				String sql = contractconfser.getQrySql(paramvo.getVmanager(), 1);
+				String sql = contractconfser.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
 			}
 			// 2、渠道运营查询条件
 			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
-				String sql = contractconfser.getQrySql(paramvo.getVoperater(), 3);
+				String sql = contractconfser.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}

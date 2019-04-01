@@ -61,6 +61,28 @@ public class BillingInvoiceVO extends SuperVO{
 
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
+	
+	@FieldAlias("mid")
+	private String vmanager;//渠道经理
+	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营
+
+	public String getVmanager() {
+		return vmanager;
+	}
+
+	public void setVmanager(String vmanager) {
+		this.vmanager = vmanager;
+	}
+
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
 
 	public DZFDouble getBillconmny() {
 		return billconmny;

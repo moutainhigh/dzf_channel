@@ -137,10 +137,10 @@ public class ChInvoiceVO extends SuperVO{
 	public Integer vprovince;// 省市
 	
 	@FieldAlias("mid")
-	private String vmanager;//渠道经理（查询使用）
+	private String vmanager;//渠道经理
 	
 	@FieldAlias("oid")
-	private String voperater;//渠道运营（查询使用）
+	private String voperater;//渠道运营
     
     public String getVmanager() {
 		return vmanager;
