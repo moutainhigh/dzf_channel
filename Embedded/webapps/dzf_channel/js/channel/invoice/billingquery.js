@@ -16,6 +16,7 @@ $(function(){
 	initChannel();
 //	reloadData();
 	initGridP();
+	initRef();
 });
 
 //初始化监听
@@ -28,6 +29,121 @@ function initListener(){
 		$("#qrydialog").css("visibility", "visible");
 	});
 	fastQry();
+}
+
+/**
+ * 参照初始化
+ */
+function initRef(){
+	$('#manager').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#manDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道经理',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/manager_select.jsp',
+                    buttons: '#manBtn'
+                });
+            }
+        }]
+    });
+	
+	$('#operater').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#operDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道运营',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/operater_select.jsp',
+                    buttons: '#operBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道经理选择事件
+ */
+function selectMans(){
+	var rows = $('#mgrid').datagrid('getChecked');
+	dClickMans(rows);
+}
+
+/**
+ * 双击选择渠道经理
+ * @param rowTable
+ */
+function dClickMans(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个经理",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#manager").textbox("setValue",unames);
+		$("#managerid").val(uids);
+	}
+	$("#manDlg").dialog('close');
+}
+
+/**
+ * 渠道运营选择事件
+ */
+function selectOpers(){
+	var rows = $('#ogrid').datagrid('getChecked');
+	dClickOpers(rows);
+}
+
+/**
+ * 双击选择渠道运营
+ * @param rowTable
+ */
+function dClickOpers(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个运营",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#operater").textbox("setValue",unames);
+		$("#operaterid").val(uids);
+	}
+	$("#operDlg").dialog('close');
 }
 
 /**
@@ -78,10 +194,12 @@ function load(){
 //		pagination : true,
 //		pageSize : 20,
 //		pageList : [ 20, 50, 100, 200 ],
-		columns : [[{width : '100',title : '',field : 'id',checkbox: true},
-		            {width : '140',title : '大区',field : 'aname',align : 'left'},
-		            {width : '140',title : '地区',field : 'provname',align : 'left'},
-		            {width : '150',title : '加盟商编码',field : 'ccode',align:'left'},
+		columns : [[{width : '10',title : '',field : 'id',checkbox: true},
+		            {width : '60',title : '大区',field : 'aname',align : 'left'},
+		            {width : '120',title : '地区',field : 'provname',align : 'left'},
+		            {width : '80',title : '渠道经理',field : 'mid',align : 'left'},
+		            {width : '80',title : '渠道运营',field : 'oid',align : 'left'},
+		            {width : '120',title : '加盟商编码',field : 'ccode',align:'left'},
 		            {width : '260',title : '加盟商名称',field : 'cname',align:'left'},
 //		            {width : '120',title : '累计扣款金额',field : 'dtotalmny',align:'right',
 //		            	formatter: function(value,row,index){
@@ -304,6 +422,8 @@ function reloadData(){
     	corps : $("#pk_account").val(),
         bdate: bdate,
         aname: $("#aname").combobox('getValue'),
+        mid : $("#managerid").val(),
+		oid : $("#operaterid").val(),
     });
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');

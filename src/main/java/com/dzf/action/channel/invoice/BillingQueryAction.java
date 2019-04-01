@@ -78,7 +78,7 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		try {
 			BillingInvoiceVO paramvo = new BillingInvoiceVO();
 			paramvo = (BillingInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if (paramvo.getBdate() == null) {
+			if (StringUtil.isEmpty(paramvo.getBdate())) {
 				paramvo.setBdate(new DZFDate().toString());
 			}
 			paramvo.setCuserid(getLoginUserid());

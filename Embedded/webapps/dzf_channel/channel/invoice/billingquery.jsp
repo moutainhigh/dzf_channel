@@ -57,7 +57,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 420px; height: 190px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width:420px; height:230px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -65,17 +65,25 @@
 				</h3>
 				<div class="time_col time_colp10">
 					<label style="width: 80px;text-align:right">截止日期：</label>
-					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" data-options="width:219,height:27"  /></font>
+					<font><input name="bdate" type="text" id="bdate" class="easyui-datebox" style="width:105px;height:28px;" /></font>
+					<label style="text-align:right;width:55px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width:105px; height: 28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" /> 
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>
-					<input id="channel_select" class="easyui-textbox" style="width:219px;height:28px;" />
+					<input id="channel_select" class="easyui-textbox" style="width:282px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 80px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 219px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
+					<label style="width:80px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:282px;height:28px;" />
+					<input id="managerid" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">渠道运营：</label>
+					<input id="operater" class="easyui-textbox" style="width:282px;height:28px;" />
+					<input id="operaterid" type="hidden">
 				</div>
 				
 			</form>
@@ -116,6 +124,25 @@
 				 <table id="gridp"></table>	
 			</div>
 		</div>
+		
+		 <!-- 渠道经理参照对话框及按钮 begin -->
+		<div id="manDlg"></div>
+		<div id="manBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道经理参照对话框及按钮 end -->
+		
+		<!-- 渠道运营参照对话框及按钮 begin -->
+		<div id="operDlg"></div>
+		<div id="operBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道运营参照对话框及按钮 end -->
+		
 	</div>
 </body>
 </html>

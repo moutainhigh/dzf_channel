@@ -18,11 +18,13 @@ import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.sys.sys_power.AccountVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
@@ -39,7 +41,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private SingleObjectBO singleObjectBO;
 
 	@Autowired
-	private IPubService pubService;
+	private IPubService pubser;
 
 	private final static String tablename = "cn_invoice";
 
@@ -53,21 +55,20 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		sql.append("       ba.unitname as corpname, \n");
 		sql.append("       ba.vprovince, \n");
 		sql.append("       ba.citycounty as vprovname, \n");
-//		sql.append("       sum(nvl(detail.nusedmny, 0)) as debittotalmny, \n");
-//		sql.append("       sum(decode(detail.iopertype, 2, nvl(detail.nusedmny,0), 0)) AS debitconmny, \n");//累计合同扣款金额
-//		sql.append("       sum(decode(detail.iopertype, 5, nvl(detail.nusedmny,0), 0)) AS debitbuymny \n");//累计商品扣款金额
-		sql.append("       SUM(CASE WHEN detail.ipaytype = 2 AND detail.iopertype = 2 THEN nvl(detail.nusedmny,0) \n");
+		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 2 THEN nvl(t.nusedmny,0) \n");
 		sql.append("       			ELSE 0 END) AS debitconmny, \n");
-		sql.append("       SUM(CASE WHEN detail.ipaytype = 2 AND detail.iopertype = 5 THEN nvl(detail.nusedmny,0) \n");
+		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 5 THEN nvl(t.nusedmny,0) \n");
 		sql.append("       			ELSE 0 END) AS debitbuymny \n");
 		sql.append("  from bd_account ba \n");
-		sql.append("  left join cn_detail detail on ba.pk_corp = detail.pk_corp \n");
-		sql.append("                            and nvl(detail.dr, 0) = 0 \n");
-		sql.append("                            and detail.ipaytype = 2 \n");//付款类型   1：加盟费；2：预付款；3：返点；
-		sql.append("                            and detail.iopertype in (2, 5) \n");//操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；5：商品购买；
+		sql.append("  left join cn_detail t on ba.pk_corp = t.pk_corp \n");
+		sql.append("                            and nvl(t.dr, 0) = 0 \n");
+		// 付款类型  1：加盟费；2：预付款；3：返点；
+		sql.append("                            and t.ipaytype = 2 \n");
+		// 操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；5：商品购买；																
+		sql.append("                            and t.iopertype in (2, 5) \n");
 
 		if (!StringUtil.isEmpty(paramvo.getBdate())) {
-			sql.append(" and detail.doperatedate <= ?");
+			sql.append(" and t.doperatedate <= ?");
 			spm.addParam(paramvo.getBdate());
 		}
 		sql.append(" where ba.ischannel = 'Y'  ");
@@ -76,11 +77,24 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
 		}
 
-		String condition = pubService.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),
-				IStatusConstant.IYUNYING);
-		if (condition != null && !condition.equals("alldata")) {
-			sql.append(condition);
-		} else if (condition == null) {
+		if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+			String qrysql = getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
+			if(!StringUtil.isEmpty(qrysql)){
+				sql.append(qrysql);
+			}
+		}
+		
+		if(!StringUtil.isEmpty(paramvo.getVoperater())){
+			String qrysql = getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
+			if(!StringUtil.isEmpty(qrysql)){
+				sql.append(qrysql);
+			}
+		}
+
+		String where = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(), IStatusConstant.IYUNYING);
+		if (where != null && !where.equals("alldata")) {
+			sql.append(where);
+		} else if (where == null) {
 			return new ArrayList<BillingInvoiceVO>();
 		}
 		sql.append(" group by ba.pk_corp, \n");
@@ -91,46 +105,104 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(BillingInvoiceVO.class));
-		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(paramvo);
-		Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(), 3);
+		
 		if (list != null && list.size() > 0) {
-			List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
-			QueryDeCodeUtils.decKeyUtils(new String[] { "corpname" }, list, 2);
-			for (BillingInvoiceVO bvo : list) {
-				if (areaMap != null && !areaMap.isEmpty()) {
-					String area = areaMap.get(bvo.getVprovince());
-					if (!StringUtil.isEmpty(area)) {
-						bvo.setAreaname(area);
-					}
+			return setShowData(paramvo, list);
+		}
+		return list;
+	}
+	
+	/**
+	 * 设置显示数据
+	 * @param pamvo
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<BillingInvoiceVO> setShowData(BillingInvoiceVO pamvo, List<BillingInvoiceVO> list) throws DZFWarpException {
+		HashMap<String, BillingInvoiceVO> map = queryInvoiceMny(pamvo);
+		Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 3);
+		List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
+		QueryDeCodeUtils.decKeyUtils(new String[] { "corpname" }, list, 2);
+		
+		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
+		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		
+		UserVO uservo = null;
+		for (BillingInvoiceVO bvo : list) {
+			if (areaMap != null && !areaMap.isEmpty()) {
+				String area = areaMap.get(bvo.getVprovince());
+				if (!StringUtil.isEmpty(area)) {
+					bvo.setAreaname(area);
 				}
-				if(map != null && !map.isEmpty()){
-					BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
-					if (binvo != null) {
-//					bvo.setBilltotalmny(CommonUtil.getDZFDouble(binvo.getBilltotalmny()));//累计开票金额
-						bvo.setBillconmny(CommonUtil.getDZFDouble(binvo.getBillconmny()));//累计合同开票金额
-						bvo.setNoticketmny(SafeCompute.sub(bvo.getDebitconmny(), bvo.getBillconmny()));//合同扣款未开票金额
-						
-						bvo.setBillbuymny(CommonUtil.getDZFDouble(binvo.getBillbuymny()));//累计商品开票金额
-						bvo.setNotbuymny(SafeCompute.sub(bvo.getDebitbuymny(), bvo.getBillbuymny()));//商品购买未开票金额
-					}
-					
+			}
+			if (map != null && !map.isEmpty()) {
+				BillingInvoiceVO binvo = map.get(bvo.getPk_corp());
+				if (binvo != null) {
+					bvo.setBillconmny(CommonUtil.getDZFDouble(binvo.getBillconmny()));// 累计合同开票金额
+					bvo.setNoticketmny(SafeCompute.sub(bvo.getDebitconmny(), bvo.getBillconmny()));// 合同扣款未开票金额
+
+					bvo.setBillbuymny(CommonUtil.getDZFDouble(binvo.getBillbuymny()));// 累计商品开票金额
+					bvo.setNotbuymny(SafeCompute.sub(bvo.getDebitbuymny(), bvo.getBillbuymny()));// 商品购买未开票金额
 				}
-				if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-					if (bvo.getCorpcode().indexOf(paramvo.getCorpname()) != -1
-							|| bvo.getCorpname().indexOf(paramvo.getCorpname()) != -1) {
-						retlist.add(bvo);
+
+			}
+			
+			if (marmap != null && !marmap.isEmpty()) {
+				String manager = marmap.get(bvo.getPk_corp());
+				if (!StringUtil.isEmpty(manager)) {
+					uservo = UserCache.getInstance().get(manager, null);
+					if (uservo != null) {
+						bvo.setVmanager(uservo.getUser_name());// 渠道经理
 					}
 				}
 			}
-			if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-				return retlist;
+			if (opermap != null && !opermap.isEmpty()) {
+				String operater = opermap.get(bvo.getPk_corp());
+				if (!StringUtil.isEmpty(operater)) {
+					uservo = UserCache.getInstance().get(operater, null);
+					if (uservo != null) {
+						bvo.setVoperater(uservo.getUser_name());// 渠道运营
+					}
+				}
 			}
+			
+			if (!StringUtil.isEmpty(pamvo.getCorpname())) {
+				if (bvo.getCorpcode().indexOf(pamvo.getCorpname()) != -1
+						|| bvo.getCorpname().indexOf(pamvo.getCorpname()) != -1) {
+					retlist.add(bvo);
+				}
+			}
+		}
+		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
+			return retlist;
 		}
 		return list;
 	}
 
 	/**
+	 * 获取查询条件
+	 * 
+	 * @param cuserid
+	 * @param qrytype   1：渠道经理；2：培训师；3：渠道运营；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
+		if (corps != null && corps.length > 0) {
+			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
+			sql.append(" AND ").append(where);
+		} else {
+			sql.append(" AND t.pk_corp is null \n");
+		}
+		return sql.toString();
+	}
+
+	/**
 	 * 查询已开票金额
+	 * 
 	 * @param vo
 	 * @return
 	 */
@@ -139,14 +211,18 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select a.pk_corp, \n");
-//		sql.append("       sum(nvl(i.invprice, 0)) as billtotalmny,");
-		sql.append("       sum(decode(i.isourcetype, 1, nvl(i.invprice, 0), 0)) AS billconmny, \n");//累计合同开票金额
-		sql.append("       sum(decode(i.isourcetype, 2, nvl(i.invprice, 0), 0)) AS billbuymny \n");//累计商品开票金额
+		// sql.append(" sum(nvl(i.invprice, 0)) as billtotalmny,");
+		sql.append("       sum(decode(i.isourcetype, 1, nvl(i.invprice, 0), 0)) AS billconmny, \n");// 累计合同开票金额
+		sql.append("       sum(decode(i.isourcetype, 2, nvl(i.invprice, 0), 0)) AS billbuymny \n");// 累计商品开票金额
 		sql.append("  from bd_account a \n");
 		sql.append("  left join cn_invoice i on i.pk_corp = a.pk_corp \n");
 		sql.append("                              and nvl(i.dr, 0) = 0 \n");
-		sql.append("                              and i.invstatus in (1, 2, 3) \n");//发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；
-		sql.append("                              and i.isourcetype in (1, 2) \n");//发票来源类型  1：合同扣款开票； 2：订单扣款开票；
+		sql.append("                              and i.invstatus in (1, 2, 3) \n");// 发票状态
+																					// 0：待提交
+																					// ；1：待开票；2：已开票；3：开票失败；
+		sql.append("                              and i.isourcetype in (1, 2) \n");// 发票来源类型
+																					// 1：合同扣款开票；
+																					// 2：订单扣款开票；
 		sql.append("                              and i.apptime <= ? \n");
 		spm.addParam(new DZFDate());
 		sql.append(" where a.ischannel = 'Y' \n");
@@ -175,9 +251,9 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			if (vo.getNoticketmny().compareTo(DZFDouble.ZERO_DBL) <= 0) {
 				throw new BusinessException("未开票金额必须大于0");
 			}
-			DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());//累计合同开票金额
-			DZFDouble umny = CommonUtil.getDZFDouble(vo.getDebitconmny());//累计合同扣款金额
-			DZFDouble invprice = new DZFDouble(vo.getNoticketmny());//合同扣款未开票金额
+			DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());// 累计合同开票金额
+			DZFDouble umny = CommonUtil.getDZFDouble(vo.getDebitconmny());// 累计合同扣款金额
+			DZFDouble invprice = new DZFDouble(vo.getNoticketmny());// 合同扣款未开票金额
 			if (invprice.compareTo(umny.sub(invmny)) > 0) {
 				StringBuffer msg = new StringBuffer();
 				msg.append("你本次要开票的金额").append(invprice.setScale(2, DZFDouble.ROUND_HALF_UP)).append("元大于可开票金额")
@@ -188,7 +264,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			if (StringUtil.isEmpty(avo.getTaxcode())) {
 				throw new BusinessException("开票信息【税号】为空。");
 			}
-			
+
 			saveChinvoice(vo, avo);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -199,26 +275,28 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			LockUtil.getInstance().unLock_Key(tablename, vo.getPk_corp(), uuid);
 		}
 	}
-	
+
 	/**
 	 * 发票保存
+	 * 
 	 * @param vo
 	 * @param avo
 	 * @throws DZFWarpException
 	 */
-	private void saveChinvoice(BillingInvoiceVO vo, AccountVO avo) throws DZFWarpException{
-		if(vo.getNoticketmny().compareTo(new DZFDouble(10000)) > 0){
+	private void saveChinvoice(BillingInvoiceVO vo, AccountVO avo) throws DZFWarpException {
+		if (vo.getNoticketmny().compareTo(new DZFDouble(10000)) > 0) {
 			List<ChInvoiceVO> list = new ArrayList<ChInvoiceVO>();
 			list = getChinvoiceList(vo, avo, list);
 			singleObjectBO.insertVOArr(vo.getPk_corp(), list.toArray(new ChInvoiceVO[0]));
-		}else{
+		} else {
 			ChInvoiceVO cvo = getChinvoiceVO(vo, avo, vo.getNoticketmny());
 			singleObjectBO.saveObject(vo.getPk_corp(), cvo);
 		}
 	}
-	
+
 	/**
-	 * 当开票金额大于 1万时，递归组装小于等于 1万的多条发票
+	 * 当开票金额大于 1万时，递归组装小于等于 10万的多条发票
+	 * 
 	 * @param vo
 	 * @param avo
 	 * @return
@@ -227,13 +305,13 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private List<ChInvoiceVO> getChinvoiceList(BillingInvoiceVO vo, AccountVO avo, List<ChInvoiceVO> list)
 			throws DZFWarpException {
 		ChInvoiceVO cvo = null;
-		if (vo.getNoticketmny().compareTo(new DZFDouble(10000)) > 0) {
-			cvo = getChinvoiceVO(vo, avo, new DZFDouble(10000));
+		if (vo.getNoticketmny().compareTo(new DZFDouble(100000)) > 0) {
+			cvo = getChinvoiceVO(vo, avo, new DZFDouble(100000));
 			list.add(cvo);
-			DZFDouble noticketmny = SafeCompute.sub(vo.getNoticketmny(), new DZFDouble(10000));
+			DZFDouble noticketmny = SafeCompute.sub(vo.getNoticketmny(), new DZFDouble(100000));
 			vo.setNoticketmny(noticketmny);
 			getChinvoiceList(vo, avo, list);
-		} else if (vo.getNoticketmny().compareTo(new DZFDouble(10000)) < 0
+		} else if (vo.getNoticketmny().compareTo(new DZFDouble(100000)) < 0
 				&& vo.getNoticketmny().compareTo(new DZFDouble(0)) > 0) {
 			cvo = getChinvoiceVO(vo, avo, vo.getNoticketmny());
 			list.add(cvo);
@@ -241,16 +319,18 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 构造开票vo
+	 * 
 	 * @param vo
 	 * @param avo
 	 * @param noticketmny
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private ChInvoiceVO getChinvoiceVO(BillingInvoiceVO vo, AccountVO avo, DZFDouble noticketmny) throws DZFWarpException{
+	private ChInvoiceVO getChinvoiceVO(BillingInvoiceVO vo, AccountVO avo, DZFDouble noticketmny)
+			throws DZFWarpException {
 		ChInvoiceVO cvo = new ChInvoiceVO();
 		cvo.setPk_corp(vo.getPk_corp());
 		cvo.setCorpname(vo.getCorpname());
@@ -268,7 +348,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		cvo.setIpaytype(0);
 		cvo.setInvcorp(2);
 		cvo.setRusername(avo.getLinkman2());
-		cvo.setIsourcetype(1);//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		cvo.setIsourcetype(1);// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
 		return cvo;
 	}
 
@@ -281,10 +361,10 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select  \n");
-		sql.append("       sum(nvl(invprice, 0)) as billconmny \n");//累计合同开票金额
+		sql.append("       sum(nvl(invprice, 0)) as billconmny \n");// 累计合同开票金额
 		sql.append("  from cn_invoice \n");
 		sql.append(" where nvl(dr,0) = 0 \n");
-		//发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；
+		// 发票状态 0：待提交 ；1：待开票；2：已开票；3：开票失败；
 		sql.append("   and invstatus in (1, 2, 3) \n");
 		sql.append("   and apptime <= ? \n");
 		sql.append("   and pk_corp = ? \n");
