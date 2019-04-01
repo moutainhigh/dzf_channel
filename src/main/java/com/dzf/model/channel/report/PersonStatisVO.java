@@ -32,6 +32,8 @@ public class PersonStatisVO extends DataVO{
 	private Integer knum;//会计人员用户总数
 	private Integer xnum;//销售人员用户总数
 	
+	private Integer custnum;//客户总数
+	
 	public Integer getLznum() {
 		return lznum;
 	}
@@ -53,6 +55,12 @@ public class PersonStatisVO extends DataVO{
 	}
 	public Integer getKnum() {
 		return knum;
+	}
+	public Integer getCustnum() {
+		return custnum;
+	}
+	public void setCustnum(Integer custnum) {
+		this.custnum = custnum;
 	}
 	public void setKnum(Integer knum) {
 		this.knum = knum;

@@ -40,6 +40,9 @@ public class StockOutVO extends MultSuperVO {
 	@FieldAlias("fcode")
 	private String fastcode; //物流单号
 	
+	@FieldAlias("fcost")
+	private DZFDouble fastcost;//物流费用
+	
 	private Integer vstatus;//状态 0:待确认；1：待发货；2：已发货
 	
 	@FieldAlias("ctid")
@@ -122,6 +125,14 @@ public class StockOutVO extends MultSuperVO {
 
 	public String getPk_logistics() {
 		return pk_logistics;
+	}
+
+	public DZFDouble getFastcost() {
+		return fastcost;
+	}
+
+	public void setFastcost(DZFDouble fastcost) {
+		this.fastcost = fastcost;
 	}
 
 	public void setPk_logistics(String pk_logistics) {

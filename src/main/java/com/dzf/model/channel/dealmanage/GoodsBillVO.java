@@ -33,8 +33,20 @@ public class GoodsBillVO extends MultSuperVO {
 	@FieldAlias("recode")
 	private String vzipcode;//收货邮编
 	
+    @FieldAlias("ovince")
+    public Integer vprovince;// 省
+    
+    @FieldAlias("city")
+    public Integer vcity;// 市
+    
+    @FieldAlias("area")
+    public Integer varea;// 区
+    
+    @FieldAlias("ccounty")
+    public String citycounty;//所属区域
+	
 	@FieldAlias("readdress")
-	private String vreceiveaddress;//收货地址
+	private String vreceiveaddress;//详细地址
 	
 	@FieldAlias("ndesummny")
 	private DZFDouble ndedsummny;// 扣款总金额
@@ -145,6 +157,38 @@ public class GoodsBillVO extends MultSuperVO {
 
 	public void setDconfdate(DZFDate dconfdate) {
 		this.dconfdate = dconfdate;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
+	public Integer getVcity() {
+		return vcity;
+	}
+
+	public void setVcity(Integer vcity) {
+		this.vcity = vcity;
+	}
+
+	public Integer getVarea() {
+		return varea;
+	}
+
+	public void setVarea(Integer varea) {
+		this.varea = varea;
+	}
+
+	public String getCitycounty() {
+		return citycounty;
+	}
+
+	public void setCitycounty(String citycounty) {
+		this.citycounty = citycounty;
 	}
 
 	public String getPk_goodsbill() {
