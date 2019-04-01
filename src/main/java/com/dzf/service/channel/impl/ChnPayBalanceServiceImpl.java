@@ -52,7 +52,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		StringBuffer qrysql = new StringBuffer();//附加查询条件
 		//1、渠道经理查询条件
 		if(!StringUtil.isEmpty(paramvo.getVmanager())){
-			String[] corps = pubService.getManagerCorp(paramvo.getVmanager());
+			String[] corps = pubService.getManagerCorp(paramvo.getVmanager(), 1);
 			if(corps != null && corps.length > 0){
 				String where = SqlUtil.buildSqlForIn(" ba.pk_corp ", corps);
 				qrysql.append(" AND ").append(where);

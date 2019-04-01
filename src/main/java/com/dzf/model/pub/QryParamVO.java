@@ -106,6 +106,17 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("contractid")
 	private String pk_contract; // 合同主键
 	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营id
+	
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
+
 	public String getVbillcode() {
 		return vbillcode;
 	}

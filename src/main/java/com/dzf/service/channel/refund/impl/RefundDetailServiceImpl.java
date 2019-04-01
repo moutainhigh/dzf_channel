@@ -50,7 +50,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		
 		//2、如果渠道经理查询条件不为空，则根据区域经理进行过滤
 		if(!StringUtil.isEmpty(pamvo.getVmanager())){
-			String[] corps = pubser.getManagerCorp(pamvo.getVmanager());
+			String[] corps = pubser.getManagerCorp(pamvo.getVmanager(), 1);
 			if(corps != null && corps.length > 0){
 				String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 				addWhere.append(" AND ").append(where);

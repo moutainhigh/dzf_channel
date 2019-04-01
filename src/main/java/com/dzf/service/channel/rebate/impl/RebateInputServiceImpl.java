@@ -507,7 +507,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append("SELECT DISTINCT userid  \n") ;
 		sql.append("  FROM cn_chnarea_b  \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		//1:渠道经理；2：培训师；3：运营；
+		//1：渠道经理；2：培训师；3：渠道运营；
 		sql.append("   AND nvl(type, 0) = ?  \n");
 		spm.addParam(pamvo.getQrytype());
 		
@@ -837,7 +837,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	@Override
 	public String getQrySql(String cuserid) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		String[] corps = pubser.getManagerCorp(cuserid);
+		String[] corps = pubser.getManagerCorp(cuserid, 1);
 		if (corps != null && corps.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);

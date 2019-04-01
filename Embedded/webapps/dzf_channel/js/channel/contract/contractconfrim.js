@@ -449,6 +449,7 @@ function reloadData(){
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.cpkid = $("#corpkid_ae").val();
 	queryParams.mid = $("#managerid").val();
+	queryParams.oid = $("#operaterid").val();
 	queryParams.corptype = $('#corptype').combobox('getValue');
 	queryParams.aname = $("#aname").combobox('getValue');
 	$('#grid').datagrid('options').queryParams = queryParams;
@@ -480,6 +481,7 @@ function clearQryParam(queryParams){
 	queryParams.id = null;
 	queryParams.cpname = null;
 	queryParams.mid = null;
+	queryParams.oid = null;
 }
 
 /**

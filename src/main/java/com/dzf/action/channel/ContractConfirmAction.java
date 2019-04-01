@@ -78,15 +78,23 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			StringBuffer qsql = new StringBuffer();// 附加查询条件
-			if (!StringUtil.isEmpty(paramvo.getVmanager())) {// 渠道经理查询条件
-				String sql = contractconfser.getQrySql(paramvo.getVmanager());
+			// 1、渠道经理查询条件
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+				String sql = contractconfser.getQrySql(paramvo.getVmanager(), 1);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
+				}
+			}
+			// 2、渠道运营查询条件
+			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
+				String sql = contractconfser.getQrySql(paramvo.getVmanager(), 3);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
 			}
 			paramvo.setCuserid(getLoginUserid());
 			int total = 0;
-			// 列表查询，根据登录人和选择区域进行过滤
+			// 3、根据登录人和选择区域进行过滤
 			String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(),
 					IStatusConstant.IYUNYING);
 			if (condition != null) {
@@ -506,14 +514,22 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		QryParamVO pamvo = new QryParamVO();
 		pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 		StringBuffer qsql = new StringBuffer();// 附加查询条件
-		if (!StringUtil.isEmpty(pamvo.getVmanager())) {// 渠道经理查询条件
-			String sql = contractconfser.getQrySql(pamvo.getVmanager());
+		// 1、渠道经理查询条件
+		if (!StringUtil.isEmpty(pamvo.getVmanager())) {
+			String sql = contractconfser.getQrySql(pamvo.getVmanager(), 1);
+			if (!StringUtil.isEmpty(sql)) {
+				qsql.append(sql);
+			}
+		}
+		// 2、渠道运营查询条件
+		if (!StringUtil.isEmpty(pamvo.getVoperater())) {
+			String sql = contractconfser.getQrySql(pamvo.getVmanager(), 3);
 			if (!StringUtil.isEmpty(sql)) {
 				qsql.append(sql);
 			}
 		}
 		pamvo.setCuserid(getLoginUserid());
-		// 列表查询，根据登录人和选择区域进行过滤
+		// 3、根据登录人和选择区域进行过滤
 		String condition = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname(),
 				IStatusConstant.IYUNYING);
 		if (condition != null) {

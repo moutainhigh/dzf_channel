@@ -146,27 +146,27 @@ public class PubServiceImpl implements IPubService {
 
 	/**
 	 * 获取渠道经理所负责客户
+	 * @param userids  以‘,’隔开
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
 	 * 
-	 * @param userids
-	 *            以‘,’隔开
-	 * @return
-	 * @throws DZFWarpException
 	 */
 	@Override
-	public String[] getManagerCorp(String userids) throws DZFWarpException {
+	public String[] getManagerCorp(String userids, Integer qrytype) throws DZFWarpException {
 		if (StringUtil.isEmpty(userids)) {
 			throw new BusinessException("区域经理信息不能为空");
 		}
 		List<String> retlist = new ArrayList<String>();
 		List<String> onlylist = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
-		sql.append(" nvl(dr,0) = 0 AND nvl(type,0) = 1 ");
+		SQLParameter spm = new SQLParameter();
+		sql.append(" nvl(dr,0) = 0 AND nvl(type,0) = ? ");
+		spm.addParam(qrytype);
 		String[] users = userids.split(",");
 		String where = SqlUtil.buildSqlForIn("userid", users);
 		if (!StringUtil.isEmpty(where)) {
 			sql.append(" AND ").append(where);
 		}
-		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), null);
+		ChnAreaBVO[] bVOs = (ChnAreaBVO[]) singleObjectBO.queryByCondition(ChnAreaBVO.class, sql.toString(), spm);
 		if (bVOs != null && bVOs.length > 0) {
 			Map<Integer, List<String>> map = getProviceCorp();
 			List<String> corplist = null;

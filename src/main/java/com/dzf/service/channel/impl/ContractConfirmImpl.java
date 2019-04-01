@@ -530,15 +530,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 	
 	/**
-	 * 获取渠道经理查询条件
+	 * 获取查询条件
 	 * @param cuserid
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@Override
-	public String getQrySql(String cuserid) throws DZFWarpException {
+	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		String[] corps = pubser.getManagerCorp(cuserid);
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
 		if(corps != null && corps.length > 0){
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 			sql.append(" AND ").append(where);

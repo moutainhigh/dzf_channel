@@ -33,12 +33,13 @@ public interface IPubService {
 	public Map<Integer,List<String>> getProviceCorp() throws DZFWarpException;
 	
 	/**
-	 * 获取渠道经理所直接负责客户
+	 * 获取所直接负责客户
 	 * @param userids
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public String[] getManagerCorp(String userids) throws DZFWarpException;
+	public String[] getManagerCorp(String userids, Integer qrytype) throws DZFWarpException;
 	
 	/**
 	 * 获取加盟商直接对应的渠道经理(非省/市负责人)
