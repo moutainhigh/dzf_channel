@@ -25,6 +25,8 @@ public class InvManageExcelField implements IExceport<ChInvoiceVO>{
 	private String corpname = null;
 	
 	private Fieldelement[] fields = new Fieldelement[]{
+			new Fieldelement("vmanager", "渠道经理",false,0,false),
+			new Fieldelement("voperater", "渠道运营",false,0,false),
 			new Fieldelement("areaname", "大区",false,0,false),
 			new Fieldelement("corpname", "加盟商",false,0,false),
 			new Fieldelement("ipaytype", "付款类型",false,0,false,new String[]{"预付款","加盟费"}),

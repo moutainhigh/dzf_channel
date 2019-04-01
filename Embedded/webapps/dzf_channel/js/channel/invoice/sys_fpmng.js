@@ -21,7 +21,123 @@ $(function(){
 		reloadData();
 	}
 	fastQry();
+	initRef();
 });
+
+/**
+ * 参照初始化
+ */
+function initRef(){
+	$('#manager').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#manDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道经理',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/manager_select.jsp',
+                    buttons: '#manBtn'
+                });
+            }
+        }]
+    });
+	
+	$('#operater').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#operDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道运营',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/operater_select.jsp',
+                    buttons: '#operBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道经理选择事件
+ */
+function selectMans(){
+	var rows = $('#mgrid').datagrid('getChecked');
+	dClickMans(rows);
+}
+
+/**
+ * 双击选择渠道经理
+ * @param rowTable
+ */
+function dClickMans(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个经理",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#manager").textbox("setValue",unames);
+		$("#managerid").val(uids);
+	}
+	$("#manDlg").dialog('close');
+}
+
+/**
+ * 渠道运营选择事件
+ */
+function selectOpers(){
+	var rows = $('#ogrid').datagrid('getChecked');
+	dClickOpers(rows);
+}
+
+/**
+ * 双击选择渠道运营
+ * @param rowTable
+ */
+function dClickOpers(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个运营",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#operater").textbox("setValue",unames);
+		$("#operaterid").val(uids);
+	}
+	$("#operDlg").dialog('close');
+}
 
 /**
  * 
@@ -39,7 +155,9 @@ function queryLink(obj){
     $('#querydate').html(obj.edate);
 }
 
-//初始化监听
+/**
+ * 初始化监听
+ */
 function initListener(){
 	// 查询框鼠标经过
 	$("#querydate").on("mouseover", function() {
@@ -48,6 +166,9 @@ function initListener(){
 	});
 }
 
+/**
+ * 关闭对话框
+ */
 function closeCx(){
 	$("#qrydialog").hide();
 }
@@ -70,6 +191,8 @@ function load(){
 		pageList : [ 20, 50, 100, 200, 1000 ],
 		showFooter:true,
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
+		            {width : '80',title : '渠道经理',field : 'mid',align : 'left'},
+		            {width : '80',title : '渠道运营',field : 'oid',align : 'left'},
 		            {width : '140',title : '大区',field : 'aname',align : 'left'},
 		            {width : '150',title : '加盟商',field : 'cname',align:'left'},
 		            {width : '80',title : '付款类型',field : 'paytype',align:'left',
@@ -201,8 +324,9 @@ function initArea(){
 	});
 }
 
-
-//初始化加盟商
+/**
+ * 加盟商初始化
+ */
 function initChannel(){
     $('#channel_select').textbox({
         editable: false,
@@ -227,8 +351,12 @@ function initChannel(){
     });
 }
 
+/**
+ * 查询
+ */
 function reloadData(){
-	$('#grid').datagrid('options').url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
+	var url = DZF.contextPath + '/sys/sys_inv_manager!query.action';
+	$('#grid').datagrid('options').url = url;
 	
 	var ischeck = $('#sq_tddate').is(':checked');
 	var bdate = ''; //开始日期
@@ -254,13 +382,18 @@ function reloadData(){
         qrytype : qrytype,
         aname　: $("#aname").combobox('getValue'),
         isourtype : $('#qsourtype').combobox('getValue'),
+        mid : $("#managerid").val(),
+		oid : $("#operaterid").val(),
     });
     
     $('#qrydialog').hide();
     $('#grid').datagrid('unselectAll');
 }
 
-//双击选择公司
+/**
+ * 双击选择公司
+ * @param rowTable
+ */
 function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];

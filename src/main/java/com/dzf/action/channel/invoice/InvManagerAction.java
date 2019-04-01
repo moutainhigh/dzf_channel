@@ -82,14 +82,30 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			int total = 0;
-			String condition = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
-			if (condition != null) {
-				if (!condition.equals("alldata")) {
-					paramvo.setVprovname(condition);
+			
+			StringBuffer qsql = new StringBuffer();// 附加查询条件
+			// 1、渠道经理查询条件
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+				String sql = invManagerSer.getQrySql(paramvo.getVmanager(), 1);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
 				}
-				total = invManagerSer.queryTotalRow(paramvo);
 			}
+			// 2、渠道运营查询条件
+			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
+				String sql = invManagerSer.getQrySql(paramvo.getVoperater(), 3);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
+				}
+			}
+			
+			int total = 0;
+			String where = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
+			if(!"alldata".equals(where)){
+				qsql.append(where);
+			}
+			paramvo.setVprovname(qsql.toString());
+			total = invManagerSer.queryTotalRow(paramvo);
 			if (total > 0) {
 				List<ChInvoiceVO> rows = invManagerSer.query(paramvo);
 				grid.setRows(rows);
@@ -489,7 +505,6 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		Excelexport2003<ChInvoiceVO> ex = new Excelexport2003<ChInvoiceVO>();
 		InvManageExcelField fields = new InvManageExcelField();
 		fields.setVos(explist.toArray(new ChInvoiceVO[0]));
-		;
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;

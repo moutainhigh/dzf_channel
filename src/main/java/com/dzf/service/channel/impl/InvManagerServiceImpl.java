@@ -35,10 +35,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
@@ -60,7 +60,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private MultBodyObjectBO multBodyObjectBO;
 
 	@Autowired
-	private IPubService pubService;
+	private IPubService pubser;
 
 	private final static String tablename = "cn_invoice";
 
@@ -69,29 +69,68 @@ public class InvManagerServiceImpl implements InvManagerService {
 	public List<ChInvoiceVO> query(ChInvoiceVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySql(paramvo);
 		List<ChInvoiceVO> retlist = (List<ChInvoiceVO>) multBodyObjectBO.queryDataPage(ChInvoiceVO.class,
-				qryvo.getSql(), qryvo.getSpm(), paramvo.getPage(), paramvo.getRows(), "a.ts");
+				qryvo.getSql(), qryvo.getSpm(), paramvo.getPage(), paramvo.getRows(), "t.ts");
 		if (retlist != null && retlist.size() > 0) {
-			Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(), 3);
-			UserVO uservo = null;
-			String ddate = null;
-			String vcmemo = null;
-			for (ChInvoiceVO vo : retlist) {
-				if (areaMap != null && !areaMap.isEmpty()) {
-					String area = areaMap.get(vo.getVprovince());
-					if (!StringUtil.isEmpty(area)) {
-						vo.setAreaname(area);
+			setShowName(paramvo, retlist);
+		}
+		return retlist;
+	}
+
+	/**
+	 * 设置显示名称
+	 * 
+	 * @param paramvo
+	 * @param retlist
+	 * @throws DZFWarpException
+	 */
+	private void setShowName(ChInvoiceVO paramvo, List<ChInvoiceVO> retlist) throws DZFWarpException {
+		Map<Integer, String> areaMap = pubser.getAreaMap(paramvo.getAreaname(), 3);
+		UserVO uservo = null;
+		StringBuffer vmemo = null;
+		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
+		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+
+		for (ChInvoiceVO vo : retlist) {
+			if (areaMap != null && !areaMap.isEmpty()) {
+				String area = areaMap.get(vo.getVprovince());
+				if (!StringUtil.isEmpty(area)) {
+					vo.setAreaname(area);// 大区名称
+				}
+			}
+			vmemo = new StringBuffer();
+			if (vo.getDchangedate() != null) {
+				vmemo.append(vo.getDchangedate());
+			}
+			if (!StringUtil.isEmpty(vo.getVchangememo())) {
+				vmemo.append(" ").append(vo.getVchangememo());
+			}
+			if (vmemo != null && vmemo.length() > 0) {
+				vo.setVchangememo(vmemo.toString());// 换票说明
+			}
+			uservo = UserCache.getInstance().get(vo.getInvperson(), null);
+			if (uservo != null) {
+				vo.setIperson(uservo.getUser_name());// 开票人
+			}
+
+			if (marmap != null && !marmap.isEmpty()) {
+				String manager = marmap.get(vo.getPk_corp());
+				if (!StringUtil.isEmpty(manager)) {
+					uservo = UserCache.getInstance().get(manager, null);
+					if (uservo != null) {
+						vo.setVmanager(uservo.getUser_name());// 渠道经理
 					}
 				}
-				ddate = vo.getDchangedate() == null ? "" : vo.getDchangedate().toString();
-				vcmemo = vo.getVchangememo() == null ? "" : vo.getVchangememo();
-				vo.setVchangememo(ddate + " " + vcmemo);
-				uservo = UserCache.getInstance().get(vo.getInvperson(), null);
-				if (uservo != null) {
-					vo.setIperson(uservo.getUser_name());
+			}
+			if (opermap != null && !opermap.isEmpty()) {
+				String operater = opermap.get(vo.getPk_corp());
+				if (!StringUtil.isEmpty(operater)) {
+					uservo = UserCache.getInstance().get(operater, null);
+					if (uservo != null) {
+						vo.setVoperater(uservo.getUser_name());// 渠道运营
+					}
 				}
 			}
 		}
-		return retlist;
 	}
 
 	@Override
@@ -110,60 +149,62 @@ public class InvManagerServiceImpl implements InvManagerService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.*,ba.vprovince from cn_invoice a");
-		sql.append(" left join bd_account ba on a.pk_corp=ba.pk_corp ");
-		sql.append(" where nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
+		sql.append("select t.*, ba.vprovince  \n");
+		sql.append("  from cn_invoice t  \n");
+		sql.append("  left join bd_account ba on t.pk_corp = ba.pk_corp  \n");
+		sql.append(" where nvl(t.dr, 0) = 0  \n");
+		sql.append("   and nvl(ba.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(paramvo.getVprovname())) {
 			sql.append(paramvo.getVprovname());
 		}
 		if (paramvo.getInvstatus() != null && paramvo.getInvstatus() == 9) {
-			sql.append(" and a.dchangedate is not null");
+			sql.append(" and t.dchangedate is not null");
 		} else if (paramvo.getInvstatus() != null && paramvo.getInvstatus() != -1) {
-			sql.append(" and a.invstatus = ?");
+			sql.append(" and t.invstatus = ?");
 			spm.addParam(paramvo.getInvstatus());
 		} else {
-			sql.append(" and a.invstatus in (1,2,3)");
+			sql.append(" and t.invstatus in (1,2,3)");
 		}
 		if (paramvo.getInvtype() != null && paramvo.getInvtype() != -1) {
-			sql.append(" and a.invtype = ?");
+			sql.append(" and t.invtype = ?");
 			spm.addParam(paramvo.getInvtype());
 		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 1) {
 			if (!StringUtil.isEmpty(paramvo.getBdate())) {
-				sql.append(" and a.apptime >= ?");
+				sql.append(" and t.apptime >= ?");
 				spm.addParam(paramvo.getBdate());
 			}
 			if (!StringUtil.isEmpty(paramvo.getEdate())) {
-				sql.append(" and a.apptime <= ?");
+				sql.append(" and t.apptime <= ?");
 				spm.addParam(paramvo.getEdate());
 			}
 		} else {
 			if (!StringUtil.isEmpty(paramvo.getBdate())) {
-				sql.append(" and a.invtime >= ?");
+				sql.append(" and t.invtime >= ?");
 				spm.addParam(paramvo.getBdate());
 			}
 			if (!StringUtil.isEmpty(paramvo.getEdate())) {
-				sql.append(" and a.invtime <= ?");
+				sql.append(" and t.invtime <= ?");
 				spm.addParam(paramvo.getEdate());
 			}
 		}
-		
-		//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-		if(paramvo.getIsourcetype() != null && paramvo.getIsourcetype() != -1){
-			sql.append(" and a.isourcetype = ?");
+
+		// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
+		if (paramvo.getIsourcetype() != null && paramvo.getIsourcetype() != -1) {
+			sql.append(" and t.isourcetype = ?");
 			spm.addParam(paramvo.getIsourcetype());
 		}
 
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-			sql.append(" and a.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and t.pk_corp  in (" + corpIdS + ")");
 		}
 		if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-			sql.append(" and a.corpname like ?");
+			sql.append(" and t.corpname like ?");
 			spm.addParam("%" + paramvo.getCorpname() + "%");
 		}
-		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
-			sql.append(" and a.ipaytype = ?");
+		if (paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1) {
+			sql.append(" and t.ipaytype = ?");
 			spm.addParam(paramvo.getIpaytype());
 		}
 		qryvo.setSql(sql.toString());
@@ -203,7 +244,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 				sql.append(" )");
 			}
 		} else if (vo.getDr() != null && vo.getDr() < 0) {// 增加权限的加盟商参照
-			String condition = pubService.getPowerSql(vo.getEmail(), vo.getDr() == -2 ? 2 : 3);
+			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr() == -2 ? 2 : 3);
 			if (condition != null && !condition.equals("alldata")) {
 				sql.append(condition);
 			} else if (condition == null) {
@@ -222,7 +263,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 				new BeanListProcessor(CorpVO.class));
 		if (list != null && list.size() > 0) {
-			encodeCorpVO(list);
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, list, 1);
 			List<CorpVO> rList = new ArrayList<>();
 			if (!StringUtil.isEmpty(vo.getCorpcode())) {
 				for (CorpVO cvo : list) {
@@ -234,13 +275,6 @@ public class InvManagerServiceImpl implements InvManagerService {
 			}
 		}
 		return list;
-	}
-
-	private List<CorpVO> encodeCorpVO(List<CorpVO> vos) {
-		for (CorpVO vo : vos) {
-			vo.setUnitname(CodeUtils1.deCode(vo.getUnitname()));
-		}
-		return vos;
 	}
 
 	@Override
@@ -259,7 +293,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 				vo = queryByPk(pk);
 
 				DZFDouble umny = CommonUtil.getDZFDouble(mapUse.get(vo.getPk_corp()));// 累计合同扣款金额
-				DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());//累计合同开票金额
+				DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());// 累计合同开票金额
 				if (vo.getInvstatus() != 1) {
 					vo.setMsg("要确认开票的单据不是待开票状态");
 					listError.add(vo);
@@ -276,9 +310,9 @@ public class InvManagerServiceImpl implements InvManagerService {
 				}
 				lists.add(vo);
 				vo.setInvperson(userid);
-				if(vo.getIsourcetype() != null && vo.getIsourcetype() == 1){
+				if (vo.getIsourcetype() != null && vo.getIsourcetype() == 1) {
 					updateContTicketMny(vo);
-				}else if(vo.getIsourcetype() != null && vo.getIsourcetype() == 2){
+				} else if (vo.getIsourcetype() != null && vo.getIsourcetype() == 2) {
 					updateBillTicketMny(vo);
 				}
 				updateInvoice(vo, invtime);
@@ -314,52 +348,52 @@ public class InvManagerServiceImpl implements InvManagerService {
 	@Override
 	public List<ChInvoiceVO> onAutoBill(String[] pk_invoices, UserVO uvo) throws DZFWarpException {
 
-//		if (pk_invoices == null || pk_invoices.length == 0) {
-//			throw new BusinessException("请选择数据");
-//		}
-//
-//		if (uvo.getUser_name().length() > 8) {
-//			throw new BusinessException("操作用户名称长度不能大于8");
-//		} else if (hasDigit(uvo.getUser_name())) {
-//			throw new BusinessException("操作用户名称不能包含数字");
-//		}
-		
+		// if (pk_invoices == null || pk_invoices.length == 0) {
+		// throw new BusinessException("请选择数据");
+		// }
+		//
+		// if (uvo.getUser_name().length() > 8) {
+		// throw new BusinessException("操作用户名称长度不能大于8");
+		// } else if (hasDigit(uvo.getUser_name())) {
+		// throw new BusinessException("操作用户名称不能包含数字");
+		// }
+
 		checkBeforeAutoBill(pk_invoices, uvo);
 
 		ChInvoiceVO[] cvos = queryByPks(pk_invoices);
 		if (cvos == null || cvos.length == 0) {
 			throw new BusinessException("请选择数据。");
 		}
-		
+
 		List<ChInvoiceVO> errlist = new ArrayList<ChInvoiceVO>();
 		HashMap<String, DZFDouble> useMap = queryUsedMny();
-		
-		List<String> pklist = new ArrayList<String>();//订单主键
+
+		List<String> pklist = new ArrayList<String>();// 订单主键
 		Map<String, List<GoodsBillBVO>> bmap = null;
 		for (ChInvoiceVO vo : cvos) {
 			if (vo.getInvtype() != 2) {
 				throw new BusinessException("您好！只有申请开具电子发票的开票申请才可提交电子发票自动开票接口，请知悉并重新选择数据。");
 			}
-			if(!StringUtil.isEmpty(vo.getPk_source())){
+			if (!StringUtil.isEmpty(vo.getPk_source())) {
 				pklist.add(vo.getPk_source());
 			}
 		}
-		if(pklist != null && pklist.size() > 0){
+		if (pklist != null && pklist.size() > 0) {
 			bmap = queryGoodsBill(pklist);
 		}
-		
+
 		for (ChInvoiceVO vo : cvos) {
 			String uuid = UUID.randomUUID().toString();
 			try {
 				LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_invoice(), uuid, 60);
-				
+
 				if (vo.getInvstatus() != 1 && vo.getInvstatus() != 3) {
 					vo.setMsg("要确认开票的单据不是待开票状态");
 					errlist.add(vo);
 					continue;
 				}
-				
-				if(vo.getIsourcetype() != null && vo.getIsourcetype() == 1){//1：合同扣款开票；
+
+				if (vo.getIsourcetype() != null && vo.getIsourcetype() == 1) {// 1：合同扣款开票；
 					DZFDouble umny = CommonUtil.getDZFDouble(useMap.get(vo.getPk_corp()));
 					DZFDouble invmny = queryInvoiceMny(vo.getPk_corp());
 					DZFDouble invprice = new DZFDouble(vo.getInvprice());
@@ -375,7 +409,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 						continue;
 					}
 				}
-				
+
 				vo.setInvperson(uvo.getCuserid());
 				PiaoTongResVO resvo = savePiaoTong(vo, uvo, bmap);
 				if (resvo == null) {
@@ -397,9 +431,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		}
 		return errlist;
 	}
-	
+
 	/**
 	 * 开具电子发票前校验
+	 * 
 	 * @param pk_invoices
 	 * @param uvo
 	 * @throws DZFWarpException
@@ -426,26 +461,27 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 	/**
 	 * 调用票通接口，开具电子发票
+	 * 
 	 * @param cvo
 	 * @param uvo
 	 * @param bmap
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo, Map<String, List<GoodsBillBVO>> bmap) 
+	private PiaoTongResVO savePiaoTong(ChInvoiceVO cvo, UserVO uvo, Map<String, List<GoodsBillBVO>> bmap)
 			throws DZFWarpException {
 		PiaoTongInvVO hvo = getHeadInfo(cvo, uvo);
 
 		// 开票项目信息
 		List<PiaoTongInvBVO> itemList = new ArrayList<>();
-		
-		//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
-		if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1){
+
+		// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
+		if (cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1) {
 			itemList = getContItem(cvo);
-		}else if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 2){
+		} else if (cvo.getIsourcetype() != null && cvo.getIsourcetype() == 2) {
 			itemList = getBillItemList(cvo, bmap);
 		}
-		//电子发票详情
+		// 电子发票详情
 		hvo.setItemList(itemList);
 
 		PiaoTongBill bill = new PiaoTongBill();
@@ -453,9 +489,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		updateSendBack(resvo, cvo);
 		return resvo;
 	}
-	
+
 	/**
 	 * 获取开票主信息
+	 * 
 	 * @param cvo
 	 * @param uvo
 	 * @return
@@ -494,9 +531,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		hvo.setTakerTel(cvo.getInvphone());
 		return hvo;
 	}
-	
+
 	/**
 	 * 开票项目信息（合同扣款开票）
+	 * 
 	 * @param cvo
 	 * @return
 	 * @throws DZFWarpException
@@ -515,9 +553,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		itemList.add(bvo);
 		return itemList;
 	}
-	
+
 	/**
 	 * 开票项目信息（商品订单开票-全扣预付款）
+	 * 
 	 * @param cvo
 	 * @return
 	 * @throws DZFWarpException
@@ -531,36 +570,37 @@ public class InvManagerServiceImpl implements InvManagerService {
 			for (GoodsBillBVO blvo : list) {
 				bvo = new PiaoTongInvBVO();
 				bvo.setGoodsName(blvo.getVgoodsname());
-				if(!StringUtil.isEmpty(blvo.getVtaxclasscode())){
+				if (!StringUtil.isEmpty(blvo.getVtaxclasscode())) {
 					// 对应税收分类编码
 					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
-				}else{
-					throw new BusinessException("商品名称【"+blvo.getVgoodsname()+"】税收分类编码不能为空！");
+				} else {
+					throw new BusinessException("商品名称【" + blvo.getVgoodsname() + "】税收分类编码不能为空！");
 				}
-				bvo.setQuantity(String.valueOf(blvo.getAmount())+".00");// 数量
-				bvo.setIncludeTaxFlag("1");// 含税标志  0：不含税，1：含税。
+				bvo.setQuantity(String.valueOf(blvo.getAmount()) + ".00");// 数量
+				bvo.setIncludeTaxFlag("1");// 含税标志 0：不含税，1：含税。
 				bvo.setUnitPrice(blvo.getNprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 单价
 				bvo.setInvoiceAmount(blvo.getNtotalmny().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
 				bvo.setTaxRateValue("0.16");// 税率
 				spectype = new StringBuffer();
-				if(!StringUtil.isEmpty(blvo.getInvspec())){
+				if (!StringUtil.isEmpty(blvo.getInvspec())) {
 					spectype.append(blvo.getInvspec());
 				}
-				if(!StringUtil.isEmpty(blvo.getInvtype())){
+				if (!StringUtil.isEmpty(blvo.getInvtype())) {
 					spectype.append(blvo.getInvtype());
 				}
-				if(spectype != null && spectype.length() > 0){
-					bvo.setSpecificationModel(spectype.toString());//规格型号
+				if (spectype != null && spectype.length() > 0) {
+					bvo.setSpecificationModel(spectype.toString());// 规格型号
 				}
-				bvo.setMeteringUnit(blvo.getVmeasname());//单位
+				bvo.setMeteringUnit(blvo.getVmeasname());// 单位
 				itlist.add(bvo);
 			}
 		}
 		return itlist;
 	}
-	
+
 	/**
 	 * 查询订单明细信息（订单全扣预付款）
+	 * 
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -580,9 +620,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		return (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsBillBVO.class));
 	}
-	
+
 	/**
 	 * 开票项目信息（商品订单开票-既扣预付款，又扣返点）
+	 * 
 	 * @param cvo
 	 * @return
 	 * @throws DZFWarpException
@@ -595,29 +636,30 @@ public class InvManagerServiceImpl implements InvManagerService {
 			for (ChInvoiceBVO blvo : list) {
 				bvo = new PiaoTongInvBVO();
 				bvo.setGoodsName(blvo.getBspmc());
-				if(!StringUtil.isEmpty(blvo.getVtaxclasscode())){
+				if (!StringUtil.isEmpty(blvo.getVtaxclasscode())) {
 					// 对应税收分类编码
 					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
-				}else{
-					throw new BusinessException("商品名称【"+blvo.getBspmc()+"】税收分类编码不能为空！");
+				} else {
+					throw new BusinessException("商品名称【" + blvo.getBspmc() + "】税收分类编码不能为空！");
 				}
-				bvo.setQuantity(String.valueOf(blvo.getBnum())+".00");// 数量
-				bvo.setIncludeTaxFlag("0");// 含税标志  0：不含税，1：含税。
+				bvo.setQuantity(String.valueOf(blvo.getBnum()) + ".00");// 数量
+				bvo.setIncludeTaxFlag("0");// 含税标志 0：不含税，1：含税。
 				bvo.setUnitPrice(blvo.getBprice().setScale(4, DZFDouble.ROUND_HALF_UP).toString());// 单价（不含税）
 				bvo.setInvoiceAmount(blvo.getBhjje().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额（不含税）
 				bvo.setTaxRateValue("0.16");// 税率
-				if(!StringUtil.isEmpty(blvo.getInvspec())){
-					bvo.setSpecificationModel(blvo.getInvspec());//规格型号
+				if (!StringUtil.isEmpty(blvo.getInvspec())) {
+					bvo.setSpecificationModel(blvo.getInvspec());// 规格型号
 				}
-				bvo.setMeteringUnit(blvo.getMeasurename());//单位
+				bvo.setMeteringUnit(blvo.getMeasurename());// 单位
 				itlist.add(bvo);
 			}
 		}
 		return itlist;
 	}
-	
+
 	/**
 	 * 查询订单明细信息（订单既扣预付款，又扣返点）
+	 * 
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -637,9 +679,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		return (List<ChInvoiceBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChInvoiceBVO.class));
 	}
-	
+
 	/**
 	 * 开票项目信息（商品购买开票）
+	 * 
 	 * @param cvo
 	 * @return
 	 * @throws DZFWarpException
@@ -654,44 +697,45 @@ public class InvManagerServiceImpl implements InvManagerService {
 			for (GoodsBillBVO blvo : list) {
 				bvo = new PiaoTongInvBVO();
 				bvo.setGoodsName(blvo.getVgoodsname());
-				if(!StringUtil.isEmpty(blvo.getVtaxclasscode())){
+				if (!StringUtil.isEmpty(blvo.getVtaxclasscode())) {
 					// 对应税收分类编码
 					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
-				}else{
-					throw new BusinessException("商品名称【"+blvo.getVgoodsname()+"】税收分类编码异常！");
+				} else {
+					throw new BusinessException("商品名称【" + blvo.getVgoodsname() + "】税收分类编码异常！");
 				}
-				bvo.setQuantity(String.valueOf(blvo.getAmount())+".00");// 数量
-				bvo.setIncludeTaxFlag("1");// 含税标志  0：不含税，1：含税。
+				bvo.setQuantity(String.valueOf(blvo.getAmount()) + ".00");// 数量
+				bvo.setIncludeTaxFlag("1");// 含税标志 0：不含税，1：含税。
 				bvo.setUnitPrice(blvo.getNprice().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 单价
 				bvo.setInvoiceAmount(blvo.getNtotalmny().setScale(2, DZFDouble.ROUND_HALF_UP).toString());// 金额
 				bvo.setTaxRateValue("0.16");// 税率
 				spectype = new StringBuffer();
-				if(!StringUtil.isEmpty(blvo.getInvspec())){
+				if (!StringUtil.isEmpty(blvo.getInvspec())) {
 					spectype.append(blvo.getInvspec());
 				}
-				if(!StringUtil.isEmpty(blvo.getInvtype())){
+				if (!StringUtil.isEmpty(blvo.getInvtype())) {
 					spectype.append(blvo.getInvtype());
 				}
-				if(spectype != null && spectype.length() > 0){
-					bvo.setSpecificationModel(spectype.toString());//规格型号
+				if (spectype != null && spectype.length() > 0) {
+					bvo.setSpecificationModel(spectype.toString());// 规格型号
 				}
-				bvo.setMeteringUnit(blvo.getVmeasname());//单位
+				bvo.setMeteringUnit(blvo.getVmeasname());// 单位
 				itlist.add(bvo);
 			}
 		}
 
 		return itlist;
 	}
-	
+
 	/**
 	 * 查询订单明细信息
+	 * 
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, List<GoodsBillBVO>> queryGoodsBill(List<String> pklist) throws DZFWarpException {
 		Map<String, List<GoodsBillBVO>> retmap = new HashMap<String, List<GoodsBillBVO>>();
-		if(pklist != null && pklist.size() > 0){
+		if (pklist != null && pklist.size() > 0) {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			sql.append("SELECT b.*, s.vtaxclasscode  \n");
@@ -701,19 +745,19 @@ public class InvManagerServiceImpl implements InvManagerService {
 			sql.append("   AND nvl(s.dr, 0) = 0  \n");
 			String where = SqlUtil.buildSqlForIn("b.pk_goodsbill", pklist.toArray(new String[0]));
 			sql.append(" AND ").append(where);
-			List<GoodsBillBVO> list =(List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+			List<GoodsBillBVO> list = (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 					new BeanListProcessor(GoodsBillBVO.class));
-			if(list != null && list.size() > 0){
+			if (list != null && list.size() > 0) {
 				List<GoodsBillBVO> newlist = null;
 				List<GoodsBillBVO> oldlist = null;
 				String pk_goodsbill = "";
-				for(GoodsBillBVO bvo : list){
+				for (GoodsBillBVO bvo : list) {
 					pk_goodsbill = bvo.getPk_goodsbill();
-					if(!retmap.containsKey(pk_goodsbill)){
+					if (!retmap.containsKey(pk_goodsbill)) {
 						newlist = new ArrayList<GoodsBillBVO>();
 						newlist.add(bvo);
 						retmap.put(pk_goodsbill, newlist);
-					}else{
+					} else {
 						oldlist = retmap.get(pk_goodsbill);
 						oldlist.add(bvo);
 						retmap.put(pk_goodsbill, oldlist);
@@ -721,21 +765,22 @@ public class InvManagerServiceImpl implements InvManagerService {
 				}
 			}
 		}
-		
+
 		return retmap;
 	}
 
 	/**
 	 * 调用票通接口开票成功后，回写发票信息
+	 * 
 	 * @param resvo
 	 * @param cvo
 	 */
 	private void updateSendBack(PiaoTongResVO resvo, ChInvoiceVO cvo) {
 		if (resvo != null && IPiaoTongConstant.SUCCESS.equals(resvo.getCode())) {
 			updatePtInvoice(resvo, cvo);
-			if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1){
+			if (cvo.getIsourcetype() != null && cvo.getIsourcetype() == 1) {
 				updateContTicketMny(cvo);
-			}else if(cvo.getIsourcetype() != null && cvo.getIsourcetype() == 2){
+			} else if (cvo.getIsourcetype() != null && cvo.getIsourcetype() == 2) {
 				updateBillTicketMny(cvo);
 			}
 		} else if (resvo == null || StringUtil.isEmpty(resvo.getCode()) || StringUtil.isEmpty(resvo.getMsg())) {
@@ -827,7 +872,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		sql.append("  from cn_invoice  \n");
 		sql.append(" where nvl(dr, 0) = 0  \n");
 		sql.append("   and invstatus = 2 \n");
-		sql.append("   and isourcetype = 1 \n");//发票来源类型  1：合同扣款开票； 2：商品扣款开票；
+		sql.append("   and isourcetype = 1 \n");// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
 		sql.append("   and apptime <= ?  \n");
 		spm.addParam(new DZFDate());
 		sql.append("   and pk_corp = ?  \n");
@@ -858,67 +903,68 @@ public class InvManagerServiceImpl implements InvManagerService {
 		if (vo.getIpaytype() == 0) {
 			sp.addParam(2);
 		}
-		sql.append("update cn_balance  \n") ;
-		sql.append("   set nticketmny = nvl(nticketmny, 0) + ?  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-		sql.append("   and pk_corp = ?  \n") ; 
+		sql.append("update cn_balance  \n");
+		sql.append("   set nticketmny = nvl(nticketmny, 0) + ?  \n");
+		sql.append(" where nvl(dr, 0) = 0  \n");
+		sql.append("   and pk_corp = ?  \n");
 		sql.append("   and ipaytype = ?  \n");
 		singleObjectBO.executeUpdate(sql.toString(), sp);
 	}
-	
+
 	/**
 	 * 更新（商品购买开票金额）开票金额
 	 */
 	private void updateBillTicketMny(ChInvoiceVO vo) {
 		GoodsBillVO hvo = (GoodsBillVO) singleObjectBO.queryByPrimaryKey(GoodsBillVO.class, vo.getPk_source());
-		if(hvo != null){
+		if (hvo != null) {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			//1、预付款扣款
-			if(CommonUtil.getDZFDouble(hvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0){
-				sql.append("UPDATE cn_balance  \n") ;
-				sql.append("   SET nticketbuymny = nvl(nticketbuymny, 0) + ?  \n") ; 
+			// 1、预付款扣款
+			if (CommonUtil.getDZFDouble(hvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {
+				sql.append("UPDATE cn_balance  \n");
+				sql.append("   SET nticketbuymny = nvl(nticketbuymny, 0) + ?  \n");
 				spm.addParam(hvo.getNdeductmny());
-				sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-				sql.append("   AND pk_corp = ?  \n") ; 
+				sql.append(" WHERE nvl(dr, 0) = 0  \n");
+				sql.append("   AND pk_corp = ?  \n");
 				sql.append("   AND ipaytype = ?  \n");
 				spm.addParam(hvo.getPk_corp());
-				spm.addParam(IStatusConstant.IPAYTYPE_2);//预付款
+				spm.addParam(IStatusConstant.IPAYTYPE_2);// 预付款
 				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-				if(res != 1){
+				if (res != 1) {
 					throw new BusinessException("商品购买开票金额回写错误");
 				}
 			}
-//			//2、返点扣款
-//			if(CommonUtil.getDZFDouble(hvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL) > 0){
-//				sql = new StringBuffer();
-//				spm = new SQLParameter();
-//				sql.append("UPDATE cn_balance  \n") ;
-//				sql.append("   SET nticketbuymny = nvl(nticketbuymny, 0) + ?  \n") ; 
-//				spm.addParam(hvo.getNdedrebamny());
-//				sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-//				sql.append("   AND pk_corp = ?  \n") ; 
-//				sql.append("   AND ipaytype = ?  \n");
-//				spm.addParam(hvo.getPk_corp());
-//				spm.addParam(IStatusConstant.IPAYTYPE_3);//返点
-//				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-//				if(res != 1){
-//					throw new BusinessException("商品购买开票金额回写错误");
-//				}
-//			}
-		}else{
+			// //2、返点扣款
+			// if(CommonUtil.getDZFDouble(hvo.getNdedrebamny()).compareTo(DZFDouble.ZERO_DBL)
+			// > 0){
+			// sql = new StringBuffer();
+			// spm = new SQLParameter();
+			// sql.append("UPDATE cn_balance \n") ;
+			// sql.append(" SET nticketbuymny = nvl(nticketbuymny, 0) + ? \n") ;
+			// spm.addParam(hvo.getNdedrebamny());
+			// sql.append(" WHERE nvl(dr, 0) = 0 \n") ;
+			// sql.append(" AND pk_corp = ? \n") ;
+			// sql.append(" AND ipaytype = ? \n");
+			// spm.addParam(hvo.getPk_corp());
+			// spm.addParam(IStatusConstant.IPAYTYPE_3);//返点
+			// int res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			// if(res != 1){
+			// throw new BusinessException("商品购买开票金额回写错误");
+			// }
+			// }
+		} else {
 			throw new BusinessException("商品购买开票金额回写错误");
 		}
 
-		
-//		spm.addParam(vo.getInvprice());
-//		spm.addParam(vo.getPk_corp());
-//		if (vo.getIpaytype() == 0) {
-//			spm.addParam(2);
-//		}
-//		sql.append("update cn_balance set nticketmny = nvl(nticketmny,0) + ? ");
-//		sql.append("where nvl(dr,0)=0 and pk_corp = ? and ipaytype = ?");
-//		singleObjectBO.executeUpdate(sql.toString(), spm);
+		// spm.addParam(vo.getInvprice());
+		// spm.addParam(vo.getPk_corp());
+		// if (vo.getIpaytype() == 0) {
+		// spm.addParam(2);
+		// }
+		// sql.append("update cn_balance set nticketmny = nvl(nticketmny,0) + ?
+		// ");
+		// sql.append("where nvl(dr,0)=0 and pk_corp = ? and ipaytype = ?");
+		// singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 
 	/**
@@ -953,11 +999,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 				if (chvo.getInvstatus() == 2) {
 					throw new BusinessException("发票状态为【已开票】，不能删除！");
 				}
-				if(chvo.getIsourcetype() != null && chvo.getIsourcetype() == 2){//商品扣款开票
-					//如果订单扣款为预付款扣款，则只需更新订单开票状态
-					//如果订单扣款为预付款扣款和订单扣款，则需要删除发票相关信息后，更新订单开发状态
-					//数据类型（1：商品扣款全扣预付款；2：商品扣款扣预付款和返点）
-					if(chvo.getIdatatype() == 2){
+				if (chvo.getIsourcetype() != null && chvo.getIsourcetype() == 2) {// 商品扣款开票
+					// 如果订单扣款为预付款扣款，则只需更新订单开票状态
+					// 如果订单扣款为预付款扣款和订单扣款，则需要删除发票相关信息后，更新订单开发状态
+					// 数据类型（1：商品扣款全扣预付款；2：商品扣款扣预付款和返点）
+					if (chvo.getIdatatype() == 2) {
 						deleteOrderInvoice(chvo);
 					}
 					updateGoodsBillStatus(chvo);
@@ -973,9 +1019,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 			LockUtil.getInstance().unLock_Key(vo.getTableName(), vo.getPk_invoice(), uuid);
 		}
 	}
-	
+
 	/**
 	 * 删除订单发票信息
+	 * 
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
@@ -985,22 +1032,23 @@ public class InvManagerServiceImpl implements InvManagerService {
 		spm.addParam(vo.getPk_invoice());
 		singleObjectBO.executeUpdate(sql, spm);
 	}
-	
+
 	/**
 	 * 更新订单状态
+	 * 
 	 * @param ivo
 	 * @throws DZFWarpException
 	 */
 	private void updateGoodsBillStatus(ChInvoiceVO ivo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE cn_goodsbill  \n") ;
-		sql.append("   SET vtistatus = 1  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("UPDATE cn_goodsbill  \n");
+		sql.append("   SET vtistatus = 1  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
 		sql.append("   AND pk_goodsbill = ?  \n");
 		spm.addParam(ivo.getPk_source());
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-		if(res != 1){
+		if (res != 1) {
 			throw new BusinessException("订单状态更新错误");
 		}
 	}
@@ -1023,15 +1071,15 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select nvl(sum(nvl(invprice, 0)), 0) price  \n") ;
-		sql.append("  from cn_invoice  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-		sql.append("   and pk_corp = ?  \n") ; 
-		sql.append("   and invstatus = 1  \n") ; 
+		sql.append("select nvl(sum(nvl(invprice, 0)), 0) price  \n");
+		sql.append("  from cn_invoice  \n");
+		sql.append(" where nvl(dr, 0) = 0  \n");
+		sql.append("   and pk_corp = ?  \n");
+		sql.append("   and invstatus = 1  \n");
 		sql.append("   and ipaytype = ?  \n");
 		sp.addParam(pk_corp);
 		sp.addParam(ipaytype);
-		sql.append("   and isourcetype = 1 \n");//发票来源类型  1：合同扣款开票；
+		sql.append("   and isourcetype = 1 \n");// 发票来源类型 1：合同扣款开票；
 		String price = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("price")).toString();
 		DZFDouble nprice = new DZFDouble(price);
 		if (!StringUtil.isEmpty(invprice)) {
@@ -1044,31 +1092,32 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private DZFDouble queryTicketPrice(String pk_corp, int ipaytype) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		//1、查询合同扣款金额
-		sql.append("SELECT SUM(nvl(nusedmny, 0)) AS nusedmny  \n") ;//合同扣款金额
-		sql.append("  FROM cn_detail  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_corp = ?  \n") ; 
+		// 1、查询合同扣款金额
+		sql.append("SELECT SUM(nvl(nusedmny, 0)) AS nusedmny  \n");// 合同扣款金额
+		sql.append("  FROM cn_detail  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_corp = ?  \n");
 		spm.addParam(pk_corp);
-		sql.append("   AND ipaytype = 2  \n") ; 
+		sql.append("   AND ipaytype = 2  \n");
 		sql.append("   AND iopertype = 2  \n");
-		ArrayList<Object> res = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
+		ArrayList<Object> res = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ArrayListProcessor());
 		DZFDouble usedmny = DZFDouble.ZERO_DBL;
 		if (res != null && !res.isEmpty()) {
 			Object[] obj = (Object[]) res.get(0);
 			usedmny = CommonUtil.getDZFDouble(obj[0]);
 		}
-		
-		//2、查询合同扣款开票金额
+
+		// 2、查询合同扣款开票金额
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("select sum(nvl(nticketmny, 0)) as nticketmny \n") ;//合同扣款开票金额
-		sql.append("  from cn_balance  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-		sql.append("   and pk_corp = ?  \n") ; 
+		sql.append("select sum(nvl(nticketmny, 0)) as nticketmny \n");// 合同扣款开票金额
+		sql.append("  from cn_balance  \n");
+		sql.append(" where nvl(dr, 0) = 0  \n");
+		sql.append("   and pk_corp = ?  \n");
 		sql.append("   and ipaytype = ?  \n");
 		spm.addParam(pk_corp);
-		if(ipaytype == 0){
+		if (ipaytype == 0) {
 			ipaytype = 2;
 		}
 		spm.addParam(ipaytype);
@@ -1078,7 +1127,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 			Object[] obj = (Object[]) res.get(0);
 			ticketmny = CommonUtil.getDZFDouble(obj[0]);
 		}
-		
+
 		return SafeCompute.sub(usedmny, ticketmny);
 	}
 
@@ -1185,13 +1234,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 		try {
 			LockUtil.getInstance().tryLockKey(cvo.getTableName(), cvo.getPk_invoice(), uuid, 60);
 			ChInvoiceVO oldvo = checkBeforeUpdateBill(cvo, useMap);
-			oldvo.setInvperson(uservo.getCuserid());//开票人主键
-			//调用票通接口，开具电子票据
+			oldvo.setInvperson(uservo.getCuserid());// 开票人主键
+			// 调用票通接口，开具电子票据
 			PiaoTongResVO resvo = savePiaoTongBill(oldvo, uservo);
 			if (resvo == null) {
 				oldvo.setMsg("票通未返回接收数据结果");
 			} else {
-				if(resvo.getCode() != null && !IPiaoTongConstant.SUCCESS.equals(resvo.getCode())){
+				if (resvo.getCode() != null && !IPiaoTongConstant.SUCCESS.equals(resvo.getCode())) {
 					oldvo.setMsg(resvo.getMsg());
 				}
 			}
@@ -1206,9 +1255,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		}
 
 	}
-	
+
 	/**
 	 * 调用票通接口开具电子发票
+	 * 
 	 * @param cvo
 	 * @param uservo
 	 * @return
@@ -1221,9 +1271,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 		updateSendBack(resvo, cvo);
 		return resvo;
 	}
-	
+
 	/**
 	 * 拼装调用票通接口所需信息
+	 * 
 	 * @param cvo
 	 * @param uservo
 	 * @return
@@ -1252,23 +1303,25 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 	/**
 	 * 开票前发票时间戳及状态校验
+	 * 
 	 * @param cvo
 	 */
-	private ChInvoiceVO checkBeforeUpdateBill(ChInvoiceVO cvo, HashMap<String, DZFDouble> useMap) throws DZFWarpException {
+	private ChInvoiceVO checkBeforeUpdateBill(ChInvoiceVO cvo, HashMap<String, DZFDouble> useMap)
+			throws DZFWarpException {
 		ChInvoiceVO oldvo = (ChInvoiceVO) singleObjectBO.queryByPrimaryKey(ChInvoiceVO.class, cvo.getPk_invoice());
-		if(oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)){
+		if (oldvo == null || (oldvo != null && oldvo.getDr() != null && oldvo.getDr() == 1)) {
 			throw new BusinessException("数据发生变化");
 		}
-		//1、发票状态校验  0：待提交 ；1：待开票；2：已开票；3：开票失败；
-		if(oldvo.getInvstatus() != null && oldvo.getInvstatus() != 1 &&  oldvo.getInvstatus() != 3){
+		// 1、发票状态校验 0：待提交 ；1：待开票；2：已开票；3：开票失败；
+		if (oldvo.getInvstatus() != null && oldvo.getInvstatus() != 1 && oldvo.getInvstatus() != 3) {
 			throw new BusinessException("发票状态不是待开票状态");
 		}
-		//2、发票类型校验  0: 专用发票、 1:普通发票 、2: 电子普通发票
+		// 2、发票类型校验 0: 专用发票、 1:普通发票 、2: 电子普通发票
 		if (oldvo.getInvtype() != 2) {
 			throw new BusinessException("没有申请开具电子发票");
 		}
-		//3、可开票金额校验
-		if(oldvo.getIsourcetype() != null && oldvo.getIsourcetype() == 1){//1：合同扣款开票；
+		// 3、可开票金额校验
+		if (oldvo.getIsourcetype() != null && oldvo.getIsourcetype() == 1) {// 1：合同扣款开票；
 			DZFDouble umny = CommonUtil.getDZFDouble(useMap.get(oldvo.getPk_corp()));
 			DZFDouble invmny = queryInvoiceMny(oldvo.getPk_corp());
 			DZFDouble invprice = CommonUtil.getDZFDouble(oldvo.getInvprice());
@@ -1284,5 +1337,27 @@ public class InvManagerServiceImpl implements InvManagerService {
 		}
 		return oldvo;
 	}
-	
+
+	/**
+	 * 获取查询条件
+	 * 
+	 * @param cuserid
+	 * @param qrytype
+	 *            1：渠道经理；2：培训师；3：渠道运营；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@Override
+	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
+		if (corps != null && corps.length > 0) {
+			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
+			sql.append(" AND ").append(where);
+		} else {
+			sql.append(" AND t.pk_corp is null \n");
+		}
+		return sql.toString();
+	}
+
 }

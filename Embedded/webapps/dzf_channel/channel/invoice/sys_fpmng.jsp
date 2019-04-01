@@ -94,13 +94,12 @@
 					<input id="pk_account" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 97px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 282px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
-				</div>
-				<div class="time_col time_colp10">
-					<label style="width:97px;text-align:right">发票状态：</label>
-					<select id="istatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
+					<label style="text-align:right;width:97px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width:100px; height:28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false"/>  
+						
+					<label style="width:70px;text-align:right">发票状态：</label>
+					<select id="istatus" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">待开票</option>
 						<option value="2">已开票</option>
@@ -110,20 +109,28 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:97px;text-align:right">发票类型：</label>
-					<select id="qitype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
+					<select id="qitype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="0">专用发票</option>
 						<option value="1">普通发票</option>
 						<option value="2">电子发票</option>
 					</select>
-				</div>
-				<div class="time_col time_colp10">
-					<label style="width:97px;text-align:right">发票来源：</label>
-					<select id="qsourtype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
+					<label style="width:70px;text-align:right">发票来源：</label>
+					<select id="qsourtype" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:100px;height:28px;">
 						<option value="-1">全部</option>
 						<option value="1">合同扣款</option>
 						<option value="2">商品订单</option>
 					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:97px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:282px;height:28px;" />
+					<input id="managerid" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:97px;text-align:right">渠道运营：</label>
+					<input id="operater" class="easyui-textbox" style="width:282px;height:28px;" />
+					<input id="operaterid" type="hidden">
 				</div>
 			</form>
 			<p>
@@ -222,55 +229,76 @@
 		</div>
 	</div>
 		
-		<div id="kj_dialog"></div>
-		<div id="kj_buttons" style="display:none;">
-			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
-			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
-		</div>
+	<div id="kj_dialog"></div>
+	<div id="kj_buttons" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
+	</div>
 		
 		
-		<div id="invInfo" class="easyui-dialog" title="电子票余量查询" 
-			data-options="modal:true,closed:true" style="width:940px;height:500px;">
-			<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
-				<label style="text-align:right">查询时间：</label> 
-				<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
-				<div class="right" style="float: right;display: inline-block;"> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExportInvInfo()">导出</a>
-			 	</div>
-			</div>	
-			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
-				 <table id="gridInvInfo"></table>	
-			</div>
+	<div id="invInfo" class="easyui-dialog" title="电子票余量查询" 
+		data-options="modal:true,closed:true" style="width:940px;height:500px;">
+		<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+			<label style="text-align:right">查询时间：</label> 
+			<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
+			<div class="right" style="float: right;display: inline-block;"> 
+				<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="onExportInvInfo()">导出</a>
+		 	</div>
+		</div>	
+		<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+			 <table id="gridInvInfo"></table>	
 		</div>
 	</div>
+  </div>
+  
+ 	<!-- 渠道经理参照对话框及按钮 begin -->
+	<div id="manDlg"></div>
+	<div id="manBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" 
+			onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
+	<!-- 渠道经理参照对话框及按钮 end -->
+	
+	<!-- 渠道运营参照对话框及按钮 begin -->
+	<div id="operDlg"></div>
+	<div id="operBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" 
+			onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
+	<!-- 渠道运营参照对话框及按钮 end -->
+	
 	<div id="billing" class="easyui-dialog" title="提示" style="width:300px;height:200px;padding:10px 20px;" 
-						data-options="modal:true,resizable:true,closed:true,buttons:'#billingBtn'">
-			<form action="" method="post" id="billFrom">
-			     <div style="width:230px;margin-bottom:6px;font-size:14px;">请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！</div>				
-				 <div class="time_col time_colp11">
-				 	开票日期:<input id="invtime" name="invtime" class = "easyui-datebox" style="width:130px;height:26px;"/>
-				 </div>
-			</form>
-		</div>
-		<div id="billingBtn" style="display:none;">
-			<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="onBill()">确定</a>
-	        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#billing').dialog('close')">取消</a>
-		</div>
+		data-options="modal:true,resizable:true,closed:true,buttons:'#billingBtn'">
+		<form action="" method="post" id="billFrom">
+		     <div style="width:230px;margin-bottom:6px;font-size:14px;">请确认已为这些客户开具发票，确认后不可返回，请谨慎操作！</div>				
+			 <div class="time_col time_colp11">
+			 	开票日期:<input id="invtime" name="invtime" class = "easyui-datebox" style="width:130px;height:26px;"/>
+			 </div>
+		</form>
+	</div>
+	
+	<div id="billingBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="onBill()">确定</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#billing').dialog('close')">取消</a>
+	</div>
 		
 	<div id="change" class="easyui-dialog" title="换票" style="width:380px;height:260px;padding:10px 20px;" 
-						data-options="modal:true,resizable:true,closed:true,buttons:'#changeBtn'">
-			<form action="" method="post" id="changeFrom">			
-				 <div class="time_col time_colp11">
-				 	换票日期:<input id="dcdate" name="dcdate" class = "easyui-datebox" style="width:130px;height:26px;"/>
-				 </div>
-				 <div class="time_col time_colp11">
-					换票说明:<input id="vcmemo" name="vcmemo" class="easyui-textbox" data-options="multiline:true" style="width:230px;height:90px;text-align:left">
-				</div>
-			</form>
-		</div>
-		<div id="changeBtn" style="display:none;">
-			<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="change()">确定</a>
-	        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#change').dialog('close')">取消</a>
-		</div>
+		data-options="modal:true,resizable:true,closed:true,buttons:'#changeBtn'">
+		<form action="" method="post" id="changeFrom">			
+			 <div class="time_col time_colp11">
+			 	换票日期:<input id="dcdate" name="dcdate" class = "easyui-datebox" style="width:130px;height:26px;"/>
+			 </div>
+			 <div class="time_col time_colp11">
+				换票说明:<input id="vcmemo" name="vcmemo" class="easyui-textbox" data-options="multiline:true" 
+				style="width:230px;height:90px;text-align:left">
+			</div>
+		</form>
+	</div>
+	<div id="changeBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="change()">确定</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="$('#change').dialog('close')">取消</a>
+	</div>
 </body>
 </html>
