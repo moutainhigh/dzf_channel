@@ -101,7 +101,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			
 			int total = 0;
 			String where = pubser.makeCondition(getLoginUserid(), paramvo.getAreaname(),IStatusConstant.IYUNYING);
-			if(!"alldata".equals(where)){
+			if(!StringUtil.isEmpty(where) && !"alldata".equals(where)){
 				qsql.append(where);
 			}
 			paramvo.setVprovname(qsql.toString());
