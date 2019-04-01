@@ -108,7 +108,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 	}
 	
 	/**
-	 * 明细查询方法(未审核)
+	 * 明细查询方法(未审核，已驳回)
 	 */
 	public void queryWDetail() {
 		Grid grid = new Grid();
@@ -117,9 +117,9 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			List<ManagerVO> clist = manager.queryWDetail(paramvo);
 			grid.setRows(clist);
 			grid.setSuccess(true);
-			grid.setMsg("操作成功");
+			grid.setMsg("查询成功");
 		} catch (Exception e) {
-			printErrorLog(grid, log, e, "操作失败");
+			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
 	}

@@ -6,6 +6,9 @@ $(function() {
 	load();
 	quickfiltet();
 	initDetailGrid();
+	initWshGrid();
+	initYbhGrid();
+	initTabs();
 });
 
 //初始化

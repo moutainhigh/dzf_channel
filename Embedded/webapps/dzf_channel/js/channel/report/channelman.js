@@ -8,6 +8,7 @@ $(function() {
 	quickfiltet();
 	initDetailGrid();
 	initWshGrid();
+	initYbhGrid();
 	initTabs();
 });
 
@@ -36,7 +37,7 @@ function load() {
 					}else if(value=="合计"){
 						return "合计";
 					}else{
-						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryChnDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
+						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
 					}
 			}}, 
 			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 
@@ -128,129 +129,4 @@ function quickfiltet(){
             } 
          }
    });
-}
-
-/**
- * 初始化未审核的合同明细
- */
-function initWshGrid(){
-	 $('#gridw').datagrid({
-			border : true,
-			striped : true,
-			rownumbers : true,
-			fitColumns : true,
-			/*height : Public.setGrid().h,*/
-			height:'350',
-			singleSelect : true,
-			showFooter:true,
-			columns : [ [ {
-				width : '100',
-				title : '提单日期',
-				align:'center',
-				halign:'center',
-				field : 'edate',
-			}, {
-				width : '80',
-				title : '提单量',
-				align:'center',
-				halign:'center',
-				field : 'anum',
-			}, {
-				width : '180',
-				title : '合同编码',
-	            halign:'left',
-				field : 'vccode',
-				formatter :weiFormat,
-			},{
-				width : '120',
-				title : '合同代账费',
-				align:'right',
-	            halign:'center',
-				field : 'antlmny',
-				formatter : function(value,row,index){
-					if(value == 0)return "0.00";
-					return formatMny(value);
-				}
-			}] ],
-			onLoadSuccess : function(data) {
-				var rows = $('#gridw').datagrid('getRows');
-				var footerData = new Object();
-	            var anum = parseFloat(0);	
-	            var antlmny = parseFloat(0);	
-	            for (var i = 0; i < rows.length; i++) {
-	            	anum += getFloatValue(rows[i].anum);
-	            	antlmny += getFloatValue(rows[i].antlmny);
-	            }
-	            footerData['edate'] = '合计';
-	            footerData['anum'] = anum;
-	            footerData['antlmny'] = antlmny;
-	            var fs=new Array(1);
-	            fs[0] = footerData;
-	            $('#gridw').datagrid('reloadFooter',fs);
-	            $('#gridw').datagrid("scrollTo",0);
-			},
-		});
-}
-
-function weiFormat(value,row,index){
-	if(row.edate != "合计"){
-		var url = 'channel/contract/contractconfrim.jsp?operate=toYnt&contractid='+row.corpid;
-		var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+value+"</a>";
-		return ss ;
-	}
-}
-
-function initTabs(){
-	$('#detail').tabs({
-	    border:false,
-	    onSelect:function(title){
-			if("已审核" == title){
-				id='#gridh';
-				$('#gridh').datagrid('options').url = contextPath + '/report/manager!queryDetail.action';
-				$('#gridh').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-			}else if("未审核" == title){
-				id='#gridw';
-				$('#gridw').datagrid('options').url = contextPath + '/report/manager!queryWDetail.action';
-				$('#gridw').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-			}
-	    }
-	});
-}
-
-function qryChnDetail(cid,corpnm){
-	var bdate = $("#bdate").datebox("getValue");
-	var edate = $("#edate").datebox("getValue");
-	var	qrydate = bdate + "至" + edate;
-	corpid=cid;
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : contextPath +'/report/manager!queryDetail.action',
-		data : {
-			"corpid" : corpid,
-			"bdate" : bdate,
-			"edate" : edate,
-		},
-		traditional : true,
-		async : false,
-		success : function(data, textStatus) {
-			if (!data.success) {
-				Public.tips({
-					content : data.msg,
-					type : 1
-				});
-			} else {
-				var res = data.rows;
-				$('#corpnm').html(corpnm);
-				$('#qrydate').html(qrydate);
-				$('#gridh').datagrid('loadData',res);
-				$('#detail_dialog').dialog('open');
-				
-				$('#gridh').datagrid('resize',{ 
-					height : '350',
-					width : '100%'
-				});
-			}
-		}
-	});
 }

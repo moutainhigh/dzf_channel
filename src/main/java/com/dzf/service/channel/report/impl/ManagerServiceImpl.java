@@ -534,6 +534,7 @@ public class ManagerServiceImpl implements IManagerService {
 	public List<ManagerVO> queryWDetail(ManagerVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
+		sp.addParam(qvo.getVprovince());
 		sp.addParam(qvo.getDbegindate());
 		sp.addParam(qvo.getDenddate());
 		sp.addParam(qvo.getPk_corp());//补提单合同，数量为0
@@ -541,7 +542,7 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" yt.pk_contract as pk_corp,substr(yt.dsubmitime,0,10) as denddate, ");
 		sql.append(" nvl(yt.ntotalmny,0)-nvl(yt.nbookmny,0) as antotalmny " );   
 		sql.append(" from ynt_contract yt " );
-		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(yt.dr,0) = 0 and yt.vstatus=5 and " );
+		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(yt.dr,0) = 0 and yt.vstatus=? and " );
 		sql.append(" substr(yt.dsubmitime,0,10)>=? and substr(yt.dsubmitime,0,10)<=? and yt.pk_corp=? " );
 		sql.append(" order by yt.dsubmitime " );
 		List<ManagerVO> vos =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));

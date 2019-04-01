@@ -58,6 +58,11 @@
 							 <table id="gridw"></table>	
 						</div>
 					</div>
+					<div title="已驳回" style="border: none; margin-top: -2px;width:90%;height:380px;padding:10px">
+						<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;">
+							 <table id="gridb"></table>	
+						</div>
+					</div>
 				</div>
 			</div>
 	 	</div>	
