@@ -535,7 +535,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 					// 对应税收分类编码
 					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
 				}else{
-					throw new BusinessException("商品名称【"+blvo.getVgoodsname()+"】税收分类编码异常！");
+					throw new BusinessException("商品名称【"+blvo.getVgoodsname()+"】税收分类编码不能为空！");
 				}
 				bvo.setQuantity(String.valueOf(blvo.getAmount())+".00");// 数量
 				bvo.setIncludeTaxFlag("1");// 含税标志  0：不含税，1：含税。
@@ -599,7 +599,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 					// 对应税收分类编码
 					bvo.setTaxClassificationCode(blvo.getVtaxclasscode());
 				}else{
-					throw new BusinessException("商品名称【"+blvo.getBspmc()+"】税收分类编码异常！");
+					throw new BusinessException("商品名称【"+blvo.getBspmc()+"】税收分类编码不能为空！");
 				}
 				bvo.setQuantity(String.valueOf(blvo.getBnum())+".00");// 数量
 				bvo.setIncludeTaxFlag("0");// 含税标志  0：不含税，1：含税。
