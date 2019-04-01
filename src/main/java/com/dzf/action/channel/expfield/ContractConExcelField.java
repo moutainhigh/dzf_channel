@@ -25,7 +25,7 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 	private String corpname = null;
 	
 	private Fieldelement[] fields = new Fieldelement[]{
-			new Fieldelement("isncust", "存量客户",false,0,false),
+			new Fieldelement("isncust", "存量",false,0,false),
 			new Fieldelement("dsubmitime", "提交时间",false,0,false),
 			new Fieldelement("areaname", "大区",false,0,false),
 			new Fieldelement("varea", "地区",false,0,false),
@@ -33,10 +33,10 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 			new Fieldelement("corpname", "加盟商",false,0,false),
 			new Fieldelement("corpkname", "客户名称",false,0,false),
 			new Fieldelement("deductdata", "扣费日期",false,0,false),
-			new Fieldelement("ideductpropor", "扣款比例(%)",false,0,false),
+			new Fieldelement("ideductpropor", "比例(%)",false,0,false),
 			new Fieldelement("ndeductmny", "预付款扣款",true,2,false),
 			new Fieldelement("ndedrebamny", "返点扣款",true,2,false),
-			new Fieldelement("vdeductstatus", "合同状态",false,0,false,
+			new Fieldelement("vdeductstatus", "状态",false,0,false,
 					new String[]{"待提交","审核通过","","","","待审批","","已驳回","服务到期","已终止","已作废"}),
 			new Fieldelement("vconfreason", "驳回原因",false,0,false),
 			new Fieldelement("naccountmny", "合同代账费",true,2,false),
@@ -44,8 +44,8 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 			new Fieldelement("isnconfirm", "未确定期限",false,0,false),
 			new Fieldelement("dbegindate", "开始日期",false,0,false),
 			new Fieldelement("denddate", "结束日期",false,0,false),
-			new Fieldelement("ireceivcycle", "收款周期(月)",false,0,false),
-			new Fieldelement("icontractcycle", "合同周期(月)",false,0,false),
+			new Fieldelement("ireceivcycle", "收款(月)",false,0,false),
+			new Fieldelement("icontractcycle", "合同(月)",false,0,false),
 			new Fieldelement("chargedeptname", "纳税人资格",false,0,false),
 			new Fieldelement("nmservicemny", "月服务费",true,2,false),
 			new Fieldelement("voperater", "渠道运营",false,0,false),

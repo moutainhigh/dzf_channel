@@ -567,8 +567,8 @@ function load(){
 //			sorter:orderfun,
 			hidden : true
 		}, {
-			width :'100',
-			title : '存量客户',
+			width :'50',
+			title : '存量',
 			field : 'isncust',
 			align : 'center',
 			halign : 'center',
@@ -585,7 +585,7 @@ function load(){
                 }
             }
 		}, {
-			width : '140',
+			width : '60',
 			title : '大区',
 			align : 'left',
             halign: 'center',
@@ -596,7 +596,7 @@ function load(){
 			halign:'center',
 			field : 'area',
 		}, {
-			width : '120',
+			width : '60',
 			title : '渠道经理',
 			halign:'center',
 			field : 'mname',
@@ -611,15 +611,15 @@ function load(){
 			halign:'center',
 			field : 'corpkna',
 		}, {
-			width : '100',
+			width : '80',
 			title : '扣费日期',
 			halign:'center',
 			align:'center',
 			field : 'dedate',
 			sortable:true,
 		}, {
-			width : '120',
-			title : '扣款比例(%)',
+			width : '50',
+			title : '比例(%)',
 			halign:'center',
 			align:'right',
 			field : 'propor',
@@ -636,7 +636,7 @@ function load(){
 			},
 			hidden : true
 		}, {
-			width : '100',
+			width : '80',
 			title : '预付款扣款',
 			align:'right',
             halign:'center',
@@ -647,7 +647,7 @@ function load(){
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '100',
+			width : '80',
 			title : '返点扣款',
 			align:'right',
             halign:'center',
@@ -658,8 +658,8 @@ function load(){
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '100',
-			title : '合同状态',
+			width : '60',
+			title : '状态',
             halign:'center',
 			field : 'destatus',
 			align:'center',
@@ -689,7 +689,7 @@ function load(){
 			field : 'vccode',
 			formatter:codeLink,
 		}, {
-			width : '110',
+			width : '80',
 			title : '合同代账费',//合同代账费 = 合同总金额 - 合同账本费
 			align:'right',
             halign:'center',
@@ -701,7 +701,7 @@ function load(){
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '110',
+			width : '80',
 			title : '账本费',
 			align:'right',
             halign:'center',
@@ -713,7 +713,7 @@ function load(){
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '100',
+			width : '60',
 			title : '附件',
 			halign:'center',
 			align:'center',
@@ -728,42 +728,42 @@ function load(){
 			formatter:isnformat,
 			hidden : true
 		}, {
-			width : '120',
+			width : '70',
 			title : '开始日期',
 			halign:'center',
 			align:'center',
 			field : 'bperiod',
 			sortable:true,
 		}, {
-			width : '120',
+			width : '70',
 			title : '结束日期',
 			halign:'center',
 			align:'center',
 			field : 'eperiod',
 			sortable:true,
 		}, {
-			width : '120',
-			title : '收款周期(月)',
+			width : '60',
+			title : '收款(月)',
 			align : 'center',
 			halign : 'center',
 			field : 'recycle',
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '120',
-			title : '合同周期(月)',
+			width : '60',
+			title : '合同(月)',
 			align : 'center',
 			halign : 'center',
 			field : 'contcycle',
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '120',
+			width : '80',
 			title : '纳税人资格',
 			halign:'center',
 			field : 'chname',
 		}, {
-			width : '100',
+			width : '70',
 			title : '月服务费',
 			align:'right',
             halign:'center',
@@ -775,7 +775,7 @@ function load(){
 			sortable:true,
 			sorter:orderfun,
 		}, {
-			width : '100',
+			width : '70',
 			title : '业务类型',
             halign:'center',
 			field : 'typeminm',
