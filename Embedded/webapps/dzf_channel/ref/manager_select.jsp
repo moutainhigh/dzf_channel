@@ -78,7 +78,7 @@
 			grid = $('#mgrid').datagrid({
 			    url: DZF.contextPath + '/rebate/rebateinput!queryManager.action',
 			    queryParams : {
-					"qtype" : 1,
+					"qtype" : 1,//查询渠道经理
 				},
 			    method: 'post',
 				fitColumns: true,
