@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,69 +41,72 @@ import com.dzf.service.pub.IPubService;
 
 @Service("rebateinptser")
 public class RebateInputServiceImpl implements IRebateInputService {
-	
+
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-	
+
 	@Autowired
 	private IPubService pubser;
-	
+
 	@Autowired
 	private IBillCodeService billCodeSer;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RebateVO> query(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySql(paramvo);
-		if(qryvo == null){
+		if (qryvo == null) {
 			return null;
 		}
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(RebateVO.class));
-		if(list != null && list.size() > 0){
-			if(!StringUtil.isEmpty(paramvo.getCorpname())){
+		if (list != null && list.size() > 0) {
+			if (!StringUtil.isEmpty(paramvo.getCorpname())) {
 				List<RebateVO> retlist = new ArrayList<RebateVO>();
 				CorpVO corpvo = null;
-				for(RebateVO vo : list){
+				for (RebateVO vo : list) {
 					corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-					if(corpvo != null && !StringUtil.isEmpty(corpvo.getUnitname()) 
-							&& corpvo.getUnitname().indexOf(paramvo.getCorpname()) != -1){
+					if (corpvo != null && !StringUtil.isEmpty(corpvo.getUnitname())
+							&& corpvo.getUnitname().indexOf(paramvo.getCorpname()) != -1) {
 						retlist.add(vo);
 					}
 				}
-				if(retlist != null && retlist.size() > 0){
-					setShowInfo(retlist,paramvo.getAreaname());
+				if (retlist != null && retlist.size() > 0) {
+					setShowInfo(retlist, paramvo.getAreaname());
 				}
 				return retlist;
 			}
-			setShowInfo(list,paramvo.getAreaname());
+			setShowInfo(list, paramvo.getAreaname());
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 设置返点相关展示信息
+	 * 
 	 * @param list
 	 * @throws DZFWarpException
 	 */
-	private void setShowInfo(List<RebateVO> list,String areaname) throws DZFWarpException{
-//		Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
-		Map<String,String> marmap = pubser.getManagerMap();//渠道经理
-		Map<Integer, String> areamap = pubser.getAreaMap(areaname,3);//大区
-//		Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
-		for(RebateVO vo : list){
-			setShowData(vo,marmap,areamap);
+	private void setShowInfo(List<RebateVO> list, String areaname) throws DZFWarpException {
+		// Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
+		Map<String, String> marmap = pubser.getManagerMap();// 渠道经理
+		Map<Integer, String> areamap = pubser.getAreaMap(areaname, 3);// 大区
+		// Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
+		for (RebateVO vo : list) {
+			setShowData(vo, marmap, areamap);
 		}
 	}
-	
+
 	/**
 	 * 设置单个返点单展示信息
+	 * 
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(RebateVO vo,Map<String,String> marmap,Map<Integer, String> areamap)	throws DZFWarpException {
+	private void setShowData(RebateVO vo, Map<String, String> marmap, Map<Integer, String> areamap)
+			throws DZFWarpException {
 		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
 		UserVO uservo = null;
-		String cuserid= null;
+		String cuserid = null;
 		if (corpvo != null) {
 			if (corpvo.getVprovince() != null) {
 				vo.setVprovname(corpvo.getCitycounty());
@@ -118,121 +120,134 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				if (areamap != null && !areamap.isEmpty()) {
 					vo.setAreaname(areamap.get(corpvo.getVprovince()));
 				}
-//				ChnAreaVO lareavo = getManagerInfo(vo.getPk_corp());
-//				if(lareavo != null){
-//					vo.setVareaname(lareavo.getAreaname());
-//					if (!StringUtil.isEmpty(lareavo.getUserid())) {
-//						UserVO uservo = UserCache.getInstance().get(lareavo.getUserid(), null);
-//						if (uservo != null) {
-//							vo.setVmanagername(uservo.getUser_name());
-//						}
-//					}
-//				}
-//				if (lareamap != null && !lareamap.isEmpty()) {
-//					ChnAreaVO lareavo = lareamap.get(String.valueOf(corpvo.getVprovince()));
-//					if (lareavo != null) {
-//						vo.setVareaname(lareavo.getAreaname());
-//						if (!StringUtil.isEmpty(lareavo.getUserid())) {
-//							UserVO uservo = UserCache.getInstance().get(lareavo.getUserid(), null);
-//							if (uservo != null) {
-//								vo.setVmanagername(uservo.getUser_name());
-//							}
-//						}
-//					}
-//				}
+				// ChnAreaVO lareavo = getManagerInfo(vo.getPk_corp());
+				// if(lareavo != null){
+				// vo.setVareaname(lareavo.getAreaname());
+				// if (!StringUtil.isEmpty(lareavo.getUserid())) {
+				// UserVO uservo =
+				// UserCache.getInstance().get(lareavo.getUserid(), null);
+				// if (uservo != null) {
+				// vo.setVmanagername(uservo.getUser_name());
+				// }
+				// }
+				// }
+				// if (lareamap != null && !lareamap.isEmpty()) {
+				// ChnAreaVO lareavo =
+				// lareamap.get(String.valueOf(corpvo.getVprovince()));
+				// if (lareavo != null) {
+				// vo.setVareaname(lareavo.getAreaname());
+				// if (!StringUtil.isEmpty(lareavo.getUserid())) {
+				// UserVO uservo =
+				// UserCache.getInstance().get(lareavo.getUserid(), null);
+				// if (uservo != null) {
+				// vo.setVmanagername(uservo.getUser_name());
+				// }
+				// }
+				// }
+				// }
 			}
 			vo.setCorpcode(corpvo.getInnercode());
 			vo.setCorpname(corpvo.getUnitname());
 		}
 		String period = "";
-		if(!StringUtil.isEmpty(vo.getVyear())){
-			period = vo.getVyear()+"-";
+		if (!StringUtil.isEmpty(vo.getVyear())) {
+			period = vo.getVyear() + "-";
 		}
-		if(vo.getIseason() != null){
+		if (vo.getIseason() != null) {
 			period = period + getSeasonName(vo.getIseason());
 		}
 		vo.setVperiod(period);
 	}
-	
+
 	/**
 	 * 获取加盟商所属大区、区域经理信息
+	 * 
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-//	private ChnAreaVO getManagerInfo(String pk_corp) throws DZFWarpException {
-//		StringBuffer sql = new StringBuffer();
-//		SQLParameter spm = new SQLParameter();
-//		sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
-//		sql.append("  FROM cn_chnarea a \n") ; 
-//		sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n") ; 
-//		sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ; 
-//		sql.append("   AND nvl(b.dr, 0) = 0 \n") ; 
-//		sql.append("   AND nvl(b.type,0) = 1 \n");
-//		sql.append("   AND b.pk_corp = ? \n");
-//		spm.addParam(pk_corp);
-//		List<ChnAreaVO> list = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnAreaVO.class));
-//		if(list != null && list.size() > 0){
-//			return list.get(0);
-//		}else{
-//			sql = new StringBuffer();
-//			spm = new SQLParameter();
-//			sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
-//			sql.append("  FROM cn_chnarea a \n") ; 
-//			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n") ; 
-//			sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ; 
-//			sql.append("   AND nvl(b.dr, 0) = 0 \n") ; 
-//			sql.append("   AND nvl(b.type,0) = 1 \n");
-//			sql.append("   AND nvl(isCharge, 'N') = 'Y' \n");
-//			sql.append("   AND b.vprovince = (SELECT vprovince \n");
-//			sql.append("                      FROM bd_account \n");
-//			sql.append("                     WHERE nvl(dr, 0) = 0 \n");
-//			sql.append("                       AND nvl(ischannel, 'N') = 'Y' \n");
-//			sql.append("                       AND nvl(isaccountcorp, 'N') = 'Y' \n");
-//			sql.append("                       AND pk_corp = ? ) \n");
-//			spm.addParam(pk_corp);
-//			List<ChnAreaVO> retlist = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnAreaVO.class));
-//			if(retlist != null && retlist.size() > 0){
-//				return retlist.get(0);
-//			}
-//		}
-//		return null;
-//	}
-	
+	// private ChnAreaVO getManagerInfo(String pk_corp) throws DZFWarpException
+	// {
+	// StringBuffer sql = new StringBuffer();
+	// SQLParameter spm = new SQLParameter();
+	// sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
+	// sql.append(" FROM cn_chnarea a \n") ;
+	// sql.append(" LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n")
+	// ;
+	// sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ;
+	// sql.append(" AND nvl(b.dr, 0) = 0 \n") ;
+	// sql.append(" AND nvl(b.type,0) = 1 \n");
+	// sql.append(" AND b.pk_corp = ? \n");
+	// spm.addParam(pk_corp);
+	// List<ChnAreaVO> list = (List<ChnAreaVO>)
+	// singleObjectBO.executeQuery(sql.toString(), spm, new
+	// BeanListProcessor(ChnAreaVO.class));
+	// if(list != null && list.size() > 0){
+	// return list.get(0);
+	// }else{
+	// sql = new StringBuffer();
+	// spm = new SQLParameter();
+	// sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
+	// sql.append(" FROM cn_chnarea a \n") ;
+	// sql.append(" LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n")
+	// ;
+	// sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ;
+	// sql.append(" AND nvl(b.dr, 0) = 0 \n") ;
+	// sql.append(" AND nvl(b.type,0) = 1 \n");
+	// sql.append(" AND nvl(isCharge, 'N') = 'Y' \n");
+	// sql.append(" AND b.vprovince = (SELECT vprovince \n");
+	// sql.append(" FROM bd_account \n");
+	// sql.append(" WHERE nvl(dr, 0) = 0 \n");
+	// sql.append(" AND nvl(ischannel, 'N') = 'Y' \n");
+	// sql.append(" AND nvl(isaccountcorp, 'N') = 'Y' \n");
+	// sql.append(" AND pk_corp = ? ) \n");
+	// spm.addParam(pk_corp);
+	// List<ChnAreaVO> retlist = (List<ChnAreaVO>)
+	// singleObjectBO.executeQuery(sql.toString(), spm, new
+	// BeanListProcessor(ChnAreaVO.class));
+	// if(retlist != null && retlist.size() > 0){
+	// return retlist.get(0);
+	// }
+	// }
+	// return null;
+	// }
+
 	/**
 	 * 获取季度名称
+	 * 
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	private String getSeasonName(Integer season) throws DZFWarpException {
 		String name = "";
 		switch (season) {
-			case 1:
-				name = "第一季度";
-				break;
-			case 2:
-				name = "第二季度";
-				break;
-			case 3:
-				name = "第三季度";
-				break;
-			case 4:
-				name = "第四季度";
-				break;
+		case 1:
+			name = "第一季度";
+			break;
+		case 2:
+			name = "第二季度";
+			break;
+		case 3:
+			name = "第三季度";
+			break;
+		case 4:
+			name = "第四季度";
+			break;
 		}
 		return name;
 	}
-	
+
 	/**
 	 * 查询会计公司信息
+	 * 
 	 * @param pk_corp
 	 * @return
 	 * @throws DZFWarpException
 	 */
 	private CorpVO qryCorpInfo(String pk_corp) throws DZFWarpException {
 		CorpVO corpvo = (CorpVO) singleObjectBO.queryByPrimaryKey(CorpVO.class, pk_corp);
-		if(corpvo != null){
+		if (corpvo != null) {
 			corpvo.setLegalbodycode(CodeUtils1.deCode(corpvo.getLegalbodycode()));
 			corpvo.setPhone1(CodeUtils1.deCode(corpvo.getPhone1()));
 			corpvo.setPhone2(CodeUtils1.deCode(corpvo.getPhone2()));
@@ -241,71 +256,72 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		}
 		return corpvo;
 	}
-	
+
 	/**
 	 * 获取查询条件及参数
+	 * 
 	 * @param paramvo
 	 * @return
 	 */
-	private QrySqlSpmVO getQrySql(QryParamVO paramvo){
+	private QrySqlSpmVO getQrySql(QryParamVO paramvo) {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.*,ba.vprovince FROM cn_rebate t \n") ;
+		sql.append("SELECT t.*,ba.vprovince FROM cn_rebate t \n");
 		sql.append(" LEFT JOIN bd_account ba on t.pk_corp = ba.pk_corp ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
-    	String condition = pubser.makeCondition(paramvo.getCuserid(),paramvo.getAreaname(),IStatusConstant.IYUNYING);
-    	if(condition!=null && !condition.equals("alldata")){
-    		sql.append(condition);
-    	}else if(condition==null){
-    		return null;
-    	}
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append("   AND t.istatus = ? \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(ba.dr,0)=0 \n");
+		String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(), IStatusConstant.IYUNYING);
+		if (condition != null && !condition.equals("alldata")) {
+			sql.append(condition);
+		} else if (condition == null) {
+			return null;
+		}
+		if (paramvo.getQrytype() != null && paramvo.getQrytype() != -1) {
+			sql.append("   AND t.istatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
-		}else{
-			if(!StringUtil.isEmpty(paramvo.getVyear())){
-				sql.append("   AND t.vyear = ? \n") ; 
+		} else {
+			if (!StringUtil.isEmpty(paramvo.getVyear())) {
+				sql.append("   AND t.vyear = ? \n");
 				spm.addParam(paramvo.getVyear());
 			}
-			if(paramvo.getIseason() != null && paramvo.getIseason() != -1){
-				sql.append("   AND t.iseason = ? \n") ; 
+			if (paramvo.getIseason() != null && paramvo.getIseason() != -1) {
+				sql.append("   AND t.iseason = ? \n");
 				spm.addParam(paramvo.getIseason());
 			}
-			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-				if(paramvo.getVdeductstatus() == -2){
-					sql.append("   AND t.istatus in (?,?,?) \n") ;
+			if (paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1) {
+				if (paramvo.getVdeductstatus() == -2) {
+					sql.append("   AND t.istatus in (?,?,?) \n");
 					spm.addParam(IStatusConstant.IREBATESTATUS_1);
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
-				}else if(paramvo.getVdeductstatus() == -3){
-					sql.append("   AND t.istatus in (?,?) \n") ;
+				} else if (paramvo.getVdeductstatus() == -3) {
+					sql.append("   AND t.istatus in (?,?) \n");
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
-				}else{
-					sql.append("   AND t.istatus = ? \n") ; 
+				} else {
+					sql.append("   AND t.istatus = ? \n");
 					spm.addParam(paramvo.getVdeductstatus());
 				}
 			}
-//			if(!StringUtil.isEmpty(paramvo.getCuserid())){
-//				String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
-//				if(corps != null && corps.length > 0){
-//					String where = SqlUtil.buildSqlForIn("pk_corp", corps);
-//					sql.append(" AND ").append(where);
-//				}else{
-//					sql.append("   AND pk_corp is null \n") ;
-//				}
-//			}
-			if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+			// if(!StringUtil.isEmpty(paramvo.getCuserid())){
+			// String[] corps = pubser.getManagerCorp(paramvo.getCuserid());
+			// if(corps != null && corps.length > 0){
+			// String where = SqlUtil.buildSqlForIn("pk_corp", corps);
+			// sql.append(" AND ").append(where);
+			// }else{
+			// sql.append(" AND pk_corp is null \n") ;
+			// }
+			// }
+			if (!StringUtil.isEmpty(paramvo.getPk_corp())) {
 				String[] corps = paramvo.getPk_corp().split(",");
 				String where = SqlUtil.buildSqlForIn("t.pk_corp", corps);
 				sql.append(" AND ").append(where);
 			}
-			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-				sql.append("   AND t.pk_rebate = ? \n") ; 
+			if (!StringUtil.isEmpty(paramvo.getPk_bill())) {
+				sql.append("   AND t.pk_rebate = ? \n");
 				spm.addParam(paramvo.getPk_bill());
 			}
-			if(!StringUtil.isEmpty(paramvo.getVqrysql())){//渠道经理过滤
+			if (!StringUtil.isEmpty(paramvo.getVqrysql())) {// 渠道经理过滤
 				sql.append(paramvo.getVqrysql());
 			}
 		}
@@ -313,24 +329,25 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		qryvo.setSpm(spm);
 		return qryvo;
 	}
-	
+
 	@Override
 	public RebateVO save(RebateVO data, String pk_corp) throws DZFWarpException {
-	    String uuid = UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		try {
 			chcekBeforeSave(data);
-			if(StringUtil.isEmpty(data.getVbillcode())){
+			if (StringUtil.isEmpty(data.getVbillcode())) {
 				String vbillcode = getVbillcode();
 				data.setVbillcode(vbillcode);
-				checkCodeOnly(data);//返点单单号唯一性校验
+				checkCodeOnly(data);// 返点单单号唯一性校验
 			}
-			LockUtil.getInstance().tryLockKey(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(),uuid, 10);
-			RebateVO retvo =  (RebateVO) singleObjectBO.saveObject(pk_corp, data);
-			if(retvo != null){
+			LockUtil.getInstance().tryLockKey(data.getTableName(),
+					data.getPk_corp() + "" + data.getVyear() + "" + data.getIseason(), uuid, 10);
+			RebateVO retvo = (RebateVO) singleObjectBO.saveObject(pk_corp, data);
+			if (retvo != null) {
 				retvo.setVprovince(data.getVprovince());
-				Map<String,String> marmap = pubser.getManagerMap();//渠道经理
-				Map<Integer, String> areaMap = pubser.getAreaMap(null,3);//大区
-				setShowData(retvo,marmap,areaMap);
+				Map<String, String> marmap = pubser.getManagerMap();// 渠道经理
+				Map<Integer, String> areaMap = pubser.getAreaMap(null, 3);// 大区
+				setShowData(retvo, marmap, areaMap);
 			}
 			return retvo;
 		} catch (Exception e) {
@@ -339,12 +356,14 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_corp()+""+data.getVyear()+""+data.getIseason(),uuid);
+			LockUtil.getInstance().unLock_Key(data.getTableName(),
+					data.getPk_corp() + "" + data.getVyear() + "" + data.getIseason(), uuid);
 		}
 	}
-	
+
 	/**
 	 * 获取单据编码
+	 * 
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -360,59 +379,62 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		mcvo.setBillType(str);
 		mcvo.setCorpIdField("pk_corp");
 		mcvo.setDiflen(4);
-		try{
+		try {
 			code = billCodeSer.getDefaultCode(mcvo);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw new BusinessException("获取单据编码失败");
 		}
 		return code;
 	}
-	
+
 	/**
 	 * 保存前校验
+	 * 
 	 * @param data
 	 * @throws DZFWarpException
 	 */
-	private void chcekBeforeSave(RebateVO data) throws DZFWarpException{
-		if(!StringUtil.isEmpty(data.getVbillcode())){
-			checkCodeOnly(data);//返点单单号唯一性校验
+	private void chcekBeforeSave(RebateVO data) throws DZFWarpException {
+		if (!StringUtil.isEmpty(data.getVbillcode())) {
+			checkCodeOnly(data);// 返点单单号唯一性校验
 		}
-		checkDataOnly(data);//返点信息年-季度唯一性校验
-		checkRebateMny(data);//返点金额校验
+		checkDataOnly(data);// 返点信息年-季度唯一性校验
+		checkRebateMny(data);// 返点金额校验
 	}
-	
+
 	/**
 	 * 校验返点相关金额是否正确
+	 * 
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
 	public void checkRebateMny(RebateVO vo) throws DZFWarpException {
-		if(CommonUtil.getDZFDouble(vo.getNbasemny()).compareTo(DZFDouble.ZERO_DBL) == 0){
+		if (CommonUtil.getDZFDouble(vo.getNbasemny()).compareTo(DZFDouble.ZERO_DBL) == 0) {
 			throw new BusinessException("返点基数必须大于0");
 		}
-		if(CommonUtil.getDZFDouble(vo.getNrebatemny()).compareTo(DZFDouble.ZERO_DBL) == 0){
+		if (CommonUtil.getDZFDouble(vo.getNrebatemny()).compareTo(DZFDouble.ZERO_DBL) == 0) {
 			throw new BusinessException("返点金额必须大于0");
 		}
 		RebateVO mnyvo = queryDebateMny(vo);
-		if(mnyvo != null){
-			if(vo.getNdebitmny() != null && vo.getNdebitmny().compareTo(mnyvo.getNdebitmny()) != 0){
+		if (mnyvo != null) {
+			if (vo.getNdebitmny() != null && vo.getNdebitmny().compareTo(mnyvo.getNdebitmny()) != 0) {
 				throw new BusinessException("扣款金额计算错误");
 			}
-			if(vo.getNdebitmny() != null && vo.getNbasemny() != null 
-					&& vo.getNbasemny().compareTo(vo.getNdebitmny()) > 0){
+			if (vo.getNdebitmny() != null && vo.getNbasemny() != null
+					&& vo.getNbasemny().compareTo(vo.getNdebitmny()) > 0) {
 				throw new BusinessException("返点基数不能大于扣款金额");
 			}
-			if(vo.getNbasemny() != null && vo.getNrebatemny() != null
-					&& vo.getNrebatemny().compareTo(vo.getNbasemny()) > 0){
+			if (vo.getNbasemny() != null && vo.getNrebatemny() != null
+					&& vo.getNrebatemny().compareTo(vo.getNbasemny()) > 0) {
 				throw new BusinessException("返点金额不能大于返点基数");
 			}
-		}else{
+		} else {
 			throw new BusinessException("扣款金额计算错误");
 		}
 	}
-	
+
 	/**
 	 * 返点单号唯一性校验
+	 * 
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
@@ -430,21 +452,22 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
 		if (list != null && list.size() > 0) {
-			throw new BusinessException("返点单号："+vo.getVbillcode()+"已经在系统中存在");
+			throw new BusinessException("返点单号：" + vo.getVbillcode() + "已经在系统中存在");
 		}
 	}
-	
+
 	/**
 	 * 返点信息年-季度唯一性校验
+	 * 
 	 * @param vo
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
 	public void checkDataOnly(RebateVO vo) throws DZFWarpException {
-		if(StringUtil.isEmpty(vo.getVyear())){
+		if (StringUtil.isEmpty(vo.getVyear())) {
 			throw new BusinessException("所属年不能为空");
 		}
-		if(vo.getIseason() == null){
+		if (vo.getIseason() == null) {
 			throw new BusinessException("所属季度不能为空");
 		}
 		SQLParameter spm = new SQLParameter();
@@ -468,20 +491,28 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if (list != null && list.size() > 0) {
 			String corpname = "";
 			CorpVO corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-			if(corpvo != null){
+			if (corpvo != null) {
 				corpname = corpvo.getUnitname();
 			}
-			throw new BusinessException("加盟商："+corpname+vo.getVyear()+"年第"+vo.getIseason()+"季度返点单，已经在系统中存在");
+			throw new BusinessException("加盟商：" + corpname + vo.getVyear() + "年第" + vo.getIseason() + "季度返点单，已经在系统中存在");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ManagerRefVO> queryManagerRef(QryParamVO paramvo) throws DZFWarpException {
+	public List<ManagerRefVO> queryManagerRef(QryParamVO pamvo) throws DZFWarpException {
 		List<ManagerRefVO> retlist = new ArrayList<ManagerRefVO>();
-		//只查询区域经理
-		String sql = " SELECT DISTINCT userid FROM cn_chnarea_b WHERE nvl(dr,0) = 0 AND nvl(type,0) = 1 ";
-		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(ChnAreaBVO.class));
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT DISTINCT userid  \n") ;
+		sql.append("  FROM cn_chnarea_b  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		//1:渠道经理；2：培训师；3：运营；
+		sql.append("   AND nvl(type, 0) = ?  \n");
+		spm.addParam(pamvo.getQrytype());
+		
+		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnAreaBVO.class));
 		if (list != null && list.size() > 0) {
 			UserVO uservo = null;
 			ManagerRefVO refvo = null;
@@ -494,12 +525,12 @@ public class RebateInputServiceImpl implements IRebateInputService {
 						refvo.setUsercode(uservo.getUser_code());
 						refvo.setUsername(uservo.getUser_name());
 					}
-					if (!StringUtil.isEmpty(paramvo.getUser_code())) {
+					if (!StringUtil.isEmpty(pamvo.getUser_code())) {
 						if (!StringUtil.isEmpty(refvo.getUsercode()) || !StringUtil.isEmpty(refvo.getUsername())) {
 							if ((!StringUtil.isEmpty(refvo.getUsercode())
-									&& refvo.getUsercode().indexOf(paramvo.getUser_code()) != -1)
+									&& refvo.getUsercode().indexOf(pamvo.getUser_code()) != -1)
 									|| (!StringUtil.isEmpty(refvo.getUsername())
-											&& refvo.getUsername().indexOf(paramvo.getUser_code()) != -1)) {
+											&& refvo.getUsername().indexOf(pamvo.getUser_code()) != -1)) {
 								retlist.add(refvo);
 							}
 						}
@@ -514,12 +545,12 @@ public class RebateInputServiceImpl implements IRebateInputService {
 
 	@Override
 	public void delete(RebateVO data) throws DZFWarpException {
-		if(data.getIstatus() != null && data.getIstatus() != IStatusConstant.IREBATESTATUS_0
-				&& data.getIstatus() != IStatusConstant.IREBATESTATUS_4){
-			throw new BusinessException("返点单："+data.getVbillcode()+"状态不为待提交或已驳回，不能删除");
+		if (data.getIstatus() != null && data.getIstatus() != IStatusConstant.IREBATESTATUS_0
+				&& data.getIstatus() != IStatusConstant.IREBATESTATUS_4) {
+			throw new BusinessException("返点单：" + data.getVbillcode() + "状态不为待提交或已驳回，不能删除");
 		}
 		String errmsg = checkData(data);
-		if(!StringUtil.isEmpty(errmsg)){
+		if (!StringUtil.isEmpty(errmsg)) {
 			throw new BusinessException(errmsg);
 		}
 		String sql = " DELETE FROM cn_rebate WHERE pk_rebate = ? ";
@@ -527,9 +558,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		spm.addParam(data.getPk_rebate());
 		singleObjectBO.executeUpdate(sql, spm);
 	}
-	
+
 	/**
 	 * 数据校验
+	 * 
 	 * @param data
 	 * @throws DZFWarpException
 	 */
@@ -537,18 +569,18 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	public String checkData(RebateVO data) throws DZFWarpException {
 		String errmsg = "";
 		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
-		if(oldvo != null){
-			if(oldvo.getDr() != null && oldvo.getDr() == 1){
-				errmsg = "返点单："+data.getVbillcode()+"已经被删除";
+		if (oldvo != null) {
+			if (oldvo.getDr() != null && oldvo.getDr() == 1) {
+				errmsg = "返点单：" + data.getVbillcode() + "已经被删除";
 			}
-			if(data.getTstamp() == null || oldvo.getTstamp() == null){
-				errmsg = "返点单："+data.getVbillcode()+"数据错误";
+			if (data.getTstamp() == null || oldvo.getTstamp() == null) {
+				errmsg = "返点单：" + data.getVbillcode() + "数据错误";
 			}
-			if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
-				errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+			if (data.getTstamp().compareTo(oldvo.getTstamp()) != 0) {
+				errmsg = "返点单：" + data.getVbillcode() + "数据发生变化，请重新查询后再次尝试";
 			}
-		}else{
-			errmsg = "返点单："+data.getVbillcode()+"数据错误";
+		} else {
+			errmsg = "返点单：" + data.getVbillcode() + "数据错误";
 		}
 		return errmsg;
 	}
@@ -564,13 +596,13 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny, \n");
 		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny, \n");
-		//合同数量去掉补提单合同数
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS icontractnum  \n") ;
+		// 合同数量去掉补提单合同数
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 THEN  \n");
+		sql.append("              1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) AS icontractnum  \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
@@ -592,25 +624,26 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		sql.append("   GROUP BY t.pk_corp \n");
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
-		if(list != null && list.size() > 0){
+		if (list != null && list.size() > 0) {
 			retvo = list.get(0);
-		}else{
+		} else {
 			retvo = new RebateVO();
 			retvo.setNdebitmny(DZFDouble.ZERO_DBL);
 			retvo.setNbasemny(DZFDouble.ZERO_DBL);
 			retvo.setIcontractnum(0);
 		}
 		RebateVO backvo = queryRetMny(data);
-		if(backvo != null){
+		if (backvo != null) {
 			retvo.setNdebitmny(SafeCompute.add(retvo.getNdebitmny(), backvo.getNdebitmny()));
 			retvo.setNbasemny(SafeCompute.add(retvo.getNbasemny(), backvo.getNbasemny()));
 			retvo.setIcontractnum(countConNum(retvo.getIcontractnum(), backvo.getIcontractnum()));
 		}
 		return retvo;
 	}
-	
+
 	/**
 	 * 合同数量计算
+	 * 
 	 * @param num1
 	 * @param num2
 	 * @return
@@ -621,9 +654,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		num2 = num2 == null ? 0 : num2;
 		return num1 - num2;
 	}
-	
+
 	/**
 	 * 获取查询期间终止合同退款金额
+	 * 
 	 * @param data
 	 * @return
 	 * @throws DZFWarpException
@@ -632,23 +666,23 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	private RebateVO queryRetMny(RebateVO data) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(ct.nsubdeductmny, 0)) AS ndebitmny,  \n") ; 
-		sql.append("       SUM(nvl(ct.nsubdeductmny, 0)) AS nbasemny,  \n") ; 
-		sql.append("       SUM(case ct.vstatus  \n") ; 
-		sql.append("             when 10 then  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             else  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           end) AS icontractnum  \n") ; 
-		sql.append("  FROM cn_contract ct  \n") ; 
-		sql.append(" INNER JOIN ynt_contract t ON ct.pk_contract = t.pk_contract  \n") ; 
-		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n") ; 
-		sql.append("   AND ct.vdeductstatus in (?, ?) \n") ; 
+		sql.append("SELECT SUM(nvl(ct.nsubdeductmny, 0)) AS ndebitmny,  \n");
+		sql.append("       SUM(nvl(ct.nsubdeductmny, 0)) AS nbasemny,  \n");
+		sql.append("       SUM(case ct.vstatus  \n");
+		sql.append("             when 10 then  \n");
+		sql.append("              1  \n");
+		sql.append("             else  \n");
+		sql.append("              0  \n");
+		sql.append("           end) AS icontractnum  \n");
+		sql.append("  FROM cn_contract ct  \n");
+		sql.append(" INNER JOIN ynt_contract t ON ct.pk_contract = t.pk_contract  \n");
+		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND ct.vdeductstatus in (?, ?) \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		sql.append("   AND ct.pk_corp = ? \n") ; 
+		sql.append("   AND ct.pk_corp = ? \n");
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
@@ -659,9 +693,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		}
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
-		if(list != null && list.size() > 0){
+		if (list != null && list.size() > 0) {
 			return list.get(0);
-		}else{
+		} else {
 			RebateVO retvo = new RebateVO();
 			retvo.setNdebitmny(DZFDouble.ZERO_DBL);
 			retvo.setNbasemny(DZFDouble.ZERO_DBL);
@@ -669,9 +703,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			return retvo;
 		}
 	}
-	
+
 	/**
 	 * 获取查询期间
+	 * 
 	 * @param data
 	 * @return
 	 * @throws DZFWarpException
@@ -679,27 +714,27 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	private List<String> getDebatePeriod(RebateVO data) throws DZFWarpException {
 		List<String> pliat = new ArrayList<String>();
 		String year = data.getVyear();
-		switch(data.getIseason()){
-			case 1:
-				pliat.add(year+"-01");
-				pliat.add(year+"-02");
-				pliat.add(year+"-03");
-				break;
-			case 2:
-				pliat.add(year+"-04");
-				pliat.add(year+"-05");
-				pliat.add(year+"-06");
-				break;
-			case 3:
-				pliat.add(year+"-07");
-				pliat.add(year+"-08");
-				pliat.add(year+"-09");
-				break;
-			case 4:
-				pliat.add(year+"-10");
-				pliat.add(year+"-11");
-				pliat.add(year+"-12");
-				break;
+		switch (data.getIseason()) {
+		case 1:
+			pliat.add(year + "-01");
+			pliat.add(year + "-02");
+			pliat.add(year + "-03");
+			break;
+		case 2:
+			pliat.add(year + "-04");
+			pliat.add(year + "-05");
+			pliat.add(year + "-06");
+			break;
+		case 3:
+			pliat.add(year + "-07");
+			pliat.add(year + "-08");
+			pliat.add(year + "-09");
+			break;
+		case 4:
+			pliat.add(year + "-10");
+			pliat.add(year + "-11");
+			pliat.add(year + "-12");
+			break;
 		}
 		return pliat;
 	}
@@ -707,15 +742,15 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	@Override
 	public RebateVO[] saveCommit(RebateVO[] bateVOs) throws DZFWarpException {
 		List<RebateVO> uplist = new ArrayList<RebateVO>();
-		if(bateVOs != null && bateVOs.length > 0){
+		if (bateVOs != null && bateVOs.length > 0) {
 			String errmsg = "";
-			for(RebateVO vo : bateVOs){
-				if(!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0)){
-					vo.setVerrmsg("返点单："+vo.getVbillcode()+"状态不为待提交");
+			for (RebateVO vo : bateVOs) {
+				if (!vo.getIstatus().equals(IStatusConstant.IREBATESTATUS_0)) {
+					vo.setVerrmsg("返点单：" + vo.getVbillcode() + "状态不为待提交");
 					continue;
 				}
 				errmsg = checkData(vo);
-				if(!StringUtil.isEmpty(errmsg)){
+				if (!StringUtil.isEmpty(errmsg)) {
 					vo.setVerrmsg(errmsg);
 					continue;
 				}
@@ -724,8 +759,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				uplist.add(vo);
 			}
 		}
-		if(uplist != null && uplist.size() > 0){
-			singleObjectBO.updateAry(uplist.toArray(new RebateVO[0]), new String[]{"istatus","tstamp"});
+		if (uplist != null && uplist.size() > 0) {
+			singleObjectBO.updateAry(uplist.toArray(new RebateVO[0]), new String[] { "istatus", "tstamp" });
 		}
 		return bateVOs;
 	}
@@ -734,68 +769,68 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	public RebateVO queryById(RebateVO data, Integer opertype) throws DZFWarpException {
 		String errmsg = "";
 		RebateVO oldvo = (RebateVO) singleObjectBO.queryByPrimaryKey(RebateVO.class, data.getPk_rebate());
-		if(oldvo != null){
-			if(oldvo.getDr() != null && oldvo.getDr() == 1){
-				errmsg = "返点单："+data.getVbillcode()+"已经被删除";
+		if (oldvo != null) {
+			if (oldvo.getDr() != null && oldvo.getDr() == 1) {
+				errmsg = "返点单：" + data.getVbillcode() + "已经被删除";
 			}
-			if(data.getTstamp() == null || oldvo.getTstamp() == null){
-				errmsg = "返点单："+data.getVbillcode()+"数据错误";
+			if (data.getTstamp() == null || oldvo.getTstamp() == null) {
+				errmsg = "返点单：" + data.getVbillcode() + "数据错误";
 			}
-			if(opertype == 1){
-//				if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
-//					errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
-//				}
-				if(oldvo.getIstatus() != null && oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0
-						&& oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_4){
-					errmsg = "返点单："+data.getVbillcode()+"状态不为待提交或已驳回状态，不能修改，请重新查询后再次尝试";
+			if (opertype == 1) {
+				// if(data.getTstamp().compareTo(oldvo.getTstamp()) != 0){
+				// errmsg = "返点单："+data.getVbillcode()+"数据发生变化，请重新查询后再次尝试";
+				// }
+				if (oldvo.getIstatus() != null && oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_0
+						&& oldvo.getIstatus() != IStatusConstant.IREBATESTATUS_4) {
+					errmsg = "返点单：" + data.getVbillcode() + "状态不为待提交或已驳回状态，不能修改，请重新查询后再次尝试";
 				}
 			}
-		}else{
-			errmsg = "返点单："+data.getVbillcode()+"数据错误";
+		} else {
+			errmsg = "返点单：" + data.getVbillcode() + "数据错误";
 		}
-		if(!StringUtil.isEmpty(errmsg)){
+		if (!StringUtil.isEmpty(errmsg)) {
 			throw new BusinessException(errmsg);
 		}
 		String sql = " nvl(dr,0) = 0 AND pk_bill = ? ORDER BY TS DESC ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(oldvo.getPk_rebate());
 		WorkflowVO[] flowVOs = (WorkflowVO[]) singleObjectBO.queryByCondition(WorkflowVO.class, sql, spm);
-		if(flowVOs != null && flowVOs.length > 0){
+		if (flowVOs != null && flowVOs.length > 0) {
 			oldvo.setChildren(flowVOs);
 		}
-		//展示赋值
+		// 展示赋值
 		CorpVO corpvo = CorpCache.getInstance().get(null, oldvo.getPk_corp());
-		if(corpvo != null){
+		if (corpvo != null) {
 			oldvo.setCorpname(corpvo.getUnitname());
 			oldvo.setVprovince(corpvo.getVprovince());
 		}
 		UserVO uservo = UserCache.getInstance().get(oldvo.getCoperatorid(), null);
-		if(uservo != null){
+		if (uservo != null) {
 			oldvo.setVoperatorname(uservo.getUser_name());
 		}
-		if(oldvo.getIstatus() != null){
+		if (oldvo.getIstatus() != null) {
 			String vstatusname = "";
-			//0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
-			switch(oldvo.getIstatus()){
-				case 0:
-					vstatusname = "待提交";
-					break;
-				case 1:
-					vstatusname = "待确认";
-					break;
-				case 2:
-					vstatusname = "待审批";
-					break;
-				case 3:
-					vstatusname = "审批通过";
-					break;
-				case 4:
-					vstatusname = "已驳回";
-					break;
+			// 0：待提交；1：待确认；2：待审批；3：审批通过；4：已驳回；
+			switch (oldvo.getIstatus()) {
+			case 0:
+				vstatusname = "待提交";
+				break;
+			case 1:
+				vstatusname = "待确认";
+				break;
+			case 2:
+				vstatusname = "待审批";
+				break;
+			case 3:
+				vstatusname = "审批通过";
+				break;
+			case 4:
+				vstatusname = "已驳回";
+				break;
 			}
 			oldvo.setVstatusname(vstatusname);
 		}
-		oldvo.setVshowdate(oldvo.getVyear()+"-0"+oldvo.getIseason());
+		oldvo.setVshowdate(oldvo.getVyear() + "-0" + oldvo.getIseason());
 		return oldvo;
 	}
 
@@ -803,11 +838,11 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	public String getQrySql(String cuserid) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		String[] corps = pubser.getManagerCorp(cuserid);
-		if(corps != null && corps.length > 0){
+		if (corps != null && corps.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
-		}else{
-			sql.append(" AND t.pk_corp is null \n") ; 
+		} else {
+			sql.append(" AND t.pk_corp is null \n");
 		}
 		return sql.toString();
 	}
