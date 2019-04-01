@@ -48,6 +48,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		if (corplist != null && corplist.size() > 0) {
 			List<PersonStatisVO> queryEmployNum = queryEmployNum(corplist);
 			HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
+			HashMap<String, Integer> queryCustNum = queryCustNum(corplist);
 			List<PersonStatisVO> list = queryPersonStatis(corplist);
 			PersonStatisVO setVO=new PersonStatisVO();
 			PersonStatisVO getvo=new PersonStatisVO();
@@ -79,6 +80,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					}
 					
 					setVO.setTotal(queryUserNum.get(pk_corp));
+					setVO.setCustnum(queryCustNum.get(pk_corp));
 					if(queryEmployNum!=null && queryEmployNum.indexOf(setVO)>=0){
 						getvo=queryEmployNum.get(queryEmployNum.indexOf(setVO));
 						setVO.setLznum(getvo.getLznum());
@@ -163,9 +165,27 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	private HashMap<String, Integer> queryUserNum(List<String> corplist) {
 		HashMap<String, Integer> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select count(cuserid) total,pk_corp from sm_user su where nvl(su.dr,0)=0 and nvl(su.locked_tag,'N')= 'N' and ");
+		sql.append(" select count(cuserid) total,pk_corp from sm_user where nvl(dr,0)=0 and nvl(locked_tag,'N')= 'N' and ");
 		sql.append(SqlUtil.buildSqlForIn("pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append(" group by pk_corp ");
+		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
+		for (PersonStatisVO personStatisVO : list) {
+			map.put(personStatisVO.getPk_corp(), personStatisVO.getTotal());
+		} 
+		return map;
+	}
+	
+	/**
+	 * 查询加盟商的总客户数（不包含流失的）
+	 * @param corplist
+	 * @return
+	 */
+	private HashMap<String, Integer> queryCustNum(List<String> corplist) {
+		HashMap<String, Integer> map=new HashMap<>();
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select count(pk_corp) total,fathercorp pk_corp from bd_corp  where nvl(dr,0)=0 and nvl(isseal,'N')='N' and ");
+		sql.append(SqlUtil.buildSqlForIn("fathercorp", corplist.toArray(new String[corplist.size()])));
+		sql.append(" group by fathercorp ");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		for (PersonStatisVO personStatisVO : list) {
 			map.put(personStatisVO.getPk_corp(), personStatisVO.getTotal());

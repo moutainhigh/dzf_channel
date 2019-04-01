@@ -59,6 +59,7 @@ function load(){
 		                		return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
 			            }},
 			            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
+			            { field : 'custnum', title : '总客户数', width:80,halign:'center',align:'right',rowspan:2},
 		                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
 		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:7},
@@ -84,6 +85,7 @@ function load(){
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
 			var footerData = new Object();
+			var custnum = 0;	// 
 			var jms01 = 0;	// 
 			var jms02 = 0;	// 
 			var jms06 = 0;	// 
@@ -99,6 +101,9 @@ function load(){
 			var total = 0;	// 
 
 			for (var i = 0; i < rows.length; i++) {
+				if(rows[i].custnum != undefined && rows[i].custnum != null){
+					custnum += parseFloat(rows[i].custnum);
+				}
 				if(rows[i].jms01 != undefined && rows[i].jms01 != null){
 					jms01 += parseFloat(rows[i].jms01);
 				}
@@ -142,6 +147,7 @@ function load(){
 			var footerData = new Object();
 			footerData['incode'] = '合计';
 			footerData['corpnm'] = "";
+			footerData['custnum'] = custnum;
 			footerData['jms01'] = jms01;
 			footerData['jms02'] = jms02;
 			footerData['jms06'] = jms06;
