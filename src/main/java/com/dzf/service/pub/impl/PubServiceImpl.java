@@ -253,20 +253,23 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	/**
-	 * 获取加盟商直接对应的渠道经理(非省/市负责人)
+	 * 获取加盟商直接对应的渠道经理/渠道运营(非省/市负责人)
+	 * 1：渠道区域；2：培训区域；3：运营区域；
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, String> getManagerMap() throws DZFWarpException {
+	public Map<String, String> getManagerMap(Integer qrytype) throws DZFWarpException {
 		Map<String, String> map = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp, t.vprovince, b.userid  \n");
 		sql.append("  FROM bd_account t  \n");
 		sql.append("  LEFT JOIN cn_chnarea_b b ON t.pk_corp = b.pk_corp  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.type, 0) = 1 \n");
-		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), null,
+		sql.append("   AND nvl(b.type, 0) = ? \n");
+		spm.addParam(qrytype);
+		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnAreaBVO.class));
 		if (list != null && list.size() > 0) {
 			// Map<Integer, String> promap = qryProvMap();
@@ -275,11 +278,11 @@ public class PubServiceImpl implements IPubService {
 				if (!StringUtil.isEmpty(bvo.getUserid())) {
 					map.put(bvo.getPk_corp(), bvo.getUserid());
 				} /*
-					 * else{ if(promap != null && !promap.isEmpty()){ userid =
-					 * promap.get(bvo.getVprovince());
-					 * if(!StringUtil.isEmpty(userid)){
-					 * map.put(bvo.getPk_corp(), userid); } } }
-					 */
+				 * else{ if(promap != null && !promap.isEmpty()){ userid =
+				 * promap.get(bvo.getVprovince());
+				 * if(!StringUtil.isEmpty(userid)){
+				 * map.put(bvo.getPk_corp(), userid); } } }
+				 */
 			}
 		}
 		return map;

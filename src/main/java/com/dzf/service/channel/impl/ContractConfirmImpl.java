@@ -100,7 +100,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	private void setShowData(List<ContractConfrimVO> list, String showtype,String areaname) throws DZFWarpException {
-		Map<String,String> marmap = pubser.getManagerMap();//渠道经理
+		Map<String,String> marmap = pubser.getManagerMap(1);//渠道经理
+		Map<String,String> opermap = pubser.getManagerMap(3);//渠道运营
 		Map<Integer, String> areaMap = null;//大区集合
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname,3);
@@ -114,7 +115,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else if("audit".equals(showtype)){//审核查询
 				setAuditQryData(confvo);
 			}
-			setShowData(confvo, marmap);
+			setShowData(confvo, marmap, opermap);
 		}
 	}
 	
@@ -124,7 +125,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param marmap
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(ContractConfrimVO confvo, Map<String,String> marmap) throws DZFWarpException {
+	private void setShowData(ContractConfrimVO confvo, Map<String, String> marmap, Map<String, String> opermap)
+			throws DZFWarpException {
 		UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
 		if (uservo != null) {
 			confvo.setVadviser(uservo.getUser_name());// 销售顾问
@@ -135,19 +137,28 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
 		if (corpvo != null) {
-			confvo.setVarea(corpvo.getCitycounty());//地区
-			confvo.setCorpname(corpvo.getUnitname());//加盟商
+			confvo.setVarea(corpvo.getCitycounty());// 地区
+			confvo.setCorpname(corpvo.getUnitname());// 加盟商
 		}
 		corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
-		if(corpvo != null){
-			confvo.setCorpkname(corpvo.getUnitname());//客户名称
+		if (corpvo != null) {
+			confvo.setCorpkname(corpvo.getUnitname());// 客户名称
 		}
-		if(marmap != null && !marmap.isEmpty()){
+		if (marmap != null && !marmap.isEmpty()) {
 			String manager = marmap.get(confvo.getPk_corp());
-			if(!StringUtil.isEmpty(manager)){
+			if (!StringUtil.isEmpty(manager)) {
 				uservo = UserCache.getInstance().get(manager, null);
 				if (uservo != null) {
-					confvo.setVmanagername(uservo.getUser_name());//渠道经理
+					confvo.setVmanagername(uservo.getUser_name());// 渠道经理
+				}
+			}
+		}
+		if(opermap != null && !opermap.isEmpty()){
+			String operater = opermap.get(confvo.getPk_corp());
+			if (!StringUtil.isEmpty(operater)) {
+				uservo = UserCache.getInstance().get(operater, null);
+				if (uservo != null) {
+					confvo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
 			}
 		}

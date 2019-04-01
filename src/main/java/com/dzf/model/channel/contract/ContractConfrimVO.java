@@ -242,6 +242,9 @@ public class ContractConfrimVO extends SuperVO {
 
 	@FieldAlias("mname")
 	private String vmanagername; // 渠道经理（只做界面展示）
+	
+	@FieldAlias("operater")
+	private String voperater;// 渠道运营（只做界面展示）
 
 	@FieldAlias("chtype")
 	private Integer channeltype;// 加盟商类型 1：普通加盟商；2：金牌加盟商；
@@ -284,6 +287,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
+
 	public DZFBoolean getIsnconfirm() {
 		return isnconfirm;
 	}

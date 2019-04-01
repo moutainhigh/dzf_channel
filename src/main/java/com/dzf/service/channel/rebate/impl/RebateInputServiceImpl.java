@@ -89,7 +89,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 */
 	private void setShowInfo(List<RebateVO> list, String areaname) throws DZFWarpException {
 		// Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
-		Map<String, String> marmap = pubser.getManagerMap();// 渠道经理
+		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
 		Map<Integer, String> areamap = pubser.getAreaMap(areaname, 3);// 大区
 		// Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
 		for (RebateVO vo : list) {
@@ -345,7 +345,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			RebateVO retvo = (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if (retvo != null) {
 				retvo.setVprovince(data.getVprovince());
-				Map<String, String> marmap = pubser.getManagerMap();// 渠道经理
+				Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
 				Map<Integer, String> areaMap = pubser.getAreaMap(null, 3);// 大区
 				setShowData(retvo, marmap, areaMap);
 			}

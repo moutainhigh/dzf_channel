@@ -42,12 +42,13 @@ public interface IPubService {
 	public String[] getManagerCorp(String userids, Integer qrytype) throws DZFWarpException;
 	
 	/**
-	 * 获取加盟商直接对应的渠道经理(非省/市负责人)
+	 * 获取加盟商直接对应的渠道经理/渠道运营(非省/市负责人)
 	 * @param pk_corp
+	 * @param qrytype
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public Map<String, String> getManagerMap() throws DZFWarpException; 
+	public Map<String, String> getManagerMap(Integer qrytype) throws DZFWarpException; 
 	
 	/**
 	 * 获取 省(直辖市)对应的区域名称<省(直辖市)，区域名称> 

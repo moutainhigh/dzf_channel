@@ -124,7 +124,6 @@
 			$('#mcode').bind('keypress', function(event) {
 				if (event.keyCode == "13") {//Enter 键事件
 					var filtername = $("#mcode").val();
-					;
 					var params = new Object();
 					params["ucode"] = filtername;
 					grid.datagrid('load', params);

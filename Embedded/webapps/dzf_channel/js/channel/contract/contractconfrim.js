@@ -176,7 +176,7 @@ function dClickOpers(rowTable){
 		$("#operater").textbox("setValue",unames);
 		$("#operaterid").val(uids);
 	}
-	 $("#operlg").dialog('close');
+	 $("#operDlg").dialog('close');
 }
 
 /**
@@ -311,6 +311,8 @@ function clearParams(){
 	$("#corpkna_ae").textbox("setValue",null);
 	$("#manager").textbox("setValue",null);
 	$("#managerid").val(null);
+	$("#operater").textbox("setValue",null);
+	$("operaterid").val(null);
 }
 
 /**
@@ -632,8 +634,6 @@ function load(){
 			formatter : function(value,row,index){
 				return formatMny(value);
 			},
-//			sortable:true,
-//			sorter:orderfun,
 			hidden : true
 		}, {
 			width : '100',
@@ -786,6 +786,10 @@ function load(){
 			align:'center',
 			field : 'changedate',
 			sortable:true,
+		}, {
+			width : '100',
+			title : '渠道运营',
+			field : 'operater',
 		}, {
 			width : '100',
 			title : '销售顾问',

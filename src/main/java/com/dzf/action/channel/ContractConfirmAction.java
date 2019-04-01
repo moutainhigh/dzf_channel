@@ -87,7 +87,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			}
 			// 2、渠道运营查询条件
 			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
-				String sql = contractconfser.getQrySql(paramvo.getVmanager(), 3);
+				String sql = contractconfser.getQrySql(paramvo.getVoperater(), 3);
 				if (!StringUtil.isEmpty(sql)) {
 					qsql.append(sql);
 				}
@@ -523,7 +523,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		}
 		// 2、渠道运营查询条件
 		if (!StringUtil.isEmpty(pamvo.getVoperater())) {
-			String sql = contractconfser.getQrySql(pamvo.getVmanager(), 3);
+			String sql = contractconfser.getQrySql(pamvo.getVoperater(), 3);
 			if (!StringUtil.isEmpty(sql)) {
 				qsql.append(sql);
 			}

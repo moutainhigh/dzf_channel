@@ -97,7 +97,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			String ipaytype = null;
 			Integer paytype = null;
 			Map<Integer, String> areaMap = pubService.getAreaMap(areaname, 3);//运营区域
-			Map<String,String> marmap = pubService.getManagerMap();//渠道经理
+			Map<String,String> marmap = pubService.getManagerMap(1);//渠道经理
 			String manager = "";
 			UserVO uservo = null;
 			for (String pk : pklist) {

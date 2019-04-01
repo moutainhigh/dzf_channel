@@ -48,6 +48,7 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 			new Fieldelement("icontractcycle", "合同周期(月)",false,0,false),
 			new Fieldelement("chargedeptname", "纳税人资格",false,0,false),
 			new Fieldelement("nmservicemny", "月服务费",true,2,false),
+			new Fieldelement("voperater", "渠道运营",false,0,false),
 			new Fieldelement("vopername", "经办人",false,0,false),
 	};
 
