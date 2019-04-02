@@ -23,5 +23,14 @@ public interface IDeductAnalysis {
 	 * @throws DZFWarpException
 	 */
 	public List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 获取查询条件
+	 * @param cuserid
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException; 
 
 }

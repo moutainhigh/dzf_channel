@@ -52,7 +52,7 @@
 			</div>
 			
 			<!-- 查询对话框 begin -->
-			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
+			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:320px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -96,6 +96,16 @@
 					<label style="width:60px;" for='all'>全部</label> 
 				</div>
 				<div class="time_col time_colp10">
+					<label style="width:85px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:280px;height:28px;" />
+					<input id="managerid" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:85px;text-align:right">渠道运营：</label>
+					<input id="operater" class="easyui-textbox" style="width:280px;height:28px;" />
+					<input id="operaterid" type="hidden">
+				</div>
+				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">加盟商：</label>
 					<input id="qcorp" class="easyui-textbox" style="width:280px;height:28px;" />
 					<input id="qcorpid" type="hidden">	
@@ -120,5 +130,24 @@
 			onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
 	</div>
 	<!-- 加盟商参照对话框及按钮 end -->
+	
+	<!-- 渠道经理参照对话框及按钮 begin -->
+	<div id="manDlg"></div>
+	<div id="manBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectMans()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" 
+			onclick="javascript:$('#manDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
+	<!-- 渠道经理参照对话框及按钮 end -->
+	
+	<!-- 渠道运营参照对话框及按钮 begin -->
+	<div id="operDlg"></div>
+	<div id="operBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" 
+			onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
+	<!-- 渠道运营参照对话框及按钮 end -->
+		
 </body>
 </html>

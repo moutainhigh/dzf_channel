@@ -100,8 +100,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	private void setShowData(List<ContractConfrimVO> list, String showtype,String areaname) throws DZFWarpException {
-		Map<String,String> marmap = pubser.getManagerMap(1);//渠道经理
-		Map<String,String> opermap = pubser.getManagerMap(3);//渠道运营
+		Map<String,String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
+		Map<String,String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
 		Map<Integer, String> areaMap = null;//大区集合
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname,3);

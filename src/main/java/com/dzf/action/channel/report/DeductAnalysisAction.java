@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.DeductAnalysisVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
@@ -57,6 +58,26 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			
+			StringBuffer qsql = new StringBuffer();// 附加查询条件
+			// 1、渠道经理查询条件
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+				String sql = analyser.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
+				}
+			}
+			// 2、渠道运营查询条件
+			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
+				String sql = analyser.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
+				}
+			}
+			if(qsql != null && qsql.length() > 0){
+				paramvo.setVqrysql(qsql.toString());
+			}
+			
 			List<DeductAnalysisVO> list = analyser.query(paramvo);
 			if(list != null && list.size() > 0){
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
@@ -111,6 +132,8 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		
 		//1、导出字段名称
 		List<String> exptitlist = new ArrayList<String>();
+		exptitlist.add("渠道经理");
+		exptitlist.add("渠道运营");
 		exptitlist.add("加盟商编码");
 		exptitlist.add("加盟商");
 		exptitlist.add("存量客户");
@@ -127,6 +150,8 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		List<Integer> hblindexlist = new ArrayList<Integer>();
 		//5、合并行字段名称
 		List<String> hbhtitlist = new ArrayList<String>();
+		hbhtitlist.add("渠道经理");
+		hbhtitlist.add("渠道运营");
 		hbhtitlist.add("加盟商编码");
 		hbhtitlist.add("加盟商");
 		hbhtitlist.add("存量客户");
@@ -135,9 +160,11 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		hbhtitlist.add("非存量合同数");
 		hbhtitlist.add("总扣款");
 		//6、合并行字段下标
-		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,5,6};
+		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,5,6,7,8};
 		//7、字符集合
 		List<String> strslist = new ArrayList<String>();
+		strslist.add("mid");
+		strslist.add("oid");
 		strslist.add("corpcode");
 		strslist.add("corpname");
 		strslist.add("stocknum");
@@ -164,7 +191,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 				exptitlist.add("金额");
 			}
 		}
-		int j = 7;
+		int j = 9;
 		for(int i = 0; i < hblcolsarray.size(); i++){
 			field = (Map<String, String>) hblcolsarray.get(i);
 			hbltitlist.add(String.valueOf(field.get("title")));

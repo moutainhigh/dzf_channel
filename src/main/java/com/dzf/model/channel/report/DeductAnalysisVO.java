@@ -52,6 +52,28 @@ public class DeductAnalysisVO extends SuperVO {
     
     @FieldAlias("dednum")
     private Integer idednum;//非存量合同数
+    
+	@FieldAlias("mid")
+	private String vmanager;//渠道经理
+	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营
+
+	public String getVmanager() {
+		return vmanager;
+	}
+
+	public void setVmanager(String vmanager) {
+		this.vmanager = vmanager;
+	}
+
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
 
 	public Integer getIcustnum() {
 		return icustnum;

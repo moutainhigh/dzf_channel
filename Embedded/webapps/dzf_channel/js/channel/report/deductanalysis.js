@@ -51,6 +51,116 @@ function initRef(){
             }
         }]
     });
+	//查询-渠道经理参照初始化
+	$('#manager').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#manDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道经理',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/manager_select.jsp',
+                    buttons: '#manBtn'
+                });
+            }
+        }]
+    });
+	//查询-渠道运营参照初始化
+	$('#operater').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#operDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道运营',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/operater_select.jsp',
+                    buttons: '#operBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道经理选择事件
+ */
+function selectMans(){
+	var rows = $('#mgrid').datagrid('getChecked');
+	dClickMans(rows);
+}
+
+/**
+ * 双击选择渠道经理
+ * @param rowTable
+ */
+function dClickMans(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个经理",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#manager").textbox("setValue",unames);
+		$("#managerid").val(uids);
+	}
+	$("#manDlg").dialog('close');
+}
+
+/**
+ * 渠道运营选择事件
+ */
+function selectOpers(){
+	var rows = $('#ogrid').datagrid('getChecked');
+	dClickOpers(rows);
+}
+
+/**
+ * 双击选择渠道运营
+ * @param rowTable
+ */
+function dClickOpers(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个运营",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#operater").textbox("setValue",unames);
+		$("#operaterid").val(uids);
+	}
+	$("#operDlg").dialog('close');
 }
 
 /**
@@ -171,6 +281,8 @@ function load(type){
 			enddate : enddate,
 			cpid : $("#qcorpid").val(),
 			qtype : qtype,
+			mid : $("#managerid").val(),
+		    oid : $("#operaterid").val(),
 		},
 		async : false,
 		success : function(data) {
@@ -204,6 +316,8 @@ function load(type){
 							if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
 								obj['retmny'] = '-'+rows[i].retmny;//退回金额
 							}
+							obj['mid'] = rows[i].mid;//渠道经理
+							obj['oid'] = rows[i].oid;//渠道运营
 							obj['corpcode'] = rows[i].corpcode;//加盟商编码
 							obj['corpname'] = rows[i].corpname;//加盟商名称
 							obj['stocknum'] = rows[i].stocknum;//存量客户数
@@ -249,6 +363,8 @@ function load(type){
 								if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
 									obj['retmny'] = '-'+rows[i].retmny;//退回金额
 								}
+								obj['mid'] = rows[i].mid;//渠道经理
+								obj['oid'] = rows[i].oid;//渠道运营
 								obj['corpcode'] = rows[i].corpcode;
 								obj['corpname'] = rows[i].corpname;
 								obj['stocknum'] = rows[i].stocknum;//存量客户数
@@ -289,6 +405,8 @@ function load(type){
 		//冻结在 左边的列 
 		frozenColumns:[[
 						{ field : 'corpid',    title : '会计公司主键', hidden:true},
+						{ field : 'mid',  title : '渠道经理', width : 100, halign:'center',align:'left'}, 
+						{ field : 'oid',  title : '渠道运营', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
 		                { field : 'stocknum',  title : '存量<br/>客户', width : 50, halign:'center',align:'right'},
@@ -435,6 +553,8 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
 			enddate : enddate,
 			qtype : qtype,
 			cpid : $("#qcorpid").val(),
+			mid : $("#managerid").val(),
+		    oid : $("#operaterid").val(),
 		},
 		async : false,
 		success : function(data) {
@@ -536,6 +656,10 @@ function closeCx(){
  * 查询框-清空
  */
 function clearParams(){
+	$('#manager').textbox("setValue",null);
+	$('#managerid').val(null);
+	$('#operater').textbox("setValue",null);
+	$('#operaterid').val(null);
 	$('#qcorp').textbox("setValue",null);
 	$('#qcorpid').val(null);
 }

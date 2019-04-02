@@ -101,7 +101,9 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				if (!condition.equals("alldata")) {
 					qsql.append(condition);
 				}
-				paramvo.setVqrysql(qsql.toString());
+				if(qsql != null && qsql.length() > 0){
+					paramvo.setVqrysql(qsql.toString());
+				}
 				total = contractconfser.queryTotalRow(paramvo);
 			}
 			grid.setTotal((long) (total));
