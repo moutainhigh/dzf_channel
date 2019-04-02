@@ -127,4 +127,8 @@ public interface IStatusConstant {
 	
 	/** 仓库主键 */
 	public static String CK_ID = "00000100000000000000CK01";
+	
+	/** 物料封存状态  1：启用  2：封存  */
+	public static int ISSEAL_1 = 1;
+	public static int ISSEAL_2 = 2;
 }

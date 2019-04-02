@@ -264,4 +264,14 @@ public interface IFunNode {
      */
     public static final String CHANNEL_63  = "channel63";
     
+    /**
+     * 物料档案
+     */
+    public static final String CHANNEL_64  = "channel64";
+    
+    /**
+     * 物料入库
+     */
+    public static final String CHANNEL_65  = "channel65";
+    
 }
