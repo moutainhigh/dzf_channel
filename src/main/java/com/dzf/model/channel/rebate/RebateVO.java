@@ -126,7 +126,18 @@ public class RebateVO extends SuperVO {
 	@FieldAlias("showdate")
 	private String vshowdate;//所属季度-展示名称
 	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营（只做展示）
+	
 	//只展示，不存库字段begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
 
 	public String getVshowdate() {
 		return vshowdate;

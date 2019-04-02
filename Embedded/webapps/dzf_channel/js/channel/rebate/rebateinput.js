@@ -111,7 +111,63 @@ function initRef(){
             }
         }]
     });
+	
+	$('#operater').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#operDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道运营',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/operater_select.jsp',
+                    buttons: '#operBtn'
+                });
+            }
+        }]
+    });
 }
+
+/**
+ * 渠道运营选择事件
+ */
+function selectOpers(){
+	var rows = $('#ogrid').datagrid('getChecked');
+	dClickOpers(rows);
+}
+
+/**
+ * 双击选择渠道运营
+ * @param rowTable
+ */
+function dClickOpers(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个运营",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#operater").textbox("setValue",unames);
+		$("#operaterid").val(uids);
+	}
+	$("#operDlg").dialog('close');
+}
+
 
 function initArea(){
 	$.ajax({
@@ -311,14 +367,15 @@ function load(){
 		checkOnSelect : false,
 		idField : 'rebid',
 		frozenColumns :[[ { field : 'ck', checkbox : true },
-			              { field : 'operate', title : '操作列',width :'150',halign: 'center',align:'center',formatter:opermatter} ,
+			              { field : 'operate', title : '操作列',width :'130',halign: 'center',align:'center',formatter:opermatter} ,
 		               ]],
 		columns : [ [ 
-		              { field : 'operdate', title : '录入日期',width :'110',halign: 'center',align:'center' }, 
+		              { field : 'operdate', title : '录入日期',width :'80',halign: 'center',align:'center' }, 
 		              { field : 'vcode', title : '返点单号',width :'120',halign: 'center',align:'left', formatter:codeLink },
-		              { field : 'aname', title : '大区',width :'130',halign: 'center',align:'left'}, 
+		              { field : 'aname', title : '大区',width :'60',halign: 'center',align:'left'}, 
 		              { field : 'provname', title : '地区',width :'140',halign: 'center',align:'left'} ,
-		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
+		              { field : 'mname', title : '渠道经理',width :'100',halign: 'center',align:'left'} ,
+		              { field : 'oid', title : '渠道运营',width :'100',halign: 'center',align:'left'} ,
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corp', title : '加盟商名称',width :'160',halign: 'center',align:'left'}, 
 		              { field : 'period', title : '返点所属期间',width :'115',halign: 'center',align:'center'} ,

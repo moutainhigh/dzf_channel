@@ -316,17 +316,17 @@
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
 			</h3>
 			<div class="time_col time_colp10">
-				<label style="width: 90px;text-align:right">返点期间：</label>
+				<label style="width:70px;text-align:right">期间：</label>
 				<font>
 					<select id="qyear" name="qyear" class="easyui-combobox" 
-						data-options="editable:false"  style="width:130px;height:28px;">
+						data-options="editable:false"  style="width:105px;height:28px;">
 						<% DzfUtil.WriteYearOption(out);%>
 			 		</select>
 			 	</font>
 				<font>-</font>
 				<font>
-					 <select id="qjd" name="qjd" class="easyui-combobox" data-options="editable:false,panelHeight:'auto'" 
-					 	style="width:130px;height:28px;text-align:left">
+					 <select id="qjd" name="qjd" class="easyui-combobox" data-options="panelHeight:'auto'" 
+					 	style="width:105px;height:28px;text-align:left">
 						<option value="1">第一季度</option>
 						<option value="2">第二季度</option>
 						<option value="3">第三季度</option>
@@ -335,10 +335,10 @@
 				</font>
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:90px;text-align:right">返点单状态：</label>
+				<label style="width:70px;text-align:right">状态：</label>
 				<!-- 状态   0：待提交；1：待确认；2：待审批；3：审批通过；4：待确认驳回；5：待审批驳回； -->
 				<select id="qstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
-					style="width:100px;height:28px;">
+					style="width:105px;height:28px;">
 					<option value="-1">全部</option>
 					<option value="0">待提交</option>
 					<option value="1">待确认</option>
@@ -346,21 +346,25 @@
 					<option value="3">审批通过</option>
 					<option value="9">已驳回</option>
 				</select>
+				
+				<label style="text-align:right;width: 70px;">大区：</label> 
+				<input id="aname"  name="aname" class="easyui-combobox" style="width:105px; height: 28px;" 
+					data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" /> 
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:90px;text-align:right">渠道经理：</label>
+				<label style="width:70px;text-align:right">渠道经理：</label>
 				<input id="manager" class="easyui-textbox" style="width:290px;height:28px;" />
 				<input id="managerid" type="hidden">
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:90px;text-align:right">加盟商：</label>
-				<input id="qcorp" class="easyui-textbox" style="width:290px;height:28px;" />
-				<input id="qcorpid" type="hidden">
+				<label style="width:70px;text-align:right">渠道运营：</label>
+				<input id="operater" class="easyui-textbox" style="width:290px;height:28px;" />
+				<input id="operaterid" type="hidden">
 			</div>
 			<div class="time_col time_colp10">
-				<label style="text-align:right;width: 90px;">大区：</label> 
-				<input id="aname"  name="aname" class="easyui-combobox" style="width: 290px; height: 28px;" 
-					data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
+				<label style="width:70px;text-align:right">加盟商：</label>
+				<input id="qcorp" class="easyui-textbox" style="width:290px;height:28px;" />
+				<input id="qcorpid" type="hidden">
 			</div>
 		</form>
 		<p>
@@ -389,6 +393,14 @@
 	</div>
 	<!-- 加盟商参照对话框及按钮 end -->
 	
+	<!-- 渠道运营参照对话框及按钮 begin -->
+	<div id="operDlg"></div>
+	<div id="operBtn" style="display:none;">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" 
+			onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+	</div>
+	<!-- 渠道运营参照对话框及按钮 end -->
 	
 </body>
 

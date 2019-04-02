@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.RebateExcelField;
+import com.dzf.action.channel.expfield.RebateAuditExcelField;
+import com.dzf.action.channel.expfield.RebateInputExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
@@ -80,13 +81,23 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if (paramvo != null && !StringUtil.isEmpty(paramvo.getVmanager())) {// 渠道经理查询条件
-				String sql = rebateser.getQrySql(paramvo.getVmanager());
-				paramvo.setVqrysql(sql);
+			StringBuffer qsql = new StringBuffer();
+			// 1、渠道经理查询条件
+			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+				String sql = rebateser.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
+				qsql.append(sql);
 			}
-			if(paramvo != null){
-				paramvo.setCuserid(getLoginUserid());
+			// 2、渠道运营查询条件
+			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
+				String sql = rebateser.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
+				if (!StringUtil.isEmpty(sql)) {
+					qsql.append(sql);
+				}
 			}
+			if(qsql != null && qsql.length() > 0){
+				paramvo.setVqrysql(qsql.toString());
+			}
+			paramvo.setCuserid(getLoginUserid());
 			List<RebateVO> list = rebateser.query(paramvo);
 			if (list != null && list.size() > 0) {
 				int page = paramvo == null ? 1 : paramvo.getPage();
@@ -422,13 +433,24 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
 		Map<String, String> mapping = FieldMapping.getFieldMapping(new RebateVO());
 		RebateVO[] expVOs = DzfTypeUtils.cast(exparray, mapping, RebateVO[].class, JSONConvtoJAVA.getParserConfig());
-		ArrayList<RebateVO> explist = new ArrayList<RebateVO>();
-		for (RebateVO vo : expVOs) {
-			explist.add(vo);
+		List<RebateVO> explist = Arrays.asList(expVOs);
+		if("0".equals(printype)){//返点单录入
+			exportInput(printype, explist);
+		}else if("1".equals(printype)){//返点单审批
+			exportAudit(printype, explist);
 		}
+	}
+	
+	/**
+	 * 返点单录入导出
+	 * @param printype
+	 * @param explist
+	 * @throws DZFWarpException
+	 */
+	private void exportInput(String printype,List<RebateVO> explist) throws DZFWarpException {
 		HttpServletResponse response = getResponse();
 		Excelexport2003<RebateVO> ex = new Excelexport2003<RebateVO>();
-		RebateExcelField fields = new RebateExcelField();
+		RebateInputExcelField fields = new RebateInputExcelField();
 		fields.setVos(explist.toArray(new RebateVO[0]));
 		fields.setQj("");
 		ServletOutputStream servletOutputStream = null;
@@ -444,11 +466,55 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
-			if("0".equals(printype)){//返点单录入
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "导出返点单", ISysConstants.SYS_3);
-			}else if("1".equals(printype)){//返点单审批
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "导出返点单", ISysConstants.SYS_3);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_25.getValue(), "导出返点单", ISysConstants.SYS_3);
+		} catch (Exception e) {
+			log.error("导出失败", e);
+		} finally {
+			if (toClient != null) {
+				try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
 			}
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败", e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 返点单审批导出
+	 * @param printype
+	 * @param explist
+	 * @throws DZFWarpException
+	 */
+	private void exportAudit(String printype,List<RebateVO> explist) throws DZFWarpException {
+		HttpServletResponse response = getResponse();
+		Excelexport2003<RebateVO> ex = new Excelexport2003<RebateVO>();
+		RebateAuditExcelField fields = new RebateAuditExcelField();
+		fields.setVos(explist.toArray(new RebateVO[0]));
+		fields.setQj("");
+		ServletOutputStream servletOutputStream = null;
+		OutputStream toClient = null;
+		try {
+			response.reset();
+			// 设置response的Header
+			String filename = fields.getExcelport2003Name();
+			String formattedName = URLEncoder.encode(filename, "UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			servletOutputStream = response.getOutputStream();
+			toClient = new BufferedOutputStream(servletOutputStream);
+			response.setContentType("applicationnd.ms-excel;charset=gb2312");
+			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_27.getValue(), "导出返点单", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {

@@ -61,90 +61,84 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(RebateVO.class));
 		if (list != null && list.size() > 0) {
-			if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-				List<RebateVO> retlist = new ArrayList<RebateVO>();
-				CorpVO corpvo = null;
-				for (RebateVO vo : list) {
-					corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
-					if (corpvo != null && !StringUtil.isEmpty(corpvo.getUnitname())
-							&& corpvo.getUnitname().indexOf(paramvo.getCorpname()) != -1) {
-						retlist.add(vo);
-					}
-				}
-				if (retlist != null && retlist.size() > 0) {
-					setShowInfo(retlist, paramvo.getAreaname());
-				}
-				return retlist;
-			}
-			setShowInfo(list, paramvo.getAreaname());
+			return setShowData(paramvo, list);
 		}
+		return list;
+	}
+	
+	/**
+	 * 设置显示名称
+	 * @param paramvo
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<RebateVO> setShowData(QryParamVO paramvo, List<RebateVO> list) throws DZFWarpException {
+		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), IStatusConstant.IYUNYING);// 大区
+		if (!StringUtil.isEmpty(paramvo.getCorpname())) {
+			List<RebateVO> retlist = new ArrayList<RebateVO>();
+			CorpVO corpvo = null;
+			for (RebateVO vo : list) {
+				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+				if (corpvo != null && !StringUtil.isEmpty(corpvo.getUnitname())
+						&& corpvo.getUnitname().indexOf(paramvo.getCorpname()) != -1) {
+					setShowSingle(vo, marmap, areamap, opermap);
+					retlist.add(vo);
+				}
+			}
+			return retlist;
+		}
+		setShowInfo(list, marmap, areamap, opermap);
 		return list;
 	}
 
 	/**
-	 * 设置返点相关展示信息
-	 * 
+	 * 设置多条显示名称
 	 * @param list
+	 * @param marmap
+	 * @param areamap
 	 * @throws DZFWarpException
 	 */
-	private void setShowInfo(List<RebateVO> list, String areaname) throws DZFWarpException {
-		// Map<Integer, String> provmap = pubser.queryAreaMap("1");//省市
-		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
-		Map<Integer, String> areamap = pubser.getAreaMap(areaname, 3);// 大区
-		// Map<String, ChnAreaVO> lareamap = pubser.queryLargeArea();
+	private void setShowInfo(List<RebateVO> list, Map<String, String> marmap, Map<Integer, String> areamap,
+			Map<String, String> opermap) throws DZFWarpException {
 		for (RebateVO vo : list) {
-			setShowData(vo, marmap, areamap);
+			setShowSingle(vo, marmap, areamap, opermap);
 		}
 	}
 
 	/**
-	 * 设置单个返点单展示信息
-	 * 
+	 * 设置单条显示名称
+	 * @param vo
+	 * @param marmap
+	 * @param areamap
+	 * @param opermap
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(RebateVO vo, Map<String, String> marmap, Map<Integer, String> areamap)
-			throws DZFWarpException {
+	private void setShowSingle(RebateVO vo, Map<String, String> marmap, Map<Integer, String> areamap,
+			Map<String, String> opermap) throws DZFWarpException {
 		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
-		UserVO uservo = null;
-		String cuserid = null;
 		if (corpvo != null) {
 			if (corpvo.getVprovince() != null) {
 				vo.setVprovname(corpvo.getCitycounty());
 				if (marmap != null && !marmap.isEmpty()) {
-					cuserid = marmap.get(vo.getPk_corp());
-					uservo = UserCache.getInstance().get(cuserid, null);
+					String cuserid = marmap.get(vo.getPk_corp());
+					UserVO uservo = UserCache.getInstance().get(cuserid, null);
 					if (uservo != null) {
-						vo.setVmanagername(uservo.getUser_name());
+						vo.setVmanagername(uservo.getUser_name());// 渠道经理
+					}
+				}
+				if (opermap != null && !opermap.isEmpty()) {
+					String cuserid = opermap.get(vo.getPk_corp());
+					UserVO uservo = UserCache.getInstance().get(cuserid, null);
+					if (uservo != null) {
+						vo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
 				}
 				if (areamap != null && !areamap.isEmpty()) {
-					vo.setAreaname(areamap.get(corpvo.getVprovince()));
+					vo.setAreaname(areamap.get(corpvo.getVprovince()));// 大区
 				}
-				// ChnAreaVO lareavo = getManagerInfo(vo.getPk_corp());
-				// if(lareavo != null){
-				// vo.setVareaname(lareavo.getAreaname());
-				// if (!StringUtil.isEmpty(lareavo.getUserid())) {
-				// UserVO uservo =
-				// UserCache.getInstance().get(lareavo.getUserid(), null);
-				// if (uservo != null) {
-				// vo.setVmanagername(uservo.getUser_name());
-				// }
-				// }
-				// }
-				// if (lareamap != null && !lareamap.isEmpty()) {
-				// ChnAreaVO lareavo =
-				// lareamap.get(String.valueOf(corpvo.getVprovince()));
-				// if (lareavo != null) {
-				// vo.setVareaname(lareavo.getAreaname());
-				// if (!StringUtil.isEmpty(lareavo.getUserid())) {
-				// UserVO uservo =
-				// UserCache.getInstance().get(lareavo.getUserid(), null);
-				// if (uservo != null) {
-				// vo.setVmanagername(uservo.getUser_name());
-				// }
-				// }
-				// }
-				// }
 			}
 			vo.setCorpcode(corpvo.getInnercode());
 			vo.setCorpname(corpvo.getUnitname());
@@ -158,60 +152,6 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		}
 		vo.setVperiod(period);
 	}
-
-	/**
-	 * 获取加盟商所属大区、区域经理信息
-	 * 
-	 * @param pk_corp
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	// private ChnAreaVO getManagerInfo(String pk_corp) throws DZFWarpException
-	// {
-	// StringBuffer sql = new StringBuffer();
-	// SQLParameter spm = new SQLParameter();
-	// sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
-	// sql.append(" FROM cn_chnarea a \n") ;
-	// sql.append(" LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n")
-	// ;
-	// sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ;
-	// sql.append(" AND nvl(b.dr, 0) = 0 \n") ;
-	// sql.append(" AND nvl(b.type,0) = 1 \n");
-	// sql.append(" AND b.pk_corp = ? \n");
-	// spm.addParam(pk_corp);
-	// List<ChnAreaVO> list = (List<ChnAreaVO>)
-	// singleObjectBO.executeQuery(sql.toString(), spm, new
-	// BeanListProcessor(ChnAreaVO.class));
-	// if(list != null && list.size() > 0){
-	// return list.get(0);
-	// }else{
-	// sql = new StringBuffer();
-	// spm = new SQLParameter();
-	// sql.append("SELECT a.areaname, a.areacode, b.userid \n") ;
-	// sql.append(" FROM cn_chnarea a \n") ;
-	// sql.append(" LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n")
-	// ;
-	// sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ;
-	// sql.append(" AND nvl(b.dr, 0) = 0 \n") ;
-	// sql.append(" AND nvl(b.type,0) = 1 \n");
-	// sql.append(" AND nvl(isCharge, 'N') = 'Y' \n");
-	// sql.append(" AND b.vprovince = (SELECT vprovince \n");
-	// sql.append(" FROM bd_account \n");
-	// sql.append(" WHERE nvl(dr, 0) = 0 \n");
-	// sql.append(" AND nvl(ischannel, 'N') = 'Y' \n");
-	// sql.append(" AND nvl(isaccountcorp, 'N') = 'Y' \n");
-	// sql.append(" AND pk_corp = ? ) \n");
-	// spm.addParam(pk_corp);
-	// List<ChnAreaVO> retlist = (List<ChnAreaVO>)
-	// singleObjectBO.executeQuery(sql.toString(), spm, new
-	// BeanListProcessor(ChnAreaVO.class));
-	// if(retlist != null && retlist.size() > 0){
-	// return retlist.get(0);
-	// }
-	// }
-	// return null;
-	// }
 
 	/**
 	 * 获取季度名称
@@ -345,9 +285,10 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			RebateVO retvo = (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if (retvo != null) {
 				retvo.setVprovince(data.getVprovince());
-				Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
-				Map<Integer, String> areaMap = pubser.getAreaMap(null, 3);// 大区
-				setShowData(retvo, marmap, areaMap);
+				Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+				Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+				Map<Integer, String> areaMap = pubser.getAreaMap(null, IStatusConstant.IYUNYING);// 大区
+				setShowSingle(retvo, marmap, areaMap, opermap);
 			}
 			return retvo;
 		} catch (Exception e) {
@@ -835,9 +776,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	}
 
 	@Override
-	public String getQrySql(String cuserid) throws DZFWarpException {
+	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		String[] corps = pubser.getManagerCorp(cuserid, 1);
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
 		if (corps != null && corps.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
