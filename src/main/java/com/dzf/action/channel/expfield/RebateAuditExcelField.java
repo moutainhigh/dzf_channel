@@ -12,7 +12,7 @@ import com.dzf.pub.lang.DZFDate;
  * @author zy
  *
  */
-public class RebateExcelField implements IExceport<RebateVO> {
+public class RebateAuditExcelField implements IExceport<RebateVO> {
 	
 	private RebateVO[] vos = null;
 	
