@@ -244,7 +244,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 				sql.append(" )");
 			}
 		} else if (vo.getDr() != null && vo.getDr() < 0) {// 增加权限的加盟商参照
-			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr() == -2 ? 2 : 3);
+			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr() == -2 ? 2 : vo.getDr());
 			if (condition != null && !condition.equals("alldata")) {
 				sql.append(condition);
 			} else if (condition == null) {
