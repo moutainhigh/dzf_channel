@@ -29,13 +29,13 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("corpkid")
 	private String pk_corpk; // 客户主键
 
+	// 加盟商合同合同状态：0：待提交；1：已审核；5:待审核：7：拒绝审核；8：服务到期；9：已终止；10：已作废；
 	@FieldAlias("destatus")
-	private Integer vdeductstatus;// 加盟商合同合同状态：0：待提交；1：已审核；5:待审核： 
-									// 7：拒绝审核；8：服务到期；9：已终止；10：已作废；
+	private Integer vdeductstatus; 
 
+	// 合同状态  0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
 	@FieldAlias("status")
-	private Integer vstatus; // 合同状态
-								// 0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+	private Integer vstatus; 
 
 	// 与原合同重复字段 end***************************
 
