@@ -160,17 +160,6 @@ function calMoney(){
 	
 
 }
-/**
- * 金额，保留两位小数
- */
-function formMny(value) {
-	var num = new Number(value);
-	if(num==0){
-		return "0.0000";
-	}else{
-		return num.toFixed(4);
-	}
-}
 
 /**
  * 计算合计
@@ -322,9 +311,6 @@ function edit(index){
 	$('#matfileid').combobox("readonly",true);
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
-	
-	//$("#matfileid").combobox("setValue",row.matfileid);
-	
 	
 }
 
