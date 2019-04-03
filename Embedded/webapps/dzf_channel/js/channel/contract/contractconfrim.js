@@ -228,7 +228,7 @@ function initQueryData(){
 }
 
 /**
- * 管理查询对话框
+ * 关闭查询对话框
  */
 function closeCx(){
 	$("#qrydialog").hide();
