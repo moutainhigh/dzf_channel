@@ -20,6 +20,7 @@ function initQry(){
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 }
 
+
 /**
  * 列表表格加载
  */
@@ -135,8 +136,40 @@ function load(){
  * 计算总金额
  */
 function calMoney(){
+	 $("#cost").numberbox({
+	      precision:2,
+	 });
+	 $("#tmny").numberbox({
+	      precision:2,
+	 });
+	 $('#num').numberbox().next('span').find('input').focus(function(){
+		    $("#num").next("span").children().first().blur(function(){
+				var num=$('#num').numberbox('getValue');
+				var cost=$('#cost').numberbox('getValue');
+				$('#tmny').numberbox('setValue',num*cost);
+			});
+	 });
+	 
+	 $('#cost').numberbox().next('span').find('input').focus(function(){
+		    $("#cost").next("span").children().first().blur(function(){
+				var num=$('#num').numberbox('getValue');
+				var cost=$('#cost').numberbox('getValue');
+				$('#tmny').numberbox('setValue',num*cost);
+			});
+	 });
 	
 
+}
+/**
+ * 金额，保留两位小数
+ */
+function formMny(value) {
+	var num = new Number(value);
+	if(num==0){
+		return "0.0000";
+	}else{
+		return num.toFixed(4);
+	}
 }
 
 /**
@@ -239,6 +272,7 @@ function add() {
 	$('#mat_add').form('clear');
 	$('#matfileid').combobox("readonly",false);
 	initEvent();
+	calMoney();
 }
 
 /**

@@ -88,10 +88,10 @@
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right">成本价：</label>
 						<input class="easyui-numberbox" id="cost" name="cost" style="width:100px;height:28px;"
-						 	data-options="required:true" onblur="calMoney()" />
+						 	data-options="required:true"  />
 						<label style="width:42px;text-align:right">数量：</label> 
 						<input class="easyui-numberbox" id="num" name="num" style="width:100px;height:28px;" 
-							data-options="required:true" onblur="calMoney()" />
+							data-options="required:true" />
 						<label style="width:56px;text-align:right">总金额：</label> 
 						<input class="easyui-numberbox" id="tmny" name="tmny" editable="false" style="width:100px;height:28px;"  />
 				</div>
