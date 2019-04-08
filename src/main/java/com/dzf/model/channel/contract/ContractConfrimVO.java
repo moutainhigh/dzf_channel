@@ -36,6 +36,10 @@ public class ContractConfrimVO extends SuperVO {
 	// 合同状态  0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
 	@FieldAlias("status")
 	private Integer vstatus; 
+	
+	//申请状态  1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
+	@FieldAlias("apstatus")
+	private Integer iapplystatus;
 
 	// 与原合同重复字段 end***************************
 
@@ -287,6 +291,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public Integer getIapplystatus() {
+		return iapplystatus;
+	}
+
+	public void setIapplystatus(Integer iapplystatus) {
+		this.iapplystatus = iapplystatus;
+	}
+
 	public String getVoperater() {
 		return voperater;
 	}
