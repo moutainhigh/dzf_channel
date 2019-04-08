@@ -103,11 +103,23 @@ public class GoodsBillVO extends MultSuperVO {
 	@FieldAlias("edate")
 	private DZFDate enddate;// 结束日期（查询使用）
 	
-	@FieldAlias("bbdate")
+	@FieldAlias("bbdate") 
 	private DZFDate bbegdate;// 开始日期（查询使用）
 
 	@FieldAlias("eedate")
 	private DZFDate eenddate;// 结束日期（查询使用）
+	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营id
+	
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+	
+    @FieldAlias("provname")
+	public String vprovname;//省市名称
+    
+	@FieldAlias("qrysql")
+	private String vqrysql;//查询语句
 	
 	//&&&&&&&&&&&&&&&&&仅作展示用字段end&&&&&&&&&&&&&&&
 
@@ -141,6 +153,38 @@ public class GoodsBillVO extends MultSuperVO {
 
 	public void setBbegdate(DZFDate bbegdate) {
 		this.bbegdate = bbegdate;
+	}
+
+	public String getVqrysql() {
+		return vqrysql;
+	}
+
+	public void setVqrysql(String vqrysql) {
+		this.vqrysql = vqrysql;
+	}
+
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
 	}
 
 	public DZFDate getEenddate() {

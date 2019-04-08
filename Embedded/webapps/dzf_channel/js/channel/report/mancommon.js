@@ -314,19 +314,19 @@ function doExport(type){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-//	var callback=function(){
+	var callback=function(){
 		var columns = $('#grid').datagrid("options").columns[0];
 //		var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');,'qj':qj
 		Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',
 				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'type':type}, true, true);
-//	}
-//	var funcode='channel18';
-//	if(type=='1'){
-//		funcode='channel16';
-//	}else if(type=='2'){
-//		funcode='channel17';
-//	}
-//	checkBtnPower('export',funcode,callback);
+	}
+	var funcode='channel18';
+	if(type=='1'){
+		funcode='channel16';
+	}else if(type=='2'){
+		funcode='channel17';
+	}
+	checkBtnPower('export',funcode,callback);
 }
 
 /**
