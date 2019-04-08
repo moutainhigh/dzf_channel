@@ -17,7 +17,7 @@
 				<div class="left mod-crumb">
 					<div id="cxjs" class="h30 h30-arrow">
 						<label class="mr5">查询：</label>
-						<strong id="querydate"></strong>
+						<strong id="jqj"></strong>
 						<span class="arrow-date"></span>
 					</div>
 				</div>
@@ -31,9 +31,6 @@
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="cancelBtn" onclick="cancel()">取消</a> 
 					
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  id="sort" onclick="startSort()">开始排序</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  id="sort_up" onclick="moveUp()">上移</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  id="sort_down" onclick="moveDown()">下移</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz"  id="sort_top" onclick="moveTop()">置顶</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="sort_save" style="display:none"   onclick="sortSave()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="sort_cancle"  onclick="onCancle()">取消</a> 
 				 </div> 

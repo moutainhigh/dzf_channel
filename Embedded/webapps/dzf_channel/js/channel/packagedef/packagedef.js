@@ -26,7 +26,7 @@ function initGrid(){
             	 field : 'checkbox',
             	 checkbox: true
      		},{
-    			width : '100',
+    			width : '90',
     			title : '操作列',
     			field : 'operate',
                 halign : 'center',
@@ -297,11 +297,8 @@ function initGrid(){
  * 监听查询
  */
 function initQueryData(){
-	$("#querydate").on("mouseover", function() {
-		$("#qrydialog").show();
-		$("#qrydialog").css("visibility", "visible");
-	});
-	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	queryBoxChange('#begdate','#enddate');
+	$('#jqj').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
 	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue", parent.SYSTEM.LoginDate);
 }
@@ -511,10 +508,10 @@ function modify() {
 		}
 		var row = rows[0];
 		var vstatus = row.vstatus;
-		if(vstatus == 2){
+/*		if(vstatus == 2){
 			Public.tips({content: "已发布的套餐不允许修改",type: 2});
 			return;
-		}else if(vstatus == 3){
+		}else */if(vstatus == 3){
 			Public.tips({content: "已下架的套餐不允许修改",type: 2});
 			return;
 		}
@@ -564,10 +561,6 @@ function showButtons(type) {
 		$("#saveBtn").hide();
 		$("#cancelBtn").hide();
 		$("#sort").hide();
-		
-		$("#sort_up").hide();
-		$("#sort_down").hide();
-		$("#sort_top").hide();
 		$("#sort_save").show();
 		$("#sort_cancle").show();
 		
@@ -581,10 +574,6 @@ function showButtons(type) {
 		$("#saveBtn").hide();
 		$("#cancelBtn").hide();
 		$("#sort").show();
-		
-		$("#sort_up").hide();
-		$("#sort_down").hide();
-		$("#sort_top").hide();
 		$("#sort_save").hide();
 		$("#sort_cancle").hide();
 		
@@ -598,10 +587,6 @@ function showButtons(type) {
 		$("#saveBtn").show();
 		$("#cancelBtn").show();
 		$("#sort").hide();
-		
-		$("#sort_up").hide();
-		$("#sort_down").hide();
-		$("#sort_top").hide();
 		$("#sort_save").hide();
 		$("#sort_cancle").hide();
 		
@@ -671,9 +656,10 @@ function onCancle(){
 }
 
 function coperatorLink(val,row,index){  
-	var add = '<div><a href="javascript:void(0)" id="upBut" onclick="upRow(this)"><img title="上移" style="margin:0px 20% 0px 20%;" src="../../images/move.png" /></a>';
-	var del = '<a href="javascript:void(0)" id="downBut" onclick="downRow(this)"><img title="下移" src="../../images/Down.png" /></a></div>';
-    return add + del;  
+	var up = '<div><a href="javascript:void(0)" id="upBut" onclick="upRow(this)"><img title="上移" style="margin:0px 10% 0px 10%;" src="../../images/move.png" /></a>';
+	var down = '<a href="javascript:void(0)" id="downBut" onclick="downRow(this)"><img title="下移"style="margin:0px 10% 0px 10%;" src="../../images/Down.png" /></a>';
+	var top = '<a href="javascript:void(0)" id="topBut" onclick="topRow(this)"><img title="置顶" style="margin:0px 10% 0px 5%;"src="../../images/top.png" /></a></div>';
+    return up + down + top;  
 }
 
 /**
@@ -689,6 +675,26 @@ function upRow(ths) {
 		$('#grid').datagrid('getData').rows[index - 1] = toup;
 		$('#grid').datagrid('refreshRow', index);
 		$('#grid').datagrid('refreshRow', index - 1);
+	}
+}
+
+/**
+ * 置顶
+ * @param ths
+ */
+function topRow(ths) {
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	index = Number(tindex);
+	if (index != 0) {
+		var totop = $('#grid').datagrid('getData').rows[index];
+		var todown;
+		for(var i= index-1;i>=0;i--){
+			todown = $('#grid').datagrid('getData').rows[i];
+			$('#grid').datagrid('getData').rows[i+1] = todown;
+			$('#grid').datagrid('refreshRow', i+1);
+		}
+		$('#grid').datagrid('getData').rows[0] = totop;
+		$('#grid').datagrid('refreshRow', 0);
 	}
 }
 
