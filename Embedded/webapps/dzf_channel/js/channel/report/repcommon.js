@@ -117,7 +117,7 @@ function initChannel(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					ovince :"-2"
+    					ovince :"-5"
     				},
                     buttons: '#kj_buttons'
                     	
