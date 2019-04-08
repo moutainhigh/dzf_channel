@@ -25,10 +25,17 @@ function initGrid(){
              {
             	 field : 'checkbox',
             	 checkbox: true
-             },{
+     		},{
+    			width : '100',
+    			title : '操作列',
+    			field : 'operate',
+                halign : 'center',
+    			align : 'center',
+    			formatter:coperatorLink
+    		},{
     			field : 'typecode',
     			title : '业务类型',
-    			width : 120,
+    			width : 100,
     			halign : 'center',
     			align : 'left',
     			formatter: function (value) {
@@ -56,7 +63,7 @@ function initGrid(){
     		 {
     			field : 'taxtype',
     			title : '纳税人资格',
-    			width : 120,
+    			width : 100,
     			halign : 'center',
     			align : 'left',
     			editor: {
@@ -548,7 +555,24 @@ function endEdit (grid) {
 }
 
 function showButtons(type) {
-	if (type =="brows") {
+	if(type=="sort"){
+		$("#addBtn").hide();
+		$("#editBtn").hide();
+		$("#publishBtn").hide();
+		$("#offBtn").hide();
+		$("#delBtn").hide();
+		$("#saveBtn").hide();
+		$("#cancelBtn").hide();
+		$("#sort").hide();
+		
+		$("#sort_up").hide();
+		$("#sort_down").hide();
+		$("#sort_top").hide();
+		$("#sort_save").show();
+		$("#sort_cancle").show();
+		
+		$('#grid').datagrid('showColumn', 'operate');
+	}else if (type =="brows") {
 		$("#addBtn").show();
 		$("#editBtn").show();
 		$("#publishBtn").show();
@@ -556,6 +580,15 @@ function showButtons(type) {
 		$("#delBtn").show();
 		$("#saveBtn").hide();
 		$("#cancelBtn").hide();
+		$("#sort").show();
+		
+		$("#sort_up").hide();
+		$("#sort_down").hide();
+		$("#sort_top").hide();
+		$("#sort_save").hide();
+		$("#sort_cancle").hide();
+		
+		$('#grid').datagrid('hideColumn', 'operate');
 	} else {
 		$("#addBtn").hide();
 		$("#editBtn").hide();
@@ -564,6 +597,15 @@ function showButtons(type) {
 		$("#delBtn").hide();
 		$("#saveBtn").show();
 		$("#cancelBtn").show();
+		$("#sort").hide();
+		
+		$("#sort_up").hide();
+		$("#sort_down").hide();
+		$("#sort_top").hide();
+		$("#sort_save").hide();
+		$("#sort_cancle").hide();
+		
+		$('#grid').datagrid('hideColumn', 'operate');
 	}
 }
 
@@ -594,4 +636,75 @@ function getSubmitData (grid) {
 	}
 	submitData = JSON.stringify(submitData);
 	return submitData;
+}
+
+//////////////////////////////////////////////////////////////////////排序////////////////////////////////////////////////////////////////////////////////////////
+
+function startSort(){
+	showButtons("sort");
+}
+
+function sortSave(){
+	var rows = grid.datagrid('getRows');
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url: DZF.contextPath + "/channel/packageDef!updateRows.action",
+		data : {
+			"datas" : JSON.stringify(rows)
+		},
+		async : false,
+        success: function(rs) {
+        	if (rs.success) {
+        		reloadData();
+                Public.tips({content: rs.msg,type:0});
+			} else {
+				 Public.tips({content: rs.msg,type:1});
+			}
+        }
+	});
+}
+
+function onCancle(){
+	showButtons("brows");
+	reloadData();
+}
+
+function coperatorLink(val,row,index){  
+	var add = '<div><a href="javascript:void(0)" id="upBut" onclick="upRow(this)"><img title="上移" style="margin:0px 20% 0px 20%;" src="../../images/move.png" /></a>';
+	var del = '<a href="javascript:void(0)" id="downBut" onclick="downRow(this)"><img title="下移" src="../../images/Down.png" /></a></div>';
+    return add + del;  
+}
+
+/**
+ * 上移
+ */
+function upRow(ths) {
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	index = Number(tindex);
+	if (index != 0) {
+		var toup = $('#grid').datagrid('getData').rows[index];
+		var todown = $('#grid').datagrid('getData').rows[index - 1];
+		$('#grid').datagrid('getData').rows[index] = todown;
+		$('#grid').datagrid('getData').rows[index - 1] = toup;
+		$('#grid').datagrid('refreshRow', index);
+		$('#grid').datagrid('refreshRow', index - 1);
+	}
+}
+
+/**
+ * 下移
+ */
+function downRow(ths){
+	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
+	index = Number(tindex);
+	var rows = $('#grid').datagrid('getRows').length;
+	if (index != rows - 1) {
+		var todown = $('#grid').datagrid('getData').rows[index];
+		var toup = $('#grid').datagrid('getData').rows[index + 1];
+		$('#grid').datagrid('getData').rows[index + 1] = todown;
+		$('#grid').datagrid('getData').rows[index] = toup;
+		$('#grid').datagrid('refreshRow', index);
+		$('#grid').datagrid('refreshRow', index + 1);
+	}
 }

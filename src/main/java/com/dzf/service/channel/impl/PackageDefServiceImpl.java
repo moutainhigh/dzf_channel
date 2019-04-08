@@ -62,7 +62,8 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and nvl(itype,0) = ?");
             params.addParam(1);
         }
-        str.append(" order by vstatus,dpublishdate desc");
+//        str.append(" order by vstatus,dpublishdate desc");
+        str.append(" order by sortnum asc");
         PackageDefVO[] vos = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, str.toString(), params);
         if(vos != null && vos.length > 0){
             UserVO uvo = null;
@@ -171,5 +172,13 @@ public class PackageDefServiceImpl implements IPackageDefService {
         singleObjectBO.updateAry(vos, new String[]{"vstatus","doffdate"});
         return vos;
     }
+
+	@Override
+	public void updateRows(PackageDefVO[] vos) throws DZFWarpException {
+		for (int i = 0; i < vos.length; i++) {
+			vos[i].setSortnum(i);
+		}
+		singleObjectBO.updateAry(vos, new String[]{"sortnum"});		
+	}
 
 }

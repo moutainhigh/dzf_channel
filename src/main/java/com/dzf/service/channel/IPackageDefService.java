@@ -46,4 +46,11 @@ public interface IPackageDefService {
      */
     public PackageDefVO[] updateOff(PackageDefVO[] vos) throws DZFWarpException;
     
+    /**
+     * 排序，更新
+     * @param vos
+     * @throws DZFWarpException
+     */
+    public void updateRows(PackageDefVO[] vos) throws DZFWarpException;
+    
 }

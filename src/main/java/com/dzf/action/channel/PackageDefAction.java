@@ -265,4 +265,38 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 		}
 		writeJson(json);
 	}
+	
+	public void updateRows(){
+		Json json = new Json();
+		String pStr = getRequest().getParameter("datas");
+		if (StringUtil.isEmpty(pStr)) {
+			return;
+		}
+		JSONArray jsonArray = (JSONArray) JSON.parseArray(pStr);
+		Map<String, String> mapping = FieldMapping.getFieldMapping(new PackageDefVO());
+		PackageDefVO[] defvos = DzfTypeUtils.cast(jsonArray, mapping, PackageDefVO[].class,
+				JSONConvtoJAVA.getParserConfig());
+		if (defvos != null && defvos.length > 0) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+					throw new BusinessException("登陆用户错误");
+				} else if (uservo == null) {
+					throw new BusinessException("登陆用户错误");
+				}
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_6);
+				packageDefImpl.updateRows(defvos);
+				json.setSuccess(true);
+				json.setRows(defvos);
+				json.setMsg("更新成功");
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "更新失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("发布失败");
+		}
+		writeJson(json);
+	}
+	
 }
