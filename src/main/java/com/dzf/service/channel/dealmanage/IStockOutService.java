@@ -101,7 +101,7 @@ public interface IStockOutService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ComboBoxVO> queryChannel() throws DZFWarpException;
+	public List<ComboBoxVO> queryChannel(String cuserid ) throws DZFWarpException;
 	
 	/**
 	 * 查询物流公司档案

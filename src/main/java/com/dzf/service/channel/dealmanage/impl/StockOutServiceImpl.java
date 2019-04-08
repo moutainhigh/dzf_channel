@@ -30,6 +30,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
@@ -721,24 +722,31 @@ public class StockOutServiceImpl implements IStockOutService{
 	}
 
 	@Override
-	public List<ComboBoxVO> queryChannel() throws DZFWarpException {
+	public List<ComboBoxVO> queryChannel(String cuserid) throws DZFWarpException {
+		QryParamVO paramvo = new QryParamVO();
+		paramvo.setCuserid(cuserid);
+		String qrySql = getQrySql(paramvo);
+		
         StringBuffer sql = new StringBuffer();
-		sql.append("select distinct b.pk_corp id,t.unitname name,t.innercode");
+		sql.append("select distinct b.pk_corp id,ba.unitname name,ba.innercode");
 		sql.append("  from cn_goodsbill_b b ");
 		sql.append("  left join cn_goodsbill c on b.pk_goodsbill = c.pk_goodsbill ");
-		sql.append("  left join bd_account t on t.pk_corp = b.pk_corp ");
+		sql.append("  left join bd_account ba on ba.pk_corp = b.pk_corp ");
 		sql.append(" where nvl(b.dr, 0) = 0 ");
 		sql.append("   and nvl(c.dr, 0) = 0 ");
-		sql.append("   and nvl(t.dr, 0) = 0 ");
-		sql.append("   and nvl(t.isaccountcorp,'N') = 'Y' ");
-		sql.append("   and nvl(t.ischannel,'N') = 'Y' ");
+		sql.append("   and nvl(ba.dr, 0) = 0 ");
+		sql.append("   and nvl(ba.isaccountcorp,'N') = 'Y' ");
+		sql.append("   and nvl(ba.ischannel,'N') = 'Y' ");
 		sql.append("   and c.vstatus in (1, 2, 3) ");
 		sql.append("   and nvl(b.deamount, 0) = 0 ");
 		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
 		sql.append("   	select sb.pk_goodsbill_b from cn_stockout_b sb");
 		sql.append("   	inner join  cn_stockout s on sb.pk_stockout=s.pk_stockout ");
 		sql.append("   	where s.vstatus!=2 and s.pk_corp is not null )");
-        sql.append(" order by t.innercode ");
+		if(!StringUtil.isEmpty(qrySql)){
+			sql.append(qrySql);
+		}
+        sql.append(" order by ba.innercode ");
         List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
                 new BeanListProcessor(ComboBoxVO.class));
         for (ComboBoxVO comboBoxVO : list) {

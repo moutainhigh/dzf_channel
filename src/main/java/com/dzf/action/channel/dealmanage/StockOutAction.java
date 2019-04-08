@@ -368,7 +368,8 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			List<ComboBoxVO> list = stockOut.queryChannel();
+			String cuserid = uservo.getCuserid();
+			List<ComboBoxVO> list = stockOut.queryChannel(cuserid);
 			if(list != null && list.size() > 0){
 				grid.setRows(list);
 				grid.setSuccess(true);
