@@ -8,13 +8,14 @@ $(window).resize(function(){
 	});
 });
 $(function() {
-	showButtons("brows");
+	initQueryData();
 	initGrid();
+	reloadData();
 });
 
 function initGrid(){
 	grid = $('#grid').datagrid({
-		url : DZF.contextPath + '/channel/packageDef!query.action',
+//		url : DZF.contextPath + '/channel/packageDef!query.action',
 		striped : true,
 		width: "auto",
 		singleSelect : false,
@@ -55,7 +56,7 @@ function initGrid(){
     		 {
     			field : 'taxtype',
     			title : '纳税人资格',
-    			width : 150,
+    			width : 120,
     			halign : 'center',
     			align : 'left',
     			editor: {
@@ -77,11 +78,10 @@ function initGrid(){
                     	required:true,
                     }
                 }
-    		},
-    		 {
+    		}, {
     			field : 'comptype',
     			title : '公司类型',
-    			width : 150,
+    			width : 120,
     			halign : 'center',
     			align : 'left',
     			formatter : function(value,row,index){
@@ -104,6 +104,36 @@ function initGrid(){
                     	},{
                     		value: '99',
                     		text: '非个体户'
+                    	},],
+                    	required:true,
+                    }
+                }
+       		}, {
+    			field : 'itype',
+    			title : '套餐',
+    			width : 100,
+    			halign : 'center',
+    			align : 'left',
+    			formatter : function(value,row,index){
+    				if (value == '0')
+    					return '常规';
+    				return "非常规";
+    			},
+    			editor: {
+    				type: 'combobox',
+                    options: {
+                    	height: 35,
+                    	panelHeight: 80,
+                    	showItemIcon: true,
+                    	valueField: "value",
+                    	editable: false,
+                    	textField: "text",
+                    	data: [{
+                    		value: '0',
+                    		text: '常规'
+                    	},{
+                    		value: '1',
+                    		text: '非常规'
                     	},],
                     	required:true,
                     }
@@ -179,7 +209,7 @@ function initGrid(){
     		}, {
     			field : 'dpubdate',
     			title : '发布时间',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'center',
 //    			editor: {
@@ -191,7 +221,7 @@ function initGrid(){
     		}, {
     			field : 'offdate',
     			title : '下架时间',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'center',
 //    			editor: {
@@ -215,7 +245,7 @@ function initGrid(){
     		}, {
     			field : 'vstatus',
     			title : '状态',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'center',
     			formatter: function (value) {
@@ -231,7 +261,7 @@ function initGrid(){
     		}, {
     			field : 'ispro',
     			title : '是否促销',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'center',
     			editor: {type:'checkbox',options : {on:'是',off:'否',},
@@ -254,6 +284,85 @@ function initGrid(){
     		}
     	] ]
 	});
+}
+
+/**
+ * 监听查询
+ */
+function initQueryData(){
+	$("#querydate").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#enddate").datebox("setValue", parent.SYSTEM.LoginDate);
+}
+
+/**
+ * 关闭查询对话框
+ */
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+/**
+ * 查询框-清除
+ */
+function clearParams(){
+	$('#corpkna_ae').combobox('readonly',true);
+	$("#pk_account").val(null);
+	$('#taxtype').combobox('setValue', "");
+	$('#vstatus').combobox('setValue', "-1");
+	$("#cylnum").numberbox("setValue",null);
+	$("#contcycle").numberbox("setValue",null);
+}
+
+/**
+ * 查询
+ */
+function reloadData(){
+	var begdate = $("#begdate").datebox('getValue');
+	var enddate = $("#enddate").datebox('getValue');
+	var taxtype = $("#taxtype").combobox('getValue');
+	var vstatus = $("#vstatus").combobox('getValue');
+	var cylnum = $("#cylnum").numberbox('getValue');
+	var contcycle = $("#contcycle").numberbox('getValue');
+	
+	var itype ="";
+	if ($("#normal").is(':checked')) {
+		itype = "1";
+	} 
+	if ($("#supple").is(':checked')) {
+		itype += "2";
+	} 
+	
+	$('#grid').datagrid('unselectAll');
+	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').url =DZF.contextPath + '/channel/packageDef!query.action';
+	queryParams.begdate = begdate;
+	queryParams.enddate = enddate;
+	queryParams.taxtype = taxtype;
+	queryParams.vstatus = vstatus;
+	if(isEmpty(cylnum)){
+		queryParams.cylnum = -1;
+	}else{
+		queryParams.cylnum = cylnum;
+	}
+	if(isEmpty(contcycle)){
+		queryParams.contcycle = -1;
+	}else{
+		queryParams.contcycle = contcycle;
+	}
+	if(isEmpty(itype)){
+		queryParams.itype = -1;
+	}else{
+		queryParams.itype = itype;
+	}
+	queryParams.itype = itype;
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('reload');
+	showButtons("brows");
 }
 
 function addType () {
@@ -383,18 +492,7 @@ function updateOff() {
 		 return;
 	}
 }
-function reload() {
-	var begdate = $("#begdate").datebox('textbox').val();
-	var enddate = $("#enddate").datebox('textbox').val();
-	$('#grid').datagrid('unselectAll');
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	$('#grid').datagrid('options').url =DZF.contextPath + '/channel/packageDef!query.action';
-	queryParams.begdate = begdate;
-	queryParams.enddate = enddate;
-	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
-	showButtons("brows");
-}
+
 var editIndex = 0;
 function modify() {
 //	var grid = $("#grid");

@@ -11,6 +11,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.model.sys.sys_set.BusiTypeVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.IPackageDefService;
@@ -27,12 +28,39 @@ public class PackageDefServiceImpl implements IPackageDefService {
         SQLParameter params = new SQLParameter();
         str.append(" nvl(dr,0) = 0 and pk_corp = '000001'");
         if(qryvo.getDbegindate() != null){
-            str.append(" and dpublishdate >= ?");
+            str.append(" and doperatedate >= ?");
             params.addParam(qryvo.getDbegindate());
         }
         if(qryvo.getDenddate() != null){
-            str.append(" and dpublishdate <= ?");
+            str.append(" and doperatedate <= ?");
             params.addParam(qryvo.getDenddate());
+        }
+        if(!StringUtil.isEmpty(qryvo.getVtaxpayertype())){
+            str.append(" and vtaxpayertype = ?");
+            params.addParam(qryvo.getVtaxpayertype());
+        }
+        if(qryvo.getIcashcycle() != -1){
+            str.append(" and icashcycle = ?");
+            params.addParam(qryvo.getIcashcycle());
+        }
+        if(qryvo.getIcontcycle() !=-1){
+            str.append(" and icontcycle = ?");
+            params.addParam(qryvo.getIcontcycle());
+        }
+        if(qryvo.getVstatus()!= -1 && qryvo.getVstatus()==3){
+            str.append(" and vstatus = ?");
+            params.addParam(qryvo.getVstatus());
+        }else if(qryvo.getVstatus()!= -1 && qryvo.getVstatus()==4){
+            str.append(" and vstatus != 3");
+        }
+        if(qryvo.getItype()==-1){
+        	return new PackageDefVO[]{};
+        }else if(qryvo.getItype()==1){
+            str.append(" and nvl(itype,0) = ?");
+            params.addParam(0);
+        }else if(qryvo.getItype()==2){
+            str.append(" and nvl(itype,0) = ?");
+            params.addParam(1);
         }
         str.append(" order by vstatus,dpublishdate desc");
         PackageDefVO[] vos = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, str.toString(), params);
@@ -42,6 +70,9 @@ public class PackageDefServiceImpl implements IPackageDefService {
                 uvo = UserCache.getInstance().get(vo.getCoperatorid(), null);
                 if(uvo != null){
                     vo.setCoperatorname(uvo.getUser_name());
+                }
+                if(vo.getItype()==null){
+                	vo.setItype(0);
                 }
             }
         }

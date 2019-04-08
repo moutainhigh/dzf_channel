@@ -13,13 +13,26 @@ import com.dzf.pub.lang.DZFDate;
 public class PackageQryVO extends SuperVO {
 
 	private static final long serialVersionUID = 8799494318014396487L;
-
     
     @FieldAlias("begdate")
     private DZFDate dbegindate;//发布日期
     
     @FieldAlias("enddate")
     private DZFDate denddate;//发布日期
+    
+    @FieldAlias("taxtype")
+    public String vtaxpayertype;// 纳税人资格
+    
+    @FieldAlias("vstatus")
+    private Integer vstatus;//状态  1：未发布；2：已发布；3：已下架；4:已保存+已发布
+    
+    @FieldAlias("cylnum")
+    private Integer icashcycle; // 收费周期数
+    
+    @FieldAlias("contcycle")
+    private Integer icontcycle;//合同周期
+    
+    private Integer itype;//服务套餐类型 null或者0为常规；1：非常规
 	
 	public DZFDate getDbegindate() {
         return dbegindate;
@@ -29,7 +42,47 @@ public class PackageQryVO extends SuperVO {
         this.dbegindate = dbegindate;
     }
 
-    public DZFDate getDenddate() {
+    public String getVtaxpayertype() {
+		return vtaxpayertype;
+	}
+
+	public void setVtaxpayertype(String vtaxpayertype) {
+		this.vtaxpayertype = vtaxpayertype;
+	}
+
+	public Integer getVstatus() {
+		return vstatus;
+	}
+
+	public void setVstatus(Integer vstatus) {
+		this.vstatus = vstatus;
+	}
+
+	public Integer getIcashcycle() {
+		return icashcycle;
+	}
+
+	public void setIcashcycle(Integer icashcycle) {
+		this.icashcycle = icashcycle;
+	}
+
+	public Integer getIcontcycle() {
+		return icontcycle;
+	}
+
+	public void setIcontcycle(Integer icontcycle) {
+		this.icontcycle = icontcycle;
+	}
+
+	public Integer getItype() {
+		return itype;
+	}
+
+	public void setItype(Integer itype) {
+		this.itype = itype;
+	}
+
+	public DZFDate getDenddate() {
         return denddate;
     }
 
