@@ -20,8 +20,10 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
@@ -114,7 +116,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	 */
 	private String getMatcode(MaterielFileVO vo) throws DZFWarpException {
 		String code;
-		String str = "lgwl";
+		String str = "LGWL";
 		MaxCodeVO mcvo = new MaxCodeVO();
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vcode");
@@ -150,10 +152,16 @@ public class MatFileServiceImpl implements IMatFileService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MaterielFileVO> query(MaterielFileVO qvo)  throws DZFWarpException{
+	public List<MaterielFileVO> query(MaterielFileVO qvo,UserVO uservo)  throws DZFWarpException{
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+	       
+	        for (MaterielFileVO mvo : list) {
+	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+				mvo.setApplyname(uservo.getUser_name());
+			}
+	        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);
 	        return list;
 	}
 	
@@ -161,6 +169,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	 * 获取查询条件
 	 * 
 	 * @param pamvo
+	 * @param uservo 
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -326,14 +335,27 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public List<MaterielFileVO> queryMatFile() {
+	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo) {
 		StringBuffer sql=new StringBuffer();
-		sql.append("  select vname,vunit,vcode \n");
+		SQLParameter spm=new SQLParameter();
+		sql.append("  select pk_materiel,vname,vunit,vcode,coperatorid \n");
 		sql.append("     from cn_materiel  \n");
 		sql.append("     where nvl(dr,0) = 0  \n");
 		sql.append("     and isseal = 1 \n");
 		
-		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(MaterielFileVO.class) );
+		if (!StringUtil.isEmpty(pamvo.getVcode())) {
+			sql.append(" AND (vname like ? ");
+			sql.append(" OR vcode like ? ) ");
+			spm.addParam("%" + pamvo.getVcode() + "%");
+			spm.addParam("%" + pamvo.getVcode() + "%");
+		}
+		
+		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(MaterielFileVO.class) );
+		for (MaterielFileVO mvo : bvoList) {
+	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+				mvo.setApplyname(uservo.getUser_name());
+		}
+	    QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);
 		if(bvoList!=null && bvoList.size()>0){
 			return bvoList;
 		}

@@ -116,7 +116,7 @@ private Logger log = Logger.getLogger(this.getClass());
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_65);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_69);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
@@ -140,7 +140,7 @@ private Logger log = Logger.getLogger(this.getClass());
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_65);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_69);
 			MaterielStockInVO pamvo = new MaterielStockInVO();
 			pamvo = (MaterielStockInVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (StringUtil.isEmpty(pamvo.getPk_corp())) {

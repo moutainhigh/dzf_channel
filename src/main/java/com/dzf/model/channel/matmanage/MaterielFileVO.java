@@ -58,6 +58,8 @@ public class MaterielFileVO extends SuperVO {
 	
 	private String applyreq;//申请条件
 	
+	private String applyname;//申请人
+	
 	@FieldAlias("begdate")
 	private String begindate;//录入开始日期
 	
@@ -209,6 +211,14 @@ public class MaterielFileVO extends SuperVO {
 
 	public void setApplynum(Integer applynum) {
 		this.applynum = applynum;
+	}
+
+	public String getApplyname() {
+		return applyname;
+	}
+
+	public void setApplyname(String applyname) {
+		this.applyname = applyname;
 	}
 
 	@Override

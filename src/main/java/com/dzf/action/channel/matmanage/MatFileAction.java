@@ -91,7 +91,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 			int total = matFile.queryTotalRow(pamvo);
 			grid.setTotal((long)(total));
 			if(total > 0){
-				List<MaterielFileVO> mList = matFile.query(pamvo);
+				List<MaterielFileVO> mList = matFile.query(pamvo,uservo);
 				grid.setRows(mList);
 				grid.setMsg("查询成功");
 			}else{
@@ -121,7 +121,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 			}
 			StringBuffer errmsg = new StringBuffer();
 			int errNum = 0;
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_64);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_67);
 			List<MaterielFileVO> vos=matFile.querySsealById(ids);
 			for (MaterielFileVO mvo : vos) {
 				try{
@@ -153,7 +153,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_64);
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_67);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
 			}
@@ -201,7 +201,6 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			MaterielFileVO vo = new MaterielFileVO();
 			String ids = getRequest().getParameter("ids");
 			if(StringUtil.isEmpty(ids)){
 				throw new BusinessException("请选择要删除的物料！");
@@ -261,12 +260,15 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			MaterielFileVO pamvo = new MaterielFileVO();
+			pamvo = (MaterielFileVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 				throw new BusinessException("登陆用户错误");
 			} else if (uservo == null) {
 				throw new BusinessException("登陆用户错误");
 			}
-			List<MaterielFileVO> list = matFile.queryMatFile();
+			List<MaterielFileVO> list = matFile.queryMatFile(pamvo,uservo);
 			grid.setRows(list);
 			grid.setTotal((long) (list.size()));
 			grid.setMsg("查询成功！");

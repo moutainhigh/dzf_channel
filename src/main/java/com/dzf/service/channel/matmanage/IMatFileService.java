@@ -14,7 +14,7 @@ public interface IMatFileService {
 
 	int queryTotalRow(MaterielFileVO pamvo);
 
-	List<MaterielFileVO> query(MaterielFileVO pamvo);
+	List<MaterielFileVO> query(MaterielFileVO pamvo, UserVO uservo);
 
 	void updateStatus(MaterielFileVO mvo, Integer type);
 
@@ -26,7 +26,7 @@ public interface IMatFileService {
 
 	void deleteWl(MaterielFileVO mvo);
 
-	List<MaterielFileVO> queryMatFile();
+	List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo, UserVO uservo);
 
 	
 }

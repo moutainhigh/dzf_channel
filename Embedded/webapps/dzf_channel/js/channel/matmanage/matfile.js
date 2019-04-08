@@ -100,7 +100,7 @@ function load(){
 		}, {
 			width : '150',
 			title : '录入人',
-			field : 'operid',
+			field : 'applyname',
 			halign : 'center',
 			align : 'center',
 		}, {

@@ -265,13 +265,37 @@ public interface IFunNode {
     public static final String CHANNEL_63  = "channel63";
     
     /**
+     * 物料管理
+     */
+    public static final String CHANNEL_65  = "channel65";
+    
+    /**
      * 物料档案
      */
-    public static final String CHANNEL_64  = "channel64";
+    public static final String CHANNEL_67  = "channel67";
+    
+    /**
+     * 物料处理
+     */
+    public static final String CHANNEL_68  = "channel68";
     
     /**
      * 物料入库
      */
-    public static final String CHANNEL_65  = "channel65";
+    public static final String CHANNEL_69  = "channel69";
+   
+    
+    /**
+     * 物料申请
+     */
+    public static final String CHANNEL_70  = "channel70";
+    
+    /**
+     * 物料审核
+     */
+    public static final String CHANNEL_71  = "channel71";
+    
+   
+    
     
 }

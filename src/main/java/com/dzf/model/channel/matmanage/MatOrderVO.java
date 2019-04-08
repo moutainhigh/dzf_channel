@@ -35,13 +35,10 @@ public class MatOrderVO extends SuperVO {
 	@FieldAlias("fcorp")
 	private String fathercorp;//加盟商id
 	
-	@FieldAlias("province")
 	private Integer vprovince;//省
 	
-	@FieldAlias("city")
 	private Integer vcity;//市
 	
-	@FieldAlias("area")
 	private Integer varea;//区
 	
 	@FieldAlias("cname")
@@ -115,8 +112,35 @@ public class MatOrderVO extends SuperVO {
 	
 	private String logname; // 快递公司名称
 	
-	/*******仅作展示，不存库*******/
+	private Integer parid;//地区父id
 	
+	private Integer regid;//地区id
+	
+	private String pname;//省份名称
+	
+	private String cityname;//市名称
+	
+	private String countryname;//区县名称
+	
+	private String applyname;//申请人名称
+	
+	@FieldAlias("wlname")
+	private String vname;//物料名称
+	
+	@FieldAlias("unit")
+	private String vunit;//单位
+	
+	/*******仅作展示，不存库*******/
+	//0-全部、1-待审核、2-待发货、3-已发货、4-已驳回
+	public static final String VSTATUS = "vstatus";
+	
+	public static final Integer VSTATUS_1 = 1;
+	
+	public static final Integer VSTATUS_2 = 2;
+	
+	public static final Integer VSTATUS_3 = 3;
+	
+	public static final Integer VSTATUS_4 = 4;
 	
 	public String getPk_materielbill() {
 		return pk_materielbill;
@@ -412,6 +436,70 @@ public class MatOrderVO extends SuperVO {
 
 	public void setLogname(String logname) {
 		this.logname = logname;
+	}
+
+	public Integer getParid() {
+		return parid;
+	}
+
+	public void setParid(Integer parid) {
+		this.parid = parid;
+	}
+	
+	public String getPname() {
+		return pname;
+	}
+
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+	
+	public String getCityname() {
+		return cityname;
+	}
+
+	public void setCityname(String cityname) {
+		this.cityname = cityname;
+	}
+
+	public String getCountryname() {
+		return countryname;
+	}
+
+	public void setCountryname(String countryname) {
+		this.countryname = countryname;
+	}
+	
+	public Integer getRegid() {
+		return regid;
+	}
+
+	public void setRegid(Integer regid) {
+		this.regid = regid;
+	}
+	
+	public String getVname() {
+		return vname;
+	}
+
+	public void setVname(String vname) {
+		this.vname = vname;
+	}
+
+	public String getVunit() {
+		return vunit;
+	}
+
+	public void setVunit(String vunit) {
+		this.vunit = vunit;
+	}
+	
+	public String getApplyname() {
+		return applyname;
+	}
+
+	public void setApplyname(String applyname) {
+		this.applyname = applyname;
 	}
 
 	@Override
