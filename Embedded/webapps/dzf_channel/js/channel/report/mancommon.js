@@ -249,6 +249,7 @@ function setFooter(){
     var ndemny = 0;	
     var nderebmny = 0;	
     var outmny = 0;	
+    var retmny = 0;
     for (var i = 0; i < rows.length; i++) {
     	bondmny += parseFloat(rows[i].bondmny);
     	predeposit += parseFloat(rows[i].predeposit);
@@ -262,6 +263,8 @@ function setFooter(){
     	ndemny += parseFloat(rows[i].ndemny);
     	nderebmny += parseFloat(rows[i].nderebmny);
     	outmny += parseFloat(rows[i].outmny);
+    	
+    	retmny += parseFloat(isEmpty(rows[i].retmny) ? 0 : rows[i].retmny);
     }
     footerData['corpnm'] = '合计';
     footerData['bondmny'] = bondmny;
@@ -276,6 +279,7 @@ function setFooter(){
     footerData['ndemny'] = ndemny;
     footerData['nderebmny'] = nderebmny;
     footerData['outmny'] = outmny;
+    footerData['retmny'] = retmny;
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
@@ -310,19 +314,19 @@ function doExport(type){
 		Public.tips({content:'当前界面数据为空',type:2});
 		return;
 	}
-	var callback=function(){
+//	var callback=function(){
 		var columns = $('#grid').datagrid("options").columns[0];
 //		var qj = $('#bdate').datebox('getValue') + '至' + $('#edate').datebox('getValue');,'qj':qj
 		Business.getFile(DZF.contextPath+ '/report/manager!exportExcel.action',
 				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'type':type}, true, true);
-	}
-	var funcode='channel18';
-	if(type=='1'){
-		funcode='channel16';
-	}else if(type=='2'){
-		funcode='channel17';
-	}
-	checkBtnPower('export',funcode,callback);
+//	}
+//	var funcode='channel18';
+//	if(type=='1'){
+//		funcode='channel16';
+//	}else if(type=='2'){
+//		funcode='channel17';
+//	}
+//	checkBtnPower('export',funcode,callback);
 }
 
 /**

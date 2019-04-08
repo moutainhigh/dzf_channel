@@ -64,6 +64,9 @@ public class ManagerVO extends SuperVO {
 	@FieldAlias("outmny")
 	private DZFDouble outmny; // 预存款余额金额
 	
+	@FieldAlias("retmny")
+	private DZFDouble retmny; // 返点余额金额
+	
 	@FieldAlias("antlmny")
 	private DZFDouble antotalmny; // 合同代账费(新增)
 	
@@ -133,6 +136,14 @@ public class ManagerVO extends SuperVO {
 
 	public void setVcontcode(String vcontcode) {
 		this.vcontcode = vcontcode;
+	}
+
+	public DZFDouble getRetmny() {
+		return retmny;
+	}
+
+	public void setRetmny(DZFDouble retmny) {
+		this.retmny = retmny;
 	}
 
 	public void setAreacode(String areacode) {

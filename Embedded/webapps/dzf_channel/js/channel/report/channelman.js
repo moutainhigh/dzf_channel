@@ -52,6 +52,11 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
+			{width : '100',title : '返点余额',field : 'retmny',align:'right',rowspan:2,
+		    	formatter : function(value,row,index){
+		    		if(isEmpty(value))return "0.00";
+		    		return formatMny(value);
+			}},
 	  	  	{width : '100',title : '本期预存款',field : 'predeposit',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";

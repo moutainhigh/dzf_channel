@@ -154,6 +154,11 @@ function load() {
 		    		if(value == 0)return "0.00";
 		    		return formatMny(value);
 			}},
+			{width : '100',title : '返点余额',field : 'retmny',align:'right',rowspan:2,
+		    	formatter : function(value,row,index){
+		    		if(isEmpty(value))return "0.00";
+		    		return formatMny(value);
+			}},
 	  	  	{width : '100',title : '本期预存款',field : 'predeposit',align:'right',rowspan:2,
 		    	formatter : function(value,row,index){
 		    		if(value == 0)return "0.00";
@@ -227,6 +232,7 @@ function insertData(data){
     var ndemny = 0;	
     var nderebmny = 0;	
     var outmny = 0;	
+    var retmny = 0;
     
     var bondmny1 = 0;	
     var predeposit1 = 0;	
@@ -239,6 +245,7 @@ function insertData(data){
     var ndemny1 = 0;	
     var nderebmny1 = 0;	
     var outmny1 = 0;	
+    var retmny1 = 0;
     
     var bondmny2 = 0;	
     var predeposit2 = 0;	
@@ -251,6 +258,7 @@ function insertData(data){
     var ndemny2 = 0;	
     var nderebmny2 = 0;	
     var outmny2 = 0;
+    var retmny2 = 0;
     
     var j=0;
 　　　for (var i=0; i <data.rows.length; i++) {
@@ -266,6 +274,7 @@ function insertData(data){
 		ndemny += parseFloat(row.ndemny);
 		nderebmny += parseFloat(row.nderebmny);
 		outmny += parseFloat(row.outmny);
+		retmny += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
 		
 　　　　　　if (i!=0 && row.provname == data.rows[i-1].provname) {  
 	　　　　　　　　mark += 1;                                            
@@ -296,6 +305,7 @@ function insertData(data){
 					ndemny 	:	ndemny1 ,
 					nderebmny:		nderebmny1,
 					outmny	:	outmny1  ,
+					retmny	:	retmny1  ,
 				}
 			});
 		     i++;
@@ -311,6 +321,7 @@ function insertData(data){
 		     ndemny1 = data.rows[i].ndemny;	
 		     nderebmny1 = data.rows[i].nderebmny;	
 		     outmny1 =data.rows[i].outmny;
+		     retmny1 = parseFloat(isEmpty(data.rows[i].retmny) ? 0 : data.rows[i].retmny);
 		}else{
 			bondmny1 += parseFloat(row.bondmny);
 			predeposit1 += parseFloat(row.predeposit);
@@ -323,6 +334,7 @@ function insertData(data){
 			ndemny1 += parseFloat(row.ndemny);
 			nderebmny1 += parseFloat(row.nderebmny);
 			outmny1 += parseFloat(row.outmny);
+			retmny1 += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
 		}
 		
 		if(i!=0 && row.aname!=data.rows[i-1-j].aname){
@@ -341,6 +353,7 @@ function insertData(data){
 					ndemny 	:	ndemny2 ,
 					nderebmny:		nderebmny2,
 					outmny	:	outmny2  ,
+					retmny	:	retmny2  ,
 				}
 			});
 			 i++;
@@ -355,6 +368,7 @@ function insertData(data){
 		     ndemny2 = data.rows[i].ndemny;	
 		     nderebmny2 = data.rows[i].nderebmny;	
 		     outmny2 =data.rows[i].outmny;
+		     retmny2 =data.rows[i].retmny;
 		}else{
 			bondmny2 += parseFloat(row.bondmny);
 			predeposit2 += parseFloat(row.predeposit);
@@ -367,6 +381,7 @@ function insertData(data){
 			ndemny2 += parseFloat(row.ndemny);
 			nderebmny2 += parseFloat(row.nderebmny);
 			outmny2 += parseFloat(row.outmny);
+		    retmny2 += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
 		}
 　	}
 
@@ -384,6 +399,7 @@ function insertData(data){
 			ndemny 	:	ndemny1 ,
 			nderebmny:		nderebmny1,
 			outmny	:	outmny1  ,
+			retmny	:	retmny1  ,
 	});
 
 	$('#grid').datagrid('appendRow',{
@@ -399,6 +415,7 @@ function insertData(data){
 			ndemny 	:	ndemny2 ,
 			nderebmny:		nderebmny2,
 			outmny	:	outmny2  ,
+			retmny	:	retmny2  ,
 	});
 	
 	var footerData = new Object();
@@ -414,6 +431,7 @@ function insertData(data){
 	footerData['ndemny'] = ndemny;
 	footerData['nderebmny'] = nderebmny;
 	footerData['outmny'] = outmny;
+	footerData['retmny'] = retmny;
 	var fs=new Array(1);
 	fs[0] = footerData;
 	$('#grid').datagrid('reloadFooter',fs);

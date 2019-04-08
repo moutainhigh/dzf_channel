@@ -753,7 +753,9 @@ public class ExportExcel<T> {
 								richString = new HSSFRichTextString(value);
 								cell.setCellValue(richString);
 							}
-						} else {
+						} else if(key.equals("retmny")){
+							cell.setCellValue("0.00");
+						}else{
 							cell.setCellValue("");
 						}
 						if (!fieldlist.contains(key)) {

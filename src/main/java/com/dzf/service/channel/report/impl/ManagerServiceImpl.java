@@ -272,8 +272,8 @@ public class ManagerServiceImpl implements IManagerService {
 			buf.append("  group by yt.pk_corp");
 			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
-			buf=new StringBuffer();//预存款余额
-			buf.append(" select (nvl(npaymny,0)-nvl(nusedmny,0)) as outmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=2 and ");
+			buf=new StringBuffer();//预存款余额 返点余额
+			buf.append(" select (nvl(npaymny,0)-nvl(nusedmny,0)) as outmny,pk_corp,ipaytype anum from cn_balance where nvl(dr,0) = 0 and (ipaytype=2 or ipaytype=3) and ");
 			buf.append(SqlUtil.buildSqlForIn("pk_corp ",pks));
 			List<ManagerVO> list4 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
 			
@@ -320,10 +320,14 @@ public class ManagerServiceImpl implements IManagerService {
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     }
-		     if(list4!=null&&list4.size()>0){//预存款余额
+		     if(list4!=null&&list4.size()>0){//预存款余额,返点余额
 		    	 for (ManagerVO managerVO : list4) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
-					vo.setOutmny(managerVO.getOutmny());
+					if(managerVO.getAnum()==2){
+						vo.setOutmny(managerVO.getOutmny());
+					}else{
+						vo.setRetmny(managerVO.getOutmny());
+					}
 					map.put(managerVO.getPk_corp(),vo);
 				}
 		     }
