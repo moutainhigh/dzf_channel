@@ -26,6 +26,7 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.IDefaultValue;
@@ -33,6 +34,7 @@ import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -42,6 +44,7 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IChannelOrderService;
+import com.dzf.service.pub.IPubService;
 
 @Service("channelorderser")
 public class ChannelOrderServiceImpl implements IChannelOrderService {
@@ -54,6 +57,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 	@Autowired
 	private ICarryOverService carryover;
+	
+	@Autowired
+	private IPubService pubser;
 
 	@Override
 	public Integer queryTotalRow(GoodsBillVO pamvo) throws DZFWarpException {
@@ -68,7 +74,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		List<GoodsBillVO> list = (List<GoodsBillVO>) multBodyObjectBO.queryDataPage(GoodsBillVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if (list != null && list.size() > 0) {
-			setShowValue(list);
+			setShowValue(list,pamvo.getAreaname());
 		}
 		return list;
 	}
@@ -78,13 +84,26 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 * 
 	 * @throws DZFWarpException
 	 */
-	private void setShowValue(List<GoodsBillVO> list) throws DZFWarpException {
-		CorpVO corpvo = null;
+	private void setShowValue(List<GoodsBillVO> list,String areaname) throws DZFWarpException {
+		UserVO uservo = null;
+		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<Integer, String> areaMap = pubser.getAreaMap(areaname, 3);//大区
 		for (GoodsBillVO bvo : list) {
-			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
-			if (corpvo != null) {
-				bvo.setCorpcode(corpvo.getInnercode());
-				bvo.setCorpname(corpvo.getUnitname());
+			QueryDeCodeUtils.decKeyUtil(new String[] { "corpname" }, bvo, 2);
+			if (areaMap != null && !areaMap.isEmpty()) {
+				String area = areaMap.get(bvo.getVprovince());
+				if (!StringUtil.isEmpty(area)) {
+					bvo.setAreaname(area);
+				}
+			}
+			if (opermap != null && !opermap.isEmpty()) {
+				String operater = opermap.get(bvo.getPk_corp());
+				if (!StringUtil.isEmpty(operater)) {
+					uservo = UserCache.getInstance().get(operater, null);
+					if (uservo != null) {
+						bvo.setVoperater(uservo.getUser_name());// 渠道运营
+					}
+				}
 			}
 		}
 	}
@@ -111,6 +130,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndeductmny,  \n");
 		sql.append("       l.ndedrebamny,  \n");
 		sql.append("       l.vstatus,  \n");
+		sql.append("       ba.innercode corpcode, \n");
+		sql.append("       ba.unitname corpname, \n");
+		sql.append("       ba.vprovince, \n");
+		sql.append("       ba.citycounty as vprovname, \n");
 		sql.append("       nvl(l.vtistatus,1) AS vtistatus, \n");
 		sql.append("       l.updatets,  \n");
 		sql.append("       t.logisticsunit,  \n");
@@ -118,6 +141,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       s.doperatetime AS dsubmittime,  \n");
 		sql.append("       u.doperatedate AS dconfdate  \n");
 		sql.append("  FROM cn_goodsbill l  \n");
+		sql.append("  INNER JOIN bd_account ba ON l.pk_corp = ba.pk_corp \n") ;
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
 		sql.append("                            AND s.vstatus = 0  \n");
 		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n");
@@ -127,6 +151,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
 		sql.append("   AND nvl(s.dr, 0) = 0  \n");
 		sql.append("   AND nvl(u.dr, 0) = 0  \n");
+		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			sql.append("   AND l.vbillcode = ?  \n");
 			spm.addParam(pamvo.getVbillcode());
@@ -168,6 +193,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		if (pamvo.getEenddate() != null) {
 			sql.append(" AND u.doperatedate <= ?  \n");
 			spm.addParam(pamvo.getEenddate());
+		}
+		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
+			sql.append(pamvo.getVqrysql());
 		}
 		sql.append(" ORDER BY s.doperatetime DESC");
 		qryvo.setSql(sql.toString());
@@ -1108,6 +1136,39 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		if(isexists){
 			throw new BusinessException("该订单已经开票");
 		}
+	}
+
+	@Override
+	public String getQrySql(GoodsBillVO pamvo) throws DZFWarpException {
+		StringBuffer buf = new StringBuffer();
+		String condition = pubser.makeCondition(pamvo.getCoperatorid(), pamvo.getAreaname(),IStatusConstant.IYUNYING);
+		if (!condition.equals("alldata")) {
+			buf.append(condition);
+		}
+		if(!StringUtil.isEmpty(pamvo.getVoperater())){
+			String sql = getQrySql(pamvo.getVoperater(), IStatusConstant.IYUNYING);
+			buf.append(sql);
+		}
+		return buf.toString();
+	}
+	
+	/**
+	 * 获取查询条件
+	 * @param cuserid
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
+		if(corps != null && corps.length > 0){
+			String where = SqlUtil.buildSqlForIn(" ba.pk_corp", corps);
+			sql.append(" AND ").append(where);
+		}else{
+			sql.append(" AND ba.pk_corp is null \n") ; 
+		}
+		return sql.toString();
 	}
 	
 }

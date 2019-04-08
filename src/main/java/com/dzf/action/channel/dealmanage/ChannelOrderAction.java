@@ -63,6 +63,9 @@ public class ChannelOrderAction extends BaseAction<GoodsBillVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			GoodsBillVO paramvo = (GoodsBillVO) DzfTypeUtils.cast(getRequest(), new GoodsBillVO());
+			paramvo.setCoperatorid(uservo.getCuserid());
+			String qrySql = orderser.getQrySql(paramvo);
+			paramvo.setVqrysql(qrySql);
 			int total = orderser.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){

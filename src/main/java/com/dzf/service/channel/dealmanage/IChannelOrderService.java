@@ -1,3 +1,4 @@
+
 package com.dzf.service.channel.dealmanage;
 
 import java.util.List;
@@ -62,4 +63,12 @@ public interface IChannelOrderService {
 	 * @throws DZFWarpException
 	 */
 	public void saveInvoice(ChInvoiceVO hvo, String cuserid) throws DZFWarpException;
+	
+	/**
+	 * 获取权限sql语句
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(GoodsBillVO pamvo) throws DZFWarpException ;
 }

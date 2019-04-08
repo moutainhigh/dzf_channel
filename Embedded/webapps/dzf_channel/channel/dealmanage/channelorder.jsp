@@ -47,7 +47,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:280px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:340px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -101,6 +101,14 @@
 					<option value="1">未开票</option>
 					<option value="2">已开票</option>
 				</select>
+			</div>
+			<div class="time_col time_colp10">
+				<label style="text-align:right;width:85px;">大区：</label> 
+				<input id="aname"  name="aname" class="easyui-combobox" style="width:90px; height: 28px;" 
+					data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" /> 
+				<label style="width: 80px;text-align:right">渠道运营：</label>
+				<input id="operater" class="easyui-textbox" style="width:110px;height:28px;" />
+				<input id="operaterid" type="hidden">
 			</div>
 			<p>
 				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
@@ -482,6 +490,15 @@
 		    </form>
 		</div>
 		<!-- 开票申请界面 end -->
+		
+		<!-- 渠道运营参照对话框及按钮 begin -->
+		<div id="operDlg"></div>
+		<div id="operBtn" style="display:none;">
+			<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectOpers()" style="width:90px">确认</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" 
+				onclick="javascript:$('#operDlg').dialog('close');" style="width:90px">取消</a>
+		</div>
+		<!-- 渠道运营参照对话框及按钮 end -->
 	</div>
 </body>
 </html>
