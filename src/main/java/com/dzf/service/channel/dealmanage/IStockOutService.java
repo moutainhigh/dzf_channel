@@ -118,4 +118,12 @@ public interface IStockOutService {
 	 */
 	public GoodsBillVO qryGoodsBill(String code) throws DZFWarpException;
 	
+	/**
+	 * 获取权限sql语句
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public String getQrySql(QryParamVO pamvo) throws DZFWarpException ;
+	
 }

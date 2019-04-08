@@ -67,6 +67,9 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			paramvo.setCuserid(uservo.getCuserid());
+			String qrySql = stockOut.getQrySql(paramvo);
+			paramvo.setVqrysql(qrySql);
 			int total = stockOut.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){

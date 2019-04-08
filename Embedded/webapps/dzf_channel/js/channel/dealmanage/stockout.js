@@ -33,6 +33,8 @@ function initQry(){
 	initCorp();
 	initUser();
 	initLogist();
+	initArea();
+	initOpera();
 }
 
 function loadCardGrid(corpid){
@@ -94,7 +96,22 @@ function load(){
             formatter : function(value, row, index) {
     			return '<a href="javascript:void(0)"  style="color:blue" onclick="view(\''+row.soutid+'\')">' + value + '</a>';
             }
-		}, {
+		},{
+			width : '60',
+			title : '大区',
+			field : 'aname',
+			align : 'left'
+	   },{
+		   width : '120',
+		   title : '地区',
+		   field : 'provname',
+		   align : 'left'
+	   },{
+		   width : '80',
+		   title : '渠道运营',
+		   field : 'oid',
+		   align : 'left'
+	   },{
 			width : '200',
 			title : '加盟商',
 			field : 'corpname',
@@ -191,6 +208,81 @@ function opermatter(val, row, index) {
 		'<span style="margin-bottom:0px;margin-left:10px;">取消确认 </span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">确认发货 </span>';
 	}
+}
+
+function initArea(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
+		data : {"qtype" :3},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    $('#aname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+}
+
+function initOpera(){
+	$('#operater').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#operDlg").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择渠道运营',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/operater_select.jsp',
+                    buttons: '#operBtn'
+                });
+            }
+        }]
+    });
+}
+
+/**
+ * 渠道运营选择事件
+ */
+function selectOpers(){
+	var rows = $('#ogrid').datagrid('getChecked');
+	dClickOpers(rows);
+}
+
+/**
+ * 双击选择渠道运营
+ * @param rowTable
+ */
+function dClickOpers(rowTable){
+	var unames = "";
+	var uids = [];
+	if(rowTable){
+		if (rowTable.length > 300) {
+			Public.tips({
+				content : "一次最多只能选择300个运营",
+				type : 2
+			});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				unames += rowTable[i].uname;
+			}else{
+				unames += rowTable[i].uname+",";
+			}
+			uids.push(rowTable[i].uid);
+		}
+		$("#operater").textbox("setValue",unames);
+		$("#operaterid").val(uids);
+	}
+	$("#operDlg").dialog('close');
 }
 
 function add(){
@@ -402,6 +494,8 @@ function reloadData(){
 		'ucode' : $("#ucode").textbox('getValue'),
 		'cpid' :  $('#cpid').combobox('getValue'),
 		'uid' :  $('#uid').combobox('getValue'),
+		'oid' : $("#operaterid").val(),
+		'aname': $("#aname").combobox('getValue'),
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#grid').datagrid('clearChecked');
@@ -418,6 +512,10 @@ function clearCondition(){
 	$('#cpid').combobox('select',null);
 	$('#ucode').textbox('setValue',null);
 	$('#uid').combobox('select',null);
+	
+	$('#aname').combobox('setValue', null);
+	$("#operaterid").val(null);
+	$("#operater").textbox("setValue",null);
 }
 
 function loadData(qtype){
@@ -624,7 +722,7 @@ function initCorp(){
 		type : 'POST',
 		async : false,
 		url : DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
-		data: {'rows':10000},
+		data: {'rows':10000,'ovince' :"-4"},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');

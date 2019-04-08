@@ -3,6 +3,7 @@ package com.dzf.service.channel.dealmanage.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
@@ -41,6 +43,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IStockOutService;
 import com.dzf.service.pub.IBillCodeService;
+import com.dzf.service.pub.IPubService;
 
 @Service("outStock")
 public class StockOutServiceImpl implements IStockOutService{
@@ -53,6 +56,9 @@ public class StockOutServiceImpl implements IStockOutService{
 	
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO= null;
+	
+	@Autowired
+	private IPubService pubser;
 	
 
 	@Override
@@ -68,15 +74,28 @@ public class StockOutServiceImpl implements IStockOutService{
 		List<StockOutVO> list = (List<StockOutVO>) multBodyObjectBO.queryDataPage(StockOutVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		UserVO uvo = null;
-		CorpVO cvo = null;
+		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 3);//大区
 		for (StockOutVO stockOutVO : list) {
 			uvo = UserCache.getInstance().get(stockOutVO.getCoperatorid(), null);
 			if (uvo != null) {
 				stockOutVO.setCoperatname(uvo.getUser_name());
 			}
-			cvo = CorpCache.getInstance().get(null, stockOutVO.getPk_corp());
-			if(cvo !=null){
-				stockOutVO.setCorpname(cvo.getUnitname());
+			QueryDeCodeUtils.decKeyUtil(new String[] { "corpname" }, stockOutVO, 2);
+			if (areaMap != null && !areaMap.isEmpty()) {
+				String area = areaMap.get(stockOutVO.getVprovince());
+				if (!StringUtil.isEmpty(area)) {
+					stockOutVO.setAreaname(area);
+				}
+			}
+			if (opermap != null && !opermap.isEmpty()) {
+				String operater = opermap.get(stockOutVO.getPk_corp());
+				if (!StringUtil.isEmpty(operater)) {
+					uvo = UserCache.getInstance().get(operater, null);
+					if (uvo != null) {
+						stockOutVO.setVoperater(uvo.getUser_name());// 渠道运营
+					}
+				}
 			}
 		}
 		return list;
@@ -561,6 +580,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("select c.vbillcode,");
 		sql.append("       c.pk_stockout,");
 		sql.append("       c.pk_corp,");
+		sql.append("       ba.innercode corpcode, \n");
+		sql.append("       ba.unitname corpname, \n");
+		sql.append("       ba.vprovince, \n");
+		sql.append("       ba.citycounty as vprovname, \n");
 		sql.append("       c.logisticsunit,");
 		sql.append("       c.fastcode,");
 		sql.append("       c.vmemo,");
@@ -570,6 +593,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.dconfirmtime,");
 		sql.append("       c.updatets");
 		sql.append("  from cn_stockout c");
+		sql.append("  INNER JOIN bd_account ba ON c.pk_corp = ba.pk_corp \n") ;
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and substr(c.doperatedate,0,10)>=? ");
@@ -594,6 +618,9 @@ public class StockOutServiceImpl implements IStockOutService{
 		if(!StringUtil.isEmpty(pamvo.getCuserid())){
 			sql.append("and c.coperatorid = ? ");
 			spm.addParam(pamvo.getCuserid());
+		}
+		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
+			sql.append(pamvo.getVqrysql());
 		}
 		sql.append(" order by c.ts desc ");
 		qryvo.setSql(sql.toString());
@@ -742,6 +769,39 @@ public class StockOutServiceImpl implements IStockOutService{
 		List<GoodsBillVO> list = (List<GoodsBillVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 	                new BeanListProcessor(GoodsBillVO.class));
 		return list.get(0);
+	}
+	
+	@Override
+	public String getQrySql(QryParamVO pamvo) throws DZFWarpException {
+		StringBuffer buf = new StringBuffer();
+		String condition = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname(),IStatusConstant.IYUNYING);
+		if (!condition.equals("alldata")) {
+			buf.append(condition);
+		}
+		if(!StringUtil.isEmpty(pamvo.getVoperater())){
+			String sql = getQrySql(pamvo.getVoperater(), IStatusConstant.IYUNYING);
+			buf.append(sql);
+		}
+		return buf.toString();
+	}
+	
+	/**
+	 * 获取查询条件
+	 * @param cuserid
+	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
+		if(corps != null && corps.length > 0){
+			String where = SqlUtil.buildSqlForIn(" ba.pk_corp", corps);
+			sql.append(" AND ").append(where);
+		}else{
+			sql.append(" AND ba.pk_corp is null \n") ; 
+		}
+		return sql.toString();
 	}
 	
 }

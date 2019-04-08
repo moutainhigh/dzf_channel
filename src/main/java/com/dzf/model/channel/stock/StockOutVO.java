@@ -94,6 +94,18 @@ public class StockOutVO extends MultSuperVO {
 	private String coperatname;//录入人名称
 	
 	private String corpname;//加盟商名称
+	
+	@FieldAlias("aname")
+    private String areaname;//大区名称
+	
+    @FieldAlias("provname")
+	public String vprovname;//省市名称
+	
+	@FieldAlias("ovince")
+	private Integer vprovince;// 地区
+	
+	@FieldAlias("oid")
+	private String voperater;//渠道运营id
 
     public String getVconfirmname() {
 		return vconfirmname;
@@ -125,6 +137,38 @@ public class StockOutVO extends MultSuperVO {
 
 	public String getPk_logistics() {
 		return pk_logistics;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
+	public String getVoperater() {
+		return voperater;
+	}
+
+	public void setVoperater(String voperater) {
+		this.voperater = voperater;
 	}
 
 	public DZFDouble getFastcost() {
