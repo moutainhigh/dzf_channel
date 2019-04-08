@@ -243,14 +243,14 @@ public class InvManagerServiceImpl implements InvManagerService {
 				sql.append(SqlUtil.buildSqlConditionForIn(split));
 				sql.append(" )");
 			}
-		} else if (vo.getDr() != null && vo.getDr() < 0) {// 增加权限的加盟商参照
-			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr() == -2 ? 2 : vo.getDr());
+		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {// 增加权限的加盟商参照 -2（渠道） -3（培训） -4（运营）
+			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr()==-5 ? 2 :-vo.getDr()-1);
 			if (condition != null && !condition.equals("alldata")) {
 				sql.append(condition);
 			} else if (condition == null) {
 				return null;
 			}
-			if (vo.getDr() == -2) {// 数据运营管理，4个报表
+			if (vo.getDr() == -5) {// 数据运营管理，4个报表
 				sql.append(" and pk_corp not in (");
 				sql.append("       (SELECT f.pk_corp  \n");
 				sql.append("          FROM ynt_franchisee f  \n");
