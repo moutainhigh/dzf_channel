@@ -172,10 +172,18 @@ function load(){
 		sortName : "vcode",
 		sortOrder : "desc",
 		remoteSort : false,
-		columns : [ [ {
+		frozenColumns:[[ {
 			field : 'ck',
 			checkbox : true
-		}, {
+		},{
+			field : 'operate',
+			title : '操作列',
+			width : '150',
+			halign : 'center',
+			align : 'center',
+			formatter : opermatter
+		},]],
+		columns : [ [ {
 			width : '100',
 			title : '主键',
 			field : 'stid',
@@ -246,14 +254,7 @@ function load(){
 			field : 'conftime',
 			halign : 'center',
 			align : 'center',
-		}, {
-			field : 'operate',
-			title : '操作列',
-			width : '150',
-			halign : 'center',
-			align : 'center',
-			formatter : opermatter
-		}, ] ],
+		},  ] ],
 		onLoadSuccess : function(data) {
 			$('#grid').datagrid("scrollTo", 0);
 		},

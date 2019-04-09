@@ -78,11 +78,7 @@ function load(){
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
 		idField : 'soutid',
-		columns : [ [ 
-  		 {
-   			field : 'ck',
-   			checkbox : true 
-		}, {
+		columns : [ [ {
 			width : '100',
 			title : '时间戳',
 			field : 'updatets',
@@ -170,15 +166,18 @@ function load(){
 			field : 'contime',
             halign : 'center',
 			align : 'center',
-		}, {
+		} , ] ],
+		frozenColumns:[[ {
+			field : 'ck',
+			checkbox : true
+		},{
 			width : '210',
 			title : '操作列',
 			field : 'operate',
             halign : 'center',
 			align : 'center',
 			formatter:opermatter
-		} , 
-		] ],
+		},]],
 		onLoadSuccess : function(data) {
             $('#grid').datagrid("scrollTo",0);
 		},
