@@ -110,12 +110,12 @@ function load(type){
 			if (data.success) {
 				var rows = data.rows;
 				if(rows != null && rows.length > 0){
-					var fcorp;
+					var matbillid;
 					var obj;
 					var colfield = "";
 					for(var i = 0; i < rows.length; i++){
 						if(i == 0){
-							fcorp = rows[i].fcorp;
+							matbillid = rows[i].matbillid;
 							obj = {};
 							var n=i+1;
 							//colnm = onlymap.get(rows[i].wlname);
@@ -155,7 +155,7 @@ function load(type){
 							}
 						}else{
 							var m=i+1;
-							if(fcorp == rows[i].fcorp){
+							if(matbillid == rows[i].matbillid){
 								//colnm = onlymap.get(rows[i].wlname);
 								colfield = 'applynum'+m;
 								obj[colfield] = rows[i].applynum;
@@ -165,9 +165,9 @@ function load(type){
 								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);
 								}
-							}else if(fcorp != rows[i].fcorp){
+							}else if(matbillid != rows[i].matbillid){
 								datarray.push(obj);
-								fcorp = rows[i].fcorp;
+								matbillid = rows[i].matbillid;
 								obj = {};
 								//colnm = onlymap.get(rows[i].dedmny);
 								colfield = 'applynum'+m;
@@ -301,13 +301,12 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 				var len = 0;
 				if(rows != null && rows.length > 0){
 					len = rows.length;
-					var fcorp;
+					var matbillid;
 					var obj;
 					var colnm = 0;
 					var colfield = "";
 					for(var i = 0; i < rows.length; i++){
-						if(!onlycol.contains(rows[i].wlname)
-								&&!onlycol.contains(rows[i].unit)){
+						if(!onlycol.contains(rows[i].wlname+"/"+rows[i].unit) ){
 							
 							var wlname = rows[i].wlname;
 							var unit = rows[i].unit;
@@ -340,8 +339,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 							
 							hjcols.push(new Array('outnum'+(i+1)+'', 0));
 							
-							onlycol.add(rows[i].wlname);
-							onlycol.add(rows[i].unit);
+							onlycol.add(rows[i].wlname+"/"+rows[i].unit);
 						}
 					
 					}
