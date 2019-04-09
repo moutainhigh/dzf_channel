@@ -27,8 +27,4 @@ public interface IMatApplyService {
 
 	void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos);
 
-
-
-
-	
 }

@@ -204,24 +204,6 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	@Override
 	public MaterielStockInVO queryDataById(String id) {
 
-		/*StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append(  "select l.pk_materielin,l.updatets,l.vmemo,l.stockdate,l.ntotalmny, \n ");
-		sql.append(  "   b.ncost cost,b.nnum num,b.vname wlname, \n");
-		sql.append(  "   m.pk_materiel \n");
-		sql.append(  "   from cn_materielin l \n");
-		sql.append(  "   left join cn_materielin_b b on \n");
-		sql.append(  "   l.pk_materielin = b.pk_materielin \n");
-		sql.append(  "   left join cn_materiel m on \n");
-		sql.append(  "   b.pk_materiel = m.pk_materiel \n");
-		sql.append(  "   where nvl(l.dr,0)=0 and nvl(b.dr,0)=0 and nvl(m.dr,0)=0 \n");
-		sql.append(  "   and l.pk_materielin =? \n");
-		spm.addParam(id);
-		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
-		if(vo!=null){
-			return vo;
-		}
-		return null;*/
 		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, id);
 		if(vo!=null){
 			return vo;
@@ -242,11 +224,6 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(data.getPk_materielin());
 			
-			//1.删除入库单子表数据
-			//String sql="delete from cn_materielin_b where pk_materielin = ? \n";
-			//singleObjectBO.executeUpdate(sql, spm);
-			
-			//2.删除入库单主表数据
 			String sql="delete from cn_materielin where pk_materielin = ? \n";
 			int i = singleObjectBO.executeUpdate(sql, spm);
 			if(i == 0){
