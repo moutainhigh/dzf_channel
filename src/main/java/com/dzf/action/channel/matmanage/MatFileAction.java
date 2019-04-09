@@ -20,16 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.GoodsNumExcelField;
 import com.dzf.action.channel.expfield.MatFileExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.ChInvoiceVO;
-import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
-import com.dzf.model.channel.matmanage.MaterielStockInBVO;
+import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -206,12 +202,12 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 				throw new BusinessException("请选择要删除的物料！");
 			}
 			StringBuffer errmsg = new StringBuffer();
-			List<MaterielStockInBVO> bvosList=matFile.queryIsRk(ids);
+			List<MaterielStockInVO> bvosList=matFile.queryIsRk(ids);
 			if(bvosList==null || bvosList.size()==0){
 				 json.setSuccess(true);
 			}else {
-				 for (MaterielStockInBVO bvo : bvosList) {
-				    	errmsg.append("物料编号："+bvo.getCode()+"已有入库单，请删除后重试<br/>");
+				 for (MaterielStockInVO bvo : bvosList) {
+				    	errmsg.append("物料编号："+bvo.getVcode()+"已有入库单，请删除后重试<br/>");
 						json.setMsg(errmsg.toString());
 					}
 			}

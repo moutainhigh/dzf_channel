@@ -3,7 +3,7 @@ package com.dzf.service.channel.matmanage;
 import java.util.List;
 
 import com.dzf.model.channel.matmanage.MaterielFileVO;
-import com.dzf.model.channel.matmanage.MaterielStockInBVO;
+import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.sys.sys_power.UserVO;
 
 public interface IMatFileService {
@@ -22,7 +22,7 @@ public interface IMatFileService {
 
 	MaterielFileVO queryDataById(String id);
 
-	List<MaterielStockInBVO> queryIsRk(String ids);
+	List<MaterielStockInVO> queryIsRk(String ids);
 
 	void deleteWl(MaterielFileVO mvo);
 

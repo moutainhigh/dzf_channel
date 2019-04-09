@@ -12,15 +12,16 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
-import com.dzf.model.channel.matmanage.MaterielStockInBVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
@@ -56,14 +57,6 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		if (StringUtil.isEmpty(data.getPk_materielin())) {
 			 data.setVbillcode((getMatcode(data)));
 			 setDefaultValue(data,uservo);
-			 //1.新增到入库单主表VO
-			 data=(MaterielStockInVO) singleObjectBO.insertVO("000001", data);
-			 //2.新增到入库单子表VO
-             MaterielStockInBVO bvo = new MaterielStockInBVO();		
-             bvo.setNcost(data.getCost());
-             bvo.setNnum(data.getNum());
-             bvo.setPk_materielin(data.getPk_materielin());
-			 bvo.setPk_materiel(data.getPk_materiel());
 			 
 			 StringBuffer sql = new StringBuffer();
 			 SQLParameter spm=new SQLParameter();
@@ -73,10 +66,12 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			 sql.append("         where nvl(dr,0)=0 and pk_materiel =? \n");
 			 MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
 			 if(mvo!=null){
-				 bvo.setVname(mvo.getVname());
-				 bvo.setVunit(mvo.getVunit());
+				 data.setVname(mvo.getVname());
+				 data.setVunit(mvo.getVunit());
 			 }
-             singleObjectBO.insertVO("000001", bvo);
+			 
+			 data=(MaterielStockInVO) singleObjectBO.insertVO("000001", data);
+			 
 		} else {
 			 saveEdit(data);
 		}
@@ -94,21 +89,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			}
 			MaterielStockInVO checkData = checkData(data.getPk_materielin(), data.getUpdatets());
 			
-			//1.修改入库主表
-			String[] updates = {"vmemo", "stockdate" };
+			String[] updates = {"vmemo", "stockdate","ncost","nnum","ntotalmny" };
 		    singleObjectBO.update(data, updates);
-		    //2.修改入库子表
-		    StringBuffer sql=new StringBuffer();
-		    SQLParameter spm=new SQLParameter();
-		    spm.addParam(data.getPk_materielin());
-		    sql.append("  select pk_materielin_b \n");
-		    sql.append("     from cn_materielin_b \n");
-		    sql.append("     where nvl(dr,0)=0 and pk_materielin=? \n");
-		    MaterielStockInBVO bvo = (MaterielStockInBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInBVO.class));
-		    bvo.setNcost(data.getCost());
-		    bvo.setNnum(data.getNum());
-		    String[] updates2 = {"ncost", "nnum" };
-		    singleObjectBO.update(bvo, updates2);
 		    
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -183,13 +165,11 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("   SELECT r.pk_materielin,r.vbillcode,r.ntotalmny,r.stockdate, \n");
 		sql.append("         r.vmemo,r.coperatorid,r.doperatetime, \n  ");
-		sql.append("         d.vname wlname,d.vunit unit,d.nnum num,d.ncost cost \n");
+		sql.append("         r.vname,r.vunit,r.nnum,r.ncost \n");
 		sql.append("         from  cn_materielin r \n");
-		sql.append("         left join cn_materielin_b d on \n");
-		sql.append("         r.pk_materielin = d.pk_materielin \n");
-		sql.append("         where nvl(r.dr,0) =0 and nvl(d.dr,0) =0 \n");
+		sql.append("         where nvl(r.dr,0) =0  \n");
 		if (!StringUtil.isEmpty(pamvo.getPk_materiel())) {
-			sql.append(" AND  d.pk_materiel = ? \n");
+			sql.append(" AND  r.pk_materiel = ? \n");
 			spm.addParam(pamvo.getPk_materiel());
 		}
 		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
@@ -207,18 +187,24 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<MaterielStockInVO> query(MaterielStockInVO qvo) {
+	public List<MaterielStockInVO> query(MaterielStockInVO qvo,UserVO uservo) {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+	        for (MaterielStockInVO mvo : list) {
+	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+				mvo.setOpername(uservo.getUser_name());
+			}
+	        QueryDeCodeUtils.decKeyUtils(new String[] { "opername" }, list, 1);
 	        return list;
 	}
 
 	@Override
 	public MaterielStockInVO queryDataById(String id) {
 
-		StringBuffer sql = new StringBuffer();
+		/*StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append(  "select l.pk_materielin,l.updatets,l.vmemo,l.stockdate,l.ntotalmny, \n ");
 		sql.append(  "   b.ncost cost,b.nnum num,b.vname wlname, \n");
@@ -232,6 +218,11 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		sql.append(  "   and l.pk_materielin =? \n");
 		spm.addParam(id);
 		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
+		if(vo!=null){
+			return vo;
+		}
+		return null;*/
+		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, id);
 		if(vo!=null){
 			return vo;
 		}
@@ -252,10 +243,11 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			spm.addParam(data.getPk_materielin());
 			
 			//1.删除入库单子表数据
-			String sql="delete from cn_materielin_b where pk_materielin = ? \n";
-			singleObjectBO.executeUpdate(sql, spm);
+			//String sql="delete from cn_materielin_b where pk_materielin = ? \n";
+			//singleObjectBO.executeUpdate(sql, spm);
+			
 			//2.删除入库单主表数据
-			sql="delete from cn_materielin where pk_materielin = ? \n";
+			String sql="delete from cn_materielin where pk_materielin = ? \n";
 			int i = singleObjectBO.executeUpdate(sql, spm);
 			if(i == 0){
 				throw new BusinessException("入库单删除失败");

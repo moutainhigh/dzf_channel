@@ -26,10 +26,10 @@ public class MatStockinExcelField implements IExceport<MaterielStockInVO> {
 	
 	private Fieldelement[] fields = new Fieldelement[]{
 			new Fieldelement("vbillcode", "单据编码",false,0,false),
-			new Fieldelement("wlname", "物料名称",false,0,false),
-			new Fieldelement("unit", "单位",false,0,false),
-			new Fieldelement("cost", "成本价",true,2,false),
-			new Fieldelement("num", "数量",false,0,false),
+			new Fieldelement("vname", "物料名称",false,0,false),
+			new Fieldelement("vunit", "单位",false,0,false),
+			new Fieldelement("ncost", "成本价",true,2,false),
+			new Fieldelement("nnum", "数量",false,0,false),
 			new Fieldelement("ntotalmny", "金额",true,2,false),
 			new Fieldelement("vmemo", "备注",false,0,false),
 			new Fieldelement("stockdate", "入库日期",false,0,false),

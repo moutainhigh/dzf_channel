@@ -51,7 +51,7 @@ function load(){
 			width : '120',
 			title : '单据编码',
 			field : 'code',
-			align : 'left',
+			align : 'center',
 			halign : 'center',
 		}, {
 			width : '100',
@@ -108,7 +108,7 @@ function load(){
 		},{
 			width : '150',
 			title : '录入人',
-			field : 'operid',
+			field : 'opername',
 			halign : 'center',
 			align : 'center',
 		}, {

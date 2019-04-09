@@ -13,7 +13,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
-import com.dzf.model.channel.matmanage.MaterielStockInBVO;
+import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -295,18 +295,18 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public List<MaterielStockInBVO> queryIsRk(String ids) {
+	public List<MaterielStockInVO> queryIsRk(String ids) {
 		
 		 List<String> idList = Arrays.asList(ids.split(","));
 		 String condition = SqlUtil.buildSqlForIn("l.pk_materiel ",idList.toArray(new String[idList.size()]));
 		 StringBuffer sql = new StringBuffer();
-		 sql.append("   select distinct l.vcode code \n ");
-		 sql.append("         from cn_materielin_b b \n");
+		 sql.append("   select distinct l.vcode \n ");
+		 sql.append("         from cn_materielin m \n");
 		 sql.append("         left join cn_materiel l on \n");
-		 sql.append("         b.pk_materiel=l.pk_materiel \n");
-		 sql.append("         where nvl(l.dr,0)=0 and nvl(b.dr,0)=0 and \n");
+		 sql.append("         m.pk_materiel=l.pk_materiel \n");
+		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0 and \n");
 		 
-		 List<MaterielStockInBVO> bvosList= (List<MaterielStockInBVO>) singleObjectBO.executeQuery(sql.toString()+condition,null, new BeanListProcessor(MaterielStockInBVO.class));
+		 List<MaterielStockInVO> bvosList= (List<MaterielStockInVO>) singleObjectBO.executeQuery(sql.toString()+condition,null, new BeanListProcessor(MaterielStockInVO.class));
 	     if(bvosList!=null&&bvosList.size()>0){
 	    	 return bvosList;
 	     }

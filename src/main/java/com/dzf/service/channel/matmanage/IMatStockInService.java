@@ -14,7 +14,7 @@ public interface IMatStockInService {
 
 	int queryTotalRow(MaterielStockInVO pamvo);
 
-	List<MaterielStockInVO> query(MaterielStockInVO pamvo);
+	List<MaterielStockInVO> query(MaterielStockInVO pamvo, UserVO uservo);
 
 	MaterielStockInVO queryDataById(String id);
 

@@ -6,7 +6,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
- * 物料入库主表VO
+ * 物料入库VO
  */
 public class MaterielStockInVO extends SuperVO {
 
@@ -16,6 +16,9 @@ public class MaterielStockInVO extends SuperVO {
 	@FieldAlias("corpid")
 	private String pk_corp;//公司主键
 	
+	@FieldAlias("matfileid")
+	private String pk_materiel;//物料档案主键
+	
 	@FieldAlias("code")
 	private String vbillcode;//单据编码
 	
@@ -24,6 +27,21 @@ public class MaterielStockInVO extends SuperVO {
 	
 	@FieldAlias("tmny")
 	private DZFDouble ntotalmny;//总金额
+	
+	@FieldAlias("wlname")
+	private String vname;//物料名称
+	
+	@FieldAlias("unit")
+	private String vunit;//单位
+	
+	@FieldAlias("cost")
+	private DZFDouble ncost;//成本价
+	
+	@FieldAlias("num")
+	private Integer nnum;//入库数量
+	
+	@FieldAlias("code")
+	private String vcode;//物料编号
 	
 	@FieldAlias("memo")
 	private String vmemo;//备注
@@ -39,21 +57,13 @@ public class MaterielStockInVO extends SuperVO {
 	private DZFDateTime ts; // 时间
 	
 	/*******仅作展示，不存库*******/
-	private String wlname;//物料名称
-	
-	private String unit;//单位
-	
-	private DZFDouble cost;//成本价
-	
-	private Integer num;//入库数量
-	
-	@FieldAlias("matfileid")
-	private String pk_materiel;//物料档案主键
 	
 	@FieldAlias("begdate")
 	private String begindate;//录入开始日期
 	
 	private String enddate;//录入结束日期
+	
+	private String opername;//录入人名称
 	
 	/*******仅作展示，不存库*******/
 	
@@ -137,38 +147,38 @@ public class MaterielStockInVO extends SuperVO {
 		this.ts = ts;
 	}
 	
-	public String getWlname() {
-		return wlname;
+	public String getVname() {
+		return vname;
 	}
 
-	public void setWlname(String wlname) {
-		this.wlname = wlname;
+	public void setVname(String vname) {
+		this.vname = vname;
 	}
 
-	public String getUnit() {
-		return unit;
+	public String getVunit() {
+		return vunit;
 	}
 
-	public void setUnit(String unit) {
-		this.unit = unit;
+	public void setVunit(String vunit) {
+		this.vunit = vunit;
 	}
 
-	public DZFDouble getCost() {
-		return cost;
+	public DZFDouble getNcost() {
+		return ncost;
 	}
 
-	public void setCost(DZFDouble cost) {
-		this.cost = cost;
+	public void setNcost(DZFDouble ncost) {
+		this.ncost = ncost;
 	}
 
-	public Integer getNum() {
-		return num;
+	public Integer getNnum() {
+		return nnum;
 	}
 
-	public void setNum(Integer num) {
-		this.num = num;
+	public void setNnum(Integer nnum) {
+		this.nnum = nnum;
 	}
-	
+
 	public String getBegindate() {
 		return begindate;
 	}
@@ -191,6 +201,22 @@ public class MaterielStockInVO extends SuperVO {
 
 	public void setPk_materiel(String pk_materiel) {
 		this.pk_materiel = pk_materiel;
+	}
+
+	public String getOpername() {
+		return opername;
+	}
+
+	public void setOpername(String opername) {
+		this.opername = opername;
+	}
+
+	public String getVcode() {
+		return vcode;
+	}
+
+	public void setVcode(String vcode) {
+		this.vcode = vcode;
 	}
 
 	@Override

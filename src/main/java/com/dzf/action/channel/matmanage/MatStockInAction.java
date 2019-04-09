@@ -71,7 +71,7 @@ private Logger log = Logger.getLogger(this.getClass());
 			int total = matstockin.queryTotalRow(pamvo);
 			grid.setTotal((long)(total));
 			if(total > 0){
-				List<MaterielStockInVO> mList = matstockin.query(pamvo);
+				List<MaterielStockInVO> mList = matstockin.query(pamvo,uservo);
 				grid.setRows(mList);
 				grid.setMsg("查询成功");
 			}else{
