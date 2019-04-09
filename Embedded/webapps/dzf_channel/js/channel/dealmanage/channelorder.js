@@ -94,10 +94,20 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		idField : 'billid',
+		frozenColumns:[[
+            {
+    			field : 'ck',
+    			checkbox : true
+    		},{
+				field : 'operate',
+				title : '操作列',
+				width : '170',
+				halign : 'center',
+				align : 'center',
+				formatter : opermatter,
+			}
+		        	]],
 		columns : [ [ {
-			field : 'ck',
-			checkbox : true
-		}, {
 			width : '100',
 			title : '主键',
 			field : 'billid',
@@ -243,14 +253,7 @@ function load(){
 			field : 'confdate',
 			align : 'center',
             halign : 'center',
-		}, {
-			field : 'operate',
-			title : '操作列',
-			width : '170',
-			halign : 'center',
-			align : 'center',
-			formatter : opermatter,
-		}] ],
+		}, ] ],
 		onLoadSuccess : function(data) {
 			parent.$.messager.progress('close');
 			var rows = $('#grid').datagrid('getRows');
