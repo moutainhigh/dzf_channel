@@ -61,16 +61,10 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if (total > 0) {
 				List<MatOrderVO> mList = matapply.query(pamvo, uservo);
 				grid.setRows(mList);
-				grid.setMsg("查询成功");
-			} else {
-				List<MaterielFileVO> mvos = matapply.queryMatFile();
-				for (MaterielFileVO mvo : mvos) {
-					mvo.setApplynum(0);
-					mvo.setOutnum(0);
-				}
-				grid.setRows(mvos);
-				grid.setSuccess(true);
+			}else{
+				grid.setRows(new ArrayList<MatOrderVO>());
 			}
+			grid.setMsg("查询成功");
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			grid.setMsg("查询失败");
@@ -80,7 +74,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 	}
 
 	/**
-	 * 查询物料信息
+	 * 查询加盟商申请物料信息
 	 */
 	public void queryNumber() {
 		Json json = new Json();
@@ -89,16 +83,11 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			checkUser(uservo);
 			MatOrderVO pamvo = new MatOrderVO();
 			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
-			List<MatOrderBVO> bvos = matapply.queryNumber(pamvo);
-			if (bvos == null || bvos.size() == 0) {// 还没有申请，查询所有启用的物料
-				List<MaterielFileVO> mvos = matapply.queryMatFile();
-				for (MaterielFileVO mvo : mvos) {
-					mvo.setApplynum(0);
-					mvo.setOutnum(0);
-				}
-				json.setRows(mvos);
-			} else {
-				json.setRows(bvos);
+			List<MatOrderBVO> list = matapply.queryNumber(pamvo);
+			if(list != null && list.size() > 0){
+				json.setRows(list);
+			}else{
+				json.setRows(new ArrayList<MatOrderBVO>());
 			}
 			json.setMsg("查询成功");
 			json.setSuccess(true);

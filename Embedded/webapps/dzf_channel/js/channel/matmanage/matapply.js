@@ -1,5 +1,5 @@
 var contextPath = DZF.contextPath;
-var hjcols = null;//汇总列字段
+//var hjcols = null;//汇总列字段
 var editIndex;
 var status="brows";
 
@@ -117,11 +117,10 @@ function load(type){
 						if(i == 0){
 							matbillid = rows[i].matbillid;
 							obj = {};
-							var n=i+1;
-							//colnm = onlymap.get(rows[i].wlname);
-							colfield = 'applynum'+n;
+							colnm = onlymap.get(rows[i].wlname+"/"+rows[i].unit);
+							colfield = 'applynum'+colnm;
 							obj[colfield] = rows[i].applynum;
-							colfield = 'outnum'+n;
+							colfield = 'outnum'+colnm;
 							obj[colfield] = rows[i].outnum;
 							
 							obj['receiver'] = rows[i].receiver;//收货人
@@ -144,22 +143,21 @@ function load(type){
 							obj['corpname'] = rows[i].corpname;//加盟商
 							obj['code'] = rows[i].code;//合同编码
 							if(i == rows.length - 1){//一行数据
-								//colnm = onlymap.get(rows[i].wlname);
-								colfield = 'applynum'+i;
+								colnm = onlymap.get(rows[i].wlname+"/"+rows[i].unit);
+								colfield = 'applynum'+colnm;
 								obj[colfield] = rows[i].applynum;
-								colfield = 'outnum'+i;
+								colfield = 'outnum'+colnm;
 								obj[colfield] = rows[i].outnum;
 								
 								
 								datarray.push(obj);
 							}
 						}else{
-							var m=i+1;
 							if(matbillid == rows[i].matbillid){
-								//colnm = onlymap.get(rows[i].wlname);
-								colfield = 'applynum'+m;
+								colnm = onlymap.get(rows[i].wlname+"/"+rows[i].unit);
+								colfield = 'applynum'+colnm;
 								obj[colfield] = rows[i].applynum;
-								colfield = 'outnum'+m;
+								colfield = 'outnum'+colnm;
 								obj[colfield] = rows[i].outnum;
 								
 								if(i == rows.length - 1){//最后一行数据
@@ -169,10 +167,10 @@ function load(type){
 								datarray.push(obj);
 								matbillid = rows[i].matbillid;
 								obj = {};
-								//colnm = onlymap.get(rows[i].dedmny);
-								colfield = 'applynum'+m;
+								colnm = onlymap.get(rows[i].wlname+"/"+rows[i].unit);
+								colfield = 'applynum'+colnm;
 								obj[colfield] = rows[i].applynum;
-								colfield = 'outnum'+m;
+								colfield = 'outnum'+colnm;
 								obj[colfield] = rows[i].outnum;
 								
 								obj['receiver'] = rows[i].receiver;//收货人
@@ -189,11 +187,11 @@ function load(type){
 								obj['applyname'] = rows[i].applyname;//申请人
 								obj['adate'] = rows[i].adate;//申请时间
 								
-								obj['aname'] = rows[i].corpcode;//大区
-								obj['mname'] = rows[i].corpname;//渠道经理
-								obj['proname'] = rows[i].stocknum;//省（市）
-								obj['corpname'] = rows[i].stocknum;//加盟商
-								obj['code'] = rows[i].stocknum;//合同编码
+								obj['aname'] = rows[i].aname;//大区
+								obj['mname'] = rows[i].mname;//渠道经理
+								obj['proname'] = rows[i].proname;//省（市）
+								obj['corpname'] = rows[i].corpname;//加盟商
+								obj['code'] = rows[i].code;//合同编码
 								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);
 								}
@@ -268,7 +266,7 @@ function load(type){
  * @param onlymap
  */
 function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,corpname){
-	hjcols = new Array();
+//	hjcols = new Array();
 	var columns = new Array(); 
 	var columnsh = new Array();//列及合并列名称
 	var columnsb = new Array();//子列表名称集合
@@ -327,7 +325,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 							column1["align"] = 'right'; 
 							columnsb.push(column1); 
 							
-							hjcols.push(new Array('applynum'+(i+1)+'', 0));
+//							hjcols.push(new Array('applynum'+(i+1)+'', 0));
 							
 							var column2 = {};
 							column2["title"] = '实发';  
@@ -337,7 +335,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 							column2["align"] = 'right'; 
 							columnsb.push(column2); 
 							
-							hjcols.push(new Array('outnum'+(i+1)+'', 0));
+//							hjcols.push(new Array('outnum'+(i+1)+'', 0));
 							
 							onlycol.add(rows[i].wlname+"/"+rows[i].unit);
 						}
@@ -347,19 +345,11 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 
 				columnsh[7+len] = { field : 'reinfo',  title : '收货信息', width : 280, halign:'center',align:'center',colspan:3}; 
 				columnsh[8+len] = { field : 'expressinfo',  title : '快递信息', width : 360, halign:'center',align:'center',colspan:4}; 
-				columnsh[9+len] = { field : 'memo',  title : '备注', width : 100, halign:'center',align:'center',rowspan:2}; 
 				
+				columnsh[9+len] = { field : 'memo',  title : '备注', width : 100, halign:'center',align:'center',rowspan:2}; 
 				columnsh[10+len] = { field : 'status',  title : '状态', width : 100, halign:'center',align:'center',rowspan:2, 
-                	formatter : function(row,index,value) {
-        				if (value == '1')
-        					return '待审核';
-        				if (value == '2')
-        					return '待发货';
-        				if (value == '3')
-        					return '已发货';
-        				if (value == '4')
-        					return '已驳回';
-        		}};
+						formatter : staForma,
+				};
         		columnsh[11+len] = { field : 'reason',  title : '驳回原因', width : 100, halign:'center',align:'center',rowspan:2}; 
         		columnsh[12+len] = { field : 'operdate',  title : '录入时间', width : 100, halign:'center',align:'center',rowspan:2}; 
         		columnsh[13+len] = { field : 'applyname',  title : '申请人', width : 100, halign:'center',align:'center',rowspan:2}; 
@@ -390,6 +380,24 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 	});
 	return columns;
 }	
+
+/**
+ * 状态格式化
+ * @param row
+ * @param index
+ * @param value
+ * @returns {String}
+ */
+function staForma(value, row, index) {
+	if (value == '1')
+		return '待审核';
+	if (value == '2')
+		return '待发货';
+	if (value == '3')
+		return '已发货';
+	if (value == '4')
+		return '已驳回';
+}
 
 /**
  * 查询框监听事件

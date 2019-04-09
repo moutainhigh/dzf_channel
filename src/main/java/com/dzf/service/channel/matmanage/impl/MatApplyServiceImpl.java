@@ -145,10 +145,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select b.vname,  \n") ;
-		sql.append("       b.vunit,  \n") ; 
-		sql.append("       nvl(b.applynum, 0) applynum,  \n") ; 
-		sql.append("       nvl(b.outnum, 0) outnum  \n") ; 
+		sql.append("select DISTINCT b.vname,  \n") ;
+		sql.append("       b.vunit  \n") ; 
+//		sql.append("       nvl(b.applynum, 0) applynum,  \n") ; 
+//		sql.append("       nvl(b.outnum, 0) outnum  \n") ; 
 		sql.append("  from cn_materielbill_b b  \n") ; 
 		sql.append("  left join cn_materielbill c on c.pk_materielbill = b.pk_materielbill  \n") ; 
 		sql.append("  left join cn_materiel m on m.pk_materiel = b.pk_materiel  \n") ; 
