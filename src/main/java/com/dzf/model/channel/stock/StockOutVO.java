@@ -69,7 +69,6 @@ public class StockOutVO extends MultSuperVO {
 	@FieldAlias("memo")
 	private String vmemo;//备注
 	
-	
 	@FieldAlias("rename")
 	private String vreceivername;//收货人
 	

@@ -31,6 +31,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.dealmanage.IStockOutService;
 import com.dzf.service.pub.IPubService;
@@ -285,6 +286,8 @@ public class StockOutAction extends BaseAction<StockOutVO>{
 			headvo.setLogisticsunit(getRequest().getParameter("logunit"));
 			headvo.setPk_logistics(getRequest().getParameter("logid"));
 			headvo.setFastcode(getRequest().getParameter("fcode"));
+			String fcost = getRequest().getParameter("fcost");
+			headvo.setFastcost(new DZFDouble(fcost));
 			headvo.setVdeliverid(getLoginUserid());
 //			headvo.setFathercorp(getLogincorppk());
 			stockOut.updateDeliver(headvo);
