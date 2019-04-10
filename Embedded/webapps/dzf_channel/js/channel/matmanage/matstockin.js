@@ -216,6 +216,13 @@ function closeCx(){
 }
 
 /**
+ * 新增修改取消
+ */
+function onCancel(){
+	$('#cbDialog').dialog('close');
+}
+
+/**
  * 列操作格式化
  * @param val
  * @param row

@@ -27,4 +27,8 @@ public interface IMatApplyService {
 
 	void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos);
 
+	MatOrderVO queryDataById(String id, UserVO uservo);
+
+	void delete(MatOrderVO param);
+
 }

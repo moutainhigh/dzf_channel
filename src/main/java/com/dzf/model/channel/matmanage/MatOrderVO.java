@@ -35,6 +35,11 @@ public class MatOrderVO extends SuperVO {
 	@FieldAlias("fcorp")
 	private String fathercorp;//加盟商id
 	
+	private String corpname; // 加盟商名称
+	
+	@FieldAlias("uid")
+	private String vmanagerid; // 渠道经理id
+	
 	private Integer vprovince;//省
 	
 	private Integer vcity;//市
@@ -90,19 +95,17 @@ public class MatOrderVO extends SuperVO {
 	
 	private String enddate;//录入结束日期
 	
-	@FieldAlias("applybegin")
+	@FieldAlias("bperiod")
 	private String applybegindate;//申请开始日期
 	
-	@FieldAlias("applyend")
+	@FieldAlias("eperiod")
 	private String applyenddate;//申请结束日期
 	
 	@FieldAlias("aname")
     private String areaname;//大区名称
 	
-	@FieldAlias("mname")
+	@FieldAlias("uname")
 	private String vmanagername; // 渠道经理
-	
-	private String corpname; // 渠道商名称
 	
 	private String proname; // 省/市
 	
@@ -500,6 +503,14 @@ public class MatOrderVO extends SuperVO {
 
 	public void setApplyname(String applyname) {
 		this.applyname = applyname;
+	}
+
+	public String getVmanagerid() {
+		return vmanagerid;
+	}
+
+	public void setVmanagerid(String vmanagerid) {
+		this.vmanagerid = vmanagerid;
 	}
 
 	@Override

@@ -224,10 +224,17 @@ function clearParams(){
 }
 
 /**
- * 取消
+ * 查询框取消
  */
 function closeCx(){
 	$("#qrydialog").hide();
+}
+
+/**
+ * 新增修改取消
+ */
+function onCancel(){
+	$('#cbDialog').dialog('close');
 }
 
 /**

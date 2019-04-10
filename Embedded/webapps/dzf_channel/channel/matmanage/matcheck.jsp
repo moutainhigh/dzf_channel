@@ -7,11 +7,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>物料申请</title>
+<title>物料审核</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/matmanage/matapply.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/matmanage/matcheck.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js" charset="UTF-8" type="text/javascript"></script>
 <style>
 #mat_add div.panel.datagrid{margin-left: 94px;margin-top: -21px;}
@@ -36,13 +36,11 @@
 				<div class="left mod-crumb">
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="load(2)">待审核</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="load(3)">已驳回</a>
 					</div>
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="add()">新增</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="edit()">修改</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="del()">删除</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="checked(0)">审核</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="checked(1)">反审核</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
 				</div>
 			</div>
@@ -85,6 +83,11 @@
 					<option value="4">已驳回</option>
 				</select>
 			</div>
+			<div class="time_col time_colp10">
+				<label style="width:85px;text-align:right">渠道经理：</label>
+				<input id="uid" class="easyui-combobox" editable="false" style="width:286px;height:28px;text-align:left"
+			       data-options="required:false,valueField:'uid',textField:'uname',multiple:false,panelHeight:200" /> 
+			</div>
 			<p>
 				<a class="ui-btn save_input" onclick="clearParams()">清除</a>
 				<a class="ui-btn save_input" onclick="load(1)">确定</a>
@@ -111,18 +114,15 @@
 			<form id="mat_add" method="post">
 				<input id="matbillid" name="matbillid" type="hidden">
 				<input id="updatets" name="updatets" type="hidden">
-				<input id="uid" name="uid" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="text-align:right; width: 85px;">合同编号：</label> 
 						<input id="code" name="code" class="easyui-textbox" style="width:286px;height:28px;"/>
-			            <span class="hid">
 			            <label style="text-align:right; width: 85px;">状态：</label> 
-						<input id="stat" class="easyui-textbox" style="width:160px;height:28px;"/>
-			            </span>
+						<input id="stat" name="status" class="easyui-textbox" style="width:160px;height:28px;"/>
 			    </div>
 			    <div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>加盟商：</label> 
-						<input id="corpnm" name="corpname" class="easyui-textbox" style="width:286px;height:28px;" data-options="required:true"/>
+						<input id="corpnm" name="corpname" class="easyui-textbox" style="width:286px;height:28px;"/>
 						<input id="fcorp" name="fcorp" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
@@ -138,14 +138,14 @@
 				         <input id="varea" name="varea" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-				       <label style="width:85px;text-align:right;margin-top: -37px;"><i class="bisu">*</i>详细地址：</label> 
-				       <textarea id="address" name="address" class="easyui-validatebox" style="width: 432px;height:51px;"  data-options="required:true"></textarea>
+				       <label style="width:85px;text-align:right;margin-top: -55px;"><i class="bisu">*</i>详细地址：</label> 
+				       <textarea id="address" name="address" style="width: 432px;" rows="2"></textarea>
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:85px;text-align:right"><i class="bisu">*</i>收货人：</label> 
-					   <input id="receiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;" data-options="required:true"/>
+					   <input id="receiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;"/>
 					   <label style="width:85px;text-align:right"><i class="bisu">*</i>联系电话：</label> 
-					   <input id="phone" name="phone" class="easyui-textbox" style="width:167px;height:28px;" data-options="required:true"/>
+					   <input id="phone" name="phone" class="easyui-textbox" style="width:167px;height:28px;"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>物料选择：</label>
@@ -154,8 +154,8 @@
 						</div>
 				</div>
                	<div class="time_col time_colp10">
-						<label style="width:85px;text-align:right;margin-top: -37px;">备注：</label>
-						<textarea id="memo" name="memo" class="easyui-validatebox" style="width: 432px;height:51px;"  data-options="prompt:'最多输入200字'"></textarea>
+						<label style="width:85px;text-align:right;margin-top: -55px;">备注：</label>
+						<textarea id="memo" name="memo" style="width: 432px;" rows="2" placeholder="最多可输入 200 个字"></textarea>
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:85px;text-align:right">申请人：</label> 
@@ -165,14 +165,25 @@
 						 data-options="width:166,height:27" />  
 				</div>
 				<div class="time_col time_colp10">
-				     <span class="hid" id="reject">
-				     <label style="width:85px;text-align:right">驳回原因：</label>
-				     <input id="reason" name="reason" type="text" style="border:none;background:none;"> 
+					  <span class="hid">
+					  <label style="width:85px;text-align:right">审核结果：</label>
+					  <input id="true" type="radio" name="seleres" value="succ" onclick="review()"/>
+					  <label style="width:30px;text-align:right">通过</label>
+					  <input id="false" type="radio" name="seleres" value="fail" onclick="review()"/>
+					  <label style="width:30px;text-align:right">驳回</label>
+					  </span>
+				</div>
+				<div class="time_col time_colp10">
+				     <span class="hid">
+				     <label style="width:85px;text-align:right;margin-top: -37px;"><i class="bisu">*</i>驳回原因：</label>
+				     <textarea id="reason" class="easyui-textbox" name="reason" style="width: 432px;height:51px;"></textarea>
 				     </span>
 				</div>
-				<div style="float:right;margin-top:11px;margin-right:276px;">
+				<div style="float:right;margin-top:2px;margin-right:276px;">
+				    <span class="hid">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				    </span>
 				</div>
 			</form>
 		</div>
