@@ -145,7 +145,7 @@
 			</form>
 		</div>
 		
-		<div id="logDialog" class="easyui-dialog" style="width:400px;height:220px;padding-top:30px;" data-options="closed:true" modal=true>
+		<div id="logDialog" class="easyui-dialog" style="width:400px;height:240px;padding-top:30px;" data-options="closed:true" modal=true>
 			<form id="logUpdate" method="post">
 				<div class="time_col time_colp11">
 					<div style="display: inline-block;">
@@ -158,6 +158,11 @@
 					<label style="text-align:right;width:140px;"><i class="bisu">*</i>物流单号</label>
 						<input id="sfcode" name="fcode" class="easyui-textbox" 
 							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
+				</div>
+				<div class="time_col time_colp11">
+					<label style="text-align:right;width:140px;"><i class="bisu">*</i>金额</label>
+						<input id="sfcost" name="fcost" class="easyui-numberbox" 
+							data-options="required:true,precision:2,groupSeparator:',',min:0" style="width:150px;height:25px;"/>
 				</div>
 			</form>
 			<div style="text-align:center;margin-top:30px;">

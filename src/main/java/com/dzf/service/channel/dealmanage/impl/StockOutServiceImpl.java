@@ -450,7 +450,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			//1、更新出库单主表
 			vo.setVstatus(2);
 			vo.setDdelivertime(new DZFDateTime());
-			singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","pk_logistics"});
+			singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","fastcost","pk_logistics"});
 			vo=(StockOutVO)singleObjectBO.queryByPrimaryKey(StockOutVO.class, vo.getPk_stockout());
 			
 			//2、查询出库单的子表对应的未发货订单

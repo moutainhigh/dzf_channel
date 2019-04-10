@@ -674,6 +674,7 @@ function updateDeliver(row){
 	postdata["logid"] = $("#slogid").combobox('getValue');
 	postdata["logunit"] = $("#slogid").combobox('getText');
 	postdata["fcode"] = $("#sfcode").textbox('getValue');
+	postdata["fcost"] = $("#sfcost").numberbox('getValue');
 	$.ajax({
 		type : 'POST',
 		async : false,
