@@ -294,6 +294,9 @@ function dClickCompany(rowTable){
 	 $("#chnDlg").dialog('close');
 }
 
+/**
+ * 选择加盟商
+ */
 function selectCorps(){
 	var rows = $('#gsTable').datagrid('getChecked');
 	dClickCompany(rows);
