@@ -104,7 +104,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		Map<String,String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
 		Map<Integer, String> areaMap = null;//大区集合
 		if("listqry".equals(showtype)){
-			areaMap = pubser.getAreaMap(areaname,3);
+			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IYUNYING);
 		}
 		for(ContractConfrimVO confvo : list){
 			confvo.setTstamp(confvo.getCheckts());//校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同

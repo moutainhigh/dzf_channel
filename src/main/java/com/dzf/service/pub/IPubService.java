@@ -140,4 +140,12 @@ public interface IPubService {
      */
     public String getManagerName(String pk_corp) throws DZFWarpException;
     
+    /**
+     * 查询当前登录人的角色权限 
+     * @param cuserid
+     * @return  1：总经理；2：区总；3：渠道经理；-1：无权限；
+     * @throws DZFWarpException
+     */
+    public Integer getAreaPower(String cuserid) throws DZFWarpException;
+    
 }

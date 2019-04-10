@@ -501,6 +501,7 @@ public class PubServiceImpl implements IPubService {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> qryPros(String cuserid, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -672,6 +673,47 @@ public class PubServiceImpl implements IPubService {
 		buf.append("   and b.userid = ? ");
 		spm.addParam(cuserid);
 		return (List<String>) singleObjectBO.executeQuery(buf.toString(), spm, new ColumnListProcessor());
+	}
+
+	@Override
+	public Integer getAreaPower(String cuserid) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		//1、查询是否为总经理
+		sql.append("SELECT vdeptuserid  \n") ;
+		sql.append("  FROM cn_leaderset  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND vdeptuserid = ?  \n");
+		spm.addParam(cuserid);
+		boolean flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
+		if(flag){
+			return 1;
+		}
+		//2、查询是否为区总
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("SELECT userid  \n") ;
+		sql.append("  FROM cn_chnarea  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND userid = ?  \n");
+		spm.addParam(cuserid);
+		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
+		if(flag){
+			return 2;
+		}
+		//3、查询是否为渠道经理
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("SELECT userid  \n") ;
+		sql.append("  FROM cn_chnarea_b  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND userid = ?  \n");
+		spm.addParam(cuserid);
+		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
+		if(flag){
+			return 3;
+		}
+		return -1;
 	}
 	
 }

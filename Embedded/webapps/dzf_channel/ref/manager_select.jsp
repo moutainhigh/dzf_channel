@@ -1,13 +1,16 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="renderer" content="webkit|ie-stand|ie-comp">
 <title>渠道经理参照</title>
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
-
 </head>
-
+<%
+	String uid = request.getParameter("uid");
+%>
 <body>
 	<style>
 	.mod-corp {
@@ -74,11 +77,13 @@
 			}; 
 		var rows = null;
 		$(function(){
+			var uid = '<%=uid%>';
 			var params = new Object();
 			grid = $('#mgrid').datagrid({
 			    url: DZF.contextPath + '/rebate/rebateinput!queryManager.action',
 			    queryParams : {
 					"qtype" : 1,//查询渠道经理
+					"uid" : uid,
 				},
 			    method: 'post',
 				fitColumns: true,
@@ -117,6 +122,7 @@
 			    	   var filtername = $("#mcode").val(); ; 
 			      		var params = new Object();
 			      		params["ucode"] = filtername;
+			      		params["uid"] = uid;
 			      		grid.datagrid('load',params); 
 			       }
 			   }); 

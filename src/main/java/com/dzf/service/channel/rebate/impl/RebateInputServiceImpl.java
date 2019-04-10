@@ -445,12 +445,49 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		List<ManagerRefVO> retlist = new ArrayList<ManagerRefVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT userid  \n") ;
-		sql.append("  FROM cn_chnarea_b  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		//1：渠道经理；2：培训师；3：渠道运营；
-		sql.append("   AND nvl(type, 0) = ?  \n");
-		spm.addParam(pamvo.getQrytype());
+		
+		//只有渠道经理参照，此字段才传值，用于过滤当前登陆人负责的渠道经理
+		if(!StringUtil.isEmpty(pamvo.getCuserid())){
+			Integer power = pubser.getAreaPower(pamvo.getCuserid());
+			if(power != null){
+				if(power == -1){
+					return new ArrayList<ManagerRefVO>();
+				}else if(power == 1){
+					sql.append("SELECT DISTINCT userid  \n") ;
+					sql.append("  FROM cn_chnarea_b  \n") ; 
+					sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+					//1：渠道经理；2：培训师；3：渠道运营；
+					sql.append("   AND nvl(type, 0) = ?  \n");
+					spm.addParam(pamvo.getQrytype());
+				}else if(power == 2){
+					sql.append("SELECT b.userid  \n") ;
+					sql.append("  FROM cn_chnarea_b b  \n") ; 
+					sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n") ; 
+					sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
+					sql.append("   AND nvl(a.dr, 0) = 0  \n") ; 
+					sql.append("   AND b.type = ?  \n") ; 
+					sql.append("   AND a.userid = ?  \n");
+					spm.addParam(pamvo.getQrytype());
+					spm.addParam(pamvo.getCuserid());
+				}else if(power == 3){
+					sql.append("SELECT DISTINCT userid  \n") ;
+					sql.append("  FROM cn_chnarea_b  \n") ; 
+					sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+					//1：渠道经理；2：培训师；3：渠道运营；
+					sql.append("   AND nvl(type, 0) = ?  \n");
+					spm.addParam(pamvo.getQrytype());
+					sql.append("   AND userid = ?  \n");
+					spm.addParam(pamvo.getCuserid());
+				}
+			}
+		}else{
+			sql.append("SELECT DISTINCT userid  \n") ;
+			sql.append("  FROM cn_chnarea_b  \n") ; 
+			sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+			//1：渠道经理；2：培训师；3：渠道运营；
+			sql.append("   AND nvl(type, 0) = ?  \n");
+			spm.addParam(pamvo.getQrytype());
+		}
 		
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnAreaBVO.class));
