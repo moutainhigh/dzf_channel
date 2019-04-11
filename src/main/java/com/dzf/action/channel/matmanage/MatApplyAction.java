@@ -220,8 +220,12 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
-			
+			String type = getRequest().getParameter("type");
+			if("1".equals(type)){
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
+			}else{
+				pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
+			}
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 			
@@ -236,7 +240,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if (bodyVOs == null || bodyVOs.length == 0) {
 				throw new BusinessException("物料数据不能为空");
 			}
-			matapply.saveApply(vo,uservo,bodyVOs);
+			matapply.saveApply(vo,uservo,bodyVOs,type);
 			json.setMsg("保存成功");
 			json.setSuccess(true);
 		}catch (Exception e) {
@@ -257,8 +261,9 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			checkUser(uservo);
 			MatOrderVO vo = new MatOrderVO();
 			String id = getRequest().getParameter("id");
+			String type = getRequest().getParameter("type");
 			if(!StringUtil.isEmpty(id)){
-			    vo=matapply.queryDataById(id,uservo);
+			    vo=matapply.queryDataById(id,uservo,type);
 			}
 			json.setRows(vo);
 			json.setMsg("查询成功");
@@ -293,7 +298,6 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		writeJson(json);
 		
 	}
-	
 	
 	/**
 	 * 登录用户校验

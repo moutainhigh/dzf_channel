@@ -850,7 +850,10 @@ function onSave(vstatus){
 	}
 }
 
-
+/***
+ * 查看详情
+ * @param index
+ */
 function showDetail(index){
 	var erow = $('#grid').datagrid('getData').rows[index];
 	var row = queryByID(erow.matbillid);
@@ -892,7 +895,9 @@ function showStatus(row){
 	}
 }
 
-
+/**
+ * 设置只读状态
+ */
 function readonly(){
 	$("#code").textbox('readonly',true);
 	$("#stat").textbox('readonly',true);
@@ -907,4 +912,5 @@ function readonly(){
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
 }
+
 

@@ -54,6 +54,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 
 	@Override
 	public void saveStockIn(MaterielStockInVO data, UserVO uservo) {
+		
 		if (StringUtil.isEmpty(data.getPk_materielin())) {
 			 data.setVbillcode((getMatcode(data)));
 			 setDefaultValue(data,uservo);
@@ -72,13 +73,23 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			 
 			 data=(MaterielStockInVO) singleObjectBO.insertVO("000001", data);
 			 
+			 //修改物料档案入库数量
+			 if(!StringUtil.isEmpty(data.getPk_materiel())){
+		    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
+			    	if(mfvo!=null && mfvo.getIntnum()!=null){
+			    		mfvo.setIntnum(mfvo.getIntnum()+data.getNnum());
+			    	}
+			    	String[] updates = {"intnum"};
+			    	singleObjectBO.update(mfvo, updates);
+		    	}
 		} else {
 			 saveEdit(data);
 		}
 	}
 	
     private void saveEdit(MaterielStockInVO data) {
-		
+    	
+    	Isintnum(data);
 		String uuid = UUID.randomUUID().toString();
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
@@ -213,6 +224,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 
 	@Override
 	public void delete(MaterielStockInVO data) {
+		
+		Isintnum(data);
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
@@ -237,5 +250,18 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_materielin(), uuid);
 		}
+	}
+	
+	/**
+	 * 判断是否可以入库
+	 * @param data
+	 */
+	private void Isintnum(MaterielStockInVO data){
+		if (!StringUtil.isEmpty(data.getPk_materiel())) {
+    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
+    		if(data.getNnum() < mfvo.getOutnum()){
+    			throw new BusinessException("该物料入库数量不可小于已发货数量");
+    		}
+    	}
 	}
 }

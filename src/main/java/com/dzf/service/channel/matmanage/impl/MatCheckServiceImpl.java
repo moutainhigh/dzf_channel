@@ -13,7 +13,6 @@ import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
-import com.dzf.model.channel.sale.ChnAreaVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.WiseRunException;
@@ -30,9 +29,6 @@ public class MatCheckServiceImpl implements IMatCheckService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-
-	@Autowired
-	private MultBodyObjectBO multBodyObjectBO;
 
 	@Autowired
 	private IPubService pubser;

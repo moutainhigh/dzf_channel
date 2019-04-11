@@ -33,7 +33,7 @@ public class MatStockinExcelField implements IExceport<MaterielStockInVO> {
 			new Fieldelement("ntotalmny", "金额",true,2,false),
 			new Fieldelement("vmemo", "备注",false,0,false),
 			new Fieldelement("stockdate", "入库日期",false,0,false),
-			new Fieldelement("coperatorid", "录入人",false,0,false),
+			new Fieldelement("opername", "录入人",false,0,false),
 			new Fieldelement("doperatetime", "录入时间",false,0,false),
 	};
 

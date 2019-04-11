@@ -1,14 +1,88 @@
 var contextPath = DZF.contextPath;
 //var hjcols = null;//汇总列字段
-var editIndex;
+var editIndex = undefined;
 var status="brows";
 
 $(function(){
 	initQry();
-	initRef();
+	initCombobox();
+	initLogistics();
 	initRadioListen();
 	load(0);
 });
+
+
+function review(){
+	if($('#false').is(':checked')){
+    	$('#reason').textbox({required:true});
+    	$('#reason').textbox({prompt:'最多输入100字'});
+    }
+	if($('#true').is(':checked')){
+    	$('#reason').textbox({required:false});
+    	$('#reason').textbox({prompt:''});
+    }
+}
+
+function initCombobox(){
+	$("#uid").combobox({
+		onShowPanel: function () {
+			initUname();
+        }
+    })
+}
+
+/**
+ * 查询渠道经理下拉
+ */
+
+function initUname(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/matmanage/matcheck!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$('#uid').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+};
+
+/**
+ * 初始化快递公司
+ */
+function initLogistics(){
+	$("#logname").combobox({
+		onShowPanel: function () {
+			initLogName();
+        }
+    })
+}
+
+/**
+ * 查询快递公司下拉
+ */
+
+function initLogName(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/matmanage/mathandle!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$('#logname').combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+};
 
 /**
  * 查询初始化
@@ -19,16 +93,25 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
-	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
+	/*$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);
+	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);*/
+	
+	$("#begdate").datebox("setValue", null);
+	$("#enddate").datebox("setValue",null);
+	//$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
+	$("#bperiod").datebox("setValue", null);
+	$("#eperiod").datebox("setValue", null);
+	
 }
+
+
 
 /**
  * 表格初始化
- * @param type  0：初始化界面加载；1；查询；2：待审核；3：已驳回；
+ * @param type  0：初始化界面加载；1；查询；2：待审核；3：待发货
  */
 function load(type){
 	var bdate = new Date();
@@ -45,13 +128,15 @@ function load(type){
 		status = 1;
 	}
 	if(type==3){
-		status = 4;
+		status = 2;
 	}
+	
 	var corpname = $("#qcorpname").val();
+	var uid = $("#uid").combobox('getValue');
 	if($('#qj').is(':checked')){
 		bperiod = $("#bperiod").datebox('getValue');
 		eperiod = $("#eperiod").datebox('getValue');
-		if(isEmpty(bperiod)){
+		/*if(isEmpty(bperiod)){
 			Public.tips({
 				content : "申请开始日期不能为空",
 				type : 2
@@ -64,13 +149,14 @@ function load(type){
 				type : 2
 			});
 			return;
+		}*/
+		if(!isEmpty(bperiod) && !isEmpty(eperiod)){
+			$('#jqj').html(bperiod + ' 至 ' + eperiod);
 		}
-		
-		$('#jqj').html(bperiod + ' 至 ' + eperiod);
 	}else{
 		begdate = $("#begdate").datebox('getValue');
 		enddate = $("#enddate").datebox('getValue');
-		if(isEmpty(begdate)){
+		/*if(isEmpty(begdate)){
 			Public.tips({
 				content : "录入开始日期不能为空",
 				type : 2
@@ -83,9 +169,11 @@ function load(type){
 				type : 2
 			});
 			return;
+		}*/
+		if(!isEmpty(begdate) && !isEmpty(enddate)){
+			$('#jqj').html(begdate + ' 至 ' + enddate);
 		}
 		
-		$('#jqj').html(begdate + ' 至 ' + enddate);
 	}
 	
 	$.messager.progress({
@@ -109,6 +197,7 @@ function load(type){
 			enddate : enddate,
 			corpname : corpname,
 			status : status,
+			uid : uid,
 		},
 		async : false,
 		success : function(data) {
@@ -118,7 +207,6 @@ function load(type){
 					var matbillid;
 					var obj;
 					var colfield = "";
-					
 					for(var i = 0; i < rows.length; i++){
 						if(i == 0){
 							matbillid = rows[i].matbillid;
@@ -449,6 +537,7 @@ function initRadioListen(){
 function clearParams(){
 	$("#qcorpname").textbox('setValue',null);
 	$("#status").combobox('setValue',0);
+	$("#uid").combobox('setValue',null);
 }
 
 /**
@@ -459,12 +548,11 @@ function closeCx(){
 }
 
 /**
- * 新增修改取消
+ * 审核取消
  */
 function onCancel(){
 	$('#cbDialog').dialog('close');
 }
-
 
 /**
  * 新增
@@ -474,9 +562,8 @@ function add() {
 	$('#mat_add').form('clear');
 	$('#cityname').combobox('loadData', {});//清空市option选项  
 	$('#countryname').combobox('loadData', {});//清空县option选项  
-	queryAllProvince();
+	//queryAllProvince();
 	initCard();
-	
 	operCard();
     $('.hid').css("display", "none"); 
 	
@@ -512,6 +599,8 @@ function initCard(){
 		striped : true,
 		rownumbers : true,
 		fitColumns : true,
+		/*onClickCell: onClickCell,
+	    onAfterEdit: onAfterEdit,*/
 		scrollbarSize:0,
 		idField : 'matbillid',
 		height : 100,
@@ -524,55 +613,38 @@ function initCard(){
             halign : 'center',
 			align : 'left',
 			hidden : true,
-			editor : {
-				type : 'textbox',
-				options : {
-					height : 28,
-				}
-			}
+			
 		}, {
 			width : '100',
 			title : '物料名称',
 			field : 'wlname',
 			halign : 'center',
 			align : 'left',
-			editor : {
-				type : 'textbox',
-				options : {
-					height : 28,
-					required:true,
-					icons: [{
-						iconCls:'icon-search',
-						handler: function(){
-							initMatFile();
-						}
-					}]
-				}
-			},
+			
 		}, {
 			width : '100',
 			title : '单位',
 			field : 'unit',
             halign : 'center',
 			align : 'left',
-			editor : {
-				type : 'textbox',
-				options : {
-					height : 28,
-					required:true,
-				}
-			}
+			
 		}, {
 			width : '100',
 			title : '申请数量',
 			field : 'applynum',
             halign : 'center',
 			align : 'right',
+			
+		},{
+			width : '50',
+			title : '数量',
+			field : 'outnum',
+            halign : 'right',
+			align : 'right',
 			editor : {
 				type : 'numberbox',
 				options : {
 					height : 28,
-					required:true,
 				}
 			}
 		}, {
@@ -588,14 +660,26 @@ function initCard(){
 			if(status == "brows"){
 				return;
 			}
-			endBodyEdit();
+			//endBodyEdit();
 //				if (index != undefined && isEmpty(row.matbillid_b)) {
 					$('#cardGrid').datagrid('beginEdit', index);
 					editIndex = index;
 //				}           		
 		} ,
-	});
-
+		onClickCell: function(index,field,value){
+			$(this).datagrid('beginEdit', index);
+			//var ed = $(this).datagrid('getEditor', {index:index,field:field});
+	  
+		/*var editors = $(this).datagrid('getEditors', index);
+        var sfgzEditor = editors[0];
+        sfgzEditor.target.bind('blur', function () {
+                        $('this').datagrid('selectRow', index)
+							.datagrid('endEdit', index);
+		
+		  });*/
+	   },
+   });
+	
 }
 
 function coperatorLink(val,row,index){  
@@ -604,377 +688,106 @@ function coperatorLink(val,row,index){
     return add + del;  
 }
 
+
 /**
- * 增行
+ * 发货
  */
-function addRow(e) {
-	e.stopPropagation();
-	endBodyEdit();
-	if (status == 'brows') {
+function send(){
+	var row = $('#grid').datagrid('getSelected');
+	if(row == null){
+		Public.tips({content : "请选择数据行" ,type:2});
 		return;
 	}
-	if (isCanAdd()) {
-		$('#cardGrid').datagrid('appendRow', {});
-		editIndex = $('#cardGrid').datagrid('getRows').length - 1;
-		$('#cardGrid').datagrid('beginEdit', editIndex);
-	} 
-}
-
-
-
-/**
- * 删行
- */
-function delRow(ths) {
-	endBodyEdit();
-	if (status == 'brows') {
-		return;
-	}
-	var tindex = $(ths).parents("tr").attr("datagrid-row-index");
-	if (tindex == editIndex) {
-		var rows = $('#cardGrid').datagrid('getRows');
-		if (rows && rows.length > 1) {
-			$('#cardGrid').datagrid('deleteRow', Number(tindex)); // 将索引转为int型，否则，删行后，剩余行的索引不重新排列
-		}
-	} else {
-		if (isCanAdd()) {
-			var rows = $('#cardGrid').datagrid('getRows');
-			if (rows && rows.length > 1) {
-				$('#cardGrid').datagrid('deleteRow', Number(tindex)); // 将索引转为int型，否则，删行后，剩余行的索引不重新排列
-			}
-		} 
-	}
-}
-
-/**
- * 能否增行
- * 
- * @returns {Boolean}
- */
-function isCanAdd() {
-	if (editIndex == undefined) {
-		return true;
-	}
-	if ($('#cardGrid').datagrid('validateRow', editIndex)) {
-		$('#cardGrid').datagrid('endEdit', editIndex);
-		editIndex = undefined;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-/**
- * 行编辑结束事件
- */
-function endBodyEdit(){
-    var rows = $("#cardGrid").datagrid('getRows');
- 	for ( var i = 0; i < rows.length; i++) {
- 		$("#cardGrid").datagrid('endEdit', i);
- 	}
-};
-
-/**
- * 查询所有的省
- */
-function queryAllProvince(){
-			$.ajax({
-				type : 'POST',
-				async : false,
-			    url : DZF.contextPath + '/matmanage/matapply!queryAllProvince.action',
-				dataTye : 'json',
-				success : function(result) {
-					var result = eval('(' + result+ ')');
-					if (result.success) {
-						$("#pname").combobox('loadData',result.rows);
-						
-					} else {
-						Public.tips({content : result.msg,type : 2});
-					}
-				}
-			});
-}
-
-
-$(function(){                                                            
-	 //触发省选项  
-	 $("#pname").combobox({  
-		 onSelect:function(record){  
-		      $("#cityname").combobox("setValue",''); //清空市  
-		      $("#countryname").combobox("setValue",''); //清空县  
-		      var provinceid=$('#pname').combobox('getValue'); 
-		      $.ajax({
-		    	    type : 'POST',
-					async : false,
-				    url : DZF.contextPath + '/matmanage/matapply!queryCityByProId.action',
-					dataTye : 'json',
-					data : "provinceid="+provinceid,
-					success : function(result) {
-						var result = eval('(' + result+ ')');
-						if (result.success) {
-							$("#cityname").combobox('loadData',result.rows);
-						} else {
-							Public.tips({content : result.msg,type : 2});
+	var id = row.matbillid;
+	var type = 1;
+	$.ajax({
+	    type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/matmanage/matapply!queryById.action',
+		dataTye : 'json',
+		data : {
+			id : id,
+			type : type,
+		},
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			var row = result.rows;
+			if (result.success) {
+				//if(type==0){
+					if(row.status==2){
+						$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料发货');
+						$('#mat_add').form('clear');
+						$('#mat_add').form('load', row);
+						 $("#fcost").numberbox({
+						      precision:2,
+						 });
+						 $('#dedate').datebox('setValue',parent.SYSTEM.LoginDate);
+						initCard();
+					    $('.hid').css("display", "none"); 
+					    $('.sid').css("display", ""); 
+					    readonly();
+					    if(row.children != null && row.children.length > 0){
+							$('#cardGrid').datagrid('loadData', row.children);
+							$('#cardGrid').datagrid('hideColumn','operate');
+							$('#cardGrid').datagrid('showColumn','outnum');
 						}
+					    
+					}else {
+						Public.tips({content : "单据状态不为待发货！" ,type:2});
+						return;
 					}
-		   }); 
-		}         
-	              
+				//}
+				
+		   }
+        }
 	});
-    //触发市选项  
-     $("#cityname").combobox({  
-	    onSelect:function(record){  
-	        $("#countryname").combobox("setValue",''); //清空县  
-	        var cityid=$('#cityname').combobox('getValue'); 
-	        $.ajax({
-	    	    type : 'POST',
-				async : false,
-			    url : DZF.contextPath + '/matmanage/matapply!queryAreaByCid.action',
-				dataTye : 'json',
-				data : "cityid="+cityid,
-				success : function(result) {
-					var result = eval('(' + result+ ')');
-					if (result.success) {
-						
-						$("#countryname").combobox('loadData',result.rows);
-					} else {
-						Public.tips({content : result.msg,type : 2});
-					}
-				}
-	   }); 
-	}         
-              
-   }); 
-
-});		
-	
-/**
- * 加盟商参照初始化
- */
-function initRef(){
-    $('#corpnm').textbox({
-        editable: false,
-        icons: [{
-            iconCls: 'icon-search',
-            handler: function(e) {
-                $("#chnDlg").dialog({
-                    width: 600,
-                    height: 480,
-                    readonly: true,
-                    title: '选择加盟商',
-                    modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
-                    queryParams : {
-    					ovince :"-1"
-    				},
-    				buttons : [ {
-    					text : '确认',
-    					handler : function() {
-    						selectCorps();
-    					}
-    				}, {
-    					text : '取消',
-    					handler : function() {
-    						$("#chnDlg").dialog('close');
-    					}
-    				} ]
-                });
-            }
-        }]
-    });
 }
 
-
 /**
- * 加盟商选择事件
+ * 发货保存
  */
-function selectCorps(){
-	var rows = $('#gsTable').datagrid('getSelections');
-	dClickCompany(rows);
-}
-
-
-/**
- * 双击选择加盟商
- * @param rowTable
- */
-function dClickCompany(rowTable){
-	var str = "";
-	var corpid="";
-	//var corpIds = [];
-	
-	if(rowTable){
-		/*if(rowTable.length>300){
-			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
-			return;
-		}*/
-		/*for(var i=0;i<rowTable.length;i++){
-			if(i == rowTable.length - 1){
-				str += rowTable[i].uname;
-			}else{
-				str += rowTable[i].uname+",";
-			}
-			corpIds.push(rowTable[i].pk_gs);
-		}*/
-		str = rowTable[0].uname;
-		corpid = rowTable[0].pk_gs;
+function onSave(){
+	   // var type = 1;
+	   $('#type').val(1);
+	    var postdata = new Object();
+		var body = "";
+		//物料数据
+		var rows = $('#cardGrid').datagrid('getRows');
+		for(var j = 0;j< rows.length; j++){
+			$('#cardGrid').datagrid('endEdit', j);
+			body = body + JSON.stringify(rows[j]); 
+		}
+		postdata["body"] = body;
 		
-		$("#corpnm").textbox("setValue",str);
-		$("#fcorp").val(corpid);
-		var fcorp=	$("#fcorp").val();
-		showApplyData(fcorp);
-	}
-	 $("#chnDlg").dialog('close');
-}
-
-/**
- * 物料档案参照初始化
- */
-function initMatFile(){
-	 $("#matDlg").dialog({
-         width: 600,
-         height: 480,
-         readonly: true,
-         title: '选择物料',
-         modal: true,
-         href: DZF.contextPath + '/ref/matfile_select.jsp',
-         /*queryParams : {
-				ovince :"-1"
-			},*/
-			buttons : [ {
-				text : '确认',
-				handler : function() {
-					selectMat();
-				}
-			}, {
-				text : '取消',
-				handler : function() {
-					$("#matDlg").dialog('close');
-				}
-			} ]
-     });
-}
-
-
-
-/**
- * 物料选择事件
- */
-function selectMat(){
-	var rows = $('#matTable').datagrid('getSelections');
-	dClickMat(rows);
-}
-
-
-/**
- * 双击选择物料
- * @param rowTable
- */
-function dClickMat(rowTable){
-	var wlnameValue = "";
-	var unitValue="";
-	var matid="";
-	if(rowTable){
-		wlnameValue = rowTable[0].wlname;
-		unitValue = rowTable[0].unit;
-		matid = rowTable[0].matfileid;
-		
-		var wlname = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'wlname'});
-		var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
-		var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
-		
-		$(wlname.target).textbox('setValue', wlnameValue);
-		$(unit.target).textbox('setValue', unitValue);
-		$(matfileid.target).textbox('setValue', matid);
-		
-	}
-	 $("#matDlg").dialog('close');
-}
-
-
-/**
- * 联动显示申请信息
- */
-function showApplyData(fcorp){
-	
-	 $.ajax({
- 	    type : 'POST',
-			async : false,
-		    url : DZF.contextPath + '/matmanage/matapply!showDataByCorp.action',
-			dataTye : 'json',
-			data : "fcorp="+fcorp,
+	if ($("#mat_add").form('validate')) {
+		$('#mat_add').form('submit', {
+			url : DZF.contextPath + '/matmanage/matapply!save.action',
+			queryParams : postdata,
 			success : function(result) {
-				var result = eval('(' + result+ ')');
+				var result = eval('(' + result + ')');
 				if (result.success) {
-					var row=result.rows;
-					$('#pname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'vprovince',    
-					     textField:'pname',
-					     value:row.pname,
+					$('#cbDialog').dialog('close');
+					load(0);
+					Public.tips({
+						content : result.msg,
 					});
-					$('#cityname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'vcity',    
-					     textField:'cityname',
-					     value:row.cityname,
-					});
-					$('#countryname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'varea',    
-					     textField:'countryname',
-					     value:row.countryname,
-					});
-					$('#vprovince').val(row.vprovince);
-					$('#vcity').val(row.vcity);
-					$('#varea').val(row.varea);
-					if(row.varea==undefined){
-						$('#varea').val();
-					}
-					$('#receiver').textbox("setValue",row.receiver);
-					$('#phone').textbox("setValue",row.phone);
-					$('#unit').textbox("setValue",row.unit);
 				} else {
-					Public.tips({content : result.msg,type : 2});
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
 				}
 			}
-  }); 
-	
+		});
+	} else {
+		Public.tips({
+			content : "必输信息为空或信息输入不正确",
+			type : 2
+		});
+		return; 
+	}
 }
 
-
-/**
- * 编辑
- */
-function edit(index){
-	status = "edit";
-	var erow = $('#grid').datagrid('getSelected');
-	if(erow==null){
-		Public.tips({content:'请选择数据行',type:2});
-		return;
-	}
-	var row = queryByID(erow.matbillid);
-	if(isEmpty(row)){
-		return;
-	}
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '编辑物料申请单');
-	$('#mat_add').form('clear');
-	$('#mat_add').form('load', row);
-	$('#applyname').textbox('readonly',true);
-	queryAllProvince();
-	initCard();
-	operCard();
-	$('.hid').css("display", "none"); 
-	
-	if(row.children != null && row.children.length > 0){
-		$('#cardGrid').datagrid('loadData',row.children);
-	}
-	
-}
 
 function operCard(){
 	$('#cardGrid').datagrid('loadData', {// 清除缓存数据
@@ -987,10 +800,11 @@ function operCard(){
 }
 
 /**
- * 通过主键查询申请单信息
+ * 通过主键查询信息
  */
 function queryByID(matbillid){
 	var row;
+	var type = 1;
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -999,6 +813,7 @@ function queryByID(matbillid){
 		url : contextPath + '/matmanage/matapply!queryById.action',
 		data : {
 			"id" : matbillid,
+			type : type,
 		},
 		success : function(data) {
 			if (!data.success) {
@@ -1054,74 +869,38 @@ function del(ths){
 	});
 }
 
-/**
- * 保存
- */
-function onSave(){
-	endBodyEdit();
-	
-	var postdata = new Object();
-	var body = "";
-	//物料数据
-	var rows = $('#cardGrid').datagrid('getRows');
-	for(var j = 0;j< rows.length; j++){
-		body = body + JSON.stringify(rows[j]); 
-	}
-	postdata["body"] = body;
-	
-	onSaveSubmit(postdata);
-}
-
-
-/**
- * 物料申请单-提交后台保存
- */
-function onSaveSubmit(postdata){
-	if ($("#mat_add").form('validate')) {
-		$('#mat_add').form('submit', {
-			url : DZF.contextPath + '/matmanage/matapply!save.action',
-			queryParams : postdata,
-			success : function(result) {
-				var result = eval('(' + result + ')');
-				if (result.success) {
-					$('#cbDialog').dialog('close');
-					load(0);
-					Public.tips({
-						content : result.msg,
-					});
-				} else {
-					Public.tips({
-						content : result.msg,
-						type : 2
-					});
-				}
-			}
-		});
-	} else {
-		Public.tips({
-			content : "必输信息为空或信息输入不正确",
-			type : 2
-		});
-		return; 
-	}
-}
-
 
 function showDetail(index){
-	status = "show";
 	var erow = $('#grid').datagrid('getData').rows[index];
 	var row = queryByID(erow.matbillid);
 	
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请详情');
+	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料详情');
 	initCard();
-	$('.hid').css("display", ""); 
-	if(row.status!=4){
-		$('#reject').css("display", "none"); 
-	}
+	$('.hid').css("display", "");
+	$('.sid').css("display", "none");
 	
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
+	$('#cardGrid').datagrid('hideColumn','operate');
+	showStatus(row);
 	
+	$('#applyname').textbox('setValue',row.applyname);
+	
+	$('#dename').textbox('setValue',row.dename);
+	
+	readonly();
+	
+	if(row.children != null && row.children.length > 0){
+		$('#cardGrid').datagrid('loadData',row.children);
+	}
+	
+}
+
+/**
+ * 显示合同状态
+ * @param row
+ */
+function showStatus(row){
 	if(row.status==1){
 		$('#stat').textbox('setValue','待审核');
 	}else if(row.status==2){
@@ -1131,18 +910,8 @@ function showDetail(index){
 	}else if(row.status==4){
 		$('#stat').textbox('setValue','已驳回');
 	}
-	
-	$('#applyname').textbox('setValue',row.applyname);
-	
-	if(row.status==2 || row.status==3){
-		readonly();
-	}
-	
-	if(row.children != null && row.children.length > 0){
-		$('#cardGrid').datagrid('loadData',row.children);
-	}
-	
 }
+
 
 function readonly(){
 	$("#code").textbox('readonly',true);
@@ -1159,26 +928,46 @@ function readonly(){
 	$("#adate").textbox('readonly',true);
 }
 
-/**
- * 导出
- */
-function doExport(){
-	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
-		return;
+/*function endEditing() {//该方法用于关闭上一个焦点的editing状态
+	if (editIndex == undefined) {
+		return true
 	}
-	
-		var columns = $('#grid').datagrid("options").columns[0];
-		var qj = null;
-		var ischeck = $('#qj').is(':checked');
-		if(ischeck){
-			qj = $('#bperiod').datebox('getValue') + '至' + $('#eperiod').datebox('getValue');
-		}else{
-			qj = $('#begdate').datebox('getValue') + '至' + $('#enddate').datebox('getValue');
-		}
-		Business.getFile(DZF.contextPath+ '/matmanage/matstockin!exportAuditExcel.action',
-				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'qj':qj,}, true, true);
-
+	if ($('#cardGrid').datagrid('validateRow', editIndex)) {
+		$('#cardGrid').datagrid('endEdit', editIndex);
+		editIndex = undefined;
+		return true;
+	} else {
+		return false;
+	}
 }
 
+
+//点击单元格事件：
+function onClickCell(index,field,value) {
+	if (endEditing()) {
+		if(field=="outnum"){
+			$(this).datagrid('beginEdit', index);
+			var ed = $(this).datagrid('getEditor', {index:index,field:field});
+			$(ed.target).focus();
+		}		
+		editIndex = index;
+	}
+	//$('#cardGrid').datagrid('onClickRow');
+}
+
+
+//单元格失去焦点执行的方法
+function onAfterEdit(index, row, changes) {
+	var updated = $('#cardGrid').datagrid('getChanges', 'updated');
+	if (updated.length < 1) {
+		editRow = undefined;
+		$('#cardGrid').datagrid('unselectAll');
+		return;
+	} else {
+		// 传值
+		//submitForm(index, row, changes);
+	}
+ 
+	
+}
+*/

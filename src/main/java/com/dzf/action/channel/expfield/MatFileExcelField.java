@@ -30,7 +30,7 @@ public class MatFileExcelField implements IExceport<MaterielFileVO> {
 			new Fieldelement("isappl", "申请条件",false,0,false,new String[]{"","上季度合同审核通过数≥上季度申请数量的 70%"}),
 			// 0-全部  1-启用  2-封存
 			new Fieldelement("isseal", "状态",false,0,false,new String[]{"","启用","封存"}),
-			new Fieldelement("coperatorid", "录入人",false,0,false),
+			new Fieldelement("applyname", "录入人",false,0,false),
 			new Fieldelement("doperatetime", "录入时间",false,0,false),
 	};
 

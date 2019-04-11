@@ -23,6 +23,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -96,6 +97,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
+		/*sql.append("                bi.,  \n") ; 
+		sql.append("                bi.,  \n") ; 
+		sql.append("                bi.,  \n") ; 
+		sql.append("                bi.,  \n") ; 
+		sql.append("                bi.,  \n") ; */
 		sql.append("                bi.ts,  \n") ; 
 		sql.append("                b.vname,  \n") ; 
 		sql.append("                b.vunit,  \n") ; 
@@ -300,7 +306,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos) {
+	public void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type) {
 		if (StringUtil.isEmpty(vo.getPk_materielbill())) {// 新增保存
 			setDefaultValue(vo, uservo);
 			// 1.新增到订单主表VO
@@ -323,11 +329,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				vo.setUpdatets(mvo.getUpdatets());
 				vo.setStatus(mvo.getStatus());
 			}
-			 saveEdit(vo,bvos);
+			 saveEdit(vo,bvos,type,uservo);
 		}
 	}
 	
-     private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos) {
+     private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
 		
     	checkIsOperOrder(data.getStatus(),"只有待审批或已驳回状态的申请单支持修改！");
 		String uuid = UUID.randomUUID().toString();
@@ -340,19 +346,57 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 			
 			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
-			
-			//1.修改主订单
-			String[] updates = {"vcontcode", "fathercorp", "corpname",
-					"vprovince","vcity","varea",
-					"vaddress","vreceiver","phone","vmemo",
-					"applydate" };
-		    singleObjectBO.update(data, updates);
+			if("1".equals(type)){//发货
+				String sql = "select pk_logistics,vname logname from cn_logistics "
+		    			+ "where pk_logistics = ? ";
+		    	SQLParameter spm=new SQLParameter();
+		    	spm.addParam(data.getLogname());
+		    	MatOrderVO mvo = (MatOrderVO) singleObjectBO.executeQuery(sql, spm, new BeanProcessor(MatOrderVO.class));
+		    	if(mvo!=null){
+		    		data.setPk_logistics(mvo.getPk_logistics());
+		    		data.setLogname(mvo.getLogname());
+		    	}
+		    	
+				data.setVstatus(3);
+				data.setDeliverid(uservo.getCoperatorid());
+		    	String[] supdates ={"vstatus","pk_logistics","fastcode","fastcost",
+						"deliverid","deliverdate" };
+		    	
+		    	singleObjectBO.update(data, supdates);		
+		    }else{
+		    	//1.修改主订单
+				String[] updates = {"vcontcode", "fathercorp", "corpname",
+						"vprovince","vcity","varea",
+						"vaddress","vreceiver","phone","vmemo",
+						"applydate"};
+			    singleObjectBO.update(data, updates);
+		    }
+		
 		    //2.修改子订单
+		    String sql="delete from cn_materielbill_b where pk_materielbill = ? ";
+		    SQLParameter spm=new SQLParameter();
+		    spm.addParam(data.getPk_materielbill());
+		    singleObjectBO.executeUpdate(sql.toString(),spm);
+		    
 		    List<MatOrderBVO> bvolist = Arrays.asList(bvos);
-		    String[] bupdates = {"vname","vunit","applynum"};
-		    for (MatOrderBVO bvo : bvolist) {
-		    	singleObjectBO.update(bvo, bupdates);
-			}
+		    if(bvolist!=null && bvolist.size()>0){
+		    	  for (MatOrderBVO bvo : bvolist) {
+				    	bvo.setPk_materielbill(data.getPk_materielbill());
+				    	singleObjectBO.insertVO("000001", bvo);
+				    	
+				    	//修改物料档案发货数量
+				    	if(!StringUtil.isEmpty(bvo.getPk_materiel())){
+				    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, bvo.getPk_materiel());
+					    	if(mfvo!=null && mfvo.getOutnum()!=null){
+					    		mfvo.setOutnum(mfvo.getOutnum()+bvo.getOutnum());
+					    	}
+					    	String[] updates = {"outnum"};
+					    	singleObjectBO.update(mfvo, updates);
+				    	}
+				    	
+					}
+		    }
+		    
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -404,7 +448,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public MatOrderVO queryDataById(String id,UserVO uservo) {
+	public MatOrderVO queryDataById(String id,UserVO uservo,String type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(id);
@@ -414,24 +458,41 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append(  "   m.fathercorp,m.corpname, \n");
 		sql.append(  "   m.vprovince,m.vcity,m.varea,m.citycounty, \n ");
 		sql.append(  "   m.vaddress,m.vreceiver,m.phone,m.vmemo, \n ");
-		sql.append(  "   m.coperatorid,m.applydate \n");
+		sql.append(  "   m.coperatorid,m.applydate, \n");
+		sql.append(  "   m.pk_logistics, \n");
+		sql.append(  "   m.fastcode,m.fastcost, \n");
+		sql.append(  "   m.deliverid,m.deliverdate, \n");
+		sql.append(  "   lg.vname logname \n");
 		
 		sql.append("     from cn_materielbill m \n");
-		sql.append("     where nvl(m.dr,0) = 0 \n");
+		sql.append("     left join cn_logistics lg on \n");
+		sql.append("     lg.pk_logistics = m.pk_logistics \n");
+		sql.append("     where nvl(m.dr,0) = 0 and nvl(lg.dr,0) = 0 \n");
 		sql.append("     and m.pk_materielbill = ? \n");
 		
 		MatOrderVO vo= (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
 		if(vo!=null){
-			if (vo.getCoperatorid() != null) {
-				uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-				vo.setApplyname(uservo.getUser_name());
-			}
-			
+				if("1".equals(type)){//发货
+					if(vo.getDeliverid()!=null){
+						uservo = UserCache.getInstance().get(vo.getDeliverid(), null);
+						vo.setDename(uservo.getUser_name());
+					}else{
+						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+						vo.setDename(uservo.getUser_name());
+					}
+					uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+					vo.setApplyname(uservo.getUser_name());
+				}else{//申请
+					if (vo.getCoperatorid() != null) {
+						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+						vo.setApplyname(uservo.getUser_name());
+					}
+				}
 			StringBuffer ssql = new StringBuffer();
 			SQLParameter sspm = new SQLParameter();
 			sspm.addParam(id);
 			ssql.append("  select b.pk_materielbill_b, \n");
-			ssql.append("    b.vname,b.vunit,b.applynum, \n");
+			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum, \n");
 			ssql.append("    l.pk_materiel \n");
 			ssql.append("    from cn_materielbill_b b \n");
 			ssql.append("    left join cn_materiel l on \n");
@@ -451,6 +512,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return null;
 	}
 	
+
 	private void setCitycountry(MatOrderVO vo){
 		if (vo.getCitycounty() != null) {
 			String[] citycountry = vo.getCitycounty().split("-");

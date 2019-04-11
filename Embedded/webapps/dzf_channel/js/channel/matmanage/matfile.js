@@ -254,6 +254,7 @@ function opermatter(val, row, index) {
 function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增物料');
 	initEvent();
+	 $('#cbDialog').form("clear");
 }
 
 /**

@@ -140,6 +140,8 @@ public class MatFileServiceImpl implements IMatFileService {
 		data.setCoperatorid(uservo.getCuserid());
 		data.setDoperatetime(new DZFDateTime());
 		data.setPk_corp("000001");
+		data.setOutnum(0);//默认发货数量为0
+		data.setIntnum(0);//默认入库数量为0
 		data.setIsseal(data.ISSEAL_1);//封存状态：默认为启用
 	}
 

@@ -25,9 +25,9 @@ public interface IMatApplyService {
 
 	MatOrderVO showDataByCorp(String corpid);
 
-	void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos);
+	void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos, String type);
 
-	MatOrderVO queryDataById(String id, UserVO uservo);
+	MatOrderVO queryDataById(String id, UserVO uservo, String type);
 
 	void delete(MatOrderVO param);
 

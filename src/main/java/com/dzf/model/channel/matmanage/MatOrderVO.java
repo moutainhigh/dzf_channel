@@ -127,6 +127,8 @@ public class MatOrderVO extends SuperVO {
 	
 	private String applyname;//申请人名称
 	
+	private String dename;//发货人名称
+	
 	@FieldAlias("wlname")
 	private String vname;//物料名称
 	
@@ -511,6 +513,14 @@ public class MatOrderVO extends SuperVO {
 
 	public void setVmanagerid(String vmanagerid) {
 		this.vmanagerid = vmanagerid;
+	}
+	
+	public String getDename() {
+		return dename;
+	}
+
+	public void setDename(String dename) {
+		this.dename = dename;
 	}
 
 	@Override
