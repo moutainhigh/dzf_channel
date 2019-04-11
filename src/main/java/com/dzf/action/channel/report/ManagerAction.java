@@ -264,6 +264,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			list.add("edate");
 			list.add("anum");
 			list.add("vccode");
+			list.add("bdate");
+			list.add("provname");
 			String[] fields= (String[]) fieldslist.toArray(new String[fieldslist.size()]);
 			PrintUtil<ManagerVO> util = new PrintUtil<ManagerVO>();
 			util.setIscross(DZFBoolean.TRUE);
@@ -295,6 +297,8 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		stringlist.add("edate");
 		stringlist.add("anum");
 		stringlist.add("vccode");
+		stringlist.add("bdate");
+		stringlist.add("provname");
 		Map<String, String> name = null;
 		if(strlist == null){
 			return;

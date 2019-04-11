@@ -410,7 +410,7 @@ function initYbhGrid(){
 			singleSelect : true,
 			showFooter:true,
 			columns : [ [ {
-				width : '100',
+				width : '80',
 				title : '提单日期',
 				align:'center',
 				halign:'center',
@@ -422,13 +422,13 @@ function initYbhGrid(){
 				halign:'center',
 				field : 'anum',
 			}, {
-				width : '180',
+				width : '160',
 				title : '合同编码',
 	            halign:'left',
 				field : 'vccode',
 				formatter :ybhFormat,
 			},{
-				width : '120',
+				width : '100',
 				title : '合同代账费',
 				align:'right',
 	            halign:'center',
@@ -437,7 +437,19 @@ function initYbhGrid(){
 					if(value == 0)return "0.00";
 					return formatMny(value);
 				}
-			}] ],
+			}, {
+				width : '80',
+				title : '驳回日期 ', 
+				align:'center',
+				halign:'center',
+				field : 'bdate',
+			},{
+				width : '140',
+				title : '驳回原因',
+	            halign:'left',
+				field : 'provname',
+				formatter :forString,
+			},] ],
 			onLoadSuccess : function(data) {
 				var rows = $('#gridw').datagrid('getRows');
 				var footerData = new Object();
@@ -456,6 +468,12 @@ function initYbhGrid(){
 	            $('#gridw').datagrid("scrollTo",0);
 			},
 		});
+}
+
+function forString(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
 }
 
 function ybhFormat(value,row,index){
