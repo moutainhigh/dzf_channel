@@ -270,6 +270,11 @@ public interface IFunNode {
     public static final String CHANNEL_65  = "channel65";
     
     /**
+     * 渠道合同审核
+     */
+    public static final String CHANNEL_66  = "channel66";
+    
+    /**
      * 物料档案
      */
     public static final String CHANNEL_67  = "channel67";
