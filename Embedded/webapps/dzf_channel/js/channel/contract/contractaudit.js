@@ -421,5 +421,17 @@ function load(){
  * 审核
  */
 function audit(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	
+	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
+	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle',title);
 	
 }
+
