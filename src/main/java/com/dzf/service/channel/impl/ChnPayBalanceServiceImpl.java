@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.model.channel.CorpNameEVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.CommonUtil;
@@ -667,10 +668,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO sqpvo = getDetailQry(paramvo);
 		List<ChnDetailRepVO> list = (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
 				new BeanListProcessor(ChnDetailRepVO.class));
-		if(list != null && list.size() > 0){
-			//2.1、对原客户名称进行解密
-			QueryDeCodeUtils.decKeyUtils(new String[]{"voldname"}, list.toArray(new ChnDetailRepVO[0]), 1);
-		}
 		
 		//3、查询零扣款数据
 		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
@@ -691,6 +688,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				contmap = queryConDetail(paramvo);
 			}
 			
+			//获取客户最后一次变更的原客户名称
+			Map<String, String> nmap = getOldName(orderlist.get(0).getPk_corp());
+			
 			for (ChnDetailRepVO repvo : orderlist) {
 				corpvo = CorpCache.getInstance().get(null, repvo.getPk_corp());
 				if (corpvo != null) {
@@ -699,6 +699,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				corpvo = CorpCache.getInstance().get(null, repvo.getPk_corpk());
 				if(corpvo != null){
 					repvo.setCorpkname(corpvo.getUnitname());
+				}
+				if(nmap != null && !nmap.isEmpty()){
+					repvo.setVoldname(nmap.get(repvo.getPk_corpk()));
 				}
 				//设置类型名称：
 				setTypeName(repvo);
@@ -717,6 +720,38 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			firstvo.setVmanagername(manager);
 		}
 		return retlist;
+	}
+	
+	/**
+	 * 获取客户最后一次变更的原客户名称
+	 * @param fathercorp
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, String> getOldName(String fathercorp) throws DZFWarpException {
+		Map<String, String> nmap = new HashMap<String, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT ed.pk_corp, ed.voldname  \n");
+		sql.append("  FROM (SELECT ROW_NUMBER() OVER(PARTITION BY pk_corpnameedit ORDER BY ts DESC) rn,  \n");
+		sql.append("               e.pk_corp,  \n");
+		sql.append("               e.voldname  \n");
+		sql.append("          FROM cn_corpnameedit e  \n");
+		sql.append("         WHERE nvl(e.dr, 0) = 0  \n");
+		sql.append("           AND e.istatus = 2  \n");
+		sql.append("           AND e.fathercorp = ? ) ed  \n");
+		spm.addParam(fathercorp);
+		sql.append(" where ed.rn = 1  \n");
+		List<CorpNameEVO> list = (List<CorpNameEVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CorpNameEVO.class));
+		if(list != null && list.size() > 0){
+			QueryDeCodeUtils.decKeyUtils(new String[]{"voldname"}, list.toArray(new ChnDetailRepVO[0]), 1);
+			for(CorpNameEVO evo : list){
+				nmap.put(evo.getPk_corp(), evo.getVoldname());
+			}
+		}
+		return nmap;
 	}
 	
 	/**
@@ -1314,17 +1349,13 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       ct.vcontcode, \n");
 		sql.append("       ct.pk_corpk, \n");
 		sql.append("       ct.vstatus, \n");
-		sql.append("       ct.isncust, \n");
-		sql.append("       e.voldname  \n");
+		sql.append("       ct.isncust \n");
 		sql.append("  FROM cn_detail l  \n") ; 
 		sql.append("  LEFT JOIN cn_contract t ON l.pk_bill = t.pk_confrim  \n") ; 
 		sql.append("  LEFT JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN cn_corpnameedit e ON t.pk_corpk = e.pk_corp \n");
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(e.dr, 0) = 0  \n") ; 
-		sql.append("   AND e.istatus = 2 \n");//客户名称修改已审核通过
 		sql.append("   AND l.pk_corp = ? \n");
 		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
