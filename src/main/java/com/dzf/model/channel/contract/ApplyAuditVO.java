@@ -18,6 +18,9 @@ public class ApplyAuditVO extends SuperVO {
 	@FieldAlias("apauid")
 	private String pk_applyaudit; // 申请审批历史主键
 	
+	@FieldAlias("applyid")
+    private String pk_changeapply; // 合同变更申请主键
+	
     @FieldAlias("conid")
     private String pk_contract; // 原合同主键
     
@@ -49,6 +52,102 @@ public class ApplyAuditVO extends SuperVO {
     @FieldAlias("ts")
     private DZFDateTime ts; // 时间戳
 
+	public String getPk_applyaudit() {
+		return pk_applyaudit;
+	}
+
+	public void setPk_applyaudit(String pk_applyaudit) {
+		this.pk_applyaudit = pk_applyaudit;
+	}
+
+	public String getPk_changeapply() {
+		return pk_changeapply;
+	}
+
+	public void setPk_changeapply(String pk_changeapply) {
+		this.pk_changeapply = pk_changeapply;
+	}
+
+	public String getPk_contract() {
+		return pk_contract;
+	}
+
+	public void setPk_contract(String pk_contract) {
+		this.pk_contract = pk_contract;
+	}
+
+	public String getPk_confrim() {
+		return pk_confrim;
+	}
+
+	public void setPk_confrim(String pk_confrim) {
+		this.pk_confrim = pk_confrim;
+	}
+
+	public String getPk_corp() {
+		return pk_corp;
+	}
+
+	public void setPk_corp(String pk_corp) {
+		this.pk_corp = pk_corp;
+	}
+
+	public String getPk_corpk() {
+		return pk_corpk;
+	}
+
+	public void setPk_corpk(String pk_corpk) {
+		this.pk_corpk = pk_corpk;
+	}
+
+	public Integer getIapplystatus() {
+		return iapplystatus;
+	}
+
+	public void setIapplystatus(Integer iapplystatus) {
+		this.iapplystatus = iapplystatus;
+	}
+
+	public String getVreason() {
+		return vreason;
+	}
+
+	public void setVreason(String vreason) {
+		this.vreason = vreason;
+	}
+
+	public String getCoperatorid() {
+		return coperatorid;
+	}
+
+	public void setCoperatorid(String coperatorid) {
+		this.coperatorid = coperatorid;
+	}
+
+	public DZFDate getDoperatedate() {
+		return doperatedate;
+	}
+
+	public void setDoperatedate(DZFDate doperatedate) {
+		this.doperatedate = doperatedate;
+	}
+
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
+	public DZFDateTime getTs() {
+		return ts;
+	}
+
+	public void setTs(DZFDateTime ts) {
+		this.ts = ts;
+	}
+
 	@Override
 	public String getPKFieldName() {
 		return "pk_applyaudit";
@@ -56,7 +155,7 @@ public class ApplyAuditVO extends SuperVO {
 
 	@Override
 	public String getParentPKFieldName() {
-		return null;
+		return "pk_changeapply";
 	}
 
 	@Override

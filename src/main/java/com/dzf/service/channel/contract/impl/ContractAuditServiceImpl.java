@@ -94,7 +94,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT y.applytime,  \n") ;
+		sql.append("SELECT DISTINCT  \n") ;
+		sql.append("       y.applytime,  \n") ;
 		sql.append("       y.ichangetype,  \n") ;
 		sql.append("       y.vchangeraeson,  \n") ;
 		sql.append("       t.pk_corp,  \n") ; 
@@ -111,6 +112,9 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       t.nbookmny  \n") ; 
 		sql.append("  FROM cn_changeapply y  \n") ; 
 		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract  \n") ; 
+		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != -1)){
+			sql.append("  LEFT JOIN cn_applyaudit a ON a.pk_changeapply = y.pk_changeapply  \n") ; 
+		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(y.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(pamvo.getVmanagername())) {//渠道经理
@@ -145,18 +149,23 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		    String where = SqlUtil.buildSqlForIn("t.pk_corpk", strs);
 		    sql.append(" AND ").append(where);
 		}
-		//渠道经理：1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
-		//区总：2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
-		//总经理：3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
-		Integer power = pubser.getAreaPower(uservo.getCuserid());
-		if(power != null){
-			if(power == 1){//总经理
-				sql.append(" AND y.iapplystatus IN (3, 4, 5, 6) \n");
-			}else if(power == 2){//区总
-				sql.append(" AND y.iapplystatus IN (2, 3, 4, 5, 6) \n");
-			}else if(power == 3){//渠道经理
-				sql.append(" AND y.iapplystatus IN (1, 2, 3, 4, 5, 6) \n");
-			}
+
+		//数据权限过滤
+		sql.append(" AND ( ( ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
+		spm.addParam(uservo.getCuserid());
+		spm.addParam(uservo.getCuserid());
+		spm.addParam(uservo.getCuserid());
+		sql.append(" AND y.iapplystatus IN (1, 2, 3) ) \n");
+		sql.append(" OR a.coperatorid = ? ) \n");
+		spm.addParam(uservo.getCuserid());
+		
+		//待审核数据过滤
+		if(pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != -1){
+			sql.append(" AND ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
+			spm.addParam(uservo.getCuserid());
+			spm.addParam(uservo.getCuserid());
+			spm.addParam(uservo.getCuserid());
+			sql.append(" AND y.iapplystatus IN (1, 2, 3) \n");
 		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

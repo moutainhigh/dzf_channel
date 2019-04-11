@@ -44,7 +44,7 @@
 				</div>
 				
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">合同审核</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="audit()">审核</a>
 				</div>
 			</div>
 		</div>

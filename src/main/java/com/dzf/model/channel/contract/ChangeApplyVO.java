@@ -84,6 +84,15 @@ public class ChangeApplyVO extends SuperVO {
 	@FieldAlias("opdate")
 	private DZFDate doperatedate;//录入日期
 	
+	@FieldAlias("chanid")
+	private String vchannelid;//渠道经理（待审核人）
+	
+	@FieldAlias("areaer")
+	private String vareaer;//区总（待审核人）
+	
+	@FieldAlias("direr")
+	private String vdirector;//总经理（待审核人）
+	
 	// 不存只作展示 begin*************************
 	
 	@FieldAlias("area")
@@ -141,6 +150,30 @@ public class ChangeApplyVO extends SuperVO {
 	private DZFDouble ndedsummny;// 扣款总金额（不存库，取历史合同）
 
 	// 不存只作展示 end***************************
+
+	public String getVchannelid() {
+		return vchannelid;
+	}
+
+	public void setVchannelid(String vchannelid) {
+		this.vchannelid = vchannelid;
+	}
+
+	public String getVareaer() {
+		return vareaer;
+	}
+
+	public void setVareaer(String vareaer) {
+		this.vareaer = vareaer;
+	}
+
+	public String getVdirector() {
+		return vdirector;
+	}
+
+	public void setVdirector(String vdirector) {
+		this.vdirector = vdirector;
+	}
 
 	public DZFDouble getNaccountmny() {
 		return naccountmny;

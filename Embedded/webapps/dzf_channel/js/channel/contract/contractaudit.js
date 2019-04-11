@@ -191,7 +191,7 @@ function qryData(){
 	var url = DZF.contextPath + "/contract/contractaudit!query.action";
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
-		"apstatus" : 1,
+		"recycle" : 1,
 	});
 }
 
@@ -380,12 +380,12 @@ function load(){
 				return formatMny(value);
 			},
 		}, {
-			width : '80',
+			width : '70',
 			title : '收款周期',
 			halign:'center',
 			field : 'recycle',
 		}, {
-			width : '80',
+			width : '70',
 			title : '合同周期',
 			halign:'center',
 			field : 'contcycle',
@@ -415,4 +415,11 @@ function load(){
             $('#grid').datagrid("scrollTo",0);
 		},
 	});
+}
+
+/**
+ * 审核
+ */
+function audit(){
+	
 }
