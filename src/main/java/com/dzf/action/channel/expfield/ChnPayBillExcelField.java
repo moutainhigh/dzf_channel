@@ -25,7 +25,7 @@ public class ChnPayBillExcelField implements IExceport<ChnPayBillVO> {
 	
 	private Fieldelement[] fields = new Fieldelement[]{
 			new Fieldelement("corpname", "加盟商",false,0,false),
-			new Fieldelement("doperatedate", "付款时间",false,0,false),
+			new Fieldelement("dpaydate", "付款时间",false,0,false),
 			new Fieldelement("vbillcode", "单据号",false,0,false),
 			new Fieldelement("ipaytype", "付款类型",false,0,false,new String[]{"","保证金","预付款"}),
 			new Fieldelement("npaymny", "付款金额",true,2,false),
