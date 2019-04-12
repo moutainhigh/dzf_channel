@@ -320,6 +320,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.vchannelid,  \n");
 		sql.append("       y.vareaer,  \n");
 		sql.append("       y.vdirector,  \n");
+		sql.append("       y.ichangetype,  \n");
 
 		sql.append("       y.iapplystatus  \n");
 		sql.append("  FROM cn_changeapply y  \n");
@@ -402,9 +403,19 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	 */
 	private void checkBeforeChange(ChangeApplyVO data) throws DZFWarpException {
 		if(data.getIopertype() != null && data.getIopertype() == 1){
-			if(data.getIapplystatus() != null && (data.getIapplystatus() == 1 || data.getIapplystatus() == 2)){
-				if(StringUtil.isEmpty(data.getVauditer())){
-					throw new BusinessException("下一审核人不能为空");
+			//1、合同终止审核或作废审核
+			if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
+				if(data.getIapplystatus() != null && (data.getIapplystatus() == 1 || data.getIapplystatus() == 2)){
+					if(StringUtil.isEmpty(data.getVauditer())){
+						throw new BusinessException("下一审核人不能为空");
+					}
+				}
+			//2、非常规套餐审核
+			}else if(data.getIchangetype() != null && data.getIchangetype() == 3){
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1 ){
+					if(StringUtil.isEmpty(data.getVauditer())){
+						throw new BusinessException("下一审核人不能为空");
+					}
 				}
 			}
 		}
@@ -430,12 +441,22 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("UPDATE ynt_contract  \n");
 		if (opertype == 1) {
-			if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-				sql.append("   SET iversion = 2  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-				sql.append("   SET iversion = 3  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-				sql.append("   SET iversion = 4  \n");
+			//1、合同终止审核或作废审核
+			if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
+					sql.append("   SET iversion = 2  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
+					sql.append("   SET iversion = 3  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
+					sql.append("   SET iversion = 4  \n");
+				}
+			//2、非常规套餐审核
+			}else if(data.getIchangetype() != null && data.getIchangetype() == 3 ){
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
+					sql.append("   SET iversion = 2  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
+					sql.append("   SET iversion = 4  \n");
+				}
 			}
 		} else if (opertype == 2) {
 			sql.append("   SET iversion = 6  \n");
@@ -449,45 +470,60 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		if (res != 1) {
 			throw new BusinessException("原合同申请状态更新失败");
 		}
-		// 2、更新历史合同-申请状态
-		sql = new StringBuffer();
-		spm = new SQLParameter();
-		sql.append("UPDATE cn_contract  \n");
-		if (opertype == 1) {
-			if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-				sql.append("   SET iapplystatus = 2  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-				sql.append("   SET iapplystatus = 3  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-				sql.append("   SET iapplystatus = 4  \n");
+		//只有合同终止审核或作废审核，才更新历史合同-申请状态
+		if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
+			// 2、更新历史合同-申请状态
+			sql = new StringBuffer();
+			spm = new SQLParameter();
+			sql.append("UPDATE cn_contract  \n");
+			if (opertype == 1) {
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
+					sql.append("   SET iapplystatus = 2  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
+					sql.append("   SET iapplystatus = 3  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
+					sql.append("   SET iapplystatus = 4  \n");
+				}
+			} else if (opertype == 2) {
+				sql.append("   SET iapplystatus = 6  \n");
 			}
-		} else if (opertype == 2) {
-			sql.append("   SET iapplystatus = 6  \n");
-		}
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
-		spm.addParam(data.getPk_corp());
-		sql.append("   AND pk_confrim = ?  \n");
-		spm.addParam(data.getPk_confrim());
-		res = singleObjectBO.executeUpdate(sql.toString(), spm);
-		if (res != 1) {
-			throw new BusinessException("历史合同申请状态更新失败");
+			sql.append(" WHERE nvl(dr, 0) = 0  \n");
+			sql.append("   AND pk_corp = ?  \n");
+			spm.addParam(data.getPk_corp());
+			sql.append("   AND pk_confrim = ?  \n");
+			spm.addParam(data.getPk_confrim());
+			res = singleObjectBO.executeUpdate(sql.toString(), spm);
+			if (res != 1) {
+				throw new BusinessException("历史合同申请状态更新失败");
+			}
 		}
 		//3、更新变更合同审核-申请状态
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("UPDATE cn_changeapply  \n");
 		if (opertype == 1) {
-			if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-				sql.append("   SET iapplystatus = 2,  \n");
-				sql.append("       vareaer = ?  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-				sql.append("   SET iapplystatus = 3,  \n");
-				sql.append("       vdirector = ?  \n");
-			}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-				sql.append("   SET iapplystatus = 4  \n");
+			//1、合同终止审核或作废审核
+			if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
+					sql.append("   SET iapplystatus = 2,  \n");
+					sql.append("       vareaer = ?  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
+					sql.append("   SET iapplystatus = 3,  \n");
+					sql.append("       vdirector = ?  \n");
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
+					sql.append("   SET iapplystatus = 4  \n");
+				}
+				spm.addParam(data.getVauditer());
+			//2、非常规套餐审核
+			}else if(data.getIchangetype() != null && data.getIchangetype() == 3){
+				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
+					sql.append("   SET iapplystatus = 2,  \n");
+					sql.append("       vareaer = ?  \n");
+					spm.addParam(data.getVauditer());
+				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
+					sql.append("   SET iapplystatus = 4  \n");
+				}
 			}
-			spm.addParam(data.getVauditer());
 		} else if (opertype == 2) {
 			sql.append("   SET iapplystatus = 6,  \n");
 			sql.append("       vconfreason = ?, \n");

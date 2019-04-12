@@ -450,7 +450,7 @@ function audit(){
 				if(row.changetype == 1 || row.changetype == 2){
 					showChangeDlg(row);
 				}else if(row.changetype == 3){
-					
+					showAuditDlg(row);
 				}
 				
 			}else{
@@ -461,6 +461,35 @@ function audit(){
 			}
 		}
 	});
+}
+
+/**
+ * 非常规套餐审核对话框
+ * @param row
+ */
+function showAuditDlg(row){
+	$('#audit_Dialog').dialog({ modal:true });//设置dig属性
+	$('#audit_Dialog').dialog('open').dialog('center').dialog('setTitle', "非常规套餐审核");
+	
+	$('#aaudit').css('display','none');
+	$('#aoper').css('display','none');
+	if(row.apstatus == 2){
+		$('#aoper').css('display','inline-block');
+	}else if(row.apstatus == 1){
+		$('#aaudit').css('display','inline-block');
+		//下一审核人初始化
+		$('#aauditer').combobox('clear');
+		setComboxValue(row);
+	}
+	
+	$('#auditfrom').form('clear');
+	$('#auditfrom').form('load',row);
+	
+	showAuditImage(row);
+	
+	document.getElementById("adebit").checked = "true";
+	$('#auopertype').val(1);
+	initAuditRedioListener();
 }
 
 /**
@@ -506,7 +535,7 @@ function setComboxValue(row) {
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
-				$('#auditer').combobox("loadData", result.rows);
+				$('#auditer,#aauditer').combobox("loadData", result.rows);
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -518,7 +547,7 @@ function setComboxValue(row) {
 }
 
 /**
- * 单选按钮初始化
+ * 单选按钮初始化-变更申请
  */
 function initRedioListener(){
 	$(":radio").click( function(){
@@ -534,6 +563,28 @@ function initRedioListener(){
 			
 			$('#auditer').combobox("readonly",true);
 			$('#auditer').combobox('setValue',null);
+		}
+	});
+}
+
+/**
+ * 单选按钮初始化-非常规套餐
+ */
+function initAuditRedioListener(){
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="aopertype"]:checked').val();
+		if(opertype == 1){
+			$("#aconfreason").textbox('readonly',true);
+			$("#aconfreason").textbox('setValue',null);
+			
+			$('#aauditer').combobox("readonly",false);
+			$('#auopertype').val(1);
+		}else if(opertype == 2){
+			$("#aconfreason").textbox('readonly',false);
+			
+			$('#aauditer').combobox("readonly",true);
+			$('#aauditer').combobox('setValue',null);
+			$('#auopertype').val(2);
 		}
 	});
 }
@@ -581,4 +632,49 @@ function changeConfri(){
  */
 function changeCancel(){
 	$('#change_Dialog').dialog('close');
+}
+
+/**
+ * 非常规套餐-确认
+ */
+function auditConfri(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	
+	parent.$.messager.progress({
+		text : '变更中....'
+	});
+	$('#auditfrom').form('submit', {
+		url : DZF.contextPath + '/contract/contractaudit!updateChange.action',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+				$('#audit_Dialog').dialog('close');
+				reloadData();
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+			parent.$.messager.progress('close');
+		}
+	});
+
+}
+/**
+ * 非常规套餐-取消
+ */
+function auditCancel(){
+	$('#audit_Dialog').dialog('close');
 }
