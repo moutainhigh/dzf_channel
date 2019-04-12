@@ -260,6 +260,13 @@ function clearParams(){
 }
 
 /**
+ * 关闭查询对话框
+ */
+function closeCx(){
+	$("#qrydialog").hide();
+}
+
+/**
  * 列表表格初始化
  */
 function load(){
@@ -430,8 +437,148 @@ function audit(){
 		return;
 	}
 	
-	$('#deduct_Dialog').dialog({ modal:true });//设置dig属性
-	$('#deduct_Dialog').dialog('open').dialog('center').dialog('setTitle',title);
-	
+	$.ajax({
+		url : DZF.contextPath + "/contract/contractaudit!queryById.action",
+		dataType : 'json',
+		data : {
+			"applyid" : rows[0].applyid,
+		},
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				
+				if(row.changetype == 1 || row.changetype == 2){
+					showChangeDlg(row);
+				}else if(row.changetype == 3){
+					
+				}
+				
+			}else{
+				Public.tips({
+					content : rs.msg,
+					type : 2
+				});
+			}
+		}
+	});
 }
 
+/**
+ * 变更审核对话框
+ */
+function showChangeDlg(row){
+	$('#change_Dialog').dialog({ modal:true });//设置dig属性
+	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle', "变更合同审核");
+	
+	$('#audit').css('display','none');
+	$('#oper').css('display','none');
+	if(row.apstatus == 3){
+		$('#oper').css('display','inline-block');
+	}else if(row.apstatus == 1 || row.apstatus == 2){
+		$('#audit').css('display','inline-block');
+		//下一审核人初始化
+		$('#auditer').combobox('clear');
+		setComboxValue(row);
+	}
+	
+	$('#changefrom').form('clear');
+	$('#changefrom').form('load',row);
+	
+	showChangeImage(row);
+	
+	document.getElementById("debit").checked = "true";
+	initRedioListener();
+}
+
+/**
+ * 初始化待审核人下拉
+ * @param id
+ */
+function setComboxValue(row) {
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/contract/contractaudit!queryAuditer.action',
+		data : {
+			applyid : row.applyid,
+		},
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$('#auditer').combobox("loadData", result.rows);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+}
+
+/**
+ * 单选按钮初始化
+ */
+function initRedioListener(){
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="opertype"]:checked').val();
+		if(opertype == 1){
+			$("#confreason").textbox('readonly',true);
+			$("#confreason").textbox('setValue',null);
+			
+			$('#auditer').combobox("readonly",false);
+			
+		}else if(opertype == 2){
+			$("#confreason").textbox('readonly',false);
+			
+			$('#auditer').combobox("readonly",true);
+			$('#auditer').combobox('setValue',null);
+		}
+	});
+}
+
+/**
+ * 变更审核-确认
+ */
+function changeConfri(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	
+	parent.$.messager.progress({
+		text : '变更中....'
+	});
+	$('#changefrom').form('submit', {
+		url : DZF.contextPath + '/contract/contractaudit!updateChange.action',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+				$('#change_Dialog').dialog('close');
+				reloadData();
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+			parent.$.messager.progress('close');
+		}
+	});
+}
+
+/**
+ * 变更审核-取消
+ */
+function changeCancel(){
+	$('#change_Dialog').dialog('close');
+}

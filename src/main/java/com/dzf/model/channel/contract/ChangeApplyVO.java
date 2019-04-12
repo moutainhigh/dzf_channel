@@ -93,6 +93,15 @@ public class ChangeApplyVO extends SuperVO {
 	@FieldAlias("direr")
 	private String vdirector;//总经理（待审核人）
 	
+	@FieldAlias("confreason")
+	private String vconfreason;// 驳回原因
+	
+	@FieldAlias("dr")
+	private Integer dr; // 删除标记
+
+	@FieldAlias("ts")
+	private DZFDateTime ts; // 时间戳
+	
 	// 不存只作展示 begin*************************
 	
 	@FieldAlias("area")
@@ -148,8 +157,54 @@ public class ChangeApplyVO extends SuperVO {
 	
 	@FieldAlias("ndesummny")
 	private DZFDouble ndedsummny;// 扣款总金额（不存库，取历史合同）
+	
+	@FieldAlias("opertype")
+	private Integer iopertype;//操作类型（仅作数据传递）
+	
+	@FieldAlias("auditer")
+	private String vauditer;//下一审核人（仅作数据传递）
 
 	// 不存只作展示 end***************************
+
+	public Integer getIopertype() {
+		return iopertype;
+	}
+
+	public void setIopertype(Integer iopertype) {
+		this.iopertype = iopertype;
+	}
+
+	public String getVauditer() {
+		return vauditer;
+	}
+
+	public void setVauditer(String vauditer) {
+		this.vauditer = vauditer;
+	}
+
+	public String getVconfreason() {
+		return vconfreason;
+	}
+
+	public void setVconfreason(String vconfreason) {
+		this.vconfreason = vconfreason;
+	}
+
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
+	public DZFDateTime getTs() {
+		return ts;
+	}
+
+	public void setTs(DZFDateTime ts) {
+		this.ts = ts;
+	}
 
 	public String getVchannelid() {
 		return vchannelid;
