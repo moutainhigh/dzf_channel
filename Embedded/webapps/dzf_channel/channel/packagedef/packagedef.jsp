@@ -63,7 +63,7 @@
 					<select id="vstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:100px;height:28px;">
 						<option value="-1">全部</option>
-						<option value="4">已保存+已发布</option>
+						<option value="4">待发布+已发布</option>
 						<option value="3">已下架</option>
 					</select>
 				</div>

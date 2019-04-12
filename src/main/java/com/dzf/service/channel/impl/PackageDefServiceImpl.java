@@ -63,7 +63,7 @@ public class PackageDefServiceImpl implements IPackageDefService {
             params.addParam(1);
         }
 //        str.append(" order by vstatus,dpublishdate desc");
-        str.append(" order by sortnum asc");
+        str.append(" order by vstatus asc,sortnum asc");
         PackageDefVO[] vos = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, str.toString(), params);
         if(vos != null && vos.length > 0){
             UserVO uvo = null;

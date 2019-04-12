@@ -288,6 +288,12 @@ function initGrid(){
                     	height: 35,
                     }
                 }
+    		}, {
+    			field : 'doperatedate',
+    			title : '录入日期',
+       			width : 90,
+    			halign : 'center',
+    			align : 'center',
     		}
     	] ]
 	});
