@@ -476,10 +476,11 @@ function add() {
 	$('#countryname').combobox('loadData', {});//清空县option选项  
 	queryAllProvince();
 	initCard();
-	
+	editable();
 	operCard();
     $('.hid').css("display", "none"); 
-	
+    $('.xid').css("display", "none");
+	$('.bid').css("display", ""); 
 	status = "add";
 }
 
@@ -573,6 +574,7 @@ function initCard(){
 				options : {
 					height : 28,
 					required:true,
+					min : 1,
 				}
 			}
 		}, {
@@ -958,6 +960,10 @@ function edit(index){
 		return;
 	}
 	var row = queryByID(erow.matbillid);
+	if(row.status == 2 || row.status ==3){
+		Public.tips({content:'只有待审核或已驳回状态的申请单支持修改',type:2});
+		return;
+	}
 	if(isEmpty(row)){
 		return;
 	}
@@ -969,6 +975,8 @@ function edit(index){
 	initCard();
 	operCard();
 	$('.hid').css("display", "none"); 
+	$('.xid').css("display", "none");
+    $('.bid').css("display", ""); 
 	
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
@@ -1023,6 +1031,11 @@ function del(ths){
 	var row = $('#grid').datagrid('getSelected');
 	if(row==null){
 		Public.tips({content:'请选择数据行',type:2});
+		return;
+	}
+	var rrow= queryByID(row.matbillid);
+	if(rrow.status == 2 || rrow.status ==3){
+		Public.tips({content:'只有待审核或已驳回状态的申请单支持删除',type:2});
 		return;
 	}
 	$.messager.confirm("提示", "你确定删除吗？", function(flag) {
@@ -1106,6 +1119,25 @@ function onSaveSubmit(postdata){
 	}
 }
 
+/**
+ * 详情页面修改
+ */
+function updateData(){
+	var status = $('#stat').val();
+	if(status == "待发货" || status == "已发货"){
+		Public.tips({
+			content: '只有待审核或已驳回状态的申请单支持修改',
+			type: 2
+		});
+		return;
+	}
+	
+	editable();
+	$('.xid').css("display", "none");
+	$('.bid').css("display", ""); 
+	
+}
+
 
 function showDetail(index){
 	status = "show";
@@ -1114,7 +1146,10 @@ function showDetail(index){
 	
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请详情');
 	initCard();
-	$('.hid').css("display", ""); 
+	$('.hid').css("display", "");
+	$('.xid').css("display", "");
+	$('.bid').css("display", "none"); 
+	
 	if(row.status!=4){
 		$('#reject').css("display", "none"); 
 	}
@@ -1151,12 +1186,34 @@ function readonly(){
 	$("#pname").combobox('readonly',true);
 	$("#cityname").combobox('readonly',true);
 	$("#countryname").combobox('readonly',true);
-	$("#address").attr('readonly','readonly');
+	//$("#address").attr('readonly','readonly');
 	$("#receiver").textbox('readonly',true);
 	$("#phone").textbox('readonly',true);
-	$("#memo").attr('readonly','readonly');
+	//$("#memo").attr('readonly','readonly');
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+	
+	document.getElementById('address').disabled = true;
+	document.getElementById('memo').disabled = true;
+}
+
+// var txt = document.getElementById('txt');
+function editable(){
+	$("#code").textbox('readonly',false);
+	$("#stat").textbox('readonly',false);
+	$("#corpnm").textbox('readonly',false);
+	$("#pname").combobox('readonly',false);
+	$("#cityname").combobox('readonly',false);
+	$("#countryname").combobox('readonly',false);
+	$("#receiver").textbox('readonly',false);
+	$("#phone").textbox('readonly',false);
+	$("#applyname").textbox('readonly',false);
+	$("#adate").textbox('readonly',false);
+	
+	var address = document.getElementById('address');
+	address.removeAttribute('disabled');
+	var memo = document.getElementById('memo');
+	memo.removeAttribute('disabled');
 }
 
 /**
@@ -1164,21 +1221,23 @@ function readonly(){
  */
 function doExport(){
 	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content: '当前界面数据为空',
+			type: 2
+		});
 		return;
 	}
-	
-		var columns = $('#grid').datagrid("options").columns[0];
-		var qj = null;
-		var ischeck = $('#qj').is(':checked');
-		if(ischeck){
-			qj = $('#bperiod').datebox('getValue') + '至' + $('#eperiod').datebox('getValue');
-		}else{
-			qj = $('#begdate').datebox('getValue') + '至' + $('#enddate').datebox('getValue');
-		}
-		Business.getFile(DZF.contextPath+ '/matmanage/matstockin!exportAuditExcel.action',
-				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns),'qj':qj,}, true, true);
-
+		
+		var hblcols = $('#grid').datagrid("options").columns[0];//  title名称
+		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
+		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
+			"strlist": JSON.stringify(datarows),
+			'hblcols':JSON.stringify(hblcols), 
+			'cols':JSON.stringify(cols),
+		}, true, true);
+		
 }
+
+
 

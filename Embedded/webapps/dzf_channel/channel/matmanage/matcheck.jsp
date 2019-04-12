@@ -109,7 +109,7 @@
 		<!-- 物料参照对话框end -->
 		
 		<!-- 新增对话框  begin-->
-		<div id="cbDialog" class="easyui-dialog" style="height:550px;width:680px;overflow:hidden;padding-top:18px;" 
+		<div id="cbDialog" class="easyui-dialog" style="height:460px;width:680px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="mat_add" method="post">
 				<input id="matbillid" name="matbillid" type="hidden">

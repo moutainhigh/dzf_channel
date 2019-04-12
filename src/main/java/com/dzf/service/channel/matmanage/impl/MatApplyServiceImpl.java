@@ -31,6 +31,10 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
+import com.sun.org.apache.bcel.internal.generic.INEG;
+import com.sun.org.apache.xpath.internal.operations.And;
+
+import oracle.net.aso.s;
 
 @Service("matapply")
 public class MatApplyServiceImpl implements IMatApplyService {
@@ -124,7 +128,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("   and nvl(cb.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(c.dr, 0) = 0  \n") ; 
 		//sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
-		sql.append("   and cb.pk_corp is not null  \n") ;
+		//sql.append("   and cb.pk_corp is not null  \n") ;
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
 			sql.append(" AND  bi.corpname like ? ");
 			spm.addParam("%" + pamvo.getCorpname() + "%");
@@ -307,6 +311,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@Override
 	public void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type) {
+		
 		if (StringUtil.isEmpty(vo.getPk_materielbill())) {// 新增保存
 			setDefaultValue(vo, uservo);
 			// 1.新增到订单主表VO
@@ -333,10 +338,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 	}
 	
-     private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
+     @SuppressWarnings("unused")
+	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
 		
     	checkIsOperOrder(data.getStatus(),"只有待审批或已驳回状态的申请单支持修改！");
 		String uuid = UUID.randomUUID().toString();
+		String msg = "";
+		String mmsg = "";
+		Integer sumnum = 0;
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielbill(), uuid, 60);
 			String message;
@@ -347,6 +356,22 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			
 			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
 			if("1".equals(type)){//发货
+				if(bvos!=null && bvos.length>0){
+					for (MatOrderBVO mbvo : bvos) {
+						if(mbvo.getOutnum()==null){
+							mbvo.setOutnum(0);
+						}
+						msg = checkIsApply(mbvo.getPk_materiel(),mbvo.getOutnum());
+						mmsg = mmsg + msg;
+						sumnum = sumnum + mbvo.getOutnum();
+					}
+					if(!StringUtil.isEmpty(mmsg)){
+						throw new BusinessException(mmsg);
+					}
+					if(sumnum == 0){
+						throw new BusinessException("总实发数量不可为0");
+					}
+				}
 				String sql = "select pk_logistics,vname logname from cn_logistics "
 		    			+ "where pk_logistics = ? ";
 		    	SQLParameter spm=new SQLParameter();
@@ -384,15 +409,18 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				    	bvo.setPk_materielbill(data.getPk_materielbill());
 				    	singleObjectBO.insertVO("000001", bvo);
 				    	
-				    	//修改物料档案发货数量
-				    	if(!StringUtil.isEmpty(bvo.getPk_materiel())){
-				    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, bvo.getPk_materiel());
-					    	if(mfvo!=null && mfvo.getOutnum()!=null){
-					    		mfvo.setOutnum(mfvo.getOutnum()+bvo.getOutnum());
+				    	if("1".equals(type)){//发货
+				    		//修改物料档案发货数量
+					    	if(!StringUtil.isEmpty(bvo.getPk_materiel())){
+					    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, bvo.getPk_materiel());
+						    	if(mfvo!=null && mfvo.getOutnum()!=null){
+						    		mfvo.setOutnum(mfvo.getOutnum()+bvo.getOutnum());
+						    	}
+						    	String[] updates = {"outnum"};
+						    	singleObjectBO.update(mfvo, updates);
 					    	}
-					    	String[] updates = {"outnum"};
-					    	singleObjectBO.update(mfvo, updates);
 				    	}
+				    
 				    	
 					}
 		    }
@@ -432,6 +460,39 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			throw new BusinessException(msg);
 		} 
 	}
+ 	
+ 	/**
+ 	 * 判断是否能发货
+ 	 * @param id
+ 	 * @param flag 
+ 	 * @param applynum
+ 	 */
+ 	private String checkIsApply(String id,Integer outnum){
+ 		String message = " ";
+ 		StringBuffer sql = new StringBuffer();
+ 		SQLParameter spm = new SQLParameter();
+ 		spm.addParam(id);
+ 		sql.append("select nvl(intnum - outnum,0) stocknum, \n");
+ 		sql.append("   nvl(intnum,0),nvl(outnum,0), \n");
+ 		sql.append("   vname \n");
+ 		sql.append("   from cn_materiel \n");
+ 		sql.append("   where nvl(dr,0) = 0 \n");
+ 		sql.append("   and pk_materiel = ? \n");
+ 		MaterielFileVO mmvo = (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
+ 	    if(mmvo!=null && mmvo.getStocknum()!=null){
+ 	    	if(outnum>0 && mmvo.getStocknum()==0){//库存为0
+ 	    		message = mmvo.getVname()+"已无货"+"<br/>";
+ 	    		return message;
+ 	    	}
+ 	    	if(mmvo.getStocknum()<outnum){//库存不足
+ 	    		message = mmvo.getVname()+"可发货数量为"+mmvo.getStocknum()+"<br/>";
+ 	    		return message;
+ 	    	}
+ 	    	
+ 	    }
+ 	    return "";
+ 	    
+ 	}
 
 	/**
 	 * 设置默认值

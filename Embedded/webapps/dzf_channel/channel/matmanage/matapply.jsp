@@ -155,7 +155,7 @@
 				</div>
                	<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right;margin-top: -37px;">备注：</label>
-						<textarea id="memo" name="memo" class="easyui-validatebox" style="width: 432px;height:51px;"  data-options="prompt:'最多输入200字'"></textarea>
+						<textarea id="memo" name="memo" class="easyui-validatebox" style="width: 432px;height:51px;"  placeholder="最多可输入 200 个字"></textarea>
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:85px;text-align:right">申请人：</label> 
@@ -170,9 +170,17 @@
 				     <input id="reason" name="reason" type="text" style="border:none;background:none;"> 
 				     </span>
 				</div>
-				<div style="float:right;margin-top:11px;margin-right:276px;">
+				<div style="float:right;margin-top:11px;margin-right:302px;">
+					<span class="xid">
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="updateData()">修改</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+					</span>
+				</div>
+				<div style="float:right;margin-top:11px;margin-right:13px;">
+				    <span class="bid">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				    </span>
 				</div>
 			</form>
 		</div>

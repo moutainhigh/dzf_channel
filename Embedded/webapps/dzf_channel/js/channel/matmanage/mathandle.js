@@ -636,10 +636,10 @@ function initCard(){
 			align : 'right',
 			
 		},{
-			width : '50',
+			width : '100',
 			title : '数量',
 			field : 'outnum',
-            halign : 'right',
+            halign : 'center',
 			align : 'right',
 			editor : {
 				type : 'numberbox',

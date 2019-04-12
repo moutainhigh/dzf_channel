@@ -67,6 +67,8 @@ public class MaterielFileVO extends SuperVO {
 	
 	private Integer applynum;//申请数量
 	
+	private Integer stocknum;//库存数量
+	
 	/********不存库**********/
 	
 	public String getPk_materiel() {
@@ -219,6 +221,14 @@ public class MaterielFileVO extends SuperVO {
 
 	public void setApplyname(String applyname) {
 		this.applyname = applyname;
+	}
+	
+	public Integer getStocknum() {
+		return stocknum;
+	}
+
+	public void setStocknum(Integer stocknum) {
+		this.stocknum = stocknum;
 	}
 
 	@Override

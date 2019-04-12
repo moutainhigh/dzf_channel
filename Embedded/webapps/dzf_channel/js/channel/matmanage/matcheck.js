@@ -581,7 +581,7 @@ function initCard(){
 				}
 			}
 		}, {
-			width : '100',
+			width : '130',
 			title : '物料名称',
 			field : 'wlname',
 			halign : 'center',
@@ -599,7 +599,7 @@ function initCard(){
 				}
 			},
 		}, {
-			width : '100',
+			width : '130',
 			title : '单位',
 			field : 'unit',
             halign : 'center',
@@ -611,7 +611,7 @@ function initCard(){
 				}
 			}
 		}, {
-			width : '100',
+			width : '130',
 			title : '申请数量',
 			field : 'applynum',
             halign : 'center',

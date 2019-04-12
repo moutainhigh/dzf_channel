@@ -267,6 +267,9 @@ function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '入库单新增');
 	$('#mat_add').form('clear');
 	$('#matfileid').combobox("readonly",false);
+	$("#num").numberbox({
+	      min :1,
+	});
 	initEvent();
 	calMoney();
 }
