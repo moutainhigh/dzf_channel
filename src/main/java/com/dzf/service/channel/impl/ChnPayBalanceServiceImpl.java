@@ -786,13 +786,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			ChnDetailRepVO repvo) throws DZFWarpException{
 		if (contmap != null && !contmap.isEmpty()) {
 			String key = "1" + repvo.getPk_bill();
-//			if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) == 0
-//					&& (vo.getDr() != null && vo.getDr() == -1)) {
-//				key = "-1" + vo.getPk_bill();
-//			}
-//			if (CommonUtil.getDZFDouble(vo.getNusedmny()).compareTo(DZFDouble.ZERO_DBL) < 0) {
-//				key = "-1" + vo.getPk_bill();
-//			}
 			//加盟商合同类型（null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同）
 			//零扣款的合同：0扣款：patchstatus值为1；0退款：patchstatus值为3；
 			//正常扣款的合同：1：被2补提交的原合同；2：小规模转一般人的合同；4：被5补提交的原合同;5:一般人转小规模的合同
@@ -958,10 +951,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 */
 	private List<ChnDetailRepVO> qryZeroDeduction(List<ChnDetailRepVO> list, QryParamVO paramvo) {
 		List<ChnDetailRepVO> zerolist = new ArrayList<ChnDetailRepVO>();
-//		StringBuffer ids = new StringBuffer();
 		List<String> pklist = new ArrayList<String>();
 		for (ChnDetailRepVO repvo : list) {
-//			ids.append("'" + repvo.getPk_bill() + "',");
 			pklist.add(repvo.getPk_bill());
 		}
 		String addwhere = "";
@@ -978,44 +969,11 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if(dlist != null && dlist.size() > 0){
 			zerolist.addAll(dlist);
 		}
-//		CorpVO corpvo = null;
-//		StringBuffer vmemo = null;
-//		for (ChnDetailRepVO repvo : zlist) {
-//			corpvo = CorpCache.getInstance().get(null, repvo.getPk_corp());
-//			vmemo = new StringBuffer();
-//			if (!StringUtil.isEmpty(repvo.getVmemo()) && repvo.getVmemo().contains("存量客户")
-//					&& corpvo != null) {
-//				vmemo.append("存量客户:").append(corpvo.getUnitname()).append("、")
-//						.append(repvo.getVmemo().substring(5));
-//			} else if (corpvo != null) {
-//				vmemo.append(corpvo.getUnitname()).append(repvo.getVmemo());
-//			}
-//			repvo.setVmemo(vmemo.toString());
-//			repvo.setDr(1);
-//			repvo.setNusedmny(DZFDouble.ZERO_DBL);
-//			list.add(repvo);
-//		}
 		//2、查询零退款数据：
 		List<ChnDetailRepVO> clist = qryZeroChange(list, paramvo, addwhere);
 		if(clist != null && clist.size() > 0){
 			zerolist.addAll(clist);
 		}
-//		for (ChnDetailRepVO crepvo : clist) {
-//			corpvo = CorpCache.getInstance().get(null, crepvo.getPk_corp());
-//			vmemo = new StringBuffer();
-//			if (crepvo.getDr() != null && crepvo.getDr() == 9) {
-//				vmemo.append("合同终止：");
-//			} else {
-//				vmemo.append("合同作废：");
-//			}
-//			if (corpvo != null) {
-//				vmemo.append(corpvo.getUnitname()).append("、").append(crepvo.getVmemo());
-//			}
-//			crepvo.setVmemo(vmemo.toString());
-//			crepvo.setNusedmny(DZFDouble.ZERO_DBL);
-//			crepvo.setDr(-1);
-//			list.add(crepvo);
-//		}
 		return zerolist;
 	}
 	
@@ -1030,10 +988,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private List<ChnDetailRepVO> qryZeroChange(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-//		sql.append(" select t.pk_confrim as pk_bill,substr(t.dchangetime,1,10) as doperatedate,t.pk_corpk as pk_corp," );   
-//		sql.append(" t.vstatus as dr,2 as ipaytype,2 as iopertype,ct.vcontcode as vmemo from cn_contract t" ); 
-//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-//		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0 and (t.vstatus=10 or t.vstatus=9) \n");
 		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
 		sql.append("       substr(t.dchangetime, 1, 10) AS doperatedate,  \n") ; 
 		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
@@ -1055,11 +1009,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-//		if(ids != null && ids.length() > 0){
-//			sql.append(" and t.pk_confrim not in (");
-//			sql.append(ids.toString().substring(0,ids.toString().length()-1));
-//			sql.append(" )");
-//		}
 		if(!StringUtil.isEmpty(addwhere)){
 			sql.append(addwhere);
 		}
@@ -1098,12 +1047,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private List<ChnDetailRepVO> qryZeroDeduct(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-//		sql.append(" select t.pk_confrim as pk_bill,t.deductdata as doperatedate,t.pk_corpk as pk_corp," );   
-//		sql.append(" 2 as ipaytype,2 as iopertype," );  
-//		sql.append(" CONCAT(decode(nvl(ct.isncust,'N'),'Y','存量客户:',''),ct.vcontcode) as vmemo from cn_contract t" );   
-//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-//		sql.append(" WHERE nvl(t.dr,0) = 0 and nvl(ct.dr,0) = 0 and t.pk_corp=? and t.ideductpropor=0  \n");
-//		sql.append(" and (t.vstatus=1 or t.vstatus=9 or t.vstatus=10) \n");
 		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
 		sql.append("       t.deductdata AS doperatedate,  \n") ; 
 		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
@@ -1113,8 +1056,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       ct.pk_corpk,  \n") ; 
 		sql.append("       0.00 AS nusedmny,  \n") ; 
 		sql.append("       1 AS patchstatus,  \n") ; 
-//		sql.append("       CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户:', ''),  \n") ; 
-//		sql.append("              ct.vcontcode) as vmemo  \n") ; 
 		sql.append("       CASE  \n") ; 
 		sql.append("         WHEN nvl(ct.patchstatus, -1) = 2 THEN  \n") ; 
 		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '小规模转一般人')  \n") ; 
@@ -1134,11 +1075,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-//		if(ids != null && ids.length() > 0){
-//			sql.append(" AND t.pk_confrim not in (");
-//			sql.append(ids.toString().substring(0,ids.toString().length()-1));
-//			sql.append(" )");
-//		}
 		if(!StringUtil.isEmpty(addwhere)){
 			sql.append(addwhere);
 		}
