@@ -746,7 +746,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<CorpNameEVO> list = (List<CorpNameEVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpNameEVO.class));
 		if(list != null && list.size() > 0){
-			QueryDeCodeUtils.decKeyUtils(new String[]{"voldname"}, list.toArray(new ChnDetailRepVO[0]), 1);
+			QueryDeCodeUtils.decKeyUtils(new String[]{"voldname"}, list.toArray(new CorpNameEVO[0]), 1);
 			for(CorpNameEVO evo : list){
 				nmap.put(evo.getPk_corp(), evo.getVoldname());
 			}
