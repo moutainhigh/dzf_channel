@@ -331,10 +331,6 @@
 				</div>
 			</div>
 			<!-- 附件信息end -->
-			
-			<!-- 附件信息begin -->
-			<div id="filedoc"></div>
-			<!-- 附件信息end -->
 		
 		</div>
 	</div>
@@ -464,6 +460,253 @@
 			<div id ="afileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
 				<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
 					<ul class="tu_block" id="afiledocs"></ul>
+				</div>
+			</div>
+			<!-- 附件信息end -->
+				
+		</div>
+	</div>
+	<!-- 非常规套餐审核 end -->
+	
+	<!-- 变更详情 begin -->
+	<div id="ichange_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
+		<div style="height:92%; overflow:auto; margin-top:10px;">
+		
+			<form id = "ichangefrom" method="post">
+			 	<!-- 进度展示 begin -->
+				<div class="time_col time_colp11">
+					<label style="width: 110px; text-align:right;">申请状态：</label>
+					<div id = "ihistory" style="display:inline-block"></div>
+				</div>
+				<!-- 进度展示 end -->
+			
+				<!-- 变更信息begin -->
+				<div class="time_col time_colp11 heading">
+					<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">变更信息</label>
+				</div>
+				<div class="time_col time_colp11 " style="margin-top:10px;">
+					<div class="time_col time_colp11 " style="margin-top: 10px;">
+						<div class="decan" style="width:22%; display: inline-block">
+							<label style="width: 110px; text-align:right;">变更原因：</label>
+							<input id="iichangereason" name="changereason" class="easyui-textbox" data-options="readonly:true"
+								style="width:40%;height:28px;text-align:left">
+						</div>
+						<div class="decan" style="width:46%; display: inline-block">
+							<label style="text-align: right; width:65px;">备注：</label>
+							<input id="iichangememo" name="changememo" class="easyui-textbox" data-options="readonly:true"
+								style="width:80%;height:28px;text-align:left">
+						</div>
+					</div>
+					<div class="time_col time_colp11">
+						<div id = "addclass">
+							<div class="decan" style="width:24%; display:inline-block">
+								<label style="text-align: right; width:40%;">终止期间：</label> 
+								<input id="iistperiod" name="stperiod" class="easyui-textbox" style="width:40%;height:28px;text-align:left"
+									data-options="readonly:true" >
+							</div>
+							<div class="decan" style="width:24%; display:inline-block">
+								<div class="time_col">
+									<label style="width: 112px;text-align: right;">变更后服务期限：</label> 
+									<input type="text" id="iibcgeperiod" name="bcgeperiod" class="easyui-textbox" data-options="readonly:true"
+										style="width:70px; height: 28px; " >-
+									<input type="text" id="iiecgeperiod" name="ecgeperiod" class="easyui-textbox" data-options="readonly:true"
+									 	style="width:70px; height: 28px;">
+								</div>
+							</div>
+							<div class="decan" style="width:24%; display:inline-block">
+								<label style="text-align: right; width:40%; white-space: nowrap;">变更后合同金额：</label> 
+								<input id="iinchtlmny" name="nchtlmny" class="easyui-numberbox" 
+									data-options="readonly:true,precision:2,groupSeparator:','"
+									style="width:56%; height: 28px; text-align: left">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- 变更信息end -->
+			
+				<!-- 合同信息 begin -->
+				<div class="time_col time_colp11 heading">
+					<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">合同信息</label>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:48.4%;display: inline-block;">
+						<label style="width:20%;text-align: right;">客户名称：</label>
+						<input id="icorpkna" name="corpkna" class="easyui-textbox" data-options="readonly:true" 
+							style="width:76%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">签订日期：</label>
+						<input id="isigndate" name="signdate" class="easyui-datebox"  data-options="readonly:true" 
+							style="width:56%;height:28px;text-align:left">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">合同编码：</label>
+						<input id="ivccode" name="vccode" class="easyui-textbox" data-options="readonly:true"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">纳税人资格：</label>
+						<input id="ichname" name="chname" class="easyui-textbox" data-options="readonly:true"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;    text-indent: 15px;">代账费(元/月):</label>
+						<input id="inmsmny" name="nmsmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">账本费：</label>
+						<input id="inbmny" name="nbmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:30%;height:28px;text-align:left"></input>
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">合同金额：</label>
+						<input id="intlmny" name="ntlmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:24%;display:inline-block;">
+						<label style="width:40%;text-align: right;">合同周期(月)：</label>
+						<input id="icontcycle" name="contcycle" class="easyui-textbox" data-options="readonly:true" 
+							style="width:56%; height: 28px; text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display:inline-block;">
+						<label style="width:40%;text-align: right;">收款周期(月)：</label>
+						<input id="irecycle" name="recycle" class="easyui-textbox" data-options="readonly:true" 
+							style="width: 56%; height: 28px; text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display:inline-block;">
+						<div class="time_col">
+							<label style="width:111px;text-align: right;">服务期限：</label> 
+							<input type="text" id="ibperiod" name="bperiod" class="easyui-textbox" data-options="readonly:true"
+								style="width:70px; height: 28px; " >-
+							<input type="text" id="ieperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
+							 	style="width:70px; height: 28px;">
+						</div>
+					</div>
+					<div class="decan" style="width: 24%;display:inline-block;">
+						<div class="time_col">
+							<label style="width:40%;text-align: right;">提单日期：</label>
+							<input id="iisubmitdate" name="submitdate" class="easyui-textbox" data-options="readonly:true" 
+								style="width: 56%; height: 28px; text-align:left;">
+						</div>
+					</div>
+				</div>
+				<!-- 合同信息 end -->
+			</form>
+				
+			<!-- 附件信息begin -->
+			<div id ="ifileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
+				<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
+					<ul class="tu_block" id="ifiledocs"></ul>
+				</div>
+			</div>
+			<!-- 附件信息end -->
+		
+		</div>
+	</div>
+	<!-- 变更详情 end -->
+	
+	<!-- 非常规套餐详情 begin -->
+	<div id="iaudit_Dialog" class="easyui-dialog" style="width:1160px;height:80%;background:#FFF" data-options="closed:true">
+		<div style="height:92%; overflow:auto; margin-top:10px;">
+		
+			<form id = "iauditfrom" method="post">
+				<!-- 进度展示 begin -->
+				<div class="time_col time_colp11">
+					<label style="width: 110px; text-align:right;">申请状态：</label>
+					<div id = "ahistory" style="display:inline-block"></div>
+				</div>
+				<!-- 进度展示 end -->
+			
+				<!-- 合同信息 begin -->
+				<div class="time_col time_colp11 heading">
+					<label style="width: 68px;text-align:center;color:#FFF;font-weight: bold;">合同信息</label>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:48.4%;display: inline-block;">
+						<label style="width:20%;text-align: right;">客户名称：</label>
+						<input id="iacorpkna" name="corpkna" class="easyui-textbox" data-options="readonly:true" 
+							style="width:76%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">签订日期：</label>
+						<input id="iasigndate" name="signdate" class="easyui-datebox"  data-options="readonly:true" 
+							style="width:56%;height:28px;text-align:left">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">合同编码：</label>
+						<input id="iavccode" name="vccode" class="easyui-textbox" data-options="readonly:true"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">纳税人资格：</label>
+						<input id="iachname" name="chname" class="easyui-textbox" data-options="readonly:true"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;    text-indent: 15px;">代账费(元/月):</label>
+						<input id="ianmsmny" name="nmsmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">账本费：</label>
+						<input id="ianbmny" name="nbmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:30%;height:28px;text-align:left"></input>
+					</div>
+					<div class="decan" style="width:24%;display: inline-block;">
+						<label style="width:40%;text-align: right;">合同金额：</label>
+						<input id="iantlmny" name="ntlmny" class="easyui-numberbox"  
+							data-options="readonly:true,precision:2,groupSeparator:','"
+							style="width:56%;height:28px;text-align:left;">
+					</div>
+				</div>
+				<div class="time_col time_colp11 ">
+					<div class="decan" style="width:24%;display:inline-block;">
+						<label style="width:40%;text-align: right;">合同周期(月)：</label>
+						<input id="iacontcycle" name="contcycle" class="easyui-textbox" data-options="readonly:true" 
+							style="width:56%; height: 28px; text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display:inline-block;">
+						<label style="width:40%;text-align: right;">收款周期(月)：</label>
+						<input id="iarecycle" name="recycle" class="easyui-textbox" data-options="readonly:true" 
+							style="width: 56%; height: 28px; text-align:left;">
+					</div>
+					<div class="decan" style="width:24%;display:inline-block;">
+						<div class="time_col">
+							<label style="width:111px;text-align: right;">服务期限：</label> 
+							<input type="text" id="iabperiod" name="bperiod" class="easyui-textbox" data-options="readonly:true"
+								style="width:70px; height: 28px; " >-
+							<input type="text" id="iaeperiod" name="eperiod" class="easyui-textbox" data-options="readonly:true"
+							 	style="width:70px; height: 28px;">
+						</div>
+					</div>
+					<div class="decan" style="width: 24%;display:inline-block;">
+						<div class="time_col">
+							<label style="width:40%;text-align: right;">提单日期：</label>
+							<input id="iaisubmitdate" name="submitdate" class="easyui-textbox" data-options="readonly:true" 
+								style="width: 56%; height: 28px; text-align:left;">
+						</div>
+					</div>
+				</div>
+				<!-- 合同信息 end -->
+			</form>
+			
+			<!-- 附件信息begin -->
+			<div id ="iafileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">
+				<div class="entrance_block_tu" id="tpght" style="height:auto;width:99%;">
+					<ul class="tu_block" id="iafiledocs"></ul>
 				</div>
 			</div>
 			<!-- 附件信息end -->

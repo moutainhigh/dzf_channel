@@ -13,6 +13,8 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.contract.ApplyAuditVO;
 import com.dzf.model.channel.contract.ChangeApplyVO;
+import com.dzf.model.channel.contract.RejectHistoryHVO;
+import com.dzf.model.channel.contract.RejectHistoryVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -20,6 +22,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
@@ -253,20 +256,44 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				vo.setCorpkname(corpvo.getUnitname());
 			}
 			//申请状态  1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
-			if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
-				if(!uservo.getCuserid().equals(vo.getVchannelid())){
-					throw new BusinessException("当前操作人员没有待审批任务");
-				}
-			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 2){
-				if(!uservo.getCuserid().equals(vo.getVareaer())){
-					throw new BusinessException("当前操作人员没有待审批任务");
-				}
-			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 3){
-				if(!uservo.getCuserid().equals(vo.getVdirector())){
-					throw new BusinessException("当前操作人员没有待审批任务");
+			if(pamvo.getIopertype() == null){//null：审核查询；1：明细查询；
+				if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
+					if(!uservo.getCuserid().equals(vo.getVchannelid())){
+						throw new BusinessException("当前操作人员没有待审批任务");
+					}
+				}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 2){
+					if(!uservo.getCuserid().equals(vo.getVareaer())){
+						throw new BusinessException("当前操作人员没有待审批任务");
+					}
+				}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 3){
+					if(!uservo.getCuserid().equals(vo.getVdirector())){
+						throw new BusinessException("当前操作人员没有待审批任务");
+					}
 				}
 			}
+			if(pamvo.getIopertype() != null && pamvo.getIopertype() == 1){//查询审批历史
+				ApplyAuditVO[] child =  queryAuditHistory(pamvo, uservo);
+				vo.setChildren(child);
+			}
 			return vo;
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private ApplyAuditVO[] queryAuditHistory(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT *  \n");
+		sql.append("  FROM cn_applyaudit  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND pk_changeapply = ?  \n");
+		sql.append(" ORDER BY ts ASC \n");
+		spm.addParam(pamvo.getPk_changeapply());
+		List<ApplyAuditVO> list = (List<ApplyAuditVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ApplyAuditVO.class));
+		if(list != null){
+			return list.toArray(new ApplyAuditVO[0]);
 		}
 		return null;
 	}
@@ -343,14 +370,16 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_changeapply(), uuid, 120);
 			//1、更新前校验
 			checkBeforeChange(datavo);
-			//2、更新合同相关状态
-			updateContData(datavo);
-			//3、删除审批历史
+			
+			//2、删除审批历史
 			if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 1){
 				deleteAuditHistory(datavo);
 			}
-			//4、记录审批历史
+			//3、记录审批历史
 			saveAuditHistory(datavo, uservo);
+			
+			//4、更新合同相关状态
+			updateContData(datavo, uservo);
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -374,10 +403,32 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		avo.setPk_contract(datavo.getPk_contract());
 		avo.setPk_corp(datavo.getPk_corp());
 		avo.setPk_corpk(datavo.getPk_corpk());
-		avo.setIapplystatus(datavo.getIapplystatus());
+		
+		Integer opertype = datavo.getIopertype();
+		if(opertype == 1){
+			avo.setIapplystatus(datavo.getIapplystatus());
+			if(datavo.getIapplystatus() == 1){
+				avo.setVmemo("渠道已审");
+			}else if(datavo.getIapplystatus() == 2){
+				avo.setVmemo("区总已审");
+			}else if(datavo.getIapplystatus() == 3){
+				avo.setVmemo("总经理已审");
+			}
+		}else if(opertype == 2){
+			avo.setIapplystatus(6);
+			if(datavo.getIapplystatus() == 1){
+				avo.setVmemo("渠道驳回");
+			}else if(datavo.getIapplystatus() == 2){
+				avo.setVmemo("区总驳回");
+			}else if(datavo.getIapplystatus() == 3){
+				avo.setVmemo("总经理驳回");
+			}
+		}
+		
 		avo.setVreason(datavo.getVconfreason());
 		avo.setCoperatorid(uservo.getCuserid());
 		avo.setDoperatedate(new DZFDate());
+		singleObjectBO.saveObject(IDefaultValue.DefaultGroup, avo);
 	}
 	
 	/**
@@ -432,9 +483,10 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	/**
 	 * 更新合同相关状态
 	 * @param data
+	 * @param uservo
 	 * @throws DZFWarpException
 	 */
-	private void updateContData(ChangeApplyVO data) throws DZFWarpException {
+	private void updateContData(ChangeApplyVO data, UserVO uservo) throws DZFWarpException {
 		Integer opertype = data.getIopertype();
 		// 1、更新原合同-申请状态
 		StringBuffer sql = new StringBuffer();
@@ -459,7 +511,14 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				}
 			}
 		} else if (opertype == 2) {
-			sql.append("   SET iversion = 6  \n");
+			//非常规套餐审核
+			if(data.getIchangetype() != null && data.getIchangetype() == 3 ){
+				sql.append("   SET iversion = 6,  \n");
+				sql.append("       vstatus = 7,  \n");
+				sql.append("       vdeductstatus = 7  \n");
+			}else{
+				sql.append("   SET iversion = 6  \n");
+			}
 		}
 		sql.append(" WHERE nvl(dr, 0) = 0  \n");
 		sql.append("   AND pk_corp = ?  \n");
@@ -470,9 +529,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		if (res != 1) {
 			throw new BusinessException("原合同申请状态更新失败");
 		}
-		//只有合同终止审核或作废审核，才更新历史合同-申请状态
+		//2、更新历史合同-申请状态 只有合同终止审核或作废审核，才更新历史合同-申请状态
 		if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
-			// 2、更新历史合同-申请状态
 			sql = new StringBuffer();
 			spm = new SQLParameter();
 			sql.append("UPDATE cn_contract  \n");
@@ -497,7 +555,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				throw new BusinessException("历史合同申请状态更新失败");
 			}
 		}
-		//3、更新变更合同审核-申请状态
+		//3、更新变更合同申请/非常规套餐申请-申请状态
 		sql = new StringBuffer();
 		spm = new SQLParameter();
 		sql.append("UPDATE cn_changeapply  \n");
@@ -520,6 +578,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 					sql.append("   SET iapplystatus = 2,  \n");
 					sql.append("       vareaer = ?  \n");
 					spm.addParam(data.getVauditer());
+					//清空驳回历史
+					deleteRejeHistory(data, uservo);
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
 					sql.append("   SET iapplystatus = 4  \n");
 				}
@@ -531,6 +591,10 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			sql.append("       vchannelid = null, \n");
 			sql.append("       vareaer = null, \n");
 			sql.append("       vdirector = null \n");
+			if(data.getIchangetype() != null && data.getIchangetype() == 3){
+				//添加驳回历史
+				saveRejectHistory(data, uservo);
+			}
 		}
 		sql.append(" WHERE nvl(dr, 0) = 0  \n");
 		sql.append("   AND pk_corp = ?  \n");
@@ -541,6 +605,62 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		if (res != 1) {
 			throw new BusinessException("合同变更申请-申请状态更新失败");
 		}
+	}
+	
+	/**
+	 * 保存驳回原因
+	 * @param paramvo
+	 * @param cuserid
+	 * @throws DZFWarpException
+	 */
+	private void saveRejectHistory(ChangeApplyVO data, UserVO uservo) throws DZFWarpException {
+		//存储驳回原因历史及明细：
+		RejectHistoryHVO hvo = new RejectHistoryHVO();
+		hvo.setPk_contract(data.getPk_contract());
+		hvo.setPk_corp(data.getPk_corp());
+		hvo.setVreason(data.getVconfreason());
+		hvo.setDr(0);
+		hvo.setCoperatorid(uservo.getCuserid());
+		hvo.setDoperatedate(new DZFDate());
+		
+		RejectHistoryVO bvo = new RejectHistoryVO();
+		bvo.setPk_contract(data.getPk_contract());
+		bvo.setPk_corp(data.getPk_corp());
+		bvo.setVreason(data.getVconfreason());//驳回原因
+//		bvo.setVsuggest("");//修改建议
+		bvo.setDr(0);
+		bvo.setCoperatorid(uservo.getCuserid());
+		bvo.setDoperatedate(new DZFDate());
+		
+		hvo.setChildren(new RejectHistoryVO[]{bvo});
+		singleObjectBO.saveObject(IDefaultValue.DefaultGroup, hvo);
+	}
+	
+	/**
+	 * 删除驳回历史
+	 * @param data
+	 * @param uservo
+	 * @throws DZFWarpException
+	 */
+	private void deleteRejeHistory(ChangeApplyVO data, UserVO uservo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("DELETE FROM cn_rejecthistory  \n") ;
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_contract = ?  \n") ; 
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(data.getPk_contract());
+		spm.addParam(data.getPk_corp());
+		singleObjectBO.executeUpdate(sql.toString(), spm);
+		sql = new StringBuffer();
+		spm = new SQLParameter();
+		sql.append("DELETE FROM cn_rejecthistory_h  \n") ;
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND pk_contract = ?  \n") ; 
+		sql.append("   AND pk_corp = ?  \n");
+		spm.addParam(data.getPk_contract());
+		spm.addParam(data.getPk_corp());
+		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 
 }

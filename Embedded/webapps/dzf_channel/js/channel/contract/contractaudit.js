@@ -360,7 +360,7 @@ function load(){
 			title : '合同编码',
 			halign:'center',
 			field : 'vccode',
-//			formatter:codeLink,
+			formatter:codeLink,
 		}, {
 			width : '80',
 			title : '开始日期',
@@ -442,6 +442,7 @@ function audit(){
 		dataType : 'json',
 		data : {
 			"applyid" : rows[0].applyid,
+			"opertype"  : -1,
 		},
 		success : function(rs) {
 			if (rs.success) {
@@ -481,6 +482,8 @@ function showAuditDlg(row){
 		$('#aauditer').combobox('clear');
 		setComboxValue(row);
 	}
+	$('#aauditer').combobox("readonly",false);
+	$("#aconfreason").textbox('readonly',true);
 	
 	$('#auditfrom').form('clear');
 	$('#auditfrom').form('load',row);
@@ -509,6 +512,8 @@ function showChangeDlg(row){
 		$('#auditer').combobox('clear');
 		setComboxValue(row);
 	}
+	$('#auditer').combobox("readonly",false);
+	$("#confreason").textbox('readonly',true);
 	
 	$('#changefrom').form('clear');
 	$('#changefrom').form('load',row);
@@ -678,3 +683,125 @@ function auditConfri(){
 function auditCancel(){
 	$('#audit_Dialog').dialog('close');
 }
+
+/**
+ * 合同编码格式化
+ * @param value
+ * @param row
+ * @param index
+ */
+function codeLink(value,row,index){
+	return '<a href="javascript:void(0)" style="color:blue"  onclick="showInfo(' + index + ')">'+value+'</a>';
+}
+
+/**
+ * 合同明细查看
+ * @param index
+ */
+function showInfo(index){
+	var row = $('#grid').datagrid('getData').rows[index];
+	$.ajax({
+		url : DZF.contextPath + "/contract/contractaudit!queryById.action",
+		dataType : 'json',
+		data : {
+			"applyid" : row.applyid,
+			"opertype"  : 1,
+		},
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				
+				if(row.changetype == 1 || row.changetype == 2){
+					showChangeInfoDlg(row);
+				}else if(row.changetype == 3){
+					showAuditInfoDlg(row);
+				}
+				
+			}else{
+				Public.tips({
+					content : rs.msg,
+					type : 2
+				});
+			}
+		}
+	});
+}
+
+/**
+ * 合同变更详情
+ * @param row
+ */
+function showChangeInfoDlg(row){
+	$('#ichange_Dialog').dialog({ modal:true });//设置dig属性
+	$('#ichange_Dialog').dialog('open').dialog('center').dialog('setTitle', "变更合同详情");
+	
+	$('#ichangefrom').form('clear');
+	$('#ichangefrom').form('load',row);
+	showChangeDetImage(row);
+	
+	$("#ihistory").empty();
+	$("#ihistory").append("已申请");
+	var children = row.children;
+	if(children != null && children.length > 0){
+		for(var i = 0; i < children.length; i++){
+			$("#ihistory").append("--->").append(children[i].memo);
+		}
+		if(row.apstatus == 1){
+			$("#ihistory").append("--->渠道待审");
+		}else if(row.apstatus == 2){
+			$("#ihistory").append("--->渠总待审");
+		}else if(row.apstatus == 3){
+			$("#ihistory").append("--->总经理待审");
+		}else if(row.apstatus == 4){
+			$("#ihistory").append("--->运营待审");
+		}
+	}else{
+		if(row.apstatus == 1){
+			$("#ihistory").append("--->渠道待审");
+		}else if(row.apstatus == 2){
+			$("#ihistory").append("--->渠总待审");
+		}else if(row.apstatus == 3){
+			$("#ihistory").append("--->总经理待审");
+		}else if(row.apstatus == 4){
+			$("#ihistory").append("--->运营待审");
+		}
+	}
+}
+
+/**
+ * 非常规套餐详情
+ * @param row
+ */
+function showAuditInfoDlg(row){
+	$('#iaudit_Dialog').dialog({ modal:true });//设置dig属性
+	$('#iaudit_Dialog').dialog('open').dialog('center').dialog('setTitle', "非常规套餐申请详情");
+	
+	$('#iauditfrom').form('clear');
+	$('#iauditfrom').form('load',row);
+	showAuditDetImage(row);
+	
+	$("#ahistory").empty();
+	$("#ahistory").append("已申请");
+	var children = row.children;
+	if(children != null && children.length > 0){
+		for(var i = 0; i < children.length; i++){
+			$("#ihistory").append("--->").append(children[i].memo);
+		}
+		if(row.apstatus == 1){
+			$("#ahistory").append("--->渠道待审");
+		}else if(row.apstatus == 2){
+			$("#ahistory").append("--->渠总待审");
+		}else if(row.apstatus == 4){
+			$("#ahistory").append("--->运营待审");
+		}
+	}else{
+		if(row.apstatus == 1){
+			$("#ahistory").append("--->渠道待审");
+		}else if(row.apstatus == 2){
+			$("#ahistory").append("--->渠总待审");
+		}else if(row.apstatus == 4){
+			$("#ahistory").append("--->运营待审");
+		}
+	}
+}
+

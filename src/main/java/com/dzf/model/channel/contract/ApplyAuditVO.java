@@ -51,6 +51,17 @@ public class ApplyAuditVO extends SuperVO {
 
     @FieldAlias("ts")
     private DZFDateTime ts; // 时间戳
+    
+    @FieldAlias("memo")
+    private String vmemo;//备注
+
+	public String getVmemo() {
+		return vmemo;
+	}
+
+	public void setVmemo(String vmemo) {
+		this.vmemo = vmemo;
+	}
 
 	public String getPk_applyaudit() {
 		return pk_applyaudit;
