@@ -508,10 +508,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("   AND t.pk_contract = ? \n") ;//原合同合同主键
 			spm.addParam(paramvo.getPk_contract());
 		}
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 1){
-			sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 \n") ;
-		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){
-			sql.append(" AND ( nvl(t.patchstatus, 0) = 2 OR nvl(t.patchstatus, 0) = 5) \n") ;
+		//qrytype 1：正常提单；2：纳税人变更；3：待变更；
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
+			if(paramvo.getQrytype() == 1){
+				sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 \n") ;
+			}else if(paramvo.getQrytype() == 2){
+				sql.append(" AND ( nvl(t.patchstatus, 0) = 2 OR nvl(t.patchstatus, 0) = 5) \n") ;
+			}else if(paramvo.getQrytype() == 3){
+				sql.append(" AND cn.pk_confrim IN ( \n");
+				sql.append("SELECT pk_confrim  \n") ;
+				sql.append("  FROM cn_changeapply  \n") ; 
+				sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+				sql.append("   AND ichangetype IN (1, 2)  \n") ; 
+				sql.append("   AND iapplystatus = 4  \n");
+				sql.append(" ) \n");
+			}
+			
 		}
 		if(paramvo.getCorptype() != null){
 			if(paramvo.getCorptype() == 1){
@@ -534,7 +546,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
 			sql.append(paramvo.getVqrysql());
 		}
-		sql.append(" ORDER BY t.dsubmitime desc \n");
+		//非常规套餐数据过滤：1、非常规套餐；2、常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
+		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 AND t.vstatus != 0 )  \n") ; 
+		sql.append("    OR ( nvl(t.iyear,0) = 1 AND t.vstatus = 5 AND t.pk_contract IN  \n") ; 
+		sql.append("   (SELECT pk_contract  \n") ; 
+		sql.append("    FROM cn_changeapply  \n") ; 
+		sql.append("   WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("     AND ichangetype = 3  \n") ; 
+		sql.append("     AND iapplystatus = 4  \n") ; 
+		sql.append("   )))  \n") ; 
+		
+		sql.append(" ORDER BY t.dsubmitime DESC \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

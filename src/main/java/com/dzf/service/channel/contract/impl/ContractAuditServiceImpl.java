@@ -608,13 +608,14 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
 					sql.append("   SET iapplystatus = 2,  \n");
 					sql.append("       vareaer = ?  \n");
+					spm.addParam(data.getVauditer());
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
 					sql.append("   SET iapplystatus = 3,  \n");
 					sql.append("       vdirector = ?  \n");
+					spm.addParam(data.getVauditer());
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
 					sql.append("   SET iapplystatus = 4  \n");
 				}
-				spm.addParam(data.getVauditer());
 			//2、非常规套餐审核
 			}else if(data.getIchangetype() != null && data.getIchangetype() == 3){
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核

@@ -907,16 +907,20 @@ function formatDocLink(val,row,index){
 
 /**
  * 标签查询
- * @param type  1：待审核；2：存量待审；
+ * @param type  1：待审核；2：存量待审；3：待变更；
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	clearQryParam(queryParams);
-	if(type == 2){
-		queryParams.isncust = "Y";
+	if(type == 3){
+		queryParams.qtype = 3;
+	}else{
+		if(type == 2){
+			queryParams.isncust = "Y";
+		}
+		queryParams.destatus = 5;
 	}
-	queryParams.destatus = 5;
 	grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');

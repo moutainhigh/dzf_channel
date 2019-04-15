@@ -55,6 +55,12 @@
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
 							onclick="qryData(1)">待审核</a>
 					</div>
+					
+					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
+							onclick="qryData(3)">待变更</a>
+					</div>
+					
 					<div style="margin:4px 0px 0px 10px;float:right;font-size:14px;">
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; margin-right:15px;" 
 							onclick="qryData(2)">存量待审</a>
