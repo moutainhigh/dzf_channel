@@ -3,6 +3,7 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -63,7 +65,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	}
 
 	@Override
-	public void updateStatusById(MatOrderVO data,UserVO uservo) {
+	public void updateStatusById(MatOrderVO data,UserVO uservo,MatOrderBVO[] bvos) {
 		
 		String uuid = UUID.randomUUID().toString();
         try {
@@ -75,6 +77,19 @@ public class MatCheckServiceImpl implements IMatCheckService {
 			}
 			
 			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
+			//修改申请通过数
+			String[] updatets = {"succnum"};
+			if(bvos!=null && bvos.length>0){
+				for (MatOrderBVO bvo : bvos) {
+					if(data.getVstatus()==2){//审核通过
+						if(bvo.getSuccnum()==null){
+							bvo.setSuccnum(0);
+						}
+						bvo.setSuccnum(bvo.getSuccnum()+bvo.getApplynum());
+					}
+					singleObjectBO.update(bvo, updatets);
+				}
+			}
 			
 			data.setAuditerid(uservo.getCuserid());
 			data.setAuditdate(new DZFDate());

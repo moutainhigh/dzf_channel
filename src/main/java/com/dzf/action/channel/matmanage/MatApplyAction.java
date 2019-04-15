@@ -43,6 +43,9 @@ import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
+import com.sun.tools.javac.code.Type.ForAll;
+
+import oracle.net.aso.i;
 
 /**
  * 物料申请
@@ -235,6 +238,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			String type = getRequest().getParameter("type");
+			String stype = getRequest().getParameter("stype");
 			if("1".equals(type)){
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
 			}else{
@@ -254,9 +258,15 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if (bodyVOs == null || bodyVOs.length == 0) {
 				throw new BusinessException("物料数据不能为空");
 			}
-			matapply.saveApply(vo,uservo,bodyVOs,type);
-			json.setMsg("保存成功");
-			json.setSuccess(true);
+			List<MatOrderBVO> bvos = matapply.saveApply(vo,uservo,bodyVOs,type,stype);
+			
+			if(bvos!=null && bvos.size()>0){//需要提示信息
+				json.setMsg("提示");
+				json.setRows(bvos);
+			}else{
+				json.setMsg("保存成功");
+				json.setSuccess(true);
+			}
 		}catch (Exception e) {
 			json.setMsg("保存失败");
 			json.setSuccess(false);
@@ -325,13 +335,18 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		JSONArray array = (JSONArray) JSON.parseArray(strlist);
 		
 		String hblcols = getRequest().getParameter("hblcols");
-		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);//title
+		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);//title+field
+		/*JSONArray hblcolsarray = new JSONArray();
+		for (int i=5;i<hblarray.size()-8;i++) {
+			hblcolsarray.add(hblarray.get(i));
+		}*/
+		
 		
 		String cols = getRequest().getParameter("cols");
 		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);//字段编码
 		
 		//1、导出字段名称
-		List<String> exptitlist = new ArrayList<String>();
+		List<String> exptitlist = new ArrayList<String>();//大区——申请，实发...发货时间
 		exptitlist.add("大区");
 		exptitlist.add("渠道经理");
 		exptitlist.add("省/市");
@@ -339,20 +354,28 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		exptitlist.add("合同编号");
 		
 		//2、导出字段编码
-		List<String> expfieidlist = new ArrayList<String>();
+		List<String> expfieidlist = new ArrayList<String>();//aname...applynum1...——>adate
 		//3、title名称
-		List<String> hbltitlist = new ArrayList<String>();
+		List<String> hbltitlist = new ArrayList<String>();//[档案袋/个, 发票盒/盒, 易拉宝/个, 合同档案/份, 收货信息, 快递信息]
 		//4、title字段下标
 		List<Integer> hblindexlist = new ArrayList<Integer>();
 		//5、除了物料信息之外的字段名称
 		List<String> hbhtitlist = new ArrayList<String>();
+		List<String> hbhtitlist2 = new ArrayList<String>();
 		hbhtitlist.add("大区");
 		hbhtitlist.add("渠道经理");
 		hbhtitlist.add("省/市");
 		hbhtitlist.add("加盟商");
 		hbhtitlist.add("合同编号");
-		hbhtitlist.add("");
-		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,5,6,7,8};
+		
+		hbhtitlist2.add("备注");
+		hbhtitlist2.add("状态");
+		hbhtitlist2.add("驳回原因");	
+		hbhtitlist2.add("录入时间");
+		hbhtitlist2.add("申请人");
+		hbhtitlist2.add("申请时间");
+		Integer[] hbhindexs = new Integer[]{0,1,2,3,4};
+		Integer[] hbhindexs2 = new Integer[]{13,14,15,16,17};
 		//7、字符集合
 		List<String> strslist = new ArrayList<String>();
 		strslist.add("aname");
@@ -361,28 +384,54 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		strslist.add("corpname");
 		strslist.add("code");
 		//8、物料名称+单位集合
-		List<String> mnylist = new ArrayList<String>();
-		mnylist.add("wlname"+"/"+"unit");
+		List<String> nalist = new ArrayList<String>();//wlname...applynum1...adate
+		nalist.add("wlname");
+		nalist.add("unit");
+		
+		//9、合并列集合
+		List<String> tlist = new ArrayList<String>();
+		tlist.add("");
 		
 		Map<String, String> field = null;
 		
-		for(int i = 0; i < colsarray.size(); i++){
-			
-			expfieidlist.add(String.valueOf(colsarray.get(i)));
-			if(i % 2 == 0){
-				strslist.add(String.valueOf(colsarray.get(i)));
-				exptitlist.add("申请");
-			}else{
-				mnylist.add(String.valueOf(colsarray.get(i)));
-				exptitlist.add("实发");
-			}
-		}
-		int j = 9;
-		for(int i = 0; i < hblcolsarray.size(); i++){
+		for(int i = 7; i < hblcolsarray.size()-6; i++){
 			field = (Map<String, String>) hblcolsarray.get(i);
 			hbltitlist.add(String.valueOf(field.get("title")));
-			hblindexlist.add(i+j);
-			j++;
+			
+            if(String.valueOf(field.get("title")).contains("/") 
+            		&& !"省/市".equals(String.valueOf(field.get("title")))){
+            	//strslist.add(String.valueOf(colsarray.get(i)));
+				exptitlist.add("申请");
+				//nalist.add(String.valueOf(colsarray.get(i)));
+				exptitlist.add("实发");
+            }
+           
+		}
+		int n = 5;
+		for(int j=0;j<hbltitlist.size();j++){
+			if(j>=0 && j<= hbltitlist.size()-2){
+				hblindexlist.add(n);
+			}
+			else if(j==hbltitlist.size()-1){
+				hblindexlist.add(n+1);
+			}
+			n=n+2;
+		}
+		
+		exptitlist.add("收货人");
+		exptitlist.add("联系电话");
+		exptitlist.add("地址");
+		exptitlist.add("快递公司");
+		exptitlist.add("金额");
+		exptitlist.add("单号");
+		exptitlist.add("发货时间");
+		
+		
+		
+		for(int i = 2; i < colsarray.size(); i++){
+			expfieidlist.add(String.valueOf(colsarray.get(i)));
+			//strslist.add(String.valueOf(colsarray.get(i)));
+			//nalist.add(String.valueOf(colsarray.get(i)));
 		}
 		
 		
@@ -406,10 +455,10 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			//byte[] length = ex.expMatApply("物料申请表", exptitlist, hbltitlist, hblindexlist, hbhtitlist,
-					//hbhindexs, array, toClient, "",strslist,mnylist);
-			//String srt2 = new String(length, "UTF-8");
-		//	response.addHeader("Content-Length", srt2);
+			byte[] length = ex.expMatApply("物料申请表", exptitlist,expfieidlist, hbltitlist, hblindexlist, hbhtitlist,hbhtitlist2,
+					hbhindexs, hbhindexs2,array, toClient, "",strslist,nalist);
+			String srt2 = new String(length, "UTF-8");
+			response.addHeader("Content-Length", srt2);
 		} catch (IOException e) {
 			log.error(e);
 		} finally {

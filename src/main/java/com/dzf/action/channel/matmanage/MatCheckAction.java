@@ -2,6 +2,7 @@ package com.dzf.action.channel.matmanage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -9,7 +10,10 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.Grid;
@@ -19,6 +23,8 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.matmanage.IMatCheckService;
 import com.dzf.service.pub.IPubService;
 
@@ -70,6 +76,15 @@ private Logger log = Logger.getLogger(this.getClass());
 			checkUser(uservo);
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
+			
+			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
+			String body = getRequest().getParameter("body"); // 物料数据
+			body = body.replace("}{", "},{");
+			body = "[" + body + "]";
+			JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+			MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
+					JSONConvtoJAVA.getParserConfig());
+			
 			if(vo!=null){
 				 MatOrderVO mvo=matcheck.queryById(vo.getPk_materielbill());
 				 if(!StringUtil.isEmpty(vo.getVreason())){
@@ -78,7 +93,7 @@ private Logger log = Logger.getLogger(this.getClass());
 				 if(vo.getVstatus()!=null){
 				     mvo.setVstatus(vo.getVstatus());
 				 }
-				 matcheck.updateStatusById(mvo,uservo);
+				 matcheck.updateStatusById(mvo,uservo,bodyVOs);
 			}
 			json.setMsg("审核成功");
 			json.setSuccess(true);

@@ -111,7 +111,8 @@
 			<form id="mat_add" method="post">
 				<input id="matbillid" name="matbillid" type="hidden">
 				<input id="updatets" name="updatets" type="hidden">
-				<input id="uid" name="uid" type="hidden">
+				<input id="debegdate" name="debegdate" type="hidden">
+				<input id="deenddate" name="deenddate" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="text-align:right; width: 85px;">合同编号：</label> 
 						<input id="code" name="code" class="easyui-textbox" style="width:286px;height:28px;"/>
