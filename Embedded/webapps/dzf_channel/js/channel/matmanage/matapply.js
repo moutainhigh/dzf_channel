@@ -477,6 +477,7 @@ function add() {
 	queryAllProvince();
 	initCard();
 	editable();
+	getLastQuarter();//获取上个季度日期
 	operCard();
     $('.hid').css("display", "none"); 
     $('.xid').css("display", "none");
@@ -1071,6 +1072,7 @@ function del(ths){
  * 保存
  */
 function onSave(){
+	
 	endBodyEdit();
 	
 	var postdata = new Object();
@@ -1096,6 +1098,50 @@ function onSaveSubmit(postdata){
 			queryParams : postdata,
 			success : function(result) {
 				var result = eval('(' + result + ')');
+				var rows = result.rows;
+				if(rows!=undefined){
+					for(var j = 0;j< rows.length; j++){
+						if(result.msg == "提示"){
+							
+							$.messager.confirm("注意", "该加盟商"+rows[j].wlname+
+									"上季度申请数"+rows[j].sumapply+"提单审核通过数"+rows[j].sumsucc, function(flag) {
+								if (flag) {
+									
+								} else {
+									return null;
+								}
+							});
+						}
+					   if(j==rows.length-1){
+						 //申请
+							$.ajax({
+								type : "POST",
+								dataType : "json",
+								url : DZF.contextPath +  '/matmanage/matapply!save.action',
+								data : {
+									body : body,
+									stype : 1,
+								},
+								success : function(rs) {
+									if (rs.success) {
+										$('#cbDialog').dialog('close');
+										load(0);
+										Public.tips({
+											content : result.msg,
+										});
+									} else {
+										Public.tips({
+											content : result.msg,
+											type : 2
+										});
+									}
+								}
+							});
+					   }
+					}
+				}
+				
+				
 				if (result.success) {
 					$('#cbDialog').dialog('close');
 					load(0);
@@ -1179,6 +1225,27 @@ function showDetail(index){
 	
 }
 
+/**
+ * 获取上个季度日期
+ */
+function getLastQuarter(){ 
+	
+	var dayMSec = 24 * 3600 * 1000;  
+	var today = new Date();  
+
+    //得到上一个季度的第一天  
+    var lastQuarterFirstDay = new Date(today.getFullYear() , today.getMonth() - 3 , 1);  
+    //得到本月第一天  
+    var nowMonthFirstDay = new Date(today.getFullYear() , today.getMonth(), 1);  
+    //得到上一个季度的最后一天的毫秒值  
+    var lastQuarterLastDayMSec = nowMonthFirstDay.getTime() - 1 * dayMSec;  
+    var lastQuarterLastDay = new Date(lastQuarterLastDayMSec);  
+      
+    document.getElementById("debegdate").value = lastQuarterFirstDay;
+    document.getElementById("deenddate").value = lastQuarterLastDay;
+}  
+
+
 function readonly(){
 	$("#code").textbox('readonly',true);
 	$("#stat").textbox('readonly',true);
@@ -1197,7 +1264,6 @@ function readonly(){
 	document.getElementById('memo').disabled = true;
 }
 
-// var txt = document.getElementById('txt');
 function editable(){
 	$("#code").textbox('readonly',false);
 	$("#stat").textbox('readonly',false);
@@ -1228,8 +1294,8 @@ function doExport(){
 		});
 		return;
 	}
+		var hblcols = $('#grid').datagrid("options").columns[0];//  title+field名称
 		
-		var hblcols = $('#grid').datagrid("options").columns[0];//  title名称
 		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
 		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
 			"strlist": JSON.stringify(datarows),

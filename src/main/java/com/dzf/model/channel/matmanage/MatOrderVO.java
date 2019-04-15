@@ -101,6 +101,12 @@ public class MatOrderVO extends SuperVO {
 	@FieldAlias("eperiod")
 	private String applyenddate;//申请结束日期
 	
+	@FieldAlias("debegdate")
+	private String dedubegdate;//扣款开始日期
+	
+	@FieldAlias("deenddate")
+	private String deduenddate;//扣款结束日期
+	
 	@FieldAlias("aname")
     private String areaname;//大区名称
 	
@@ -112,6 +118,12 @@ public class MatOrderVO extends SuperVO {
     private Integer outnum;//发货数量
 	
 	private Integer applynum;//申请数量
+	
+	private Integer succnum;//申请通过数量
+	
+	private Integer sumapply;//上季度申请总数量
+	
+	private Integer sumsucc;//上季度申请通过总数量
 	
 	private String logname; // 快递公司名称
 	
@@ -134,6 +146,12 @@ public class MatOrderVO extends SuperVO {
 	
 	@FieldAlias("unit")
 	private String vunit;//单位
+	//审核通过+终止-作废
+	private Integer dedunum;//上季度加盟商合同审核通过数
+	
+	private Integer num1;//终止+通过
+	
+	private Integer num2;//作废
 	
 	/*******仅作展示，不存库*******/
 	//0-全部、1-待审核、2-待发货、3-已发货、4-已驳回
@@ -521,6 +539,78 @@ public class MatOrderVO extends SuperVO {
 
 	public void setDename(String dename) {
 		this.dename = dename;
+	}
+	
+	public String getDedubegdate() {
+		return dedubegdate;
+	}
+
+	public void setDedubegdate(String dedubegdate) {
+		this.dedubegdate = dedubegdate;
+	}
+
+	public String getDuduenddate() {
+		return deduenddate;
+	}
+
+	public void setDuduenddate(String duduenddate) {
+		this.deduenddate = duduenddate;
+	}
+	
+	public String getDeduenddate() {
+		return deduenddate;
+	}
+
+	public void setDeduenddate(String deduenddate) {
+		this.deduenddate = deduenddate;
+	}
+	
+	public Integer getSuccnum() {
+		return succnum;
+	}
+
+	public void setSuccnum(Integer succnum) {
+		this.succnum = succnum;
+	}
+
+	public Integer getDedunum() {
+		return dedunum;
+	}
+
+	public void setDedunum(Integer dedunum) {
+		this.dedunum = dedunum;
+	}
+	
+	public Integer getNum1() {
+		return num1;
+	}
+
+	public void setNum1(Integer num1) {
+		this.num1 = num1;
+	}
+
+	public Integer getNum2() {
+		return num2;
+	}
+
+	public void setNum2(Integer num2) {
+		this.num2 = num2;
+	}
+	
+	public Integer getSumapply() {
+		return sumapply;
+	}
+
+	public void setSumapply(Integer sumapply) {
+		this.sumapply = sumapply;
+	}
+
+	public Integer getSumsucc() {
+		return sumsucc;
+	}
+
+	public void setSumsucc(Integer sumsucc) {
+		this.sumsucc = sumsucc;
 	}
 
 	@Override

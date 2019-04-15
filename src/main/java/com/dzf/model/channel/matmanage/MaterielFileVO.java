@@ -29,7 +29,7 @@ public class MaterielFileVO extends SuperVO {
 	private DZFDouble ncost;//成本价
 	
 	@FieldAlias("apply")
-	private Integer isappl;//是否申请
+	private Integer isappl;//是否申请  0 ：否  1 ：是
 	
 	@FieldAlias("sseal")
 	private Integer isseal;//是否封存  0-全部  1-启用  2-封存

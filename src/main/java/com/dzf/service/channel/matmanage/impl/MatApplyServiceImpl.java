@@ -1,7 +1,14 @@
 package com.dzf.service.channel.matmanage.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,8 +38,10 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.sun.org.apache.bcel.internal.generic.INEG;
 import com.sun.org.apache.xpath.internal.operations.And;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import oracle.net.aso.s;
 
@@ -309,34 +318,129 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
-	public void saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type) {
+	public List<MatOrderBVO> saveApply(MatOrderVO vo, UserVO uservo,
+			MatOrderBVO[] bvos,String type,String stype) {
 		
-		if (StringUtil.isEmpty(vo.getPk_materielbill())) {// 新增保存
-			setDefaultValue(vo, uservo);
-			// 1.新增到订单主表VO
-			vo.setPk_corp("000001");
-			if ("市辖区".equals(vo.getCityname()) || "市".equals(vo.getCityname()) || "县".equals(vo.getCityname())) {
-				vo.setCitycounty(vo.getPname() + "-" + vo.getCountryname());
-			} else {
-				vo.setCitycounty(vo.getPname() + "-" + vo.getCityname() + "-" + vo.getCountryname());
+		List<MatOrderBVO> bvosList = new ArrayList<>();
+		
+		if("1".equals(stype)){//直接保存
+			save(vo, uservo, bvos, type);
+			return null;
+		}else{
+			
+			 //获取上个季度时间
+			 try {
+				String lastQuarter = getLastQuarter(vo.getDedubegdate(), vo.getDuduenddate());
+				String[] quarter = lastQuarter.split(",");
+				vo.setDedubegdate(quarter[0]);
+				vo.setDuduenddate(quarter[1]);
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-			vo = (MatOrderVO) singleObjectBO.insertVO("000001", vo);
-			// 2.新增到订单子表VO
-			for (MatOrderBVO bvo : bvos) {
-				bvo.setPk_materielbill(vo.getPk_materielbill());
-				singleObjectBO.insertVO("000001", bvo);
+			
+			for (MatOrderBVO mbvo :bvos) {
+				MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
+				if(mvo!=null && mvo.getIsappl()!=null){
+					if(mvo.getIsappl() == 1){//勾选了申请条件
+						Integer passNum = null;
+						StringBuffer sql = new StringBuffer();
+						SQLParameter spm=new SQLParameter();
+						spm.addParam(vo.getFathercorp());
+						
+						sql.append("  SELECT  COUNT  (CASE WHEN \n");
+						sql.append("       c.vdeductstatus = 1 AND c.vdeductstatus = 9 \n");
+						sql.append("       THEN 1 ELSE NULL \n");
+						sql.append("       END) num1, \n");
+						sql.append("       COUNT (CASE WHEN c.vdeductstatus = 10 \n");
+						sql.append("       THEN 1 ELSE NULL \n");
+						sql.append("       END) num2 \n");
+						sql.append("       FROM cn_contract c \n");
+						sql.append("       where nvl(c.dr,0) = 0  \n");
+						sql.append("        and c.pk_corp = ? \n");
+						
+						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+							sql.append(" and c.deductdata >= ? ");
+							spm.addParam(vo.getDedubegdate());
+						}
+						if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+							sql.append(" and c.deductdata <= ? ");
+							spm.addParam(vo.getDeduenddate());
+						}
+						MatOrderVO mmvo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
+					    
+						if(mmvo!=null && mmvo.getNum1()!=null 
+								 && mmvo.getNum2()!=null){
+							 passNum = mmvo.getNum1()-mmvo.getNum2();
+						}
+						
+						StringBuffer csql = new StringBuffer();
+						SQLParameter cspm=new SQLParameter();
+						cspm.addParam(vo.getFathercorp());
+						cspm.addParam(mbvo.getPk_materiel());
+						csql.append("  select b.vname,b.applynum,b.outnum,b.succnum \n");
+						csql.append("      from cn_materielbill l  \n");
+						csql.append("      left join cn_materielbill_b b on  \n");
+						csql.append("      l.pk_materielbill = b.pk_materielbill \n");
+						csql.append("      where nvl(l.dr,0) = 0 \n");
+						csql.append("      and nvl(b.dr,0) = 0 \n");
+						csql.append("      and l.fathercorp = ? \n");
+						csql.append("      and b.pk_materiel = ? \n");
+						
+						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+							sql.append(" and l.deliverdate >= ? ");
+							spm.addParam(vo.getDedubegdate());
+						}
+						if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+							sql.append(" and l.deliverdate <= ? ");
+							spm.addParam(vo.getEnddate());
+						}
+						List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
+						
+						Integer sumapply = 0;//上季度申请数量
+						Integer sumout = 0;//上季度实发数量
+						Integer sumsucc = 0;//上季度申请通过数量
+						for (MatOrderVO ovo : mvoList) {
+							if(ovo.getApplynum()==null){
+								ovo.setApplynum(0);
+							}
+							if(ovo.getOutnum()==null){
+								ovo.setOutnum(0);
+							}
+							if(ovo.getSuccnum()==null){
+								ovo.setSuccnum(0);
+							}
+							sumapply = sumapply + ovo.getApplynum();
+							sumout = sumout + ovo.getOutnum();
+							sumsucc = sumsucc + ovo.getSuccnum();
+						}
+						sumout= (int) (0.7*sumout);
+						if(sumapply == 0){//上季度没有申请
+							//可以申请保存
+						}else{
+							if(passNum >= sumout){
+								//可以申请保存
+							}else{
+								//提示再申请保存
+								mbvo.setSumapply(sumapply);
+								mbvo.setSumsucc(sumsucc);
+								bvosList.add(mbvo);
+							}
+							
+						}
+					}else{
+					}
+				}
 			}
-		} else {
-			// 编辑保存
-			MatOrderVO mvo=queryById(vo.getPk_materielbill());
-			if(mvo.getUpdatets()!=null){
-				vo.setUpdatets(mvo.getUpdatets());
-				vo.setStatus(mvo.getStatus());
+			if(bvosList.isEmpty()){
+				//不需要提示
+				save(vo, uservo, bvos, type);
 			}
-			 saveEdit(vo,bvos,type,uservo);
 		}
-	}
+		
+		return bvosList;
+  }
 	
      @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
@@ -434,6 +538,42 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_materielbill(), uuid);
 		}
   }
+     
+     /**
+      * 保存
+      * @param vo
+      * @param uservo
+      * @param bvos
+      * @param type
+      */
+     private void save(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type){
+    	 
+    	 if (StringUtil.isEmpty(vo.getPk_materielbill())) {// 新增保存
+ 			setDefaultValue(vo, uservo);
+ 			// 1.新增到订单主表VO
+ 			vo.setPk_corp("000001");
+ 			if ("市辖区".equals(vo.getCityname()) || "市".equals(vo.getCityname()) || "县".equals(vo.getCityname())) {
+ 				vo.setCitycounty(vo.getPname() + "-" + vo.getCountryname());
+ 			} else {
+ 				vo.setCitycounty(vo.getPname() + "-" + vo.getCityname() + "-" + vo.getCountryname());
+ 			}
+ 			vo = (MatOrderVO) singleObjectBO.insertVO("000001", vo);
+ 			// 2.新增到订单子表VO
+ 			for (MatOrderBVO bvo : bvos) {
+ 				bvo.setPk_materielbill(vo.getPk_materielbill());
+ 				bvo.setSuccnum(0);//审核通过数 默认为0
+ 				singleObjectBO.insertVO("000001", bvo);
+ 			}
+ 		} else {
+ 			// 编辑保存
+ 			MatOrderVO mvo=queryById(vo.getPk_materielbill());
+ 			if(mvo.getUpdatets()!=null){
+ 				vo.setUpdatets(mvo.getUpdatets());
+ 				vo.setStatus(mvo.getStatus());
+ 			}
+ 			 saveEdit(vo,bvos,type,uservo);
+ 		}
+     }
       
      /**
  	 * 检查是否是最新数据
@@ -502,7 +642,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 */
 	private void setDefaultValue(MatOrderVO data, UserVO uservo) throws DZFWarpException {
 		data.setCoperatorid(uservo.getCuserid());
-		data.setDoperatedate(new DZFDate());
 		data.setDoperatedate(new DZFDate());
 		data.setPk_corp("000001");
 		data.setVstatus(data.VSTATUS_1);// 合同状态：默认为待审核
@@ -649,7 +788,29 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			LockUtil.getInstance().unLock_Key(qryvo.getTableName(), qryvo.getPk_materielbill(), uuid);
 		}
 		
-		
 	}
+	
+	/**
+	 * 获取上个季度时间
+	 * 将中国标准时间转为2019-04-12日期类型
+	 * @param startdate
+	 * @param enddate
+	 * @return
+	 * @throws ParseException
+	 */
+	private String getLastQuarter(String startdate,String enddate) throws ParseException{
+		startdate = startdate.replace("GMT", "").replaceAll("\\(.*\\)", "");
+		enddate = enddate.replace("GMT", "").replaceAll("\\(.*\\)", "");
+		//将字符串转化为date类型
+		SimpleDateFormat format =  new SimpleDateFormat("EEE MMM dd yyyy hh:mm:ss z",Locale.ENGLISH);
+		Date sdate = format.parse(startdate);
+		Date edate = format.parse(enddate);
+		String start = new SimpleDateFormat("yyyy-MM-dd").format(sdate);
+		String end = new SimpleDateFormat("yyyy-MM-dd").format(edate);
+		return start+","+end;
+	}
+	
+	
+
 
 }

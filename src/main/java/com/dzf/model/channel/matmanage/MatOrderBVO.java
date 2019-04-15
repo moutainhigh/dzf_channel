@@ -29,6 +29,13 @@ public class MatOrderBVO extends SuperVO {
 	
 	private Integer applynum;//申请数量
 	
+	private Integer succnum;//审核通过数量
+	
+    private Integer sumapply;//上季度申请总数量
+	
+	private Integer sumsucc;//上季度申请通过总数量
+	
+	
 	private Integer dr; // 删除标记
 
 	private DZFDateTime ts; // 时间
@@ -103,6 +110,30 @@ public class MatOrderBVO extends SuperVO {
 
 	public void setTs(DZFDateTime ts) {
 		this.ts = ts;
+	}
+	
+	public Integer getSuccnum() {
+		return succnum;
+	}
+
+	public void setSuccnum(Integer succnum) {
+		this.succnum = succnum;
+	}
+	
+	public Integer getSumapply() {
+		return sumapply;
+	}
+
+	public void setSumapply(Integer sumapply) {
+		this.sumapply = sumapply;
+	}
+
+	public Integer getSumsucc() {
+		return sumsucc;
+	}
+
+	public void setSumsucc(Integer sumsucc) {
+		this.sumsucc = sumsucc;
 	}
 
 	@Override

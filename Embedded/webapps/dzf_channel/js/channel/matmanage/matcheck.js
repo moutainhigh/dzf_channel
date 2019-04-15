@@ -673,6 +673,18 @@ function checked(type){
 			var row = result.rows;
 			if (result.success) {
 				if(type==0){
+					
+					$.messager.confirm("注意", "该加盟商"+rows[j].wlname+
+							"上季度申请数"+rows[j].sumapply+
+							"提单审核通过数"+rows[j].sumsucc, function(flag) {
+						if (flag) {
+							
+						} else {
+							return null;
+						}
+					});
+					
+					
 					if(row.status==1){
 						$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请审核');
 						$('#mat_add').form('clear');
@@ -686,9 +698,6 @@ function checked(type){
 					    if(row.children != null && row.children.length > 0){
 							$('#cardGrid').datagrid('loadData', row.children);
 							$('#cardGrid').datagrid('hideColumn','operate');
-							/*$('#cardGrid').datagrid(123,'物料名称');
-							$('#cardGrid').datagrid(123,'单位');
-							$('#cardGrid').datagrid(123,'申请数量');*/
 						}
 					}else {
 						Public.tips({content : "只有待审核的申请单可以审核！" ,type:2});
@@ -793,12 +802,6 @@ function del(ths){
  */
 function onSave(vstatus){
 	
-	/*if(!$('#false').is(':checked') && 
-			!$('#true').is(':checked')){
-		Public.tips({content : "请审核是否通过" ,type:2});
-		return;
-	}*/
-	
 	var matbillid = $('#matbillid').val();
 	var reason = $('#reason').val();
 	var status = null;
@@ -814,6 +817,13 @@ function onSave(vstatus){
 		status = vstatus;
 	}
 	
+	var body = "";
+	//物料数据
+	var rows = $('#cardGrid').datagrid('getRows');
+	for(var j = 0;j< rows.length; j++){
+		body = body + JSON.stringify(rows[j]); 
+	}
+	
 	if ($("#mat_add").form('validate')) {
 		$.ajax({
 			type : "post",
@@ -823,6 +833,7 @@ function onSave(vstatus){
 				reason : reason,
 				status : status,
 				matbillid : matbillid,
+				body : body,
 			},
 			traditional : true,
 			async : false,
