@@ -1100,45 +1100,38 @@ function onSaveSubmit(postdata){
 				var result = eval('(' + result + ')');
 				var rows = result.rows;
 				if(rows!=undefined){
-					for(var j = 0;j< rows.length; j++){
 						if(result.msg == "提示"){
-							
-							$.messager.confirm("注意", "该加盟商"+rows[j].wlname+
-									"上季度申请数"+rows[j].sumapply+"提单审核通过数"+rows[j].sumsucc, function(flag) {
+							$.messager.confirm("注意",rows, function(flag) {
 								if (flag) {
-									
+									//申请
+									$.ajax({
+										type : "POST",
+										dataType : "json",
+										url : DZF.contextPath +  '/matmanage/matapply!save.action',
+										data : {
+											body : body,
+											stype : 1,
+										},
+										success : function(rs) {
+											if (rs.success) {
+												$('#cbDialog').dialog('close');
+												load(0);
+												Public.tips({
+													content : result.msg,
+												});
+											} else {
+												Public.tips({
+													content : result.msg,
+													type : 2
+												});
+											}
+										}
+									});
 								} else {
 									return null;
 								}
 							});
 						}
-					   if(j==rows.length-1){
-						 //申请
-							$.ajax({
-								type : "POST",
-								dataType : "json",
-								url : DZF.contextPath +  '/matmanage/matapply!save.action',
-								data : {
-									body : body,
-									stype : 1,
-								},
-								success : function(rs) {
-									if (rs.success) {
-										$('#cbDialog').dialog('close');
-										load(0);
-										Public.tips({
-											content : result.msg,
-										});
-									} else {
-										Public.tips({
-											content : result.msg,
-											type : 2
-										});
-									}
-								}
-							});
-					   }
-					}
 				}
 				
 				

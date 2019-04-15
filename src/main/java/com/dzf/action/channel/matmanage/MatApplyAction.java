@@ -258,11 +258,11 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if (bodyVOs == null || bodyVOs.length == 0) {
 				throw new BusinessException("物料数据不能为空");
 			}
-			List<MatOrderBVO> bvos = matapply.saveApply(vo,uservo,bodyVOs,type,stype);
+			String message = matapply.saveApply(vo,uservo,bodyVOs,type,stype);
 			
-			if(bvos!=null && bvos.size()>0){//需要提示信息
+			if(!StringUtil.isEmpty(message)){//需要提示信息
 				json.setMsg("提示");
-				json.setRows(bvos);
+				json.setRows(message);
 			}else{
 				json.setMsg("保存成功");
 				json.setSuccess(true);
@@ -286,12 +286,19 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			MatOrderVO vo = new MatOrderVO();
 			String id = getRequest().getParameter("id");
 			String type = getRequest().getParameter("type");
+			String stype = getRequest().getParameter("stype");
 			if(!StringUtil.isEmpty(id)){
-			    vo=matapply.queryDataById(id,uservo,type);
+			    vo=matapply.queryDataById(id,uservo,type,stype);
 			}
-			json.setRows(vo);
-			json.setMsg("查询成功");
-			json.setSuccess(true);
+			if(!StringUtil.isEmpty(vo.getMessage())){
+				json.setMsg("提示");
+				json.setRows(vo.getMessage());
+			}else{
+				json.setRows(vo);
+				json.setMsg("查询成功");
+				json.setSuccess(true);
+			}
+			
 		}catch (Exception e) {
 			json.setMsg("查询失败");
 			json.setSuccess(false);

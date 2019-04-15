@@ -667,41 +667,26 @@ function checked(type){
 		async : false,
 	    url : DZF.contextPath + '/matmanage/matapply!queryById.action',
 		dataTye : 'json',
-		data : "id="+id,
+		data : {
+			id : id,
+			stype : 1,
+		},
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
 			if (result.success) {
 				if(type==0){
-					
-					$.messager.confirm("注意", "该加盟商"+rows[j].wlname+
-							"上季度申请数"+rows[j].sumapply+
-							"提单审核通过数"+rows[j].sumsucc, function(flag) {
-						if (flag) {
-							
-						} else {
-							return null;
-						}
-					});
-					
-					
-					if(row.status==1){
-						$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请审核');
-						$('#mat_add').form('clear');
-						$('#mat_add').form('load', row);
-						initCard();
-					    $('.hid').css("display", ""); 
-					    readonly();
-					    $('#stat').textbox('setValue','待审核');
-					    $('#reason').textbox({required:false});
-				    	$('#reason').textbox({prompt:''});
-					    if(row.children != null && row.children.length > 0){
-							$('#cardGrid').datagrid('loadData', row.children);
-							$('#cardGrid').datagrid('hideColumn','operate');
-						}
-					}else {
-						Public.tips({content : "只有待审核的申请单可以审核！" ,type:2});
-						return;
+					if(row.msg =="提示"){
+						$.messager.confirm("注意", , function(flag) {
+							if (flag) {
+								showCard(row);
+							} else {
+								return null;
+							}
+						});
+					}else{
+						//不需要提示，直接弹出审核框
+						showCard(row);
 					}
 				}else{
 					if(row.status==2){
@@ -711,11 +696,33 @@ function checked(type){
 						return;
 					}
 				}
-				
-				
 		   }
         }
 	});
+}
+
+/**
+ * 显示审核框
+ */
+function showCard(){
+	if(row.status==1){
+		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请审核');
+		$('#mat_add').form('clear');
+		$('#mat_add').form('load', row);
+		initCard();
+	    $('.hid').css("display", ""); 
+	    readonly();
+	    $('#stat').textbox('setValue','待审核');
+	    $('#reason').textbox({required:false});
+    	$('#reason').textbox({prompt:''});
+	    if(row.children != null && row.children.length > 0){
+			$('#cardGrid').datagrid('loadData', row.children);
+			$('#cardGrid').datagrid('hideColumn','operate');
+		}
+	}else {
+		Public.tips({content : "只有待审核的申请单可以审核！" ,type:2});
+		return;
+	}
 }
 
 

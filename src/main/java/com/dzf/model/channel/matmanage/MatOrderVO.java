@@ -153,6 +153,8 @@ public class MatOrderVO extends SuperVO {
 	
 	private Integer num2;//作废
 	
+	private String message;//提示消息
+	
 	/*******仅作展示，不存库*******/
 	//0-全部、1-待审核、2-待发货、3-已发货、4-已驳回
 	public static final String VSTATUS = "vstatus";
@@ -611,6 +613,14 @@ public class MatOrderVO extends SuperVO {
 
 	public void setSumsucc(Integer sumsucc) {
 		this.sumsucc = sumsucc;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	@Override

@@ -320,12 +320,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@SuppressWarnings("unused")
 	@Override
-	public List<MatOrderBVO> saveApply(MatOrderVO vo, UserVO uservo,
+	public String saveApply(MatOrderVO vo, UserVO uservo,
 			MatOrderBVO[] bvos,String type,String stype) {
 		
-		List<MatOrderBVO> bvosList = new ArrayList<>();
-		
-		if("1".equals(stype)){//直接保存
+		String message = "";
+		if("1".equals(stype)){//提示后保存
 			save(vo, uservo, bvos, type);
 			return null;
 		}else{
@@ -340,107 +339,119 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				e.printStackTrace();
 			}
 			
-			for (MatOrderBVO mbvo :bvos) {
-				MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
-				if(mvo!=null && mvo.getIsappl()!=null){
-					if(mvo.getIsappl() == 1){//勾选了申请条件
-						Integer passNum = null;
-						StringBuffer sql = new StringBuffer();
-						SQLParameter spm=new SQLParameter();
-						spm.addParam(vo.getFathercorp());
-						
-						sql.append("  SELECT  COUNT  (CASE WHEN \n");
-						sql.append("       c.vdeductstatus = 1 AND c.vdeductstatus = 9 \n");
-						sql.append("       THEN 1 ELSE NULL \n");
-						sql.append("       END) num1, \n");
-						sql.append("       COUNT (CASE WHEN c.vdeductstatus = 10 \n");
-						sql.append("       THEN 1 ELSE NULL \n");
-						sql.append("       END) num2 \n");
-						sql.append("       FROM cn_contract c \n");
-						sql.append("       where nvl(c.dr,0) = 0  \n");
-						sql.append("        and c.pk_corp = ? \n");
-						
-						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-							sql.append(" and c.deductdata >= ? ");
-							spm.addParam(vo.getDedubegdate());
-						}
-						if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-							sql.append(" and c.deductdata <= ? ");
-							spm.addParam(vo.getDeduenddate());
-						}
-						MatOrderVO mmvo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
-					    
-						if(mmvo!=null && mmvo.getNum1()!=null 
-								 && mmvo.getNum2()!=null){
-							 passNum = mmvo.getNum1()-mmvo.getNum2();
-						}
-						
-						StringBuffer csql = new StringBuffer();
-						SQLParameter cspm=new SQLParameter();
-						cspm.addParam(vo.getFathercorp());
-						cspm.addParam(mbvo.getPk_materiel());
-						csql.append("  select b.vname,b.applynum,b.outnum,b.succnum \n");
-						csql.append("      from cn_materielbill l  \n");
-						csql.append("      left join cn_materielbill_b b on  \n");
-						csql.append("      l.pk_materielbill = b.pk_materielbill \n");
-						csql.append("      where nvl(l.dr,0) = 0 \n");
-						csql.append("      and nvl(b.dr,0) = 0 \n");
-						csql.append("      and l.fathercorp = ? \n");
-						csql.append("      and b.pk_materiel = ? \n");
-						
-						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-							sql.append(" and l.deliverdate >= ? ");
-							spm.addParam(vo.getDedubegdate());
-						}
-						if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-							sql.append(" and l.deliverdate <= ? ");
-							spm.addParam(vo.getEnddate());
-						}
-						List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
-						
-						Integer sumapply = 0;//上季度申请数量
-						Integer sumout = 0;//上季度实发数量
-						Integer sumsucc = 0;//上季度申请通过数量
-						for (MatOrderVO ovo : mvoList) {
-							if(ovo.getApplynum()==null){
-								ovo.setApplynum(0);
-							}
-							if(ovo.getOutnum()==null){
-								ovo.setOutnum(0);
-							}
-							if(ovo.getSuccnum()==null){
-								ovo.setSuccnum(0);
-							}
-							sumapply = sumapply + ovo.getApplynum();
-							sumout = sumout + ovo.getOutnum();
-							sumsucc = sumsucc + ovo.getSuccnum();
-						}
-						sumout= (int) (0.7*sumout);
-						if(sumapply == 0){//上季度没有申请
-							//可以申请保存
-						}else{
-							if(passNum >= sumout){
-								//可以申请保存
-							}else{
-								//提示再申请保存
-								mbvo.setSumapply(sumapply);
-								mbvo.setSumsucc(sumsucc);
-								bvosList.add(mbvo);
-							}
-							
-						}
-					}else{
-					}
-				}
-			}
-			if(bvosList.isEmpty()){
-				//不需要提示
+			 //校验
+			 message = checkIsInfo(vo,bvos,message);
+			if(message.isEmpty()){
 				save(vo, uservo, bvos, type);
 			}
 		}
 		
-		return bvosList;
+		return message;
   }
+	
+	
+	private String checkIsInfo(MatOrderVO vo,MatOrderBVO[] bvos,String message){
+		for (MatOrderBVO mbvo :bvos) {
+			MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
+			if(mvo!=null && mvo.getIsappl()!=null){
+				if(mvo.getIsappl() == 1){//勾选了申请条件
+					Integer passNum = null;
+					StringBuffer sql = new StringBuffer();
+					SQLParameter spm=new SQLParameter();
+					spm.addParam(vo.getFathercorp());
+					
+					sql.append("  SELECT  COUNT  (CASE WHEN \n");
+					sql.append("       c.vdeductstatus = 1 AND c.vdeductstatus = 9 \n");
+					sql.append("       THEN 1 ELSE NULL \n");
+					sql.append("       END) num1, \n");
+					sql.append("       COUNT (CASE WHEN c.vdeductstatus = 10 \n");
+					sql.append("       THEN 1 ELSE NULL \n");
+					sql.append("       END) num2 \n");
+					sql.append("       FROM cn_contract c \n");
+					sql.append("       where nvl(c.dr,0) = 0  \n");
+					sql.append("        and c.pk_corp = ? \n");
+					
+					if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+						sql.append(" and c.deductdata >= ? ");
+						spm.addParam(vo.getDedubegdate());
+					}
+					if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+						sql.append(" and c.deductdata <= ? ");
+						spm.addParam(vo.getDeduenddate());
+					}
+					MatOrderVO mmvo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
+				    
+					if(mmvo!=null && mmvo.getNum1()!=null 
+							 && mmvo.getNum2()!=null){
+						 passNum = mmvo.getNum1()-mmvo.getNum2();
+					}
+					
+					StringBuffer csql = new StringBuffer();
+					SQLParameter cspm=new SQLParameter();
+					cspm.addParam(vo.getFathercorp());
+					cspm.addParam(mbvo.getPk_materiel());
+					csql.append("  select b.vname,b.applynum,b.outnum,b.succnum \n");
+					csql.append("      from cn_materielbill l  \n");
+					csql.append("      left join cn_materielbill_b b on  \n");
+					csql.append("      l.pk_materielbill = b.pk_materielbill \n");
+					csql.append("      where nvl(l.dr,0) = 0 \n");
+					csql.append("      and nvl(b.dr,0) = 0 \n");
+					csql.append("      and l.fathercorp = ? \n");
+					csql.append("      and b.pk_materiel = ? \n");
+					
+					if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+						sql.append(" and l.deliverdate >= ? ");
+						spm.addParam(vo.getDedubegdate());
+					}
+					if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+						sql.append(" and l.deliverdate <= ? ");
+						spm.addParam(vo.getEnddate());
+					}
+					List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
+					
+					Integer sumapply = 0;//上季度申请数量
+					Integer sumout = 0;//上季度实发数量
+					Integer sumsucc = 0;//上季度申请通过数量
+					for (MatOrderVO ovo : mvoList) {
+						if(ovo.getApplynum()==null){
+							ovo.setApplynum(0);
+						}
+						if(ovo.getOutnum()==null){
+							ovo.setOutnum(0);
+						}
+						if(ovo.getSuccnum()==null){
+							ovo.setSuccnum(0);
+						}
+						sumapply = sumapply + ovo.getApplynum();
+						sumout = sumout + ovo.getOutnum();
+						sumsucc = sumsucc + ovo.getSuccnum();
+					}
+					sumout= (int) (0.7*sumout);
+					if(sumapply == 0){//上季度没有申请
+						//可以申请保存
+						//save(vo, uservo, bvos, type);
+					}else{
+						if(passNum >= sumout){
+							//可以申请保存
+							//save(vo, uservo, bvos, type);
+						}else{
+							//提示再申请保存
+							mbvo.setSumapply(sumapply);
+							mbvo.setSumsucc(sumsucc);
+							message = message + "该加盟商"+mbvo.getVname()+
+									"上季度申请数"+mbvo.getSumapply()+
+									"提单审核通过数"+mbvo.getSumsucc();
+						}
+						
+					}
+				}else{
+					//不需要校验
+					//save(vo, uservo, bvos, type);
+				}
+			}
+		}
+		return message;
+	}
 	
      @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
@@ -648,7 +659,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public MatOrderVO queryDataById(String id,UserVO uservo,String type) {
+	public MatOrderVO queryDataById(String id,UserVO uservo,String type,String stype) {
+		String message = "";
+		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(id);
@@ -707,6 +720,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 			
 			setCitycountry(vo);
+			
+			if("1".equals(stype)){
+				//点击审核校验
+				message = checkIsInfo(vo, bvos, message);
+				if(!message.isEmpty()){
+					vo.setMessage(message);
+				}
+			}
 			return vo;
 		}
 		return null;

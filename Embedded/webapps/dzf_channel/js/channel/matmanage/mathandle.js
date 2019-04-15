@@ -708,39 +708,58 @@ function send(){
 		data : {
 			id : id,
 			type : type,
+			stype : 1,
 		},
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
+			
+			if(row.msg =="提示"){
+				$.messager.confirm("注意", , function(flag) {
+					if (flag) {
+						showCard(row);
+					} else {
+						return null;
+					}
+				});
+			}else{
+				//不需要提示，直接弹出发货框
+				showCard(row);
+			}
+			
 			if (result.success) {
 				//if(type==0){
-					if(row.status==2){
-						$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料发货');
-						$('#mat_add').form('clear');
-						$('#mat_add').form('load', row);
-						 $("#fcost").numberbox({
-						      precision:2,
-						 });
-						 $('#dedate').datebox('setValue',parent.SYSTEM.LoginDate);
-						initCard();
-					    $('.hid').css("display", "none"); 
-					    $('.sid').css("display", ""); 
-					    readonly();
-					    if(row.children != null && row.children.length > 0){
-							$('#cardGrid').datagrid('loadData', row.children);
-							$('#cardGrid').datagrid('hideColumn','operate');
-							$('#cardGrid').datagrid('showColumn','outnum');
-						}
-					    
-					}else {
-						Public.tips({content : "单据状态不为待发货！" ,type:2});
-						return;
-					}
+					showCard(row);
 				//}
 				
 		   }
         }
 	});
+}
+
+function showCard(row){
+	if(row.status==2){
+		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料发货');
+		$('#mat_add').form('clear');
+		$('#mat_add').form('load', row);
+		 $("#fcost").numberbox({
+		      precision:2,
+		 });
+		 $('#dedate').datebox('setValue',parent.SYSTEM.LoginDate);
+		initCard();
+	    $('.hid').css("display", "none"); 
+	    $('.sid').css("display", ""); 
+	    readonly();
+	    if(row.children != null && row.children.length > 0){
+			$('#cardGrid').datagrid('loadData', row.children);
+			$('#cardGrid').datagrid('hideColumn','operate');
+			$('#cardGrid').datagrid('showColumn','outnum');
+		}
+	    
+	}else {
+		Public.tips({content : "单据状态不为待发货！" ,type:2});
+		return;
+	}
 }
 
 /**
