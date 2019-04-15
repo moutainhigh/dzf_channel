@@ -23,6 +23,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.IDefaultValue;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
@@ -271,15 +272,56 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 					}
 				}
 			}
-			if(pamvo.getIopertype() != null && pamvo.getIopertype() == 1){//查询审批历史
+			//2、查询审批历史
+			if(pamvo.getIopertype() != null && pamvo.getIopertype() == 1){
 				ApplyAuditVO[] child =  queryAuditHistory(pamvo, uservo);
 				vo.setChildren(child);
+			}
+			//3、查询驳回历史
+			if(!StringUtil.isEmpty(vo.getVconfreason())){
+				RejectHistoryHVO[] rejeVOs = qryRejectHistory(vo.getPk_contract());
+				if(rejeVOs != null && rejeVOs.length > 0){
+					vo.setBodys(rejeVOs);
+				}
 			}
 			return vo;
 		}
 		return null;
 	}
 	
+	/**
+	 * 查询驳回历史
+	 * @param pk_contract
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private RejectHistoryHVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT h.*, r.user_name AS coperator \n");
+		sql.append("  FROM cn_rejecthistory_h h  \n");
+		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid  \n");
+		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
+		sql.append("   AND nvl(r.dr, 0) = 0  \n");
+		sql.append("   AND h.pk_contract = ?  \n");
+		spm.addParam(pk_contract);
+		List<RejectHistoryHVO> list = (List<RejectHistoryHVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(RejectHistoryHVO.class));
+		if(list != null && list.size() > 0){
+			QueryDeCodeUtils.decKeyUtils(new String[]{"coperator"}, list, 1);
+			return list.toArray(new RejectHistoryHVO[0]);
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询审批历史
+	 * @param pamvo
+	 * @param uservo
+	 * @return
+	 * @throws DZFWarpException
+	 */
 	@SuppressWarnings("unchecked")
 	private ApplyAuditVO[] queryAuditHistory(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -338,11 +380,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.docName,  \n");
 		sql.append("       y.vfilepath,  \n");
 		sql.append("       y.docTemp,  \n");
+		sql.append("       y.vfilepath,  \n");
 
 		sql.append("       y.vbchangeperiod,  \n");
 		sql.append("       y.vechangeperiod,  \n");
 		sql.append("       y.nchangetotalmny,  \n");
-		sql.append("       y.vfilepath,  \n");
+		sql.append("       y.vconfreason,  \n");
 		
 		sql.append("       y.vchannelid,  \n");
 		sql.append("       y.vareaer,  \n");
@@ -578,8 +621,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 					sql.append("   SET iapplystatus = 2,  \n");
 					sql.append("       vareaer = ?  \n");
 					spm.addParam(data.getVauditer());
-					//清空驳回历史
-					deleteRejeHistory(data, uservo);
+					//清空驳回历史(驳回历史待渠道运营审核之后清空)
+//					deleteRejeHistory(data, uservo);
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
 					sql.append("   SET iapplystatus = 4  \n");
 				}

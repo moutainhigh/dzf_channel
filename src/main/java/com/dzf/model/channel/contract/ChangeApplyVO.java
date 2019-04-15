@@ -102,6 +102,8 @@ public class ChangeApplyVO extends SuperVO {
 	@FieldAlias("ts")
 	private DZFDateTime ts; // 时间戳
 	
+	private SuperVO<?>[] bodys;//表体信息
+	
 	// 不存只作展示 begin*************************
 	
 	@FieldAlias("area")
@@ -165,6 +167,14 @@ public class ChangeApplyVO extends SuperVO {
 	private String vauditer;//下一审核人（仅作数据传递）
 
 	// 不存只作展示 end***************************
+
+	public SuperVO<?>[] getBodys() {
+		return bodys;
+	}
+
+	public void setBodys(SuperVO<?>[] bodys) {
+		this.bodys = bodys;
+	}
 
 	public Integer getIopertype() {
 		return iopertype;

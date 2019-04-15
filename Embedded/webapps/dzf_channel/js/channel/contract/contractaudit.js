@@ -488,11 +488,19 @@ function showAuditDlg(row){
 	$('#auditfrom').form('clear');
 	$('#auditfrom').form('load',row);
 	
+	$('#aauditer').combobox("setValue",null);
+	$("#aconfreason").textbox('setValue',null);
+	
 	showAuditImage(row);
 	
 	document.getElementById("adebit").checked = "true";
 	$('#auopertype').val(1);
 	initAuditRedioListener();
+	
+	if(!isEmpty(row.confreason)){
+    	$('#rejereson').css('display','block');
+    	showRejectReason(row);
+    }
 }
 
 /**
@@ -518,10 +526,79 @@ function showChangeDlg(row){
 	$('#changefrom').form('clear');
 	$('#changefrom').form('load',row);
 	
+	$('#auditer').combobox("setValue",null);
+	$("#confreason").textbox('setValue',null);
+	
 	showChangeImage(row);
 	
 	document.getElementById("debit").checked = "true";
 	initRedioListener();
+	
+}
+
+/**
+ * 展示驳回原因
+ */
+function showRejectReason(row){
+	var rejesons = row.bodys;
+	$("#rejereson").empty();
+	if(rejesons != null && rejesons.length > 0){
+		var showinfo = "";
+		showinfo = showinfo + "<div class='time_col time_colp11 heading'>";
+		showinfo = showinfo + "		<label style='width: 68px;text-align:center;color:#FFF;font-weight: bold;'>驳回历史</label>";
+		showinfo = showinfo + "</div>";
+		
+		showinfo = showinfo + "<div style='height: 50px; margin-top: 16px; width: 100%;'>";
+		showinfo = showinfo + "  <div"; 
+		showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+		showinfo = showinfo + "    <img src='../../images/tbpng_03.png' style='position: absolute; left: 69px;' />"; 
+		showinfo = showinfo + "    <img src='../../images/pngg_03.png' style='position: absolute; left: 75px; top: 14px;height:50px;' />"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+		showinfo = showinfo + "    <div  class='dot'>"; 
+		showinfo = showinfo + "      <font>"+rejesons[0].updatets+"</font> &emsp;<span>"+rejesons[0].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[0].operator+"</font>"; 
+		showinfo = showinfo + "    </div>"; 
+		showinfo = showinfo + "  </div>"; 
+		showinfo = showinfo + "</div>";
+		if(rejesons.length > 1){
+			showinfo = showinfo + "<div style='display: none;' id='panela'>";
+			showinfo = showinfo + "		<div style='width: 100%;'>";
+			showinfo = showinfo + "";
+			showinfo = showinfo + "";
+			for(var i = 1; i < rejesons.length; i++){
+				showinfo = showinfo + "<div style='height: 50px;'>";
+				showinfo = showinfo + "  <div"; 
+				showinfo = showinfo + "    style='height: 50px; width: 100px; float: left; position: relative;'>"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 71px;' src='../../images/xial_03.png' />"; 
+				showinfo = showinfo + "    <img style='position: absolute; left: 75px; top: 8px;height:50px;' src='../../images/pngg_03.png' />"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
+				showinfo = showinfo + "    <div  class='dot'>"; 
+				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[i].operator+"</font>"; 
+				showinfo = showinfo + "    </div>"; 
+				showinfo = showinfo + "  </div>"; 
+				showinfo = showinfo + "</div>";
+			}
+			showinfo = showinfo + "		</div>";
+			showinfo = showinfo + "</div>";
+		}
+		showinfo = showinfo + "<p class='slide'>";
+		showinfo = showinfo + "		<a href='javascript:;' rel='external nofollow' class='btn-slide active'></a>";
+		showinfo = showinfo + "</p>";
+		$("#rejereson").append(showinfo);
+		actionListen();
+	}
+}
+
+/**
+ * 监听
+ */
+function actionListen(){
+	$(".btn-slide").click(function() {
+		$("#panela").slideToggle("slow");
+		$(this).toggleClass("active");
+		return false;
+	})
 }
 
 /**

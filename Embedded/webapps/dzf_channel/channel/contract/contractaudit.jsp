@@ -331,7 +331,7 @@
 				</div>
 			</div>
 			<!-- 附件信息end -->
-		
+			
 		</div>
 	</div>
 	<!-- 变更审核 end -->
@@ -463,6 +463,10 @@
 				</div>
 			</div>
 			<!-- 附件信息end -->
+			
+			<!-- 驳回历史begin -->
+            <div id="rejereson"></div>
+			<!-- 驳回历史 -->
 				
 		</div>
 	</div>
