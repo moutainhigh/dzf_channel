@@ -85,4 +85,12 @@ public interface IContractConfirm {
 	public ContractConfrimVO updateAuditData(ContractConfrimVO datavo, ContractConfrimVO paramvo, Integer opertype,
 			String cuserid, String pk_corp, String checktype) throws DZFWarpException;
 	
+	/**
+	 * 查询待变更数据信息
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public ContractConfrimVO queryChangeById(ContractConfrimVO pamvo) throws DZFWarpException;
+	
 }

@@ -1536,13 +1536,105 @@ function change(){
 		});			
 		return;
 	}
+	if(rows[0].apstatus != null && rows[0].apstatus != 4){
+		Public.tips({
+			content : '该合同变更申请正在审核中，请审核通过后重试',
+			type : 2
+		});			
+		return;
+	}
+	$.ajax({
+		url : DZF.contextPath + "/contract/contractconf!queryChangeById.action",
+		dataType : 'json',
+		data : rows[0],
+		success : function(rs) {
+			if (rs.success) {
+				var row = rs.rows;
+				if(row.apstatus != null && row.apstatus == 4){
+					showApplyChangeDlg(row);
+				}else{
+					showNormalChangeDlg(row);
+				}
+			}
+		}
+		
+	});
+}
+
+/**
+ * 展示申请变更对话框
+ * @param row
+ */
+function showApplyChangeDlg(row){
+	$('#achange_Dialog').dialog({ modal:true });//设置dig属性
+	$('#achange_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
+	if(row.changetype == 1){
+		$('#first').css('display','inline-block');
+		document.getElementById("aend").checked="true";
+	}else if(row.changetype == 2){
+		$('#second').css('display','inline-block');
+		document.getElementById("anullify").checked="true";
+	}
+	$('#achangefrom').form('load',row);
+	$('#ahchtype').val(row.changetype);
+	setChangeShowMny(row);
+	initChangeApplyDoc(row);
+	showChangeDetImage(row);
+}
+
+/**
+ * 设置申请变更界面展示金额
+ */
+function setChangeShowMny(row){
+	var changetype = row.changetype;
+	var sndesummny = getFloatValue(row.ndesummny);//原扣款金额
+	if(changetype == 1){//终止
+		var sntlmny = getFloatValue(row.ntlmny);//原合同金额
+		//退回扣款 = 原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
+		//变更后合同金额 = 原月代账费 *（原开始期间到终止期间的期数）+ 账本费
+		//变更后扣款金额 = 原扣款金额-退回扣款
+		var sbperiod = row.bperiod;//开始期间
+		var stperiod = row.stperiod;//变更期间
+		var cnum = getMonthNum(stperiod, sbperiod)+1;//变更期数
+		var srecycle = getFloatValue(row.recycle);//原收款周期
+		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
+		var remny = sndesummny.sub(sndesummny.div(srecycle).mul(cnum));
+		if(getFloatValue(remny) < getFloatValue(0)){
+			remny = getFloatValue(0);
+		}
+		$('#aremny').numberbox('setValue', remny);//退回扣款
+		var snmsmny = getFloatValue(row.nmsmny);//原月代账费
+		var snbmny = getFloatValue(row.nbmny);//账本费
+		var nchtlmny = snmsmny.mul(cnum).add(snbmny);
+		if(getFloatValue(remny) == getFloatValue(0)){
+			$('#anchtlmny').numberbox('setValue', sntlmny);//变更后合同金额 = 原合同金额
+		}else{
+			$('#anchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
+		}
+		var nchsumny = sndesummny.sub(remny);
+		$('#anchsumny').numberbox('setValue', nchsumny);//变更后扣款金额 = 原扣款金额 - 退回扣款金额
+	}else if(changetype == 2){//作废
+		//退回扣款 = 原扣款金额
+		//变更后合同金额 = 0
+		//变更后扣款金额 = 0
+		$('#aremny').numberbox('setValue', sndesummny);
+		$('#anchtlmny').numberbox('setValue', 0);
+		$('#anchsumny').numberbox('setValue', 0);
+	}
+}
+
+/**
+ * 展示正常变更对话框
+ * @param row
+ */
+function showNormalChangeDlg(row){
 	initPeriod("#stperiod");//变更期间初始化
 	$('#change_Dialog').dialog({ modal:true });//设置dig属性
 	$('#change_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
 	$("#sfileshow").hide();
-	$('#changefrom').form('load',rows[0]);
+	$('#changefrom').form('load',row);
 	$('#changememo').textbox('setValue',null);
-	initChangeFileDoc(rows[0]);//初始化变更合同附件
+	initChangeFileDoc(row);//初始化变更合同附件
 	initFileEvent();
 	initChangeListener();
 	$("#end").prop({"disabled":false});
@@ -1557,34 +1649,7 @@ function change(){
 	$("#nchtlmny").numberbox("readonly", false);
 	$("#nchsumny").numberbox("readonly", false);
 	$("#changetype").val(1);
-	
-//	if(rows[0].isnconfirm == "Y" || rows[0].isnconfirm == "是"){
-//		document.getElementById("nullify").checked="true";
-//		$("#end").prop({"disabled":true});
-//		$('#cisnconfirm').prop('checked',true);
-//		setChangeMny(2);
-//		
-//		$("#addclass").attr("class", "decan");
-//		$("#stperiod").datebox("readonly", true);
-//		$("#remny").numberbox("readonly", true);
-//		$("#nchtlmny").numberbox("readonly", true);
-//		$("#nchsumny").numberbox("readonly", true);
-//		$("#changetype").val(2);
-//	}else{
-//		document.getElementById("end").checked="true";
-//		$('#cisnconfirm').prop('checked',false);
-//		setChangeMny(1);
-//		
-//		$("#addclass").removeClass("decan");
-//		$("#stperiod").datebox("readonly", false);
-//		$("#remny").numberbox("readonly", false);
-//		$("#nchtlmny").numberbox("readonly", false);
-//		$("#nchsumny").numberbox("readonly", false);
-//		$("#changetype").val(1);
-//	}
 }
-
-
 
 /**
  * 变更原因改变事件
@@ -1741,10 +1806,48 @@ function initChangeFileDoc(row){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
 					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
-							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" >'+
+							'<span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width:60%;height:25px;position:absolute;top:105px;left:0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
 							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#sfiledocs"));
+				}
+			}
+		}
+	});
+}
+
+/**
+ * 初始化变更申请合同附件
+ * @param row
+ */
+function initChangeApplyDoc(row){
+	var para = {};
+	para.corp_id = row.corpid;
+	para.c_id = row.contractid;
+	
+	$.ajax({
+		type : "POST",
+		url : DZF.contextPath + "/contract/contractconf!getAttaches.action",
+  		dataType : 'json',
+  		data : para,
+  		processData : true,
+  		async : false,//异步传输
+  		success : function(result) {
+			var rows = result.rows;
+			if(rows != null && rows.length > 0){
+				$("#asfileshow").show();
+				arrachrows = result.rows;
+				$("#asfiledocs").html('');
+				for(var i = 0;i<rows.length;i++){
+					var srcpath = rows[i].fpath.replace(/\\/g, "/");
+					var attachImgUrl = getAttachImgUrl(rows[i]);
+					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" >'+
+							'<span><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width:60%;height:25px;position:absolute;top:105px;left:0px; display:none;">'+
+							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
+							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#asfiledocs"));
 				}
 			}
 		}
@@ -2242,4 +2345,68 @@ function onExportAll(){
 			}, true, true);
 	}
 	checkBtnPower('export','channel4',callback);
+}
+
+/**
+ * 合同变更申请审核-确认
+ */
+function achangeConfri(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length != 1) {
+		Public.tips({
+			content : '请选择一行数据',
+			type : 2
+		});			
+		return;
+	}
+	var opertype = $('input:radio[name="achtype"]:checked').val();	
+	if(opertype == 1){
+		var stperiod = $("#stperiod").datebox('getValue');//终止期间
+		var sbperiod = $("#sbperiod").val();//开始期间
+		var seperiod = $("#seperiod").val();//结束期间
+		if(stperiod < sbperiod || stperiod > seperiod){
+			Public.tips({
+				content : '终止期间不能在服务期间之外，请重新选择终止期间',
+				type : 2
+			});			
+			return;
+		}
+	}
+	parent.$.messager.progress({
+		text : '变更中....'
+	});
+	$('#achangefrom').form('submit', {
+		url : contextPath + '/contract/contractconf!saveChange.action',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 0
+				});
+//				reloadData();
+				$('#achange_Dialog').dialog('close');
+				var rerow = result.rows;
+				var index = $("#grid").datagrid("getRowIndex",rows[0]);
+				$('#grid').datagrid('updateRow',{
+					index: index,
+					row : rerow
+				});
+				$("#grid").datagrid('uncheckAll');
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+			parent.$.messager.progress('close');
+		}
+	});
+}
+
+/**
+ * 合同变更申请审核-取消
+ */
+function achangeCancel(){
+	$('#achange_Dialog').dialog('close');
 }

@@ -403,8 +403,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			File[] files = ((MultiPartRequestWrapper) getRequest()).getFiles("imageFile");
 			String[] filenames = ((MultiPartRequestWrapper) getRequest()).getFileNames("imageFile");
 			try {
-				if (files == null || files.length == 0) {
-					throw new BusinessException("变更附件不能为空");
+				if(data.getIapplystatus() != null && data.getIapplystatus() != 4){
+					if (files == null || files.length == 0) {
+						throw new BusinessException("变更附件不能为空");
+					}
 				}
 				ContractConfrimVO retvo = contractconfser.saveChange(data, getLoginUserid(), files, filenames);
 				if (retvo != null) {
@@ -592,6 +594,32 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 查询待变更数据信息
+	 */
+	public void queryChangeById() {
+		Json json = new Json();
+		if (data != null) {
+			try {
+				UserVO uservo = getLoginUserInfo();
+				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+					throw new BusinessException("登陆用户错误");
+				} else if (uservo == null) {
+					throw new BusinessException("登陆用户错误");
+				}
+				ContractConfrimVO retvo = contractconfser.queryChangeById(data);
+				json.setSuccess(true);
+				json.setRows(retvo);
+			} catch (Exception e) {
+				printErrorLog(json, log, e, "操作失败");
+			}
+		} else {
+			json.setSuccess(false);
+			json.setMsg("操作数据为空");
+		}
+		writeJson(json);
 	}
 
 }

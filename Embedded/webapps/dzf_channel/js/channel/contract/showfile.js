@@ -210,3 +210,50 @@ $(document).keydown(function(e) {
 		parent.closeFullViewDlg();
 	}
 });
+
+/**
+ * 展示变更申请附件图片
+ * @param row
+ */
+function showChangeDetImage(row){
+	$("#aifileshow").show();
+	$("#aifiledocs").html('');
+	arrachrows = new Array();
+	flowImgUrls = new Array();
+	var srcpath = row.fpath.replace(/\\/g, "/");
+	var src = getAttachImgUrl(row);
+	arrachrows[0] = row;
+	var src = DZF.contextPath + '/contract/contractaudit!getAttachImage.action?applyid='
+			+ row.applyid ;
+	
+	var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
+		+ '" style="position: absolute;z-index: 1;left:50px;">';
+	flowImgUrls[0] = img;
+	
+	$('<li><a href="javascript:void(0)"  onmouseover="showTips(0)"  '+
+			'onmouseout="hideTips(0)"  ondblclick="doubleDetImage(0);" >' + 
+			'<span><img src="' +src +  '" />'+
+			'<div id="reUpload0' +
+			'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+			'<h4><span id="tips0"></span></h4></div></span>'+
+			'<font>' + 	row.doc_name + '</font></a></li>').appendTo($("#aifiledocs"));
+}
+
+/**
+ *  展示变更申请附件图片详情
+ * @param i
+ */
+function doubleDetImage(i){
+	var ext = getFileExt(arrachrows[i]['doc_name']);
+	var src = DZF.contextPath
+			+ '/contract/contractaudit!getAttachImage.action?applyid='
+			+ arrachrows[i].applyid ;
+	if ("png" == ext.toLowerCase() || "jpg" == ext.toLowerCase()
+			|| "jpeg" == ext.toLowerCase() || "bmp" == ext.toLowerCase()) {
+		$("#tpfd").empty();
+		var offset = $("#tpght").offset();
+		var img = '<img id="conturnid" alt="无法显示图片" src="' + src
+				+ '" style="position: absolute;z-index: 1;left:50px;">';
+		parent.openFullViewDlg(img, '原图', null, null, i, flowImgUrls);
+	}
+}

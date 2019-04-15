@@ -289,8 +289,74 @@ public class ContractConfrimVO extends SuperVO {
 	@FieldAlias("comptypenm")
 	private String vcomptypename;//公司类型名称
 	
+	@FieldAlias("doc_name")
+	private String docName; // 附件名称(中文，仅作展示)
+
+	@FieldAlias("doc_temp")
+	private String docTemp; // 附件名称(下载用 非中文，仅作展示)
+
+	@FieldAlias("doc_time")
+	private DZFDateTime docTime; // 上传时间(仅作展示)
+	
+	@FieldAlias("fpath")
+	private String vfilepath;// 文件存储路径(仅作展示)
+	
+	@FieldAlias("doc_owner")
+	private String docOwner; // 上传人(仅作展示)
+	
+	@FieldAlias("applyid")
+    private String pk_changeapply; // 合同变更申请主键(仅作展示)
+	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public String getPk_changeapply() {
+		return pk_changeapply;
+	}
+
+	public void setPk_changeapply(String pk_changeapply) {
+		this.pk_changeapply = pk_changeapply;
+	}
+
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
+
+	public String getDocTemp() {
+		return docTemp;
+	}
+
+	public void setDocTemp(String docTemp) {
+		this.docTemp = docTemp;
+	}
+
+	public DZFDateTime getDocTime() {
+		return docTime;
+	}
+
+	public void setDocTime(DZFDateTime docTime) {
+		this.docTime = docTime;
+	}
+
+	public String getVfilepath() {
+		return vfilepath;
+	}
+
+	public void setVfilepath(String vfilepath) {
+		this.vfilepath = vfilepath;
+	}
+
+	public String getDocOwner() {
+		return docOwner;
+	}
+
+	public void setDocOwner(String docOwner) {
+		this.docOwner = docOwner;
+	}
+
 	public Integer getIapplystatus() {
 		return iapplystatus;
 	}
