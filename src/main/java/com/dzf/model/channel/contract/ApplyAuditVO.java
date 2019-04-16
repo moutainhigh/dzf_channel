@@ -33,6 +33,9 @@ public class ApplyAuditVO extends SuperVO {
 	@FieldAlias("corpkid")
 	private String pk_corpk;//客户主键
 	
+	@FieldAlias("opertype")
+	private Integer iopertype;// 操作类型1：审核；2：变更；
+	
 	//申请状态  1：渠道待审（保存态）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
 	@FieldAlias("apstatus")
 	private Integer iapplystatus;
@@ -54,6 +57,14 @@ public class ApplyAuditVO extends SuperVO {
     
     @FieldAlias("memo")
     private String vmemo;//备注
+
+	public Integer getIopertype() {
+		return iopertype;
+	}
+
+	public void setIopertype(Integer iopertype) {
+		this.iopertype = iopertype;
+	}
 
 	public String getVmemo() {
 		return vmemo;

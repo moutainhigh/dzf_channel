@@ -381,7 +381,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("       t.pk_corpk,  \n") ; 
 		sql.append("       t.vdeductstatus,  \n") ; 
 		sql.append("       t.vstatus,  \n") ; 
-		sql.append("       cn.iapplystatus,  \n") ; 
+		sql.append("       t.iversion AS iapplystatus,  \n") ; 
 		sql.append("       CASE  \n") ; 
 		sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN  \n") ; 
 		sql.append("              t.tstamp  \n") ; 
@@ -797,7 +797,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
 				//12、更新申请状态
 				if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
-					updateContApply(datavo, cuserid, 1);
+					updateContApply(datavo, cuserid, 1, 1);
 				}
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 				checkBeforeReject(datavo);
@@ -812,7 +812,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				saveAuditMsg(datavo, 2, pk_corp, cuserid);
 				//12、更新申请状态
 				if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
-					updateContApply(datavo, cuserid, 2);
+					updateContApply(datavo, cuserid, 2, 1);
 				}
 			}
 		} catch (Exception e) {
@@ -1536,7 +1536,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			
 			//6、更新合同申请-申请状态，记录操作历史
 			if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
-				updateContApply(datavo, cuserid, 1);
+				updateContApply(datavo, cuserid, 1, 2);
 			}
 			
 			//7.1、更新原合同主表数据的合同结束日期、合同结束期间、合同周期、合同总金额
@@ -1603,9 +1603,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param datavo
 	 * @param cuserid
 	 * @param type  1：正向；2：逆向；
+	 * @param iopertype 操作类型1：审核；2：变更；
 	 * @throws DZFWarpException
 	 */
-	private void updateContApply(ContractConfrimVO datavo, String cuserid, Integer type) throws DZFWarpException {
+	private void updateContApply(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		// 1、更新合同申请-申请状态

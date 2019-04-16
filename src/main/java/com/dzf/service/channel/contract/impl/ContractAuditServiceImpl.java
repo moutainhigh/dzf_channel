@@ -447,6 +447,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		avo.setPk_corp(datavo.getPk_corp());
 		avo.setPk_corpk(datavo.getPk_corpk());
 		
+		if(datavo.getIchangetype() != null && (datavo.getIchangetype() == 1 || datavo.getIchangetype() == 2)){
+			avo.setIopertype(2);// 操作类型1：审核；2：变更；
+		}else if(datavo.getIchangetype() != null && datavo.getIchangetype() == 3){
+			avo.setIopertype(1);// 操作类型1：审核；2：变更；
+		}
+		
 		Integer opertype = datavo.getIopertype();
 		if(opertype == 1){
 			avo.setIapplystatus(datavo.getIapplystatus());

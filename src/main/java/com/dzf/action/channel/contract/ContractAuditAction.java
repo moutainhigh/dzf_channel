@@ -200,9 +200,9 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 			}
 			auditser.updateChange(data, getLoginUserInfo());
 			json.setSuccess(true);
-			json.setMsg("变更成功");
+			json.setMsg("操作成功");
 		} catch (Exception e) {
-			printErrorLog(json, log, e, "变更失败");
+			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}

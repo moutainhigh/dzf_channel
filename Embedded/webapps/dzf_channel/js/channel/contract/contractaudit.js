@@ -862,7 +862,7 @@ function showAuditInfoDlg(row){
 	var children = row.children;
 	if(children != null && children.length > 0){
 		for(var i = 0; i < children.length; i++){
-			$("#ihistory").append("--->").append(children[i].memo);
+			$("#ahistory").append("--->").append(children[i].memo);
 		}
 		if(row.apstatus == 1){
 			$("#ahistory").append("--->渠道待审");
