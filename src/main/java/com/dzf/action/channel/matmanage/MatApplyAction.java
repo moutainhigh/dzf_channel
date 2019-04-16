@@ -355,20 +355,11 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		// 5、合并行字段名称
 		List<String> hbhtitlist = new ArrayList<String>();
 
-		List<String> hbhtitlist2 = new ArrayList<String>();
-
-		hbhtitlist2.add("备注");
-		hbhtitlist2.add("状态");
-		hbhtitlist2.add("驳回原因");
-		hbhtitlist2.add("录入时间");
-		hbhtitlist2.add("申请人");
-		hbhtitlist2.add("申请时间");
-
 		// 7、字符集合
 		List<String> strslist = new ArrayList<String>();
 
 		// 8、金额集合
-		List<String> mnylist = new ArrayList<String>();// wlname...applynum1...adate
+		List<String> mnylist = new ArrayList<String>();
 		mnylist.add("fcost");
 
 		Map<String, String> field = null;
@@ -402,9 +393,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 
 			// 合并两列的标题
 			if ("2".equals(String.valueOf(field.get("colspan")))) {
-				// strslist.add(String.valueOf(colsarray.get(i)));
 				exptitlist.add("申请");
-				// nalist.add(String.valueOf(colsarray.get(i)));
 				exptitlist.add("实发");
 				if(hblnum == 0){
 					hblindexlist.add(i-2);
