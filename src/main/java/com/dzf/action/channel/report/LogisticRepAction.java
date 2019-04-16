@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.LogisticRepVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -77,6 +78,52 @@ public class LogisticRepAction extends BaseAction<LogisticRepVO>{
 			}
 			grid.setRows(retlist);
 			grid.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 查询商品表头
+	 */
+	public void qryGoodsHead() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			List<ComboBoxVO> list = logistic.qryGoodsHead();
+			if (list == null || list.size() == 0) {
+				grid.setRows(new ArrayList<ComboBoxVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	/**
+	 * 查询物料表头
+	 */
+	public void qryMaterHead() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			List<ComboBoxVO> list = logistic.qryMaterHead();
+			if (list == null || list.size() == 0) {
+				grid.setRows(new ArrayList<ComboBoxVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}

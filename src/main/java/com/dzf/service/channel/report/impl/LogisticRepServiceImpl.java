@@ -12,6 +12,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.dealmanage.GoodsBoxVO;
 import com.dzf.model.channel.report.LogisticRepVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.ComboBoxVO;
@@ -44,7 +45,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO sqpvo =  getQryGoods(pamvo);
 		List<LogisticRepVO> list = (List<LogisticRepVO>) multBodyObjectBO.queryDataPage(LogisticRepVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		Map<String, String> opermap = pubService.getManagerMap(3);// 渠道运营
+		Map<String, String> opermap = pubService.getManagerMap(1);// 渠道经理
 		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(), 3);//大区
 		Map<String,List<ComboBoxVO>> comMap = getGoodsMap(pamvo);
 		UserVO uvo;
@@ -63,14 +64,16 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 				if (!StringUtil.isEmpty(getId)) {
 					uvo = UserCache.getInstance().get(getId, null);
 					if (uvo != null) {
-						logisticRepVO.setVoperater(uvo.getUser_name());// 渠道运营
+						logisticRepVO.setVmanager(uvo.getUser_name());
 					}
 				}
 			}
 			if(comMap != null && !comMap.isEmpty()){
 				getList = comMap.get(logisticRepVO.getPk_id());
 				if (getList !=null && getList.size()>0) {
-					logisticRepVO.setChildren(getList.toArray(new ComboBoxVO[getList.size()]));// 渠道运营
+					logisticRepVO.setChildren(getList.toArray(new ComboBoxVO[getList.size()]));
+				}else{
+					logisticRepVO.setChildren(new ComboBoxVO[0]);
 				}
 			}
 		}
@@ -86,7 +89,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		Map<String, List<ComboBoxVO>> map = new HashMap<String, List<ComboBoxVO>>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select g.vgoodsname name, sum(b.nnum) code,b.pk_stockout id");
+		sql.append("select sum(b.nnum) name,g.pk_goods id,b.pk_stockout code");
 		sql.append("  from cn_stockout_b b ");
 		sql.append("  left join cn_stockout out on b.pk_stockout = out.pk_stockout ");
 		sql.append("  left join bd_account ba on out.pk_corp = ba.pk_corp  ");
@@ -113,18 +116,18 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());
 		}
-		sql.append(" group by b.pk_goods, b.pk_stockout, g.vgoodsname ");
+		sql.append(" group by g.pk_goods, b.pk_stockout ");
 		List<ComboBoxVO> list = (List<ComboBoxVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
 		List<ComboBoxVO> setList= new ArrayList<>();
 		for (ComboBoxVO comboBoxVO : list) {
-			if(!map.isEmpty() && map.containsKey(comboBoxVO.getId())){
+			if(!map.isEmpty() && map.containsKey(comboBoxVO.getCode())){
 				setList= new ArrayList<>();
-				setList = map.get(comboBoxVO.getId());
+				setList = map.get(comboBoxVO.getCode());
 				setList.add(comboBoxVO);
 			}else{
 				setList= new ArrayList<>();
 				setList.add(comboBoxVO);
-				map.put(comboBoxVO.getId(), setList);
+				map.put(comboBoxVO.getCode(), setList);
 			}
 		}
 		return map;
@@ -149,7 +152,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("select ba.pk_corp, ");
 		sql.append("       ba.unitname corpname, ");
 		sql.append("       ba.vprovince, ");
-		sql.append("       pk_stockout,pk_id ");
+		sql.append("       pk_stockout pk_id, ");
 		sql.append("       out.vreceivername, ");
 		sql.append("       out.phone, ");
 		sql.append("       out.vreceiveaddress, ");
@@ -195,7 +198,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO sqpvo =  getQryMateriel(pamvo);
 		List<LogisticRepVO> list = (List<LogisticRepVO>) multBodyObjectBO.queryDataPage(LogisticRepVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		Map<String, String> opermap = pubService.getManagerMap(3);// 渠道运营
+		Map<String, String> opermap = pubService.getManagerMap(1);//渠道经理
 		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(), 3);//大区
 		Map<String, List<ComboBoxVO>> matmap = getMaterielMap(pamvo);
 		UserVO uvo;
@@ -214,7 +217,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 				if (!StringUtil.isEmpty(getId)) {
 					uvo = UserCache.getInstance().get(getId, null);
 					if (uvo != null) {
-						logisticRepVO.setVoperater(uvo.getUser_name());// 渠道运营
+						logisticRepVO.setVmanager(uvo.getUser_name());
 					}
 				}
 			}
@@ -243,7 +246,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		Map<String, List<ComboBoxVO>> map = new HashMap<String, List<ComboBoxVO>>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select m.vname name, sum(b.outnum) code,b.pk_materielbill id");
+		sql.append("select sum(b.outnum) name,m.pk_materiel id, b.pk_materielbill code");
 		sql.append("  from cn_materielbill_b b ");
 		sql.append("  left join cn_materielbill mat on b.pk_materielbill = mat.pk_materielbill");
 		sql.append("  left join bd_account ba on mat.pk_corp = ba.pk_corp ");
@@ -270,18 +273,18 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());
 		}
-		sql.append(" group by b.pk_materiel, b.pk_materielbill, m.vname ");
+		sql.append(" group by m.pk_materiel, b.pk_materielbill ");
 		List<ComboBoxVO> list = (List<ComboBoxVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
 		List<ComboBoxVO> setList= new ArrayList<>();
 		for (ComboBoxVO comboBoxVO : list) {
-			if(!map.isEmpty() && map.containsKey(comboBoxVO.getId())){
+			if(!map.isEmpty() && map.containsKey(comboBoxVO.getCode())){
 				setList= new ArrayList<>();
-				setList = map.get(comboBoxVO.getId());
+				setList = map.get(comboBoxVO.getCode());
 				setList.add(comboBoxVO);
 			}else{
 				setList= new ArrayList<>();
 				setList.add(comboBoxVO);
-				map.put(comboBoxVO.getId(), setList);
+				map.put(comboBoxVO.getCode(), setList);
 			}
 		}
 		return map;
@@ -339,6 +342,28 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
+	}
+
+	@Override
+	public List<ComboBoxVO> qryGoodsHead() throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pk_goods AS id,  \n") ;
+		sql.append("       vgoodsname AS name  \n") ; 
+		sql.append("  FROM cn_goods \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(GoodsBoxVO.class));
+	}
+
+	@Override
+	public List<ComboBoxVO> qryMaterHead() throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pk_materiel AS id,  \n") ;
+		sql.append("       vname AS name  \n") ; 
+		sql.append("  FROM cn_materiel \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(GoodsBoxVO.class));
 	}
 	
 }

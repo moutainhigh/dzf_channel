@@ -1,12 +1,12 @@
 package com.dzf.model.channel.report;
 
-import com.dzf.model.pub.MultSuperVO;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
 @SuppressWarnings({ "serial" })
-public class LogisticRepVO extends MultSuperVO {
+public class LogisticRepVO extends SuperVO{
 	
 	@FieldAlias("corpid")
 	private String pk_corp;
@@ -22,15 +22,15 @@ public class LogisticRepVO extends MultSuperVO {
 	@FieldAlias("ovince")
 	private Integer vprovince;// 地区
 	
-	@FieldAlias("oid")
-	private String voperater;//渠道运营id
+	@FieldAlias("mid")
+	private String vmanager;//渠道经理id
 	
 	//////////////////////////////1、收货信息	//////////////////////////////
 	
 	@FieldAlias("rename")
 	private String vreceivername;//收货人
 	
-	private String phone;//联系方式
+	private String phone;//联系电话
 	
 	@FieldAlias("readdress")
 	private String vreceiveaddress;//收货地址
@@ -38,7 +38,7 @@ public class LogisticRepVO extends MultSuperVO {
 	//////////////////////////////2、快递信息	//////////////////////////////
 	
 	@FieldAlias("logunit")
-	private String logisticsunit; //物流公司
+	private String logisticsunit; //快递公司
 	
 	@FieldAlias("fcode")
 	private String fastcode; //物流单号
@@ -99,20 +99,20 @@ public class LogisticRepVO extends MultSuperVO {
 		this.vprovince = vprovince;
 	}
 
-	public String getVoperater() {
-		return voperater;
-	}
-
-	public void setVoperater(String voperater) {
-		this.voperater = voperater;
-	}
-
 	public void setVreceivername(String vreceivername) {
 		this.vreceivername = vreceivername;
 	}
 
 	public String getPhone() {
 		return phone;
+	}
+
+	public String getVmanager() {
+		return vmanager;
+	}
+
+	public void setVmanager(String vmanager) {
+		this.vmanager = vmanager;
 	}
 
 	public void setPhone(String phone) {
