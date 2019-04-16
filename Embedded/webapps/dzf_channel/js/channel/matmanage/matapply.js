@@ -889,7 +889,17 @@ function dClickMat(rowTable){
 		var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
 		var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
 		
-		var name = $(wlname.target).textbox('getValue');
+		var rows = $('#cardGrid').datagrid('getRows');
+			for(var i=0;i<rows.length;i++){
+				if(rows[i].matfileid!=null){
+					if(rows[i].wlname==wlnameValue){
+						Public.tips({content : "不能选择重复物料",type : 2});
+						return;
+					}
+					
+				}
+				
+			}
 		
 		$(wlname.target).textbox('setValue', wlnameValue);
 		$(unit.target).textbox('setValue', unitValue);
