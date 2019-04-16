@@ -254,7 +254,11 @@ function opermatter(val, row, index) {
 function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增物料');
 	initEvent();
-	 $('#cbDialog').form("clear");
+	$('#cbDialog').form("clear");
+    $('.hid').css("display", ""); 
+    $('.show').css("display", "none");
+    $("#name").textbox({required:false});
+    $('#nname').textbox({required:true});
 }
 
 /**
@@ -293,13 +297,20 @@ function edit(index){
 	
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '编辑物料');
 	$('#mat_add').form('clear');
+	$('.hid').css("display", "none"); 
+	$('.show').css("display", "");
+	
+	$('#mat_add').form('load', row);
+	$('#nname').textbox({required:false});
+	$('#nname').textbox("setValue",null); 
+	
 	if(row.apply==1){
 		$("#apply").prop("checked",true);
 	}
-	$('#mat_add').form('load', row);
 	
 	$("#matfileid").combobox("setValue",row.matfileid);
 }
+
 
 /**
  * 通过主键查询物料信息

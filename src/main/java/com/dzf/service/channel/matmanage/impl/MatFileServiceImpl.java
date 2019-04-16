@@ -115,7 +115,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	 */
 	private String getMatcode(MaterielFileVO vo) throws DZFWarpException {
 		String code;
-		String str = "LGWL";
+		String str = "CGWL";
 		MaxCodeVO mcvo = new MaxCodeVO();
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vcode");

@@ -146,12 +146,19 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 	 */
 	public void save() {
 		Json json = new Json();
+		String vname = "";
 		try{
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_67);
 			if (data == null) {
 				throw new BusinessException("数据信息不能为空");
+			}
+			if(!StringUtil.isEmpty(data.getVname())){
+				if(data.getVname().contains(",")){
+					vname = data.getVname().replace(",", "").trim();
+					data.setVname(vname);
+				}
 			}
 			matFile.saveMatFile(data,uservo);
 			json.setMsg("保存成功");

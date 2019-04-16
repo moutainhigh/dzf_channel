@@ -85,14 +85,19 @@
 		<div id="cbDialog" class="easyui-dialog" style="height:275px;width:500px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="mat_add" method="post">
-				<input id="matfileid" name="matfileid" type="hidden">
-				<input id="updatets" name="updatets" type="hidden">
+				<input name="matfileid" type="hidden">
+				<input name="updatets" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>物料名称：</label> 
-						<input class="easyui-textbox" id="wlname" name="wlname" style="width:300px;height:28px;"
-						 data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/matmanage/matfile!queryMatname.action','wlname' ]" 
-						 invalidMessage= "此物料已存在"  /> 
-						
+						<span class="hid">
+							<input class="easyui-textbox" id="nname" name="wlname" class="hid" style="width:300px;height:28px;"
+						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/matmanage/matfile!queryMatname.action','wlname' ]" 
+						      invalidMessage= "此物料已存在"  /> 
+						</span>
+						<span class="show">
+						   <input class="easyui-textbox" id="name" name="wlname" style="width:300px;height:28px;"
+						      data-options="required:true" /> 
+						</span>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>单位：</label>
