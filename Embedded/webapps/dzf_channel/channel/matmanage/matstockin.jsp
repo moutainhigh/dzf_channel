@@ -97,7 +97,8 @@
 				</div>
                	<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right">备注：</label>
-						<input class="easyui-textbox" id="memo" name="memo" style="width:425px;height:28px;" />
+						<input class="easyui-validatebox" id="memo" name="memo" style="width:425px;height:28px;"
+							validtype="length[0,200]" invalidMessage="最多输入200个字" />
 				</div>
 				<div style="float:right;margin-top:40px;margin-right:276px;">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
