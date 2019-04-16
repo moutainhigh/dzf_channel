@@ -677,7 +677,7 @@ function checked(type){
 			if (result.success) {
 				if(type==0){
 					if(row.msg =="提示"){
-						$.messager.confirm("注意", , function(flag) {
+						$.messager.confirm("注意", "", function(flag) {
 							if (flag) {
 								showCard(row);
 							} else {
