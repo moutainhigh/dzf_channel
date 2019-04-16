@@ -434,6 +434,12 @@ function clearParams(){
 	$("#pk_account").val(null);
 	$('#aname').combobox('setValue', null);
 	$("#channel_select").textbox("setValue",null);
+	
+	$("#manager").textbox("setValue",null);
+	$("#managerid").val(null);
+	
+	$("#operater").textbox("setValue",null);
+	$("#operaterid").val(null);
 }
 
 function selectCorps(){
