@@ -422,6 +422,15 @@ function dele(){
  * 保存
  */
 function onSave(){
+	var wlname = $('#nname').textbox('getValue');
+	
+	if (wlname.indexOf(" ") != -1) {
+		Public.tips({
+			content :"物料名称不可以输入空格",
+			type : 2
+		});
+		return ;
+	} 
 	
 	if ($("#mat_add").form('validate')) {
 		$('#mat_add').form('submit', {

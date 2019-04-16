@@ -92,7 +92,7 @@
 						<span class="hid">
 							<input class="easyui-textbox" id="nname" name="wlname" class="hid" style="width:300px;height:28px;"
 						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/matmanage/matfile!queryMatname.action','wlname' ]" 
-						      invalidMessage= "此物料已存在"  /> 
+						      invalidMessage= "此物料已存在" /> 
 						</span>
 						<span class="show">
 						   <input class="easyui-textbox" id="name" name="wlname" style="width:300px;height:28px;"

@@ -83,7 +83,7 @@
 							 data-options="width:137,height:27" />  
 						<label style="width:85px;text-align:right">物料名称：</label> 
 						<input id="matfileid" name="matfileid" class="easyui-combobox" style="width:188px;height:28px;"
-				   			editable="false" data-options="required:false,valueField:'matfileid', textField:'wlname', panelHeight:'200'" />
+				   			editable="false" data-options="required:true,valueField:'matfileid', textField:'wlname', panelHeight:'200'" />
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right">成本价：</label>

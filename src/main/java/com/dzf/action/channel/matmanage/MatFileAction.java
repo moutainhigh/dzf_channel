@@ -214,7 +214,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 				 json.setSuccess(true);
 			}else {
 				 for (MaterielStockInVO bvo : bvosList) {
-				    	errmsg.append("物料编号："+bvo.getVcode()+"已有入库单，请删除后重试<br/>");
+				    	errmsg.append("物料编号："+bvo.getVcode()+"已有入库单，请删除入库单后重试<br/>");
 						json.setMsg(errmsg.toString());
 					}
 			}

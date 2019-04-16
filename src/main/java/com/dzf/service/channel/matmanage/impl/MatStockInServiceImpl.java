@@ -136,7 +136,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 */
 	private String getMatcode(MaterielStockInVO vo) throws DZFWarpException {
 		String code;
-		String str = "cgrk";
+		String str = "WLRK";
 		DZFDate now = new DZFDate();
 		MaxCodeVO mcvo = new MaxCodeVO();
 		mcvo.setTbName(vo.getTableName());

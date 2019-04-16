@@ -1,7 +1,7 @@
 var contextPath = DZF.contextPath;
 $(function(){
 	initQry();
-	initCombobox();
+	//initCombobox();
 	load();
 	reloadData();
 });
@@ -238,11 +238,19 @@ function opermatter(val, row, index) {
 }
 
 
+function initCombobox(){
+	$("#matfileid").combobox({
+		onShowPanel: function () {
+			initLogistics();
+        }
+    })
+}
+
 /**
  * 查询物料下拉
  */
 
-function initCombobox(){
+function initLogistics(){
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -270,6 +278,12 @@ function add() {
 	$("#num").numberbox({
 	      min :1,
 	});
+	$("#cost").numberbox({
+	      min :0,
+	});
+	$('#indate').datebox('setValue',parent.SYSTEM.LoginDate);
+	
+	initCombobox();
 	initEvent();
 	calMoney();
 }
