@@ -292,13 +292,12 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			}
 			if(!StringUtil.isEmpty(vo.getMessage())){
 				json.setMsg("提示");
-				json.setRows(vo.getMessage());
+				json.setRows(vo);
 			}else{
 				json.setRows(vo);
 				json.setMsg("查询成功");
 				json.setSuccess(true);
 			}
-			
 		}catch (Exception e) {
 			json.setMsg("查询失败");
 			json.setSuccess(false);

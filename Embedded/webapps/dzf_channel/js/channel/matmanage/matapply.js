@@ -769,7 +769,7 @@ function initRef(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					ovince :"-1"
+    					ovince :"-2"
     				},
     				buttons : [ {
     					text : '确认',

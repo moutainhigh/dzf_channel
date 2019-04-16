@@ -106,6 +106,8 @@
 				<input id="matbillid" name="matbillid" type="hidden">
 				<input id="updatets" name="updatets" type="hidden">
 				<input id="type" name="type" type="hidden">
+				<input id="debegdate" name="debegdate" type="hidden">
+				<input id="deenddate" name="deenddate" type="hidden">
 				<div class="time_col time_colp10">
 				        <span class="hid">
 						<label style="text-align:right; width: 85px;">合同编号：</label> 

@@ -674,10 +674,9 @@ function checked(type){
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
-			if (result.success) {
 				if(type==0){
 					if(row.msg =="提示"){
-						$.messager.confirm("注意", "", function(flag) {
+						$.messager.confirm("注意",row.message , function(flag) {
 							if (flag) {
 								showCard(row);
 							} else {
@@ -696,15 +695,17 @@ function checked(type){
 						return;
 					}
 				}
+			if (result.success) {
+			    showCard(row);
 		   }
-        }
+		}
 	});
 }
 
 /**
  * 显示审核框
  */
-function showCard(){
+function showCard(row){
 	if(row.status==1){
 		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请审核');
 		$('#mat_add').form('clear');

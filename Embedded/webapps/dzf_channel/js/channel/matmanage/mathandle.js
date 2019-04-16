@@ -713,9 +713,8 @@ function send(){
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
-			
 			if(row.msg =="提示"){
-				$.messager.confirm("注意", , function(flag) {
+				$.messager.confirm("注意",row.message, function(flag) {
 					if (flag) {
 						showCard(row);
 					} else {
