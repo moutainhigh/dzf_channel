@@ -5,7 +5,7 @@ var status="brows";
 
 $(function(){
 	initQry();
-	initCombobox();
+	//initCombobox();
 	initLogistics();
 	initRadioListen();
 	load(0);
@@ -727,6 +727,12 @@ function showCard(row){
 			$('#cardGrid').datagrid('hideColumn','operate');
 			$('#cardGrid').datagrid('showColumn','outnum');
 		}
+	    
+	    $("#logname").combobox({
+		     onSelect: function(){
+		    	 initCombobox()
+		     }
+		});
 	    
 	}else {
 		Public.tips({content : "单据状态不为待发货！" ,type:2});

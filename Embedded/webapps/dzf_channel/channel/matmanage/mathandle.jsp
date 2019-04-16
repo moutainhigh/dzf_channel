@@ -46,7 +46,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:220px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:263px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<h3>
 				<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -165,7 +165,7 @@
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;">快递公司：</label>
 					 	<input id="logname" name="logname" class="easyui-combobox" style="width:166px;height:28px;"
-				           editable="false" data-options="valueField:'logid', textField:'logname', panelHeight:'200'" />  
+				           editable="false" data-options="required:true,valueField:'logid', textField:'logname', panelHeight:'200'" />  
 						<input id="logid" name="logid" type="hidden">
 					
 			            <label style="text-align:right; width: 85px;">金额：</label> 

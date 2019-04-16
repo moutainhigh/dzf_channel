@@ -766,6 +766,7 @@ function initRef(){
                     width: 600,
                     height: 480,
                     readonly: true,
+                    singleSelect : true,
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
@@ -809,10 +810,10 @@ function dClickCompany(rowTable){
 	//var corpIds = [];
 	
 	if(rowTable){
-		/*if(rowTable.length>300){
-			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+		if(rowTable.length>1){
+			Public.tips({content : "只能选择1个加盟商!" ,type:2});
 			return;
-		}*/
+		}
 		/*for(var i=0;i<rowTable.length;i++){
 			if(i == rowTable.length - 1){
 				str += rowTable[i].uname;
@@ -912,36 +913,39 @@ function showApplyData(fcorp){
 				var result = eval('(' + result+ ')');
 				if (result.success) {
 					var row=result.rows;
-					$('#pname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'vprovince',    
-					     textField:'pname',
-					     value:row.pname,
-					});
-					$('#cityname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'vcity',    
-					     textField:'cityname',
-					     value:row.cityname,
-					});
-					$('#countryname').combobox({  
-						 //readonly : true,
-					     editable:false,
-					     valueField:'varea',    
-					     textField:'countryname',
-					     value:row.countryname,
-					});
-					$('#vprovince').val(row.vprovince);
-					$('#vcity').val(row.vcity);
-					$('#varea').val(row.varea);
-					if(row.varea==undefined){
-						$('#varea').val();
+					if(rows!=undefined){
+						$('#pname').combobox({  
+							 //readonly : true,
+						     editable:false,
+						     valueField:'vprovince',    
+						     textField:'pname',
+						     value:row.pname,
+						});
+						$('#cityname').combobox({  
+							 //readonly : true,
+						     editable:false,
+						     valueField:'vcity',    
+						     textField:'cityname',
+						     value:row.cityname,
+						});
+						$('#countryname').combobox({  
+							 //readonly : true,
+						     editable:false,
+						     valueField:'varea',    
+						     textField:'countryname',
+						     value:row.countryname,
+						});
+						$('#vprovince').val(row.vprovince);
+						$('#vcity').val(row.vcity);
+						$('#varea').val(row.varea);
+						if(row.varea==undefined){
+							$('#varea').val();
+						}
+						$('#receiver').textbox("setValue",row.receiver);
+						$('#phone').textbox("setValue",row.phone);
+						$('#unit').textbox("setValue",row.unit);
 					}
-					$('#receiver').textbox("setValue",row.receiver);
-					$('#phone').textbox("setValue",row.phone);
-					$('#unit').textbox("setValue",row.unit);
+					
 				} else {
 					Public.tips({content : result.msg,type : 2});
 				}
