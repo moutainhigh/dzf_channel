@@ -204,7 +204,7 @@ function initPackageGrid() {
 				}
 			},
 			formatter : formatMny,
-		}, {
+		}, /*{
 			field : 'ispackage',
 			title : '只买套餐',
 			width : 100,
@@ -221,7 +221,7 @@ function initPackageGrid() {
 					return '<input type="checkbox" disabled ' + checked + '/>';
 				}
 			}
-		}, {
+		},*/ {
 			width : '100',
 			title : '商品状态',
 			field : 'status',
@@ -239,19 +239,19 @@ function initPackageGrid() {
 	});
 }
 
-/**
- * 只买套餐格式化
- * 
- * @param value
- * @returns {String}
- */
-function packageformat(value, row) {
-	if (value && (value == 'Y' || value == "是")) {
-		return "<input type=\"checkbox\" checked=\"checked\" onclick=\"return false;\" >";
-	} else {
-		return "<input type=\"checkbox\" onclick=\"return false;\" >";
-	}
-}
+///**
+// * 只买套餐格式化
+// * 
+// * @param value
+// * @returns {String}
+// */
+//function packageformat(value, row) {
+//	if (value && (value == 'Y' || value == "是")) {
+//		return "<input type=\"checkbox\" checked=\"checked\" onclick=\"return false;\" >";
+//	} else {
+//		return "<input type=\"checkbox\" onclick=\"return false;\" >";
+//	}
+//}
 
 /**
  * 新增（套餐）
