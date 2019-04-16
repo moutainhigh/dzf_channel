@@ -190,7 +190,7 @@ function onDelete(ths){
  * 刷新
  */
 function reloadData(){
-	var url = DZF.contextPath + '/chn_set/rejectreason!query.action',
+	var url = DZF.contextPath + '/chn_set/rejectreason!query.action';
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {});
 }
