@@ -424,6 +424,12 @@ function clearParams(){
 	$('#istatus').combobox('setValue', -1);
 	$('#qitype').combobox('setValue', -1);
 	$('#qsourtype').combobox('setValue', -1);
+	
+	$("#manager").textbox("setValue",null);
+	$("#managerid").val(null);
+	
+	$("#operater").textbox("setValue",null);
+	$("#operaterid").val(null);
 }
 
 function selectCorps(){

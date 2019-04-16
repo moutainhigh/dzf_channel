@@ -105,8 +105,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			if (where != null) {
 				if (!where.equals("alldata")) {
 					qsql.append(where);
-					paramvo.setVprovname(qsql.toString());
 				}
+				paramvo.setVprovname(qsql.toString());
 				total = invManagerSer.queryTotalRow(paramvo);
 			}
 			
