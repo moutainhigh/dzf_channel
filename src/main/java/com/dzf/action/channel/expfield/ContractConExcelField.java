@@ -41,14 +41,15 @@ public class ContractConExcelField implements IExceport<ContractConfrimVO>{
 			new Fieldelement("vconfreason", "驳回原因",false,0,false),
 			new Fieldelement("naccountmny", "合同代账费",true,2,false),
 			new Fieldelement("nbookmny", "账本费",true,2,false),
-			new Fieldelement("isnconfirm", "未确定期限",false,0,false),
 			new Fieldelement("dbegindate", "开始日期",false,0,false),
 			new Fieldelement("denddate", "结束日期",false,0,false),
 			new Fieldelement("ireceivcycle", "收款(月)",false,0,false),
 			new Fieldelement("icontractcycle", "合同(月)",false,0,false),
 			new Fieldelement("chargedeptname", "纳税人资格",false,0,false),
 			new Fieldelement("nmservicemny", "月服务费",true,2,false),
+			new Fieldelement("dchangedate", "作废/终止日期",true,2,false),
 			new Fieldelement("voperater", "渠道运营",false,0,false),
+			new Fieldelement("vadviser", "销售顾问",false,0,false),
 			new Fieldelement("vopername", "经办人",false,0,false),
 	};
 
