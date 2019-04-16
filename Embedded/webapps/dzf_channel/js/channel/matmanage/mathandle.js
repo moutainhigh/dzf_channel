@@ -11,18 +11,6 @@ $(function(){
 	load(0);
 });
 
-
-function review(){
-	if($('#false').is(':checked')){
-    	$('#reason').textbox({required:true});
-    	$('#reason').textbox({prompt:'最多输入100字'});
-    }
-	if($('#true').is(':checked')){
-    	$('#reason').textbox({required:false});
-    	$('#reason').textbox({prompt:''});
-    }
-}
-
 function initCombobox(){
 	$("#uid").combobox({
 		onShowPanel: function () {
@@ -555,22 +543,6 @@ function onCancel(){
 }
 
 /**
- * 新增
- */
-function add() {
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增物料申请单');
-	$('#mat_add').form('clear');
-	$('#cityname').combobox('loadData', {});//清空市option选项  
-	$('#countryname').combobox('loadData', {});//清空县option选项  
-	//queryAllProvince();
-	initCard();
-	operCard();
-    $('.hid').css("display", "none"); 
-	
-	status = "add";
-}
-
-/**
  * 卡片表格
  */
 function initCard(){
@@ -807,16 +779,6 @@ function onSave(){
 }
 
 
-function operCard(){
-	$('#cardGrid').datagrid('loadData', {// 清除缓存数据
-		total : 0,
-		rows : []
-	});
-	$('#cardGrid').datagrid('appendRow', {});
-	editIndex = $('#cardGrid').datagrid('getRows').length - 1;
-	$('#cardGrid').datagrid('beginEdit', editIndex);
-}
-
 /**
  * 通过主键查询信息
  */
@@ -846,45 +808,6 @@ function queryByID(matbillid){
 		},
 	});
 	return row;
-}
-
-/**
- * 删除
- * @param ths
- */
-function del(ths){
-	var row = $('#grid').datagrid('getSelected');
-	if(row==null){
-		Public.tips({content:'请选择数据行',type:2});
-		return;
-	}
-	$.messager.confirm("提示", "你确定删除吗？", function(flag) {
-		if (flag) {
-			$.ajax({
-				type : "post",
-				dataType : "json",
-				url : contextPath + '/matmanage/matapply!delete.action',
-				data : row,
-				traditional : true,
-				async : false,
-				success : function(data) {
-					if (!data.success) {
-						Public.tips({
-							content : data.msg,
-							type : 1
-						});
-					} else {
-						load(0);
-						Public.tips({
-							content : data.msg,
-						});
-					}
-				},
-			});
-		} else {
-			return null;
-		}
-	});
 }
 
 
@@ -946,46 +869,3 @@ function readonly(){
 	$("#adate").textbox('readonly',true);
 }
 
-/*function endEditing() {//该方法用于关闭上一个焦点的editing状态
-	if (editIndex == undefined) {
-		return true
-	}
-	if ($('#cardGrid').datagrid('validateRow', editIndex)) {
-		$('#cardGrid').datagrid('endEdit', editIndex);
-		editIndex = undefined;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-//点击单元格事件：
-function onClickCell(index,field,value) {
-	if (endEditing()) {
-		if(field=="outnum"){
-			$(this).datagrid('beginEdit', index);
-			var ed = $(this).datagrid('getEditor', {index:index,field:field});
-			$(ed.target).focus();
-		}		
-		editIndex = index;
-	}
-	//$('#cardGrid').datagrid('onClickRow');
-}
-
-
-//单元格失去焦点执行的方法
-function onAfterEdit(index, row, changes) {
-	var updated = $('#cardGrid').datagrid('getChanges', 'updated');
-	if (updated.length < 1) {
-		editRow = undefined;
-		$('#cardGrid').datagrid('unselectAll');
-		return;
-	} else {
-		// 传值
-		//submitForm(index, row, changes);
-	}
- 
-	
-}
-*/

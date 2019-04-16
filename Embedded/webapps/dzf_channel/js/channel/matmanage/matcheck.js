@@ -516,23 +516,6 @@ function onCancel(){
 	$('#cbDialog').dialog('close');
 }
 
-
-/**
- * 新增
- */
-function add() {
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增物料申请单');
-	$('#mat_add').form('clear');
-	$('#cityname').combobox('loadData', {});//清空市option选项  
-	$('#countryname').combobox('loadData', {});//清空县option选项  
-	//queryAllProvince();
-	initCard();
-	operCard();
-    $('.hid').css("display", "none"); 
-	
-	status = "add";
-}
-
 /**
  * 卡片表格
  */
@@ -764,45 +747,6 @@ function queryByID(matbillid){
 		},
 	});
 	return row;
-}
-
-/**
- * 删除
- * @param ths
- */
-function del(ths){
-	var row = $('#grid').datagrid('getSelected');
-	if(row==null){
-		Public.tips({content:'请选择数据行',type:2});
-		return;
-	}
-	$.messager.confirm("提示", "你确定删除吗？", function(flag) {
-		if (flag) {
-			$.ajax({
-				type : "post",
-				dataType : "json",
-				url : contextPath + '/matmanage/matapply!delete.action',
-				data : row,
-				traditional : true,
-				async : false,
-				success : function(data) {
-					if (!data.success) {
-						Public.tips({
-							content : data.msg,
-							type : 1
-						});
-					} else {
-						load(0);
-						Public.tips({
-							content : data.msg,
-						});
-					}
-				},
-			});
-		} else {
-			return null;
-		}
-	});
 }
 
 /**
