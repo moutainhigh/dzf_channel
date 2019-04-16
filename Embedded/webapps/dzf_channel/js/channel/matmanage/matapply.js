@@ -891,7 +891,6 @@ function dClickMat(rowTable){
 		
 		var name = $(wlname.target).textbox('getValue');
 		
-		
 		$(wlname.target).textbox('setValue', wlnameValue);
 		$(unit.target).textbox('setValue', unitValue);
 		$(matfileid.target).textbox('setValue', matid);

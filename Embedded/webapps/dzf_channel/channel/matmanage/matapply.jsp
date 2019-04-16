@@ -129,13 +129,13 @@
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right"><i class="bisu">*</i>所在地区：</label> 
 						<input id="pname" name="pname" class="easyui-combobox" style="width:141px;height:28px;"
-				           editable="false" data-options="valueField:'vprovince', textField:'pname', panelHeight:'200',prompt:'请选择省'" /> 
+				           editable="false" data-options="required:true,valueField:'vprovince', textField:'pname', panelHeight:'200',prompt:'请选择省'" /> 
 				        <input id="vprovince" name="vprovince" type="hidden">
 				        <input id="cityname" name="cityname" class="easyui-combobox" style="width:141px;height:28px;"
-				           editable="false" data-options="valueField:'vcity', textField:'cityname', panelHeight:'200',prompt:'请选择市'" />
+				           editable="false" data-options="required:true,valueField:'vcity', textField:'cityname', panelHeight:'200',prompt:'请选择市'" />
 				        <input id="vcity" name="vcity" type="hidden">
 				        <input id="countryname" name="countryname" class="easyui-combobox" style="width:141px;height:28px;"
-				           editable="false" data-options="valueField:'varea', textField:'countryname', panelHeight:'200',prompt:'请选择区/县'" />
+				           editable="false" data-options="required:true,valueField:'varea', textField:'countryname', panelHeight:'200',prompt:'请选择区/县'" />
 				         <input id="varea" name="varea" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
