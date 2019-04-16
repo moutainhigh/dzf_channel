@@ -750,13 +750,6 @@
 									 	style="width:70px; height: 28px;">
 								</div>
 							</div>
-							<div class="decan" style="width: 24%;display:inline-block;">
-								<div class="time_col">
-									<label for="cisnconfirm" style="text-align:right;width:57%;">
-										<input type="checkbox" id="cisnconfirm" name="isnconfirm" value="是" onclick="return false;">&nbsp;未确定服务期限
-									</label>
-								</div>
-							</div>
 						</div>
 						<!-- 附件信息begin -->
 						<div id ="sfileshow" class="menu_entrance menu_entrances" style="margin-top:0;margin-right:5px;display:none;">

@@ -1640,7 +1640,7 @@ function showNormalChangeDlg(row){
 	$("#end").prop({"disabled":false});
 	
 	document.getElementById("end").checked="true";
-	$('#cisnconfirm').prop('checked',false);
+//	$('#cisnconfirm').prop('checked',false);
 	setChangeMny(1);
 	
 	$("#addclass").removeClass("decan");
