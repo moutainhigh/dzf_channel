@@ -4,7 +4,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>合同审核</title>
+<title>渠道合同审核</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link
 	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>

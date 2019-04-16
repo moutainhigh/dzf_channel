@@ -685,7 +685,7 @@ function changeConfri(){
 	}
 	
 	parent.$.messager.progress({
-		text : '变更中....'
+		text : '审核中....'
 	});
 	$('#changefrom').form('submit', {
 		url : DZF.contextPath + '/contract/contractaudit!updateChange.action',
