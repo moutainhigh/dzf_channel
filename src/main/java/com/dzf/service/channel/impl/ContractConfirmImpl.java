@@ -703,6 +703,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(r.dr, 0) = 0  \n");
 		sql.append("   AND h.pk_contract = ?  \n");
 		spm.addParam(pk_contract);
+		sql.append(" ORDER BY h.ts DESC \n");
 		List<RejectHistoryHVO> list = (List<RejectHistoryHVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RejectHistoryHVO.class));
 		if(list != null && list.size() > 0){
