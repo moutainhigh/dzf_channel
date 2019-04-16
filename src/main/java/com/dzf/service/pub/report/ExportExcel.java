@@ -1174,7 +1174,7 @@ public class ExportExcel<T> {
 	 */
 	public byte[] expMatApply(String title, List<String> exptitls,List<String> expfieids,
 			List<String> hbltitls, List<Integer> hblindexs, 
-			List<String> hbhtitls,List<String> hbhtitls2,Integer[] hbhindexs,Integer[] hbhindexs2,
+			List<String> hbhtitls, List<Integer> hbhindexs,
 			JSONArray array, OutputStream out, 
 			String pattern, List<String> strslist, List<String> mnylist) {
 		 
@@ -1231,8 +1231,8 @@ public class ExportExcel<T> {
 			headstyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 			headstyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 
-			int headerlength = exptitls.size();//大区——申请时间
-			int fieldlength = expfieids.size();//aname——adate
+			int headerlength = exptitls.size();
+			int fieldlength = expfieids.size();
 
 			// 大标题
 			HSSFRow rowtitle = sheet.createRow(0);
@@ -1248,7 +1248,7 @@ public class ExportExcel<T> {
 			if (hbhtitls != null && hbhtitls.size() > 0) {
 				int begindex = 0;
 				for (int i = 0; i < hbhtitls.size(); i++) {
-					begindex = hbhindexs[i];
+					begindex = hbhindexs.get(i);
 					HSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new HSSFRichTextString(String.valueOf(hbhtitls.get(i))));
 					cell.setCellStyle(style);
@@ -1268,7 +1268,13 @@ public class ExportExcel<T> {
 					HSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new HSSFRichTextString(String.valueOf(hbltitls.get(i))));
 					cell.setCellStyle(style);
-					reg = new Region(3, (short) (begindex), 3, (short) (begindex + 1));
+					if(i == hbltitls.size() - 1){
+						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 3));
+					}else if(i == hbltitls.size() - 2){
+						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 2));
+					}else{
+						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 1));
+					}
 					sheet.addMergedRegion(reg);
 				}
 			}
@@ -1293,6 +1299,7 @@ public class ExportExcel<T> {
 			// setRegionStyle(sheet, reg3_1, rightstyle);
 
 			//复制的别的代码   还没改
+			String showname = "";
 			for (int i = 0; i < array.size(); i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
 				Map<String, Object> map = (Map<String, Object>) array.get(i);
@@ -1308,7 +1315,21 @@ public class ExportExcel<T> {
 								// DZFDouble.ROUND_HALF_UP);//四舍五入
 								cell.setCellValue(doublevalue.toString());
 							} else if (strslist != null && strslist.contains(key)) {
-								richString = new HSSFRichTextString(map.get(key).toString());
+								if("status".equals(key)){
+									//合同状态   1-待审核、2-待发货、3-已发货、4-已驳回
+									if("1".equals(map.get(key).toString())){
+										showname = "待审核";
+									}else if("2".equals(map.get(key).toString())){
+										showname = "待发货";
+									}else if("3".equals(map.get(key).toString())){
+										showname = "已发货";
+									}else if("4".equals(map.get(key).toString())){
+										showname = "已驳回";
+									}
+									richString = new HSSFRichTextString(showname);
+								}else{
+									richString = new HSSFRichTextString(map.get(key).toString());
+								}
 								cell.setCellValue(richString);
 							}
 						} else {
