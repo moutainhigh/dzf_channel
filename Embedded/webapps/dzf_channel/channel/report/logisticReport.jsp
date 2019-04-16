@@ -66,12 +66,20 @@
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
 			</div>
-			
-				<div class="mod-inner">
-						<div id="dataGrid" class="grid-wrap">
+			<div class="mod-inner">
+				<div class="easyui-tabs" style="padding: 0px 0px 0px 18px;width:96%;" id="detail">
+					<div title="物料快递" style="border: none; margin-top: -2px;width:90%;height:380px;padding:10px">
+						<div class="grid-wrap">
+							<table id="gridm"></table>
+						</div>
+					</div>
+					<div title="商品快递" style="border: none; margin-top: -2px;width:90%;height:380px;padding:10px">
+						<div class="grid-wrap">
 							<table id="gridg"></table>
 						</div>
 					</div>
+				</div>
+			</div>
 			
 			<!-- 加盟商参照对话框及按钮 begin -->
 			<div id="chnDlg"></div>

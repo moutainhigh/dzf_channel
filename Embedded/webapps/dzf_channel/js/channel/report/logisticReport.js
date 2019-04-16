@@ -3,17 +3,17 @@ var contextPath = DZF.contextPath;
 /**
  * 窗口初始化
  */
-/*$(window).resize(function(){ 
+$(window).resize(function(){ 
 	var tabIndex = $('#detail').tabs('getTabIndex',$('#detail').tabs('getSelected'));
 	switch (tabIndex) {
 	case 0:
-		$('#grid').datagrid('resize',{ 
+		$('#gridm').datagrid('resize',{ 
 			height : Public.setGrid().h,
 			width : '100%'
 		});
 		break;
 	case 1:
-		$('#signgrid').datagrid('resize',{ 
+		$('#gridg').datagrid('resize',{ 
 			height : Public.setGrid(0,"dataGrid1").h,
 			width : '100%'
 		});
@@ -21,15 +21,29 @@ var contextPath = DZF.contextPath;
 	default:
 		break;
 	}
-});*/
-
-$(function() {
-//	load();
-	loadGoods();
-	initRef();
-	initTabs();
 });
 
+$(function() {
+	initTabs();
+	initRef();
+});
+
+function initTabs(){
+	$('#detail').tabs({
+	    border:false,
+	    onSelect:function(title){
+			if("物料快递" == title){
+				loadGoods();
+			}else if("商品快递" == title){
+				loadMater();
+			}
+	    }
+	});
+}
+
+/**
+ * 加载商品
+ */
 function loadGoods(){
 	parent.$.messager.progress({text : '数据加载中....'});
 	var params = getParams();
@@ -38,14 +52,13 @@ function loadGoods(){
 		dataType : "json",
 		url : contextPath + "/report/logistic!qryGoodsHead.action",
 		traditional : true,
-//		data : params,
 		async : false,
 		success : function(data) {
 			parent.$.messager.progress('close');
 			if (data.success) {
 				var headData = data.rows;
 				setGoodsGrid(headData);
-				getGoodsData(params);
+				getColumn(params);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -54,12 +67,59 @@ function loadGoods(){
 	});
 }
 
-/*
+/**
+ * 加载物料
+ */
+function loadMater(){
+	parent.$.messager.progress({text : '数据加载中....'});
+	var params = getParams();
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + "/report/logistic!qryMaterHead.action",
+		traditional : true,
+		async : false,
+		success : function(data) {
+			parent.$.messager.progress('close');
+			if (data.success) {
+				var headData = data.rows;
+				setMaterGrid(headData);
+				getColumn(params);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			parent.$.messager.progress('close');
+		}
+	});
+}
+
+/**
  * 更新商品grid
  */
 function setGoodsGrid(headData){
 	var columns = getGoodsColumn(headData);
 	$('#gridg').datagrid({
+		striped : true,
+		title : '',
+		rownumbers : true,
+		height : Public.setGrid().h,
+		singleSelect : true,
+		showFooter:true,
+		border : true,
+		remoteSort:false,
+		columns : columns,
+		onLoadSuccess : function(data) {
+			
+		},
+	});		
+}
+
+/**
+ * 更新物料grid
+ */
+function setMaterGrid(headData){
+	var columns = getMaterColumn(headData);
+	$('#gridm').datagrid({
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -102,7 +162,35 @@ function getGoodsData(params){
 	$('#gridg').datagrid('loadData',{ total:rows.length, rows:rows});
 }
 
-function getGoodsColumn(headData){
+
+function getMaterData(params){
+	var rows;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : contextPath + "/report/logistic!queryMateriel.action",
+		traditional : true,
+		data : params,
+		async : false,
+		success : function(data) {
+			if (data.success) {
+				rows = data.rows;
+				var children;
+				var mater;
+				for(var i=0;i<rows.length;i++){
+					children = rows[i].children;
+					for(var j=0;j<children.length;j++){
+						mater = children[j];
+						rows[i][mater.id] = mater.name;
+					}
+				}
+			}
+		},
+	});
+	$('#gridm').datagrid('loadData',{ total:rows.length, rows:rows});
+}
+
+function getColumn(headData){
 	var columns = new Array(); 
 	var columnl = new Array();
 	var columnh = new Array();
@@ -255,27 +343,6 @@ function initRef(){
 //	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	initCorp();
 	initArea();
-}
-
-function initTabs(){
-	$('#detail').tabs({
-	    border:false,
-	    onSelect:function(title){
-			if("已审核" == title){
-				id='#gridh';
-				$('#gridh').datagrid('options').url = contextPath + '/report/manager!queryDetail.action';
-				$('#gridh').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-			}else if("未审核" == title){
-				id='#gridw';
-				$('#gridw').datagrid('options').url = contextPath + '/report/manager!queryWDetail.action?ovince=5';
-				$('#gridw').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-			}else if("已驳回" == title){
-				id='#gridb';
-				$('#gridb').datagrid('options').url = contextPath + '/report/manager!queryWDetail.action?ovince=7';
-				$('#gridb').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-			}
-	    }
-	});
 }
 
 function initArea(){
