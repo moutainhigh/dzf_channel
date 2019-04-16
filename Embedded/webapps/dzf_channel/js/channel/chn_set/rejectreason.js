@@ -1,5 +1,4 @@
 var contextPath = DZF.contextPath;
-//var isadd;
 var editIndex;
 
 $(function(){
@@ -9,7 +8,6 @@ $(function(){
 function load(){
 	$('#grid').datagrid({
 		url : DZF.contextPath + '/chn_set/rejectreason!query.action',
-//		queryParams : {'type' :2},
 		striped : true,
 		title : '',
 		fitColumns:false,
@@ -41,7 +39,6 @@ function load(){
 		] ],
 		onLoadSuccess : function(data) {
 			parent.$.messager.progress('close');
-//			$('#grid').datagrid("selectRow", 0);  	
 		}
 		
 	});
@@ -70,7 +67,6 @@ function add(){
 		height:340,
 		modal: true,
 	});
-//	isadd = true;
 }
 
 /**
@@ -106,12 +102,6 @@ function save(){
 				$('#dataform').form('clear');
 				$('#datadlg').dialog('close');
 				reloadData();
-//				if(isadd){
-//					$('#grid').datagrid('appendRow',row);
-//				}else{
-//					$('#grid').datagrid('updateRow',{index:editIndex,row:row});
-//				}
-//				isadd = false;
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -128,7 +118,6 @@ function save(){
  */
 function cancel(){
 	$('#datadlg').dialog('close');
-//	isadd = false;
 }
 
 /**
@@ -152,7 +141,6 @@ function onEdit(index){
 				var row = rs.rows;
 				$('#dataform').form('clear');
 				$('#dataform').form('load', row);
-//				isadd = false;
 			} else {
 				Public.tips({
 					content : rs.msg,
@@ -202,7 +190,7 @@ function onDelete(ths){
  * 刷新
  */
 function reloadData(){
-	url = DZF.contextPath + '/chn_set/rejectreason!query.action',
+	var url = DZF.contextPath + '/chn_set/rejectreason!query.action',
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {});
 }
