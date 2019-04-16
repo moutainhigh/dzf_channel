@@ -191,9 +191,9 @@ function load(){
 		pageList : [ 20, 50, 100, 200, 1000 ],
 		showFooter:true,
 		columns : [[{width : '100',title : '主键id',field : 'id',checkbox: true},
+		            {width : '140',title : '大区',field : 'aname',align : 'left'},
 		            {width : '80',title : '渠道经理',field : 'mid',align : 'left'},
 		            {width : '80',title : '渠道运营',field : 'oid',align : 'left'},
-		            {width : '140',title : '大区',field : 'aname',align : 'left'},
 		            {width : '150',title : '加盟商',field : 'cname',align:'left'},
 		            {width : '80',title : '付款类型',field : 'paytype',align:'left',
 						formatter: function(value,row,index){
