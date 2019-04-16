@@ -533,6 +533,9 @@ function clearParams(){
 	$('#managerid').val(null);
 	$('#qcorp').textbox("setValue",null);
 	$('#qcorpid').val(null);
+	
+	$('#operater').textbox("setValue",null);
+	$('#operaterid').val(null);
 }
 
 /**
@@ -548,8 +551,8 @@ function reloadData(){
 		'destatus' : $("#qstatus").combobox("getValue"),
 		'mid' : $("#managerid").val(),
 		'cpid' : $("#qcorpid").val(),
-		'aname' : $("#aname").combobox('getValue')
-
+		'aname' : $("#aname").combobox('getValue'),
+		'oid' : $('#operaterid').val(),
 	});
 	var qyear = $("#qyear").combobox("getValue");
 	var qjd = $("#qjd").combobox("getText");
