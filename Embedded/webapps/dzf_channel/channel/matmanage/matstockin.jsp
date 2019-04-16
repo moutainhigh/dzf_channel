@@ -78,18 +78,18 @@
 				<input id="matinid" name="matinid" type="hidden">
 				<input id="updatets" name="updatets" type="hidden">
 				<div class="time_col time_colp10">
-						<label style="text-align:right; width: 85px;">入库日期：</label> 
+						<label style="text-align:right; width: 85px;"><i class="bisu">*</i>入库日期：</label> 
 						<input id="indate" name="indate" type="text" class="easyui-datebox" 
-							 data-options="width:137,height:27" />  
-						<label style="width:85px;text-align:right">物料名称：</label> 
+							 data-options="width:149,height:27,required:true" />  
+						<label style="width:85px;text-align:right"><i class="bisu">*</i>物料名称：</label> 
 						<input id="matfileid" name="matfileid" class="easyui-combobox" style="width:188px;height:28px;"
 				   			editable="false" data-options="required:true,valueField:'matfileid', textField:'wlname', panelHeight:'200'" />
 				</div>
 				<div class="time_col time_colp10">
-						<label style="width:85px;text-align:right">成本价：</label>
+						<label style="width:85px;text-align:right"><i class="bisu">*</i>成本价：</label>
 						<input class="easyui-numberbox" id="cost" name="cost" style="width:100px;height:28px;"
 						 	data-options="required:true"  />
-						<label style="width:42px;text-align:right">数量：</label> 
+						<label style="width:55px;text-align:right"><i class="bisu">*</i>数量：</label> 
 						<input class="easyui-numberbox" id="num" name="num" style="width:100px;height:28px;" 
 							data-options="required:true" />
 						<label style="width:56px;text-align:right">总金额：</label> 

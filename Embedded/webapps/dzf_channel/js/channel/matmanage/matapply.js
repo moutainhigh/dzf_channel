@@ -889,6 +889,9 @@ function dClickMat(rowTable){
 		var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
 		var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
 		
+		var name = $(wlname.target).textbox('getValue');
+		
+		
 		$(wlname.target).textbox('setValue', wlnameValue);
 		$(unit.target).textbox('setValue', unitValue);
 		$(matfileid.target).textbox('setValue', matid);
@@ -913,7 +916,7 @@ function showApplyData(fcorp){
 				var result = eval('(' + result+ ')');
 				if (result.success) {
 					var row=result.rows;
-					if(rows!=undefined){
+					if(row!=undefined){
 						$('#pname').combobox({  
 							 //readonly : true,
 						     editable:false,

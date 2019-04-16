@@ -275,6 +275,7 @@ function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '入库单新增');
 	$('#mat_add').form('clear');
 	$('#matfileid').combobox("readonly",false);
+	//$('#indate').combobox("readonly",true);
 	$("#num").numberbox({
 	      min :1,
 	});
