@@ -481,7 +481,8 @@ function add() {
 	operCard();
     $('.hid').css("display", "none"); 
     $('.xid').css("display", "none");
-	$('.bid').css("display", ""); 
+	$('.bid').css("display", "");
+	$('#code').textbox({width:431});
 	status = "add";
 }
 
@@ -978,7 +979,8 @@ function edit(index){
 	$('.hid').css("display", "none"); 
 	$('.xid').css("display", "none");
     $('.bid').css("display", ""); 
-	
+    $('#code').textbox({width:431});
+    
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
 	}
@@ -1188,6 +1190,7 @@ function showDetail(index){
 	$('.hid').css("display", "");
 	$('.xid').css("display", "");
 	$('.bid').css("display", "none"); 
+	$('#code').textbox({width:168});
 	
 	if(row.status!=4){
 		$('#reject').css("display", "none"); 

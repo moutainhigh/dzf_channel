@@ -720,6 +720,7 @@ function showCard(row){
 		initCard();
 	    $('.hid').css("display", "none"); 
 	    $('.sid').css("display", ""); 
+	    $('#code').textbox({width:431});
 	    readonly();
 	    if(row.children != null && row.children.length > 0){
 			$('#cardGrid').datagrid('loadData', row.children);
@@ -819,6 +820,7 @@ function showDetail(index){
 	initCard();
 	$('.hid').css("display", "");
 	$('.sid').css("display", "none");
+	$('#code').textbox({width:168});
 	
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);

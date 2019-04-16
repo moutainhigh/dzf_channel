@@ -14,7 +14,7 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/matmanage/mathandle.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js" charset="UTF-8" type="text/javascript"></script>
 <style>
-#mat_add div.panel.datagrid{margin-left: 94px;margin-top: -21px;}
+#mat_add div.panel.datagrid{margin-left: 132px;margin-top: -21px;}
 </style>	
 </head>
 <body>
@@ -100,7 +100,7 @@
 		</div>
 		
 		<!-- 新增对话框  begin-->
-		<div id="cbDialog" class="easyui-dialog" style="height:550px;width:680px;overflow:hidden;padding-top:18px;" 
+		<div id="cbDialog" class="easyui-dialog" style="height:540px;width:680px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="mat_add" method="post">
 				<input id="matbillid" name="matbillid" type="hidden">
@@ -109,20 +109,20 @@
 				<input id="debegdate" name="debegdate" type="hidden">
 				<input id="deenddate" name="deenddate" type="hidden">
 				<div class="time_col time_colp10">
-				        <span class="hid">
-						<label style="text-align:right; width: 85px;">合同编号：</label> 
-						<input id="code" name="code" class="easyui-textbox" style="width:286px;height:28px;"/>
+						<label style="text-align:right; width: 124px;">合同编号：</label> 
+						<input id="code" name="code" class="easyui-textbox" style="width:168px;height:28px;"/>
+			            <span class="hid">
 			            <label style="text-align:right; width: 85px;">状态：</label> 
-						<input id="stat" name="status" class="easyui-textbox" style="width:160px;height:28px;"/>
+						<input id="stat" class="easyui-textbox" style="width:163px;height:28px;"/>
 			            </span>
 			    </div>
 			    <div class="time_col time_colp10">
-						<label style="width:85px;text-align:right"><i class="bisu">*</i>加盟商：</label> 
-						<input id="corpnm" name="corpname" class="easyui-textbox" style="width:286px;height:28px;"/>
+						<label style="width:124px;text-align:right"><i class="bisu">*</i>加盟商：</label> 
+						<input id="corpnm" name="corpname" class="easyui-textbox" style="width:431px;height:28px;" data-options="required:true"/>
 						<input id="fcorp" name="fcorp" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-						<label style="width:85px;text-align:right"><i class="bisu">*</i>所在地区：</label> 
+						<label style="width:124px;text-align:right"><i class="bisu">*</i>所在地区：</label> 
 						<input id="pname" name="pname" class="easyui-combobox" style="width:141px;height:28px;"
 				           editable="false" data-options="valueField:'vprovince', textField:'pname', panelHeight:'200',prompt:'请选择省'" /> 
 				        <input id="vprovince" name="vprovince" type="hidden">
@@ -134,38 +134,36 @@
 				         <input id="varea" name="varea" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
-				       <label style="width:85px;text-align:right;margin-top: -55px;"><i class="bisu">*</i>详细地址：</label> 
-				       <textarea id="address" name="address" style="width: 432px;" rows="2"></textarea>
+				       <label style="text-align:right; width: 124px;"><i class="bisu">*</i>详细地址：</label> 
+				       <!-- <textarea id="address" name="address" class="easyui-validatebox" style="width: 432px;height:51px;"  data-options="required:true"></textarea> -->
+			           <input id="address" name="address" class="easyui-textbox" style="width:431px;height:28px;" data-options="required:true" />
 				</div>
 				<div class="time_col time_colp10">
-					   <label style="width:85px;text-align:right"><i class="bisu">*</i>收货人：</label> 
-					   <input id="receiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;"/>
+					   <label style="width:124px;text-align:right"><i class="bisu">*</i>收货人：</label> 
+					   <input id="receiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;" data-options="required:true"/>
 					   <label style="width:85px;text-align:right"><i class="bisu">*</i>联系电话：</label> 
-					   <input id="phone" name="phone" class="easyui-textbox" style="width:167px;height:28px;"/>
+					   <input id="phone" name="phone" class="easyui-textbox" style="width:167px;height:28px;" data-options="required:true"/>
 				</div>
 				<div class="time_col time_colp10">
-						<label style="width:85px;text-align:right"><i class="bisu">*</i>物料选择：</label>
+						<label style="width:124px;text-align:right"><i class="bisu">*</i>物料选择：</label>
 					    <div id="cardGrid" style="width:432px;height:70px;
 							margin-left:94px;margin-top:-21px;">
 						</div>
 				</div>
                	<div class="time_col time_colp10">
-               	        <span class="hid">
-						<label style="width:85px;text-align:right;margin-top: -55px;">备注：</label>
-						<textarea id="memo" name="memo" style="width: 432px;" rows="2" placeholder="最多可输入 200 个字"></textarea>
-				        </span>
+						<label style="text-align:right; width: 124px;">备注：</label>
+						<!-- <textarea id="memo" name="memo" class="easyui-validatebox" style="width: 432px;height:51px;"  placeholder="最多可输入200个字"></textarea> -->
+				        <input id="memo" name="memo" class="easyui-textbox" style="width:431px;height:28px;"  data-options="prompt:'最多可输入200个字'"/>
 				</div>
 				<div class="time_col time_colp10">
-				       <span class="hid">
-					   <label style="width:85px;text-align:right">申请人：</label> 
-					   <input id="applyname" name="applyname" class="easyui-textbox" style="width:166px;height:28px;"/>
-					   <label style="width:85px;text-align:right">申请时间：</label> 
+					   <label style="width:124px;text-align:right">申请人：</label> 
+					   <input id="applyname" name="applyname" class="easyui-textbox" style="width:168px;height:28px;"/>
+					   <label style="width:87px;text-align:right">申请时间：</label> 
 					   <input id="adate" name="adate" type="text" class="easyui-datebox" 
-						 data-options="width:166,height:27" />  
-					     </span>
+						 data-options="width:163,height:27" />  
 				</div>
 				<div class="time_col time_colp10">
-					 	<label style="text-align:right; width: 85px;">快递公司：</label>
+					 	<label style="text-align:right; width: 124px;">快递公司：</label>
 					 	<input id="logname" name="logname" class="easyui-combobox" style="width:166px;height:28px;"
 				           editable="false" data-options="valueField:'logid', textField:'logname', panelHeight:'200'" />  
 						<input id="logid" name="logid" type="hidden">
@@ -175,7 +173,7 @@
 							data-options="required:true"/>
 				</div>
 				<div class="time_col time_colp10">
-					   <label style="width:85px;text-align:right">快递单号：</label> 
+					   <label style="width:124px;text-align:right">快递单号：</label> 
 					   <input id="fcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;" 
 					 	   data-options="required:true"/>
 					   <label style="width:85px;text-align:right">发货时间：</label> 
@@ -183,11 +181,11 @@
 						   data-options="width:166,height:27" />  
 				</div>
 				<div class="time_col time_colp10">
-					  <label style="width:85px;text-align:right">发货人：</label> 
+					  <label style="width:124px;text-align:right">发货人：</label> 
 				      <input id="dename" name="dename" class="easyui-textbox" style="width:166px;height:28px;"/>
 				</div>
 				  
-				<div style="float:right;margin-top:2px;margin-right:276px;">
+				<div style="float:right;margin-top:2px;margin-right:293px;">
 				    <span class="sid">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
