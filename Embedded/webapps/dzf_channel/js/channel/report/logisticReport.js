@@ -1,52 +1,32 @@
 var contextPath = DZF.contextPath;
 
-/**
- * 窗口初始化
- */
 $(window).resize(function(){ 
-	var tabIndex = $('#detail').tabs('getTabIndex',$('#detail').tabs('getSelected'));
-	switch (tabIndex) {
-	case 0:
-		$('#gridm').datagrid('resize',{ 
-			height : Public.setGrid().h,
-			width : '100%'
-		});
-		break;
-	case 1:
-		$('#gridg').datagrid('resize',{ 
-			height : Public.setGrid(0,"dataGrid1").h,
-			width : '100%'
-		});
-		break;
-	default:
-		break;
-	}
+	$('#grid').datagrid('resize',{ 
+		height : Public.setGrid().h,
+		width : '100%'
+	});
 });
 
 $(function() {
-	initTabs();
+	loadMater();
 	initRef();
 });
 
-function initTabs(){
-	$('#detail').tabs({
-	    border:false,
-	    onSelect:function(title){
-			if("物料快递" == title){
-				loadGoods();
-			}else if("商品快递" == title){
-				loadMater();
-			}
-	    }
-	});
+function reloadData(){
+	var item = $(":radio:checked").val(); 
+	if(item =="goods"){
+		loadGoods();
+	}else{
+		loadMater();
+	}
 }
+
 
 /**
  * 加载商品
  */
 function loadGoods(){
 	parent.$.messager.progress({text : '数据加载中....'});
-	var params = getParams();
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -58,7 +38,7 @@ function loadGoods(){
 			if (data.success) {
 				var headData = data.rows;
 				setGoodsGrid(headData);
-				getColumn(params);
+				getGoodsData();
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -72,7 +52,6 @@ function loadGoods(){
  */
 function loadMater(){
 	parent.$.messager.progress({text : '数据加载中....'});
-	var params = getParams();
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -84,7 +63,7 @@ function loadMater(){
 			if (data.success) {
 				var headData = data.rows;
 				setMaterGrid(headData);
-				getColumn(params);
+				getMaterData();
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -98,7 +77,7 @@ function loadMater(){
  */
 function setGoodsGrid(headData){
 	var columns = getGoodsColumn(headData);
-	$('#gridg').datagrid({
+	$('#grid').datagrid({
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -119,7 +98,7 @@ function setGoodsGrid(headData){
  */
 function setMaterGrid(headData){
 	var columns = getMaterColumn(headData);
-	$('#gridm').datagrid({
+	$('#grid').datagrid({
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -135,8 +114,10 @@ function setMaterGrid(headData){
 	});		
 }
 
-function getGoodsData(params){
+function getGoodsData(){
 	var rows;
+	var params = getParams();
+	console.log(params);
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -159,12 +140,14 @@ function getGoodsData(params){
 			}
 		},
 	});
-	$('#gridg').datagrid('loadData',{ total:rows.length, rows:rows});
+	$('#grid').datagrid('loadData',{ total:rows.length, rows:rows});
 }
 
 
-function getMaterData(params){
+function getMaterData(){
 	var rows;
+	var params = getParams();
+	console.log(params);
 	$.ajax({
 		type : "post",
 		dataType : "json",
@@ -187,10 +170,10 @@ function getMaterData(params){
 			}
 		},
 	});
-	$('#gridm').datagrid('loadData',{ total:rows.length, rows:rows});
+	$('#grid').datagrid('loadData',{ total:rows.length, rows:rows});
 }
 
-function getColumn(headData){
+function getGoodsColumn(headData){
 	var columns = new Array(); 
 	var columnl = new Array();
 	var columnh = new Array();
@@ -320,14 +303,146 @@ function getColumn(headData){
 	return columns;
 }
 
+function getMaterColumn(headData){
+	var columns = new Array(); 
+	var columnl = new Array();
+	var columnh = new Array();
+	
+	var columnl1 = {};
+	columnl1["title"] = '大区';  
+	columnl1["field"] = 'aname';  
+	columnl1["rowspan"] = 2;  
+	columnl1["width"] = '100'; 
+	columnl1["halign"] = 'center'; 
+	columnl1["align"] = 'left'; 
+	columnl.push(columnl1);
+	
+	var columnl2 = {};
+	columnl2["title"] = '渠道经理';  
+	columnl2["field"] = 'mid';  
+	columnl2["rowspan"] = 2;  
+	columnl2["width"] = '100'; 
+	columnl2["halign"] = 'center'; 
+	columnl.push(columnl2);
+	
+	var columnl3 = {};
+	columnl3["title"] = '加盟商';  
+	columnl3["field"] = 'corpname';  
+	columnl3["rowspan"] = 2;  
+	columnl3["width"] = '200'; 
+	columnl3["halign"] = 'center'; 
+	columnl.push(columnl3);
+	
+	if(headData != null && headData.length>0){
+		var columnl3 = {};
+		columnl3["title"] = '物料信息';  
+		columnl3["field"] = 'goods';  
+		columnl3["colspan"] = headData.length;  
+		columnl3["width"] = '200'; 
+		columnl3["halign"] = 'center'; 
+		columnl.push(columnl3);
+		for(var i=0;i<headData.length;i++){
+			var column = {};
+			column["title"] = headData[i].name;  
+			column["field"] = headData[i].id;  
+			column["width"] = '100'; 
+			column["halign"] = 'center';
+			column["align"] = 'center'; 
+			columnh.push(column);
+		}
+	}
+	
+	var columnl3 = {};
+	columnl3["title"] = '收货信息';  
+	columnl3["field"] = 'receive';  
+	columnl3["colspan"] = 3;  
+	columnl3["width"] = '120'; 
+	columnl3["halign"] = 'center'; 
+	columnl.push(columnl3);
+	
+	var column = {};
+	column["title"] = "收货人";  
+	column["field"] = "rename";  
+	column["width"] = '100'; 
+	column["halign"] = 'center';
+	column["align"] = 'left'; 
+	columnh.push(column);
+	var column = {};
+	column["title"] = "联系电话";  
+	column["field"] = "phone";  
+	column["width"] = '90'; 
+	column["halign"] = 'center';
+	column["align"] = 'left'; 
+	columnh.push(column);
+	var column = {};
+	column["title"] = "地址";  
+	column["field"] = "readdress";  
+	column["width"] = '300'; 
+	column["halign"] = 'center';
+	column["align"] = 'left'; 
+	columnh.push(column);
+	
+	
+	var columnl3 = {};
+	columnl3["title"] = '快递信息';  
+	columnl3["field"] = 'kd';  
+	columnl3["colspan"] = 4;  
+	columnl3["width"] = '200'; 
+	columnl3["halign"] = 'center'; 
+	columnl.push(columnl3);
+	
+	var column = {};
+	column["title"] = "快递公司";  
+	column["field"] = "logunit";  
+	column["width"] = '100'; 
+	column["halign"] = 'center';
+	column["align"] = 'left'; 
+	columnh.push(column);
+	var column = {};
+	column["title"] = "金额";  
+	column["field"] = "fcost";  
+	column["width"] = '100'; 
+	column["halign"] = 'center';
+	column["align"] = 'right'; 
+	columnh.push(column);
+	var column = {};
+	column["title"] = "单号";  
+	column["field"] = "fcode";  
+	column["width"] = '120'; 
+	column["halign"] = 'center';
+	column["align"] = 'left'; 
+	columnh.push(column);
+	var column = {};
+	column["title"] = "发货日期";  
+	column["field"] = "dedate";  
+	column["width"] = '100'; 
+	column["halign"] = 'center';
+	column["align"] = 'center'; 
+	columnh.push(column);
+	
+	var columnl3 = {};
+	columnl3["title"] = '备注';  
+	columnl3["field"] = 'memo';  
+	columnl3["rowspan"] = 2;  
+	columnl3["width"] = '200'; 
+	columnl3["halign"] = 'center'; 
+	columnl.push(columnl3);
+	
+	columns.push(columnl);
+	columns.push(columnh);
+	return columns;
+}
+
 /**
  * 获取查询条件
  */
 function getParams(){
-	var queryParams = [];
+	var queryParams = {};
     queryParams['begdate'] = $("#begdate").datebox("getValue");
     queryParams['enddate'] = $("#enddate").datebox("getValue");
-    //more
+    queryParams['corps'] = $("#corpid").val();
+    queryParams['ucode'] = $("#ucode").textbox("getValue");
+    queryParams['aname'] = $("#aname").combobox("getValue");
     return queryParams;
 }
 
@@ -441,4 +556,29 @@ function clearParams(){
 	$("#corpnm").textbox("setValue",null);
 	$('#aname').combobox('setValue', null);
 	$('#ucode').textbox("setValue",null);
+}
+
+/**
+ * 导出  type:1:申请表 2：审核表 3:处理表
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content: '当前界面数据为空',
+			type: 2
+		});
+		return;
+	}
+	var head0 = $('#grid').datagrid("options").columns[0];//  title+field名称
+	var head1 = $('#grid').datagrid("options").columns[1];//  title+field名称
+	
+	var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
+	Business.getFile(DZF.contextPath + "/report/logistic!exportLogistic.action", {
+		"strlist": JSON.stringify(datarows),
+		'head0':JSON.stringify(head0), 
+		'head1':JSON.stringify(head1), 
+		'cols':JSON.stringify(cols),
+	}, true, true);
+		
 }

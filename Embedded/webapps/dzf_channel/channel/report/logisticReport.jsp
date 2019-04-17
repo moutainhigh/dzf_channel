@@ -25,13 +25,14 @@
 							<span class="arrow-date"></span>
 						</div>
 					</div>
+					
 					<div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="doExport()">导出</a>
 					</div>
 				</div>
 			</div>
 			
-			<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 230px">
+			<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 260px">
 				<s class="s" style="left: 25px;"><i class="i"></i> </s>
 				<h3>
 					<span>查询</span><a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -47,6 +48,13 @@
 					</font>
 				</div>
 				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">查询类型：</label>
+					<input type="radio" id="mater" value="mater" name="log" checked style="width:20px;height:28px;text-align:left;margin-left:20px;">
+					<label style="width:100px;text-align:left" for='mater'>物料快递</label> 
+                    <input type="radio" id="goods" value="goods" name="log" style="width:20px;height:28px;text-align:left;margin-left:20px;">
+                    <label style="width:100px;text-align:left" for='goods'>商品快递</label> 
+				</div>
+				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">加盟商：</label>
 					<input id="corpnm" class="easyui-textbox" style="width:290px;height:28px;" />
 					<input id="corpid" type="hidden">
@@ -57,8 +65,8 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:80px;text-align:right">大区：</label>
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 133px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
+					<input id="aname"  name="aname" class="easyui-combobox" style="width: 150px; height: 28px;" 
+						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />
 				</div>
 				<p>
 					<a class="ui-btn save_input" onclick="clearParams()">清除</a>
@@ -66,20 +74,12 @@
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
 			</div>
+			
 			<div class="mod-inner">
-				<div class="easyui-tabs" style="padding: 0px 0px 0px 18px;width:96%;" id="detail">
-					<div title="物料快递" style="border: none; margin-top: -2px;width:90%;height:380px;padding:10px">
-						<div class="grid-wrap">
-							<table id="gridm"></table>
-						</div>
-					</div>
-					<div title="商品快递" style="border: none; margin-top: -2px;width:90%;height:380px;padding:10px">
-						<div class="grid-wrap">
-							<table id="gridg"></table>
-						</div>
-					</div>
+				<div id="dataGrid" class="grid-wrap">
+					<table id="grid"></table>
 				</div>
-			</div>
+			</div> 
 			
 			<!-- 加盟商参照对话框及按钮 begin -->
 			<div id="chnDlg"></div>
@@ -89,10 +89,7 @@
 					onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
 			</div>
 			<!-- 加盟商参照对话框及按钮 end -->
-			
 	 	</div>	
 	</div>
-
-
 </body>
 </html>

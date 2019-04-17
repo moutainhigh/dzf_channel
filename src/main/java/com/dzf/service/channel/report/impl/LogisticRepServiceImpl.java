@@ -313,7 +313,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("        deliverdate, ");
 		sql.append("        vmemo ");
 		sql.append("   from cn_materielbill mat ");
-		sql.append("   left join bd_account ba on mat.pk_corp = ba.pk_corp ");
+		sql.append("   left join bd_account ba on mat.fathercorp = ba.pk_corp ");
 		sql.append("   left join cn_logistics log on mat.pk_logistics = log.pk_logistics ");
 		sql.append("  where nvl(mat.dr, 0) = 0 ");
 		sql.append("    and nvl(log.dr, 0) = 0 ");
@@ -359,7 +359,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 	public List<ComboBoxVO> qryMaterHead() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT pk_materiel AS id,  \n") ;
-		sql.append("       vname AS name  \n") ; 
+		sql.append("       vname ||'/'|| vunit AS name  \n") ; 
 		sql.append("  FROM cn_materiel \n") ; 
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
 		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
