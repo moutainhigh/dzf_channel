@@ -264,11 +264,25 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 * @param data
 	 */
 	private void Isintnum(MaterielStockInVO data){
+		Integer intnum = null;
+		Integer sumnum = null;
+		Integer ssum = null;
 		if (!StringUtil.isEmpty(data.getPk_materiel())) {
     		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
-    		if(data.getNnum() < mfvo.getOutnum()){
-    			throw new BusinessException("该物料入库数量不可小于已发货数量");
+    		if(mfvo!=null){
+    			sumnum = mfvo.getIntnum() - mfvo.getOutnum();//剩余库存
     		}
+    		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
+			if(msvo!=null){
+				intnum = msvo.getNnum();//当前入库单入库数量
+			}
+			if(data.getNnum()!=null && mfvo.getOutnum()!=null){
+				ssum = sumnum - intnum + data.getNnum();
+				if(ssum!=null && ssum < mfvo.getOutnum()){
+					throw new BusinessException("该物料入库数量不可小于已发货数量");
+				}
+			}
+			
     	}
 	}
 	
