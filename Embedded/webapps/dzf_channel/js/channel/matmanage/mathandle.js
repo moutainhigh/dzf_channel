@@ -685,31 +685,38 @@ function send(){
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
-			if(row.msg =="提示"){
-				$.messager.confirm("注意",row.message, function(flag) {
-					if (flag) {
+			
+			if(row.status==2){
+				if(result.msg =="提示"){
+					$.messager.confirm("注意",row.message, function(flag) {
+						if (flag) {
+							showCard(row);
+						} else {
+							return null;
+						}
+					});
+				}else{
+					//不需要提示，直接弹出发货框
+					showCard(row);
+				}
+				
+				if (result.success) {
+					//if(type==0){
 						showCard(row);
-					} else {
-						return null;
-					}
-				});
-			}else{
-				//不需要提示，直接弹出发货框
-				showCard(row);
+					//}
+					
+			   }
+			}else {
+				Public.tips({content : "单据状态不为待发货！" ,type:2});
+				return;
 			}
 			
-			if (result.success) {
-				//if(type==0){
-					showCard(row);
-				//}
-				
-		   }
         }
 	});
 }
 
 function showCard(row){
-	if(row.status==2){
+	//if(row.status==2){
 		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料发货');
 		$('#mat_add').form('clear');
 		$('#mat_add').form('load', row);
@@ -730,10 +737,10 @@ function showCard(row){
 	    
 	    initLogistics();
 		
-	}else {
+	    /*}else {
 		Public.tips({content : "单据状态不为待发货！" ,type:2});
 		return;
-	}
+	}*/
 }
 
 /**
@@ -871,5 +878,29 @@ function readonly(){
 	$("#memo").attr('readonly','readonly');
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+}
+
+/**
+ * 导出  type:1:申请表 2：审核表 3:处理表
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content: '当前界面数据为空',
+			type: 2
+		});
+		return;
+	}
+		var hblcols = $('#grid').datagrid("options").columns[0];//  title+field名称
+		
+		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
+		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
+			"strlist": JSON.stringify(datarows),
+			'hblcols':JSON.stringify(hblcols), 
+			'cols':JSON.stringify(cols),
+			'type': 3,
+		}, true, true);
+		
 }
 

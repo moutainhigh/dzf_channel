@@ -658,7 +658,7 @@ function checked(type){
 			var result = eval('(' + result+ ')');
 			var row = result.rows;
 				if(type==0){
-					if(row.msg =="提示"){
+					if(result.msg =="提示"){
 						$.messager.confirm("注意",row.message , function(flag) {
 							if (flag) {
 								showCard(row);
@@ -874,6 +874,30 @@ function readonly(){
 	$("#memo").attr('readonly','readonly');
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+}
+
+/**
+ * 导出 type:1:申请表 2：审核表 3:处理表
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content: '当前界面数据为空',
+			type: 2
+		});
+		return;
+	}
+		var hblcols = $('#grid').datagrid("options").columns[0];//  title+field名称
+		
+		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
+		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
+			"strlist": JSON.stringify(datarows),
+			'hblcols':JSON.stringify(hblcols), 
+			'cols':JSON.stringify(cols),
+			'type': 2,
+		}, true, true);
+		
 }
 
 

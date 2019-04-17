@@ -325,6 +325,18 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 	 * 物料申请表导出
 	 */
 	public void exportAuditExcel() {
+		
+		String reportName = "";
+		//导出表类型
+		String type = getRequest().getParameter("type");
+		if("1".equals(type)){
+			reportName = "物料申请表";
+		}else if("2".equals(type)){
+			reportName = "物料审核表";
+		}else if("3".equals(type)){
+			reportName = "物料处理表";
+		}
+		
 		// 获取需要导出数据
 		String strlist = getRequest().getParameter("strlist");
 		if (StringUtil.isEmpty(strlist)) {
@@ -438,15 +450,15 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			String userAgent = getRequest().getHeader("user-agent");
 			if (!StringUtil.isEmpty(userAgent) && (userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0
 					|| userAgent.indexOf("Safari") >= 0)) {
-				fileName = new String(("物料申请表").getBytes(), "ISO8859-1");
+				fileName = new String((reportName).getBytes(), "ISO8859-1");
 			} else {
-				fileName = URLEncoder.encode("物料申请表", "UTF8"); // 其他浏览器
+				fileName = URLEncoder.encode(reportName, "UTF8"); // 其他浏览器
 			}
 			response.addHeader("Content-Disposition", "attachment;filename=" + fileName + new String(date + ".xls"));
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.expMatApply("物料申请表", exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
+			byte[] length = ex.expMatApply(reportName, exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
 					hbhindexs, array, toClient, "", strslist, mnylist);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);

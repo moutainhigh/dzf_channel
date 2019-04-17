@@ -113,6 +113,7 @@
 				<input id="updatets" name="updatets" type="hidden">
 				<input id="debegdate" name="debegdate" type="hidden">
 				<input id="deenddate" name="deenddate" type="hidden">
+				<input id="stype" name="stype" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="text-align:right; width: 124px;">合同编号：</label> 
 						<input id="code" name="code" class="easyui-textbox" style="width:168px;height:28px;"/>

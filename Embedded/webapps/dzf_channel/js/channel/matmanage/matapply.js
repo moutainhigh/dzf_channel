@@ -1121,30 +1121,29 @@ function onSaveSubmit(postdata){
 						if(result.msg == "提示"){
 							$.messager.confirm("注意",rows, function(flag) {
 								if (flag) {
+									$('#stype').val(1);
 									//申请
-									$.ajax({
-										type : "POST",
-										dataType : "json",
-										url : DZF.contextPath +  '/matmanage/matapply!save.action',
-										data : {
-											body : body,
-											stype : 1,
-										},
-										success : function(rs) {
-											if (rs.success) {
-												$('#cbDialog').dialog('close');
-												load(0);
-												Public.tips({
-													content : result.msg,
-												});
-											} else {
-												Public.tips({
-													content : result.msg,
-													type : 2
-												});
+									if ($("#mat_add").form('validate')) {
+										$('#mat_add').form('submit', {
+											url : DZF.contextPath + '/matmanage/matapply!save.action',
+											queryParams : postdata,
+											success : function(result) {
+												var result = eval('(' + result + ')');
+												if (result.success) {
+													$('#cbDialog').dialog('close');
+													load(0);
+													Public.tips({
+														content : result.msg,
+													});
+												} else {
+													Public.tips({
+														content : result.msg,
+														type : 2
+													});
+												}
 											}
-										}
-									});
+										});
+									}
 								} else {
 									return null;
 								}
@@ -1160,10 +1159,10 @@ function onSaveSubmit(postdata){
 						content : result.msg,
 					});
 				} else {
-					Public.tips({
+					/*Public.tips({
 						content : result.msg,
 						type : 2
-					});
+					});*/
 				}
 			}
 		});
@@ -1295,7 +1294,7 @@ function editable(){
 }
 
 /**
- * 导出
+ * 导出  type:1:申请表 2：审核表 3:处理表
  */
 function doExport(){
 	var datarows = $('#grid').datagrid("getRows");
@@ -1313,6 +1312,7 @@ function doExport(){
 			"strlist": JSON.stringify(datarows),
 			'hblcols':JSON.stringify(hblcols), 
 			'cols':JSON.stringify(cols),
+			'type': 1,
 		}, true, true);
 		
 }
