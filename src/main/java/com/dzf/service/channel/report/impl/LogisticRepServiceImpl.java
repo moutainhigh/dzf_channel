@@ -159,7 +159,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("       log.vname logisticsunit, ");
 		sql.append("       fastcost, ");
 		sql.append("       fastcode, ");
-		sql.append("       ddelivertime, ");
+		sql.append("       substr(ddelivertime,0,10) deliverdate, ");
 		sql.append("       vmemo ");
 		sql.append("  from cn_stockout out ");
 		sql.append("  left join bd_account ba on out.pk_corp = ba.pk_corp ");

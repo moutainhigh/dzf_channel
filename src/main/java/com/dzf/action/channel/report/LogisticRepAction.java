@@ -60,6 +60,8 @@ public class LogisticRepAction extends BaseAction<LogisticRepVO>{
 			UserVO uservo = getLoginUserInfo();
 			List<LogisticRepVO> retlist = new ArrayList<>();
 			String powSql = pubService.makeCondition(uservo.getCuserid(), qvo.getAreaname(), 3);
+			qvo.setPage(1);
+			qvo.setRows(10000);
 			if (powSql != null && !powSql.equals("alldata")) {
 				qvo.setVqrysql(powSql);
 				retlist = logistic.queryGoods(qvo);
@@ -84,6 +86,8 @@ public class LogisticRepAction extends BaseAction<LogisticRepVO>{
 			UserVO uservo = getLoginUserInfo();
 			List<LogisticRepVO> retlist = new ArrayList<>();
 			String powSql = pubService.makeCondition(uservo.getCuserid(), qvo.getAreaname(), 3);
+			qvo.setPage(1);
+			qvo.setRows(10000);
 			if (powSql != null && !powSql.equals("alldata")) {
 				qvo.setVqrysql(powSql);
 				retlist = logistic.queryMateriel(qvo);

@@ -274,6 +274,7 @@ function getGoodsColumn(headData){
 	column["width"] = '100'; 
 	column["halign"] = 'center';
 	column["align"] = 'right'; 
+	column["formatter"] = formatMny;
 	columnh.push(column);
 	var column = {};
 	column["title"] = "单号";  
@@ -404,6 +405,7 @@ function getMaterColumn(headData){
 	column["width"] = '100'; 
 	column["halign"] = 'center';
 	column["align"] = 'right'; 
+	column["formatter"] = formatMny; 
 	columnh.push(column);
 	var column = {};
 	column["title"] = "单号";  
