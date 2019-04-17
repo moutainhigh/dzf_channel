@@ -163,9 +163,8 @@ function initPackageGrid() {
 				options : {
 					height : 31,
 					required : true,
-					onChange : function(n, o) {
-
-					}
+					validType : [ 'length[0,10]' ],
+					invalidMessage : "计量单位最大长度不能超过10",
 				}
 			},
 		}, {
