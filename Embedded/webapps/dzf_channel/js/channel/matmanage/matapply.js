@@ -927,7 +927,7 @@ function showApplyData(fcorp){
 					var row=result.rows;
 					if(row!=undefined){
 						$('#pname').combobox({  
-							 //readonly : true,
+							 readonly : false,
 						     editable:false,
 						     valueField:'vprovince',    
 						     textField:'pname',
@@ -1110,6 +1110,7 @@ function onSave(){
  * 物料申请单-提交后台保存
  */
 function onSaveSubmit(postdata){
+	setValue();
 	if ($("#mat_add").form('validate')) {
 		$('#mat_add').form('submit', {
 			url : DZF.contextPath + '/matmanage/matapply!save.action',
@@ -1122,6 +1123,7 @@ function onSaveSubmit(postdata){
 							$.messager.confirm("注意",rows, function(flag) {
 								if (flag) {
 									$('#stype').val(1);
+									setValue();
 									//申请
 									if ($("#mat_add").form('validate')) {
 										$('#mat_add').form('submit', {
@@ -1316,6 +1318,32 @@ function doExport(){
 		}, true, true);
 		
 }
+
+/**
+ * 设置省市区值
+ */
+function setValue(){
+	var reg = /^[0-9]+.?[0-9]*$/;
+	var pname = $('#pname').combobox('getValue');
+	var cityname = $('#cityname').combobox('getValue');
+	var countryname = $('#countryname').combobox('getValue');
+	if(reg.test(pname)){
+		var text = $('#pname').combobox('getText');
+		$('#pname').combobox('setValue',text);
+		$('#vprovince').val(pname);
+	}
+	if(reg.test(cityname)){
+		var text = $('#cityname').combobox('getText');
+		$('#cityname').combobox('setValue',text);
+		$('#vcity').val(cityname);
+	}
+	if(reg.test(countryname)){
+		var text = $('#countryname').combobox('getText');
+		$('#countryname').combobox('setValue',text);
+		$('#varea').val(countryname);
+	}
+}
+
 
 
 

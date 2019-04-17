@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -563,6 +564,13 @@ public class MatApplyServiceImpl implements IMatApplyService {
  			setDefaultValue(vo, uservo);
  			// 1.新增到订单主表VO
  			vo.setPk_corp("000001");
+ 			if(isInteger(vo.getPname())  &&
+ 					isInteger(vo.getCityname())  &&
+ 					isInteger(vo.getCountryname())){
+ 				vo.setVprovince(Integer.parseInt(vo.getPname()));
+ 				vo.setVcity(Integer.parseInt(vo.getCityname()));
+ 				vo.setVarea(Integer.parseInt(vo.getCountryname()));
+ 			}
  			if ("市辖区".equals(vo.getCityname()) || "市".equals(vo.getCityname()) || "县".equals(vo.getCityname())) {
  				vo.setCitycounty(vo.getPname() + "-" + vo.getCountryname());
  			} else {
@@ -829,6 +837,16 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		String start = new SimpleDateFormat("yyyy-MM-dd").format(sdate);
 		String end = new SimpleDateFormat("yyyy-MM-dd").format(edate);
 		return start+","+end;
+	}
+	
+	/**
+	 * 判断是否是数字
+	 * @param str
+	 * @return
+	 */
+	private static boolean isInteger(String str) {  
+	        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
+	        return pattern.matcher(str).matches();  
 	}
 	
 	
