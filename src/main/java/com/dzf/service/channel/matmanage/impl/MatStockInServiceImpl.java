@@ -3,6 +3,7 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -27,6 +29,8 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatStockInService;
 import com.dzf.service.pub.IBillCodeService;
+
+import oracle.net.aso.s;
 
 @Service("matstockin")
 public class MatStockInServiceImpl implements IMatStockInService {
@@ -226,7 +230,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	public void delete(MaterielStockInVO data) {
 		
 		//Isintnum(data);
-		//IsDele();
+		IsDele(data);
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
@@ -253,6 +257,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		}
 	}
 	
+	
+
 	/**
 	 * 判断是否可以入库
 	 * @param data
@@ -264,5 +270,39 @@ public class MatStockInServiceImpl implements IMatStockInService {
     			throw new BusinessException("该物料入库数量不可小于已发货数量");
     		}
     	}
+	}
+	
+	/**
+	 * 判断是否可以删除
+	 * @param pk_materiel
+	 */
+	private void IsDele(MaterielStockInVO data) {
+		
+		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		if(msvo.getPk_materiel()!=null){
+			spm.addParam(msvo.getPk_materiel());
+		}
+		sql.append("  select count(pk_materielin) count \n");
+		sql.append("      from cn_materielin \n ");
+		sql.append("      where nvl(dr,0) = 0  ");
+		sql.append("      and pk_materiel = ?  \n ");
+		 MaterielStockInVO svo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
+		if(svo.getCount() == 1){//只有一条入库单，不可以删除
+			throw new BusinessException("该物料已发货，不可删除");
+		}else if(svo.getCount() > 1){
+			MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
+			if(vo!=null){
+				Integer sumnum = null;//剩余的库存量
+				if(vo.getIntnum()!=null && vo.getOutnum()!=null){
+					sumnum = vo.getIntnum() - vo.getOutnum();
+				}
+				if(vo.getOutnum()>sumnum){
+					throw new BusinessException("该物料入库数量不可小于已发货数量");
+
+				}
+			}
+		}
 	}
 }

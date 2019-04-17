@@ -65,6 +65,8 @@ public class MaterielStockInVO extends SuperVO {
 	
 	private String opername;//录入人名称
 	
+	private Integer count;//入库单的条数
+	
 	/*******仅作展示，不存库*******/
 	
 	public String getPk_materielin() {
@@ -217,6 +219,14 @@ public class MaterielStockInVO extends SuperVO {
 
 	public void setVcode(String vcode) {
 		this.vcode = vcode;
+	}
+	
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
 	}
 
 	@Override

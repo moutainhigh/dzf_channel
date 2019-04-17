@@ -473,8 +473,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	
      @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
-		
-    	checkIsOperOrder(data.getVstatus(),"只有待审批或已驳回状态的申请单支持修改！");
+    	if(type==null){
+    		checkIsOperOrder(data.getVstatus(),"只有待审批或已驳回状态的申请单支持修改！");
+    	}
 		String uuid = UUID.randomUUID().toString();
 		String msg = "";
 		String mmsg = "";
