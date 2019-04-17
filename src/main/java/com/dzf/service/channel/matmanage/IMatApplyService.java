@@ -9,9 +9,9 @@ import com.dzf.model.sys.sys_power.UserVO;
 
 public interface IMatApplyService {
 
-	int queryTotalRow(MatOrderVO pamvo);
+	int queryTotalRow(MatOrderVO pamvo, String stype);
 
-	List<MatOrderVO> query(MatOrderVO pamvo, UserVO uservo);
+	List<MatOrderVO> query(MatOrderVO pamvo, UserVO uservo, String stype);
 
 	List<MatOrderBVO> queryNumber(MatOrderVO pamvo);
 

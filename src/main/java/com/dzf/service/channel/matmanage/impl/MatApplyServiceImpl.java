@@ -59,15 +59,15 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	private IPubService pubser;
 
 	@Override
-	public int queryTotalRow(MatOrderVO qvo) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
+	public int queryTotalRow(MatOrderVO qvo,String stype) {
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,stype);
 		return multBodyObjectBO.queryDataTotal(MatOrderVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MatOrderVO> query(MatOrderVO qvo, UserVO uservo) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
+	public List<MatOrderVO> query(MatOrderVO qvo, UserVO uservo,String stype) {
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,stype);
 		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
@@ -91,7 +91,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return list;
 	}
 
-	private QrySqlSpmVO getQrySqlSpm(MatOrderVO pamvo) {
+	private QrySqlSpmVO getQrySqlSpm(MatOrderVO pamvo, String stype) {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -139,6 +139,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("   and nvl(c.dr, 0) = 0  \n") ; 
 		//sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
 		//sql.append("   and cb.pk_corp is not null  \n") ;
+		
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
 			sql.append(" AND  bi.corpname like ? ");
 			spm.addParam("%" + pamvo.getCorpname() + "%");
@@ -147,7 +148,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			sql.append(" AND  bi.vmanagerid = ? ");
 			spm.addParam(pamvo.getVmanagerid());
 		}
-		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
+		if(stype!=null && "1".equals(stype)){//物料处理界面
+			sql.append("   AND bi.vstatus in (2,3) \n");
+		}
+		else if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
 			sql.append("   AND bi.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
@@ -325,6 +329,15 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			MatOrderBVO[] bvos,String type,String stype) {
 		
 		String message = "";
+		MatOrderVO mvo=queryById(vo.getPk_materielbill());
+		if(mvo.getVstatus()==4){//已驳回的修改保存
+			save(vo, uservo, bvos, type);
+			return null;
+		}
+		if("1".equals(type)){//发货保存
+			save(vo, uservo, bvos, type);
+			return null;
+		}
 		if("1".equals(stype)){//提示后保存
 			save(vo, uservo, bvos, type);
 			return null;
@@ -441,7 +454,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 							mbvo.setSumsucc(sumsucc);
 							message = message + "该加盟商"+mbvo.getVname()+
 									"上季度申请数"+mbvo.getSumapply()+
-									"提单审核通过数"+mbvo.getSumsucc();
+									"提单审核通过数"+mbvo.getSumsucc()+
+									"不符合该物料的申请条件，望知悉";
+
 						}
 						
 					}
@@ -457,7 +472,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
      @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
 		
-    	checkIsOperOrder(data.getStatus(),"只有待审批或已驳回状态的申请单支持修改！");
+    	checkIsOperOrder(data.getVstatus(),"只有待审批或已驳回状态的申请单支持修改！");
 		String uuid = UUID.randomUUID().toString();
 		String msg = "";
 		String mmsg = "";
@@ -471,7 +486,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 			
 			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
-			if("1".equals(type)){//发货
+			if(type!=null && "1".equals(type)){//发货
 				if(bvos!=null && bvos.length>0){
 					for (MatOrderBVO mbvo : bvos) {
 						if(mbvo.getOutnum()==null){
@@ -506,11 +521,21 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		    	singleObjectBO.update(data, supdates);		
 		    }else{
 		    	//1.修改主订单
-				String[] updates = {"vcontcode", "fathercorp", "corpname",
-						"vprovince","vcity","varea",
-						"vaddress","vreceiver","phone","vmemo",
-						"applydate"};
-			    singleObjectBO.update(data, updates);
+		    	if(data.getVstatus()==4){//已驳回的修改
+		    		data.setVstatus(1);
+		    		String[] updates = {"vcontcode", "fathercorp", "corpname",
+							"vprovince","vcity","varea",
+							"vaddress","vreceiver","phone","vmemo",
+							"applydate","vstatus"};
+		    		singleObjectBO.update(data, updates);
+		    	}else{
+		    		String[] updates = {"vcontcode", "fathercorp", "corpname",
+							"vprovince","vcity","varea",
+							"vaddress","vreceiver","phone","vmemo",
+							"applydate"};
+				    singleObjectBO.update(data, updates);
+		    	}
+				
 		    }
 		
 		    //2.修改子订单
@@ -525,7 +550,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				    	bvo.setPk_materielbill(data.getPk_materielbill());
 				    	singleObjectBO.insertVO("000001", bvo);
 				    	
-				    	if("1".equals(type)){//发货
+				    	if(type!=null && "1".equals(type)){//发货
 				    		//修改物料档案发货数量
 					    	if(!StringUtil.isEmpty(bvo.getPk_materiel())){
 					    		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, bvo.getPk_materiel());
@@ -537,10 +562,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					    	}
 				    	}
 				    
-				    	
 					}
 		    }
-		    
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
@@ -588,7 +611,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
  			MatOrderVO mvo=queryById(vo.getPk_materielbill());
  			if(mvo.getUpdatets()!=null){
  				vo.setUpdatets(mvo.getUpdatets());
- 				vo.setStatus(mvo.getStatus());
+ 				vo.setVstatus(mvo.getVstatus());
  			}
  			 saveEdit(vo,bvos,type,uservo);
  		}

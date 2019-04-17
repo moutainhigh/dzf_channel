@@ -74,16 +74,20 @@ private Logger log = Logger.getLogger(this.getClass());
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
+			String body = "";
+			MatOrderBVO[] bodyVOs = null;
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 			
 			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
-			String body = getRequest().getParameter("body"); // 物料数据
-			body = body.replace("}{", "},{");
-			body = "[" + body + "]";
-			JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
-			MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
-					JSONConvtoJAVA.getParserConfig());
+			body = getRequest().getParameter("body"); // 物料数据
+			if(!StringUtil.isEmpty(body)){
+				body = body.replace("}{", "},{");
+				body = "[" + body + "]";
+				JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+				bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
+						JSONConvtoJAVA.getParserConfig());
+			}
 			
 			if(vo!=null){
 				 MatOrderVO mvo=matcheck.queryById(vo.getPk_materielbill());
@@ -95,12 +99,12 @@ private Logger log = Logger.getLogger(this.getClass());
 				 }
 				 matcheck.updateStatusById(mvo,uservo,bodyVOs);
 			}
-			json.setMsg("审核成功");
+			json.setMsg("操作成功");
 			json.setSuccess(true);
 		} catch (Exception e) {
-			json.setMsg("审核失败");
+			json.setMsg("操作失败");
 			json.setSuccess(false);
-			printErrorLog(json, log, e, "审核失败");
+			printErrorLog(json, log, e, "操作失败");
 		}
 		writeJson(json);
 	}

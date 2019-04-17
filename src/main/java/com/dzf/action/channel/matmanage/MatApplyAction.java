@@ -63,13 +63,14 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
+			String stype =getRequest().getParameter("stype");
 			MatOrderVO pamvo = new MatOrderVO();
 			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			pamvo.setPk_corp(getLogincorppk());
-			int total = matapply.queryTotalRow(pamvo);
+			int total = matapply.queryTotalRow(pamvo,stype);
 			grid.setTotal((long)(total));
 			if(total > 0){
-				List<MatOrderVO> mList = matapply.query(pamvo,uservo);
+				List<MatOrderVO> mList = matapply.query(pamvo,uservo,stype);
 				grid.setRows(mList);
 				grid.setMsg("查询成功");
 			}/*else{

@@ -19,11 +19,18 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
-	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
+	/*$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);
+	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);*/
+	
+	$("#begdate").datebox("setValue", null);
+	$("#enddate").datebox("setValue",null);
+	//$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
+	$("#bperiod").datebox("setValue", null);
+	$("#eperiod").datebox("setValue", null);
+	
 }
 
 /**
@@ -51,7 +58,7 @@ function load(type){
 	if($('#qj').is(':checked')){
 		bperiod = $("#bperiod").datebox('getValue');
 		eperiod = $("#eperiod").datebox('getValue');
-		if(isEmpty(bperiod)){
+		/*if(isEmpty(bperiod)){
 			Public.tips({
 				content : "申请开始日期不能为空",
 				type : 2
@@ -64,13 +71,13 @@ function load(type){
 				type : 2
 			});
 			return;
-		}
+		}*/
 		
 		$('#jqj').html(bperiod + ' 至 ' + eperiod);
 	}else{
 		begdate = $("#begdate").datebox('getValue');
 		enddate = $("#enddate").datebox('getValue');
-		if(isEmpty(begdate)){
+		/*if(isEmpty(begdate)){
 			Public.tips({
 				content : "录入开始日期不能为空",
 				type : 2
@@ -83,9 +90,11 @@ function load(type){
 				type : 2
 			});
 			return;
-		}
+		}*/
 		
-		$('#jqj').html(begdate + ' 至 ' + enddate);
+		if(!isEmpty(begdate) && !isEmpty(enddate)){
+			$('#jqj').html(begdate + ' 至 ' + enddate);
+		}
 	}
 	
 	$.messager.progress({
@@ -1228,9 +1237,9 @@ function showDetail(index){
 	
 	$('#applyname').textbox('setValue',row.applyname);
 	
-	if(row.status==2 || row.status==3){
+	//if(row.status==2 || row.status==3){
 		readonly();
-	}
+	//}
 	
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
@@ -1267,14 +1276,18 @@ function readonly(){
 	$("#cityname").combobox('readonly',true);
 	$("#countryname").combobox('readonly',true);
 	//$("#address").attr('readonly','readonly');
+	$("#address").textbox('readonly',true);
 	$("#receiver").textbox('readonly',true);
 	$("#phone").textbox('readonly',true);
 	//$("#memo").attr('readonly','readonly');
+	$("#memo").textbox('readonly',true);
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+	$("#adate").datebox('readonly',true);
 	
-	document.getElementById('address').disabled = true;
-	document.getElementById('memo').disabled = true;
+	
+	//document.getElementById('address').disabled = true;
+	//document.getElementById('memo').disabled = true;
 }
 
 function editable(){
@@ -1288,11 +1301,13 @@ function editable(){
 	$("#phone").textbox('readonly',false);
 	$("#applyname").textbox('readonly',false);
 	$("#adate").textbox('readonly',false);
+	$("#address").textbox('readonly',false);
+	$("#memo").textbox('readonly',false);
 	
-	var address = document.getElementById('address');
+	/*var address = document.getElementById('address');
 	address.removeAttribute('disabled');
 	var memo = document.getElementById('memo');
-	memo.removeAttribute('disabled');
+	memo.removeAttribute('disabled');*/
 }
 
 /**
