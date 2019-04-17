@@ -75,6 +75,9 @@ function load(){
 			formatter : function(value, row, index) {
 				if (value == 0)
 					return "0.00";
+				if(value!=null){
+					return value.toFixed(2);
+				}
 			},
 		}, {
 			width : '100',
@@ -91,6 +94,9 @@ function load(){
 			formatter : function(value, row, index) {
 				if (value == 0)
 					return "0.00";
+				if(value!=null){
+					return value.toFixed(2);
+				}
 			},
 		}, {
 			width : '200',
@@ -337,12 +343,12 @@ function edit(index){
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
 	//$("#cost").numberbox('setValue',row.cost);
-	$("#cost").numberbox({
+	/*$("#cost").numberbox({
 	      precision:2,
 	});
 	$("#tmny").numberbox({
 	      precision:2,
-	});
+	});*/
 	calMoney();
 	
 }

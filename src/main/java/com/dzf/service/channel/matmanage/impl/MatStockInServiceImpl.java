@@ -225,7 +225,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	@Override
 	public void delete(MaterielStockInVO data) {
 		
-		Isintnum(data);
+		//Isintnum(data);
+		//IsDele();
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);

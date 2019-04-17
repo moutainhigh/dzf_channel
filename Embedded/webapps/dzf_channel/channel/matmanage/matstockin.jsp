@@ -88,12 +88,13 @@
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>成本价：</label>
 						<input class="easyui-numberbox" id="cost" name="cost" style="width:100px;height:28px;"
-						 	data-options="required:true"  />
+						 	data-options="required:true" precision="2" />
 						<label style="width:55px;text-align:right"><i class="bisu">*</i>数量：</label> 
 						<input class="easyui-numberbox" id="num" name="num" style="width:100px;height:28px;" 
 							data-options="required:true" />
 						<label style="width:56px;text-align:right">总金额：</label> 
-						<input class="easyui-numberbox" id="tmny" name="tmny" editable="false" style="width:100px;height:28px;"  />
+						<input class="easyui-numberbox" id="tmny" name="tmny" editable="false" 
+							style="width:100px;height:28px;" precision="2"/>
 				</div>
                	<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right">备注：</label>

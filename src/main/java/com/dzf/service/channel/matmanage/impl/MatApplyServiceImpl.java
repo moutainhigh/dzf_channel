@@ -329,10 +329,12 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			MatOrderBVO[] bvos,String type,String stype) {
 		
 		String message = "";
-		MatOrderVO mvo=queryById(vo.getPk_materielbill());
-		if(mvo.getVstatus()==4){//已驳回的修改保存
-			save(vo, uservo, bvos, type);
-			return null;
+		if(!StringUtil.isEmpty(vo.getPk_materielbill())){
+			MatOrderVO mvo=queryById(vo.getPk_materielbill());
+			if(mvo.getVstatus()!=null && mvo.getVstatus()==4){//已驳回的修改保存
+				save(vo, uservo, bvos, type);
+				return null;
+			}
 		}
 		if("1".equals(type)){//发货保存
 			save(vo, uservo, bvos, type);

@@ -732,6 +732,11 @@ function showCard(row){
 	    $('.sid').css("display", ""); 
 	    $('#code').textbox({width:431});
 	    readonly();
+	    $("#logname").combobox('readonly',false);
+		$("#fcost").numberbox('readonly',false);
+		$("#fcode").textbox('readonly',false);
+		$("#dedate").datebox('readonly',false);
+		$("#dename").textbox('readonly',false);
 	    if(row.children != null && row.children.length > 0){
 			$('#cardGrid').datagrid('loadData', row.children);
 			$('#cardGrid').datagrid('hideColumn','operate');
