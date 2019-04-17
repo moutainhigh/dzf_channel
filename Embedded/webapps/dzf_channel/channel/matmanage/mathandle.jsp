@@ -79,7 +79,7 @@
 					<!-- <option value="1">待审核</option> -->
 					<option value="2">待发货</option>
 					<option value="3">已发货</option>
-					<option value="4">已驳回</option>
+					<!-- <option value="4">已驳回</option> -->
 				</select>
 			</div>
 			<div class="time_col time_colp10">
@@ -163,17 +163,17 @@
 						 data-options="width:163,height:27" />  
 				</div>
 				<div class="time_col time_colp10">
-					 	<label style="text-align:right; width: 124px;">快递公司：</label>
+					 	<label style="text-align:right; width: 124px;"><i class="bisu">*</i>快递公司：</label>
 					 	<input id="logname" name="logname" class="easyui-combobox" style="width:166px;height:28px;"
 				           editable="false" data-options="required:true,valueField:'logid', textField:'logname', panelHeight:'200'" />  
 						<input id="logid" name="logid" type="hidden">
 					
-			            <label style="text-align:right; width: 85px;">金额：</label> 
+			            <label style="text-align:right; width: 85px;"><i class="bisu">*</i>金额：</label> 
 						<input id="fcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
 							data-options="required:true"/>
 				</div>
 				<div class="time_col time_colp10">
-					   <label style="width:124px;text-align:right">快递单号：</label> 
+					   <label style="width:124px;text-align:right"><i class="bisu">*</i>快递单号：</label> 
 					   <input id="fcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;" 
 					 	   data-options="required:true"/>
 					   <label style="width:85px;text-align:right">发货时间：</label> 

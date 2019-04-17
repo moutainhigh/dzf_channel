@@ -2,6 +2,7 @@ var contextPath = DZF.contextPath;
 $(function(){
 	initQry();
 	//initCombobox();
+	initMatFile();
 	load();
 	reloadData();
 });
@@ -74,7 +75,6 @@ function load(){
 			formatter : function(value, row, index) {
 				if (value == 0)
 					return "0.00";
-				return formatMny(value);
 			},
 		}, {
 			width : '100',
@@ -91,7 +91,6 @@ function load(){
 			formatter : function(value, row, index) {
 				if (value == 0)
 					return "0.00";
-				return formatMny(value);
 			},
 		}, {
 			width : '200',
@@ -238,19 +237,19 @@ function opermatter(val, row, index) {
 }
 
 
-function initCombobox(){
+/*function initCombobox(){
 	$("#matfileid").combobox({
 		onShowPanel: function () {
-			initLogistics();
+			initMatFile();
         }
     })
-}
+}*/
 
 /**
  * 查询物料下拉
  */
 
-function initLogistics(){
+function initMatFile(){
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -284,7 +283,8 @@ function add() {
 	});
 	$('#indate').datebox('setValue',parent.SYSTEM.LoginDate);
 	
-	initCombobox();
+	//initCombobox();
+	initMatFile();
 	initEvent();
 	calMoney();
 }
@@ -336,6 +336,14 @@ function edit(index){
 	$('#matfileid').combobox("readonly",true);
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
+	//$("#cost").numberbox('setValue',row.cost);
+	$("#cost").numberbox({
+	      precision:2,
+	});
+	$("#tmny").numberbox({
+	      precision:2,
+	});
+	calMoney();
 	
 }
 

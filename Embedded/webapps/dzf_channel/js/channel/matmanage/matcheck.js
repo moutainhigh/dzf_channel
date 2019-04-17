@@ -763,29 +763,34 @@ function onSave(vstatus){
 	if($('#true').is(':checked')){
 		status = 2;
 	}
+	if(!$('#false').is(':checked') && 
+			!$('#true').is(':checked')){
+		status = 2;
+	}
 	if(vstatus != null){
 		var row = $('#grid').datagrid('getSelected');
 		matbillid = row.matbillid;
 		status = vstatus;
 	}
 	
+	var postdata = new Object();
 	var body = "";
-	//物料数据
-	var rows = $('#cardGrid').datagrid('getRows');
-	for(var j = 0;j< rows.length; j++){
-		body = body + JSON.stringify(rows[j]); 
+	if(status!=1){
+		//物料数据
+		var rows = $('#cardGrid').datagrid('getRows');
+		for(var j = 0;j< rows.length; j++){
+			body = body + JSON.stringify(rows[j]); 
+		}
 	}
 	
-	if ($("#mat_add").form('validate')) {
+	if(status==1){
 		$.ajax({
 			type : "post",
 			dataType : "json",
 			url : contextPath + '/matmanage/matcheck!save.action',
 			data : {
-				reason : reason,
 				status : status,
 				matbillid : matbillid,
-				body : body,
 			},
 			traditional : true,
 			async : false,
@@ -804,13 +809,44 @@ function onSave(vstatus){
 				}
 			},
 		});
-	} else {
-		Public.tips({
-			content : "必输信息为空或信息输入不正确",
-			type : 2
-		});
-		return; 
+	}else{
+		if ($("#mat_add").form('validate')) {
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				url : contextPath + '/matmanage/matcheck!save.action',
+				data : {
+					reason : reason,
+					status : status,
+					matbillid : matbillid,
+					body : body,
+				},
+				traditional : true,
+				async : false,
+				success : function(data) {
+					if (!data.success) {
+						Public.tips({
+							content : data.msg,
+							type : 2
+						});
+					} else {
+						$('#cbDialog').dialog('close');
+						load(0);
+						Public.tips({
+							content : data.msg,
+						});
+					}
+				},
+			});
+		} else {
+			Public.tips({
+				content : "必输信息为空或信息输入不正确",
+				type : 2
+			});
+			return; 
+		}
 	}
+	
 }
 
 /***
@@ -868,12 +904,15 @@ function readonly(){
 	$("#pname").combobox('readonly',true);
 	$("#cityname").combobox('readonly',true);
 	$("#countryname").combobox('readonly',true);
-	$("#address").attr('readonly','readonly');
+	//$("#address").attr('readonly','readonly');
 	$("#receiver").textbox('readonly',true);
 	$("#phone").textbox('readonly',true);
-	$("#memo").attr('readonly','readonly');
+	//$("#memo").attr('readonly','readonly');
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+	$("#address").textbox('readonly',true);
+	$("#memo").textbox('readonly',true);
+	
 }
 
 /**

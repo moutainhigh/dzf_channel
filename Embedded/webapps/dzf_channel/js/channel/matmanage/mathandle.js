@@ -186,6 +186,7 @@ function load(type){
 			corpname : corpname,
 			status : status,
 			uid : uid,
+			stype : 1,//物料处理节点只显示待发货和已发货的数据
 		},
 		async : false,
 		success : function(data) {
@@ -665,6 +666,7 @@ function coperatorLink(val,row,index){
  * 发货
  */
 function send(){
+	status = "brows"
 	var row = $('#grid').datagrid('getSelected');
 	if(row == null){
 		Public.tips({content : "请选择数据行" ,type:2});
@@ -722,6 +724,7 @@ function showCard(row){
 		$('#mat_add').form('load', row);
 		 $("#fcost").numberbox({
 		      precision:2,
+		      min : 0,
 		 });
 		 $('#dedate').datebox('setValue',parent.SYSTEM.LoginDate);
 		initCard();
@@ -872,12 +875,21 @@ function readonly(){
 	$("#pname").combobox('readonly',true);
 	$("#cityname").combobox('readonly',true);
 	$("#countryname").combobox('readonly',true);
-	$("#address").attr('readonly','readonly');
+	$("#address").textbox('readonly',true);
+	//$("#address").attr('readonly','readonly');
 	$("#receiver").textbox('readonly',true);
 	$("#phone").textbox('readonly',true);
-	$("#memo").attr('readonly','readonly');
+	//$("#memo").attr('readonly','readonly');
+	$("#memo").textbox('readonly',true);
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+	$("#logname").combobox('readonly',true);
+	$("#fcost").numberbox('readonly',true);
+	$("#fcode").textbox('readonly',true);
+	$("#dedate").datebox('readonly',true);
+	$("#dename").textbox('readonly',true);
+	
+	
 }
 
 /**
