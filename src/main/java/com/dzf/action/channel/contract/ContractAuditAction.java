@@ -58,7 +58,6 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 		try {
 			checkUser();
 			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_66);
-			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_66);
 			ChangeApplyVO pamvo = new ChangeApplyVO();
 			pamvo = (ChangeApplyVO) DzfTypeUtils.cast(getRequest(), new ChangeApplyVO());
 			UserVO uservo = getLoginUserInfo();
