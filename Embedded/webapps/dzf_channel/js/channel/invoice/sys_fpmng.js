@@ -673,7 +673,7 @@ function fastQry() {
 					edate: edate,
 					corps : $("#pk_account").val(),
 					istatus : $('#istatus').combobox('getValue'),
-					itype : $('#itype').combobox('getValue'),
+					itype : $('#qitype').combobox('getValue'),
 					cname: filtername,
 					aname　: $("#aname").combobox('getValue'),
 					qrytype : qrytype,
