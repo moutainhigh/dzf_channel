@@ -92,7 +92,8 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 					|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)) {
 				int page = pamvo == null ? 1 : pamvo.getPage();
 				int rows = pamvo == null ? 10000 : pamvo.getRows();
-				pamvo.setRows(10000);
+				pamvo.setPage(1);
+				pamvo.setRows(100000);
 				List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);
 				int len = detlist == null ? 0 : detlist.size();
 				if (len > 0) {
