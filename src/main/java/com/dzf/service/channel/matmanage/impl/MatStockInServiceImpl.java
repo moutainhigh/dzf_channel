@@ -231,6 +231,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		
 		//Isintnum(data);
 		IsDele(data);
+		MaterielFileVO fvo = new MaterielFileVO();
+		Integer num = null;
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
@@ -242,9 +244,19 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(data.getPk_materielin());
 			
+			MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
+			if(msvo!=null){
+				//修改入库数量
+				fvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
+				if(fvo!=null){
+					num = fvo.getOutnum();
+					fvo.setOutnum(num + msvo.getNnum());
+				}
+			}
 			String sql="delete from cn_materielin where pk_materielin = ? \n";
 			int i = singleObjectBO.executeUpdate(sql, spm);
 			if(i == 0){
+				fvo.setOutnum(num);
 				throw new BusinessException("入库单删除失败");
 			}
 		} catch (Exception e) {

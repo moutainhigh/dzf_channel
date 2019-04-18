@@ -1298,7 +1298,6 @@ public class ExportExcel<T> {
 			setRegionStyle(sheet, reg, style);
 			// setRegionStyle(sheet, reg3_1, rightstyle);
 
-			//复制的别的代码   还没改
 			String showname = "";
 			for (int i = 0; i < array.size(); i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
