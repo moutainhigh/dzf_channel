@@ -61,7 +61,7 @@
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width:100px;">查询期间：</label>
+					<label style="text-align:right;width:100px;">截止日期：</label>
 					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
 						style="width:137px;height:30px;" value=<%=ym%> />
 				</div>
@@ -106,7 +106,7 @@
 			<div id="detail_dialog" class="easyui-dialog" title="客户明细" 
 				data-options="modal:true,closed:true" style="width:1000px;height:500px;">
 				<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
-					<label style="text-align:right">查询：</label> 
+					<label style="text-align:right">截止日期：</label> 
 					<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
 					<label style="text-align:right">加盟商：</label> 
 					<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
