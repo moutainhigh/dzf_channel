@@ -460,7 +460,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 					sql.append("   AND nvl(type, 0) = ?  \n");
 					spm.addParam(pamvo.getQrytype());
 				}else if(power == 2){
-					sql.append("SELECT b.userid  \n") ;
+					sql.append("SELECT DISTINCT b.userid  \n") ;
 					sql.append("  FROM cn_chnarea_b b  \n") ; 
 					sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n") ; 
 					sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
