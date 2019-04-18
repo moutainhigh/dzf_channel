@@ -918,7 +918,6 @@ function readonly(type){
 		$("#fcode").numberbox({required:true});
 	}
 	
-	
 }
 
 /**
