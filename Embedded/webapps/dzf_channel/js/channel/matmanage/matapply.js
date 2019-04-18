@@ -3,6 +3,13 @@ var contextPath = DZF.contextPath;
 var editIndex;
 var status="brows";
 
+$(window).resize(function () {
+    $('#grid').datagrid('resize', {
+        height: Public.setGrid().h,
+        width: "auto",
+    });
+});
+
 $(function(){
 	initQry();
 	initRef();
