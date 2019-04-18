@@ -1585,9 +1585,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 	/**
 	 * 保存审批历史
 	 * @param datavo
-	 * @param uservo
+	 * @param cuserid
+	 * @param type  1：正向；2：逆向；
+	 * @param iopertype 操作类型1：审核；2：变更；
+	 * @throws DZFWarpException
 	 */
-	private void saveAuditHistory(ContractConfrimVO datavo, String cuserid, Integer type) throws DZFWarpException{
+	private void saveAuditHistory(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype) throws DZFWarpException{
 		ApplyAuditVO avo = new ApplyAuditVO();
 		avo.setPk_changeapply(datavo.getPk_changeapply());
 		avo.setPk_confrim(datavo.getPk_confrim());
@@ -1595,6 +1598,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		avo.setPk_contract(datavo.getPk_contract());
 		avo.setPk_corp(datavo.getPk_corp());
 		avo.setPk_corpk(datavo.getPk_corpk());
+		avo.setIopertype(iopertype);
 		
 		if(type == 1){
 			avo.setIapplystatus(5);
@@ -1636,25 +1640,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (res != 1) {
 			throw new BusinessException("合同变更申请-申请状态更新失败");
 		}
-		// 2、更新原合同-申请状态
-//		sql = new StringBuffer();
-//		spm = new SQLParameter();
-//		sql.append("UPDATE ynt_contract  \n");
-//		if (type == 1) {
-//			sql.append("   SET iversion = 5  \n");
-//		} else if (type == 2) {
-//			sql.append("   SET iversion = 6  \n");
-//		}
-//		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-//		sql.append("   AND pk_corp = ?  \n");
-//		spm.addParam(datavo.getPk_corp());
-//		sql.append("   AND pk_contract = ?  \n");
-//		spm.addParam(datavo.getPk_contract());
-//		res = singleObjectBO.executeUpdate(sql.toString(), spm);
-//		if (res != 1) {
-//			throw new BusinessException("原合同申请状态更新失败");
-//		}
-		saveAuditHistory(datavo, cuserid, type);
+		saveAuditHistory(datavo, cuserid, type, iopertype);
 	}
 	
 	/**
