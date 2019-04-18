@@ -174,11 +174,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		
 		//待审核数据过滤
 		if(pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != -1){
-			sql.append(" AND ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
+			sql.append("   AND ((y.vchannelid = ? AND y.iapplystatus = 1) OR  \n") ; 
+			sql.append("        (y.vareaer = ? AND y.iapplystatus = 2) OR  \n") ; 
+			sql.append("        (y.vdirector = ? AND y.iapplystatus = 3))    \n");
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
-			sql.append(" AND y.iapplystatus IN (1, 2, 3) \n");
 		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
