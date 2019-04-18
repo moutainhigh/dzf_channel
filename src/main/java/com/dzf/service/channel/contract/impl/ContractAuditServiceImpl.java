@@ -271,6 +271,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 					if(!uservo.getCuserid().equals(vo.getVdirector())){
 						throw new BusinessException("当前操作人员没有待审批任务");
 					}
+				}else{
+					throw new BusinessException("当前操作人员没有待审批任务");
 				}
 			}
 			//2、查询审批历史
