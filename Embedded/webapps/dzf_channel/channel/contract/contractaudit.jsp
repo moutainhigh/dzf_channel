@@ -352,7 +352,6 @@
 				<input type="hidden" id="aapplyid" name="applyid">
 				<input type="hidden" id="aconid" name="conid">
 				<input type="hidden" id="ahisid" name="hisid">
-				<input type="hidden" id="acorpid" name="corpid">
 				<input type="hidden" id="aapstatus" name="apstatus">
 				<input type="hidden" id="aupdatets" name="updatets">
 				<input type="hidden" id="achangetype" name="changetype">
