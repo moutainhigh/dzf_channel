@@ -26,6 +26,7 @@ import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -63,25 +64,32 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
+			List<MatOrderVO>  mList = new ArrayList<MatOrderVO>();
 			String stype =getRequest().getParameter("stype");
+			
 			MatOrderVO pamvo = new MatOrderVO();
+			QryParamVO qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			pamvo.setPk_corp(getLogincorppk());
-			int total = matapply.queryTotalRow(pamvo,stype);
-			grid.setTotal((long)(total));
-			if(total > 0){
-				List<MatOrderVO> mList = matapply.query(pamvo,uservo,stype);
-				grid.setRows(mList);
-				grid.setMsg("查询成功");
-			}/*else{
-				List<MaterielFileVO> mvos=matapply.queryMatFile();
-				for (MaterielFileVO mvo : mvos) {
-					mvo.setApplynum(0);
-					mvo.setOutnum(0);
+			
+			if(stype!=null && "1".equals(stype)){//物料处理数据权限
+				String powSql = pubser.makeCondition(uservo.getCuserid(), pamvo.getAreaname(), 1);
+				if (powSql != null && !powSql.equals("alldata")) {
+					qvo.setVqrysql(powSql);
+					mList = matapply.query(qvo,pamvo,uservo,stype);
+				} else if (powSql != null) {
+					mList = matapply.query(qvo,pamvo,uservo,stype);
 				}
-				grid.setRows(mvos);
-				grid.setSuccess(true);
-			}*/
+			}else{
+				int total = matapply.queryTotalRow(qvo,pamvo,stype);
+				grid.setTotal((long)(total));
+				if(total > 0){
+					mList = matapply.query(qvo,pamvo,uservo,stype);
+				}
+			}
+			
+			grid.setRows(mList);
+			grid.setMsg("查询成功");
 			grid.setSuccess(true);
 		} catch (Exception e) {
 			grid.setMsg("查询失败");

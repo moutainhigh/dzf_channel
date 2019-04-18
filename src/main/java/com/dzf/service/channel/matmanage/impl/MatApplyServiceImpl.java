@@ -22,6 +22,7 @@ import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.IStatusConstant;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -50,15 +51,15 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	private IPubService pubser;
 
 	@Override
-	public int queryTotalRow(MatOrderVO qvo,String stype) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,stype);
+	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm,String stype) {
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,parm,stype);
 		return multBodyObjectBO.queryDataTotal(MatOrderVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MatOrderVO> query(MatOrderVO qvo, UserVO uservo,String stype) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,stype);
+	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype) {
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype);
 		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
@@ -82,7 +83,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return list;
 	}
 
-	private QrySqlSpmVO getQrySqlSpm(MatOrderVO pamvo, String stype) {
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo, String stype) {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -161,6 +162,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if (!StringUtil.isEmptyWithTrim(pamvo.getApplyenddate())) {
 			sql.append(" and bi.applydate <= ? ");
 			spm.addParam(pamvo.getApplyenddate());
+		}
+		if(!StringUtil.isEmpty(qvo.getVqrysql())){
+			sql.append(qvo.getVqrysql());
 		}
 		sql.append(" order by bi.ts desc");
 		qryvo.setSql(sql.toString());

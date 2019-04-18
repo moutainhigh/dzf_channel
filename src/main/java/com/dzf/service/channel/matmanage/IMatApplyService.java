@@ -5,13 +5,14 @@ import java.util.List;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 
 public interface IMatApplyService {
 
-	int queryTotalRow(MatOrderVO pamvo, String stype);
+	int queryTotalRow(QryParamVO qvo,MatOrderVO pamvo, String stype);
 
-	List<MatOrderVO> query(MatOrderVO pamvo, UserVO uservo, String stype);
+	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo, String stype);
 
 	List<MatOrderBVO> queryNumber(MatOrderVO pamvo);
 
