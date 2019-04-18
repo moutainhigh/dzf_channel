@@ -177,6 +177,7 @@
 				<input type="hidden" id="conid" name="conid">
 				<input type="hidden" id="hisid" name="hisid">
 				<input type="hidden" id="corpid" name="corpid">
+				<input type="hidden" id="corpkid" name="corpkid">
 				<input type="hidden" id="apstatus" name="apstatus">
 				<input type="hidden" id="updatets" name="updatets">
 				<input type="hidden" id="changetype" name="changetype">
@@ -355,7 +356,8 @@
 				<input type="hidden" id="aapstatus" name="apstatus">
 				<input type="hidden" id="aupdatets" name="updatets">
 				<input type="hidden" id="achangetype" name="changetype">
-				
+				<input type="hidden" id="acorpid" name="corpid">
+				<input type="hidden" id="acorpkid" name="corpkid">
 				<input type="hidden" id="auopertype" name="opertype">
 			
 				<div class="time_col time_colp11 ">
