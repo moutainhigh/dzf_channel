@@ -746,14 +746,17 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			
 			setCitycountry(vo);
 			
-			 //获取上个季度时间
-			 try {
-				String lastQuarter = getLastQuarter(mvo.getDedubegdate(), mvo.getDuduenddate());
-				String[] quarter = lastQuarter.split(",");
-				vo.setDedubegdate(quarter[0]);
-				vo.setDuduenddate(quarter[1]);
-			} catch (ParseException e) {
-				e.printStackTrace();
+			if(!StringUtil.isEmpty(mvo.getDedubegdate()) &&
+					!StringUtil.isEmpty(mvo.getDuduenddate())){
+				 //获取上个季度时间
+				 try {
+					String lastQuarter = getLastQuarter(mvo.getDedubegdate(), mvo.getDuduenddate());
+					String[] quarter = lastQuarter.split(",");
+					vo.setDedubegdate(quarter[0]);
+					vo.setDuduenddate(quarter[1]);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			if("1".equals(stype)){
