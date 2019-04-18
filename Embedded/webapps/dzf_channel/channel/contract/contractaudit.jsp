@@ -42,7 +42,7 @@
 				<div class="left mod-crumb">
 					<div id="cxjs" class="h30 h30-arrow">
 						<label class="mr5">查询：</label>
-						<strong id="querydate"></strong>
+						<strong id="jqj"></strong>
 						<span class="arrow-date"></span>
 					</div>
 				</div>

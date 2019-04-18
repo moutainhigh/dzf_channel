@@ -236,7 +236,7 @@ function reloadData(){
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
 		"bperiod" : bdate,
-		"eperiod" : bdate,
+		"eperiod" : edate,
 		"fpath" : fpath,
 		"apstatus" : $("#qapstatus").combobox('getValue'),
 		"chname" : $("#qchname").combobox('getValue'),

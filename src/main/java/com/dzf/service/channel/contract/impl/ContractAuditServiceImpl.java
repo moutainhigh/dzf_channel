@@ -130,12 +130,15 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(y.dr, 0) = 0  \n");
-		if (!StringUtil.isEmpty(pamvo.getVmanagername())) {//渠道经理
-			String where = getQrySql(pamvo.getVmanagername(), IStatusConstant.IQUDAO);
-			if (!StringUtil.isEmpty(where)) {
-				sql.append(where);
-			}
+		if(!StringUtil.isEmpty(pamvo.getVbeginperiod())){
+			sql.append(" AND  SUBSTR(applytime, 0, 10) >= ? \n");
+			spm.addParam(pamvo.getVbeginperiod());
 		}
+		if(!StringUtil.isEmpty(pamvo.getVendperiod())){
+			sql.append(" AND  SUBSTR(applytime, 0, 10) <= ? \n");
+			spm.addParam(pamvo.getVendperiod());
+		}
+		
 		if(!StringUtil.isEmpty(pamvo.getVfilepath())){//申请类型
 			String[] strs = pamvo.getVfilepath().split(",");
 		    String where = SqlUtil.buildSqlForIn("y.ichangetype", strs);
@@ -150,6 +153,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				sql.append(" AND t.chargedeptname = '小规模纳税人' \n");
 			}else if("2".equals(pamvo.getChargedeptname())){
 				sql.append(" AND t.chargedeptname = '一般纳税人' \n");
+			}
+		}
+		if (!StringUtil.isEmpty(pamvo.getVmanagername())) {//渠道经理
+			String where = getQrySql(pamvo.getVmanagername(), IStatusConstant.IQUDAO);
+			if (!StringUtil.isEmpty(where)) {
+				sql.append(where);
 			}
 		}
 		if(!StringUtil.isEmpty(pamvo.getPk_corp())){//加盟商
