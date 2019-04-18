@@ -144,8 +144,9 @@ public interface IPubService {
      * 查询当前登录人的角色权限 
      * @param cuserid
      * @return  1：总经理；2：区总；3：渠道经理；-1：无权限；
+     * @param type(1:渠道；2：培训；3：运营)
      * @throws DZFWarpException
      */
-    public Integer getAreaPower(String cuserid) throws DZFWarpException;
+    public Integer getAreaPower(String cuserid, Integer type) throws DZFWarpException;
     
 }
