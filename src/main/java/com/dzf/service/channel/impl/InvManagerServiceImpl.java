@@ -1076,7 +1076,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		sql.append(" where nvl(dr, 0) = 0  \n");
 		sql.append("   and pk_corp = ?  \n");
 		//发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；9：已换票；
-		sql.append("   and invstatus IN ( 1, 3)  \n");
+		sql.append("   and invstatus NOT IN ( 0, 2)  \n");
 		sql.append("   and ipaytype = ?  \n");
 		sp.addParam(pk_corp);
 		sp.addParam(ipaytype);
