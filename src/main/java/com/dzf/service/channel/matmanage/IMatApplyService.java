@@ -5,6 +5,7 @@ import java.util.List;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
+import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 
