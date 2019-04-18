@@ -249,8 +249,8 @@ function reloadData(){
  */
 function clearParams(){
 	$('#corpkna_ae').textbox('readonly',true);
-	$('#qapstatus').combobox('setValue', null);
-	$('#qchname').combobox('setValue', null);
+	$('#qapstatus').combobox('setValue', -1);
+	$('#qchname').combobox('setValue', -1);
 	$("#channel_select").textbox("setValue",null);
 	$("#pk_account").val(null);
 	$("#corpkna_ae").textbox("setValue",null);
