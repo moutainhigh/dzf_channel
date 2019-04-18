@@ -96,7 +96,7 @@
 				<label style="width:80px;text-align:left">非常规套餐</label>
 			</div>
 			<div class="time_col time_colp10">
-				<label style="width:70px;text-align:right">申请状态：</label>
+				<label style="width:70px;text-align:right">处理状态：</label>
 				<select id="qapstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 					style="width:105px;height:28px;">
 					<!-- 申请状态  1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝； -->
