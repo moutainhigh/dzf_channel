@@ -815,11 +815,16 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		// 合同数量去掉补提单合同数
 		sql.append("       SUM(CASE  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
-		sql.append("                  AND SUBSTR(t.deductdata, 1, 7) = ? THEN  \n");
+		sql.append("                  AND SUBSTR(t.deductdata, 1, 7) = ?  AND ( ( nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') = ? \n");
+		sql.append("                  AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') != ? )THEN \n");
+		spm.addParam(paramvo.getPeriod());
+		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		sql.append("              1  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
-		sql.append("                  AND t.vdeductstatus = 10 AND SUBSTR(t.dchangetime, 1, 7) = ? THEN  \n");
+		sql.append("                  AND t.vdeductstatus = 10 AND SUBSTR(t.dchangetime, 1, 7) = ?   \n");
+		sql.append("                  AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') != ? THEN \n");
+		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		sql.append("              -1  \n");
 		sql.append("             ELSE  \n");
@@ -850,6 +855,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 		if (list != null && list.size() > 0) {
+			Integer num = 0;
 			for (CustCountVO cvo : list) {
 				cmap.put(cvo.getPk_corp(), cvo.getNum());
 			}
