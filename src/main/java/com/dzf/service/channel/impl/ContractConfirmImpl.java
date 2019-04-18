@@ -780,7 +780,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(datavo.getIdeductpropor() != 0){//扣款比例如果为0，则不回写余额
 					updateBalanceMny(datavo, cuserid, balVOs);
 				}
-				//8、更新原合同加盟合同状态、驳回原因
+				//8、更新原合同加盟合同状态、驳回原因，如果为非常规套餐，更新原合同申请状态
 				updateContract(datavo, opertype, cuserid, pk_corp);
 				//9、回写套餐促销活动名额(补提交的合同不回写套餐数量)：
 				if(datavo.getPatchstatus() == null || (datavo.getPatchstatus() != null 
@@ -806,6 +806,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					datavo.setVconfreason(paramvo.getVconfreason());
 					datavo.setVconfreasonid(paramvo.getVconfreasonid());
 				}
+				//更新原合同加盟合同状态、驳回原因，如果为非常规套餐，更新原合同申请状态
 				updateContract(datavo, opertype, cuserid, pk_corp);
 				datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
 				datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_7);// 已驳回
@@ -1077,16 +1078,18 @@ public class ContractConfirmImpl implements IContractConfirm {
 	}
 	
 	/**
-	 * 更新原合同信息
-	 * @param contvo
+	 * 审核-更新原合同信息
 	 * @param paramvo
+	 * @param opertype
+	 * @param cuserid
+	 * @param pk_corp
 	 * @throws DZFWarpException
 	 */
 	private void updateContract(ContractConfrimVO paramvo, Integer opertype, String cuserid, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" UPDATE ynt_contract set vdeductstatus = ? , vstatus = ?, vconfreason = ? ,");
-		sql.append(" tstamp = ? WHERE nvl(dr,0) = 0 AND pk_corp = ? AND pk_contract = ? ");
+		sql.append(" UPDATE ynt_contract set vdeductstatus = ? ");
+		sql.append(" , vstatus = ?, vconfreason = ? , tstamp = ? ");
 		if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -1094,18 +1097,26 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 		}
+		if(paramvo.getIapplystatus() != null && paramvo.getIapplystatus() == 4){
+			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+				sql.append(" ,iversion = 5 \n");
+			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+				sql.append(" ,iversion = 6 \n");
+			}
+		}
 		if(StringUtil.isEmpty(paramvo.getVconfreason())){
 			spm.addParam("");
 		}else{
 			spm.addParam(paramvo.getVconfreason());
 		}
+		sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ? AND pk_contract = ? ");
 		spm.addParam(new DZFDateTime());
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(paramvo.getPk_contract());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
-		if(IStatusConstant.IDEDUCTYPE_2 == opertype){
+		if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
 			saveRejectHistory(paramvo, cuserid, pk_corp);
-		}else if(IStatusConstant.IDEDUCTYPE_1 == opertype){
+		}else if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 			updateRejectHistory(paramvo, pk_corp);
 		}
 	}
@@ -1532,26 +1543,25 @@ public class ContractConfirmImpl implements IContractConfirm {
 			//2、相关字段赋值：
 			setChangeValue(datavo, cuserid);
 			
-			//3、更新历史合同-相关计算金额
+			//3、更新历史合同-相关计算金额，如果为变更申请，则更新历史合同申请状态
 			updateCountMny(datavo);
 			
-			//6、更新合同申请-申请状态，记录操作历史
-			if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
+			//6、更新合同申请-申请状态，记录操作历史，上传附件
+			if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 5){
 				updateContApply(datavo, cuserid, 1, 2);
+				saveContApplyDoc(datavo, cuserid);
 			}
 			
-			//7.1、更新原合同主表数据的合同结束日期、合同结束期间、合同周期、合同总金额
+			//7.1、更新原合同主表数据的合同结束日期、合同结束期间、合同周期、合同总金额，如果为变更申请，则更新原合同申请状态
 			updateContByChange(datavo);
 			
-			//7.2、如果是合同终止，更新合同子表“代理记账费”的应收金额、未收金额、应收期间；更新合同子表“ 账本费”的应收期间
+			//7.2、如果是合同终止，更新合同子表“代理记账费”的应收金额、未收金额、应收期间；更新合同子表“账本费”的应收期间
 			if(datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1){
 				updateContBodyByChange(datavo);
 			}
 			
-			//8、上传变更合同附件
-			if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
-				saveContApplyDoc(datavo, cuserid);
-			}else{
+			//8、上传变更合同附件(非变更申请数据)
+			if(files != null && files.length > 0){
 				saveContDocVO(datavo, files, filenames, cuserid);
 			}
 			
@@ -1627,23 +1637,23 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throw new BusinessException("合同变更申请-申请状态更新失败");
 		}
 		// 2、更新原合同-申请状态
-		sql = new StringBuffer();
-		spm = new SQLParameter();
-		sql.append("UPDATE ynt_contract  \n");
-		if (type == 1) {
-			sql.append("   SET iversion = 5  \n");
-		} else if (type == 2) {
-			sql.append("   SET iversion = 6  \n");
-		}
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
-		spm.addParam(datavo.getPk_corp());
-		sql.append("   AND pk_contract = ?  \n");
-		spm.addParam(datavo.getPk_contract());
-		res = singleObjectBO.executeUpdate(sql.toString(), spm);
-		if (res != 1) {
-			throw new BusinessException("原合同申请状态更新失败");
-		}
+//		sql = new StringBuffer();
+//		spm = new SQLParameter();
+//		sql.append("UPDATE ynt_contract  \n");
+//		if (type == 1) {
+//			sql.append("   SET iversion = 5  \n");
+//		} else if (type == 2) {
+//			sql.append("   SET iversion = 6  \n");
+//		}
+//		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+//		sql.append("   AND pk_corp = ?  \n");
+//		spm.addParam(datavo.getPk_corp());
+//		sql.append("   AND pk_contract = ?  \n");
+//		spm.addParam(datavo.getPk_contract());
+//		res = singleObjectBO.executeUpdate(sql.toString(), spm);
+//		if (res != 1) {
+//			throw new BusinessException("原合同申请状态更新失败");
+//		}
 		saveAuditHistory(datavo, cuserid, type);
 	}
 	
