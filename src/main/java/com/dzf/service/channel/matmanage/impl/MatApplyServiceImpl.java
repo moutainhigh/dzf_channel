@@ -135,8 +135,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(cb.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(c.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(cb.dr, 0) = 0 and cb.type = 1 \n") ; 
+		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ; 
 		//sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
 		//sql.append("   and cb.pk_corp is not null  \n") ;
 		
