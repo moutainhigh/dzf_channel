@@ -222,6 +222,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
 			sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
 			sql.append("   AND nvl(b.dr, 0) = 0  \n");
+			sql.append("   AND b.type = 1 \n");//渠道经理
 			sql.append("   AND b.userid = ?  \n");
 			spm.addParam(uservo.getCuserid());
 		} else if (oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 2) {
