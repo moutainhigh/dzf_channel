@@ -123,13 +123,17 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
 		sql.append("  left join cn_chnarea_b cb on cb.vprovince = bi.vprovince  \n") ; 
 		sql.append("  left join cn_chnarea c on c.pk_chnarea = cb.pk_chnarea  \n") ; 
-		//sql.append("  left join bd_account co on co.pk_corp = cb.pk_corp  \n") ; 
+		if(stype!=null && "1".equals(stype)){
+			sql.append("  left join bd_account co on co.pk_corp = bi.fathercorp  \n") ; 
+		}
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(cb.dr, 0) = 0 and cb.type = 1 \n") ; 
-		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ; 
-		//sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ;
+		if(stype!=null && "1".equals(stype)){
+			sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
+		}
 		//sql.append("   and cb.pk_corp is not null  \n") ;
 		
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
