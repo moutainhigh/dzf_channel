@@ -226,6 +226,12 @@ function reloadData(){
 		fpath += "3,"
 	}
 	
+	if(fpath == ""){
+		$('#grid').datagrid('loadData',{ total:0, rows:[]});
+		$("#qrydialog").hide();
+		return;
+	}
+	
 	var url = DZF.contextPath + "/contract/contractaudit!query.action";
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
