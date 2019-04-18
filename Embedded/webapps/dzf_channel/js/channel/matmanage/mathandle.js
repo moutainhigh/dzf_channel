@@ -745,7 +745,7 @@ function showCard(row){
 	    $('.hid').css("display", "none"); 
 	    $('.sid').css("display", ""); 
 	    $('#code').textbox({width:431});
-	    readonly();
+	    readonly(1);
 	    $("#logname").combobox('readonly',false);
 		$("#fcost").numberbox('readonly',false);
 		$("#fcode").textbox('readonly',false);
@@ -862,7 +862,7 @@ function showDetail(index){
 	
 	$('#dename').textbox('setValue',row.dename);
 	
-	readonly();
+	readonly(0);
 	
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
@@ -887,7 +887,7 @@ function showStatus(row){
 }
 
 
-function readonly(){
+function readonly(type){
 	$("#code").textbox('readonly',true);
 	$("#stat").textbox('readonly',true);
 	$("#corpnm").textbox('readonly',true);
@@ -907,6 +907,16 @@ function readonly(){
 	$("#fcode").textbox('readonly',true);
 	$("#dedate").datebox('readonly',true);
 	$("#dename").textbox('readonly',true);
+	
+	if(type==0){
+		$("#logname").combobox({required:false});
+		$("#fcost").numberbox({required:false});
+		$("#fcode").numberbox({required:false});
+	}else{
+		$("#logname").combobox({required:true});
+		$("#fcost").numberbox({required:true});
+		$("#fcode").numberbox({required:true});
+	}
 	
 	
 }
