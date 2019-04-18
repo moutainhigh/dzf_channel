@@ -425,38 +425,26 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			// 1、记账状态：
 			status = queryJzStatus(vo.getPk_corpk(), pamvo.getPeriod(), map, mapV, qrytype);
 			vo.setJzstatus(status);
-			if (pamvo.getQrytype() != null && pamvo.getQrytype() != -1) {
-				if (pamvo.getQrytype() == 1 && vo.getJzstatus().indexOf("未开始") != -1) {
-					retlist.add(vo);
-				} else if (pamvo.getQrytype() == 2 && vo.getJzstatus().indexOf("进行中") != -1) {
-					retlist.add(vo);
-				} else if (pamvo.getQrytype() == 3 && vo.getJzstatus().indexOf("已完成") != -1) {
-					retlist.add(vo);
-				}
-			}
-
+			
 			// 2、账务检查以查询月是否关账来统计：
 			if (gzmap != null && !gzmap.isEmpty()) {
 				if (!StringUtil.isEmpty(gzmap.get(vo.getPk_corpk()))) {
 					vo.setVcheckstatus(pamvo.getPeriod() + "已关账");
 				}
 			}
-
-			if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
-				if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
-						&& vo.getVcheckstatus().indexOf("已关账") != -1) {
-					retlist.add(vo);
-				} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
-					retlist.add(vo);
-				}
-			}
-
+			
 			// 3、客户所属部门：
 			if (deptmap != null && !deptmap.isEmpty()) {
 				deptvalue = deptmap.get(vo.getPk_corpk());
 				if (deptvalue != null && deptvalue.length() > 0) {
 					vo.setVdeptname(deptvalue);
 				}
+			}
+			
+			//过滤数据
+			if((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
+					|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)){
+				filterData(pamvo, retlist, vo);
 			}
 		}
 		
@@ -465,6 +453,66 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			return retlist;
 		}else{
 			return list;
+		}
+	}
+	
+	/**
+	 * 过滤明细数据
+	 * @param pamvo
+	 * @param retlist
+	 * @param vo
+	 * @throws DZFWarpException
+	 */
+	private void filterData(QryParamVO pamvo, List<FinanceDetailVO> retlist, FinanceDetailVO vo) throws DZFWarpException {
+		//记账状态过滤条件：1：未开始；2：进行中；3：已完成；
+		if (pamvo.getQrytype() != null && pamvo.getQrytype() != -1) {
+			if (pamvo.getQrytype() == 1 && vo.getJzstatus().indexOf("未开始") != -1) {
+				//账务检查过滤状态：1：已关账；2：未关账；
+				if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
+					if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
+							&& vo.getVcheckstatus().indexOf("已关账") != -1) {
+						retlist.add(vo);
+					} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
+						retlist.add(vo);
+					}
+				}else{
+					retlist.add(vo);
+				}
+			} else if (pamvo.getQrytype() == 2 && vo.getJzstatus().indexOf("进行中") != -1) {
+				//账务检查过滤状态：1：已关账；2：未关账；
+				if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
+					if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
+							&& vo.getVcheckstatus().indexOf("已关账") != -1) {
+						retlist.add(vo);
+					} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
+						retlist.add(vo);
+					}
+				}else{
+					retlist.add(vo);
+				}
+			} else if (pamvo.getQrytype() == 3 && vo.getJzstatus().indexOf("已完成") != -1) {
+				//账务检查过滤状态：1：已关账；2：未关账；
+				if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
+					if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
+							&& vo.getVcheckstatus().indexOf("已关账") != -1) {
+						retlist.add(vo);
+					} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
+						retlist.add(vo);
+					}
+				}else{
+					retlist.add(vo);
+				}
+			}
+		}else{
+			//账务检查过滤状态：1：已关账；2：未关账；
+			if (pamvo.getSeletype() != null && pamvo.getSeletype() != -1) {
+				if (pamvo.getSeletype() == 1 && !StringUtil.isEmpty(vo.getVcheckstatus())
+						&& vo.getVcheckstatus().indexOf("已关账") != -1) {
+					retlist.add(vo);
+				} else if (pamvo.getSeletype() == 2 && StringUtil.isEmpty(vo.getVcheckstatus())) {
+					retlist.add(vo);
+				}
+			}
 		}
 	}
 
