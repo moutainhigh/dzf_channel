@@ -24,7 +24,7 @@ function initRef(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					ovince :"-1"
+    					ovince :"-2"
     				},
                     buttons: '#chnBtn'
                 });
@@ -224,6 +224,12 @@ function reloadData(){
 	}
 	if($("#unroutine").is(':checked')){
 		fpath += "3,"
+	}
+	
+	if(fpath == ""){
+		$('#grid').datagrid('loadData',{ total:0, rows:[]});
+		$("#qrydialog").hide();
+		return;
 	}
 	
 	var url = DZF.contextPath + "/contract/contractaudit!query.action";
@@ -497,6 +503,8 @@ function showAuditDlg(row){
 	$('#auopertype').val(1);
 	initAuditRedioListener();
 	
+	$("#rejereson").empty();
+	$('#rejereson').css('display','none');
 	if(!isEmpty(row.confreason)){
     	$('#rejereson').css('display','block');
     	showRejectReason(row);
@@ -683,6 +691,17 @@ function changeConfri(){
 		});			
 		return;
 	}
+	var opertype = $('input:radio[name="opertype"]:checked').val();
+	if(opertype == 2){
+		var confreason = $("#confreason").textbox("getValue");
+		if(isEmpty(confreason)){
+			Public.tips({
+				content : '驳回原因不能为空',
+				type : 2
+			});			
+			return;
+		}
+	}
 	
 	parent.$.messager.progress({
 		text : '审核中....'
@@ -728,7 +747,16 @@ function auditConfri(){
 		});			
 		return;
 	}
-	
+	if($('#auopertype').val() == 2){
+		var aconfreason = $("#aconfreason").textbox("getValue");
+		if(isEmpty(aconfreason)){
+			Public.tips({
+				content : '驳回原因不能为空',
+				type : 2
+			});			
+			return;
+		}
+	}
 	parent.$.messager.progress({
 		text : '变更中....'
 	});
@@ -867,7 +895,7 @@ function showAuditInfoDlg(row){
 		if(row.apstatus == 1){
 			$("#ahistory").append("--->渠道待审");
 		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->渠总待审");
+			$("#ahistory").append("--->区总待审");
 		}else if(row.apstatus == 4){
 			$("#ahistory").append("--->运营待审");
 		}
@@ -875,7 +903,7 @@ function showAuditInfoDlg(row){
 		if(row.apstatus == 1){
 			$("#ahistory").append("--->渠道待审");
 		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->渠总待审");
+			$("#ahistory").append("--->区总待审");
 		}else if(row.apstatus == 4){
 			$("#ahistory").append("--->运营待审");
 		}

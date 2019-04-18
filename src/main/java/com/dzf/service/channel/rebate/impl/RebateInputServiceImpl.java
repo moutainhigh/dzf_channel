@@ -448,7 +448,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		
 		//只有渠道经理参照，此字段才传值，用于过滤当前登陆人负责的渠道经理
 		if(!StringUtil.isEmpty(pamvo.getCuserid())){
-			Integer power = pubser.getAreaPower(pamvo.getCuserid());
+			Integer power = pubser.getAreaPower(pamvo.getCuserid(), IStatusConstant.IQUDAO);
 			if(power != null){
 				if(power == -1){
 					return new ArrayList<ManagerRefVO>();

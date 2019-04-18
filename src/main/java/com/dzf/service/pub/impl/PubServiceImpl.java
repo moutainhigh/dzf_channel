@@ -676,7 +676,7 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	@Override
-	public Integer getAreaPower(String cuserid) throws DZFWarpException {
+	public Integer getAreaPower(String cuserid, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		//1、查询是否为总经理
@@ -697,6 +697,8 @@ public class PubServiceImpl implements IPubService {
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
 		sql.append("   AND userid = ?  \n");
 		spm.addParam(cuserid);
+		sql.append("   AND type = ?  \n");
+		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
 		if(flag){
 			return 2;
@@ -709,6 +711,8 @@ public class PubServiceImpl implements IPubService {
 		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
 		sql.append("   AND userid = ?  \n");
 		spm.addParam(cuserid);
+		sql.append("   AND type = ?  \n");
+		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
 		if(flag){
 			return 3;
