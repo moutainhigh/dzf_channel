@@ -503,6 +503,8 @@ function showAuditDlg(row){
 	$('#auopertype').val(1);
 	initAuditRedioListener();
 	
+	$("#rejereson").empty();
+	$('#rejereson').css('display','none');
 	if(!isEmpty(row.confreason)){
     	$('#rejereson').css('display','block');
     	showRejectReason(row);
