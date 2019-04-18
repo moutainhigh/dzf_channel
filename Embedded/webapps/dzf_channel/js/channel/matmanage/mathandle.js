@@ -27,7 +27,10 @@ function initUname(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-	    url : DZF.contextPath + '/matmanage/matcheck!queryComboBox.action',
+	    url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
+	    data :{
+	    	qtype : 1,
+	    },
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result+ ')');
