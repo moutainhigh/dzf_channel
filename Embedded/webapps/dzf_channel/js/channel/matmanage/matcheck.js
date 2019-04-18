@@ -167,6 +167,7 @@ function load(type){
 			corpname : corpname,
 			status : status,
 			uid : uid,
+			stype : 2,
 		},
 		async : false,
 		success : function(data) {

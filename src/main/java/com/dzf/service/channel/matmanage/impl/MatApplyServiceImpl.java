@@ -2,6 +2,7 @@ package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
@@ -36,6 +38,8 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.sun.org.apache.xpath.internal.operations.And;
 
 
 @Service("matapply")
@@ -52,14 +56,24 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@Override
 	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm,String stype) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,parm,stype);
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,parm,stype,null);
 		return multBodyObjectBO.queryDataTotal(MatOrderVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype) {
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype);
+		String condition = "";
+		if(stype!=null && "2".equals(stype)){
+			//物料审核数据权限
+            List<MatOrderVO> list = queryPro(uservo);
+			for (MatOrderVO mvo : list) {
+				condition = condition + ","+mvo.getVprovince();
+			}
+			condition = condition.substring(1);
+			condition = "("+condition+")";
+		}
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,condition);
 		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
@@ -83,7 +97,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return list;
 	}
 
-	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo, String stype) {
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
+			String stype, String condition) {
+		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -103,11 +119,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
-		/*sql.append("                bi.,  \n") ; 
-		sql.append("                bi.,  \n") ; 
-		sql.append("                bi.,  \n") ; 
-		sql.append("                bi.,  \n") ; 
-		sql.append("                bi.,  \n") ; */
 		sql.append("                bi.ts,  \n") ; 
 		sql.append("                b.vname,  \n") ; 
 		sql.append("                b.vunit,  \n") ; 
@@ -117,7 +128,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                cb.vprovname proname,  \n") ; 
 		sql.append("                cb.vprovince,  \n") ; 
 		sql.append("                c.areaname \n") ; 
-		//sql.append("                co.unitname corpname  \n") ; 
 		sql.append("  from cn_materielbill bi  \n") ; 
 		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill  \n") ; 
 		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
@@ -134,7 +144,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(stype!=null && "1".equals(stype)){
 			sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
 		}
-		//sql.append("   and cb.pk_corp is not null  \n") ;
 		
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
 			sql.append(" AND  bi.corpname like ? ");
@@ -167,9 +176,13 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			sql.append(" and bi.applydate <= ? ");
 			spm.addParam(pamvo.getApplyenddate());
 		}
+		if(!StringUtil.isEmpty(condition)){
+			sql.append(" and cb.vprovince in "+condition);
+		}
 		if(!StringUtil.isEmpty(qvo.getVqrysql())){
 			sql.append(qvo.getVqrysql());
 		}
+		
 		sql.append(" order by bi.ts desc");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
@@ -856,6 +869,34 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 		
 	}
+	
+	/**
+	 * 物料审核过滤
+	 * 大区负责人只能看见自己负责的加盟商
+	 */
+	private List<MatOrderVO> queryPro(UserVO uservo){
+		
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select b.vprovince \n");
+		sql.append("    from cn_chnarea a \n");
+		sql.append("    left join cn_chnarea_b  b on \n");
+		sql.append("    a.pk_chnarea = b.pk_chnarea \n");
+		sql.append("    where nvl(a.dr, 0) = 0 \n");
+		sql.append("    and nvl(b.dr, 0) = 0 ");
+		sql.append("    and a.type = 1 and b.type = 1 \n");
+		if(!StringUtil.isEmpty(uservo.getCuserid())){
+			sql.append(" and a.userid = ? ");
+			spm.addParam(uservo.getCuserid());
+		}
+		
+		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(MatOrderVO.class));
+	    if(list!=null && list.size()>0){
+	    	return list;
+	    }
+		return null;
+	}
+
 	
 	/**
 	 * 获取上个季度时间

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
@@ -39,6 +40,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.report.ExportExcel;
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Single;
 
 /**
  * 物料申请
@@ -493,7 +495,8 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			}
 		}
 	}
-
+	
+	
 	
 	
 	/**
