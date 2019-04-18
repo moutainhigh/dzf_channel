@@ -151,7 +151,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(stype!=null && "1".equals(stype)){//物料处理界面
 			sql.append("   AND bi.vstatus in (2,3) \n");
 		}
-		else if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
+		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
 			sql.append("   AND bi.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
 		}
