@@ -689,6 +689,17 @@ function changeConfri(){
 		});			
 		return;
 	}
+	var opertype = $('input:radio[name="opertype"]:checked').val();
+	if(opertype == 2){
+		var confreason = $("#confreason").textbox("getValue");
+		if(isEmpty(confreason)){
+			Public.tips({
+				content : '驳回原因不能为空',
+				type : 2
+			});			
+			return;
+		}
+	}
 	
 	parent.$.messager.progress({
 		text : '审核中....'
@@ -734,7 +745,16 @@ function auditConfri(){
 		});			
 		return;
 	}
-	
+	if($('#auopertype').val() == 2){
+		var aconfreason = $("#aconfreason").textbox("getValue");
+		if(isEmpty(aconfreason)){
+			Public.tips({
+				content : '驳回原因不能为空',
+				type : 2
+			});			
+			return;
+		}
+	}
 	parent.$.messager.progress({
 		text : '变更中....'
 	});
