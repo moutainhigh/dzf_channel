@@ -1601,7 +1601,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		avo.setIopertype(iopertype);
 		
 		if(type == 1){
-			avo.setIapplystatus(5);
+			avo.setIapplystatus(4);
 			avo.setVmemo("运营已审");
 		}else if(type == 2){
 			avo.setIapplystatus(6);
