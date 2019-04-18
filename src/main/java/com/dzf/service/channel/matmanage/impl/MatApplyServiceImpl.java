@@ -2,11 +2,8 @@ package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,7 +28,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -39,12 +35,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-import com.sun.org.apache.bcel.internal.generic.INEG;
-import com.sun.org.apache.xpath.internal.operations.And;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import oracle.net.aso.s;
 
 @Service("matapply")
 public class MatApplyServiceImpl implements IMatApplyService {
@@ -416,12 +407,12 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					csql.append("      and b.pk_materiel = ? \n");
 					
 					if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-						sql.append(" and l.deliverdate >= ? ");
-						spm.addParam(vo.getDedubegdate());
+						csql.append(" and l.deliverdate >= ? ");
+						cspm.addParam(vo.getDedubegdate());
 					}
 					if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-						sql.append(" and l.deliverdate <= ? ");
-						spm.addParam(vo.getEnddate());
+						csql.append(" and l.deliverdate <= ? ");
+						cspm.addParam(vo.getDeduenddate());
 					}
 					List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
 					
@@ -693,7 +684,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public MatOrderVO queryDataById(String id,UserVO uservo,String type,String stype) {
+	public MatOrderVO queryDataById(MatOrderVO mvo,String id,UserVO uservo,String type,String stype) {
 		String message = "";
 		
 		StringBuffer sql = new StringBuffer();
@@ -754,6 +745,16 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 			
 			setCitycountry(vo);
+			
+			 //获取上个季度时间
+			 try {
+				String lastQuarter = getLastQuarter(mvo.getDedubegdate(), mvo.getDuduenddate());
+				String[] quarter = lastQuarter.split(",");
+				vo.setDedubegdate(quarter[0]);
+				vo.setDuduenddate(quarter[1]);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			
 			if("1".equals(stype)){
 				//点击审核校验

@@ -644,6 +644,8 @@ function checked(type){
 		Public.tips({content : "请选择数据行" ,type:2});
 		return;
 	}
+	var quarterdate = getLastQuarter();//获取上个季度日期
+	var qdate = quarterdate.split(",");
 	var id = row.matbillid;
 	$.ajax({
 	    type : 'POST',
@@ -653,6 +655,8 @@ function checked(type){
 		data : {
 			id : id,
 			stype : 1,
+			debegdate : qdate[0],
+			deenddate : qdate[1],
 		},
 		success : function(result) {
 			var result = eval('(' + result+ ')');
@@ -938,5 +942,29 @@ function doExport(){
 		}, true, true);
 		
 }
+
+/**
+ * 获取上个季度日期
+ */
+function getLastQuarter(){ 
+	var quarterdate;
+	var dayMSec = 24 * 3600 * 1000;  
+	var today = new Date();  
+
+    //得到上一个季度的第一天  
+    var lastQuarterFirstDay = new Date(today.getFullYear() , today.getMonth() - 3 , 1);  
+    //得到本月第一天  
+    var nowMonthFirstDay = new Date(today.getFullYear() , today.getMonth(), 1);  
+    //得到上一个季度的最后一天的毫秒值  
+    var lastQuarterLastDayMSec = nowMonthFirstDay.getTime() - 1 * dayMSec;  
+    var lastQuarterLastDay = new Date(lastQuarterLastDayMSec);  
+      
+    var debegdate = lastQuarterFirstDay;
+    var deenddate = lastQuarterLastDay;
+    
+    return debegdate+","+deenddate;
+    //document.getElementById("debegdate").value = lastQuarterFirstDay;
+    //document.getElementById("deenddate").value = lastQuarterLastDay;
+}  
 
 

@@ -277,11 +277,12 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			MatOrderVO vo = new MatOrderVO();
+			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 			String id = getRequest().getParameter("id");
 			String type = getRequest().getParameter("type");
 			String stype = getRequest().getParameter("stype");
 			if(!StringUtil.isEmpty(id)){
-			    vo=matapply.queryDataById(id,uservo,type,stype);
+			    vo=matapply.queryDataById(vo,id,uservo,type,stype);
 			}
 			if(!StringUtil.isEmpty(vo.getMessage())){
 				json.setMsg("提示");
