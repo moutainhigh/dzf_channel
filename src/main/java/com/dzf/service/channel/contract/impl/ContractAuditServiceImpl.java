@@ -257,7 +257,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				vo.setCorpkname(corpvo.getUnitname());
 			}
 			//申请状态  1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
-			if(pamvo.getIopertype() == null){//null：审核查询；1：明细查询；
+			if(pamvo.getIopertype() != null && pamvo.getIopertype() == -1){//-1：审核查询；1：明细查询；
 				if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
 					if(!uservo.getCuserid().equals(vo.getVchannelid())){
 						throw new BusinessException("当前操作人员没有待审批任务");
