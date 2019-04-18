@@ -867,7 +867,7 @@ function showAuditInfoDlg(row){
 		if(row.apstatus == 1){
 			$("#ahistory").append("--->渠道待审");
 		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->渠总待审");
+			$("#ahistory").append("--->区总待审");
 		}else if(row.apstatus == 4){
 			$("#ahistory").append("--->运营待审");
 		}
@@ -875,7 +875,7 @@ function showAuditInfoDlg(row){
 		if(row.apstatus == 1){
 			$("#ahistory").append("--->渠道待审");
 		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->渠总待审");
+			$("#ahistory").append("--->区总待审");
 		}else if(row.apstatus == 4){
 			$("#ahistory").append("--->运营待审");
 		}
