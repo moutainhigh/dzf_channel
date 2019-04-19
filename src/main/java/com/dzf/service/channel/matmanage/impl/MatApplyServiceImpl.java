@@ -115,8 +115,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, list, 1);
 		}
-		if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
-			list = null;
+		if(stype!=null && !"1".equals(stype)){
+			if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
+				list = null;
+			}
 		}
 		return list;
 	}
