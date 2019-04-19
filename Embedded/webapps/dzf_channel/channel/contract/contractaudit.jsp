@@ -338,14 +338,14 @@
 	<!-- 变更审核 end -->
 	
 	<!-- 非常规套餐审核 begin -->
-	<div id="audit_Dialog" class="easyui-dialog" style="width:1160px;height:80%;background:#FFF" data-options="closed:true">
+	<div id="audit_Dialog" class="easyui-dialog" style="width:1160px;height:90%;background:#FFF" data-options="closed:true">
 		<div class="time_col time_colp11  Marketing" style="margin:0 auto;height:50px;line-height:50px;background:#eff1f2;">
 			<div style="width:14%;display: inline-block;float: right;">
 				<a class="ui-btn ui-btn-xz" onclick="auditConfri()">确定</a>
 				<a class="ui-btn ui-btn-xz" onclick="auditCancel()">取消</a>
 			</div>
 		</div>
-		<div style="height:92%; overflow:auto; margin-top:10px;">
+		<div style="height:85%; overflow:auto; margin-top:10px;">
 		
 			<form id = "auditfrom" method="post">
 				
