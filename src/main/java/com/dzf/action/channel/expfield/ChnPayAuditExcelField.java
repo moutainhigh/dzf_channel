@@ -17,6 +17,8 @@ public class ChnPayAuditExcelField implements IExceport<ChnPayBillVO> {
 	
 	private String now = DZFDate.getDate(new Date()).toString();
 	
+	private static final String F_NAME = "付款单审批";
+	
 	private String creator = null;
 	
 	private String corpname = null;
@@ -76,17 +78,17 @@ public class ChnPayAuditExcelField implements IExceport<ChnPayBillVO> {
 
 	@Override
 	public String getExcelport2003Name() {
-		return "付款单审批" + now + ".xls";
+		return F_NAME + now + ".xls";
 	}
 
 	@Override
 	public String getExcelport2007Name() {
-		return "付款单审批" + now + ".xlsx";
+		return F_NAME + now + ".xlsx";
 	}
 
 	@Override
 	public String getExceportHeadName() {
-		return "付款单审批";
+		return getSheetName();
 	}
 
 	@Override
@@ -101,7 +103,7 @@ public class ChnPayAuditExcelField implements IExceport<ChnPayBillVO> {
 
 	@Override
 	public String getSheetName() {
-		return "付款单审批";
+		return F_NAME;
 	}
 
 	@Override

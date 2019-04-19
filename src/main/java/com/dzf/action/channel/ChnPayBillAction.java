@@ -28,6 +28,7 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
@@ -51,6 +52,8 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 	private static final long serialVersionUID = -5179718423895024141L;
 
 	private Logger log = Logger.getLogger(this.getClass());
+	
+	private static final String warnMsg = "登陆用户错误";
 
 	@Autowired
 	private IChnPayService chnpay;
@@ -62,10 +65,10 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
+			if (uservo != null && !IDefaultValue.DefaultGroup.equals(uservo.getPk_corp())) {
+				throw new BusinessException(warnMsg);
 			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
+				throw new BusinessException(warnMsg);
 			}
 			ChnPayBillVO paramvo = new ChnPayBillVO();
 			paramvo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), paramvo);
@@ -98,10 +101,10 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 			try {
 				UserVO uservo = getLoginUserInfo();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
-				if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-					throw new BusinessException("登陆用户错误");
+				if (uservo != null && !IDefaultValue.DefaultGroup.equals(uservo.getPk_corp())) {
+					throw new BusinessException(warnMsg);
 				} else if (uservo == null) {
-					throw new BusinessException("登陆用户错误");
+					throw new BusinessException(warnMsg);
 				}
 				String opertype = "";
 				if(StringUtil.isEmpty(data.getPk_paybill())){
@@ -151,10 +154,10 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
+			if (uservo != null && !IDefaultValue.DefaultGroup.equals(uservo.getPk_corp())) {
+				throw new BusinessException(warnMsg);
 			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
+				throw new BusinessException(warnMsg);
 			}
 			String chns = getRequest().getParameter("chns");
 			String temp = getRequest().getParameter("stat");
@@ -204,10 +207,10 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		Json json = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
+			if (uservo != null && !IDefaultValue.DefaultGroup.equals(uservo.getPk_corp())) {
+				throw new BusinessException(warnMsg);
 			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
+				throw new BusinessException(warnMsg);
 			}
 			ChnPayBillVO chn = new ChnPayBillVO();
 			chn = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), chn);
@@ -286,10 +289,10 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_36);
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
+			if (uservo != null && !IDefaultValue.DefaultGroup.equals(uservo.getPk_corp())) {
+				throw new BusinessException(warnMsg);
 			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
+				throw new BusinessException(warnMsg);
 			}
 			ChnPayBillVO paramvo = new ChnPayBillVO();
 			paramvo = (ChnPayBillVO) DzfTypeUtils.cast(getRequest(), paramvo);
