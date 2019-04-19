@@ -35,7 +35,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT distinct a.pk_chnarea, \n");
-		corpsql.append("  b.pk_chnarea_b,b.userid \n");
+		corpsql.append("  b.pk_chnarea_b,b.userid,a.ts \n");
 		corpsql.append(" FROM cn_chnarea_b b \n");
 		corpsql.append(" left join cn_chnarea a on \n");
 		corpsql.append(" a.pk_chnarea = b.pk_chnarea \n");
