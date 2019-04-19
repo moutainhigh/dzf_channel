@@ -1568,6 +1568,8 @@ function change(){
 function showApplyChangeDlg(row){
 	$('#achange_Dialog').dialog({ modal:true });//设置dig属性
 	$('#achange_Dialog').dialog('open').dialog('center').dialog('setTitle','合同变更');
+	$('#first').css('display','none');
+	$('#second').css('display','none');
 	if(row.changetype == 1){
 		$('#first').css('display','inline-block');
 		document.getElementById("aend").checked="true";
