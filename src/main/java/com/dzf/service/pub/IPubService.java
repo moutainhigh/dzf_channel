@@ -96,6 +96,16 @@ public interface IPubService {
 	 */
 	public List<String> qryPros(String cuserid,Integer type) throws DZFWarpException;
 	
+	
+	/**
+	 * 以渠道经理所选的加盟商（加盟商客户维度）
+	 * @param cuserid
+	 * @param areaname
+	 * @param type(1:渠道；2：培训；3：运营)
+	 * @return
+	 */
+	public List<String> qryCorpIds(String cuserid, String areaname,int type) throws DZFWarpException;
+	
 	/**
      * 在线业务系统功能操作是校验是否有节点权限，防止攻击
      * @author gejw

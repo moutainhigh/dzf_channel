@@ -474,14 +474,8 @@ public class PubServiceImpl implements IPubService {
 		return list;
 	}
 
-	/**
-	 * 以渠道经理所选的加盟商（加盟商客户维度）
-	 * @param cuserid
-	 * @param areaname
-	 * @param type(1:渠道；2：培训；3：运营)
-	 * @return
-	 */
-	private List<String> qryCorpIds(String cuserid, String areaname,int type) {
+	@Override
+	public List<String> qryCorpIds(String cuserid, String areaname,int type) {
 		StringBuffer buf = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append("select distinct b.pk_corp");
