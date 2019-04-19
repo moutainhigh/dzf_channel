@@ -568,7 +568,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		    	}
 		    	
 				data.setVstatus(3);
-				data.setDeliverid(uservo.getCoperatorid());
+				data.setDeliverid(uservo.getCuserid());
 		    	String[] supdates ={"vstatus","pk_logistics","fastcode","fastcost",
 						"deliverid","deliverdate" };
 		    	
