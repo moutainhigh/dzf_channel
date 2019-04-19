@@ -95,23 +95,25 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		for (MatOrderVO mvo : list) {
-			if (mvo.getCoperatorid() != null) {
-				uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-				mvo.setApplyname(uservo.getUser_name());
-			}
-			String manager = marmap.get(mvo.getFathercorp());
-			if (!StringUtil.isEmpty(manager)) {
-				uservo = UserCache.getInstance().get(manager, null);
-				if (uservo != null) {
-					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
-					mvo.setVmanagerid(manager);
+		if(list!=null && list.size()>0){
+			for (MatOrderVO mvo : list) {
+				if (mvo.getCoperatorid() != null) {
+					uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					mvo.setApplyname(uservo.getUser_name());
 				}
+				String manager = marmap.get(mvo.getFathercorp());
+				if (!StringUtil.isEmpty(manager)) {
+					uservo = UserCache.getInstance().get(manager, null);
+					if (uservo != null) {
+						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
+						mvo.setVmanagerid(manager);
+					}
+				}
+				String[] updates= {"vmanagerid"};
+				singleObjectBO.update(mvo, updates);
 			}
-			String[] updates= {"vmanagerid"};
-			singleObjectBO.update(mvo, updates);
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, list, 1);
 		}
-		QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, list, 1);
 		if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
 			list = null;
 		}
