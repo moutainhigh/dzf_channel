@@ -3,7 +3,6 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +10,18 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
-import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatCheckService;
-import com.dzf.service.pub.IPubService;
-import com.sun.org.apache.regexp.internal.recompile;
 
 @Service("matcheck")
 public class MatCheckServiceImpl implements IMatCheckService {
@@ -32,11 +29,8 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 
-	@Autowired
-	private IPubService pubser;
-
 	@Override
-	public List<ChnAreaBVO> queryComboBox(UserVO uservo) {
+	public List<ChnAreaBVO> queryComboBox(UserVO uservo)   throws DZFWarpException{
 		
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
@@ -65,7 +59,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	}
 
 	@Override
-	public void updateStatusById(MatOrderVO data,UserVO uservo,MatOrderBVO[] bvos) {
+	public void updateStatusById(MatOrderVO data,UserVO uservo,MatOrderBVO[] bvos)   throws DZFWarpException{
 		
 		String uuid = UUID.randomUUID().toString();
         try {
@@ -107,7 +101,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 
 	
 	@Override
-	public MatOrderVO queryById(String pk_materielbill) {
+	public MatOrderVO queryById(String pk_materielbill)  throws DZFWarpException {
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -130,7 +124,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
  	 * @param updatets
  	 * @return
  	 */
- 	private MatOrderVO checkData(String pk_materielbill, DZFDateTime updatets) {
+ 	private MatOrderVO checkData(String pk_materielbill, DZFDateTime updatets)  throws DZFWarpException {
  		MatOrderVO vo = (MatOrderVO) singleObjectBO.queryByPrimaryKey(MatOrderVO.class, pk_materielbill);
  		if (!updatets.equals(vo.getUpdatets())) {
  			throw new BusinessException("合同编号：" + vo.getVcontcode() + ",数据已发生变化;<br>");

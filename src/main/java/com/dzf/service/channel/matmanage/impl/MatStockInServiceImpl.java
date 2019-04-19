@@ -3,7 +3,6 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.List;
 import java.util.UUID;
 
-import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -30,7 +28,6 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatStockInService;
 import com.dzf.service.pub.IBillCodeService;
 
-import oracle.net.aso.s;
 
 @Service("matstockin")
 public class MatStockInServiceImpl implements IMatStockInService {
@@ -46,7 +43,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MaterielFileVO> queryComboBox() {
+	public List<MaterielFileVO> queryComboBox()   throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT pk_materiel ,vname  \n");
 		sql.append("  FROM cn_materiel  \n");
@@ -57,7 +54,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	}
 
 	@Override
-	public void saveStockIn(MaterielStockInVO data, UserVO uservo) {
+	public void saveStockIn(MaterielStockInVO data, UserVO uservo)  throws DZFWarpException {
 		
 		if (StringUtil.isEmpty(data.getPk_materielin())) {
 			 data.setVbillcode((getMatcode(data)));
@@ -91,7 +88,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		}
 	}
 	
-    private void saveEdit(MaterielStockInVO data) {
+    private void saveEdit(MaterielStockInVO data)  throws DZFWarpException {
     	
     	Isintnum(data);
 		String uuid = UUID.randomUUID().toString();
@@ -123,7 +120,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 * @param updatets
 	 * @return
 	 */
-	private MaterielStockInVO checkData(String pk_materielin, DZFDateTime updatets) {
+	private MaterielStockInVO checkData(String pk_materielin, DZFDateTime updatets)  throws DZFWarpException {
 		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, pk_materielin);
 		if (!updatets.equals(vo.getUpdatets())) {
 			throw new BusinessException("单据编码：" + vo.getVbillcode() + ",数据已发生变化;<br>");
@@ -169,12 +166,12 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	}
 
 	@Override
-	public int queryTotalRow(MaterielStockInVO qvo) {
+	public int queryTotalRow(MaterielStockInVO qvo)   throws DZFWarpException{
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	     return multBodyObjectBO.queryDataTotal(MaterielFileVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
-	private QrySqlSpmVO getQrySqlSpm(MaterielStockInVO pamvo) {
+	private QrySqlSpmVO getQrySqlSpm(MaterielStockInVO pamvo)  throws DZFWarpException {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -204,7 +201,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MaterielStockInVO> query(MaterielStockInVO qvo,UserVO uservo) {
+	public List<MaterielStockInVO> query(MaterielStockInVO qvo,UserVO uservo)  throws DZFWarpException {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
@@ -217,7 +214,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	}
 
 	@Override
-	public MaterielStockInVO queryDataById(String id) {
+	public MaterielStockInVO queryDataById(String id)  throws DZFWarpException {
 
 		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, id);
 		if(vo!=null){
@@ -227,7 +224,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	}
 
 	@Override
-	public void delete(MaterielStockInVO data) {
+	public void delete(MaterielStockInVO data)  throws DZFWarpException {
 		
 		//Isintnum(data);
 		IsDele(data);
@@ -275,7 +272,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 * 判断是否可以入库
 	 * @param data
 	 */
-	private void Isintnum(MaterielStockInVO data){
+	private void Isintnum(MaterielStockInVO data)  throws DZFWarpException{
 		Integer intnum = null;
 		Integer sumnum = null;
 		Integer ssum = null;
@@ -302,7 +299,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 * 判断是否可以删除
 	 * @param pk_materiel
 	 */
-	private void IsDele(MaterielStockInVO data) {
+	private void IsDele(MaterielStockInVO data)  throws DZFWarpException {
 		
 		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
 		StringBuffer sql = new StringBuffer();

@@ -5,19 +5,49 @@ import java.util.List;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.DZFWarpException;
 
 public interface IMatStockInService {
 
-	List<MaterielFileVO> queryComboBox();
+	/**
+	 * 查询所有物料
+	 * @return
+	 */
+	List<MaterielFileVO> queryComboBox() throws DZFWarpException;
 
-	void saveStockIn(MaterielStockInVO data, UserVO uservo);
+	/**
+	 * 新增入库单
+	 * @param data
+	 * @param uservo
+	 */
+	void saveStockIn(MaterielStockInVO data, UserVO uservo) throws DZFWarpException;
 
-	int queryTotalRow(MaterielStockInVO pamvo);
+	/**
+	 * 查询数据条数
+	 * @param pamvo
+	 * @return
+	 */
+	int queryTotalRow(MaterielStockInVO pamvo) throws DZFWarpException;
 
-	List<MaterielStockInVO> query(MaterielStockInVO pamvo, UserVO uservo);
+	/**
+	 * 查询数据
+	 * @param pamvo
+	 * @param uservo
+	 * @return
+	 */
+	List<MaterielStockInVO> query(MaterielStockInVO pamvo, UserVO uservo) throws DZFWarpException;
 
-	MaterielStockInVO queryDataById(String id);
+	/**
+	 * 根据主键查询数据
+	 * @param id
+	 * @return
+	 */
+	MaterielStockInVO queryDataById(String id) throws DZFWarpException;
 
-	void delete(MaterielStockInVO pamvo);
+	/**
+	 * 删除入库单
+	 * @param pamvo
+	 */
+	void delete(MaterielStockInVO pamvo) throws DZFWarpException;
 
 }

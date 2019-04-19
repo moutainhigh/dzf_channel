@@ -26,7 +26,6 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.matmanage.IMatCheckService;
-import com.dzf.service.pub.IPubService;
 
 @ParentPackage("basePackage")
 @Namespace("/matmanage")
@@ -37,9 +36,6 @@ private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
 	private IMatCheckService matcheck;
-	
-	@Autowired
-	private IPubService pubser;
 	
 	/**
 	 * 查询渠道商下拉

@@ -3,10 +3,14 @@ package com.dzf.service.channel.matmanage;
 import java.util.List;
 
 import com.dzf.model.channel.matmanage.MatOrderVO;
-import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.DZFWarpException;
 
 public interface IMatHandleService {
 
-	List<MatOrderVO> queryComboBox();
+	/**
+	 * 查询快递公司下拉
+	 * @return
+	 */
+	List<MatOrderVO> queryComboBox() throws DZFWarpException;
 
 }

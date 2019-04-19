@@ -5,28 +5,81 @@ import java.util.List;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.DZFWarpException;
+
 
 public interface IMatFileService {
 
-	Boolean queryMatName(String name);
+	/**
+	 * 校验物料名称唯一性
+	 * @param name
+	 * @return
+	 */
+	Boolean queryMatName(String name)  throws DZFWarpException;
 
-	void saveMatFile(MaterielFileVO data, UserVO uservo);
+	/**
+	 * 新增物料
+	 * @param data
+	 * @param uservo
+	 */
+	void saveMatFile(MaterielFileVO data, UserVO uservo)  throws DZFWarpException;
 
-	int queryTotalRow(MaterielFileVO pamvo);
+	/**
+	 * 查询数据条数
+	 * @param pamvo
+	 * @return
+	 */
+	int queryTotalRow(MaterielFileVO pamvo)  throws DZFWarpException;
 
-	List<MaterielFileVO> query(MaterielFileVO pamvo, UserVO uservo);
+	/**
+	 * 查询数据
+	 * @param pamvo
+	 * @param uservo
+	 * @return
+	 */
+	List<MaterielFileVO> query(MaterielFileVO pamvo, UserVO uservo)  throws DZFWarpException;
 
-	void updateStatus(MaterielFileVO mvo, Integer type);
+	/**
+	 * 修改封存状态
+	 * @param mvo
+	 * @param type
+	 */
+	void updateStatus(MaterielFileVO mvo, Integer type)  throws DZFWarpException;
 
-	List<MaterielFileVO> querySsealById(String ids);
+	/**
+	 * 是否封存
+	 * @param ids
+	 * @return
+	 */
+	List<MaterielFileVO> querySsealById(String ids)  throws DZFWarpException;
 
-	MaterielFileVO queryDataById(String id);
+	/**
+	 * 根据主键查询数据
+	 * @param id
+	 * @return
+	 */
+	MaterielFileVO queryDataById(String id)  throws DZFWarpException;
 
-	List<MaterielStockInVO> queryIsRk(String ids);
+	/**
+	 * 判断是否已经入库
+	 * @param ids
+	 * @return
+	 */
+	List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException;
 
-	void deleteWl(MaterielFileVO mvo);
+	/**
+	 * 删除物料档案
+	 * @param mvo
+	 */
+	void deleteWl(MaterielFileVO mvo)  throws DZFWarpException;
 
-	List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo, UserVO uservo);
+	/**
+	 * 下拉查询所有物料档案
+	 * @param pamvo
+	 * @param uservo
+	 * @return
+	 */
+	List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo, UserVO uservo)  throws DZFWarpException;
 
 	
 }

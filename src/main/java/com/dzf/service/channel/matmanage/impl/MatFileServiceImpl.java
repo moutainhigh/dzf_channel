@@ -69,7 +69,7 @@ public class MatFileServiceImpl implements IMatFileService {
 		}
 	}
 	
-	private void saveEdit(MaterielFileVO data) {
+	private void saveEdit(MaterielFileVO data)   throws DZFWarpException{
 		
 		String uuid = UUID.randomUUID().toString();
 		try{
@@ -99,7 +99,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	 * @param updatets
 	 * @return
 	 */
-	private MaterielFileVO checkData(String pk_materiel, DZFDateTime updatets) {
+	private MaterielFileVO checkData(String pk_materiel, DZFDateTime updatets)   throws DZFWarpException{
 		MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, pk_materiel);
 		if (!updatets.equals(vo.getUpdatets())) {
 			throw new BusinessException("物料编号：" + vo.getVcode() + ",数据已发生变化;<br>");
@@ -206,7 +206,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public void updateStatus(MaterielFileVO mvo,Integer type) {
+	public void updateStatus(MaterielFileVO mvo,Integer type)   throws DZFWarpException{
 		if(type==1){
 			checkIsOperY(mvo.getIsseal(),mvo.getVcode(),1,"已启用");
 		}
@@ -270,7 +270,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public List<MaterielFileVO> querySsealById(String ids) {
+	public List<MaterielFileVO> querySsealById(String ids)  throws DZFWarpException {
 		
 		List<String> idList = Arrays.asList(ids.split(","));
 		String condition = SqlUtil.buildSqlForIn("pk_materiel ",idList.toArray(new String[idList.size()]));
@@ -280,7 +280,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public MaterielFileVO queryDataById(String id) {
+	public MaterielFileVO queryDataById(String id)  throws DZFWarpException {
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -296,7 +296,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public List<MaterielStockInVO> queryIsRk(String ids) {
+	public List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException {
 		
 		 List<String> idList = Arrays.asList(ids.split(","));
 		 String condition = SqlUtil.buildSqlForIn("l.pk_materiel ",idList.toArray(new String[idList.size()]));
@@ -315,7 +315,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public void deleteWl(MaterielFileVO qryvo) {
+	public void deleteWl(MaterielFileVO qryvo)  throws DZFWarpException {
 		
 		String uuid = UUID.randomUUID().toString();
 		try {
@@ -336,7 +336,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	}
 
 	@Override
-	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo) {
+	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo)  throws DZFWarpException {
 		StringBuffer sql=new StringBuffer();
 		SQLParameter spm=new SQLParameter();
 		sql.append("  select pk_materiel,vname,vunit,vcode,coperatorid \n");

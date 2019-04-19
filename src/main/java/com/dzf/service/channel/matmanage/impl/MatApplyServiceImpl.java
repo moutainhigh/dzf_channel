@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.record.VCenterRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,29 +53,31 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	private IPubService pubser;
 
 	@Override
-	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm,String stype) {
+	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm,String stype) throws DZFWarpException{
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,parm,stype,null,null);
 		return multBodyObjectBO.queryDataTotal(MatOrderVO.class, sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype) {
+	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype)  throws DZFWarpException {
 		String vpro = "";
 		String vcorp = "";
 		List<String> corp = new ArrayList<String>();
 		if(stype!=null && !"1".equals(stype)){
 			//物料审核，申请数据权限
             List<ChnAreaBVO> list = queryPro(uservo);
-			for (ChnAreaBVO vo : list) {
-				if("Y".equals(vo.getIsCharge().toString())){//是否是省市负责人
-					vpro = vpro + "," +vo.getVprovince();
-				}else{
-					if(vo.getPk_corp()!=null){
-						corp.add(vo.getPk_corp());
-					}
-				}
-			}
+            if(list!=null && list.size()>0){
+            	for (ChnAreaBVO vo : list) {
+    				if("Y".equals(vo.getIsCharge().toString())){//是否是省市负责人
+    					vpro = vpro + "," +vo.getVprovince();
+    				}else{
+    					if(vo.getPk_corp()!=null){
+    						corp.add(vo.getPk_corp());
+    					}
+    				}
+    			}
+            }
 			if(vpro!=null && !StringUtil.isEmpty(vpro)){
 				vpro = vpro.substring(1);
 				vpro = "("+vpro+")";
@@ -111,11 +112,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			singleObjectBO.update(mvo, updates);
 		}
 		QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, list, 1);
+		if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
+			list = null;
+		}
 		return list;
 	}
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
-			String stype, String vpro,String vcorp) {
+			String stype, String vpro,String vcorp)  throws DZFWarpException {
 		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
@@ -205,6 +209,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 		
 		sql.append(" order by bi.ts desc");
+		
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -213,7 +218,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MatOrderBVO> queryNumber(MatOrderVO pamvo) {
+	public List<MatOrderBVO> queryNumber(MatOrderVO pamvo)  throws DZFWarpException {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -265,7 +270,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MaterielFileVO> queryMatFile() {
+	public List<MaterielFileVO> queryMatFile() throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		sql.append("select vname, vunit  \n") ;
 		sql.append("  from cn_materiel  \n") ; 
@@ -281,7 +286,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public List<MatOrderVO> queryAllProvince() {
+	public List<MatOrderVO> queryAllProvince()  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		sql.append("  select region_id vprovince,region_name pname,parenter_id parid \n");
 		sql.append("     from ynt_area \n");
@@ -297,7 +302,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public List<MatOrderVO> queryCityByProId(Integer pid) {
+	public List<MatOrderVO> queryCityByProId(Integer pid)  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pid);
@@ -315,7 +320,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public List<MatOrderVO> queryAreaByCid(Integer cid) {
+	public List<MatOrderVO> queryAreaByCid(Integer cid)  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(cid);
@@ -333,7 +338,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public MatOrderVO showDataByCorp(String corpid) {
+	public MatOrderVO showDataByCorp(String corpid)   throws DZFWarpException{
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -359,7 +364,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@SuppressWarnings("unused")
 	@Override
 	public String saveApply(MatOrderVO vo, UserVO uservo,
-			MatOrderBVO[] bvos,String type,String stype) {
+			MatOrderBVO[] bvos,String type,String stype)  throws DZFWarpException {
 		
 		String message = "";
 		if(!StringUtil.isEmpty(vo.getPk_materielbill())){
@@ -399,7 +404,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
   }
 	
 	
-	private String checkIsInfo(MatOrderVO vo,MatOrderBVO[] bvos,String message){
+	private String checkIsInfo(MatOrderVO vo,MatOrderBVO[] bvos,String message)  throws DZFWarpException{
 		for (MatOrderBVO mbvo :bvos) {
 			MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
 			if(mvo!=null && mvo.getIsappl()!=null){
@@ -505,7 +510,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 	
      @SuppressWarnings("unused")
-	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo) {
+	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo)  throws DZFWarpException {
     	if(type==null){
     		checkIsOperOrder(data.getVstatus(),"只有待审批或已驳回状态的申请单支持修改！");
     	}
@@ -617,7 +622,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
       * @param bvos
       * @param type
       */
-     private void save(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type){
+     private void save(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos,String type)  throws DZFWarpException{
     	 
     	 if (StringUtil.isEmpty(vo.getPk_materielbill())) {// 新增保存
  			setDefaultValue(vo, uservo);
@@ -659,7 +664,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
  	 * @param updatets
  	 * @return
  	 */
- 	private MatOrderVO checkData(String pk_materielbill, DZFDateTime updatets) {
+ 	private MatOrderVO checkData(String pk_materielbill, DZFDateTime updatets)  throws DZFWarpException {
  		MatOrderVO vo = (MatOrderVO) singleObjectBO.queryByPrimaryKey(MatOrderVO.class, pk_materielbill);
  		if (!updatets.equals(vo.getUpdatets())) {
  			throw new BusinessException("合同编号：" + vo.getVcontcode() + ",数据已发生变化;<br>");
@@ -685,7 +690,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
  	 * @param flag 
  	 * @param applynum
  	 */
- 	private String checkIsApply(String id,Integer outnum){
+ 	private String checkIsApply(String id,Integer outnum)  throws DZFWarpException{
  		String message = " ";
  		StringBuffer sql = new StringBuffer();
  		SQLParameter spm = new SQLParameter();
@@ -726,7 +731,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public MatOrderVO queryDataById(MatOrderVO mvo,String id,UserVO uservo,String type,String stype) {
+	public MatOrderVO queryDataById(MatOrderVO mvo,String id,UserVO uservo,String type,String stype)  throws DZFWarpException {
 		String message = "";
 		
 		StringBuffer sql = new StringBuffer();
@@ -814,7 +819,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 	
 
-	private void setCitycountry(MatOrderVO vo){
+	private void setCitycountry(MatOrderVO vo)  throws DZFWarpException{
 		if (vo.getCitycounty() != null) {
 			String[] citycountry = vo.getCitycounty().split("-");
 			if (citycountry.length == 3) {
@@ -840,7 +845,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 	}
 
-	private MatOrderVO queryById(String pk_materielbill) {
+	private MatOrderVO queryById(String pk_materielbill)  throws DZFWarpException {
 		
 		StringBuffer str=new StringBuffer();
 		SQLParameter spm=new SQLParameter();
@@ -859,7 +864,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	@Override
-	public void delete(MatOrderVO qryvo) {
+	public void delete(MatOrderVO qryvo)   throws DZFWarpException{
 		
 		MatOrderVO mvo=queryById(qryvo.getPk_materielbill());
 		if(mvo.getUpdatets()!=null){
@@ -895,7 +900,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * 物料审核过滤
 	 * 大区负责人只能看见自己负责的加盟商
 	 */
-	private List<ChnAreaBVO> queryPro(UserVO uservo){
+	private List<ChnAreaBVO> queryPro(UserVO uservo)   throws DZFWarpException{
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -927,7 +932,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * @return
 	 * @throws ParseException
 	 */
-	private String getLastQuarter(String startdate,String enddate) throws ParseException{
+	private String getLastQuarter(String startdate,String enddate) throws ParseException, DZFWarpException{
 		startdate = startdate.replace("GMT", "").replaceAll("\\(.*\\)", "");
 		enddate = enddate.replace("GMT", "").replaceAll("\\(.*\\)", "");
 		//将字符串转化为date类型
@@ -944,12 +949,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * @param str
 	 * @return
 	 */
-	private static boolean isInteger(String str) {  
+	private static boolean isInteger(String str) throws DZFWarpException {  
 	        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
 	        return pattern.matcher(str).matches();  
 	}
 	
-	
-
 
 }

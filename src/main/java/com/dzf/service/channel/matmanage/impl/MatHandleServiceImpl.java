@@ -6,12 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
-import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.matmanage.MatOrderVO;
-import com.dzf.model.channel.sale.ChnAreaBVO;
-import com.dzf.model.sys.sys_power.UserVO;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.service.channel.matmanage.IMatHandleService;
 
 @Service("mathandle")
@@ -21,7 +18,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 	private SingleObjectBO singleObjectBO;
 
 	@Override
-	public List<MatOrderVO> queryComboBox() {
+	public List<MatOrderVO> queryComboBox()   throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT lg.pk_logistics, \n");
 		sql.append("    lg.vname logname \n");
