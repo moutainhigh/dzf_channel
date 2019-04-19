@@ -272,10 +272,12 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			List<MaterielFileVO> list = matFile.queryMatFile(pamvo,uservo);
-			grid.setRows(list);
-			grid.setTotal((long) (list.size()));
-			grid.setMsg("查询成功！");
-			grid.setSuccess(true);
+			if(list!=null && list.size()>0){
+				grid.setRows(list);
+				grid.setTotal((long) (list.size()));
+				grid.setMsg("查询成功！");
+				grid.setSuccess(true);
+			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
