@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -329,6 +331,41 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		}
 		writeJson(json);
 		
+	}
+	
+	/**
+	 * 查询符合条件的加盟商
+	 */
+	public void queryChannel() {
+		 Grid grid = new Grid();
+		 try {
+			 UserVO uservo = getLoginUserInfo();
+		     checkUser(uservo);
+		     List<CorpVO> list = matapply.queryChannel(uservo);
+		     if (list != null && list.size() > 0) {
+					CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
+					grid.setRows(Arrays.asList(corpvos));
+					grid.setTotal((long) (list.size()));
+				} else {
+					grid.setRows(list);
+					grid.setTotal(0L);
+				}
+				grid.setMsg("查询成功！");
+				grid.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		 writeJson(grid);
+	}
+	
+	private CorpVO[] getPagedVOs(CorpVO[] cvos, int page, int rows) {
+		int beginIndex = rows * (page - 1);
+		int endIndex = rows * page;
+		if (endIndex >= cvos.length) {// 防止endIndex数组越界
+			endIndex = cvos.length;
+		}
+		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+		return cvos;
 	}
 	
 	/**

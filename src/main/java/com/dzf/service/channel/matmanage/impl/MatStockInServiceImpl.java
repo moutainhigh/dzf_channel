@@ -205,12 +205,17 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
-	        for (MaterielStockInVO mvo : list) {
-	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-				mvo.setOpername(uservo.getUser_name());
-			}
-	        QueryDeCodeUtils.decKeyUtils(new String[] { "opername" }, list, 1);
-	        return list;
+	       if(list!=null && list.size()>0){
+	    	   for (MaterielStockInVO mvo : list) {
+		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					mvo.setOpername(uservo.getUser_name());
+				}
+		        QueryDeCodeUtils.decKeyUtils(new String[] { "opername" }, list, 1);
+		        return list;
+	       }
+	       
+	       return list;
+	        
 	}
 
 	@Override
@@ -226,7 +231,6 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	@Override
 	public void delete(MaterielStockInVO data)  throws DZFWarpException {
 		
-		//Isintnum(data);
 		IsDele(data);
 		MaterielFileVO fvo = new MaterielFileVO();
 		Integer num = null;

@@ -157,13 +157,14 @@ public class MatFileServiceImpl implements IMatFileService {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
-	       
-	        for (MaterielFileVO mvo : list) {
-	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-				mvo.setApplyname(uservo.getUser_name());
-			}
-	        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);
-	        return list;
+	       if(list!=null && list.size()>0){
+	    	   for (MaterielFileVO mvo : list) {
+		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					mvo.setApplyname(uservo.getUser_name());
+				}
+		        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);  
+	       }
+	       return list;
 	}
 	
 	/**
@@ -352,14 +353,16 @@ public class MatFileServiceImpl implements IMatFileService {
 		}
 		
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(MaterielFileVO.class) );
-		for (MaterielFileVO mvo : bvoList) {
+		
+		if(bvoList!=null && bvoList.size()>0){
+			for (MaterielFileVO mvo : bvoList) {
 	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 				mvo.setApplyname(uservo.getUser_name());
-		}
-	    QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);
-		if(bvoList!=null && bvoList.size()>0){
+			}
+			QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);
 			return bvoList;
 		}
+		
 		return null;
 	}
 

@@ -6,6 +6,7 @@ import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -97,5 +98,12 @@ public interface IMatApplyService {
 	 * @param param
 	 */
 	void delete(MatOrderVO param) throws DZFWarpException;
+
+	/**
+	 * 查询符合条件的加盟商
+	 * @param uservo
+	 * @return
+	 */
+	List<CorpVO> queryChannel(UserVO uservo) throws DZFWarpException;
 
 }
