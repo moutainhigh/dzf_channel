@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hssf.record.VCenterRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@Override
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype) {
 		String vpro = "";
+		String vcorp = "";
 		List<String> corp = new ArrayList<String>();
 		if(stype!=null && !"1".equals(stype)){
 			//物料审核，申请数据权限
@@ -71,7 +73,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					vpro = vpro + "," +vo.getVprovince();
 				}else{
 					if(vo.getPk_corp()!=null){
-						//corp = corp + "," +vo.getPk_corp();
 						corp.add(vo.getPk_corp());
 					}
 				}
@@ -80,13 +81,16 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				vpro = vpro.substring(1);
 				vpro = "("+vpro+")";
 			}
-		    /*if(corp!=null && !StringUtil.isEmpty(corp)){
-		    	corp = corp.substring(1);
-				//corp = "("+corp+")";
-		    }*/
+			if(corp!=null && corp.size()>0){
+				for (String  c : corp) {
+					vcorp = vcorp + "," + "'" + c + "'";
+				}
+				vcorp = vcorp.substring(1);
+				vcorp = "(" + vcorp + ")";
+			}
 			
 		}
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,corp);
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,vcorp);
 		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
@@ -111,7 +115,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
-			String stype, String vpro,List<String> corp) {
+			String stype, String vpro,String vcorp) {
 		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
@@ -192,18 +196,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(!StringUtil.isEmpty(vpro)){
 			sql.append(" and cb.vprovince in "+vpro);
 		}
-		if(corp!=null && corp.size()>0){
-			for (int i=0;i<corp.size();i++) {
-				if(i==0){
-					sql.append(" or ( cb.pk_corp =" +"'"+corp.get(i)+"'");
-				}else if(i==corp.size()-1){
-					sql.append("  or cb.pk_corp = "+"'"+corp.get(i)+"'"+")");
-				}else{
-					sql.append("  or cb.pk_corp = "+"'"+corp.get(i)+"'");
-				}
-				
-			}
+		if(!StringUtil.isEmpty(vcorp)){
+			sql.append(" or cb.pk_corp in "+vcorp);
 		}
+		
 		if(!StringUtil.isEmpty(qvo.getVqrysql())){
 			sql.append(qvo.getVqrysql());
 		}
