@@ -67,7 +67,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		List<String> corp = new ArrayList<String>();
 		if(stype!=null && !"1".equals(stype)){
 			//物料审核，申请数据权限
-            List<ChnAreaBVO> list = queryPro(uservo);
+            List<ChnAreaBVO> list = queryPro(uservo,stype);
             if(list!=null && list.size()>0){
             	for (ChnAreaBVO vo : list) {
     				if("Y".equals(vo.getIsCharge().toString())){//是否是省市负责人
@@ -912,8 +912,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	/**
 	 * 物料审核过滤
 	 * 大区负责人只能看见自己负责的加盟商
+	 * @param stype 
 	 */
-	private List<ChnAreaBVO> queryPro(UserVO uservo)   throws DZFWarpException{
+	private List<ChnAreaBVO> queryPro(UserVO uservo, String stype)   throws DZFWarpException{
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -924,10 +925,19 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("    where nvl(a.dr, 0) = 0 \n");
 		sql.append("    and nvl(b.dr, 0) = 0 ");
 		sql.append("    and a.type = 1 and b.type = 1 \n");
-		if(!StringUtil.isEmpty(uservo.getCuserid())){
-			sql.append(" and a.userid = ? ");
-			spm.addParam(uservo.getCuserid());
+		if(stype!=null && "3".equals(stype)){//物料申请
+			if(!StringUtil.isEmpty(uservo.getCuserid())){
+				sql.append(" and b.userid = ? ");
+				spm.addParam(uservo.getCuserid());
+			}
 		}
+		if(stype!=null && "2".equals(stype)){//物料审核
+			if(!StringUtil.isEmpty(uservo.getCuserid())){
+				sql.append(" and a.userid = ? ");
+				spm.addParam(uservo.getCuserid());
+			}
+		}
+		
 		
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnAreaBVO.class));
 	    if(list!=null && list.size()>0){
