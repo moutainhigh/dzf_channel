@@ -6,7 +6,7 @@ public class IPiaoTongConstant {
 	//系统参数
 	public static final String SUCCESS = "0000";
 	
-	public static HashMap<String, String> errorMap=new HashMap<String, String>(){{    
+	public static final HashMap<String, String> errorMap=new HashMap<String, String>(){{    
         put("9999", "验签失败");    
         put("9998", "平台编码无效");  
         put("9997", "纳税人识别号无效");    
@@ -30,28 +30,28 @@ public class IPiaoTongConstant {
     
     
     /** 发票种类代码  */
-    public static String INVOICEKINDCODE_01 = "01";
+    public static final String INVOICEKINDCODE_01 = "01";
     
-    public static String INVOICEKINDCODE_02 = "02";
+    public static final String INVOICEKINDCODE_02 = "02";
     
-    public static String INVOICEKINDCODE_03 = "03";
+    public static final String INVOICEKINDCODE_03 = "03";
     
-    public static String INVOICEKINDCODE_04 = "04";
+    public static final String INVOICEKINDCODE_04 = "04";
     
-    public static String INVOICEKINDCODE_10 = "10";
+    public static final String INVOICEKINDCODE_10 = "10";
     
-    public static String INVOICEKINDCODE_41 = "41";
+    public static final String INVOICEKINDCODE_41 = "41";
     
     /** 发票种类名称  */
-    public static String INVOICEKINDNAME_01 = "增值税专用发票";
+    public static final String INVOICEKINDNAME_01 = "增值税专用发票";
     
-    public static String INVOICEKINDNAME_02 = "货运运输增值税专用发票";
+    public static final String INVOICEKINDNAME_02 = "货运运输增值税专用发票";
     
-    public static String INVOICEKINDNAME_03 = "机动车销售统一发票";
+    public static final String INVOICEKINDNAME_03 = "机动车销售统一发票";
     
-    public static String INVOICEKINDNAME_04 = "增值税普通发票";
+    public static final String INVOICEKINDNAME_04 = "增值税普通发票";
     
-    public static String INVOICEKINDNAME_10 = "增值税普通发票(电子)";
+    public static final String INVOICEKINDNAME_10 = "增值税普通发票(电子)";
     
-    public static String INVOICEKINDNAME_41 = "卷票";
+    public static final String INVOICEKINDNAME_41 = "卷票";
 }

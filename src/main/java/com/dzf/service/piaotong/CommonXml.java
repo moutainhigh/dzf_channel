@@ -27,68 +27,53 @@ import com.dzf.pub.lang.DZFDateTime;
 public class CommonXml {
 	
 	private static Logger log = Logger.getLogger(CommonXml.class);
+	
 	public static final int BUFFER = 1024;
-	//取票业务
-	public static String busiurl = null;
-	//授权业务
-	public static String authurl = null;
 	//版本号
-	public static String version = null;
+	private static String version = null;
 	//平台编码
-	public static String appKey = null;
+	private static String appKey = null;
 	//加密密钥
-	public static String appSecret = null;
+	private static String appSecret = null;
 	//平台税号
-	public static String uid = null;
+	private static String uid = null;
 	//随机数
-	public static String randnum = null;
+	private static String randnum = null;
 	//不压缩
-	public static String unzip = null;
-	//不加密
-	public static String unencry = null;
+	private static String unzip = null;
 	//dsc加密
-	public static String endes = null;
+	private static String endes = null;
 	//ca加密
-	public static String enca = null;
+	private static String enca = null;
 	//加密方式
-	public static String codeType = null;
-	//增量时间戳
-	public static String standardtime = null;
+	private static String codeType = null;
 	//注册密码
-	public static String regpwd = null;
-	//获取张数
-	public static String pagesize = null;
-	//大账房系统生成
-	public static String autouser = "大账房系统";
-	//返回代码成功标识
-	public static String rtnsucccode = "0000";
-	//返回代码失败标识
-	public static String rtnfailcode = "9999";
+	private static String regpwd = null;
 	//请求列表
-	public static String REQUEST_FPCY_QYSH = "REQUEST_FPCY_QYSH";
+	public static final String REQUEST_FPCY_QYSH = "REQUEST_FPCY_QYSH";
 	//请求PDF 
-	public static String REQUEST_FPXZ_DZFP = "REQUEST_FPXZ_DZFP";
+	public static final String REQUEST_FPXZ_DZFP = "REQUEST_FPXZ_DZFP";
 	//根据纳税人识别号发送短信验证码
-	public static String SEND_VERIFICATION_CODE = "SEND_VERIFICATION_CODE";
+	public static final String SEND_VERIFICATION_CODE = "SEND_VERIFICATION_CODE";
 	//根据短信验证码获取token
-	public static String ACCESS_TOKEN = "ACCESS_TOKEN";
+	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 	static {
 		ResourceBundle bundle = PropertyResourceBundle.getBundle("ticket");
-		busiurl = bundle.getString("busiurl");
-		authurl = bundle.getString("authurl");
+		bundle.getString("busiurl");
+		bundle.getString("authurl");
 		version = bundle.getString("version");
 		appKey = bundle.getString("appKey");
 		appSecret = bundle.getString("appSecret");
 		uid = bundle.getString("uid");
 		randnum = bundle.getString("randnum");
 		unzip = bundle.getString("unzip");
-		unencry = bundle.getString("unencry");
+		bundle.getString("unencry");
 		endes = bundle.getString("endes");
 		enca = bundle.getString("enca");
 		codeType = bundle.getString("codeType");
-		standardtime = bundle.getString("standardtime");
+		bundle.getString("standardtime");
 		regpwd = bundle.getString("regpwd");
-		pagesize = bundle.getString("pagesize");
+		bundle.getString("pagesize");
 	}
 	
 	public static String getCurDate(){

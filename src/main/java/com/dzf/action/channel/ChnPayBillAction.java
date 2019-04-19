@@ -266,7 +266,7 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
-
+		    log.info(e);
 		} finally {
 			try {
 				if (os != null) {
@@ -276,7 +276,7 @@ public class ChnPayBillAction extends BaseAction<ChnPayBillVO> {
 					is.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info(e);
 			}
 		}
 	}

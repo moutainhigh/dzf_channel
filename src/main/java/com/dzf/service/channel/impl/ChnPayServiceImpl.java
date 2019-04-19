@@ -46,8 +46,6 @@ import com.dzf.service.pub.IPubService;
 @Service("dfz_chnpay")
 public class ChnPayServiceImpl implements IChnPayService {
 
-	private static final String ChnPayBillVO = null;
-
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
 	
@@ -256,7 +254,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 			os = new FileOutputStream(filepath);
 			IOUtils.copy(is, os);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.error(this, e.getMessage(), e);
 		} finally {
 			if (is != null) {
 				try {

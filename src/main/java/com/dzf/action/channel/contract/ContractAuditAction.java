@@ -171,7 +171,7 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
-
+		    log.info(e);
 		} finally {
 			try {
 				if (os != null) {
@@ -181,7 +181,7 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 					is.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info(e);
 			}
 		}
 	}

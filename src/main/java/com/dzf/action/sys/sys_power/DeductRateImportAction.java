@@ -56,7 +56,7 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 	private IPubService pubser;
 
 	// 更新导入数组编码
-	public static final Object[][] STYLE_1 = new Object[][] {
+	protected static final Object[][] STYLE_1 = new Object[][] {
 			{ 0, "corpcode" }, // 加盟商编码
 			{ 1, "corpname" }, // 加盟商名称
 			{ 2, "inewrate" }, // 新增
@@ -64,7 +64,7 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 	};
 
 	// 更新导入数组名称
-	public static final Object[][] STYLE_1_NAME = new Object[][] { 
+	protected static final Object[][] STYLE_1_NAME = new Object[][] { 
 			{ 0, "加盟商编码" }, 
 			{ 1, "加盟商名称" }, 
 			{ 2, "新增" },
