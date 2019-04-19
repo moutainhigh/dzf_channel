@@ -14,7 +14,7 @@ import com.dzf.pub.util.DateUtils;
  */
 public class AdminDateUtil {
 	
-    private static Calendar CALENDAR = Calendar.getInstance();
+//    private static Calendar CALENDAR = Calendar.getInstance();
     
     /**
      * 服务器时间：年-月-日
@@ -95,7 +95,7 @@ public class AdminDateUtil {
      }
      
      private static long incrementMonth(long date, int increment) {
-         Calendar calendar = CALENDAR;
+         Calendar calendar = Calendar.getInstance();
          synchronized (calendar) {
              calendar.setTimeInMillis(date);
              calendar.add(Calendar.MONTH, increment);

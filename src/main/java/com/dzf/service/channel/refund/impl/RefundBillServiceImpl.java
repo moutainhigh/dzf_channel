@@ -392,7 +392,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		if(errmsg != null && errmsg.length() > 0){
 			if(checktype != null && checktype == 1){
 				errmsg.append("确认保存？");
-			}else if(checktype != null && checktype == 1){
+			}else if(checktype != null && checktype == 2){
 				errmsg.append("确定确认？");
 			}
 			datavo.setVerrmsg(errmsg.toString());
