@@ -122,7 +122,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			json.setSuccess(true);
 			json.setRows(retvo);
 			json.setMsg("保存成功");
-			if(operat == "edit"){
+			if("edit".equals(operat)){
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_42.getValue(), "编辑商品“"+data.getVgoodscode()+"”", ISysConstants.SYS_3);
 			}
 		} catch (Exception e) {
