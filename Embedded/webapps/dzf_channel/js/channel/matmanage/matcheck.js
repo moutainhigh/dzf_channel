@@ -167,7 +167,7 @@ function load(type){
 			corpname : corpname,
 			status : status,
 			uid : uid,
-			stype : 2,
+			stype : 2,//表示是物料审核
 		},
 		async : false,
 		success : function(data) {

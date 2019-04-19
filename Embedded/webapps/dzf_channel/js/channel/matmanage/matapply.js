@@ -125,6 +125,7 @@ function load(type){
 			enddate : enddate,
 			corpname : corpname,
 			status : status,
+			stype : 3,//表示是物料申请
 		},
 		async : false,
 		success : function(data) {

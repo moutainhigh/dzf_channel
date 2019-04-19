@@ -694,7 +694,7 @@ function send(){
 		data : {
 			id : id,
 			type : type,
-			stype : 1,
+			stype : 1,//表示是物料处理
 			debegdate : qdate[0],
 			deenddate : qdate[1],
 		},

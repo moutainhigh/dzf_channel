@@ -2,6 +2,7 @@ package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -61,16 +62,17 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@Override
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo,String stype) {
 		String vpro = "";
-		String corp = "";
-		if(stype!=null && "2".equals(stype)){
-			//物料审核数据权限
+		List<String> corp = new ArrayList<String>();
+		if(stype!=null && !"1".equals(stype)){
+			//物料审核，申请数据权限
             List<ChnAreaBVO> list = queryPro(uservo);
 			for (ChnAreaBVO vo : list) {
 				if("Y".equals(vo.getIsCharge().toString())){//是否是省市负责人
 					vpro = vpro + "," +vo.getVprovince();
 				}else{
 					if(vo.getPk_corp()!=null){
-						corp = corp + "," +vo.getPk_corp();
+						//corp = corp + "," +vo.getPk_corp();
+						corp.add(vo.getPk_corp());
 					}
 				}
 			}
@@ -78,10 +80,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				vpro = vpro.substring(1);
 				vpro = "("+vpro+")";
 			}
-		    if(corp!=null && !StringUtil.isEmpty(corp)){
+		    /*if(corp!=null && !StringUtil.isEmpty(corp)){
 		    	corp = corp.substring(1);
-				corp = "("+corp+")";
-		    }
+				//corp = "("+corp+")";
+		    }*/
 			
 		}
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,corp);
@@ -109,7 +111,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	}
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
-			String stype, String vpro,String corp) {
+			String stype, String vpro,List<String> corp) {
 		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
@@ -190,8 +192,17 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(!StringUtil.isEmpty(vpro)){
 			sql.append(" and cb.vprovince in "+vpro);
 		}
-		if(!StringUtil.isEmpty(corp)){
-			sql.append(" and cb.pk_corp in "+corp);
+		if(corp!=null && corp.size()>0){
+			for (int i=0;i<corp.size();i++) {
+				if(i==0){
+					sql.append(" or ( cb.pk_corp =" +"'"+corp.get(i)+"'");
+				}else if(i==corp.size()-1){
+					sql.append("  or cb.pk_corp = "+"'"+corp.get(i)+"'"+")");
+				}else{
+					sql.append("  or cb.pk_corp = "+"'"+corp.get(i)+"'");
+				}
+				
+			}
 		}
 		if(!StringUtil.isEmpty(qvo.getVqrysql())){
 			sql.append(qvo.getVqrysql());
