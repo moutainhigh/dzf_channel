@@ -2023,7 +2023,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 					os = new FileOutputStream(filepath);
 					IOUtils.copy(is, os);
 				} catch (Exception e) {
-					e.printStackTrace();
+				    Logger.error(this, e.getMessage(),e);
 				} finally {
 					if (is != null) {
 						try {
