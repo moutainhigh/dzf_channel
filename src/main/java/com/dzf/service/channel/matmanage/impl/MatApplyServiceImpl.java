@@ -944,7 +944,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(uservo.getCuserid());
-		sql.append("    select  \n");
+		sql.append("    select distinct \n");
 		//sql.append("       b.vprovince,b.isCharge, \n");
 		sql.append("       c.pk_corp,c.innercode,c.unitname \n");
 		sql.append("       from cn_chnarea a \n");
