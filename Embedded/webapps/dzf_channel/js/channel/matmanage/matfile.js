@@ -30,6 +30,10 @@ function load(){
 		height : Public.setGrid().h,
 		singleSelect : false,
 		checkOnSelect :false,
+		pagination : true,// 分页工具栏显示
+		pageSize : DZF.pageSize,
+		pageList : DZF.pageList,
+		showFooter:true,
 		idField : 'matfileid',
 		columns : [ [ {
 			field : 'ck',

@@ -267,8 +267,11 @@ public class MatStockInServiceImpl implements IMatStockInService {
 				//修改入库数量
 				fvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
 				if(fvo!=null){
-					num = fvo.getOutnum();
-					fvo.setOutnum(num + msvo.getNnum());
+					if(data.getNnum()!=null){
+						fvo.setIntnum(fvo.getIntnum() - msvo.getNnum());
+						String[] updates = {"intnum"};
+				    	singleObjectBO.update(fvo, updates);
+					}
 				}
 			}
 			String sql="delete from cn_materielin where pk_materielin = ? \n";

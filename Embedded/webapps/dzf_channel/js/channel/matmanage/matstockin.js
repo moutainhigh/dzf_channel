@@ -34,6 +34,10 @@ function load(){
 		singleSelect : false,
 		checkOnSelect :false,
 		showFooter: true,
+		pagination : true,// 分页工具栏显示
+		pageSize : DZF.pageSize,
+		pageList : DZF.pageList,
+		showFooter:true,
 		idField : 'matinid',
 		columns : [ [ {
 			field : 'ck',
