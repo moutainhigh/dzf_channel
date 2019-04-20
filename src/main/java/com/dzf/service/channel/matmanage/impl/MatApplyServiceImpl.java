@@ -124,7 +124,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
 			String stype, String vpro,String vcorp)  throws DZFWarpException {
-		System.out.println(pamvo.getVstatus()+"--------");
 		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();

@@ -864,6 +864,8 @@ function showDetail(index){
 	
 	readonly(0);
 	
+	$('#logname').combobox('setValue',row.logname);
+	
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
 	}
