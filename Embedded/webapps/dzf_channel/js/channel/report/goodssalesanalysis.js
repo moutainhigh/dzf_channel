@@ -229,13 +229,22 @@ function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
     var totalcost = parseFloat(0);	
+    var ndemny = parseFloat(0);
+    var nderebmny = parseFloat(0);
+    var ndesummny = parseFloat(0);
     for (var i = 0; i < rows.length; i++) {
     	if(rows[i].gname != "小计"){
     		totalcost = totalcost.add(getFloatValue(rows[i].totalcost));
+    		ndemny = ndemny.add(getFloatValue(rows[i].ndemny));
+    		nderebmny = nderebmny.add(getFloatValue(rows[i].nderebmny));
+    		ndesummny = ndesummny.add(getFloatValue(rows[i].ndesummny));
     	}
     }
     footerData['gname'] = '合计';
     footerData['totalcost'] = totalcost;
+    footerData['ndemny'] = ndemny;
+    footerData['nderebmny'] = nderebmny;
+    footerData['ndesummny'] = ndesummny;
     var fs=new Array(1);
     fs[0] = footerData;
     $('#grid').datagrid('reloadFooter',fs);
