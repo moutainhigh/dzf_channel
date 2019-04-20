@@ -3,6 +3,7 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.dialect.function.StandardAnsiSqlAggregationFunctions.SumFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -27,6 +29,7 @@ import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatStockInService;
 import com.dzf.service.pub.IBillCodeService;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 
 @Service("matstockin")
@@ -91,6 +94,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
     private void saveEdit(MaterielStockInVO data)  throws DZFWarpException {
     	
     	Isintnum(data);
+    	//获取修改前的值
+    	MaterielStockInVO mvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
 		String uuid = UUID.randomUUID().toString();
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
@@ -103,6 +108,18 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			
 			String[] updates = {"vmemo", "stockdate","ncost","nnum","ntotalmny" };
 		    singleObjectBO.update(data, updates);
+		    
+		    //修改入库数量
+		    MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
+		    if(mvo!=null && mvo.getNnum()!=null){
+		    	if(vo!=null && vo.getIntnum()!=null){
+		    		Integer newintnum =  vo.getIntnum() - mvo.getNnum() + data.getNnum();
+		    		vo.setIntnum(newintnum);
+		    		String[] nupdatets = {"intnum"};
+		    		singleObjectBO.update(vo,nupdatets );
+		    	}
+		    	
+		    }
 		    
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -143,9 +160,9 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vbillcode");
 		mcvo.setPk_corp("000001");
-		mcvo.setBillType(str + now.getYear() + now.getStrMonth());
+		mcvo.setBillType(str);
 		mcvo.setCorpIdField("pk_corp");
-		mcvo.setDiflen(3);
+		mcvo.setDiflen(4);
 		try {
 			code = billCode.getDefaultCode(mcvo);
 		} catch (Exception e) {
@@ -282,20 +299,23 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		Integer ssum = null;
 		if (!StringUtil.isEmpty(data.getPk_materiel())) {
     		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
-    		if(mfvo!=null){
-    			sumnum = mfvo.getIntnum() - mfvo.getOutnum();//剩余库存
+    		MaterielStockInVO mmvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
+    		MaterielStockInVO vo = rkCount(data);
+    		if(vo!=null && vo.getCount()==1){//只有一条入库单
+    			if(data.getNnum()<mfvo.getOutnum()){
+    				throw new BusinessException("该物料入库数量不可小于已发货数量");
+    			}
+    		}else{
+    			Integer snum = null;//剩余的
+    			if(mfvo.getIntnum()!=null && mmvo.getNnum()!=null){
+    				snum = mfvo.getIntnum() - mmvo.getNnum();
+    			}
+    			if(data.getNnum()!=null && mfvo.getOutnum()!=null){
+    			   if(snum + data.getNnum() < mfvo.getOutnum()){
+    				   throw new BusinessException("该物料入库数量不可小于已发货数量");
+    			   }
+    			}
     		}
-    		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
-			if(msvo!=null){
-				intnum = msvo.getNnum();//当前入库单入库数量
-			}
-			if(data.getNnum()!=null && mfvo.getOutnum()!=null){
-				ssum = sumnum - intnum + data.getNnum();
-				if(ssum!=null && ssum < mfvo.getOutnum()){
-					throw new BusinessException("该物料入库数量不可小于已发货数量");
-				}
-			}
-			
     	}
 	}
 	
@@ -306,6 +326,37 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	private void IsDele(MaterielStockInVO data)  throws DZFWarpException {
 		
 		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
+		MaterielStockInVO  svo = rkCount(msvo);
+		if(svo!=null && svo.getCount()!=null ){
+			if(svo.getCount() == 1){//只有一条入库单，不可以删除
+				throw new BusinessException("该物料已发货，不可删除");
+			}else if(svo.getCount() > 1){
+				MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
+				
+				if(vo!=null && msvo!=null){
+					if(vo.getIntnum()!=null && msvo.getNnum()!=null){
+						Integer snum = null;//剩余的数量
+						snum = vo.getIntnum() - msvo.getNnum();
+						if(vo.getOutnum()!=null){
+							if(snum < vo.getOutnum()){
+								throw new BusinessException("该物料入库数量不可小于已发货数量");
+							}
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+	}
+	
+	/**
+	 * 判断入库单数量
+	 * @param msvo
+	 * @return
+	 */
+	private MaterielStockInVO rkCount(MaterielStockInVO msvo){
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if(msvo.getPk_materiel()!=null){
@@ -315,21 +366,12 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		sql.append("      from cn_materielin \n ");
 		sql.append("      where nvl(dr,0) = 0  ");
 		sql.append("      and pk_materiel = ?  \n ");
-		 MaterielStockInVO svo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
-		if(svo.getCount() == 1){//只有一条入库单，不可以删除
-			throw new BusinessException("该物料已发货，不可删除");
-		}else if(svo.getCount() > 1){
-			MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
-			if(vo!=null){
-				Integer sumnum = null;//剩余的库存量
-				if(vo.getIntnum()!=null && vo.getOutnum()!=null){
-					sumnum = vo.getIntnum() - vo.getOutnum();
-				}
-				if(vo.getOutnum()>sumnum){
-					throw new BusinessException("该物料入库数量不可小于已发货数量");
-
-				}
-			}
-		}
+		MaterielStockInVO svo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
+	    if(svo!=null){
+	    	return svo;
+	    }
+	    return null;
 	}
 }
+
+

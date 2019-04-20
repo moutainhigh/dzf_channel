@@ -707,6 +707,7 @@ function showCard(row){
 		$('#mat_add').form('load', row);
 		initCard();
 	    $('.hid').css("display", ""); 
+	    $("#true")[0].checked=true;
 	    readonly();
 	    $('#stat').textbox('setValue','待审核');
 	    $('#reason').textbox({required:false});
@@ -775,10 +776,10 @@ function onSave(vstatus){
 	if($('#true').is(':checked')){
 		status = 2;
 	}
-	if(!$('#false').is(':checked') && 
+	/*if(!$('#false').is(':checked') && 
 			!$('#true').is(':checked')){
 		status = 2;
-	}
+	}*/
 	if(vstatus != null){
 		var row = $('#grid').datagrid('getSelected');
 		matbillid = row.matbillid;
