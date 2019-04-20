@@ -846,29 +846,108 @@ function queryByID(matbillid){
 function showDetail(index){
 	var erow = $('#grid').datagrid('getData').rows[index];
 	var row = queryByID(erow.matbillid);
-	
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料详情');
-	initCard();
-	$('.hid').css("display", "");
-	$('.sid').css("display", "none");
-	$('#code').textbox({width:168});
-	
-	$('#mat_add').form('clear');
-	$('#mat_add').form('load', row);
-	$('#cardGrid').datagrid('hideColumn','operate');
-	showStatus(row);
-	
-	$('#applyname').textbox('setValue',row.applyname);
-	
-	$('#dename').textbox('setValue',row.dename);
-	
-	readonly(0);
-	
-	$('#logname').combobox('setValue',row.logname);
-	
+	$('#infoDialog').dialog('open').dialog('center').dialog('setTitle', '物料详情');
+	initCardDetail();
+	showStatusDetail(row);
+	$('#infoform').form('clear');
+	$('#infoform').form('load', row);
 	if(row.children != null && row.children.length > 0){
-		$('#cardGrid').datagrid('loadData',row.children);
+		$('#icardGrid').datagrid('loadData',row.children);
 	}
+}
+
+function showStatusDetail(row){
+	if(row.status==1){
+		$('#istat').textbox('setValue','待审核');
+	}else if(row.status==2){
+		$('#istat').textbox('setValue','待发货');
+	}else if(row.status==3){
+		$('#istat').textbox('setValue','已发货');
+	}else if(row.status==4){
+		$('#istat').textbox('setValue','已驳回');
+	}
+}
+
+/**
+ * 卡片表格
+ */
+function initCardDetail(){
+	var mat = null;
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : contextPath + '/matmanage/matfile!queryMatFile.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				mat = result.rows;
+				$("#iapplyname").textbox("setValue", mat[0].applyname);
+				$("#iadate").datebox("setValue", parent.SYSTEM.LoginDate);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+
+	$('#icardGrid').datagrid({
+		striped : true,
+		rownumbers : true,
+		fitColumns : true,
+		/*onClickCell: onClickCell,
+	    onAfterEdit: onAfterEdit,*/
+		scrollbarSize:0,
+		idField : 'matbillid',
+		height : 100,
+		singleSelect : true,
+		columns : [ [ 
+		  {
+			width : '100',
+			title : '物料主键',
+			field : 'matfileid',
+            halign : 'center',
+			align : 'left',
+			hidden : true,
+			
+		}, {
+			width : '100',
+			title : '物料名称',
+			field : 'wlname',
+			halign : 'center',
+			align : 'left',
+			
+		}, {
+			width : '100',
+			title : '单位',
+			field : 'unit',
+            halign : 'center',
+			align : 'left',
+			
+		}, {
+			width : '100',
+			title : '申请数量',
+			field : 'applynum',
+            halign : 'center',
+			align : 'right',
+			
+		},{
+			width : '100',
+			title : '数量',
+			field : 'outnum',
+            halign : 'center',
+			align : 'right',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 28,
+				}
+			}
+		}, 
+		] ],
+   });
 	
 }
 
