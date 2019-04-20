@@ -682,7 +682,7 @@ function checked(type){
 						//不需要提示，直接弹出审核框
 						showCard(row);
 					}
-				}else{
+				}else{//反审核
 					if(row.status==2){
 						onSave(1);
 					}else {
@@ -690,9 +690,12 @@ function checked(type){
 						return;
 					}
 				}
-			if (result.success) {
-			    showCard(row);
-		   }
+				if(type==0){
+					if (result.success) {
+					    showCard(row);
+				   }
+				}
+			
 		}
 	});
 }
