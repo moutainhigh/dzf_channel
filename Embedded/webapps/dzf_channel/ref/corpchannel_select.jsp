@@ -98,7 +98,7 @@
 		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
-		    url: DZF.contextPath + '/matmanage/matapply!queryChannel.action',
+		    url: DZF.contextPath + '/corp/channel!querySmall.action?qtype=1',
 		    method: 'post',
 			fitColumns: true,
 			idField:'pk_gs',

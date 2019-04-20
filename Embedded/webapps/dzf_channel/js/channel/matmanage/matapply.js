@@ -787,9 +787,6 @@ function initRef(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/corpchannel_select.jsp',
-                    /*queryParams : {
-    					ovince :"-2"
-    				},*/
     				buttons : [ {
     					text : '确认',
     					handler : function() {
