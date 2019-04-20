@@ -298,8 +298,9 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				}
 			}
 			return vo;
+		}else{
+			throw new BusinessException("该数据已经发生变化，请重新查询后，再次尝试");
 		}
-		return null;
 	}
 	
 	/**
