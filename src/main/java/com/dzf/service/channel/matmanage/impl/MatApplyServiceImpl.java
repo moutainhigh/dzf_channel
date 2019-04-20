@@ -201,12 +201,17 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			sql.append(" and bi.applydate <= ? ");
 			spm.addParam(pamvo.getApplyenddate());
 		}
-		if(!StringUtil.isEmpty(vpro)){
+		if(!StringUtil.isEmpty(vpro) && !StringUtil.isEmpty(vcorp)){
+			sql.append(" and (cb.vprovince in "+vpro);
+			sql.append(" or cb.pk_corp in "+vcorp+")");
+		}
+		if(!StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){
 			sql.append(" and cb.vprovince in "+vpro);
 		}
-		if(!StringUtil.isEmpty(vcorp)){
-			sql.append(" or cb.pk_corp in "+vcorp);
+		if(!StringUtil.isEmpty(vcorp) && StringUtil.isEmpty(vpro)){
+			sql.append(" and cb.pk_corp in "+vcorp);
 		}
+		
 		
 		if(!StringUtil.isEmpty(qvo.getVqrysql())){
 			sql.append(qvo.getVqrysql());
