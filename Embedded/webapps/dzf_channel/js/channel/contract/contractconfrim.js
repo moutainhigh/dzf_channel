@@ -315,7 +315,7 @@ function clearParams(){
 	$("#manager").textbox("setValue",null);
 	$("#managerid").val(null);
 	$("#operater").textbox("setValue",null);
-	$("operaterid").val(null);
+	$("#operaterid").val(null);
 }
 
 /**
