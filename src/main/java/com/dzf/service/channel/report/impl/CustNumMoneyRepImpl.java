@@ -278,7 +278,8 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 	}
 	
 	/**
-	 * 查询应续签客户数
+	 * 查询应续签客户数 
+	 * 结束月份在查询月 、非存量客户、非补提单的已审核或已终止合同的客户数
 	 * @param paramvo
 	 * @param corplist
 	 * @return
@@ -314,6 +315,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 	
 	/**
 	 * 查询已续签客户数
+	 * 结束月份在查询月 、非存量客户、非补提单的已审核或已终止合同，且客户在查询月之后有符合此条件的合同的客户
 	 * @param paramvo
 	 * @param corplist
 	 * @return
