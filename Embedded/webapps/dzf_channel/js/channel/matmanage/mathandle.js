@@ -848,12 +848,12 @@ function showDetail(index){
 	var row = queryByID(erow.matbillid);
 	$('#infoDialog').dialog('open').dialog('center').dialog('setTitle', '物料详情');
 	initCardDetail();
-	showStatusDetail(row);
 	$('#infoform').form('clear');
 	$('#infoform').form('load', row);
 	if(row.children != null && row.children.length > 0){
 		$('#icardGrid').datagrid('loadData',row.children);
 	}
+	showStatusDetail(row);
 }
 
 function showStatusDetail(row){

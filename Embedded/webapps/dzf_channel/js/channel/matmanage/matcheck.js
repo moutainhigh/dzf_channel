@@ -710,6 +710,7 @@ function showCard(row){
 		$('#mat_add').form('load', row);
 		initCard();
 	    $('.hid').css("display", ""); 
+	    $('#code').textbox({width:168});
 	    $("#true")[0].checked=true;
 	    readonly();
 	    $('#stat').textbox('setValue','待审核');
@@ -881,7 +882,7 @@ function showDetail(index){
 	$('#mat_add').form('load', row);
 	$('#cardGrid').datagrid('hideColumn','operate');
 	showStatus(row);
-	
+	$('#code').textbox({width:431});
 	$('#applyname').textbox('setValue',row.applyname);
 	
 	//if(row.status==2 || row.status==3){
