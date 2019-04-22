@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
+import com.dzf.model.channel.report.CustCountVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
@@ -37,6 +39,7 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
 
@@ -422,11 +425,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
 				if(mvo!=null && mvo.getIsappl()!=null){
 					if(mvo.getIsappl() == 1){//勾选了申请条件
+						//获取上季度提单审核通过数
+						Integer passNum = queryContNum(vo,vo.getFathercorp());
+						
+						/*
 						Integer passNum = null;
 						StringBuffer sql = new StringBuffer();
 						SQLParameter spm=new SQLParameter();
 						spm.addParam(vo.getFathercorp());
-						
 						sql.append("  SELECT  COUNT  (CASE WHEN \n");
 						sql.append("       c.vdeductstatus = 1 AND c.vdeductstatus = 9 \n");
 						sql.append("       THEN 1 ELSE NULL \n");
@@ -451,7 +457,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						if(mmvo!=null && mmvo.getNum1()!=null 
 								 && mmvo.getNum2()!=null){
 							 passNum = mmvo.getNum1()-mmvo.getNum2();
-						}
+						}*/
 						
 						StringBuffer csql = new StringBuffer();
 						SQLParameter cspm=new SQLParameter();
@@ -505,7 +511,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 								mbvo.setSumsucc(sumsucc);
 								message = message + "该加盟商"+mbvo.getVname()+
 										"上季度申请数"+mbvo.getSumapply()+"，"+
-										"提单审核通过数"+mbvo.getSumsucc()+"，"+
+										"提单审核通过数"+passNum+"，"+
 										"不符合该物料的申请条件，望知悉"+"<br/>";
 
 							}
@@ -521,6 +527,118 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		
 		return message;
 	}
+	
+	
+	/**
+	 * 查询合同提单量
+	 * @param paramvo
+	 * @param corpid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private Integer queryContNum(MatOrderVO vo, String corpid) throws DZFWarpException {
+
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT count ( \n");
+		// 合同数量去掉补提单合同数
+		sql.append("       SUM(CASE  \n");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("        AND SUBSTR(t.deductdata, 1, 7) >= ? \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("        AND SUBSTR(t.deductdata, 1, 7) < = ? \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("        AND ( ( nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') >= ? \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("        AND nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01')  <= ? \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("        AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') < ? \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') > ? )THEN \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		sql.append("              1  \n");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
+		sql.append("                  AND t.vdeductstatus = 10  \n");
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 7) >= ? \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 7) < = ? \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("         AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') < ? \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') > ? THEN \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		sql.append("              -1  \n");
+		sql.append("             ELSE  \n");
+		sql.append("              0  \n");
+		sql.append("           END) ) AS num  \n");
+		sql.append("  FROM cn_contract t \n");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("   AND nvl(ct.dr, 0) = 0 \n");
+		//sql.append("   AND nvl(ct.isncust, 'N') = 'N' \n");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
+		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
+		
+		sql.append("   AND t.pk_corp = ? \n");
+		spm.addParam(corpid);
+		
+		
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("        AND (  SUBSTR(t.deductdata, 1, 7) >= ?  \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("         AND SUBSTR(t.deductdata, 1, 7) <= ? OR \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		
+		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
+			sql.append("          SUBSTR(t.dchangetime, 1, 7)  >= ?  \n");
+			spm.addParam(vo.getDedubegdate());
+		}
+		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
+			sql.append("         AND SUBSTR(t.dchangetime, 1, 7) <= ? ) \n");
+			spm.addParam(vo.getDeduenddate());
+		}
+		sql.append("   GROUP BY t.pk_corp \n");
+		
+		CustCountVO countvo = (CustCountVO) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanProcessor(CustCountVO.class));
+		Integer num = null;
+		if(countvo!=null && countvo.getNum()!=null){
+			num = countvo.getNum();
+		}
+		return num;
+	}
+
 	
      @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo)  throws DZFWarpException {
@@ -594,16 +712,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		
 		    //2.修改子订单
 			
-		    /*String sql="delete from cn_materielbill_b where pk_materielbill = ? ";
-		    SQLParameter spm=new SQLParameter();
-		    spm.addParam(data.getPk_materielbill());
-		    singleObjectBO.executeUpdate(sql.toString(),spm);*/
-		    
 		    List<MatOrderBVO> bvolist = Arrays.asList(bvos);
 		    if(bvolist!=null && bvolist.size()>0){
 		    	  for (MatOrderBVO bvo : bvolist) {
 				    	bvo.setPk_materielbill(data.getPk_materielbill());
-				    	//singleObjectBO.insertVO("000001", bvo);
 				    	String[] uupdatets = {"pk_materielbill","outnum"};
 				    	singleObjectBO.update(bvo,uupdatets );
 				    	
