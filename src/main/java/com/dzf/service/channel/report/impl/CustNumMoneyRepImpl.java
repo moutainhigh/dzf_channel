@@ -290,17 +290,14 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,  \n");
-		sql.append("       COUNT(CASE  \n");
-		sql.append("               WHEN nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 THEN  \n");
-		sql.append("                1  \n");
-		sql.append("               ELSE  \n");
-		sql.append("                0  \n");
-		sql.append("             END) AS iyrenewnum  \n");
+		sql.append("       COUNT(t.pk_corpk) AS iyrenewnum \n");
 		sql.append("  FROM ynt_contract t  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND t.icontracttype = 2  \n");
 		sql.append("   AND t.icosttype = 0  \n");
 		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND nvl(t.patchstatus, 0) != 2 \n");
+		sql.append("   AND nvl(t.patchstatus, 0) != 5 \n");
 		sql.append("   AND t.vendperiod = ?  \n");
 		spm.addParam(paramvo.getPeriod());
 		sql.append("   AND t.vstatus IN (1, 9)  \n");
@@ -326,17 +323,14 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,  \n") ;
-		sql.append("       COUNT(CASE  \n") ; 
-		sql.append("               WHEN nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 THEN  \n") ; 
-		sql.append("                1  \n") ; 
-		sql.append("               ELSE  \n") ; 
-		sql.append("                0  \n") ; 
-		sql.append("             END) AS irenewnum  \n") ; 
+		sql.append("       COUNT(t.pk_corpk) AS irenewnum \n") ; 
 		sql.append("  FROM ynt_contract t  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; 
 		sql.append("   AND t.icosttype = 0  \n") ; 
 		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n") ; 
+		sql.append("   AND nvl(t.patchstatus, 0) != 2 \n");
+		sql.append("   AND nvl(t.patchstatus, 0) != 5 \n");
 		sql.append("   AND t.vendperiod = ?  \n") ; 
 		spm.addParam(paramvo.getPeriod());
 		if (corplist != null && corplist.size() > 0) {
@@ -344,12 +338,14 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 			sql.append(" AND ").append(where);
 		}
 		sql.append("   AND t.vstatus IN (1, 9)  \n") ; 
-		sql.append("   AND t.pk_corp IN (SELECT DISTINCT t.pk_corp  \n") ; 
+		sql.append("   AND t.pk_corpk IN (SELECT DISTINCT t.pk_corpk  \n") ; 
 		sql.append("                       FROM ynt_contract t  \n") ; 
 		sql.append("                      WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("                        AND t.icontracttype = 2  \n") ; 
 		sql.append("                        AND t.icosttype = 0  \n") ; 
 		sql.append("                        AND nvl(t.isncust, 'N') = 'N'  \n") ; 
+		sql.append("   						AND nvl(t.patchstatus, 0) != 2 \n");
+		sql.append("  						AND nvl(t.patchstatus, 0) != 5 \n");
 		sql.append("                        AND t.vendperiod > ?  \n") ; 
 		spm.addParam(paramvo.getPeriod());
 		if (corplist != null && corplist.size() > 0) {
