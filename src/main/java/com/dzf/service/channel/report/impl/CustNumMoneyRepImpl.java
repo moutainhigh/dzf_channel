@@ -249,45 +249,115 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
 	private Map<String, CustNumMoneyRepVO> queryXqNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		Map<String, CustNumMoneyRepVO> xqmap = new HashMap<String, CustNumMoneyRepVO>();
+		//1、应续签客户数 
+		List<CustNumMoneyRepVO> shouldlist = queryShouldNum(paramvo, corplist);
+		if(shouldlist != null && shouldlist.size() > 0){
+			for(CustNumMoneyRepVO repvo : shouldlist){
+				xqmap.put(repvo.getPk_corp(), repvo);
+			}
+		}
+		//2、已续签客户数
+		List<CustNumMoneyRepVO> alreadylist = queryAlreadyNum(paramvo, corplist);
+		if(alreadylist != null && alreadylist.size() > 0){
+			CustNumMoneyRepVO numvo = null;
+			for(CustNumMoneyRepVO repvo : alreadylist){
+				if(xqmap.containsKey(repvo.getPk_corp())){
+					numvo = xqmap.get(repvo.getPk_corp());
+					numvo.setIrenewnum(repvo.getIrenewnum());
+					xqmap.put(repvo.getPk_corp(), numvo);
+				}else{
+					numvo = new CustNumMoneyRepVO();
+					numvo.setIrenewnum(repvo.getIrenewnum());
+					xqmap.put(repvo.getPk_corp(), numvo);
+				}
+			}
+		}
+		return xqmap;
+	}
+	
+	/**
+	 * 查询应续签客户数
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustNumMoneyRepVO> queryShouldNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,  \n");
 		sql.append("       COUNT(CASE  \n");
-		sql.append("               WHEN nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
+		sql.append("               WHEN nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 THEN  \n");
 		sql.append("                1  \n");
 		sql.append("               ELSE  \n");
 		sql.append("                0  \n");
-		sql.append("             END) AS iyrenewnum,  \n");
-		sql.append("       COUNT(CASE  \n");
-		sql.append("               WHEN nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND  \n");
-		sql.append("                    nvl(ct.isxq, 'N') = 'Y' THEN  \n");
-		sql.append("                1  \n");
-		sql.append("               ELSE  \n");
-		sql.append("                0  \n");
-		sql.append("             END) AS irenewnum  \n");
-		sql.append("  FROM cn_contract t  \n");
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
+		sql.append("             END) AS iyrenewnum  \n");
+		sql.append("  FROM ynt_contract t  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND ct.icontracttype = 2  \n");
-		sql.append("   AND ct.icosttype = 0  \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND ct.vendperiod = ?  \n");
+		sql.append("   AND t.icontracttype = 2  \n");
+		sql.append("   AND t.icosttype = 0  \n");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
+		sql.append("   AND t.vendperiod = ?  \n");
 		spm.addParam(paramvo.getPeriod());
-		sql.append("   AND t.vdeductstatus = ?  \n");
-		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
-		sql.append(" GROUP BY t.pk_corp  \n");
-		List<CustNumMoneyRepVO> list = (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustNumMoneyRepVO.class));
-		if(list != null && list.size() > 0){
-			for(CustNumMoneyRepVO repvo : list){
-				xqmap.put(repvo.getPk_corp(), repvo);
-			}
+		sql.append("   AND t.vstatus IN (1, 9)  \n");
+		if (corplist != null && corplist.size() > 0) {
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+			sql.append(" AND ").append(where);
 		}
-		return xqmap;
+		sql.append(" GROUP BY t.pk_corp  \n");
+		return (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustNumMoneyRepVO.class));
+	}
+	
+	/**
+	 * 查询已续签客户数
+	 * @param paramvo
+	 * @param corplist
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<CustNumMoneyRepVO> queryAlreadyNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException{
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT t.pk_corp,  \n") ;
+		sql.append("       COUNT(CASE  \n") ; 
+		sql.append("               WHEN nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 THEN  \n") ; 
+		sql.append("                1  \n") ; 
+		sql.append("               ELSE  \n") ; 
+		sql.append("                0  \n") ; 
+		sql.append("             END) AS irenewnum  \n") ; 
+		sql.append("  FROM ynt_contract t  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("   AND t.icontracttype = 2  \n") ; 
+		sql.append("   AND t.icosttype = 0  \n") ; 
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n") ; 
+		sql.append("   AND t.vendperiod = ?  \n") ; 
+		spm.addParam(paramvo.getPeriod());
+		if (corplist != null && corplist.size() > 0) {
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+			sql.append(" AND ").append(where);
+		}
+		sql.append("   AND t.vstatus IN (1, 9)  \n") ; 
+		sql.append("   AND t.pk_corp IN (SELECT DISTINCT t.pk_corp  \n") ; 
+		sql.append("                       FROM ynt_contract t  \n") ; 
+		sql.append("                      WHERE nvl(t.dr, 0) = 0  \n") ; 
+		sql.append("                        AND t.icontracttype = 2  \n") ; 
+		sql.append("                        AND t.icosttype = 0  \n") ; 
+		sql.append("                        AND nvl(t.isncust, 'N') = 'N'  \n") ; 
+		sql.append("                        AND t.vendperiod > ?  \n") ; 
+		spm.addParam(paramvo.getPeriod());
+		if (corplist != null && corplist.size() > 0) {
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
+			sql.append(" AND ").append(where);
+		}
+		sql.append("                        AND t.vstatus IN (1, 9))  \n") ; 
+		sql.append(" GROUP BY t.pk_corp  \n");
+		return (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CustNumMoneyRepVO.class));
 	}
 
 	/**
@@ -855,7 +925,6 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 		if (list != null && list.size() > 0) {
-			Integer num = 0;
 			for (CustCountVO cvo : list) {
 				cmap.put(cvo.getPk_corp(), cvo.getNum());
 			}
