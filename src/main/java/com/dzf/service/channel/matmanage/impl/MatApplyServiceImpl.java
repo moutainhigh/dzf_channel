@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
@@ -475,42 +476,37 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						}
 						List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
 						
-						Integer sumapply = 0;//上季度申请数量
 						Integer sumout = 0;//上季度实发数量
 						Integer sumsucc = 0;//上季度申请通过数量
 						
 						if(mvoList!=null && mvoList.size()>0){
 							for (MatOrderVO ovo : mvoList) {
-								if(ovo.getApplynum()==null){
-									ovo.setApplynum(0);
-								}
 								if(ovo.getOutnum()==null){
 									ovo.setOutnum(0);
 								}
 								if(ovo.getSuccnum()==null){
 									ovo.setSuccnum(0);
 								}
-								sumapply = sumapply + ovo.getApplynum();
 								sumout = sumout + ovo.getOutnum();
 								sumsucc = sumsucc + ovo.getSuccnum();
 							}
 						}
-						sumout= (int) (0.7*sumout);
-						if(sumapply == 0){//上季度没有申请
+						Integer ssumout= (int) (0.7*sumout);
+						if(sumout == 0){//上季度没有发货
 							//可以申请保存
 							//save(vo, uservo, bvos, type);
 						}else{
-							if(passNum >= sumout){
+							if(passNum >= ssumout){
 								//可以申请保存
 								//save(vo, uservo, bvos, type);
 							}else{
 								//提示再申请保存
-								mbvo.setSumapply(sumapply);
+								mbvo.setSumapply(sumout);
 								mbvo.setSumsucc(sumsucc);
 								message = message + "该加盟商"+mbvo.getVname()+
-										"上季度申请数"+mbvo.getSumapply()+
-										"提单审核通过数"+mbvo.getSumsucc()+
-										"不符合该物料的申请条件，望知悉";
+										"上季度申请数"+mbvo.getSumapply()+"，"+
+										"提单审核通过数"+mbvo.getSumsucc()+"，"+
+										"不符合该物料的申请条件，望知悉"+"<br/>";
 
 							}
 							
@@ -597,16 +593,19 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		    }
 		
 		    //2.修改子订单
-		    String sql="delete from cn_materielbill_b where pk_materielbill = ? ";
+			
+		    /*String sql="delete from cn_materielbill_b where pk_materielbill = ? ";
 		    SQLParameter spm=new SQLParameter();
 		    spm.addParam(data.getPk_materielbill());
-		    singleObjectBO.executeUpdate(sql.toString(),spm);
+		    singleObjectBO.executeUpdate(sql.toString(),spm);*/
 		    
 		    List<MatOrderBVO> bvolist = Arrays.asList(bvos);
 		    if(bvolist!=null && bvolist.size()>0){
 		    	  for (MatOrderBVO bvo : bvolist) {
 				    	bvo.setPk_materielbill(data.getPk_materielbill());
-				    	singleObjectBO.insertVO("000001", bvo);
+				    	//singleObjectBO.insertVO("000001", bvo);
+				    	String[] uupdatets = {"pk_materielbill","outnum"};
+				    	singleObjectBO.update(bvo,uupdatets );
 				    	
 				    	if(type!=null && "1".equals(type)){//发货
 				    		//修改物料档案发货数量

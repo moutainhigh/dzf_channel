@@ -31,14 +31,16 @@ public class MatOrderBVO extends SuperVO {
 	
 	private Integer succnum;//审核通过数量
 	
-    private Integer sumapply;//上季度申请总数量
-	
-	private Integer sumsucc;//上季度申请通过总数量
-	
-	
 	private Integer dr; // 删除标记
 
 	private DZFDateTime ts; // 时间
+	
+	/*******仅作展示，不存库*******/
+    private Integer sumapply;//上季度申请成功总数量（发货）
+	
+	private Integer sumsucc;//上季度申请通过总数量
+	
+	/*******仅作展示，不存库*******/
 	
 	public String getPk_materielbill_b() {
 		return pk_materielbill_b;
