@@ -340,7 +340,7 @@ public class MatFileServiceImpl implements IMatFileService {
 	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo)  throws DZFWarpException {
 		StringBuffer sql=new StringBuffer();
 		SQLParameter spm=new SQLParameter();
-		sql.append("  select pk_materiel,vname,vunit,vcode,coperatorid \n");
+		sql.append("  select pk_materiel,vname,vunit,vcode \n");
 		sql.append("     from cn_materiel  \n");
 		sql.append("     where nvl(dr,0) = 0  \n");
 		sql.append("     and isseal = 1 \n");
@@ -356,7 +356,7 @@ public class MatFileServiceImpl implements IMatFileService {
 		
 		if(bvoList!=null && bvoList.size()>0){
 			for (MaterielFileVO mvo : bvoList) {
-	            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+	            uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 				mvo.setApplyname(uservo.getUser_name());
 			}
 			QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);
