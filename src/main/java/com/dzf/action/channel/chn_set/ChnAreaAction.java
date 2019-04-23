@@ -89,11 +89,7 @@ public class ChnAreaAction extends BaseAction<ChnAreaVO> {
 				logValue=LogRecordEnum.OPE_CHANNEL_35.getValue();
 				operate+="运营区域:"+headvo.getAreacode()+" "+headvo.getAreaname();
 			}
-			if("新增".equals(operate)){
-				writeLogRecord(logValue, operate, ISysConstants.SYS_3);
-			}else{
-				writeLogRecord(logValue, operate, ISysConstants.SYS_3);
-			}
+			writeLogRecord(logValue, operate, ISysConstants.SYS_3);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
