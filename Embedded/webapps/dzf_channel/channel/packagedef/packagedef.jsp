@@ -75,6 +75,13 @@
 					<label style="width:100px;text-align:left" for="supple">非常规套餐</label> 
 				</div>
 				<div class="time_col time_colp10">
+					<label style="width: 85px;text-align:right">促销状态：</label>
+					<input id="cx"  type="checkbox" checked style="width:20px;height:28px;text-align:left;margin-left:2px;"/>
+					<label style="width:100px;text-align:left" for="cx">促销套餐</label> 
+					<input id="fcx"  type="checkbox" checked style="width:20px;height:28px;text-align:left;margin-left:20px;"/>
+					<label style="width:100px;text-align:left" for="fcx">非促销套餐</label> 
+				</div>
+				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">收费周期：</label>
 					<input id="cylnum" class="easyui-numberbox" style="width:284px;height:28px;"/>
 				</div>

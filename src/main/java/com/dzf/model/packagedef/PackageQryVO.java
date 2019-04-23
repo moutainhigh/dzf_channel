@@ -2,6 +2,7 @@ package com.dzf.model.packagedef;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 
 /**
@@ -32,7 +33,9 @@ public class PackageQryVO extends SuperVO {
     @FieldAlias("contcycle")
     private Integer icontcycle;//合同周期
     
-    private Integer itype;//服务套餐类型 null或者0为常规；1：非常规
+    private Integer itype;//服务套餐类型  1为常规；2：非常规   12查询全部
+    
+    private Integer ptype;//是否促销 1促销；2：非促销  12查询全部
 	
 	public DZFDate getDbegindate() {
         return dbegindate;
@@ -52,6 +55,14 @@ public class PackageQryVO extends SuperVO {
 
 	public Integer getVstatus() {
 		return vstatus;
+	}
+
+	public Integer getPtype() {
+		return ptype;
+	}
+
+	public void setPtype(Integer ptype) {
+		this.ptype = ptype;
 	}
 
 	public void setVstatus(Integer vstatus) {

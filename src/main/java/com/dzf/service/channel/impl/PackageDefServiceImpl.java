@@ -47,6 +47,15 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and icontcycle = ?");
             params.addParam(qryvo.getIcontcycle());
         }
+        if(qryvo.getPtype()==-1){
+        	return new PackageDefVO[0];
+        }else if(qryvo.getPtype()==1){
+            str.append(" and nvl(ispromotion,'N') = ?");
+            params.addParam("Y");
+        }else if(qryvo.getPtype()==2){
+            str.append(" and nvl(ispromotion,'N') = ?");
+            params.addParam("N");
+        }
         if(qryvo.getVstatus()!= -1 && qryvo.getVstatus()==3){
             str.append(" and vstatus = ?");
             params.addParam(qryvo.getVstatus());
@@ -54,7 +63,7 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and vstatus != 3");
         }
         if(qryvo.getItype()==-1){
-        	return new PackageDefVO[]{};
+        	return new PackageDefVO[0];
         }else if(qryvo.getItype()==1){
             str.append(" and nvl(itype,0) = ?");
             params.addParam(0);

@@ -8,7 +8,7 @@ $(window).resize(function(){
 	});
 });
 $(function() {
-	initQueryData();
+	queryBoxChange('#begdate','#enddate');
 	initGrid();
 	reloadData();
 });
@@ -299,15 +299,6 @@ function initGrid(){
 	});
 }
 
-/**
- * 监听查询
- */
-function initQueryData(){
-	queryBoxChange('#begdate','#enddate');
-	$('#jqj').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
-	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#enddate").datebox("setValue", parent.SYSTEM.LoginDate);
-}
 
 /**
  * 关闭查询对话框
@@ -346,6 +337,13 @@ function reloadData(){
 	if ($("#supple").is(':checked')) {
 		itype += "2";
 	} 
+	var ptype ="";
+	if ($("#cx").is(':checked')) {
+		ptype = "1";
+	} 
+	if ($("#fcx").is(':checked')) {
+		ptype += "2";
+	} 
 	
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
@@ -365,11 +363,13 @@ function reloadData(){
 		queryParams.contcycle = contcycle;
 	}
 	if(isEmpty(itype)){
-		queryParams.itype = -1;
-	}else{
-		queryParams.itype = itype;
+		itype = "-1";
+	}
+	if(isEmpty(ptype)){
+		ptype = "-1";
 	}
 	queryParams.itype = itype;
+	queryParams.ptype = ptype;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	showButtons("brows");
