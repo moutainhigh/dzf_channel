@@ -224,7 +224,9 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 			if(matmap != null && !matmap.isEmpty()){
 				getList = matmap.get(logisticRepVO.getPk_id());
 				if (getList !=null && getList.size()>0) {
-					logisticRepVO.setChildren(getList.toArray(new ComboBoxVO[getList.size()]));// 渠道运营
+					logisticRepVO.setChildren(getList.toArray(new ComboBoxVO[getList.size()]));
+				}else{
+					logisticRepVO.setChildren(new ComboBoxVO[0]);
 				}
 			}
 		}
@@ -249,7 +251,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("select sum(b.outnum) name,m.pk_materiel id, b.pk_materielbill code");
 		sql.append("  from cn_materielbill_b b ");
 		sql.append("  left join cn_materielbill mat on b.pk_materielbill = mat.pk_materielbill");
-		sql.append("  left join bd_account ba on mat.pk_corp = ba.pk_corp ");
+		sql.append("  left join bd_account ba on mat.fathercorp = ba.pk_corp ");
 		sql.append("  left join cn_materiel m on m.pk_materiel = b.pk_materiel ");
 		sql.append(" where nvl(b.dr, 0) = 0 ");
 		sql.append("   and nvl(mat.dr, 0) = 0 ");
@@ -264,7 +266,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		}
 		if (pamvo.getCorps() != null && pamvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(pamvo.getCorps());
-			sql.append(" and mat.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and mat.fathercorp  in (" + corpIdS + ")");
 		}
 		if(!StringUtil.isEmpty(pamvo.getUser_code())){
 			sql.append("and fastcode like ? ");
@@ -329,7 +331,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		}
 		if (pamvo.getCorps() != null && pamvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(pamvo.getCorps());
-			sql.append(" and mat.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and mat.fathercorp  in (" + corpIdS + ")");
 		}
 		if(!StringUtil.isEmpty(pamvo.getUser_code())){
 			sql.append("and fastcode like ? ");

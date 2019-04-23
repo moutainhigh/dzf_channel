@@ -147,7 +147,6 @@ function getGoodsData(){
 function getMaterData(){
 	var rows;
 	var params = getParams();
-	console.log(params);
 	$.ajax({
 		type : "post",
 		dataType : "json",
