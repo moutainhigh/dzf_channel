@@ -153,21 +153,21 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                nvl(b.outnum, 0) outnum,  \n") ; 
 		sql.append("                nvl(b.applynum, 0) applynum,  \n") ; 
 		sql.append("                log.vname logname,  \n") ; 
-		sql.append("                cb.vprovname proname,  \n") ; 
-		sql.append("                cb.vprovince,  \n") ; 
+		sql.append("                ba.vprovname proname,  \n") ; 
+		sql.append("                ba.vprovince,  \n") ; 
 		sql.append("                c.areaname \n") ; 
 		sql.append("  from cn_materielbill bi  \n") ; 
 		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill  \n") ; 
 		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
-		sql.append("  left join cn_chnarea_b cb on cb.vprovince = bi.vprovince  \n") ; 
-		sql.append("  left join cn_chnarea c on c.pk_chnarea = cb.pk_chnarea  \n") ; 
+		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
+		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
 		if(stype!=null && "1".equals(stype)){
 			sql.append("  left join bd_account co on co.pk_corp = bi.fathercorp  \n") ; 
 		}
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(cb.dr, 0) = 0 and cb.type = 1 \n") ; 
+		sql.append("   and nvl(ba.dr, 0) = 0 and ba.type = 1 \n") ; 
 		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ;
 		if(stype!=null && "1".equals(stype)){
 			sql.append("   and nvl(co.dr, 0) = 0  \n") ; 
@@ -205,14 +205,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			spm.addParam(pamvo.getApplyenddate());
 		}
 		if(!StringUtil.isEmpty(vpro) && !StringUtil.isEmpty(vcorp)){
-			sql.append(" and (cb.vprovince in "+vpro);
-			sql.append(" or cb.pk_corp in "+vcorp+")");
+			sql.append(" and (ba.vprovince in "+vpro);
+			sql.append(" or ba.pk_corp in "+vcorp+")");
 		}
 		if(!StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){
-			sql.append(" and cb.vprovince in "+vpro);
+			sql.append(" and ba.vprovince in "+vpro);
 		}
 		if(!StringUtil.isEmpty(vcorp) && StringUtil.isEmpty(vpro)){
-			sql.append(" and cb.pk_corp in "+vcorp);
+			sql.append(" and ba.pk_corp in "+vcorp);
 		}
 		
 		
