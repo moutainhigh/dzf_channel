@@ -1,5 +1,6 @@
 package com.dzf.pub.excel;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -26,9 +27,19 @@ import com.dzf.pub.constant.ICommonContstant;
  */
 public class ExcelComMethod {
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");// 格式化日期字符串
 
     private static DecimalFormat formatter = new DecimalFormat("#.##"); // #,##0.00
+    
+    private ExcelComMethod() {
+        throw new IllegalStateException("ExcelComMethod class");
+    }
+    
+    private static final ThreadLocal<DateFormat> sdf = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd");
+        }
+    };
     
     /**
      *  校验是否最新模版(操作Excel2007的版本，扩展名是.xlsx)
@@ -103,7 +114,7 @@ public class ExcelComMethod {
                 if ("General".equals(cell.getCellStyle().getDataFormatString())) {
                     ret = formatter.format(cell.getNumericCellValue());
                 } else {
-                    ret = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                    ret = sdf.get().format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
                 }
             } else if (cell.getCellType() == XSSFCell.CELL_TYPE_FORMULA) {
                 ret = cell.getCellFormula();
@@ -137,7 +148,7 @@ public class ExcelComMethod {
                 if ("General".equals(cell.getCellStyle().getDataFormatString())) {
                     ret = formatter.format(cell.getNumericCellValue());
                 } else {
-                    ret = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                    ret = sdf.get().format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
                 }
             } else if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
                 ret = cell.getCellFormula();

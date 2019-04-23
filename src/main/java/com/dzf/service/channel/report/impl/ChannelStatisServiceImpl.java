@@ -74,7 +74,7 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("   and nvl(t.dr, 0) = 0 ");
 		buf.append("   and nvl(yt.dr, 0) = 0 ");
 		buf.append("   and (yt.vstatus = 1 or yt.vstatus = 9 or yt.vstatus = 10) ");
-		buf.append("   and yt.vchannelid is not null ");
+//		buf.append("   and yt.vchannelid is not null ");
 		if(!StringUtil.isEmpty(vo.getUserid())){
 			buf.append("   and yt.vchannelid=? ");
 			spm.addParam(vo.getUserid());
