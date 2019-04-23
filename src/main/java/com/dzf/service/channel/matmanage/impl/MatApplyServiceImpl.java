@@ -19,7 +19,6 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
@@ -374,7 +373,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		return null;
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public String saveApply(MatOrderVO vo, UserVO uservo,
 			MatOrderBVO[] bvos,String type,String stype,String kind)  throws DZFWarpException {
