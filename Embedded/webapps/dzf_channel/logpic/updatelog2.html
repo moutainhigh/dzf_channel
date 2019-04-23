@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.190425"><cite>V1.190425</cite></a></li>';
 res = res+'<li><a href="#V1.190328"><cite>V1.190328</cite></a></li>';
 res = res+'<li><a href="#V1.190226"><cite>V1.190226</cite></a></li>';
 res = res+'<li><a href="#V1.190124"><cite>V1.190124</cite></a></li>';
@@ -71,9 +72,250 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2019年03月26日重磅更新
+	 &nbsp;2019年04月25日重磅更新
     </blockquote>
     <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <a name="V1.190425"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.190425&nbsp;&nbsp;<span class="layui-badge-rim">2019-04-25</span></h2>
+                </div>
+                <ul>
+                    <li>
+                        <h3>总体优化</h3>
+                        <ul>
+                            <li>预制行业增值税税负：管理端建账界面，根据维护【国家标准行业】预制对应增值税税负率<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/01.png')" src="./20190425/01.png">
+                            </li>
+                            <li>在线端：首页增值税税负预警线根据维护的行业对应的税负率进行显示预警提示<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/02.png')" src="./20190425/02.png">
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <h3>凭证优化</h3>
+                        <ul>
+                            <h3>1、适配最新税政“国家税务总局公告2019年第15号”文件</h3>
+                            <!-- <a target="_blank" href="./20180627/image001.png" >#查看图片</a> -->
+                            <li>一般纳税人：新增13%和9%两档税率，凭证保存自动生成对应税表表项<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/03.png')" src="./20190425/03.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>2、增加凭证封皮打印</h3>
+                        <ul>
+                            <li>一般纳税人：新增13%和9%两档税率，凭证保存自动生成对应税表表项<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/04.png')" src="./20190425/04.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                    <h3>3、界面显示优化：科目存货辅助核算显示存货的规格型号</h3>
+                    <ul>
+                        <li style="list-style: none">
+                            <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/05.png')" src="./20190425/05.png">
+                        </li>
+                    </ul>
+                </li>
+                    <li>
+                        <h3>票据优化</h3>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">1、进项发票|销项发票：选中发票行点“入账设置”用户可修改发票的入账科目、摘要、结算科目等</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/06.png')" src="./20190425/06.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">2、进项发票|销项发票：通过“一键取票”生成的清单，当参数设置“dzf021 一健取票方工”为“手动制单”<br>
+                                时，生成库存模块按一张发票生成一张入库单（出库单）及一张凭证。</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/07.png')" src="./20190425/07.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">3、进项发票|销项发票：增加票据明细行设置业务类型，一张发票可支持多种业务。</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/08.png')" src="./20190425/08.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">4、进项发票|销项发票：启用库存模块，生成存货均显示匹配存货弹窗</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/09.png')" src="./20190425/09.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">5、进项发票|销项发票：一般纳税人新增发票时默认改为增值税专用发票</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/10.png')" src="./20190425/10.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">6、进项发票|销项发票：导入模板增加规格型号和计量单位列</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/11.png')" src="./20190425/11.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">7、进项发票|销项发票：进销项清单存货匹配时可按规格型号进行模糊搜索</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/12.png')" src="./20190425/12.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">8、进项发票|销项发票：列表去掉“类型”字段</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/13.png')" src="./20190425/13.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">9、银行对账单：列表显示增加“本方银行名称”和“本方银行账号”字段</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/14.png')" src="./20190425/14.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">10、银行对账单：银行对账单与银行回单数据的手动勾对</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/15.png')" src="./20190425/15.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">11、银行对账单：通用模板新增支持如下银行</h3>
+                            <li style="list-style: none">
+                                <p>（1）、中国农业银行股份有限公司鄂温克族自治旗支行</p>
+                                <p>（2）、中国银行股份有限公司呼伦贝尔市成吉思汗广场银行</p>
+                                <p>（3）、中国建设银行股份有限公司海拉尔天润支行</p>
+                                <p>（4）、扬州农商行</p>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">12、【图片浏览】删除改为作废，去掉【识别】按钮</h3>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">13、【上传图片】、【图片浏览】-【批量上传】及客户端，票据类型字段默认值改为“全部”</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/16.png')" src="./20190425/16.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul>
+                            <h3 style="margin-top:10px;margin-bottom:10px">14、新增【票据工作台】节点，针对识别票据实现对票据自动分类到匹配存货再到智能做账处理的全流程处理（旗舰版）；</h3>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/17.png')" src="./20190425/17.png">
+                            </li>
+                        </ul>
+                    <li>
+                        <h3>结账办理</h3>
+                        <ul>
+                            <h3 style="margin-top:10px;">1、原税收测算节点更新为税费计算：</h3>
+                            <li>（1）支持增值税、其他税费、所得税的计提过程<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/18.png')" src="./20190425/18.png">
+                                <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/19.png')" src="./20190425/19.png">
+                            </li>
+                            <li>（2）点“生成凭证”生成对应税种的计提凭证<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/20.png')" src="./20190425/20.png">
+                            </li>
+                            <li>（3）期末结转对应结转类型也自动勾上，同一类型无需重复操作。<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/21.png')" src="./20190425/21.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>财报优化</h3>
+                        <ul>
+                            <li>
+                                <h3 style="margin-top:10px;">1、税局格式导出新增地区：上海、湖北、江苏、北京、河南</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/22.png')" src="./20190425/22.png">
+                            </li>
+                            <li>
+                                <h3 style="margin-top:10px;">2、新增财报英文导出格式（仅支持小企业会计准则）</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/23.png')" src="./20190425/23.png">
+                            </li>
+                            <li>
+                                <h3 style="margin-top:10px;">3、利润表和现金流量表支持“本月金额”与“本年累计金额”列切换</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/23.png')" src="./20190425/24.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>资产优化</h3>
+                        <ul>
+                            <li>
+                               资产类别：【折旧方式】、【净残率】、【使用年限（月）】的调整，新增卡片自动读取“资产类别”节点维护后的信息 <br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/22.png')" src="./20190425/25.png">
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>纳税申报优化</h3>
+                        <ul>
+                            <li>
+                                <h3>1、根据“国家税务总局公告2019年第15号”文件调整增值税一般纳税人纳税申报表</h3>
+                            </li>
+                            <li>
+                                <h3>2、新增4个地区的纳税申报表:天津、河北、广西、海南，支持的税种：增值税、附加税、财务报表、企业所得税</h3>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>其他优化</h3>
+                        <ul>
+                            <li>
+                                <h3>1、关账检查：使用了“工资管理--工资表”的检查“工资薪金计提”数据，未使用工资表不检查</h3>
+                            </li>
+                            <li>
+                                <h3>2、期末处理：凭证生成顺序及算法优化（损益结转凭证顺序优化：先结转收入，后结转费用；附加税计算结果<0.01时不生成凭证）</h3>
+                            </li>
+                            <li>
+                                <h3>3、标准科目：升级【其他应付款】科目时，允许多个下级科目指定同一升级科目并对升级科目增加操作说明</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/26.png')" src="./20190425/26.png">
+                            </li>
+                            <li>
+                                <h3>4、用户生效日期后才可登录系统</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/27.png')" src="./20190425/27.png">
+                            </li>
+                            <li>
+                                <h3>5、纳税工作台增加印花税查询</h3>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190425/28.png')" src="./20190425/28.png">
+                            </li>
+                        </ul>
+                    </li>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
         <li class="layui-timeline-item">
             <a name="V1.190328"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
@@ -82,7 +324,6 @@ $(document).ready(function (){
                     <h2 style="color: #FF5722;">V1.190328&nbsp;&nbsp;<span class="layui-badge-rim">2019-03-28</span></h2>
                 </div>
                 <ul>
-
                     <li>
                         <h3>1.新增期末结转功能</h3>
                         <ul>
@@ -154,6 +395,8 @@ $(document).ready(function (){
                 </ul>
             </div>
         </li>
+
+
         <li class="layui-timeline-item">
             <a name="V1.190226"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
