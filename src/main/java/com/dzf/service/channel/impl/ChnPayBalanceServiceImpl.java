@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.CorpNameEVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
@@ -253,14 +254,16 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
 		sql.append("   AND t.vstatus = 1  \n") ; 
-		sql.append("   AND t.pk_confrim NOT IN (SELECT l.pk_bill  \n") ; 
-		sql.append("                              FROM cn_detail l  \n") ; 
-		sql.append("                             WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append("                               AND l.ipaytype = 2) \n");
-		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
-	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+		String[] billids = getbillids();
+		if(billids != null && billids.length > 0){
+			String where = ToolsUtil.buildSqlForNotIn("t.pk_confrim", billids);
+			sql.append(" AND ").append(where);
+		}
+		if(paramvo.getCorps() != null && paramvo.getCorps().length > 0){
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
+			sql.append(" AND ").append(where);
 	    }
+		
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
@@ -294,6 +297,27 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 获取付款余额表主键
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	private String[] getbillids() throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_bill  \n") ;
+		sql.append("  FROM cn_detail  \n") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("   AND ipaytype = 2  \n");
+		List<String> list = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ColumnListProcessor("pk_bill"));
+		if(list != null && list.size() > 0){
+			return list.toArray(new String[0]);
+		}
+		return null;
 	}
 	
 	/**
@@ -339,8 +363,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
-			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
+			sql.append(" AND ").append(where);
 		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
@@ -450,8 +474,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
-			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-			sql.append(" and  t.pk_corp  in (" + corpIdS + ")");
+			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
+			sql.append(" AND ").append(where);
 		}
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
@@ -618,9 +642,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("  FROM cn_detail a \n") ; 
 		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
 		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
-		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
-	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-	        sql.append(" AND a.pk_corp  in (" + corpIdS + ")");
+		if(paramvo.getCorps() != null  && paramvo.getCorps().length > 0){
+	        String where = SqlUtil.buildSqlForIn("a.pk_corp", paramvo.getCorps());
+	        sql.append(" AND ").append(where);
 	    }
 		if(!StringUtil.isEmpty(paramvo.getAreaname())){
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
@@ -957,12 +981,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		String addwhere = "";
 		if(pklist != null && pklist.size() > 0){
-			StringBuffer where = new StringBuffer();
-			where.append(" AND t.pk_confrim NOT IN (");
-			String qrywhere = SqlUtil.buildSqlConditionForIn(pklist.toArray(new String[0]));
-			where.append(qrywhere);
-			where.append(" ) ");
-			addwhere = where.toString();
+			StringBuffer asql = new StringBuffer();
+			String where = ToolsUtil.buildSqlForNotIn("t.pk_confrim", pklist.toArray(new String[0]));
+			asql.append(" AND ").append(where);
+			addwhere = asql.toString();
 		}
 		//1、查询零扣款数据：
 		List<ChnDetailRepVO> dlist = qryZeroDeduct(list, paramvo, addwhere);
