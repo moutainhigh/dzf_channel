@@ -19,6 +19,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.dealmanage.StockOutInMVO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
@@ -94,8 +95,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			
 		}
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,vcorp);
-		List<MatOrderVO> list = (List<MatOrderVO>) multBodyObjectBO.queryDataPage(MatOrderVO.class, sqpvo.getSql(),
-				sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
+				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
+		
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
