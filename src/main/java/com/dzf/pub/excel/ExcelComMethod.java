@@ -1,8 +1,6 @@
 package com.dzf.pub.excel;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -18,6 +16,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.constant.ICommonContstant;
+import com.dzf.pub.util.DateUtils;
 
 /**
  * Excel导入公共方法
@@ -33,13 +32,6 @@ public class ExcelComMethod {
     private ExcelComMethod() {
         throw new IllegalStateException("ExcelComMethod class");
     }
-    
-    private static final ThreadLocal<DateFormat> sdf = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd");
-        }
-    };
     
     /**
      *  校验是否最新模版(操作Excel2007的版本，扩展名是.xlsx)
@@ -114,7 +106,7 @@ public class ExcelComMethod {
                 if ("General".equals(cell.getCellStyle().getDataFormatString())) {
                     ret = formatter.format(cell.getNumericCellValue());
                 } else {
-                    ret = sdf.get().format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                    ret = DateUtils.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()),"yyyy-MM-dd");
                 }
             } else if (cell.getCellType() == XSSFCell.CELL_TYPE_FORMULA) {
                 ret = cell.getCellFormula();
@@ -148,7 +140,7 @@ public class ExcelComMethod {
                 if ("General".equals(cell.getCellStyle().getDataFormatString())) {
                     ret = formatter.format(cell.getNumericCellValue());
                 } else {
-                    ret = sdf.get().format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                    ret = DateUtils.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()),"yyyy-MM-dd");
                 }
             } else if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
                 ret = cell.getCellFormula();
