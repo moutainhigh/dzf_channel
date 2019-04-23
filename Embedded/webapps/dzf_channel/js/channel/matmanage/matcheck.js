@@ -525,6 +525,31 @@ function onCancel(){
 }
 
 /**
+ * 查询申请人
+ */
+function userInfo(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : contextPath + '/matmanage/matapply!queryUserData.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#applyname").textbox("setValue", result.rows.applyname);
+				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
+}
+
+
+/**
  * 卡片表格
  */
 function initCard(){
@@ -538,8 +563,6 @@ function initCard(){
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				mat = result.rows;
-				$("#applyname").textbox("setValue", mat[0].applyname);
-				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -690,11 +713,11 @@ function checked(type){
 						return;
 					}
 				}
-				if(type==0){
+				/*if(type==0){
 					if (result.success) {
 					    showCard(row);
 				   }
-				}
+				}*/
 			
 		}
 	});
@@ -709,6 +732,7 @@ function showCard(row){
 		$('#mat_add').form('clear');
 		$('#mat_add').form('load', row);
 		initCard();
+		userInfo();
 	    $('.hid').css("display", ""); 
 	    $('#code').textbox({width:168});
 	    $("#true")[0].checked=true;

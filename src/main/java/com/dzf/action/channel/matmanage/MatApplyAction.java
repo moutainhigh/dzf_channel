@@ -113,10 +113,13 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			List<MatOrderBVO> bvos=matapply.queryNumber(pamvo);
 			if(bvos==null || bvos.size()==0){//还没有申请，查询所有启用的物料
 				List<MaterielFileVO> mvos=matapply.queryMatFile();
-				for (MaterielFileVO mvo : mvos) {
-					mvo.setApplynum(0);
-					mvo.setOutnum(0);
+				if(mvos!=null && mvos.size()>0){
+					for (MaterielFileVO mvo : mvos) {
+						mvo.setApplynum(0);
+						mvo.setOutnum(0);
+					}
 				}
+				
 				json.setRows(mvos);
 			}else{
 				json.setRows(bvos);
@@ -127,6 +130,28 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
+	}
+	
+	
+	/**
+	 * 查询登录人
+	 */
+	public void queryUserData() {
+		Json json = new Json();
+		try{
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			MatOrderVO  vo = matapply.queryUserData(uservo);
+			if(vo!=null){
+				json.setRows(vo);
+				json.setMsg("查询成功");
+				json.setSuccess(true);
+			}
+		}catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+		
 	}
 	
 	/**

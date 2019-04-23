@@ -865,10 +865,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						vo.setDename(uservo.getUser_name());
 					}else{
 						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
-						vo.setDename(uservo.getUser_name());
+						vo.setDename(uservo.getUser_name());//发货人
 					}
 					uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-					vo.setApplyname(uservo.getUser_name());
+					vo.setApplyname(uservo.getUser_name());//申请人
 				}else{//申请
 					if (vo.getCoperatorid() != null) {
 						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
@@ -1065,6 +1065,16 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 		return null;
 	}
+	
+	@Override
+	public MatOrderVO queryUserData(UserVO uservo) {
+		
+		 uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+		 MatOrderVO mvo = new MatOrderVO();
+		 mvo.setApplyname(uservo.getUser_name());
+		 QueryDeCodeUtils.decKeyUtil(new String[] { "applyname" }, mvo, 1);
+		 return mvo;
+	}
 
 	
 	/**
@@ -1096,6 +1106,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
 	        return pattern.matcher(str).matches();  
 	}
+
+	
 	
 
 }

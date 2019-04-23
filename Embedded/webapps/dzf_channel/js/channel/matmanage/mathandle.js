@@ -567,8 +567,6 @@ function initCard(){
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				mat = result.rows;
-				$("#applyname").textbox("setValue", mat[0].applyname);
-				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -716,12 +714,11 @@ function send(){
 					showCard(row);
 				}
 				
-				if (result.success) {
+				/*if (result.success) {
 					//if(type==0){
 						showCard(row);
 					//}
-					
-			   }
+			    }*/
 			}else {
 				Public.tips({content : "单据状态不为待发货！" ,type:2});
 				return;
@@ -882,8 +879,6 @@ function initCardDetail(){
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				mat = result.rows;
-				$("#iapplyname").textbox("setValue", mat[0].applyname);
-				$("#iadate").datebox("setValue", parent.SYSTEM.LoginDate);
 			} else {
 				Public.tips({
 					content : result.msg,

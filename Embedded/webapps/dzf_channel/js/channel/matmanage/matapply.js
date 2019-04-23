@@ -493,6 +493,7 @@ function add() {
 	$('#countryname').combobox('loadData', {});//清空县option选项  
 	queryAllProvince();
 	initCard();
+	userInfo();
 	editable();
 	getLastQuarter();//获取上个季度日期
 	operCard();
@@ -502,6 +503,30 @@ function add() {
 	$('.aid').css("display", "none");
 	$('#code').textbox({width:431});
 	status = "add";
+}
+
+/**
+ * 查询申请人
+ */
+function userInfo(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : contextPath + '/matmanage/matapply!queryUserData.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				$("#applyname").textbox("setValue", result.rows.applyname);
+				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
+			} else {
+				Public.tips({
+					content : result.msg,
+					type : 2
+				});
+			}
+		}
+	});
 }
 
 /**
@@ -518,8 +543,6 @@ function initCard(){
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				mat = result.rows;
-				$("#applyname").textbox("setValue", mat[0].applyname);
-				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
 			} else {
 				Public.tips({
 					content : result.msg,

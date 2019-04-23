@@ -107,4 +107,11 @@ public interface IMatApplyService {
 	 */
 	List<CorpVO> queryChannel(UserVO uservo) throws DZFWarpException;
 
+	/**
+	 * 查询当前登录人
+	 * @param uservo
+	 * @return
+	 */
+	MatOrderVO queryUserData(UserVO uservo);
+
 }

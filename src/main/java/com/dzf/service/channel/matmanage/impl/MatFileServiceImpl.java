@@ -355,11 +355,11 @@ public class MatFileServiceImpl implements IMatFileService {
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(MaterielFileVO.class) );
 		
 		if(bvoList!=null && bvoList.size()>0){
-			for (MaterielFileVO mvo : bvoList) {
+			/*for (MaterielFileVO mvo : bvoList) {
 	            uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 				mvo.setApplyname(uservo.getUser_name());
 			}
-			QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);
+			QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);*/
 			return bvoList;
 		}
 		
