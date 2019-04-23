@@ -53,25 +53,32 @@ function load(){
 			field : 'updatets',
 			hidden : true
 		}, {
+			field : 'operate',
+			title : '操作',
+			width : '80',
+			halign : 'center',
+			align : 'center',
+			formatter : opermatter
+		},{
 			width : '120',
 			title : '单据编码',
 			field : 'code',
 			align : 'center',
 			halign : 'center',
 		}, {
-			width : '100',
+			width : '120',
 			title : '物料名称',
 			align : 'center',
 			halign : 'center',
 			field : 'wlname',
 		}, {
-			width : '100',
+			width : '70',
 			title : '单位',
 			align : 'center',
 			halign : 'center',
 			field : 'unit',
 		}, {
-			width : '100',
+			width : '70',
 			title : '成本价',
 			field : 'cost',
 			halign : 'right',
@@ -84,13 +91,13 @@ function load(){
 				}
 			},
 		}, {
-			width : '100',
+			width : '70',
 			title : '数量',
 			field : 'num',
 			halign : 'center',
 			align : 'center',
 		}, {
-			width : '110',
+			width : '70',
 			title : '金额',
 			field : 'tmny',
 			halign : 'right',
@@ -103,19 +110,13 @@ function load(){
 				}
 			},
 		}, {
-			width : '200',
-			title : '备注',
-			field : 'memo',
-			halign : 'center',
-			align : 'center',
-		},{
-			width : '150',
+			width : '100',
 			title : '入库日期',
 			field : 'indate',
 			halign : 'center',
 			align : 'center',
 		},{
-			width : '150',
+			width : '70',
 			title : '录入人',
 			field : 'opername',
 			halign : 'center',
@@ -126,14 +127,13 @@ function load(){
 			field : 'opertime',
 			halign : 'center',
 			align : 'center',
-		}, {
-			field : 'operate',
-			title : '操作',
-			width : '80',
+		},{
+			width : '200',
+			title : '备注',
+			field : 'memo',
 			halign : 'center',
 			align : 'center',
-			formatter : opermatter
-		}, ] ],
+		},  ] ],
 		onLoadSuccess : function(data) {
 			$('#grid').datagrid("scrollTo", 0);
 			calFooter();
