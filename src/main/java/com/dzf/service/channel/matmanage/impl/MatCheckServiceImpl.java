@@ -90,6 +90,14 @@ public class MatCheckServiceImpl implements IMatCheckService {
 			data.setAuditdate(new DZFDate());
 			String[] updates ={ "vstatus","vreason","auditerid","auditdate"};
 			singleObjectBO.update(data, updates);
+			
+			if(data.getVstatus()==1){//反审核后
+				data.setAuditdate(null);//清除之前的审核人信息
+				data.setAuditerid(null);
+				String[] nupdatets ={ "auditerid","auditdate"};
+				singleObjectBO.update(data, nupdatets);
+				
+			}
 		} catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
