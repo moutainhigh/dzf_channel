@@ -15,7 +15,7 @@ function showChangeImage(row){
 	var src = getAttachImgUrl(row);
 	arrachrows[0] = row;
 	var src = DZF.contextPath + '/contract/contractaudit!getAttachImage.action?applyid='
-			+ row.applyid ;
+			+ row.applyid + "&time =" + Math.random();
 	
 	var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
 		+ '" style="position: absolute;z-index: 1;left:50px;">';
@@ -43,7 +43,7 @@ function showChangeDetImage(row){
 	var src = getAttachImgUrl(row);
 	arrachrows[0] = row;
 	var src = DZF.contextPath + '/contract/contractaudit!getAttachImage.action?applyid='
-			+ row.applyid ;
+			+ row.applyid + "&time =" + Math.random();
 	
 	var img = '<img id="conturnid" alt="无法显示图片" src="' + src 
 		+ '" style="position: absolute;z-index: 1;left:50px;">';
@@ -197,7 +197,7 @@ function getAttachImgUrl(row) {
 		return "../../images/typeicon/txt.jpg";
 	}
 	return DZF.contextPath + '/contract/contractaudit!getAttachImage.action?applyid='
-			+ row.applyid ;
+			+ row.applyid + "&time =" + Math.random();
 }
 
 /**
@@ -262,7 +262,7 @@ function doubleImage(i) {
 	var ext = getFileExt(arrachrows[i]['doc_name']);
 	var src = DZF.contextPath
 			+ '/contract/contractaudit!getAttachImage.action?applyid='
-			+ arrachrows[i].applyid ;
+			+ arrachrows[i].applyid + "&time =" + Math.random();
 	if ("png" == ext.toLowerCase() || "jpg" == ext.toLowerCase()
 			|| "jpeg" == ext.toLowerCase() || "bmp" == ext.toLowerCase()) {
 		$("#tpfd").empty();
