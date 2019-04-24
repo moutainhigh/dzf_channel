@@ -31,10 +31,6 @@ public class ChangeApplyVO extends SuperVO {
 	@FieldAlias("corpkid")
 	private String pk_corpk; // 客户主键
 
-	// 合同状态  0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
-	@FieldAlias("status")
-	private Integer vstatus; 
-	
 	@FieldAlias("aptime")
 	private DZFDateTime applytime;//申请时间
 	
@@ -105,6 +101,10 @@ public class ChangeApplyVO extends SuperVO {
 	private SuperVO<?>[] bodys;//表体信息
 	
 	// 不存只作展示 begin*************************
+	
+	// 合同状态  0：待提交；1：审核通过；5:待审批；7：已驳回；8：服务到期；9：已终止（加盟商合同）；10：已作废（加盟商合同）；
+	@FieldAlias("status")
+	private Integer vstatus; 
 	
 	@FieldAlias("area")
 	private String varea;// 地区：取客户的省+市 （不存库，取客户缓存）

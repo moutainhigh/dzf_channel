@@ -29,6 +29,7 @@ import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.contract.IContractAuditService;
@@ -425,7 +426,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	public void updateChange(ChangeApplyVO datavo, UserVO uservo) throws DZFWarpException {
 		String uuid = UUID.randomUUID().toString();
 		try {
-			LockUtil.getInstance().tryLockKey(datavo.getTableName(), datavo.getPk_changeapply(), uuid, 120);
+			LockUtil.getInstance().tryLockKey("ynt_contract", datavo.getPk_contract(), uuid, 120);
 			//1、更新前校验
 			checkBeforeChange(datavo);
 			
@@ -444,7 +445,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			else
 				throw new WiseRunException(e);
 		} finally {
-			LockUtil.getInstance().unLock_Key(datavo.getTableName(), datavo.getPk_changeapply(), uuid);
+			LockUtil.getInstance().unLock_Key("ynt_contract", datavo.getPk_contract(), uuid);
 		}
 	}
 	
@@ -584,6 +585,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				sql.append("   SET iversion = 6  \n");
 			}
 		}
+		sql.append(" , tstamp = ? \n");
+		spm.addParam(new DZFDateTime());
 		sql.append(" WHERE nvl(dr, 0) = 0  \n");
 		sql.append("   AND pk_corp = ?  \n");
 		spm.addParam(data.getPk_corp());
@@ -609,6 +612,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			} else if (opertype == 2) {
 				sql.append("   SET iapplystatus = 6  \n");
 			}
+			sql.append(" , tstamp = ? \n");
+			spm.addParam(new DZFDateTime());
 			sql.append(" WHERE nvl(dr, 0) = 0  \n");
 			sql.append("   AND pk_corp = ?  \n");
 			spm.addParam(data.getPk_corp());
