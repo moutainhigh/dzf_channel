@@ -172,6 +172,13 @@
 							   data-options="width:163,height:27" />
 					</div>
 					<div class="time_col time_colp10">
+						<label style="width:124px;text-align:right">审核人：</label>
+						<input id="audname" name="audname" class="easyui-textbox" style="width:168px;height:28px;"/>
+						<label style="width:87px;text-align:right">审核时间：</label>
+						<input id="audate" name="audate" type="text" class="easyui-datebox"
+							   data-options="width:163,height:27" />
+					</div>
+					<div class="time_col time_colp10">
 					  <span class="hid">
 					  <label style="width:124px;text-align:right">审核结果：</label>
 					  <input id="true" type="radio" name="seleres" value="succ" onclick="review()"/>

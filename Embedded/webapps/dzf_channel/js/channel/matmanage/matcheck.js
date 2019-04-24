@@ -525,19 +525,24 @@ function onCancel(){
 }
 
 /**
- * 查询申请人
+ * 查询申请人，审核人
  */
-function userInfo(){
+function userInfo(id){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : contextPath + '/matmanage/matapply!queryUserData.action',
+		url : contextPath + '/matmanage/matcheck!queryUserData.action',
 		dataTye : 'json',
+		data : {
+			id : id,
+		},
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				$("#applyname").textbox("setValue", result.rows.applyname);
-				$("#adate").datebox("setValue", parent.SYSTEM.LoginDate);
+				$("#audname").textbox("setValue", result.rows.audname);
+				$("#adate").textbox("setValue", result.rows.adate);
+				$("#audate").datebox("setValue", parent.SYSTEM.LoginDate);
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -732,7 +737,7 @@ function showCard(row){
 		$('#mat_add').form('clear');
 		$('#mat_add').form('load', row);
 		initCard();
-		userInfo();
+		userInfo(row.matbillid);
 	    $('.hid').css("display", ""); 
 	    $('#code').textbox({width:168});
 	    $("#true")[0].checked=true;

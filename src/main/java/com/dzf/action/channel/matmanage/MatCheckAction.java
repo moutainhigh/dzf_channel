@@ -105,6 +105,29 @@ private Logger log = Logger.getLogger(this.getClass());
 		writeJson(json);
 	}
     
+    /**
+	 * 查询申请人和审核人
+	 */
+	public void queryUserData() {
+		Json json = new Json();
+		try{
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			String mid =getRequest().getParameter("id");
+			MatOrderVO  vo = matcheck.queryUserData(uservo,mid);
+			if(vo!=null){
+				json.setRows(vo);
+				json.setMsg("查询成功");
+				json.setSuccess(true);
+			}
+		}catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+		
+	}
+	
+    
     
 	/**
 	 * 登录用户校验

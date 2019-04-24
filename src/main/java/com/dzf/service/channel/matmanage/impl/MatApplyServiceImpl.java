@@ -215,7 +215,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			sql.append(" and ba.pk_corp in "+vcorp);
 		}
 		
-		
 		if(!StringUtil.isEmpty(qvo.getVqrysql())){
 			sql.append(qvo.getVqrysql());
 		}
@@ -849,6 +848,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append(  "   m.pk_logistics, \n");
 		sql.append(  "   m.fastcode,m.fastcost, \n");
 		sql.append(  "   m.deliverid,m.deliverdate, \n");
+		sql.append(  "   m.auditerid,m.auditdate, \n");
 		sql.append(  "   lg.vname logname \n");
 		
 		sql.append("     from cn_materielbill m \n");
@@ -867,14 +867,22 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 						vo.setDename(uservo.getUser_name());//发货人
 					}
-					uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+					/*uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
 					vo.setApplyname(uservo.getUser_name());//申请人
-				}else{//申请
+					uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
+					vo.setAudname(uservo.getUser_name());//审核人
+*/				}
+					//else{
 					if (vo.getCoperatorid() != null) {
 						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-						vo.setApplyname(uservo.getUser_name());
+						vo.setApplyname(uservo.getUser_name());//申请人
 					}
-				}
+					if(vo.getAuditerid()!=null){
+						uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
+						vo.setAudname(uservo.getUser_name());//审核人
+					}
+					
+				//}
 			StringBuffer ssql = new StringBuffer();
 			SQLParameter sspm = new SQLParameter();
 			sspm.addParam(id);

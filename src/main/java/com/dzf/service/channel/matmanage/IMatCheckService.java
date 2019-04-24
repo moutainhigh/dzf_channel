@@ -28,4 +28,12 @@ public interface IMatCheckService {
 	 */
 	MatOrderVO queryById(String pk_materielbill)  throws DZFWarpException;
 
+	/**
+	 * 查询申请人和审核人
+	 * @param uservo
+	 * @param mid
+	 * @return
+	 */
+	MatOrderVO queryUserData(UserVO uservo, String mid);
+
 }

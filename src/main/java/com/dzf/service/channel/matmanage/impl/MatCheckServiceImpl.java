@@ -16,6 +16,8 @@ import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -130,7 +132,18 @@ public class MatCheckServiceImpl implements IMatCheckService {
  		}
  		return vo;
  	}
-	
+
+	@Override
+	public MatOrderVO queryUserData(UserVO uservo, String mid) {
+		
+	    MatOrderVO mvo = (MatOrderVO) singleObjectBO.queryByPrimaryKey(MatOrderVO.class, mid);
+	    uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+		mvo.setAudname(uservo.getUser_name());//审核人
+		uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+		mvo.setApplyname(uservo.getUser_name());//申请人
+		QueryDeCodeUtils.decKeyUtil(new String[] { "applyname","audname" }, mvo, 1);
+		return mvo;
+	}
 	
 }
 

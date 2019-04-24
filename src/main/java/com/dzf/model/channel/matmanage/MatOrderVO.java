@@ -139,6 +139,8 @@ public class MatOrderVO extends SuperVO {
 	
 	private String applyname;//申请人名称
 	
+	private String audname;//审核人名称
+	
 	private String dename;//发货人名称
 	
 	@FieldAlias("wlname")
@@ -591,6 +593,14 @@ public class MatOrderVO extends SuperVO {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public String getAudname() {
+		return audname;
+	}
+
+	public void setAudname(String audname) {
+		this.audname = audname;
 	}
 
 	@Override
