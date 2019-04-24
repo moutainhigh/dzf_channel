@@ -8,7 +8,6 @@
 </head>
 <%
 	String issingle = request.getParameter("issingle");
-	//String ovince = request.getParameter("ovince");
 
 %>
 <body>
@@ -133,10 +132,7 @@
 		       if(event.keyCode == "13") {//Enter 键事件
 		    	   var filtername = $("#unitcode").val(); ; 
 		      		var params = new Object();
-		    		if(ovince!=undefined){
-		    			params['dr']=ovince
-		    		}
-		      		params["corpcode"] = filtername;
+		      		params["cpcode"] = filtername;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 
