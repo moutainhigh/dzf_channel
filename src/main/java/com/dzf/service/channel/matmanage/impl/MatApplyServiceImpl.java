@@ -867,12 +867,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 						vo.setDename(uservo.getUser_name());//发货人
 					}
-					/*uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-					vo.setApplyname(uservo.getUser_name());//申请人
-					uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
-					vo.setAudname(uservo.getUser_name());//审核人
-*/				}
-					//else{
+				}
 					if (vo.getCoperatorid() != null) {
 						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
 						vo.setApplyname(uservo.getUser_name());//申请人
@@ -882,7 +877,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						vo.setAudname(uservo.getUser_name());//审核人
 					}
 					
-				//}
 			StringBuffer ssql = new StringBuffer();
 			SQLParameter sspm = new SQLParameter();
 			sspm.addParam(id);
