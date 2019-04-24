@@ -451,7 +451,7 @@ function initYbhGrid(){
 				formatter :forString,
 			},] ],
 			onLoadSuccess : function(data) {
-				var rows = $('#gridw').datagrid('getRows');
+				var rows = $('#gridb').datagrid('getRows');
 				var footerData = new Object();
 	            var anum = parseFloat(0);	
 	            var antlmny = parseFloat(0);	
@@ -464,8 +464,8 @@ function initYbhGrid(){
 	            footerData['antlmny'] = antlmny;
 	            var fs=new Array(1);
 	            fs[0] = footerData;
-	            $('#gridw').datagrid('reloadFooter',fs);
-	            $('#gridw').datagrid("scrollTo",0);
+	            $('#gridb').datagrid('reloadFooter',fs);
+	            $('#gridb').datagrid("scrollTo",0);
 			},
 		});
 }
