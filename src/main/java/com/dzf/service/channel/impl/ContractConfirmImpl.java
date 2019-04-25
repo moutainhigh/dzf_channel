@@ -797,7 +797,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				//11、发送消息：
 				saveAuditMsg(datavo, 1, pk_corp, cuserid);
 				//12、更新申请状态
-				if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
+				if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 5){
 					updateContApply(datavo, cuserid, 1, 1);
 				}
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
