@@ -61,5 +61,24 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * 明细查询方法
+	 */
+	public void queryDetail() {
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_56);
+			ManagerVO paramvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), new ManagerVO());
+			List<ManagerVO> clist = chnStatis.queryDetail(paramvo);
+			grid.setRows(clist);
+			grid.setSuccess(true);
+			grid.setMsg("操作成功");
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "操作失败");
+		}
+		writeJson(grid);
+	}
 
 }

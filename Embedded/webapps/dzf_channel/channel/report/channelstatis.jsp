@@ -65,6 +65,18 @@
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
 			</div>
 			
+			<div id="detail_dialog" class="easyui-dialog" title="合同金额明细" data-options="modal:true,closed:true" style="width:730px;height:500px;">
+				<div class="time_col" style="padding-top: 10px;width:96%;margin:0 auto;">
+					<label style="text-align:right">查询：</label> 
+					<span id ="qrydate" style="vertical-align: middle;font-size:14px;"></span>
+					<label style="text-align:right">加盟商：</label> 
+					<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
+				</div>	
+				<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:380px;padding:10px">
+					 <table id="gridh"></table>	
+				</div>
+			</div>
+			
 	 	</div>	
 	</div>
 </body>
