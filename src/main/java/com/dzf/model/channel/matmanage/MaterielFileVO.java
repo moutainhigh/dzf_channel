@@ -36,7 +36,7 @@ public class MaterielFileVO extends SuperVO {
 	
 	private Integer intnum;//入库数量
 	
-	private Integer outnum;//出库数量（包括发货数量+删除的入库数量）
+	private Integer outnum;//出库数量
 	
 	@FieldAlias("operid")
 	private String coperatorid;//录入人
