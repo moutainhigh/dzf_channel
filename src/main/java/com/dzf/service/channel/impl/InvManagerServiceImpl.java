@@ -101,12 +101,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 			if (vo.getDchangedate() != null) {
 				vmemo.append(vo.getDchangedate());
 			}
+			vmemo.append(" ");//为前端添加已换票图片处理
 			if (!StringUtil.isEmpty(vo.getVchangememo())) {
-				vmemo.append(" ").append(vo.getVchangememo());
+				vmemo.append(vo.getVchangememo());
 			}
-			if (vmemo != null && vmemo.length() > 0) {
-				vo.setVchangememo(vmemo.toString());// 换票说明
-			}
+			vo.setVchangememo(vmemo.toString());// 换票说明
 			uservo = UserCache.getInstance().get(vo.getInvperson(), null);
 			if (uservo != null) {
 				vo.setIperson(uservo.getUser_name());// 开票人
