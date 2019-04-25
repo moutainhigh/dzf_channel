@@ -550,8 +550,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
 			sql.append(paramvo.getVqrysql());
 		}
-		//非常规套餐数据过滤：1、非常规套餐；2、常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
-		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 AND t.vstatus != 0 )  \n") ; 
+		//非常规套餐数据过滤：（未提交合同不查询，已在上边过滤状态）1、常规套餐；2、非常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
+		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 )  \n") ; 
 		sql.append("    OR ( nvl(t.iyear,0) = 1 AND t.vstatus = 5 AND t.pk_contract IN  \n") ; 
 		sql.append("   (SELECT pk_contract  \n") ; 
 		sql.append("    FROM cn_changeapply  \n") ; 
@@ -933,6 +933,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		//清空会计公司名称和客户名称
 		datavo.setCorpname(null);
 		datavo.setCorpkname(null);
+		if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
+			datavo.setIapplystatus(5);
+		}
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", datavo);
 	}
 	
@@ -1097,7 +1100,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 		}
-		if(paramvo.getIapplystatus() != null && paramvo.getIapplystatus() == 4){
+		if(paramvo.getIapplystatus() != null && paramvo.getIapplystatus() == 5){
 			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
 				sql.append(" ,iversion = 5 \n");
 			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
@@ -2230,10 +2233,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 				confvo.setCorpkname(corpvo.getUnitname());// 客户名称
 			}
 			
+			if(confvo.getIapplystatus() != null && confvo.getIapplystatus() != 4){
+				throw new BusinessException("该合同变更申请正在审核中，请审核通过后重试");
+			}
+			
 			return confvo;
+		}else{
+			throw new BusinessException("该合同不允许变更");
 		}
-		
-		return null;
 	}
 	
 	/**
@@ -2326,15 +2333,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("  FROM ynt_contract t  \n") ; 
 		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
-		sql.append("  LEFT JOIN cn_changeapply y ON cn.pk_confrim = y.pk_confrim  \n") ; 
+		sql.append("  LEFT JOIN cn_changeapply y ON t.pk_contract = y.pk_contract  \n") ; 
+		sql.append("                            AND nvl(y.dr, 0) = 0 \n");
+		sql.append("                             AND y.ichangetype != 3 \n ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(y.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
-		sql.append(" AND t.vdeductstatus = 1 \n") ;//审核通过
+		sql.append("   AND t.vdeductstatus = 1 \n") ;//审核通过
 		sql.append("   AND cn.pk_confrim = ? \n") ; //历史合同主键
 		spm.addParam(pamvo.getPk_confrim());
 		

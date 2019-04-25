@@ -1536,13 +1536,6 @@ function change(){
 		});			
 		return;
 	}
-	if(rows[0].apstatus != null && rows[0].apstatus != 4){
-		Public.tips({
-			content : '该合同变更申请正在审核中，请审核通过后重试',
-			type : 2
-		});			
-		return;
-	}
 	$.ajax({
 		url : DZF.contextPath + "/contract/contractconf!queryChangeById.action",
 		dataType : 'json',
