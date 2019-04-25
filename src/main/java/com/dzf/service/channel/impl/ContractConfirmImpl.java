@@ -1100,10 +1100,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_7);
 		}
-		if(paramvo.getIapplystatus() != null && paramvo.getIapplystatus() == 5){
-			if(IStatusConstant.IDEDUCTYPE_1 == opertype){//扣款
+		//审核时，状态为5；驳回时，状态为4；
+		if (paramvo.getIapplystatus() != null && (paramvo.getIapplystatus() == 5 || paramvo.getIapplystatus() == 4)) {
+			if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 扣款
 				sql.append(" ,iversion = 5 \n");
-			}else if(IStatusConstant.IDEDUCTYPE_2 == opertype){//驳回
+			} else if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
 				sql.append(" ,iversion = 6 \n");
 			}
 		}
