@@ -40,9 +40,6 @@ public class MaterielStockInVO extends SuperVO {
 	@FieldAlias("num")
 	private Integer nnum;//入库数量
 	
-	@FieldAlias("code")
-	private String vcode;//物料编号
-	
 	@FieldAlias("memo")
 	private String vmemo;//备注
 	
@@ -66,6 +63,9 @@ public class MaterielStockInVO extends SuperVO {
 	private String opername;//录入人名称
 	
 	private Integer count;//入库单的条数
+	
+	@FieldAlias("code")
+	private String vcode;//物料编号
 	
 	/*******仅作展示，不存库*******/
 	

@@ -306,6 +306,7 @@ function edit(index){
 	
 	$('#mat_add').form('load', row);
 	$('#nname').textbox({required:false});
+	$("#name").textbox({required:true});
 	$('#nname').textbox("setValue",null); 
 	
 	if(row.apply==1){

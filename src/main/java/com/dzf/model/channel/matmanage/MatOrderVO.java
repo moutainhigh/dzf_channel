@@ -61,7 +61,7 @@ public class MatOrderVO extends SuperVO {
 	private String vmemo;//备注
 	
 	@FieldAlias("operid")
-	private String coperatorid;//录入人，申请人
+	private String coperatorid;//录入人
 	
 	@FieldAlias("operdate")
 	private DZFDate doperatedate;//录入日期

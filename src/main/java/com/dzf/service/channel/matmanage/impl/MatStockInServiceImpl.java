@@ -20,6 +20,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -327,12 +328,16 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		
 		MaterielStockInVO msvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
 		MaterielStockInVO  svo = rkCount(msvo);
+		MaterielFileVO vo = new MaterielFileVO();
+		if(msvo.getPk_materiel()!=null){
+			vo	= (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
+		}
 		if(svo!=null && svo.getCount()!=null ){
 			if(svo.getCount() == 1){//只有一条入库单，不可以删除
-				throw new BusinessException("该物料已发货，不可删除");
+				if(vo.getOutnum()!=null && vo.getOutnum()>0){
+					throw new BusinessException("该物料已发货，不可删除");
+				}
 			}else if(svo.getCount() > 1){
-				MaterielFileVO vo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
-				
 				if(vo!=null && msvo!=null){
 					if(vo.getIntnum()!=null && msvo.getNnum()!=null){
 						Integer snum = null;//剩余的数量
