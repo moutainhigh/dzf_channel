@@ -685,12 +685,18 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		
 		    //2.修改子订单
 			
+			//删除原有子订单
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(data.getPk_materielbill());
+			String sql = "delete from cn_materielbill_b where pk_materielbill = ? ";
+			singleObjectBO.executeUpdate(sql, spm);
+			
+			//增加修改后的子订单
 		    List<MatOrderBVO> bvolist = Arrays.asList(bvos);
 		    if(bvolist!=null && bvolist.size()>0){
 		    	  for (MatOrderBVO bvo : bvolist) {
 				    	bvo.setPk_materielbill(data.getPk_materielbill());
-				    	String[] uupdatets = {"pk_materielbill","outnum"};
-				    	singleObjectBO.update(bvo,uupdatets );
+				    	singleObjectBO.insertVO("000001", bvo);
 				    	
 				    	if(type!=null && "1".equals(type)){//发货
 				    		//修改物料档案发货数量

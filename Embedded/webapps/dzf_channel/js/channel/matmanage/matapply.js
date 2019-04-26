@@ -1257,6 +1257,7 @@ function showDetail(index){
 	$('.xid').css("display", "");
 	$('.bid').css("display", "none");
 	$('.aid').css("display", "none");
+	
 	$('#code').textbox({width:168});
 	
 	if(row.status!=4){
@@ -1284,6 +1285,7 @@ function showDetail(index){
 	
 	if(row.children != null && row.children.length > 0){
 		$('#cardGrid').datagrid('loadData',row.children);
+		$('#cardGrid').datagrid('hideColumn','operate');
 	}
 	
 }
