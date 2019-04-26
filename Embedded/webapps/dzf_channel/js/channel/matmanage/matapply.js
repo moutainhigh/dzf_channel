@@ -555,7 +555,7 @@ function initCard(){
 	$('#cardGrid').datagrid({
 		striped : true,
 		rownumbers : true,
-		fitColumns : true,
+		//fitColumns : true,
 		scrollbarSize:0,
 		idField : 'matbillid',
 		height : 100,
@@ -607,7 +607,7 @@ function initCard(){
 				}
 			}
 		}, {
-			width : '100',
+			width : '91',
 			title : '申请数量',
 			field : 'applynum',
             halign : 'center',
@@ -621,7 +621,7 @@ function initCard(){
 				}
 			}
 		}, {
-			width : '70',
+			width : '91',
 			title : '操作',
 			field : 'operate',
             halign : 'center',
@@ -1242,6 +1242,10 @@ function updateData(){
 	$('.xid').css("display", "none");
 	$('.bid').css("display", "none"); 
 	$('.aid').css("display", ""); 
+	$('#stat').textbox('readonly',true);
+	$('#cardGrid').datagrid('showColumn','operate');
+	var col = $('#cardGrid').datagrid('getColumnOption', 'applynum');//获取Column
+	col.width = 112;
 	
 }
 
@@ -1276,6 +1280,7 @@ function showDetail(index){
 	}else if(row.status==4){
 		$('#stat').textbox('setValue','已驳回');
 	}
+	
 	
 	$('#applyname').textbox('setValue',row.applyname);
 	
