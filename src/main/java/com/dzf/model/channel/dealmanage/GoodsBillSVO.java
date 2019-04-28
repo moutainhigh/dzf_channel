@@ -27,6 +27,7 @@ public class GoodsBillSVO extends SuperVO {
 	@FieldAlias("vstatus")
 	private Integer vstatus;//状态   0：订单创建
 	
+	//create-订单创建；confirm-订单确认；send-商品发货；receive-已收货；cancel-取消订单；cancelConf-5：取消确认；
 	@FieldAlias("describe")
 	private String vsdescribe;//状态说明
 	
