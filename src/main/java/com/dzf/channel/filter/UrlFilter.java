@@ -44,19 +44,19 @@ public class UrlFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws 
 	IOException, ServletException {
-			boolean needClearTl = false;
+//			boolean needClearTl = false;
 			try {
 				ServletRequestCache.getInstance().getThreadLocal().set(request);
 	    		//	getTlCurrentRequest().set(request);
 //	    			needClearTl = true;
 			} finally {
-				if(needClearTl) {				
-					try {
-						ServletRequestCache.getInstance().getThreadLocal().remove();
-				//		getTlCurrentRequest().remove();
-					} catch (Exception e) {
-					}
-				}
+//				if(needClearTl) {				
+//					try {
+//						ServletRequestCache.getInstance().getThreadLocal().remove();
+//				//		getTlCurrentRequest().remove();
+//					} catch (Exception e) {
+//					}
+//				}
 			}
 			if(request != null)
 		   	request.setCharacterEncoding("UTF-8");
