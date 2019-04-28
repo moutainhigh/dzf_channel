@@ -18,8 +18,6 @@ public class ToolsUtil {
 		
 	}
 	
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    
 	/**
 	 * 获取两个日期之间的期间数
 	 * @param begindate
@@ -210,19 +208,6 @@ public class ToolsUtil {
         return map;  
     }
     
-    /**
-     * 获取月末日期
-     * @param date
-     * @return
-     * @throws ParseException
-     */
-//    public static String getMaxMonthDate(String date) throws ParseException {
-//		Calendar calendar = Calendar.getInstance();
-//		calendar.setTime(dateFormat.parse(date));
-//		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-//		return dateFormat.format(calendar.getTime());
-//	}
-    
 	/**
 	 * 获取查询期间的上一个期间
 	 * @param period
@@ -271,7 +256,7 @@ public class ToolsUtil {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date.toDate());
 		c.add(Calendar.MONTH, num - 1);
-    	return dateFormat.format(c.getTime());
+		return DateUtils.format(c.getTime(), "yyyy-MM-dd");
     }
     
     /**
