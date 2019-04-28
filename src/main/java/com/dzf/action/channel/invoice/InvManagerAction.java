@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.InvInfoExcelField;
 import com.dzf.action.channel.expfield.InvManageExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.piaotong.invinfo.InvInfoResBVO;
 import com.dzf.model.pub.Grid;
@@ -541,7 +542,6 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		Excelexport2003<InvInfoResBVO> ex = new Excelexport2003<InvInfoResBVO>();
 		InvInfoExcelField fields = new InvInfoExcelField();
 		fields.setVos(explist.toArray(new InvInfoResBVO[0]));
-		;
 		fields.setQj(qj);
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -557,22 +557,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "导出电票余量关闭输入流");
+			InOutUtil.close(toClient, "导出电票余量关闭输出流");
 		}
 	}
 }
