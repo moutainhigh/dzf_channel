@@ -179,11 +179,13 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 								retlist.add(revo);
 								pklist.add(revo.getPk_corp());
 							} else {
-								sumvo.setNtotalcost(SafeCompute.add(sumvo.getNtotalcost(), revo.getNtotalcost()));
-								sumvo.setNdeductmny(SafeCompute.add(sumvo.getNdeductmny(), revo.getNdeductmny()));
-								sumvo.setNdedrebamny(SafeCompute.add(sumvo.getNdedrebamny(), revo.getNdedrebamny()));
-								sumvo.setNdedsummny(SafeCompute.add(sumvo.getNdedsummny(), revo.getNdedsummny()));
-								sumvo.setAmount(ToolsUtil.addInteger(sumvo.getAmount(), revo.getAmount()));
+								if(sumvo != null){
+									sumvo.setNtotalcost(SafeCompute.add(sumvo.getNtotalcost(), revo.getNtotalcost()));
+									sumvo.setNdeductmny(SafeCompute.add(sumvo.getNdeductmny(), revo.getNdeductmny()));
+									sumvo.setNdedrebamny(SafeCompute.add(sumvo.getNdedrebamny(), revo.getNdedrebamny()));
+									sumvo.setNdedsummny(SafeCompute.add(sumvo.getNdedsummny(), revo.getNdedsummny()));
+									sumvo.setAmount(ToolsUtil.addInteger(sumvo.getAmount(), revo.getAmount()));
+								}
 								retlist.add(revo);
 							}
 							num++;
