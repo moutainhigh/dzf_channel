@@ -1,7 +1,6 @@
 package com.dzf.action.channel.refund;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RefundDetailExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.refund.RefundDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
@@ -37,6 +37,11 @@ import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.refund.IRefundDetailService;
 import com.dzf.service.pub.IPubService;
 
+/**
+ * 退款明细查询
+ * @author zy
+ *
+ */
 @ParentPackage("basePackage")
 @Namespace("/refund")
 @Action(value = "refunddetail")
@@ -67,10 +72,13 @@ public class RefundDetailAction extends BaseAction<RefundDetailVO> {
 			}
 		    QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+			if(pamvo == null){
+				pamvo = new QryParamVO();
+			}
 			pamvo.setCuserid(getLoginUserid());
 			List<RefundDetailVO> list = refdetailser.query(pamvo);
-			int page = pamvo == null ? 1 : pamvo.getPage();
-			int rows = pamvo == null ? 10000 : pamvo.getRows();
+			int page = pamvo.getPage();
+			int rows = pamvo.getRows();
 			int len = list == null ? 0 : list.size();
 			if (len > 0) {
 				grid.setTotal((long) (len));
@@ -104,6 +112,9 @@ public class RefundDetailAction extends BaseAction<RefundDetailVO> {
 			}
 		    QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
+			if(pamvo == null){
+				pamvo = new QryParamVO();
+			}
 			pamvo.setCuserid(getLoginUserid());
 			List<RefundDetailVO> clist = refdetailser.queryDetail(pamvo);
 			grid.setRows(clist);
@@ -151,22 +162,8 @@ public class RefundDetailAction extends BaseAction<RefundDetailVO> {
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
-            if(toClient != null){
-                try {
-                    toClient.flush();
-                    toClient.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-            if(servletOutputStream != null){
-                try {
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
+            InOutUtil.close(servletOutputStream, "退款明细查询关闭输入流");
+            InOutUtil.close(toClient, "退款明细查询关闭输出流");
         }
 	}
 }
