@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,8 @@ import com.dzf.service.pub.IPubService;
 
 @Service("matapply")
 public class MatApplyServiceImpl implements IMatApplyService {
+    
+    private Logger logger = Logger.getLogger(this.getClass());
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
@@ -393,7 +396,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					 vo.setDuduenddate(quarter[1]);
 				 }
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 			
 			 //校验
@@ -903,7 +906,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					vo.setDedubegdate(quarter[0]);
 					vo.setDuduenddate(quarter[1]);
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 			}
 			

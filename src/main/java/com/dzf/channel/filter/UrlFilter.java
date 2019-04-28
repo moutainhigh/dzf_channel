@@ -58,7 +58,6 @@ public class UrlFilter implements Filter {
 					}
 				}
 			}
-		
 			if(request != null)
 		   	request.setCharacterEncoding("UTF-8");
 		   	response.setContentType("text/html;charset=UTF-8");
@@ -81,26 +80,10 @@ public class UrlFilter implements Filter {
 	        	return;
 			}
 			//会计公司注册.....zpm增加
-			if(url.endsWith("/sys/sm_user!getLogin.action") || url.endsWith("/au/image.jsp") || url.endsWith("/login.jsp") ){
+			if(url.endsWith("/au/image.jsp") || url.endsWith("/login.jsp") ){
 				filterChain.doFilter(request, response);
 	        	return;
 			}
-			//二维码
-//			if ((url.endsWith(".eot")) || (url.endsWith(".svg"))
-//			    		|| (url.endsWith(".ttf")) || (url.endsWith(".woff"))) {
-//			        filterChain.doFilter(request, response);
-//			        return;
-//			 }
-			 
-//			if(url.endsWith("qrcheck!doQRCodeCheck.action") || url.endsWith("qrcheck!doQRLogin.action")){
-//				filterChain.doFilter(request, response);
-//				return;
-//			}
-			
-//			if(url.contains("/hessian")){
-//				filterChain.doFilter(request, response);
-//	        	return;
-//			}
 
 			String contextPath = req.getContextPath();
 			if(contextPath.equals("/")){
