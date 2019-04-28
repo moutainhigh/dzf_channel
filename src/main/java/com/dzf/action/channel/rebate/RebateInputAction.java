@@ -1,7 +1,6 @@
 package com.dzf.action.channel.rebate;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -475,22 +474,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "返点单录入关闭输入流");
+			InOutUtil.close(toClient, "返点单录入关闭输出流");
 		}
 	}
 	
@@ -523,8 +508,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			InOutUtil.close(servletOutputStream, "返点单录入关闭输入流");
-            InOutUtil.close(toClient, "返点单录入关闭输出流");
+			InOutUtil.close(servletOutputStream, "返点单审批关闭输入流");
+            InOutUtil.close(toClient, "返点单审批关闭输出流");
 		}
 	}
 }
