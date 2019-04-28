@@ -41,7 +41,6 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
 
-
 @Service("matapply")
 public class MatApplyServiceImpl implements IMatApplyService {
 
@@ -102,7 +101,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			for (MatOrderVO mvo : list) {
 				if (mvo.getCoperatorid() != null) {
 					uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					mvo.setApplyname(uservo.getUser_name());
+					if(uservo!=null){
+						mvo.setApplyname(uservo.getUser_name());
+					}
 				}
 				String manager = marmap.get(mvo.getFathercorp());
 				if (!StringUtil.isEmpty(manager)) {
@@ -235,8 +236,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("select DISTINCT b.vname,  \n") ;
 		sql.append("       b.vunit  \n") ; 
-//		sql.append("       nvl(b.applynum, 0) applynum,  \n") ; 
-//		sql.append("       nvl(b.outnum, 0) outnum  \n") ; 
 		sql.append("  from cn_materielbill_b b  \n") ; 
 		sql.append("  left join cn_materielbill c on c.pk_materielbill = b.pk_materielbill  \n") ; 
 		sql.append("  left join cn_materiel m on m.pk_materiel = b.pk_materiel  \n") ; 
@@ -273,10 +272,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		List<MatOrderBVO> bvoList = (List<MatOrderBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(MatOrderBVO.class));
-		if (bvoList != null && bvoList.size() > 0) {
-			return bvoList;
-		}
-		return null;
+		return bvoList;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -290,12 +286,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(MaterielFileVO.class));
-		if (bvoList != null && bvoList.size() > 0) {
-			return bvoList;
-		}
-		return null;
+		return bvoList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MatOrderVO> queryAllProvince()  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -306,12 +300,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		List<MatOrderVO> plist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(MatOrderVO.class));
-		if (plist != null && plist.size() > 0) {
-			return plist;
-		}
-		return null;
+		return plist;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MatOrderVO> queryCityByProId(Integer pid)  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -324,12 +316,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		List<MatOrderVO> clist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(MatOrderVO.class));
-		if (clist != null && clist.size() > 0) {
-			return clist;
-		}
-		return null;
+	    return clist;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MatOrderVO> queryAreaByCid(Integer cid)  throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
@@ -342,10 +332,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 		List<MatOrderVO> clist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(MatOrderVO.class));
-		if (clist != null && clist.size() > 0) {
-			return clist;
-		}
-		return null;
+		return clist;
 	}
 
 	@Override
@@ -420,6 +407,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
   }
 	
 	
+	@SuppressWarnings("unchecked")
 	private String checkIsInfo(MatOrderVO vo,MatOrderBVO[] bvos,String message)  throws DZFWarpException{
 		if(bvos!=null && bvos.length>0){
 			for (MatOrderBVO mbvo :bvos) {
@@ -429,7 +417,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						Integer passNum = null;
 							//获取上季度提单审核通过数
 							passNum	= queryContNum(vo,vo.getFathercorp());
-						
 						
 						StringBuffer csql = new StringBuffer();
 						SQLParameter cspm=new SQLParameter();
@@ -472,12 +459,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						Integer ssumout= (int) (0.7*sumout);
 						if(sumout == 0){//上季度没有发货
 							//可以申请保存
-							//save(vo, uservo, bvos, type);
 						}else{
 							if(passNum!=null&&ssumout!=null){
 								if(passNum >= ssumout){
 									//可以申请保存
-									//save(vo, uservo, bvos, type);
 								}else{
 									//提示再申请保存
 									mbvo.setSumapply(sumout);
@@ -493,7 +478,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						}
 					}else{
 						//不需要校验
-						//save(vo, uservo, bvos, type);
 					}
 				}
 			}
@@ -624,10 +608,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		Integer sumnum = 0;
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielbill(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
 			}
 			
 			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
@@ -834,9 +816,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		data.setCoperatorid(uservo.getCuserid());
 		data.setDoperatedate(new DZFDate());
 		data.setPk_corp("000001");
-		data.setVstatus(data.VSTATUS_1);// 合同状态：默认为待审核
+		data.setVstatus(IStatusConstant.VSTATUS_1);// 合同状态：默认为待审核
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public MatOrderVO queryDataById(MatOrderVO mvo,String id,UserVO uservo,String type,String stype)  throws DZFWarpException {
 		String message = "";
@@ -868,19 +851,27 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				if("1".equals(type)){//发货
 					if(vo.getDeliverid()!=null){
 						uservo = UserCache.getInstance().get(vo.getDeliverid(), null);
-						vo.setDename(uservo.getUser_name());
+						if(uservo!=null){
+							vo.setDename(uservo.getUser_name());
+						}
 					}else{
 						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
-						vo.setDename(uservo.getUser_name());//发货人
+						if(uservo!=null){
+							vo.setDename(uservo.getUser_name());//发货人
+						}
 					}
 				}
 					if (vo.getCoperatorid() != null) {
 						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-						vo.setApplyname(uservo.getUser_name());//申请人
+						if(uservo!=null){
+							vo.setApplyname(uservo.getUser_name());//申请人
+						}
 					}
 					if(vo.getAuditerid()!=null){
 						uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
-						vo.setAudname(uservo.getUser_name());//审核人
+						if(uservo!=null){
+							vo.setAudname(uservo.getUser_name());//审核人
+						}
 					}
 					
 			StringBuffer ssql = new StringBuffer();
@@ -965,12 +956,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		str.append("     from cn_materielbill  \n");
 		str.append("     where nvl(dr,0) = 0 and \n");
 		str.append("     pk_materielbill = ? \n");
-		MatOrderVO vo = (MatOrderVO) singleObjectBO.executeQuery(str.toString(), spm, new BeanProcessor(MatOrderVO.class));
+		return (MatOrderVO) singleObjectBO.executeQuery(str.toString(), spm, new BeanProcessor(MatOrderVO.class));
 		
-		if(vo!=null){
-			return vo;
-		}
-		return null;
 	}
 
 	@Override
@@ -1011,6 +998,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * 大区负责人只能看见自己负责的加盟商
 	 * @param stype 
 	 */
+	@SuppressWarnings("unchecked")
 	private List<ChnAreaBVO> queryPro(UserVO uservo, String stype)   throws DZFWarpException{
 		
 		StringBuffer sql = new StringBuffer();
@@ -1035,18 +1023,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			}
 		}
 		
-		
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ChnAreaBVO.class));
-	    if(list!=null && list.size()>0){
-	    	return list;
-	    }
-		return null;
+	    return list;
 	}
 	
 	/**
 	 * 查询直接负责的加盟商
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<CorpVO> queryChannel(UserVO uservo) throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -1068,7 +1052,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		List<CorpVO> corpList = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(CorpVO.class));
 		if(corpList!=null && corpList.size()>0){
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, corpList, 1);
-			
 			return corpList;
 		}
 		return null;
@@ -1079,8 +1062,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		
 		 uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 		 MatOrderVO mvo = new MatOrderVO();
-		 mvo.setApplyname(uservo.getUser_name());
-		 QueryDeCodeUtils.decKeyUtil(new String[] { "applyname" }, mvo, 1);
+		 if(uservo!=null){
+			 mvo.setApplyname(uservo.getUser_name());
+			 QueryDeCodeUtils.decKeyUtil(new String[] { "applyname" }, mvo, 1);
+		 }
 		 return mvo;
 	}
 
@@ -1111,11 +1096,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * @return
 	 */
 	private static boolean isInteger(String str) throws DZFWarpException {  
-	        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
-	        return pattern.matcher(str).matches();  
+	    Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
+	    return pattern.matcher(str).matches();  
 	}
-
-	
-	
 
 }

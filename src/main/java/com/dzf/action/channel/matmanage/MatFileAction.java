@@ -276,8 +276,13 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 				grid.setRows(list);
 				grid.setTotal((long) (list.size()));
 				grid.setMsg("查询成功！");
-				grid.setSuccess(true);
+				
+			}else{
+				grid.setMsg("查询数据为空！");
+				grid.setRows(new ArrayList<MaterielFileVO>());
+				grid.setTotal((long)0);
 			}
+			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}

@@ -153,15 +153,7 @@ public class MatOrderVO extends SuperVO {
 	
 	/*******仅作展示，不存库*******/
 	//0-全部、1-待审核、2-待发货、3-已发货、4-已驳回
-	public static final String VSTATUS = "vstatus";
 	
-	public static final Integer VSTATUS_1 = 1;
-	
-	public static final Integer VSTATUS_2 = 2;
-	
-	public static final Integer VSTATUS_3 = 3;
-	
-	public static final Integer VSTATUS_4 = 4;
 	
 	public String getPk_materielbill() {
 		return pk_materielbill;
