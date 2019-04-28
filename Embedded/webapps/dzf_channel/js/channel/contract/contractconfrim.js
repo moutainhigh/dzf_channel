@@ -1548,6 +1548,11 @@ function change(){
 				}else{
 					showNormalChangeDlg(row);
 				}
+			}else {
+				Public.tips({
+					content : rs.msg,
+					type : 2
+				});
 			}
 		}
 		
