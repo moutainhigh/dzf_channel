@@ -17,6 +17,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.chn_set.ISaleAnalyseService;
 
 @Service("sale_analyse")
@@ -105,11 +106,11 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 					salevo.setContractmny(chnvo);
 				}
 			}
-			if(incmap != null && !incmap.isEmpty()){
-				if(salevo.getContractmny()!=null){
-					salevo.setContractmny(salevo.getContractmny().add(chnmap.get(pk_corp)));
-				}else{
-					salevo.setContractmny(chnmap.get(pk_corp));
+			if (incmap != null && !incmap.isEmpty()) {
+				if (salevo.getContractmny() != null) {
+					salevo.setContractmny(SafeCompute.add(salevo.getContractmny(), incmap.get(pk_corp)));
+				} else {
+					salevo.setContractmny(incmap.get(pk_corp));
 				}
 			}
 			if(salevo.getIsignnum() != null && salevo.getContractmny() != null){
