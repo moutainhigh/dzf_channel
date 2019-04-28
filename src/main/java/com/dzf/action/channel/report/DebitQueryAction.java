@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.pub.ColumnCellAttr;
 import com.dzf.model.pub.Grid;
@@ -86,7 +87,6 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 			DebitQueryVO qvo = new DebitQueryVO();
 			qvo = (DebitQueryVO) DzfTypeUtils.cast(getRequest(), qvo);
 			List<DebitQueryVO> rows = debitquery.query(qvo);
-//			QueryDeCodeUtils.decKeyUtils(new String[]{"corpname"}, rows, 2);
 			grid.setRows(rows);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功!");
@@ -250,22 +250,8 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
-			if(toClient != null){
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
-			if(servletOutputStream != null){
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "加盟商扣款查询关闭输入流");
+			InOutUtil.close(toClient, "加盟商扣款查询关闭输出流");
 		}
 	}
 }
