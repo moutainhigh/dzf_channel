@@ -3,7 +3,6 @@ package com.dzf.action.channel;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -27,6 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ContractConExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.contract.ContractConfrimVO;
 import com.dzf.model.demp.contract.ContractDocVO;
 import com.dzf.model.pub.Grid;
@@ -374,22 +374,10 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
-
+		    log.error(e);
 		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					log.error(e.getMessage());
-				}
-			}
-			if (os != null) {
-				try {
-					os.close();
-				} catch (IOException e) {
-					log.error(e.getMessage());
-				}
-			}
+		    InOutUtil.close(is, "合同确认查看附件关闭输入流");
+            InOutUtil.close(os, "合同确认查看附件关闭输出流");
 		}
 	}
 
@@ -492,22 +480,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+		    InOutUtil.close(servletOutputStream, "合同确认导出关闭输入流");
+            InOutUtil.close(toClient, "合同确认导出关闭输出流");
 		}
 	}
 	
@@ -577,22 +551,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+		    InOutUtil.close(servletOutputStream, "合同确认导出全部关闭输入流");
+            InOutUtil.close(toClient, "合同确认导出全部关闭输出流");
 		}
 	}
 	

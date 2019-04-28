@@ -25,6 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChnPayBalExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
@@ -150,22 +151,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "ChnPayBalanceAction关闭流");
+			InOutUtil.close(toClient, "ChnPayBalanceAction关闭流");
 		}
 	}
 
@@ -330,22 +317,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
+		    InOutUtil.close(servletOutputStream, "ChnPayBalanceAction明细导出关闭流");
+            InOutUtil.close(toClient, "ChnPayBalanceAction明细导出关闭流");
 		}
 	}
 

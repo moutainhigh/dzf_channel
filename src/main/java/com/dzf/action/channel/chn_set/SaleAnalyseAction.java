@@ -1,6 +1,5 @@
 package com.dzf.action.channel.chn_set;
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.SaleAnalyseExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.sale.SaleAnalyseVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.BusinessException;
@@ -108,22 +108,8 @@ public class SaleAnalyseAction extends  BaseAction<SaleAnalyseVO> {
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
-			if(toClient != null){
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
-			if(servletOutputStream != null){
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
+		    InOutUtil.close(servletOutputStream, "销售数据分析导出关闭输入流");
+            InOutUtil.close(toClient, "销售数据分析导出关闭输出流");
 		}
 	}
 }
