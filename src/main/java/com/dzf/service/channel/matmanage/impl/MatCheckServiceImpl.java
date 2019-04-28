@@ -17,7 +17,6 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
@@ -31,6 +30,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ChnAreaBVO> queryComboBox(UserVO uservo)   throws DZFWarpException{
 		
@@ -65,13 +65,11 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		String uuid = UUID.randomUUID().toString();
         try {
         	boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielbill(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
 			}
 			
-			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
+			checkData(data.getPk_materielbill(), data.getUpdatets());
 			//修改申请通过数
 			String[] updatets = {"succnum"};
 			if(bvos!=null && bvos.length>0){
@@ -121,10 +119,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		sql.append("     and pk_materielbill = ? \n");
 		
 		MatOrderVO vo=(MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
-		if(vo!=null){
-			return vo;
-		}
-		return null;
+		return vo;
 	}
 	
 	 /**

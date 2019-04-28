@@ -17,6 +17,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MatOrderVO> queryComboBox()   throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
@@ -25,11 +26,8 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		sql.append(" FROM cn_logistics lg \n");
 		sql.append("  where nvl(lg.dr,0)= 0 \n");
 		List<MatOrderVO> volist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(MatOrderVO.class));
-		if(volist!=null && volist.size()>0){
-			return volist;
-		}
+		return volist;
 		
-		return null;
 	}
 
 }

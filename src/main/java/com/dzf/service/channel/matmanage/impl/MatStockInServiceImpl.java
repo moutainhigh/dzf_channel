@@ -20,10 +20,8 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
-import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatStockInService;
@@ -97,12 +95,10 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		String uuid = UUID.randomUUID().toString();
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "单据编码：" + data.getVbillcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("单据编码：" + data.getVbillcode() + ",其他用户正在操作此数据;<br>");
 			}
-			MaterielStockInVO checkData = checkData(data.getPk_materielin(), data.getUpdatets());
+			checkData(data.getPk_materielin(), data.getUpdatets());
 			
 			String[] updates = {"vmemo", "stockdate","ncost","nnum","ntotalmny" };
 		    singleObjectBO.update(data, updates);
@@ -153,7 +149,6 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	private String getMatcode(MaterielStockInVO vo) throws DZFWarpException {
 		String code;
 		String str = "WLRK";
-		DZFDate now = new DZFDate();
 		MaxCodeVO mcvo = new MaxCodeVO();
 		mcvo.setTbName(vo.getTableName());
 		mcvo.setFieldName("vbillcode");
@@ -223,7 +218,9 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	       if(list!=null && list.size()>0){
 	    	   for (MaterielStockInVO mvo : list) {
 		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					mvo.setOpername(uservo.getUser_name());
+					if(uservo!=null){
+						mvo.setOpername(uservo.getUser_name());
+					}
 				}
 		        QueryDeCodeUtils.decKeyUtils(new String[] { "opername" }, list, 1);
 		        return list;
@@ -237,10 +234,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	public MaterielStockInVO queryDataById(String id)  throws DZFWarpException {
 
 		MaterielStockInVO vo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, id);
-		if(vo!=null){
-			return vo;
-		}
-		return null;
+		return vo;
 	}
 
 	@Override
@@ -252,10 +246,8 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		String uuid = UUID.randomUUID().toString();
 		try {
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielin(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "单据编码：" + data.getVbillcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("单据编码：" + data.getVbillcode() + ",其他用户正在操作此数据;<br>");
 			}
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(data.getPk_materielin());
@@ -265,7 +257,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 				//修改入库数量
 				fvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, msvo.getPk_materiel());
 				if(fvo!=null){
-					if(data.getNnum()!=null){
+					if(msvo.getNnum()!=null && fvo.getIntnum()!=null){
 						fvo.setIntnum(fvo.getIntnum() - msvo.getNnum());
 						String[] updates = {"intnum"};
 				    	singleObjectBO.update(fvo, updates);
@@ -274,7 +266,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			}
 			String sql="delete from cn_materielin where pk_materielin = ? \n";
 			int i = singleObjectBO.executeUpdate(sql, spm);
-			if(i == 0){
+			if(i == 0 && fvo!=null){
 				fvo.setOutnum(num);
 				throw new BusinessException("入库单删除失败");
 			}
@@ -295,16 +287,16 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	 * @param data
 	 */
 	private void Isintnum(MaterielStockInVO data)  throws DZFWarpException{
-		Integer intnum = null;
-		Integer sumnum = null;
-		Integer ssum = null;
+		
 		if (!StringUtil.isEmpty(data.getPk_materiel())) {
     		MaterielFileVO mfvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class, data.getPk_materiel());
     		MaterielStockInVO mmvo = (MaterielStockInVO) singleObjectBO.queryByPrimaryKey(MaterielStockInVO.class, data.getPk_materielin());
     		MaterielStockInVO vo = rkCount(data);
     		if(vo!=null && vo.getCount()==1){//只有一条入库单
-    			if(data.getNnum()<mfvo.getOutnum()){
-    				throw new BusinessException("该物料入库数量不可小于已发货数量");
+    			if(mfvo.getOutnum()!=null){
+    				if(data.getNnum()<mfvo.getOutnum()){
+        				throw new BusinessException("该物料入库数量不可小于已发货数量");
+        			}
     			}
     		}else{
     			Integer snum = null;//剩余的
@@ -372,10 +364,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		sql.append("      where nvl(dr,0) = 0  ");
 		sql.append("      and pk_materiel = ?  \n ");
 		MaterielStockInVO svo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
-	    if(svo!=null){
-	    	return svo;
-	    }
-	    return null;
+	    return svo;
 	}
 }
 

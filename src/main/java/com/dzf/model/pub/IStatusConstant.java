@@ -131,4 +131,11 @@ public interface IStatusConstant {
 	/** 物料封存状态  1：启用  2：封存  */
 	public static int ISSEAL_1 = 1;
 	public static int ISSEAL_2 = 2;
+	
+	/** 合同状态  0：全部、1：待审核、2：待发货、3：已发货、4：已驳回 */
+	public static final int VSTATUS_1 = 1;
+	public static final int VSTATUS_2 = 2;
+	public static final int VSTATUS_3 = 3;
+	public static final int VSTATUS_4 = 4;
+	
 }

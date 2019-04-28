@@ -48,12 +48,6 @@ public class MaterielFileVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间
 	
-	public static final String ISSEAL = "isseal";
-	
-	public static final Integer ISSEAL_1 = 1;//启用
-	
-	public static final Integer ISSEAL_2 = 2;//封存
-	
 	/********不存库**********/
 	
 	private String applyreq;//申请条件

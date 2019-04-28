@@ -44,15 +44,14 @@ public class MatFileServiceImpl implements IMatFileService {
 	
 	@Override
 	public Boolean queryMatName(String name)  throws DZFWarpException{
-		Boolean b=false;
 		String sql="select * from cn_materiel where nvl(dr,0)=0 and vname=? ";
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(name);
 		MaterielFileVO vo= (MaterielFileVO) singleObjectBO.executeQuery(sql, spm, new BeanProcessor(MaterielFileVO.class));
 		if(vo==null){
-			b=true;
+			return true;
 	    }
-		return b;
+		return false;
 	 }
 
 	@Override
@@ -74,12 +73,10 @@ public class MatFileServiceImpl implements IMatFileService {
 		String uuid = UUID.randomUUID().toString();
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materiel(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "物料编号：" + data.getVcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("物料编号：" + data.getVcode() + ",其他用户正在操作此数据;<br>");
 			}
-			MaterielFileVO checkData = checkData(data.getPk_materiel(), data.getUpdatets());
+			checkData(data.getPk_materiel(), data.getUpdatets());
 			
 			String[] updates = {"vname", "vunit", "isappl" };
 		    singleObjectBO.update(data, updates);
@@ -142,7 +139,7 @@ public class MatFileServiceImpl implements IMatFileService {
 		data.setPk_corp("000001");
 		data.setOutnum(0);//默认发货数量为0
 		data.setIntnum(0);//默认入库数量为0
-		data.setIsseal(data.ISSEAL_1);//封存状态：默认为启用
+		data.setIsseal(IStatusConstant.ISSEAL_1);//封存状态：默认为启用
 	}
 
 	@Override
@@ -160,7 +157,9 @@ public class MatFileServiceImpl implements IMatFileService {
 	       if(list!=null && list.size()>0){
 	    	   for (MaterielFileVO mvo : list) {
 		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					mvo.setApplyname(uservo.getUser_name());
+					if(uservo!=null){
+						mvo.setApplyname(uservo.getUser_name());
+					}
 				}
 		        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);  
 	       }
@@ -217,10 +216,8 @@ public class MatFileServiceImpl implements IMatFileService {
 		String uuid = UUID.randomUUID().toString();
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(mvo.getTableName(), mvo.getPk_materiel(), uuid, 60);
-			String message;
 			if (!lockKey) {
-				message = "物料编号：" + mvo.getVcode() + ",其他用户正在操作此数据;<br>";
-				throw new BusinessException(message);
+				throw new BusinessException("物料编号：" + mvo.getVcode() + ",其他用户正在操作此数据;<br>");
 			}
 			if(type==2){
 				mvo.setIsseal(IStatusConstant.ISSEAL_2);//启用变为封存
@@ -250,26 +247,23 @@ public class MatFileServiceImpl implements IMatFileService {
 	 * @throws DZFWarpException
 	 */
 	private void checkIsOperY(Integer sseal, String code, Integer type, String msg) throws DZFWarpException{
-		String message = "";
 			if (sseal == null) {
-				message = "物料编号：" + code + "是错误数据";
-				throw new BusinessException(message);
+				throw new BusinessException("物料编号：" + code + "是错误数据");
 			}else{
 				if(type==1){
 				    if (sseal == 1) {
-						message = "物料编号：" + code + msg;
-						throw new BusinessException(message);
+						throw new BusinessException("物料编号：" + code + msg);
 					} 
 				}
 				if(type==2){
 				    if (sseal == 2) {
-						message = "物料编号：" + code + msg;
-						throw new BusinessException(message);
+						throw new BusinessException("物料编号：" + code + msg);
 					} 
 				}
 			}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MaterielFileVO> querySsealById(String ids)  throws DZFWarpException {
 		
@@ -289,13 +283,10 @@ public class MatFileServiceImpl implements IMatFileService {
 		sql.append(  "   from cn_materiel \n");
 		sql.append(  "   where nvl(dr,0)=0 and pk_materiel =? \n");
 		spm.addParam(id);
-		MaterielFileVO vo = (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
-		if(vo!=null){
-			return vo;
-		}
-		return null;
+		return (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException {
 		
@@ -309,10 +300,7 @@ public class MatFileServiceImpl implements IMatFileService {
 		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0 and \n");
 		 
 		 List<MaterielStockInVO> bvosList= (List<MaterielStockInVO>) singleObjectBO.executeQuery(sql.toString()+condition,null, new BeanListProcessor(MaterielStockInVO.class));
-	     if(bvosList!=null&&bvosList.size()>0){
-	    	 return bvosList;
-	     }
-		return null;
+	     return bvosList;
 	}
 
 	@Override
@@ -336,6 +324,7 @@ public class MatFileServiceImpl implements IMatFileService {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo)  throws DZFWarpException {
 		StringBuffer sql=new StringBuffer();
@@ -353,19 +342,9 @@ public class MatFileServiceImpl implements IMatFileService {
 		}
 		
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(MaterielFileVO.class) );
+		return bvoList;
 		
-		if(bvoList!=null && bvoList.size()>0){
-			/*for (MaterielFileVO mvo : bvoList) {
-	            uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
-				mvo.setApplyname(uservo.getUser_name());
-			}
-			QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, bvoList, 1);*/
-			return bvoList;
-		}
-		
-		return null;
 	}
 
-	
 
 }
