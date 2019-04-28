@@ -523,15 +523,22 @@ public class ChnPayServiceImpl implements IChnPayService {
 	        if(list != null && list.size() > 0){
 	        	File f = null;
 	        	File parent=null;
+	        	boolean ret = true;
 	        	for(ChnPayBillVO vo : list){
 	        		if(!StringUtil.isEmpty(vo.getVfilepath())){
 	        			f = new File(vo.getVfilepath());
 	        			parent=f.getParentFile();
-						f.delete();
+						ret = f.delete();
+						if(!ret){
+						    Logger.info(this, "删除文件失败。");
+						}
 	        		}
 	        	}
 	        	if(parent!=null){
-	        		parent.delete();//删除文件夹  
+	        	    ret = parent.delete();//删除文件夹  
+	        	    if(!ret){
+                        Logger.info(this, "删除文件失败。");
+                    }
 	        	}
 	        }
 		}else{
@@ -552,42 +559,45 @@ public class ChnPayServiceImpl implements IChnPayService {
 	/**
 	 * 多个付款时间戳校验
 	 */
-	private HashMap<String,Object> checkDatas(ChnPayBillVO[] vos,String pk_paybills,String errmsg,int stat){
-		HashMap<String,Object> cmap=new HashMap<>();
-		String condition = "  nvl(dr,0)=0 and pk_paybill in("+ pk_paybills + ")";//pk_corp=? and
-		SQLParameter params = new SQLParameter();
-		ArrayList<ChnPayBillVO> list = (ArrayList<ChnPayBillVO>)singleObjectBO.retrieveByClause(ChnPayBillVO.class, condition, params);
-		HashMap<String , ChnPayBillVO> map=new HashMap<>();
-		for (ChnPayBillVO vo : list) {
-			map.put(vo.getPk_paybill(), vo);
-		}
-		ArrayList<ChnPayBillVO> clist=new ArrayList<ChnPayBillVO>();
-		String str="";
-		String cids="";//只是为了删除功能
-		for (ChnPayBillVO vo : vos) {
-			if(vo.getTstamp().compareTo(map.get(vo.getPk_paybill()).getTstamp())!=0){
-				str+=vo.getVbillcode()+"、";
-			}else{
-				vo.setVstatus(stat);
-				cids+="'"+vo.getPk_paybill()+"'"+",";
-				vo.setTstamp(new DZFDateTime());
-				clist.add(vo);
-			}
-		}
-		if(!StringUtil.isEmpty(str)){
-			errmsg="付款编号："+str.substring(0,str.length()-1)+"数据已发生变化;";
-		}
-		cmap.put("list", clist);
-		cmap.put("errmsg", errmsg);
-		cmap.put("cids", cids);
-		return cmap;
-	}
+//	private HashMap<String,Object> checkDatas(ChnPayBillVO[] vos,String pk_paybills,String errmsg,int stat){
+//		HashMap<String,Object> cmap=new HashMap<>();
+//		String condition = "  nvl(dr,0)=0 and pk_paybill in("+ pk_paybills + ")";//pk_corp=? and
+//		SQLParameter params = new SQLParameter();
+//		ArrayList<ChnPayBillVO> list = (ArrayList<ChnPayBillVO>)singleObjectBO.retrieveByClause(ChnPayBillVO.class, condition, params);
+//		HashMap<String , ChnPayBillVO> map=new HashMap<>();
+//		for (ChnPayBillVO vo : list) {
+//			map.put(vo.getPk_paybill(), vo);
+//		}
+//		ArrayList<ChnPayBillVO> clist=new ArrayList<ChnPayBillVO>();
+//		String str="";
+//		String cids="";//只是为了删除功能
+//		for (ChnPayBillVO vo : vos) {
+//			if(vo.getTstamp().compareTo(map.get(vo.getPk_paybill()).getTstamp())!=0){
+//				str+=vo.getVbillcode()+"、";
+//			}else{
+//				vo.setVstatus(stat);
+//				cids+="'"+vo.getPk_paybill()+"'"+",";
+//				vo.setTstamp(new DZFDateTime());
+//				clist.add(vo);
+//			}
+//		}
+//		if(!StringUtil.isEmpty(str)){
+//			errmsg="付款编号："+str.substring(0,str.length()-1)+"数据已发生变化;";
+//		}
+//		cmap.put("list", clist);
+//		cmap.put("errmsg", errmsg);
+//		cmap.put("cids", cids);
+//		return cmap;
+//	}
 	
 	@Override
 	public void deleteImageFile(ChnPayBillVO vo) throws DZFWarpException {
 		vo=queryByID(vo.getPk_paybill());
 		File file = new File(vo.getVfilepath());
-		file.delete();
+		boolean ret = file.delete();
+		if(!ret){
+		    Logger.info(this, "deleteImageFile():删除文件失败。");
+		}
 		vo.setDocName(null);
 		vo.setDocOwner(null);
 		vo.setDocTime(null);

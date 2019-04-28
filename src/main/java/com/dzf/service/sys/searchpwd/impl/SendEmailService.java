@@ -175,15 +175,16 @@ public static void main(String[] args) {
 	    String content = "你好！";// 邮件内容 
 	    String username = "dg9259@163.com";// 发件人真实的账户名
 	    String password = "18242981180";// 发件人密码 
-*/		String smtp = "smtp.exmail.qq.com";// smtp服务器 
-	    String from = "lili@dazhangfang.com";// 邮件显示名称 
-	    String to = "1250776020@qq.com";// 收件人的邮件地址，必须是真实地址 
-	    String copyto = "";// 抄送人邮件地址 
-	    String subject = "测试邮件";// 邮件标题 
-	    String content = "你好！";// 邮件内容 
-	    String username = "lili@dazhangfang.com";// 发件人真实的账户名
-	    String password = "19940709LIli11";// 发件人密码 
-		SendEmailService.sendAndCc(smtp, from, to, copyto, subject, content, username, password); 
+		 */		
+//        String smtp = "smtp.exmail.qq.com";// smtp服务器 
+//	    String from = "lili@dazhangfang.com";// 邮件显示名称 
+//	    String to = "1250776020@qq.com";// 收件人的邮件地址，必须是真实地址 
+//	    String copyto = "";// 抄送人邮件地址 
+//	    String subject = "测试邮件";// 邮件标题 
+//	    String content = "你好！";// 邮件内容 
+//	    String username = "lili@dazhangfang.com";// 发件人真实的账户名
+//	    String password = "19940709LIli11";// 发件人密码 
+//		SendEmailService.sendAndCc(smtp, from, to, copyto, subject, content, username, password); 
     } 
 
 }

@@ -264,7 +264,7 @@ public class PiaoTongBill {
 
             return Base64CodeUtils.encode(signed);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         return null;
