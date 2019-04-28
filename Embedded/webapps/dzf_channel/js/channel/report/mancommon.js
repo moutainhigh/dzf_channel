@@ -38,8 +38,17 @@ function qryDetail(cid,corpnm){
 				$('#qrydate').html(qrydate);
 				$('#gridh').datagrid('loadData',res);
 				$('#detail_dialog').dialog('open');
-				
-				$('#gridh').datagrid('resize',{ 
+				var url;
+				if(id =="#gridh"){
+					url = contextPath + '/report/manager!queryDetail.action';
+				}else if(id == "#gridw"){
+					url = contextPath + '/report/manager!queryWDetail.action?ovince=5';
+				}else{
+					url = contextPath + '/report/manager!queryWDetail.action?ovince=7';
+				}
+				$(id).datagrid('options').url = url;
+				$(id).datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
+				$(id).datagrid('resize',{ 
 					height : '350',
 					width : '100%'
 				});
