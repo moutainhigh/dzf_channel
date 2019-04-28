@@ -40,9 +40,12 @@ public class ChannelAction extends BaseAction<UserVO> {
 			}
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			if(paramvo == null){
+				paramvo = new QryParamVO();
+			}
 			paramvo.setCuserid(uservo.getCuserid());
-			int page = paramvo == null ? 1 : paramvo.getPage();
-			int rows = paramvo == null ? 100000 : paramvo.getRows();
+			int page = paramvo.getPage();
+			int rows = paramvo.getRows();
 			List<CorpVO> list = channel.querySmall(paramvo);
 			if (list != null && list.size() > 0) {
 				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
