@@ -43,6 +43,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
@@ -146,7 +147,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			List<CorpVO> list = invManagerSer.queryChannel(paramvo);
 			if (list != null && list.size() > 0) {
-				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
+				CorpVO[] corpvos = list.toArray(new CorpVO[0]);
+				corpvos = (CorpVO[]) QueryUtil.getPagedVOs(corpvos, page, rows);
 				grid.setRows(Arrays.asList(corpvos));
 				grid.setTotal((long) (list.size()));
 			} else {
@@ -155,21 +157,10 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			grid.setMsg("查询成功！");
 			grid.setSuccess(true);
-			// grid.setRows(rows);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
-	}
-
-	private CorpVO[] getPagedVOs(CorpVO[] cvos, int page, int rows) {
-		int beginIndex = rows * (page - 1);
-		int endIndex = rows * page;
-		if (endIndex >= cvos.length) {// 防止endIndex数组越界
-			endIndex = cvos.length;
-		}
-		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
-		return cvos;
 	}
 
 	/**
@@ -191,7 +182,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			String[] pkArry = pkinvoicesToArray(pk_invoices);
 			List<ChInvoiceVO> listError = invManagerSer.onBilling(pkArry, uid, invtime);
 			int errorNum = listError == null ? 0 : listError.size();
-			int success = pkArry.length - errorNum;
+			int arrayNum = pkArry == null ? 0 :pkArry.length;
+			int success = arrayNum - errorNum;
 			StringBuffer msg = new StringBuffer();
 			msg.append("成功").append(success).append("条");
 			if (listError != null && errorNum > 0) {
@@ -226,28 +218,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_39);
-			
-//			ChInvoiceVO paramvo = new ChInvoiceVO();
-//			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-//			
-//			String pk_invoices = getRequest().getParameter("ids");
-//			String[] pkArry = pkinvoicesToArray(pk_invoices);
-//			
-//			List<ChInvoiceVO> listError = invManagerService.onAutoBill(pkArry, getLoginUserInfo());
-//			int errorNum = listError == null ? 0 : listError.size();
-//			int success = pkArry.length - errorNum;
-//			StringBuffer msg = new StringBuffer();
-//			msg.append("成功").append(success).append("条");
-//			if (listError != null && errorNum > 0) {
-//				msg.append("，失败").append(errorNum).append("条<br>");
-//				for (ChInvoiceVO vo : listError) {
-//					msg.append("加盟商：").append(vo.getCorpname()).append(",失败原因：").append(vo.getMsg()).append("<br>");
-//				}
-//			}
-//			json.setMsg(msg.toString());
-			
 			checkBeforeAutoBill(uservo);
-
 			HashMap<String, DZFDouble> useMap = invManagerSer.queryUsedMny();
 			ChInvoiceVO[] chiVOs = getOperateData();
 			int rignum = 0;
