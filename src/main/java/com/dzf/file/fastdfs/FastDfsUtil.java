@@ -21,6 +21,7 @@ import org.csource.fastdfs.StorageClient1;
 import org.csource.fastdfs.StorageServer;
 import org.csource.fastdfs.TrackerServer;
 
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.spring.SpringUtils;
 
 /**
@@ -93,7 +94,8 @@ public class FastDfsUtil {
 			throw ERRORS.READ_FILE_ERROR.ERROR();
 		}finally{
 			if(is != null){
-				IOUtils.closeQuietly(is);
+//				IOUtils.closeQuietly(is);
+			    InOutUtil.close(is, "附件服务器");
 			}
 		}
 		

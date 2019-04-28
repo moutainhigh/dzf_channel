@@ -216,12 +216,12 @@ public class ToolsUtil {
      * @return
      * @throws ParseException
      */
-    public static String getMaxMonthDate(String date) throws ParseException {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(dateFormat.parse(date));
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-		return dateFormat.format(calendar.getTime());
-	}
+//    public static String getMaxMonthDate(String date) throws ParseException {
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(dateFormat.parse(date));
+//		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+//		return dateFormat.format(calendar.getTime());
+//	}
     
 	/**
 	 * 获取查询期间的上一个期间

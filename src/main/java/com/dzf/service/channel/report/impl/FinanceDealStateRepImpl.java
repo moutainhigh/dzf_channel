@@ -1,6 +1,5 @@
 package com.dzf.service.channel.report.impl;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,12 +47,8 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	@Override
 	public List<FinanceDealStateRepVO> query(QryParamVO pamvo) throws DZFWarpException {
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-			try {
-				String begindate = ToolsUtil.getMaxMonthDate(pamvo.getPeriod() + "-01");
-				pamvo.setBegdate(new DZFDate(begindate));
-			} catch (ParseException e) {
-				throw new BusinessException("日期格式转换错误");
-			}
+		    DZFDate begindate =DateUtils.getPeriodEndDate(pamvo.getPeriod());
+			pamvo.setBegdate(begindate);
 		}
 
 		// 1、按照所选则的大区、省（市）、会计运营经理和当前登陆人过滤出符合条件的加盟商信息

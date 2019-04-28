@@ -22,9 +22,9 @@ public class HeartBeat {
 	/** fastdfs连接池 */
 	private ConnectionPool pool = null;
 	/** 小时毫秒数 */
-	public static int ahour = 1000 * 60 * 60 * 1;
+	private static final int ahour = 1000 * 60 * 60 * 1;
 	/** 等待时间 */
-	public static int waitTimes = 200;
+	private static final int waitTimes = 200;
 
 	public HeartBeat(ConnectionPool pool) {
 		this.pool = pool;
