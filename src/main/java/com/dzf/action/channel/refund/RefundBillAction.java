@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RefundExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.refund.RefundBillVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.Grid;
@@ -257,13 +258,6 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 					errnum++;
 					errmsg.append(e.getMessage()).append("<br>");
 				}
-//				if(!StringUtil.isEmpty(refvo.getVerrmsg() )){
-//					errnum++;
-//					errmsg.append(refvo.getVerrmsg()).append("<br>");
-//				}else{
-//					rignum++;
-//					rightlist.add(refvo);
-//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == refVOs.length){
@@ -323,13 +317,6 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
 					errnum++;
 					errmsg.append(e.getMessage()).append("<br>");
 				}
-//				if(!StringUtil.isEmpty(refvo.getVerrmsg())){
-//					errnum++;
-//					errmsg.append(refvo.getVerrmsg()).append("<br>");
-//				}else{
-//					rignum++;
-//					rightlist.add(refvo);
-//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == refVOs.length){
@@ -397,22 +384,8 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
-            if(toClient != null){
-                try {
-                    toClient.flush();
-                    toClient.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
-            if(servletOutputStream != null){
-                try {
-                    servletOutputStream.flush();
-                    servletOutputStream.close();
-                } catch (IOException e) {
-                    log.error("导出失败",e);
-                }
-            }
+            InOutUtil.close(servletOutputStream, "退款单关闭输入流");
+            InOutUtil.close(toClient, "退款单关闭输出流");
         }
 	}
 	
