@@ -155,10 +155,11 @@ public class MatFileServiceImpl implements IMatFileService {
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 	       if(list!=null && list.size()>0){
+	           UserVO uvo = null;
 	    	   for (MaterielFileVO mvo : list) {
-		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					if(uservo!=null){
-						mvo.setApplyname(uservo.getUser_name());
+	    	        uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					if(uvo!=null){
+						mvo.setApplyname(uvo.getUser_name());
 					}
 				}
 		        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);  

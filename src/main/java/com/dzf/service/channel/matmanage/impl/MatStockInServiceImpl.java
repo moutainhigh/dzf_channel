@@ -216,10 +216,11 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 	       if(list!=null && list.size()>0){
+	           UserVO uvo = null;
 	    	   for (MaterielStockInVO mvo : list) {
-		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					if(uservo!=null){
-						mvo.setOpername(uservo.getUser_name());
+	    	        uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					if(uvo!=null){
+						mvo.setOpername(uvo.getUser_name());
 					}
 				}
 		        QueryDeCodeUtils.decKeyUtils(new String[] { "opername" }, list, 1);
