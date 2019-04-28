@@ -112,7 +112,7 @@
 					<span id ="corpnm" style="vertical-align: middle;font-size:14px;"></span>
 					<input id="corpid" name="corpid" type="hidden">
 					
-					<label style="width:85px;text-align:right;margin-left:200px;">记账状态：</label>
+					<label style="width:85px;text-align:right;">记账状态：</label>
 					<select id="jzstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:80px;height:28px;">
 						<option value="-1">全部</option>

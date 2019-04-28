@@ -616,9 +616,9 @@ public class StockOutServiceImpl implements IStockOutService{
 			sql.append("and c.vbillcode like ? ");
 			spm.addParam("%"+pamvo.getUser_code()+"%");
 		}
-		if(!StringUtil.isEmpty(pamvo.getCuserid())){
+		if(!StringUtil.isEmpty(pamvo.getUser_code())){
 			sql.append("and c.coperatorid = ? ");
-			spm.addParam(pamvo.getCuserid());
+			spm.addParam(pamvo.getUser_code());
 		}
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());

@@ -492,7 +492,7 @@ function reloadData(){
 		'enddate' : $("#enddate").datebox('getValue'),
 		'ucode' : $("#ucode").textbox('getValue'),
 		'cpid' :  $('#cpid').combobox('getValue'),
-		'uid' :  $('#uid').combobox('getValue'),
+		'ucode' :  $('#uid').combobox('getValue'),
 		'oid' : $("#operaterid").val(),
 		'aname': $("#aname").combobox('getValue'),
 	});
