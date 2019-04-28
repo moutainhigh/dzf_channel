@@ -18,7 +18,6 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IRebateCountService;
 
@@ -50,12 +49,15 @@ public class RebateCountAction extends BaseAction<RebateCountVO> {
             }
             QryParamVO paramvo = new QryParamVO();
             paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+            if(paramvo == null){
+            	paramvo = new QryParamVO();
+            }
             paramvo.setPk_corp(getLogincorppk());
             paramvo.setCuserid(getLoginUserid());
             List<RebateCountVO> list = rebateCountSer.query(paramvo);
             if (list != null && list.size() > 0) {
-                int page = paramvo == null ? 1 : paramvo.getPage();
-                int rows = paramvo == null ? 100000 : paramvo.getRows();
+                int page = paramvo.getPage();
+                int rows = paramvo.getRows();
                 RebateCountVO[] rebatVOs = (RebateCountVO[]) QueryUtil.getPagedVOs(list.toArray(new RebateCountVO[0]), page, rows);
                 grid.setRows(Arrays.asList(rebatVOs));
                 grid.setTotal((long) (list.size()));
@@ -70,6 +72,5 @@ public class RebateCountAction extends BaseAction<RebateCountVO> {
         }
         writeJson(grid);
     }
-
 	
 }
