@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RebateAuditExcelField;
 import com.dzf.action.channel.expfield.RebateInputExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.rebate.ManagerRefVO;
 import com.dzf.model.channel.rebate.RebateVO;
 import com.dzf.model.pub.Grid;
@@ -521,22 +522,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "返点单录入关闭输入流");
+            InOutUtil.close(toClient, "返点单录入关闭输出流");
 		}
 	}
 }
