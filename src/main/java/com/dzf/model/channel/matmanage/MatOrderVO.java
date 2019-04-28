@@ -152,8 +152,6 @@ public class MatOrderVO extends SuperVO {
 	private String message;//提示消息
 	
 	/*******仅作展示，不存库*******/
-	//0-全部、1-待审核、2-待发货、3-已发货、4-已驳回
-	
 	
 	public String getPk_materielbill() {
 		return pk_materielbill;

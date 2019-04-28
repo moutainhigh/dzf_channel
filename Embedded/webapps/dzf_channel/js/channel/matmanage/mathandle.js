@@ -54,7 +54,7 @@ function initUname(){
  * 初始化快递公司
  */
 function initLogistics(){
-	$("#logname").combobox({
+	$("#logid").combobox({
 		onShowPanel: function () {
 			initLogName();
         }
@@ -74,7 +74,7 @@ function initLogName(){
 		success : function(result) {
 			var result = eval('(' + result+ ')');
 			if (result.success) {
-				$('#logname').combobox('loadData',result.rows);
+				$('#logid').combobox('loadData',result.rows);
 			} else {
 				Public.tips({content : result.msg,type : 2});
 			}
@@ -743,7 +743,7 @@ function showCard(row){
 	    $('.sid').css("display", ""); 
 	    $('#code').textbox({width:431});
 	    readonly(1);
-	    $("#logname").combobox('readonly',false);
+	    $("#logid").combobox('readonly',false);
 		$("#fcost").numberbox('readonly',false);
 		$("#fcode").textbox('readonly',false);
 		$("#dedate").datebox('readonly',false);
@@ -978,18 +978,18 @@ function readonly(type){
 	$("#memo").textbox('readonly',true);
 	$("#applyname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
-	$("#logname").combobox('readonly',true);
+	$("#logid").combobox('readonly',true);
 	$("#fcost").numberbox('readonly',true);
 	$("#fcode").textbox('readonly',true);
 	$("#dedate").datebox('readonly',true);
 	$("#dename").textbox('readonly',true);
 	
 	if(type==0){
-		$("#logname").combobox({required:false});
+		$("#logid").combobox({required:false});
 		$("#fcost").numberbox({required:false});
 		$("#fcode").numberbox({required:false});
 	}else{
-		$("#logname").combobox({required:true});
+		$("#logid").combobox({required:true});
 		$("#fcost").numberbox({required:true});
 		$("#fcode").numberbox({required:true});
 	}

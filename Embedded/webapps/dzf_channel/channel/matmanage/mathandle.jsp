@@ -178,10 +178,12 @@
 					</div>
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;"><i class="bisu">*</i>快递公司：</label>
-					 	<input id="logname" name="logname" class="easyui-combobox" style="width:166px;height:28px;"
+					 	<!-- <input id="logname" name="logname" class="easyui-combobox" style="width:166px;height:28px;"
 				           editable="false" data-options="required:true,valueField:'logid', textField:'logname', panelHeight:'200'" />  
-						<input id="logid" name="logid" type="hidden">
-					
+						<input id="logid" name="logid" type="hidden"> -->
+					    <input id="logid" name="logid" class="easyui-combobox" style="width:166px;height:28px;"
+				           editable="false" data-options="required:true,valueField:'logid', textField:'logname', panelHeight:'200'" />
+			            
 			            <label style="text-align:right; width: 85px;"><i class="bisu">*</i>金额：</label> 
 						<input id="fcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
 							data-options="required:true"/>
@@ -284,9 +286,9 @@
 				</div>
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;"><i class="bisu">*</i>快递公司：</label>
-					 	<input id="ilogname" name="logname" class="easyui-textbox" style="width:166px;height:28px;"
+					 	 <input id="ilogname" name="logname" class="easyui-textbox" style="width:166px;height:28px;"
 				           data-options="readonly:true" />  
-						<input id="ilogid" name="logid" type="hidden">
+						 <input id="ilogid" name="logid" type="hidden"> 
 					
 			            <label style="text-align:right; width: 85px;"><i class="bisu">*</i>金额：</label> 
 						<input id="ifcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
