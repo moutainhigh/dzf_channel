@@ -44,9 +44,6 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("status")
 	private Integer vstatus;//状态  1：已保存；2：已发布；3：已下架；
 	
-	@FieldAlias("staname")
-	private String vstaname;//状态名称
-	
 	@FieldAlias("pubdate")
 	private DZFDate dpublishdate;//发布日期
 	
@@ -69,14 +66,21 @@ public class GoodsVO extends SuperVO {
 	@FieldAlias("gtype")
 	private String pk_goodstype;//商品类型
 	
+	@FieldAlias("taxcode")
+	private String vtaxclasscode;//税收分类编码
+	
+	//&&&&&&&&&&&&仅作查询或展示使用begin&&&&&&&&&&&&&&&&
+	
+	@FieldAlias("staname")
+	private String vstaname;//状态名称
+	
 	@FieldAlias("gtypenm")
 	private String vgoodstypename;//商品类型名称
 	
 	@FieldAlias("isin")
 	private DZFBoolean isstockin;//是否已经入库（仅作查询使用）
 	
-	@FieldAlias("taxcode")
-	private String vtaxclasscode;//税收分类编码
+	//&&&&&&&&&&&&仅作查询或展示使用end&&&&&&&&&&&&&&&&
 	
 	public String getVtaxclasscode() {
 		return vtaxclasscode;
