@@ -77,13 +77,16 @@ public class DeductRateAction extends BaseAction<DeductRateVO> {
 			checkUser(uservo);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if(pamvo == null){
+				pamvo = new QryParamVO();
+			}
 			pamvo.setPk_corp(getLogincorppk());
 			
 			//加盟商名称或编码过滤，采用代码分页
 			if(!StringUtil.isEmpty(pamvo.getCorpcode())){
 				List<DeductRateVO> retlist = rateser.queryAllData(pamvo);
-				int page = pamvo == null ? 1 : pamvo.getPage();
-				int rows = pamvo == null ? 10000 : pamvo.getRows();
+				int page = pamvo.getPage();
+				int rows = pamvo.getRows();
 				int len = retlist == null ? 0 : retlist.size();
 				if (len > 0) {
 					grid.setTotal((long) (len));
