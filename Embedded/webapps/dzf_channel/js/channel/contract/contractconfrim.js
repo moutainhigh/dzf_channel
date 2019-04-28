@@ -2192,11 +2192,7 @@ function initRejectReason(){
 					title : '选择原因',
 					modal : true,
 					href : contextPath+ '/ref/rejectreason_select.jsp',
-					buttons : [{text : '新增驳回原因',
-									handler : function() {
-										addReje();
-									}
-							   },
+					buttons : [
 							   {text : '确认',
 									handler : function() {
 										var rows = $('#rgrid').datagrid('getChecked');
@@ -2207,7 +2203,12 @@ function initRejectReason(){
 									handler : function() {
 										$('#rejeDlg').dialog('close');
 									}
-								}]
+								},
+								{text : '新增驳回原因',
+									handler : function() {
+										addReje();
+									}
+							   },]
 				});
 			}
 	  } ]
