@@ -416,7 +416,7 @@ public class ManagerServiceImpl implements IManagerService {
 			managerVO.setPredeposit(DZFDouble.ZERO_DBL);
 			managerVO.setUnitprice(DZFDouble.ZERO_DBL);
 			if(!StringUtil.isEmpty(qvo.getCorpname())){
-				if(cvo.getUnitname().indexOf(qvo.getCorpname())>=0){
+				if(!StringUtil.isEmpty(managerVO.getCorpname()) && managerVO.getCorpname().indexOf(qvo.getCorpname()) != -1){
 					pk_corps.add(managerVO.getPk_corp());
 					map.put(managerVO.getPk_corp(), managerVO);
 				}
