@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.BillingExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.channel.invoice.BillingInvoiceVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
@@ -176,22 +177,8 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+			InOutUtil.close(servletOutputStream, "加盟商开票查询关闭输入流");
+			InOutUtil.close(toClient, "加盟商开票查询关闭输出流");
 		}
 		writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(), "导出加盟商开票查询表", ISysConstants.SYS_3);
 	}
