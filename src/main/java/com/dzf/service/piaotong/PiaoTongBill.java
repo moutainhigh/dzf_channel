@@ -212,7 +212,9 @@ public class PiaoTongBill {
         map.put("timestamp", new DZFDateTime().toString());
         map.put("serialNo", getSerialNo(xxptbm));// getSerialNo("DEMO"));
         String sign = sign(getSignatureContent(map), privateKey);
-        sign = sign.replace("\r\n", "").replace("\n", "");
+        if(!StringUtil.isEmpty(sign)){
+        	sign = sign.replace("\r\n", "").replace("\n", "");
+        }
         map.put("sign", sign);
         return map;
     }
