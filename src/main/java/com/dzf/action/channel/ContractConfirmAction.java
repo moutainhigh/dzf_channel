@@ -480,8 +480,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "合同确认导出关闭输出流");
 		    InOutUtil.close(servletOutputStream, "合同确认导出关闭输入流");
-            InOutUtil.close(toClient, "合同确认导出关闭输出流");
 		}
 	}
 	
@@ -551,8 +551,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "合同确认导出全部关闭输出流");
 		    InOutUtil.close(servletOutputStream, "合同确认导出全部关闭输入流");
-            InOutUtil.close(toClient, "合同确认导出全部关闭输出流");
 		}
 	}
 	

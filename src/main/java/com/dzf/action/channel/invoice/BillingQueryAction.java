@@ -177,8 +177,8 @@ public class BillingQueryAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "加盟商开票查询关闭输出流");
 			InOutUtil.close(servletOutputStream, "加盟商开票查询关闭输入流");
-			InOutUtil.close(toClient, "加盟商开票查询关闭输出流");
 		}
 		writeLogRecord(LogRecordEnum.OPE_CHANNEL_JMSKPCX.getValue(), "导出加盟商开票查询表", ISysConstants.SYS_3);
 	}

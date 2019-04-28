@@ -250,8 +250,8 @@ public class DebitQueryAction extends PrintUtil<DebitQueryVO>{
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {
+		    InOutUtil.close(toClient, "加盟商扣款查询关闭输出流");
 			InOutUtil.close(servletOutputStream, "加盟商扣款查询关闭输入流");
-			InOutUtil.close(toClient, "加盟商扣款查询关闭输出流");
 		}
 	}
 }

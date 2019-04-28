@@ -162,8 +162,8 @@ public class RefundDetailAction extends BaseAction<RefundDetailVO> {
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
-            InOutUtil.close(servletOutputStream, "退款明细查询关闭输入流");
             InOutUtil.close(toClient, "退款明细查询关闭输出流");
+            InOutUtil.close(servletOutputStream, "退款明细查询关闭输入流");
         }
 	}
 }

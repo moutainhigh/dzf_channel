@@ -151,8 +151,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "ChnPayBalanceAction关闭流");
 			InOutUtil.close(servletOutputStream, "ChnPayBalanceAction关闭流");
-			InOutUtil.close(toClient, "ChnPayBalanceAction关闭流");
 		}
 	}
 
@@ -317,8 +317,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
+		    InOutUtil.close(toClient, "ChnPayBalanceAction明细导出关闭流");
 		    InOutUtil.close(servletOutputStream, "ChnPayBalanceAction明细导出关闭流");
-            InOutUtil.close(toClient, "ChnPayBalanceAction明细导出关闭流");
 		}
 	}
 

@@ -496,22 +496,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-			if (toClient != null) {
-				try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
-			if (servletOutputStream != null) {
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败", e);
-				}
-			}
+		    InOutUtil.close(toClient, "InvManagerAction:关闭流");
+		    InOutUtil.close(servletOutputStream, "InvManagerAction:关闭流");
 		}
 		writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "导出发票申请表", ISysConstants.SYS_3);
 	}
@@ -557,8 +543,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "导出电票余量关闭输出流");
 			InOutUtil.close(servletOutputStream, "导出电票余量关闭输入流");
-			InOutUtil.close(toClient, "导出电票余量关闭输出流");
 		}
 	}
 }

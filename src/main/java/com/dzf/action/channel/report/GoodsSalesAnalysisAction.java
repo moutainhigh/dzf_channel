@@ -118,8 +118,8 @@ public class GoodsSalesAnalysisAction extends BaseAction<GoodsSalesAnalysisVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
+		    InOutUtil.close(toClient, "加盟商商品销售分析关闭输出流");
 			InOutUtil.close(servletOutputStream, "加盟商商品销售分析关闭输入流");
-			InOutUtil.close(toClient, "加盟商商品销售分析关闭输出流");
 		}
 	}
 
