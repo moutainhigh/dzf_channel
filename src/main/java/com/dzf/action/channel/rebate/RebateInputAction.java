@@ -350,9 +350,10 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 			}
 			json.setRows(retlist);
 			json.setSuccess(true);
-			if (retlist != null && retlist.size() > 0) {
+			int sumnum = custVOs == null ? 0 : custVOs.length;
+			if (retlist.size() > 0) {
 				if (errmsg != null && errmsg.length() > 0) {
-					json.setMsg("成功提交" + retlist.size() + "条数据，失败" + (custVOs.length - retlist.size()) + "条数据，失败原因："
+					json.setMsg("成功提交" + retlist.size() + "条数据，失败" + (sumnum - retlist.size()) + "条数据，失败原因："
 							+ errmsg.toString());
 				} else {
 					json.setMsg("成功提交" + retlist.size() + "条数据");
