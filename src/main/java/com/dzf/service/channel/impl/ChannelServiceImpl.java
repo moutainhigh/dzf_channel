@@ -38,7 +38,7 @@ public class ChannelServiceImpl implements IChannelService {
 		sql.append("  and nvl(ischannel,'N') = 'Y'  ");
 		String smallCondition = getSmallCondition(paramvo);
 		if(StringUtil.isEmpty(smallCondition)){
-			sql.append(" 1 != 1 ");
+			sql.append(" and 1 != 1 ");
 		}else{
 			sql.append(smallCondition);
 		}

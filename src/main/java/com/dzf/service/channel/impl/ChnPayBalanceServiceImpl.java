@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.CorpNameEVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
@@ -254,11 +253,12 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
 		sql.append("   AND t.vstatus = 1  \n") ; 
-		String[] billids = getbillids();
-		if(billids != null && billids.length > 0){
-			String where = ToolsUtil.buildSqlForNotIn("t.pk_confrim", billids);
-			sql.append(" AND ").append(where);
-		}
+//		String[] billids = getbillids();
+//		if(billids != null && billids.length > 0){
+//			String where = ToolsUtil.buildSqlForNotIn("t.pk_confrim", billids);
+//			sql.append(" AND ").append(where);
+//		}
+		sql.append(" and not exists ( SELECT pk_bill FROM cn_detail det WHERE det.pk_bill = t.pk_confrim and nvl(dr, 0) = 0 AND ipaytype = 2)");
 		if(paramvo.getCorps() != null && paramvo.getCorps().length > 0){
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -297,27 +297,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				}
 			}
 		}
-	}
-	
-	/**
-	 * 获取付款余额表主键
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	private String[] getbillids() throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_bill  \n") ;
-		sql.append("  FROM cn_detail  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND ipaytype = 2  \n");
-		List<String> list = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new ColumnListProcessor("pk_bill"));
-		if(list != null && list.size() > 0){
-			return list.toArray(new String[0]);
-		}
-		return null;
 	}
 	
 	/**
@@ -696,7 +675,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		//3、查询零扣款数据
 		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
 			//查询全部或查询预付款时，把零扣款的数据查询出来
-			List<ChnDetailRepVO> zerolist = qryZeroDeduction(list, paramvo);// 查询扣费为0的数据
+			List<ChnDetailRepVO> zerolist = qryZeroDeduction(sqpvo,list, paramvo);// 查询扣费为0的数据
 			if(zerolist != null && zerolist.size() > 0){
 				list.addAll(zerolist);
 			}
@@ -973,7 +952,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	 * @param paramvo
 	 * @return
 	 */
-	private List<ChnDetailRepVO> qryZeroDeduction(List<ChnDetailRepVO> list, QryParamVO paramvo) {
+	private List<ChnDetailRepVO> qryZeroDeduction(QrySqlSpmVO sqpvo,List<ChnDetailRepVO> list, QryParamVO paramvo) {
 		List<ChnDetailRepVO> zerolist = new ArrayList<ChnDetailRepVO>();
 		List<String> pklist = new ArrayList<String>();
 		for (ChnDetailRepVO repvo : list) {
