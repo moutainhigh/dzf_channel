@@ -90,8 +90,6 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if ((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
 					|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)) {
-				int page = pamvo == null ? 1 : pamvo.getPage();
-				int rows = pamvo == null ? 10000 : pamvo.getRows();
 				pamvo.setPage(1);
 				pamvo.setRows(100000);
 				List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);

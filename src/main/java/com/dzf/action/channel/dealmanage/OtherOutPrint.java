@@ -10,6 +10,7 @@ import javax.servlet.ServletOutputStream;
 import org.apache.log4j.Logger;
 
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.ColumnCellAttr;
@@ -111,18 +112,8 @@ public class OtherOutPrint<T> extends BaseAction<T> {
         } catch (Exception exp) {
             throw new WiseRunException(exp);
         } finally {
-            try {
-                if (buffer != null) {
-                    buffer.flush();
-                    buffer.close();
-                }
-                if (out != null) {
-                    out.flush();
-                    out.close();
-                }
-            } catch (IOException ioe) {
-                throw new WiseRunException(ioe);
-            }
+            InOutUtil.close(out, "返点单录入关闭输入流");
+            InOutUtil.close(buffer, "返点单录入关闭输出流");
         }
 
     }
