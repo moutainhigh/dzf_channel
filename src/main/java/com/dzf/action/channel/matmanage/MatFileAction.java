@@ -1,7 +1,6 @@
 package com.dzf.action.channel.matmanage;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.MatFileExcelField;
 import com.dzf.action.pub.BaseAction;
+import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.Grid;
@@ -324,21 +324,8 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
-			if(toClient != null){
-				try {
-					toClient.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
-			if(servletOutputStream != null){
-				try {
-					servletOutputStream.flush();
-					servletOutputStream.close();
-				} catch (IOException e) {
-					log.error("导出失败",e);
-				}
-			}
+		    InOutUtil.close(toClient, "导出物料档案");
+		    InOutUtil.close(servletOutputStream, "导出物料档案");
 		}
 	}
 	
