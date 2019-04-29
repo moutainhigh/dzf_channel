@@ -891,7 +891,7 @@ function initCardDetail(){
 	$('#icardGrid').datagrid({
 		striped : true,
 		rownumbers : true,
-		fitColumns : true,
+		//fitColumns : true,
 		/*onClickCell: onClickCell,
 	    onAfterEdit: onAfterEdit,*/
 		scrollbarSize:0,
@@ -929,7 +929,7 @@ function initCardDetail(){
 			align : 'right',
 			
 		},{
-			width : '100',
+			width : '82',
 			title : '数量',
 			field : 'outnum',
             halign : 'center',
