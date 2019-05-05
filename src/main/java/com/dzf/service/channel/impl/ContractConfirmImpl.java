@@ -469,7 +469,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(!"info".equals(qrytype)){
 			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		}
-		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
+		sql.append("   AND t.isflag = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
 //		sql.append("   AND nvl(t.vstatus,0) != 0  \n") ; //未提交合同不查询
