@@ -59,17 +59,18 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		}
 		return new ArrayList<DeductAnalysisVO>();
 	}
-	
+
 	/**
 	 * 设置显示名称
+	 * 
 	 * @param retlist
 	 * @throws DZFWarpException
 	 */
 	private void setShowName(List<DeductAnalysisVO> retlist) throws DZFWarpException {
-		Map<String,String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
-		Map<String,String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
+		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 		UserVO uservo = null;
-		for(DeductAnalysisVO dvo : retlist){
+		for (DeductAnalysisVO dvo : retlist) {
 			if (marmap != null && !marmap.isEmpty()) {
 				String manager = marmap.get(dvo.getPk_corp());
 				if (!StringUtil.isEmpty(manager)) {
@@ -79,7 +80,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 					}
 				}
 			}
-			if(opermap != null && !opermap.isEmpty()){
+			if (opermap != null && !opermap.isEmpty()) {
 				String operater = opermap.get(dvo.getPk_corp());
 				if (!StringUtil.isEmpty(operater)) {
 					uservo = UserCache.getInstance().get(operater, null);
@@ -93,6 +94,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 
 	/**
 	 * 组装返回信息
+	 * 
 	 * @param pk_corplist
 	 * @param detmap
 	 * @param dedmap
@@ -109,7 +111,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		List<DeductAnalysisVO> detlist = null;
 		DeductAnalysisVO dedvo = null;
 		DeductAnalysisVO bakvo = null;
-		CorpVO corpvo = null;
 		int num = 0;// 循环次数
 		int connum = 0;// 合同总数量
 
@@ -124,6 +125,8 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			icustnum = 0;// 存量合同数
 			izeronum = 0;// 0扣款(非存量)合同数
 			idednum = 0;// 非存量合同数
+			ndedsummny = DZFDouble.ZERO_DBL;
+			
 			if (detmap != null && !detmap.isEmpty()) {
 				detlist = (List<DeductAnalysisVO>) detmap.get(pk_corp);
 				if (detlist != null && detlist.size() > 0) {
@@ -134,196 +137,201 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 						izeronum = 0;// 0扣款(非存量)合同数
 						idednum = 0;// 非存量合同数
 						ndedsummny = DZFDouble.ZERO_DBL;
-						retvo = new DeductAnalysisVO();
-						retvo.setPk_corp(pk_corp);
-						corpvo = CorpCache.getInstance().get(null, pk_corp);
-						if (corpvo != null) {
-							retvo.setCorpcode(corpvo.getInnercode());
-							retvo.setCorpname(corpvo.getUnitname());
-						}
-						retvo.setNdeducmny(dvo.getNdeducmny());
-						retvo.setIcorpnums(dvo.getIcorpnums());
-						if (bakmap != null && !bakmap.isEmpty()) {
-							bakvo = bakmap.get(pk_corp);
-							if (bakvo != null) {
-								retvo.setIretnum(bakvo.getIcorpnums());// 退回合同数
-								retvo.setNretmny(bakvo.getNdeducmny());// 退回金额
 
-								retvo.setIcustnum(bakvo.getIcustnum());// 存量合同数
-								retvo.setIzeronum(bakvo.getIzeronum());// 0扣款(非存量)合同数
-								retvo.setIdednum(bakvo.getIdednum());// 非存量合同数
-							}
-						}
-						if (dedmap != null && !dedmap.isEmpty()) {
-							dedvo = dedmap.get(pk_corp);
-							if (dedvo != null) {
-								if (num == 0) {
-									connum = ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum());
-									ndedsummny = SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny());
-
-									icustnum = ToolsUtil.addInteger(dedvo.getIcustnum(), retvo.getIcustnum());// 存量合同数
-									izeronum = ToolsUtil.addInteger(dedvo.getIzeronum(), retvo.getIzeronum());// 0扣款(非存量)合同数
-									idednum = ToolsUtil.addInteger(dedvo.getIdednum(), retvo.getIdednum());// 非存量合同数
-								}
-								retvo.setIcorpnums_sum(connum);// 总合同数
-								retvo.setNdeductmny_sum(ndedsummny);// 总扣款
-
-								retvo.setIcustnum(icustnum);// 存量合同数
-								retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
-								retvo.setIdednum(idednum);// 非存量合同数
-							} else {// 此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
-								if (num == 0) {
-									connum = ToolsUtil.subInteger(0, retvo.getIretnum());
-									ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
-									icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
-									izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
-									idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
-								}
-								retvo.setIcorpnums_sum(connum);// 总合同数
-								retvo.setNdeductmny_sum(ndedsummny);// 总扣款
-
-								retvo.setIcustnum(icustnum);// 存量合同数
-								retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
-								retvo.setIdednum(idednum);// 非存量合同数
-							}
-						} else {// 无扣款金额，只有退款金额，计算总合同数和总扣款
-							if (num == 0) {
-								connum = ToolsUtil.subInteger(0, retvo.getIretnum());
-								ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
-								icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
-								izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
-								idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
-							}
-							retvo.setIcorpnums_sum(connum);// 总合同数
-							retvo.setNdeductmny_sum(ndedsummny);// 总扣款
-							retvo.setIcustnum(icustnum);// 存量合同数
-							retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
-							retvo.setIdednum(idednum);// 非存量合同数
-						}
-						if (custmap != null && !custmap.isEmpty()) {
-							retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
-						}
+						retvo = getDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum,
+								icustnum, izeronum, idednum, ndedsummny, dvo);
 						retlist.add(retvo);
 						num++;
 					}
 				} else {
 					// 某公司没有扣款明细
-					retvo = new DeductAnalysisVO();
-					retvo.setPk_corp(pk_corp);
-					corpvo = CorpCache.getInstance().get(null, pk_corp);
-					if (corpvo != null) {
-						retvo.setCorpcode(corpvo.getInnercode());
-						retvo.setCorpname(corpvo.getUnitname());
-					}
-					if (bakmap != null && !bakmap.isEmpty()) {
-						bakvo = bakmap.get(pk_corp);
-						if (bakvo != null) {
-							retvo.setIretnum(bakvo.getIcorpnums());// 退回合同数
-							retvo.setNretmny(bakvo.getNdeducmny());// 退回金额
-
-							retvo.setIcustnum(bakvo.getIcustnum());// 存量合同数
-							retvo.setIzeronum(bakvo.getIzeronum());// 0扣款(非存量)合同数
-							retvo.setIdednum(bakvo.getIdednum());// 非存量合同数
-						}
-					}
-					if (dedmap != null && !dedmap.isEmpty()) {
-						dedvo = dedmap.get(pk_corp);
-						if (dedvo != null) {
-							retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));// 总合同数
-							retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));// 总扣款
-
-							retvo.setIcustnum(ToolsUtil.addInteger(dedvo.getIcustnum(), retvo.getIcustnum()));// 存量合同数
-							retvo.setIzeronum(ToolsUtil.addInteger(dedvo.getIzeronum(), retvo.getIzeronum()));// 0扣款(非存量)合同数
-							retvo.setIdednum(ToolsUtil.addInteger(dedvo.getIdednum(), retvo.getIdednum()));// 非存量合同数
-						} else {// 此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
-							if (num == 0) {
-								connum = ToolsUtil.subInteger(0, retvo.getIretnum());
-								ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
-
-								icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
-								izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
-								idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
-							}
-							retvo.setIcorpnums_sum(connum);// 总合同数
-							retvo.setNdeductmny_sum(ndedsummny);// 总扣款
-
-							retvo.setIcustnum(icustnum);// 存量合同数
-							retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
-							retvo.setIdednum(idednum);// 非存量合同数
-						}
-					} else {// 无扣款金额，只有退款金额，计算总合同数和总扣款
-						retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));// 总合同数
-						retvo.setNdeductmny_sum(SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny()));// 总扣款
-
-						retvo.setIcustnum(ToolsUtil.addInteger(0, retvo.getIcustnum()));// 存量合同数
-						retvo.setIzeronum(ToolsUtil.addInteger(0, retvo.getIzeronum()));// 0扣款(非存量)合同数
-						retvo.setIdednum(ToolsUtil.addInteger(0, retvo.getIdednum()));// 非存量合同数
-					}
-					if (custmap != null && !custmap.isEmpty()) {
-						retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
-					}
+					retvo = getNullDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum,
+							icustnum, izeronum, idednum, ndedsummny);
 					retlist.add(retvo);
 				}
-
 			} else {
-				// 查询所有公司没有扣款明细
-				retvo = new DeductAnalysisVO();
-				retvo.setPk_corp(pk_corp);
-				corpvo = CorpCache.getInstance().get(null, pk_corp);
-				if (corpvo != null) {
-					retvo.setCorpcode(corpvo.getInnercode());
-					retvo.setCorpname(corpvo.getUnitname());
-				}
-				if (bakmap != null && !bakmap.isEmpty()) {
-					bakvo = bakmap.get(pk_corp);
-					if (bakvo != null) {
-						retvo.setIretnum(bakvo.getIcorpnums());// 退回合同数
-						retvo.setNretmny(bakvo.getNdeducmny());// 退回金额
-
-						retvo.setIcustnum(bakvo.getIcustnum());// 存量合同数
-						retvo.setIzeronum(bakvo.getIzeronum());// 0扣款(非存量)合同数
-						retvo.setIdednum(bakvo.getIdednum());// 非存量合同数
-					}
-				}
-				if (dedmap != null && !dedmap.isEmpty()) {
-					dedvo = dedmap.get(pk_corp);
-					if (dedvo != null) {
-						retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));// 总合同数
-						retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));// 总扣款
-
-						retvo.setIcustnum(ToolsUtil.addInteger(dedvo.getIcustnum(), retvo.getIcustnum()));// 存量合同数
-						retvo.setIzeronum(ToolsUtil.addInteger(dedvo.getIzeronum(), retvo.getIzeronum()));// 0扣款(非存量)合同数
-						retvo.setIdednum(ToolsUtil.addInteger(dedvo.getIdednum(), retvo.getIdednum()));// 非存量合同数
-					} else {// 此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
-						if (num == 0) {
-							connum = ToolsUtil.subInteger(0, retvo.getIretnum());
-							ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
-
-							icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
-							izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
-							idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
-						}
-						retvo.setIcorpnums_sum(connum);// 总合同数
-						retvo.setNdeductmny_sum(ndedsummny);// 总扣款
-						retvo.setIcustnum(icustnum);// 存量合同数
-						retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
-						retvo.setIdednum(idednum);// 非存量合同数
-					}
-				} else {// 无扣款金额，只有退款金额，计算总合同数和总扣款
-					retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));// 总合同数
-					retvo.setNdeductmny_sum(SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny()));// 总扣款
-					retvo.setIcustnum(ToolsUtil.addInteger(0, retvo.getIcustnum()));// 存量合同数
-					retvo.setIzeronum(ToolsUtil.addInteger(0, retvo.getIzeronum()));// 0扣款(非存量)合同数
-					retvo.setIdednum(ToolsUtil.addInteger(0, retvo.getIdednum()));// 非存量合同数
-				}
-				if (custmap != null && !custmap.isEmpty()) {
-					retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
-				}
+				// 查询公司没有扣款明细
+				retvo = getNullDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum, icustnum,
+						izeronum, idednum, ndedsummny);
 				retlist.add(retvo);
 			}
 		}
 
 		return retlist;
+	}
+
+	/**
+	 * 查询扣款明细
+	 * @param pk_corp
+	 * @param dedvo
+	 * @param bakvo
+	 * @param bakmap
+	 * @param detmap
+	 * @param dedmap
+	 * @param custmap
+	 * @param num
+	 * @param connum
+	 * @param icustnum
+	 * @param izeronum
+	 * @param idednum
+	 * @param ndedsummny
+	 * @param dvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private DeductAnalysisVO getDeductCorp(String pk_corp, DeductAnalysisVO dedvo, DeductAnalysisVO bakvo,
+			Map<String, DeductAnalysisVO> bakmap, Map<String, List<DeductAnalysisVO>> detmap,
+			Map<String, DeductAnalysisVO> dedmap, Map<String, Integer> custmap, int num, int connum, int icustnum,
+			int izeronum, int idednum, DZFDouble ndedsummny, DeductAnalysisVO dvo) throws DZFWarpException {
+		DeductAnalysisVO retvo = new DeductAnalysisVO();
+		retvo.setPk_corp(pk_corp);
+		CorpVO corpvo = CorpCache.getInstance().get(null, pk_corp);
+		if (corpvo != null) {
+			retvo.setCorpcode(corpvo.getInnercode());
+			retvo.setCorpname(corpvo.getUnitname());
+		}
+		retvo.setNdeducmny(dvo.getNdeducmny());
+		retvo.setIcorpnums(dvo.getIcorpnums());
+		if (bakmap != null && !bakmap.isEmpty()) {
+			bakvo = bakmap.get(pk_corp);
+			if (bakvo != null) {
+				retvo.setIretnum(bakvo.getIcorpnums());// 退回合同数
+				retvo.setNretmny(bakvo.getNdeducmny());// 退回金额
+
+				retvo.setIcustnum(bakvo.getIcustnum());// 存量合同数
+				retvo.setIzeronum(bakvo.getIzeronum());// 0扣款(非存量)合同数
+				retvo.setIdednum(bakvo.getIdednum());// 非存量合同数
+			}
+		}
+		if (dedmap != null && !dedmap.isEmpty()) {
+			dedvo = dedmap.get(pk_corp);
+			if (dedvo != null) {
+				if (num == 0) {
+					connum = ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum());
+					ndedsummny = SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny());
+
+					icustnum = ToolsUtil.addInteger(dedvo.getIcustnum(), retvo.getIcustnum());// 存量合同数
+					izeronum = ToolsUtil.addInteger(dedvo.getIzeronum(), retvo.getIzeronum());// 0扣款(非存量)合同数
+					idednum = ToolsUtil.addInteger(dedvo.getIdednum(), retvo.getIdednum());// 非存量合同数
+				}
+				retvo.setIcorpnums_sum(connum);// 总合同数
+				retvo.setNdeductmny_sum(ndedsummny);// 总扣款
+
+				retvo.setIcustnum(icustnum);// 存量合同数
+				retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
+				retvo.setIdednum(idednum);// 非存量合同数
+			} else {// 此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
+				if (num == 0) {
+					connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+					ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+					icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
+					izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
+					idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
+				}
+				retvo.setIcorpnums_sum(connum);// 总合同数
+				retvo.setNdeductmny_sum(ndedsummny);// 总扣款
+
+				retvo.setIcustnum(icustnum);// 存量合同数
+				retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
+				retvo.setIdednum(idednum);// 非存量合同数
+			}
+		} else {// 无扣款金额，只有退款金额，计算总合同数和总扣款
+			if (num == 0) {
+				connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+				ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+				icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
+				izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
+				idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
+			}
+			retvo.setIcorpnums_sum(connum);// 总合同数
+			retvo.setNdeductmny_sum(ndedsummny);// 总扣款
+			retvo.setIcustnum(icustnum);// 存量合同数
+			retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
+			retvo.setIdednum(idednum);// 非存量合同数
+		}
+		if (custmap != null && !custmap.isEmpty()) {
+			retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
+		}
+		return retvo;
+	}
+
+	/**
+	 * 查询公司没有扣款明细
+	 * 
+	 * @param pk_corp
+	 * @param dedvo
+	 * @param bakvo
+	 * @param bakmap
+	 * @param detmap
+	 * @param dedmap
+	 * @param custmap
+	 * @param num
+	 * @param connum
+	 * @param icustnum
+	 * @param izeronum
+	 * @param idednum
+	 * @param ndedsummny
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private DeductAnalysisVO getNullDeductCorp(String pk_corp, DeductAnalysisVO dedvo, DeductAnalysisVO bakvo,
+			Map<String, DeductAnalysisVO> bakmap, Map<String, List<DeductAnalysisVO>> detmap,
+			Map<String, DeductAnalysisVO> dedmap, Map<String, Integer> custmap, int num, int connum, int icustnum,
+			int izeronum, int idednum, DZFDouble ndedsummny) throws DZFWarpException {
+		DeductAnalysisVO retvo = new DeductAnalysisVO();
+		retvo.setPk_corp(pk_corp);
+		CorpVO corpvo = CorpCache.getInstance().get(null, pk_corp);
+		if (corpvo != null) {
+			retvo.setCorpcode(corpvo.getInnercode());
+			retvo.setCorpname(corpvo.getUnitname());
+		}
+		if (bakmap != null && !bakmap.isEmpty()) {
+			bakvo = bakmap.get(pk_corp);
+			if (bakvo != null) {
+				retvo.setIretnum(bakvo.getIcorpnums());// 退回合同数
+				retvo.setNretmny(bakvo.getNdeducmny());// 退回金额
+
+				retvo.setIcustnum(bakvo.getIcustnum());// 存量合同数
+				retvo.setIzeronum(bakvo.getIzeronum());// 0扣款(非存量)合同数
+				retvo.setIdednum(bakvo.getIdednum());// 非存量合同数
+			}
+		}
+		if (dedmap != null && !dedmap.isEmpty()) {
+			dedvo = dedmap.get(pk_corp);
+			if (dedvo != null) {
+				retvo.setIcorpnums_sum(ToolsUtil.subInteger(dedvo.getIcorpnums(), retvo.getIretnum()));// 总合同数
+				retvo.setNdeductmny_sum(SafeCompute.sub(dedvo.getNdeducmny(), retvo.getNretmny()));// 总扣款
+
+				retvo.setIcustnum(ToolsUtil.addInteger(dedvo.getIcustnum(), retvo.getIcustnum()));// 存量合同数
+				retvo.setIzeronum(ToolsUtil.addInteger(dedvo.getIzeronum(), retvo.getIzeronum()));// 0扣款(非存量)合同数
+				retvo.setIdednum(ToolsUtil.addInteger(dedvo.getIdednum(), retvo.getIdednum()));// 非存量合同数
+			} else {// 此公司无扣款金额，只有退款金额，但是别的公司有退款金额，计算总合同数和总扣款
+				if (num == 0) {
+					connum = ToolsUtil.subInteger(0, retvo.getIretnum());
+					ndedsummny = SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny());
+
+					icustnum = ToolsUtil.addInteger(0, retvo.getIcustnum());// 存量合同数
+					izeronum = ToolsUtil.addInteger(0, retvo.getIzeronum());// 0扣款(非存量)合同数
+					idednum = ToolsUtil.addInteger(0, retvo.getIdednum());// 非存量合同数
+				}
+				retvo.setIcorpnums_sum(connum);// 总合同数
+				retvo.setNdeductmny_sum(ndedsummny);// 总扣款
+				retvo.setIcustnum(icustnum);// 存量合同数
+				retvo.setIzeronum(izeronum);// 0扣款(非存量)合同数
+				retvo.setIdednum(idednum);// 非存量合同数
+			}
+		} else {// 无扣款金额，只有退款金额，计算总合同数和总扣款
+			retvo.setIcorpnums_sum(ToolsUtil.subInteger(0, retvo.getIretnum()));// 总合同数
+			retvo.setNdeductmny_sum(SafeCompute.sub(DZFDouble.ZERO_DBL, retvo.getNretmny()));// 总扣款
+			retvo.setIcustnum(ToolsUtil.addInteger(0, retvo.getIcustnum()));// 存量合同数
+			retvo.setIzeronum(ToolsUtil.addInteger(0, retvo.getIzeronum()));// 0扣款(非存量)合同数
+			retvo.setIdednum(ToolsUtil.addInteger(0, retvo.getIdednum()));// 非存量合同数
+		}
+		if (custmap != null && !custmap.isEmpty()) {
+			retvo.setIstocknum(custmap.get(retvo.getPk_corp()));
+		}
+
+		return retvo;
 	}
 
 	/**
