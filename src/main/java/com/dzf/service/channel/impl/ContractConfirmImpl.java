@@ -466,7 +466,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
-		sql.append("   AND nvl(t.vstatus,0) != 0  \n") ; //未提交合同不查询
+//		sql.append("   AND nvl(t.vstatus,0) != 0  \n") ; //未提交合同不查询
+		
+		sql.append(" AND ((t.vstatus > 0 and nvl(t.iversion,4) >= 4))") ;
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8){
 				sql.append(" AND t.vendperiod < ? ");
@@ -551,14 +553,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append(paramvo.getVqrysql());
 		}
 		//非常规套餐数据过滤：（未提交合同不查询，已在上边过滤状态）1、常规套餐；2、非常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
-		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 )  \n") ; 
-		sql.append("    OR ( nvl(t.iyear,0) = 1 AND t.vstatus = 5 AND t.pk_contract IN  \n") ; 
-		sql.append("   (SELECT pk_contract  \n") ; 
-		sql.append("    FROM cn_changeapply  \n") ; 
-		sql.append("   WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("     AND ichangetype = 3  \n") ; 
-		sql.append("     AND iapplystatus = 4  \n") ; 
-		sql.append("   )))  \n") ; 
+//		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 )  \n") ; 
+//		sql.append("    OR ( nvl(t.iyear,0) = 1 AND t.vstatus = 5 AND t.pk_contract IN  \n") ; 
+//		sql.append("   (SELECT pk_contract  \n") ; 
+//		sql.append("    FROM cn_changeapply  \n") ; 
+//		sql.append("   WHERE nvl(dr, 0) = 0  \n") ; 
+//		sql.append("     AND ichangetype = 3  \n") ; 
+//		sql.append("     AND iapplystatus = 4  \n") ; 
+//		sql.append("   )))  \n") ; 
 		
 		sql.append(" ORDER BY t.dsubmitime DESC \n");
 		qryvo.setSql(sql.toString());
