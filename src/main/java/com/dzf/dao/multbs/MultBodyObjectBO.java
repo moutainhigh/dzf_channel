@@ -363,7 +363,10 @@ public class MultBodyObjectBO {
 	 */
 	public int getDataTotal(String sql,SQLParameter params) throws DZFWarpException{
 		Object obj = singleObjectBO.executeQuery(sql, params, new ColumnProcessor());
-		return new Integer((int)(obj == null ? 0 :obj.toString()));
+		if(obj == null){
+			return 0;
+		}
+		return Integer.parseInt(obj.toString());
 	}
 	
 	public int queryDataTotal(Class className,String sql,SQLParameter params) throws DZFWarpException{
