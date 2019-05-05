@@ -121,11 +121,12 @@
 						}
 			});
 
-			$('#mcode').bind('keypress', function(event) {
+			$('#ocode').bind('keypress', function(event) {
 				if (event.keyCode == "13") {//Enter 键事件
-					var filtername = $("#mcode").val();
+					var filtername = $("#ocode").val();
 					var params = new Object();
 					params["ucode"] = filtername;
+					params["qtype"] = 3;
 					grid.datagrid('load', params);
 				}
 			});
@@ -136,7 +137,7 @@
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-corp">
-					<input id="mcode" value="请输入编码或名称" 
+					<input id="ocode" value="请输入编码或名称" 
 						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
 						onBlur="if(!value){value=defaultValue;this.style.color='#999'}" />
 				</div>

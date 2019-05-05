@@ -123,6 +123,7 @@
 			      		var params = new Object();
 			      		params["ucode"] = filtername;
 			      		params["uid"] = uid;
+			      		params["qtype"] = 1;
 			      		grid.datagrid('load',params); 
 			       }
 			   }); 
