@@ -516,7 +516,7 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			}
 			pamvo.setVqrysql(qsql.toString());
 		}
-		
+		pamvo.setIsncust(null);
 		pamvo.setRows(1000000);
 		List<ContractConfrimVO> list = contractconfser.query(pamvo);
 		ContractConfrimVO[] expVOs = null;
