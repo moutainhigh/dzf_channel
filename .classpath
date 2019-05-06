@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_211">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>
 			<accessrule kind="accessible" pattern="*/**"/>
 		</accessrules>
@@ -129,10 +129,10 @@
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/xstream-1.4.8.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/hessian-4.0.7.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/pinyin4j-2.5.0.jar"/>
-	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/druid-1.0.15.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/dzfbase.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/dzfpub.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/fastdfs-client-java-1.25.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/jedis-2.9.3.jar"/>
+	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/druid-1.1.16.jar"/>
 	<classpathentry kind="output" path="Embedded/webapps/dzf_channel/WEB-INF/classes"/>
 </classpath>
