@@ -316,6 +316,7 @@ function clearParams(){
 	$("#managerid").val(null);
 	$("#operater").textbox("setValue",null);
 	$("#operaterid").val(null);
+	$("#qpropor").numberbox('setValue',null);
 }
 
 /**
@@ -457,6 +458,11 @@ function reloadData(){
 	queryParams.oid = $("#operaterid").val();
 	queryParams.corptype = $('#corptype').combobox('getValue');
 	queryParams.aname = $("#aname").combobox('getValue');
+	var stype = $("#qpropor").numberbox('getValue');
+	if(isEmpty(stype)){
+		stype = -1;
+	}
+	queryParams.stype = stype;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	if(ischeck){
@@ -487,6 +493,7 @@ function clearQryParam(queryParams){
 	queryParams.cpname = null;
 	queryParams.mid = null;
 	queryParams.oid = null;
+	queryParams.stype = null;
 }
 
 /**
@@ -2344,7 +2351,11 @@ function onExportAll(){
 	if(!isEmpty(isncust)){
 		queryParams.isncust = isncust;
 	}
-	
+	var stype = $("#qpropor").numberbox('getValue');
+	if(isEmpty(qpropor)){
+		stype = -1;
+	}
+	queryParams.stype = stype;
 	var callback = function(){
 		Business.getFile(DZF.contextPath+ '/contract/contractconf!onExportAll.action',
 					queryParams, true, true);

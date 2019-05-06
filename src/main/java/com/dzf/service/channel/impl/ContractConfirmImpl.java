@@ -474,7 +474,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
 //		sql.append("   AND nvl(t.vstatus,0) != 0  \n") ; //未提交合同不查询
 		
-		sql.append(" AND ((t.vstatus > 0 and nvl(t.iversion,4) >= 4))") ;
+		//合同状态过滤
+//		sql.append(" AND ((t.vstatus > 0 and nvl(t.iversion,4) >= 4))") ;
+		//合同状态过滤：1、未提交的合同显示；2、待审核的合同，申请状态为待运营处理（过滤非常规套餐）；
+		sql.append("   AND ((t.vstatus != 0 AND t.vstatus != 5) OR  \n") ; 
+		sql.append("        (t.vstatus = 5 AND nvl(t.iversion, 4) >= 4))  \n") ; 
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8){
 				sql.append(" AND t.vendperiod < ? ");
@@ -557,6 +561,10 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
 			sql.append(paramvo.getVqrysql());
+		}
+		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
+			sql.append(" AND cn.ideductpropor = ? \n") ; 
+			spm.addParam(paramvo.getSeletype());
 		}
 		//非常规套餐数据过滤：（未提交合同不查询，已在上边过滤状态）1、常规套餐；2、非常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
 //		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 )  \n") ; 

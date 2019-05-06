@@ -92,7 +92,7 @@
 		</div>
 		
 		<!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:350px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:380px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -156,25 +156,29 @@
 					<input id="corpkid_ae" name="corpkid" type="hidden"> 
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:75px;text-align:right">渠道经理：</label>
-					<input id="manager" class="easyui-textbox" style="width:105px;height:28px;" />
+					<label style="width:85px;text-align:right">渠道经理：</label>
+					<input id="manager" class="easyui-textbox" style="width:100px;height:28px;" />
 					<input id="managerid" type="hidden">
 					
-					<label style="width:75px;text-align:right">渠道运营：</label>
-					<input id="operater" class="easyui-textbox" style="width:105px;height:28px;" />
+					<label style="width:74px;text-align:right">渠道运营：</label>
+					<input id="operater" class="easyui-textbox" style="width:100px;height:28px;" />
 					<input id="operaterid" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">纳税人资格：</label>
 					<select id="corptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
-						style="width:110px;height:28px;">
+						style="width:100px;height:28px;">
 						<option value="-1">全部</option>
-						<option value="1">小规模纳税人</option>
-						<option value="2">一般纳税人</option>
+						<option value="1">小规模</option>
+						<option value="2">一般人</option>
 					</select>
-					<label style="text-align:right;width: 43px;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width: 120px; height: 28px;" 
+					<label style="text-align:right;width:74px;">大区：</label> 
+					<input id="aname"  name="aname" class="easyui-combobox" style="width:100px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:85px;text-align:right">扣费比例：</label>
+					<input id="qpropor" class="easyui-numberbox" style="width:100px;height:28px;" />
 				</div>
 			</form>
 			<p>
