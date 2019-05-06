@@ -278,16 +278,21 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			
 			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
 			String body = getRequest().getParameter("body"); // 物料数据
-			body = body.replace("}{", "},{");
-			body = "[" + body + "]";
-			JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
-			MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
-					JSONConvtoJAVA.getParserConfig());
-			
-			if (bodyVOs == null || bodyVOs.length == 0) {
-				throw new BusinessException("物料数据不能为空");
+			String message = "";
+			if(body!=null){
+				body = body.replace("}{", "},{");
+				body = "[" + body + "]";
+				JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+				MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
+						JSONConvtoJAVA.getParserConfig());
+				
+				if (bodyVOs == null || bodyVOs.length == 0) {
+					throw new BusinessException("物料数据不能为空");
+				}
+				message = matapply.saveApply(vo,uservo,bodyVOs,type,stype,kind);
+			}else{
+				matapply.editSave(vo);
 			}
-			String message = matapply.saveApply(vo,uservo,bodyVOs,type,stype,kind);
 			
 			if(!StringUtil.isEmpty(message)){//需要提示信息
 				json.setMsg("提示");

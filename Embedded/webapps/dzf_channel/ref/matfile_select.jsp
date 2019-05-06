@@ -6,6 +6,10 @@
 <title>选择物料</title>
 <jsp:include page="../inc/easyui.jsp"></jsp:include>
 </head>
+<%
+	String issingle = request.getParameter("issingle");
+
+%>
 <body>
 <style>
 .mod-corp {
@@ -74,11 +78,23 @@
 	
 	var rows = null;
 	$(function(){
+		var issingle = '<%=issingle%>';
 		var columns;
+		if(issingle == "true"){
+			issingle = true;
 			columns = [[   {field:'matfileid', title:'主键id', hidden:true},
 			     		   {field:'code',title:'物料编码',width:500},
 			               {field:'wlname',title:'物料名称',width:500}
 			   	      ]];
+		}else{
+			issingle = false;
+			columns = [[   {field:'ck', checkbox:true },
+			               {field:'matfileid', title:'主键id', hidden:true},
+			               {field:'code',title:'物料编码',width:500},
+			               {field:'wlname',title:'物料名称',width:500}
+			   	 ]];
+		}
+			
 		var params = new Object();
 		grid = $('#matTable').datagrid({
 		    url: DZF.contextPath + '/matmanage/matfile!queryMatFile.action',
@@ -86,7 +102,7 @@
 			fitColumns: true,
 			idField:'matfileid',
 			rownumbers : true,
-			singleSelect : true,
+			singleSelect : issingle,
 			//pagination : true,
 			//pageSize:10,
 		    //pageList:[10,20,30,40,50],

@@ -114,4 +114,11 @@ public interface IMatApplyService {
 	 */
 	MatOrderVO queryUserData(UserVO uservo);
 
+	
+	/**
+	 * 修改保存
+	 * @param vo
+	 */
+	void editSave(MatOrderVO vo);
+
 }

@@ -598,9 +598,37 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 		return num;
 	}
+	
+	@Override
+	public void editSave(MatOrderVO data) {
+		
+		String uuid = UUID.randomUUID().toString();
+		try{
+			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_materielbill(), uuid, 60);
+			if (!lockKey) {
+				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
+			}
+			MatOrderVO mvo=queryById(data.getPk_materielbill());
+ 			if(mvo.getUpdatets()!=null){
+ 				data.setUpdatets(mvo.getUpdatets());
+ 			}
+			checkData(data.getPk_materielbill(), data.getUpdatets());
+			
+			data.setCitycounty(data.getPname()+"-"+data.getCityname()+"-"+data.getCountryname());
+			String[] updates = {"vprovince","vcity","varea","citycounty",
+					"vaddress","vreceiver","phone","fastcost"};
+    		singleObjectBO.update(data, updates);
+		}catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_materielbill(), uuid);
+		}
+	}
 
 	
-     @SuppressWarnings("unused")
 	private void saveEdit(MatOrderVO data,MatOrderBVO[] bvos,String type,UserVO uservo)  throws DZFWarpException {
     	if(type==null){
     		checkIsOperOrder(data.getVstatus(),"只有待审批或已驳回状态的申请单支持修改！");
@@ -615,7 +643,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
 			}
 			
-			MatOrderVO checkData = checkData(data.getPk_materielbill(), data.getUpdatets());
+		    checkData(data.getPk_materielbill(), data.getUpdatets());
 			if(type!=null && "1".equals(type)){//发货
 				if(bvos!=null && bvos.length>0){
 					for (MatOrderBVO mbvo : bvos) {
@@ -645,10 +673,15 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		    	
 				data.setVstatus(3);
 				data.setDeliverid(uservo.getCuserid());
+				data.setCitycounty(data.getPname()+"-"+data.getCityname()+"-"+data.getCountryname());
 		    	String[] supdates ={"vstatus","pk_logistics","fastcode","fastcost",
-						"deliverid","deliverdate" };
+						"deliverid","deliverdate","vprovince","vcity","varea","citycounty",
+						"vaddress","vreceiver","phone"};
 		    	
-		    	singleObjectBO.update(data, supdates);		
+		    	singleObjectBO.update(data, supdates);
+		    	
+		    	//String[] updates = {"vprovince","vcity","varea","citycounty",
+				//"vaddress","vreceiver","phone","fastcost"};
 		    }else{
 		    	//1.修改主订单
 		    	if(data.getVstatus()==4){//已驳回的修改

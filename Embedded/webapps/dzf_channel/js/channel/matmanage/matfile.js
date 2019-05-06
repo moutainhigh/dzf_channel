@@ -358,16 +358,15 @@ function dele(){
 		});
 		return;
 	}
-	var ids="";
+	/*var ids="";
 	for(var i = 0; i < rows.length; i++){
 		ids+=","+rows[i].matfileid;
 	}
 	ids=ids.substring(1);
-	
-	$.ajax({
+	*/
+	/*$.ajax({
 		type : "post",
 		dataType : "json",
-		traditional : true,
 		async : false,
 		url : contextPath + '/matmanage/matfile!queryIsRk.action',
 		data : {
@@ -380,7 +379,8 @@ function dele(){
 					type : 1
 				});	
 				return;
-			} else {
+			} else {*/
+				
 				 var wl = '';
 				    for (var i = 0; i < rows.length; i++) {
 				    	wl = wl + JSON.stringify(rows[i]);
@@ -398,9 +398,10 @@ function dele(){
 							async : false,
 							success : function(data) {
 								if (!data.success) {
+									reloadData();
 									Public.tips({
 										content : data.msg,
-										type : 1
+										type : 2
 									});
 								} else {
 									reloadData();
@@ -415,13 +416,10 @@ function dele(){
 					}
 				});
 			}
-		},
-	});
-	
-	
-	
-	
-}
+		
+		//},
+	//});
+//}
 
 /**
  * 保存

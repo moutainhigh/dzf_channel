@@ -65,7 +65,7 @@ public interface IMatFileService {
 	 * @param ids
 	 * @return
 	 */
-	List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException;
+	//List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException;
 
 	/**
 	 * 删除物料档案

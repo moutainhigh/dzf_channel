@@ -653,7 +653,7 @@ function coperatorLink(val,row,index){
  * 增行
  */
 function addRow(e) {
-	e.stopPropagation();
+	//e.stopPropagation();
 	endBodyEdit();
 	if (status == 'brows') {
 		return;
@@ -811,6 +811,9 @@ function initRef(){
                     title: '选择加盟商',
                     modal: true,
                     href: DZF.contextPath + '/ref/corpchannel_select.jsp',
+                    queryParams : {
+                    	issingle : true
+    				},
     				buttons : [ {
     					text : '确认',
     					handler : function() {
@@ -882,9 +885,9 @@ function initMatFile(){
          title: '选择物料',
          modal: true,
          href: DZF.contextPath + '/ref/matfile_select.jsp',
-         /*queryParams : {
-				ovince :"-1"
-			},*/
+         queryParams : {
+        	 issingle : false
+			},
 			buttons : [ {
 				text : '确认',
 				handler : function() {
@@ -905,7 +908,7 @@ function initMatFile(){
  * 物料选择事件
  */
 function selectMat(){
-	var rows = $('#matTable').datagrid('getSelections');
+	var rows = $('#matTable').datagrid('getChecked');
 	dClickMat(rows);
 }
 
@@ -915,33 +918,44 @@ function selectMat(){
  * @param rowTable
  */
 function dClickMat(rowTable){
-	var wlnameValue = "";
+	
+	/*var wlnameValue = "";
 	var unitValue="";
-	var matid="";
-	if(rowTable){
-		wlnameValue = rowTable[0].wlname;
+	var matid="";*/
+	if(rowTable.length>0){
+		/*wlnameValue = rowTable[0].wlname;
 		unitValue = rowTable[0].unit;
-		matid = rowTable[0].matfileid;
-		
-		var wlname = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'wlname'});
-		var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
-		var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
+		matid = rowTable[0].matfileid;*/
 		
 		var rows = $('#cardGrid').datagrid('getRows');
+		var names = [];
 			for(var i=0;i<rows.length;i++){
 				if(rows[i].matfileid!=null){
-					if(rows[i].wlname==wlnameValue){
-						Public.tips({content : "不能选择重复物料",type : 2});
-						return;
-					}
-					
+					names.push(rows[i].wlname);
 				}
-				
 			}
-		
-		$(wlname.target).textbox('setValue', wlnameValue);
-		$(unit.target).textbox('setValue', unitValue);
-		$(matfileid.target).textbox('setValue', matid);
+			for(var j=0;j<rowTable.length;j++){
+				if(names.indexOf(rowTable[j].wlname)!=-1){
+					Public.tips({content : "不能选择重复物料",type : 2});
+					return;
+				}
+			}
+			for(var j=0;j<rowTable.length;j++){
+				var wlname = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'wlname'});
+				var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
+				var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
+				var appnum = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'applynum'});
+				
+				
+				$(wlname.target).textbox('setValue', rowTable[j].wlname);
+				$(unit.target).textbox('setValue', rowTable[j].unit);
+				$(matfileid.target).textbox('setValue', rowTable[j].matfileid);
+				$(appnum.target).textbox('setValue', 1);
+				
+				if(j!=rowTable.length-1){
+					addRow();
+				}
+			}
 		
 	}
 	 $("#matDlg").dialog('close');

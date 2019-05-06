@@ -1,6 +1,7 @@
 package com.dzf.action.channel.matmanage;
 
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.MatFileExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.Grid;
@@ -199,7 +199,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 	/**
 	 * 查询是否已有入库单
 	 */
-	public void queryIsRk() {
+	/*public void queryIsRk() {
 		Json json = new Json();
 		try{
 			UserVO uservo = getLoginUserInfo();
@@ -223,7 +223,7 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		}
 		writeJson(json);
 	}
-	
+	*/
 	/**
 	 * 删除物料
 	 */
@@ -242,14 +242,25 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 			MaterielFileVO[] mvos = DzfTypeUtils.cast(array, map, MaterielFileVO[].class, JSONConvtoJAVA.getParserConfig());
 			
 			List<MaterielFileVO> mvoList = Arrays.asList(mvos);
+			StringBuffer errmsg = new StringBuffer();
+			int errNum = 0;
 			for (MaterielFileVO mvo : mvoList) {
-				matFile.deleteWl(mvo);
+				try{
+					matFile.deleteWl(mvo);
+				}catch (Exception e) {
+					errNum++;
+					errmsg.append(e.getMessage()).append("<br>");
+				}
 			}
-			json.setMsg("删除成功");
-			json.setSuccess(true);
+			if(errNum==0){
+				json.setMsg("删除成功");
+				json.setSuccess(true);
+			}else{
+				json.setMsg("删除成功" +(mvoList.size()-errNum) + "条，失败" + errNum + "条，失败原因：" + errmsg.toString());
+			    json.setSuccess(false);
+			}
 		}catch (Exception e) {
 			json.setMsg("删除失败");
-			json.setSuccess(false);
 			printErrorLog(json, log, e, "删除失败");
 		}
 		writeJson(json);
@@ -324,8 +335,21 @@ public class MatFileAction extends BaseAction<MaterielFileVO> {
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
-		    InOutUtil.close(toClient, "导出物料档案");
-		    InOutUtil.close(servletOutputStream, "导出物料档案");
+			if(toClient != null){
+				try {
+					toClient.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
+				}
+			}
+			if(servletOutputStream != null){
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("导出失败",e);
+				}
+			}
 		}
 	}
 	

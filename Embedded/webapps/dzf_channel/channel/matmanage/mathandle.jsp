@@ -47,6 +47,8 @@
 				</div>
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="send()">发货</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="edit()">修改</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doImport()">导入</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
 				</div>
 			</div>
@@ -237,28 +239,28 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right"><i class="bisu">*</i>所在地区：</label> 
-						<input id="ipname" name="pname" class="easyui-textbox" style="width:141px;height:28px;"
-				           data-options="readonly:true" /> 
+						<input id="ipname" name="pname" class="easyui-combobox" style="width:141px;height:28px;"
+				           editable="false" data-options="required:true,readonly:true,valueField:'vprovince', textField:'pname', panelHeight:'200',prompt:'请选择省'" /> 
 				        <input id="ivprovince" name="vprovince" type="hidden">
-				        <input id="icityname" name="cityname" class="easyui-textbox" style="width:141px;height:28px;"
-				           data-options="readonly:true" />
+				        <input id="icityname" name="cityname" class="easyui-combobox" style="width:141px;height:28px;"
+				           editable="false" data-options="required:true,readonly:true,valueField:'vcity', textField:'cityname', panelHeight:'200',prompt:'请选择市'" />
 				        <input id="ivcity" name="vcity" type="hidden">
-				        <input id="icountryname" name="countryname" class="easyui-textbox" style="width:141px;height:28px;"
-				           data-options="readonly:true" />
-				        <input id="ivarea" name="varea" type="hidden">
+				        <input id="icountryname" name="countryname" class="easyui-combobox" style="width:141px;height:28px;"
+				           editable="false" data-options="required:true,readonly:true,valueField:'varea', textField:'countryname', panelHeight:'200',prompt:'请选择区/县'" />
+				         <input id="ivarea" name="varea" type="hidden">
 				</div>
 				<div class="time_col time_colp10">
 				       <label style="text-align:right; width: 124px;"><i class="bisu">*</i>详细地址：</label> 
 			           <input id="iaddress" name="address" class="easyui-textbox" style="width:431px;height:28px;" 
-			           	data-options="readonly:true" />
+			           	data-options="required:true,readonly:true" />
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:124px;text-align:right"><i class="bisu">*</i>收货人：</label> 
 					   <input id="ireceiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;" 
-					   	data-options="readonly:true"/>
+					   	data-options="required:true,readonly:true"/>
 					   <label style="width:85px;text-align:right"><i class="bisu">*</i>联系电话：</label> 
 					   <input id="iphone" name="phone" class="easyui-textbox" style="width:167px;height:28px;" 
-					   	data-options="readonly:true"/>
+					   	data-options="required:true,readonly:true"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right"><i class="bisu">*</i>物料选择：</label>
@@ -279,17 +281,19 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right">审核人：</label>
-						<input id="audname" name="audname" class="easyui-textbox" style="width:168px;height:28px;"/>
+						<input id="iaudname" name="audname" class="easyui-textbox" style="width:168px;height:28px;"/>
 						<label style="width:87px;text-align:right">审核时间：</label>
-						<input id="audate" name="audate" type="text" class="easyui-datebox"
+						<input id="iaudate" name="audate" type="text" class="easyui-datebox"
 							   data-options="width:163,height:27" />
 				</div>
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;"><i class="bisu">*</i>快递公司：</label>
-					 	 <input id="ilogname" name="logname" class="easyui-textbox" style="width:166px;height:28px;"
+					 	 <!-- <input id="ilogname" name="logname" class="easyui-textbox" style="width:166px;height:28px;"
 				           data-options="readonly:true" />  
-						 <input id="ilogid" name="logid" type="hidden"> 
-					
+						 <input id="ilogid" name="logid" type="hidden">  -->
+					     <input id="ilogid" name="logid" class="easyui-textbox" style="width:166px;height:28px;"
+				           data-options="readonly:true" />
+			            
 			            <label style="text-align:right; width: 85px;"><i class="bisu">*</i>金额：</label> 
 						<input id="ifcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
 							data-options="readonly:true"/>
@@ -306,6 +310,12 @@
 					  <label style="width:124px;text-align:right">发货人：</label> 
 				      <input id="idename" name="dename" class="easyui-textbox" style="width:166px;height:28px;"
 				      	data-options="readonly:true"/>
+				</div>
+				<div style="float:right;margin-top:2px;margin-right:293px;">
+				    <span class="eid">
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="editSave()">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				    </span>
 				</div>
 			</form>
 		</div>

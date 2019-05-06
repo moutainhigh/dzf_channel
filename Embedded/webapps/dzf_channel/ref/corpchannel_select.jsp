@@ -79,10 +79,9 @@
 	
 	var rows = null;
 	$(function(){
-		 var issingle = '<%=issingle%>';
+		var issingle = '<%=issingle%>';
 		var columns;
 		if(issingle == "true"){
-			issingle = true;
 			columns = [[   {field:'pk_gs', title:'主键id', hidden:true},
 			     		   {field:'incode',title:'公司编码',width:500},
 			               {field:'uname',title:'公司名称',width:500}

@@ -155,11 +155,10 @@ public class MatFileServiceImpl implements IMatFileService {
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 	       if(list!=null && list.size()>0){
-	           UserVO uvo = null;
 	    	   for (MaterielFileVO mvo : list) {
-	    	        uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
-					if(uvo!=null){
-						mvo.setApplyname(uvo.getUser_name());
+		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					if(uservo!=null){
+						mvo.setApplyname(uservo.getUser_name());
 					}
 				}
 		        QueryDeCodeUtils.decKeyUtils(new String[] { "applyname" }, list, 1);  
@@ -287,40 +286,46 @@ public class MatFileServiceImpl implements IMatFileService {
 		return (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<MaterielStockInVO> queryIsRk(String ids)  throws DZFWarpException {
+    private MaterielStockInVO queryIsRk(String id)  throws DZFWarpException {
 		
-		 List<String> idList = Arrays.asList(ids.split(","));
-		 String condition = SqlUtil.buildSqlForIn("l.pk_materiel ",idList.toArray(new String[idList.size()]));
+		 //List<String> idList = Arrays.asList(ids.split(","));
+		// String condition = SqlUtil.buildSqlForIn("l.pk_materiel ",idList.toArray(new String[idList.size()]));
 		 StringBuffer sql = new StringBuffer();
+		 SQLParameter spm = new SQLParameter();
+		 spm.addParam(id);
 		 sql.append("   select distinct l.vcode \n ");
 		 sql.append("         from cn_materielin m \n");
 		 sql.append("         left join cn_materiel l on \n");
 		 sql.append("         m.pk_materiel=l.pk_materiel \n");
-		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0 and \n");
+		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0  \n");
+		 sql.append("         and l.pk_materiel = ? \n");
 		 
-		 List<MaterielStockInVO> bvosList= (List<MaterielStockInVO>) singleObjectBO.executeQuery(sql.toString()+condition,null, new BeanListProcessor(MaterielStockInVO.class));
-	     return bvosList;
+		 return (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(),spm, new BeanProcessor(MaterielStockInVO.class));
 	}
 
 	@Override
 	public void deleteWl(MaterielFileVO qryvo)  throws DZFWarpException {
 		
-		String uuid = UUID.randomUUID().toString();
-		try {
-			LockUtil.getInstance().tryLockKey(qryvo.getTableName(), qryvo.getPk_materiel(), uuid, 60);
-			SQLParameter spm = new SQLParameter();
-	    	spm.addParam(qryvo.getPk_materiel());
-			String sql = " DELETE FROM cn_materiel WHERE pk_materiel = ? ";
-			singleObjectBO.executeUpdate(sql, spm);
-		}catch (Exception e) {
-			if (e instanceof BusinessException)
-				throw new BusinessException(e.getMessage());
-			else
-				throw new WiseRunException(e);
-		} finally {
-			LockUtil.getInstance().unLock_Key(qryvo.getTableName(), qryvo.getPk_materiel(), uuid);
+		MaterielStockInVO vo = queryIsRk(qryvo.getPk_materiel());
+		if(vo!=null){
+			throw new BusinessException("物料编号："+vo.getVcode()+"已有入库单，请删除入库单后重试<br/>");
+		}else{
+			String uuid = UUID.randomUUID().toString();
+			try {
+				LockUtil.getInstance().tryLockKey(qryvo.getTableName(), qryvo.getPk_materiel(), uuid, 60);
+				SQLParameter spm = new SQLParameter();
+		    	spm.addParam(qryvo.getPk_materiel());
+				String sql = " DELETE FROM cn_materiel WHERE pk_materiel = ? ";
+				singleObjectBO.executeUpdate(sql, spm);
+			}catch (Exception e) {
+				if (e instanceof BusinessException)
+					throw new BusinessException(e.getMessage());
+				else
+					throw new WiseRunException(e);
+			} finally {
+				LockUtil.getInstance().unLock_Key(qryvo.getTableName(), qryvo.getPk_materiel(), uuid);
+			}
+			
 		}
 		
 	}
