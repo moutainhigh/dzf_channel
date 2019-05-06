@@ -592,6 +592,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.coperatorid,");
 		sql.append("       c.doperatedate,");
 		sql.append("       c.dconfirmtime,");
+		sql.append("       c.ddelivertime,");
 		sql.append("       c.updatets");
 		sql.append("  from cn_stockout c");
 		sql.append("  INNER JOIN bd_account ba ON c.pk_corp = ba.pk_corp \n") ;

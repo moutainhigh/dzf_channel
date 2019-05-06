@@ -166,6 +166,12 @@ function load(){
 			field : 'contime',
             halign : 'center',
 			align : 'center',
+		}, {
+			width : '140',
+			title : '发货时间',
+			field : 'deltime',
+            halign : 'center',
+			align : 'center',
 		} , ] ],
 		frozenColumns:[[ {
 			field : 'ck',
@@ -201,11 +207,11 @@ function opermatter(val, row, index) {
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanCancel(\''+index+'\')">取消确认</a>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
-	}else{
+	}else if(row.vstatus==2){
 		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">取消确认 </span>'+
-		'<span style="margin-bottom:0px;margin-left:10px;">确认发货 </span>';
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
 	}
 }
 
