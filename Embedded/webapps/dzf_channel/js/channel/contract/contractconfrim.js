@@ -2328,22 +2328,26 @@ function onExportAll(){
 	}
 	var isncust = $('#isncust').combobox('getValue');
 	
+	var queryParams = new Object();
+	
+	queryParams.qj = $('#querydate').html();
+	queryParams.begdate = bdate;
+	queryParams.enddate = edate;
+	queryParams.bperiod = bperiod;
+	queryParams.eperiod = eperiod;
+	queryParams.destatus = $('#destatus').combobox('getValue');
+	queryParams.cpid = $("#pk_account").val();
+	queryParams.cpkid = $("#corpkid_ae").val();
+	queryParams.mid = $("#managerid").val();
+	queryParams.corptype = $('#corptype').combobox('getValue');
+	queryParams.aname = $("#aname").combobox('getValue');
+	if(!isEmpty(isncust)){
+		queryParams.isncust = isncust;
+	}
+	
 	var callback = function(){
-    	Business.getFile(
-			DZF.contextPath+ '/contract/contractconf!onExportAll.action',
-			{'qj' : $('#querydate').html(),
-			 'begdate' : bdate,
-			 'enddate' : edate,
-			 'bperiod' : bperiod,
-			 'eperiod' : eperiod,
-			 'destatus' : $('#destatus').combobox('getValue'),
-			 'isncust' : isncust,
-			 'cpid' : $("#pk_account").val(),
-			 'cpkid' : $("#corpkid_ae").val(),
-			 'mid' : $("#managerid").val(),
-			 'corptype' : $('#corptype').combobox('getValue'),
-			 'aname' : $("#aname").combobox('getValue'),
-			}, true, true);
+		Business.getFile(DZF.contextPath+ '/contract/contractconf!onExportAll.action',
+					queryParams, true, true);
 	}
 	checkBtnPower('export','channel4',callback);
 }
