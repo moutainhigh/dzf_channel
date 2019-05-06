@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -1552,6 +1553,158 @@ public class ExportExcel<T> {
 			log.error("文件打印", e);
 		}
 		return workbook.getBytes();
+	}
+
+	
+	/**
+	 * 渠道业绩统计表
+	 * @param string
+	 * @param conameList
+	 * @param codeList
+	 * @param array
+	 * @param mnylist 
+	 * @param strslist 
+	 * @param toClient
+	 * @param string2
+	 * @return
+	 */
+	public byte[] expChannelStatis(String title, List<String> conameList, List<String> codeList, JSONArray array,
+			OutputStream out, List<String> mnylist, List<String> strslist) {
+		List<Integer> codeindexList = new ArrayList<Integer>();
+		codeindexList.add(0);
+		codeindexList.add(1);
+		codeindexList.add(2);
+		codeindexList.add(3);
+		codeindexList.add(4);
+		 HSSFWorkbook workbook = new HSSFWorkbook();
+			try {
+				int index = 4;
+				HSSFSheet sheet = workbook.createSheet(title);
+				// 行宽
+				sheet.setDefaultColumnWidth((short) 15);
+
+				// 数字类型样式
+				HSSFCellStyle numsty = workbook.createCellStyle();
+				numsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				numsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				numsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				numsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				numsty.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+
+				// 字符、日期类型样式
+				HSSFCellStyle strsty = workbook.createCellStyle();
+				strsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				strsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				strsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				strsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				strsty.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+
+				// 通用样式
+				HSSFCellStyle style = workbook.createCellStyle();
+				style.setFillForegroundColor(HSSFColor.WHITE.index);
+				style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+				style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				// 生成一个字体
+				HSSFFont font = workbook.createFont();
+				font.setFontHeightInPoints((short) 12);
+				font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+				// 把字体应用到当前的样式
+				style.setFont(font);
+
+				HSSFCellStyle headstyle = workbook.createCellStyle();
+				HSSFFont f = workbook.createFont();
+				f.setFontHeightInPoints((short) 20);// 字号
+				f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+				headstyle.setFont(f);
+				headstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
+				headstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
+																				
+				headstyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				headstyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				headstyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				headstyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				
+				int headerlength = conameList.size();
+				int fieldlength = codeList.size();
+
+				
+				// 大标题
+				HSSFRow rowtitle = sheet.createRow(0);
+				HSSFCell titlecell = rowtitle.createCell(0);
+				titlecell.setCellValue(title);
+				titlecell.setCellStyle(headstyle);
+				Region region = new Region(0, (short) 0, 2, (short) (fieldlength - 1));// 合并前三行
+				sheet.addMergedRegion(region);// 合并标题
+
+				// 添加导出行信息
+				HSSFRow rowfour = sheet.createRow(3);
+				Region reg = null;
+				for (int i = 0; i < headerlength; i++) {
+					HSSFCell cell1 = rowfour.createCell(i);
+					cell1.setCellValue(new HSSFRichTextString(String.valueOf(conameList.get(i))));
+					cell1.setCellStyle(style);
+				}
+				
+				// 大标题合并行设置边框
+				setRegionStyle(sheet, region, headstyle);
+				
+				for (int i = 0; i < array.size(); i++) {
+					HSSFRow row1 = sheet.createRow(i + index);
+					Map<String, Object> map = (Map<String, Object>) array.get(i);
+					
+					int count = 0;
+					for (String key : codeList) {
+						try {
+							HSSFRichTextString richString;
+							HSSFCell cell = row1.createCell(count);
+							if (map.get(key) != null && !map.get(key).toString().equals("0") ) {
+								if (mnylist != null && mnylist.contains(key)) {
+									DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
+									cell.setCellValue(doublevalue.toString());
+										
+								} else if (strslist != null && strslist.contains(key)) {
+								    richString = new HSSFRichTextString(map.get(key).toString());
+									cell.setCellValue(richString);
+								}
+							} else {
+								richString = new HSSFRichTextString("");
+								cell.setCellValue(richString);
+							}
+							if (mnylist != null && mnylist.contains(key)) {
+								cell.setCellStyle(numsty);
+								if(map.get(key).toString().equals("0")){
+									cell.setCellValue("0.00");
+								}
+							} else if (strslist != null && strslist.contains(key)) {
+								cell.setCellStyle(strsty);
+							}
+							count++;
+						} catch (SecurityException e) {
+							throw new WiseRunException(e);
+						} catch (IllegalArgumentException e) {
+							throw new WiseRunException(e);
+						} catch (Exception e) {
+							log.error("文件打印", e);
+						} finally {
+							// 清理资源
+						}
+					}
+				}
+				
+				try {
+					workbook.write(out);
+				} catch (IOException e) {
+					throw new WiseRunException(e);
+				}	
+			}catch (Exception e) {
+				log.error("文件打印", e);
+			}
+			return workbook.getBytes();
 	}
 
 }

@@ -24,6 +24,9 @@
 							<span class="arrow-date"></span>
 						</div>
 					</div>
+					<div class="right">
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
+				</div>
 				</div>
 			</div>
 			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:220px;">
