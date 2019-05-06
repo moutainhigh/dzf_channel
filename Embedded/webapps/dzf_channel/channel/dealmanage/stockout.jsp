@@ -160,9 +160,9 @@
 							data-options="required:true,validType:'length[0,20]'" style="width:150px;height:25px;"/>
 				</div>
 				<div class="time_col time_colp11">
-					<label style="text-align:right;width:140px;"><i class="bisu">*</i>金额</label>
+					<label style="text-align:right;width:140px;">金额</label>
 						<input id="sfcost" name="fcost" class="easyui-numberbox" 
-							data-options="required:true,precision:2,groupSeparator:',',min:0" style="width:150px;height:25px;"/>
+							data-options="precision:2,groupSeparator:',',min:0" style="width:150px;height:25px;"/>
 				</div>
 			</form>
 			<div style="text-align:center;margin-top:30px;">
