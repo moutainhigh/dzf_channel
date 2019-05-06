@@ -13,17 +13,20 @@ public interface IPackageDefService {
      * @throws DZFWarpException
      */
     public PackageDefVO[] query(PackageQryVO qryvo) throws DZFWarpException;
-
+    
     /**
      * 新增保存
-     * @param pk_corp
      * @param insertData
-     * @param delData
+     * @throws DZFWarpException
+     */
+    public void saveNew(PackageDefVO insertData) throws DZFWarpException;
+    
+    /**
+     * 修改保存
      * @param updateData
      * @throws DZFWarpException
      */
-    public void save(String pk_corp, PackageDefVO[] insertData, PackageDefVO[] delData, PackageDefVO[] updateData)
-            throws DZFWarpException;
+    public void saveModify(PackageDefVO updateData) throws DZFWarpException;
 
     /**
      * 删除

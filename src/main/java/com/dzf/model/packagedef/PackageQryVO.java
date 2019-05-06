@@ -2,7 +2,6 @@ package com.dzf.model.packagedef;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 
 /**
@@ -37,6 +36,9 @@ public class PackageQryVO extends SuperVO {
     
     private Integer ptype;//是否促销 1促销；2：非促销  12查询全部
 	
+    @FieldAlias("comptype")
+    private Integer icompanytype;// 公司类型 20-个体工商，99-非个体工商； -1全部
+    
 	public DZFDate getDbegindate() {
         return dbegindate;
     }
@@ -55,6 +57,14 @@ public class PackageQryVO extends SuperVO {
 
 	public Integer getVstatus() {
 		return vstatus;
+	}
+
+	public Integer getIcompanytype() {
+		return icompanytype;
+	}
+
+	public void setIcompanytype(Integer icompanytype) {
+		this.icompanytype = icompanytype;
 	}
 
 	public Integer getPtype() {

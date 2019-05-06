@@ -71,8 +71,6 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 		writeJson(grid);
 	}
 
-	/**
-	 */
 	public void save() {
 		Json json = new Json();
 		try {
@@ -86,23 +84,17 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 
 			Map<String, String> bodymapping = FieldMapping.getFieldMapping(new PackageDefVO());
 			JSONObject jsonObj = (JSONObject) JSON.parse(getRequest().getParameter("submitData"));
-
 			PackageDefVO[] insertData = DzfTypeUtils.cast(jsonObj.get("newRows"), bodymapping, PackageDefVO[].class,
-					JSONConvtoJAVA.getParserConfig());
-			PackageDefVO[] delData = DzfTypeUtils.cast(jsonObj.get("deleteRows"), bodymapping, PackageDefVO[].class,
 					JSONConvtoJAVA.getParserConfig());
 			PackageDefVO[] updateData = DzfTypeUtils.cast(jsonObj.get("updateRows"), bodymapping, PackageDefVO[].class,
 					JSONConvtoJAVA.getParserConfig());
-
-			setDefaultValue(insertData, updateData);
-			packageDefImpl.save(getLogincorppk(), insertData, delData, updateData);
-			// json.setRows(data);
-			json.setSuccess(true);
-			json.setMsg("保存成功");
+			
 			PackageDefVO logVO=null;
 			StringBuffer buf=new StringBuffer();
 			if(insertData!=null && insertData.length>0){
 				logVO=insertData[0];
+				setDefaultValue(logVO,uservo);
+				packageDefImpl.saveNew(logVO);
 				buf.append("新增服务套餐：");
 				buf.append(logVO.getVtaxpayertype()).append("、月服务费");
 				buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
@@ -110,28 +102,31 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
 			}else if(updateData!=null && updateData.length>0){
 				logVO=updateData[0];
-				buf.append("修改服务套餐：");
-				buf.append(logVO.getVtaxpayertype()).append("、月服务费");
-				buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
-				buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
-				writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+				logVO.setPk_corp(uservo.getPk_corp());
+				packageDefImpl.saveModify(logVO);
+				if(logVO.getVstatus()!=2){//已发布,只能修改服务套餐类型
+					buf.append("修改服务套餐：");
+					buf.append(logVO.getVtaxpayertype()).append("、月服务费");
+					buf.append(logVO.getNmonthmny().setScale(2, DZFDouble.ROUND_HALF_UP)).append("、收费周期");
+					buf.append(logVO.getIcashcycle()).append("、合同周期").append(logVO.getIcontcycle());
+					writeLogRecord(LogRecordEnum.OPE_CHANNEL_6.getValue(), buf.toString(), ISysConstants.SYS_3);
+				}
 			}
+			json.setSuccess(true);
+			json.setMsg("保存成功");
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败！");
 		}
 		writeJson(json);
 	}
 
-	private void setDefaultValue(PackageDefVO[] insertData, PackageDefVO[] updateData) {
-		if (insertData != null && insertData.length > 0) {
-			for (PackageDefVO data : insertData) {
-				data.setDr(0);
-				data.setCoperatorid(getLoginUserid());
-				data.setDoperatedate(new DZFDate());
-				data.setVstatus(1);
-				data.setCoperatorname(getLoginUserInfo().getUser_name());
-			}
-		}
+	private void setDefaultValue(PackageDefVO insertData,UserVO uservo) {
+		insertData.setDr(0);
+		insertData.setCoperatorid(uservo.getCuserid());
+		insertData.setDoperatedate(new DZFDate());
+		insertData.setVstatus(1);
+		insertData.setCoperatorname(uservo.getUser_name());
+		insertData.setPk_corp(uservo.getPk_corp());
 	}
 
 	public void delete() {
@@ -173,7 +168,7 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 			}
 		} else {
 			json.setSuccess(false);
-			json.setMsg("删除失败");
+			json.setMsg("请选择数据");
 		}
 		writeJson(json);
 	}

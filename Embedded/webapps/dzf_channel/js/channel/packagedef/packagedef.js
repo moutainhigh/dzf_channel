@@ -1,5 +1,6 @@
 var parentRow;
 var grid;
+var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro;
 //自适应边框
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -10,6 +11,7 @@ $(window).resize(function(){
 $(function() {
 	queryBoxChange('#begdate','#enddate');
 	initGrid();
+	initDgEditor();
 	reloadData();
 });
 
@@ -35,7 +37,7 @@ function initGrid(){
     		},{
     			field : 'typecode',
     			title : '业务类型',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'left',
     			formatter: function (value) {
@@ -44,21 +46,6 @@ function initGrid(){
     					text = "代理记账";
     				return text;
     			},
-				editor: {
-					type: 'combobox',
-					options: {
-                    	height: 35,
-                    	panelHeight: 80,
-                    	showItemIcon: true,
-                    	valueField: "value",
-                    	editable: false,
-                    	textField: "text",
-                    	data: [{
-                    		value: 'FW0101',
-                    		text: '代理记账'
-                    	},]
-                    }
-	            }
     		},
     		 {
     			field : 'taxtype',
@@ -66,29 +53,10 @@ function initGrid(){
     			width : 100,
     			halign : 'center',
     			align : 'left',
-    			editor: {
-    				type: 'combobox',
-                    options: {
-                    	height: 35,
-                    	panelHeight: 80,
-                    	showItemIcon: true,
-                    	valueField: "value",
-                    	editable: false,
-                    	textField: "text",
-                    	data: [{
-                    		value: '一般纳税人',
-                    		text: '一般纳税人'
-                    	},{
-                    		value: '小规模纳税人',
-                    		text: '小规模纳税人'
-                    	},],
-                    	required:true,
-                    }
-                }
     		}, {
     			field : 'comptype',
     			title : '公司类型',
-    			width : 120,
+    			width : 100,
     			halign : 'center',
     			align : 'left',
     			formatter : function(value,row,index){
@@ -96,29 +64,10 @@ function initGrid(){
     					return '个体工商户';
     				return "非个体户";
     			},
-    			editor: {
-    				type: 'combobox',
-                    options: {
-                    	height: 35,
-                    	panelHeight: 80,
-                    	showItemIcon: true,
-                    	valueField: "value",
-                    	editable: false,
-                    	textField: "text",
-                    	data: [{
-                    		value: '20',
-                    		text: '个体工商户'
-                    	},{
-                    		value: '99',
-                    		text: '非个体户'
-                    	},],
-                    	required:true,
-                    }
-                }
        		}, {
     			field : 'itype',
     			title : '套餐',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'left',
     			formatter : function(value,row,index){
@@ -126,133 +75,56 @@ function initGrid(){
     					return '常规';
     				return "非常规";
     			},
-    			editor: {
-    				type: 'combobox',
-                    options: {
-                    	height: 35,
-                    	panelHeight: 80,
-                    	showItemIcon: true,
-                    	valueField: "value",
-                    	editable: false,
-                    	textField: "text",
-                    	data: [{
-                    		value: '0',
-                    		text: '常规'
-                    	},{
-                    		value: '1',
-                    		text: '非常规'
-                    	},],
-                    	required:true,
-                    }
-                }
     		},{
     			field : 'nmsmny',
     			title : '月服务费',
-    			width : 100,
+    			width : 90,
     			align : 'right',
     			halign : 'center',
     			formatter : function(value,row,index){
     				if(value == 0)return "0.00";
     				return formatMny(value);
     			},
-    			editor: {
-    				type: 'numberbox',
-                    options: {
-                    	height: 35,
-                    	min:0,
-                    	precision: 2,
-                    	groupSeparator:',',
-                    	validType:'length[1,8]',
-                    	required:true,
-                    }
-                }
     		}, {
     			field : 'cylnum',
     			title : '收费周期(月)',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'right',
-    			editor: {
-    				type: 'numberbox',
-                    options: {
-                    	height: 35,
-                    	precision: 0,
-                    	min:0,
-                    	validType:'length[1,2]',
-                    	required:true,
-                    }
-                }
     		}, {
     			field : 'contcycle',
     			title : '合同期限(月)',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'right',
-    			editor: {
-    				type: 'numberbox',
-                    options: {
-                    	height: 35,
-                    	precision: 0,
-                    	min:0,
-                    	validType:'length[1,6]',
-                    	required:true,
-                    }
-                }
     		}, {
     			field : 'pubnum',
     			title : '发布个数',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'right',
-    			editor: {
-    				type: 'numberbox',
-                    options: {
-                    	height: 35,
-                    	precision: 0,
-                    	min:0,
-                    	validType:'length[1,6]',
-                    }
-                }
     		}, {
     			field : 'dpubdate',
     			title : '发布时间',
     			width : 90,
     			halign : 'center',
     			align : 'center',
-//    			editor: {
-//    				type: 'datebox',
-//                    options: {
-//                    	height: 35,
-//                    }
-//                }
     		}, {
     			field : 'offdate',
     			title : '下架时间',
     			width : 90,
     			halign : 'center',
     			align : 'center',
-//    			editor: {
-//    				type: 'datebox',
-//                    options: {
-//                    	height: 35,
-//                    }
-//                }
     		}, {
     			field : 'coperatorname',
     			title : '录入人',
-    			width : 100,
+    			width : 90,
     			halign : 'center',
     			align : 'left',
-//    			editor: {
-//    				type: 'textbox',
-//                    options: {
-//                    	height: 35,
-//                    }
-//                }
     		}, {
     			field : 'vstatus',
     			title : '状态',
-    			width : 90,
+    			width : 80,
     			halign : 'center',
     			align : 'center',
     			formatter: function (value) {
@@ -271,23 +143,16 @@ function initGrid(){
     			width : 90,
     			halign : 'center',
     			align : 'center',
-    			editor: {type:'checkbox',options : {on:'是',off:'否',},
-    				formatter: function (value, row, index) {
-    					var checked = (value == '是'||value == 'Y') ? "checked" : "";
-    					return '<input type="checkbox" disabled ' + checked + '/>';
-    				}}
+				formatter: function (value, row, index) {
+					var checked = (value == '是'||value == 'Y') ? "checked" : "";
+					return '<input type="checkbox" disabled ' + checked + '/>';
+				},
     		}, {
     			field : 'memo',
     			title : '备注',
     			width : 300,
     			halign : 'center',
     			align : 'left',
-    			editor: {
-    				type: 'textbox',
-                    options: {
-                    	height: 35,
-                    }
-                }
     		}, {
     			field : 'doperatedate',
     			title : '录入日期',
@@ -297,6 +162,129 @@ function initGrid(){
     		}
     	] ]
 	});
+}
+
+function initDgEditor(){
+	//业务类型
+	typecode = {
+		type: 'combobox',
+		options: {
+        	height: 35,
+        	panelHeight: 80,
+        	showItemIcon: true,
+        	valueField: "value",
+        	editable: false,
+        	textField: "text",
+        	data: [{
+        		value: 'FW0101',
+        		text: '代理记账'
+        	},]
+        }
+    };
+    taxtype = {
+			type: 'combobox',
+               options: {
+               		height: 35,
+	               	panelHeight: 80,
+	               	showItemIcon: true,
+	               	valueField: "value",
+	               	editable: false,
+	               	textField: "text",
+	               	data: [{
+	               		value: '一般纳税人',
+	               		text: '一般纳税人'
+	               	},{
+	               		value: '小规模纳税人',
+	               		text: '小规模纳税人'
+	               	},],
+	               	required:true,
+               }
+           };
+    comptype = {
+    				type: 'combobox',
+                    options: {
+                    	height: 35,
+                    	panelHeight: 80,
+                    	showItemIcon: true,
+                    	valueField: "value",
+                    	editable: false,
+                    	textField: "text",
+                    	data: [{
+                    		value: '20',
+                    		text: '个体工商户'
+                    	},{
+                    		value: '99',
+                    		text: '非个体户'
+                    	},],
+                    	required:true,
+                    }
+                };
+    itype = {
+    				type: 'combobox',
+                    options: {
+                    	height: 35,
+                    	panelHeight: 80,
+                    	showItemIcon: true,
+                    	valueField: "value",
+                    	editable: false,
+                    	textField: "text",
+                    	data: [{
+                    		value: '0',
+                    		text: '常规'
+                    	},{
+                    		value: '1',
+                    		text: '非常规'
+                    	},],
+                    	required:true,
+                    }
+                };
+    nmsmny = {
+    				type: 'numberbox',
+                    options: {
+                    	height: 35,
+                    	min:0,
+                    	precision: 2,
+                    	groupSeparator:',',
+                    	validType:'length[1,8]',
+                    	required:true,
+                    }
+                };  
+    cylnum = {
+    				type: 'numberbox',
+                    options: {
+                    	height: 35,
+                    	precision: 0,
+                    	min:0,
+                    	validType:'length[1,2]',
+                    	required:true,
+                    }
+                };     
+    contcycle = {
+    				type: 'numberbox',
+                    options: {
+                    	height: 35,
+                    	precision: 0,
+                    	min:0,
+                    	validType:'length[1,6]',
+                    	required:true,
+                    }
+                };
+    pubnum = {
+    				type: 'numberbox',
+                    options: {
+                    	height: 35,
+                    	precision: 0,
+                    	min:0,
+                    	validType:'length[1,6]',
+                    }
+                };
+    ispro = {type:'checkbox',options : {on:'是',off:'否',}};     
+    memo = {
+			type: 'textbox',
+            options: {
+            	height: 35,
+            }
+        };
 }
 
 
@@ -327,6 +315,7 @@ function reloadData(){
 	var enddate = $("#enddate").datebox('getValue');
 	var taxtype = $("#taxtype").combobox('getValue');
 	var vstatus = $("#vstatus").combobox('getValue');
+	var comptype = $("#comptype").combobox('getValue');
 	var cylnum = $("#cylnum").numberbox('getValue');
 	var contcycle = $("#contcycle").numberbox('getValue');
 	
@@ -352,6 +341,7 @@ function reloadData(){
 	queryParams.enddate = enddate;
 	queryParams.taxtype = taxtype;
 	queryParams.vstatus = vstatus;
+	queryParams.comptype = comptype;
 	if(isEmpty(cylnum)){
 		queryParams.cylnum = -1;
 	}else{
@@ -380,6 +370,28 @@ function addType () {
 	$('#grid').datagrid('insertRow',{index: 0,	// 索引从0开始
 		row: {typecode:'FW0101'}
 	});
+
+	var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
+	typecodeO.editor=typecode;
+	var taxtypeO = $('#grid').datagrid('getColumnOption', 'taxtype');
+	taxtypeO.editor=taxtype;
+	var comptypeO = $('#grid').datagrid('getColumnOption', 'comptype');
+	comptypeO.editor=comptype;
+	var itypeO = $('#grid').datagrid('getColumnOption', 'itype');
+	itypeO.editor=itype;
+	var nmsmnyO = $('#grid').datagrid('getColumnOption', 'nmsmny');
+	nmsmnyO.editor=nmsmny;
+	var cylnumO = $('#grid').datagrid('getColumnOption', 'cylnum');
+	cylnumO.editor=cylnum;
+	var contcycleO = $('#grid').datagrid('getColumnOption', 'contcycle');
+	contcycleO.editor=contcycle;
+	var pubnumO = $('#grid').datagrid('getColumnOption', 'pubnum');
+	pubnumO.editor=pubnum;
+	var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
+	isproO.editor=ispro;
+	var memoO = $('#grid').datagrid('getColumnOption', 'memo');
+	memoO.editor=memo;
+
 	$('#grid').datagrid("beginEdit", 0);
 	editIndex = 0;
 }
@@ -505,21 +517,73 @@ function updateOff() {
 
 var editIndex = 0;
 function modify() {
-//	var grid = $("#grid");
 	var rows = grid.datagrid("getChecked");
-	if(rows){
-		if(rows.length > 1){
-			Public.tips({content: "请选择一条数据修改",type: 2});
-			return;
-		}
+	if(rows && rows.length == 1){
 		var row = rows[0];
 		var vstatus = row.vstatus;
-/*		if(vstatus == 2){
-			Public.tips({content: "已发布的套餐不允许修改",type: 2});
-			return;
-		}else */if(vstatus == 3){
-			Public.tips({content: "已下架的套餐不允许修改",type: 2});
-			return;
+		if(vstatus == 3){
+			var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
+			typecodeO.editor={};
+			var taxtypeO = $('#grid').datagrid('getColumnOption', 'taxtype');
+			taxtypeO.editor=taxtype;
+			var comptypeO = $('#grid').datagrid('getColumnOption', 'comptype');
+			comptypeO.editor=comptype;
+			var itypeO = $('#grid').datagrid('getColumnOption', 'itype');
+			itypeO.editor=itype;
+			var nmsmnyO = $('#grid').datagrid('getColumnOption', 'nmsmny');
+			nmsmnyO.editor=nmsmny;
+			var cylnumO = $('#grid').datagrid('getColumnOption', 'cylnum');
+			cylnumO.editor=cylnum;
+			var contcycleO = $('#grid').datagrid('getColumnOption', 'contcycle');
+			contcycleO.editor=contcycle;
+			var pubnumO = $('#grid').datagrid('getColumnOption', 'pubnum');
+			pubnumO.editor=pubnum;
+			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
+			isproO.editor={};
+			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
+			memoO.editor={};
+		}else if(vstatus == 2){
+			var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
+			typecodeO.editor={};
+			var taxtypeO = $('#grid').datagrid('getColumnOption', 'taxtype');
+			taxtypeO.editor={};
+			var comptypeO = $('#grid').datagrid('getColumnOption', 'comptype');
+			comptypeO.editor={};
+			var itypeO = $('#grid').datagrid('getColumnOption', 'itype');
+			itypeO.editor=itype;
+			var nmsmnyO = $('#grid').datagrid('getColumnOption', 'nmsmny');
+			nmsmnyO.editor={};
+			var cylnumO = $('#grid').datagrid('getColumnOption', 'cylnum');
+			cylnumO.editor={};
+			var contcycleO = $('#grid').datagrid('getColumnOption', 'contcycle');
+			contcycleO.editor={};
+			var pubnumO = $('#grid').datagrid('getColumnOption', 'pubnum');
+			pubnumO.editor={};
+			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
+			isproO.editor={};
+			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
+			memoO.editor={};
+		}else if(vstatus == 1){
+			var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
+			typecodeO.editor=typecode;
+			var taxtypeO = $('#grid').datagrid('getColumnOption', 'taxtype');
+			taxtypeO.editor=taxtype;
+			var comptypeO = $('#grid').datagrid('getColumnOption', 'comptype');
+			comptypeO.editor=comptype;
+			var itypeO = $('#grid').datagrid('getColumnOption', 'itype');
+			itypeO.editor=itype;
+			var nmsmnyO = $('#grid').datagrid('getColumnOption', 'nmsmny');
+			nmsmnyO.editor=nmsmny;
+			var cylnumO = $('#grid').datagrid('getColumnOption', 'cylnum');
+			cylnumO.editor=cylnum;
+			var contcycleO = $('#grid').datagrid('getColumnOption', 'contcycle');
+			contcycleO.editor=contcycle;
+			var pubnumO = $('#grid').datagrid('getColumnOption', 'pubnum');
+			pubnumO.editor=pubnum;
+			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
+			isproO.editor=ispro;
+			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
+			memoO.editor=memo;
 		}
 		showButtons("edit");
 		var index = $("#grid").datagrid("getRowIndex", row);
@@ -601,9 +665,8 @@ function showButtons(type) {
 }
 
 function getSubmitData (grid) {
-//	endEdit(grid);
-	var newRows = $('#grid').datagrid("getChanges", "inserted");
 	var datagrid;
+	var newRows = $('#grid').datagrid("getChanges", "inserted");
 	if(newRows != null && newRows.length > 0){
 		for (var i = 0; i < newRows.length; i++) {
 			datagrid = $("#grid").datagrid("validateRow", i);
@@ -616,13 +679,10 @@ function getSubmitData (grid) {
 			}
 		}
 	}
-	
-	var deleteRows = grid.datagrid("getChanges", "deleted");
 	var updateRows = grid.datagrid("getChanges", "updated");
 	
 	var submitData = {
 		newRows: newRows,
-		deleteRows: deleteRows,
 		updateRows: updateRows
 	}
 	submitData = JSON.stringify(submitData);

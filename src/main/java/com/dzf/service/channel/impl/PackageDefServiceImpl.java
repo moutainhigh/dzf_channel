@@ -1,5 +1,7 @@
 package com.dzf.service.channel.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +14,10 @@ import com.dzf.model.sys.sys_set.BusiTypeVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.IPackageDefService;
 
 @Service("packageDefImpl")
@@ -47,6 +51,10 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and icontcycle = ?");
             params.addParam(qryvo.getIcontcycle());
         }
+        if(qryvo.getIcompanytype() !=-1){
+            str.append(" and icompanytype = ?");
+            params.addParam(qryvo.getIcompanytype());
+        }
         if(qryvo.getPtype()==-1){
         	return new PackageDefVO[0];
         }else if(qryvo.getPtype()==1){
@@ -71,7 +79,6 @@ public class PackageDefServiceImpl implements IPackageDefService {
             str.append(" and nvl(itype,0) = ?");
             params.addParam(1);
         }
-//        str.append(" order by vstatus,dpublishdate desc");
         str.append(" order by vstatus asc,sortnum asc");
         PackageDefVO[] vos = (PackageDefVO[]) singleObjectBO.queryByCondition(PackageDefVO.class, str.toString(), params);
         if(vos != null && vos.length > 0){
@@ -89,42 +96,99 @@ public class PackageDefServiceImpl implements IPackageDefService {
         return vos;
     }
     
-    @Override
-    public void save(String pk_corp, PackageDefVO[] insertData, PackageDefVO[] delData, PackageDefVO[] updateData)
-            throws DZFWarpException {
-        if (insertData != null && insertData.length > 0) {
-            for (PackageDefVO insert : insertData) {
-                BusiTypeVO bvo = queryBusitype(insert.getVbusitypecode());
-                insert.setPk_corp(pk_corp);
-                if(bvo != null){
-                    insert.setPk_busitype(bvo.getPk_busitype());
-                    insert.setPk_product(bvo.getPk_product());
-                    insert.setVbusitypename(bvo.getVbusitypename());
-                }else{
-                    throw new BusinessException("代理记账业务类型为空，保存失败");
-                }
-                if(insert.getIspromotion() != null && insert.getIspromotion().booleanValue()){
-                    if(insert.getIpublishnum() == null || insert.getIpublishnum() <=0 ){
-                        throw new BusinessException("发布个数不可以小于1，请重新填写");
-                    }
-                }
-            }
-            singleObjectBO.insertVOArr(pk_corp, insertData);
-        }
-        if (updateData != null && updateData.length > 0){
-            for (PackageDefVO update : updateData) {
-                if(update.getIspromotion() != null && update.getIspromotion().booleanValue()){
-                    if(update.getIpublishnum() == null || update.getIpublishnum() <=0 ){
-                        throw new BusinessException("发布个数不可以小于1，请重新填写");
-                    }
-                }
-            }
-            singleObjectBO.updateAry(updateData);
-        }
-        if(delData != null && delData.length > 0){
-            singleObjectBO.deleteVOArray(delData);
-        }
+    private void checkIsSimilar(PackageDefVO checkVO) throws DZFWarpException {
+    	StringBuffer sql = new StringBuffer();
+    	SQLParameter spm = new SQLParameter();
+		sql.append("select 1 from cn_packagedef where nvl(dr, 0) = 0 ") ; 
+		if(!StringUtil.isEmpty(checkVO.getPk_packagedef())){
+			sql.append("and pk_packagedef != ? ");
+			spm.addParam(checkVO.getPk_packagedef());
+		}
+		sql.append("and vtaxpayertype = ? ");
+		spm.addParam(checkVO.getVtaxpayertype());
+		sql.append("and icompanytype = ? ");
+		spm.addParam(checkVO.getIcompanytype());
+		sql.append("and itype = ? ");
+		spm.addParam(checkVO.getItype());
+		sql.append("and nmonthmny = ? ");
+		spm.addParam(checkVO.getNmonthmny());
+		sql.append("and icashcycle = ? ");
+		spm.addParam(checkVO.getIcashcycle());
+		sql.append("and icontcycle = ? ");
+		spm.addParam(checkVO.getIcontcycle());
+    	boolean exists = singleObjectBO.isExists(checkVO.getPk_corp(), sql.toString(), spm);
+    	if(exists){
+    		throw new BusinessException("服务套餐已存在");
+    	}
     }
+    
+    @Override
+    public void saveNew(PackageDefVO insertData) throws DZFWarpException {
+    	checkIsSimilar(insertData);
+        BusiTypeVO bvo = queryBusitype(insertData.getVbusitypecode());
+        if(bvo != null){
+        	insertData.setPk_busitype(bvo.getPk_busitype());
+        	insertData.setPk_product(bvo.getPk_product());
+        	insertData.setVbusitypename(bvo.getVbusitypename());
+        }else{
+            throw new BusinessException("代理记账业务类型为空，保存失败");
+        }
+        if(insertData.getIspromotion() != null && insertData.getIspromotion().booleanValue()){
+            if(insertData.getIpublishnum() == null || insertData.getIpublishnum() <=0 ){
+                throw new BusinessException("发布个数不可以小于1，请重新填写");
+            }
+        }
+        singleObjectBO.insertVO(insertData.getPk_corp(), insertData);
+    }
+    
+    @Override
+    public void saveModify(PackageDefVO updateData) throws DZFWarpException {
+		String uuid = UUID.randomUUID().toString();
+		try {
+			LockUtil.getInstance().tryLockKey(updateData.getTableName(), updateData.getPk_packagedef(),uuid, 120);
+			PackageDefVO oldvo = checkData(updateData);
+			checkIsSimilar(updateData);
+	        if(updateData.getIspromotion() != null && updateData.getIspromotion().booleanValue()){
+	            if(updateData.getIpublishnum() == null || updateData.getIpublishnum() <=0 ){
+	                throw new BusinessException("发布个数不可以小于1，请重新填写");
+	            }
+	            if(oldvo.getVstatus() == 3){
+		            if(updateData.getIpublishnum().compareTo(oldvo.getIpublishnum())<0){
+		            	 throw new BusinessException("修改已下架的套餐，发布个数不可以小于之前的个数");
+		            }
+	            }
+	        }
+	        if(oldvo.getVstatus() == 1){
+		        singleObjectBO.update(updateData);
+	        }else if(oldvo.getVstatus() == 2){
+	        	singleObjectBO.update(updateData, new String[]{"itype"});
+	        }else{
+	        	singleObjectBO.update(updateData, new String[]{"vtaxpayertype","icompanytype",
+	        			"itype","nmonthmny","icashcycle","icontcycle","ipublishnum"});
+	        }
+		}catch (Exception e) {
+            if (e instanceof BusinessException)
+                throw new BusinessException(e.getMessage());
+            else
+                throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(updateData.getTableName(), updateData.getPk_packagedef(),uuid);
+		}
+    }
+    
+	/**
+	 * 时间戳校验
+	 */
+	private PackageDefVO checkData(PackageDefVO vo) throws DZFWarpException {
+		PackageDefVO oldvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class, vo.getPk_packagedef());
+		if(oldvo == null){
+			throw new BusinessException("非法操作");
+		}
+		if(oldvo.getUpdatets().compareTo(vo.getUpdatets()) != 0){
+			throw new BusinessException("数据已发生变化，请取消本次操作后刷新");
+		}
+		return oldvo;
+	}
 
     private BusiTypeVO queryBusitype(String vbusitypecode){
         String condition = "nvl(dr,0) = 0 and pk_corp = '000001' and vbusitypecode = ? ";
@@ -142,8 +206,6 @@ public class PackageDefServiceImpl implements IPackageDefService {
         for(PackageDefVO vo : vos){
             if(vo.getVstatus() == 2){
                 throw new BusinessException("已发布的套餐不允许删除");
-            }else if(vo.getVstatus() == 3){
-                throw new BusinessException("已下架的套餐不允许删除");
             }
         }
         singleObjectBO.deleteVOArray(vos);
@@ -154,8 +216,6 @@ public class PackageDefServiceImpl implements IPackageDefService {
         for(PackageDefVO vo : vos){
             if(vo.getVstatus() == 2){
                 throw new BusinessException("已发布的套餐不允许发布");
-            }else if(vo.getVstatus() == 3){
-                throw new BusinessException("已下架的套餐不允许发布");
             }
             if(vo.getIcontcycle() == null){
                 throw new BusinessException("合同周期不能为空");

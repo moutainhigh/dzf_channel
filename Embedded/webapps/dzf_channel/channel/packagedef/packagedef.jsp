@@ -37,7 +37,7 @@
 			</div>
 	    </div>
 	    <!-- 查询对话框 begin -->
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:340px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -80,6 +80,15 @@
 					<label style="width:100px;text-align:left" for="cx">促销套餐</label> 
 					<input id="fcx"  type="checkbox" checked style="width:20px;height:28px;text-align:left;margin-left:20px;"/>
 					<label style="width:100px;text-align:left" for="fcx">非促销套餐</label> 
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:85px;text-align:right">公司类型：</label>
+					<select id="comptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:110px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="20">个体工商户</option>
+						<option value="99">非个体户</option>
+					</select>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">收费周期：</label>
