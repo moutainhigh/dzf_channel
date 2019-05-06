@@ -448,10 +448,15 @@ public class StockOutServiceImpl implements IStockOutService{
 			LockUtil.getInstance().tryLockKey(vo.getTableName(),vo.getPk_stockout(),uuid, 120);
 			checkData(vo);
 			//1、更新出库单主表
-			vo.setVstatus(2);
-			vo.setDdelivertime(new DZFDateTime());
-			singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","fastcost","pk_logistics"});
-			vo=(StockOutVO)singleObjectBO.queryByPrimaryKey(StockOutVO.class, vo.getPk_stockout());
+			if(vo.getVstatus()==2){//已发货
+				singleObjectBO.update(vo, new String[]{"vdeliverid","logisticsunit","fastcode","fastcost","pk_logistics"});
+			}else{
+				vo.setVstatus(2);
+				vo.setDdelivertime(new DZFDateTime());
+				singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","fastcost","pk_logistics"});
+				vo=(StockOutVO)singleObjectBO.queryByPrimaryKey(StockOutVO.class, vo.getPk_stockout());
+			}
+			
 			
 			//2、查询出库单的子表对应的未发货订单
 			StringBuffer sql = new StringBuffer();
@@ -669,11 +674,11 @@ public class StockOutServiceImpl implements IStockOutService{
 				throw new BusinessException(message);
 			}
 		}
-		if(msg.equals(",不能确认发货;")){
+		/*if(msg.equals(",不能确认发货;")){
 			if(vo.getVstatus()!=1){
 				throw new BusinessException(message);
 			}
-		}
+		}*/
 	}
 	
 	/**

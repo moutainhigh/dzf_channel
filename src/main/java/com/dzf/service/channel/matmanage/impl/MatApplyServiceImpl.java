@@ -680,8 +680,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		    	
 		    	singleObjectBO.update(data, supdates);
 		    	
-		    	//String[] updates = {"vprovince","vcity","varea","citycounty",
-				//"vaddress","vreceiver","phone","fastcost"};
 		    }else{
 		    	//1.修改主订单
 		    	if(data.getVstatus()==4){//已驳回的修改
