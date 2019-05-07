@@ -161,7 +161,7 @@ public class ChangeApplyVO extends SuperVO {
 	private DZFDouble ndedsummny;// 扣款总金额（不存库，取历史合同）
 	
 	@FieldAlias("opertype")
-	private Integer iopertype;//操作类型（仅作数据传递）
+	private Integer iopertype;//操作类型（仅作数据传递）1：通过；2：驳回；
 	
 	@FieldAlias("auditer")
 	private String vauditer;//下一审核人（仅作数据传递）

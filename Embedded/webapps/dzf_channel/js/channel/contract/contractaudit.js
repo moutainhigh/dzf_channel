@@ -435,14 +435,24 @@ function load(){
  */
 function audit(){
 	var rows = $('#grid').datagrid('getChecked');
-	if (rows == null || rows.length != 1) {
+	if (rows == null || rows.length == 0) {
 		Public.tips({
-			content : '请选择一行数据',
+			content : '请选择需要处理的数据',
 			type : 2
 		});			
 		return;
 	}
-	
+	if(rows.length == 1){
+		showSingleAuditDlg(rows);
+	}else{
+		showBatchAuditDlg(rows);
+	}
+}
+
+/**
+ * 显示单条审核对话框
+ */
+function showSingleAuditDlg(rows){
 	$.ajax({
 		url : DZF.contextPath + "/contract/contractaudit!queryById.action",
 		dataType : 'json',
@@ -453,13 +463,11 @@ function audit(){
 		success : function(rs) {
 			if (rs.success) {
 				var row = rs.rows;
-				
 				if(row.changetype == 1 || row.changetype == 2){
 					showChangeDlg(row);
 				}else if(row.changetype == 3){
 					showAuditDlg(row);
 				}
-				
 			}else{
 				Public.tips({
 					content : rs.msg,
@@ -468,6 +476,199 @@ function audit(){
 			}
 		}
 	});
+}
+
+/**
+ * 显示批量审核对话框
+ */
+function showBatchAuditDlg(rows){
+	var changetype;
+	var apstatus;
+	for(var i = 0; i < rows.length; i++){
+		if(i == 0){
+			if(rows[i].changetype == 1 || rows[i].changetype == 2){
+				changetype = 1;
+			}else{
+				changetype = 3;
+			}
+			apstatus = rows[i].apstatus;
+		}else{
+			if(rows[i].changetype == 1 || rows[i].changetype == 2){
+				if(changetype != 1){
+					Public.tips({
+						content : "请选择同一申请类型数据",
+						type : 2
+					});
+					return;
+				}
+			}else{
+				if(changetype != 3){
+					Public.tips({
+						content : "请选择同一申请类型数据",
+						type : 2
+					});
+					return;
+				}
+			}
+			if(apstatus != rows[i].apstatus){
+				if(changetype != 3){
+					Public.tips({
+						content : "请选择同一处理状态数据",
+						type : 2
+					});
+					return;
+				}
+			}
+		}
+	}
+	
+	//选择多条数据时，弹出批量审核对话框
+	$('#batch_Dialog').dialog({ modal:true });//设置dig属性
+	$('#batch_Dialog').dialog('open').dialog('center').dialog('setTitle', "审核");
+	
+	$('#baudit').css('display','none');
+	$('#boper').css('display','none');
+	
+	if(changetype == 3){
+		//非常规套餐界面初始化
+		if(apstatus == 2){
+			$('#boper').css('display','inline-block');
+		}else if(apstatus == 1){
+			$('#baudit').css('display','inline-block');
+			//下一审核人初始化
+			$('#bauditer').combobox('clear');
+			setComboxValue(rows[0].applyid);
+		}
+	}else{
+		//合同变更申请界面初始化
+		if(apstatus == 3){
+			$('#boper').css('display','inline-block');
+		}else if(apstatus == 1 || apstatus == 2){
+			$('#baudit').css('display','inline-block');
+			//下一审核人初始化
+			$('#bauditer').combobox('clear');
+			setComboxValue(rows[0].applyid);
+		}
+	}
+	
+	$('#bauditer').combobox("readonly",false);
+	$("#bconfreason").textbox('readonly',true);
+	
+	$('#bauditer').combobox("setValue",null);
+	$("#bconfreason").textbox('setValue',null);
+	
+	document.getElementById("bdebit").checked = "true";
+	$('#buopertype').val(1);
+	initRedioBatchListener();
+}
+
+/**
+ * 单选按钮初始化-批量审核
+ */
+function initRedioBatchListener(){
+	$(":radio").click( function(){
+		var opertype = $('input:radio[name="bopertype"]:checked').val();
+		if(opertype == 1){
+			$("#bconfreason").textbox('readonly',true);
+			$("#bconfreason").textbox('setValue',null);
+			
+			$('#bauditer').combobox("readonly",false);
+			$('#buopertype').val(1);
+		}else if(opertype == 2){
+			$("#bconfreason").textbox('readonly',false);
+			
+			$('#bauditer').combobox("readonly",true);
+			$('#bauditer').combobox('setValue',null);
+			$('#buopertype').val(2);
+		}
+	});
+}
+
+/**
+ * 批量审核-确认
+ */
+function batchConfri(){
+	var rows = $('#grid').datagrid('getChecked');
+	if (rows == null || rows.length == 0) {
+		Public.tips({
+			content : '请选择需要处理的数据',
+			type : 2
+		});			
+		return;
+	}
+	
+	if($('#buopertype').val() == 2){
+		var bconfreason = $("#bconfreason").textbox("getValue");
+		if(isEmpty(bconfreason)){
+			Public.tips({
+				content : '驳回原因不能为空',
+				type : 2
+			});			
+			return;
+		}
+	}
+	
+	var data = '';
+	if (rows != null && rows.length > 0) {
+		for (var i = 0; i < rows.length; i++) {
+			data = data + JSON.stringify(rows[i]);
+		}
+	}
+	
+	var postdata = new Object();
+	postdata["audit"] = JSON.stringify(serializeObject($('#batchfrom')));
+	postdata["data"] = data;
+	batchConf(postdata);
+}
+
+/**
+ * 批量审核-后台确认
+ * @param postdata
+ */
+function batchConf(postdata){
+	$.messager.progress({
+		text : '数据审核中....'
+	});
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		url : DZF.contextPath + '/contract/contractaudit!bathconfrim.action',
+		data : postdata,
+		traditional : true,
+		success : function(result) {
+			$.messager.progress('close');
+			if (!result.success) {
+				Public.tips({
+					content : result.msg,
+					type : 1
+				});
+				isclose = true;
+			} else {
+				if(result.status == -1){
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}else{
+					Public.tips({
+						content : result.msg,
+					});
+				}
+				reloadData();
+				$('#batch_Dialog').dialog('close');
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.progress('close');
+		}
+	});
+}
+
+/**
+ * 批量审核-取消
+ */
+function batchCancel(){
+	$('#batch_Dialog').dialog('close');
 }
 
 /**
@@ -486,7 +687,7 @@ function showAuditDlg(row){
 		$('#aaudit').css('display','inline-block');
 		//下一审核人初始化
 		$('#aauditer').combobox('clear');
-		setComboxValue(row);
+		setComboxValue(row.applyid);
 	}
 	$('#aauditer').combobox("readonly",false);
 	$("#aconfreason").textbox('readonly',true);
@@ -526,7 +727,7 @@ function showChangeDlg(row){
 		$('#audit').css('display','inline-block');
 		//下一审核人初始化
 		$('#auditer').combobox('clear');
-		setComboxValue(row);
+		setComboxValue(row.applyid);
 	}
 	$('#auditer').combobox("readonly",false);
 	$("#confreason").textbox('readonly',true);
@@ -613,19 +814,19 @@ function actionListen(){
  * 初始化待审核人下拉
  * @param id
  */
-function setComboxValue(row) {
+function setComboxValue(applyid) {
 	$.ajax({
 		type : 'POST',
 		async : false,
 		url : DZF.contextPath + '/contract/contractaudit!queryAuditer.action',
 		data : {
-			applyid : row.applyid,
+			applyid : applyid,
 		},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
-				$('#auditer,#aauditer').combobox("loadData", result.rows);
+				$('#auditer,#aauditer,#bauditer').combobox("loadData", result.rows);
 			} else {
 				Public.tips({
 					content : result.msg,

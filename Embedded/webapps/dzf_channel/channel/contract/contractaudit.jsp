@@ -720,5 +720,39 @@
 	</div>
 	<!-- 非常规套餐审核 end -->
 	
+	<!-- 批量审核begin -->
+	<div id="batch_Dialog" class="easyui-dialog" style="width:500px;height:238px;background:#FFF" data-options="closed:true">
+		<div style="height:85%; overflow:auto; margin-top:10px;">
+		 	<form id = "batchfrom" method="post">
+		 		<input type="hidden" id="buopertype" name="opertype">
+		 		<div class="time_col time_colp11 ">
+					&emsp;&emsp;<input id="bdebit" name="bopertype" type="radio" value="1" checked />
+					<label style="width:28px;">通过</label>
+					<div id="baudit" style="width:220px;display:none;">
+						<label style="text-align: right;width:90px;">下一审核人：</label>
+						<input id="bauditer" name="auditer" class="easyui-combobox" editable="false"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name'"
+							style="width:110px;height:28px;text-align:left">
+					</div>
+					<div id="boper" style="width:220px;display:none;font-size:14px;">提交渠道运营人员处理</div>
+				</div>
+					
+				<div class="time_col time_colp11 " style="margin-top:10px;">
+					&emsp;&emsp;<input name="bopertype" type="radio" value="2" />
+					<label style="width:28px;">驳回</label>
+					<label style="text-align: right;width:90px;">驳回原因：</label>
+					<input id="bconfreason" name="confreason" class="easyui-textbox"  
+						data-options="multiline:true,readonly:true,validType:'length[0,200]'" 
+						style="height:66px; width:286px; border-radius:5px;"/>
+				</div>
+		 	</form>
+			<div style="text-align: center;margin-top:20px;">
+				<a class="ui-btn ui-btn-xz" onclick="batchConfri()">确定</a>
+				<a class="ui-btn ui-btn-xz" onclick="batchCancel()">取消</a>
+			</div>
+		</div>
+	</div>
+	<!-- 批量审核end -->
+	
 </body>
 </html>

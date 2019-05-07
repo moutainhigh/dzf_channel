@@ -112,9 +112,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.applytime,  \n") ;
 		sql.append("       y.ichangetype,  \n") ;
 		sql.append("       y.vchangeraeson,  \n") ;
+		sql.append("       y.iapplystatus,  \n") ; 
+		sql.append("       y.updatets,  \n") ; 
+		sql.append("       y.pk_confrim,  \n");
+		sql.append("       y.pk_contract,  \n") ;
 		sql.append("       t.pk_corp,  \n") ; 
 		sql.append("       t.pk_corpk,  \n") ; 
-		sql.append("       y.iapplystatus,  \n") ; 
 		sql.append("       t.vcontcode,  \n") ; 
 		sql.append("       t.vbeginperiod,  \n") ; 
 		sql.append("       t.vendperiod,  \n") ; 
@@ -126,11 +129,15 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       t.nbookmny  \n") ; 
 		sql.append("  FROM cn_changeapply y  \n") ; 
 		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract  \n") ; 
-		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != -1)){
+		//数据过滤：本人审核过的申请，都可以看到
+		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != 1)){
 			sql.append("  LEFT JOIN cn_applyaudit a ON a.pk_changeapply = y.pk_changeapply  \n") ; 
 		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(y.dr, 0) = 0  \n");
+		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != 1)){
+			sql.append("   AND nvl(a.dr, 0) = 0  \n");
+		}
 		if(!StringUtil.isEmpty(pamvo.getVbeginperiod())){
 			sql.append(" AND  SUBSTR(applytime, 0, 10) >= ? \n");
 			spm.addParam(pamvo.getVbeginperiod());
@@ -172,23 +179,23 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		    String where = SqlUtil.buildSqlForIn("t.pk_corpk", strs);
 		    sql.append(" AND ").append(where);
 		}
-
-		//数据权限过滤
-		sql.append(" AND ( ( ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
-		spm.addParam(uservo.getCuserid());
-		spm.addParam(uservo.getCuserid());
-		spm.addParam(uservo.getCuserid());
-		sql.append(" AND y.iapplystatus IN (1, 2, 3) ) \n");
-		sql.append(" OR a.coperatorid = ? ) \n");
-		spm.addParam(uservo.getCuserid());
 		
 		//待审核数据过滤
-		if(pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != -1){
+		if(pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() == 1){
 			sql.append("   AND ((y.vchannelid = ? AND y.iapplystatus = 1) OR  \n") ; 
 			sql.append("        (y.vareaer = ? AND y.iapplystatus = 2) OR  \n") ; 
 			sql.append("        (y.vdirector = ? AND y.iapplystatus = 3))    \n");
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
+			spm.addParam(uservo.getCuserid());
+		}else{
+			//数据权限过滤
+			sql.append(" AND ( ( ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
+			spm.addParam(uservo.getCuserid());
+			spm.addParam(uservo.getCuserid());
+			spm.addParam(uservo.getCuserid());
+			sql.append(" AND y.iapplystatus IN (1, 2, 3) ) \n");
+			sql.append(" OR a.coperatorid = ? ) \n");
 			spm.addParam(uservo.getCuserid());
 		}
 		qryvo.setSql(sql.toString());
@@ -458,7 +465,6 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		ApplyAuditVO avo = new ApplyAuditVO();
 		avo.setPk_changeapply(datavo.getPk_changeapply());
 		avo.setPk_confrim(datavo.getPk_confrim());
-		avo.setPk_contract(datavo.getPk_contract());
 		avo.setPk_contract(datavo.getPk_contract());
 		avo.setPk_corp(datavo.getPk_corp());
 		avo.setPk_corpk(datavo.getPk_corpk());
