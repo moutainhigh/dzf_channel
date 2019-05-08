@@ -79,11 +79,21 @@ public class PackageDefVO extends SuperVO {
     private String coperatorname;
     
     @FieldAlias("comptype")
-    private Integer icompanytype;// 公司类型 20-个体工商，99-非个体工商；
+    private Integer icompanytype;// 公司类型 20-个体工商户，99-非个体户；
     
     private Integer itype;//服务套餐类型 null或者0为常规；1：非常规
     
     private Integer sortnum;//排序
+    
+    private String corpids;//适用加盟商id总合
+    
+    private String cityids;//适用地区id总合
+    
+    @FieldAlias("corpnms")
+    private String corpnames;
+    
+    @FieldAlias("citynms")
+    private String citynames;
 
 	public Integer getIcompanytype() {
         return icompanytype;
@@ -104,6 +114,38 @@ public class PackageDefVO extends SuperVO {
     public String getCoperatorname() {
         return coperatorname;
     }
+
+	public String getCorpids() {
+		return corpids;
+	}
+
+	public void setCorpids(String corpids) {
+		this.corpids = corpids;
+	}
+
+	public String getCityids() {
+		return cityids;
+	}
+
+	public void setCityids(String cityids) {
+		this.cityids = cityids;
+	}
+
+	public String getCorpnames() {
+		return corpnames;
+	}
+
+	public void setCorpnames(String corpnames) {
+		this.corpnames = corpnames;
+	}
+
+	public String getCitynames() {
+		return citynames;
+	}
+
+	public void setCitynames(String citynames) {
+		this.citynames = citynames;
+	}
 
 	public Integer getItype() {
 		return itype;

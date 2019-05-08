@@ -1,7 +1,11 @@
 package com.dzf.service.channel;
 
+import java.util.HashMap;
+import java.util.List;
+
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.packagedef.PackageQryVO;
+import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.DZFWarpException;
 
 public interface IPackageDefService {
@@ -12,7 +16,7 @@ public interface IPackageDefService {
      * @return
      * @throws DZFWarpException
      */
-    public PackageDefVO[] query(PackageQryVO qryvo) throws DZFWarpException;
+    public List<PackageDefVO> query(PackageQryVO qryvo) throws DZFWarpException;
     
     /**
      * 新增保存
@@ -55,5 +59,12 @@ public interface IPackageDefService {
      * @throws DZFWarpException
      */
     public void updateRows(PackageDefVO[] vos) throws DZFWarpException;
+    
+    /**
+     * 获取
+     * @return
+     * @throws DZFWarpException
+     */
+	public HashMap<String,List<YntArea>> queryCityMap() throws DZFWarpException;
     
 }

@@ -101,7 +101,7 @@
 // 			showFooter : true,
 			height:330,
 			striped:true,
-			queryParams: {'dr':ovince,'vmome':corpids,'rows':100},
+			queryParams: {'dr':ovince,'vmome':corpids,'rows':10000},
 		    columns: [[   {field:'ck', checkbox:true },
 			               {field:'pk_gs', title:'主键id', hidden:true},
 			     		   {field:'incode',title:'公司编码',width:500},
@@ -184,7 +184,7 @@
 		      		//params["corpname"] = filtername;
 		      		params["corpcode"] = filtername;
 		      		params["dr"] = ovince;
-		      		params["rows"] = 100;
+		      		params["rows"] = 10000;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 

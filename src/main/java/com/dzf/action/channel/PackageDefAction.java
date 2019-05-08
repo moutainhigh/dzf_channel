@@ -1,5 +1,9 @@
 package com.dzf.action.channel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -14,13 +18,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.packagedef.PackageQryVO;
+import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.model.sys.sys_set.YntArea;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
@@ -28,6 +35,7 @@ import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IPackageDefService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
+import com.dzf.service.sys.sys_set.IAreaSearch;
 
 /**
  * 服务套餐定义
@@ -47,6 +55,9 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 	
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IAreaSearch areaService;
 
 	/**
 	 * 查询方法
@@ -61,7 +72,7 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 				throw new BusinessException("登陆用户错误");
 			}
 			PackageQryVO paramvo = (PackageQryVO) DzfTypeUtils.cast(getRequest(), new PackageQryVO());
-			PackageDefVO[] vos = packageDefImpl.query(paramvo);
+			List<PackageDefVO> vos = packageDefImpl.query(paramvo);
 			grid.setRows(vos);
 			grid.setSuccess(true);
 			grid.setMsg("操作成功");
@@ -293,5 +304,25 @@ public class PackageDefAction extends BaseAction<PackageDefVO> {
 		}
 		writeJson(json);
 	}
+	
+    public void queryArea() {
+        Grid grid = new Grid();
+        try {
+        	YntArea arvo = AreaCache.getInstance().get(areaService);
+        	HashMap<String, List<YntArea>> queryCityMap = packageDefImpl.queryCityMap();
+        	YntArea[] children = arvo.getChildren()[0].getChildren();
+        	List<YntArea> getList = new ArrayList<>();
+        	for (YntArea yntArea : children) {
+        		getList = queryCityMap.get(yntArea.getRegion_id());
+        		yntArea.setChildren(getList.toArray(new YntArea[getList.size()]));
+			}
+			grid.setRows(Arrays.asList(children));
+			grid.setMsg("查询成功!");
+			grid.setSuccess(true);
+        } catch (Exception e) {
+            printErrorLog(grid, log, e, "查询失败");
+        }
+        writeJson(grid);
+    }
 	
 }

@@ -112,6 +112,14 @@
 				<table id="grid" ></table>
 			</div>
 		</div>
+		
+		<div id="detail_dialog" class="easyui-dialog" title="加盟商联查" data-options="modal:true,closed:true" style="width:600px;height:400px;">
+			<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:400px;padding:10px">
+				 <table id="gridh"></table>	
+			</div>
+		</div>
+		<div id="chnDlg"></div>
+		<div id="areaDlg"></div>
     </div>
 </body>
 </html>

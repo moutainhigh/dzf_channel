@@ -1,6 +1,12 @@
 var parentRow;
 var grid;
-var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro;
+var editIndex = 0;
+var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro,citynms,corpnms,memo;
+var areaData;
+var selmap;
+var sellist;
+var uidlist;
+
 //自适应边框
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -13,10 +19,19 @@ $(function() {
 	initGrid();
 	initDgEditor();
 	reloadData();
+	
+	areamap = new HashMap();
+	arealist = new ArrayList();
+	aidlist = new ArrayList();
+	
+	selmap = new HashMap();
+	sellist = new ArrayList();
+	uidlist = new ArrayList();
 });
 
 function initGrid(){
 	grid = $('#grid').datagrid({
+	    idField: "pid",
 //		url : DZF.contextPath + '/channel/packageDef!query.action',
 		striped : true,
 		width: "auto",
@@ -148,11 +163,42 @@ function initGrid(){
 					return '<input type="checkbox" disabled ' + checked + '/>';
 				},
     		}, {
+    			field : 'citynms',
+    			title : '适用地区',
+    			width : 200,
+    			halign : 'center',
+    			align : 'left',
+    			formatter : showTitle
+    		}, {
+    			field : 'corpnms',
+    			title : '适用加盟商',
+    			width : 200,
+    			halign : 'center',
+    			align : 'left',
+    			formatter : showTitle
+    		},{
+    			width : '100',
+    			field : 'corpids',
+    			title : '适用加盟商主键',
+    			hidden : true,
+    			editor : {
+    				type : 'textbox',
+    			}
+    		},{
+    			width : '100',
+    			field : 'cityids',
+    			title : '适用地区主键',
+    			hidden : true,
+    			editor : {
+    				type : 'textbox',
+    			}
+    		},{
     			field : 'memo',
     			title : '备注',
     			width : 300,
     			halign : 'center',
     			align : 'left',
+    			formatter : showTitle
     		}, {
     			field : 'doperatedate',
     			title : '录入日期',
@@ -162,6 +208,149 @@ function initGrid(){
     		}
     	] ]
 	});
+}
+
+function initArea(){
+	var cityids = $('#grid').datagrid('getEditor', {index:editIndex,field:'cityids'});
+	var tar_cityid;
+	if(!isEmpty(cityids)){
+		tar_cityid=$(cityids.target).textbox('getValue');
+	}
+	$("#areaDlg").dialog({
+		width: 340,
+	    height: 520,
+		readonly: true,
+		queryParams : {
+			'cityids' : tar_cityid,
+		},
+		title: '选择省市',
+		modal: true,
+		href: DZF.contextPath + '/ref/mult_area.jsp',
+		buttons : [ {
+			text : '确认',
+			handler : function() {
+				areamap = new HashMap();
+				seleMultArea();
+				$('#areaDlg').dialog('close');
+			}
+		}, {
+			text : '取消',
+			handler : function() {
+	        	areamap = new HashMap();
+	    		arealist = new ArrayList();
+	    		aidlist = new ArrayList();
+				$('#areaDlg').dialog('close');
+			}
+		} ]
+	});
+    $("#areaDlg").dialog({  
+        onClose: function () {  
+        	areamap = new HashMap();
+    		arealist = new ArrayList();
+    		aidlist = new ArrayList();
+        }  
+    }); 
+}
+
+function seleMultArea(){
+	var texts = "";
+	var ids = "";
+	if (arealist != null && arealist.size() > 0) {
+		for (var i = 0; i < arealist.size(); i++) {
+			if (i == 0) {
+				texts = arealist.get(i).text;
+				ids = arealist.get(i).id;
+			} else {
+				texts = texts + ';' + arealist.get(i).text;
+				ids= ids + ',' + arealist.get(i).id;
+			}
+		}
+	}
+	var cityids = $('#grid').datagrid('getEditor', {index : editIndex,field : 'cityids'});
+	$(cityids.target).textbox('setValue', null);
+	$(cityids.target).textbox('setValue', ids);
+	var citynms = $('#grid').datagrid('getEditor', {index : editIndex,field : 'citynms'});
+	$(citynms.target).textbox('setValue',null);
+	$(citynms.target).textbox('setValue',texts);
+}
+
+
+/**
+ * 加盟商参照初始化
+ */
+function initChnCorp(){
+	var corpids = $('#grid').datagrid('getEditor', {index:editIndex,field:'corpids'});
+	var tar_corpid;
+	if(!isEmpty(corpids)){
+		tar_corpid=$(corpids.target).textbox('getValue');
+	}
+	$("#chnDlg").dialog({
+		width: 600,
+	    height: 480,
+		readonly: true,
+		title: '选择加盟商',
+		modal: true,
+		href: DZF.contextPath + '/ref/select_channels.jsp',
+		queryParams:{
+			'ovince' : -1,
+			'corpid': tar_corpid
+		},
+		buttons : [ {
+			text : '确认',
+			handler : function() {
+				selmap = new HashMap();
+				selectCorps();
+				$('#chnDlg').dialog('close');
+			}
+		}, {
+			text : '取消',
+			handler : function() {
+				selmap = new HashMap();
+				sellist = new ArrayList();
+				uidlist = new ArrayList();
+				$('#chnDlg').dialog('close');
+			}
+		} ]
+	});
+    $("#chnDlg").dialog({  
+        onClose: function () {  
+        	selmap = new HashMap();
+    		sellist = new ArrayList();
+    		uidlist = new ArrayList();
+        }  
+    }); 
+}
+
+function selectCorps(){
+	var rows = $('#gsTable').datagrid('getSelections');
+	dClickCompany(rows);
+}
+
+/**
+ * 双击选择加盟商
+ * @param rowTable
+ */
+function dClickCompany(rowTable) {
+	var corpIds = "";
+	var corpNms = "";
+	if (rowTable) {
+		for (var i = 0; i < rowTable.length; i++) {
+			if (i == rowTable.length - 1) {
+				corpIds += rowTable[i].pk_gs;
+				corpNms += rowTable[i].uname;
+			} else {
+				corpIds += rowTable[i].pk_gs + ",";
+				corpNms += rowTable[i].uname + ",";
+			}
+		}
+		var corpids = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpids'});
+		var corpnms = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpnms'});
+		$(corpids.target).textbox('setValue', null);
+		$(corpids.target).textbox('setValue', corpIds);
+		$(corpnms.target).textbox('setValue', null);
+		$(corpnms.target).textbox('setValue', corpNms);
+	}
+	$("#chnDlg").dialog('close');
 }
 
 function initDgEditor(){
@@ -279,12 +468,44 @@ function initDgEditor(){
                     }
                 };
     ispro = {type:'checkbox',options : {on:'是',off:'否',}};     
+    citynms = {
+			type : 'textbox',
+			options : {
+				height:31,
+				editable:false,
+				icons: [{
+					iconCls:'icon-search',
+					handler: function(){
+						initArea();
+					}
+				}]
+			}
+		};
+    corpnms = {
+			type : 'textbox',
+			options : {
+				height:31,
+				editable:false,
+				icons: [{
+					iconCls:'icon-search',
+					handler: function(){
+						initChnCorp();
+					}
+				}]
+			}
+		};
     memo = {
 			type: 'textbox',
             options: {
             	height: 35,
             }
         };
+}
+
+function showTitle(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
 }
 
 
@@ -361,6 +582,7 @@ function reloadData(){
 	queryParams.itype = itype;
 	queryParams.ptype = ptype;
 	$('#grid').datagrid('options').queryParams = queryParams;
+    $('#grid').datagrid('unselectAll');
 	$('#grid').datagrid('reload');
 	showButtons("brows");
 }
@@ -389,6 +611,10 @@ function addType () {
 	pubnumO.editor=pubnum;
 	var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
 	isproO.editor=ispro;
+	var citynmsO = $('#grid').datagrid('getColumnOption', 'citynms');
+	citynmsO.editor=citynms;
+	var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
+	corpnmsO.editor=corpnms;
 	var memoO = $('#grid').datagrid('getColumnOption', 'memo');
 	memoO.editor=memo;
 
@@ -397,7 +623,7 @@ function addType () {
 }
 
 function save () {
-	var flag = endEdit(grid);
+	var flag = endEdit();
 	if(!flag){
 		Public.tips({
 			content : "必输信息为空或格式不正确",
@@ -405,7 +631,7 @@ function save () {
 		});
 		return; 
 	}
-	var submitData = getSubmitData($("#grid"));
+	var submitData = getSubmitData();
 	$.ajax({
 		type: "POST",
         dataType: "json",
@@ -515,9 +741,8 @@ function updateOff() {
 	}
 }
 
-var editIndex = 0;
 function modify() {
-	var rows = grid.datagrid("getChecked");
+	var rows = $('#grid').datagrid("getSelections");
 	if(rows && rows.length == 1){
 		var row = rows[0];
 		var vstatus = row.vstatus;
@@ -540,6 +765,10 @@ function modify() {
 			pubnumO.editor=pubnum;
 			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
 			isproO.editor={};
+			var citynmsO = $('#grid').datagrid('getColumnOption', 'citynms');
+			citynmsO.editor=citynms;
+			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
+			corpnmsO.editor=corpnms;
 			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
 			memoO.editor={};
 		}else if(vstatus == 2){
@@ -561,6 +790,10 @@ function modify() {
 			pubnumO.editor={};
 			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
 			isproO.editor={};
+			var citynmsO = $('#grid').datagrid('getColumnOption', 'citynms');
+			citynmsO.editor={};
+			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
+			corpnmsO.editor={};
 			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
 			memoO.editor={};
 		}else if(vstatus == 1){
@@ -582,6 +815,10 @@ function modify() {
 			pubnumO.editor=pubnum;
 			var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
 			isproO.editor=ispro;
+			var citynmsO = $('#grid').datagrid('getColumnOption', 'citynms');
+			citynmsO.editor=citynms;
+			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
+			corpnmsO.editor=corpnms;
 			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
 			memoO.editor=memo;
 		}
@@ -607,16 +844,12 @@ function cancel () {
 }
 
 
-function endEdit (grid) {
-	var len = grid.datagrid("getRows").length;
-	var datagrid;
-	for (var i = 0; i < len; i++) {
-		datagrid = grid.datagrid('validateRow', i);
-		if (!datagrid){
-			return false;
-		}else{
-			grid.datagrid("endEdit", i);
-		}
+function endEdit () {
+	var datagrid = $('#grid').datagrid('validateRow', editIndex);
+	if (!datagrid){
+		return false;
+	}else{
+		$('#grid').datagrid("endEdit", editIndex);
 	}
 	return true;
 }
@@ -664,7 +897,7 @@ function showButtons(type) {
 	}
 }
 
-function getSubmitData (grid) {
+function getSubmitData () {
 	var datagrid;
 	var newRows = $('#grid').datagrid("getChanges", "inserted");
 	if(newRows != null && newRows.length > 0){
@@ -679,7 +912,7 @@ function getSubmitData (grid) {
 			}
 		}
 	}
-	var updateRows = grid.datagrid("getChanges", "updated");
+	var updateRows = $('#grid').datagrid("getChanges", "updated");
 	
 	var submitData = {
 		newRows: newRows,
