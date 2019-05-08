@@ -447,46 +447,45 @@ public class StockOutServiceImpl implements IStockOutService{
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(),vo.getPk_stockout(),uuid, 120);
 			checkData(vo);
-			//1、更新出库单主表
 			if(vo.getVstatus()==2){//已发货
 				singleObjectBO.update(vo, new String[]{"vdeliverid","logisticsunit","fastcode","fastcost","pk_logistics"});
 			}else{
+				//1、更新出库单主表
 				vo.setVstatus(2);
 				vo.setDdelivertime(new DZFDateTime());
 				singleObjectBO.update(vo, new String[]{"vstatus","vdeliverid","ddelivertime","logisticsunit","fastcode","fastcost","pk_logistics"});
 				vo=(StockOutVO)singleObjectBO.queryByPrimaryKey(StockOutVO.class, vo.getPk_stockout());
-			}
-			
-			
-			//2、查询出库单的子表对应的未发货订单
-			StringBuffer sql = new StringBuffer();
-			SQLParameter spm = new SQLParameter();
-			sql.append("select distinct b.pk_goodsbill ");
-			sql.append("  from cn_stockout_b sb ");
-			sql.append("  left join cn_goodsbill_b gb on sb.pk_goodsbill_b = gb.pk_goodsbill_b ");
-			sql.append("  left join cn_goodsbill b on gb.pk_goodsbill = b.pk_goodsbill ");
-			sql.append(" where nvl(sb.dr, 0) = 0 ");
-			sql.append("   and nvl(gb.dr, 0) = 0 ");
-			sql.append("   and nvl(b.dr, 0) = 0 ");
-			sql.append("   and sb.pk_stockout = ? ");
-			sql.append("   and b.vstatus = 1 ");
-			spm.addParam(vo.getPk_stockout());
-			List<GoodsBillVO> vos=(List<GoodsBillVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(GoodsBillVO.class));
-			
-			//3、更新订单主表信息；创建订单状态子表；
-			updateGoodBills(vo,vos);
-			
-			//4、批量更新订单商品子表的 deamount字段
-			sql = new StringBuffer();
-			sql.append("  select sb.pk_goodsbill_b from cn_stockout_b sb ");
-			sql.append("   where nvl(sb.dr,0)=0 and sb.pk_stockout=? ");
-			List<String> billbs = (List<String>)singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor("pk_goodsbill_b"));
-			if(billbs!=null &&  billbs.size()>0){
+				
+				//2、查询出库单的子表对应的未发货订单
+				StringBuffer sql = new StringBuffer();
+				SQLParameter spm = new SQLParameter();
+				sql.append("select distinct b.pk_goodsbill ");
+				sql.append("  from cn_stockout_b sb ");
+				sql.append("  left join cn_goodsbill_b gb on sb.pk_goodsbill_b = gb.pk_goodsbill_b ");
+				sql.append("  left join cn_goodsbill b on gb.pk_goodsbill = b.pk_goodsbill ");
+				sql.append(" where nvl(sb.dr, 0) = 0 ");
+				sql.append("   and nvl(gb.dr, 0) = 0 ");
+				sql.append("   and nvl(b.dr, 0) = 0 ");
+				sql.append("   and sb.pk_stockout = ? ");
+				sql.append("   and b.vstatus = 1 ");
+				spm.addParam(vo.getPk_stockout());
+				List<GoodsBillVO> vos=(List<GoodsBillVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(GoodsBillVO.class));
+				
+				//3、更新订单主表信息；创建订单状态子表；
+				updateGoodBills(vo,vos);
+				
+				//4、批量更新订单商品子表的 deamount字段
 				sql = new StringBuffer();
-				sql.append(" update cn_goodsbill_b sb set sb.deamount=sb.amount ");
-				sql.append("   where nvl(sb.dr,0)=0 and ");
-				sql.append(SqlUtil.buildSqlForIn("pk_goodsbill_b",billbs.toArray(new String[billbs.size()])));
-				singleObjectBO.executeUpdate(sql.toString(),null);
+				sql.append("  select sb.pk_goodsbill_b from cn_stockout_b sb ");
+				sql.append("   where nvl(sb.dr,0)=0 and sb.pk_stockout=? ");
+				List<String> billbs = (List<String>)singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor("pk_goodsbill_b"));
+				if(billbs!=null &&  billbs.size()>0){
+					sql = new StringBuffer();
+					sql.append(" update cn_goodsbill_b sb set sb.deamount=sb.amount ");
+					sql.append("   where nvl(sb.dr,0)=0 and ");
+					sql.append(SqlUtil.buildSqlForIn("pk_goodsbill_b",billbs.toArray(new String[billbs.size()])));
+					singleObjectBO.executeUpdate(sql.toString(),null);
+				}
 			}
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
