@@ -494,6 +494,7 @@ function clearQryParam(queryParams){
 	queryParams.mid = null;
 	queryParams.oid = null;
 	queryParams.stype = null;
+	delete queryParams.stype;
 }
 
 /**
