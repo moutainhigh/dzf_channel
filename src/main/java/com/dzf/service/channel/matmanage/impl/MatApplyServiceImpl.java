@@ -102,20 +102,30 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
-				if (mvo.getCoperatorid() != null) {
+				if(mvo.getVmanagerid()!=null){//导入（渠道经理不为空）
+					uservo = UserCache.getInstance().get(mvo.getVmanagerid(), null);
+					if(uservo!=null){
+						mvo.setVmanagername(uservo.getUser_name());
+						mvo.setApplyname(uservo.getUser_name());
+					}
+				}
+				if (mvo.getVmanagerid()==null && mvo.getCoperatorid() != null) {
 					uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
 					}
 				}
 				String manager = marmap.get(mvo.getFathercorp());
-				if (!StringUtil.isEmpty(manager)) {
+				if (mvo.getVmanagerid()==null && !StringUtil.isEmpty(manager)) {
 					uservo = UserCache.getInstance().get(manager, null);
 					if (uservo != null) {
 						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
 						mvo.setVmanagerid(manager);
 					}
 				}
+				/*if(mvo.getAname()!=null){//导入的大区名称
+					mvo.setAreaname(mvo.getAname());
+				}*/
 				String[] updates= {"vmanagerid"};
 				singleObjectBO.update(mvo, updates);
 			}
@@ -137,6 +147,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT distinct bi.pk_materielbill,  \n") ;
 		sql.append("                bi.vcontcode,  \n") ; 
+		//sql.append("                bi.aname,  \n") ; 
 		sql.append("                bi.vaddress,  \n") ; 
 		sql.append("                bi.vreceiver,  \n") ; 
 		sql.append("                bi.phone,  \n") ; 
@@ -151,6 +162,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
+		sql.append("                bi.vmanagerid,  \n") ; 
 		sql.append("                bi.ts,  \n") ; 
 		sql.append("                b.vname,  \n") ; 
 		sql.append("                b.vunit,  \n") ; 
@@ -158,7 +170,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                nvl(b.applynum, 0) applynum,  \n") ; 
 		sql.append("                log.vname logname,  \n") ; 
 		sql.append("                ba.vprovname proname,  \n") ; 
-		sql.append("                ba.vprovince,  \n") ; 
+		sql.append("                ba.vprovince,  \n") ;
 		sql.append("                c.areaname \n") ; 
 		sql.append("  from cn_materielbill bi  \n") ; 
 		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill  \n") ; 
@@ -445,7 +457,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 						List<MatOrderVO> mvoList = (List<MatOrderVO>) singleObjectBO.executeQuery(csql.toString(), cspm, new BeanListProcessor(MatOrderVO.class));
 						
 						Integer sumout = 0;//上季度实发数量
-						Integer sumsucc = 0;//上季度申请通过数量
+						//Integer sumsucc = 0;//上季度申请通过数量
 						
 						if(mvoList!=null && mvoList.size()>0){
 							for (MatOrderVO ovo : mvoList) {
@@ -456,7 +468,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 									ovo.setSuccnum(0);
 								}
 								sumout = sumout + ovo.getOutnum();
-								sumsucc = sumsucc + ovo.getSuccnum();
+								//sumsucc = sumsucc + ovo.getSuccnum();
 							}
 						}
 						Integer ssumout= (int) (0.7*sumout);
@@ -469,7 +481,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 								}else{
 									//提示再申请保存
 									mbvo.setSumapply(sumout);
-									mbvo.setSumsucc(sumsucc);
+									//mbvo.setSumsucc(sumsucc);
 									message = message + "该加盟商"+mbvo.getVname()+
 											"上季度申请数"+mbvo.getSumapply()+"，"+
 											"提单审核通过数"+passNum+"，"+

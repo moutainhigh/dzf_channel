@@ -12,6 +12,7 @@
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/matmanage/mathandle.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/impexcel.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/jslib/jquery-easyui-1.4.3/datagrid-detailview.js" charset="UTF-8" type="text/javascript"></script>
 <style>
 #mat_add div.panel.datagrid {
@@ -22,6 +23,9 @@
 	margin-left: 132px;
 	margin-top: -21px;
 }
+.selecticon {
+    background: url(../../img/add_lan.png) no-repeat;
+} 
 </style>	
 </head>
 <body>
@@ -48,7 +52,7 @@
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="send()">发货</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="edit()">修改</a>
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doImport()">导入</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="onImport()">导入</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
 				</div>
 			</div>
@@ -320,6 +324,37 @@
 			</form>
 		</div>
 		<!-- 详情对话框  end-->
+		
+		<!-- 附件上传begin -->
+		<div id="impDlg" class="easyui-dialog" style="overflow: auto;" data-options="closed:true">
+		<form id="impForm" method="post" enctype="multipart/form-data" style="text-align:center;font-size:14px;">
+			<p>
+			 	<p class="selecticon" style="cursor:pointer;border:1px solid #A5A5A5;width:78px;height:78px;margin:20px 175px 10px 175px;background-position:26px 26px;"
+			 		onclick="$('#impfile').trigger('click')">
+			 	</p>
+			 	<p class="fileicon" style="margin:20px 175px 10px 175px;">
+			 		<img src="../../img/fileicon.png">
+			 	</p>
+			</p>
+			<p style="color:#333;">
+		 		<input id="impfile" type="file" accept= "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="file" style="display:none"
+		 			onchange="onFileSelected()">
+				<span id="impfileName" class="notfeil">未选择任何文件</span>
+			</p>
+			<p class="clickdown" style="color:#999;">
+				<span >支持标准模板导入,没有导入模板
+					<a href="<%=request.getContextPath()%>/exceltemplet/mathistroryimp.xlsx" id="downloadtemp" 
+					style="color:#2c9dd8;font-size:14px;text-decoration:none;">点此下载</a>
+				</span>
+			</p>
+		</form>
+		<div id="imp_msg" ></div>
+	</div>
+	<div id="imp-buttons" style="display:none;">
+		<a href="javascript:void(0)" id="confirmBtn" class="easyui-linkbutton c6" onclick="onFileConfirm()" style="width:90px">上传</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#impDlg').dialog('close')" style="width:90px">取消</a>
+	</div>
+	<!-- 附件上传end -->
 		
 	</div>
 	<!-- 列表界面 end -->

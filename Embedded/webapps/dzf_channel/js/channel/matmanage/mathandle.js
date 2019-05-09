@@ -1481,6 +1481,42 @@ function doExport() {
 }
 
 /**
+ * 上传
+ */
+function onFileConfirm() {
+	$('#impForm').form('submit', {
+	    url: contextPath + '/matmanage/mathandle!matImport.action',
+	    onSubmit: function(){
+	    	$.messager.progress();
+	    },
+	    success:function(data){
+	    	data = $.parseJSON(data);
+	    	$.messager.progress('close');
+	    	if (data.success) {
+	    		$('#imp_msg').html(data.msg);
+	    		if(data.msg != null && data.msg != ''){
+	    			Public.tips({
+			        	type: 0,
+			        	content: data.msg
+			        });
+	    		}
+	    		if (data.rows) {
+	    			load(0);
+				}
+	    		$('#impDlg').dialog('close')
+	    	} else {
+	    		Public.tips({
+		        	type: 1,
+		        	content: data.msg
+		        });
+	    	}
+	    	$("#impDlg").dialog("close");
+	    }
+	});
+
+}
+
+/**
  * 获取上个季度日期
  */
 function getLastQuarter() {

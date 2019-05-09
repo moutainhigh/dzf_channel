@@ -40,6 +40,9 @@ public class MatOrderVO extends SuperVO {
 	@FieldAlias("uid")
 	private String vmanagerid; // 渠道经理id
 	
+	/*@FieldAlias("name")
+    private String aname;//大区名称（导入）
+*/	
 	private Integer vprovince;//省
 	
 	private Integer vcity;//市
@@ -108,7 +111,7 @@ public class MatOrderVO extends SuperVO {
 	private String deduenddate;//扣款结束日期
 	
 	@FieldAlias("aname")
-    private String areaname;//大区名称
+    private String areaname;//大区名称（缓存）
 	
 	@FieldAlias("uname")
 	private String vmanagername; // 渠道经理
@@ -592,7 +595,7 @@ public class MatOrderVO extends SuperVO {
 	public void setAudname(String audname) {
 		this.audname = audname;
 	}
-
+	
 	@Override
 	public String getParentPKFieldName() {
 		return null;
