@@ -2114,6 +2114,10 @@ panel-body panel-body-noheader panel-body-noborder
     opacity: 0;
 }
 
-.position_more {
-    top: 30px;
+@media screen and (min-width:1025px) and (max-width:1366px) {
+    
+    .position_more {
+	    top: 30px;
+	}
+   
 }
