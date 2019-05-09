@@ -14,11 +14,9 @@ import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.matmanage.IMatHandleService;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 
 @Service("mathandle")
@@ -94,7 +92,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 			MatOrderVO mmvo = (MatOrderVO) singleObjectBO.executeQuery(ssql.toString(), ssspm, new BeanProcessor(MatOrderVO.class));
 			if(mmvo!=null){
 				excelvo.setCoperatorid(mmvo.getCoperatorid());
-				excelvo.setVmanagerid(mmvo.getCoperatorid());
+				//excelvo.setVmanagerid(mmvo.getCoperatorid());
 			}
 			
 			String string = "select pk_logistics from cn_logistics where nvl(dr,0)=0 and vname = ? ";

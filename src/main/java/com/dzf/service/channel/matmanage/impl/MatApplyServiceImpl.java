@@ -102,21 +102,21 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
-				if(mvo.getVmanagerid()!=null){//导入（渠道经理不为空）
+				/*if(mvo.getVmanagerid()!=null){//导入（渠道经理不为空）
 					uservo = UserCache.getInstance().get(mvo.getVmanagerid(), null);
 					if(uservo!=null){
 						mvo.setVmanagername(uservo.getUser_name());
 						mvo.setApplyname(uservo.getUser_name());
 					}
-				}
-				if (mvo.getVmanagerid()==null && mvo.getCoperatorid() != null) {
+				}*/
+				if (mvo.getCoperatorid() != null) {
 					uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
 					}
 				}
 				String manager = marmap.get(mvo.getFathercorp());
-				if (mvo.getVmanagerid()==null && !StringUtil.isEmpty(manager)) {
+				if (!StringUtil.isEmpty(manager)) {
 					uservo = UserCache.getInstance().get(manager, null);
 					if (uservo != null) {
 						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
