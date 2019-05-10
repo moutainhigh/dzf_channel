@@ -12,6 +12,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.pub.IStatusConstant;
@@ -80,6 +81,21 @@ public class MatFileServiceImpl implements IMatFileService {
 			
 			String[] updates = {"vname", "vunit", "isappl" };
 		    singleObjectBO.update(data, updates);
+		    
+		    //修改的物料信息同步到物料订单中
+		    String sql ="select * from cn_materielbill_b "
+		    +"where nvl(dr,0) = 0 and pk_materiel = ? ";
+		    SQLParameter spm = new SQLParameter();
+		    spm.addParam(data.getPk_materiel());
+		    List<MatOrderBVO> voList = (List<MatOrderBVO>) singleObjectBO.executeQuery(sql, spm, new BeanListProcessor(MatOrderBVO.class));
+		    if(voList!=null && voList.size()>0){
+		    	String[] nupdates = {"vname", "vunit" };
+		    	for (MatOrderBVO vo : voList) {
+		    		vo.setVname(data.getVname());
+		    		vo.setVunit(data.getVunit());
+		    		singleObjectBO.update(vo,nupdates);
+				}
+		    }
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
 				throw new BusinessException(e.getMessage());
