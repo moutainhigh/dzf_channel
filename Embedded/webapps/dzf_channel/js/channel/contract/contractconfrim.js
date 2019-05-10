@@ -2353,7 +2353,7 @@ function onExportAll(){
 		queryParams.isncust = isncust;
 	}
 	var stype = $("#qpropor").numberbox('getValue');
-	if(isEmpty(qpropor)){
+	if(isEmpty(stype)){
 		stype = -1;
 	}
 	queryParams.stype = stype;
