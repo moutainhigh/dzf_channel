@@ -93,7 +93,7 @@ config  配置文件存放目录
 	<!-- Compile Target 编译代码  在这之前现由parpre建立目录结构 -->
 	<!--bootclasspath="${java.home}/lib/rt.jar"  -->
 	<target name="compile" depends="init" description="compile java resources">
-        <javac target="1.7" fork="true" srcdir="${src.base.dir}/main/java" destdir="${build}/base/WEB-INF/classes" 
+        <javac target="1.8" fork="true" srcdir="${src.base.dir}/main/java" destdir="${build}/base/WEB-INF/classes" 
         		debug="true" nowarn="yes" memoryInitialSize="256m" memoryMaximumSize="512m" encoding="UTF-8" includeAntRuntime="false" >
 			<classpath refid="project.classpath"/>
 			<classpath refid="basejar"/> 
@@ -101,7 +101,7 @@ config  配置文件存放目录
 		<jar jarfile="${templib}/base.jar" update="true">
 			<fileset dir="${build}/base/WEB-INF/classes"/>
 		</jar>
-		<javac target="1.7" fork="true" srcdir="${src.pub.dir}" destdir="${build}/pub/WEB-INF/classes" debug="true" nowarn="yes" memoryInitialSize="256m" memoryMaximumSize="512m" encoding="UTF-8" includeAntRuntime="false" >
+		<javac target="1.8" fork="true" srcdir="${src.pub.dir}" destdir="${build}/pub/WEB-INF/classes" debug="true" nowarn="yes" memoryInitialSize="256m" memoryMaximumSize="512m" encoding="UTF-8" includeAntRuntime="false" >
 			 <compilerarg line="-XDignore.symbol.file"/>
 			<classpath refid="baselib"/>
 			<classpath refid="pubjar"/>
@@ -111,7 +111,7 @@ config  配置文件存放目录
 		</jar>
         
   
-		<javac destdir="${build.web.classes.dir}" source="1.7" target="1.7" srcdir="${src.dir}" debug="true" nowarn="yes"
+		<javac destdir="${build.web.classes.dir}" source="1.8" target="1.8" srcdir="${src.dir}" debug="true" nowarn="yes"
 				deprecation="false" optimize="false" failonerror="true" includeAntRuntime="false" >
 			<compilerarg line="-encoding UTF-8 "/>  
 			<compilerarg line="-XDignore.symbol.file"/>
