@@ -43,7 +43,6 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IStockOutService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("outStock")
 public class StockOutServiceImpl implements IStockOutService{
@@ -60,10 +59,6 @@ public class StockOutServiceImpl implements IStockOutService{
 	@Autowired
 	private IPubService pubser;
 	
-	@Autowired
-    private IUserService userser;
-	
-
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
@@ -77,7 +72,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		List<StockOutVO> list = (List<StockOutVO>) multBodyObjectBO.queryDataPage(StockOutVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		UserVO uvo = null;
-		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<String, UserVO> opermap = pubser.getManagerMap(3);// 渠道运营
 		Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 3);//大区
 		for (StockOutVO stockOutVO : list) {
 			stockOutVO.setCoperatname(CodeUtils1.deCode(stockOutVO.getCoperatname()));
@@ -89,12 +84,9 @@ public class StockOutServiceImpl implements IStockOutService{
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				String operater = opermap.get(stockOutVO.getPk_corp());
-				if (!StringUtil.isEmpty(operater)) {
-					uvo=  userser.queryUserJmVOByID(operater);
-					if (uvo != null) {
-						stockOutVO.setVoperater(uvo.getUser_name());// 渠道运营
-					}
+				uvo = opermap.get(stockOutVO.getPk_corp());
+				if (uvo != null) {
+					stockOutVO.setVoperater(uvo.getUser_name());// 渠道运营
 				}
 			}
 		}
