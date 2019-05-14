@@ -1,6 +1,7 @@
 package com.dzf.service.channel.rebate.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,10 +25,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -38,6 +39,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("rebateinptser")
 public class RebateInputServiceImpl implements IRebateInputService {
@@ -50,6 +52,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 
 	@Autowired
 	private IBillCodeService billCodeSer;
+	
+	@Autowired
+    private IUserService userser;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -74,8 +79,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	private List<RebateVO> setShowData(QryParamVO paramvo, List<RebateVO> list) throws DZFWarpException {
-		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 		Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), IStatusConstant.IYUNYING);// 大区
 		if (!StringUtil.isEmpty(paramvo.getCorpname())) {
 			List<RebateVO> retlist = new ArrayList<RebateVO>();
@@ -101,8 +106,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @param areamap
 	 * @throws DZFWarpException
 	 */
-	private void setShowInfo(List<RebateVO> list, Map<String, String> marmap, Map<Integer, String> areamap,
-			Map<String, String> opermap) throws DZFWarpException {
+	private void setShowInfo(List<RebateVO> list, Map<String, UserVO> marmap, Map<Integer, String> areamap,
+			Map<String, UserVO> opermap) throws DZFWarpException {
 		for (RebateVO vo : list) {
 			setShowSingle(vo, marmap, areamap, opermap);
 		}
@@ -116,23 +121,22 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @param opermap
 	 * @throws DZFWarpException
 	 */
-	private void setShowSingle(RebateVO vo, Map<String, String> marmap, Map<Integer, String> areamap,
-			Map<String, String> opermap) throws DZFWarpException {
+	private void setShowSingle(RebateVO vo, Map<String, UserVO> marmap, Map<Integer, String> areamap,
+			Map<String, UserVO> opermap) throws DZFWarpException {
 		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
+		UserVO uservo;
 		if (corpvo != null) {
 			if (corpvo.getVprovince() != null) {
 				vo.setVprovname(corpvo.getCitycounty());
 				if (marmap != null && !marmap.isEmpty()) {
-					String cuserid = marmap.get(vo.getPk_corp());
-					UserVO uservo = UserCache.getInstance().get(cuserid, null);
+					uservo = marmap.get(vo.getPk_corp());
 					if (uservo != null) {
 						vo.setVmanagername(uservo.getUser_name());// 渠道经理
 					}
 				}
 				if (opermap != null && !opermap.isEmpty()) {
-					String cuserid = opermap.get(vo.getPk_corp());
-					UserVO uservo = UserCache.getInstance().get(cuserid, null);
-					if (uservo != null) {
+					uservo = opermap.get(vo.getPk_corp());
+					if (uservo != null) {	
 						vo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
 				}
@@ -285,8 +289,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			RebateVO retvo = (RebateVO) singleObjectBO.saveObject(pk_corp, data);
 			if (retvo != null) {
 				retvo.setVprovince(data.getVprovince());
-				Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-				Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+				Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+				Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 				Map<Integer, String> areaMap = pubser.getAreaMap(null, IStatusConstant.IYUNYING);// 大区
 				setShowSingle(retvo, marmap, areaMap, opermap);
 			}
@@ -494,11 +498,12 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		if (list != null && list.size() > 0) {
 			UserVO uservo = null;
 			ManagerRefVO refvo = null;
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap(IDefaultValue.DefaultGroup, true);
 			for (ChnAreaBVO vo : list) {
 				if (!StringUtil.isEmpty(vo.getUserid())) {
 					refvo = new ManagerRefVO();
 					refvo.setCuserid(vo.getUserid());
-					uservo = UserCache.getInstance().get(vo.getUserid(), null);
+					uservo = queryUserMap.get(vo.getUserid());
 					if (uservo != null) {
 						refvo.setUsercode(uservo.getUser_code());
 						refvo.setUsername(uservo.getUser_name());
@@ -782,9 +787,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			oldvo.setCorpname(corpvo.getUnitname());
 			oldvo.setVprovince(corpvo.getVprovince());
 		}
-		UserVO uservo = UserCache.getInstance().get(oldvo.getCoperatorid(), null);
-		if (uservo != null) {
-			oldvo.setVoperatorname(uservo.getUser_name());
+		UserVO userVO =  userser.queryUserJmVOByID(IDefaultValue.DefaultGroup);
+		if (userVO != null) {
+			oldvo.setVoperatorname(userVO.getUser_name());
 		}
 		if (oldvo.getIstatus() != null) {
 			String vstatusname = "";

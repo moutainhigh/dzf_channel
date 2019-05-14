@@ -22,7 +22,6 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.ILogisticRepService;
 import com.dzf.service.pub.IPubService;
@@ -45,7 +44,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO sqpvo =  getQryGoods(pamvo);
 		List<LogisticRepVO> list = (List<LogisticRepVO>) multBodyObjectBO.queryDataPage(LogisticRepVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		Map<String, String> opermap = pubService.getManagerMap(1);// 渠道经理
+		Map<String, UserVO> opermap = pubService.getManagerMap(1);// 渠道经理
 		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(), 3);//大区
 		Map<String,List<ComboBoxVO>> comMap = getGoodsMap(pamvo);
 		UserVO uvo;
@@ -60,12 +59,9 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				getId = opermap.get(logisticRepVO.getPk_corp());
-				if (!StringUtil.isEmpty(getId)) {
-					uvo = UserCache.getInstance().get(getId, null);
-					if (uvo != null) {
-						logisticRepVO.setVmanager(uvo.getUser_name());
-					}
+				uvo = opermap.get(logisticRepVO.getPk_corp());
+				if (uvo != null) {
+					logisticRepVO.setVmanager(uvo.getUser_name());
 				}
 			}
 			if(comMap != null && !comMap.isEmpty()){
@@ -198,7 +194,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO sqpvo =  getQryMateriel(pamvo);
 		List<LogisticRepVO> list = (List<LogisticRepVO>) multBodyObjectBO.queryDataPage(LogisticRepVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		Map<String, String> opermap = pubService.getManagerMap(1);//渠道经理
+		Map<String, UserVO> opermap = pubService.getManagerMap(1);//渠道经理
 		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(), 3);//大区
 		Map<String, List<ComboBoxVO>> matmap = getMaterielMap(pamvo);
 		UserVO uvo;
@@ -213,12 +209,9 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				getId = opermap.get(logisticRepVO.getPk_corp());
-				if (!StringUtil.isEmpty(getId)) {
-					uvo = UserCache.getInstance().get(getId, null);
-					if (uvo != null) {
-						logisticRepVO.setVmanager(uvo.getUser_name());
-					}
+				uvo = opermap.get(logisticRepVO.getPk_corp());
+				if (uvo != null) {
+					logisticRepVO.setVmanager(uvo.getUser_name());
 				}
 			}
 			if(matmap != null && !matmap.isEmpty()){
