@@ -22,12 +22,11 @@ import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.MaxCodeVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
-import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -70,9 +69,7 @@ public class StockInServiceImpl implements IStockInService {
 		List<StockInVO> list = (List<StockInVO>) multBodyObjectBO.queryDataPage(StockInVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if (list != null && list.size() > 0) {
-			for (StockInVO invo : list) {
-				setShowName(invo);
-			}
+			QueryDeCodeUtils.decKeyUtils(new String[]{"coperatorname"}, list, 1);
 		}
 		return list;
 	}
@@ -88,40 +85,41 @@ public class StockInServiceImpl implements IStockInService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_stockin  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ? \n");
+		sql.append("SELECT in.*,u.user_name coperatorname  \n");
+		sql.append("  FROM cn_stockin in \n");
+		sql.append("  LEFT JOIN sm_user u ON in.coperatorid = u.cuserid  \n") ; 
+		sql.append(" WHERE nvl(in.dr, 0) = 0  \n");
+		sql.append("   AND in.pk_corp = ? \n");
 		spm.addParam(pamvo.getPk_corp());
 		if (!StringUtil.isEmpty(pamvo.getCuserid())) {
-			sql.append("   AND coperatorid = ? \n");
+			sql.append("   AND in.coperatorid = ? \n");
 			spm.addParam(pamvo.getCuserid());
 		}
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
-			sql.append("   AND vbillcode like ? \n");
+			sql.append("   AND in.vbillcode like ? \n");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
 		}
 		if(pamvo.getQrytype() != null && pamvo.getQrytype() != -1){
-			sql.append("   AND vstatus = ? \n");
+			sql.append("   AND in.vstatus = ? \n");
 			spm.addParam(pamvo.getQrytype());
 		}
 		if(pamvo.getBegdate() != null){
-			sql.append("   AND dstockdate >= ? \n");
+			sql.append("   AND in.dstockdate >= ? \n");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null ){
-			sql.append("   AND dstockdate <= ? \n");
+			sql.append("   AND in.dstockdate <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
-			sql.append(" AND substr(dconfirmtime, 0, 10) >= ? \n");
+			sql.append(" AND substr(in.dconfirmtime, 0, 10) >= ? \n");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getEndperiod())){
-			sql.append(" AND substr(dconfirmtime, 0, 10) <= ? \n");
+			sql.append(" AND substr(in.dconfirmtime, 0, 10) <= ? \n");
 			spm.addParam(pamvo.getEndperiod());
 		}
-		sql.append(" ORDER BY ts DESC");
+		sql.append(" ORDER BY in.ts DESC");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -148,7 +146,6 @@ public class StockInServiceImpl implements IStockInService {
 		if (StringUtil.isEmpty(hvo.getPk_stockin())) {
 			hvo.setVbillcode(getVbillcode(hvo));
 			hvo = (StockInVO) singleObjectBO.saveObject(pk_corp, hvo);
-			setShowName(hvo);
 			return hvo;
 		} else {
 			return saveEdit(hvo, pk_corp);
@@ -212,19 +209,6 @@ public class StockInServiceImpl implements IStockInService {
 		return map;
 	}
 	
-	/**
-	 * 设置显示名称
-	 * 
-	 * @param hvo
-	 * @throws DZFWarpException
-	 */
-	private void setShowName(StockInVO hvo) throws DZFWarpException {
-		UserVO uvo = UserCache.getInstance().get(hvo.getCoperatorid(), null);
-		if (uvo != null) {
-			hvo.setCoperatorname(uvo.getUser_name());
-		}
-	}
-
 	/**
 	 * 获取单据编码
 	 * 

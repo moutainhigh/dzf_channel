@@ -25,10 +25,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -37,6 +37,7 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.refund.IRefundBillService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("refundbillser")
 public class RefundBillServiceImpl implements IRefundBillService {
@@ -52,6 +53,8 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	
 	@Autowired
 	private IBillCodeService billCodeSer;
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -66,6 +69,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		List<RefundBillVO> list = (List<RefundBillVO>) multBodyObjectBO.queryDataPage(RefundBillVO.class, 
 					sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
+		    QueryDeCodeUtils.decKeyUtils(new String[]{"voperator"}, list, 1);
 			setListShowName(list);
 		}
 		return list;
@@ -78,7 +82,6 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	 */
 	private void setListShowName(List<RefundBillVO> list) throws DZFWarpException {
 		CorpVO corpvo = null;
-		UserVO uservo = null;
 		Map<Integer, String> areamap = pubser.getAreaMap(null, 1);
 		for(RefundBillVO bvo : list){
 			corpvo = CorpCache.getInstance().get(null, bvo.getPk_corp());
@@ -90,11 +93,6 @@ public class RefundBillServiceImpl implements IRefundBillService {
 				bvo.setCorpcode(corpvo.getInnercode());//加盟商编码
 				bvo.setCorpname(corpvo.getUnitname());//加盟商名称
 			}
-			uservo = UserCache.getInstance().get(bvo.getCoperatorid(), null);
-			if(uservo != null){
-				bvo.setVoperator(uservo.getUser_name());
-			}
-			
 		}
 	}
 	
@@ -108,8 +106,9 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n") ;
-		sql.append("  FROM cn_refund f  \n") ; 
+		sql.append("SELECT f.*,us.user_name as voperator  \n") ;
+		sql.append("  FROM cn_refund f  \n") ;
+		sql.append(" left join sm_user us on us.cuserid = f.coperatorid");
 		sql.append(" WHERE nvl(f.dr, 0) = 0  \n") ; 
 		if(paramvo.getBegdate() != null){
 			sql.append("   AND f.drefunddate >= ?  \n") ; 
@@ -275,7 +274,7 @@ public class RefundBillServiceImpl implements IRefundBillService {
 			datavo.setCorpcode(corpvo.getInnercode());//加盟商编码
 			datavo.setCorpname(corpvo.getUnitname());//加盟商名称
 		}
-		UserVO uservo = UserCache.getInstance().get(datavo.getCoperatorid(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(datavo.getCoperatorid());
 		if(uservo != null){
 			datavo.setVoperator(uservo.getUser_name());
 		}

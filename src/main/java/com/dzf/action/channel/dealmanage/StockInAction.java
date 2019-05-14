@@ -122,7 +122,7 @@ public class StockInAction extends BaseAction<StockInVO> {
 			JSON headjs = (JSON) JSON.parse(head);
 			Map<String, String> headmaping = FieldMapping.getFieldMapping(new StockInVO());
 			StockInVO hvo = DzfTypeUtils.cast(headjs, headmaping, StockInVO.class, JSONConvtoJAVA.getParserConfig());
-			setDefaultValue(hvo);
+			setDefaultValue(hvo,uservo);
 			
 			Map<String, String> bmapping = FieldMapping.getFieldMapping(new StockInBVO());
 			String body = getRequest().getParameter("body"); // 界面数据
@@ -154,12 +154,13 @@ public class StockInAction extends BaseAction<StockInVO> {
 	 * @param hvo
 	 * @throws DZFWarpException
 	 */
-	private void setDefaultValue(StockInVO hvo) throws DZFWarpException{
+	private void setDefaultValue(StockInVO hvo,UserVO uservo) throws DZFWarpException{
 		if(StringUtil.isEmpty(hvo.getPk_stockin())){
-			hvo.setPk_corp(getLogincorppk());
-			hvo.setCoperatorid(getLogin_userid());
+			hvo.setPk_corp(uservo.getPk_corp());
+			hvo.setCoperatorid(uservo.getCuserid());
 			hvo.setDoperatedate(new DZFDateTime());
 			hvo.setVstatus(IStatusConstant.ISTOCKINSTATUS_1);
+			hvo.setCoperatorname(uservo.getUser_name());
 		}
 		hvo.setDr(0);
 	}
