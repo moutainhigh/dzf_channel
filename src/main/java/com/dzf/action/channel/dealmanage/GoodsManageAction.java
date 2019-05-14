@@ -75,7 +75,7 @@ public class GoodsManageAction extends BaseAction<GoodsVO> {
 			int total = manser.queryTotalRow(paramvo);
 			grid.setTotal((long)(total));
 			if(total > 0){
-				List<GoodsVO> clist = manser.query(paramvo);
+				List<GoodsVO> clist = manser.query(paramvo,uservo);
 				grid.setRows(clist);
 			}else{
 				grid.setRows(new ArrayList<GoodsVO>());

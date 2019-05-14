@@ -9,6 +9,7 @@ import com.dzf.model.channel.dealmanage.GoodsSpecVO;
 import com.dzf.model.channel.dealmanage.GoodsVO;
 import com.dzf.model.channel.dealmanage.MeasVO;
 import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IGoodsManageService {
@@ -23,11 +24,12 @@ public interface IGoodsManageService {
 	
 	/**
 	 * 查询数据
+	 * @param uservo 
 	 * @param paramvo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<GoodsVO> query(GoodsVO pamvo) throws DZFWarpException;
+	public List<GoodsVO> query(GoodsVO pamvo, UserVO uservo) throws DZFWarpException;
 	
 	/**
 	 * 保存

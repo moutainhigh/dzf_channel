@@ -33,7 +33,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -41,6 +40,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IGoodsManageService;
 import com.dzf.service.pub.IBillCodeService;
+import com.dzf.service.sys.sys_power.IUserService;
 import com.dzf.spring.SpringUtils;
 
 @Service("goodsmanageser")
@@ -55,6 +55,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Autowired
 	private IBillCodeService billCodeSer;
 	
+	@Autowired
+	private IUserService userser;
+	
 	@Override
 	public Integer queryTotalRow(GoodsVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
@@ -63,12 +66,12 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GoodsVO> query(GoodsVO pamvo) throws DZFWarpException {
+	public List<GoodsVO> query(GoodsVO pamvo,UserVO uservo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
 		List<GoodsVO> list = (List<GoodsVO>) multBodyObjectBO.queryDataPage(GoodsVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if(list != null && list.size() > 0){
-			UserVO uservo = null;
+			//UserVO uservo = null;
 			String vstaname = "";
 			String where = "";
 			List<String> pklist = new ArrayList<String>();
@@ -79,8 +82,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 				where = SqlUtil.buildSqlForIn("pk_goods", pklist.toArray(new String[0]));
 			}
 			List<String> gslist = queryStockGoods(where);
+			HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 			for(GoodsVO vo : list){
-				uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+				 uservo = map.get(vo.getCoperatorid());
 				if(uservo != null){
 					vo.setVopername(uservo.getUser_name());
 				}
@@ -173,7 +177,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		}else{
 			datavo = saveEdit(datavo, files, filenames);
 		}
-		UserVO uservo = UserCache.getInstance().get(datavo.getCoperatorid(), null);
+		UserVO uservo = userser.queryUserJmVOByID(datavo.getCoperatorid());
 		if(uservo != null){
 			datavo.setVopername(uservo.getUser_name());
 		}
