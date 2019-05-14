@@ -129,11 +129,10 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		List<BillingInvoiceVO> retlist = new ArrayList<BillingInvoiceVO>();
 		QueryDeCodeUtils.decKeyUtils(new String[] { "corpname" }, list, 2);
 		
-		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
-		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<String, UserVO> marmap = pubser.getManagerMap(1);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(3);// 渠道运营
 		
 		UserVO uservo = null;
-		HashMap<String, UserVO> mapUser = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (BillingInvoiceVO bvo : list) {
 			if (areaMap != null && !areaMap.isEmpty()) {
 				String area = areaMap.get(bvo.getVprovince());
@@ -154,21 +153,15 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			}
 			
 			if (marmap != null && !marmap.isEmpty()) {
-				String manager = marmap.get(bvo.getPk_corp());
-				if (!StringUtil.isEmpty(manager)) {
-					uservo = mapUser.get(manager);
-					if (uservo != null) {
-						bvo.setVmanager(uservo.getUser_name());// 渠道经理
-					}
+				uservo = marmap.get(bvo.getPk_corp());
+				if (uservo != null) {
+					bvo.setVmanager(uservo.getUser_name());// 渠道经理
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				String operater = opermap.get(bvo.getPk_corp());
-				if (!StringUtil.isEmpty(operater)) {
-					uservo = mapUser.get(operater);
-					if (uservo != null) {
-						bvo.setVoperater(uservo.getUser_name());// 渠道运营
-					}
+				uservo = opermap.get(bvo.getPk_corp());
+				if (uservo != null) {
+					bvo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
 			}
 			

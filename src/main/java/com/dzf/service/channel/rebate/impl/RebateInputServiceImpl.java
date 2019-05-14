@@ -27,7 +27,6 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -74,8 +73,8 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @throws DZFWarpException
 	 */
 	private List<RebateVO> setShowData(QryParamVO paramvo, List<RebateVO> list) throws DZFWarpException {
-		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 		Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), IStatusConstant.IYUNYING);// 大区
 		if (!StringUtil.isEmpty(paramvo.getCorpname())) {
 			List<RebateVO> retlist = new ArrayList<RebateVO>();
@@ -116,23 +115,22 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	 * @param opermap
 	 * @throws DZFWarpException
 	 */
-	private void setShowSingle(RebateVO vo, Map<String, String> marmap, Map<Integer, String> areamap,
-			Map<String, String> opermap) throws DZFWarpException {
+	private void setShowSingle(RebateVO vo, Map<String, UserVO> marmap, Map<Integer, String> areamap,
+			Map<String, UserVO> opermap) throws DZFWarpException {
 		CorpVO corpvo = qryCorpInfo(vo.getPk_corp());
+		UserVO uservo;
 		if (corpvo != null) {
 			if (corpvo.getVprovince() != null) {
 				vo.setVprovname(corpvo.getCitycounty());
 				if (marmap != null && !marmap.isEmpty()) {
-					String cuserid = marmap.get(vo.getPk_corp());
-					UserVO uservo = UserCache.getInstance().get(cuserid, null);
+					uservo = marmap.get(vo.getPk_corp());
 					if (uservo != null) {
 						vo.setVmanagername(uservo.getUser_name());// 渠道经理
 					}
 				}
 				if (opermap != null && !opermap.isEmpty()) {
-					String cuserid = opermap.get(vo.getPk_corp());
-					UserVO uservo = UserCache.getInstance().get(cuserid, null);
-					if (uservo != null) {
+					uservo = opermap.get(vo.getPk_corp());
+					if (uservo != null) {	
 						vo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
 				}

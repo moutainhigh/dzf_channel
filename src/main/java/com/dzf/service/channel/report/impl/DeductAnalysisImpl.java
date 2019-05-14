@@ -19,7 +19,6 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
@@ -70,27 +69,21 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	 * @throws DZFWarpException
 	 */
 	private void setShowName(List<DeductAnalysisVO> retlist) throws DZFWarpException {
-		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 		UserVO uservo = null;
-		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
+//		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (DeductAnalysisVO dvo : retlist) {
 			if (marmap != null && !marmap.isEmpty()) {
-				String manager = marmap.get(dvo.getPk_corp());
-				if (!StringUtil.isEmpty(manager)) {
-					uservo = map.get(manager);
-					if (uservo != null) {
-						dvo.setVmanager(uservo.getUser_name());// 渠道经理
-					}
+				uservo = marmap.get(dvo.getPk_corp());
+				if (uservo != null) {
+					dvo.setVmanager(uservo.getUser_name());// 渠道经理
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				String operater = opermap.get(dvo.getPk_corp());
-				if (!StringUtil.isEmpty(operater)) {
-					uservo = map.get(operater);
-					if (uservo != null) {
-						dvo.setVoperater(uservo.getUser_name());// 渠道运营
-					}
+				uservo = opermap.get(dvo.getPk_corp());
+				if (uservo != null) {
+					dvo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
 			}
 		}

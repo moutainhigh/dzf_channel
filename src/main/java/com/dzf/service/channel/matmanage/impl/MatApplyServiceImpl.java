@@ -103,26 +103,20 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,vcorp);
 		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
-		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
-		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
-				
 				if (mvo.getCoperatorid() != null) {
-					//uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 					uservo = map.get(mvo.getCoperatorid());
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
 					}
 				}
-				String manager = marmap.get(mvo.getFathercorp());
-				if (!StringUtil.isEmpty(manager)) {
-					//uservo = UserCache.getInstance().get(manager, null);
-					uservo = map.get(manager);
-					if (uservo != null) {
-						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
-						mvo.setVmanagerid(manager);
-					}
+				uservo = marmap.get(mvo.getFathercorp());
+				if (uservo != null) {
+					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
+					mvo.setVmanagerid(uservo.getCuserid());
 				}
 				String[] updates= {"vmanagerid"};
 				singleObjectBO.update(mvo, updates);

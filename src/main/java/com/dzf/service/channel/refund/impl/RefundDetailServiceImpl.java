@@ -19,7 +19,6 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
@@ -77,7 +76,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			CorpVO corpvo = null;
 			UserVO uservo = null;
 			Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 1);//渠道区域大区集合
-			Map<String,String> marmap = pubser.getManagerMap(1);//渠道经理
+			Map<String,UserVO> marmap = pubser.getManagerMap(1);//渠道经理
 			String manager = "";
 			for(String key : retmap.keySet()){
 				refvo = retmap.get(key);
@@ -94,12 +93,9 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 					}
 				}
 				if(marmap != null && !marmap.isEmpty()){
-					manager = marmap.get(refvo.getPk_corp());
-					if(!StringUtil.isEmpty(manager)){
-						uservo = UserCache.getInstance().get(manager, null);
-						if (uservo != null) {
-							refvo.setVmanagername(uservo.getUser_name());//渠道经理
-						}
+					uservo = marmap.get(refvo.getPk_corp());
+					if (uservo != null) {
+						refvo.setVmanagername(uservo.getUser_name());//渠道经理
 					}
 				}
 				retlist.add(refvo);
