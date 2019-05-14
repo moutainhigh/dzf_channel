@@ -1,5 +1,6 @@
 package com.dzf.service.channel.contract.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,13 +28,13 @@ import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.contract.IContractAuditService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("contractauditser")
 public class ContractAuditServiceImpl implements IContractAuditService {
@@ -46,6 +47,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	
 	@Autowired
 	private IPubService pubser;
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalNum(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
@@ -74,6 +77,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		Map<String,String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
 		CorpVO corpvo = null;
 		UserVO uservo = null;
+		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for(ChangeApplyVO vo : list){
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if(corpvo != null){
@@ -87,7 +91,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			if (marmap != null && !marmap.isEmpty()) {
 				String manager = marmap.get(vo.getPk_corp());
 				if (!StringUtil.isEmpty(manager)) {
-					uservo = UserCache.getInstance().get(manager, null);
+					uservo = map.get(manager);
 					if (uservo != null) {
 						vo.setVmanagername(uservo.getUser_name());// 渠道经理
 					}
@@ -234,17 +238,19 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		SQLParameter spm = new SQLParameter();
 		// 申请状态 1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
 		if (oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 1) {
-			sql.append("SELECT DISTINCT a.userid AS id \n");
+			sql.append("SELECT DISTINCT a.userid AS id,us.user_name as name \n");
 			sql.append("  FROM cn_chnarea a  \n");
 			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
+			sql.append(" left join sm_user us on us.cuserid = a.userid");
 			sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
 			sql.append("   AND nvl(b.dr, 0) = 0  \n");
 			sql.append("   AND b.type = 1 \n");//渠道经理
 			sql.append("   AND b.userid = ?  \n");
 			spm.addParam(uservo.getCuserid());
 		} else if (oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 2) {
-			sql.append("SELECT vdeptuserid AS id \n");
-			sql.append("  FROM cn_leaderset  \n");
+			sql.append("SELECT vdeptuserid AS id,us.user_name as name \n");
+			sql.append("  FROM cn_leaderset ld \n");
+			sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid");
 			sql.append(" WHERE nvl(dr, 0) = 0  \n");
 		} else if(oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 3){
 			return null;
@@ -252,13 +258,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ComboBoxVO.class));
 		if(list != null && list.size() > 0){
-			UserVO uvo = null;
-			for(ComboBoxVO bvo : list){
-				uvo = UserCache.getInstance().get(bvo.getId(), null);
-				if(uvo != null){
-					bvo.setName(uvo.getUser_name());
-				}
-			}
+			QueryDeCodeUtils.decKeyUtils(new String[]{"name"}, list, 1);
 		}
 		return list;
 	}
