@@ -22,13 +22,14 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IOtherOutService;
 import com.dzf.service.pub.IBillCodeService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("outOther")
 public class OtherOutServiceImpl implements IOtherOutService{
@@ -45,7 +46,9 @@ public class OtherOutServiceImpl implements IOtherOutService{
 	@Autowired
 	private ICarryOverService  carryover;
 	
-
+	@Autowired
+    private IUserService userser;
+	
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
@@ -58,12 +61,8 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(pamvo);
 		List<StockOutVO> list = (List<StockOutVO>) multBodyObjectBO.queryDataPage(StockOutVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
-		UserVO uvo = null;
 		for (StockOutVO stockOutVO : list) {
-			uvo = UserCache.getInstance().get(stockOutVO.getCoperatorid(), null);
-			if (uvo != null) {
-				stockOutVO.setCoperatname(uvo.getUser_name());
-			}
+			stockOutVO.setCoperatname(CodeUtils1.deCode(stockOutVO.getCoperatname()));
 		}
 		return list;
 	}
@@ -109,7 +108,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		sp.addParam(soutid);
 		List<StockOutBVO> bvos = (List<StockOutBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(StockOutBVO.class));
 		retvo.setChildren(bvos.toArray(new StockOutBVO[bvos.size()]));
-		UserVO uvo= UserCache.getInstance().get(retvo.getCoperatorid(), null);
+		UserVO uvo =  userser.queryUserJmVOByID(retvo.getCoperatorid());
 		if (uvo != null) {
 			retvo.setCoperatname(uvo.getUser_name());
 		}
@@ -476,8 +475,10 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		sql.append("       c.doperatedate,");
 		sql.append("       c.dconfirmtime,");
 		sql.append("       c.updatets,");
-		sql.append("       c.itype");
+		sql.append("       c.itype,");
+		sql.append("       u.user_name coperatname");
 		sql.append("  from cn_stockout c");
+		sql.append("  LEFT JOIN sm_user u ON c.coperatorid = u.cuserid ") ; 
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=1 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and vgetdate >=? ");
