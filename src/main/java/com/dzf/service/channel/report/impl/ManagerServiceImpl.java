@@ -24,11 +24,11 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IManagerService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("mana_manager")
 public class ManagerServiceImpl implements IManagerService {
@@ -38,6 +38,9 @@ public class ManagerServiceImpl implements IManagerService {
 	
     @Autowired
     private IPubService pubService;
+    
+	@Autowired
+    private IUserService userser;
 	
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
@@ -46,11 +49,14 @@ public class ManagerServiceImpl implements IManagerService {
 		if(level==null){
 			
 		}else if(type==3 && level<=1){
-			list = qryBoth(qvo,type);//3渠道总
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+			list = qryBoth(qvo,type,queryUserMap);//3渠道总
 		}else if(type==2 && level<=2){
-			list = qryBoth(qvo,type);//2大区 
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+			list = qryBoth(qvo,type,queryUserMap);//2大区 
 		}else if(type==1 && level<=3){
-			list = qryChannel(qvo);//1省
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+			list = qryChannel(qvo,queryUserMap);//1省
 		}
 		if(list!=null && list.size()!=0){
 			Collections.sort(list, new Comparator<ManagerVO>() {
@@ -83,7 +89,7 @@ public class ManagerServiceImpl implements IManagerService {
 	 * @param qvo
 	 * @return
 	 */
-	private List<ManagerVO> qryChannel(ManagerVO qvo) {
+	private List<ManagerVO> qryChannel(ManagerVO qvo,HashMap<String, UserVO> queryUserMap ) {
 		List<ManagerVO> qryCharge= qryCharge(qvo);		 //查询  是  省/市负责人相关的数据
 		String condition=null;
 		if(qryCharge == null || qryCharge.size() == 0){
@@ -100,6 +106,7 @@ public class ManagerServiceImpl implements IManagerService {
         }
 		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
 		if(qryCharge!=null && qryCharge.size()>0){
+			UserVO uservo;
 			for (ManagerVO managerVO : qryCharge) {
 				if(managerVO.getCorpname()!=null && !(managerVO.getPk_corp().equals(managerVO.getCorpname()))){
 					managerVO.setCuserid(null);
@@ -108,6 +115,14 @@ public class ManagerServiceImpl implements IManagerService {
 					map.put(managerVO.getPk_corp(), managerVO);
 				}else if(!StringUtil.isEmpty(managerVO.getCuserid())){
 					map.put(managerVO.getPk_corp(), managerVO);
+				}
+				uservo = queryUserMap.get(managerVO.getUserid());
+				if (uservo != null) {
+					managerVO.setUsername(uservo.getUser_name());
+				}
+				uservo = queryUserMap.get(managerVO.getCuserid());
+				if (uservo != null) {
+					managerVO.setCusername(uservo.getUser_name());
 				}
 			}
 			Collection<ManagerVO> manas = map.values();
@@ -123,7 +138,7 @@ public class ManagerServiceImpl implements IManagerService {
 	 * @param type
 	 * @return
 	 */
-	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type) {
+	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type,HashMap<String, UserVO> queryUserMap ) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("  select a.areaname,a.areacode,a.userid,");
@@ -168,6 +183,7 @@ public class ManagerServiceImpl implements IManagerService {
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
 		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
+		UserVO uservo;
 		if(list!=null && list.size()>0){
 			Boolean isPut=true;
 			for (ManagerVO managerVO : list) {
@@ -183,6 +199,14 @@ public class ManagerServiceImpl implements IManagerService {
 					map.put(managerVO.getPk_corp(), managerVO);
 				}else if(!StringUtil.isEmpty(managerVO.getCuserid())&& isPut){
 					map.put(managerVO.getPk_corp(), managerVO);
+				}
+				uservo = queryUserMap.get(managerVO.getUserid());
+				if (uservo != null) {
+					managerVO.setUsername(uservo.getUser_name());
+				}
+				uservo = queryUserMap.get(managerVO.getCuserid());
+				if (uservo != null) {
+					managerVO.setCusername(uservo.getUser_name());
 				}
 			}
 			Collection<ManagerVO> manas = map.values();
@@ -392,16 +416,6 @@ public class ManagerServiceImpl implements IManagerService {
 				managerVO.setCorpname(cvo.getUnitname());
 			}else{
 				managerVO.setCorpname(null);
-			}
-			uvo = UserCache.getInstance().get(managerVO.getUserid(), null);
-			if(uvo!=null){
-				managerVO.setUsername(uvo.getUser_name());
-			}
-			if(!StringUtil.isEmpty(managerVO.getCuserid())){
-				uvo = UserCache.getInstance().get(managerVO.getCuserid(), null);
-				if(uvo!=null){
-					managerVO.setCusername(uvo.getUser_name());
-				}
 			}
 			managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
 			managerVO.setNdedrebamny(DZFDouble.ZERO_DBL);
