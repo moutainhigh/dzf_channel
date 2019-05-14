@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,12 +36,12 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("matapply")
 public class MatApplyServiceImpl implements IMatApplyService {
@@ -55,6 +56,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+    private IUserService userser;
+	
 
 	@Override
 	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm,String stype) throws DZFWarpException{
@@ -98,34 +103,27 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,stype,vpro,vcorp);
 		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
-		
+		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
-				/*if(mvo.getVmanagerid()!=null){//导入（渠道经理不为空）
-					uservo = UserCache.getInstance().get(mvo.getVmanagerid(), null);
-					if(uservo!=null){
-						mvo.setVmanagername(uservo.getUser_name());
-						mvo.setApplyname(uservo.getUser_name());
-					}
-				}*/
+				
 				if (mvo.getCoperatorid() != null) {
-					uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					//uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+					uservo = map.get(mvo.getCoperatorid());
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
 					}
 				}
 				String manager = marmap.get(mvo.getFathercorp());
 				if (!StringUtil.isEmpty(manager)) {
-					uservo = UserCache.getInstance().get(manager, null);
+					//uservo = UserCache.getInstance().get(manager, null);
+					uservo = map.get(manager);
 					if (uservo != null) {
 						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
 						mvo.setVmanagerid(manager);
 					}
 				}
-				/*if(mvo.getAname()!=null){//导入的大区名称
-					mvo.setAreaname(mvo.getAname());
-				}*/
 				String[] updates= {"vmanagerid"};
 				singleObjectBO.update(mvo, updates);
 			}
@@ -896,25 +894,29 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(vo!=null){
 				if("1".equals(type)){//发货
 					if(vo.getDeliverid()!=null){
-						uservo = UserCache.getInstance().get(vo.getDeliverid(), null);
+						//uservo = UserCache.getInstance().get(vo.getDeliverid(), null);
+						uservo = userser.queryUserJmVOByID(vo.getDeliverid());
 						if(uservo!=null){
 							vo.setDename(uservo.getUser_name());
 						}
 					}else{
-						uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+						//uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+						uservo = userser.queryUserJmVOByID(uservo.getCuserid());
 						if(uservo!=null){
 							vo.setDename(uservo.getUser_name());//发货人
 						}
 					}
 				}
 					if (vo.getCoperatorid() != null) {
-						uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+						//uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
+						uservo = userser.queryUserJmVOByID(vo.getCoperatorid());
 						if(uservo!=null){
 							vo.setApplyname(uservo.getUser_name());//申请人
 						}
 					}
 					if(vo.getAuditerid()!=null){
-						uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
+						//uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
+						uservo = userser.queryUserJmVOByID(vo.getAuditerid());
 						if(uservo!=null){
 							vo.setAudname(uservo.getUser_name());//审核人
 						}
@@ -1106,7 +1108,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@Override
 	public MatOrderVO queryUserData(UserVO uservo) {
 		
-		 uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+		// uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+		   uservo = userser.queryUserJmVOByID(uservo.getCuserid());
 		 MatOrderVO mvo = new MatOrderVO();
 		 if(uservo!=null){
 			 mvo.setApplyname(uservo.getUser_name());

@@ -1,5 +1,6 @@
 package com.dzf.service.channel.matmanage.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,11 +22,11 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatStockInService;
 import com.dzf.service.pub.IBillCodeService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 
 @Service("matstockin")
@@ -40,6 +41,9 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	@Autowired
 	private IBillCodeService billCode;
 	
+	@Autowired
+	private IUserService userser;
+		
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MaterielFileVO> queryComboBox()   throws DZFWarpException{
@@ -215,10 +219,13 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+
+	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
 	       if(list!=null && list.size()>0){
 	           UserVO uvo = null;
 	    	   for (MaterielStockInVO mvo : list) {
-	    	        uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+	    	       // uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+	    		     uvo = userser.queryUserJmVOByID(mvo.getCoperatorid());
 					if(uvo!=null){
 						mvo.setOpername(uvo.getUser_name());
 					}

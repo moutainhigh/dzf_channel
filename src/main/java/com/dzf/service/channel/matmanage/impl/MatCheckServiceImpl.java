@@ -1,5 +1,6 @@
 package com.dzf.service.channel.matmanage.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,17 +19,20 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatCheckService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("matcheck")
 public class MatCheckServiceImpl implements IMatCheckService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private IUserService userser;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -46,9 +50,11 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		corpsql.append(" order by a.ts desc");
 		sp.addParam(uservo.getCuserid());
 		List<ChnAreaBVO> bvolist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(), sp, new BeanListProcessor(ChnAreaBVO.class));
+		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
 		if(bvolist!=null && bvolist.size()>0){
 			for (ChnAreaBVO bvo : bvolist) {
-				uservo = UserCache.getInstance().get(bvo.getUserid(), null);
+				//uservo = UserCache.getInstance().get(bvo.getUserid(), null);
+				  uservo = userser.queryUserJmVOByID(bvo.getUserid());
 				if(uservo != null){
 					bvo.setUsername(uservo.getUser_name());
 				}
@@ -140,9 +146,11 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	public MatOrderVO queryUserData(UserVO uservo, String mid) {
 		
 	    MatOrderVO mvo = (MatOrderVO) singleObjectBO.queryByPrimaryKey(MatOrderVO.class, mid);
-	    uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+	    //uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
+	      uservo = userser.queryUserJmVOByID(uservo.getCuserid());
 		mvo.setAudname(uservo.getUser_name());//审核人
-		uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+		//uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+		uservo = userser.queryUserJmVOByID(mvo.getCoperatorid());
 		mvo.setApplyname(uservo.getUser_name());//申请人
 		QueryDeCodeUtils.decKeyUtil(new String[] { "applyname","audname" }, mvo, 1);
 		return mvo;

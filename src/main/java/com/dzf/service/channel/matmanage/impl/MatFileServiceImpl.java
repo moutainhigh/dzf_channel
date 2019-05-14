@@ -1,6 +1,7 @@
 package com.dzf.service.channel.matmanage.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,12 +25,12 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.matmanage.IMatFileService;
 import com.dzf.service.pub.IBillCodeService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("matfile")
 public class MatFileServiceImpl implements IMatFileService {
@@ -42,6 +43,9 @@ public class MatFileServiceImpl implements IMatFileService {
 	
 	@Autowired
 	private IBillCodeService billCodeSer;
+	
+	@Autowired
+    private IUserService userser;
 	
 	@Override
 	public Boolean queryMatName(String name)  throws DZFWarpException{
@@ -170,9 +174,11 @@ public class MatFileServiceImpl implements IMatFileService {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
 	       if(list!=null && list.size()>0){
 	    	   for (MaterielFileVO mvo : list) {
-		            uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+		           // uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
+	    		      uservo = map.get(mvo.getCoperatorid());
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
 					}
