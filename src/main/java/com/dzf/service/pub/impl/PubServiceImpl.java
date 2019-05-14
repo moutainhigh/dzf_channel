@@ -30,8 +30,8 @@ import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.ISysFunnodeService;
+import com.dzf.service.sys.sys_power.IUserService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
-import com.sun.org.apache.bcel.internal.classfile.Code;
 
 @Service("pubservice")
 public class PubServiceImpl implements IPubService {
@@ -44,6 +44,9 @@ public class PubServiceImpl implements IPubService {
 
 	@Autowired
 	private ISysFunnodeService sysFunnodeService = null;
+
+	@Autowired
+	private IUserService userser;
 
 	@Override
 	public HashMap<Integer, String> queryAreaMap(String parenter_id) throws DZFWarpException {
@@ -218,7 +221,7 @@ public class PubServiceImpl implements IPubService {
 		if (bVOs != null && bVOs.length > 0) {
 			String userid = bVOs[0].getUserid();
 			if (!StringUtil.isEmpty(userid)) {
-				UserVO uservo = UserCache.getInstance().get(userid, null);
+				UserVO uservo = userser.queryUserJmVOByID(userid);
 				if (uservo != null) {
 					return uservo.getUser_name();
 				}
@@ -243,7 +246,7 @@ public class PubServiceImpl implements IPubService {
 			if (blist != null && blist.size() > 0) {
 				String userid = blist.get(0).getUserid();
 				if (!StringUtil.isEmpty(userid)) {
-					UserVO uservo = UserCache.getInstance().get(userid, null);
+					UserVO uservo =  userser.queryUserJmVOByID(userid);
 					if (uservo != null) {
 						return uservo.getUser_name();
 					}
