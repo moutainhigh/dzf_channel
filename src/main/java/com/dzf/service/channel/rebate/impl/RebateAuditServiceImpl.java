@@ -17,13 +17,13 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.rebate.IRebateAuditService;
 import com.dzf.service.channel.rebate.IRebateInputService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("rebateauditser")
 public class RebateAuditServiceImpl implements IRebateAuditService {
@@ -33,6 +33,8 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@Override
 	public RebateVO updateAudit(RebateVO data, String pk_corp, Integer opertype) throws DZFWarpException {
@@ -103,7 +105,7 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 		flowvo.setIsdeal(DZFBoolean.TRUE);
 		String userid = data.getVapproveid();//审批人
 		flowvo.setSenderman(userid);
-		uservo = UserCache.getInstance().get(userid, null);
+		uservo = userServiceImpl.queryUserJmVOByID(userid);
 		flowvo.setDsenddate(new DZFDate());
 		flowvo.setDsendtime(new DZFDateTime());
 		flowvo.setDealman(userid);

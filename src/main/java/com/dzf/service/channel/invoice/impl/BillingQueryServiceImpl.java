@@ -21,10 +21,10 @@ import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
@@ -33,6 +33,7 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("billingQueryServiceImpl")
 public class BillingQueryServiceImpl implements IBillingQueryService {
@@ -44,6 +45,9 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private IPubService pubser;
 
 	private final static String tablename = "cn_invoice";
+	
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -129,6 +133,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
 		
 		UserVO uservo = null;
+		HashMap<String, UserVO> mapUser = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (BillingInvoiceVO bvo : list) {
 			if (areaMap != null && !areaMap.isEmpty()) {
 				String area = areaMap.get(bvo.getVprovince());
@@ -151,7 +156,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			if (marmap != null && !marmap.isEmpty()) {
 				String manager = marmap.get(bvo.getPk_corp());
 				if (!StringUtil.isEmpty(manager)) {
-					uservo = UserCache.getInstance().get(manager, null);
+					uservo = mapUser.get(manager);
 					if (uservo != null) {
 						bvo.setVmanager(uservo.getUser_name());// 渠道经理
 					}
@@ -160,7 +165,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			if (opermap != null && !opermap.isEmpty()) {
 				String operater = opermap.get(bvo.getPk_corp());
 				if (!StringUtil.isEmpty(operater)) {
-					uservo = UserCache.getInstance().get(operater, null);
+					uservo = mapUser.get(operater);
 					if (uservo != null) {
 						bvo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
