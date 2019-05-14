@@ -91,8 +91,8 @@ public class InvManagerServiceImpl implements InvManagerService {
 		Map<Integer, String> areaMap = pubser.getAreaMap(paramvo.getAreaname(), 3);
 		UserVO uservo = null;
 		StringBuffer vmemo = null;
-		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
-		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<String, UserVO> marmap = pubser.getManagerMap(1);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(3);// 渠道运营
 		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (ChInvoiceVO vo : retlist) {
 			if (areaMap != null && !areaMap.isEmpty()) {
@@ -116,21 +116,15 @@ public class InvManagerServiceImpl implements InvManagerService {
 			}
 
 			if (marmap != null && !marmap.isEmpty()) {
-				String manager = marmap.get(vo.getPk_corp());
-				if (!StringUtil.isEmpty(manager)) {
-					uservo = map.get(manager);
-					if (uservo != null) {
-						vo.setVmanager(uservo.getUser_name());// 渠道经理
-					}
+				uservo = marmap.get(vo.getPk_corp());
+				if (uservo != null) {
+					vo.setVmanager(uservo.getUser_name());// 渠道经理
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				String operater = opermap.get(vo.getPk_corp());
-				if (!StringUtil.isEmpty(operater)) {
-					uservo = map.get(operater);
-					if (uservo != null) {
-						vo.setVoperater(uservo.getUser_name());// 渠道运营
-					}
+				uservo = opermap.get(vo.getPk_corp());
+				if (uservo != null) {
+					vo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
 			}
 		}
