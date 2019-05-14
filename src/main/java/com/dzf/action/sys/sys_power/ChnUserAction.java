@@ -19,7 +19,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.QueryDeCodeUtils;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.sys_power.IChnUserService;
@@ -94,7 +93,7 @@ public class ChnUserAction extends BaseAction<UserVO> {
 				checkUser();
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_14);
 				String loginCorp = getLoginCorpInfo().getPk_corp();
-				UserVO user = UserCache.getInstance().get(data.getCuserid(), null);
+				UserVO user = userService.queryUserById(data.getCuserid());
 				if (user == null) {
 					throw new BusinessException("该数据不存在或已删除！");
 				}
