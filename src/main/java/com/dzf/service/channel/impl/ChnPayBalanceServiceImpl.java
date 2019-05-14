@@ -25,7 +25,6 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
@@ -36,7 +35,6 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("chnpaybalanceser")
 public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
@@ -46,8 +44,6 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	
     @Autowired
     private IPubService pubService;
-    @Autowired
-    private IUserService userServiceImpl;
     
 	@Override
 	public List<ChnBalanceRepVO> query(QryParamVO paramvo) throws DZFWarpException {
@@ -101,10 +97,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			String ipaytype = null;
 			Integer paytype = null;
 			Map<Integer, String> areaMap = pubService.getAreaMap(areaname, 3);//运营区域
-			Map<String,String> marmap = pubService.getManagerMap(1);//渠道经理
+			Map<String,UserVO> marmap = pubService.getManagerMap(1);//渠道经理
 			String manager = "";
 			UserVO uservo = null;
-			HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 			for (String pk : pklist) {
 				repvo = new ChnBalanceRepVO();
 				ipaytype = pk.substring(pk.indexOf(",") + 1);
@@ -134,12 +129,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 					repvo.setVpaytypename("返点");
 				}
 				if(marmap != null && !marmap.isEmpty()){
-					manager = marmap.get(pk_corp);
-					if(!StringUtil.isEmpty(manager)){
-						uservo = map.get(manager);
-						if (uservo != null) {
-							repvo.setVmanagername(uservo.getUser_name());//渠道经理
-						}
+					uservo = marmap.get(pk_corp);
+					if (uservo != null) {
+						repvo.setVmanagername(uservo.getUser_name());//渠道经理
 					}
 				}
 				// 全部查询、预付款查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在预付款上
