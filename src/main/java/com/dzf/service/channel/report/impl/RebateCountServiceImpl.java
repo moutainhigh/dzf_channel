@@ -17,10 +17,10 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.service.channel.report.IRebateCountService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("rebateCountSer")
 public class RebateCountServiceImpl implements IRebateCountService {
@@ -30,6 +30,9 @@ public class RebateCountServiceImpl implements IRebateCountService {
     
     @Autowired
     private IPubService pubService;
+    
+    @Autowired
+    private IUserService userser;
     
     @Override
     public List<RebateCountVO> query(QryParamVO paramvo) throws DZFWarpException {
@@ -58,8 +61,10 @@ public class RebateCountServiceImpl implements IRebateCountService {
         params.addParam(paramvo.getPk_corp());
         params.addParam(paramvo.getVyear());
         List<RebateCountVO> list = (List<RebateCountVO>) singleObjectBO.executeQuery(sql.toString(), params, new BeanListProcessor(RebateCountVO.class));
+               
         if(list != null && list.size() > 0){
             HashMap<String, String> map = queryChannelManger();
+            HashMap<String, UserVO> usermap = userser.queryUserMap(paramvo.getPk_corp(), true);
             UserVO uvo = null;
             String userid = null;
             ArrayList<RebateCountVO> listFilter = new ArrayList<>();
@@ -67,7 +72,8 @@ public class RebateCountServiceImpl implements IRebateCountService {
             	rvo.setCorpname(CodeUtils1.deCode(rvo.getCorpname()));
                 userid = map.get(rvo.getPk_corp());
                 if(!StringUtil.isEmpty(userid)){
-                    uvo = UserCache.getInstance().get(userid, null);
+                	  uvo = usermap.get(userid);
+                	
                     if(uvo != null){
                         rvo.setVmanagername(uvo.getUser_name());	
                     }
