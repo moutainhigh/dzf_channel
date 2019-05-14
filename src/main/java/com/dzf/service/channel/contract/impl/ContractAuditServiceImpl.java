@@ -74,10 +74,10 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	 * @throws DZFWarpException
 	 */
 	private void setShowName(List<ChangeApplyVO> list) throws DZFWarpException {
-		Map<String,String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
+		Map<String,UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
 		CorpVO corpvo = null;
 		UserVO uservo = null;
-		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
+//		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for(ChangeApplyVO vo : list){
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if(corpvo != null){
@@ -89,12 +89,9 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				vo.setVarea(corpvo.getCitycounty());// 地区
 			}
 			if (marmap != null && !marmap.isEmpty()) {
-				String manager = marmap.get(vo.getPk_corp());
-				if (!StringUtil.isEmpty(manager)) {
-					uservo = map.get(manager);
-					if (uservo != null) {
-						vo.setVmanagername(uservo.getUser_name());// 渠道经理
-					}
+				uservo = marmap.get(vo.getPk_corp());
+				if (uservo != null) {
+					vo.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
 			}
 		}

@@ -44,7 +44,6 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
 import com.dzf.service.channel.dealmanage.IChannelOrderService;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("channelorderser")
 public class ChannelOrderServiceImpl implements IChannelOrderService {
@@ -60,8 +59,6 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	
 	@Autowired
 	private IPubService pubser;
-	@Autowired
-	private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalRow(GoodsBillVO pamvo) throws DZFWarpException {
@@ -88,9 +85,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	 */
 	private void setShowValue(List<GoodsBillVO> list,String areaname) throws DZFWarpException {
 		UserVO uservo = null;
-		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
+		Map<String, UserVO> opermap = pubser.getManagerMap(3);// 渠道运营
 		Map<Integer, String> areaMap = pubser.getAreaMap(areaname, 3);//大区
-		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
+//		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (GoodsBillVO bvo : list) {
 			QueryDeCodeUtils.decKeyUtil(new String[] { "corpname" }, bvo, 2);
 			if (areaMap != null && !areaMap.isEmpty()) {
@@ -100,12 +97,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 				}
 			}
 			if (opermap != null && !opermap.isEmpty()) {
-				String operater = opermap.get(bvo.getPk_corp());
-				if (!StringUtil.isEmpty(operater)) {
-					uservo = map.get(operater);
-					if (uservo != null) {
-						bvo.setVoperater(uservo.getUser_name());// 渠道运营
-					}
+				uservo = opermap.get(bvo.getPk_corp());
+				if (uservo != null) {
+					bvo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
 			}
 		}
