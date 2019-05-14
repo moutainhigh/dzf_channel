@@ -8,7 +8,6 @@
 <%@page import="org.springframework.context.ApplicationContext"%>
 <%@page import="com.dzf.pub.cache.CorpCache"%>
 <%@page import="com.dzf.model.sys.sys_power.CorpVO"%>
-<%@page import="com.dzf.pub.cache.UserCache"%>
 <%@page import="com.dzf.model.sys.sys_power.UserVO"%>
 <%@page import="com.dzf.pub.IGlobalConstants"%>
 <%@page import="com.dzf.pub.DzfUtil"%>
@@ -17,6 +16,7 @@
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@page import="com.dzf.pub.StringUtil"%>
 <%@page import="com.dzf.pub.constant.AdminDateUtil"%>
+<%@page import="com.dzf.service.sys.sys_power.IUserService"%>
 
 <%
 	String datevalue = (String) session.getAttribute(IGlobalConstants.login_date);
@@ -27,14 +27,17 @@
 		request.getRequestDispatcher("/error_kj.jsp").forward(request, response);
 		return;
 	}
-	UserVO userVo = UserCache.getInstance().get(userid, corp);
 	String date = AdminDateUtil.getServerDate();
 	String preDate = AdminDateUtil.getPreviousDate();
 	String preYear = AdminDateUtil.getPreviousYear();
 	String serverTime = AdminDateUtil.getServerDateTime();
-	CorpVO corpVo = CorpCache.getInstance().get(userVo.getPrimaryKey(), corp);
+	CorpVO corpVo = CorpCache.getInstance().get(null, corp);
 	ServletContext servletContext = session.getServletContext();
 	ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+	
+	IUserService userServiceImpl = (IUserService)ctx.getBean("userServiceImpl");
+	UserVO userVo = userServiceImpl.queryUserJmVOByID(userid);
+	
 	ISysFunnodeService sysFunnodeService = (ISysFunnodeService) ctx.getBean("sys_funnodeserv");
 	List<SysFunNodeVO> list = sysFunnodeService.querySysnodeByUserAndCorp(userVo, corpVo, "dzf_channel");
 	//  首页的节点

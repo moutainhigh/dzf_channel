@@ -2,7 +2,6 @@
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@ page import="com.dzf.pub.IGlobalConstants"%>
 <%@page import="com.dzf.model.sys.sys_power.UserVO"%>
-<%@ page import="com.dzf.pub.cache.UserCache"%>
 <%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -30,7 +29,6 @@
 <%
 	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);
 	String login_user = (String) session.getAttribute(IGlobalConstants.login_user);
-	UserVO userVo = UserCache.getInstance().get(login_user, logincorp);
 	String period = AdminDateUtil.getPeriod();
 %>					
 <body>

@@ -1169,7 +1169,7 @@ function initdeductData(row){
                 var ndesummny = getFloatValue(countmny).mul(parseFloat(row.propor)).div(100);
                 $('#ndesummny').numberbox('setValue', ndesummny);
                 $("#dedate").datebox("setValue",Public.getLoginDate());
-                $('#vopernm').textbox('setValue',$("#unm").val());
+                $('#vopernm').textbox('setValue',top.SYSTEM.UserName);
                 $('#voper').val($("#uid").val());
                 $('#balmny').numberbox('setValue', row.balmny);//预付款余额
                 $('#rebbalmny').numberbox('setValue', row.rebbalmny);//返点余额
@@ -1358,7 +1358,7 @@ function bathAudit(){
 	$('#bdeductfrom').form('clear');
 	$('#bpropor').numberbox('setValue', 10);
 	$("#bdedate").datebox("setValue",Public.getLoginDate());
-	$('#bvopernm').textbox('setValue',$("#unm").val());
+	$('#bvopernm').textbox('setValue',top.SYSTEM.UserName);
 	$('#bvoper').val($("#uid").val());
 	document.getElementById("bdebit").checked="true";
 	initRedioListener();
