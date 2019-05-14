@@ -17,18 +17,21 @@ import com.dzf.model.channel.report.DebitQueryVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IDebitQueryService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("debitquery_ser")
 public class DebitQueryServiceImpl implements IDebitQueryService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
+	
+	@Autowired
+    private IUserService userser;
 	
 	@Override
 	public List<DebitQueryVO> queryHeader(DebitQueryVO qvo) throws DZFWarpException {
@@ -246,8 +249,9 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	private List<DebitQueryVO> qryChannel(DebitQueryVO paramvo) throws DZFWarpException {
 		List<String> ids =new ArrayList<>();
 		List<DebitQueryVO>  list = new ArrayList<>();
-		List<DebitQueryVO>  nlist = qryNChannel(paramvo,ids);
-		List<DebitQueryVO>  Ylist = qryYChannel(paramvo,ids);
+		HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+		List<DebitQueryVO>  nlist = qryNChannel(paramvo,ids,queryUserMap);
+		List<DebitQueryVO>  Ylist = qryYChannel(paramvo,ids,queryUserMap);
 		if(nlist != null && nlist.size() > 0){
 			list.addAll(nlist);
 		}
@@ -283,7 +287,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	/**
 	 * 查询 非省市负责人的加盟商
 	 */
-	private List<DebitQueryVO> qryNChannel(DebitQueryVO paramvo,List<String> ids) throws DZFWarpException {
+	private List<DebitQueryVO> qryNChannel(DebitQueryVO paramvo,List<String> ids,HashMap<String, UserVO> queryUserMap ) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select ba.pk_corp, \n");
@@ -311,11 +315,11 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
 		for (DebitQueryVO debitQueryVO : list) {
-			uvo = UserCache.getInstance().get(debitQueryVO.getCuserid(), null);
+			uvo =queryUserMap.get(debitQueryVO.getCuserid());
 			if(uvo!=null){
 				debitQueryVO.setCusername(uvo.getUser_name());
 			}
-			uvo = UserCache.getInstance().get(debitQueryVO.getUserid(), null);
+			uvo = queryUserMap.get(debitQueryVO.getUserid());
 			if(uvo!=null){
 				debitQueryVO.setUsername(uvo.getUser_name());
 			}
@@ -327,7 +331,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	/**
 	 * 查询 是省市负责人的加盟商(不包含已查询出来的非省市负责人的加盟商)
 	 */
-	private List<DebitQueryVO> qryYChannel(DebitQueryVO paramvo,List<String> ids) {
+	private List<DebitQueryVO> qryYChannel(DebitQueryVO paramvo,List<String> ids,HashMap<String, UserVO> queryUserMap ) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select ba.pk_corp, \n");
@@ -367,11 +371,11 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 			}else{
 				continue;
 			}
-			uvo = UserCache.getInstance().get(debitQueryVO.getCuserid(), null);
+			uvo = queryUserMap.get(debitQueryVO.getCuserid());
 			if(uvo!=null){
 				debitQueryVO.setCusername(uvo.getUser_name());
 			}
-			uvo = UserCache.getInstance().get(debitQueryVO.getUserid(), null);
+			uvo = queryUserMap.get(debitQueryVO.getUserid());
 			if(uvo!=null){
 				debitQueryVO.setUsername(uvo.getUser_name());
 			}
