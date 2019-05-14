@@ -30,13 +30,11 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -45,6 +43,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IStockOutService;
 import com.dzf.service.pub.IBillCodeService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("outStock")
 public class StockOutServiceImpl implements IStockOutService{
@@ -60,6 +59,9 @@ public class StockOutServiceImpl implements IStockOutService{
 	
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+    private IUserService userser;
 	
 
 	@Override
@@ -78,10 +80,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
 		Map<Integer, String> areaMap = pubser.getAreaMap(pamvo.getAreaname(), 3);//大区
 		for (StockOutVO stockOutVO : list) {
-			uvo = UserCache.getInstance().get(stockOutVO.getCoperatorid(), null);
-			if (uvo != null) {
-				stockOutVO.setCoperatname(uvo.getUser_name());
-			}
+			stockOutVO.setCoperatname(CodeUtils1.deCode(stockOutVO.getCoperatname()));
 			QueryDeCodeUtils.decKeyUtil(new String[] { "corpname" }, stockOutVO, 2);
 			if (areaMap != null && !areaMap.isEmpty()) {
 				String area = areaMap.get(stockOutVO.getVprovince());
@@ -92,7 +91,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			if (opermap != null && !opermap.isEmpty()) {
 				String operater = opermap.get(stockOutVO.getPk_corp());
 				if (!StringUtil.isEmpty(operater)) {
-					uvo = UserCache.getInstance().get(operater, null);
+					uvo=  userser.queryUserJmVOByID(operater);
 					if (uvo != null) {
 						stockOutVO.setVoperater(uvo.getUser_name());// 渠道运营
 					}
@@ -597,9 +596,11 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.doperatedate,");
 		sql.append("       c.dconfirmtime,");
 		sql.append("       c.ddelivertime,");
-		sql.append("       c.updatets");
+		sql.append("       c.updatets,");
+		sql.append("       u.user_name coperatname");
 		sql.append("  from cn_stockout c");
 		sql.append("  INNER JOIN bd_account ba ON c.pk_corp = ba.pk_corp \n") ;
+		sql.append("  LEFT JOIN sm_user u ON c.sendman = u.cuserid  \n") ; 
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and substr(c.doperatedate,0,10)>=? ");
