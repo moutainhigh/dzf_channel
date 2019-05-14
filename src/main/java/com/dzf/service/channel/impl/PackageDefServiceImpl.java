@@ -26,7 +26,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.IPackageDefService;
@@ -64,12 +64,15 @@ public class PackageDefServiceImpl implements IPackageDefService {
         str.append("        p.itype, ");
         str.append("        p.sortnum, ");
         str.append("        p.updatets, ");
+        str.append("        u.user_name coperatorname, ");
         str.append("        wm_concat(b.vcity) cityids, ");
         str.append("        wm_concat(c.pk_corp) corpids ");
         str.append("   from cn_packagedef p ");
         str.append("   left join cn_packagedef_b b on p.pk_packagedef = b.pk_packagedef ");
         str.append("   left join cn_packagedef_c c on p.pk_packagedef = c.pk_packagedef ");
-        str.append(" where nvl(p.dr,0) = 0 and nvl(b.dr,0) = 0 and nvl(c.dr,0) = 0 and p.pk_corp = '000001'");
+        str.append("   left join sm_user u ON p.coperatorid = u.cuserid ") ; 
+        str.append(" where nvl(p.dr,0) = 0 and nvl(b.dr,0) = 0 and nvl(c.dr,0) = 0 and p.pk_corp =? ");
+        params.addParam("000001");
         if(qryvo.getDbegindate() != null){
             str.append(" and p.doperatedate >= ?");
             params.addParam(qryvo.getDbegindate());
@@ -91,7 +94,7 @@ public class PackageDefServiceImpl implements IPackageDefService {
             params.addParam(qryvo.getIcontcycle());
         }
         if(qryvo.getIcompanytype() !=-1){
-            str.append(" and p.icompanytype = ?");
+            str.append(" and nvl(p.icompanytype,99) = ?");
             params.addParam(qryvo.getIcompanytype());
         }
         if(qryvo.getPtype()==-1){
@@ -139,7 +142,8 @@ public class PackageDefServiceImpl implements IPackageDefService {
         str.append("           p.icompanytype, ");
         str.append("           p.itype, ");
         str.append("           p.sortnum, ");
-        str.append("           p.updatets ");
+        str.append("           p.updatets, ");
+        str.append("           u.user_name ");
         
         str.append(" order by p.vstatus asc,p.sortnum asc");
         retlist = (List<PackageDefVO>)singleObjectBO.executeQuery(str.toString(), params, new BeanListProcessor(PackageDefVO.class));
@@ -168,10 +172,7 @@ public class PackageDefServiceImpl implements IPackageDefService {
 		HashSet<String> set;
 		
 		for (PackageDefVO vo : retlist) {
-			uvo = UserCache.getInstance().get(vo.getCoperatorid(), null);
-			if (uvo != null) {
-				vo.setCoperatorname(uvo.getUser_name());
-			}
+			vo.setCoperatorname(CodeUtils1.deCode(vo.getCoperatorname()));
 			if (vo.getItype() == null) {
 				vo.setItype(0);
 			}
