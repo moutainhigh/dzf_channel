@@ -106,8 +106,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	private void setShowData(List<ContractConfrimVO> list, String showtype,String areaname) throws DZFWarpException {
-		Map<String,String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
-		Map<String,String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
+		Map<String,UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
+		Map<String,UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
 		Map<Integer, String> areaMap = null;//大区集合
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IYUNYING);
@@ -132,12 +132,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param marmap
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(HashMap<String, UserVO> map,ContractConfrimVO confvo, Map<String, String> marmap, Map<String, String> opermap)
+	private void setShowData(HashMap<String, UserVO> map,ContractConfrimVO confvo, Map<String, UserVO> marmap, Map<String, UserVO> opermap)
 			throws DZFWarpException {
-//		UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
-//		if (uservo != null) {
-//			confvo.setVadviser(uservo.getUser_name());// 销售顾问
-//		}
 	    UserVO uservo = map.get(confvo.getVoperator());
 		if (uservo != null) {
 			confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
@@ -152,21 +148,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 			confvo.setCorpkname(corpvo.getUnitname());// 客户名称
 		}
 		if (marmap != null && !marmap.isEmpty()) {
-			String manager = marmap.get(confvo.getPk_corp());
-			if (!StringUtil.isEmpty(manager)) {
-				uservo = map.get(manager);
-				if (uservo != null) {
-					confvo.setVmanagername(uservo.getUser_name());// 渠道经理
-				}
+			uservo= marmap.get(confvo.getPk_corp());
+			if (uservo != null) {
+				confvo.setVmanagername(uservo.getUser_name());// 渠道经理
 			}
 		}
 		if(opermap != null && !opermap.isEmpty()){
-			String operater = opermap.get(confvo.getPk_corp());
-			if (!StringUtil.isEmpty(operater)) {
-				uservo = map.get(operater);
-				if (uservo != null) {
-					confvo.setVoperater(uservo.getUser_name());// 渠道运营
-				}
+			uservo = opermap.get(confvo.getPk_corp());
+			if (uservo != null) {
+				confvo.setVoperater(uservo.getUser_name());// 渠道运营
 			}
 		}
 	}
