@@ -22,10 +22,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -78,12 +78,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 					rvo.setIrenewrate(10);
 				}
 			}
-			if(!StringUtil.isEmpty(rvo.getLastmodifypsnid())){
-				uservo = UserCache.getInstance().get(rvo.getLastmodifypsnid(), null);
-				if(uservo != null){
-					rvo.setLastmodifypsn(uservo.getUser_name());
-				}
-			}
+			rvo.setLastmodifypsn(CodeUtils1.deCode(rvo.getLastmodifypsn()));
 		}
 	}
 	
@@ -107,9 +102,11 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		sql.append("       d.inewrate,  \n"); 
 		sql.append("       d.irenewrate,  \n"); 
 		sql.append("       d.lastmodifypsnid,  \n"); 
+		sql.append("       u.user_name astmodifypsn,  \n"); 
 		sql.append("       d.lastmodifydate  \n") ; 
 		sql.append("  FROM bd_account t  \n"); 
 		sql.append("  LEFT JOIN cn_deductrate d ON t.pk_corp = d.pk_corp  \n"); 
+		sql.append("  LEFT JOIN sm_user u ON d.lastmodifypsnid = u.cuserid  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n"); 
 		sql.append("   AND nvl(d.dr, 0) = 0  \n"); 
 		sql.append("   AND t.fathercorp = '000001'  \n");
@@ -155,8 +152,10 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	}
 
 	@Override
-	public DeductRateVO saveImport(DeductRateVO ratevo, Map<String, String> map, String fathercorp,
-			String cuserid) throws DZFWarpException {
+	public DeductRateVO saveImport(DeductRateVO ratevo, Map<String, String> map, UserVO uservo) throws DZFWarpException {
+		String fathercorp = uservo.getPk_corp(); 	
+		String cuserid = uservo.getCuserid();
+		String cusername = uservo.getUser_name();
 		if (map != null && !map.isEmpty()) {
 			String pk_corp = map.get(ratevo.getCorpcode());
 			if (!StringUtil.isEmpty(pk_corp)) {
@@ -169,7 +168,8 @@ public class DeductRateServiceImpl implements IDeductRateService {
 					ratevo.setLastmodifydate(new DZFDateTime());
 					ratevo.setFathercorp(fathercorp);
 					ratevo.setDr(0);
-					ratevo =  saveData(ratevo, fathercorp, cuserid);
+					ratevo = saveData(ratevo, fathercorp, cuserid);
+					ratevo.setLastmodifypsn(cusername);
 					setShowName(ratevo);
 					return ratevo;
 				}else{
@@ -179,6 +179,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 					oldvo.setLastmodifydate(new DZFDateTime());
 					oldvo.setFathercorp(fathercorp);
 					oldvo = saveData(oldvo, fathercorp, cuserid);
+					ratevo.setLastmodifypsn(cusername);
 					setShowName(oldvo);
 					return oldvo;
 				}
@@ -196,10 +197,6 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	 * @throws DZFWarpException
 	 */
 	private void setShowName(DeductRateVO ratevo) throws DZFWarpException {
-		UserVO uservo = UserCache.getInstance().get(ratevo.getLastmodifypsnid(), null);
-		if(uservo != null){
-			ratevo.setLastmodifypsn(uservo.getUser_name());
-		}
 		CorpVO corpvo = CorpCache.getInstance().get(null, ratevo.getPk_corp());
 		if(corpvo != null){
 			ratevo.setCorpcode(corpvo.getInnercode());
@@ -336,24 +333,19 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	public List<DeductRateLogVO> queryLog(String fathercorp, String pk_deductrate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT inewrate, irenewrate, coperatorid, doperatedate  \n");
-		sql.append("  FROM cn_deductratelog  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND fathercorp = ?  \n");
+		sql.append("SELECT g.inewrate,g.irenewrate,g.coperatorid,g.doperatedate,u.user_name coperator \n");
+		sql.append("  FROM cn_deductratelog g \n");
+		sql.append("  LEFT JOIN sm_user u ON g.coperatorid = u.cuserid  \n") ; 
+		sql.append(" WHERE nvl(g.dr, 0) = 0  \n");
+		sql.append("   AND g.fathercorp = ?  \n");
 		spm.addParam(fathercorp);
-		sql.append("   AND pk_deductrate = ? \n");
+		sql.append("   AND g.pk_deductrate = ? \n");
 		spm.addParam(pk_deductrate);
-		sql.append(" ORDER BY ts DESC");
+		sql.append(" ORDER BY g.ts DESC");
 		List<DeductRateLogVO> list = (List<DeductRateLogVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(DeductRateLogVO.class));
 		if(list != null && list.size() > 0){
-			UserVO uservo = null;
-			for(DeductRateLogVO logvo : list){
-				uservo = UserCache.getInstance().get(logvo.getCoperatorid(), null);
-				if(uservo != null){
-					logvo.setCoperator(uservo.getUser_name());
-				}
-			}
+			QueryDeCodeUtils.decKeyUtils(new String[]{"coperator"}, list, 1);
 		}
 		return list;
 	}

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.dzf.model.channel.sys_power.DeductRateLogVO;
 import com.dzf.model.channel.sys_power.DeductRateVO;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IDeductRateService {
@@ -46,8 +47,7 @@ public interface IDeductRateService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public DeductRateVO saveImport(DeductRateVO ratevo, Map<String, String> map, String fathercorp,
-			String cuserid) throws DZFWarpException;
+	public DeductRateVO saveImport(DeductRateVO ratevo, Map<String, String> map, UserVO uservo) throws DZFWarpException;
 
 	/**
 	 * 查询加盟商信息

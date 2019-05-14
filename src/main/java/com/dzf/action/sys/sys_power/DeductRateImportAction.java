@@ -106,7 +106,7 @@ public class DeductRateImportAction extends BaseAction<DeductRateVO> {
 			Map<String, String> map = rateser.queryCorpMap();//加盟商信息
 			for(DeductRateVO ratevo : rateVOs){
 				try {
-					ratevo = rateser.saveImport(ratevo, map, getLogincorppk(), getLoginUserid());
+					ratevo = rateser.saveImport(ratevo, map, uservo);
 					rignum++;
 					rightlist.add(ratevo);
 				} catch (Exception e) {
