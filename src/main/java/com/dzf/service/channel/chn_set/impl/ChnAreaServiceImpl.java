@@ -23,12 +23,14 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.service.channel.chn_set.IChnAreaService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("chn_area")
 public class ChnAreaServiceImpl implements IChnAreaService {
@@ -41,6 +43,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	
     @Autowired
     private IPubService pubService;
+    
+    @Autowired
+    private IUserService userServiceImpl;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -48,7 +53,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		StringBuffer sf=  new StringBuffer();
-		sql.append("select * from cn_chnarea where nvl(dr,0) = 0");
+		sql.append("select h.*,us.user_name as username from cn_chnarea h");
+		sql.append(" left join sm_user us on us.cuserid = h.userid");
+		sql.append(" where nvl(dr,0) = 0");
 		sql.append(" and pk_corp=? and type=?  order by areacode " );   
 		sp.addParam(qvo.getPk_corp());
 		sp.addParam(qvo.getType());
@@ -76,12 +83,13 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			}
 		}
 		if(vos != null){
-			UserVO uvo = null;
+//			UserVO uvo = null;
+			QueryDeCodeUtils.decKeyUtils(new String[]{"username"}, vos, 1);
 			for (ChnAreaVO chnAreaVO : vos) {
-				uvo=UserCache.getInstance().get(chnAreaVO.getUserid(), null);
-				if(uvo != null){
-					chnAreaVO.setUsername(uvo.getUser_name());
-				}
+//				uvo=UserCache.getInstance().get(chnAreaVO.getUserid(), null);
+//				if(uvo != null){
+//					chnAreaVO.setUsername(uvo.getUser_name());
+//				}
 				StringBuffer isf = map.get(chnAreaVO.getPk_chnarea());
 				if(isf!=null){
 					chnAreaVO.setVprovnames(isf.toString().substring(0,isf.toString().length()-1));
@@ -180,7 +188,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		ChnAreaVO hvo = (ChnAreaVO)singleObjectBO.queryVOByID(pk, ChnAreaVO.class);
 		if(hvo != null){
 			if(!StringUtil.isEmpty(hvo.getUserid())){
-				UserVO uvo = UserCache.getInstance().get(hvo.getUserid(), null);
+				UserVO uvo = userServiceImpl.queryUserJmVOByID(hvo.getUserid());
 				if(uvo != null){
 					hvo.setUsername(uvo.getUser_name());
 				}
@@ -194,8 +202,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	private ChnAreaBVO[] queryBy1ID(String pk) throws DZFWarpException {
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		corpsql.append("SELECT pk_chnarea,pk_corp,vprovince,vprovname,ischarge,userid,vmemo,ts");
-		corpsql.append(" FROM cn_chnarea_b where nvl(dr,0)= 0");
+		corpsql.append("SELECT b.pk_chnarea,b.pk_corp,b.vprovince,b.vprovname,b.ischarge,b.userid,b.vmemo,b.ts,us.user_name as username");
+		corpsql.append(" FROM cn_chnarea_b b where nvl(dr,0)= 0");
+		corpsql.append(" left join sm_user us on us.cuserid =b.userid ");
 		corpsql.append(" and pk_chnarea = ? ");
 		corpsql.append(" order by ts desc");
 		sp.addParam(pk);
@@ -203,12 +212,13 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		List<ChnAreaBVO> b1vos = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(ChnAreaBVO.class));
 		int i=0;
 		CorpVO cvo =null;
-		UserVO user =null;
+//		UserVO user =null;
+		QueryDeCodeUtils.decKeyUtils(new String[]{"username"}, b1vos, 1);
 		for (ChnAreaBVO chnAreaBVO : b1vos) {
-			user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
-			if(user != null){
-				chnAreaBVO.setUsername(user.getUser_name());
-			}
+//			user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
+//			if(user != null){
+//				chnAreaBVO.setUsername(user.getUser_name());
+//			}
 			cvo=CorpCache.getInstance().get(null, chnAreaBVO.getPk_corp());
 			if(!StringUtil.isEmpty(chnAreaBVO.getUserid())){
 				String id=chnAreaBVO.getVprovince()+chnAreaBVO.getUserid();
@@ -260,16 +270,17 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 
 	@Override
 	public String queryManager(String pk_corp) throws DZFWarpException {
-		String sql="select vdeptuserid userid from cn_leaderset where nvl(dr,0)=0 and pk_corp=? ";
+		StringBuffer sql= new StringBuffer();
+		sql.append("select ld.vdeptuserid userid,us.user_name as username from cn_leaderset ld");
+		sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid");
+		sql.append(" where nvl(dr,0)=0 and pk_corp=?");
+//		String sql="select vdeptuserid userid from cn_leaderset where nvl(dr,0)=0 and pk_corp=? ";
 		SQLParameter sp = new SQLParameter();
 		sp.addParam(pk_corp);
-		ChnAreaBVO vo =(ChnAreaBVO) singleObjectBO.executeQuery(sql, sp, new BeanProcessor(ChnAreaBVO.class));
+		ChnAreaBVO vo =(ChnAreaBVO) singleObjectBO.executeQuery(sql.toString(), sp, new BeanProcessor(ChnAreaBVO.class));
 		String username=null;
-		if(vo!=null&&!StringUtil.isEmpty(vo.getUserid())){
-			UserVO uvo=UserCache.getInstance().get(vo.getUserid(), null);
-			if(uvo!=null){
-				username=uvo.getUser_name();
-			}
+		if(vo!=null&&!StringUtil.isEmpty(vo.getUsername())){
+		    username = CodeUtils1.deCode(vo.getUsername());
 		}
 		return username;
 	}
@@ -350,19 +361,19 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	
 	@Override
 	public List<ComboBoxVO> queryTrainer(QryParamVO paramvo) throws DZFWarpException {
-		List<ComboBoxVO> list=null;
-		UserVO uvo=null;
 		StringBuffer buf=new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		buf.append(" select distinct b.userid as id ");
-		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append(" select distinct b.userid as id,us.user_name as name");
+		buf.append("  from cn_chnarea_b b ");
+		buf.append("  left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append("  left join sm_user us on us.cuserid = b.userid");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
 		Integer level=pubService.getDataLevel(paramvo.getCuserid());
 		if(paramvo.getSeletype()!=null && paramvo.getSeletype()==1 ){
 			//销售数据
 		}else if(level==null){
-			return list;
+			return null;
 		}else if(level==2){
 			buf.append("  and a.userid=? ");
 			spm.addParam(paramvo.getCuserid());
@@ -378,13 +389,8 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 			buf.append("  and b.vprovince=? ");
 			spm.addParam(paramvo.getVprovince());
 		}
-		list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
-		for (ComboBoxVO comboBoxVO : list) {
-			uvo = UserCache.getInstance().get(comboBoxVO.getId(), null);
-			if(uvo!=null){
-				comboBoxVO.setName(uvo.getUser_name());
-			}
-		}
+		List<ComboBoxVO> list =(List<ComboBoxVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
+		QueryDeCodeUtils.decKeyUtils(new String[]{"name"}, list, 1);
 		return list;
 	}
 	
