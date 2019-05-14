@@ -21,10 +21,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
@@ -32,6 +32,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayConfService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("chnpayconfser")
 public class ChnPayConfServiceImpl implements IChnPayConfService {
@@ -41,6 +42,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+    @Autowired
+    private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -57,7 +61,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		if(list != null && list.size() > 0){
 //			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
-			UserVO uservo = null;
+			QueryDeCodeUtils.decKeyUtils(new String[]{"vconfirmname"}, list, 1);
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
@@ -68,10 +72,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 //							retlist.add(vo);
 //						}
 //					}
-				}
-				uservo = UserCache.getInstance().get(vo.getVconfirmid(), null);
-				if(uservo != null){
-					vo.setVconfirmname(uservo.getUser_name());
 				}
 			}
 //			if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -90,7 +90,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.* FROM cn_paybill t \n");
+		sql.append("SELECT t.*,us.user_name as vconfirmname FROM cn_paybill t \n");
+		sql.append(" left join sm_user us on us.cuserid = t.vconfirmid");
 		sql.append("  WHERE nvl(t.dr,0) = 0 \n");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
@@ -316,7 +317,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 //		} finally {
 //			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 //		}
-		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(billvo.getVconfirmid());
 		if(uservo != null){
 			billvo.setVconfirmname(uservo.getUser_name());
 		}
@@ -504,7 +505,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 //		} finally {
 //			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 //		}
-		UserVO uservo = UserCache.getInstance().get(billvo.getVconfirmid(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(billvo.getVconfirmid());
 		if(uservo != null){
 			billvo.setVconfirmname(uservo.getUser_name());
 		}

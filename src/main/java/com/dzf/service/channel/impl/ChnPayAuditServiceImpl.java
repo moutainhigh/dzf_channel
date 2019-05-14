@@ -19,10 +19,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
@@ -30,6 +30,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayAuditService;
 import com.dzf.service.channel.IChnPayConfService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("payauditser")
 public class ChnPayAuditServiceImpl implements IChnPayAuditService {
@@ -45,6 +46,8 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 	
 	@Autowired
 	private IPubService pubser;
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -62,7 +65,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 //			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
 			Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), 3);//渠道运营区域设置
-			UserVO uservo = null;
+			QueryDeCodeUtils.decKeyUtils(new String[]{"vapprovename"}, list, 1);
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
@@ -79,10 +82,6 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 					if(!StringUtil.isEmpty(area)){
 						vo.setAreaname(area);//渠道运营区域
 					}
-				}
-				uservo = UserCache.getInstance().get(vo.getVapproveid(), null);
-				if(uservo != null){
-					vo.setVapprovename(uservo.getUser_name());
 				}
 			}
 //			if(!StringUtil.isEmpty(paramvo.getCorpname())){
@@ -101,8 +100,9 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.*,ba.vprovince FROM cn_paybill t \n");
+		sql.append("SELECT t.*,ba.vprovince,us.user_name as vapprovename FROM cn_paybill t \n");
 		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+		sql.append(" left join sm_user us on us.cuserid = t.vapproveid");
 		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
 		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
@@ -215,7 +215,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
-		UserVO uservo = UserCache.getInstance().get(billvo.getVapproveid(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(billvo.getVapproveid());
 		if(uservo != null){
 			billvo.setVapprovename(uservo.getUser_name());
 		}
@@ -259,7 +259,7 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(billvo.getTableName(), billvo.getPk_paybill(),uuid);
 		}
-		UserVO uservo = UserCache.getInstance().get(billvo.getVapproveid(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(billvo.getVapproveid());
 		if(uservo != null){
 			billvo.setVapprovename(uservo.getUser_name());
 		}

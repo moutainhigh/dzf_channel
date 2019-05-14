@@ -25,10 +25,10 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
@@ -36,6 +36,7 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("chnpaybalanceser")
 public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
@@ -45,6 +46,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	
     @Autowired
     private IPubService pubService;
+    @Autowired
+    private IUserService userServiceImpl;
     
 	@Override
 	public List<ChnBalanceRepVO> query(QryParamVO paramvo) throws DZFWarpException {
@@ -101,6 +104,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			Map<String,String> marmap = pubService.getManagerMap(1);//渠道经理
 			String manager = "";
 			UserVO uservo = null;
+			HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 			for (String pk : pklist) {
 				repvo = new ChnBalanceRepVO();
 				ipaytype = pk.substring(pk.indexOf(",") + 1);
@@ -132,7 +136,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				if(marmap != null && !marmap.isEmpty()){
 					manager = marmap.get(pk_corp);
 					if(!StringUtil.isEmpty(manager)){
-						uservo = UserCache.getInstance().get(manager, null);
+						uservo = map.get(manager);
 						if (uservo != null) {
 							repvo.setVmanagername(uservo.getUser_name());//渠道经理
 						}

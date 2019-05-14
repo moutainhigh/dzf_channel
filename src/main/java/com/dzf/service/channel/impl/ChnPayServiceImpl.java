@@ -29,12 +29,11 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.Logger;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
-import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
@@ -60,8 +59,9 @@ public class ChnPayServiceImpl implements IChnPayService {
 	public ChnPayBillVO[] query(ChnPayBillVO chn, UserVO uservo) throws DZFWarpException {
 		StringBuffer querysql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		querysql.append(" select a.*,ba.vprovince,su.user_name submitname from cn_paybill a ");
+		querysql.append(" select a.*,ba.vprovince,su.user_name submitname,us.user_name as vconfirmname from cn_paybill a ");
 		querysql.append(" left join sm_user su on a.submitid=su.cuserid and a.submitid is not null ");
+		querysql.append(" left join sm_user us on a.vconfirmid = us.cuserid  ");
 		querysql.append(" left join bd_account ba on a.pk_corp=ba.pk_corp ");
 		querysql.append(" 	where nvl(a.dr,0) = 0 and  a.systype=2 ");
 		if (chn.getDoperatedate() != null) {// 付款日期
@@ -112,7 +112,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 		List<ChnPayBillVO> rets=new ArrayList<ChnPayBillVO>();
 		if (chns != null) {
 			CorpVO cvo = null;
-			UserVO uvo = null;
+			QueryDeCodeUtils.decKeyUtils(new String[]{"vconfirmname","submitname"}, chns, 1);
 			for (ChnPayBillVO chnb : chns) {
 				cvo=CorpCache.getInstance().get(null, chnb.getPk_corp());
 				if(cvo!=null){
@@ -123,13 +123,6 @@ public class ChnPayServiceImpl implements IChnPayService {
 							rets.add(chnb);
 						}
 					}
-				}
-				uvo = UserCache.getInstance().get(chnb.getVconfirmid(), null);
-				if (uvo != null) {
-					chnb.setVconfirmname(uvo.getUser_name());
-				}
-				if(!StringUtil.isEmpty(chnb.getSubmitname())){
-					chnb.setSubmitname(CodeUtils1.deCode(chnb.getSubmitname()));
 				}
 				if(areaMap.containsKey(chnb.getVprovince())){
 					chnb.setAreaname(areaMap.get(chnb.getVprovince()));
