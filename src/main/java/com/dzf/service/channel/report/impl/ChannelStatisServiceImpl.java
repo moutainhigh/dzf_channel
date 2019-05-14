@@ -13,11 +13,10 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.sys.sys_power.CorpVO;
-import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IChannelStatisService;
 import com.dzf.service.pub.IPubService;
@@ -69,9 +68,10 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
 		buf.append("         when 1 then 0 ");
 		buf.append("         else nvl(t.nsubdedrebamny,0) end) as ndedrebamny,");
-		buf.append("     yt.pk_corp,yt.vchannelid as userid");
+		buf.append("     yt.pk_corp,yt.vchannelid as userid,u.user_name username");
 		buf.append("  from cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
+		buf.append(" LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid  \n") ; 
 		buf.append(" where nvl(yt.isncust, 'N') = 'N' ");
 		buf.append("   and nvl(t.dr, 0) = 0 ");
 		buf.append("   and nvl(yt.dr, 0) = 0 ");
@@ -93,8 +93,8 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append(" group by yt.pk_corp, yt.vchannelid ");
 		buf.append(" order by yt.vchannelid");
 		List<ManagerVO> list=(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(ManagerVO.class));
-		CorpVO cvo = null;
-		UserVO uvo = null;
+		CorpVO cvo ;
+		String userName;
 		for (ManagerVO managerVO : list) {
 			cvo = CorpCache.getInstance().get(null, managerVO.getPk_corp());
 			if(cvo!=null){
@@ -103,9 +103,9 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 			}else{
 				managerVO.setVcontcode(null);
 			}
-			uvo = UserCache.getInstance().get(managerVO.getUserid(), null);
-			if(uvo!=null){
-				managerVO.setUsername(uvo.getUser_name());
+			userName = managerVO.getUsername();
+			if(!StringUtil.isEmpty(userName)){
+				managerVO.setUsername(CodeUtils1.deCode(userName));
 			}
 		}
 		return list;
