@@ -26,11 +26,12 @@ import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
-import com.dzf.pub.cache.UserCache;
+import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.ISysFunnodeService;
 import com.dzf.service.sys.sys_set.IAreaSearch;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 
 @Service("pubservice")
 public class PubServiceImpl implements IPubService {
@@ -258,31 +259,26 @@ public class PubServiceImpl implements IPubService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, String> getManagerMap(Integer qrytype) throws DZFWarpException {
-		Map<String, String> map = new HashMap<String, String>();
+	public Map<String, UserVO> getManagerMap(Integer qrytype) throws DZFWarpException {
+		Map<String, UserVO> map = new HashMap<String, UserVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, t.vprovince, b.userid  \n");
+		sql.append("SELECT t.pk_corp, b.userid cuserid,u.user_name \n");
 		sql.append("  FROM bd_account t  \n");
 		sql.append("  LEFT JOIN cn_chnarea_b b ON t.pk_corp = b.pk_corp  \n");
+		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.type, 0) = ? \n");
 		spm.addParam(qrytype);
-		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(ChnAreaBVO.class));
+		List<UserVO> list = (List<UserVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(UserVO.class));
 		if (list != null && list.size() > 0) {
-			// Map<Integer, String> promap = qryProvMap();
-			// String userid = "";
-			for (ChnAreaBVO bvo : list) {
-				if (!StringUtil.isEmpty(bvo.getUserid())) {
-					map.put(bvo.getPk_corp(), bvo.getUserid());
-				} /*
-				 * else{ if(promap != null && !promap.isEmpty()){ userid =
-				 * promap.get(bvo.getVprovince());
-				 * if(!StringUtil.isEmpty(userid)){
-				 * map.put(bvo.getPk_corp(), userid); } } }
-				 */
+			for (UserVO vo : list) {
+				if (!StringUtil.isEmpty(vo.getCuserid())) {
+					vo.setUser_name(CodeUtils1.deCode(vo.getUser_name()));
+					map.put(vo.getPk_corp(),vo);
+				} 
 			}
 		}
 		return map;

@@ -48,7 +48,7 @@ public interface IPubService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public Map<String, String> getManagerMap(Integer qrytype) throws DZFWarpException; 
+	public Map<String, UserVO> getManagerMap(Integer qrytype) throws DZFWarpException; 
 	
 	/**
 	 * 获取 省(直辖市)对应的区域名称<省(直辖市)，区域名称> 
