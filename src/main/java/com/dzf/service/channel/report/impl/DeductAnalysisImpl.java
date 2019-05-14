@@ -19,15 +19,16 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.IDeductAnalysis;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("deductanalysisser")
 public class DeductAnalysisImpl implements IDeductAnalysis {
@@ -37,6 +38,8 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 
 	@Autowired
 	private IPubService pubser;
+	@Autowired
+	private IUserService userServiceImpl;
 
 	@Override
 	public List<DeductAnalysisVO> query(QryParamVO paramvo) throws DZFWarpException {
@@ -70,11 +73,12 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		Map<String, String> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		Map<String, String> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
 		UserVO uservo = null;
+		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (DeductAnalysisVO dvo : retlist) {
 			if (marmap != null && !marmap.isEmpty()) {
 				String manager = marmap.get(dvo.getPk_corp());
 				if (!StringUtil.isEmpty(manager)) {
-					uservo = UserCache.getInstance().get(manager, null);
+					uservo = map.get(manager);
 					if (uservo != null) {
 						dvo.setVmanager(uservo.getUser_name());// 渠道经理
 					}
@@ -83,7 +87,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			if (opermap != null && !opermap.isEmpty()) {
 				String operater = opermap.get(dvo.getPk_corp());
 				if (!StringUtil.isEmpty(operater)) {
-					uservo = UserCache.getInstance().get(operater, null);
+					uservo = map.get(operater);
 					if (uservo != null) {
 						dvo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
