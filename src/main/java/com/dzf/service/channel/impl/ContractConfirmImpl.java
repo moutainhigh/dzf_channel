@@ -47,7 +47,6 @@ import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.image.ImageCommonPath;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
@@ -61,6 +60,7 @@ import com.dzf.service.channel.IContractConfirm;
 import com.dzf.service.channel.sys_power.IDeductRateService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pushappmsg.IPushAppMessage;
+import com.dzf.service.sys.sys_power.IUserService;
 import com.dzf.spring.SpringUtils;
 
 @Service("contractconfser")
@@ -77,6 +77,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Autowired
 	private IDeductRateService rateser;
+	@Autowired
+	private IUserService userServiceImpl;
 	
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -110,6 +112,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if("listqry".equals(showtype)){
 			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IYUNYING);
 		}
+		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for(ContractConfrimVO confvo : list){
 			confvo.setTstamp(confvo.getCheckts());//校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同
 			if("listqry".equals(showtype)){
@@ -119,7 +122,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else if("audit".equals(showtype)){//审核查询
 				setAuditQryData(confvo);
 			}
-			setShowData(confvo, marmap, opermap);
+			setShowData(map,confvo, marmap, opermap);
 		}
 	}
 	
@@ -129,13 +132,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param marmap
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(ContractConfrimVO confvo, Map<String, String> marmap, Map<String, String> opermap)
+	private void setShowData(HashMap<String, UserVO> map,ContractConfrimVO confvo, Map<String, String> marmap, Map<String, String> opermap)
 			throws DZFWarpException {
-		UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
-		if (uservo != null) {
-			confvo.setVadviser(uservo.getUser_name());// 销售顾问
-		}
-		uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
+//		UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
+//		if (uservo != null) {
+//			confvo.setVadviser(uservo.getUser_name());// 销售顾问
+//		}
+	    UserVO uservo = map.get(confvo.getVoperator());
 		if (uservo != null) {
 			confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
 		}
@@ -151,7 +154,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (marmap != null && !marmap.isEmpty()) {
 			String manager = marmap.get(confvo.getPk_corp());
 			if (!StringUtil.isEmpty(manager)) {
-				uservo = UserCache.getInstance().get(manager, null);
+				uservo = map.get(manager);
 				if (uservo != null) {
 					confvo.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
@@ -160,7 +163,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(opermap != null && !opermap.isEmpty()){
 			String operater = opermap.get(confvo.getPk_corp());
 			if (!StringUtil.isEmpty(operater)) {
-				uservo = UserCache.getInstance().get(operater, null);
+				uservo = map.get(operater);
 				if (uservo != null) {
 					confvo.setVoperater(uservo.getUser_name());// 渠道运营
 				}
@@ -942,7 +945,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		datavo.setDeductdata(new DZFDate());// 扣款日期
 		datavo.setDeductime(new DZFDateTime());// 扣款时间
 		datavo.setDr(0);
-		UserVO uservo = UserCache.getInstance().get(datavo.getVoperator(), null);
+		UserVO uservo = userServiceImpl.queryUserJmVOByID(datavo.getVoperator());
 		if (uservo != null) {
 			datavo.setVopername(uservo.getUser_name());
 		}
@@ -2232,11 +2235,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (list != null && list.size() > 0) {
 			ContractConfrimVO confvo = list.get(0);
 			
-			UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
-			if (uservo != null) {
-				confvo.setVadviser(uservo.getUser_name());// 销售顾问
-			}
-			uservo = UserCache.getInstance().get(confvo.getVoperator(), null);
+//			UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
+//			if (uservo != null) {
+//				confvo.setVadviser(uservo.getUser_name());// 销售顾问
+//			}
+			UserVO uservo = userServiceImpl.queryUserJmVOByID(confvo.getVoperator());
 			if (uservo != null) {
 				confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
 			}

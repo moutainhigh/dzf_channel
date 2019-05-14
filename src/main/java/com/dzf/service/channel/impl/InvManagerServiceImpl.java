@@ -35,10 +35,10 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
@@ -48,6 +48,7 @@ import com.dzf.service.channel.InvManagerService;
 import com.dzf.service.piaotong.IPiaoTongConstant;
 import com.dzf.service.piaotong.PiaoTongBill;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 import com.itextpdf.xmp.impl.Base64;
 
 @Service("invManagerService")
@@ -61,6 +62,9 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IUserService userServiceImpl;
 
 	private final static String tablename = "cn_invoice";
 
@@ -89,7 +93,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		StringBuffer vmemo = null;
 		Map<String, String> marmap = pubser.getManagerMap(1);// 渠道经理
 		Map<String, String> opermap = pubser.getManagerMap(3);// 渠道运营
-
+		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (ChInvoiceVO vo : retlist) {
 			if (areaMap != null && !areaMap.isEmpty()) {
 				String area = areaMap.get(vo.getVprovince());
@@ -106,7 +110,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 				vmemo.append(vo.getVchangememo());
 			}
 			vo.setVchangememo(vmemo.toString());// 换票说明
-			uservo = UserCache.getInstance().get(vo.getInvperson(), null);
+			uservo = map.get(vo.getInvperson());
 			if (uservo != null) {
 				vo.setIperson(uservo.getUser_name());// 开票人
 			}
@@ -114,7 +118,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 			if (marmap != null && !marmap.isEmpty()) {
 				String manager = marmap.get(vo.getPk_corp());
 				if (!StringUtil.isEmpty(manager)) {
-					uservo = UserCache.getInstance().get(manager, null);
+					uservo = map.get(manager);
 					if (uservo != null) {
 						vo.setVmanager(uservo.getUser_name());// 渠道经理
 					}
@@ -123,7 +127,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 			if (opermap != null && !opermap.isEmpty()) {
 				String operater = opermap.get(vo.getPk_corp());
 				if (!StringUtil.isEmpty(operater)) {
-					uservo = UserCache.getInstance().get(operater, null);
+					uservo = map.get(operater);
 					if (uservo != null) {
 						vo.setVoperater(uservo.getUser_name());// 渠道运营
 					}
