@@ -21,7 +21,6 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
@@ -68,14 +67,6 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
-				}
-				uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setUsername(uservo.getUser_name());
-				}
-				uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setCusername(uservo.getUser_name());
 				}
 				// 1 、客户数量、合同金额：
 				if (custmap != null && !custmap.isEmpty()) {
@@ -166,14 +157,6 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
-				}
-				uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setUsername(uservo.getUser_name());
-				}
-				uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
-				if (uservo != null) {
-					retvo.setCusername(uservo.getUser_name());
 				}
 				
 				// 1 、客户数量、合同金额：

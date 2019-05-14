@@ -26,7 +26,6 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
@@ -107,14 +106,8 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 				if (showvo != null) {
 					retvo.setChndate(showvo.getChndate());
 					retvo.setAreaname(showvo.getAreaname());// 大区
-					uservo = UserCache.getInstance().get(showvo.getUserid(), pk_corp);
-					if (uservo != null) {
-						retvo.setUsername(uservo.getUser_name());// 区总
-					}
-					uservo = UserCache.getInstance().get(showvo.getCuserid(), pk_corp);
-					if (uservo != null) {
-						retvo.setCusername(uservo.getUser_name());// 会计运营经理
-					}
+					retvo.setUsername(showvo.getUsername());// 区总
+					retvo.setCusername(showvo.getCusername());// 会计运营经理
 				}
 				retvo.setIcustratesmall(getCustRate(retvo.getIcustsmall(), retvo.getIcusttaxpay()));
 				retvo.setIcustratetaxpay(getCustRate(retvo.getIcusttaxpay(), retvo.getIcustsmall()));

@@ -23,7 +23,6 @@ import com.dzf.model.sys.sys_set.BDTradeVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
@@ -89,14 +88,6 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			if (corpvo != null) {
 				retvo.setCorpname(corpvo.getUnitname());
 				retvo.setVprovname(corpvo.getCitycounty());
-			}
-			uservo = UserCache.getInstance().get(retvo.getUserid(), pk_corp);
-			if (uservo != null) {
-				retvo.setUsername(uservo.getUser_name());
-			}
-			uservo = UserCache.getInstance().get(retvo.getCuserid(), pk_corp);
-			if (uservo != null) {
-				retvo.setCusername(uservo.getUser_name());
 			}
 			custnumvo = custmap.get(pk_corp);
 			if (custnumvo != null) {

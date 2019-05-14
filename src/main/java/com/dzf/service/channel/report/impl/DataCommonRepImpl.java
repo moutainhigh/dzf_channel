@@ -12,11 +12,13 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 /**
  * 数据运营管理下报表的数据权限过滤
@@ -30,17 +32,22 @@ public class DataCommonRepImpl {
 
 	@Autowired
 	private IPubService pubService;
+	
+	@Autowired
+    private IUserService userser;
 
 	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class cla) throws DZFWarpException {
 		Integer level = pubService.getDataLevel(paramvo.getUser_name());
 
 		HashMap<String, DataVO> map = new HashMap<>();
 		if (level == null) {
-
+			
 		} else if (level <= 2) {
-			map = qryBoth(paramvo, level, cla);// 2大区+3渠道总
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+			map = qryBoth(paramvo, level, cla,queryUserMap);// 2大区+3渠道总
 		} else if (level == 3) {
-			map = qryChannel(paramvo, cla);// 1省
+			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
+			map = qryChannel(paramvo, cla,queryUserMap);// 1省
 		}
 		return map;
 	}
@@ -51,7 +58,7 @@ public class DataCommonRepImpl {
 	 * @param qvo
 	 * @return
 	 */
-	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla) {
+	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla,HashMap<String, UserVO> queryUserMap) {
 		List<DataVO> qryCharge = qryCharge(qvo, cla); // 查询 是 省/市负责人相关的数据
 		String condition = null;
 		if (qryCharge == null || qryCharge.size() == 0) {
@@ -68,6 +75,7 @@ public class DataCommonRepImpl {
 			qryCharge.addAll(qryNotCharge);
 		}
 		HashMap<String, DataVO> map = new HashMap<>();
+		UserVO uservo;
 		if (qryCharge != null && qryCharge.size() > 0) {
 			for (DataVO dataVO : qryCharge) {
 				if (dataVO.getCorpname() != null && !(dataVO.getPk_corp().equals(dataVO.getCorpname()))) {
@@ -77,6 +85,14 @@ public class DataCommonRepImpl {
 					map.put(dataVO.getPk_corp(), dataVO);
 				} else if (!StringUtil.isEmpty(dataVO.getCuserid())) {
 					map.put(dataVO.getPk_corp(), dataVO);
+				}
+				uservo = queryUserMap.get(dataVO.getUserid());
+				if (uservo != null) {
+					dataVO.setUsername(uservo.getUser_name());
+				}
+				uservo = queryUserMap.get(dataVO.getCuserid());
+				if (uservo != null) {
+					dataVO.setCusername(uservo.getUser_name());
 				}
 			}
 		}
@@ -91,7 +107,7 @@ public class DataCommonRepImpl {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla) {
+	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,HashMap<String, UserVO> queryUserMap) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select a.areaname,  \n");
@@ -160,6 +176,7 @@ public class DataCommonRepImpl {
 		HashMap<String, DataVO> map = new HashMap<String, DataVO>();
 		if (list != null && list.size() > 0) {
 			Boolean isPut = true;
+			UserVO uservo;
 			for (DataVO dataVO : list) {
 				if (dataVO.getCorpname() == null || !(dataVO.getPk_corp().equals(dataVO.getCorpname()))) {
 					dataVO.setCuserid(null);
@@ -174,8 +191,16 @@ public class DataCommonRepImpl {
 				} else if (!StringUtil.isEmpty(dataVO.getCuserid()) && isPut) {
 					map.put(dataVO.getPk_corp(), dataVO);
 				}
+				
+				uservo = queryUserMap.get(dataVO.getUserid());
+				if (uservo != null) {
+					dataVO.setUsername(uservo.getUser_name());
+				}
+				uservo = queryUserMap.get(dataVO.getCuserid());
+				if (uservo != null) {
+					dataVO.setCusername(uservo.getUser_name());
+				}
 			}
-
 		}
 		return map;
 	}

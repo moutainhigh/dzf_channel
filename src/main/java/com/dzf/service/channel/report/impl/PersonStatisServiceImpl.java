@@ -23,7 +23,6 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IPersonStatis;
@@ -69,14 +68,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					if (corpvo != null) {
 						setVO.setCorpname(corpvo.getUnitname());
 						setVO.setVprovname(corpvo.getCitycounty());
-					}
-					uservo = UserCache.getInstance().get(setVO.getUserid(), pk_corp);
-					if (uservo != null) {
-						setVO.setUsername(uservo.getUser_name());
-					}
-					uservo = UserCache.getInstance().get(setVO.getCuserid(), pk_corp);
-					if (uservo != null) {
-						setVO.setCusername(uservo.getUser_name());
 					}
 					
 					setVO.setTotal(queryUserNum.get(pk_corp));
