@@ -17,13 +17,13 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.chn_set.ISaleSetService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
+import com.dzf.service.sys.sys_power.IUserService;
 
 /**
  * 
@@ -43,6 +43,9 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IUserService userServiceImpl;
 
 	/**
 	 * 查询
@@ -94,7 +97,7 @@ public class SaleSetAction extends BaseAction<SaleSetVO> {
 				}
 				saleSet.save(data);
 				if (!StringUtil.isEmpty(data.getLastmodifypsnid())) {
-					UserVO uvo = UserCache.getInstance().get(data.getLastmodifypsnid(), null);
+				    UserVO uvo = userServiceImpl.queryUserJmVOByID(data.getLastmodifypsnid());
 					data.setLastmodifypsn(uvo.getUser_name());
 				}
 				json.setData(data);
