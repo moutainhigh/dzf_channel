@@ -592,7 +592,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       u.user_name coperatname");
 		sql.append("  from cn_stockout c");
 		sql.append("  INNER JOIN bd_account ba ON c.pk_corp = ba.pk_corp \n") ;
-		sql.append("  LEFT JOIN sm_user u ON c.sendman = u.cuserid  \n") ; 
+		sql.append("  LEFT JOIN sm_user u ON c.coperatorid = u.cuserid  \n") ; 
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and substr(c.doperatedate,0,10)>=? ");
