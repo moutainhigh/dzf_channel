@@ -12,8 +12,23 @@ import com.dzf.pub.lang.DZFDate;
 @SuppressWarnings({ "rawtypes", "serial" })
 public class DataVO extends SuperVO {
 	
+	@FieldAlias("corpid")
+	public String pk_corp;//加盟商主键
+	
+    @FieldAlias("incode")
+    public String innercode;//加盟商编码
+    
+	@FieldAlias("corpnm")
+	public String corpname;//加盟商名称
+    
+	@FieldAlias("chndate")
+	private DZFDate chndate;//加盟商时间
+	
 	@FieldAlias("aname")
     public String areaname;//大区名称
+	
+	@FieldAlias("provname")
+	public String vprovname;//省市名称
 	
 	@FieldAlias("uid")
 	public String userid; // 用户主键（大区总经理）
@@ -21,27 +36,12 @@ public class DataVO extends SuperVO {
     @FieldAlias("uname")
     public String username; // 用户名称（大区总经理）
     
-	@FieldAlias("provname")
-	public String vprovname;// 省市名称
-	
 	@FieldAlias("cuid")
 	public String cuserid; // 用户主键（培训师）
 	
     @FieldAlias("cuname")
     public String cusername; // 用户名称（培训师）
     
-    @FieldAlias("incode")
-    public String innercode;//加盟商编码
-    
-	@FieldAlias("chndate")
-	private DZFDate chndate;//加盟商时间
-	
-	@FieldAlias("corpid")
-	public String pk_corp;//会计公司主键
-	
-	@FieldAlias("corpnm")
-	public String corpname;//加盟商名称
-	
 	@FieldAlias("isCharge")
 	public DZFBoolean isCharge;//是否省/市负责人
 

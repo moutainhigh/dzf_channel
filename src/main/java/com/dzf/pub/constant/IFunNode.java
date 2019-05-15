@@ -300,7 +300,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_71  = "channel71";
     
-   
-    
+    /**
+     * 账务设置
+     */
+    public static final String CHANNEL_73  = "channel73";
     
 }
