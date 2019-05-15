@@ -206,12 +206,12 @@ function opermatter(val, row, index) {
 		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
 		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanCancel(\''+index+'\')">取消确认</a>'+
-		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+row.soutid+'\',\''+index+'\')">确认发货</a>';
 	}else if(row.vstatus==2){
 		return '<span style="margin-bottom:0px;margin-left:10px;">编辑</span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">删除 </span>'+
 		'<span style="margin-bottom:0px;margin-left:10px;">取消确认 </span>'+
-		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+index+'\')">确认发货</a>';
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="tanLog(\''+row.soutid+'\',\''+index+'\')">确认发货</a>';
 	}
 }
 
@@ -651,11 +651,19 @@ function delOrder(index){
 /**
  * 弹出物流信息对话框
  */
-function tanLog(index){
+function tanLog(id,index){
 	tanIndex=index;
 	$('#logDialog').dialog({modal:true});
     $('#logDialog').dialog('open').dialog('center').dialog('setTitle',"物流信息");
     $('#logUpdate').form("clear");
+    var row = queryByID(id);
+    $('#sfcode').textbox('setValue',row.fcode);
+    $('#slogid').combobox('setValue',row.logid);
+    $('#slogid').combobox('setText',row.logunit);
+    $('#sfcost').numberbox('setValue',row.fcost);
+    
+    
+    
 }
 
 function logCancel(){
