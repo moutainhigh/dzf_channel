@@ -888,13 +888,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		if(vo!=null){
 				if("1".equals(type)){//发货
 					if(vo.getDeliverid()!=null){
-						//uservo = UserCache.getInstance().get(vo.getDeliverid(), null);
 						uservo = userser.queryUserJmVOByID(vo.getDeliverid());
 						if(uservo!=null){
 							vo.setDename(uservo.getUser_name());
 						}
 					}else{
-						//uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 						uservo = userser.queryUserJmVOByID(uservo.getCuserid());
 						if(uservo!=null){
 							vo.setDename(uservo.getUser_name());//发货人
@@ -902,14 +900,12 @@ public class MatApplyServiceImpl implements IMatApplyService {
 					}
 				}
 					if (vo.getCoperatorid() != null) {
-						//uservo = UserCache.getInstance().get(vo.getCoperatorid(), null);
 						uservo = userser.queryUserJmVOByID(vo.getCoperatorid());
 						if(uservo!=null){
 							vo.setApplyname(uservo.getUser_name());//申请人
 						}
 					}
 					if(vo.getAuditerid()!=null){
-						//uservo = UserCache.getInstance().get(vo.getAuditerid(), null);
 						uservo = userser.queryUserJmVOByID(vo.getAuditerid());
 						if(uservo!=null){
 							vo.setAudname(uservo.getUser_name());//审核人
@@ -1102,7 +1098,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@Override
 	public MatOrderVO queryUserData(UserVO uservo) {
 		
-		// uservo = UserCache.getInstance().get(uservo.getCuserid(), null);
 		   uservo = userser.queryUserJmVOByID(uservo.getCuserid());
 		 MatOrderVO mvo = new MatOrderVO();
 		 if(uservo!=null){

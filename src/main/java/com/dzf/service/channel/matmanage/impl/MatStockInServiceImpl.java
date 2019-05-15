@@ -220,11 +220,10 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	        List<MaterielStockInVO> list = (List<MaterielStockInVO>) multBodyObjectBO.queryDataPage(MaterielStockInVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
 
-	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
+	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 	       if(list!=null && list.size()>0){
 	           UserVO uvo = null;
 	    	   for (MaterielStockInVO mvo : list) {
-	    	       // uvo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 	    		     uvo = userser.queryUserJmVOByID(mvo.getCoperatorid());
 					if(uvo!=null){
 						mvo.setOpername(uvo.getUser_name());

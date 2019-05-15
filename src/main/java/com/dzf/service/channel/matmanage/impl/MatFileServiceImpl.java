@@ -174,10 +174,9 @@ public class MatFileServiceImpl implements IMatFileService {
 		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
 	        List<MaterielFileVO> list = (List<MaterielFileVO>) multBodyObjectBO.queryDataPage(MaterielFileVO.class, sqpvo.getSql(),
 	                sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
-	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), false);
+	        HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 	       if(list!=null && list.size()>0){
 	    	   for (MaterielFileVO mvo : list) {
-		           // uservo = UserCache.getInstance().get(mvo.getCoperatorid(), null);
 	    		      uservo = map.get(mvo.getCoperatorid());
 					if(uservo!=null){
 						mvo.setApplyname(uservo.getUser_name());
