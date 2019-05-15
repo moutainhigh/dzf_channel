@@ -1,7 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
 <%@ page import="com.dzf.pub.IGlobalConstants"%>
-<%@page import="com.dzf.model.sys.sys_power.UserVO"%>
 <%@page import="com.dzf.pub.constant.AdminDateUtil"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -27,13 +26,11 @@
 </style>
 </head>
 <%
-	String logincorp = (String) session.getAttribute(IGlobalConstants.login_corp);
 	String login_user = (String) session.getAttribute(IGlobalConstants.login_user);
 	String period = AdminDateUtil.getPeriod();
 %>					
 <body>
-	<input id="unm" name="unm" type="hidden" value=<%= userVo.getUser_name() %>> 
-	<input id="uid" name="uid" type="hidden" value=<%= userVo.getCuserid() %>> 
+	<input id="uid" name="uid" type="hidden" value=<%= login_user %>> 
 	<input id="period" name="period" type="hidden" value=<%= period %>> 
 	<div id="List_panel" class="wrapper" data-options="closed:false">
 		<div class="mod-toolbar-top">
