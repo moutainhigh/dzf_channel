@@ -90,7 +90,7 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    buf.append(" AND yt.pk_corp in (").append(inSql).append(")");
 		}
-		buf.append(" group by yt.pk_corp, yt.vchannelid ");
+		buf.append(" group by yt.pk_corp, yt.vchannelid,u.user_name ");
 		buf.append(" order by yt.vchannelid");
 		List<ManagerVO> list=(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(ManagerVO.class));
 		CorpVO cvo ;
