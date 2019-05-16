@@ -144,13 +144,12 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 	@Override
 	public void save(AccountSetVO vo) throws DZFWarpException {
 //		AccountSetVO qryContract = qryContract(vo);
-//		if(vo.getVchangeperiod().compareTo(vo.getVendperiod())<=0){
-//			
-//		}
+		if(vo.getVchangeperiod().compareTo(vo.getVendperiod())<=0){
+			throw new BusinessException("调整结束月份，需在原服务期限之后");
+		}
 		vo.setDoperatedate(new DZFDate());
 		vo.setIstatus(0);
 		vo.setDr(0); 
-//		AdminDateUtil.
 		Integer diff = calPeriodDiff(vo.getVchangeperiod(),vo.getVendperiod());
 		vo.setIdiff(diff);
 		//校验时间戳
@@ -171,6 +170,9 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getPk_accountset(),uuid, 60);
 			AccountSetVO oldVO = checkData(vo);
+			if(vo.getVchangeperiod().compareTo(oldVO.getVendperiod())<=0){
+				throw new BusinessException("调整结束月份，需在原服务期限之后");
+			}
 			Integer diff = calPeriodDiff(vo.getVchangeperiod(),oldVO.getVendperiod());
 			vo.setIdiff(diff);
 			singleObjectBO.update(vo, new String[]{"vchangeperiod","idiff"});
