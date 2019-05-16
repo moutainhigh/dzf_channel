@@ -667,6 +667,7 @@ function del() {
 			        	if (rs.success) {
 //							var index = $("#grid").datagrid("getRowIndex", row);
 //							$("#grid").datagrid("deleteRow",index);
+			        		$('#grid').datagrid('unselectAll');
 			        		$("#grid").datagrid("reload");
 			                Public.tips({content: rs.msg,type:0});
 						} else {
