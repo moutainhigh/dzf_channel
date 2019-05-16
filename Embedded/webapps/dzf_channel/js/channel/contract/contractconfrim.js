@@ -832,8 +832,6 @@ function initArea(){
 			var result = eval('(' + result + ')');
 			if (result.success) {
 			    $('#aname').combobox('loadData',result.rows);
-			} else {
-				Public.tips({content : result.msg,type : 2});
 			}
 		}
 	});
