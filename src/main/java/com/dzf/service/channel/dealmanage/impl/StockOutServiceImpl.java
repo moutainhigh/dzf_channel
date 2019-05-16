@@ -614,9 +614,9 @@ public class StockOutServiceImpl implements IStockOutService{
 			sql.append("and c.vbillcode like ? ");
 			spm.addParam("%"+pamvo.getUser_code()+"%");
 		}
-		if(!StringUtil.isEmpty(pamvo.getUser_code())){
+		if(!StringUtil.isEmpty(pamvo.getCuserid())){
 			sql.append("and c.coperatorid = ? ");
-			spm.addParam(pamvo.getUser_code());
+			spm.addParam(pamvo.getCuserid());
 		}
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());
@@ -780,7 +780,7 @@ public class StockOutServiceImpl implements IStockOutService{
 	@Override
 	public String getQrySql(QryParamVO pamvo) throws DZFWarpException {
 		StringBuffer buf = new StringBuffer();
-		String condition = pubser.makeCondition(pamvo.getCuserid(), pamvo.getAreaname(),IStatusConstant.IYUNYING);
+		String condition = pubser.makeCondition(pamvo.getVmanager(), pamvo.getAreaname(),IStatusConstant.IYUNYING);
 		if (!condition.equals("alldata")) {
 			buf.append(condition);
 		}
