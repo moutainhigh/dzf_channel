@@ -71,7 +71,7 @@
 				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCon();">清除</a> 
-					<a class="ui-btn save_input" onclick="load()">确定</a>
+					<a class="ui-btn save_input" onclick="reloadData()">确定</a>
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
 			</div>

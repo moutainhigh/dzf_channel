@@ -56,11 +56,11 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		sql.append("  left join sm_user u on a.coperatorid = u.cuserid ");
 		sql.append(" where a.dr = 0  ");
 		if(paramvo.getBegdate()!=null){
-			sql.append("and a.doperatedate>=? ");
+			sql.append("and substr(a.doperatedate,0,10)>=? ");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate()!=null){
-			sql.append("and a.doperatedate<= ? ");
+			sql.append("and substr(a.doperatedate,0,10)<=? ");//直接写 a.doperatedate<=有些问题
 			spm.addParam(paramvo.getEnddate());
 		}
 		List<AccountSetVO> list=(List<AccountSetVO>)singleObjectBO.executeQuery(sql.toString(),spm, new BeanListProcessor(AccountSetVO.class));
@@ -75,7 +75,12 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 						accountSetVO.setAreaname(dataVO.getAreaname());
 						accountSetVO.setVprovname(dataVO.getVprovname());
 						accountSetVO.setCusername(dataVO.getCusername());
-						accountSetVO.setCorpname(dataVO.getCorpname());
+						cvo = CorpCache.getInstance().get(null, dataVO.getPk_corp());
+						if(cvo!=null){
+							accountSetVO.setCorpname(cvo.getUnitname());
+						}else{
+							accountSetVO.setCorpname(null);
+						}
 						cvo = CorpCache.getInstance().get(null, accountSetVO.getPk_corpk());
 						if(cvo!=null){
 							accountSetVO.setCorpkname(cvo.getUnitname());

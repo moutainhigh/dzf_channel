@@ -264,7 +264,7 @@ function del(){
 	}
 	var ids = '';
 	for(var i=0; i<rows.length;i++){
-		ids = ids + rows[i].asetid;
+		ids = ids +","+ rows[i].asetid;
 	}
 	$.messager.confirm("提示", "你确定删除吗？", function(flag) {
 		if (flag) {
@@ -304,6 +304,7 @@ function edit(index){
     var rows = $("#grid").datagrid("getRows");
     var row = rows[index];
     $('#addForm').form('load',row);
+    $('#tperiod').textbox('setValue',row.bperiod);
 }
 
 /**
