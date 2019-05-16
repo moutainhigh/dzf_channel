@@ -55,8 +55,8 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		StringBuffer sf=  new StringBuffer();
 		sql.append("select h.*,us.user_name as username from cn_chnarea h");
 		sql.append(" left join sm_user us on us.cuserid = h.userid");
-		sql.append(" where nvl(dr,0) = 0");
-		sql.append(" and pk_corp=? and type=?  order by areacode " );   
+		sql.append(" where nvl(h.dr,0) = 0");
+		sql.append(" and h.pk_corp=? and h.type=?  order by h.areacode " );   
 		sp.addParam(qvo.getPk_corp());
 		sp.addParam(qvo.getType());
 		List<ChnAreaVO> vos =(List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ChnAreaVO.class));
@@ -203,22 +203,17 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		corpsql.append("SELECT b.pk_chnarea,b.pk_corp,b.vprovince,b.vprovname,b.ischarge,b.userid,b.vmemo,b.ts,us.user_name as username");
-		corpsql.append(" FROM cn_chnarea_b b where nvl(dr,0)= 0");
+		corpsql.append(" FROM cn_chnarea_b b ");
 		corpsql.append(" left join sm_user us on us.cuserid =b.userid ");
-		corpsql.append(" and pk_chnarea = ? ");
+		corpsql.append(" where nvl(b.dr,0)= 0 and b.pk_chnarea = ? ");
 		corpsql.append(" order by ts desc");
 		sp.addParam(pk);
 		Map<String, ChnAreaBVO > map = new HashMap<String,ChnAreaBVO>();
 		List<ChnAreaBVO> b1vos = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(),sp,new BeanListProcessor(ChnAreaBVO.class));
 		int i=0;
 		CorpVO cvo =null;
-//		UserVO user =null;
 		QueryDeCodeUtils.decKeyUtils(new String[]{"username"}, b1vos, 1);
 		for (ChnAreaBVO chnAreaBVO : b1vos) {
-//			user = UserCache.getInstance().get(chnAreaBVO.getUserid(), null);
-//			if(user != null){
-//				chnAreaBVO.setUsername(user.getUser_name());
-//			}
 			cvo=CorpCache.getInstance().get(null, chnAreaBVO.getPk_corp());
 			if(!StringUtil.isEmpty(chnAreaBVO.getUserid())){
 				String id=chnAreaBVO.getVprovince()+chnAreaBVO.getUserid();
