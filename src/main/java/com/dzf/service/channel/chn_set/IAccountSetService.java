@@ -3,9 +3,18 @@ package com.dzf.service.channel.chn_set;
 import java.util.List;
 
 import com.dzf.model.channel.sale.AccountSetVO;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IAccountSetService {
+	
+	/**
+	 * 查询
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<AccountSetVO> query(QryParamVO paramvo) throws DZFWarpException;
 	
 	/**
 	 * 查询客户

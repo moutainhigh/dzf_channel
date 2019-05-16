@@ -8,6 +8,7 @@ import com.dzf.pub.lang.DZFDateTime;
 @SuppressWarnings({ "serial" })
 public class AccountSetVO extends DataVO{
 	
+	@FieldAlias("asetid")
     private String pk_accountset; //主键
     
     @FieldAlias("corpid")
@@ -36,7 +37,7 @@ public class AccountSetVO extends DataVO{
     private Integer istatus;//状态 0：启用；1：禁用
     
 	@FieldAlias("coptid")
-	private String coperatorid;//创建人
+	private String coperatorid;//录入人
 	
 	@FieldAlias("ddate")
 	private DZFDate doperatedate;//创建日期
@@ -46,6 +47,9 @@ public class AccountSetVO extends DataVO{
     private DZFDateTime ts;//时间戳
     
     private String corpkname;//客户名称
+    
+	@FieldAlias("coptname")
+	private String coperatname;//录入人名称
 
 	public String getPk_accountset() {
 		return pk_accountset;
@@ -69,6 +73,14 @@ public class AccountSetVO extends DataVO{
 
 	public String getPk_contract() {
 		return pk_contract;
+	}
+
+	public String getCoperatname() {
+		return coperatname;
+	}
+
+	public void setCoperatname(String coperatname) {
+		this.coperatname = coperatname;
 	}
 
 	public Integer getDr() {

@@ -27,20 +27,23 @@
 						</div>
 					</div>
 				  	<div class="right">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" onclick="add()" id="">新增</a> 
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" onclick="delete()" id="">删除</a> 
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" onclick="load()" id="">导出</a> 
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="add()">新增</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="del()" >删除</a> 
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
 					</div>
 		        </div>
 		    </div>
-		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
+		    <div class="qijian_box" id="qrydialog" style="display:none; width:460px; height:340px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
+				<div class="sel_time time_col">
+				<label style="text-align:right;width: 100px;">日期：</label> 
+					<input id="begdate" name="begdate"  class="easyui-datebox" data-options="width:125,height:28,validType:'checkdate'" />
+					<font>-</font> 
+					<input id="enddate" name="enddate"  class="easyui-datebox" data-options="width:125,height:28,validType:'checkdate'" />
+				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 260px; height: 28px;" 
@@ -61,8 +64,13 @@
 					<input id="channel_select" class="easyui-textbox" style="width:260px;height:28px;" />
 					<input id="pk_account" type="hidden">
 				</div>
+				<div class="time_col time_colp10">
+					<label style="width:100px;text-align:right">客户：</label>
+					<input id="corpkna_ae" class="easyui-textbox" style="width:260px;height:28px;"/>
+					<input id="corpkid_ae" name="corpkid" type="hidden"> 
+				</div>
 				<p>
-					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 
+					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCon();">清除</a> 
 					<a class="ui-btn save_input" onclick="load()">确定</a>
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
