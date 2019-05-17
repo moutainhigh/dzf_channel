@@ -24,4 +24,14 @@ public class QueryUtil {
 		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
 		return cvos;
 	}
+	
+	/**
+	 * 代账机构过滤掉演示加盟商
+	 * @author gejw
+	 * @time 下午2:41:57
+	 * @return
+	 */
+	public String getWhereSql(){
+	    return " nvl(account.dr,0) = 0 and account.channeltype != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y'"; 
+	}
 }

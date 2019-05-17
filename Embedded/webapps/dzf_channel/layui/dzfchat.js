@@ -122,7 +122,7 @@ function initim(history_message){
 	  layim.config({
 	    //初始化接口
 	    init: {
-	    	url: basePath + '/chat/chat!queryFriends.action'
+	    	url: ''
 		    ,type: 'post' //默认get，一般可不填
 	    }
 	    //查看群员接口  ，注销则不显示
