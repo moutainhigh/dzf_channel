@@ -119,7 +119,7 @@ public class CorpEditConfAction extends BaseAction<CorpNameEVO> {
 			}
 			String type = getRequest().getParameter("type");
 			String vreason = getRequest().getParameter("vreason"); // 驳回原因
-			int opertype = Integer.valueOf(type);// 操作类型 2：审核通过； 3：拒绝审核；
+			int opertype = Integer.valueOf(type);// 操作类型 2：审核通过； 3：已驳回；
 			if (opertype == 3 && StringUtil.isEmpty(vreason)) {
 				throw new BusinessException("驳回原因不能为空");
 			}

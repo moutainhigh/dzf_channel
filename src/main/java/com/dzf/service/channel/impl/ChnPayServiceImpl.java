@@ -455,7 +455,7 @@ public class ChnPayServiceImpl implements IChnPayService {
 				errmsg.append(",是已确认,").append(czmsg); 
 			}else if(inte==4){
 				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
-				errmsg.append(",是拒绝审核,").append(czmsg); 
+				errmsg.append(",是已驳回,").append(czmsg); 
 			}else if(inte==5){
 				errmsg.append(map.get(inte).substring(0, map.get(inte).length() - 1));
 				errmsg.append(",是待确认,").append(czmsg); 

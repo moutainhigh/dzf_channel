@@ -36,7 +36,7 @@ public interface ICorpEditConfService {
 	public CorpNameEVO queryByID(String pk_corpnameedit) throws DZFWarpException;
 	
 	/**
-	 * 审核/拒绝审核
+	 * 审核/已驳回
 	 * @param paramvo
 	 * @param uservo
 	 * @param opertype
