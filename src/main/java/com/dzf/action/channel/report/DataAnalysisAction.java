@@ -44,9 +44,10 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 			if(pamvo == null){
 				pamvo = new QryParamVO();
 			}
-			int total = analyser.queryTotalRow(pamvo);
+			long total = analyser.queryTotalRow(pamvo);
 			if(total > 0){
 				List<DataAnalysisVO> list = analyser.query(pamvo);
+				grid.setTotal(total);
 				grid.setRows(list);
 			}else{
 				grid.setRows(new ArrayList<DataAnalysisVO>());
