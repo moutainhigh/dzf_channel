@@ -1,5 +1,4 @@
 var parentRow;
-var grid;
 var editIndex = 0;
 var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro,citynms,corpnms,memo;
 var areaData;
@@ -30,7 +29,7 @@ $(function() {
 });
 
 function initGrid(){
-	grid = $('#grid').datagrid({
+	$('#grid').datagrid({
 	    idField: "pid",
 //		url : DZF.contextPath + '/channel/packageDef!query.action',
 		striped : true,
@@ -266,12 +265,12 @@ function seleMultArea(){
 			}
 		}
 	}
-	var cityids = $('#grid').datagrid('getEditor', {index : editIndex,field : 'cityids'});
-	$(cityids.target).textbox('setValue', null);
-	$(cityids.target).textbox('setValue', ids);
-	var citynms = $('#grid').datagrid('getEditor', {index : editIndex,field : 'citynms'});
-	$(citynms.target).textbox('setValue',null);
-	$(citynms.target).textbox('setValue',texts);
+	var cityidsO = $('#grid').datagrid('getEditor', {index : editIndex,field : 'cityids'});
+	$(cityidsO.target).textbox('setValue', null);
+	$(cityidsO.target).textbox('setValue', ids);
+	var citynmsO = $('#grid').datagrid('getEditor', {index : editIndex,field : 'citynms'});
+	$(citynmsO.target).textbox('setValue',null);
+	$(citynmsO.target).textbox('setValue',texts);
 }
 
 
@@ -331,24 +330,24 @@ function selectCorps(){
  * @param rowTable
  */
 function dClickCompany(rowTable) {
-	var corpIds = "";
-	var corpNms = "";
+	var corpIdsN = "";
+	var corpNmsN = "";
 	if (rowTable) {
 		for (var i = 0; i < rowTable.length; i++) {
 			if (i == rowTable.length - 1) {
-				corpIds += rowTable[i].pk_gs;
-				corpNms += rowTable[i].uname;
+				corpIdsN += rowTable[i].pk_gs;
+				corpNmsN += rowTable[i].uname;
 			} else {
-				corpIds += rowTable[i].pk_gs + ",";
-				corpNms += rowTable[i].uname + ",";
+				corpIdsN += rowTable[i].pk_gs + ",";
+				corpNmsN += rowTable[i].uname + ",";
 			}
 		}
-		var corpids = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpids'});
-		var corpnms = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpnms'});
-		$(corpids.target).textbox('setValue', null);
-		$(corpids.target).textbox('setValue', corpIds);
-		$(corpnms.target).textbox('setValue', null);
-		$(corpnms.target).textbox('setValue', corpNms);
+		var corpidsT = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpids'});
+		var corpnmsT = $('#grid').datagrid('getEditor', {index : editIndex,field : 'corpnms'});
+		$(corpidsT.target).textbox('setValue', null);
+		$(corpidsT.target).textbox('setValue', corpIdsN);
+		$(corpnmsT.target).textbox('setValue', null);
+		$(corpnmsT.target).textbox('setValue', corpNmsN);
 	}
 	$("#chnDlg").dialog('close');
 }
@@ -827,7 +826,7 @@ function modify() {
 		showButtons("edit");
 		var index = $("#grid").datagrid("getRowIndex", row);
 		editIndex=index;
-		grid.datagrid("beginEdit", index);
+		$("#grid").datagrid("beginEdit", index);
 	}else {
 		Public.tips({content: "请选择一条数据修改",type: 2});
 		return;
