@@ -25,7 +25,7 @@
 				treeField : 'text',
 				rownumbers : true,
 				singleSelect : false,
-				height : 360,
+				height : 320,
 				pagination : false,
 				columns : [ [ {
 					field : 'ck', 

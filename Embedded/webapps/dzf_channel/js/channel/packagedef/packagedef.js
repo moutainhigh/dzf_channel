@@ -218,7 +218,7 @@ function initArea(){
 	}
 	$("#areaDlg").dialog({
 		width: 340,
-	    height: 520,
+	    height: 460,
 		readonly: true,
 		queryParams : {
 			'cityids' : tar_cityid,
@@ -640,6 +640,7 @@ function save () {
         success: function(rs) {
         	if (rs.success) {
         		showButtons("brows");
+        		$('#grid').datagrid('unselectAll');
         		$("#grid").datagrid("reload");
                 Public.tips({content: rs.msg,type:0});
 			} else {
