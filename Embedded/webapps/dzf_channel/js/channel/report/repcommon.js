@@ -120,7 +120,6 @@ function initChannel(){
     					ovince :"-5"
     				},
                     buttons: '#kj_buttons'
-                    	
                 });
             }
         }]
@@ -140,6 +139,8 @@ function dClickCompany(rowTable){
 		if(!isEmpty(status) && status =="add"){
 			$("#c_corpnm").textbox("setValue",rowTable[0].uname);
 			$("#c_corpid").val(rowTable[0].pk_gs);
+			$('#c_corpkname').textbox('readonly', false);
+			$('#c_corpkname').textbox('textbox').validatebox('options').required = true;
 		}else if(!isEmpty(status) && status =="brows"){
 			$("#corpkid_ae").val(null);
 			$("#corpkna_ae").textbox("setValue",null);

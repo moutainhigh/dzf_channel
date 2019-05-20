@@ -20,11 +20,13 @@ import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.chn_set.IAccountSetService;
 import com.dzf.service.channel.report.impl.DataCommonRepImpl;
 
@@ -55,12 +57,21 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		sql.append("  from cn_accountset a ");
 		sql.append("  left join sm_user u on a.coperatorid = u.cuserid ");
 		sql.append(" where a.dr = 0  ");
+		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
+		    String[] strs = paramvo.getPk_corp().split(",");
+		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
+		    sql.append(" AND a.pk_corp in (").append(inSql).append(")");
+		}
+		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
+			sql.append(" and a.pk_corpk =? ");
+			spm.addParam(paramvo.getPk_corpk());
+		}
 		if(paramvo.getBegdate()!=null){
-			sql.append("and substr(a.doperatedate,0,10)>=? ");
+			sql.append(" and substr(a.doperatedate,0,10)>=? ");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate()!=null){
-			sql.append("and substr(a.doperatedate,0,10)<=? ");//直接写 a.doperatedate<=有些问题
+			sql.append(" and substr(a.doperatedate,0,10)<=? ");//直接写 a.doperatedate<=有些问题
 			spm.addParam(paramvo.getEnddate());
 		}
 		List<AccountSetVO> list=(List<AccountSetVO>)singleObjectBO.executeQuery(sql.toString(),spm, new BeanListProcessor(AccountSetVO.class));
@@ -138,7 +149,7 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 				return list;
 			}
 		}
-		return null;
+		return list;
 	}
 	
 	@Override

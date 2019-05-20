@@ -91,6 +91,7 @@ public class AccountSetAction extends BaseAction<AccountSetVO> {
 			List<AccountSetVO> queryCorpk = accountSet.queryCorpk(pk_corp, corpkname);
 			grid.setRows(queryCorpk);
 			grid.setSuccess(true);
+			grid.setTotal((long)queryCorpk.size());
 			grid.setMsg("查询成功");
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");

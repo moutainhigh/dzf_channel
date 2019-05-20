@@ -78,7 +78,7 @@ function load(){
 			align : 'left'
 	   },{
 		   width : '120',
-		   title : '地区',
+		   title : '省市',
 		   field : 'provname',
 		   align : 'left'
 	   },{
@@ -130,7 +130,7 @@ function load(){
 			title : '差异月份',
 			field : 'idiff',
 			halign : 'center',
-			align : 'left',
+			align : 'center',
 		}, {
 			width : '60',
 			title : '状态',
@@ -176,9 +176,9 @@ function reloadData() {
     queryParams['aname'] =  $('#aname').combobox('getValue');
     queryParams['ovince'] = vince;
     queryParams['uid'] = $('#uid').combobox('getValue');
-    queryParams['corps'] = $("#pk_account").val();
+    queryParams['cpid'] = $("#pk_account").val();
     
-    queryParams['corpkid'] = $("#corpkid_ae").val();
+    queryParams['cpkid'] = $("#corpkid_ae").val();
     queryParams['begdate'] = $("#begdate").datebox('getValue');
     queryParams['enddate'] = $("#enddate").datebox('getValue');
     
@@ -193,8 +193,11 @@ function clearCon(){
 	$('#ovince').combobox('select',null);
 	$('#uid').combobox('select',null);
 	$("#pk_account").val(null);
-	$("#corpkid_ae").val(null);
 	$("#channel_select").textbox("setValue",null);
+	
+	$("#corpkid_ae").val(null);
+	$("#corpkna_ae").textbox("setValue",null);
+	$('#corpkna_ae').textbox('readonly',true);
 }
 
 function opermatter(val, row, index) {
@@ -218,6 +221,10 @@ function add(){
 	$('#addDialog').dialog({modal:true});
     $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"新增");
     $('#addForm').form("clear");
+    
+    $('#c_corpnm').textbox('readonly', false);
+    $('#c_corpkname').textbox('textbox').validatebox('options').required = false;
+    $('#c_corpkname').textbox('readonly', true);
 }
 
 function save(){
@@ -305,6 +312,10 @@ function edit(index){
     var row = rows[index];
     $('#addForm').form('load',row);
     $('#tperiod').textbox('setValue',row.bperiod);
+    
+    $('#c_corpnm').textbox('readonly', true);
+    $('#c_corpkname').textbox('readonly', true);
+    $('#c_corpkname').textbox('textbox').validatebox('options').required = false;
 }
 
 /**

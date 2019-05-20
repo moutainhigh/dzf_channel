@@ -34,7 +34,7 @@ public class AccountSetExcelField implements IExceport<AccountSetVO> {
 			new Fieldelement("vendperiod", "结束日期",false,0,false),
 			new Fieldelement("vchangeperiod", "调整后",false,0,false),
 			new Fieldelement("idiff", "差异月份",false,0,false),
-			new Fieldelement("istatus", "单据状态",false,0,false,new String[]{"启用","禁用"}),
+			new Fieldelement("istatus", "状态",false,0,false,new String[]{"启用","停用"}),
 			new Fieldelement("coperatname", "录入人",false,0,false),
 			new Fieldelement("doperatedate", "录入时间",false,0,false),
 	};

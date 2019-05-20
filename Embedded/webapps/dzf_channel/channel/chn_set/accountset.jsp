@@ -96,11 +96,14 @@
 						<label style="width:140px;text-align: right;"><i class="bisu">*</i>加盟商:</label>
 					    <input id="c_corpnm" name="corpnm" class="easyui-textbox" style="width:200px;height:25px;" data-options="required:true" />
 						<input id="c_corpid" name="corpid" type="hidden">
+						
+						<input id="asetid" name="asetid" type="hidden"/>
+						<input id=updatets name="updatets" type="hidden"/>
 					</div>
 				</div>
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:140px;"><i class="bisu">*</i>客户:</label>
-					<input id="c_corpkname" name="corpkname" class="easyui-textbox" style="width:200px;height:28px;" data-options="required:true"/>
+					<input id="c_corpkname" name="corpkname" class="easyui-textbox" style="width:200px;height:28px;" />
 					<input id="c_corpkid" name="corpkid" type="hidden"> 
 					<input id="vccode" name="vccode" type="hidden"> 
 					<input id="contractid" name="contractid" type="hidden"> 
