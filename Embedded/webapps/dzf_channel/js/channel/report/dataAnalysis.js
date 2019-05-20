@@ -37,7 +37,7 @@ function load(){
 		frozenColumns:[[
 						{ field : 'ck',	checkbox : true },
 						{ field : 'corpid', title : '加盟商主键', hidden : true},
-						{ field : 'aname',  title : '大区', width : 60}, 
+						{ field : 'aname',  title : '大区', width : 60, formatter:anameFormat}, 
 						{ field : 'provname',  title : '省市', width : 100}, 
 		                { field : 'corpname',  title : '加盟商', width : 150}, 
 		]],
@@ -72,6 +72,16 @@ function load(){
 		            { field : 'gensnum', title : '一般人', width : 60, halign:'center',align:'right'}, 
 		        ] ],
 	});
+}
+
+/**
+ * 大区添加tips显示
+ * @returns
+ */
+function anameFormat(value){
+	if(value != undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
 }
 
 /**

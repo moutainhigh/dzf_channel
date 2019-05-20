@@ -39,7 +39,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	public List<DataAnalysisVO> query(QryParamVO pamvo) throws DZFWarpException {
 		QrySqlSpmVO fqryvo = getFilterSql(pamvo);
 		List<DataAnalysisVO> list = (List<DataAnalysisVO>) multBodyObjectBO.queryDataPage(DataAnalysisVO.class, 
-				fqryvo.getSql(), fqryvo.getSpm(), pamvo.getPage(), pamvo.getRows(), "t.begindate");
+				fqryvo.getSql(), fqryvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
 		if(list != null && list.size() > 0){
 			List<String> pklist = new ArrayList<String>();
 			for(DataAnalysisVO dvo : list){
@@ -59,9 +59,11 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 			getCorpSqlSpm(pamvo, corpks, sql, spm);
 			//4、合同相关信息：
 			getContSqlSpm(pamvo, corpks, sql, spm);
-			//5、余额相关信息：
+			//5、余额相关信息
 			getPaySqlSpm(pamvo, corpks, sql, spm);
-			//6、用户相关信息：
+			//6、商品个购买相关信息：
+			getBuySqlSpm(pamvo, corpks, sql, spm);
+			//7、用户相关信息：
 			getUserSqlSpm(pamvo, corpks, sql, spm);
 			List<DataAnalysisVO> rlist = (List<DataAnalysisVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 					new BeanListProcessor(DataAnalysisVO.class));
@@ -83,7 +85,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count(t.pk_corp)  \n");
+		sql.append("SELECT count(DISTINCT t.pk_corp)  \n");
 		sql.append("  FROM bd_account t  \n");
 		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
@@ -125,7 +127,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp  \n");
+		sql.append("SELECT DISTINCT t.pk_corp  \n");
 		sql.append("  FROM bd_account t  \n");
 		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
@@ -187,8 +189,9 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		sql.append("       nvl(cont.ndeductmny_s,0) + nvl(cont.ndeductmny_b,0) AS ndeductmny, \n");
 		
 		sql.append("       pay.ndepositmny, \n");
-		sql.append("       nvl(pay.npaymentmny_s,0) - nvl(pay.npaymentmny_b,0) AS npaymentmny, \n");
-		sql.append("       nvl(pay.nrebatemny_s,0) - nvl(pay.nrebatemny_b,0) AS nrebatemny, \n");
+		sql.append("       pay.npaymentmny, \n");
+		sql.append("       pay.nrebatemny, \n");
+		
 		sql.append("       pay.ngoodsbuymny, \n");
 		
 		sql.append("       usr.isumcustnum \n");
@@ -205,7 +208,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 */
 	private void getAccSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		//1、加盟商相关信息：
-		sql.append("(SELECT t.pk_corp,  \n");
+		sql.append("(SELECT DISTINCT t.pk_corp,  \n");
 		sql.append("       t.unitname AS corpname,  \n");
 		sql.append("       t.djoindate,  \n");
 		sql.append("       t.drelievedate,  \n");
@@ -233,7 +236,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 */
 	private void getCorpSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT p.fathercorp AS pk_corp,  \n") ;
+		sql.append("(SELECT DISTINCT p.fathercorp AS pk_corp,  \n") ;
 		sql.append("              SUM(CASE  \n") ; 
 		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' THEN  \n") ; 
 		sql.append("              1  \n") ; 
@@ -276,6 +279,8 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		sql.append("           END) AS igenstocknum  \n") ; 
 		sql.append("  FROM bd_corp p  \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
+		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", corpks);
 	    sql.append(" AND  ").append(where);
 		if(pamvo.getBegdate() != null){
@@ -300,7 +305,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 */
 	private void getContSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT ct.pk_corp,  \n") ;
+		sql.append("(SELECT DISTINCT ct.pk_corp,  \n") ;
 		sql.append("       SUM(CASE  \n") ; 
 		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND  \n") ; 
 		spm.addParam(pamvo.getBegdate());
@@ -439,43 +444,36 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @param corpks
 	 * @param sql
 	 * @param spm
-	 * @return
 	 * @throws DZFWarpException
 	 */
 	private void getPaySqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT dl.pk_corp,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN dl.ipaytype = 1 AND dl.iopertype = 1 THEN  \n") ; 
-		sql.append("              nvl(dl.npaymny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ndepositmny,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN dl.ipaytype = 2 AND ( dl.iopertype = 1 OR dl.iopertype = 4 ) THEN  \n") ; 
-		sql.append("              nvl(dl.npaymny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS npaymentmny_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN dl.ipaytype = 2 AND  \n") ; 
-		sql.append("                  (dl.iopertype = 2 OR dl.iopertype = 5) THEN  \n") ; 
-		sql.append("              nvl(dl.nusedmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS npaymentmny_b,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN dl.ipaytype = 3 AND dl.iopertype = 3 THEN  \n") ; 
-		sql.append("              nvl(dl.npaymny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS nrebatemny_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN dl.ipaytype = 3 AND (dl.iopertype = 2 OR dl.iopertype = 5) THEN  \n") ; 
-		sql.append("              nvl(dl.nusedmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS nrebatemny_b,  \n") ; 
+		sql.append("(SELECT DISTINCT b.pk_corp,  \n") ;
+		sql.append("       SUM(decode(b.ipaytype, 1, nvl(b.npaymny, 0), 0)) AS ndepositmny,  \n") ; 
+		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.npaymny, 0), 0)) -  \n") ; 
+		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.nusedmny, 0), 0)) AS npaymentmny,  \n") ; 
+		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.npaymny, 0), 0)) -  \n") ; 
+		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.nusedmny, 0), 0)) AS nrebatemny  \n") ; 
+		sql.append("  FROM cn_balance b  \n") ; 
+		sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
+		String where = SqlUtil.buildSqlForIn("b.pk_corp", corpks);
+	    sql.append(" AND  ").append(where);
+	    sql.append(" GROUP BY b.pk_corp ) pay \n");
+		sql.append("    ON acc.pk_corp = pay.pk_corp  \n");
+	}
+	
+	/**
+	 * 获取商品购买相关信息查询语句
+	 * @param pamvo
+	 * @param corpks
+	 * @param sql
+	 * @param spm
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private void getBuySqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
+		sql.append("LEFT JOIN  \n");
+		sql.append("(SELECT DISTINCT dl.pk_corp,  \n") ;
 		sql.append("       SUM(CASE  \n") ; 
 		sql.append("             WHEN (dl.ipaytype = 2 OR dl.ipaytype = 3) AND dl.iopertype = 5 THEN  \n") ; 
 		sql.append("              nvl(dl.nusedmny, 0)  \n") ; 
@@ -508,7 +506,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 */
 	private void getUserSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT r.pk_corp, COUNT(r.cuserid) AS isumcustnum \n") ;
+		sql.append("(SELECT DISTINCT r.pk_corp, COUNT(r.cuserid) AS isumcustnum \n") ;
 		sql.append("  FROM sm_user r  \n") ; 
 		sql.append(" WHERE nvl(r.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(r.locked_tag, 'N') = 'N'  \n") ; 
