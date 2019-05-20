@@ -237,5 +237,33 @@ function reloadData(){
  * 导出
  */
 function onExport(){
-	
+	var datarows = $('#grid').datagrid("getChecked");
+	var strlist = '';
+	if (datarows != null && datarows.length > 0) {
+		strlist = JSON.stringify(datarows);
+	}
+	var bdate = $("#bdate").datebox("getValue");
+	var edate = $("#edate").datebox("getValue");
+	var period = bdate + "至" + edate;
+	var ovince = $("#aname").combobox('getValue');
+	if(isEmpty()){
+		ovince = -1;
+	}
+	var url = DZF.contextPath + "/report/dataanalysis!onExport.action";
+//	var columns = $('#grid').datagrid("options").columns[0];
+	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
+	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
+	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+	Business.getFile(url, {
+		'vcode' : strlist,
+		"begdate" : bdate,
+		"enddate" : edate,
+		"bperiod" : $("#jmbdate").datebox("getValue"),
+		"eperiod" : $("#jmedate").datebox("getValue"),
+		"cpid" : $("#pk_account").val(),
+		"ovince" : ovince,
+		'hblcols':JSON.stringify(hblcols), //合并列信息
+		'cols':JSON.stringify(cols),//除冻结列之外，导出字段编码
+		'hbhcols':JSON.stringify(hbhcols)//冻结列编码
+	}, true, true);
 }

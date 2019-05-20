@@ -86,7 +86,7 @@ public class DataAnalysisVO extends SuperVO {
 	
 	@FieldAlias("ssumnum")
 	private Integer isumcustnum;//总用户数
-
+	
 	public DZFDouble getNtotalmny() {
 		return ntotalmny;
 	}
