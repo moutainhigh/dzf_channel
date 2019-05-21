@@ -291,29 +291,29 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	private List<DebitQueryVO> qryNChannel(DebitQueryVO paramvo,List<String> ids,HashMap<String, UserVO> queryUserMap ) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select ba.pk_corp, \n");
-		sql.append("        ba.innercode as corpcode, \n");
-		sql.append("        ba.unitname as corpname, \n");
-		sql.append("        ba.djoindate as chndate, \n");
-		sql.append("        ba.channeltype, \n");
+		sql.append(" select account.pk_corp, \n");
+		sql.append("        account.innercode as corpcode, \n");
+		sql.append("        account.unitname as corpname, \n");
+		sql.append("        account.djoindate as chndate, \n");
+		sql.append("        account.channeltype, \n");
 		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
 		sql.append("        cn.areacode,cb.vprovince, \n");
 		sql.append("        cb.userid   as cuserid \n");
-		sql.append("   from bd_account ba \n");
-		sql.append("	left join cn_chnarea_b cb on ba.pk_corp=cb.pk_corp \n");
+		sql.append("   from bd_account account \n");
+		sql.append("	left join cn_chnarea_b cb on account.pk_corp=cb.pk_corp \n");
 		sql.append("    left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
-		sql.append("      where nvl(ba.dr,0)=0 and nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
+		sql.append("      where nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
 		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='N'  \n");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-            sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
+            sql.append(" and account.pk_corp  in (" + corpIdS + ")");
         }
         if(!StringUtil.isEmpty(paramvo.getCuserid())){
         	sql.append(" and cb.userid=?   \n");
         	sp.addParam(paramvo.getCuserid());
         }
         sql.append(" and "+ QueryUtil.getWhereSql());
-		sql.append(" order by cn.areacode ,ba.innercode \n");
+		sql.append(" order by cn.areacode ,account.innercode \n");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
 		for (DebitQueryVO debitQueryVO : list) {

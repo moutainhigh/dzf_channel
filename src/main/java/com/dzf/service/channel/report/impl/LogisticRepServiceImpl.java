@@ -146,9 +146,9 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select ba.pk_corp, ");
-		sql.append("       ba.unitname corpname, ");
-		sql.append("       ba.vprovince, ");
+		sql.append("select account.pk_corp, ");
+		sql.append("       account.unitname corpname, ");
+		sql.append("       account.vprovince, ");
 		sql.append("       pk_stockout pk_id, ");
 		sql.append("       out.vreceivername, ");
 		sql.append("       out.phone, ");
@@ -159,7 +159,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("       substr(ddelivertime,0,10) deliverdate, ");
 		sql.append("       vmemo ");
 		sql.append("  from cn_stockout out ");
-		sql.append("  left join bd_account ba on out.pk_corp = ba.pk_corp ");
+		sql.append("  left join bd_account account on out.pk_corp = account.pk_corp ");
 		sql.append("  left join cn_logistics log on out.pk_logistics = log.pk_logistics ");
 		sql.append(" where nvl(out.dr, 0) = 0 ");
 		sql.append("   and nvl(log.dr, 0) = 0 ");
@@ -297,9 +297,9 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" select ba.pk_corp, ");
-		sql.append("        ba.vprovince, ");
-		sql.append("        ba.unitname corpname, ");
+		sql.append(" select account.pk_corp, ");
+		sql.append("        account.vprovince, ");
+		sql.append("        account.unitname corpname, ");
 		sql.append("        pk_materielbill pk_id, ");
 		sql.append("        mat.vreceiver vreceivername, ");
 		sql.append("        mat.phone, ");
@@ -310,11 +310,11 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		sql.append("        deliverdate, ");
 		sql.append("        vmemo ");
 		sql.append("   from cn_materielbill mat ");
-		sql.append("   left join bd_account ba on mat.fathercorp = ba.pk_corp ");
+		sql.append("   left join bd_account account on mat.fathercorp = account.pk_corp ");
 		sql.append("   left join cn_logistics log on mat.pk_logistics = log.pk_logistics ");
 		sql.append("  where nvl(mat.dr, 0) = 0 ");
 		sql.append("    and nvl(log.dr, 0) = 0 ");
-		sql.append("    and nvl(ba.dr, 0) = 0 ");
+		//sql.append("    and nvl(account.dr, 0) = 0 ");
 		sql.append("    and mat.vstatus = 3 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and deliverdate >=? ");
