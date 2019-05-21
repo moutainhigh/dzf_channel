@@ -29,9 +29,11 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.report.IDataAnalysisService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.report.ExportExcel;
 
 /**
@@ -51,6 +53,9 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 	@Autowired
 	private IDataAnalysisService analyser;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询方法
 	 */
@@ -62,6 +67,7 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 			if(pamvo == null){
 				pamvo = new QryParamVO();
 			}
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.CHANNEL_72);
 			long total = analyser.queryTotalRow(pamvo);
 			if(total > 0){
 				List<DataAnalysisVO> list = analyser.query(pamvo);
@@ -107,8 +113,6 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		}
 		String hblcols = getRequest().getParameter("hblcols");
 		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);//合并列信息
-		
-		String hbhcols = getRequest().getParameter("hbhcols");
 		
 		String cols = getRequest().getParameter("cols");
 		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);//除冻结列之外，导出字段编码

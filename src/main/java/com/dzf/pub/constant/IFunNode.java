@@ -301,6 +301,11 @@ public interface IFunNode {
     public static final String CHANNEL_71  = "channel71";
     
     /**
+     * 加盟商数据分析
+     */
+    public static final String CHANNEL_72  = "channel72";
+    
+    /**
      * 账务设置
      */
     public static final String CHANNEL_73  = "channel73";
