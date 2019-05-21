@@ -484,7 +484,15 @@ function showSingleAuditDlg(rows){
 function showBatchAuditDlg(rows){
 	var changetype;
 	var apstatus;
+	var uid = $("#uid").val();
 	for(var i = 0; i < rows.length; i++){
+		if(rows[i].apstatus == 5){
+			Public.tips({
+				content : "合同编码"+rows[i].vccode+"状态为已处理",
+				type : 2
+			});
+			return;
+		}
 		if(i == 0){
 			if(rows[i].changetype == 1 || rows[i].changetype == 2){
 				changetype = 1;
@@ -519,6 +527,25 @@ function showBatchAuditDlg(rows){
 					return;
 				}
 			}
+		}
+		if(rows[i].apstatus == 1 && uid != rows[i].chanid){
+			Public.tips({
+				content : "合同编码"+rows[i].vccode+"待审批任务不属于当前操作员",
+				type : 2
+			});
+			return;
+		}else if(rows[i].apstatus == 2 && uid != rows[i].areaer){
+			Public.tips({
+				content : "合同编码"+rows[i].vccode+"待审批任务不属于当前操作员",
+				type : 2
+			});
+			return;
+		}else if(rows[i].apstatus == 3 && uid != rows[i].direr){
+			Public.tips({
+				content : "合同编码"+rows[i].vccode+"待审批任务不属于当前操作员",
+				type : 2
+			});
+			return;
 		}
 	}
 	

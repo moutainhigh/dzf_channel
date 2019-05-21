@@ -290,6 +290,7 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 	private void checkBeforeBatchAudit(ChangeApplyVO[] applyVOs) throws DZFWarpException {
 		List<Integer> typelist = new ArrayList<Integer>();
 		List<Integer> statlist = new ArrayList<Integer>();
+		ChangeApplyVO vo = null;
 		for(int i = 0; i <applyVOs.length; i++){
 			if(i == 0){
 				if(applyVOs[i].getIchangetype() != null && applyVOs[i].getIchangetype() == 3){
@@ -311,6 +312,25 @@ public class ContractAuditAction extends BaseAction<ChangeApplyVO> {
 				if(!statlist.contains(applyVOs[i].getIapplystatus())){
 					throw new BusinessException("请选择同一处理状态数据");
 				}
+			}
+			vo = applyVOs[i];
+			if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
+				if(!getLoginUserid().equals(vo.getVchannelid())){
+					throw new BusinessException("合同编码"+vo.getVcontcode()+"待审批任务不属于当前操作员");
+				}
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 2){
+				if(!getLoginUserid().equals(vo.getVareaer())){
+					throw new BusinessException("合同编码"+vo.getVcontcode()+"待审批任务不属于当前操作员");
+				}
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 3){
+				if(!getLoginUserid().equals(vo.getVdirector())){
+					throw new BusinessException("合同编码"+vo.getVcontcode()+"待审批任务不属于当前操作员");
+				}
+			}else{
+				throw new BusinessException("合同编码"+vo.getVcontcode()+"待审批任务不属于当前操作员");
+			}
+			if(applyVOs[i].getIapplystatus() != null && applyVOs[i].getIapplystatus() == 5){
+				throw new BusinessException("合同编码"+vo.getVcontcode()+"状态为已处理");
 			}
 		}
 	}

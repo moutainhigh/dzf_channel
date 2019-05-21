@@ -1,6 +1,5 @@
 package com.dzf.service.channel.contract.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +33,6 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.contract.IContractAuditService;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("contractauditser")
 public class ContractAuditServiceImpl implements IContractAuditService {
@@ -47,8 +45,6 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	
 	@Autowired
 	private IPubService pubser;
-	@Autowired
-	private IUserService userServiceImpl;
 
 	@Override
 	public Integer queryTotalNum(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
@@ -77,7 +73,6 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		Map<String,UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
 		CorpVO corpvo = null;
 		UserVO uservo = null;
-//		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for(ChangeApplyVO vo : list){
 			corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if(corpvo != null){
@@ -117,6 +112,9 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.updatets,  \n") ; 
 		sql.append("       y.pk_confrim,  \n");
 		sql.append("       y.pk_contract,  \n") ;
+		sql.append("       y.vchannelid,  \n") ;
+		sql.append("       y.vareaer,  \n") ;
+		sql.append("       y.vdirector,  \n") ;
 		sql.append("       t.pk_corp,  \n") ; 
 		sql.append("       t.pk_corpk,  \n") ; 
 		sql.append("       t.vcontcode,  \n") ; 
