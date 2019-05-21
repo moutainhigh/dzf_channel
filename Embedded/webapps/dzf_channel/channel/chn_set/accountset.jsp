@@ -82,14 +82,6 @@
 			</div>
 			
 			<div id="kj_dialog"></div>
-			<div id="kj_buttons" style="display:none;">
-				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectListCorps()" style="width:90px">确认</a> 
-				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
-			</div>
-			<div id="ckj_buttons" style="display:none;">
-				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCardCorps()" style="width:90px">确认</a> 
-				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
-			</div>
 			<div id="gs_dialog"></div>
 		</div>
 		

@@ -28,7 +28,7 @@ function initQry(){
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	
 	initQryCommbox();
-	initChannel();
+	initListCorp();
 	initCorpk();
 	$('#corpkna_ae').textbox('readonly',true);
 }
@@ -446,9 +446,20 @@ function initCardCorp(){
                     queryParams : {
                     	issingle : "true",
     					ovince :"-5",
-    					dblClickRowCallback:"dblClickRowCallback"
+    					dblClickRowCallback:"selectCardCorps"
     				},
-                    buttons: '#ckj_buttons'
+//                    buttons: '#corp_buttons'
+    				buttons : [ {
+    					text : '确认',
+    					handler : function() {
+    						selectCardCorps();
+    					}
+    				}, {
+    					text : '取消',
+    					handler : function() {
+    						$('#kj_dialog').dialog('close');
+    					}
+    				} ]
                 });
             }
         }]
@@ -464,6 +475,40 @@ function selectCardCorps(rowTable){
 	$('#c_corpkname').textbox('readonly', false);
 	$('#c_corpkname').textbox('textbox').validatebox('options').required = true;
 	$("#kj_dialog").dialog('close');
+}
+
+function initListCorp(){
+    $('#channel_select').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#kj_dialog").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+    					ovince :"-5",
+    					dblClickRowCallback:"selectListCorps"
+    				},
+    				buttons : [ {
+    					text : '确认',
+    					handler : function() {
+    						selectListCorps();
+    					}
+    				}, {
+    					text : '取消',
+    					handler : function() {
+    						$('#kj_dialog').dialog('close');
+    					}
+    				} ]
+                });
+            }
+        }]
+    });
 }
 
 function selectListCorps(rowTable){
