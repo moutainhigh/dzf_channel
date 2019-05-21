@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.PackageDefVO;
 import com.dzf.model.packagedef.PackageDefBVO;
 import com.dzf.model.packagedef.PackageDefCVO;
@@ -242,14 +244,14 @@ public class PackageDefServiceImpl implements IPackageDefService {
     private void checkIsSimilar(PackageDefVO checkVO) throws DZFWarpException {
     	StringBuffer sql = new StringBuffer();
     	SQLParameter spm = new SQLParameter();
-		sql.append("select 1 from cn_packagedef where nvl(dr, 0) = 0 ") ; 
+		sql.append("select vstatus from cn_packagedef where nvl(dr, 0) = 0 ") ; 
 		if(!StringUtil.isEmpty(checkVO.getPk_packagedef())){
 			sql.append("and pk_packagedef != ? ");
 			spm.addParam(checkVO.getPk_packagedef());
 		}
 		sql.append("and vtaxpayertype = ? ");
 		spm.addParam(checkVO.getVtaxpayertype());
-		sql.append("and icompanytype = ? ");
+		sql.append("and nvl(icompanytype,99) = ? ");
 		spm.addParam(checkVO.getIcompanytype());
 		sql.append("and itype = ? ");
 		spm.addParam(checkVO.getItype());
@@ -259,10 +261,17 @@ public class PackageDefServiceImpl implements IPackageDefService {
 		spm.addParam(checkVO.getIcashcycle());
 		sql.append("and icontcycle = ? ");
 		spm.addParam(checkVO.getIcontcycle());
-    	boolean exists = singleObjectBO.isExists(checkVO.getPk_corp(), sql.toString(), spm);
-    	if(exists){
-    		throw new BusinessException("服务套餐已存在");
-    	}
+		Object executeQuery = singleObjectBO.executeQuery(sql.toString(),spm, new ColumnProcessor());
+		if(executeQuery !=null){
+			String vstatus = executeQuery.toString();///状态  1：未发布；2：已发布；3：已下架；
+			if(vstatus.equals("1")){
+				throw new BusinessException("该套餐与[未发布]套餐重复，请检查后重试");
+			}else if(vstatus.equals("2")){
+				throw new BusinessException("该套餐与[已发布]套餐重复，请检查后重试");
+			}else{
+				throw new BusinessException("该套餐与[已下架]套餐重复，请检查后重试");
+			}
+		}
     }
     
     @Override
