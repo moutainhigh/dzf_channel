@@ -89,8 +89,8 @@
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:70px;text-align:right;">大区：</label> 
-					<input id="aname"  name="aname" class="easyui-combobox" style="width:280px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:'auto'" editable="false" />  
+					<input id="aname" class="easyui-combobox" style="width:280px; height: 28px;" 
+						data-options="required:false,valueField:'id',textField:'name',panelHeight:'auto'" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:70px;text-align:right;">加盟商：</label>

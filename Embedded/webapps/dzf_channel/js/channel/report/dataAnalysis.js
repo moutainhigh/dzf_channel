@@ -37,8 +37,8 @@ function load(){
 		frozenColumns:[[
 						{ field : 'ck',	checkbox : true },
 						{ field : 'corpid', title : '加盟商主键', hidden : true},
-						{ field : 'aname',  title : '大区', width : 60, formatter:anameFormat}, 
-						{ field : 'provname',  title : '省市', width : 100}, 
+						{ field : 'aname',  title : '大区', width : 60, formatter:tipsFormat}, 
+						{ field : 'provname',  title : '省市', width : 100, formatter:tipsFormat}, 
 		                { field : 'corpname',  title : '加盟商', width : 150}, 
 		]],
 		columns : [ 
@@ -61,7 +61,7 @@ function load(){
 		             { field : 'ndtmny', title : '合同扣款', width:80,formatter:formatMny,halign:'center',align:'right',rowspan:2},
 		             { field : 'ngbmny', title : '商品购买', width:80,formatter:formatMny,halign:'center',align:'right',rowspan:2},
 		             
-		             { field : 'ssumnum', title : '总用户数', width:80,halign:'right',align:'left',rowspan:2},
+		             { field : 'ssumnum', title : '总用户数', width:80,halign:'center',align:'right',rowspan:2},
 		            ] ,
 		        [
 		            { field : 'smcnum', title : '小规模', width : 60, halign:'center',align:'right'}, 
@@ -78,7 +78,7 @@ function load(){
  * 大区添加tips显示
  * @returns
  */
-function anameFormat(value){
+function tipsFormat(value){
 	if(value != undefined){
 		return "<span title='" + value + "'>" + value + "</span>";
 	}
@@ -215,10 +215,6 @@ function reloadData(){
 		});
 		return;
 	}
-	var ovince = $("#aname").combobox('getValue');
-	if(isEmpty()){
-		ovince = -1;
-	}
 	var url = DZF.contextPath + "/report/dataanalysis!query.action";
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
@@ -227,7 +223,7 @@ function reloadData(){
 		"bperiod" : $("#jmbdate").datebox("getValue"),
 		"eperiod" : $("#jmedate").datebox("getValue"),
 		"cpid" : $("#pk_account").val(),
-		"ovince" : ovince,
+		"aname" : $("#aname").combobox('getValue'),
 	});
 	$("#jqj").html(bdate + " 至 " + edate);
 	closeCx();

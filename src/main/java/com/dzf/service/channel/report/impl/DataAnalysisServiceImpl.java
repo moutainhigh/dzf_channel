@@ -100,9 +100,9 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
 		}
-		if(pamvo.getVprovince() != null && pamvo.getVprovince() != -1){
+		if(!StringUtil.isEmpty(pamvo.getAreaname())){
 			sql.append(" AND a.areacode = ? \n");
-			spm.addParam(pamvo.getVprovince());
+			spm.addParam(pamvo.getAreaname());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
 			sql.append(" AND t.djoindate >= ? \n");
@@ -142,9 +142,9 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND t.pk_corp in (").append(inSql).append(")");
 		}
-		if (pamvo.getVprovince() != null && pamvo.getVprovince() != -1) {
+		if (!StringUtil.isEmpty(pamvo.getAreaname())) {
 			sql.append(" AND a.areacode = ? \n");
-			spm.addParam(pamvo.getVprovince());
+			spm.addParam(pamvo.getAreaname());
 		}
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
 			sql.append(" AND t.djoindate >= ? \n");
@@ -169,7 +169,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		sql.append("       acc.corpname,  \n");
 		sql.append("       acc.djoindate,  \n");
 		sql.append("       acc.drelievedate,  \n");
-		sql.append("       acc.citycounty,  \n");
+		sql.append("       acc.citycounty AS vprovname,  \n");
 		sql.append("       acc.areaname,  \n");
 		
 		sql.append("       corp.ismcustnum,  \n");
