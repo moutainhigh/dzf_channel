@@ -919,13 +919,7 @@ function selectMat(){
  */
 function dClickMat(rowTable){
 	
-	/*var wlnameValue = "";
-	var unitValue="";
-	var matid="";*/
 	if(rowTable.length>0){
-		/*wlnameValue = rowTable[0].wlname;
-		unitValue = rowTable[0].unit;
-		matid = rowTable[0].matfileid;*/
 		
 		var rows = $('#cardGrid').datagrid('getRows');
 		var names = [];

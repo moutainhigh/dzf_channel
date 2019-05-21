@@ -1299,7 +1299,27 @@ function showEdit(row) {
 	if(row.status==3){
 		$("#ifcost").combobox('readonly', false);
 	}
+	
+	$("input",$("#ipname").next("span")).blur(function(){
+		if($("#ipname").combobox('getValue')==""){
+		$("#ipname").combobox('setValue',row.pname);
+		$("#ivprovince").val(row.vprovince);
+	    }
+	});
+	$("input",$("#icityname").next("span")).blur(function(){
+		if($("#icityname").combobox('getValue')==""){
+		$("#icityname").combobox('setValue',row.cityname);
+		$("#ivcity").val(row.vcity);
+	    }
+	});
+	$("input",$("#icountryname").next("span")).blur(function(){
+		if($("#icountryname").combobox('getValue')==""){
+		$("#icountryname").combobox('setValue',row.countryname);
+		$("#ivarea").val(row.varea);
+	    }
+	});
 }
+
 
 function showStatusDetail(row) {
 	if (row.status == 1) {
