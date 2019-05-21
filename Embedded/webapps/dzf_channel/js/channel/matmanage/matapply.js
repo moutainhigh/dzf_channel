@@ -940,21 +940,26 @@ function dClickMat(rowTable){
 					return;
 				}
 			}
-			for(var j=0;j<rowTable.length;j++){
-				var wlname = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'wlname'});
-				var unit = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'unit'});
-				var matfileid = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'matfileid'});
-				var appnum = $('#cardGrid').datagrid('getEditor', {index:editIndex,field : 'applynum'});
+			
+			var i = 0;
+			for(var j=names.length;j<rowTable.length+names.length;j++){
+				
+				var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
+				var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
+				var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
+				var appnum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'applynum'});
 				
 				
-				$(wlname.target).textbox('setValue', rowTable[j].wlname);
-				$(unit.target).textbox('setValue', rowTable[j].unit);
-				$(matfileid.target).textbox('setValue', rowTable[j].matfileid);
+				$(wlname.target).textbox('setValue', rowTable[i].wlname);
+				$(unit.target).textbox('setValue', rowTable[i].unit);
+				$(matfileid.target).textbox('setValue', rowTable[i].matfileid);
 				$(appnum.target).textbox('setValue', 1);
 				
-				if(j!=rowTable.length-1){
+				if(i!=rowTable.length-1){
 					addRow();
+					i++;
 				}
+				
 			}
 		
 	}
