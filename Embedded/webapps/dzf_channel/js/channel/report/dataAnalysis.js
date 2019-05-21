@@ -164,7 +164,7 @@ function initArea() {
 		async : false,
 		url : DZF.contextPath + '/chn_set/chnarea!queryArea.action',
 		data : {
-			"qtype" : 3
+			"qtype" : 1
 		},
 		dataTye : 'json',
 		success : function(result) {
@@ -250,7 +250,6 @@ function onExport(){
 		ovince = -1;
 	}
 	var url = DZF.contextPath + "/report/dataanalysis!onExport.action";
-//	var columns = $('#grid').datagrid("options").columns[0];
 	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
 	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
 	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息

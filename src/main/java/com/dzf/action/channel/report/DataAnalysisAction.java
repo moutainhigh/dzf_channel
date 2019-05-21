@@ -105,14 +105,10 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 				return;
 			}
 		}
-		
-		JSONArray array = (JSONArray) JSON.parseArray(pamvo.getVbillcode());
-		
 		String hblcols = getRequest().getParameter("hblcols");
 		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);//合并列信息
 		
 		String hbhcols = getRequest().getParameter("hbhcols");
-		JSONArray hbhcolsarray = (JSONArray) JSON.parseArray(hbhcols);//冻结列编码
 		
 		String cols = getRequest().getParameter("cols");
 		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);//除冻结列之外，导出字段编码
@@ -155,20 +151,6 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,11,12,13,14,15,16,17,18,19,20,21};
 		//7、字符集合
 		List<String> strslist = new ArrayList<String>();
-//		strslist.add("aname");
-//		strslist.add("provname");
-//		strslist.add("corpname");
-//		strslist.add("jdate");
-//		strslist.add("dreldate");
-//		strslist.add("sconnum");
-//		strslist.add("zconnum");
-//		strslist.add("nsconnum");
-//		strslist.add("smcnum");
-//		strslist.add("gecnum");
-//		strslist.add("smsnum");
-//		strslist.add("gesnum");
-//		strslist.add("smnsnum");
-//		strslist.add("gensnum");
 		strslist.add("corpname");
 		strslist.add("areaname");
 		strslist.add("vprovname");
@@ -189,13 +171,6 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		strslist.add("ssumnum");
 		//8、金额集合
 		List<String> mnylist = new ArrayList<String>();
-//		mnylist.add("naccmny");
-//		mnylist.add("nbmny");
-//		mnylist.add("ndpmny");
-//		mnylist.add("npmny");
-//		mnylist.add("nrmny");
-//		mnylist.add("ndtmny");
-//		mnylist.add("ngbmny");
 		mnylist.add("ntotalmny");
 		mnylist.add("naccountmny");
 		mnylist.add("nbookmny");
@@ -206,9 +181,6 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		mnylist.add("ngoodsbuymny");
 		
 		Map<String, String> field = null;
-//		for(int i = 2; i < hbhcolsarray.size(); i++){
-//			expfieidlist.add(hbhcolsarray.getString(i));
-//		}
 		
 		expfieidlist.add("corpname");
 		expfieidlist.add("areaname");
@@ -238,8 +210,6 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		expfieidlist.add("isumcustnum");
 		
 		for(int i = 0; i < colsarray.size(); i++){
-			
-//			expfieidlist.add(String.valueOf(colsarray.get(i)));
 
 			if(i >= 2 && i < 8){
 				if(i % 2 == 0){
