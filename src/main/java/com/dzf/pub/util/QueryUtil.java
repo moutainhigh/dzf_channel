@@ -31,7 +31,7 @@ public class QueryUtil {
 	 * @time 下午2:41:57
 	 * @return
 	 */
-	public String getWhereSql(){
-	    return " nvl(account.dr,0) = 0 and account.channeltype != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y'"; 
+	public static String getWhereSql(){
+	    return " nvl(account.dr,0) = 0 and account.channeltype != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y' "; 
 	}
 }
