@@ -17,6 +17,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IChannelStatisService;
 import com.dzf.service.pub.IPubService;
@@ -72,6 +73,7 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("  from cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
 		buf.append(" LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid  \n") ; 
+		buf.append(" LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp  \n") ; 
 		buf.append(" where nvl(yt.isncust, 'N') = 'N' ");
 		buf.append("   and nvl(t.dr, 0) = 0 ");
 		buf.append("   and nvl(yt.dr, 0) = 0 ");
@@ -90,6 +92,7 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    buf.append(" AND yt.pk_corp in (").append(inSql).append(")");
 		}
+		buf.append(" AND "+QueryUtil.getWhereSql());
 		buf.append(" group by yt.pk_corp, yt.vchannelid,u.user_name ");
 		buf.append(" order by yt.vchannelid");
 		List<ManagerVO> list=(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(ManagerVO.class));

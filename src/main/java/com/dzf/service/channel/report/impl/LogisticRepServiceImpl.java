@@ -22,6 +22,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.ILogisticRepService;
 import com.dzf.service.pub.IPubService;
@@ -182,6 +183,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());
 		}
+		sql.append(" and "+QueryUtil.getWhereSql());
 		sql.append(" order by ddelivertime desc ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
@@ -333,6 +335,7 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
 			sql.append(pamvo.getVqrysql());
 		}
+		sql.append(" and "+QueryUtil.getWhereSql());
 		sql.append(" order by deliverdate desc,mat.ts desc ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);

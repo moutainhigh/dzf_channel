@@ -20,6 +20,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IDebitQueryService;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -311,6 +312,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
         	sql.append(" and cb.userid=?   \n");
         	sp.addParam(paramvo.getCuserid());
         }
+        sql.append(" and "+ QueryUtil.getWhereSql());
 		sql.append(" order by cn.areacode ,ba.innercode \n");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
