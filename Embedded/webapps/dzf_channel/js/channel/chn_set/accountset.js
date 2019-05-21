@@ -445,13 +445,59 @@ function initCardCorp(){
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
                     	issingle : "true",
-    					ovince :"-5"
+    					ovince :"-5",
+    					dblClickRowCallback:"dblClickRowCallback"
     				},
-                    buttons: '#kj_buttons'
+                    buttons: '#ckj_buttons'
                 });
             }
         }]
     });
+}
+
+function selectCardCorps(rowTable){
+	if(isEmpty(rowTable)){
+		rowTable = $('#gsTable').datagrid('getSelections');
+	}
+	$("#c_corpnm").textbox("setValue",rowTable[0].uname);
+	$("#c_corpid").val(rowTable[0].pk_gs);
+	$('#c_corpkname').textbox('readonly', false);
+	$('#c_corpkname').textbox('textbox').validatebox('options').required = true;
+	$("#kj_dialog").dialog('close');
+}
+
+function selectListCorps(rowTable){
+	if(isEmpty(rowTable)){
+		rowTable = $('#gsTable').datagrid('getSelections');
+	}
+	$("#corpkid_ae").val(null);
+	$("#corpkna_ae").textbox("setValue",null);
+	if(!isEmpty(rowTable.length) && rowTable.length==1){
+		$('#corpkna_ae').textbox('readonly',false);
+		$("#channel_select").textbox("setValue",rowTable[0].uname);
+		$("#pk_account").val(rowTable[0].pk_gs);
+	}else{
+		$('#corpkna_ae').textbox('readonly',true);
+	}
+	var str = "";
+	var corpIds = [];
+	if(rowTable.length>1){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	$("#kj_dialog").dialog('close');
 }
 
 

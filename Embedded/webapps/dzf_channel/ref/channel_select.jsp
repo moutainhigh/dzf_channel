@@ -9,7 +9,7 @@
 <%
 	String issingle = request.getParameter("issingle");
 	String ovince = request.getParameter("ovince");
-
+	String funcName = request.getParameter("dblClickRowCallback");
 %>
 <body>
 <style>
@@ -81,6 +81,7 @@
 	var rows = null;
 	$(function(){
 		var issingle = '<%=issingle%>';
+		var funcName = <%=funcName%>;
 		var columns;
 		if(issingle == "true"){
 			issingle = true;
@@ -123,7 +124,11 @@
 				}else{
 					rowTable.push(rowData);
 				}
-				dClickCompany(rowTable);
+				if(!isEmpty(funcName)){
+						eval('funcName(rowTable)');
+				}else{
+					dClickCompany(rowTable);
+				}
 				rowTable = $('#gsTable').datagrid('clearSelections');
 			},
 			onLoadSuccess: function (data) {
