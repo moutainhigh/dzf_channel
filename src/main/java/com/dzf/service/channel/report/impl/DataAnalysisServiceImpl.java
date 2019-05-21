@@ -192,7 +192,7 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		sql.append("       pay.npaymentmny, \n");
 		sql.append("       pay.nrebatemny, \n");
 		
-		sql.append("       pay.ngoodsbuymny, \n");
+		sql.append("       buy.ngoodsbuymny, \n");
 		
 		sql.append("       usr.isumcustnum \n");
 		sql.append("  FROM  \n");
@@ -492,8 +492,8 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 			sql.append(" AND dl.doperatedate <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY dl.pk_corp) pay \n");
-		sql.append("    ON acc.pk_corp = pay.pk_corp  \n");
+		sql.append(" GROUP BY dl.pk_corp) buy \n");
+		sql.append("    ON acc.pk_corp = buy.pk_corp  \n");
 	}
 	
 	/**
@@ -510,14 +510,14 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		sql.append("  FROM sm_user r  \n") ; 
 		sql.append(" WHERE nvl(r.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(r.locked_tag, 'N') = 'N'  \n") ; 
-		if(pamvo.getBegdate() != null){
-			sql.append(" AND r.able_time >= ? \n");
-			spm.addParam(pamvo.getBegdate() );
-		}
-		if(pamvo.getEnddate() != null){
-			sql.append(" AND r.able_time <= ? \n");
-			spm.addParam(pamvo.getEnddate() );
-		}
+//		if(pamvo.getBegdate() != null){
+//			sql.append(" AND r.able_time >= ? \n");
+//			spm.addParam(pamvo.getBegdate() );
+//		}
+//		if(pamvo.getEnddate() != null){
+//			sql.append(" AND r.able_time <= ? \n");
+//			spm.addParam(pamvo.getEnddate() );
+//		}
 		String where = SqlUtil.buildSqlForIn("r.pk_corp", corpks);
 		sql.append(" AND  ").append(where);
 		sql.append(" GROUP BY r.pk_corp) usr \n");
