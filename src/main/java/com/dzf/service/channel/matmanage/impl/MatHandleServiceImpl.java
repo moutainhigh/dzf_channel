@@ -42,7 +42,6 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		String enCode = CodeUtils1.enCode(sTmp);
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(enCode);
-		System.out.println("加密后："+enCode+"=========");
 		String sql = "select pk_corp fathercorp,unitname corpname from bd_account where nvl(dr,0) = 0 and unitname = ?";
 		MatOrderVO mvo = (MatOrderVO) singleObjectBO.executeQuery(sql, spm, new BeanProcessor(MatOrderVO.class));
 	    return mvo;

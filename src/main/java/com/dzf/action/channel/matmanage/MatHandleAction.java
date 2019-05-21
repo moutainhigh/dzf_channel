@@ -4,13 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.xslf.model.geom.SinArcTanExpression;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -22,16 +18,13 @@ import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.sys.sys_power.UserVO;
-import com.dzf.model.sys.sys_set.FeeTypeVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.ICommonContstant;
 import com.dzf.pub.excel.ExcelComMethod;
@@ -151,16 +144,16 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 			}
 			XSSFSheet sheets = rwb.getSheetAt(ICommonContstant.START_SHEET);
 			//ExcelComMethod.checkTemplete(rwb, STYLE_1, STYLE_NAME_1,startRow);
-			List<MatOrderVO> clist = new ArrayList<MatOrderVO>();
-			List<MatOrderBVO> blist = new ArrayList<MatOrderBVO>();
 			
+			List<MatOrderVO> clist = new ArrayList<MatOrderVO>();
+			Integer counter = 0;
+			String corpname="";
+			String managname="";
+			String date="";
+			String logname="";
 			for (int iBegin = startRow; iBegin < (sheets.getLastRowNum() + 1); iBegin++) {
 				MatOrderVO excelvo = new MatOrderVO();
-				Integer counter = 0;
-				String corpname="";
-				String managname="";
-				String date="";
-				String logname="";
+				List<MatOrderBVO> blist = new ArrayList<MatOrderBVO>();
 				for (int j = 0; j < STYLE_1.length; j++) {
 					XSSFRow xssFRow = sheets.getRow(iBegin);
 					XSSFCell aCell = xssFRow.getCell(Integer.parseInt(STYLE_1[j][0].toString()));
@@ -205,6 +198,7 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 				excelvo = mathandle.getFullVO(excelvo,corpname,managname,date,logname,uservo);
 				clist.add(excelvo);
 			}
+			
 			if (clist.size() > 0) {
 				vos = clist.toArray(new MatOrderVO[0]);
 				vos = mathandle.saveImoprt(vos);
