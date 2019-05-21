@@ -315,10 +315,10 @@ public class PackageDefServiceImpl implements IPackageDefService {
 		        singleObjectBO.update(updateData);
 	        }else if(oldvo.getVstatus() ==3){
 	        	singleObjectBO.update(updateData, new String[]{"vtaxpayertype","icompanytype",
-	        			"itype","nmonthmny","icashcycle","icontcycle","ipublishnum"});
+	        			"itype","nmonthmny","icashcycle","icontcycle","ipublishnum","vmemo"});
 	        }
 	        if(oldvo.getVstatus() == 2){
-	        	singleObjectBO.update(updateData, new String[]{"itype"});
+	        	singleObjectBO.update(updateData, new String[]{"itype","vmemo"});
 	        }else{
 	        	deleteChildren(updateData.getPk_packagedef());
 	        	saveChildren(updateData);
@@ -430,8 +430,9 @@ public class PackageDefServiceImpl implements IPackageDefService {
             }
             vo.setVstatus(2);
             vo.setDpublishdate(new DZFDate());
+            vo.setDoffdate(null);
         }
-        singleObjectBO.updateAry(vos, new String[]{"vstatus","dpublishdate"});
+        singleObjectBO.updateAry(vos, new String[]{"vstatus","dpublishdate","doffdate"});
         return vos;
     }
 

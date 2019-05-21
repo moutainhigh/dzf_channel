@@ -1,6 +1,6 @@
 var parentRow;
 var editIndex = 0;
-var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro,citynms,corpnms,memo;
+var typecode,taxtype,comptype,itype,nmsmny,cylnum,contcycle,pubnum,ispro,citynms,corpnms;
 var areaData;
 var selmap;
 var sellist;
@@ -197,7 +197,13 @@ function initGrid(){
     			width : 300,
     			halign : 'center',
     			align : 'left',
-    			formatter : showTitle
+    			formatter : showTitle,
+    			editor : {
+    					type: 'textbox',
+    		            options: {
+    		            	height: 35,
+    		            }
+    		        }
     		}, {
     			field : 'doperatedate',
     			title : '录入日期',
@@ -493,12 +499,6 @@ function initDgEditor(){
 				}]
 			}
 		};
-    memo = {
-			type: 'textbox',
-            options: {
-            	height: 35,
-            }
-        };
 }
 
 function showTitle(value){
@@ -614,8 +614,6 @@ function addType () {
 	citynmsO.editor=citynms;
 	var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
 	corpnmsO.editor=corpnms;
-	var memoO = $('#grid').datagrid('getColumnOption', 'memo');
-	memoO.editor=memo;
 
 	$('#grid').datagrid("beginEdit", 0);
 	editIndex = 0;
@@ -770,8 +768,6 @@ function modify() {
 			citynmsO.editor=citynms;
 			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
 			corpnmsO.editor=corpnms;
-			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
-			memoO.editor={};
 		}else if(vstatus == 2){
 			var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
 			typecodeO.editor={};
@@ -795,8 +791,6 @@ function modify() {
 			citynmsO.editor={};
 			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
 			corpnmsO.editor={};
-			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
-			memoO.editor={};
 		}else if(vstatus == 1){
 			var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
 			typecodeO.editor=typecode;
@@ -820,8 +814,6 @@ function modify() {
 			citynmsO.editor=citynms;
 			var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
 			corpnmsO.editor=corpnms;
-			var memoO = $('#grid').datagrid('getColumnOption', 'memo');
-			memoO.editor=memo;
 		}
 		showButtons("edit");
 		var index = $("#grid").datagrid("getRowIndex", row);
