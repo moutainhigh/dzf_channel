@@ -1722,7 +1722,7 @@ public class ExportExcel<T> {
 	 */
 	public byte[] expSjfxExcel(String title, List<String> exptitls, List<String> expfieids, List<String> hbltitls,
 			List<Integer> hblindexs, List<String> hbhtitls, Integer[] hbhindexs, DataAnalysisVO[] expVOs, OutputStream out,
-			String pattern, List<String> strslist, List<String> mnylist) {
+			String pattern, List<String> strslist, List<String> mnylist, List<String> strnmylist) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
@@ -1838,47 +1838,8 @@ public class ExportExcel<T> {
 			setRegionStyle(sheet, reg, style);
 			// setRegionStyle(sheet, reg3_1, rightstyle);
 
-//			for (int i = 0; i < array.size(); i++) {
-//				HSSFRow row1 = sheet.createRow(i + index + 1);
-//				Map<String, Object> map = (Map<String, Object>) array.get(i);
-//				int count = 0;
-//				for (String key : expfieids) {
-//					try {
-//						HSSFRichTextString richString;
-//						HSSFCell cell = row1.createCell(count);
-//						if (map.get(key) != null ) {
-//							if (mnylist != null && mnylist.contains(key)) {
-//								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
-//								cell.setCellValue(doublevalue.toString());
-//							} else if (strslist != null && strslist.contains(key)) {
-//								richString = new HSSFRichTextString(map.get(key).toString());
-//								cell.setCellValue(richString);
-//							}
-//						} else {
-//							richString = new HSSFRichTextString("");
-//							cell.setCellValue(richString);
-//						}
-//						if (mnylist != null && mnylist.contains(key)) {
-//							cell.setCellStyle(numsty);
-//						} else if (strslist != null && strslist.contains(key)) {
-//							cell.setCellStyle(strsty);
-//						}
-//						count++;
-//					} catch (SecurityException e) {
-//						throw new WiseRunException(e);
-//					} catch (IllegalArgumentException e) {
-//						throw new WiseRunException(e);
-//					} catch (Exception e) {
-//						log.error("文件打印", e);
-//					} finally {
-//						// 清理资源
-//					}
-//				}
-//			}
-		
 			for (int i = 0; i < expVOs.length; i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
-//				Map<String, Object> map = (Map<String, Object>) array.get(i);
 				int count = 0;
 				for (String key : expfieids) {
 					try {
@@ -1899,7 +1860,11 @@ public class ExportExcel<T> {
 						if (mnylist != null && mnylist.contains(key)) {
 							cell.setCellStyle(numsty);
 						} else if (strslist != null && strslist.contains(key)) {
-							cell.setCellStyle(strsty);
+							if(strnmylist != null && strnmylist.contains(key)){
+								cell.setCellStyle(numsty);
+							}else{
+								cell.setCellStyle(strsty);
+							}
 						}
 						count++;
 					} catch (SecurityException e) {

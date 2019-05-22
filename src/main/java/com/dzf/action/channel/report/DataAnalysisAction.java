@@ -91,47 +91,46 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 	public void onExport() {
 		QryParamVO pamvo = new QryParamVO();
 		pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
-		if(pamvo == null){
+		if (pamvo == null) {
 			pamvo = new QryParamVO();
 		}
 		pamvo.setRows(1000000);
-		
+
 		DataAnalysisVO[] expVOs = null;
-		if(!StringUtil.isEmpty(pamvo.getVbillcode())){
+		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			JSONArray exparray = (JSONArray) JSON.parseArray(pamvo.getVbillcode());
 			Map<String, String> mapping = FieldMapping.getFieldMapping(new DataAnalysisVO());
-			expVOs = DzfTypeUtils.cast(exparray, mapping, DataAnalysisVO[].class,
-					JSONConvtoJAVA.getParserConfig());
-		}else{
+			expVOs = DzfTypeUtils.cast(exparray, mapping, DataAnalysisVO[].class, JSONConvtoJAVA.getParserConfig());
+		} else {
 			List<DataAnalysisVO> clist = analyser.query(pamvo);
-			
-			if(clist != null && clist.size() > 0){
+
+			if (clist != null && clist.size() > 0) {
 				expVOs = clist.toArray(new DataAnalysisVO[0]);
-			}else{
+			} else {
 				return;
 			}
 		}
 		String hblcols = getRequest().getParameter("hblcols");
-		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);//合并列信息
-		
+		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);// 合并列信息
+
 		String cols = getRequest().getParameter("cols");
-		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);//除冻结列之外，导出字段编码
-		
-		//1、导出字段名称
+		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);// 除冻结列之外，导出字段编码
+
+		// 1、导出字段名称
 		List<String> exptitlist = new ArrayList<String>();
 		exptitlist.add("大区");
 		exptitlist.add("省市");
 		exptitlist.add("加盟商");
 		exptitlist.add("加盟日期");
 		exptitlist.add("解约日期");
-		
-		//2、导出字段编码
+
+		// 2、导出字段编码
 		List<String> expfieidlist = new ArrayList<String>();
-		//3、合并列字段名称
+		// 3、合并列字段名称
 		List<String> hbltitlist = new ArrayList<String>();
-		//4、合并列字段下标
+		// 4、合并列字段下标
 		List<Integer> hblindexlist = new ArrayList<Integer>();
-		//5、合并行字段名称
+		// 5、合并行字段名称
 		List<String> hbhtitlist = new ArrayList<String>();
 		hbhtitlist.add("大区");
 		hbhtitlist.add("省市");
@@ -151,15 +150,16 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		hbhtitlist.add("合同扣款");
 		hbhtitlist.add("商品购买");
 		hbhtitlist.add("总用户数");
-		//6、合并行字段下标
-		Integer[] hbhindexs = new Integer[]{0,1,2,3,4,11,12,13,14,15,16,17,18,19,20,21};
-		//7、字符集合
+		// 6、合并行字段下标
+		Integer[] hbhindexs = new Integer[] { 0, 1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+		// 7、字符集合
 		List<String> strslist = new ArrayList<String>();
-		strslist.add("corpname");
 		strslist.add("areaname");
 		strslist.add("vprovname");
+		strslist.add("corpname");
 		strslist.add("djoindate");
 		strslist.add("drelievedate");
+
 		strslist.add("ismcustnum");
 		strslist.add("igecustnum");
 		strslist.add("ismstocknum");
@@ -169,11 +169,10 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		strslist.add("istockconnum");
 		strslist.add("izeroconnum");
 		strslist.add("instockconnum");
-		
 		strslist.add("isumcustnum");
-		
 		strslist.add("ssumnum");
-		//8、金额集合
+
+		// 8、金额集合
 		List<String> mnylist = new ArrayList<String>();
 		mnylist.add("ntotalmny");
 		mnylist.add("naccountmny");
@@ -183,26 +182,40 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		mnylist.add("nrebatemny");
 		mnylist.add("ndeductmny");
 		mnylist.add("ngoodsbuymny");
-		
+
+		// 9、字符按照金额格式显示
+		List<String> strnmylist = new ArrayList<String>();
+		strnmylist.add("ismcustnum");
+		strnmylist.add("igecustnum");
+		strnmylist.add("ismstocknum");
+		strnmylist.add("igestocknum");
+		strnmylist.add("ismnstocknum");
+		strnmylist.add("igenstocknum");
+		strnmylist.add("istockconnum");
+		strnmylist.add("izeroconnum");
+		strnmylist.add("instockconnum");
+		strnmylist.add("isumcustnum");
+		strnmylist.add("ssumnum");
+
 		Map<String, String> field = null;
-		
-		expfieidlist.add("corpname");
+
 		expfieidlist.add("areaname");
 		expfieidlist.add("vprovname");
+		expfieidlist.add("corpname");
 		expfieidlist.add("djoindate");
 		expfieidlist.add("drelievedate");
-		
+
 		expfieidlist.add("ismcustnum");
 		expfieidlist.add("igecustnum");
 		expfieidlist.add("ismstocknum");
 		expfieidlist.add("igestocknum");
 		expfieidlist.add("ismnstocknum");
 		expfieidlist.add("igenstocknum");
-		
+
 		expfieidlist.add("istockconnum");
 		expfieidlist.add("izeroconnum");
 		expfieidlist.add("instockconnum");
-		
+
 		expfieidlist.add("naccountmny");
 		expfieidlist.add("nbookmny");
 		expfieidlist.add("ndepositmny");
@@ -210,24 +223,24 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		expfieidlist.add("nrebatemny");
 		expfieidlist.add("ndeductmny");
 		expfieidlist.add("ngoodsbuymny");
-		
-		expfieidlist.add("isumcustnum");
-		
-		for(int i = 0; i < colsarray.size(); i++){
 
-			if(i >= 2 && i < 8){
-				if(i % 2 == 0){
+		expfieidlist.add("isumcustnum");
+
+		for (int i = 0; i < colsarray.size(); i++) {
+
+			if (i >= 2 && i < 8) {
+				if (i % 2 == 0) {
 					exptitlist.add("小规模");
-				}else{
+				} else {
 					exptitlist.add("一般人");
 				}
 			}
 		}
-		
+
 		exptitlist.add("存量合同");
 		exptitlist.add("0扣款(非存量)合同");
 		exptitlist.add("非存量合同数");
-		
+
 		exptitlist.add("合同代账费");
 		exptitlist.add("账本费");
 		exptitlist.add("保证金");
@@ -236,18 +249,17 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		exptitlist.add("合同扣款");
 		exptitlist.add("商品购买");
 		exptitlist.add("总用户数");
-		
+
 		int j = 3;
-		for(int i = 0; i < hblcolsarray.size(); i++){
+		for (int i = 0; i < hblcolsarray.size(); i++) {
 			field = (Map<String, String>) hblcolsarray.get(i);
-			if("2".equals(String.valueOf(field.get("colspan")))){
+			if ("2".equals(String.valueOf(field.get("colspan")))) {
 				hbltitlist.add(String.valueOf(field.get("title")));
-				hblindexlist.add(i+j);
+				hblindexlist.add(i + j);
 				j++;
 			}
 		}
-		
-		
+
 		ExportExcel<DeductAnalysisVO> ex = new ExportExcel<DeductAnalysisVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -256,28 +268,26 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 			response.reset();
 			String date = DateUtils.getDate(new Date());
 			String fileName = null;
-			String userAgent = getRequest().getHeader("user-agent");  
-            if (!StringUtil.isEmpty(userAgent) && ( userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0   
-                    || userAgent.indexOf("Safari") >= 0 ) ) {  
-                fileName= new String(("加盟商数据分析").getBytes(), "ISO8859-1");  
-            } else {  
-                fileName=URLEncoder.encode("加盟商数据分析","UTF8"); //其他浏览器  
-            }  
-			response.addHeader("Content-Disposition", "attachment;filename=" + fileName//new String("加盟商数据分析".getBytes("UTF-8"),"ISO8859-1")
-					+ new String(date+".xls"));
-//			response.addHeader("Content-Disposition", "attachment;filename=" + new String(date + ".xls"));
+			String userAgent = getRequest().getHeader("user-agent");
+			if (!StringUtil.isEmpty(userAgent) && (userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0
+					|| userAgent.indexOf("Safari") >= 0)) {
+				fileName = new String(("加盟商数据分析").getBytes(), "ISO8859-1");
+			} else {
+				fileName = URLEncoder.encode("加盟商数据分析", "UTF8"); // 其他浏览器
+			}
+			response.addHeader("Content-Disposition", "attachment;filename=" + fileName + new String(date + ".xls"));
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
 			byte[] length = ex.expSjfxExcel("加盟商数据分析", exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
-					hbhindexs, expVOs, toClient, "",strslist,mnylist);
+					hbhindexs, expVOs, toClient, "", strslist, mnylist, strnmylist);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
-		    InOutUtil.close(toClient, "收款登记导出全部关闭输出流");
-		    InOutUtil.close(servletOutputStream, "收款登记导出全部关闭输入流");
+			InOutUtil.close(toClient, "收款登记导出全部关闭输出流");
+			InOutUtil.close(servletOutputStream, "收款登记导出全部关闭输入流");
 		}
 	}
 	
