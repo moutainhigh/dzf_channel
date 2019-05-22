@@ -1067,9 +1067,6 @@ function send() {
 					queryAllProvince();
 				}
 
-				/*
-				 * if (result.success) { //if(type==0){ showCard(row); //} }
-				 */
 			} else {
 				Public.tips({
 					content : "单据状态不为待发货！",
@@ -1120,9 +1117,6 @@ function showCard(row) {
 	queryAllProvince();
 	initLogistics();
 
-	/*
-	 * }else { Public.tips({content : "单据状态不为待发货！" ,type:2}); return; }
-	 */
 }
 
 /**
@@ -1450,28 +1444,6 @@ function readonly(type) {
 	$("#fcode").textbox('readonly', true);
 	$("#dedate").datebox('readonly', true);
 	$("#dename").textbox('readonly', true);
-
-	if (type == 0) {
-		$("#logid").combobox({
-			required : false
-		});
-		$("#fcost").numberbox({
-			required : false
-		});
-		$("#fcode").numberbox({
-			required : false
-		});
-	} else {
-		$("#logid").combobox({
-			required : true
-		});
-		$("#fcost").numberbox({
-			required : true
-		});
-		$("#fcode").numberbox({
-			required : true
-		});
-	}
 
 }
 
