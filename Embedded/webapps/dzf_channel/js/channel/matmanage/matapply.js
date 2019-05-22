@@ -499,6 +499,7 @@ function add() {
     $('.hid').css("display", "none"); 
     $('.xid').css("display", "none");
 	$('.bid').css("display", "");
+	$('.aid').css("display", "none");
 	$('#code').textbox({width:431});
 	status = "add";
 }
@@ -1008,7 +1009,8 @@ function edit(index){
 	operCard();
 	$('.hid').css("display", "none"); 
 	$('.xid').css("display", "none");
-    $('.bid').css("display", ""); 
+    $('.bid').css("display", "none"); 
+    $('.aid').css("display", ""); 
     $('#code').textbox({width:431});
     
 	if(row.children != null && row.children.length > 0){
@@ -1103,7 +1105,7 @@ function del(ths){
 /**
  * 保存
  */
-function onSave(){
+function onSave(t){
 	
 	endBodyEdit();
 	
@@ -1116,14 +1118,20 @@ function onSave(){
 	}
 	postdata["body"] = body;
 	
-	onSaveSubmit(postdata);
+	if(t==1){//新增保存
+		onSaveSubmit(postdata,t);
+	}else{
+		onSaveSubmit(postdata,null);
+	}
+	
+	
 }
 
 
 /**
  * 物料申请单-提交后台保存
  */
-function onSaveSubmit(postdata){
+function onSaveSubmit(postdata,t){
 	setValue();
 	if ($("#mat_add").form('validate')) {
 		$('#mat_add').form('submit', {
@@ -1137,6 +1145,9 @@ function onSaveSubmit(postdata){
 							$.messager.confirm("注意",rows, function(flag) {
 								if (flag) {
 									$('#stype').val(1);
+									if(t==1){
+										$('#kind').val(1);
+									}
 									setValue();
 									//申请
 									if ($("#mat_add").form('validate')) {
@@ -1206,7 +1217,8 @@ function updateData(){
 	
 	editable();
 	$('.xid').css("display", "none");
-	$('.bid').css("display", ""); 
+	$('.bid').css("display", "none"); 
+	$('.aid').css("display", ""); 
 	
 }
 
@@ -1220,7 +1232,8 @@ function showDetail(index){
 	initCard();
 	$('.hid').css("display", "");
 	$('.xid').css("display", "");
-	$('.bid').css("display", "none"); 
+	$('.bid').css("display", "none");
+	$('.aid').css("display", "none");
 	$('#code').textbox({width:168});
 	
 	if(row.status!=4){

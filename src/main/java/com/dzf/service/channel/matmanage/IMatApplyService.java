@@ -78,9 +78,10 @@ public interface IMatApplyService {
 	 * @param bvos
 	 * @param type
 	 * @param stype
+	 * @param kind 
 	 * @return
 	 */
-	String saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos, String type, String stype) throws DZFWarpException;
+	String saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos, String type, String stype, String kind) throws DZFWarpException;
 
 	/**
 	 * 根据主键查询数据

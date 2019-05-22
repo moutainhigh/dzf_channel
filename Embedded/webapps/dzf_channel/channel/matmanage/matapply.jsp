@@ -114,6 +114,7 @@
 				<input id="debegdate" name="debegdate" type="hidden">
 				<input id="deenddate" name="deenddate" type="hidden">
 				<input id="stype" name="stype" type="hidden">
+				<input id="kind" name="kind" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="text-align:right; width: 124px;">合同编号：</label> 
 						<input id="code" name="code" class="easyui-textbox" style="width:168px;height:28px;"/>
@@ -182,6 +183,12 @@
 				</div>
 				<div style="float:right;margin-top:11px;margin-right:-17px;">
 				    <span class="bid">
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave(1)">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				    </span>
+				</div>
+				<div style="float:right;margin-top:11px;margin-right:-17px;">
+				    <span class="aid">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
 				    </span>

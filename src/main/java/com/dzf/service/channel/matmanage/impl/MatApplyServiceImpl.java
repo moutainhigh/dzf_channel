@@ -377,7 +377,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	@SuppressWarnings("unused")
 	@Override
 	public String saveApply(MatOrderVO vo, UserVO uservo,
-			MatOrderBVO[] bvos,String type,String stype)  throws DZFWarpException {
+			MatOrderBVO[] bvos,String type,String stype,String kind)  throws DZFWarpException {
 		
 		String message = "";
 		if(!StringUtil.isEmpty(vo.getPk_materielbill())){
@@ -386,6 +386,10 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				save(vo, uservo, bvos, type);
 				return null;
 			}
+		}
+		if(StringUtil.isEmpty(kind)){//不需要校验
+			save(vo, uservo, bvos, type);
+			return null;
 		}
 		if(type!=null && "1".equals(type)){//发货保存
 			save(vo, uservo, bvos, type);
@@ -425,8 +429,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.queryByPrimaryKey(MaterielFileVO.class,mbvo.getPk_materiel());
 				if(mvo!=null && mvo.getIsappl()!=null){
 					if(mvo.getIsappl() == 1){//勾选了申请条件
-						//获取上季度提单审核通过数
-						Integer passNum = queryContNum(vo,vo.getFathercorp());
+						Integer passNum = null;
+						//if(kind!=null && "1".equals(kind)){
+							//获取上季度提单审核通过数
+							passNum	= queryContNum(vo,vo.getFathercorp());
+						//}
 						
 						/*
 						Integer passNum = null;
@@ -502,18 +509,20 @@ public class MatApplyServiceImpl implements IMatApplyService {
 							//可以申请保存
 							//save(vo, uservo, bvos, type);
 						}else{
-							if(passNum >= ssumout){
-								//可以申请保存
-								//save(vo, uservo, bvos, type);
-							}else{
-								//提示再申请保存
-								mbvo.setSumapply(sumout);
-								mbvo.setSumsucc(sumsucc);
-								message = message + "该加盟商"+mbvo.getVname()+
-										"上季度申请数"+mbvo.getSumapply()+"，"+
-										"提单审核通过数"+passNum+"，"+
-										"不符合该物料的申请条件，望知悉"+"<br/>";
+							if(passNum!=null&&ssumout!=null){
+								if(passNum >= ssumout){
+									//可以申请保存
+									//save(vo, uservo, bvos, type);
+								}else{
+									//提示再申请保存
+									mbvo.setSumapply(sumout);
+									mbvo.setSumsucc(sumsucc);
+									message = message + "该加盟商"+mbvo.getVname()+
+											"上季度申请数"+mbvo.getSumapply()+"，"+
+											"提单审核通过数"+passNum+"，"+
+											"不符合该物料的申请条件，望知悉"+"<br/>";
 
+								}
 							}
 							
 						}
@@ -567,11 +576,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? )THEN \n");
+			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? ) \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
-		sql.append("              1  \n");
+		sql.append("             THEN 1  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
 		sql.append("                  AND t.vdeductstatus = 10  \n");
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
@@ -588,11 +597,11 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') > ? THEN \n");
+			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') > ?  \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
-		sql.append("              -1  \n");
+		sql.append("             THEN  -1  \n");
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
 		sql.append("           END)  AS num  \n");

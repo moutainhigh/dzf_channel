@@ -242,6 +242,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			checkUser(uservo);
 			String type = getRequest().getParameter("type");
 			String stype = getRequest().getParameter("stype");
+			String kind = getRequest().getParameter("kind");
 			if("1".equals(type)){
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
 			}else{
@@ -261,7 +262,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if (bodyVOs == null || bodyVOs.length == 0) {
 				throw new BusinessException("物料数据不能为空");
 			}
-			String message = matapply.saveApply(vo,uservo,bodyVOs,type,stype);
+			String message = matapply.saveApply(vo,uservo,bodyVOs,type,stype,kind);
 			
 			if(!StringUtil.isEmpty(message)){//需要提示信息
 				json.setMsg("提示");
