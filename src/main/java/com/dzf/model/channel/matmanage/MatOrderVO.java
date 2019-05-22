@@ -146,12 +146,6 @@ public class MatOrderVO extends SuperVO {
 	
 	@FieldAlias("unit")
 	private String vunit;//单位
-	//审核通过+终止-作废
-	private Integer dedunum;//上季度加盟商合同审核通过数
-	
-	private Integer num1;//终止+通过
-	
-	private Integer num2;//作废
 	
 	private String message;//提示消息
 	
@@ -575,30 +569,6 @@ public class MatOrderVO extends SuperVO {
 		this.succnum = succnum;
 	}
 
-	public Integer getDedunum() {
-		return dedunum;
-	}
-
-	public void setDedunum(Integer dedunum) {
-		this.dedunum = dedunum;
-	}
-	
-	public Integer getNum1() {
-		return num1;
-	}
-
-	public void setNum1(Integer num1) {
-		this.num1 = num1;
-	}
-
-	public Integer getNum2() {
-		return num2;
-	}
-
-	public void setNum2(Integer num2) {
-		this.num2 = num2;
-	}
-	
 	public Integer getSumapply() {
 		return sumapply;
 	}

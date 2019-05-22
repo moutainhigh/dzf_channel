@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +38,6 @@ import com.dzf.pub.cache.UserCache;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
-import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.pub.IPubService;
 
@@ -387,7 +385,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				return null;
 			}
 		}
-		if(StringUtil.isEmpty(kind)){//不需要校验
+		if(StringUtil.isEmpty(kind)){//不需要校验（修改保存，详情保存等）
 			save(vo, uservo, bvos, type);
 			return null;
 		}
@@ -430,41 +428,9 @@ public class MatApplyServiceImpl implements IMatApplyService {
 				if(mvo!=null && mvo.getIsappl()!=null){
 					if(mvo.getIsappl() == 1){//勾选了申请条件
 						Integer passNum = null;
-						//if(kind!=null && "1".equals(kind)){
 							//获取上季度提单审核通过数
 							passNum	= queryContNum(vo,vo.getFathercorp());
-						//}
 						
-						/*
-						Integer passNum = null;
-						StringBuffer sql = new StringBuffer();
-						SQLParameter spm=new SQLParameter();
-						spm.addParam(vo.getFathercorp());
-						sql.append("  SELECT  COUNT  (CASE WHEN \n");
-						sql.append("       c.vdeductstatus = 1 AND c.vdeductstatus = 9 \n");
-						sql.append("       THEN 1 ELSE NULL \n");
-						sql.append("       END) num1, \n");
-						sql.append("       COUNT (CASE WHEN c.vdeductstatus = 10 \n");
-						sql.append("       THEN 1 ELSE NULL \n");
-						sql.append("       END) num2 \n");
-						sql.append("       FROM cn_contract c \n");
-						sql.append("       where nvl(c.dr,0) = 0  \n");
-						sql.append("        and c.pk_corp = ? \n");
-						
-						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-							sql.append(" and c.deductdata >= ? ");
-							spm.addParam(vo.getDedubegdate());
-						}
-						if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-							sql.append(" and c.deductdata <= ? ");
-							spm.addParam(vo.getDeduenddate());
-						}
-						MatOrderVO mmvo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MatOrderVO.class));
-					    
-						if(mmvo!=null && mmvo.getNum1()!=null 
-								 && mmvo.getNum2()!=null){
-							 passNum = mmvo.getNum1()-mmvo.getNum2();
-						}*/
 						
 						StringBuffer csql = new StringBuffer();
 						SQLParameter cspm=new SQLParameter();
