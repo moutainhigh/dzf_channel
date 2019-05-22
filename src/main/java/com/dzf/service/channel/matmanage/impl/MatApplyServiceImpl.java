@@ -536,39 +536,38 @@ public class MatApplyServiceImpl implements IMatApplyService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer queryContNum(MatOrderVO vo, String corpid) throws DZFWarpException {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count ( \n");
+		sql.append("SELECT  \n");
 		// 合同数量去掉补提单合同数
 		sql.append("       SUM(CASE  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND SUBSTR(t.deductdata, 1, 7) >= ? \n");
+			sql.append("        AND SUBSTR(t.deductdata, 1, 10) >= ? \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND SUBSTR(t.deductdata, 1, 7) < = ? \n");
+			sql.append("        AND SUBSTR(t.deductdata, 1, 10) < = ? \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND ( ( nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') >= ? \n");
+			sql.append("        AND ( ( nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') >= ? \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01')  <= ? \n");
+			sql.append("        AND nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01')  <= ? \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') < ? \n");
+			sql.append("        AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') < ? \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') > ? )THEN \n");
+			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? )THEN \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
@@ -576,27 +575,27 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
 		sql.append("                  AND t.vdeductstatus = 10  \n");
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND SUBSTR(t.dchangetime, 1, 7) >= ? \n");
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) >= ? \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND SUBSTR(t.dchangetime, 1, 7) < = ? \n");
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) < = ? \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("         AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') < ? \n");
+			sql.append("         AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') < ? \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') > ? THEN \n");
+			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') > ? THEN \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
 		sql.append("              -1  \n");
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
-		sql.append("           END) ) AS num  \n");
+		sql.append("           END)  AS num  \n");
 		sql.append("  FROM cn_contract t \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
@@ -612,20 +611,20 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		
 		
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND (  SUBSTR(t.deductdata, 1, 7) >= ?  \n");
+			sql.append("        AND (  SUBSTR(t.deductdata, 1, 10) >= ?  \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("         AND SUBSTR(t.deductdata, 1, 7) <= ? OR \n");
+			sql.append("         AND SUBSTR(t.deductdata, 1, 10) <= ? OR \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("          SUBSTR(t.dchangetime, 1, 7)  >= ?  \n");
+			sql.append("          SUBSTR(t.dchangetime, 1, 10)  >= ?  \n");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("         AND SUBSTR(t.dchangetime, 1, 7) <= ? ) \n");
+			sql.append("         AND SUBSTR(t.dchangetime, 1, 10) <= ? ) \n");
 			spm.addParam(vo.getDeduenddate());
 		}
 		sql.append("   GROUP BY t.pk_corp \n");

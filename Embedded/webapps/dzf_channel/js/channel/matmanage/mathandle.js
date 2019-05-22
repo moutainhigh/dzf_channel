@@ -1029,23 +1029,18 @@ function doExport(){
  * 获取上个季度日期
  */
 function getLastQuarter(){ 
-	var quarterdate;
-	var dayMSec = 24 * 3600 * 1000;  
-	var today = new Date();  
-
-    //得到上一个季度的第一天  
-    var lastQuarterFirstDay = new Date(today.getFullYear() , today.getMonth() - 3 , 1);  
-    //得到本月第一天  
-    var nowMonthFirstDay = new Date(today.getFullYear() , today.getMonth(), 1);  
-    //得到上一个季度的最后一天的毫秒值  
-    var lastQuarterLastDayMSec = nowMonthFirstDay.getTime() - 1 * dayMSec;  
-    var lastQuarterLastDay = new Date(lastQuarterLastDayMSec);  
-      
-    var debegdate = lastQuarterFirstDay;
-    var deenddate = lastQuarterLastDay;
+	
+	var y = new Date().getFullYear();  //当前年份
+	var m = new Date().getMonth();  //当前月份
+	//0（一月） 到 11（十二月）
+	var q = parseInt(m / 3);  //当前季度
+	var qs = new Date(y, (q - 1) * 3, 1);  //上一季度的开始日期
+	var qe = new Date(y, q * 3, 0);  //上一季度的结束日期
+	
+    var debegdate = qs;
+    var deenddate = qe;
     
     return debegdate+","+deenddate;
-    //document.getElementById("debegdate").value = lastQuarterFirstDay;
-    //document.getElementById("deenddate").value = lastQuarterLastDay;
+	
 }  
 
