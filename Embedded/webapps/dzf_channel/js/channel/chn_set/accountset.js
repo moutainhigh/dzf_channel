@@ -223,13 +223,12 @@ function add(){
     $('#addForm').form("clear");
     
     $('#c_corpnm').textbox('readonly', false);
-    $('#c_corpkname').textbox('textbox').validatebox('options').required = false;
     $('#c_corpkname').textbox('readonly', true);
 }
 
 function save(){
 	var flag = $('#addForm').form('validate');
-	if(flag == false){
+	if(flag == false ||  isEmpty($('#c_corpkname').textbox('getValue'))){
 		Public.tips({content:"必输信息为空或格式不正确",type:2});
 		return;
 	}
@@ -315,7 +314,6 @@ function edit(index){
     
     $('#c_corpnm').textbox('readonly', true);
     $('#c_corpkname').textbox('readonly', true);
-    $('#c_corpkname').textbox('textbox').validatebox('options').required = false;
 }
 
 /**
@@ -473,7 +471,6 @@ function selectCardCorps(rowTable){
 	$("#c_corpnm").textbox("setValue",rowTable[0].uname);
 	$("#c_corpid").val(rowTable[0].pk_gs);
 	$('#c_corpkname').textbox('readonly', false);
-	$('#c_corpkname').textbox('textbox').validatebox('options').required = true;
 	$("#kj_dialog").dialog('close');
 }
 
