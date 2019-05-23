@@ -19,6 +19,7 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
@@ -29,6 +30,8 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	private String wheresql = QueryUtil.getWhereSql();
 
 	@Override
 	public AchievementVO query(QryParamVO paramvo) throws DZFWarpException{
@@ -124,7 +127,9 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 		sql.append("       SUM(nvl(t.ndedrebamny, 0)) AS naccountmny  \n");//预付款
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp \n");
+		sql.append(" WHERE ").append(wheresql);
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
@@ -156,7 +161,9 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 		sql.append("       SUM(nvl(t.nsubdedrebamny, 0)) AS naccountmny  \n");//预付款 
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp \n");
+		sql.append(" WHERE ").append(wheresql);
+		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
