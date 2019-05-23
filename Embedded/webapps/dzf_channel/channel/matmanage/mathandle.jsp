@@ -109,7 +109,7 @@
 		</div>
 		
 		<!-- 新增对话框  begin-->
-		<div id="cbDialog" class="easyui-dialog" style="height:440px;width:680px;overflow:auto;padding-top:18px;"
+		<div id="cbDialog" class="easyui-dialog" style="height:500px;width:680px;overflow:auto;padding-top:18px;"
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="mat_add" method="post">
 				<input id="matbillid" name="matbillid" type="hidden">
@@ -209,7 +209,7 @@
 		
 		
 		<!-- 详情对话框  begin-->
-		<div id="infoDialog" class="easyui-dialog" style="height:430px;width:680px;overflow:auto;padding-top:18px;"
+		<div id="infoDialog" class="easyui-dialog" style="height:500px;width:680px;overflow:auto;padding-top:18px;"
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
 			<form id="infoform" method="post">
 				<input id="imatbillid" name="matbillid" type="hidden">
