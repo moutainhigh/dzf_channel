@@ -25,6 +25,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IManagerService;
 import com.dzf.service.pub.IPubService;
@@ -41,6 +42,8 @@ public class ManagerServiceImpl implements IManagerService {
     
 	@Autowired
     private IUserService userser;
+	
+	private String wheresql = QueryUtil.getWhereSql();
 	
 	@Override
 	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
@@ -143,18 +146,16 @@ public class ManagerServiceImpl implements IManagerService {
 		SQLParameter sp = new SQLParameter();
 		sql.append("  select a.areaname,a.areacode,a.userid,");
 		sql.append("  	   y.region_name vprovname,");
-		sql.append("       p.pk_corp, p.innercode, p.vprovince,b.ischarge isxq,");
+		sql.append("       account.pk_corp, account.innercode, account.vprovince,b.ischarge isxq,");
 		sql.append("       b.userid cuserid,b.pk_corp corpname");//, b.vprovince
-		sql.append("  from bd_account p");
+		sql.append("  from bd_account account");
 		sql.append("  left join ynt_area y on p.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
 		sql.append("  left join cn_chnarea_b b on p.vprovince = b.vprovince and b.type = 1 and nvl(b.dr, 0) = 0");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea and a.type = 1 and nvl(a.dr, 0) = 0");
-		sql.append(" where nvl(p.dr, 0) = 0");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'"); 
-		sql.append("   and nvl(p.ischannel,'N')='Y'"); 
+		sql.append(" where ").append(wheresql);
 //		sql.append("   and nvl(p.isseal,'N')='N'"); 
 //		sql.append("   and (p.sealeddate is null or p.sealeddate > ? ) "); 
-		sql.append("   and p.vprovince is not null "); 
+		sql.append("   and account.vprovince is not null "); 
 //		sp.addParam(new DZFDate());
 	    if(type==2){// 区域总经理
 	    	sql.append(" and a.userid=? ");
@@ -218,14 +219,13 @@ public class ManagerServiceImpl implements IManagerService {
 	private List<ManagerVO> qryCharge(ManagerVO qvo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.areacode,a.userid ,b.vprovname,b.vprovince,p.innercode,b.pk_corp corpname,");
-//		sql.append(" (case when b.pk_corp is null then null else b.userid end) cuserid ");
-		sql.append(" (case when b.pk_corp is null then null  when b.pk_corp!=p.pk_corp then null else b.userid end) cuserid ");
-		sql.append(" from bd_account p right join cn_chnarea_b b on  p.vprovince=b.vprovince  " );   
+		sql.append("select account.pk_corp ,account.innercode,a.areaname,a.areacode,a.userid ,b.vprovname,b.vprovince,b.pk_corp corpname,");
+		sql.append(" (case when b.pk_corp is null then null  when b.pk_corp!=account.pk_corp then null else b.userid end) cuserid ");
+		sql.append(" from bd_account account right join cn_chnarea_b b on  account.vprovince=b.vprovince  " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' and b.userid=?" );
-	    sql.append(" and nvl(b.ischarge,'N')='Y' " );
+		sql.append(" where ").append(wheresql);
+	    sql.append("    and nvl(b.dr,0)=0  and nvl(a.dr,0)=0 and b.type=1 and b.userid=?" );
+	    sql.append("    and nvl(b.ischarge,'N')='Y' " );
     	sp.addParam(qvo.getUserid());
 	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
 	    return list;
@@ -234,11 +234,11 @@ public class ManagerServiceImpl implements IManagerService {
 	private List<ManagerVO> qryNotCharge(ManagerVO qvo,String condition) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
-		sql.append("select p.pk_corp ,a.areaname,a.areacode,a.userid,b.userid cuserid,b.vprovname,b.vprovince,p.innercode");
-		sql.append(" from bd_account p right join cn_chnarea_b b on  p.pk_corp=b.pk_corp " );   
+		sql.append("select account.pk_corp,account.innercode ,a.areaname,a.areacode,a.userid,b.userid cuserid,b.vprovname,b.vprovince");
+		sql.append(" from bd_account account right join cn_chnarea_b b on account.pk_corp=b.pk_corp " );   
 		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where nvl(b.dr,0)=0 and nvl(p.dr,0)=0 and nvl(a.dr,0)=0 and b.type=1" );
-	    sql.append(" and nvl(p.ischannel,'N')='Y' and nvl(p.isaccountcorp,'N') = 'Y' " );
+		sql.append(" where " ).append(wheresql);
+	    sql.append(" and nvl(b.dr,0)=0  and nvl(a.dr,0)=0 and b.type=1" );
 		if(!StringUtil.isEmpty(condition)){
 			 sql.append(" and ("+condition+" or b.userid=? ) " );
 		}else{
