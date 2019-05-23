@@ -149,8 +149,8 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append("       account.pk_corp, account.innercode, account.vprovince,b.ischarge isxq,");
 		sql.append("       b.userid cuserid,b.pk_corp corpname");//, b.vprovince
 		sql.append("  from bd_account account");
-		sql.append("  left join ynt_area y on p.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
-		sql.append("  left join cn_chnarea_b b on p.vprovince = b.vprovince and b.type = 1 and nvl(b.dr, 0) = 0");
+		sql.append("  left join ynt_area y on account.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
+		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince and b.type = 1 and nvl(b.dr, 0) = 0");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea and a.type = 1 and nvl(a.dr, 0) = 0");
 		sql.append(" where ").append(wheresql);
 //		sql.append("   and nvl(p.isseal,'N')='N'"); 
