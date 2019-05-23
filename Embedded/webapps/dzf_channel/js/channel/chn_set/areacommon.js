@@ -604,7 +604,7 @@ function initChnCorp(){
 function initChnUser(){
 	$("#userdialog").dialog({
 		width : 520,
-		height : 530,
+		height : 470,
 		readonly : true,
 		title : '选择用户',
 		cache : false,

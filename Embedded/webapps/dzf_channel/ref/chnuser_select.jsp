@@ -20,7 +20,7 @@ $(function(){
 	    url: DZF.contextPath + '/sys/chnUseract!query.action',
 	    method: 'post',
 	    //fit:true,
-	    height:390,
+	    height:330,
 		fitColumns: true,
 		idField:'uid',
 		rownumbers: true,
