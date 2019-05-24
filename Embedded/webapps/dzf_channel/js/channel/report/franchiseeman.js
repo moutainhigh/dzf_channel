@@ -49,13 +49,12 @@ function initArea(queryData){
 
 function changeArea(){
 	 $("#aname").combobox({
-		onChange : function(n, o) {
+		 onSelect  : function() {
 			var queryData={"qtype" :1};
-			if(!isEmpty(n)){
-				queryData={'aname' : n,"qtype" :1};
-				$('#ovince').combobox('setValue',null);
-				$('#cuid').combobox('setValue',null);
-			}
+			var aname = $("#aname").combobox('getValue');
+			queryData={'aname' : aname,"qtype" :1};
+			$('#ovince').combobox('setValue',null);
+			$('#cuid').combobox('setValue',null);
 			initProvince(queryData);
 			initManager(queryData);
 		}
@@ -64,12 +63,12 @@ function changeArea(){
 
 function changeProvince(){
 	 $("#ovince").combobox({
-		onChange : function(n, o) {
+		 onSelect  : function() {
 			var queryData={"qtype" :1};
-			if(!isEmpty(n)){
-				queryData={'aname' : $("#aname").combobox('getValue'),'ovince':n,"qtype" :1};
-				$('#cuid').combobox('setValue',null);
-			}
+			var ovince = $("#ovince").combobox("getValue") ;
+			var aname = $("#aname").combobox('getValue');
+			queryData={'aname' : ovince,'ovince':ovince,"qtype" :1};
+			$('#cuid').combobox('setValue',null);
 			initManager(queryData);
 		}
 	});
@@ -90,22 +89,22 @@ function clearCondition(){
 function reloadData() {
 	var queryParams =new Array();
 	var aname=$('#aname').combobox('getValue')
-	if(aname!=null&&aname!=""){
+	if(aname!=null && aname!=""){
 		queryParams['aname'] = $('#aname').combobox('getValue');
 	}
 	var ovince=$('#ovince').combobox('getValue')
-	if(ovince!=null&&ovince!=""){
+	if(ovince!=null && ovince!=""){
 		queryParams['ovince'] = $('#ovince').combobox('getValue');
 	}
 	var cuid=$('#cuid').combobox('getValue')
-	if(cuid!=null&&cuid!=""){
+	if(cuid!=null && cuid!=""){
 		queryParams['cuid'] = $('#cuid').combobox('getValue');
 	}
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
 	queryParams['type'] = 3;
 	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('options').url = DZF.contextPath +'/report/manager!query.action';
+	$('#grid').datagrid('options').url = DZF.contextPath +'/report/franchiseeman!query.action';
 	$("#grid").datagrid('reload');
 	$('#grid').datagrid('unselectAll');
 	$("#qrydialog").css("visibility", "hidden");
@@ -115,7 +114,7 @@ function reloadData() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/manager!query.action',
+		url : DZF.contextPath + '/report/franchiseeman!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
@@ -196,245 +195,78 @@ function load() {
 			    ]
 			],
 		onLoadSuccess : function(data) {
-			insertData(data);
-			
+			var myDate = new Date(); //实例一个时间对象；
+			myDate.getFullYear();   //获取系统的年；
+			myDate.getMonth()+1;   //获取系统月份，由于月份是从0开始计算，所以要加1
+			myDate.getDate(); // 获取系统日，
+			myDate.getHours(); //获取系统时，
+			myDate.getMinutes(); //分
+			myDate.getSeconds(); //秒
+			var seperator1 = "-";
+			console.log(myDate.getHours()+seperator1 + myDate.getMinutes() +seperator1+myDate.getSeconds())
+			 
+			var bondmny = 0;	
+		    var predeposit = 0;	
+		    var xgmNum = 0;	
+		    var ybrNum = 0;	
+		    var rnum = 0;	
+		    var anum = 0;	
+		    var rntlmny = 0;	
+		    var antlmny = 0;
+		    var ndemny = 0;	
+		    var nderebmny = 0;	
+		    var outmny = 0;	
+			var retmny = 0;
+			var row;
 			for(var i = 0;i<data.rows.length;i++){
-				if(data.rows[i].provname){
-					if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "省" || data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "市" ){
-						
-						/*$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")*/
-					}else if(data.rows[i].provname.substr(data.rows[i].provname.length -1,1) ==  "计" ){
-						$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
-					}
-				}else if(data.rows[i].aname.substr(data.rows[i].aname.length -2,2) == "合计"){
-					
+			    
+				row=data.rows[i];
+				
+				bondmny += parseFloat(row.bondmny);
+				predeposit += parseFloat(row.predeposit);
+				xgmNum += parseFloat(row.xgmNum);
+				ybrNum += parseFloat(row.ybrNum);
+				rnum += parseFloat(row.rnum);
+				anum += parseFloat(row.anum);
+				rntlmny += parseFloat(row.rntlmny);
+				antlmny += parseFloat(row.antlmny);
+				ndemny += parseFloat(row.ndemny);
+				nderebmny += parseFloat(row.nderebmny);
+				outmny += parseFloat(row.outmny);
+				retmny += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
+				if(isEmpty(row.corpid) && !isEmpty(row.provname)){
+					$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
+				}else if(isEmpty(row.corpid)){
 					$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#a9b9d5")
 				}
+				/*$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")*/
 			}
 			
+			var footerData = new Object();
+			footerData['corpnm'] = '合计';
+			footerData['bondmny'] = bondmny;
+			footerData['predeposit'] = predeposit;
+			footerData['xgmNum'] = xgmNum;
+			footerData['ybrNum'] = ybrNum;
+			footerData['rnum'] = rnum;
+			footerData['anum'] = anum;
+			footerData['rntlmny'] = rntlmny;
+			footerData['antlmny'] = antlmny;
+			footerData['ndemny'] = ndemny;
+			footerData['nderebmny'] = nderebmny;
+			footerData['outmny'] = outmny;
+			footerData['retmny'] = retmny;
+			var fs=new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter',fs);
 			
+			var myDate2 = new Date(); //实例一个时间对象；
+			myDate2.getHours(); //获取系统时，
+			myDate2.getMinutes(); //分
+			myDate2.getSeconds(); //秒
+			console.log(myDate2.getHours()+seperator1 + myDate2.getMinutes() +seperator1+myDate2.getSeconds())
 		}
 	});
-}
-
-
-function insertData(data){
-	var mark=1;
-	
-    var bondmny = 0;	
-    var predeposit = 0;	
-    var xgmNum = 0;	
-    var ybrNum = 0;	
-    var rnum = 0;	
-    var anum = 0;	
-    var rntlmny = 0;	
-    var antlmny = 0;
-    var ndemny = 0;	
-    var nderebmny = 0;	
-    var outmny = 0;	
-    var retmny = 0;
-    
-    var bondmny1 = 0;	
-    var predeposit1 = 0;	
-    var xgmNum1 = 0;	
-    var ybrNum1 = 0;	
-    var rnum1 = 0;	
-    var anum1 = 0;	
-    var rntlmny1 = 0;	
-    var antlmny1 = 0;
-    var ndemny1 = 0;	
-    var nderebmny1 = 0;	
-    var outmny1 = 0;	
-    var retmny1 = 0;
-    
-    var bondmny2 = 0;	
-    var predeposit2 = 0;	
-    var xgmNum2 = 0;	
-    var ybrNum2 = 0;	
-    var rnum2 = 0;	
-    var anum2 = 0;	
-    var rntlmny2 = 0;	
-    var antlmny2 = 0;
-    var ndemny2 = 0;	
-    var nderebmny2 = 0;	
-    var outmny2 = 0;
-    var retmny2 = 0;
-    
-    var j=0;
-　　　for (var i=0; i <data.rows.length; i++) {
-		var row=data.rows[i];
-		bondmny += parseFloat(row.bondmny);
-		predeposit += parseFloat(row.predeposit);
-		xgmNum += parseFloat(row.xgmNum);
-		ybrNum += parseFloat(row.ybrNum);
-		rnum += parseFloat(row.rnum);
-		anum += parseFloat(row.anum);
-		rntlmny += parseFloat(row.rntlmny);
-		antlmny += parseFloat(row.antlmny);
-		ndemny += parseFloat(row.ndemny);
-		nderebmny += parseFloat(row.nderebmny);
-		outmny += parseFloat(row.outmny);
-		retmny += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
-		
-　　　　　　if (i!=0 && row.provname == data.rows[i-1].provname) {  
-	　　　　　　　　mark += 1;                                            
-	　　　　　　　　$('#grid').datagrid('mergeCells',{ 
-	　　　　　　　　　　index: i+1-mark,                 
-	　　　　　　　　　　field: 'uprice',              
-	　　　　　　　　　　rowspan:mark                 
-	　　　　　　　　}); 
-　　　　　　}else{
-　　　　　　　　mark=1;                                
-　　　　　　}
-		
-		j=0;
-		if(i!=0 && row.provname!=data.rows[i-1].provname){
-			$('#grid').datagrid('insertRow',{
-				index: i,	// index start with 0
-				row: {
-//					aname:data.rows[i-1].aname,
-					provname: data.rows[i-1].provname+'小计',
-					bondmny	:	bondmny1,
-					predeposit 	:	predeposit1 ,
-					xgmNum 	:	xgmNum1 ,
-					ybrNum :		ybrNum1 ,
-					rnum	:	rnum1,
-					anum	:	anum1,
-					rntlmny :		rntlmny1 ,
-					antlmny :		antlmny1 ,
-					ndemny 	:	ndemny1 ,
-					nderebmny:		nderebmny1,
-					outmny	:	outmny1  ,
-					retmny	:	retmny1  ,
-				}
-			});
-		     i++;
-		     j++;
-		     bondmny1 = data.rows[i].bondmny;	
-		     predeposit1 = data.rows[i].predeposit;
-		     xgmNum1 =data.rows[i].xgmNum;
-		     ybrNum1 =data.rows[i].ybrNum;
-		     rnum1 = data.rows[i].rnum;
-		     anum1 =data.rows[i].anum;	
-		     rntlmny1 = data.rows[i].rntlmny;
-		     antlmny1 =data.rows[i].antlmny;
-		     ndemny1 = data.rows[i].ndemny;	
-		     nderebmny1 = data.rows[i].nderebmny;	
-		     outmny1 =data.rows[i].outmny;
-		     retmny1 = parseFloat(isEmpty(data.rows[i].retmny) ? 0 : data.rows[i].retmny);
-		}else{
-			bondmny1 += parseFloat(row.bondmny);
-			predeposit1 += parseFloat(row.predeposit);
-			xgmNum1 += parseFloat(row.xgmNum);
-			ybrNum1 += parseFloat(row.ybrNum);
-			rnum1 += parseFloat(row.rnum);
-			anum1 += parseFloat(row.anum);
-			rntlmny1 += parseFloat(row.rntlmny);
-			antlmny1 += parseFloat(row.antlmny);
-			ndemny1 += parseFloat(row.ndemny);
-			nderebmny1 += parseFloat(row.nderebmny);
-			outmny1 += parseFloat(row.outmny);
-			retmny1 += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
-		}
-		
-		if(i!=0 && row.aname!=data.rows[i-1-j].aname){
-			$('#grid').datagrid('insertRow',{
-				index: i,	// index start with 0
-				row: {
-					aname: data.rows[i-2].aname+'合计',
-					bondmny	:	bondmny2,
-					predeposit 	:	predeposit2 ,
-					xgmNum 	:	xgmNum2,
-					ybrNum :		ybrNum2 ,
-					rnum	:	rnum2,
-					anum	:	anum2,
-					rntlmny :		rntlmny2 ,
-					antlmny :		antlmny2 ,
-					ndemny 	:	ndemny2 ,
-					nderebmny:		nderebmny2,
-					outmny	:	outmny2  ,
-					retmny	:	retmny2  ,
-				}
-			});
-			 i++;
-		     bondmny2 = data.rows[i].bondmny;	
-		     predeposit2 = data.rows[i].predeposit;
-		     xgmNum2 =data.rows[i].xgmNum;
-		     ybrNum2 =data.rows[i].ybrNum;
-		     rnum2 = data.rows[i].rnum;
-		     anum2 =data.rows[i].anum;	
-		     rntlmny2 = data.rows[i].rntlmny;
-		     antlmny2 =data.rows[i].antlmny;
-		     ndemny2 = data.rows[i].ndemny;	
-		     nderebmny2 = data.rows[i].nderebmny;	
-		     outmny2 =data.rows[i].outmny;
-		     retmny2 =data.rows[i].retmny;
-		}else{
-			bondmny2 += parseFloat(row.bondmny);
-			predeposit2 += parseFloat(row.predeposit);
-			xgmNum2 += parseFloat(row.xgmNum);
-			ybrNum2 += parseFloat(row.ybrNum);
-			rnum2 += parseFloat(row.rnum);
-			anum2 += parseFloat(row.anum);
-			rntlmny2 += parseFloat(row.rntlmny);
-			antlmny2 += parseFloat(row.antlmny);
-			ndemny2 += parseFloat(row.ndemny);
-			nderebmny2 += parseFloat(row.nderebmny);
-			outmny2 += parseFloat(row.outmny);
-		    retmny2 += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
-		}
-　	}
-
-	$('#grid').datagrid('appendRow',{
-//			aname:data.rows[data.rows.length-1].aname,
-			provname: data.rows[data.rows.length-1].provname+'小计',
-			bondmny	:	bondmny1,
-			predeposit 	:	predeposit1 ,
-			xgmNum 	:	xgmNum1 ,
-			ybrNum :		ybrNum1 ,
-			rnum	:	rnum1,
-			anum	:	anum1,
-			rntlmny :		rntlmny1 ,
-			antlmny :		antlmny1 ,
-			ndemny 	:	ndemny1 ,
-			nderebmny:		nderebmny1,
-			outmny	:	outmny1  ,
-			retmny	:	retmny1  ,
-	});
-
-	$('#grid').datagrid('appendRow',{
-			aname: data.rows[data.rows.length-2].aname==undefined?'无大区合计':data.rows[data.rows.length-2].aname+'合计',
-			bondmny	:	bondmny2,
-			predeposit 	:	predeposit2 ,
-			xgmNum 	:	xgmNum2 ,
-			ybrNum :		ybrNum2 ,
-			rnum	:	rnum2,
-			anum	:	anum2,
-			rntlmny :		rntlmny2 ,
-			antlmny :		antlmny2 ,
-			ndemny 	:	ndemny2 ,
-			nderebmny:		nderebmny2,
-			outmny	:	outmny2  ,
-			retmny	:	retmny2  ,
-	});
-	
-	var footerData = new Object();
-	footerData['corpnm'] = '合计';
-	footerData['bondmny'] = bondmny;
-	footerData['predeposit'] = predeposit;
-	footerData['xgmNum'] = xgmNum;
-	footerData['ybrNum'] = ybrNum;
-	footerData['rnum'] = rnum;
-	footerData['anum'] = anum;
-	footerData['rntlmny'] = rntlmny;
-	footerData['antlmny'] = antlmny;
-	footerData['ndemny'] = ndemny;
-	footerData['nderebmny'] = nderebmny;
-	footerData['outmny'] = outmny;
-	footerData['retmny'] = retmny;
-	var fs=new Array(1);
-	fs[0] = footerData;
-	$('#grid').datagrid('reloadFooter',fs);
 }
 
 /**
