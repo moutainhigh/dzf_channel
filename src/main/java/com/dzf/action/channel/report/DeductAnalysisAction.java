@@ -26,14 +26,12 @@ import com.dzf.model.channel.report.DeductAnalysisVO;
 import com.dzf.model.channel.report.ReportDataGrid;
 import com.dzf.model.channel.report.ReportDatagridColumn;
 import com.dzf.model.pub.CommonUtil;
-import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.SafeCompute;
@@ -61,6 +59,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 	/**
 	 * 查询金额数据
 	 */
+	@SuppressWarnings("unchecked")
 	public void query() {
 		ReportDataGrid grid = new ReportDataGrid();
 		try {
@@ -69,15 +68,12 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			if(paramvo == null){
 				paramvo = new QryParamVO();
 			}
-			DZFDateTime btime = new DZFDateTime();
 			Object[] objs = analyser.queryColumn(paramvo);
 			if(objs != null && objs.length > 0){
 				grid.setHbcolumns((List<ReportDatagridColumn>) objs[0]);
 				grid.setColumns((List<ReportDatagridColumn>) objs[1]);
 			}
-			DZFDateTime b1time = new DZFDateTime();
 			List<DeductAnalysisVO> list = queryData(paramvo);
-			DZFDateTime b2time = new DZFDateTime();
 			if(list != null && list.size() > 0){
 				List<String> nslist = getNoSumList();
 				HashMap<String, Object> smap = new HashMap<String, Object>();
@@ -129,11 +125,6 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			}else{
 				grid.setRows(new ArrayList<DeductAnalysisVO>());
 			}
-			DZFDateTime etime = new DZFDateTime();
-			log.info("开始时间："+btime);
-			log.info("获取列结束时间："+b1time);
-			log.info("获取数据结束时间："+b2time);
-			log.info("结束时间："+etime);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功");
 		} catch (Exception e) {

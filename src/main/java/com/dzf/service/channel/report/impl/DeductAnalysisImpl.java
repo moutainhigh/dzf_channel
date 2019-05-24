@@ -28,7 +28,6 @@ import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.IDeductAnalysis;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("deductanalysisser")
 public class DeductAnalysisImpl implements IDeductAnalysis {
@@ -38,123 +37,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 
 	@Autowired
 	private IPubService pubser;
-
-	@Override
-	public List<DeductAnalysisVO> query(QryParamVO paramvo) throws DZFWarpException {
-		// 查询日期校验
-		checkQryDate(paramvo);
-		// 1、客户主键
-		List<String> pk_corplist = new ArrayList<String>();
-		// 2、扣款金额明细
-		Map<String, List<DeductAnalysisVO>> detmap = queryDedMnyDetail(paramvo, pk_corplist);
-		// 3、扣款总金额
-		Map<String, DeductAnalysisVO> dedmap = queryTotalMny(paramvo, 1, pk_corplist);
-		// 4、退款总金额
-		Map<String, DeductAnalysisVO> bakmap = queryTotalMny(paramvo, 2, pk_corplist);
-		// 5、存量客户数
-		Map<String, Integer> custmap = queryCustNum(paramvo);
-		if (pk_corplist != null && pk_corplist.size() > 0) {
-			List<DeductAnalysisVO> retlist = getRetList(pk_corplist, detmap, dedmap, bakmap, custmap);
-			setShowName(retlist);
-			return retlist;
-		}
-		return new ArrayList<DeductAnalysisVO>();
-	}
-
-	/**
-	 * 设置显示名称
-	 * 
-	 * @param retlist
-	 * @throws DZFWarpException
-	 */
-	private void setShowName(List<DeductAnalysisVO> retlist) throws DZFWarpException {
-		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
-		UserVO uservo = null;
-//		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
-		for (DeductAnalysisVO dvo : retlist) {
-			if (marmap != null && !marmap.isEmpty()) {
-				uservo = marmap.get(dvo.getPk_corp());
-				if (uservo != null) {
-					dvo.setVmanager(uservo.getUser_name());// 渠道经理
-				}
-			}
-			if (opermap != null && !opermap.isEmpty()) {
-				uservo = opermap.get(dvo.getPk_corp());
-				if (uservo != null) {
-					dvo.setVoperater(uservo.getUser_name());// 渠道运营
-				}
-			}
-		}
-	}
-
-	/**
-	 * 组装返回信息
-	 * 
-	 * @param pk_corplist
-	 * @param detmap
-	 * @param dedmap
-	 * @param bakmap
-	 * @param custmap
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private List<DeductAnalysisVO> getRetList(List<String> pk_corplist, Map<String, List<DeductAnalysisVO>> detmap,
-			Map<String, DeductAnalysisVO> dedmap, Map<String, DeductAnalysisVO> bakmap, Map<String, Integer> custmap)
-			throws DZFWarpException {
-		List<DeductAnalysisVO> retlist = new ArrayList<DeductAnalysisVO>();
-		DeductAnalysisVO retvo = null;
-		List<DeductAnalysisVO> detlist = null;
-		DeductAnalysisVO dedvo = null;
-		DeductAnalysisVO bakvo = null;
-		int num = 0;// 循环次数
-		int connum = 0;// 合同总数量
-
-		int icustnum = 0;// 存量合同数
-		int izeronum = 0;// 0扣款(非存量)合同数
-		int idednum = 0;// 非存量合同数
-
-		DZFDouble ndedsummny = DZFDouble.ZERO_DBL;
-		for (String pk_corp : pk_corplist) {
-			num = 0;
-			connum = 0;
-			icustnum = 0;// 存量合同数
-			izeronum = 0;// 0扣款(非存量)合同数
-			idednum = 0;// 非存量合同数
-			ndedsummny = DZFDouble.ZERO_DBL;
-			
-			if (detmap != null && !detmap.isEmpty()) {
-				detlist = (List<DeductAnalysisVO>) detmap.get(pk_corp);
-				if (detlist != null && detlist.size() > 0) {
-					for (DeductAnalysisVO dvo : detlist) {
-						num = 0;
-						connum = 0;
-						icustnum = 0;// 存量合同数
-						izeronum = 0;// 0扣款(非存量)合同数
-						idednum = 0;// 非存量合同数
-						ndedsummny = DZFDouble.ZERO_DBL;
-
-						retvo = getDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum,
-								icustnum, izeronum, idednum, ndedsummny, dvo);
-						retlist.add(retvo);
-						num++;
-					}
-				} else {
-					// 某公司没有扣款明细
-					retvo = getNullDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum,
-							icustnum, izeronum, idednum, ndedsummny);
-					retlist.add(retvo);
-				}
-			} else {
-				// 查询公司没有扣款明细
-				retvo = getNullDeductCorp(pk_corp, dedvo, bakvo, bakmap, detmap, dedmap, custmap, num, connum, icustnum,
-						izeronum, idednum, ndedsummny);
-				retlist.add(retvo);
-			}
-		}
-
-		return retlist;
-	}
 
 	/**
 	 * 查询扣款明细
@@ -715,8 +597,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException {
+	private List<DeductAnalysisVO> queryMnyOrder(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO qryvo = getQrySqlSpm(paramvo, 2);
 		List<DeductAnalysisVO> list = (List<DeductAnalysisVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(DeductAnalysisVO.class));
@@ -910,7 +791,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 					setvo = new DeductAnalysisVO();
 					num = 0;
 					for (DeductAnalysisVO dvo : detlist) {
-//						num = 0;
 						connum = 0;
 						icustnum = 0;// 存量合同数
 						izeronum = 0;// 0扣款(非存量)合同数
@@ -922,7 +802,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 						setUserName(marmap, opermap, retvo);
 						setvo = setHashValue(retvo, num, setvo);
 						num++;
-//						retlist.add(retvo);
 					}
 					retlist.add(setvo);
 				} else {
@@ -934,7 +813,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 					num = 0;
 					setvo = setHashValue(retvo, num, setvo);
 					retlist.add(setvo);
-//					retlist.add(retvo);
 				}
 			} else {
 				// 查询公司没有扣款明细
@@ -945,7 +823,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 				num = 0;
 				setvo = setHashValue(retvo, num, setvo);
 				retlist.add(setvo);
-//				retlist.add(retvo);
 			}
 		}
 
@@ -962,9 +839,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 	 */
 	private DeductAnalysisVO setHashValue(DeductAnalysisVO retvo, Integer num, DeductAnalysisVO setvo) throws DZFWarpException {
 		HashMap<String, Object> map = setvo.getHash();
-		//总扣款计算
-//		DZFDouble ndeductmny_sum = setvo.getNdeductmny_sum();
-//		DZFDouble countmny = DZFDouble.ZERO_DBL;
 		if(num == 0){
 			map.put("corpid", retvo.getPk_corp());
 			map.put("corpcode", retvo.getCorpcode());
@@ -975,8 +849,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			}
 			if(retvo.getNretmny() != null){
 				DZFDouble retmny = SafeCompute.multiply(retvo.getNretmny(), new DZFDouble(-1)).setScale(2, DZFDouble.ROUND_HALF_UP);
-//				countmny = SafeCompute.multiply(retmny, new DZFDouble(retvo.getIretnum())).setScale(2, DZFDouble.ROUND_HALF_UP);
-//				ndeductmny_sum = SafeCompute.add(ndeductmny_sum, retmny);
 				map.put("retmny", retmny);
 			}
 			if(retvo.getIstocknum() != null){
@@ -1005,12 +877,6 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		String mny = String.valueOf(ndeductmny);
 		map.put("num_"+mny, retvo.getIcorpnums());
 		map.put("mny_"+mny, ndeductmny);
-		
-//		countmny = SafeCompute.multiply(ndeductmny, new DZFDouble(retvo.getIcorpnums())).setScale(2, DZFDouble.ROUND_HALF_UP);
-//		ndeductmny_sum = SafeCompute.add(ndeductmny_sum, countmny);
-//		setvo.setNdeductmny_sum(ndeductmny_sum);
-//		map.put("summny", ndeductmny_sum);
-		
 		return setvo;
 	}
 	
