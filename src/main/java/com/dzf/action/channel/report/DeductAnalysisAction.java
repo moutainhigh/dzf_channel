@@ -75,52 +75,9 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			}
 			List<DeductAnalysisVO> list = queryData(paramvo);
 			if(list != null && list.size() > 0){
-				List<String> nslist = getNoSumList();
-				HashMap<String, Object> smap = new HashMap<String, Object>();
-				String str = "[";
-				HashMap<String, Object> map = null;
-				Integer num = 0;
-				Integer addnum = 0;
-				DZFDouble mny = DZFDouble.ZERO_DBL;
-				DZFDouble addmny = DZFDouble.ZERO_DBL;
-				for (DeductAnalysisVO dvo : list) {
-					map = dvo.getHash();
-					if(map != null && !map.isEmpty()){
-						str = toJson(str, map);
-						for(String key : map.keySet()){
-							if(!nslist.contains(key)){
-								if(!smap.containsKey(key)){
-									if(key.indexOf("mny") != -1){
-										mny = (DZFDouble) map.get(key);
-										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
-									}else{
-										smap.put(key, map.get(key));
-									}
-								}else{
-									if(key.indexOf("mny") != -1){
-										mny = (DZFDouble) smap.get(key);
-										addmny = CommonUtil.getDZFDouble(map.get(key));
-										mny = SafeCompute.add(mny, addmny);
-										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
-									}else{
-										num = (Integer) smap.get(key);
-										addnum = CommonUtil.getInteger(map.get(key));
-										num = num + addnum;
-										smap.put(key, num);
-									}
-								}
-							}
-						}
-					}
-				}
-				str = str + "]";
-				grid.setRowdata(str);
-				if(smap != null && !smap.isEmpty()){
-					String sumstr =  "[";
-					sumstr = toJson(sumstr, smap);
-					sumstr = sumstr + "]";
-					grid.setSumdata(sumstr);
-				}
+				String[] strs =  getCloData(list);
+				grid.setRowdata(strs[0]);
+				grid.setSumdata(strs[1]);
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
 			}else{
 				grid.setRows(new ArrayList<DeductAnalysisVO>());
@@ -133,23 +90,62 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		writeJson(grid);
 	}
 	
-//	/**
-//	 * 查询金额排序数据
-//	 */
-//	public void queryMnyOrder() {
-//		Grid grid = new Grid();
-//		try {
-//			QryParamVO paramvo = new QryParamVO();
-//			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-//			List<DeductAnalysisVO> vos = analyser.queryMnyOrder(paramvo);
-//			grid.setRows(vos);
-//			grid.setSuccess(true);
-//			grid.setMsg("查询成功");
-//		} catch (Exception e) {
-//			printErrorLog(grid, log, e, "查询失败");
-//		}
-//		writeJson(grid);
-//	}
+	/**
+	 * 获取行及合计行数据
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private String[] getCloData(List<DeductAnalysisVO> list) throws DZFWarpException {
+		String[] strs = new String[2];
+		List<String> nslist = getNoSumList();
+		HashMap<String, Object> smap = new HashMap<String, Object>();
+		String str = "[";
+		HashMap<String, Object> map = null;
+		Integer num = 0;
+		Integer addnum = 0;
+		DZFDouble mny = DZFDouble.ZERO_DBL;
+		DZFDouble addmny = DZFDouble.ZERO_DBL;
+		for (DeductAnalysisVO dvo : list) {
+			map = dvo.getHash();
+			if(map != null && !map.isEmpty()){
+				str = toJson(str, map);
+				for(String key : map.keySet()){
+					if(!nslist.contains(key)){
+						if(!smap.containsKey(key)){
+							if(key.indexOf("mny") != -1){
+								mny = (DZFDouble) map.get(key);
+								smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+							}else{
+								smap.put(key, map.get(key));
+							}
+						}else{
+							if(key.indexOf("mny") != -1){
+								mny = (DZFDouble) smap.get(key);
+								addmny = CommonUtil.getDZFDouble(map.get(key));
+								mny = SafeCompute.add(mny, addmny);
+								smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+							}else{
+								num = (Integer) smap.get(key);
+								addnum = CommonUtil.getInteger(map.get(key));
+								num = num + addnum;
+								smap.put(key, num);
+							}
+						}
+					}
+				}
+			}
+		}
+		str = str + "]";
+		strs[0] = str;
+		if(smap != null && !smap.isEmpty()){
+			String sumstr =  "[";
+			sumstr = toJson(sumstr, smap);
+			sumstr = sumstr + "]";
+			strs[0] = sumstr;
+		}
+		return strs;
+	}
 	
 	/**
 	 * 导出excel
@@ -287,87 +283,6 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			}
 		}
 	}
-	
-//	/**
-//	 * 查询列及数据
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public void queryDataCol() {
-//		ReportDataGrid grid = new ReportDataGrid();
-//		try {
-//			QryParamVO paramvo = new QryParamVO();
-//			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-//			if(paramvo == null){
-//				paramvo = new QryParamVO();
-//			}
-//			Object[] objs = analyser.queryColumn(paramvo);
-//			if(objs != null && objs.length > 0){
-//				grid.setHbcolumns((List<ReportDatagridColumn>) objs[0]);
-//				grid.setColumns((List<ReportDatagridColumn>) objs[1]);
-//			}
-//			DZFDateTime btime = new DZFDateTime();
-//			List<DeductAnalysisVO> list = queryData(paramvo);
-//			if(list != null && list.size() > 0){
-//				List<String> nslist = getNoSumList();
-//				HashMap<String, Object> smap = new HashMap<String, Object>();
-//				String str = "[";
-//				HashMap<String, Object> map = null;
-//				Integer num = 0;
-//				Integer addnum = 0;
-//				DZFDouble mny = DZFDouble.ZERO_DBL;
-//				DZFDouble addmny = DZFDouble.ZERO_DBL;
-//				for (DeductAnalysisVO dvo : list) {
-//					map = dvo.getHash();
-//					if(map != null && !map.isEmpty()){
-//						str = toJson(str, map);
-//						for(String key : map.keySet()){
-//							if(!nslist.contains(key)){
-//								if(!smap.containsKey(key)){
-//									if(key.indexOf("mny") != -1){
-//										mny = (DZFDouble) map.get(key);
-//										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
-//									}else{
-//										smap.put(key, map.get(key));
-//									}
-//								}else{
-//									if(key.indexOf("mny") != -1){
-//										mny = (DZFDouble) smap.get(key);
-//										addmny = CommonUtil.getDZFDouble(map.get(key));
-//										mny = SafeCompute.add(mny, addmny);
-//										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
-//									}else{
-//										num = (Integer) smap.get(key);
-//										addnum = CommonUtil.getInteger(map.get(key));
-//										num = num + addnum;
-//										smap.put(key, num);
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//				str = str + "]";
-//				grid.setRowdata(str);
-//				if(smap != null && !smap.isEmpty()){
-//					String sumstr =  "[";
-//					sumstr = toJson(sumstr, smap);
-//					sumstr = sumstr + "]";
-//					grid.setSumdata(sumstr);
-//				}
-//				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
-//			}else{
-//				grid.setRows(new ArrayList<DeductAnalysisVO>());
-//			}
-//			DZFDateTime etime = new DZFDateTime();
-//			log.info("开始时间："+btime);
-//			log.info("结束时间："+etime);
-//			grid.setSuccess(true);
-//			grid.setMsg("查询成功");
-//		} catch (Exception e) {
-//			printErrorLog(grid, log, e, "查询失败");
-//		}
-//		writeJson(grid);
-//	}
 	
 	/**
 	 * 获取不需要汇总列编码
