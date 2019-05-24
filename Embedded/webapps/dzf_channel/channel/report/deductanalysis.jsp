@@ -15,10 +15,18 @@
 <head>
 <title>扣款统计表</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
-<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<link href=<%UpdateGradeVersion.outversion(out, "../../css/periodext.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/deductanalysis.js");%> charset="UTF-8" type="text/javascript"></script>
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
+	rel="stylesheet">
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/periodext.css");%>
+	rel="stylesheet">
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/deductanalysis.js");%>
+	charset="UTF-8" type="text/javascript"></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -39,7 +47,7 @@
 						<input style="height:28px;width:220px" class="easyui-textbox" id="quname" prompt="录入加盟商名称或编码回车定位 "/> 
 					</div> -->
 					<div class="right">
-						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="load(2)">刷新</a>
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="reloadData(1)">刷新</a>
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onExport()">导出</a>
 					</div>
 				</div>
@@ -113,7 +121,7 @@
 				</form>
 				<p>
 					<a class="ui-btn save_input" onclick="clearParams();">清除</a> 
-					<a class="ui-btn save_input" onclick="load(1)">确定</a>
+					<a class="ui-btn save_input" onclick="reloadData(0)">确定</a>
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
 			</div>

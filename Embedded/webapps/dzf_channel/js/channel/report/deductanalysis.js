@@ -1,11 +1,13 @@
 var contextPath = DZF.contextPath;
-var hjcols = null;//汇总列字段
+var hbstr = new Array();
+var str = new Array();
 
 $(function(){
 	initQueryDlg();
 	initRef();
 	initRadioListen();
-	load(0);
+	load();
+	reloadData();
 });
 
 /**
@@ -221,405 +223,6 @@ function initRadioListen(){
 }
 
 /**
- * 表格初始化
- * @param type  0：初始化界面加载；1；查询；2；刷新；
- */
-function load(type){
-	var bdate = new Date();
-	
-	var onlycol =  new ArrayList();//金额展示集合
-	var onlymap = new HashMap();//金额对应列数
-	
-	var bperiod;
-	var eperiod;
-	var begdate;
-	var enddate;
-	var qtype = $("input[name='seletype']:checked").val();
-	if($('#qj').is(':checked')){
-		bperiod = $("#begperiod").datebox('getValue');
-		eperiod = $("#endperiod").datebox('getValue');
-		if(isEmpty(bperiod)){
-			Public.tips({
-				content : "开始期间不能为空",
-				type : 2
-			});
-			return;
-		}
-		if(isEmpty(eperiod)){
-			Public.tips({
-				content : "结束期间不能为空",
-				type : 2
-			});
-			return;
-		}
-		
-		$('#jqj').html(bperiod + ' 至 ' + eperiod);
-	}else{
-		begdate = $("#bdate").datebox('getValue');
-		enddate = $("#edate").datebox('getValue');
-		$('#jqj').html(begdate + ' 至 ' + enddate);
-	}
-	
-	$.messager.progress({
-		text : '数据加载中....'
-	});
-	
-	//获取标题列
-	var columns = getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype);
-	
-	var datarray =  new Array();
-	var errmsg = "";
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : DZF.contextPath + "/report/deductanalysis!query.action",
-		traditional : true,
-		data : {
-			bperiod : bperiod,
-			eperiod : eperiod,
-			begdate : begdate,
-			enddate : enddate,
-			cpid : $("#qcorpid").val(),
-			qtype : qtype,
-			mid : $("#managerid").val(),
-		    oid : $("#operaterid").val(),
-		},
-		async : false,
-		success : function(data) {
-			if (data.success) {
-				var rows = data.rows;
-				if(rows != null && rows.length > 0){
-					var corpid;
-					var obj;
-					var colfield = "";
-					for(var i = 0; i < rows.length; i++){
-						if(i == 0){
-							corpid = rows[i].corpid;
-							obj = {};
-							colnm = onlymap.get(rows[i].dedmny);
-							colfield = 'num'+colnm;
-							obj[colfield] = rows[i].corpnum;
-							colfield = 'mny'+colnm;
-							obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
-							
-							obj['num'] = rows[i].sumnum;//总合同数
-							obj['mny'] = rows[i].summny;//总扣款
-							obj['retnum'] = rows[i].retnum;//退回合同数
-							obj['custnum'] = rows[i].custnum;//存量合同数
-							obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
-							obj['dednum'] = rows[i].dednum;//非存量合同数
-//							if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
-//								obj['retmny'] = '-'+rows[i].retmny;//退回金额
-//							}else{
-//								obj['retmny'] = rows[i].retmny;//退回金额
-//							}
-							if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
-								obj['retmny'] = '-'+rows[i].retmny;//退回金额
-							}
-							obj['mid'] = rows[i].mid;//渠道经理
-							obj['oid'] = rows[i].oid;//渠道运营
-							obj['corpcode'] = rows[i].corpcode;//加盟商编码
-							obj['corpname'] = rows[i].corpname;//加盟商名称
-							obj['stocknum'] = rows[i].stocknum;//存量客户数
-							if(i == rows.length - 1){//一行数据
-								colnm = onlymap.get(rows[i].dedmny);
-								colfield = 'num'+colnm;
-								obj[colfield] = rows[i].corpnum;
-								colfield = 'mny'+colnm;
-								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
-								datarray.push(obj);
-							}
-						}else{
-							if(corpid == rows[i].corpid){
-								colnm = onlymap.get(rows[i].dedmny);
-								colfield = 'num'+colnm;
-								obj[colfield] = rows[i].corpnum;
-								colfield = 'mny'+colnm;
-								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
-								if(i == rows.length - 1){//最后一行数据
-									datarray.push(obj);
-								}
-							}else if(corpid != rows[i].corpid){
-								datarray.push(obj);
-								corpid = rows[i].corpid;
-								obj = {};
-								colnm = onlymap.get(rows[i].dedmny);
-								colfield = 'num'+colnm;
-								obj[colfield] = rows[i].corpnum;
-								colfield = 'mny'+colnm;
-								obj[colfield] = getFloatValue(rows[i].corpnum).mul(getFloatValue(rows[i].dedmny));
-								
-								obj['num'] = rows[i].sumnum;//总合同数
-								obj['mny'] = rows[i].summny;//总扣款
-								obj['retnum'] = rows[i].retnum;//退回合同数
-								obj['custnum'] = rows[i].custnum;//存量合同数
-								obj['zeronum'] = rows[i].zeronum;//0扣款(非存量)合同数
-								obj['dednum'] = rows[i].dednum;//非存量合同数
-//								if(getFloatValue(rows[i].retnum) > getFloatValue(0)){
-//									obj['retmny'] = '-'+rows[i].retmny;//退回金额
-//								}else{
-//									obj['retmny'] = rows[i].retmny;//退回金额
-//								}
-								if(getFloatValue(rows[i].retmny) > getFloatValue(0)){
-									obj['retmny'] = '-'+rows[i].retmny;//退回金额
-								}
-								obj['mid'] = rows[i].mid;//渠道经理
-								obj['oid'] = rows[i].oid;//渠道运营
-								obj['corpcode'] = rows[i].corpcode;
-								obj['corpname'] = rows[i].corpname;
-								obj['stocknum'] = rows[i].stocknum;//存量客户数
-								if(i == rows.length - 1){//最后一行数据
-									datarray.push(obj);
-								}
-							}
-						}
-					}
-				}
-			}else{
-				errmsg = data.msg;
-			}
-		},
-		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			$.messager.progress('close');
-		}
-	});
-	
-	if(!isEmpty(errmsg)){
-		$.messager.progress('close');
-		Public.tips({
-			content : errmsg,
-			type : 2
-		});
-		return;
-	}
-	
-	$('#grid').datagrid({
-		striped : true,
-		title : '',
-		rownumbers : true,
-		height : Public.setGrid().h,
-		singleSelect : false,
-		border : true,
-		remoteSort:false,
-		showFooter:true,
-		//冻结在 左边的列 
-		frozenColumns:[[
-						{ field : 'corpid',    title : '会计公司主键', hidden:true},
-						{ field : 'mid',  title : '渠道经理', width : 100, halign:'center',align:'left'}, 
-						{ field : 'oid',  title : '渠道运营', width : 100, halign:'center',align:'left'}, 
-		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
-		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
-		                { field : 'stocknum',  title : '存量<br/>客户', width : 50, halign:'center',align:'right'},
-//		                { field : 'num',  title : '总合同数', width : 100, halign:'center',align:'right', hidden:true}, 
-		                { field : 'custnum',  title : '存量<br/>合同数', width : 60, halign:'center',align:'right', },
-		                { field : 'zeronum',  title : '0扣款<br/>(非存量)<br/>合同数', width : 70, halign:'center',align:'right', },
-		                { field : 'dednum',  title : '非存量<br/>合同数', width : 60, halign:'center',align:'right', },
-		                { field : 'mny',  title : '总扣款', width : 100, halign:'center',align:'right',formatter:formatMny},
-		]],
-		columns : columns,
-		onLoadSuccess : function(data) {
-			calFooter();
-			
-			var edate = new Date();
-			var time = edate.getTime() - bdate.getTime();
-			
-			setTimeout(function(){
-				$.messager.progress('close');
-			}, time/2);
-		},
-	});
-	
-	if(datarray != null && datarray.length > 0){
-		$('#grid').datagrid('loadData', datarray);
-	}else{
-		$('#grid').datagrid('loadData',{ total:0, rows:[]});
-	}
-	
-	$("#qrydialog").hide();
-	
-	var msg = "";
-	if(type == 1){
-		msg = "查询成功";
-	}else if(type == 2){
-		msg = "刷新成功";
-	}
-	if(!isEmpty(msg)){
-		Public.tips({
-			content : msg,
-			type : 0
-		});
-	}
-
-	
-}
-
-/**
- * 计算合计
- */
-function calFooter(){
-	var rows = $('#grid').datagrid('getRows');
-	var footerData = new Object();
-//    var num = 0;	
-    var mny = 0;	
-    var stocknum = 0;//存量客户
-    var custnum = 0;//存量合同数
-    var zeronum = 0;//0扣款(非存量)合同数
-    var dednum = 0;//非存量合同数
-    
-    for (var i = 0; i < rows.length; i++) {
-//    	num += getFloatValue(rows[i].num);
-    	mny += getFloatValue(rows[i].mny);
-    	stocknum += getFloatValue(rows[i].stocknum);
-    	custnum += getFloatValue(rows[i].custnum);
-    	zeronum += getFloatValue(rows[i].zeronum);
-    	dednum += getFloatValue(rows[i].dednum);
-    	
-		if(hjcols != null && hjcols.length > 0){
-			for(var j = 0; j < hjcols.length; j++){
-				var col = hjcols[j][0];
-	    		hjcols[j][1] += getFloatValue(rows[i][col]);
-	    	}
-	    }
-    }
-    footerData['corpname'] = '合计';
-//    footerData['num'] = num;
-    footerData['mny'] = mny;
-    footerData['stocknum'] = stocknum;
-    footerData['custnum'] = custnum;
-    footerData['zeronum'] = zeronum;
-    footerData['dednum'] = dednum;
-    
-    if(hjcols != null && hjcols.length > 0){
-		for(var j = 0; j < hjcols.length; j++){
-			var col = hjcols[j][0];
-    		footerData[col] = hjcols[j][1];
-    	}
-    }
-    
-    var fs=new Array(1);
-    fs[0] = footerData;
-    $('#grid').datagrid('reloadFooter',fs);
-}
-
-/**
- * 获取标题列
- * @param onlymap
- */
-function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, qtype){
-	hjcols = new Array();
-	var columns = new Array(); 
-	var columnsh = new Array();//列及合并列名称
-	var columnsb = new Array();//子列表名称集合
-	
-	//退回扣款
-	var columnh1 = {};
-	columnh1["title"] = '退回扣款';  
-	columnh1["field"] = 'ret';  
-	columnh1["width"] = '180'; 
-	columnh1["colspan"] = 2; 
-	columnsh.push(columnh1);
-	
-	var columnb1 = {};
-	columnb1["title"] = '合同数';  
-	columnb1["field"] = 'retnum';  
-	columnb1["width"] = '90'; 
-	columnb1["halign"] = 'center'; 
-	columnb1["align"] = 'right'; 
-//	columnb1["formatter"] = useFormat;
-	columnsb.push(columnb1); 
-	
-	hjcols.push(new Array('retnum', 0));
-	
-	var columnb2 = {};
-	columnb2["title"] = '金额';  
-	columnb2["field"] = 'retmny';  
-	columnb2["width"] = '90'; 
-	columnb2["halign"] = 'center'; 
-	columnb2["align"] = 'right'; 
-	columnb2["formatter"] = formatMny;
-	columnsb.push(columnb2); 
-	
-	hjcols.push(new Array('retmny', 0));
-	
-	$.ajax({
-		type : "post",
-		dataType : "json",
-		url : DZF.contextPath + "/report/deductanalysis!queryMnyOrder.action",
-		traditional : true,
-		data : {
-			bperiod : bperiod,
-			eperiod : eperiod,
-			begdate : begdate,
-			enddate : enddate,
-			qtype : qtype,
-			cpid : $("#qcorpid").val(),
-			mid : $("#managerid").val(),
-		    oid : $("#operaterid").val(),
-		},
-		async : false,
-		success : function(data) {
-			if (data.success) {
-				var rows = data.rows;
-				if(rows != null && rows.length > 0){
-					var corpid;
-					var obj;
-					var colnm = 0;
-					var colfield = "";
-					for(var i = 0; i < rows.length; i++){
-						if(!onlycol.contains(rows[i].dedmny)){
-							var column = {};
-							var dedmny = rows[i].dedmny+"";
-							if(dedmny.indexOf(".") != -1 ){
-								column["title"] = dedmny;  
-							}else{
-								column["title"] = dedmny + ".00";  
-							}
-							column["field"] = 'col'+(i+1);  
-							column["width"] = '180'; 
-							column["colspan"] = 2; 
-							columnsh.push(column); 
-							
-							onlymap.put(rows[i].dedmny,(i+1));
-							
-							var column1 = {};
-							column1["title"] = '合同数';  
-							column1["field"] = 'num'+(i+1);  
-							column1["width"] = '90'; 
-							column1["halign"] = 'center'; 
-							column1["align"] = 'right'; 
-//							column1["formatter"] = useFormat;
-							columnsb.push(column1); 
-							
-							hjcols.push(new Array('num'+(i+1)+'', 0));
-							
-							var column2 = {};
-							column2["title"] = '扣款';  
-							column2["field"] = 'mny'+(i+1);  
-							column2["width"] = '90'; 
-							column2["halign"] = 'center'; 
-							column2["align"] = 'right'; 
-							column2["formatter"] = formatMny;
-							columnsb.push(column2); 
-							
-							hjcols.push(new Array('mny'+(i+1)+'', 0));
-							
-							onlycol.add(rows[i].dedmny);
-						}
-					
-					}
-				}
-				columns.push(columnsh);
-				columns.push(columnsb);
-			}
-		},
-		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			parent.$.messager.progress('close');
-		}
-	});
-	return columns;
-}
-
-/**
 * 导出
 */
 function onExport() {
@@ -665,14 +268,150 @@ function clearParams(){
 }
 
 /**
- * 扣款金额格式化
- * @param value
- * @param row
- * @param index
- * @returns
+ * grid初始化冻结列
  */
-function useFormat(value,row,index){
-	var url = 'channel/contract/contractconfrim.jsp?operate=tocont&pk_billid='+row.billid;
-	var ss = "<a href='javascript:void(0)' style='color:blue' onclick=\"parent.addTabNew('合同审核','"+url+"');\">"+formatMny(value)+"</a>";
-	return ss ;
+function load(){
+	$('#grid').datagrid({
+		striped : true,
+		title : '',
+		rownumbers : true,
+		height : Public.setGrid().h,
+		singleSelect : false,
+		border : true,
+		remoteSort:false,
+		showFooter:true,
+		disableAutoSize:true,
+		//冻结在 左边的列 
+		frozenColumns:[[
+						{ field : 'corpid',    title : '会计公司主键', hidden:true},
+						{ field : 'mid',  title : '渠道经理', width : 100, halign:'center',align:'left'}, 
+						{ field : 'oid',  title : '渠道运营', width : 100, halign:'center',align:'left'}, 
+		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
+		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
+		                { field : 'stocknum',  title : '存量<br/>客户', width : 50, halign:'center',align:'right'},
+		                { field : 'custnum',  title : '存量<br/>合同数', width : 60, halign:'center',align:'right', },
+		                { field : 'zeronum',  title : '0扣款<br/>(非存量)<br/>合同数', width : 70, halign:'center',align:'right', },
+		                { field : 'dednum',  title : '非存量<br/>合同数', width : 60, halign:'center',align:'right', },
+		                { field : 'summny',  title : '总扣款', width : 100, halign:'center',align:'right',formatter:formatMny},
+		]],
+		onLoadSuccess : function(data) {
+		},
+	});
+}
+
+
+/**
+ * 查询
+ */
+function reloadData(type){
+	
+	var bdate = new Date();
+	
+	var onlycol =  new ArrayList();//金额展示集合
+	var onlymap = new HashMap();//金额对应列数
+	
+	var bperiod;
+	var eperiod;
+	var begdate;
+	var enddate;
+	var qtype = $("input[name='seletype']:checked").val();
+	if($('#qj').is(':checked')){
+		bperiod = $("#begperiod").datebox('getValue');
+		eperiod = $("#endperiod").datebox('getValue');
+		if(isEmpty(bperiod)){
+			Public.tips({
+				content : "开始期间不能为空",
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(eperiod)){
+			Public.tips({
+				content : "结束期间不能为空",
+				type : 2
+			});
+			return;
+		}
+		
+		$('#jqj').html(bperiod + ' 至 ' + eperiod);
+	}else{
+		begdate = $("#bdate").datebox('getValue');
+		enddate = $("#edate").datebox('getValue');
+		$('#jqj').html(begdate + ' 至 ' + enddate);
+	}
+	
+	$.messager.progress({
+		text : '数据查询中，请稍候.....'
+	});
+	var currcolumns = $("#grid").datagrid("options").columns;
+    $.ajax({
+    	url : DZF.contextPath + "/report/deductanalysis!query.action",
+        type: "POST",  
+        data : {
+			bperiod : bperiod,
+			eperiod : eperiod,
+			begdate : begdate,
+			enddate : enddate,
+			qtype : qtype,
+			cpid : $("#qcorpid").val(),
+			mid : $("#managerid").val(),
+		    oid : $("#operaterid").val(),
+		},
+ 		dataType : 'json',
+	    success: function(data){
+	    	$.messager.progress('close');
+			
+			if (data.success) {
+				var options = $("#grid").datagrid("options"); //取出当前datagrid的配置     
+		        //字符串转JSON
+		        if(data.columns.length != 0 && data.hbcolumns != 0){
+		        	hbstr = JSON.stringify(data.hbcolumns);
+		        	str = JSON.stringify(data.columns);
+		        	options.columns = eval('[' + hbstr + ',' +str+ ']');
+		        	$('#grid').datagrid(options);
+		        }else{
+		        	hbstr = null;
+		        	str = null;
+		        	options.columns = currcolumns;
+		        	$('#grid').datagrid(options);
+		        }
+				
+				var rowdata;
+				if (data.rowdata != undefined && data.rowdata.length > 0) {
+					rowdata = eval(data.rowdata);
+				} else {
+					rowdata = data.rows;
+				}
+				
+				//实例化之后立刻载入数据源,加载本地数据，旧的行会被移除。
+				$('#grid').datagrid("loadData", rowdata);
+				
+				if(data.sumdata != undefined && data.sumdata.length > 0){
+					var sumdata = eval(data.sumdata);
+					$('#grid').datagrid('reloadFooter', sumdata);
+				}
+				
+				if(type == 1){
+					Public.tips({
+						content : "刷新成功",
+						type : 0
+					});
+				}else{
+					Public.tips({
+						content : data.msg,
+						type : 0
+					});
+				}
+			} else {
+				Public.tips({
+					content : data.msg,
+					type : 2
+				});
+			}
+			
+	     }
+    });
+    
+    $("#qrydialog").hide();
+  
 }

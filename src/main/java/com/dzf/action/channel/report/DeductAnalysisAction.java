@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,13 +23,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.report.DeductAnalysisVO;
+import com.dzf.model.channel.report.ReportDataGrid;
+import com.dzf.model.channel.report.ReportDatagridColumn;
+import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.report.IDeductAnalysis;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
@@ -54,35 +62,78 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 	 * 查询金额数据
 	 */
 	public void query() {
-		Grid grid = new Grid();
+		ReportDataGrid grid = new ReportDataGrid();
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			
-			StringBuffer qsql = new StringBuffer();// 附加查询条件
-			// 1、渠道经理查询条件
-			if (!StringUtil.isEmpty(paramvo.getVmanager())) {
-				String sql = analyser.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
-				if (!StringUtil.isEmpty(sql)) {
-					qsql.append(sql);
-				}
+			if(paramvo == null){
+				paramvo = new QryParamVO();
 			}
-			// 2、渠道运营查询条件
-			if (!StringUtil.isEmpty(paramvo.getVoperater())) {
-				String sql = analyser.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
-				if (!StringUtil.isEmpty(sql)) {
-					qsql.append(sql);
-				}
+			DZFDateTime btime = new DZFDateTime();
+			Object[] objs = analyser.queryColumn(paramvo);
+			if(objs != null && objs.length > 0){
+				grid.setHbcolumns((List<ReportDatagridColumn>) objs[0]);
+				grid.setColumns((List<ReportDatagridColumn>) objs[1]);
 			}
-			if(qsql != null && qsql.length() > 0){
-				paramvo.setVqrysql(qsql.toString());
-			}
-			
-			List<DeductAnalysisVO> list = analyser.query(paramvo);
+			DZFDateTime b1time = new DZFDateTime();
+			List<DeductAnalysisVO> list = queryData(paramvo);
+			DZFDateTime b2time = new DZFDateTime();
 			if(list != null && list.size() > 0){
+				List<String> nslist = getNoSumList();
+				HashMap<String, Object> smap = new HashMap<String, Object>();
+				String str = "[";
+				HashMap<String, Object> map = null;
+				Integer num = 0;
+				Integer addnum = 0;
+				DZFDouble mny = DZFDouble.ZERO_DBL;
+				DZFDouble addmny = DZFDouble.ZERO_DBL;
+				for (DeductAnalysisVO dvo : list) {
+					map = dvo.getHash();
+					if(map != null && !map.isEmpty()){
+						str = toJson(str, map);
+						for(String key : map.keySet()){
+							if(!nslist.contains(key)){
+								if(!smap.containsKey(key)){
+									if(key.indexOf("mny") != -1){
+										mny = (DZFDouble) map.get(key);
+										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+									}else{
+										smap.put(key, map.get(key));
+									}
+								}else{
+									if(key.indexOf("mny") != -1){
+										mny = (DZFDouble) smap.get(key);
+										addmny = CommonUtil.getDZFDouble(map.get(key));
+										mny = SafeCompute.add(mny, addmny);
+										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+									}else{
+										num = (Integer) smap.get(key);
+										addnum = CommonUtil.getInteger(map.get(key));
+										num = num + addnum;
+										smap.put(key, num);
+									}
+								}
+							}
+						}
+					}
+				}
+				str = str + "]";
+				grid.setRowdata(str);
+				if(smap != null && !smap.isEmpty()){
+					String sumstr =  "[";
+					sumstr = toJson(sumstr, smap);
+					sumstr = sumstr + "]";
+					grid.setSumdata(sumstr);
+				}
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
+			}else{
+				grid.setRows(new ArrayList<DeductAnalysisVO>());
 			}
-			grid.setRows(list);
+			DZFDateTime etime = new DZFDateTime();
+			log.info("开始时间："+btime);
+			log.info("获取列结束时间："+b1time);
+			log.info("获取数据结束时间："+b2time);
+			log.info("结束时间："+etime);
 			grid.setSuccess(true);
 			grid.setMsg("查询成功");
 		} catch (Exception e) {
@@ -91,23 +142,23 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		writeJson(grid);
 	}
 	
-	/**
-	 * 查询金额排序数据
-	 */
-	public void queryMnyOrder() {
-		Grid grid = new Grid();
-		try {
-			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			List<DeductAnalysisVO> vos = analyser.queryMnyOrder(paramvo);
-			grid.setRows(vos);
-			grid.setSuccess(true);
-			grid.setMsg("查询成功");
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "查询失败");
-		}
-		writeJson(grid);
-	}
+//	/**
+//	 * 查询金额排序数据
+//	 */
+//	public void queryMnyOrder() {
+//		Grid grid = new Grid();
+//		try {
+//			QryParamVO paramvo = new QryParamVO();
+//			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+//			List<DeductAnalysisVO> vos = analyser.queryMnyOrder(paramvo);
+//			grid.setRows(vos);
+//			grid.setSuccess(true);
+//			grid.setMsg("查询成功");
+//		} catch (Exception e) {
+//			printErrorLog(grid, log, e, "查询失败");
+//		}
+//		writeJson(grid);
+//	}
 	
 	/**
 	 * 导出excel
@@ -173,7 +224,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		strslist.add("dednum");
 		//8、金额集合
 		List<String> mnylist = new ArrayList<String>();
-		mnylist.add("mny");
+		mnylist.add("summny");
 		
 		Map<String, String> field = null;
 		for(int i = 1; i < hbhcolsarray.size(); i++){
@@ -215,9 +266,8 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
             } else {  
                 fileName=URLEncoder.encode("扣款统计表","UTF8"); //其他浏览器  
             }  
-			response.addHeader("Content-Disposition", "attachment;filename=" + fileName//new String("扣款统计表".getBytes("UTF-8"),"ISO8859-1")
+			response.addHeader("Content-Disposition", "attachment;filename=" + fileName
 					+ new String(date+".xls"));
-//			response.addHeader("Content-Disposition", "attachment;filename=" + new String(date + ".xls"));
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
@@ -246,4 +296,150 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			}
 		}
 	}
+	
+//	/**
+//	 * 查询列及数据
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public void queryDataCol() {
+//		ReportDataGrid grid = new ReportDataGrid();
+//		try {
+//			QryParamVO paramvo = new QryParamVO();
+//			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+//			if(paramvo == null){
+//				paramvo = new QryParamVO();
+//			}
+//			Object[] objs = analyser.queryColumn(paramvo);
+//			if(objs != null && objs.length > 0){
+//				grid.setHbcolumns((List<ReportDatagridColumn>) objs[0]);
+//				grid.setColumns((List<ReportDatagridColumn>) objs[1]);
+//			}
+//			DZFDateTime btime = new DZFDateTime();
+//			List<DeductAnalysisVO> list = queryData(paramvo);
+//			if(list != null && list.size() > 0){
+//				List<String> nslist = getNoSumList();
+//				HashMap<String, Object> smap = new HashMap<String, Object>();
+//				String str = "[";
+//				HashMap<String, Object> map = null;
+//				Integer num = 0;
+//				Integer addnum = 0;
+//				DZFDouble mny = DZFDouble.ZERO_DBL;
+//				DZFDouble addmny = DZFDouble.ZERO_DBL;
+//				for (DeductAnalysisVO dvo : list) {
+//					map = dvo.getHash();
+//					if(map != null && !map.isEmpty()){
+//						str = toJson(str, map);
+//						for(String key : map.keySet()){
+//							if(!nslist.contains(key)){
+//								if(!smap.containsKey(key)){
+//									if(key.indexOf("mny") != -1){
+//										mny = (DZFDouble) map.get(key);
+//										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+//									}else{
+//										smap.put(key, map.get(key));
+//									}
+//								}else{
+//									if(key.indexOf("mny") != -1){
+//										mny = (DZFDouble) smap.get(key);
+//										addmny = CommonUtil.getDZFDouble(map.get(key));
+//										mny = SafeCompute.add(mny, addmny);
+//										smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
+//									}else{
+//										num = (Integer) smap.get(key);
+//										addnum = CommonUtil.getInteger(map.get(key));
+//										num = num + addnum;
+//										smap.put(key, num);
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				str = str + "]";
+//				grid.setRowdata(str);
+//				if(smap != null && !smap.isEmpty()){
+//					String sumstr =  "[";
+//					sumstr = toJson(sumstr, smap);
+//					sumstr = sumstr + "]";
+//					grid.setSumdata(sumstr);
+//				}
+//				writeLogRecord(LogRecordEnum.OPE_CHANNEL_29.getValue(), "扣款统计表查询成功", ISysConstants.SYS_3);
+//			}else{
+//				grid.setRows(new ArrayList<DeductAnalysisVO>());
+//			}
+//			DZFDateTime etime = new DZFDateTime();
+//			log.info("开始时间："+btime);
+//			log.info("结束时间："+etime);
+//			grid.setSuccess(true);
+//			grid.setMsg("查询成功");
+//		} catch (Exception e) {
+//			printErrorLog(grid, log, e, "查询失败");
+//		}
+//		writeJson(grid);
+//	}
+	
+	/**
+	 * 获取不需要汇总列编码
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<String> getNoSumList() throws DZFWarpException {
+		List<String> nlist = new ArrayList<String>();
+		nlist.add("corpid");
+		nlist.add("corpcode");
+		nlist.add("corpname");
+		nlist.add("mid");
+		nlist.add("oid");
+		return nlist;
+	}
+	
+	/**
+	 * 查询数据
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<DeductAnalysisVO> queryData(QryParamVO paramvo) throws DZFWarpException{
+		StringBuffer qsql = new StringBuffer();// 附加查询条件
+		// 1、渠道经理查询条件
+		if (!StringUtil.isEmpty(paramvo.getVmanager())) {
+			String sql = analyser.getQrySql(paramvo.getVmanager(), IStatusConstant.IQUDAO);
+			if (!StringUtil.isEmpty(sql)) {
+				qsql.append(sql);
+			}
+		}
+		// 2、渠道运营查询条件
+		if (!StringUtil.isEmpty(paramvo.getVoperater())) {
+			String sql = analyser.getQrySql(paramvo.getVoperater(), IStatusConstant.IYUNYING);
+			if (!StringUtil.isEmpty(sql)) {
+				qsql.append(sql);
+			}
+		}
+		if(qsql != null && qsql.length() > 0){
+			paramvo.setVqrysql(qsql.toString());
+		}
+		
+		return analyser.queryData(paramvo);
+	}
+	
+	/**
+	 * 序列化成Json字符串
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	private static String toJson(String str, Map<String, Object> map) {
+		str = str + "{";
+		for (String key : map.keySet()) {
+			if(map.get(key)!=null){
+				str = str + "\"" + key + "\"" + ":\"" + map.get(key).toString().replaceAll("\n", "") + "\",";
+			}else{
+				str = str + "\"" + key + "\"" + ":\"" + map.get(key) + "\",";
+			}
+		}
+		str = str + "},";
+		return str;
+	}
+	
 }

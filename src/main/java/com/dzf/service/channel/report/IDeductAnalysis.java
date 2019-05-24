@@ -32,5 +32,21 @@ public interface IDeductAnalysis {
 	 * @throws DZFWarpException
 	 */
 	public String getQrySql(String cuserid, Integer qrytype) throws DZFWarpException; 
+	
+	/**
+	 * 获取展示列
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Object[] queryColumn(QryParamVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 获取展示数据
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<DeductAnalysisVO> queryData(QryParamVO paramvo) throws DZFWarpException;
 
 }

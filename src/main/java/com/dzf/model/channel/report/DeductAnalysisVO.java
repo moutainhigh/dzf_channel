@@ -1,5 +1,7 @@
 package com.dzf.model.channel.report;
 
+import java.util.HashMap;
+
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDouble;
@@ -13,6 +15,8 @@ import com.dzf.pub.lang.DZFDouble;
 public class DeductAnalysisVO extends SuperVO {
 
 	private static final long serialVersionUID = -7715601659614330398L;
+	
+	private HashMap<String, Object> hash = new HashMap<String, Object>();
 	
 	@FieldAlias("corpid")
 	private String pk_corp;//加盟商主键
@@ -33,7 +37,7 @@ public class DeductAnalysisVO extends SuperVO {
 	private Integer icorpnums_sum;//扣款总户数
 	
 	@FieldAlias("summny")
-	private DZFDouble ndeductmny_sum;//扣款总总额
+	private DZFDouble ndeductmny_sum;//扣款总额
 	
 	@FieldAlias("retnum")
 	private Integer iretnum;//退回合同数
@@ -58,6 +62,14 @@ public class DeductAnalysisVO extends SuperVO {
 	
 	@FieldAlias("oid")
 	private String voperater;//渠道运营
+
+	public HashMap<String, Object> getHash() {
+		return hash;
+	}
+
+	public void setHash(HashMap<String, Object> hash) {
+		this.hash = hash;
+	}
 
 	public String getVmanager() {
 		return vmanager;
