@@ -65,7 +65,12 @@ function changeProvince(){
 	 $("#ovince").combobox({
 		 onSelect  : function() {
 			var queryData={"qtype" :1};
-			var ovince = $("#ovince").combobox("getValue") ;
+			var ovince;
+			if(isEmpty(ovince)){
+				ovince = -1;
+			}else{
+				ovince = $("#ovince").combobox("getValue");
+			}
 			var aname = $("#aname").combobox('getValue');
 			queryData={'aname' : ovince,'ovince':ovince,"qtype" :1};
 			$('#cuid').combobox('setValue',null);
@@ -82,7 +87,7 @@ function closeCx() {
 // 清空查询条件
 function clearCondition(){
 	$('#aname').combobox('select',null);
-	$('#ovince').combobox('select',-1);
+	$('#ovince').combobox('select',null);
 	$('#cuid').combobox('select',null);
 }
 // 重新加载数据
@@ -211,21 +216,22 @@ function load() {
 			for(var i = 0;i<data.rows.length;i++){
 				row=data.rows[i];
 				
-				bondmny += parseFloat(row.bondmny);
-				predeposit += parseFloat(row.predeposit);
-				xgmNum += parseFloat(row.xgmNum);
-				ybrNum += parseFloat(row.ybrNum);
-				rnum += parseFloat(row.rnum);
-				anum += parseFloat(row.anum);
-				rntlmny += parseFloat(row.rntlmny);
-				antlmny += parseFloat(row.antlmny);
-				ndemny += parseFloat(row.ndemny);
-				nderebmny += parseFloat(row.nderebmny);
-				outmny += parseFloat(row.outmny);
-				retmny += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
 				if(isEmpty(row.corpid) && !isEmpty(row.provname)){
 					$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
 				}else if(isEmpty(row.corpid)){
+					bondmny += parseFloat(row.bondmny);
+					predeposit += parseFloat(row.predeposit);
+					xgmNum += parseFloat(row.xgmNum);
+					ybrNum += parseFloat(row.ybrNum);
+					rnum += parseFloat(row.rnum);
+					anum += parseFloat(row.anum);
+					rntlmny += parseFloat(row.rntlmny);
+					antlmny += parseFloat(row.antlmny);
+					ndemny += parseFloat(row.ndemny);
+					nderebmny += parseFloat(row.nderebmny);
+					outmny += parseFloat(row.outmny);
+					retmny += parseFloat(isEmpty(row.retmny) ? 0 : row.retmny);
+					
 					$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#a9b9d5")
 				}
 				/*$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#bbceef")*/
