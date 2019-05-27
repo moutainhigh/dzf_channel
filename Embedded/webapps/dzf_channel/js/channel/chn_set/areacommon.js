@@ -676,7 +676,7 @@ function initManger(){
 	    searcher:function(){
 	    	$('#userdialog').dialog({
 	    		width : 520,
-	    		height : 530,
+	    		height : 470,
 	    		readonly : true,
 	    		close:true,
 	    		title : '选择用户',
