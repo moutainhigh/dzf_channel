@@ -460,7 +460,7 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 				areaNow = StringUtil.isEmpty(managerVO.getAreaname()) ? "无大区" : managerVO.getAreaname();
 				if(areaName!=null && !areaName.equals(areaNow)){
 					inserVO = new ManagerVO();
-					inserVO.setAreaname(areaNow+"合计");
+					inserVO.setAreaname(areaName+"合计");
 					inserVO.setXgmNum(xgmNum1);
 					inserVO.setYbrNum(ybrNum1);
 					inserVO.setRnum(rnum1);
@@ -488,7 +488,7 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 					outmny1 =   DZFDouble.ZERO_DBL;
 					retmny1 =  DZFDouble.ZERO_DBL;
 				}
-				areaName = managerVO.getAreaname();
+				areaName = areaNow;
 				retlist.add(managerVO);
 			}
 			
