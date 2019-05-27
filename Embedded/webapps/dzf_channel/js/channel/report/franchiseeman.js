@@ -195,16 +195,6 @@ function load() {
 			    ]
 			],
 		onLoadSuccess : function(data) {
-//			var myDate = new Date(); //实例一个时间对象；
-//			myDate.getFullYear();   //获取系统的年；
-//			myDate.getMonth()+1;   //获取系统月份，由于月份是从0开始计算，所以要加1
-//			myDate.getDate(); // 获取系统日，
-//			myDate.getHours(); //获取系统时，
-//			myDate.getMinutes(); //分
-//			myDate.getSeconds(); //秒
-//			var seperator1 = "-";
-//			console.log(myDate.getHours()+seperator1 + myDate.getMinutes() +seperator1+myDate.getSeconds())
-			 
 			var bondmny = 0;	
 		    var predeposit = 0;	
 		    var xgmNum = 0;	
@@ -219,7 +209,6 @@ function load() {
 			var retmny = 0;
 			var row;
 			for(var i = 0;i<data.rows.length;i++){
-			    
 				row=data.rows[i];
 				
 				bondmny += parseFloat(row.bondmny);
@@ -259,12 +248,6 @@ function load() {
 			var fs=new Array(1);
 			fs[0] = footerData;
 			$('#grid').datagrid('reloadFooter',fs);
-			
-//			var myDate2 = new Date(); //实例一个时间对象；
-//			myDate2.getHours(); //获取系统时，
-//			myDate2.getMinutes(); //分
-//			myDate2.getSeconds(); //秒
-//			console.log(myDate2.getHours()+seperator1 + myDate2.getMinutes() +seperator1+myDate2.getSeconds())
 		}
 	});
 }

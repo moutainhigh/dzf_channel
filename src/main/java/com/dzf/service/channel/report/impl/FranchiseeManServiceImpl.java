@@ -92,6 +92,7 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select y.region_name vprovname, ");
+		sql.append("       account.vprovince, ");
 		sql.append("       account.pk_corp, ");
 		sql.append("       account.innercode, ");
 		sql.append("       account.unitname corpname, ");
@@ -116,7 +117,6 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 			}
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-//		Map<Integer, String> areaMap = pubService.getAreaMap();
 		Map<String, UserVO> opermap = pubService.getManagerMap(qrytype);// 渠道运营
 		Map<Integer, ChnAreaVO> chnmap = pubService.getChnMap(qvo.getAreaname(), qrytype);// 渠道运营
 		ChnAreaVO areaVO ;
@@ -133,7 +133,6 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 					managerVO.setCorpname(corpName);
 					userVO = opermap.get(managerVO.getPk_corp());
 					if (userVO != null) {
-//						managerVO.setUsername(uservo.getUser_name());
 						managerVO.setCusername(userVO.getUser_name());
 					}
 					setDefult(managerVO);
@@ -275,7 +274,7 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 				}
 		     }
 		     HashMap<Integer, ManagerVO> promap=new HashMap<Integer, ManagerVO>();
-		     if(list6!=null&&list6.size()>0){//客单价
+		     if(list6!=null && list6.size()>0){//客单价
 		    	 for (ManagerVO managerVO : list6) {
 		    		 promap.put(managerVO.getVprovince(), managerVO);
 				}
@@ -315,7 +314,13 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 	 */
 	private StringBuffer getSql(String[] pks,Integer type) {
 		StringBuffer buf=new StringBuffer();
-		buf.append("  select c.pk_corp,nvl(yt.isxq,'N') isxq,");
+		if(type==2){
+			buf.append("  select sum(w.rnum) as rnum,");
+			buf.append("  sum(w.rntotalmny) as rntotalmny,w.vprovince as vprovince from ( ");
+			buf.append("  select c.pk_corp,b.vprovince, ");
+		}else{
+			buf.append("  select c.pk_corp,nvl(yt.isxq,'N') isxq,");
+		}
 		buf.append("  sum(decode((sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))");
 		buf.append("  +sum(decode(c.vstatus,10," );
@@ -337,12 +342,23 @@ public class FranchiseeManServiceImpl implements IFranchiseeManService {
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(c.nsubtotalmny,0)+nvl(yt.nbookmny,0)),");
 		buf.append("  decode((sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(c.nsubtotalmny,0))");
-		buf.append("  ))as rntotalmny from cn_contract c");
-		buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+		if(type==2){
+			buf.append("  ))as rntotalmny from cn_contract c");
+			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+			buf.append("  left join bd_corp b on c.pk_corp=b.pk_corp");
+		}else{
+			buf.append("  ))as rntotalmny from cn_contract c");
+			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+		}
 		buf.append("  where nvl(yt.isncust,'N')='N' and nvl(yt.dr,0) = 0 and nvl(c.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) ");
-		buf.append(" and  ");
-		buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-		buf.append(" group by c.pk_corp,yt.isxq ");
+		if(type==2){
+			buf.append("  and b.vprovince is not null ");
+			buf.append("  group by c.pk_corp,b.vprovince  order by b.vprovince)w group by w.vprovince");
+		}else{
+			buf.append(" and  ");
+			buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+			buf.append(" group by c.pk_corp,yt.isxq ");
+		}
 		return buf;
 	}
 	
