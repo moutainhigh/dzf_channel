@@ -722,7 +722,7 @@ public class StockOutServiceImpl implements IStockOutService{
 	@Override
 	public List<ComboBoxVO> queryChannel(String cuserid) throws DZFWarpException {
 		QryParamVO paramvo = new QryParamVO();
-		paramvo.setCuserid(cuserid);
+		paramvo.setVmanager(cuserid);
 		String qrySql = getQrySql(paramvo);
 		
         StringBuffer sql = new StringBuffer();
