@@ -136,22 +136,20 @@ function dClickCompany(rowTable){
 	var str = "";
 	var corpIds = [];
 	if(rowTable){
-		if(rowTable.length>1){
-			if(rowTable.length>300){
-				Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
-				return;
-			}
-			for(var i=0;i<rowTable.length;i++){
-				if(i == rowTable.length - 1){
-					str += rowTable[i].uname;
-				}else{
-					str += rowTable[i].uname+",";
-				}
-				corpIds.push(rowTable[i].pk_gs);
-			}
-			$("#channel_select").textbox("setValue",str);
-			$("#pk_account").val(corpIds);
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
 		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
 	}
-	 $("#kj_dialog").dialog('close');
+	$("#kj_dialog").dialog('close');
 }
