@@ -343,7 +343,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append("        account.channeltype, \n");
 		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
 		sql.append("        cn.areacode,cb.vprovince, \n");
-		sql.append("        case when cb.pk_corp=ba.pk_corp then cb.userid else null end as cuserid \n");
+		sql.append("        case when cb.pk_corp = account.pk_corp then cb.userid else null end as cuserid \n");
 		sql.append("   from bd_account account \n");
 		sql.append("   left join cn_chnarea_b cb on account.vprovince=cb.vprovince \n");
 		sql.append("   left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
