@@ -60,6 +60,15 @@ public interface IPubService {
 	public Map<Integer, String> getAreaMap(String areaname,Integer type) throws DZFWarpException;
 	
 	/**
+	 * 获取 省(直辖市)-》大区信息（名称、编码、大区负责人） map
+	 * @param areaname
+	 * @param type
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<Integer, ChnAreaVO> getChnMap(String areaname, Integer type) throws DZFWarpException;
+	
+	/**
 	 * 通过省(直辖市)获取对应的区域名称
 	 * @param vprovince
 	 * @param type

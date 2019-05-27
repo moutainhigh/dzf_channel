@@ -82,7 +82,7 @@ function closeCx() {
 // 清空查询条件
 function clearCondition(){
 	$('#aname').combobox('select',null);
-	$('#ovince').combobox('select',null);
+	$('#ovince').combobox('select',-1);
 	$('#cuid').combobox('select',null);
 }
 // 重新加载数据
@@ -195,15 +195,15 @@ function load() {
 			    ]
 			],
 		onLoadSuccess : function(data) {
-			var myDate = new Date(); //实例一个时间对象；
-			myDate.getFullYear();   //获取系统的年；
-			myDate.getMonth()+1;   //获取系统月份，由于月份是从0开始计算，所以要加1
-			myDate.getDate(); // 获取系统日，
-			myDate.getHours(); //获取系统时，
-			myDate.getMinutes(); //分
-			myDate.getSeconds(); //秒
-			var seperator1 = "-";
-			console.log(myDate.getHours()+seperator1 + myDate.getMinutes() +seperator1+myDate.getSeconds())
+//			var myDate = new Date(); //实例一个时间对象；
+//			myDate.getFullYear();   //获取系统的年；
+//			myDate.getMonth()+1;   //获取系统月份，由于月份是从0开始计算，所以要加1
+//			myDate.getDate(); // 获取系统日，
+//			myDate.getHours(); //获取系统时，
+//			myDate.getMinutes(); //分
+//			myDate.getSeconds(); //秒
+//			var seperator1 = "-";
+//			console.log(myDate.getHours()+seperator1 + myDate.getMinutes() +seperator1+myDate.getSeconds())
 			 
 			var bondmny = 0;	
 		    var predeposit = 0;	
@@ -260,11 +260,11 @@ function load() {
 			fs[0] = footerData;
 			$('#grid').datagrid('reloadFooter',fs);
 			
-			var myDate2 = new Date(); //实例一个时间对象；
-			myDate2.getHours(); //获取系统时，
-			myDate2.getMinutes(); //分
-			myDate2.getSeconds(); //秒
-			console.log(myDate2.getHours()+seperator1 + myDate2.getMinutes() +seperator1+myDate2.getSeconds())
+//			var myDate2 = new Date(); //实例一个时间对象；
+//			myDate2.getHours(); //获取系统时，
+//			myDate2.getMinutes(); //分
+//			myDate2.getSeconds(); //秒
+//			console.log(myDate2.getHours()+seperator1 + myDate2.getMinutes() +seperator1+myDate2.getSeconds())
 		}
 	});
 }
@@ -277,7 +277,7 @@ function quickfiltet(){
 		if (e.keyCode == 13) {
 			var filtername = $("#filter_value").val(); 
 	        if (filtername != "") {
-	        	var url = DZF.contextPath +'/report/manager!query.action';
+	        	var url = DZF.contextPath +'/report/franchiseeman!query.action';
 	        	$('#grid').datagrid('options').url = url;
 	        	var rows = $('#grid').datagrid('getRows');
 	        	if(rows != null && rows.length > 0){

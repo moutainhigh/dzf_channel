@@ -38,7 +38,6 @@ public class FranchiseeManAction extends BaseAction<ManagerVO>{
 	public void query() {
 		Grid grid = new Grid();
 		try {
-			System.out.println("start:"+new DZFDateTime());
 			ManagerVO qvo = new ManagerVO();
 			qvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), qvo);
 			qvo.setUserid(getLoginUserid());
@@ -55,7 +54,6 @@ public class FranchiseeManAction extends BaseAction<ManagerVO>{
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
-		System.out.println("end:"+new DZFDateTime());
 		writeJson(grid);
 	}
 

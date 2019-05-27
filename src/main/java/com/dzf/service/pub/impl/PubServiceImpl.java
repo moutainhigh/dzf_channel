@@ -341,6 +341,34 @@ public class PubServiceImpl implements IPubService {
 		}
 		return promap;
 	}
+	
+	@Override
+	public Map<Integer, ChnAreaVO> getChnMap(String areaname, Integer type) throws DZFWarpException {
+		Map<Integer, ChnAreaVO> chnMap = new HashMap<Integer, ChnAreaVO>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr \n");
+		sql.append("  from cn_chnarea_b b  \n");
+		sql.append("  LEFT JOIN cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid  \n") ; 
+		sql.append(" where nvl(b.dr, 0) = 0  \n");
+		sql.append("   and nvl(a.dr, 0) = 0  \n");
+		sql.append("   and b.type = ? \n");
+		spm.addParam(type);
+		if (!StringUtil.isEmpty(areaname)) {
+			sql.append(" and a.areaname = ?");
+			spm.addParam(areaname);
+		}
+		List<ChnAreaVO> list = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(ChnAreaVO.class));
+		if (list != null && list.size() > 0) {
+			for (ChnAreaVO vo : list) {
+				vo.setUsername(CodeUtils1.deCode(vo.getUsername()));
+				chnMap.put(vo.getDr(),vo);
+			}
+		}
+		return chnMap;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
