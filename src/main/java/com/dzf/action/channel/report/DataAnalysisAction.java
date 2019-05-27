@@ -286,8 +286,8 @@ public class DataAnalysisAction extends BaseAction<DataAnalysisVO> {
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
-			InOutUtil.close(toClient, "收款登记导出全部关闭输出流");
-			InOutUtil.close(servletOutputStream, "收款登记导出全部关闭输入流");
+			InOutUtil.close(toClient, "加盟商数据分析导出全部关闭输出流");
+			InOutUtil.close(servletOutputStream, "加盟商数据分析导出全部关闭输入流");
 		}
 	}
 	
