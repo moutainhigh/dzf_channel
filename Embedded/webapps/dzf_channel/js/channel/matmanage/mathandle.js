@@ -466,7 +466,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 									var column = {};
 									column["title"] = wlname + "/" + unit;
 									column["field"] = 'col' + (i + 1);
-									column["width"] = '140';
+									column["width"] = '160';
 									column["colspan"] = 2;
 
 									columnsh.push(column);
@@ -476,7 +476,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 									var column1 = {};
 									column1["title"] = '申请';
 									column1["field"] = 'applynum' + (i + 1);
-									column1["width"] = '70';
+									column1["width"] = '80';
 									column1["halign"] = 'center';
 									column1["align"] = 'right';
 									columnsb.push(column1);
@@ -487,7 +487,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 									var column2 = {};
 									column2["title"] = '实发';
 									column2["field"] = 'outnum' + (i + 1);
-									column2["width"] = '70';
+									column2["width"] = '80';
 									column2["halign"] = 'center';
 									column2["align"] = 'right';
 									columnsb.push(column2);
