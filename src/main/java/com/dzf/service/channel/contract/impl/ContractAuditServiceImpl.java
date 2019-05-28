@@ -246,7 +246,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			sql.append("SELECT vdeptuserid AS id,us.user_name as name \n");
 			sql.append("  FROM cn_leaderset ld \n");
 			sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid");
-			sql.append(" WHERE nvl(dr, 0) = 0  \n");
+			sql.append(" WHERE nvl(ld.dr, 0) = 0  \n");
+			sql.append("   AND nvl(us.dr, 0) = 0  \n");
 		} else if(oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 3){
 			return null;
 		}
