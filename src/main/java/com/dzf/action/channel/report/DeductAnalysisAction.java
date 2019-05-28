@@ -142,7 +142,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 			String sumstr =  "[";
 			sumstr = toJson(sumstr, smap);
 			sumstr = sumstr + "]";
-			strs[0] = sumstr;
+			strs[1] = sumstr;
 		}
 		return strs;
 	}
