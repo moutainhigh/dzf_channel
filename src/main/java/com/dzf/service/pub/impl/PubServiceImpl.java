@@ -347,7 +347,7 @@ public class PubServiceImpl implements IPubService {
 		Map<Integer, ChnAreaVO> chnMap = new HashMap<Integer, ChnAreaVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr \n");
+		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr,b.vprovname vprovnames \n");
 		sql.append("  from cn_chnarea_b b  \n");
 		sql.append("  LEFT JOIN cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
 		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid  \n") ; 

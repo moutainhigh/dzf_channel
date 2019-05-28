@@ -13,6 +13,7 @@ import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.service.channel.report.IChannelManService;
 import com.dzf.service.pub.LogRecordEnum;
 
@@ -36,6 +37,7 @@ public class ChannelManAction extends BaseAction<ManagerVO>{
 	 * 查询主表数据
 	 */
 	public void query() {
+		System.out.println("start:"+new DZFDateTime());
 		Grid grid = new Grid();
 		try {
 			ManagerVO qvo = new ManagerVO();
@@ -55,6 +57,7 @@ public class ChannelManAction extends BaseAction<ManagerVO>{
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
+		System.out.println("end:"+new DZFDateTime());
 	}
 
 }

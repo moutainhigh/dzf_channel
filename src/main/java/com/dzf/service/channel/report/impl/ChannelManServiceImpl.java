@@ -72,6 +72,7 @@ public class ChannelManServiceImpl extends ManagerServiceImpl implements IChanne
 				corpName = CodeUtils1.deCode(managerVO.getCorpname());
 				if (StringUtil.isEmpty(qvo.getCorpname()) || corpName.indexOf(qvo.getCorpname()) != -1) {
 					areaVO = chnmap.get(managerVO.getVprovince());
+					managerVO.setVprovname(areaVO.getVprovnames());
 					managerVO.setAreaname(areaVO.getAreaname());
 					// managerVO.setUsername(areaVO.getUsername());
 
