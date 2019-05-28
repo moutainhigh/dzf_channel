@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.190520"><cite>V1.190520</cite></a></li>';
 res = res+'<li><a href="#V1.190427"><cite>V1.190427</cite></a></li>';
 res = res+'<li><a href="#V1.190328"><cite>V1.190328</cite></a></li>';
 res = res+'<li><a href="#V1.190226"><cite>V1.190226</cite></a></li>';
@@ -72,9 +73,91 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2019年04月27日重磅更新
+	 &nbsp;2019年05月20日重磅更新
     </blockquote>
     <ul class="layui-timeline">
+
+        <li class="layui-timeline-item">
+            <a name="V1.190520"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.190520&nbsp;&nbsp;<span class="layui-badge-rim">2019-05-20</span></h2>
+                </div>
+                <ul>
+                    <li style="list-style:none">
+                        <h3 >新增加盟商数据分析表</h3>
+                        <ul>
+                            <li style="list-style:none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/01.png')" src="./20190520/01.png">
+                            </li>
+                        </ul>
+
+                        <h4 style="margin-top:10px;">1. 客户数、存量客户、非存量客户：录入日期在查询日期的客户数，随查询时间变化，纳税人资格为空计入小规模客户</h4>
+                        <h4 style="margin-top:10px;">2.（存量客户+非存量=总客户数）</h4>
+                        <h4 style="margin-top:10px;">3. 存量合同：查询期间的存量客户提的合同数，如果查询期间有作废的合同，按负数统计至总数中</h4>
+                        <h4 style="margin-top:10px;">4. 0扣款（非存量）合同：查询期间的非存量客户提的加盟商合同扣款为0 的合同数</h4>
+                        <h4 style="margin-top:10px;">5. 非存量合同：查询期间的非存量客户提的加盟商合同扣款不为0 的合同数</h4>
+                        <h4 style="margin-top:10px;">6. 合同代账费、账本费：扣款日期在查询期间加盟商的代账费、账本费合计</h4>
+                        <h4 style="margin-top:10px;">7. 保证金：截止现在系统时间客户的保证金余额</h4>
+                        <h4 style="margin-top:10px;">8. 预存款余额：截止现在系统时间客户的预存款余额</h4>
+                        <h4 style="margin-top:10px;">9. 返点余额：截止现在系统时间客户的返点余额</h4>
+                        <h4 style="margin-top:10px;">10.合同扣款：查询期间合同的扣款合计金额，查询期间作废的合同按扣款金额的负数统计至合计数</h4>
+                        <h4 style="margin-top:10px;">11.商品购买：查询期间商品购买扣款的合计金额</h4>
+                        <h4 style="margin-top:10px;">12.总用户数：截止系统日期加盟商系统中未封存用户合计数</h4>
+
+
+                        <h3 style="margin-top:10px;">合同审核支持按扣款比例查询</h3>
+                        <ul>
+                            <li style="list-style:none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/02.png')" src="./20190520/02.png">
+                            </li>
+                        </ul>
+
+                        <h3>服务套餐定义优化</h3>
+                        <ul>
+                            <li>查询框增加“公司类型”查询<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/03.png')" src="./20190520/03.png">
+                            </li>
+                            <li>服务套餐增加唯一性校验<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/04.png')" src="./20190520/04.png">
+                            </li>
+                            <li>已下架套餐支持修改、删除、重新发布<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/05.png')" src="./20190520/05.png">
+                            </li>
+                            <li>套餐可设置使用地区及加盟商，不选择地区、加盟商，默认是全部区域、全部加盟商可见该<br>
+                                套餐；可同时设置适用地区+适用加盟商<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/06.png')" src="./20190520/06.png">
+                            </li>
+                        </ul>
+
+                        <h3>物料处理优化</h3>
+                        <ul>
+                            <li>物料处理增加修改<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/07.png')" src="./20190520/07.png">
+                            </li>
+                            <li>物料处理增加【导入】，可导入物料历史处理数据<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/08.png')" src="./20190520/08.png">
+                            </li>
+                        </ul>
+
+                        <h3>新增账务设置</h3>
+                        <ul>
+                            <li>物料处理增加【导入】，可导入物料历史处理数据<br>
+                                不受合同控制。<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/09.png')" src="./20190520/09.png"><br/>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190520/10.png')" src="./20190520/10.png">
+                            </li>
+
+                        </ul>
+
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+
         <li class="layui-timeline-item">
             <a name="V1.190427"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
