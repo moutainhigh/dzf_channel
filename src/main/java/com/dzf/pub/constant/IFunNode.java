@@ -310,4 +310,9 @@ public interface IFunNode {
      */
     public static final String CHANNEL_73  = "channel73";
     
+    /**
+     * 机构设置
+     */
+    public static final String BRANCH_02  = "branch02";
+    
 }
