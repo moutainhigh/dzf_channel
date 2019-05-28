@@ -156,7 +156,7 @@ function load() {
 				    ]
 				],
 		onLoadSuccess : function(data) {
-			mergeCell(data,this);
+//			mergeCell(data,this);
 			setFooter();
 		}
 	});
