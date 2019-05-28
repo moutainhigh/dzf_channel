@@ -58,37 +58,6 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 
 	private Logger log = Logger.getLogger(this.getClass());
 	
-	/**
-	 * 查询主表数据
-	 */
-	public void query() {
-		Grid grid = new Grid();
-		try {
-			ManagerVO qvo = new ManagerVO();
-			Integer type = Integer.parseInt(getRequest().getParameter("type"));
-			qvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), qvo);
-			qvo.setUserid(getLoginUserid());
-			List<ManagerVO> vos = manager.query(qvo,type);
-			if(vos==null||vos.size()==0){
-				grid.setRows(new ArrayList<ManagerVO>());
-				grid.setMsg("查询数据为空!");
-			}else{
-				grid.setRows(vos);
-				grid.setSuccess(true);
-				grid.setMsg("查询成功!");
-				if(type==3){
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_QDZSJFX.getValue(), "渠道总数据分析查询成功", ISysConstants.SYS_3);
-				}else if(type==2){
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_DQSJFX.getValue(), "大区总数据分析查询成功", ISysConstants.SYS_3);
-				}else{
-					writeLogRecord(LogRecordEnum.OPE_CHANNEL_SSJFX.getValue(), "省数据分析查询成功", ISysConstants.SYS_3);
-				}
-			}
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "查询失败");
-		}
-		writeJson(grid);
-	}
 	
 	/**
 	 * 明细查询方法(已审核)
