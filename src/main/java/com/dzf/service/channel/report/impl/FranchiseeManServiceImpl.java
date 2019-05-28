@@ -85,12 +85,14 @@ public class FranchiseeManServiceImpl extends ManagerServiceImpl implements IFra
 			}
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-		Map<String, UserVO> opermap = pubService.getManagerMap(qrytype);// 渠道运营
-		Map<Integer, ChnAreaVO> chnmap = pubService.getChnMap(qvo.getAreaname(), qrytype);// 渠道运营
-		ChnAreaVO areaVO ;
-		String corpName;
-		UserVO userVO;
 		for (ManagerVO managerVO : list) {
+			
+			Map<String, UserVO> opermap = pubService.getManagerMap(qrytype);// 渠道运营
+			Map<Integer, ChnAreaVO> chnmap = pubService.getChnMap(qvo.getAreaname(), qrytype);// 渠道运营
+			ChnAreaVO areaVO ;
+			String corpName;
+			UserVO userVO;
+			
 			if(chnmap.containsKey(managerVO.getVprovince())){
 				corpName = CodeUtils1.deCode(managerVO.getCorpname());
 				if(StringUtil.isEmpty(qvo.getCorpname()) || corpName.indexOf(qvo.getCorpname()) != -1){
