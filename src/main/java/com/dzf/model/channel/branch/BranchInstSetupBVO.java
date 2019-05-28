@@ -5,13 +5,10 @@ import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 
-import lombok.Data;
-
 /**
  * 机构设置子表VO
  */
 @SuppressWarnings("rawtypes")
-@Data
 public class BranchInstSetupBVO extends SuperVO {
 	
 	 
@@ -47,6 +44,102 @@ public class BranchInstSetupBVO extends SuperVO {
 
 	private DZFDateTime ts; // 时间戳
 	
+	public String getPk_branchcorp() {
+		return pk_branchcorp;
+	}
+
+	public void setPk_branchcorp(String pk_branchcorp) {
+		this.pk_branchcorp = pk_branchcorp;
+	}
+
+	public String getPk_branchset() {
+		return pk_branchset;
+	}
+
+	public void setPk_branchset(String pk_branchset) {
+		this.pk_branchset = pk_branchset;
+	}
+
+	public String getPk_corp() {
+		return pk_corp;
+	}
+
+	public void setPk_corp(String pk_corp) {
+		this.pk_corp = pk_corp;
+	}
+
+	public String getVname() {
+		return vname;
+	}
+
+	public void setVname(String vname) {
+		this.vname = vname;
+	}
+
+	public String getLinkman() {
+		return linkman;
+	}
+
+	public void setLinkman(String linkman) {
+		this.linkman = linkman;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getIsseal() {
+		return isseal;
+	}
+
+	public void setIsseal(String isseal) {
+		this.isseal = isseal;
+	}
+
+	public String getVmemo() {
+		return vmemo;
+	}
+
+	public void setVmemo(String vmemo) {
+		this.vmemo = vmemo;
+	}
+
+	public String getCoperatorid() {
+		return coperatorid;
+	}
+
+	public void setCoperatorid(String coperatorid) {
+		this.coperatorid = coperatorid;
+	}
+
+	public DZFDate getDoperatedate() {
+		return doperatedate;
+	}
+
+	public void setDoperatedate(DZFDate doperatedate) {
+		this.doperatedate = doperatedate;
+	}
+
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
+	public DZFDateTime getTs() {
+		return ts;
+	}
+
+	public void setTs(DZFDateTime ts) {
+		this.ts = ts;
+	}
+
 	@Override
 	public String getPKFieldName() {
 		return "pk_branchset";

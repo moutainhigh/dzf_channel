@@ -4,9 +4,9 @@
 <html>
 <head>
 <title>机构设置</title>
-<jsp:include page="../../inc/easyuigs.jsp"></jsp:include>
+<jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/branch/inststepup.js");%> charset="UTF-8" type="text/javascript"></script>
+<%-- <SCRIPT SRC=<%UPDATEGRADEVERSION.OUTVERSION(OUT, "../../JS/CHANNEL/BRANCH/INSTSTEPUP.JS");%> CHARSET="UTF-8" TYPE="TEXT/JAVASCRIPT"></SCRIPT> --%>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style>
  
