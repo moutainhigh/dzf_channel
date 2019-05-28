@@ -85,29 +85,29 @@ public class FranchiseeManServiceImpl extends ManagerServiceImpl implements IFra
 			}
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-		for (ManagerVO managerVO : list) {
-			
+		if(list!=null && list.size()>0){
 			Map<String, UserVO> opermap = pubService.getManagerMap(qrytype);// 渠道运营
 			Map<Integer, ChnAreaVO> chnmap = pubService.getChnMap(qvo.getAreaname(), qrytype);// 渠道运营
 			ChnAreaVO areaVO ;
 			String corpName;
 			UserVO userVO;
-			
-			if(chnmap.containsKey(managerVO.getVprovince())){
-				corpName = CodeUtils1.deCode(managerVO.getCorpname());
-				if(StringUtil.isEmpty(qvo.getCorpname()) || corpName.indexOf(qvo.getCorpname()) != -1){
-					areaVO = chnmap.get(managerVO.getVprovince());
-					managerVO.setAreaname(areaVO.getAreaname());
-					managerVO.setUsername(areaVO.getUsername());
-					
-					managerVO.setCorpname(corpName);
-					userVO = opermap.get(managerVO.getPk_corp());
-					if (userVO != null) {
-						managerVO.setCusername(userVO.getUser_name());
+			for (ManagerVO managerVO : list) {
+				if(chnmap.containsKey(managerVO.getVprovince())){
+					corpName = CodeUtils1.deCode(managerVO.getCorpname());
+					if(StringUtil.isEmpty(qvo.getCorpname()) || corpName.indexOf(qvo.getCorpname()) != -1){
+						areaVO = chnmap.get(managerVO.getVprovince());
+						managerVO.setAreaname(areaVO.getAreaname());
+						managerVO.setUsername(areaVO.getUsername());
+						
+						managerVO.setCorpname(corpName);
+						userVO = opermap.get(managerVO.getPk_corp());
+						if (userVO != null) {
+							managerVO.setCusername(userVO.getUser_name());
+						}
+						setDefult(managerVO);
+						pk_corps.add(managerVO.getPk_corp());
+						map.put(managerVO.getPk_corp(), managerVO);
 					}
-					setDefult(managerVO);
-					pk_corps.add(managerVO.getPk_corp());
-					map.put(managerVO.getPk_corp(), managerVO);
 				}
 			}
 		}
