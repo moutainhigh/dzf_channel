@@ -85,41 +85,41 @@ public class StockInServiceImpl implements IStockInService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT in.*,u.user_name coperatorname  \n");
-		sql.append("  FROM cn_stockin in \n");
-		sql.append("  LEFT JOIN sm_user u ON in.coperatorid = u.cuserid  \n") ; 
-		sql.append(" WHERE nvl(in.dr, 0) = 0  \n");
-		sql.append("   AND in.pk_corp = ? \n");
+		sql.append("SELECT sin.*,u.user_name coperatorname  \n");
+		sql.append("  FROM cn_stockin sin \n");
+		sql.append("  LEFT JOIN sm_user u ON sin.coperatorid = u.cuserid  \n") ; 
+		sql.append(" WHERE nvl(sin.dr, 0) = 0  \n");
+		sql.append("   AND sin.pk_corp = ? \n");
 		spm.addParam(pamvo.getPk_corp());
 		if (!StringUtil.isEmpty(pamvo.getCuserid())) {
-			sql.append("   AND in.coperatorid = ? \n");
+			sql.append("   AND sin.coperatorid = ? \n");
 			spm.addParam(pamvo.getCuserid());
 		}
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
-			sql.append("   AND in.vbillcode like ? \n");
+			sql.append("   AND sin.vbillcode like ? \n");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
 		}
 		if(pamvo.getQrytype() != null && pamvo.getQrytype() != -1){
-			sql.append("   AND in.vstatus = ? \n");
+			sql.append("   AND sin.vstatus = ? \n");
 			spm.addParam(pamvo.getQrytype());
 		}
 		if(pamvo.getBegdate() != null){
-			sql.append("   AND in.dstockdate >= ? \n");
+			sql.append("   AND sin.dstockdate >= ? \n");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null ){
-			sql.append("   AND in.dstockdate <= ? \n");
+			sql.append("   AND sin.dstockdate <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
-			sql.append(" AND substr(in.dconfirmtime, 0, 10) >= ? \n");
+			sql.append(" AND substr(sin.dconfirmtime, 0, 10) >= ? \n");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getEndperiod())){
-			sql.append(" AND substr(in.dconfirmtime, 0, 10) <= ? \n");
+			sql.append(" AND substr(sin.dconfirmtime, 0, 10) <= ? \n");
 			spm.addParam(pamvo.getEndperiod());
 		}
-		sql.append(" ORDER BY in.ts DESC");
+		sql.append(" ORDER BY sin.ts DESC");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
