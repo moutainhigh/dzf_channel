@@ -873,10 +873,12 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 				map.put("summny", retvo.getNdeductmny_sum());
 			}
 		}
-		DZFDouble ndeductmny = retvo.getNdeducmny().setScale(2, DZFDouble.ROUND_HALF_UP);
-		String mny = String.valueOf(ndeductmny);
-		map.put("num_"+mny, retvo.getIcorpnums());
-		map.put("mny_"+mny, ndeductmny);
+		if(retvo.getNdeducmny() != null){
+			DZFDouble ndeductmny = retvo.getNdeducmny().setScale(2, DZFDouble.ROUND_HALF_UP);
+			String mny = String.valueOf(ndeductmny);
+			map.put("num_"+mny, retvo.getIcorpnums());
+			map.put("mny_"+mny, ndeductmny);
+		}
 		return setvo;
 	}
 	
