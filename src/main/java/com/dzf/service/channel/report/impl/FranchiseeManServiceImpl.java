@@ -26,7 +26,7 @@ import com.dzf.service.channel.report.IFranchiseeManService;
 import com.dzf.service.pub.IPubService;
 
 @Service("manfranchisee")
-public class FranchiseeManServiceImpl extends ManagerServiceImpl implements IFranchiseeManService {
+public class FranchiseeManServiceImpl extends ManCommonServiceImpl implements IFranchiseeManService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;

@@ -24,7 +24,7 @@ import com.dzf.service.channel.report.IRegionalManService;
 import com.dzf.service.pub.IPubService;
 
 @Service("manregional")
-public class RegionalManServiceImpl extends ManagerServiceImpl implements IRegionalManService {
+public class RegionalManServiceImpl extends ManCommonServiceImpl implements IRegionalManService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;

@@ -23,7 +23,7 @@ import com.dzf.service.channel.report.IChannelManService;
 import com.dzf.service.pub.IPubService;
 
 @Service("manchannel")
-public class ChannelManServiceImpl extends ManagerServiceImpl implements IChannelManService {
+public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChannelManService {
 	
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
