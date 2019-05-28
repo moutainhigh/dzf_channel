@@ -15,7 +15,7 @@ $(function() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/manager!query.action',
+		url : DZF.contextPath + '/report/channelman!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
@@ -120,7 +120,7 @@ function quickfiltet(){
 		 if (e.keyCode == 13) {
             var filtername = $("#filter_value").val(); 
             if (filtername != "") {
-            	var url = DZF.contextPath +'/report/manager!query.action';
+            	var url = DZF.contextPath +'/report/channelman!query.action';
             	$('#grid').datagrid('options').url = url;
             	$('#grid').datagrid('loadData',{ total:0, rows:[]});
             	$('#grid').datagrid('load', {

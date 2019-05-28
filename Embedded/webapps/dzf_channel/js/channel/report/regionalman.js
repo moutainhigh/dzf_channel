@@ -67,7 +67,7 @@ function reloadData() {
 	queryParams['type'] = 2;
 	
 	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('options').url = DZF.contextPath +'/report/manager!query.action';
+	$('#grid').datagrid('options').url = DZF.contextPath +'/report/regional!query.action';
 	$("#grid").datagrid('reload');
 	$('#grid').datagrid('unselectAll');
 	$("#qrydialog").css("visibility", "hidden");
@@ -77,7 +77,7 @@ function reloadData() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/manager!query.action',
+		url : DZF.contextPath + '/report/regional!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,

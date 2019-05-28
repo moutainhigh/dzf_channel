@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,17 +18,10 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.CommonUtil;
-import com.dzf.model.sys.sys_power.CorpVO;
-import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
-import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IManagerService;
-import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("mana_manager")
 public class ManagerServiceImpl implements IManagerService {
@@ -37,224 +29,61 @@ public class ManagerServiceImpl implements IManagerService {
 	@Autowired
 	private SingleObjectBO singleObjectBO = null;
 	
-    @Autowired
-    private IPubService pubService;
-    
-	@Autowired
-    private IUserService userser;
-	
-	private String wheresql = QueryUtil.getWhereSql();
-	
-	@Override
-	public List<ManagerVO> query(ManagerVO qvo,Integer type) throws DZFWarpException {
-		List<ManagerVO> list=new ArrayList<ManagerVO>();
-		Integer level = pubService.getDataLevel(qvo.getUserid());
-		if(level==null){
-			
-		}else if(type==3 && level<=1){
-			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			list = qryBoth(qvo,type,queryUserMap);//3渠道总
-		}else if(type==2 && level<=2){
-			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			list = qryBoth(qvo,type,queryUserMap);//2大区 
-		}else if(type==1 && level<=3){
-			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			list = qryChannel(qvo,queryUserMap);//1省
-		}
-		if(list!=null && list.size()!=0){
-			Collections.sort(list, new Comparator<ManagerVO>() {
-				@Override
-				public int compare(ManagerVO o1, ManagerVO o2) {
-					int sort=0;
-					if(o1.getAreacode()!=null && o2.getAreacode()!=null){
-						if(o1.getAreacode().equals(o2.getAreacode())){
-							sort=o1.getVprovince().compareTo(o2.getVprovince());
-						}else{
-							sort=o1.getAreacode().compareTo(o2.getAreacode());
-						}
-					}else if(o1.getAreacode()==null && o2.getAreacode()!=null){
-						sort=1;
-					}else if(o2.getAreacode()==null && o1.getAreacode()!=null){
-						sort=-1;
-					}else{
+	/**
+	 * 排序
+	 * @param retList
+	 */
+	protected void sortList(List<ManagerVO> retList){
+		Collections.sort(retList, new Comparator<ManagerVO>() {
+			@Override
+			public int compare(ManagerVO o1, ManagerVO o2) {
+				int sort=0;
+				if(o1.getAreacode()!=null && o2.getAreacode()!=null){
+					if(o1.getAreacode().equals(o2.getAreacode())){
 						sort=o1.getVprovince().compareTo(o2.getVprovince());
+					}else{
+						sort=o1.getAreacode().compareTo(o2.getAreacode());
 					}
-					return sort;
+				}else if(o1.getAreacode()==null && o2.getAreacode()!=null){
+					sort=1;
+				}else if(o2.getAreacode()==null && o1.getAreacode()!=null){
+					sort=-1;
+				}else{
+					sort=o1.getVprovince().compareTo(o2.getVprovince());
 				}
-			});
-			list=queryCommon(qvo,list);
-		}
-		return list;
+				return sort;
+			}
+		});
 	}
 	
 	/**
-	 * 查询省市数据分析
-	 * @param qvo
-	 * @return
+	 * 设置默认值
+	 * @param managerVO
 	 */
-	private List<ManagerVO> qryChannel(ManagerVO qvo,HashMap<String, UserVO> queryUserMap ) {
-		List<ManagerVO> qryCharge= qryCharge(qvo);		 //查询  是  省/市负责人相关的数据
-		String condition=null;
-		if(qryCharge == null || qryCharge.size() == 0){
-			qryCharge = new ArrayList<>();
-        }else{
-        	List<String> pros=pubService.qryPros(qvo.getUserid(),1);
-        	if(pros!=null && pros.size()>0){
-        		condition = SqlUtil.buildSqlForIn("b.vprovince",pros.toArray(new String[pros.size()]));
-        	}
-        }
-		List<ManagerVO> qryNotCharge = qryNotCharge(qvo,condition);//查询  非  省/市负责人相关的数据
-        if(qryNotCharge != null && qryNotCharge.size() > 0){
-        	qryCharge.addAll(qryNotCharge);
-        }
-		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
-		if(qryCharge!=null && qryCharge.size()>0){
-			UserVO uservo;
-			for (ManagerVO managerVO : qryCharge) {
-				if(managerVO.getCorpname()!=null && !(managerVO.getPk_corp().equals(managerVO.getCorpname()))){
-					managerVO.setCuserid(null);
-				}
-				if(!map.containsKey(managerVO.getPk_corp())){
-					map.put(managerVO.getPk_corp(), managerVO);
-				}else if(!StringUtil.isEmpty(managerVO.getCuserid())){
-					map.put(managerVO.getPk_corp(), managerVO);
-				}
-				uservo = queryUserMap.get(managerVO.getUserid());
-				if (uservo != null) {
-					managerVO.setUsername(uservo.getUser_name());
-				}
-				uservo = queryUserMap.get(managerVO.getCuserid());
-				if (uservo != null) {
-					managerVO.setCusername(uservo.getUser_name());
-				}
-			}
-			Collection<ManagerVO> manas = map.values();
-			qryCharge= new ArrayList<ManagerVO>(manas);
-		}
-		return qryCharge;
-	}
+	protected void setDefult(ManagerVO managerVO) {
+		managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
+		managerVO.setNdedrebamny(DZFDouble.ZERO_DBL);
+		managerVO.setXgmNum(0);
+		managerVO.setYbrNum(0);
+		managerVO.setAnum(0);
+		managerVO.setRnum(0);
+		managerVO.setBondmny(DZFDouble.ZERO_DBL);
+		managerVO.setAntotalmny(DZFDouble.ZERO_DBL);
+		managerVO.setRntotalmny(DZFDouble.ZERO_DBL);
+		managerVO.setOutmny(DZFDouble.ZERO_DBL);
+		managerVO.setPredeposit(DZFDouble.ZERO_DBL);
+		managerVO.setUnitprice(DZFDouble.ZERO_DBL);
+ 	}
 	
-
 	/**
-	 * 查询渠道总数据+区域总经理
+	 * 查询报表 基本数据
 	 * @param qvo
-	 * @param type
+	 * @param map
+	 * @param pk_corps
 	 * @return
 	 */
-	private List<ManagerVO> qryBoth(ManagerVO qvo,Integer type,HashMap<String, UserVO> queryUserMap ) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("  select a.areaname,a.areacode,a.userid,");
-		sql.append("  	   y.region_name vprovname,");
-		sql.append("       account.pk_corp, account.innercode, account.vprovince,b.ischarge isxq,");
-		sql.append("       b.userid cuserid,b.pk_corp corpname");//, b.vprovince
-		sql.append("  from bd_account account");
-		sql.append("  left join ynt_area y on account.vprovince=y.region_id and y.parenter_id = 1 and nvl(y.dr, 0) = 0 ");
-		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince and b.type = 1 and nvl(b.dr, 0) = 0");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea and a.type = 1 and nvl(a.dr, 0) = 0");
-		sql.append(" where ").append(wheresql);
-//		sql.append("   and nvl(p.isseal,'N')='N'"); 
-//		sql.append("   and (p.sealeddate is null or p.sealeddate > ? ) "); 
-		sql.append("   and account.vprovince is not null "); 
-//		sp.addParam(new DZFDate());
-	    if(type==2){// 区域总经理
-	    	sql.append(" and a.userid=? ");
-	    	sp.addParam(qvo.getUserid());
-	    }
-		if (!StringUtil.isEmpty(qvo.getAreaname())) {
-			sql.append(" and a.areaname=? "); // 大区
-			sp.addParam(qvo.getAreaname());
-		}
-		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
-			sql.append(" and b.vprovince=? ");// 省市
-			sp.addParam(qvo.getVprovince());
-		}
-		Boolean isQuery=true;
-		if (!StringUtil.isEmpty(qvo.getCuserid())) {
-			isQuery = false;
-			String condition = null;
-			List<String> qryPros = pubService.qryPros(qvo.getCuserid(), 1);
-			if (qryPros != null && qryPros.size() > 0) {
-				condition = SqlUtil.buildSqlForIn("b.vprovince", qryPros.toArray(new String[qryPros.size()]));
-				sql.append(" and (" + condition + " or b.userid=? ) ");
-			} else {
-				sql.append(" and b.userid=? ");// 渠道经理
-			}
-			sp.addParam(qvo.getCuserid());
-		}
-		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-		HashMap<String, ManagerVO> map = new HashMap<String, ManagerVO>();
-		UserVO uservo;
-		if(list!=null && list.size()>0){
-			Boolean isPut=true;
-			for (ManagerVO managerVO : list) {
-				if(managerVO.getCorpname()==null || !(managerVO.getPk_corp().equals(managerVO.getCorpname()))){
-					managerVO.setCuserid(null);
-				}
-				if(!isQuery &&(managerVO.getIsxq().booleanValue() || !StringUtil.isEmpty(managerVO.getCuserid()))){
-					isPut=true;
-				}else if(!isQuery){
-					isPut=false;
-				}
-				if(!map.containsKey(managerVO.getPk_corp())&& isPut){
-					map.put(managerVO.getPk_corp(), managerVO);
-				}else if(!StringUtil.isEmpty(managerVO.getCuserid())&& isPut){
-					map.put(managerVO.getPk_corp(), managerVO);
-				}
-				uservo = queryUserMap.get(managerVO.getUserid());
-				if (uservo != null) {
-					managerVO.setUsername(uservo.getUser_name());
-				}
-				uservo = queryUserMap.get(managerVO.getCuserid());
-				if (uservo != null) {
-					managerVO.setCusername(uservo.getUser_name());
-				}
-			}
-			Collection<ManagerVO> manas = map.values();
-			list= new ArrayList<ManagerVO>(manas);
-		}
-	    return list;
-	}
-	
-	private List<ManagerVO> qryCharge(ManagerVO qvo) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select account.pk_corp ,account.innercode,a.areaname,a.areacode,a.userid ,b.vprovname,b.vprovince,b.pk_corp corpname,");
-		sql.append(" (case when b.pk_corp is null then null  when b.pk_corp!=account.pk_corp then null else b.userid end) cuserid ");
-		sql.append(" from bd_account account right join cn_chnarea_b b on  account.vprovince=b.vprovince  " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where ").append(wheresql);
-	    sql.append("    and nvl(b.dr,0)=0  and nvl(a.dr,0)=0 and b.type=1 and b.userid=?" );
-	    sql.append("    and nvl(b.ischarge,'N')='Y' " );
-    	sp.addParam(qvo.getUserid());
-	    List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-	    return list;
-	}
-
-	private List<ManagerVO> qryNotCharge(ManagerVO qvo,String condition) {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter sp=new SQLParameter();
-		sql.append("select account.pk_corp,account.innercode ,a.areaname,a.areacode,a.userid,b.userid cuserid,b.vprovname,b.vprovince");
-		sql.append(" from bd_account account right join cn_chnarea_b b on account.pk_corp=b.pk_corp " );   
-		sql.append(" left join cn_chnarea a on b.pk_chnarea=a.pk_chnarea " );   
-		sql.append(" where " ).append(wheresql);
-	    sql.append(" and nvl(b.dr,0)=0  and nvl(a.dr,0)=0 and b.type=1" );
-		if(!StringUtil.isEmpty(condition)){
-			 sql.append(" and ("+condition+" or b.userid=? ) " );
-		}else{
-			 sql.append(" and b.userid=? " );
-		}
-	    sql.append(" and nvl(b.ischarge,'N')='N' " );
-	    sp.addParam(qvo.getUserid());
-	    List<ManagerVO> vos =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));
-		return vos;
-	}
-	
-	private ArrayList<ManagerVO> queryCommon(ManagerVO qvo,List<ManagerVO> vos) {
-		LinkedHashMap<String, ManagerVO> map = new LinkedHashMap<String, ManagerVO>();
-		ArrayList<String> pk_corps =new ArrayList<>();
-		setDefult(qvo, vos, map, pk_corps);//设置默认值
-		if(pk_corps!=null&&pk_corps.size()>0){
+	protected ArrayList<ManagerVO> queryCommon(ManagerVO qvo,Map<String, ManagerVO> map,ArrayList<String> pk_corps) {
+		if(pk_corps!=null && pk_corps.size()>0){
 			String[] pks=pk_corps.toArray(new String[0]);
 			StringBuffer buf=new StringBuffer();//保证金
 			buf.append(" select npaymny as bondmny,pk_corp from cn_balance where nvl(dr,0) = 0 and ipaytype=1 and ");
@@ -367,7 +196,7 @@ public class ManagerServiceImpl implements IManagerService {
 				}
 		     }
 		     HashMap<Integer, ManagerVO> promap=new HashMap<Integer, ManagerVO>();
-		     if(list6!=null&&list6.size()>0){//客单价
+		     if(list6!=null && list6.size()>0){//客单价
 		    	 for (ManagerVO managerVO : list6) {
 		    		 promap.put(managerVO.getVprovince(), managerVO);
 				}
@@ -401,51 +230,10 @@ public class ManagerServiceImpl implements IManagerService {
 	}
 	
 	/**
-	 * 设置默认值
-	 * @param qvo
-	 * @param vos
-	 * @param map
-	 * @param pk_corps
-	 */
-	private void setDefult(ManagerVO qvo, List<ManagerVO> vos, Map<String, ManagerVO> map, ArrayList<String> pk_corps) {
-		CorpVO cvo = null;
-		UserVO uvo = null;
-		for (ManagerVO managerVO : vos) {
-			cvo = CorpCache.getInstance().get(null, managerVO.getPk_corp());
-			if(cvo!=null){
-				managerVO.setCorpname(cvo.getUnitname());
-			}else{
-				managerVO.setCorpname(null);
-			}
-			managerVO.setNdeductmny(DZFDouble.ZERO_DBL);
-			managerVO.setNdedrebamny(DZFDouble.ZERO_DBL);
-			managerVO.setXgmNum(0);
-			managerVO.setYbrNum(0);
-			managerVO.setAnum(0);
-			managerVO.setRnum(0);
-			managerVO.setBondmny(DZFDouble.ZERO_DBL);
-			managerVO.setAntotalmny(DZFDouble.ZERO_DBL);
-			managerVO.setRntotalmny(DZFDouble.ZERO_DBL);
-			managerVO.setOutmny(DZFDouble.ZERO_DBL);
-			managerVO.setPredeposit(DZFDouble.ZERO_DBL);
-			managerVO.setUnitprice(DZFDouble.ZERO_DBL);
-			if(!StringUtil.isEmpty(qvo.getCorpname())){
-				if(!StringUtil.isEmpty(managerVO.getCorpname()) && managerVO.getCorpname().indexOf(qvo.getCorpname()) != -1){
-					pk_corps.add(managerVO.getPk_corp());
-					map.put(managerVO.getPk_corp(), managerVO);
-				}
-			}else{
-				pk_corps.add(managerVO.getPk_corp());
-				map.put(managerVO.getPk_corp(), managerVO);
-			}
-		}
-	}
-	
-	/**
 	 * 查询语句（提单量，合同代账费）
 	 * @param buf
 	 */
-	private StringBuffer getSql(String[] pks,Integer type) {
+	protected StringBuffer getSql(String[] pks,Integer type) {
 		StringBuffer buf=new StringBuffer();
 		if(type==2){
 			buf.append("  select sum(w.rnum) as rnum,");
