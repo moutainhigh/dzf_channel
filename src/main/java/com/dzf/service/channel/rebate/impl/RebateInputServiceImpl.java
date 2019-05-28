@@ -787,9 +787,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			oldvo.setCorpname(corpvo.getUnitname());
 			oldvo.setVprovince(corpvo.getVprovince());
 		}
-		UserVO userVO =  userser.queryUserJmVOByID(IDefaultValue.DefaultGroup);
-		if (userVO != null) {
-			oldvo.setVoperatorname(userVO.getUser_name());
+		UserVO uservo =  userser.queryUserJmVOByID(oldvo.getCoperatorid());
+		if (uservo != null) {
+			oldvo.setVoperatorname(uservo.getUser_name());
 		}
 		if (oldvo.getIstatus() != null) {
 			String vstatusname = "";
