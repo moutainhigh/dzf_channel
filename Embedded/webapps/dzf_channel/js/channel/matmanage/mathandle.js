@@ -57,7 +57,7 @@ function initUname() {
  * 初始化快递公司
  */
 function initLogistics() {
-	$("#logid").combobox({
+	$("#logid,#ilogid").combobox({
 		onShowPanel : function() {
 			initLogName();
 		}
@@ -78,6 +78,7 @@ function initLogName() {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				$('#logid').combobox('loadData', result.rows);
+				$('#ilogid').combobox('loadData', result.rows);
 			} else {
 				Public.tips({
 					content : result.msg,
@@ -1274,8 +1275,10 @@ function showDetail(index) {
 function showEdit(row) {
 	$('#infoDialog').dialog('open').dialog('center').dialog('setTitle', '物料修改');
 	initCardDetail();
+	
 	$('#infoform').form('clear');
 	$('#infoform').form('load', row);
+	initLogistics();
 	$('#ilogid').textbox('setValue', row.logname);
 	if (row.children != null && row.children.length > 0) {
 		$('#icardGrid').datagrid('loadData', row.children);
@@ -1290,8 +1293,12 @@ function showEdit(row) {
 	$("#iphone").textbox('readonly', false);
 	$("#iaudname").combobox('readonly', true);
 	$("#iaudate").combobox('readonly', true);
+	$('#ilogid').textbox('readonly', true);
+	$('#ifcode').textbox('readonly', true);
 	if(row.status==3){
 		$("#ifcost").combobox('readonly', false);
+		$('#ilogid').textbox('readonly', false);
+		$('#ifcode').textbox('readonly', false);
 	}
 	
 	$("input",$("#ipname").next("span")).blur(function(){
@@ -1310,6 +1317,12 @@ function showEdit(row) {
 		if($("#icountryname").combobox('getValue')==""){
 		$("#icountryname").combobox('setValue',row.countryname);
 		$("#ivarea").val(row.varea);
+	    }
+	});
+	
+	$("input",$("#ilogid").next("span")).blur(function(){
+		if($("#ilogid").combobox('getValue')==""){
+		$("#ilogid").combobox('setValue',row.logid);
 	    }
 	});
 }

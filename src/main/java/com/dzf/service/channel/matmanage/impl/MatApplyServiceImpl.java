@@ -620,7 +620,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			
 			data.setCitycounty(data.getPname()+"-"+data.getCityname()+"-"+data.getCountryname());
 			String[] updates = {"vprovince","vcity","varea","citycounty",
-					"vaddress","vreceiver","phone","fastcost"};
+					"vaddress","vreceiver","phone","fastcost","pk_logistics","fastcode"};
     		singleObjectBO.update(data, updates);
 		}catch (Exception e) {
 			if (e instanceof BusinessException)

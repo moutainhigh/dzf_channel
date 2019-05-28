@@ -282,17 +282,16 @@
 				</div>
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;">快递公司：</label>
-					     <input id="ilogid" name="logid" class="easyui-textbox" style="width:166px;height:28px;"
-				           data-options="readonly:true" />
-			            
+			             <input id="ilogid" name="logid" class="easyui-combobox" style="width:166px;height:28px;"
+				           editable="false" data-options="valueField:'logid', textField:'logname', panelHeight:'200'" />
+				           
 			            <label style="text-align:right; width: 85px;">金额：</label> 
 						<input id="ifcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
 							data-options="readonly:true"/>
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:124px;text-align:right">快递单号：</label> 
-					   <input id="ifcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;" 
-					 	   data-options="readonly:true"/>
+					   <input id="ifcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;"/>
 					   <label style="width:85px;text-align:right">发货时间：</label> 
 					   <input id="idedate" name="dedate" type="text" class="easyui-datebox" style="width:166px;height:27px;" 
 						   data-options="readonly:true" />  
