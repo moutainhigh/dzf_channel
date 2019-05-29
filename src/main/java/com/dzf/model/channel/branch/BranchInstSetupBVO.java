@@ -20,6 +20,9 @@ public class BranchInstSetupBVO extends SuperVO {
 
 	@FieldAlias("corpid")
 	private String pk_corp;// 公司id
+	
+	@FieldAlias("uname")
+	private String unitname;//公司名称
 
 	@FieldAlias("name")
 	private String vname;// 企业识别码
@@ -29,7 +32,7 @@ public class BranchInstSetupBVO extends SuperVO {
 	
 	private String phone;//联系方式
 	
-	private String isseal; //是否封存 
+	private String isseal; //是否封存  Y:封存  N:启用
 	
 	@FieldAlias("memo")
 	private String vmemo; //备注
@@ -139,10 +142,18 @@ public class BranchInstSetupBVO extends SuperVO {
 	public void setTs(DZFDateTime ts) {
 		this.ts = ts;
 	}
+	
+	public String getUnitname() {
+		return unitname;
+	}
+
+	public void setUnitname(String unitname) {
+		this.unitname = unitname;
+	}
 
 	@Override
 	public String getPKFieldName() {
-		return "pk_branchset";
+		return "pk_branchcorp";
 	}
 
 	@Override
@@ -152,7 +163,7 @@ public class BranchInstSetupBVO extends SuperVO {
 
 	@Override
 	public String getTableName() {
-		return "br_branchset";
+		return "br_branchcorp";
 	}
 
 }

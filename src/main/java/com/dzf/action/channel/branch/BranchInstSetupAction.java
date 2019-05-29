@@ -1,5 +1,8 @@
 package com.dzf.action.channel.branch;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -10,6 +13,7 @@ import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.branch.BranchInstSetupBVO;
 import com.dzf.model.channel.branch.BranchInstSetupVO;
 import com.dzf.model.pub.Json;
+import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -37,6 +41,37 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 	private IBranchInstStepupService branchser;
 	
 	/**
+	 * 查询列表
+	 */
+	public void query(){
+		Json json = new Json();
+		try {
+			QueryParamVO param = new QueryParamVO();
+			param = (QueryParamVO) DzfTypeUtils.cast(getRequest(), param);
+			Map<String, List> map = branchser.query(param);
+			if(map==null || map.size()==0){
+				json.setRows(null);
+				json.setMsg("查询数据为空");
+			}else{
+				if(map.size()>1){
+					json.setRows(map.get("0"));//第一次加载
+				}
+				json.setMsg("查询成功");
+				json.setData(map.get("1"));
+			}
+			json.setSuccess(true);
+		}catch (Exception e) {
+			json.setSuccess(false);
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	
+	
+	
+	
+	/**
 	 * 新增机构
 	 */
 	public void saveInst() {
@@ -59,7 +94,6 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 	    	json.setMsg("保存成功");
 			json.setSuccess(true);
 	    }catch (Exception e) {
-			json.setMsg("保存失败");
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "保存失败");
 		}
@@ -83,12 +117,12 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 				vo.setPk_corp("000001");
 				vo.setCoperatorid(uservo.getCuserid());
 				vo.setDoperatedate(new DZFDate());
-				vo.setIsseal("Y");
+				vo.setIsseal("N");
 	    	}
 	        branchser.saveCorp(vo);
-	    	
+	        json.setMsg("保存成功");
+			json.setSuccess(true);
 		}catch (Exception e) {
-			json.setMsg("保存失败");
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "保存失败");
 		}
@@ -108,7 +142,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
-		writeJson(json.isSuccess());
+		writeJson(json);
 	}
 	
 	/**
@@ -125,7 +159,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		}catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
-		writeJson(json.isSuccess());
+		writeJson(json);
 	}
 	
 	/**
@@ -148,6 +182,72 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		}catch (Exception e) {
 			printErrorLog(json, log, e, "保存失败");
 		}
-		writeJson(json.isSuccess());
+		writeJson(json);
 	}
+	
+	/**
+	 * 封存、启用
+	 */
+	public void editSseal() {
+		Json json = new Json();
+		try{
+			BranchInstSetupBVO vo = new BranchInstSetupBVO();
+			vo = (BranchInstSetupBVO) DzfTypeUtils.cast(getRequest(), vo);
+			branchser.updateStatus(vo);
+			json.setMsg("操作成功");
+			json.setSuccess(true);
+		}catch (Exception e) {
+			printErrorLog(json, log, e, "操作失败");
+		}
+		writeJson(json);
+		
+	}
+	
+	
+	/**
+	 * 删除公司
+	 */
+	public void deleteCorpById() {
+		Json json = new Json();
+		try{
+			BranchInstSetupBVO vo = new BranchInstSetupBVO();
+			vo = (BranchInstSetupBVO) DzfTypeUtils.cast(getRequest(), vo);
+			branchser.deleteCorpById(vo);
+			json.setMsg("删除成功");
+			json.setSuccess(true);
+		}catch (Exception e) {
+			printErrorLog(json, log, e, "删除失败");
+		}
+		writeJson(json);
+		
+	}
+	
+	/**
+	 * 根据id查询机构
+	 */
+	public void queryById(){
+		Json json = new Json();
+		try{
+			String id = getRequest().getParameter("id");
+			String type = getRequest().getParameter("type");
+			BranchInstSetupVO vo = new BranchInstSetupVO();
+			BranchInstSetupBVO bvo = new BranchInstSetupBVO();
+			if(type!=null && "0".equals(type)){
+				vo = (BranchInstSetupVO) branchser.queryById(id,type);
+				json.setRows(vo);
+			}else{
+				bvo = (BranchInstSetupBVO) branchser.queryById(id,type);
+				json.setRows(bvo);
+			}
+			json.setMsg("查询成功");
+			json.setSuccess(true);
+		}catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+		
+	}
+	
+	
+	
 }
