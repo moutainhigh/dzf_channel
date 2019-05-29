@@ -214,7 +214,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 				throw new BusinessException("企业识别号："+data.getVname()+"其他用户正在操作此数据;<br>");
 			}
 			checkData(data.getPk_branchcorp(), data.getUpdatets(), "corp");
-			String sql = "delete from br_branchset where pk_branchcorp = ? ";
+			String sql = "delete from br_branchcorp where pk_branchcorp = ? ";
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(data.getPk_branchcorp());
 			singleObjectBO.executeUpdate(sql, spm);
