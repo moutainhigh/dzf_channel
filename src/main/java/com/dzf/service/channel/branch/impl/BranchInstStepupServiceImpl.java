@@ -1,5 +1,8 @@
 package com.dzf.service.channel.branch.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.channel.branch.BranchInstSetupBVO;
 import com.dzf.model.channel.branch.BranchInstSetupVO;
+import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -158,6 +163,36 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 			checkData(data.getPk_branchcorp(), data.getUpdatets(), "corp");
 			singleObjectBO.update(data, new String[]{"pk_branchset"});
 			
+		}catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_branchcorp(), uuid);
+		}	
+	}
+
+
+	@Override
+	public void updateStatus(BranchInstSetupBVO data) {
+		String uuid = UUID.randomUUID().toString();
+		try{
+			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_branchcorp(), uuid, 60);
+			if (!lockKey) {
+				throw new BusinessException("企业识别号："+data.getVname()+"其他用户正在操作此数据;<br>");
+			}
+			checkData(data.getPk_branchcorp(), data.getUpdatets(), "corp");
+			
+			if(!StringUtil.isEmpty(data.getIsseal()) &&
+					"Y".equals(data.getIsseal())){
+				data.setIsseal("N");
+			}else if(!StringUtil.isEmpty(data.getIsseal()) &&
+					"N".equals(data.getIsseal())){
+				data.setIsseal("Y");
+			}
+			singleObjectBO.update(data, new String[]{"isseal"});
+			
 			
 		}catch (Exception e) {
 			if (e instanceof BusinessException)
@@ -167,6 +202,79 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		} finally {
 			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_branchcorp(), uuid);
 		}	
+	}
+
+
+	@Override
+	public void deleteCorpById(BranchInstSetupBVO data) {
+		String uuid = UUID.randomUUID().toString();
+		try{
+			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_branchcorp(), uuid, 60);
+			if (!lockKey) {
+				throw new BusinessException("企业识别号："+data.getVname()+"其他用户正在操作此数据;<br>");
+			}
+			checkData(data.getPk_branchcorp(), data.getUpdatets(), "corp");
+			String sql = "delete from br_branchset where pk_branchcorp = ? ";
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(data.getPk_branchcorp());
+			singleObjectBO.executeUpdate(sql, spm);
+			
+		}catch (Exception e) {
+			if (e instanceof BusinessException)
+				throw new BusinessException(e.getMessage());
+			else
+				throw new WiseRunException(e);
+		} finally {
+			LockUtil.getInstance().unLock_Key(data.getTableName(), data.getPk_branchcorp(), uuid);
+		}	
+	}
+
+
+	@Override
+	public Map<String, List> query(QueryParamVO param) {
+		
+		StringBuffer ssql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		Map<String, List> map = new HashMap<String, List>();
+		if(param.getQrytype()!=null && param.getQrytype()==0){//第一次加载
+			String sql ="select * from br_branchset where nvl(dr,0) = 0 order by ts desc";
+			List<BranchInstSetupBVO> list = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(BranchInstSetupBVO.class));
+			map.put("0", list);
+			if(list!=null && list.size()>0){
+				spm.addParam(list.get(0).getPk_branchset());
+			}else{
+				return null;
+			}
+		}else{
+			spm.addParam(param.getPk_currency());//主键id
+		}
+		
+		ssql.append(" select \n");
+		ssql.append("   bc.pk_branchcorp,bc.vname,\n");
+		ssql.append("   bc.linkman,bc.phone,bc.unitname,\n");
+		ssql.append("   bc.isseal,bc.vmemo,bc.updatets \n");
+		ssql.append("   from br_branchset bs \n");
+		ssql.append("   left join br_branchcorp bc on \n");
+		ssql.append("   bs.pk_branchset = bc.pk_branchset \n");
+		ssql.append("   where nvl(bs.dr,0) = 0 and \n");
+		ssql.append("   nvl(bc.dr,0) = 0 and \n");
+		ssql.append("   bs.pk_branchset = ? \n");
+		List<BranchInstSetupBVO> bvolist = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(ssql.toString(), spm, new BeanListProcessor(BranchInstSetupBVO.class));
+		
+		map.put("1", bvolist);
+		
+		return map;
+	}
+
+
+	@Override
+	public Object queryById(String id,String type) {
+		if(type!=null && "0".equals(type)){
+			return (BranchInstSetupVO) singleObjectBO.queryByPrimaryKey(BranchInstSetupVO.class, id);
+		}else{
+			return (BranchInstSetupBVO) singleObjectBO.queryByPrimaryKey(BranchInstSetupBVO.class, id);
+		}
+		
 	}
 
 
