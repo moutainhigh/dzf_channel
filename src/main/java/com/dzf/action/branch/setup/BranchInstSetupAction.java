@@ -100,6 +100,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		writeJson(json);
 	}
 	
+	
 	/**
 	 * 新增公司
 	 */
@@ -178,9 +179,10 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 					branchser.updateInst(vo);
 				}
 			}
-			
+			json.setMsg("更换成功");
+			json.setSuccess(true);
 		}catch (Exception e) {
-			printErrorLog(json, log, e, "保存失败");
+			printErrorLog(json, log, e, "更换失败");
 		}
 		writeJson(json);
 	}

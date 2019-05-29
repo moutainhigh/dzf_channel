@@ -6,7 +6,7 @@
 <title>机构设置</title>
 <jsp:include page="../../inc/easyui.jsp"></jsp:include>
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/branch/inststepup.js");%> charset="UTF-8" type="text/javascript"></script>
+<script src=<%UpdateGradeVersion.outversion(out,"../../js/branch/setup/inststepup.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style>
  
@@ -113,12 +113,12 @@
 				<input name="updatets" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>所属机构：</label> 
-					    <input class="easyui-combobox"  style="width:200px;height:28px;"
-						      data-options="required:true"/>
+					    <input class="easyui-combobox"  id="pk_bset" style="width:200px;height:28px;"
+						      data-options="required:true,valueField:'pk_bset', textField:'name'"/>
 				</div>
 				
 				<div style="float:right;margin-top:20px;margin-right:116px;">
-				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="editInst()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
 				</div>
 			</form>

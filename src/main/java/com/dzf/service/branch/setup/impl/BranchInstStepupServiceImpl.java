@@ -155,12 +155,13 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 	@Override
 	public void updateInst(BranchInstSetupBVO data) {
 		String uuid = UUID.randomUUID().toString();
+		BranchInstSetupBVO bvo = (BranchInstSetupBVO) singleObjectBO.queryByPrimaryKey(BranchInstSetupBVO.class, data.getPk_branchcorp());
 		try{
 			boolean lockKey = LockUtil.getInstance().addLockKey(data.getTableName(), data.getPk_branchcorp(), uuid, 60);
 			if (!lockKey) {
-				throw new BusinessException("企业识别号："+data.getVname()+"其他用户正在操作此数据;<br>");
+				throw new BusinessException("企业识别号："+bvo.getVname()+"其他用户正在操作此数据;<br>");
 			}
-			checkData(data.getPk_branchcorp(), data.getUpdatets(), "corp");
+			checkData(data.getPk_branchcorp(), bvo.getUpdatets(), "corp");
 			singleObjectBO.update(data, new String[]{"pk_branchset"});
 			
 		}catch (Exception e) {
