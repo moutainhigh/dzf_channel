@@ -6,7 +6,6 @@ import java.util.Map;
 import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.QueryParamVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 
 public interface IBranchInstStepupService {
 
@@ -34,7 +33,7 @@ public interface IBranchInstStepupService {
 	 * @param entnumber
 	 * @return
 	 */
-	CorpVO queryCorpInfo(String entnumber);
+	BranchInstSetupBVO queryCorpInfo(String entnumber);
 
 	/**
 	 * 批量更换公司所属机构

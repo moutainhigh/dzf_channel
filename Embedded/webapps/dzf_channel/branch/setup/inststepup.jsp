@@ -84,13 +84,11 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">联系人：</label> 
-					    <input class="easyui-textbox" id="linkman" name="lman" style="width:200px;height:28px;"
-						      data-options="required:true"/>
+					    <input class="easyui-textbox" id="linkman" name="lman" style="width:200px;height:28px;"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">联系方式：</label> 
-					    <input class="easyui-textbox" id="phone" name="phone" style="width:200px;height:28px;"
-						      data-options="required:true"/>
+					    <input class="easyui-textbox" id="phone" name="phone" style="width:200px;height:28px;"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">备注：</label> 

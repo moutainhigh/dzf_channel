@@ -4,6 +4,7 @@ $(function(){
 	initInstGrid();
 	initCorpGrid();
 	initListColumn(0);
+	queryCorpInfo();
 });
 
 /**
@@ -364,8 +365,49 @@ function del(pk_id){
 }
 
 
+/**
+ * 按enter自动带出公司信息
+ */
+function queryCorpInfo(){
+	$('#entname').textbox('textbox').keydown(function (e) {
+		if (e.keyCode == 13) {
+			var entname = $("#entname").textbox('getValue'); 
+	        if (entname != "") { 
+			$.ajax({
+				type : "post",
+				dataType : "json",
+				traditional : true,
+				async : false,
+				url : contextPath + '/branch/setup!queryCorpInfo.action',
+				data : {
+					"name" : entname
+				},
+				success : function(data) {
+					if (!data.success) {
+						Public.tips({
+							content :  data.msg,
+							type : 1
+						});	
+						return;
+					} else {
+						$('#cname').textbox('setValue',data.rows.uname);
+						$('#linkman').textbox('setValue',data.rows.lman);
+						$('#phone').textbox('setValue',data.rows.phone);
+					}
+				},
+			});
+	        }
+		}
+		
+	});
+}
 
 
+function onCancel(){
+	$('#addInstDialog').dialog('close');
+	$('#addCorpDialog').dialog('close');
+	$('#updateInstDialog').dialog('close');
+}
 
 
 function addCorp(){

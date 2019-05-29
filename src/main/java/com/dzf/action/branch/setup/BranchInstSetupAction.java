@@ -14,7 +14,6 @@ import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QueryParamVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
@@ -153,8 +152,8 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		Json json = new Json();
 		try{
 			String entnumber = getRequest().getParameter("name");
-			CorpVO corp = branchser.queryCorpInfo(entnumber);
-			json.setRows(corp);
+			BranchInstSetupBVO bvo = branchser.queryCorpInfo(entnumber);
+			json.setRows(bvo);
 			json.setMsg("查询成功");
 			json.setSuccess(true);
 		}catch (Exception e) {

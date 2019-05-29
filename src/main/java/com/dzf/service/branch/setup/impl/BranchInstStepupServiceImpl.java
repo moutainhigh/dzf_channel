@@ -15,7 +15,6 @@ import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.QueryParamVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
@@ -135,18 +134,18 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 
 
 	@Override
-	public CorpVO queryCorpInfo(String entnumber) {
+	public BranchInstSetupBVO queryCorpInfo(String entnumber) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(entnumber);
 		sql.append(" select\n");
-		sql.append("    pk_corp,def12,unitname,linkman2,phone1 \n");
+		sql.append("    pk_corp,def12 vname,unitname,linkman2 linkman,phone1 phone \n");
 		sql.append("    from bd_account \n");
 		sql.append("    where nvl(dr,0)=0 and def12 is not null \n");
 		sql.append("    and def12 =? \n");
-		CorpVO corpvo = (CorpVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(CorpVO.class));
+		BranchInstSetupBVO corpvo = (BranchInstSetupBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupBVO.class));
 		if(corpvo!=null){
-			QueryDeCodeUtils.decKeyUtil(new String[] { "unitname", "phone1" }, corpvo, 1);
+			QueryDeCodeUtils.decKeyUtil(new String[] { "unitname", "phone" }, corpvo, 1);
 		}
 		return corpvo;
 	}
