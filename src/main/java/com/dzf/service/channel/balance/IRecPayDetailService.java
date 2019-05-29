@@ -1,4 +1,4 @@
-package com.dzf.service.branch.setup;
+package com.dzf.service.channel.balance;
 
 import java.util.List;
 

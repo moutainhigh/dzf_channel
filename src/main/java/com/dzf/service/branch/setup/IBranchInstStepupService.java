@@ -1,10 +1,10 @@
-package com.dzf.service.channel.branch;
+package com.dzf.service.branch.setup;
 
 import java.util.List;
 import java.util.Map;
 
-import com.dzf.model.channel.branch.BranchInstSetupBVO;
-import com.dzf.model.channel.branch.BranchInstSetupVO;
+import com.dzf.model.branch.setup.BranchInstSetupBVO;
+import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 

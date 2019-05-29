@@ -1,4 +1,4 @@
-package com.dzf.service.channel.branch;
+package com.dzf.service.branch.setup;
 
 public interface IBranchUserService {
 

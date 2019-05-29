@@ -21,7 +21,7 @@ import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.lang.DZFDate;
-import com.dzf.service.channel.branch.IBranchInstStepupService;
+import com.dzf.service.branch.setup.IBranchInstStepupService;
 import com.dzf.service.pub.IPubService;
 
 /**

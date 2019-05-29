@@ -1,4 +1,4 @@
-package com.dzf.service.channel.branch.impl;
+package com.dzf.service.branch.setup.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,8 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
-import com.dzf.model.channel.branch.BranchInstSetupBVO;
-import com.dzf.model.channel.branch.BranchInstSetupVO;
+import com.dzf.model.branch.setup.BranchInstSetupBVO;
+import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
@@ -23,7 +23,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
-import com.dzf.service.channel.branch.IBranchInstStepupService;
+import com.dzf.service.branch.setup.IBranchInstStepupService;
 
 
 @Service("serbranch")
