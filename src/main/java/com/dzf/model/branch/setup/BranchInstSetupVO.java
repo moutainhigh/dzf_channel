@@ -1,4 +1,4 @@
-package com.dzf.model.channel.branch;
+package com.dzf.model.branch.setup;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;

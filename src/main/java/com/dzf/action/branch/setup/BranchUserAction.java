@@ -1,4 +1,4 @@
-package com.dzf.action.channel.branch;
+package com.dzf.action.branch.setup;
 
 import java.util.ArrayList;
 import java.util.List;

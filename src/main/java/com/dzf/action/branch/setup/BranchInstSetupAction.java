@@ -1,4 +1,4 @@
-package com.dzf.action.channel.branch;
+package com.dzf.action.branch.setup;
 
 import java.util.List;
 import java.util.Map;
@@ -10,8 +10,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.branch.BranchInstSetupBVO;
-import com.dzf.model.channel.branch.BranchInstSetupVO;
+import com.dzf.model.branch.setup.BranchInstSetupBVO;
+import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;

@@ -1,4 +1,4 @@
-package com.dzf.service.channel.balance.impl;
+package com.dzf.service.branch.setup.impl;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.service.channel.balance.IRecPayDetailService;
+import com.dzf.service.branch.setup.IRecPayDetailService;
 
 @Service("recPayDetailService")
 public class RecPayDetailServiceImpl implements IRecPayDetailService {
