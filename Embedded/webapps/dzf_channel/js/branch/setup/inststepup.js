@@ -19,7 +19,9 @@ function initCombobox(){
 }
 
 
-
+/**
+ * 机构设置
+ */
 function initInstGrid(){
 	$("#instgrid").datagrid({
 		fit:true,
@@ -47,7 +49,9 @@ function initInstGrid(){
 }
 
 
-
+/**
+ * 公司设置
+ */
 function initCorpGrid(){
 	$("#corpgrid").datagrid({
 		rownumbers : true,
@@ -95,7 +99,11 @@ function initCorpGrid(){
 	});
 }
 
-
+/**
+ * 列表查询
+ * @param qtype
+ * @param pk_id
+ */
 function initListColumn(qtype,pk_id){
 	$.ajax({
 		type : "POST",
@@ -119,12 +127,17 @@ function initListColumn(qtype,pk_id){
 	});
 }
 
-
+/**
+ * 弹出新增机构框
+ */
 function addInst(){
 	$('#addInstDialog').dialog('open').dialog('center').dialog('setTitle', '新增机构');
 	$('#addInstDialog').form("clear");
 }
 
+/**
+ * 新增机构保存
+ */
 function onSave(){
 	if ($("#inst_add").form('validate')) {
 		$('#inst_add').form('submit', {
@@ -168,7 +181,9 @@ function updateInst(){
 }
 
 
-
+/**
+ * 更换机构名称
+ */
 function editInst(){
 	var ids = "";
 	var row = $('#instgrid').datagrid('getSelected');
@@ -204,7 +219,9 @@ function editInst(){
 	});
 }
 
-
+/**
+ * 新增公司保存
+ */
 function onSaveCorp(){
 	
 	var row = $('#instgrid').datagrid('getSelected');
@@ -237,6 +254,10 @@ function onSaveCorp(){
 	}
 }
 
+/**
+ * 修改机构
+ * @param index
+ */
 function edit(index){
 	$('#addInstDialog').dialog('open').dialog('center').dialog('setTitle', '修改机构');
 	var erow = $('#instgrid').datagrid('getData').rows[index];
@@ -248,6 +269,12 @@ function edit(index){
 	
 }
 
+/**
+ * 根据id查询
+ * @param pk_id
+ * @param type
+ * @returns
+ */
 function queryByID(pk_id,type){
 	var row;
 	$.ajax({
@@ -275,7 +302,10 @@ function queryByID(pk_id,type){
 	return row;
 }
 
-
+/**
+ * 封存、启用
+ * @param pk_id
+ */
 function seal(pk_id){
 	
 	var row = queryByID(pk_id,1);
@@ -323,7 +353,10 @@ function seal(pk_id){
 }
 
 
-
+/**
+ * 删除
+ * @param pk_id
+ */
 function del(pk_id){
 	var row = queryByID(pk_id,1);
 	$.messager.confirm("提示", "确定删除？", function(flag) {
@@ -402,14 +435,18 @@ function queryCorpInfo(){
 	});
 }
 
-
+/**
+ * 取消
+ */
 function onCancel(){
 	$('#addInstDialog').dialog('close');
 	$('#addCorpDialog').dialog('close');
 	$('#updateInstDialog').dialog('close');
 }
 
-
+/**
+ * 弹出新增公司框
+ */
 function addCorp(){
 	$('#addCorpDialog').dialog('open').dialog('center').dialog('setTitle', '新增公司');
 	$('#addCorpDialog').form("clear");
