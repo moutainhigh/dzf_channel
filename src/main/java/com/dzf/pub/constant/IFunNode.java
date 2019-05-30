@@ -315,4 +315,9 @@ public interface IFunNode {
      */
     public static final String BRANCH_02  = "branch02";
     
+    /**
+     * 机构用户管理
+     */
+    public static final String BRANCH_04  = "branch04";
+    
 }

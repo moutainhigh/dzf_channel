@@ -40,88 +40,7 @@ $.extend($.fn.validatebox.defaults.rules, {
         message: "<font size=2 color='red'>*密码长度不能小于8</font>"   
     }
 });
-function add() {
-	if($(window).height() < 450){
-		$('#cbDialog').dialog('resize',{width: 600,height:($(window).height() - 40)});
-		$('#tableDiv').css("height",($(window).height() - 40 -100));
-	}
-	url=contextPath+ '/sys/chnUseract!save.action';
-	$('#bill').form('clear');
-	$('#cbDialog').dialog({
-		modal:true
-	});//设置dig属性
-	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle','新增');
-	$("#en_time").textbox('setValue',getNowFormatDate());
-	$('#b_mng').combobox('setValue', 'Y');//
-	$('#editOne').hide();
-	$('#addNew').show();
-	$('#ucode').textbox({'readonly': false});
-}
-function getNowFormatDate() {
-    var date = new Date();
-    var seperator1 = "-";
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var strDate = date.getDate();
-    if (month >= 1 && month <= 9) {
-        month = "0" + month;
-    }
-    if (strDate >= 0 && strDate <= 9) {
-        strDate = "0" + strDate;
-    }
-    var currentdate = year + seperator1 + month + seperator1 + strDate;
-    return currentdate;
-}
-function edit() {
-	  var row = $('#grid').datagrid('getSelected');
-	   if(row == null){
-		   Public.tips({content: "请选择一行数据修改",type:2});
-		   return;
-	   }
-		if($(window).height() < 450){
-			$('#cbDialog').dialog('resize',{width: 600,height:($(window).height() - 40)});
-			$('#tableDiv').css("height",($(window).height() - 40 -100));
-		}
-		url=contextPath+ '/sys/chnUseract!update.action';
-	   $('#bill').form('clear');
-	   $('#cbDialog').dialog({
-   			modal:true
-   		});//设置dig属性
-       row.uc_pwd=row.u_pwd;
-       $('#cbDialog').dialog('open').dialog('center').dialog('setTitle','修改');
-       $('#bill').form('load',row);
-   	   $('#editOne').show();
-	   $('#addNew').hide();
-	   status="edit";
-//	   $('#ucode').textbox({'readonly': true});
-}
 
-function onSave(cls) {
-	//校验是否可校验通过
-	for(key in ckmap){  
-		 $.messager.alert("提示",ckmap[key]);
-		return;
-	}  
-    $('#bill').form('submit',{
-        url: url,
-        onSubmit: function(){
-            return  $('#bill').form('validate');
-        },
-        success: function(result){
-            var result = eval('('+result+')');
-            if (result.success){
-                $('#grid').datagrid('reload',{unjl:'Y'}); 
-                $('#cbDialog').dialog('close');
-                $('#bill').form().find('input').val("");
-                Public.tips({content: result.msg});
-                status="add";
-                $('#grid').datagrid('clearSelections');
-            } else {
-            	Public.tips({content: result.msg,type:1});
-            } 
-        }
-    });
-}
 
 $(function() {
 	load();
@@ -130,6 +49,7 @@ $(function() {
 	if($(window).height() < 600){
 		t_heigth = $(window).height() - 40;
 	}
+	
 	checkUserCode();
 	checkUserPwd();
 	$('#qrylock').combobox({    
@@ -168,11 +88,113 @@ $(function() {
         }
     });
 });
+
+function load(){
+	$('#grid').datagrid({
+		url : contextPath + '/branch/user!query.action',
+		rownumbers : true,
+		singleSelect : true,
+		idField : 'uid',
+		striped:true,
+		height : Public.setGrid(0,'dataGrid').h,
+		frozenColumns:[[{width : '100',title : '操作列',field : 'operate',halign : 'center',align : 'center',formatter:opermatter}
+						]],
+		columns : [ [{ width : '120', title : '登陆账号', field : 'ucode' },
+		             { width : '120', title : '用户名称', field : 'uname' },
+		             { width : '160', title : '角色', field : 'rolenames',formatter:showTitle},
+		             { width : '120', title : '所属机构', field : 'pk_depts',},
+		             { width : '100', title : '生效时间', field : 'en_time' },
+		             { width : '100', title : '失效时间', field : 'dis_time'},
+		             { width : '80',title : '锁定标志', field : 'lock_flag',align:'center' },
+		             { width : '200',title : '用户描述', field : 'u_note' ,formatter:showTitle},
+		             { title : '主键', field : 'uid', hidden:true},
+		             { title : '所属公司', field : 'corp_id', hidden:true},
+		             { title : '创建公司', field : 'crtcorp_id', hidden:true},
+		             { title : '密码', field : 'u_pwd', hidden:true}
+		             ] ],
+		onBeforeLoad : function(param) {
+			parent.$.messager.progress({
+				text : '数据加载中....'
+			});
+		},
+		onLoadSuccess : function(data) {
+			parent.$.messager.progress('close');
+		}
+	});
+}
+
+
+function add() {
+	url=contextPath+ '/branch/user!save.action';
+	$('#addDialog').dialog({modal:true});
+    $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"新增用户");
+    
+    $('#addForm').form("clear");
+	$("#en_time").textbox('setValue',parent.SYSTEM.LoginDate);
+	$('#b_mng').combobox('setValue', 'Y');
+	
+	$('#ucode').textbox({'readonly': false});
+	
+	$('#saveEdit').hide();
+	$('#saveNew').show();
+	status="add";
+}
+
+
+function edit(index){
+	url=contextPath+ '/branch/user!saveEdit.action';
+    $('#addDialog').dialog({modal:true});
+    $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"修改用户");
+    
+    $('#addForm').form("clear");
+    var rows = $("#grid").datagrid("getRows");
+    var row = rows[index];
+    row.uc_pwd=row.u_pwd;
+    
+    $('#addForm').form('load',row);
+    
+    $('#saveEdit').show();
+    $('#saveNew').hide();
+	status="edit";
+}
+
+
+
+function onSave(cls) {
+	//校验是否可校验通过
+	for(key in ckmap){  
+		 $.messager.alert("提示",ckmap[key]);
+		return;
+	}  
+    $('#bill').form('submit',{
+        url: url,
+        onSubmit: function(){
+            return  $('#bill').form('validate');
+        },
+        success: function(result){
+            var result = eval('('+result+')');
+            if (result.success){
+                $('#grid').datagrid('reload',{unjl:'Y'}); 
+                $('#cbDialog').dialog('close');
+                $('#bill').form().find('input').val("");
+                Public.tips({content: result.msg});
+                status="add";
+                $('#grid').datagrid('clearSelections');
+            } else {
+            	Public.tips({content: result.msg,type:1});
+            } 
+        }
+    });
+}
+
+
 function cancel(){
 	$('#cbDialog').dialog('close');
 	//清除提示信息标记
 	$("font").hide();
 }
+
+
 function checkUserCode(){
 	$("#ucode").blur(function(){
 		var value = $(this).val();
@@ -240,36 +262,71 @@ function checkExist(name,val){
 	});
 	return flag;
 }
-function load(){
-	$('#grid').datagrid({
-		url : contextPath + '/sys/chnUseract!query.action',
-		rownumbers : true,
-		singleSelect : true,
-		idField : 'uid',
-		striped:true,
-		height : Public.setGrid(0,'dataGrid').h,
-		columns : [ [{ width : '150', title : '用户编码', field : 'ucode' },
-		             { width : '150', title : '用户名称', field : 'uname' },
-		             { width : '100', title : '生效时间', field : 'en_time' },
-		             { width : '100', title : '失效时间', field : 'dis_time'},
-		             { width : '100',title : '锁定标志', field : 'lock_flag',align:'center' },//, formatter:formatCheckBox
-		             { width : '360',title : '用户描述', field : 'u_note' },
-		             { title : '主键', field : 'uid', hidden:true},
-		             { title : '所属公司', field : 'corp_id', hidden:true},
-		             { title : '创建公司', field : 'crtcorp_id', hidden:true},
-		             { title : '密码', field : 'u_pwd', hidden:true}
-		             ] ],
-		toolbar : '#toolbar',
-		onBeforeLoad : function(param) {
-			parent.$.messager.progress({
-				text : '数据加载中....'
+
+function showTitle(value){
+	if(value!=undefined){
+		return "<span title='" + value + "'>" + value + "</span>";
+	}
+}
+
+function opermatter(val, row, index) {
+	if(row.lock_flag=="是"){
+		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+index+'\')">编辑</a>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="unlock(\''+row.asetid+'\',\''+row.updatets+'\')">解锁</a>';
+	}else{
+		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+index+'\')">编辑</a>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="lock(\''+row.asetid+'\',\''+row.updatets+'\')">锁定</a>';
+	}
+}
+
+function lock(id,updatets){
+	$.messager.confirm('提示','确认锁定?',function(conf){
+		if (conf){
+			jQuery.ajax({
+				url : contextPath + '/branch/user!updateLock.action',
+				data : {
+					'uid' : row.uid,
+					'corp_id' : row.corp_id
+				},
+				type : 'post',
+				dataType : 'json',
+				success: function(result){
+		            if (result.success){
+		               $("#grid").datagrid("reload",{unjl:'Y'});
+					   Public.tips({content: result.msg});
+		            } else {
+		               Public.tips({content: result.msg,type:1});
+		            } 
+				}
 			});
-		},
-		onLoadSuccess : function(data) {
-			parent.$.messager.progress('close');
 		}
 	});
 }
+
+function unlock(id,updatets){
+	$.messager.confirm('提示','确认解锁?',function(conf){
+		if (conf){
+			jQuery.ajax({
+				url : contextPath + '/branch/user!updateLock.action',
+				data : {
+					'uid' : row.uid,
+					'corp_id' : row.corp_id
+				},
+				type : 'post',
+				dataType : 'json',
+				success: function(result){
+		            if (result.success){
+		               $("#grid").datagrid("reload",{unjl:'Y'});
+					   Public.tips({content: result.msg});
+		            } else {
+		               Public.tips({content: result.msg,type:1});
+		            } 
+				}
+			});
+		}
+	});
+}
+
 function qryLockUser(ilock) {
 	var queryParams = $('#grid').datagrid('options').queryParams; 
     queryParams['ilock'] =ilock;
@@ -277,98 +334,4 @@ function qryLockUser(ilock) {
     $("#grid").datagrid('load'); 
     $('#grid').datagrid('clearSelections');
 }
-function del(){
-	var row = $("#grid").datagrid('getSelected');
-	if(row == null){
-		   Public.tips({content:"请选择一行数据进行删除",type:2});
-		   return;
-	   }
-	$.messager.confirm('提示','确认删除?',function(conf){
-		if (conf){
-			jQuery.ajax({
-				url : contextPath + '/sys/sys_useract!delete.action',
-				data : {
-					'uid' : row.uid,
-					'corp_id' : row.corp_id
-				},
-				type : 'post',
-				dataType : 'json',
-				success: function(result){
-		            if (result.success){
-		               $("#grid").datagrid("reload",{unjl:'Y'});
-					   Public.tips({content: result.msg});
-					   $('#grid').datagrid('clearSelections');
-		            } else {
-		               Public.tips({content: result.msg,type:1});
-		            } 
-				}
-			});
-		}
-	});
-}
 
-function lock(){
-	var row = $("#grid").datagrid('getSelected');
-	if(row == null){
-		   Public.tips({content:"请选择一行数据进行操作。",type:2});
-		   return;
-	}
-	if(row.lock_flag=="是"){
-		 Public.tips({content:"用户已经锁定。",type:2});
-		 return;
-	}
-	$.messager.confirm('提示','确认锁定?',function(conf){
-		if (conf){
-			jQuery.ajax({
-				url : contextPath + '/sys/sys_useract!updateLock.action',
-				data : {
-					'uid' : row.uid,
-					'corp_id' : row.corp_id
-				},
-				type : 'post',
-				dataType : 'json',
-				success: function(result){
-		            if (result.success){
-		               $("#grid").datagrid("reload",{unjl:'Y'});
-					   Public.tips({content: result.msg});
-		            } else {
-		               Public.tips({content: result.msg,type:1});
-		            } 
-				}
-			});
-		}
-	});
-}
-
-function unlock(){
-	var row = $("#grid").datagrid('getSelected');
-	if(row == null){
-		   Public.tips({content:"请选择一行数据进行操作。",type:2});
-		   return;
-	}
-	if(row.lock_flag=="否"){
-		 Public.tips({content:"用户未锁定。",type:2});
-		 return;
-	}
-	$.messager.confirm('提示','确认解锁?',function(conf){
-		if (conf){
-			jQuery.ajax({
-				url : contextPath + '/sys/sys_useract!updateUnLock.action',
-				data : {
-					'uid' : row.uid,
-					'corp_id' : row.corp_id
-				},
-				type : 'post',
-				dataType : 'json',
-				success: function(result){
-		            if (result.success){
-		               $("#grid").datagrid("reload",{unjl:'Y'});
-					   Public.tips({content: result.msg});
-		            } else {
-		               Public.tips({content: result.msg,type:1});
-		            } 
-				}
-			});
-		}
-	});
-}
