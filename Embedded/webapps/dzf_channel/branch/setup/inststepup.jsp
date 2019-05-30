@@ -52,7 +52,7 @@
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>机构名称：</label> 
 					    <input class="easyui-textbox" id="iname" name="name" style="width:200px;height:28px;"
-						      data-options="required:true"/>
+						      data-options="required:true,validType:'length[1,10]'"/>
 				</div>
 				
 				<div style="float:right;margin-top:20px;margin-right:116px;">
