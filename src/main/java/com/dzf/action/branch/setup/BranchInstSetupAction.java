@@ -77,7 +77,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		Json json = new Json();
 	    try{
 	    	UserVO uservo = getLoginUserInfo();
-	    	pubser.checkFunnode(uservo, IFunNode.CHANNEL_67);
+	    	pubser.checkFunnode(uservo, IFunNode.BRANCH_02);
 	    	if(data == null){
 	    		throw new BusinessException("数据信息不能为空");
 	    	}
@@ -107,7 +107,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 		Json json = new Json();
 		try{
 			UserVO uservo = getLoginUserInfo();
-	    	pubser.checkFunnode(uservo, IFunNode.CHANNEL_67);
+	    	pubser.checkFunnode(uservo, IFunNode.BRANCH_02);
 	    	BranchInstSetupBVO vo = new BranchInstSetupBVO();
 			vo = (BranchInstSetupBVO) DzfTypeUtils.cast(getRequest(), vo);
 			if(StringUtil.isEmpty(vo.getPk_branchset())){
