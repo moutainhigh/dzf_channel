@@ -221,6 +221,7 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 		sql.append("  FROM sm_user u  \n");
 		sql.append(" WHERE nvl(u.dr, 0) = 0   \n");
 		sql.append("   AND u.xsstyle = 8 \n");// 分部管理用户
+		sql.append("   AND u.ismanager = 'Y' \n");
 		sql.append("   AND u.pk_corp = ?  \n");
 		spm.addParam(pamvo.getPk_corp());
 		// 是否锁定
