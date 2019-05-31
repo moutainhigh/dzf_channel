@@ -77,6 +77,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 
 	@Autowired
 	private IDeductRateService rateser;
+	
 	@Autowired
 	private IUserService userServiceImpl;
 	
@@ -1497,7 +1498,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				&& confrimvo.getPatchstatus() != IStatusConstant.ICONTRACTTYPE_5)){
 			PackageDefVO packvo = (PackageDefVO) singleObjectBO.queryByPrimaryKey(PackageDefVO.class,
 					confrimvo.getPk_packagedef());
-			if(packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
+			if(packvo != null && packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
 				Integer num = packvo.getIusenum() == null ? 0 : packvo.getIusenum();
 				Integer pulishnum = packvo.getIpublishnum() == null ? 0 : packvo.getIpublishnum();
 				if (num.compareTo(pulishnum) == 0) {
