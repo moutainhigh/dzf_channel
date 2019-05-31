@@ -137,7 +137,7 @@ public class MatOrderBVO extends SuperVO {
 	public void setSumsucc(Integer sumsucc) {
 		this.sumsucc = sumsucc;
 	}
-
+	
 	@Override
 	public String getParentPKFieldName() {
 		return null;

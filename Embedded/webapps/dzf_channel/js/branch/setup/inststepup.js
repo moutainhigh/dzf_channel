@@ -7,6 +7,15 @@ $(function(){
 	queryCorpInfo();
 });
 
+
+$(window).resize(function() {
+	$('#instgrid,#corpgrid').datagrid('resize', {
+		height : Public.setGrid().h,
+		width : 'auto',
+	});
+});
+
+
 /**
  * 初始化机构名称
  */
