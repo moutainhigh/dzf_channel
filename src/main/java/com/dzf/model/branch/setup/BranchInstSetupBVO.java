@@ -158,7 +158,7 @@ public class BranchInstSetupBVO extends SuperVO {
 
 	@Override
 	public String getParentPKFieldName() {
-		return null;
+		return "pk_branchset";
 	}
 
 	@Override

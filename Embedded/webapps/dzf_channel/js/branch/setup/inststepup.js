@@ -76,7 +76,7 @@ function initCorpGrid(){
 						return '<span style="margin-bottom:0px;" onclick="seal(this)">封存</span>'  
 		        		 +'  '+'<a href="javascript:void(0)" style="margin-bottom:0px;margin-left:5px;color:blue;" onclick="seal(\''+row.pk_bcorp+'\')">启用</a>'
 		        		 +'  '+'<a href="javascript:void(0)" style="margin-bottom:0px;margin-left:5px;color:blue;" onclick="del(\''+row.pk_bcorp+'\')">删除</a>';
-					}else{
+					}else if(row.isseal=='N'){
 						return '<a href="javascript:void(0)" style="margin-bottom:0px;color:blue;" onclick="seal(\''+row.pk_bcorp+'\')">封存</a>'
 		        		 +'  '+'<span style="margin-bottom:0px;margin-left:5px;" onclick="seal(this)">启用</span>'
 		        		 +'  '+'<a href="javascript:void(0)" style="margin-bottom:0px;margin-left:5px;color:blue;" onclick="del(\''+row.pk_bcorp+'\')">删除</a>';
@@ -127,7 +127,9 @@ function initListColumn(qtype,pk_id){
         			$("#instgrid").datagrid("loadData",result.rows);
         			$('#pk_bset').combobox('loadData', result.rows);
         		}
-                $("#corpgrid").datagrid("loadData",result.data);
+        		if(result.data!=undefined){
+        			$("#corpgrid").datagrid("loadData",result.data);
+        		}
         	}else{
         		$("#instgrid").datagrid("loadData",{total:0,rows:[]});
         		$("#corpgrid").datagrid("loadData",{total:0,rows:[] });
@@ -435,6 +437,7 @@ function queryCorpInfo(){
 						$('#cname').textbox('setValue',data.rows.uname);
 						$('#linkman').textbox('setValue',data.rows.lman);
 						$('#phone').textbox('setValue',data.rows.phone);
+						$('#pk_corp').val(data.rows.corpid);
 					}
 				},
 			});

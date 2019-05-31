@@ -71,6 +71,7 @@
 				<input name="pk_bcorp" type="hidden">
 				<input name="updatets" type="hidden">
 				<input name="pk_bset" id ="bset" type="hidden">
+				<input name="corpid" id="pk_corp" type="hidden">
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;"><i class="bisu">*</i>企业识别号：</label> 
 					    <input class="easyui-textbox" id="entname" name="name" style="width:200px;height:28px;"
@@ -79,7 +80,7 @@
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">公司名称：</label> 
 					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;"
-						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/branch/setup!queryCorpname.action','name' ]" 
+						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/branch/setup!queryCorpname.action','uname' ]" 
 						      invalidMessage= "此公司名称已存在"/>
 				</div>
 				<div class="time_col time_colp10">

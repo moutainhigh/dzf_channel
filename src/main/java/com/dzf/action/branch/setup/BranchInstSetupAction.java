@@ -52,7 +52,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 				json.setRows(null);
 				json.setMsg("查询数据为空");
 			}else{
-				if(map.size()>1){
+				if(map.size()>=1){
 					json.setRows(map.get("0"));//第一次加载
 				}
 				json.setMsg("查询成功");
@@ -114,7 +114,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 				throw new BusinessException("请设置机构");
 			}
 			if(StringUtil.isEmpty(vo.getPk_branchcorp())){
-				vo.setPk_corp("000001");
+				//vo.setPk_corp("000001");
 				vo.setCoperatorid(uservo.getCuserid());
 				vo.setDoperatedate(new DZFDate());
 				vo.setIsseal("N");
@@ -136,13 +136,13 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 	public void queryCorpname(){
 		Json json = new Json();
 		try{
-			String name = getRequest().getParameter("name");
+			String name = getRequest().getParameter("uname");
 			Boolean b=branchser.queryCorpname(name);
 			json.setSuccess(b);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
-		writeJson(json);
+		writeJson(json.isSuccess());
 	}
 	
 	/**

@@ -121,7 +121,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 
 	@Override
 	public Boolean queryCorpname(String name) {
-		String sql="select * from br_branchcorp where nvl(dr,0)=0 and vname=? ";
+		String sql="select * from br_branchcorp where nvl(dr,0)=0 and unitname=? ";
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(name);
 		BranchInstSetupBVO vo= (BranchInstSetupBVO) singleObjectBO.executeQuery(sql, spm, new BeanProcessor(BranchInstSetupBVO.class));
@@ -238,8 +238,8 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		if(param.getQrytype()!=null && param.getQrytype()==0){//第一次加载
 			String sql ="select * from br_branchset where nvl(dr,0) = 0 order by ts desc";
 			List<BranchInstSetupBVO> list = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(BranchInstSetupBVO.class));
-			map.put("0", list);
 			if(list!=null && list.size()>0){
+				map.put("0", list);
 				spm.addParam(list.get(0).getPk_branchset());
 			}else{
 				return null;
@@ -253,14 +253,16 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		ssql.append("   bc.linkman,bc.phone,bc.unitname,\n");
 		ssql.append("   bc.isseal,bc.vmemo,bc.updatets \n");
 		ssql.append("   from br_branchset bs \n");
-		ssql.append("   left join br_branchcorp bc on \n");
+		ssql.append("   right join br_branchcorp bc on \n");
 		ssql.append("   bs.pk_branchset = bc.pk_branchset \n");
 		ssql.append("   where nvl(bs.dr,0) = 0 and \n");
 		ssql.append("   nvl(bc.dr,0) = 0 and \n");
 		ssql.append("   bs.pk_branchset = ? \n");
 		List<BranchInstSetupBVO> bvolist = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(ssql.toString(), spm, new BeanListProcessor(BranchInstSetupBVO.class));
+		if(bvolist!=null && bvolist.size()>0){
+			map.put("1", bvolist);
+		}
 		
-		map.put("1", bvolist);
 		
 		return map;
 	}
