@@ -14,6 +14,12 @@ public class GoodsNumVO extends SuperVO {
     
     private String pk_goodstype;
     
+	@FieldAlias("specid")
+	private String pk_goodsspec;//主键  
+	
+	@FieldAlias("gid")
+	private String pk_goods;//主键 
+    
     private String vname;//商品分类
     
     @FieldAlias("gcode")
@@ -50,7 +56,7 @@ public class GoodsNumVO extends SuperVO {
     private Integer noutnum;//待出库数量
     
     @FieldAlias("lock")
-    private Integer ilocknum;//锁定数量
+    private Integer ilocknum;//订单购买数量
     
     @FieldAlias("use")
     private Integer iusenum;//可用数量
@@ -59,7 +65,7 @@ public class GoodsNumVO extends SuperVO {
     private Integer ibuynum;//可购买数量
     
     @FieldAlias("nowdate")
-    private Integer nowdate;//当前日期
+    private String nowdate;//当前日期
 
     public Integer getNoutnum() {
 		return noutnum;
@@ -77,19 +83,19 @@ public class GoodsNumVO extends SuperVO {
         this.istockinnum = istockinnum;
     }
 
-    public Integer getNowdate() {
-        return nowdate;
-    }
-
-    public void setNowdate(Integer nowdate) {
-        this.nowdate = nowdate;
-    }
-
     public String getVname() {
         return vname;
     }
 
-    public void setVname(String vname) {
+    public String getNowdate() {
+		return nowdate;
+	}
+
+	public void setNowdate(String nowdate) {
+		this.nowdate = nowdate;
+	}
+
+	public void setVname(String vname) {
         this.vname = vname;
     }
 
@@ -121,7 +127,23 @@ public class GoodsNumVO extends SuperVO {
         return pk_goodstype;
     }
 
-    public void setPk_goodstype(String pk_goodstype) {
+    public String getPk_goodsspec() {
+		return pk_goodsspec;
+	}
+
+	public void setPk_goodsspec(String pk_goodsspec) {
+		this.pk_goodsspec = pk_goodsspec;
+	}
+
+	public String getPk_goods() {
+		return pk_goods;
+	}
+
+	public void setPk_goods(String pk_goods) {
+		this.pk_goods = pk_goods;
+	}
+
+	public void setPk_goodstype(String pk_goodstype) {
         this.pk_goodstype = pk_goodstype;
     }
 

@@ -1,5 +1,6 @@
 package com.dzf.service.channel.dealmanage.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.stock.GoodsNumVO;
 import com.dzf.model.channel.stock.StockOutVO;
@@ -29,10 +31,67 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
         QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
         List<GoodsNumVO> list = (List<GoodsNumVO>) multBodyObjectBO.queryDataPage(GoodsNumVO.class, sqpvo.getSql(),
                 sqpvo.getSpm(), qvo.getPage(), qvo.getRows(), null);
+        if(list!=null && list.size()>0){
+            HashMap<String,Integer>  inMap = queryStockInNum(qvo);
+            HashMap<String,Integer>  outMap = queryStockOutNum(qvo);
+            String id ;
+            for (GoodsNumVO goodsNumVO : list) {
+            	id = goodsNumVO.getPk_goods()+goodsNumVO.getPk_goodsspec();
+            	goodsNumVO.setIstockinnum(inMap.get(id));
+            	goodsNumVO.setIoutnum(outMap.get(id));
+			}
+        }
         return list;
     }
 
-    @Override
+	private HashMap queryStockInNum(GoodsNumVO qvo) {
+		HashMap<String, Integer> inMap = new HashMap<>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select sib.pk_goods, sib.pk_goodsspec, sum(nnum) istockinnum ");
+		sql.append("  from cn_stockin_b sib ");
+		sql.append("  left join cn_stockin si on sib.pk_stockin = si.pk_stockin ");
+		sql.append(" where nvl(sib.dr, 0) = 0 ");
+		sql.append("   and nvl(si.dr, 0) = 0 ");
+		sql.append("   and substr(si.dconfirmtime, 0, 10) <= ? ");
+		sql.append("   and si.vstatus = 2 ");
+		sql.append(" group by sib.pk_goods, sib.pk_goodsspec ");
+		spm.addParam(qvo.getNowdate());
+		List<GoodsNumVO> retlist = (List<GoodsNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsNumVO.class));
+		String id ;
+		for (GoodsNumVO goodsNumVO : retlist) {
+			id = goodsNumVO.getPk_goods()+goodsNumVO.getPk_goodsspec();
+			inMap.put(id, goodsNumVO.getIstockinnum());
+		}
+		return inMap;
+	}
+
+	private HashMap queryStockOutNum(GoodsNumVO qvo) {
+		HashMap<String, Integer> outMap = new HashMap<>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("select sob.pk_goods, sob.pk_goodsspec, sum(nnum) ioutnum ");
+		sql.append("  from cn_stockout_b sob ");
+		sql.append("  left join cn_stockout so on sob.pk_stockout = so.pk_stockout ");
+		sql.append(" where nvl(sob.dr, 0) = 0 ");
+		sql.append("   and nvl(so.dr, 0) = 0   ");
+		sql.append("   and substr(so.dconfirmtime,0,10) <= ? ");
+		sql.append("   and so.vstatus != 0 ");
+		sql.append("  and sob.pk_goodsbill_b is not null ");
+		sql.append(" group by sob.pk_goods, sob.pk_goodsspec ");
+		spm.addParam(qvo.getNowdate());
+		List<GoodsNumVO> retlist = (List<GoodsNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(GoodsNumVO.class));
+		String id ;
+		for (GoodsNumVO goodsNumVO : retlist) {
+			id = goodsNumVO.getPk_goods()+goodsNumVO.getPk_goodsspec();
+			outMap.put(id, goodsNumVO.getIoutnum());
+		}
+		return outMap;
+	}
+
+	@Override
     public Integer queryTotalRow(GoodsNumVO qvo) throws DZFWarpException {
         QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
         return multBodyObjectBO.queryDataTotal(StockOutVO.class, sqpvo.getSql(), sqpvo.getSpm());
@@ -51,8 +110,9 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 		SQLParameter spm = new SQLParameter();
 		sql.append("    select t.vname, s.invspec, s.invtype,");
 		sql.append("  g.vgoodscode, g.vgoodsname, g.vmeasname goodsunit,s.nprice goodsprice,");
-		sql.append("  nvl(num.ioutnum,0) ioutnum,  nvl(num.istocknum,0) istockinnum,");
-		sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
+//		sql.append("  nvl(num.ioutnum,0) ioutnum,  nvl(num.istocknum,0) istockinnum,");
+		sql.append("  num.pk_goods, num.pk_goodsspec,");
+//		sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
 		sql.append("  nvl(num.isellnum, 0) - nvl(sh.nnum,0) ilocknum,  ");
 		sql.append("  nvl(stockbill.nsendnum,0)  nsendnum,   ");
 		sql.append("  nvl(stockbill.noutnum,0) noutnum,  ");

@@ -127,8 +127,10 @@ function load(){
 
 function reloadData(){
 	var url = DZF.contextPath + '/dealmanage/goodsnum!query.action';
+	var nowdate = $("#nowdate").datebox('getValue');
 	$('#grid').datagrid('options').url = url;
 	$('#grid').datagrid('load', {
+		'nowdate' : nowdate,
 		'pk_goodstype' : $("#vname").combobox('getValue'),
 		'gcode' : $("#gcode").textbox('getValue'),
 		'gname' :  $('#gname').textbox('getValue'),
@@ -136,6 +138,7 @@ function reloadData(){
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#qrydialog').hide();
+	$('#querydate').html(nowdate);
 }
 
 function initType(){
