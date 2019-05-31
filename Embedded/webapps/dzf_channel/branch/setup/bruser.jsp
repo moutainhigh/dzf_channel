@@ -15,8 +15,6 @@
 	          <div class="h30 h30-arrow"> 
 				<label class="mr5">用户名称：</label>
 					<input id="quname" class="easyui-textbox" prompt="输入用户名称或编码，按Enter键过滤" style="width:280px;height:27px"/>
-<!-- 					<input style="height: 28px; width: 280px" class="easyui-textbox" id="filter_value" prompt="录入加盟商名称关键字回车可过滤" /> -->
-					
 			  	<label style="width:70px;">锁定用户：</label>
 					<input id="qrylock" class="easyui-combobox" 
 							data-options="valueField: 'value',
@@ -46,7 +44,8 @@
 					<div style="display: inline-block;">
 						<label style="width:140px;text-align: right;"><i class="bisu">*</i>登录账号:</label>
 						<input id="ucode" name="ucode" class="easyui-textbox"  style="width:200px;height:28px;" data-options="required:true"/>
-						<input id="cuserid" name="cuserid" type="hidden">
+						<input id="uid" name="uid" type="hidden">
+						<input id="updatets" name="updatets" type="hidden">
 						
 						<label style="width:140px;text-align: right;"><i class="bisu">*</i>用户名称:</label>
 						<input id="uname" name="uname" class="easyui-textbox"  style="width:200px;height:28px;" data-options="required:true"/>
@@ -70,12 +69,14 @@
 				</div>
 				<div class="time_col time_colp11">
 					<label style="text-align:right;width:140px;">用户描述:</label>
-					<input id="u_note" name=u_note class="easyui-textbox" style="width:600px;height:40px;">
+					<input id="u_note" name=u_note class="easyui-textbox" style="width:560px;height:40px;">
 				</div>
+				<div class="time_col time_colp11" id="branch"></div>
+				<div class="time_col time_colp11" id = "roles"></div>
 			</form>
 			<div style="text-align:center;margin-top:30px;">
-			    <a href="javascript:void(0)" id="saveNew" class="ui-btn ui-btn-xz"  onclick="save(true)">保存</a> 
-			    <a href="javascript:void(0)" id="saveEdit" class="ui-btn ui-btn-xz"  onclick="save(false)">保存</a> 
+			    <a href="javascript:void(0)" id="saveNew" class="ui-btn ui-btn-xz"  onclick="onSave(true)">保存</a> 
+			    <a href="javascript:void(0)" id="saveEdit" class="ui-btn ui-btn-xz"  onclick="onSave(false)">保存</a> 
 				<a href="javascript:void(0)"   class="ui-btn ui-btn-xz" onclick="cancel()">取消</a>
 			</div>
 		</div>
