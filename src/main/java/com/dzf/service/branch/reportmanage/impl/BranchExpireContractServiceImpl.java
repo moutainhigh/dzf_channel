@@ -12,7 +12,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
-import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.branch.reportmanage.QueryContractVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -26,16 +25,6 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-	
-	@Autowired
-	private MultBodyObjectBO multBodyObjectBO;
-	
-	@Override
-	public int queryTotalRow(QueryContractVO qvo)  throws DZFWarpException{
-		 QrySqlSpmVO sqpvo = getQrySqlSpm(qvo);
-	     return multBodyObjectBO.queryDataTotal(QueryContractVO.class, sqpvo.getSql(), sqpvo.getSpm());
-	}
-
 	
 	@SuppressWarnings("unchecked")
 	@Override

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import com.dzf.action.channel.expfield.ExpireContractExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.branch.reportmanage.QueryContractVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -58,18 +60,28 @@ public class BranchExpireContractAction extends BaseAction<QueryContractVO>{
 			checkUser(uservo);
 			QueryContractVO param = new QueryContractVO();
 			param = (QueryContractVO) DzfTypeUtils.cast(getRequest(), param);
-			int total = exconser.queryTotalRow(param);
-			grid.setTotal((long)(total));
-			if(total > 0){
-				List<QueryContractVO> mList = exconser.query(param,uservo);
-				grid.setRows(mList);
+			
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			if(paramvo == null){
+				paramvo = new QryParamVO();
+			}
+			int page = paramvo.getPage();
+			int rows = paramvo.getRows();
+			
+			List<QueryContractVO> list = exconser.query(param,uservo);
+			if (list != null && list.size() > 0) {
+				QueryContractVO[] cvos = getPagedVOs(list.toArray(new QueryContractVO[0]), page, rows);
+				grid.setRows(Arrays.asList(cvos));
+				grid.setTotal((long) (list.size()));
 				grid.setMsg("查询成功");
 			}else{
 				grid.setRows(new ArrayList<QueryContractVO>());
 				grid.setMsg("查询数据为空");
+				grid.setTotal(0L);
+				
 			}
 			grid.setSuccess(true);
-			
 		}catch (Exception e) {
 			grid.setSuccess(false);
 			printErrorLog(grid, log, e, "查询失败");
@@ -89,6 +101,19 @@ public class BranchExpireContractAction extends BaseAction<QueryContractVO>{
 		}
 	}
 
+	
+	
+	private QueryContractVO[] getPagedVOs(QueryContractVO[] cvos, int page, int rows) {
+		int beginIndex = rows * (page - 1);
+		int endIndex = rows * page;
+		if (endIndex >= cvos.length) {// 防止endIndex数组越界
+			endIndex = cvos.length;
+		}
+		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+		return cvos;
+	}
+	
+	
 	
 	/**
 	 * 导出

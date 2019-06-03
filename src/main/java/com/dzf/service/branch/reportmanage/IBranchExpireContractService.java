@@ -8,13 +8,6 @@ import com.dzf.pub.DZFWarpException;
 
 public interface IBranchExpireContractService {
 
-	/**
-	 * 数据条数
-	 * @param qvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	int queryTotalRow(QueryContractVO qvo) throws DZFWarpException;
 
 	/**
 	 * 列表查询
