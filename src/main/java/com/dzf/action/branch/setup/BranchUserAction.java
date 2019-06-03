@@ -18,7 +18,6 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.IGlobalConstants;
-import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.service.branch.setup.IBranchUserService;
@@ -50,6 +49,12 @@ public class BranchUserAction extends BaseAction<UserVO> {
 		try {
 			if (data != null) {
 				checkUser();
+				if(StringUtil.isEmpty(data.getPk_department())){
+					throw new BusinessException("请选择所属机构");
+				}
+				if(StringUtil.isEmpty(data.getRoleids())){
+					throw new BusinessException("请勾选角色");
+				}
 				branchUser.save(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功");
@@ -68,6 +73,12 @@ public class BranchUserAction extends BaseAction<UserVO> {
 		try {
 			if (data != null || StringUtil.isEmpty(data.getCuserid())) {
 				checkUser();
+				if(StringUtil.isEmpty(data.getPk_department())){
+					throw new BusinessException("请选择所属机构");
+				}
+				if(StringUtil.isEmpty(data.getRoleids())){
+					throw new BusinessException("请勾选角色");
+				}
 				branchUser.saveEdit(data);
 				json.setSuccess(true);
 				json.setMsg("保存成功");
@@ -101,22 +112,16 @@ public class BranchUserAction extends BaseAction<UserVO> {
 		Grid grid = new Grid();
 		String loginCorp = IGlobalConstants.DefaultGroup;
 		try {
-			checkUser();
-//			SysPowerConditVO qryVO = new SysPowerConditVO();
-//			String ilock = getRequest().getParameter("ilock");
-//			String invalid = getRequest().getParameter("invalid");// 失效
-//			qryVO.setIlock(ilock);
+			UserVO checkUser = checkUser();
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			paramvo.setCuserid(checkUser.getCuserid());
 			List<UserVO> list = branchUser.query(paramvo);
-			List<UserVO> alist = new ArrayList<>();
-			UserVO[] array = alist.toArray(new UserVO[0]);
-			array = (UserVO[]) QueryDeCodeUtils.decKeyUtils(new String[] { "user_name" }, array, 1);
 			if (list != null && list.size() > 0) {
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
-				grid.setTotal((long) alist.size());
-				grid.setRows(alist);
+				grid.setTotal((long) list.size());
+				grid.setRows(list);
 			} else {
 				grid.setRows(new ArrayList<UserVO>());
 				grid.setSuccess(false);

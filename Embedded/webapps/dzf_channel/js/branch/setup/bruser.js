@@ -9,21 +9,17 @@ $(window).resize(function(){
 		width : 'auto'
 	});
 });
+
 //enter 键代替tab键换行        begin
 $(document).ready(function(){
 	$(document).on('keyup', 'input', function(e) {
 		 if(e.keyCode == 13 && e.target.type!== 'submit') {
-//		   var inputs = $("#qrydialog").find(":input:visible"),
-//		   idx = inputs.index(e.target);
-//		       if (idx == inputs.length - 1) {
-//		          inputs[0].select()
-//		       } else {
-//		          inputs[idx + 1].focus();
-//		          inputs[idx + 1].select();
-//		       }
+			 
 		 }
 		});
-});//enter 键代替tab键换行        end
+});
+//enter 键代替tab键换行        end
+
 $.extend($.fn.validatebox.defaults.rules, {    
     equals: {    
         validator: function(value,param){ 
@@ -52,52 +48,21 @@ $(function() {
 	
 	checkUserCode();
 	checkUserPwd();
-	$('#qrylock').combobox({    
-		onSelect: function(rec){
-			var ilock = rec.value;
-			qryLockUser(ilock);
-        }
-	}); 
-	$('#quname').textbox('textbox').keydown(function (e) {
-        if (e.keyCode == 13) {
- 		   var filtername = $("#quname").val(); 
-    		var rows = $('#grid').datagrid('getRows');
-    		if(rows != null && rows.length >0){
-    			var panel = $('#grid').datagrid('getPanel'); 
-		        var tr = panel.find('div.datagrid-body tr');
-		        var first_id = null;
-		        tr.each(function(){   
-		            var td_name = $(this).children('td[field="uname"]');   
-		            var value_name = td_name.children("div").text();
-	            	td_name.children("div").removeClass("search-rs");
-		            if(filtername && (value_name.indexOf(filtername) >= 0)){
-		            	if (first_id == null ){
-		            		var td_id = $(this).children('td[field="uid"]');   
-				            var value_id = td_id.children("div").text();
-				            first_id = value_id;
-		            	}
-		            	td_name.children("div").addClass("search-rs");
-		            }; 
-		        });  
-		        if (first_id != null ) {
-		        	var index = $('#grid').datagrid('getRowIndex',first_id);
-					$('#grid').datagrid('scrollTo',index);
-					$('#grid').datagrid('selectRow',index);
-		        }
-    		}
-        }
-    });
+	initListen();
 });
 
 function load(){
 	$('#grid').datagrid({
 		url : contextPath + '/branch/user!query.action',
+		queryParams: {
+			 "qtype": 0,
+		},
 		rownumbers : true,
 		singleSelect : true,
 		idField : 'uid',
 		striped:true,
 		height : Public.setGrid(0,'dataGrid').h,
-		frozenColumns:[[{width : '100',title : '操作列',field : 'operate',halign : 'center',align : 'center',formatter:opermatter}
+		frozenColumns:[[{width : '140',title : '操作列',field : 'operate',halign : 'center',align : 'center',formatter:opermatter}
 						]],
 		columns : [ [{ width : '120', title : '登陆账号', field : 'ucode' },
 		             { width : '120', title : '用户名称', field : 'uname' },
@@ -128,16 +93,60 @@ function add() {
 	url=contextPath+ '/branch/user!save.action';
 	$('#addDialog').dialog({modal:true});
     $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"新增用户");
-    
     $('#addForm').form("clear");
-	$("#en_time").textbox('setValue',parent.SYSTEM.LoginDate);
-	$('#b_mng').combobox('setValue', 'Y');
-	
-	$('#ucode').textbox({'readonly': false});
-	
-	$('#saveEdit').hide();
-	$('#saveNew').show();
-	status="add";
+	$.ajax({
+		url : DZF.contextPath + "/branch/user!queryByID.action",
+		dataType : 'json',
+		processData : true,
+  		async : false,//异步传输
+		success : function(result) {
+			var branchs = result.rows.branchs;
+			var roles = result.rows.roles;
+			setAddCheck(branchs,roles);
+			$("#en_time").textbox('setValue',parent.SYSTEM.LoginDate);
+			$('#b_mng').combobox('setValue', 'Y');
+			
+			$('#ucode').textbox({'readonly': false});
+			
+			$('#saveEdit').hide();
+			$('#saveNew').show();
+			status="add";
+		},
+	});
+}
+
+function setAddCheck(branchs,roles){
+	$("#branch").empty();
+	if(branchs != null && branchs.length > 0){
+		var br = "<label style='text-align:right;width:140px;'>所属机构:</label>";
+		var num = 1;
+		for(var i = 0; i <branchs.length; i++){
+			if(num % 4 == 0){
+				br += "<input type='radio' name='departid' value="+branchs[i].id
+					+" style='width:18px;height:28px;' />"+branchs[i].name+"<br>";
+			}else{
+				br = br + "<input type='radio' name='departid' value="+branchs[i].id
+				+" style='width:18px;height:28px;'/>"+branchs[i].name+"&nbsp;&nbsp;";
+			}
+			num ++;
+		}
+		$("#branch").append(br);
+	}
+	$("#roles").empty();
+	if(roles != null && roles.length > 0){
+		var br = "<label style='text-align:right;width:140px;'>角色:</label>";
+		var num = 1;
+		for(var i = 0; i <roles.length; i++){
+			if(num % 4 == 0){
+				br += "<input type='checkbox' name='roleids' value="+roles[i].id
+					+" style='width:18px;height:28px;' />"+roles[i].name+"<br>";
+			}else{
+				br = br + "<input type='checkbox' name='roleids' value="+roles[i].id
+				+" style='width:18px;height:28px;'/>"+roles[i].name+"&nbsp;&nbsp;";
+			}
+		}
+		$("#roles").append(br);
+	}
 }
 
 
@@ -145,20 +154,89 @@ function edit(index){
 	url=contextPath+ '/branch/user!saveEdit.action';
     $('#addDialog').dialog({modal:true});
     $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"修改用户");
-    
     $('#addForm').form("clear");
+    
     var rows = $("#grid").datagrid("getRows");
     var row = rows[index];
-    row.uc_pwd=row.u_pwd;
-    
-    $('#addForm').form('load',row);
-    
-    $('#saveEdit').show();
-    $('#saveNew').hide();
-	status="edit";
+	$.ajax({
+		url : DZF.contextPath + "/branch/user!queryByID.action",
+		dataType : 'json',
+		processData : true,
+  		async : false,//异步传输
+		data : {
+			qryId : row.uid,
+		},
+		success : function(result) {
+			row = result.rows.uservo;
+			var branchs = result.rows.branchs;
+			var roles = result.rows.roles;
+			setEditCheck(row,branchs,roles);
+			
+		    row.uc_pwd=row.u_pwd;
+		    $('#addForm').form('load',row);
+		    
+		    $('#saveEdit').show();
+		    $('#saveNew').hide();
+			status="edit";
+		},
+	});
 }
 
+function setEditCheck(row,branchs,roles){
+	$("#branch").empty();
+	if(branchs != null && branchs.length > 0){
+		var br = "<label style='text-align:right;width:140px;'>所属机构:</label>";
+		var num = 1;
+		for(var i = 0; i <branchs.length; i++){
+			if(num % 4 == 0){
+				if(row.departid.indexOf(branchs[i].id) > -1){
+					br += "<input type='radio' name='departid' value="+branchs[i].id
+						+" style='width:18px;height:28px;'checked />"+branchs[i].name+"<br>";
+				}else{
+					br += "<input type='radio' name='departid' value="+branchs[i].id
+						+" style='width:18px;height:28px;' />"+branchs[i].name+"<br>";
+				}
+			}else{
+				if(row.departid.indexOf(branchs[i].id) > -1){
+					br += "<input type='radio' name='departid' value="+branchs[i].id
+						+" style='width:18px;height:28px;'checked />"+branchs[i].name+"&nbsp;&nbsp;";
+				}else{
+					br += "<input type='radio' name='departid' value="+branchs[i].id
+						+" style='width:18px;height:28px;' />"+branchs[i].name+"&nbsp;&nbsp;";
+				}
+			}
+			num ++;
+		}
+		$("#branch").append(br);
+	}
+	$("#roles").empty();
+	if(roles != null && roles.length > 0){
+		var br = "<label style='text-align:right;width:140px;'>角色:</label>";
+		var num = 1;
+		for(var i = 0; i <roles.length; i++){
+			if(num % 4 == 0){
+				if(row.roleids.indexOf(roles[i].id) > -1){
+					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+						+" style='width:18px;height:28px;' checked />"+roles[i].name+"<br>";
+				}else{
+					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+						+" style='width:18px;height:28px;' />"+roles[i].name+"<br>";
+				}
+			}else{
+				if(row.roleids.indexOf(roles[i].id) > -1){
+					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+						+" style='width:18px;height:28px;' checked />"+roles[i].name+"&nbsp;&nbsp;";
+				}else{
+					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+						+" style='width:18px;height:28px;' />"+roles[i].name+"&nbsp;&nbsp;";
+				}
+			}
+		}
+		$("#roles").append(br);
+	}
 
+	
+}
 
 function onSave(cls) {
 	//校验是否可校验通过
@@ -166,19 +244,19 @@ function onSave(cls) {
 		 $.messager.alert("提示",ckmap[key]);
 		return;
 	}  
-    $('#bill').form('submit',{
+    $('#addForm').form('submit',{
         url: url,
         onSubmit: function(){
-            return  $('#bill').form('validate');
+            return  $('#addForm').form('validate');
         },
         success: function(result){
             var result = eval('('+result+')');
             if (result.success){
                 $('#grid').datagrid('reload',{unjl:'Y'}); 
-                $('#cbDialog').dialog('close');
-                $('#bill').form().find('input').val("");
+                $('#addDialog').dialog('close');
+//                $('#addForm').form().find('input').val("");
                 Public.tips({content: result.msg});
-                status="add";
+//                status="add";
                 $('#grid').datagrid('clearSelections');
             } else {
             	Public.tips({content: result.msg,type:1});
@@ -189,9 +267,7 @@ function onSave(cls) {
 
 
 function cancel(){
-	$('#cbDialog').dialog('close');
-	//清除提示信息标记
-	$("font").hide();
+	$('#addDialog').dialog('close');
 }
 
 
@@ -228,7 +304,6 @@ function checkUserPwd(){
 		var value = $(this).val();
 		if(value != null && value != ""){
 			//字母和数字组成
-//			var strExp=/.*([0-9]+.*[A-Za-z]+|[A-Za-z]+.*[0-9]+).*/;
 			var strExp = /.*([0-9].*([a-zA-Z].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[a-zA-Z])|[a-zA-Z].*([0-9].*[~!@#$%^&*()<>?+=]|[~!@#$%^&*()<>?+=].*[0-9])|[~!@#$%^&*()<>?+=].*([0-9].*[a-zA-Z]|[a-zA-Z].*[0-9])).*/;
 			if(strExp.test(value)){
 				$("#"+$(this).attr("id")+"_ck").hide(); 
@@ -243,6 +318,7 @@ function checkUserPwd(){
 		}
 	});
 }
+
 function checkExist(name,val){
 	var flag = false;
 	jQuery.ajax({
@@ -272,21 +348,24 @@ function showTitle(value){
 function opermatter(val, row, index) {
 	if(row.lock_flag=="是"){
 		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+index+'\')">编辑</a>'+
-		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="unlock(\''+row.asetid+'\',\''+row.updatets+'\')">解锁</a>';
+		' <span>锁定</span>'+
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="unlock(\''+row.uid+'\',\''+row.updatets+'\')">解锁</a>';
 	}else{
 		return '<a href="#" style="margin-bottom:0px;color:blue;margin-left:10px;" onclick="edit(\''+index+'\')">编辑</a>'+
-		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="lock(\''+row.asetid+'\',\''+row.updatets+'\')">锁定</a>';
+		'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="lock(\''+row.uid+'\',\''+row.updatets+'\')">锁定</a>'+
+		' <span>解锁</span>';
 	}
 }
 
-function lock(id,updatets){
+function lock(uid,updatets){
 	$.messager.confirm('提示','确认锁定?',function(conf){
 		if (conf){
 			jQuery.ajax({
 				url : contextPath + '/branch/user!updateLock.action',
 				data : {
-					'uid' : row.uid,
-					'corp_id' : row.corp_id
+					'uid' : uid,
+					'updatets' : updatets,
+					'lock_flag' : 'Y'
 				},
 				type : 'post',
 				dataType : 'json',
@@ -303,14 +382,15 @@ function lock(id,updatets){
 	});
 }
 
-function unlock(id,updatets){
+function unlock(uid,updatets){
 	$.messager.confirm('提示','确认解锁?',function(conf){
 		if (conf){
 			jQuery.ajax({
 				url : contextPath + '/branch/user!updateLock.action',
 				data : {
-					'uid' : row.uid,
-					'corp_id' : row.corp_id
+					'uid' : uid,
+					'updatets' : updatets,
+					'lock_flag' : 'N'
 				},
 				type : 'post',
 				dataType : 'json',
@@ -327,11 +407,33 @@ function unlock(id,updatets){
 	});
 }
 
-function qryLockUser(ilock) {
-	var queryParams = $('#grid').datagrid('options').queryParams; 
-    queryParams['ilock'] =ilock;
-    $('#grid').datagrid('options').queryParams = queryParams;  
-    $("#grid").datagrid('load'); 
-    $('#grid').datagrid('clearSelections');
+function initListen() {
+	$('#qrylock').combobox({    
+		onSelect: function(rec){
+			var qryType;
+			if(rec.value=="Y" || rec.value=="是"){
+				qryType = 1;
+			}else{
+				qryType = 0;
+			}
+			$('#grid').datagrid('load', {"qtype" : qryType});
+		    $('#grid').datagrid('clearSelections');
+        }
+	}); 
+	
+	$('#quname').textbox('textbox').keydown(function (e) {
+        if (e.keyCode == 13) {
+ 		   var ucode = $("#quname").textbox('getValue'); 
+ 		   var lock = $('#qrylock').combobox('getValue');
+ 		   var qryType;
+ 		   if(lock=='N'){
+ 			  qryType = 0;
+ 		   }else{
+ 			  qryType = 1;
+ 		   }
+		 $('#grid').datagrid('load', {"qtype" : qryType,"ucode" : ucode});
+		   $('#grid').datagrid('clearSelections');
+        }
+    });
 }
 

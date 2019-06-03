@@ -1,5 +1,6 @@
 package com.dzf.service.branch.setup.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.branch.setup.BranchUserVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
@@ -20,6 +22,9 @@ import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
+import com.dzf.pub.framework.rsa.Encode;
+import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.branch.setup.IBranchUserService;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -37,7 +42,7 @@ public class BranchUserServiceImpl implements IBranchUserService {
 	
 	@Autowired
 	private IUserService userService;
-	
+
 	@Override
 	public List<UserVO> query(QryParamVO qvo) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
@@ -48,6 +53,8 @@ public class BranchUserServiceImpl implements IBranchUserService {
         sql.append("       u.disable_time, ");
         sql.append("       u.able_time, ");
         sql.append("       u.user_note, ");
+        sql.append("       u.updatets, ");
+        sql.append("       nvl(u.locked_tag,'N') locked_tag, ");
         sql.append("       bs.vname as pk_depts, ");
         sql.append("       wm_concat(r.role_name) rolenames ");
         sql.append("  from sm_user u ");
@@ -55,11 +62,17 @@ public class BranchUserServiceImpl implements IBranchUserService {
         sql.append("  left join sm_user_role ur on u.cuserid = ur.cuserid ");
         sql.append("  left join sm_role r on ur.pk_role = r.pk_role ");
         sql.append(" where nvl(u.dr, 0) = 0 ");
+        sql.append("   and nvl(u.ismanager, 'N') = 'N' ");
         sql.append("   and nvl(bs.dr, 0) = 0 ");
         sql.append("   and nvl(ur.dr, 0) = 0 ");
         sql.append("   and nvl(r.dr, 0) = 0 ");
         sql.append("   and u.xsstyle = ? ");
-        sql.append("   and exists (select ub.pk_branchset br_user_branch ub ");
+        if(qvo.getQrytype()!=null && qvo.getQrytype()== 0){
+        	sql.append("   and nvl(u.locked_tag,'N') = 'N' ");
+        }else if(qvo.getQrytype()!=null &&  qvo.getQrytype()== 1){
+        	sql.append("   and nvl(u.locked_tag,'N') = 'Y' ");
+        }
+        sql.append("   and exists (select ub.pk_branchset from br_user_branch ub ");
         sql.append("         where u.pk_department = ub.pk_branchset ");
         sql.append("           and ub.cuserid = ?) ");
         sql.append(" group by u.cuserid, ");
@@ -68,23 +81,39 @@ public class BranchUserServiceImpl implements IBranchUserService {
         sql.append("          u.disable_time, ");
         sql.append("          u.able_time, ");
         sql.append("          u.user_note, ");
-        sql.append("          bs.vname ");
+        sql.append("          u.updatets, ");
+        sql.append("          bs.vname,");
+        sql.append("          u.locked_tag");
     	param.addParam(UTYPE);
+    	param.addParam(qvo.getCuserid());
     	List<UserVO> list =(List<UserVO>) singleObjectBO.executeQuery(sql.toString(), param, new BeanListProcessor(UserVO.class));
-		return list;
+		List<UserVO> reList = new ArrayList<>();
+		String userName ;
+    	for (UserVO userVO : list) {
+    		userName = CodeUtils1.deCode(userVO.getUser_name());
+    		userVO.setUser_name(userName);
+			if(StringUtil.isEmpty(qvo.getUser_code()) || userName.indexOf(qvo.getUser_code()) >-1 || userVO.getUser_code().indexOf(qvo.getUser_code())>-1){
+				reList.add(userVO);
+			}
+		}
+		return reList;
 	}
 	
 	@Override
-	public  void save(UserVO uservo) throws DZFWarpException{
-		String[] roles = uservo.getRoleids().split(",");
-//		uservo.get
+	public void save(UserVO uservo) throws DZFWarpException{
 		//1、保存用户，相关信息
 		uservo.setPk_creatcorp(loginCorp);// 创建用户的公司
 		uservo.setPk_corp(loginCorp);
 		uservo.setXsstyle(UTYPE);
+		uservo.setIsmanager(DZFBoolean.FALSE);
 		QueryDeCodeUtils.decKeyUtil(new String[] { "user_name" },uservo, 0);
 		userService.save(uservo);
 		//2、保存用户角色中间表
+		saveUserRoles(uservo);
+	}
+
+	private void saveUserRoles(UserVO uservo) {
+		String[] roles = uservo.getRoleids().split(",");
 		UserRoleVO[] urvos = new UserRoleVO[roles.length];
 		UserRoleVO urvo;
 		int i=0;
@@ -92,7 +121,7 @@ public class BranchUserServiceImpl implements IBranchUserService {
 			urvo = new UserRoleVO();
 			urvo.setPk_corp(loginCorp);
 			urvo.setCuserid(uservo.getCuserid());
-			urvo.setPk_role(roleid);
+			urvo.setPk_role(roleid.replace(" ", ""));
 			urvos[i] = urvo;
 			i++;
 		}
@@ -111,6 +140,12 @@ public class BranchUserServiceImpl implements IBranchUserService {
 			}
 			QueryDeCodeUtils.decKeyUtil(new String[] { "user_name" },uservo, 0);
 			userService.update(uservo);
+			
+			SQLParameter spm = new SQLParameter();
+			spm.addParam(uservo.getCuserid());
+			singleObjectBO.executeUpdate("update sm_user_role set dr=1 where r.cuserid=? ", spm);
+			
+			saveUserRoles(uservo);
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
 		        throw new BusinessException(e.getMessage());
@@ -124,10 +159,46 @@ public class BranchUserServiceImpl implements IBranchUserService {
 	@Override
 	public BranchUserVO queryByID(String loginUserid,String qryId) throws DZFWarpException{
 		BranchUserVO retvo = new BranchUserVO();
-		UserVO uservo;
-		if(StringUtil.isEmpty(qryId)){
-			
-			uservo = (UserVO)singleObjectBO.queryByPrimaryKey(UserVO.class, qryId);
+		if(!StringUtil.isEmpty(qryId)){
+	        StringBuffer sql = new StringBuffer();
+	        SQLParameter param = new SQLParameter();
+	        sql.append("select u.cuserid, ");
+	        sql.append("       u.user_code, ");
+	        sql.append("       u.user_name, ");
+	        sql.append("       u.user_password, ");
+	        sql.append("       u.disable_time, ");
+	        sql.append("       u.able_time, ");
+	        sql.append("       u.user_note, ");
+	        sql.append("       u.pk_department, ");
+	        sql.append("       u.updatets, ");
+//	        sql.append("       bs.vname as pk_depts, ");
+	        sql.append("       wm_concat(r.pk_role) roleids ");
+	        sql.append("  from sm_user u ");
+//	        sql.append("  left join br_branchset bs on u.pk_department = bs.pk_branchset ");
+	        sql.append("  left join sm_user_role ur on u.cuserid = ur.cuserid ");
+	        sql.append("  left join sm_role r on ur.pk_role = r.pk_role ");
+	        sql.append(" where nvl(u.dr, 0) = 0 ");
+	        sql.append("   and nvl(u.ismanager, 'N') = 'N' ");
+//	        sql.append("   and nvl(bs.dr, 0) = 0 ");
+	        sql.append("   and nvl(ur.dr, 0) = 0 ");
+	        sql.append("   and nvl(r.dr, 0) = 0 ");
+	        sql.append("   and u.cuserid= ? ");
+	        sql.append(" group by u.cuserid, ");
+	        sql.append("          u.user_code, ");
+	        sql.append("          u.user_name, ");
+	        sql.append("          u.user_password, ");
+	        sql.append("          u.disable_time, ");
+	        sql.append("          u.able_time, ");
+	        sql.append("          u.user_note, ");
+	        sql.append("          u.updatets, ");
+	        sql.append("          u.pk_department ");
+	        param.addParam(qryId);
+	        UserVO uservo = (UserVO)singleObjectBO.executeQuery(sql.toString(),param,new BeanProcessor(UserVO.class));
+	        if(uservo == null){
+	        	throw new BusinessException("该用户已被删除");
+	        }
+	        uservo.setUser_name(CodeUtils1.deCode(uservo.getUser_name()));
+	        uservo.setUser_password(new Encode().decode(uservo.getUser_password()));
 			retvo.setUservo(uservo);
 		}
 		List<ComboBoxVO> roles = getBranchRoles(loginUserid);
@@ -143,7 +214,7 @@ public class BranchUserServiceImpl implements IBranchUserService {
 		try {
 			LockUtil.getInstance().tryLockKey(vo.getTableName(), vo.getCuserid(),uuid, 60);
 			checkData(vo);
-			singleObjectBO.update(vo, new String[]{"istatus"});
+			singleObjectBO.update(vo, new String[]{"locked_tag"});
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
 		        throw new BusinessException(e.getMessage());
