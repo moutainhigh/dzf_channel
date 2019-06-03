@@ -12,6 +12,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.branch.setup.BranchUserVO;
+import com.dzf.model.branch.setup.UserBranchVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserRoleVO;
@@ -25,6 +26,7 @@ import com.dzf.pub.WiseRunException;
 import com.dzf.pub.framework.rsa.Encode;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFBoolean;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.branch.setup.IBranchUserService;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -110,6 +112,13 @@ public class BranchUserServiceImpl implements IBranchUserService {
 		userService.save(uservo);
 		//2、保存用户角色中间表
 		saveUserRoles(uservo);
+		//3、插入用户机构设置中间表
+		UserBranchVO ubvo = new UserBranchVO();
+		ubvo.setPk_corp(loginCorp);
+		ubvo.setPk_branchset(uservo.getPk_department());
+		ubvo.setCuserid(uservo.getCuserid());
+		ubvo.setDoperatedate(new DZFDate());
+		singleObjectBO.insertVO(loginCorp, ubvo);
 	}
 
 	private void saveUserRoles(UserVO uservo) {
@@ -145,6 +154,11 @@ public class BranchUserServiceImpl implements IBranchUserService {
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(uservo.getCuserid());
 			singleObjectBO.executeUpdate("update sm_user_role set dr=1 where cuserid=? ", spm);
+			
+			spm = new SQLParameter();
+			spm.addParam(uservo.getPk_department());
+			spm.addParam(uservo.getCuserid());
+			singleObjectBO.executeUpdate("update br_user_branch set pk_branchset = ? where cuserid=? ", spm);
 			
 			saveUserRoles(uservo);
 		}catch (Exception e) {
