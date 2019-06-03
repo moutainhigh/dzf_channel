@@ -102,7 +102,6 @@ function doExport(){
 		return;
 	}
 	var columns = $('#grid').datagrid("options").columns[0];
-	//var qj = $('#begdate').datebox('getValue')+"至"+$('#enddate').datebox('getValue');
 	var qj = $('#jqj').html();
 	Business.getFile(DZF.contextPath+ '/branch/expcontract!exportAuditExcel.action',
 			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);

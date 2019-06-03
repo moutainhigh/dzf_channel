@@ -24,12 +24,12 @@ public class ExpireContractExcelField implements IExceport<QueryContractVO> {
 	private String qj = null;
 	
 	private Fieldelement[] fields = new Fieldelement[]{
-			new Fieldelement("ucode", "公司编码",false,0,false),
-			new Fieldelement("uname", "公司名称",false,0,false),
-			new Fieldelement("enum", "到期合同数",false,0,false),
-			new Fieldelement("snum", "已签合同数",false,0,false),
-			new Fieldelement("usnum", "未签合同数",false,0,false),
-			new Fieldelement("locorpnum", "流失客户数",false,0,false),
+			new Fieldelement("unitcode", "公司编码",false,0,false),
+			new Fieldelement("unitname", "公司名称",false,0,false),
+			new Fieldelement("expirenum", "到期合同数",false,0,false),
+			new Fieldelement("signednum", "已签合同数",false,0,false),
+			new Fieldelement("unsignednum", "未签合同数",false,0,false),
+			new Fieldelement("losscorpnum", "流失客户数",false,0,false),
 	};
 
 	public void setVos(QueryContractVO[] vos) {
