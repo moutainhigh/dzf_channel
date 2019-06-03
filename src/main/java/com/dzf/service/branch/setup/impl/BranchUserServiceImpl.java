@@ -118,6 +118,7 @@ public class BranchUserServiceImpl implements IBranchUserService {
 		ubvo.setPk_branchset(uservo.getPk_department());
 		ubvo.setCuserid(uservo.getCuserid());
 		ubvo.setDoperatedate(new DZFDate());
+		ubvo.setDr(0);
 		singleObjectBO.insertVO(loginCorp, ubvo);
 	}
 
@@ -241,6 +242,21 @@ public class BranchUserServiceImpl implements IBranchUserService {
 	}
 	
 	/**
+	 * 是否是最新数据
+	 * @param qryvo
+	 */
+	private UserVO checkData(UserVO qvo) throws DZFWarpException{
+		UserVO vo =(UserVO) singleObjectBO.queryByPrimaryKey(UserVO.class, qvo.getCuserid());
+		if(vo==null){
+			throw new BusinessException("该行数据已被其它用户删除!");
+		}
+		if(!vo.getUpdatets().equals(qvo.getUpdatets())){
+			throw new BusinessException("该行数据已发生变化,请取消操作刷新再试!");
+		}
+		return vo;
+	}
+	
+	/**
 	 * 获取分支机构，所有角色
 	 * @param cuserid
 	 * @return
@@ -255,6 +271,12 @@ public class BranchUserServiceImpl implements IBranchUserService {
         return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(ComboBoxVO.class));
     }
 	
+	/**
+	 * 获取登陆人，所属机构
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
 	private List<ComboBoxVO> getBranchs(String cuserid) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
         SQLParameter param = new SQLParameter();
@@ -268,19 +290,4 @@ public class BranchUserServiceImpl implements IBranchUserService {
         return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), param, new BeanListProcessor(ComboBoxVO.class));
     }
 	
-	/**
-	 * 是否是最新数据
-	 * @param qryvo
-	 */
-	private UserVO checkData(UserVO qvo) throws DZFWarpException{
-		UserVO vo =(UserVO) singleObjectBO.queryByPrimaryKey(UserVO.class, qvo.getCuserid());
-		if(vo==null){
-			throw new BusinessException("该行数据已被其它用户删除!");
-		}
-		if(!vo.getUpdatets().equals(qvo.getUpdatets())){
-			throw new BusinessException("该行数据已发生变化,请取消操作刷新再试!");
-		}
-		return vo;
-	}
-
 }
