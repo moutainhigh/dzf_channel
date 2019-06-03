@@ -139,11 +139,12 @@ public class BranchUserServiceImpl implements IBranchUserService {
 				throw new BusinessException("修改的用户不属于当前登陆公司，不允许修改。");
 			}
 			QueryDeCodeUtils.decKeyUtil(new String[] { "user_name" },uservo, 0);
+			uservo.setPk_corp(loginCorp);
 			userService.update(uservo);
 			
 			SQLParameter spm = new SQLParameter();
 			spm.addParam(uservo.getCuserid());
-			singleObjectBO.executeUpdate("update sm_user_role set dr=1 where r.cuserid=? ", spm);
+			singleObjectBO.executeUpdate("update sm_user_role set dr=1 where cuserid=? ", spm);
 			
 			saveUserRoles(uservo);
 		}catch (Exception e) {
@@ -252,7 +253,6 @@ public class BranchUserServiceImpl implements IBranchUserService {
     	param.addParam(cuserid);
         return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), param, new BeanListProcessor(ComboBoxVO.class));
     }
-	
 	
 	/**
 	 * 是否是最新数据

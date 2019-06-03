@@ -6,6 +6,7 @@
 	<jsp:include page="../../inc/easyui.jsp"></jsp:include>
 	<link href=<%UpdateGradeVersion.outversion(out,"../../css/index.css");%>  rel="stylesheet">
 	<script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"../../js/branch/setup/bruser.js");%>  charset="UTF-8"></script>
+	<script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" ></script>
 </head>
 <body class="easyui-layout">
 	<!-- <div class="wrapper"> -->
@@ -46,6 +47,7 @@
 						<input id="ucode" name="ucode" class="easyui-textbox"  style="width:200px;height:28px;" data-options="required:true"/>
 						<input id="uid" name="uid" type="hidden">
 						<input id="updatets" name="updatets" type="hidden">
+						<input id="roleids" name="roleids" type="hidden">
 						
 						<label style="width:140px;text-align: right;"><i class="bisu">*</i>用户名称:</label>
 						<input id="uname" name="uname" class="easyui-textbox"  style="width:200px;height:28px;" data-options="required:true"/>
@@ -72,7 +74,7 @@
 					<input id="u_note" name=u_note class="easyui-textbox" style="width:560px;height:40px;">
 				</div>
 				<div class="time_col time_colp11" id="branch"></div>
-				<div class="time_col time_colp11" id = "roles"></div>
+				<div class="time_col time_colp11" id ="roles"></div>
 			</form>
 			<div style="text-align:center;margin-top:30px;">
 			    <a href="javascript:void(0)" id="saveNew" class="ui-btn ui-btn-xz"  onclick="onSave(true)">保存</a> 

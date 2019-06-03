@@ -1,6 +1,6 @@
 var contextPath=DZF.contextPath;
 var url;
-var status="add";
+var o;
 var ckmap = {};
 //自适应边框
 $(window).resize(function(){ 
@@ -138,10 +138,10 @@ function setAddCheck(branchs,roles){
 		var num = 1;
 		for(var i = 0; i <roles.length; i++){
 			if(num % 4 == 0){
-				br += "<input type='checkbox' name='roleids' value="+roles[i].id
+				br += "<input type='checkbox' name='roleids0' value="+roles[i].id
 					+" style='width:18px;height:28px;' />"+roles[i].name+"<br>";
 			}else{
-				br = br + "<input type='checkbox' name='roleids' value="+roles[i].id
+				br = br + "<input type='checkbox' name='roleids0' value="+roles[i].id
 				+" style='width:18px;height:28px;'/>"+roles[i].name+"&nbsp;&nbsp;";
 			}
 		}
@@ -216,34 +216,48 @@ function setEditCheck(row,branchs,roles){
 		for(var i = 0; i <roles.length; i++){
 			if(num % 4 == 0){
 				if(row.roleids.indexOf(roles[i].id) > -1){
-					br += "<input type='checkbox' name='roleids' value="+roles[i].id
-						+" style='width:18px;height:28px;' checked />"+roles[i].name+"<br>";
+					br += "<input type='checkbox' name='roleids1' value="+roles[i].id
+						+" style='width:18px;height:28px;'checked  />"+roles[i].name+"<br>";
 				}else{
-					br += "<input type='checkbox' name='roleids' value="+roles[i].id
-						+" style='width:18px;height:28px;' />"+roles[i].name+"<br>";
+					br += "<input type='checkbox' name='roleids1' value="+roles[i].id
+						+" style='width:18px;height:28px;'/>"+roles[i].name+"<br>";
 				}
 			}else{
 				if(row.roleids.indexOf(roles[i].id) > -1){
-					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+					br += "<input type='checkbox' name='roleids1' value="+roles[i].id
 						+" style='width:18px;height:28px;' checked />"+roles[i].name+"&nbsp;&nbsp;";
 				}else{
-					br += "<input type='checkbox' name='roleids' value="+roles[i].id
+					br += "<input type='checkbox' name='roleids1' value="+roles[i].id
 						+" style='width:18px;height:28px;' />"+roles[i].name+"&nbsp;&nbsp;";
 				}
 			}
 		}
 		$("#roles").append(br);
 	}
-
-	
 }
 
-function onSave(cls) {
+function onSave(isAdd) {
 	//校验是否可校验通过
 	for(key in ckmap){  
 		 $.messager.alert("提示",ckmap[key]);
 		return;
 	}  
+	var roleIds ="";
+	if(isAdd){
+        $("input[name='roleids0']:checked").each(function(i){
+        	roleIds += $(this).val()+",";
+        });
+        if(!isEmpty(roleIds)){
+        	$("#roleids").val(roleIds.substr(0,roleIds.length-1));
+        }
+	}else{
+        $("input[name='roleids1']:checked").each(function(i){
+        	roleIds += $(this).val()+",";
+        });
+        if(!isEmpty(roleIds)){
+        	$("#roleids").val(roleIds.substr(0,roleIds.length-1));
+        }
+	}
     $('#addForm').form('submit',{
         url: url,
         onSubmit: function(){
@@ -254,9 +268,7 @@ function onSave(cls) {
             if (result.success){
                 $('#grid').datagrid('reload',{unjl:'Y'}); 
                 $('#addDialog').dialog('close');
-//                $('#addForm').form().find('input').val("");
                 Public.tips({content: result.msg});
-//                status="add";
                 $('#grid').datagrid('clearSelections');
             } else {
             	Public.tips({content: result.msg,type:1});
