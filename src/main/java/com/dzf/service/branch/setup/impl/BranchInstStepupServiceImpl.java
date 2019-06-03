@@ -14,6 +14,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
@@ -277,6 +278,20 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		}
 		
 	}
+	
+	@Override
+	public List<ComboBoxVO> qryBranchs(String cuserid) throws DZFWarpException {
+        StringBuffer sql = new StringBuffer();
+        SQLParameter param = new SQLParameter();
+        sql.append("select bs.pk_branchset id , bs.vname name  ");
+        sql.append("  from br_user_branch ub ");
+        sql.append("  left join br_branchset bs on ub.pk_branchset = bs.pk_branchset ");
+        sql.append(" where nvl(ub.dr, 0) = 0 ");
+        sql.append("   and nvl(bs.dr, 0) = 0 ");
+        sql.append("   and ub.cuserid = ? ");
+    	param.addParam(cuserid);
+        return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), param, new BeanListProcessor(ComboBoxVO.class));
+    }
 
 
 }

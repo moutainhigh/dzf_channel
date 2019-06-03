@@ -1,5 +1,6 @@
 package com.dzf.action.branch.setup;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
+import com.dzf.model.pub.ComboBoxVO;
+import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QueryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -246,9 +249,22 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
 	}
 	
-	
+	public void qryBranchs(){
+        Grid grid = new Grid();
+        try {
+            List<ComboBoxVO> list = branchser.qryBranchs(getLogin_userid());
+            if(list==null || list.size()<1){
+            	list = new ArrayList<>();
+            }
+            grid.setRows(list);
+            grid.setSuccess(true);
+            grid.setMsg("查询成功！");
+        } catch (Exception e) {
+            printErrorLog(grid, log, e, "查询失败");
+        }
+        writeJson(grid);
+	}
 	
 }

@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
+import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QueryParamVO;
+import com.dzf.pub.DZFWarpException;
 
 public interface IBranchInstStepupService {
 
@@ -67,5 +69,13 @@ public interface IBranchInstStepupService {
 	 * @return
 	 */
 	Object queryById(String id, String type);
+	
+	/**
+	 * 根据用户id，查询有权限的机构
+	 * @param cuserid
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<ComboBoxVO> qryBranchs(String cuserid) throws DZFWarpException;
 
 }
