@@ -127,10 +127,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       l.ndeductmny,  \n");
 		sql.append("       l.ndedrebamny,  \n");
 		sql.append("       l.vstatus,  \n");
-		sql.append("       ba.innercode corpcode, \n");
-		sql.append("       ba.unitname corpname, \n");
-		sql.append("       ba.vprovince, \n");
-		sql.append("       ba.citycounty as vprovname, \n");
+		sql.append("       account.innercode corpcode, \n");
+		sql.append("       account.unitname corpname, \n");
+		sql.append("       account.vprovince, \n");
+		sql.append("       account.citycounty as vprovname, \n");
 		sql.append("       nvl(l.vtistatus,1) AS vtistatus, \n");
 		sql.append("       l.updatets,  \n");
 		sql.append("       t.logisticsunit,  \n");
@@ -138,7 +138,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       s.doperatetime AS dsubmittime,  \n");
 		sql.append("       u.doperatedate AS dconfdate  \n");
 		sql.append("  FROM cn_goodsbill l  \n");
-		sql.append("  INNER JOIN bd_account ba ON l.pk_corp = ba.pk_corp \n") ;
+		sql.append("  INNER JOIN bd_account account ON l.pk_corp = account.pk_corp \n") ;
 		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
 		sql.append("                            AND s.vstatus = 0  \n");
 		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n");
@@ -148,7 +148,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
 		sql.append("   AND nvl(s.dr, 0) = 0  \n");
 		sql.append("   AND nvl(u.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			sql.append("   AND l.vbillcode = ?  \n");
 			spm.addParam(pamvo.getVbillcode());
@@ -1160,10 +1160,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		StringBuffer sql = new StringBuffer();
 		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
 		if(corps != null && corps.length > 0){
-			String where = SqlUtil.buildSqlForIn(" ba.pk_corp", corps);
+			String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND ba.pk_corp is null \n") ; 
+			sql.append(" AND account.pk_corp is null \n") ; 
 		}
 		return sql.toString();
 	}

@@ -401,7 +401,7 @@ public class PubServiceImpl implements IPubService {
 			if ((dataLevel == 1 && !StringUtil.isEmpty(areaname)) || (dataLevel == 2)) {
 				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
 				if (qryProvince != null && qryProvince.size() > 0) {
-					sql.append(" and ba.vprovince  in (");
+					sql.append(" and account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
 					sql.append(" )");
 					retstr = sql.toString();
@@ -410,20 +410,20 @@ public class PubServiceImpl implements IPubService {
 				List<String> qryCorpIds = qryCorpIds(cuserid, areaname,type);
 				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
 				if (qryProvince != null && qryProvince.size() > 0 && qryCorpIds != null && qryCorpIds.size() > 0) {
-					sql.append(" and (ba.vprovince  in (");
+					sql.append(" and (account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
 					sql.append(" ) or ");
-					sql.append("  ba.pk_corp  in (");
+					sql.append("  account.pk_corp  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 					sql.append(" ))");
 					retstr = sql.toString();
 				} else if (qryProvince != null && qryProvince.size() > 0) {
-					sql.append(" and ba.vprovince  in (");
+					sql.append(" and account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
 					sql.append(" )");
 					retstr = sql.toString();
 				} else if (qryCorpIds != null && qryCorpIds.size() > 0) {
-					sql.append(" and ba.pk_corp  in (");
+					sql.append(" and account.pk_corp  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 					sql.append(" )");
 					retstr = sql.toString();

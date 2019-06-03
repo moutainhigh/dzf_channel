@@ -33,7 +33,7 @@ public class ChannelServiceImpl implements IChannelService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append(" select pk_corp,unitname,innercode ");
-		sql.append(" from bd_account ba ");
+		sql.append(" from bd_account account ");
 		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
 		sql.append("  and nvl(ischannel,'N') = 'Y'  ");
 		String smallCondition = getSmallCondition(paramvo);
@@ -67,20 +67,20 @@ public class ChannelServiceImpl implements IChannelService {
 		StringBuffer sql = new StringBuffer();
 		String retstr = null;
 		if (qryProvince != null && qryProvince.size() > 0 && qryCorpIds != null && qryCorpIds.size() > 0) {
-			sql.append(" and (ba.vprovince  in (");
+			sql.append(" and (account.vprovince  in (");
 			sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
 			sql.append(" ) or ");
-			sql.append("  ba.pk_corp  in (");
+			sql.append("  account.pk_corp  in (");
 			sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 			sql.append(" ))");
 			retstr = sql.toString();
 		} else if (qryProvince != null && qryProvince.size() > 0) {
-			sql.append(" and ba.vprovince  in (");
+			sql.append(" and account.vprovince  in (");
 			sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
 			sql.append(" )");
 			retstr = sql.toString();
 		} else if (qryCorpIds != null && qryCorpIds.size() > 0) {
-			sql.append(" and ba.pk_corp  in (");
+			sql.append(" and account.pk_corp  in (");
 			sql.append(SqlUtil.buildSqlConditionForIn(qryCorpIds.toArray(new String[qryCorpIds.size()])));
 			sql.append(" )");
 			retstr = sql.toString();

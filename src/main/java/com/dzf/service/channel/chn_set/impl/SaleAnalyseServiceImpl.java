@@ -17,6 +17,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.service.channel.chn_set.ISaleAnalyseService;
 
@@ -31,25 +32,26 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 	public List<SaleAnalyseVO> query(SaleAnalyseVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select ba.pk_corp,b.vprovname,b.vprovince,c.areaname");
-		sql.append("   from bd_account ba");
+		sql.append(" select account.pk_corp,b.vprovname,b.vprovince,c.areaname");
+		sql.append("   from bd_account account");
 		sql.append("   left join (select distinct pk_chnarea, vprovname, vprovince");
 		sql.append("                from cn_chnarea_b");
 		sql.append("               where type = 1");
-		sql.append("                 and nvl(dr, 0) = 0) b on ba.vprovince = b.vprovince");
+		sql.append("                 and nvl(dr, 0) = 0) b on account.vprovince = b.vprovince");
 		sql.append("   left join cn_chnarea c on b.pk_chnarea = c.pk_chnarea");
 		sql.append("                         and c.type = 1");
-		sql.append("  where nvl(ba.dr, 0) = 0");
+		sql.append("  where nvl(account.dr, 0) = 0");
 		sql.append("    and nvl(c.dr, 0) = 0");
-		sql.append("    and nvl(ba.isaccountcorp, 'N') = 'Y'");
-		sql.append("    and nvl(ba.ischannel, 'N') = 'Y'");
-		sql.append("    and nvl(ba.isseal, 'N') = 'N'");
+		sql.append("    and nvl(account.isaccountcorp, 'N') = 'Y'");
+		sql.append("    and nvl(account.ischannel, 'N') = 'Y'");
+		sql.append("    and nvl(account.isseal, 'N') = 'N'");
+		sql.append("    and " +QueryUtil.getWhereSql());
 		if(!StringUtil.isEmpty(qvo.getAreaname())){
 			sql.append(" and c.areaname=? " );   //大区
 			sp.addParam(qvo.getAreaname());
 		}
 		if(qvo.getVprovince() != null && qvo.getVprovince() != -1){
-			sql.append(" and ba.vprovince=? ");//省市
+			sql.append(" and account.vprovince=? ");//省市
 			sp.addParam(qvo.getVprovince());
 		}
 		List<SaleAnalyseVO> list =(List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(SaleAnalyseVO.class));
