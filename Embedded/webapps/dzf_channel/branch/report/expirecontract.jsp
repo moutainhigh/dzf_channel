@@ -37,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:260px;">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:230px;">
 			<s class="s"><i class="i"></i></s>
 			<h3>
 				<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -66,7 +66,7 @@
 				<input id="uname" name="uname" class="easyui-textbox" style="width:286px;height:28px;"/>  
 			</div>
 			<p>
-				<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 
+				<a class="ui-btn save_input" id="cleanbtn" onclick="clearQuery();">清除</a> 
 				<a class="ui-btn save_input" onclick="reloadData()">确定</a>
 				<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 			</p>
