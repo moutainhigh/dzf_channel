@@ -301,7 +301,7 @@ function edit(index) {
 				var num = 1;
 				for(var i = 0; i < rows.length; i++){
 					if(num % 3 == 0){
-						if(row.braname.indexOf(rows[i].pk_bset) != -1){
+						if(!isEmpty(row.braname) && row.braname.indexOf(rows[i].pk_bset) != -1){
 							br = br + "<input type='checkbox' name='braname' value="+rows[i].pk_bset
 							+" style='width:18px;height:18px;' checked />"+rows[i].name+"<br>";
 						}else{
@@ -309,7 +309,7 @@ function edit(index) {
 							+" style='width:18px;height:18px;' />"+rows[i].name+"<br>";
 						}
 					}else{
-						if(row.braname.indexOf(rows[i].pk_bset) != -1){
+						if(!isEmpty(row.braname) && row.braname.indexOf(rows[i].pk_bset) != -1){
 							br = br + "<input type='checkbox' name='braname' value="+rows[i].pk_bset
 							+" style='width:18px;height:18px;' checked />"+rows[i].name+"&nbsp;&nbsp;";
 						}else{

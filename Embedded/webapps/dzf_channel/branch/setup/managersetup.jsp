@@ -3,9 +3,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<jsp:include page="../../inc/easyui.jsp"></jsp:include>
-	<link href=<%UpdateGradeVersion.outversion(out,"../../css/index.css");%>  rel="stylesheet">
-	<script type="text/javascript" src=<%UpdateGradeVersion.outversion(out,"../../js/branch/setup/managersetup.js");%>  charset="UTF-8"></script>
+<jsp:include page="../../inc/easyui.jsp"></jsp:include>
+<link
+	href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%>
+	rel="stylesheet">
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script type="text/javascript"
+	src=<%UpdateGradeVersion.outversion(out, "../../js/branch/setup/managersetup.js");%>
+	charset="UTF-8"></script>
 </head>
 <body class="easyui-layout">
 	<div class="mod-toolbar-top">
