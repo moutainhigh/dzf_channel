@@ -35,12 +35,12 @@ function load(){
 			showFooter:true,
 			columns : [ [ 
 			              { field : 'contractid', title : '合同主键', width : '120',hidden:true},
-			              { field : 'ucode', title : '公司编码', width : '120'},
-			              { field : 'uname', title : '公司名称', width : '120'},
-			              { field : 'enum', title : '到期合同数', width : '120'},
-			              { field : 'snum', title : '已签合同数', width : '120'},
-			              { field : 'usnum', title : '未签合同数', width : '120'},
-			              { field : 'locorpnum', title : '流失客户数', width : '120'},
+			              { field : 'ucode', title : '公司编码', width : '120',align : 'left',halign : 'center'},
+			              { field : 'uname', title : '公司名称', width : '120',align : 'center',halign : 'center'},
+			              { field : 'enum', title : '到期合同数', width : '120',align : 'center',halign : 'center'},
+			              { field : 'snum', title : '已签合同数', width : '120',align : 'center',halign : 'center'},
+			              { field : 'usnum', title : '未签合同数', width : '120',align : 'center',halign : 'center'},
+			              { field : 'locorpnum', title : '流失客户数', width : '120',align : 'center',halign : 'center'},
 					   ]],
 			onLoadSuccess : function(data) {
 				$('#grid').datagrid("scrollTo",0);

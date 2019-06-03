@@ -2,7 +2,6 @@ package com.dzf.model.branch.reportmanage;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
-import com.dzf.pub.lang.DZFDate;
 
 /**
  * 合同查询VO
@@ -31,7 +30,20 @@ public class QueryContractVO extends SuperVO {
 	@FieldAlias("locorpnum")
 	public Integer losscorpnum;// 流失客户数
 	
-	public DZFDate qjq;//查询日期
+	@FieldAlias("qjq")
+	public String qjq;//查询日期
+	
+	@FieldAlias("nextqjq")
+	public String nextqjq;//下个日期
+	
+	@FieldAlias("corpids")
+	public String corpids;//客户主键
+	
+	@FieldAlias("pk_corp")
+	public String  pk_corp;//公司ID
+	
+	@FieldAlias("kcount")
+	public Integer kcount;//不同公司的客户数
 
 	
 	public String getPk_contract() {
@@ -90,12 +102,44 @@ public class QueryContractVO extends SuperVO {
 		this.losscorpnum = losscorpnum;
 	}
 
-	public DZFDate getQjq() {
+	public String getQjq() {
 		return qjq;
 	}
 
-	public void setQjq(DZFDate qjq) {
+	public void setQjq(String qjq) {
 		this.qjq = qjq;
+	}
+	
+	public String getCorpids() {
+		return corpids;
+	}
+
+	public void setCorpids(String corpids) {
+		this.corpids = corpids;
+	}
+
+	public String getPk_corp() {
+		return pk_corp;
+	}
+
+	public void setPk_corp(String pk_corp) {
+		this.pk_corp = pk_corp;
+	}
+	
+	public Integer getKcount() {
+		return kcount;
+	}
+
+	public void setKcount(Integer kcount) {
+		this.kcount = kcount;
+	}
+
+	public String getNextqjq() {
+		return nextqjq;
+	}
+
+	public void setNextqjq(String nextqjq) {
+		this.nextqjq = nextqjq;
 	}
 
 	@Override
