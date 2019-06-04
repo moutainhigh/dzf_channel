@@ -140,7 +140,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		spm.addParam(entnumber);
 		sql.append(" select\n");
 		sql.append("    pk_corp,def12 vname,unitname,linkman2 linkman,phone1 phone \n");
-		sql.append("    from bd_account \n");
+		sql.append("    from bd_corp \n");
 		sql.append("    where nvl(dr,0)=0 and def12 is not null \n");
 		sql.append("    and def12 =? \n");
 		BranchInstSetupBVO corpvo = (BranchInstSetupBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupBVO.class));
