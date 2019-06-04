@@ -178,7 +178,8 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<CorpDataVO> getReturnData(QryParamVO pamvo, String[] corpks, String period) throws DZFWarpException {
+	@Override
+	public List<CorpDataVO> getReturnData(QryParamVO pamvo, String[] corpks, String period) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		// 1、列表查询字段：
@@ -192,7 +193,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		List<CorpDataVO> rlist = (List<CorpDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpDataVO.class));
 		if (rlist != null && rlist.size() > 0) {
-			String[] strs = new String[] { "corpname", "unitname", "pcountname" };
+			String[] strs = new String[] { "corpname", "unitname", "pcountname", "phone2" };
 			Map<String, String> jzmap = qryJzMap(corpks, period);
 			Map<String, String> vmap = qryVouchMap(corpks, period);
 			for (CorpDataVO cvo : rlist) {
@@ -434,6 +435,8 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("SELECT corp.corpname,  \n");
 		sql.append("       corp.unitcode,  \n");
 		sql.append("       corp.unitname,  \n");
+		sql.append("       corp.linkman2,  \n");
+		sql.append("       corp.phone2,  \n");
 		sql.append("       corp.citycounty,  \n");
 		sql.append("       corp.chargedeptname,  \n");
 		sql.append("       corp.begindate,  \n");
@@ -468,6 +471,8 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("       p.innercode AS unitcode,  \n");
 		sql.append("       p.unitname,  \n");
 		sql.append("       p.pk_corp,  \n");
+		sql.append("       p.linkman2,  \n");
+		sql.append("       p.phone2,  \n");
 		sql.append("       a.region_name || b.region_name || c.region_name AS citycounty,  \n");
 		sql.append("       CASE p.chargedeptname  \n");
 		sql.append("         WHEN '小规模纳税人' THEN  \n");

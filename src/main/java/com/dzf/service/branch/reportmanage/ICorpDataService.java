@@ -64,4 +64,14 @@ public interface ICorpDataService {
 	 * @throws DZFWarpException
 	 */
 	public List<CorpDataVO> queryAll(QryParamVO pamvo) throws DZFWarpException;
+	
+	/**
+	 * 组织返回数据
+	 * @param pamvo
+	 * @param corpks
+	 * @param period
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<CorpDataVO> getReturnData(QryParamVO pamvo, String[] corpks, String period) throws DZFWarpException;
 }

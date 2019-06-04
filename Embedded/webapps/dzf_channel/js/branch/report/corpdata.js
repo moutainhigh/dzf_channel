@@ -122,7 +122,7 @@ function load(){
 		columns : [ 
 		            [ 
 		            { field : 'ccounty',  title : '省市', width : 140,halign:'center',align:'left',rowspan:2, formatter:showTips}, 
-		            { field : 'chname',  title : '纳税人', width : 70,halign:'center',align:'left',rowspan:2},
+		            { field : 'chname',  title : '纳税人', width : 70,halign:'center',align:'center',rowspan:2},
 		            { field : 'bdate', title : '建账日期', width:80,halign:'center',align:'center',rowspan:2},
 		            { field : 'jzzt',  title : '记账状态', width : 80,halign:'center',align:'center',rowspan:2},
 		            { field : 'bszt',  title : '报税状态', width : 80,halign:'center',align:'center',rowspan:2},

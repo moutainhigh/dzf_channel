@@ -25,10 +25,16 @@ public class CorpDataVO extends SuperVO {
     private String pk_corp;// 客户主键
     
     @FieldAlias("ucode")
-    private String unitcode;// 公司编码
+    private String unitcode;// 客户编码
+    
+    @FieldAlias("l2")
+    public String linkman2;//联系人
+    
+    @FieldAlias("p2")
+    public String phone2;//手机号
     
     @FieldAlias("uname")
-    private String unitname;// 公司名称
+    private String unitname;// 客户名称
     
     @FieldAlias("ccounty")
     public String citycounty;//省市
@@ -80,6 +86,22 @@ public class CorpDataVO extends SuperVO {
     
     @FieldAlias("cdate")
     public DZFDate createdate;// 录入日期
+
+	public String getLinkman2() {
+		return linkman2;
+	}
+
+	public void setLinkman2(String linkman2) {
+		this.linkman2 = linkman2;
+	}
+
+	public String getPhone2() {
+		return phone2;
+	}
+
+	public void setPhone2(String phone2) {
+		this.phone2 = phone2;
+	}
 
 	public DZFDouble getNmservicemny() {
 		return nmservicemny;
