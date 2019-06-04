@@ -246,15 +246,15 @@
 				<div class="time_col time_colp10">
 				       <label style="text-align:right; width: 124px;"><i class="bisu">*</i>详细地址：</label> 
 			           <input id="iaddress" name="address" class="easyui-textbox" style="width:431px;height:28px;" 
-			           	data-options="required:true,readonly:true" />
+			           	data-options="required:true" />
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:124px;text-align:right"><i class="bisu">*</i>收货人：</label> 
 					   <input id="ireceiver" name="receiver" class="easyui-textbox" style="width:167px;height:28px;" 
-					   	data-options="required:true,readonly:true"/>
+					   	data-options="required:true"/>
 					   <label style="width:85px;text-align:right"><i class="bisu">*</i>联系电话：</label> 
 					   <input id="iphone" name="phone" class="easyui-textbox" style="width:167px;height:28px;" 
-					   	data-options="required:true,readonly:true"/>
+					   	data-options="required:true"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right"><i class="bisu">*</i>物料选择：</label>
@@ -275,15 +275,16 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:124px;text-align:right">审核人：</label>
-						<input id="iaudname" name="audname" class="easyui-textbox" style="width:168px;height:28px;"/>
+						<input id="iaudname" name="audname" class="easyui-textbox" style="width:168px;height:28px;"
+						data-options="readonly:true"/>
 						<label style="width:87px;text-align:right">审核时间：</label>
 						<input id="iaudate" name="audate" type="text" class="easyui-datebox"
-							   data-options="width:163,height:27" />
+					    data-options="width:163,height:27,readonly:true" />
 				</div>
 				<div class="time_col time_colp10">
 					 	<label style="text-align:right; width: 124px;">快递公司：</label>
 			             <input id="ilogid" name="logid" class="easyui-combobox" style="width:166px;height:28px;"
-				           editable="false" data-options="valueField:'logid', textField:'logname', panelHeight:'200'" />
+				           editable="false" data-options="valueField:'logid', textField:'logname', panelHeight:'200',readonly:true" />
 				           
 			            <label style="text-align:right; width: 85px;">金额：</label> 
 						<input id="ifcost" name="fcost" class="easyui-numberbox" style="width:166px;height:28px;" 
@@ -291,7 +292,7 @@
 				</div>
 				<div class="time_col time_colp10">
 					   <label style="width:124px;text-align:right">快递单号：</label> 
-					   <input id="ifcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;"/>
+					   <input id="ifcode" name="fcode" class="easyui-textbox" style="width:166px;height:28px;" data-options="readonly:true"/>
 					   <label style="width:85px;text-align:right">发货时间：</label> 
 					   <input id="idedate" name="dedate" type="text" class="easyui-datebox" style="width:166px;height:27px;" 
 						   data-options="readonly:true" />  
