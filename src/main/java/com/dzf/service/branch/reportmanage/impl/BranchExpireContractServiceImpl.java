@@ -105,7 +105,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 		sql.append("select  \n");
 		sql.append("    nvl(sum(case when corp.isseal = 'Y' then 1 else 0 end),0) losscorpnum,  \n");
 	    sql.append("	wmsys.wm_concat(distinct con.pk_corpk) corpids, \n");
-	    sql.append("	corp.pk_corp,corp.unitname,corp.unitcode, \n");
+	    sql.append("	corp.pk_corp,corp.unitname,corp.innercode, \n");
 	    sql.append("	count(distinct con.pk_corpk) expirenum \n");
 	    sql.append(" 	from ynt_contract con left join bd_corp corp on \n");  
 	    sql.append("	con.pk_corp  = corp.pk_corp   \n");
@@ -116,12 +116,12 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 	    sql.append(" 	and substr(con.denddate, 1, 7) = ?  \n");
 	    sql.append(" 	and con.icosttype = 0  \n");
 	  
-		if (!StringUtil.isEmpty(qvo.getUnitcode())) {
-			sql.append(" AND corp.unitcode like ? ");
-			spm.addParam("%" + qvo.getUnitcode() + "%");
+		if (!StringUtil.isEmpty(qvo.getInnercode())) {
+			sql.append(" AND corp.innercode like ? ");
+			spm.addParam("%" + qvo.getInnercode() + "%");
 		}
 		
-	    sql.append("	group by corp.pk_corp,corp.unitname,corp.unitcode \n");
+	    sql.append("	group by corp.pk_corp,corp.unitname,corp.innercode \n");
         sql.append("	order by corp.pk_corp \n");
 		
 		qryvo.setSql(sql.toString());

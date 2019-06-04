@@ -16,7 +16,7 @@ public class QueryContractVO extends SuperVO {
 	public String unitname;// 公司名称
 
 	@FieldAlias("ucode")
-	public String unitcode;// 公司编码
+	public String innercode;// 公司编码
 
 	@FieldAlias("enum")
 	public Integer expirenum;// 到期合同数
@@ -62,12 +62,12 @@ public class QueryContractVO extends SuperVO {
 		this.unitname = unitname;
 	}
 
-	public String getUnitcode() {
-		return unitcode;
+	public String getInnercode() {
+		return innercode;
 	}
 
-	public void setUnitcode(String unitcode) {
-		this.unitcode = unitcode;
+	public void setInnercode(String innercode) {
+		this.innercode = innercode;
 	}
 
 	public Integer getExpirenum() {
