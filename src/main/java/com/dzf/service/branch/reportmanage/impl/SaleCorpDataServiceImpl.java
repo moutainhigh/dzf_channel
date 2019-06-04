@@ -15,6 +15,7 @@ import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.ToolsUtil;
@@ -136,13 +137,83 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 		}
 		// 销售人员
 		if (!StringUtil.isEmpty(pamvo.getUser_name())) {
-			sql.append(" AND p.foreignname = ? \n");
+			sql.append(" AND c.foreignname = ? \n");
 			spm.addParam(pamvo.getUser_name());
 		}
 		
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CorpDataVO> queryAll(QryParamVO pamvo) throws DZFWarpException {
+		QrySqlSpmVO qryvo = getTotalSqlSpm(pamvo, false);
+		List<CorpDataVO> list = (List<CorpDataVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
+				new BeanListProcessor(CorpDataVO.class));
+		if (list != null && list.size() > 0) {
+			List<String> pklist = new ArrayList<String>();
+			for (CorpDataVO dvo : list) {
+				QueryDeCodeUtils.decKeyUtil(new String[] { "unitname" }, dvo, 1);
+				if (!StringUtil.isEmpty(dvo.getUnitname()) && dvo.getUnitname().indexOf(pamvo.getCorpkname()) != -1) {
+					pklist.add(dvo.getPk_corp());
+				}
+			}
+
+			String[] corpks = null;
+			if (pklist != null && pklist.size() > 0) {
+				corpks = pklist.toArray(new String[0]);
+			}
+			
+			DZFDate date = new DZFDate();
+			String period = date.getYear() + date.getStrMonth();
+			period = ToolsUtil.getPreNumsMonth(period, 1);
+			
+			List<CorpDataVO> relist = corpser.getReturnData(pamvo, corpks, period);
+			return getRetList(relist, pamvo);
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取过滤后数据
+	 * @param relist
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<CorpDataVO> getRetList(List<CorpDataVO> relist, QryParamVO pamvo) throws DZFWarpException {
+		List<CorpDataVO> retlist = new ArrayList<CorpDataVO>();
+		boolean jz = false;
+		boolean mz = false;
+		for(CorpDataVO dvo : relist){
+			jz = false;
+			mz = false;
+			if(!"全部".equals(pamvo.getVmanager())){
+				if(!StringUtil.isEmpty(dvo.getVjzstatues()) && dvo.getVjzstatues().equals(pamvo.getVmanager())){
+					jz = true;
+				}else{
+					jz = false;
+				}
+			}else{
+				jz = true;
+			}
+			if(!StringUtil.isEmpty(pamvo.getVoperater())){
+				if(dvo.getIsurplusmonth() != null && Integer.parseInt(pamvo.getVoperater()) == dvo.getIsurplusmonth()){
+					mz = true;
+				}else{
+					mz = false;
+				}
+			}else{
+				mz = true;
+			}
+			if(jz && mz){
+				retlist.add(dvo);
+			}
+		}
+		
+		return retlist;
 	}
 
 }

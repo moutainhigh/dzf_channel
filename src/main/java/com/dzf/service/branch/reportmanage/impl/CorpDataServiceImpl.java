@@ -514,6 +514,13 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			String where = SqlUtil.buildSqlForIn("p.pk_corp", corpks);
 			sql.append(" AND ").append(where);
 		}
+		if(!"全部".equals(pamvo.getVbillcode())){
+			if("未开始".equals(pamvo.getVbillcode())){
+				sql.append(" AND nvl(n.taxStateFinish,0) = 0 \n");
+			}else if("已完成".equals(pamvo.getVbillcode())){
+				sql.append(" AND n.taxStateFinish = 1 \n");
+			}
+		}
 		sql.append(" ) corp \n");
 	}
 

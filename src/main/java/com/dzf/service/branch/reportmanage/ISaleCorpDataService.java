@@ -33,4 +33,12 @@ public interface ISaleCorpDataService {
 	 */
 	public List<CorpDataVO> query(QryParamVO pamvo) throws DZFWarpException;
 	
+	/**
+	 * 查询所有数据
+	 * @param pamvo
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<CorpDataVO> queryAll(QryParamVO pamvo) throws DZFWarpException;
+	
 }
