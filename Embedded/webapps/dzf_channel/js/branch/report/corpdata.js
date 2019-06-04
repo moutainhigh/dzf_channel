@@ -162,6 +162,11 @@ function load(){
         	fs[0] = footerData;
         	$('#grid').datagrid('reloadFooter',fs);
         },
+        rowStyler:function(index,row){
+			if (row.smonth > 0 && row.smonth <= 3){
+				return 'background-color:pink;';
+			}
+		}
 	});
 }	
 
