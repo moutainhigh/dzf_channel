@@ -126,15 +126,16 @@ function initListColumn(qtype,pk_id){
         		if(result.rows!=undefined){
         			$("#instgrid").datagrid("loadData",result.rows);
         			$('#pk_bset').combobox('loadData', result.rows);
-        		}
+        		}	
         		if(result.data!=undefined){
         			$("#corpgrid").datagrid("loadData",result.data);
         		}
+        		
         	}else{
         		$("#instgrid").datagrid("loadData",{total:0,rows:[]});
-        		$("#corpgrid").datagrid("loadData",{total:0,rows:[] });
+        		$("#corpgrid").datagrid("loadData",{total:0,rows:[]});
         	}
-        },
+        }
 	});
 }
 

@@ -53,6 +53,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 			Map<String, List> map = branchser.query(param);
 			if(map==null || map.size()==0){
 				json.setRows(null);
+				json.setData(new ArrayList<BranchInstSetupBVO>());
 				json.setMsg("查询数据为空");
 			}else{
 				if(map.size()>=1){
