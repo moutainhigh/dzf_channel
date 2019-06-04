@@ -215,7 +215,7 @@ function add() {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '新增');
 	//设置生效时间
 	$("#en_time").textbox('setValue', parent.SYSTEM.LoginDate);
-	$('#b_mng').combobox('setValue', 'Y');//是否管理员
+	$('#b_mng').val('Y');//是否管理员
 	$('#ucode').textbox({
 		'readonly' : false
 	});
