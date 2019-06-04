@@ -20,10 +20,8 @@ import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.SuperVO;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
-import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
@@ -403,7 +401,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			sql.append(" AND c.createdate <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
+		if (!StringUtil.isEmpty(pamvo.getPk_corp()) && !"pk_all".equals(pamvo.getPk_corp())) {
 			sql.append(" AND p.pk_corp = ? \n");
 			spm.addParam(pamvo.getPk_corp());
 		}
