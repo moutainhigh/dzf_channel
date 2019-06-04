@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChannelService;
 import com.dzf.service.pub.IPubService;
@@ -88,4 +90,57 @@ public class ChannelServiceImpl implements IChannelService {
 		return retstr;
 	}
 	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select pk_corp,unitname,innercode,vprovince from bd_account account");
+		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
+		sql.append(" and nvl(ischannel,'N') = 'Y' ");
+		sql.append(" and "+QueryUtil.getWhereSql());
+		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
+			sql.append(" and vprovince=? ");
+			sp.addParam(vo.getDr());
+			if (!StringUtil.isEmpty(vo.getVmome())) {
+				String[] split = vo.getVmome().split(",");
+				sql.append(" and pk_corp not in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(split));
+				sql.append(" )");
+			}
+		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {// 增加权限的加盟商参照 -2（渠道） -3（培训） -4（运营）
+			String condition = pubservice.getPowerSql(vo.getEmail(), vo.getDr()==-5 ? 2 :-vo.getDr()-1);
+			if (condition != null && !condition.equals("alldata")) {
+				sql.append(condition);
+			} else if (condition == null) {
+				return null;
+			}
+			if (vo.getDr() == -5) {// 数据运营管理，4个报表
+				sql.append(" and pk_corp not in (");
+				sql.append("       (SELECT f.pk_corp  \n");
+				sql.append("          FROM ynt_franchisee f  \n");
+				sql.append("         WHERE nvl(dr, 0) = 0  \n");
+				sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+				sql.append(" )");
+			}
+		}
+		sql.append(" order by innercode ");
+		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(CorpVO.class));
+		if (list != null && list.size() > 0) {
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, list, 1);
+			List<CorpVO> rList = new ArrayList<>();
+			if (!StringUtil.isEmpty(vo.getCorpcode())) {
+				for (CorpVO cvo : list) {
+					if (cvo.getUnitname().contains(vo.getCorpcode()) || cvo.getInnercode().contains(vo.getCorpcode())) {
+						rList.add(cvo);
+					}
+				}
+				return rList;
+			}
+		}
+		return list;
+	}
 }
