@@ -223,7 +223,6 @@ function closeCx(){
 	$("#qrydialog").css("visibility","hidden");
 }
 
-
 /**
  * 导出
  */
