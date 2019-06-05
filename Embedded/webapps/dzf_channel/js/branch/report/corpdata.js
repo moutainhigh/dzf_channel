@@ -212,7 +212,7 @@ function reloadData() {
  * @returns
  */
 function clearQuery(){
-	$("#cpname").combobox('setValue', 'pk_all')
+	$("#cpname").combobox('setValue', null);
 	$("#cpkcode").textbox('setValue', null);
 	$("#cpkname").textbox('setValue', null);
 	$("#saler").textbox('setValue', null);
