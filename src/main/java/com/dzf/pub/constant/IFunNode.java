@@ -325,4 +325,14 @@ public interface IFunNode {
      */
     public static final String BRANCH_04  = "branch04";
     
+    /**
+     * 客户数据统计
+     */
+    public static final String BRANCH_09  = "branch09";
+    
+    /**
+     * 销售客户明细
+     */
+    public static final String BRANCH_10  = "branch10";
+    
 }
