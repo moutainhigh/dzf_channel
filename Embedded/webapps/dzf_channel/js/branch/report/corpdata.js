@@ -250,8 +250,5 @@ function doExport(){
 	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
 	Business.getFile(url, {
 		'strlist' : strlist,
-		'hblcols':JSON.stringify(hblcols), //合并列信息
-		'cols':JSON.stringify(cols),//除冻结列之外，导出字段编码
-		'hbhcols':JSON.stringify(hbhcols)//冻结列编码
 	}, true, true);
 }

@@ -179,7 +179,6 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 	 * 导出
 	 */
 	public void onExport() {
-
 		String strlist = getRequest().getParameter("strlist");
 		CorpDataVO[] expVOs = null;
 		if (!StringUtil.isEmpty(strlist)) {
@@ -216,21 +215,17 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		expfieidlist.add("unitname");
 		expfieidlist.add("citycounty");
 		expfieidlist.add("chargedeptname");
-
 		expfieidlist.add("begindate");
 		expfieidlist.add("vjzstatues");
 		expfieidlist.add("vbsstatues");
 		expfieidlist.add("dbegindate");
 		expfieidlist.add("denddate");
 		expfieidlist.add("ntotalmny");
-
 		expfieidlist.add("nreceivemny");
 		expfieidlist.add("isurplusmonth");
 		expfieidlist.add("pcountname");
-
 		expfieidlist.add("foreignname");
 		expfieidlist.add("createdate");
-		
 		
 		// 3、合并列字段名称
 		List<String> hbltitlist = new ArrayList<String>();
@@ -246,11 +241,9 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		hbhtitlist.add("客户名称");
 		hbhtitlist.add("省市");
 		hbhtitlist.add("纳税人");
-
 		hbhtitlist.add("建账日期");
 		hbhtitlist.add("记账状态");
 		hbhtitlist.add("报税状态");
-
 		hbhtitlist.add("主办会计");
 		hbhtitlist.add("销售人员");
 		hbhtitlist.add("录入日期");
@@ -277,10 +270,6 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		mnylist.add("ntotalmny");
 		mnylist.add("nreceivemny");
 
-		// 9、字符按照金额格式显示
-		List<String> strnmylist = new ArrayList<String>();
-		
-
 		ExportExcel<CorpDataVO> ex = new ExportExcel<CorpDataVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -301,7 +290,7 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
 			byte[] length = ex.expCorpDataExcel("客户数据统计", exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
-					hbhindexs, expVOs, toClient, "", strslist, mnylist, strnmylist);
+					hbhindexs, expVOs, toClient, "", strslist, mnylist, null);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
 		} catch (IOException e) {
