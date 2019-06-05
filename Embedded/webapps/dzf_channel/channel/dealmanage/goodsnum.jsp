@@ -38,7 +38,7 @@
 			</h3>
 			<div class="time_col time_colp10">
 				<label style="text-align:right; width: 85px;">截止日期：</label> 
-				<input id="nowdate" name="nowdate" class="easyui-datebox" data-options="width:137,height:27" />
+				<input id="nowdate" name="nowdate" class="easyui-datebox" data-options="width:137,height:27,validType:'checkdate'" />
 			</div>
 			<div class="time_col time_colp10">
 				<label style="width:85px;text-align:right">商品分类：</label>

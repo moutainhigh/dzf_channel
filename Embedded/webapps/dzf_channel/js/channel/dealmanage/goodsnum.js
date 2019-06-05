@@ -9,10 +9,15 @@ $(function(){
  * 查询初始化
  */
 function initQry(){
-	
+	$('#nowdate').datebox({
+		onChange: function(newValue, oldValue){
+			$('#querydate').text(newValue);
+		}
+	});
 	$("#nowdate").datebox("setValue", parent.SYSTEM.LoginDate);
 	$("#querydate").html(parent.SYSTEM.LoginDate);
 }
+
 
 
 /**
