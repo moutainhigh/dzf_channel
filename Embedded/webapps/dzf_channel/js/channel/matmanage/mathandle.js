@@ -1266,9 +1266,11 @@ function showDetail(index) {
 	$("#iaddress").textbox('readonly', true);
 	$("#ireceiver").textbox('readonly', true);
 	$("#iphone").textbox('readonly', true);
-	/*$("#ifcost").combobox('readonly', true);*/
-	/*$("#iaudname").combobox('readonly', false);
-	$("#iaudate").combobox('readonly', false);*/
+	$("#ifcost").textbox('readonly', true);
+	$("#iaudname").combobox('readonly', true);
+	$("#iaudate").combobox('readonly', true);
+	$('#ilogid').combobox('readonly', true);
+	$('#ifcode').textbox('readonly', true);
 	showStatusDetail(row);
 }
 
@@ -1291,13 +1293,11 @@ function showEdit(row) {
 	$("#iaddress").textbox('readonly', false);
 	$("#ireceiver").textbox('readonly', false);
 	$("#iphone").textbox('readonly', false);
-	/*$("#iaudname").combobox('readonly', true);
+	$("#iaudname").combobox('readonly', true);
 	$("#iaudate").combobox('readonly', true);
-	$('#ilogid').textbox('readonly', true);
-	$('#ifcode').textbox('readonly', true);*/
 	if(row.status==3){
-		$("#ifcost").combobox('readonly', false);
-		$('#ilogid').textbox('readonly', false);
+		$("#ifcost").textbox('readonly', false);
+		$('#ilogid').combobox('readonly', false);
 		$('#ifcode').textbox('readonly', false);
 	}
 	
