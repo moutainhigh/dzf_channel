@@ -184,19 +184,20 @@ function doExport(){
 	var strlist = '';
 	if (datarows != null && datarows.length > 0) {
 		strlist = JSON.stringify(datarows);
-	}else{
-		Public.tips({
-			content : '请选择需要导出的数据',
-			type : 2
-		});
-		return;
 	}
 	
 	var url = DZF.contextPath + "/branch/salecorpdataact!onExport.action";
-	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
-	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
-	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
+	var bdate = $("#bdate").datebox("getValue");
+	var edate = $("#edate").datebox("getValue");
 	Business.getFile(url, {
 		'strlist' : strlist,
+		"begdate" : bdate,
+		"enddate" : edate,
+		"cpid" : $("#cpname").combobox('getValue'),
+		"cpkcode" : $('#cpkcode').textbox('getValue'),
+		"cpkname" : $('#cpkname').textbox('getValue'),
+		"mid" : $("#jzzt").combobox('getValue'),//记账状态
+		"vcode" : $("#bszt").combobox('getValue'),//报税状态
+		"oid" : $("#qmonth").numberbox('getValue'),//服务余额
 	}, true, true);
 }

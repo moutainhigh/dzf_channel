@@ -29,13 +29,16 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.branch.reportmanage.ISaleCorpDataService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.report.ExportExcel;
 
 /**
@@ -55,6 +58,9 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 	@Autowired
 	private ISaleCorpDataService salecorpser;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询
 	 */
@@ -62,6 +68,7 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 		Grid grid = new Grid();
 		try {
 			checkUser();
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.BRANCH_10);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if(pamvo == null){
@@ -122,6 +129,37 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 	}
 	
 	/**
+	 * 获取导出插叙数据
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<CorpDataVO> getExportQryData() throws DZFWarpException {
+		pubser.checkFunnode(getLoginUserInfo(), IFunNode.BRANCH_10);
+		QryParamVO pamvo = new QryParamVO();
+		pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
+		if(pamvo == null){
+			pamvo = new QryParamVO();
+		}
+		if(StringUtil.isEmpty(pamvo.getCuserid())){
+			pamvo.setCuserid(getLoginUserid());
+		}
+		UserVO uservo = getLoginUserInfo();
+		if(uservo != null){
+			pamvo.setUser_name(uservo.getUser_name());
+		}
+		
+		List<CorpDataVO> list = null;
+		if (StringUtil.isEmpty(pamvo.getCorpkname()) && "全部".equals(pamvo.getVmanager())
+				&& "全部".equals(pamvo.getVbillcode()) && StringUtil.isEmpty(pamvo.getVoperater())) {
+			pamvo.setRows(100000);
+			list = salecorpser.query(pamvo);
+		}else{
+			list = salecorpser.queryAll(pamvo);
+		}
+		return list;
+	}
+	
+	/**
 	 * 导出
 	 */
 	public void onExport() {
@@ -132,7 +170,10 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 			Map<String, String> mapping = FieldMapping.getFieldMapping(new CorpDataVO());
 			expVOs = DzfTypeUtils.cast(exparray, mapping, CorpDataVO[].class, JSONConvtoJAVA.getParserConfig());
 		} else {
-			throw new BusinessException("导出数据不能为空");
+			List<CorpDataVO> list = getExportQryData();
+			if(list != null && list.size() > 0){
+				expVOs = list.toArray(new CorpDataVO[0]);
+			}
 		}
 
 		// 1、导出字段名称

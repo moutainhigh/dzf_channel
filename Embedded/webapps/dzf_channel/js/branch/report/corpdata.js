@@ -245,9 +245,6 @@ function doExport(){
 	}
 	
 	var url = DZF.contextPath + "/branch/corpdataact!onExport.action";
-	var hblcols = $('#grid').datagrid("options").columns[0];//合并列信息
-	var cols = $('#grid').datagrid('getColumnFields');               // 行信息
-	var hbhcols = $('#grid').datagrid('getColumnFields', true);       // 合并行信息
 	Business.getFile(url, {
 		'strlist' : strlist,
 	}, true, true);

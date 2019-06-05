@@ -32,10 +32,12 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.branch.reportmanage.ICorpDataService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.report.ExportExcel;
 
 /**
@@ -55,6 +57,9 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 	@Autowired
 	private ICorpDataService corpser;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	/**
 	 * 查询
 	 */
@@ -62,6 +67,7 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		Grid grid = new Grid();
 		try {
 			checkUser();
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.BRANCH_10);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if(pamvo == null){
