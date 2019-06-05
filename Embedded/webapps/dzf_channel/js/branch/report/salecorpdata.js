@@ -75,9 +75,6 @@ function load(){
 		            { field : 'jzzt',  title : '记账状态', width : 80,halign:'center',align:'center',rowspan:2},
 		            { field : 'bszt',  title : '报税状态', width : 80,halign:'center',align:'center',rowspan:2},
 		            { field : 'contract', title : '合同信息', halign:'center',align:'center',colspan:5},
-		            
-//		            { field : 'pcount',  title : '主办会计', width : 80,halign:'center',align:'left',rowspan:2},
-//		            { field : 'fname',  title : '销售人员', width : 80,halign:'center',align:'left',rowspan:2, formatter:showTips},
 		            { field : 'cdate',  title : '录入日期', width : 80,halign:'center',align:'center',rowspan:2},
 	               ] ,
            [
