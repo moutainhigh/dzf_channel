@@ -36,6 +36,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 	@Override
 	public void saveInst(BranchInstSetupVO data) throws DZFWarpException{
 		if(StringUtil.isEmpty(data.getPk_branchset())){
+			checkIsAddInst(data);
 			//新增机构设置
 			singleObjectBO.insertVO("000001",data);
 		}else{
@@ -43,7 +44,28 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		}
 	}
 
-	
+	/**
+	 * 校验是否能新增机构
+	 * @param data
+	 */
+	private void checkIsAddInst(BranchInstSetupVO data) {
+		
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm=new SQLParameter();
+		spm.addParam(data.getVname());
+		sql.append("select \n");
+		sql.append("  pk_branchset \n");
+		sql.append("  from br_branchset \n");
+		sql.append("  where nvl(dr,0) = 0 and \n");
+		sql.append("  vname = ? \n");
+		
+		BranchInstSetupVO bvo = (BranchInstSetupVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupVO.class));
+		if(bvo!=null){
+			throw new BusinessException("此机构名称已存在");
+		}
+	}
+
+
 	private void saveEdit(BranchInstSetupVO data) throws DZFWarpException{
 		String uuid = UUID.randomUUID().toString();
 		try {
