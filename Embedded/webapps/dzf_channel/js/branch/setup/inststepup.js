@@ -5,6 +5,7 @@ $(function(){
 	initCorpGrid();
 	initListColumn(0);
 	queryCorpInfo();
+	initInstName();
 });
 
 
@@ -15,6 +16,11 @@ $(window).resize(function() {
 	});
 });
 
+
+function initInstName(){
+	var row = $("#instgrid").datagrid("getSelected");
+	document.getElementById("instname").innerText = "公司设置-"+row.name;
+}
 
 /**
  * 初始化机构名称
@@ -135,6 +141,7 @@ function initListColumn(qtype,pk_id){
         		$("#instgrid").datagrid("loadData",{total:0,rows:[]});
         		$("#corpgrid").datagrid("loadData",{total:0,rows:[]});
         	}
+        	initInstName();
         }
 	});
 }

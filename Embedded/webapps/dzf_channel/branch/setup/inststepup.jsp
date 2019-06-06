@@ -32,8 +32,8 @@
 	    	<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
     		<div class="index_top mod-toolbar-top"  >
 		 		<div class="right mod-btn" id="view_buttons">
-	    	     	<div class="h30 h30-arrow" style="margin-left:60px;" id="filter">
-	    	     		<span style="font-size:18px;font-weight:bold">公司设置-直营</span>&nbsp;&nbsp;&nbsp;
+	    	     	<div class="h30 h30-arrow" style="margin-left:60px;">
+	    	     		<span id="instname" style="font-size:18px;font-weight:bold"></span>&nbsp;&nbsp;&nbsp;
 					 </div>
 					  <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addCorp()">新增</a>
 			          <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="updateInst()">更换机构</a>
