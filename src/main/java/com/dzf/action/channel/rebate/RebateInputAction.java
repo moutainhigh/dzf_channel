@@ -40,6 +40,7 @@ import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.rebate.IRebateInputService;
@@ -474,8 +475,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "返点单录入关闭输出流");
-			InOutUtil.close(servletOutputStream, "返点单录入关闭输入流");
+		    InOutUtils.close(toClient, "返点单录入关闭输出流");
+		    InOutUtils.close(servletOutputStream, "返点单录入关闭输入流");
 		}
 	}
 	
@@ -508,8 +509,8 @@ public class RebateInputAction extends BaseAction<RebateVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "返点单审批关闭输出流");
-			InOutUtil.close(servletOutputStream, "返点单审批关闭输入流");
+		    InOutUtils.close(toClient, "返点单审批关闭输出流");
+		    InOutUtils.close(servletOutputStream, "返点单审批关闭输入流");
 		}
 	}
 }

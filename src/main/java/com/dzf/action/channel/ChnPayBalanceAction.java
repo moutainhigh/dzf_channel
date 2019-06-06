@@ -25,7 +25,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChnPayBalExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
@@ -40,6 +39,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.IChnPayBalanceService;
@@ -151,8 +151,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "ChnPayBalanceAction关闭流");
-			InOutUtil.close(servletOutputStream, "ChnPayBalanceAction关闭流");
+		    InOutUtils.close(toClient, "ChnPayBalanceAction关闭流");
+		    InOutUtils.close(servletOutputStream, "ChnPayBalanceAction关闭流");
 		}
 	}
 
@@ -317,8 +317,8 @@ public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
-		    InOutUtil.close(toClient, "ChnPayBalanceAction明细导出关闭流");
-		    InOutUtil.close(servletOutputStream, "ChnPayBalanceAction明细导出关闭流");
+		    InOutUtils.close(toClient, "ChnPayBalanceAction明细导出关闭流");
+		    InOutUtils.close(servletOutputStream, "ChnPayBalanceAction明细导出关闭流");
 		}
 	}
 

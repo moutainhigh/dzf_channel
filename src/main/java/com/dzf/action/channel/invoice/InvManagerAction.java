@@ -1,7 +1,6 @@
 package com.dzf.action.channel.invoice;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +42,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.InvManagerService;
@@ -496,8 +496,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "InvManagerAction:关闭流");
-		    InOutUtil.close(servletOutputStream, "InvManagerAction:关闭流");
+		    InOutUtils.close(toClient, "InvManagerAction:关闭流");
+		    InOutUtils.close(servletOutputStream, "InvManagerAction:关闭流");
 		}
 		writeLogRecord(LogRecordEnum.OPE_CHANNEL_FPGL.getValue(), "导出发票申请表", ISysConstants.SYS_3);
 	}
@@ -543,8 +543,8 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "导出电票余量关闭输出流");
-			InOutUtil.close(servletOutputStream, "导出电票余量关闭输入流");
+		    InOutUtils.close(toClient, "导出电票余量关闭输出流");
+		    InOutUtils.close(servletOutputStream, "导出电票余量关闭输入流");
 		}
 	}
 }

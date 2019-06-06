@@ -10,7 +10,6 @@ import javax.servlet.ServletOutputStream;
 import org.apache.log4j.Logger;
 
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.stock.StockOutBVO;
 import com.dzf.model.channel.stock.StockOutVO;
 import com.dzf.model.pub.ColumnCellAttr;
@@ -19,6 +18,7 @@ import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.InOutUtils;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -126,8 +126,8 @@ public class StockOutPrint<T> extends BaseAction<T> {
         } catch (Exception exp) {
             throw new WiseRunException(exp);
         } finally {
-            InOutUtil.close(out, "出库单明细打印关闭输入流");
-            InOutUtil.close(buffer, "出库单明细打印关闭输出流");
+            InOutUtils.close(out, "出库单明细打印关闭输入流");
+            InOutUtils.close(buffer, "出库单明细打印关闭输出流");
         }
 
     }

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.branch.reportmanage.CorpDataVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.Grid;
@@ -34,6 +33,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.branch.reportmanage.ICorpDataService;
@@ -302,8 +302,8 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
-			InOutUtil.close(toClient, "客户数据统计导出全部关闭输出流");
-			InOutUtil.close(servletOutputStream, "客户数据统计导出全部关闭输入流");
+		    InOutUtils.close(toClient, "客户数据统计导出全部关闭输出流");
+		    InOutUtils.close(servletOutputStream, "客户数据统计导出全部关闭输入流");
 		}
 	}
 }

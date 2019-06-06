@@ -1,7 +1,6 @@
 package com.dzf.action.channel.refund;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RefundExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.refund.RefundBillVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.Grid;
@@ -41,6 +39,7 @@ import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.refund.IRefundBillService;
 import com.dzf.service.pub.IPubService;
@@ -384,8 +383,8 @@ public class RefundBillAction extends BaseAction<RefundBillVO> {
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
-            InOutUtil.close(toClient, "退款单关闭输出流");
-            InOutUtil.close(servletOutputStream, "退款单关闭输入流");
+            InOutUtils.close(toClient, "退款单关闭输出流");
+            InOutUtils.close(servletOutputStream, "退款单关闭输入流");
         }
 	}
 	

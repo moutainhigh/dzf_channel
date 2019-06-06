@@ -21,7 +21,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.RefundDetailExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.dao.jdbc.framework.util.InOutUtil;
 import com.dzf.model.channel.refund.RefundDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
@@ -32,6 +31,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.refund.IRefundDetailService;
@@ -162,8 +162,8 @@ public class RefundDetailAction extends BaseAction<RefundDetailVO> {
         } catch (Exception e) {
             log.error("导出失败",e);
         }  finally {
-            InOutUtil.close(toClient, "退款明细查询关闭输出流");
-            InOutUtil.close(servletOutputStream, "退款明细查询关闭输入流");
+            InOutUtils.close(toClient, "退款明细查询关闭输出流");
+            InOutUtils.close(servletOutputStream, "退款明细查询关闭输入流");
         }
 	}
 }

@@ -43,6 +43,7 @@ import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.util.InOutUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.IContractConfirm;
 import com.dzf.service.pub.IPubService;
@@ -376,8 +377,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 		    log.error(e);
 		} finally {
-		    InOutUtil.close(is, "合同确认查看附件关闭输入流");
-            InOutUtil.close(os, "合同确认查看附件关闭输出流");
+		    InOutUtils.close(is, "合同确认查看附件关闭输入流");
+		    InOutUtils.close(os, "合同确认查看附件关闭输出流");
 		}
 	}
 
@@ -480,8 +481,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "合同确认导出关闭输出流");
-		    InOutUtil.close(servletOutputStream, "合同确认导出关闭输入流");
+		    InOutUtils.close(toClient, "合同确认导出关闭输出流");
+		    InOutUtils.close(servletOutputStream, "合同确认导出关闭输入流");
 		}
 	}
 	
@@ -550,8 +551,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 		} catch (Exception e) {
 			log.error("导出失败", e);
 		} finally {
-		    InOutUtil.close(toClient, "合同确认导出全部关闭输出流");
-		    InOutUtil.close(servletOutputStream, "合同确认导出全部关闭输入流");
+		    InOutUtils.close(toClient, "合同确认导出全部关闭输出流");
+		    InOutUtils.close(servletOutputStream, "合同确认导出全部关闭输入流");
 		}
 	}
 	
