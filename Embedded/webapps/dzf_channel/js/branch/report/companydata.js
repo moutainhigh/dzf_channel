@@ -118,7 +118,7 @@ function initBranch(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/branch/setup!qryBranchs.action',
+		url : DZF.contextPath + '/branch/instSetupAct!qryBranchs.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
