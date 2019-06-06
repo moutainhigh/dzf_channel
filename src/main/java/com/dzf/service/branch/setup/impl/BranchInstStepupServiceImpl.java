@@ -35,11 +35,13 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 
 	@Override
 	public void saveInst(BranchInstSetupVO data) throws DZFWarpException{
+		
 		if(StringUtil.isEmpty(data.getPk_branchset())){
-			checkIsAddInst(data);
 			//新增机构设置
+			checkIsAddInst(data,0);
 			singleObjectBO.insertVO("000001",data);
 		}else{
+			checkIsAddInst(data,1);
 			saveEdit(data);
 		}
 	}
@@ -47,8 +49,9 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 	/**
 	 * 校验是否能新增机构
 	 * @param data
+	 * @param i 
 	 */
-	private void checkIsAddInst(BranchInstSetupVO data) {
+	private void checkIsAddInst(BranchInstSetupVO data, Integer type) {
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm=new SQLParameter();
@@ -57,7 +60,12 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		sql.append("  pk_branchset \n");
 		sql.append("  from br_branchset \n");
 		sql.append("  where nvl(dr,0) = 0 and \n");
-		sql.append("  vname = ? \n");
+		if(type!=null && "1".equals(type.toString())){//修改机构
+			sql.append(" vname = ? and pk_branchset!= ? \n");
+			spm.addParam(data.getPk_branchset());
+		}else{
+			sql.append(" vname = ? \n");
+		}
 		
 		BranchInstSetupVO bvo = (BranchInstSetupVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupVO.class));
 		if(bvo!=null){
@@ -113,7 +121,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		esql.append("    isaccountcorp = 'Y' and \n");
 		esql.append("    def12 = ? \n");
 		CorpVO corp = (CorpVO) singleObjectBO.executeQuery(esql.toString(), espm, new BeanProcessor(CorpVO.class));
-		if(corp==null){//
+		if(corp==null){
 			throw new BusinessException("此企业识别号不存在");
 		}
 		
