@@ -264,11 +264,14 @@ public class BranchUserServiceImpl implements IBranchUserService {
 	 */
 	private List<ComboBoxVO> getBranchRoles(String cuserid) throws DZFWarpException {
         StringBuffer sql = new StringBuffer();
+        SQLParameter spm = new SQLParameter();
         sql.append("select r.pk_role id,r.role_name name ");
         sql.append("  from sm_role r ");
         sql.append(" where r.roletype = 10 ");
+        sql.append("   and r.role_name !=? ");
         sql.append("   and nvl(r.dr, 0) = 0 ");
-        return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(ComboBoxVO.class));
+        spm.addParam("分部管理");
+        return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(ComboBoxVO.class));
     }
 	
 	/**

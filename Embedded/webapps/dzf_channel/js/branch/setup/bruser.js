@@ -64,7 +64,7 @@ function load(){
 		height : Public.setGrid(0,'dataGrid').h,
 		frozenColumns:[[{width : '140',title : '操作列',field : 'operate',halign : 'center',align : 'center',formatter:opermatter}
 						]],
-		columns : [ [{ width : '120', title : '登陆账号', field : 'ucode' },
+		columns : [ [{ width : '120', title : '登录账号', field : 'ucode' },
 		             { width : '120', title : '用户名称', field : 'uname' },
 		             { width : '160', title : '角色', field : 'rolenames',formatter:showTitle},
 		             { width : '120', title : '所属机构', field : 'pk_depts',},
