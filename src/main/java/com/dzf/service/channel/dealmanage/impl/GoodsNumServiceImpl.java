@@ -112,7 +112,7 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 		sql.append("  g.vgoodscode, g.vgoodsname, g.vmeasname goodsunit,s.nprice goodsprice,");
 //		sql.append("  nvl(num.ioutnum,0) ioutnum,  nvl(num.istocknum,0) istockinnum,");
 		sql.append("  num.pk_goods, num.pk_goodsspec,");
-//		sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
+		sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
 		sql.append("  nvl(num.isellnum, 0) - nvl(sh.nnum,0) ilocknum,  ");
 		sql.append("  nvl(stockbill.nsendnum,0)  nsendnum,   ");
 		sql.append("  nvl(stockbill.noutnum,0) noutnum,  ");
