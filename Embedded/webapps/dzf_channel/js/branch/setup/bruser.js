@@ -151,7 +151,7 @@ function setAddCheck(branchs,roles){
 
 
 function edit(index){
-	url=contextPath+ '/branch/user!saveEdit.action';
+	url=contextPath+ '/branch/brachuser!saveEdit.action';
     $('#addDialog').dialog({modal:true});
     $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"修改用户");
     $('#addForm').form("clear");
