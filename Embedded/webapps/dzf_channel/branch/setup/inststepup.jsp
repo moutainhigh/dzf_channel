@@ -80,7 +80,7 @@
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">公司名称：</label> 
 					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;"
-						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/branch/setup!queryCorpname.action','uname' ]" 
+						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/branch/instSetupAct!queryCorpname.action','uname' ]" 
 						      invalidMessage= "此公司名称已存在"/>
 				</div>
 				<div class="time_col time_colp10">

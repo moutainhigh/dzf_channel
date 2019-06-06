@@ -116,7 +116,7 @@ function initCorpGrid(){
 function initListColumn(qtype,pk_id){
 	$.ajax({
 		type : "POST",
-		url : contextPath+'/branch/setup!query.action',
+		url : contextPath+'/branch/instSetupAct!query.action',
 		data:{qrytype:qtype,pk_currency:pk_id},
         async: false, 
         dataTye:'json',
@@ -153,7 +153,7 @@ function addInst(){
 function onSave(){
 	if ($("#inst_add").form('validate')) {
 		$('#inst_add').form('submit', {
-			url : DZF.contextPath + '/branch/setup!saveInst.action',
+			url : DZF.contextPath + '/branch/instSetupAct!saveInst.action',
 			success : function(result) {
 				var result = eval('(' + result + ')');
 				if (result.success) {
@@ -210,7 +210,7 @@ function editInst(){
 		dataType : "json",
 		traditional : true,
 		async : false,
-		url : contextPath + '/branch/setup!editInst.action',
+		url : contextPath + '/branch/instSetupAct!editInst.action',
 		data : {
 			"ids" : ids,
 			"pk_bset" : $('#pk_bset').combobox('getValue')
@@ -240,7 +240,7 @@ function onSaveCorp(){
 	$('#bset').val(row.pk_bset);
 	if ($("#corp_add").form('validate')) {
 		$('#corp_add').form('submit', {
-			url : DZF.contextPath + '/branch/setup!saveCorp.action',
+			url : DZF.contextPath + '/branch/instSetupAct!saveCorp.action',
 			success : function(result) {
 				var result = eval('(' + result + ')');
 				if (result.success) {
@@ -294,7 +294,7 @@ function queryByID(pk_id,type){
 		dataType : "json",
 		traditional : true,
 		async : false,
-		url : contextPath + '/branch/setup!queryById.action',
+		url : contextPath + '/branch/instSetupAct!queryById.action',
 		data : {
 			"id" : pk_id,
 		    "type" : type,//0-机构设置  1-公司设置
@@ -331,7 +331,7 @@ function seal(pk_id){
 			$.ajax({
 				type : "post",
 				dataType : "json",
-				url : contextPath + '/branch/setup!editSseal.action',
+				url : contextPath + '/branch/instSetupAct!editSseal.action',
 				data : {
 					"pk_bcorp" : row.pk_bcorp,
 					"name" : row.name,
@@ -376,7 +376,7 @@ function del(pk_id){
 			$.ajax({
 				type : "post",
 				dataType : "json",
-				url : contextPath + '/branch/setup!deleteCorpById.action',
+				url : contextPath + '/branch/instSetupAct!deleteCorpById.action',
 				data : {
 					"pk_bcorp" : row.pk_bcorp,
 					"name" : row.name,
@@ -423,7 +423,7 @@ function queryCorpInfo(){
 				dataType : "json",
 				traditional : true,
 				async : false,
-				url : contextPath + '/branch/setup!queryCorpInfo.action',
+				url : contextPath + '/branch/instSetupAct!queryCorpInfo.action',
 				data : {
 					"name" : entname
 				},

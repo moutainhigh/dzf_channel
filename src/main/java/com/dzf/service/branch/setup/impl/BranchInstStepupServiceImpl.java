@@ -26,7 +26,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.branch.setup.IBranchInstStepupService;
 
 
-@Service("serbranch")
+@Service("serbranchinst")
 public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 
 	@Autowired

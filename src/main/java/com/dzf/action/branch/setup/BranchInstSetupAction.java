@@ -31,7 +31,7 @@ import com.dzf.service.pub.IPubService;
  */
 @ParentPackage("basePackage")
 @Namespace("/branch")
-@Action(value = "setup")
+@Action(value = "instSetupAct")
 public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 	
 	private Logger log = Logger.getLogger(this.getClass());
