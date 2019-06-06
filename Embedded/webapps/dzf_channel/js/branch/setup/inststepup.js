@@ -461,6 +461,15 @@ function onCancel(){
  * 弹出新增公司框
  */
 function addCorp(){
+	
+	var row = $("#instgrid").datagrid("getSelected");
+	if (row == null || row.length == 0) {
+		Public.tips({
+			content : '请设置机构',
+			type : 2
+		});
+		return;
+	}
 	$('#addCorpDialog').dialog('open').dialog('center').dialog('setTitle', '新增公司');
 	$('#addCorpDialog').form("clear");
 }
