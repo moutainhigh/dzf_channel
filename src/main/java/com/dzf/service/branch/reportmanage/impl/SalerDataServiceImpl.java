@@ -65,7 +65,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 		}
 		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
 		sql.append(" group by  p.foreignname ");
-		List<CompanyDataVO> allCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), null,
+		List<CompanyDataVO> allCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 				new BeanListProcessor(CompanyDataVO.class));
 		if (allCorps != null && allCorps.size() > 0) {
 			for (CompanyDataVO companyDataVO : allCorps) {
@@ -119,7 +119,11 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			if (addCorps != null && addCorps.size() > 0) {
 				for (CompanyDataVO companyDataVO : addCorps) {
 					getVO = map.get(companyDataVO.getBranchname());
-					getVO.setAddcorp(companyDataVO.getAddcorp());
+					if(getVO == null){
+						continue;
+					}else{
+						getVO.setAddcorp(companyDataVO.getAddcorp());
+					}
 				}
 			}
 			
@@ -138,7 +142,11 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			if (loseCorps != null && loseCorps.size() > 0) {
 				for (CompanyDataVO companyDataVO : loseCorps) {
 					getVO = map.get(companyDataVO.getBranchname());
-					 getVO.setLosecorp(companyDataVO.getLosecorp());
+					if(getVO == null){
+						continue;
+					}else{
+						getVO.setLosecorp(companyDataVO.getLosecorp());
+					}
 				}
 			}
 			
@@ -168,10 +176,14 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			if (contracts != null && contracts.size() > 0) {
 				for (CompanyDataVO companyDataVO : contracts) {
 					getVO = map.get(companyDataVO.getBranchname());
-					getVO.setContcorp(companyDataVO.getContcorp());
-					getVO.setTotalmny(companyDataVO.getTotalmny());
-					getVO.setYsmny(companyDataVO.getYsmny());
-					getVO.setWsmny(companyDataVO.getWsmny());
+					if(getVO == null){
+						continue;
+					}else{
+						getVO.setContcorp(companyDataVO.getContcorp());
+						getVO.setTotalmny(companyDataVO.getTotalmny());
+						getVO.setYsmny(companyDataVO.getYsmny());
+						getVO.setWsmny(companyDataVO.getWsmny());
+					}
 				}
 			}
 			retList = new ArrayList<CompanyDataVO>(map.values());
