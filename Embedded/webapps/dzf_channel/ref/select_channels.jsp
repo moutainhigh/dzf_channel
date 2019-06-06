@@ -12,6 +12,7 @@
 	String ovince = request.getParameter("ovince");
 	String corpids = request.getParameter("corpids");
 	String corpid = request.getParameter("corpid");
+	String qtype = request.getParameter("qtype");
 %>
 <body>
 <style>
@@ -84,24 +85,24 @@
 		var ovince = <%=ovince%>;
 		var corpids = '<%=corpids%>';
 		var corpid = '<%=corpid%>';
+		var qtype = '<%=qtype%>';
 		if(isEmpty(ovince)){
-			ovince=-1;
+			ovince =-1;
+		}
+		if(isEmpty(qtype)){
+			qtype = 0;
 		}
 		var params = new Object();
 		grid = $('#gsTable').datagrid({
-		    url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
+		    url: DZF.contextPath + '/corp/channel!qryMultiChannel.action',
 		    method: 'post',
 			fitColumns: true,
 			idField:'pk_gs',
 			rownumbers : true,
 			singleSelect : false,
-// 			pagination : true,
-// 			pageSize:10,
-// 		    pageList:[10,20,30,40,50],
-// 			showFooter : true,
 			height:330,
 			striped:true,
-			queryParams: {'dr':ovince,'vmome':corpids,'rows':10000},
+			queryParams: {'ovince':ovince,'cpid':corpids,"qtype":qtype},
 		    columns: [[   {field:'ck', checkbox:true },
 			               {field:'pk_gs', title:'主键id', hidden:true},
 			     		   {field:'incode',title:'公司编码',width:500},
@@ -179,12 +180,11 @@
 	
 		 $('#unitcode').bind('keypress',function(event){
 		       if(event.keyCode == "13") {//Enter 键事件
-		    	   var filtername = $("#unitcode").val(); ; 
+		    	    var filtername = $("#unitcode").val(); ; 
 		      		var params = new Object();
-		      		//params["corpname"] = filtername;
 		      		params["corpcode"] = filtername;
-		      		params["dr"] = ovince;
-		      		params["rows"] = 10000;
+		      		params["ovince"] = ovince;
+		      		params["qtype"] = qtype;
 		      		grid.datagrid('load',params); 
 		       }
 		   }); 

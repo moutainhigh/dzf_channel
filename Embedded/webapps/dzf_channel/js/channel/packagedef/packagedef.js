@@ -298,6 +298,7 @@ function initChnCorp(){
 		href: DZF.contextPath + '/ref/select_channels.jsp',
 		queryParams:{
 			'ovince' : -1,
+			'qtype' : 0,
 			'corpid': tar_corpid
 		},
 		buttons : [ {

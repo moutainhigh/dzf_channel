@@ -562,6 +562,10 @@ function initChnCorp(){
 	if(!isEmpty(corpids)){
 		corpids=corpids.substring(1);
 	}
+	var qtype = 1;
+	if(type=="3"){
+		qtype = 0;
+	}
 	$("#chnDlg").dialog({
 		width: 600,
 	    height: 480,
@@ -572,7 +576,8 @@ function initChnCorp(){
 		queryParams:{
 			'ovince' : tar_ovince,
 			'corpids' : corpids,
-			'corpid': tar_corpid
+			'corpid': tar_corpid,
+			'qtype' : qtype,
 		},
 		buttons : [ {
 			text : '确认',

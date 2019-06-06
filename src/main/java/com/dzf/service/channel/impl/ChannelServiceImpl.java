@@ -143,4 +143,46 @@ public class ChannelServiceImpl implements IChannelService {
 		}
 		return list;
 	}
+	
+	@Override
+	public List<CorpVO> qryMultiChannel(QryParamVO qvo) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter sp = new SQLParameter();
+		sql.append("select pk_corp,unitname,innercode,vprovince ");
+		sql.append(" from bd_account account ");
+		sql.append("  where nvl(dr,0) = 0  ");
+		sql.append("   and nvl(isaccountcorp,'N') = 'Y'  ");
+		sql.append("   and nvl(ischannel,'N') = 'Y' ");
+		if(qvo.getQrytype()== 1){//过滤掉演示加盟商
+			sql.append(" and ").append(QueryUtil.getWhereSql());
+		}
+		sql.append(" and ").append(QueryUtil.getWhereSql());
+		if (qvo.getVprovince()!=-1) {// 给区域划分（省市过滤）用的
+			sql.append(" and vprovince=? ");
+			sp.addParam(qvo.getVprovince());
+			if (!StringUtil.isEmpty(qvo.getPk_corp())) {
+				String[] split = qvo.getPk_corp().split(",");
+				sql.append(" and pk_corp not in (");
+				sql.append(SqlUtil.buildSqlConditionForIn(split));
+				sql.append(" )");
+			}
+		}
+		sql.append(" order by innercode ");
+		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+				new BeanListProcessor(CorpVO.class));
+		if (list != null && list.size() > 0) {
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, list, 1);
+			List<CorpVO> rList = new ArrayList<>();
+			if (!StringUtil.isEmpty(qvo.getCorpcode())) {
+				for (CorpVO cvo : list) {
+					if (cvo.getUnitname().contains(qvo.getCorpcode()) || cvo.getInnercode().contains(qvo.getCorpcode())) {
+						rList.add(cvo);
+					}
+				}
+				return rList;
+			}
+		}
+		return list;
+	}
+	
 }

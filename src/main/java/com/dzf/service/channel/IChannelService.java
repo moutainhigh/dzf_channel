@@ -15,10 +15,18 @@ public interface IChannelService {
 	List<CorpVO> querySmall(QryParamVO paramvo) throws DZFWarpException;
 
 	/**
-	 * 查询渠道商
+	 * 查询渠道商(目前逻辑：过滤掉演示的)
 	 * @param paramvo
 	 * @return
+	 */    
+	List<CorpVO> queryChannel(ChInvoiceVO paramvo) throws DZFWarpException;
+	
+	/**
+	 * 查询渠道商（为多选参照使用）
+	 * @param paramvo
+	 * @return
+	 * @throws DZFWarpException
 	 */
-	List<CorpVO> queryChannel(ChInvoiceVO paramvo);
+	List<CorpVO> qryMultiChannel(QryParamVO paramvo) throws DZFWarpException;
 
 }

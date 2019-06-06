@@ -1,5 +1,6 @@
 package com.dzf.action.channel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,12 +35,7 @@ public class ChannelAction extends BaseAction<UserVO> {
 	public void querySmall() {
 		Grid grid = new Grid();
 		try {
-			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			UserVO uservo = checkLoginUser();
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			if(paramvo == null){
@@ -67,17 +63,12 @@ public class ChannelAction extends BaseAction<UserVO> {
 	
 	
 	/**
-	 * 查询渠道商
+	 * 查询渠道商(目前逻辑：过滤掉演示的)
 	 */
 	public void queryChannel() {
 		Grid grid = new Grid();
 		try {
-			UserVO uservo = getLoginUserInfo();
-			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
-				throw new BusinessException("登陆用户错误");
-			} else if (uservo == null) {
-				throw new BusinessException("登陆用户错误");
-			}
+			checkLoginUser();
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
@@ -101,6 +92,41 @@ public class ChannelAction extends BaseAction<UserVO> {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
+	}
+	
+	/**
+	 * 多选加盟商参照
+	 */
+	public void qryMultiChannel() {
+		Grid grid = new Grid();
+		try {
+			checkLoginUser();
+			QryParamVO paramvo = new QryParamVO();
+			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
+			List<CorpVO> list = channel.qryMultiChannel(paramvo);
+			if (list != null && list.size() > 0) {
+				grid.setRows(list);
+				grid.setTotal((long) (list.size()));
+			} else {
+				grid.setRows(new ArrayList<CorpVO>());
+				grid.setTotal(0L);
+			}
+			grid.setMsg("查询成功！");
+			grid.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+	}
+	
+	private UserVO checkLoginUser(){
+		UserVO uservo = getLoginUserInfo();
+		if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+			throw new BusinessException("登陆用户错误");
+		} else if (uservo == null) {
+			throw new BusinessException("登陆用户错误");
+		}
+		return uservo;
 	}
 	
 	private CorpVO[] getPagedVOs(CorpVO[] cvos, int page, int rows) {
