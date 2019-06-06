@@ -118,7 +118,6 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 				throw new BusinessException("请设置机构");
 			}
 			if(StringUtil.isEmpty(vo.getPk_branchcorp())){
-				//vo.setPk_corp("000001");
 				vo.setCoperatorid(uservo.getCuserid());
 				vo.setDoperatedate(new DZFDate());
 				vo.setIsseal("N");

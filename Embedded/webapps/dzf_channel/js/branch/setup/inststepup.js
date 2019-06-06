@@ -438,14 +438,23 @@ function queryCorpInfo(){
 					if (!data.success) {
 						Public.tips({
 							content :  data.msg,
-							type : 1
+							type : 2
 						});	
 						return;
 					} else {
-						$('#cname').textbox('setValue',data.rows.uname);
-						$('#linkman').textbox('setValue',data.rows.lman);
-						$('#phone').textbox('setValue',data.rows.phone);
-						$('#pk_corp').val(data.rows.corpid);
+						if(data.rows==undefined){
+							$('#cname').textbox('setValue',null);
+							$('#linkman').textbox('setValue',null);
+							$('#phone').textbox('setValue',null);
+							$('#pk_corp').val($('#entname').textbox('getValue'));
+						}else{
+							$('#cname').textbox('setValue',data.rows.uname);
+							$('#linkman').textbox('setValue',data.rows.lman);
+							$('#phone').textbox('setValue',data.rows.phone);
+							$('#pk_corp').val(data.rows.corpid);
+							$('#cname').textbox('readonly',true);
+						}
+						
 					}
 				},
 			});

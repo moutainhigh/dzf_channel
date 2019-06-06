@@ -52,7 +52,7 @@
 				<div class="time_col time_colp10">
 						<label style="width:85px;text-align:right"><i class="bisu">*</i>机构名称：</label> 
 					    <input class="easyui-textbox" id="iname" name="name" style="width:200px;height:28px;"
-						      data-options="required:true,validType:'length[1,10]'"/>
+						      data-options="required:true,validType:'length[1,10]'"  />
 				</div>
 				
 				<div style="float:right;margin-top:20px;margin-right:116px;">
@@ -79,9 +79,7 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">公司名称：</label> 
-					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;"
-						      data-options="required:true"  validType= "remote['<%=request.getContextPath() %>/branch/instSetupAct!queryCorpname.action','uname' ]" 
-						      invalidMessage= "此公司名称已存在"/>
+					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;"/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">联系人：</label> 
@@ -97,8 +95,8 @@
 				</div>
 				
 				<div style="float:right;margin-top:20px;margin-right:116px;">
-				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSaveCorp()">保存</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="onSaveCorp()">保存</a> 
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="onCancel()">取消</a>
 				</div>
 			</form>
 		</div>

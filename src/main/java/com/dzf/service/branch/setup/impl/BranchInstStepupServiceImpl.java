@@ -16,6 +16,7 @@ import com.dzf.model.branch.setup.BranchInstSetupBVO;
 import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QueryParamVO;
+import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
@@ -68,6 +69,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 	@Override
 	public void saveCorp(BranchInstSetupBVO vo) {
 		if(StringUtil.isEmpty(vo.getPk_branchcorp())){
+			checkIsAdd(vo);
 			//新增公司
 			singleObjectBO.insertVO("000001",vo);
 		}else{
@@ -75,6 +77,40 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		}
 	}
 	
+	/**
+	 * 校验企业识别号，公司名称
+	 * @param vo
+	 */
+	private void checkIsAdd(BranchInstSetupBVO vo) {
+		StringBuffer esql = new StringBuffer();
+		SQLParameter espm=new SQLParameter();
+		espm.addParam(vo.getVname());
+		esql.append("  select def12 vname \n");
+		esql.append("    from bd_corp \n");
+		esql.append("    where nvl(dr,0) = 0 and \n");
+		esql.append("    isaccountcorp = 'Y' and \n");
+		esql.append("    def12 = ? \n");
+		CorpVO corp = (CorpVO) singleObjectBO.executeQuery(esql.toString(), espm, new BeanProcessor(CorpVO.class));
+		if(corp==null){//
+			throw new BusinessException("此企业识别号不存在");
+		}
+		
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm=new SQLParameter();
+		spm.addParam(vo.getPk_corp());
+		sql.append("select \n");
+		sql.append("  pk_corp \n");
+		sql.append("  from br_branchcorp \n");
+		sql.append("  where nvl(dr,0) = 0 and \n");
+		sql.append("  pk_corp = ? \n");
+		
+		BranchInstSetupBVO bvo = (BranchInstSetupBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupBVO.class));
+		if(bvo!=null){
+			throw new BusinessException("此公司名称已存在");
+		}
+	}
+
+
 	private void saveEditCorp(BranchInstSetupBVO data) {
 		String uuid = UUID.randomUUID().toString();
 		try {
