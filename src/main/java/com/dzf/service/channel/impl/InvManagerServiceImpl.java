@@ -146,11 +146,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select t.*, ba.vprovince  \n");
+		sql.append("select t.*, account.vprovince  \n");
 		sql.append("  from cn_invoice t  \n");
-		sql.append("  left join bd_account ba on t.pk_corp = ba.pk_corp  \n");
+		sql.append("  left join bd_account account on t.pk_corp = account.pk_corp  \n");
 		sql.append(" where nvl(t.dr, 0) = 0  \n");
-		sql.append("   and nvl(ba.dr, 0) = 0  \n");
+		sql.append("   and nvl(account.dr, 0) = 0  \n");
 		if (!StringUtil.isEmpty(paramvo.getVprovname())) {
 			sql.append(paramvo.getVprovname());
 		}

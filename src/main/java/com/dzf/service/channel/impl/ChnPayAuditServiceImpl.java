@@ -100,11 +100,11 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.*,ba.vprovince,us.user_name as vapprovename FROM cn_paybill t \n");
-		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+		sql.append("SELECT t.*,account.vprovince,us.user_name as vapprovename FROM cn_paybill t \n");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
 		sql.append(" left join sm_user us on us.cuserid = t.vapproveid");
 		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());

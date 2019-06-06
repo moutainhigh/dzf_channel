@@ -88,9 +88,9 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT a.*,ba.vprovince FROM cn_corpnameedit a \n") ;
-		sql.append(" LEFT JOIN bd_account ba on a.fathercorp=ba.pk_corp ");
-		sql.append(" WHERE nvl(a.dr,0) = 0 and nvl(ba.dr,0) = 0 ");
+		sql.append(" SELECT a.*,account.vprovince FROM cn_corpnameedit a \n") ;
+		sql.append(" LEFT JOIN bd_account account on a.fathercorp=account.pk_corp ");
+		sql.append(" WHERE nvl(a.dr,0) = 0 and nvl(account.dr,0) = 0 ");
     	if(!StringUtil.isEmpty(paramvo.getVqrysql())){
     		sql.append(paramvo.getVqrysql());
     	}

@@ -54,17 +54,17 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	public List<BillingInvoiceVO> query(BillingInvoiceVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select ba.pk_corp, \n");
-		sql.append("       ba.innercode as corpcode, \n");
-		sql.append("       ba.unitname as corpname, \n");
-		sql.append("       ba.vprovince, \n");
-		sql.append("       ba.citycounty as vprovname, \n");
+		sql.append("select account.pk_corp, \n");
+		sql.append("       account.innercode as corpcode, \n");
+		sql.append("       account.unitname as corpname, \n");
+		sql.append("       account.vprovince, \n");
+		sql.append("       account.citycounty as vprovname, \n");
 		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 2 THEN nvl(t.nusedmny,0) \n");
 		sql.append("       			ELSE 0 END) AS debitconmny, \n");
 		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 5 THEN nvl(t.nusedmny,0) \n");
 		sql.append("       			ELSE 0 END) AS debitbuymny \n");
-		sql.append("  from bd_account ba \n");
-		sql.append("  left join cn_detail t on ba.pk_corp = t.pk_corp \n");
+		sql.append("  from bd_account account \n");
+		sql.append("  left join cn_detail t on account.pk_corp = t.pk_corp \n");
 		sql.append("                            and nvl(t.dr, 0) = 0 \n");
 		// 付款类型  1：加盟费；2：预付款；3：返点；
 		sql.append("                            and t.ipaytype = 2 \n");
@@ -75,10 +75,10 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			sql.append(" and t.doperatedate <= ?");
 			spm.addParam(paramvo.getBdate());
 		}
-		sql.append(" where ba.ischannel = 'Y'  ");
+		sql.append(" where account.ischannel = 'Y'  ");
 		if (null != paramvo.getCorps() && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
-			sql.append(" and ba.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
 
 		if (!StringUtil.isEmpty(paramvo.getVmanager())) {
@@ -101,11 +101,11 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		} else if (where == null) {
 			return new ArrayList<BillingInvoiceVO>();
 		}
-		sql.append(" group by ba.pk_corp, \n");
-		sql.append("          ba.innercode, \n");
-		sql.append("          ba.unitname, \n");
-		sql.append("          ba.vprovince, \n");
-		sql.append("          ba.citycounty \n");
+		sql.append(" group by account.pk_corp, \n");
+		sql.append("          account.innercode, \n");
+		sql.append("          account.unitname, \n");
+		sql.append("          account.vprovince, \n");
+		sql.append("          account.citycounty \n");
 
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(BillingInvoiceVO.class));

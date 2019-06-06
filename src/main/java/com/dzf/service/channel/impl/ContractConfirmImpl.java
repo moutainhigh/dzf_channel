@@ -387,11 +387,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("              cn.tstamp  \n") ; 
 			sql.append("           END AS checkts,  \n") ;//原合同、历史合同时间戳
 			if("audit".equals(qrytype)){
-				sql.append("       ba.channeltype,  \n") ; //加盟商类型
+				sql.append("       account.channeltype,  \n") ; //加盟商类型
 				sql.append("       t.isxq,  \n") ; //是否续签
 			}
 			if("listqry".equals(qrytype)){
-				sql.append("       ba.vprovince,  \n") ; //省份
+				sql.append("       account.vprovince,  \n") ; //省份
 			}
 			sql.append("       t.vcontcode,  \n") ; 
 			sql.append("       t.pk_packagedef,  \n") ; 
@@ -455,13 +455,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
 		if(!"info".equals(qrytype)){
-			sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp \n") ;
+			sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
 		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
 		if(!"info".equals(qrytype)){
-			sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+			sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		}
 		sql.append("   AND t.isflag = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 

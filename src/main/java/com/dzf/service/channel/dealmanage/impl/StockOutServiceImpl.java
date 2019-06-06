@@ -576,10 +576,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("select c.vbillcode,");
 		sql.append("       c.pk_stockout,");
 		sql.append("       c.pk_corp,");
-		sql.append("       ba.innercode corpcode, \n");
-		sql.append("       ba.unitname corpname, \n");
-		sql.append("       ba.vprovince, \n");
-		sql.append("       ba.citycounty as vprovname, \n");
+		sql.append("       account.innercode corpcode, \n");
+		sql.append("       account.unitname corpname, \n");
+		sql.append("       account.vprovince, \n");
+		sql.append("       account.citycounty as vprovname, \n");
 		sql.append("       c.logisticsunit,");
 		sql.append("       c.fastcode,");
 		sql.append("       c.vmemo,");
@@ -591,7 +591,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.updatets,");
 		sql.append("       u.user_name coperatname");
 		sql.append("  from cn_stockout c");
-		sql.append("  INNER JOIN bd_account ba ON c.pk_corp = ba.pk_corp \n") ;
+		sql.append("  INNER JOIN bd_account account ON c.pk_corp = account.pk_corp \n") ;
 		sql.append("  LEFT JOIN sm_user u ON c.coperatorid = u.cuserid  \n") ; 
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
@@ -726,15 +726,15 @@ public class StockOutServiceImpl implements IStockOutService{
 		String qrySql = getQrySql(paramvo);
 		
         StringBuffer sql = new StringBuffer();
-		sql.append("select distinct b.pk_corp id,ba.unitname name,ba.innercode");
+		sql.append("select distinct b.pk_corp id,account.unitname name,account.innercode");
 		sql.append("  from cn_goodsbill_b b ");
 		sql.append("  left join cn_goodsbill c on b.pk_goodsbill = c.pk_goodsbill ");
-		sql.append("  left join bd_account ba on ba.pk_corp = b.pk_corp ");
+		sql.append("  left join bd_account account on account.pk_corp = b.pk_corp ");
 		sql.append(" where nvl(b.dr, 0) = 0 ");
 		sql.append("   and nvl(c.dr, 0) = 0 ");
-		sql.append("   and nvl(ba.dr, 0) = 0 ");
-		sql.append("   and nvl(ba.isaccountcorp,'N') = 'Y' ");
-		sql.append("   and nvl(ba.ischannel,'N') = 'Y' ");
+		sql.append("   and nvl(account.dr, 0) = 0 ");
+		sql.append("   and nvl(account.isaccountcorp,'N') = 'Y' ");
+		sql.append("   and nvl(account.ischannel,'N') = 'Y' ");
 		sql.append("   and c.vstatus in (1, 2, 3) ");
 		sql.append("   and nvl(b.deamount, 0) = 0 ");
 		sql.append("   and b.pk_goodsbill_b not in( ");//去掉cn_stockout_b的订单pk_goodsbill_b  vstatus 0与1
@@ -744,7 +744,7 @@ public class StockOutServiceImpl implements IStockOutService{
 		if(!StringUtil.isEmpty(qrySql)){
 			sql.append(qrySql);
 		}
-        sql.append(" order by ba.innercode ");
+        sql.append(" order by account.innercode ");
         List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
                 new BeanListProcessor(ComboBoxVO.class));
         for (ComboBoxVO comboBoxVO : list) {
@@ -802,10 +802,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		StringBuffer sql = new StringBuffer();
 		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
 		if(corps != null && corps.length > 0){
-			String where = SqlUtil.buildSqlForIn(" ba.pk_corp", corps);
+			String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND ba.pk_corp is null \n") ; 
+			sql.append(" AND account.pk_corp is null \n") ; 
 		}
 		return sql.toString();
 	}

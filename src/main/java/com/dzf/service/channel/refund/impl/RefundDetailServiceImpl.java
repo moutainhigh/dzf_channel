@@ -136,14 +136,14 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryContRefund(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ct.pk_corp, nvl(SUM(t.nretdedmny),0) AS nreturnmny, ba.vprovince  \n");
+		sql.append("SELECT ct.pk_corp, nvl(SUM(t.nretdedmny),0) AS nreturnmny, account.vprovince  \n");
 		sql.append("  FROM ynt_contract ct  \n");
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n");
-		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp  \n");
 		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n");
 		sql.append("   AND ct.patchstatus = 3 \n");
 		sql.append("   AND ct.vstatus IN (?, ?) \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -163,7 +163,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY ct.pk_corp, ba.vprovince \n");
+		sql.append(" GROUP BY ct.pk_corp, account.vprovince \n");
 		return (List<RefundDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RefundDetailVO.class));
 	}
@@ -179,14 +179,14 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryContDeduct(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ct.pk_corp, nvl(abs(SUM(t.ndeductmny)),0) AS nreturnmny, ba.vprovince  \n") ;
+		sql.append("SELECT ct.pk_corp, nvl(abs(SUM(t.ndeductmny)),0) AS nreturnmny, account.vprovince  \n") ;
 		sql.append("  FROM ynt_contract ct  \n") ; 
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n") ; 
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n") ; 
 		sql.append("   AND ct.patchstatus = 5  \n") ; 
 		sql.append("   AND ct.vstatus = ?  \n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -205,7 +205,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			sql.append(" AND t.deductdata <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY ct.pk_corp, ba.vprovince \n");
+		sql.append(" GROUP BY ct.pk_corp, account.vprovince \n");
 		return (List<RefundDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RefundDetailVO.class));
 	}
@@ -221,12 +221,12 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 	private List<RefundDetailVO> queryRefund(QryParamVO pamvo, String addWhere) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, nvl(SUM(t.nrefyfkmny),0) AS nreturnmny, ba.vprovince  \n") ; 
+		sql.append("SELECT t.pk_corp, nvl(SUM(t.nrefyfkmny),0) AS nreturnmny, account.vprovince  \n") ; 
 		sql.append("  FROM cn_refund t  \n") ; 
-		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp  \n") ; 
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n") ; 
 		sql.append("   AND t.istatus = 1  \n") ; 
 		if (!StringUtil.isEmpty(addWhere)) {
 			sql.append(addWhere);
@@ -243,7 +243,7 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 			sql.append(" AND t.dconfirmdate <= ? \n");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY t.pk_corp, ba.vprovince \n");
+		sql.append(" GROUP BY t.pk_corp, account.vprovince \n");
 		return (List<RefundDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RefundDetailVO.class));
 	}
@@ -322,11 +322,11 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') AS vmemo  \n") ; 
 		sql.append("  FROM ynt_contract ct  \n");
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n");
-		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp  \n");
 		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n");
 		sql.append("   AND ct.patchstatus = 3 \n");
 		sql.append("   AND ct.vstatus IN (?, ?) \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -363,11 +363,11 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("       '一般人转为小规模' AS vmemo  \n") ; 
 		sql.append("  FROM ynt_contract ct  \n") ; 
 		sql.append("  LEFT JOIN cn_contract t ON ct.pk_contract = t.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN bd_account ba ON ct.pk_corp = ba.pk_corp  \n") ; 
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n") ; 
 		sql.append("   AND ct.patchstatus = 5  \n") ; 
 		sql.append("   AND ct.vstatus = ?  \n") ; 
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -401,10 +401,10 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("       t.vbillcode, \n") ;
 		sql.append("       '退款单' AS vmemo  \n") ;
 		sql.append("  FROM cn_refund t  \n") ; 
-		sql.append("  LEFT JOIN bd_account ba ON t.pk_corp = ba.pk_corp  \n") ; 
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.ischannel, 'N') = 'Y'  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n") ; 
 		sql.append("   AND t.istatus = 1  \n") ; 
 		sql.append("   AND t.pk_corp = ? \n");
 		spm.addParam(pamvo.getPk_corp());

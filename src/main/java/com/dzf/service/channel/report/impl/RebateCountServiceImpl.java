@@ -43,21 +43,21 @@ public class RebateCountServiceImpl implements IRebateCountService {
     	}
         SQLParameter params = new SQLParameter();
         sql.append("select reb.pk_corp,");
-        sql.append(" ba.innercode as corpcode,");
-        sql.append(" ba.unitname as corpname,");
+        sql.append(" account.innercode as corpcode,");
+        sql.append(" account.unitname as corpname,");
         sql.append(" area.region_name as vprovname,");
         sql.append(" sum(decode(reb.iseason,1,reb.nrebatemny)) as nmny1,");
         sql.append(" sum(decode(reb.iseason,2,reb.nrebatemny)) as nmny2, ");
         sql.append(" sum(decode(reb.iseason,3,reb.nrebatemny)) as nmny3,");
         sql.append(" sum(decode(reb.iseason,4,reb.nrebatemny)) as nmny4");
         sql.append(" from cn_rebate reb ");
-        sql.append(" join bd_account ba on reb.pk_corp = ba.pk_corp ");
-        sql.append(" join ynt_area area on area.region_id = ba.vprovince ");
+        sql.append(" join bd_account account on reb.pk_corp = account.pk_corp ");
+        sql.append(" join ynt_area area on area.region_id = account.vprovince ");
         sql.append(" where reb.fathercorp = ? and reb.vyear = ? and nvl(reb.dr,0) = 0 and reb.istatus = 3");
      	if(!condition.equals("alldata")){
     		sql.append(condition);
     	}
-        sql.append(" group by reb.pk_corp,ba.innercode,ba.unitname,area.region_name");
+        sql.append(" group by reb.pk_corp,account.innercode,account.unitname,area.region_name");
         params.addParam(paramvo.getPk_corp());
         params.addParam(paramvo.getVyear());
         List<RebateCountVO> list = (List<RebateCountVO>) singleObjectBO.executeQuery(sql.toString(), params, new BeanListProcessor(RebateCountVO.class));

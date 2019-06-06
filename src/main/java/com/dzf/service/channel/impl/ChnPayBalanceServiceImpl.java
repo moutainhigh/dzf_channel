@@ -54,7 +54,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if(!StringUtil.isEmpty(paramvo.getVmanager())){
 			String[] corps = pubService.getManagerCorp(paramvo.getVmanager(), 1);
 			if(corps != null && corps.length > 0){
-				String where = SqlUtil.buildSqlForIn(" ba.pk_corp ", corps);
+				String where = SqlUtil.buildSqlForIn(" account.pk_corp ", corps);
 				qrysql.append(" AND ").append(where);
 			}else{
 				return null;
@@ -244,9 +244,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT DISTINCT t.pk_corp \n") ;
 		sql.append("  FROM cn_contract t  \n") ; 
-		sql.append(" LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
+		sql.append(" LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
 		sql.append("   AND t.vstatus = 1  \n") ; 
 //		String[] billids = getbillids();
@@ -333,10 +333,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(nvl(ct.nbookmny, 0)) AS nbookmny  \n");
 		sql.append("  FROM cn_contract t  \n");
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
-		sql.append(" LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
+		sql.append(" LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -444,10 +444,10 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("                END)) AS nbookmny  \n") ; 
 		sql.append("  FROM cn_contract t  \n") ; 
 		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN bd_account ba on t.pk_corp=ba.pk_corp ");
+		sql.append("  LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ba.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -558,8 +558,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) - \n") ; 
 		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; //返点
 		sql.append("  FROM cn_detail a \n") ; 
-		sql.append("  LEFT JOIN bd_account ba on a.pk_corp = ba.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0) = 0 \n") ; 
+		sql.append("  LEFT JOIN bd_account account on a.pk_corp = account.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(account.dr,0) = 0 \n") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 	        sql.append(" and a.pk_corp in (" + corpIdS + ")");
@@ -615,8 +615,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdspmny, \n");
 		sql.append("       MIN(CASE a.ideductpropor WHEN 0 THEN NULL ELSE a.ideductpropor END) AS ideductpropor \n") ; 
 		sql.append("  FROM cn_detail a \n") ; 
-		sql.append("  LEFT JOIN bd_account ba on a.pk_corp=ba.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(ba.dr,0)=0 \n") ; 
+		sql.append("  LEFT JOIN bd_account account on a.pk_corp=account.pk_corp ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0 and nvl(account.dr,0)=0 \n") ; 
 		if(paramvo.getCorps() != null  && paramvo.getCorps().length > 0){
 	        String where = SqlUtil.buildSqlForIn("a.pk_corp", paramvo.getCorps());
 	        sql.append(" AND ").append(where);
