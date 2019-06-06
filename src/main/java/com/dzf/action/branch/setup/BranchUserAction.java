@@ -31,7 +31,7 @@ import com.dzf.service.pub.IPubService;
  */
 @ParentPackage("basePackage")
 @Namespace("/branch")
-@Action(value = "/user")
+@Action(value = "/brachuser")
 public class BranchUserAction extends BaseAction<UserVO> {
 
 	private static final long serialVersionUID = 1L;

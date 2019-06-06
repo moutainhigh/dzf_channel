@@ -53,7 +53,7 @@ $(function() {
 
 function load(){
 	$('#grid').datagrid({
-		url : contextPath + '/branch/user!query.action',
+		url : contextPath + '/branch/brachuser!query.action',
 		queryParams: {
 			 "qtype": 0,
 		},
@@ -90,12 +90,12 @@ function load(){
 
 
 function add() {
-	url=contextPath+ '/branch/user!save.action';
+	url=contextPath+ '/branch/brachuser!save.action';
 	$('#addDialog').dialog({modal:true});
     $('#addDialog').dialog('open').dialog('center').dialog('setTitle',"新增用户");
     $('#addForm').form("clear");
 	$.ajax({
-		url : DZF.contextPath + "/branch/user!queryByID.action",
+		url : DZF.contextPath + "/branch/brachuser!queryByID.action",
 		dataType : 'json',
 		processData : true,
   		async : false,//异步传输
@@ -159,7 +159,7 @@ function edit(index){
     var rows = $("#grid").datagrid("getRows");
     var row = rows[index];
 	$.ajax({
-		url : DZF.contextPath + "/branch/user!queryByID.action",
+		url : DZF.contextPath + "/branch/brachuser!queryByID.action",
 		dataType : 'json',
 		processData : true,
   		async : false,//异步传输
@@ -373,7 +373,7 @@ function lock(uid,updatets){
 	$.messager.confirm('提示','确认锁定?',function(conf){
 		if (conf){
 			jQuery.ajax({
-				url : contextPath + '/branch/user!updateLock.action',
+				url : contextPath + '/branch/brachuser!updateLock.action',
 				data : {
 					'uid' : uid,
 					'updatets' : updatets,
@@ -398,7 +398,7 @@ function unlock(uid,updatets){
 	$.messager.confirm('提示','确认解锁?',function(conf){
 		if (conf){
 			jQuery.ajax({
-				url : contextPath + '/branch/user!updateLock.action',
+				url : contextPath + '/branch/brachuser!updateLock.action',
 				data : {
 					'uid' : uid,
 					'updatets' : updatets,
