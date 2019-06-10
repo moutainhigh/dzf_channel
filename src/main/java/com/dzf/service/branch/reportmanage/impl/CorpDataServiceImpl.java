@@ -187,9 +187,9 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		// 2、客户相关信息：
 		getCorpSqlSpm(pamvo, corpks, sql, spm, period);
 		// 3、合同主表信息：
-		getContSqlSpm(pamvo, corpks, sql, spm, period);
+		getContSqlSpm(pamvo, corpks, sql, spm);
 		// 4、合同子表信息：
-		getContbSqlSpm(pamvo, corpks, sql, spm, period);
+		getContbSqlSpm(pamvo, corpks, sql, spm);
 		List<CorpDataVO> rlist = (List<CorpDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpDataVO.class));
 		if (rlist != null && rlist.size() > 0) {
@@ -254,7 +254,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	}
 
 	/**
-	 * 计算记账状态
+	 * 计算记账状态、报税状态
 	 * 
 	 * @param cvo
 	 * @param jzmap
@@ -264,15 +264,23 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	private void countJzStatue(CorpDataVO cvo, Map<String, String> jzmap, Map<String, String> vmap)
 			throws DZFWarpException {
 		if(cvo.getBegindate() != null){
+			//记账状态
 			if(jzmap != null && !jzmap.isEmpty() && !StringUtil.isEmpty(jzmap.get(cvo.getPk_corp()))){
 				cvo.setVjzstatues("已完成");
 			}else{
 				if(vmap != null && !vmap.isEmpty() && !StringUtil.isEmpty(vmap.get(cvo.getPk_corp()))){
 					cvo.setVjzstatues("进行中");
 				}else{
-					cvo.setVjzstatues("未开始");
+					if(cvo.getBegindate().compareTo(new DZFDate()) <= 0){
+						cvo.setVjzstatues("未开始");
+					}
 				}
 			}
+			if(cvo.getBegindate().compareTo(new DZFDate()) > 0){
+				cvo.setVbsstatues("");
+			}
+		}else{
+			cvo.setVbsstatues("");
 		}
 	}
 
@@ -533,7 +541,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	 * @param spm
 	 * @throws DZFWarpException
 	 */
-	private void getContSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm, String period)
+	private void getContSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm)
 			throws DZFWarpException {
 		sql.append(" LEFT JOIN \n");
 		sql.append("(SELECT ct.pk_corpk AS pk_corp,  \n");
@@ -556,10 +564,10 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("           AND t.isflag = 'Y'  \n");
 		sql.append("           AND t.vstatus IN (1, 3, 4)  \n");
 		sql.append("           AND t.icosttype = 0  \n");
-		sql.append("   AND substr(t.vbeginperiod, 0, 7) <= ?  \n");
-		spm.addParam(period);
-		sql.append("   AND substr(t.vendperiod, 0, 7) >= ?  \n");
-		spm.addParam(period);
+		sql.append("   AND t.vbeginperiod <= ?  \n");
+		spm.addParam(new DZFDate());
+		sql.append("   AND t.vbeginperiod >= ?  \n");
+		spm.addParam(new DZFDate());
 		if (corpks != null && corpks.length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corpk", corpks);
 			sql.append(" AND ").append(where);
@@ -578,7 +586,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	 * @param spm
 	 * @throws DZFWarpException
 	 */
-	private void getContbSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm, String period)
+	private void getContbSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm)
 			throws DZFWarpException {
 		sql.append("LEFT JOIN \n");
 		sql.append("(SELECT t.pk_contract,  \n");
@@ -596,10 +604,10 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("   AND t.isflag = 'Y'  \n");
 		sql.append("   AND t.vstatus IN (1, 3, 4)  \n");
 		sql.append("   AND t.icosttype = 0  \n");
-		sql.append("   AND substr(t.vbeginperiod, 0, 7) <= ?  \n");
-		spm.addParam(period);
-		sql.append("   AND substr(t.vendperiod, 0, 7) >= ?  \n");
-		spm.addParam(period);
+		sql.append("   AND t.vbeginperiod <= ?  \n");
+		spm.addParam(new DZFDate());
+		sql.append("   AND t.vbeginperiod >= ?  \n");
+		spm.addParam(new DZFDate());
 		if (corpks != null && corpks.length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corpk", corpks);
 			sql.append(" AND ").append(where);
