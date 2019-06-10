@@ -144,6 +144,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 	    sql.append("	and corp.isaccountcorp = 'Y'   \n");
 	    sql.append(" 	and substr(con.denddate, 1, 7) = ?  \n");
 	    sql.append(" 	and con.icosttype = 0 \n");
+	    sql.append(" 	and con.vstatus in (1,3,4) \n");
 	    if(!StringUtil.isEmpty(condition.toString())){
 	    	sql.append("  and "+condition.toString());
 	    }
