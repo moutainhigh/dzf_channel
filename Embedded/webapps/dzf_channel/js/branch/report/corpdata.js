@@ -10,7 +10,7 @@ $(window).resize(function() {
 $(function(){
 	load();
 	initQueryData();
-	reloadData();
+//	reloadData();
 	initCpname();
 	initPcount();
 });
@@ -187,6 +187,16 @@ function showTips(value){
  * @returns
  */
 function reloadData() {
+	var cpid = $("#cpname").combobox('getValue');
+	var uname = $('#saler').textbox('getValue');
+	var mid = $("#cpcountid").val();
+	if((isEmpty(cpid) || cpid == "pk_all") && isEmpty(uname) && isEmpty(mid)){
+		Public.tips({
+			content : '请选择代账公司或人员进行查询',
+			type : 2
+		});
+		return;
+	}
 	var bdate = $("#bdate").datebox("getValue");
 	var edate = $("#edate").datebox("getValue");
 	var url = DZF.contextPath + "/branch/corpdataact!query.action";
@@ -194,11 +204,11 @@ function reloadData() {
 	$('#grid').datagrid('load', {
 		"begdate" : bdate,
 		"enddate" : edate,
-		"cpid" : $("#cpname").combobox('getValue'),
+		"cpid" : cpid,
 		"cpkcode" : $('#cpkcode').textbox('getValue'),
 		"cpkname" : $('#cpkname').textbox('getValue'),
-		"uname" : $('#saler').textbox('getValue'),//销售人员
-		"mid" : $("#cpcountid").val(),//主办会计
+		"uname" : uname,//销售人员
+		"mid" : mid,//主办会计
 	});
 	$("#jqj").html(bdate + " 至 " + edate);
   	

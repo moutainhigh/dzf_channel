@@ -76,7 +76,12 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 			if(StringUtil.isEmpty(pamvo.getCuserid())){
 				pamvo.setCuserid(getLoginUserid());
 			}
+			if (StringUtil.isEmpty(pamvo.getUser_name()) && StringUtil.isEmpty(pamvo.getVmanager())
+					&& (StringUtil.isEmpty(pamvo.getPk_corp()) || "pk_all".equals(pamvo.getPk_corp()))) {
+				throw new BusinessException("请选择代账公司或人员进行查询");
+			}
 			if(StringUtil.isEmpty(pamvo.getCorpkname())){
+				
 				long total = corpser.queryTotal(pamvo);
 				if(total > 0){
 					List<CorpDataVO> list = corpser.query(pamvo);
