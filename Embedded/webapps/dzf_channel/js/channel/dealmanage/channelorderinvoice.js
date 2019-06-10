@@ -175,8 +175,8 @@ $(function(){
     		cmny = cmny.add(lcmny);
     		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="cmny"]').val(cmny.toFixed(2));
     		
-    		//不含税金额 = 含税金额/(1+0.16);
-    		var bje = cmny.div(parseFloat(1.16));
+    		//不含税金额 = 含税金额/(1+0.16); 由0.16变更为0.13
+    		var bje = cmny.div(parseFloat(1.13));
     		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bje"]').val(bje.toFixed(2));
     		
     		//数量
@@ -187,8 +187,8 @@ $(function(){
     		var bdj = bje.div(bnum);
     		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bdj"]').val(bdj.toFixed(pricePrecision));
     		
-    		//税额 = 不含税金额 * 0.16；
-    		var bse = bje.mul(parseFloat(0.16));
+    		//税额 = 不含税金额 * 0.16； 由0.16变更为0.13
+    		var bse = bje.mul(parseFloat(0.13));
     		$("#table_body tr:eq(" + (index - 1) + ") ").find('[name="bse"]').val(bse.toFixed(2));
     		
     	}

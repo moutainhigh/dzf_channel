@@ -932,7 +932,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       vgoodsname AS bspmc,  \n");
 		sql.append("       invspec || invtype AS invspec,  \n");
 		sql.append("       vmeasname AS measurename,  \n");
-		sql.append("       16 AS bspsl,  \n");
+		sql.append("       13 AS bspsl,  \n");//由16变更为13
 		sql.append("       amount AS bnum,  \n");
 		sql.append("       pk_goods,  \n");
 		sql.append("       pk_goodsspec,  \n");
@@ -961,12 +961,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 						bvo.setNcountmny(ndeductmny);
 						ndeductmny = DZFDouble.ZERO_DBL;
 					}
-					// 不含税金额 = 含税金额/(1+0.16)
+					// 不含税金额 = 含税金额/(1+0.16) 由0.16变更为0.13
 					// 不含税单价 = 不含税金额/数量
-					// 税额 = 不含税金额 * 0.16
-					bhjje = SafeCompute.div(bvo.getNcountmny(), new DZFDouble(1.16));
+					// 税额 = 不含税金额 * 0.16  由0.16变更为0.13
+					bhjje = SafeCompute.div(bvo.getNcountmny(), new DZFDouble(1.13));
 					bprice = SafeCompute.div(bhjje, CommonUtil.getDZFDouble(bvo.getBnum()));
-					bspse = SafeCompute.multiply(bhjje, new DZFDouble(0.16));
+					bspse = SafeCompute.multiply(bhjje, new DZFDouble(0.13));
 					bvo.setBhjje(bhjje.setScale(2, DZFDouble.ROUND_HALF_UP));
 					bvo.setBprice(bprice.setScale(4, DZFDouble.ROUND_HALF_UP));
 					bvo.setBspse(bspse.setScale(2, DZFDouble.ROUND_HALF_UP));
