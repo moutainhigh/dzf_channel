@@ -163,7 +163,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("               from ynt_contract_b b ");
 			sql.append("              where nvl(b.dr, 0) = 0 ");
 			sql.append("              group by b.pk_contract) w on t.pk_contract = w.pk_contract ");
-			sql.append("  left join bd_corp p on t.pk_corp=p.pk_corp ");
+			sql.append("  left join bd_corp p on t.pk_corpk=p.pk_corp ");
 			sql.append(" where nvl(t.dr, 0) = 0 ");
 			sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
 			sql.append("   and nvl(p.dr, 0) = 0 ");
@@ -201,7 +201,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 		sql.append("  from sm_user_role ur ");
 		sql.append("  left join sm_user u on ur.cuserid = u.cuserid ");
 		sql.append("  left join sm_role r on ur.pk_role = r.pk_role ");
-		sql.append(" where ur.cuserid = ? ");
+		sql.append(" where ur.cuserid = ? and nvl(ur.dr,0)=0 and nvl(u.dr,0)=0 ");
 		sp.addParam(cuserid);
 		List<String> names = (List<String>)singleObjectBO.executeQuery(sql.toString(), sp,new ColumnListProcessor("role_name"));
 		if(names!=null && names.size()>0){
