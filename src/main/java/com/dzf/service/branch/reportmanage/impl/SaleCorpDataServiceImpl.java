@@ -164,6 +164,8 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 			String[] corpks = null;
 			if (pklist != null && pklist.size() > 0) {
 				corpks = pklist.toArray(new String[0]);
+			}else{
+				return null;
 			}
 			
 			DZFDate date = new DZFDate();
