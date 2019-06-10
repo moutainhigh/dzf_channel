@@ -67,7 +67,7 @@ public class CorpDataAction extends BaseAction<CorpDataVO> {
 		Grid grid = new Grid();
 		try {
 			checkUser();
-			pubser.checkFunnode(getLoginUserInfo(), IFunNode.BRANCH_10);
+			pubser.checkFunnode(getLoginUserInfo(), IFunNode.BRANCH_09);
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			if(pamvo == null){
