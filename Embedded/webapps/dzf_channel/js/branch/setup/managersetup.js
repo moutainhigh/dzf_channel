@@ -275,7 +275,7 @@ function edit(index) {
   		async : false,//异步传输
 		data : {
 			uid : row.uid,
-			lock_flag : $('#qrylock').combobox('getValue'),
+//			lock_flag : $('#qrylock').combobox('getValue'),
 		},
 		success : function(rs) {
 			row = rs.rows;
@@ -474,7 +474,7 @@ function lock(index) {
 				success : function(result) {
 					if (result.success) {
 						$("#grid").datagrid("reload", {
-							unjl : 'Y'
+//							lock_flag : 'Y'
 						});
 						Public.tips({
 							content : result.msg
@@ -517,7 +517,7 @@ function unlock(index) {
 				success : function(result) {
 					if (result.success) {
 						$("#grid").datagrid("reload", {
-							unjl : 'Y'
+//							lock_flag : 'Y'
 						});
 						Public.tips({
 							content : result.msg

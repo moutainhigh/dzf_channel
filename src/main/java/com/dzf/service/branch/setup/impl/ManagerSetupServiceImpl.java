@@ -227,7 +227,7 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 		// 是否锁定
 		if (pamvo.getLocked_tag() != null && pamvo.getLocked_tag().booleanValue()) {
 			sql.append(" and u.locked_tag = 'Y' \n");
-		} else {
+		} else if(pamvo.getLocked_tag() != null && !pamvo.getLocked_tag().booleanValue()){
 			sql.append(" and nvl(u.locked_tag,'N') = 'N' \n");
 		}
 		if(!StringUtil.isEmpty(pamvo.getCuserid())){
