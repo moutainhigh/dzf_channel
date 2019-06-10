@@ -33,7 +33,13 @@ $.extend($.fn.validatebox.defaults.rules, {
             return value.length >= param[0]; 
         },    
         message: "<font size=2 color='red'>*密码长度不能小于8</font>"   
-    }
+    },
+    minLimit: {    
+        validator: function(value, param){
+            return value.length >= param[0]; 
+        },    
+        message: "<font size=2 color='red'>*登录账号长度不能小于6</font>"   
+    },
 });
 
 $(function() {
@@ -372,7 +378,7 @@ function cancel(){
 }
 
 /**
- * 校验用户编码是否存在
+ * 校验登录账号是否存在
  */
 function checkUserCode(){
 	$("#ucode").blur(function(){
@@ -391,8 +397,8 @@ function checkUserCode(){
 			}
 			//校验存在
 			if(checkExist($(this).attr("name"),value)){
-				ckmap["ckcode_ext"]="用户编码已经存在";
-				$("#ckcode").html("<font size=2 color='red'>*用户编码已经存在</font>").show();
+				ckmap["ckcode_ext"]="登录账号已经存在";
+				$("#ckcode").html("<font size=2 color='red'>*登录账号已经存在</font>").show();
 				return;
 			}else{
 				$("#ckcode").hide(); 
@@ -403,7 +409,7 @@ function checkUserCode(){
 }
 
 /**
- * 校验用户编码是否存在
+ * 校验登录账号是否存在
  */
 function checkExist(name,val){
 	var flag = false;

@@ -46,7 +46,8 @@
 				<tr>
 					<td><label style="width:70px;">登录账号：</label></td>
 					<td>
-						<input id="ucode" name="ucode" class="easyui-textbox" style="width:160px;height:27px;" data-options="required:true"/>
+						<input id="ucode" name="ucode" class="easyui-textbox" style="width:160px;height:27px;" 
+							data-options="required:true,validType:['minLimit[6]']"/>
 					</td>
 					<td><div id="ckcode" style="display:none;"></div></td>
 					
@@ -66,7 +67,7 @@
 					<td><label style="width:70px;">确认密码：</label></td>
 					<td>
 						<input id="uc_pwd" name="uc_pwd" type="password" class="easyui-textbox" style="width:160px;height:27px;" 
-							data-options="required:true,validType:['equals[\'#u_pwd\']','minLength[6]']">
+							data-options="required:true,validType:['equals[\'#u_pwd\']','minLength[8]']">
 					</td>
 					<td><div id="uc_pwd_ck" style="display:none;"></div></td>
 				</tr>
