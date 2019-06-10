@@ -198,7 +198,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			Map<String, String> vmap = qryVouchMap(corpks, period);
 			for (CorpDataVO cvo : rlist) {
 				QueryDeCodeUtils.decKeyUtil(strs, cvo, 1);
-				countJzStatue(cvo, jzmap, vmap);
+				countJzStatue(cvo, jzmap, vmap, period);
 				countSerMonth(cvo, corpks, period);
 			}
 		}
@@ -261,9 +261,10 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	 * @param vmap
 	 * @throws DZFWarpException
 	 */
-	private void countJzStatue(CorpDataVO cvo, Map<String, String> jzmap, Map<String, String> vmap)
+	private void countJzStatue(CorpDataVO cvo, Map<String, String> jzmap, Map<String, String> vmap, String period)
 			throws DZFWarpException {
 		if(cvo.getBegindate() != null){
+			String jzperid = cvo.getBegindate().getYear() + "-" + cvo.getBegindate().getStrMonth();
 			//记账状态
 			if(jzmap != null && !jzmap.isEmpty() && !StringUtil.isEmpty(jzmap.get(cvo.getPk_corp()))){
 				cvo.setVjzstatues("已完成");
@@ -271,12 +272,12 @@ public class CorpDataServiceImpl implements ICorpDataService {
 				if(vmap != null && !vmap.isEmpty() && !StringUtil.isEmpty(vmap.get(cvo.getPk_corp()))){
 					cvo.setVjzstatues("进行中");
 				}else{
-					if(cvo.getBegindate().compareTo(new DZFDate()) <= 0){
+					if(jzperid.compareTo(period) <= 0){
 						cvo.setVjzstatues("未开始");
 					}
 				}
 			}
-			if(cvo.getBegindate().compareTo(new DZFDate()) > 0){
+			if(jzperid.compareTo(period) > 0){
 				cvo.setVbsstatues("");
 			}
 		}else{
