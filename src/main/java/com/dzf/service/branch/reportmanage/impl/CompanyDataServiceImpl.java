@@ -64,6 +64,10 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 			sql.append(" and  bs.pk_branchset = ? ");
 			sp.addParam(qvo.getPk_bill());
 		}
+		if(!StringUtil.isEmpty(qvo.getCorpkcode())){
+			sql.append(" and  ac.innercode like ? ");
+			sp.addParam(qvo.getCorpkcode());
+		}
 		sql.append("   and exists (select ub.pk_branchset ");
 		sql.append("          from br_user_branch ub ");
 		sql.append("         where nvl(ub.dr, 0) = 0 ");
@@ -76,7 +80,7 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 			String corpName;
 			for (CompanyDataVO companyDataVO : list) {
 				corpName = CodeUtils1.deCode(companyDataVO.getCorpname());
-				if(StringUtil.isEmpty(qvo.getCorpname()) || corpName.indexOf(qvo.getCorpname()) != -1){
+				if(StringUtil.isEmpty(qvo.getCorpkname()) || corpName.indexOf(qvo.getCorpkname())!= -1){
 					companyDataVO.setCorpname(corpName);
 					pk_corps.add(companyDataVO.getPk_corp());
 					map.put(companyDataVO.getPk_corp(), companyDataVO);
@@ -195,11 +199,15 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("              group by b.pk_contract) w on t.pk_contract = w.pk_contract ");
 		sql.append(" where nvl(t.dr, 0) = 0 ");
 		sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
-		sql.append("   and t.doperatedate >= ? ");
-		sql.append("   and t.doperatedate <= ? ");
-		sql.append(" and ").append(SqlUtil.buildSqlForIn("t.pk_corp ", pks));
+		sql.append("   and exists (select p.pk_corp ");
+		sql.append("          from bd_corp p ");
+		sql.append("         where nvl(p.dr, 0) = 0 ");
+		sql.append("           and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("           and substr(createdate, 0, 7) >= ? ");
+		sql.append("           and substr(createdate, 0, 7) <= ? ");
+		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp", pks));
+		sql.append("           and p.pk_corp = t.pk_corpk) ");
 		sql.append(" group by pk_corp ");
-
 		List<CompanyDataVO> contracts = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CompanyDataVO.class));
 		if (contracts != null && contracts.size() > 0) {
