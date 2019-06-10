@@ -564,9 +564,9 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("           AND t.isflag = 'Y'  \n");
 		sql.append("           AND t.vstatus IN (1, 3, 4)  \n");
 		sql.append("           AND t.icosttype = 0  \n");
-		sql.append("   AND t.vbeginperiod <= ?  \n");
+		sql.append("   AND t.dbegindate <= ?  \n");
 		spm.addParam(new DZFDate());
-		sql.append("   AND t.vbeginperiod >= ?  \n");
+		sql.append("   AND t.denddate >= ?  \n");
 		spm.addParam(new DZFDate());
 		if (corpks != null && corpks.length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corpk", corpks);
@@ -596,7 +596,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("             ELSE  \n");
 		sql.append("              0  \n");
 		sql.append("           END) AS nbookmny,  \n");
-		sql.append("       SUM(nvl(b.nyhmny,0)) AS nyhmny ");
+		sql.append("       SUM(nvl(b.nyhmny,0)) AS nyhmny \n");
 		sql.append("  FROM ynt_contract t  \n");
 		sql.append("  LEFT JOIN ynt_contract_b b ON t.pk_contract = b.pk_contract  \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
@@ -604,9 +604,9 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("   AND t.isflag = 'Y'  \n");
 		sql.append("   AND t.vstatus IN (1, 3, 4)  \n");
 		sql.append("   AND t.icosttype = 0  \n");
-		sql.append("   AND t.vbeginperiod <= ?  \n");
+		sql.append("   AND t.dbegindate <= ?  \n");
 		spm.addParam(new DZFDate());
-		sql.append("   AND t.vbeginperiod >= ?  \n");
+		sql.append("   AND t.denddate >= ?  \n");
 		spm.addParam(new DZFDate());
 		if (corpks != null && corpks.length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corpk", corpks);
