@@ -249,6 +249,8 @@ function onSave(isAdd) {
         });
         if(!isEmpty(roleIds)){
         	$("#roleids").val(roleIds.substr(0,roleIds.length-1));
+        }else{
+        	$("#roleids").val(null);
         }
 	}else{
         $("input[name='roleids1']:checked").each(function(i){
@@ -256,6 +258,8 @@ function onSave(isAdd) {
         });
         if(!isEmpty(roleIds)){
         	$("#roleids").val(roleIds.substr(0,roleIds.length-1));
+        }else{
+        	$("#roleids").val(null);
         }
 	}
     $('#addForm').form('submit',{
@@ -266,7 +270,7 @@ function onSave(isAdd) {
         success: function(result){
             var result = eval('('+result+')');
             if (result.success){
-                $('#grid').datagrid('reload',{unjl:'Y'}); 
+            	$('#grid').datagrid('reload',{'qtype':'0'}); 
                 $('#addDialog').dialog('close');
                 Public.tips({content: result.msg});
                 $('#grid').datagrid('clearSelections');
@@ -383,7 +387,7 @@ function lock(uid,updatets){
 				dataType : 'json',
 				success: function(result){
 		            if (result.success){
-		               $("#grid").datagrid("reload",{unjl:'Y'});
+		            	$('#grid').datagrid('reload',{'qtype':'0'}); 
 					   Public.tips({content: result.msg});
 		            } else {
 		               Public.tips({content: result.msg,type:1});
@@ -408,7 +412,7 @@ function unlock(uid,updatets){
 				dataType : 'json',
 				success: function(result){
 		            if (result.success){
-		               $("#grid").datagrid("reload",{unjl:'Y'});
+		            	$('#grid').datagrid('reload',{'qtype':'0'}); 
 					   Public.tips({content: result.msg});
 		            } else {
 		               Public.tips({content: result.msg,type:1});
