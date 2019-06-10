@@ -59,9 +59,9 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append(" and p.foreignname = ? ");
 			sp.addParam(qvo.getUser_name());
 		}
-		if(!StringUtil.isEmpty(qvo.getUser_code())){
+		if(!StringUtil.isEmpty(qvo.getCorpkcode())){
 			sql.append(" and p.foreignname like ? ");
-			sp.addParam("%"+qvo.getUser_code()+"%");
+			sp.addParam("%"+qvo.getCorpkcode()+"%");
 		}
 		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
 		sql.append(" group by  p.foreignname ");
@@ -166,8 +166,10 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("  left join bd_corp p on t.pk_corp=p.pk_corp ");
 			sql.append(" where nvl(t.dr, 0) = 0 ");
 			sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
-			sql.append("   and t.doperatedate >= ? ");
-			sql.append("   and t.doperatedate <= ? ");
+			sql.append("   and nvl(p.dr, 0) = 0 ");
+			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+			sql.append("   and substr(createdate, 0, 7) >= ? ");
+			sql.append("   and substr(createdate, 0, 7) <= ? ");
 			sql.append(" and ").append(SqlUtil.buildSqlForIn("t.pk_corp ", pks));
 			sql.append(" group by p.foreignname  ");
 
