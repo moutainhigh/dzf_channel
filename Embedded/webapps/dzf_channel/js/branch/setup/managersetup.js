@@ -216,9 +216,9 @@ function add() {
 	//设置生效时间
 	$("#en_time").textbox('setValue', parent.SYSTEM.LoginDate);
 	$('#b_mng').val('Y');//是否管理员
-	$('#ucode').textbox({
-		'readonly' : false
-	});
+//	$('#ucode').textbox({
+//		'readonly' : false
+//	});
 	
 	//设置机构
 	$("#branch").empty();
@@ -284,7 +284,7 @@ function edit(index) {
 		},
 	});
 	
-	$('#ucode').textbox({'readonly': true});
+//	$('#ucode').textbox({'readonly': true});
 	
 	//设置机构
 	$("#branch").empty();
