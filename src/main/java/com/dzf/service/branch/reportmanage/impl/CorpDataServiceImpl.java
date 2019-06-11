@@ -500,7 +500,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("         WHEN 1 THEN  \n");
 		sql.append("          '已完成'  \n");
 		sql.append("         ELSE  \n");
-		sql.append("          '未开始'  \n");
+		sql.append("          '未完成'  \n");
 		sql.append("       END AS vbsstatues  \n");
 		sql.append("  FROM bd_corp p  \n");
 		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
@@ -525,7 +525,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			sql.append(" AND ").append(where);
 		}
 		if(!"全部".equals(pamvo.getVbillcode())){
-			if("未开始".equals(pamvo.getVbillcode())){
+			if("未完成".equals(pamvo.getVbillcode())){
 				sql.append(" AND nvl(n.taxStateFinish,0) = 0 \n");
 			}else if("已完成".equals(pamvo.getVbillcode())){
 				sql.append(" AND n.taxStateFinish = 1 \n");

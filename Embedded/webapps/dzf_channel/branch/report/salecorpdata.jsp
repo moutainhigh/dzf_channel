@@ -79,7 +79,7 @@
 					<select id="bszt" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:102px;height:28px;">
 						<option value="全部">全部</option>
-						<option value="未开始">未开始</option>
+						<option value="未完成">未完成</option>
 						<option value="已完成">已完成</option>
 					</select>
 				</div>
