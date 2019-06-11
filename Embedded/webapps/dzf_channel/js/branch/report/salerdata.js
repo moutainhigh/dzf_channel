@@ -105,15 +105,32 @@ function calFooter(){
 }
 
 function reloadData(){
-	var url = DZF.contextPath + '/branch/salerData!query.action';
-	$('#grid').datagrid('options').url = url;
-	$('#grid').datagrid('load', {
-		'begdate' : $("#begdate").datebox('getValue'),
-		'enddate' : $("#enddate").datebox('getValue'),
-		'cpkcode' : $("#cpkcode").textbox('getValue'),
+	$.ajax({
+		url : DZF.contextPath + '/branch/salerData!query.action',
+		type : "post",
+		dataType : "json",
+		data : {
+			'begdate' : $("#begdate").datebox('getValue'),
+			'enddate' : $("#enddate").datebox('getValue'),
+			'cpkcode' : $("#cpkcode").textbox('getValue'),
+				},
+		traditional : true,
+		async : false,
+		success : function(data, textStatus) {
+			if (data.success) {
+				$("#grid").datagrid("loadData",data.rows);
+				if(data.status==1){
+					$("#export").hide();
+				}else{
+					$("#export").show();
+				}
+				$('#grid').datagrid('clearSelections');
+				$('#qrydialog').hide();
+			} else {
+				Public.tips({content : data.msg,type:1});
+			}
+		}
 	});
-	$('#grid').datagrid('clearSelections');
-	$('#qrydialog').hide();
 }
 
 /**

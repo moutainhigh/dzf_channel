@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.branch.reportmanage.CompanyDataVO;
-import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
@@ -52,7 +52,7 @@ public class SalerDataAction extends PrintUtil<CompanyDataVO> {
 	 * 查询
 	 */
 	public void query() {
-		Grid grid = new Grid();
+		Json grid = new Json();
 		try {
 			UserVO uservo = getLoginUserInfo();
 			if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
@@ -70,7 +70,11 @@ public class SalerDataAction extends PrintUtil<CompanyDataVO> {
 			int rows = qvo == null ? 100000 : qvo.getRows();
 			List<CompanyDataVO> list = saler.query(qvo);
 			int len = list == null ? 0 : list.size();
+			grid.setStatus(1);
 			if (list != null && list.size() > 0) {
+				if(qvo.getIpaytype()!=null && qvo.getIpaytype()==2){
+					grid.setStatus(2);
+				}
 				list = getPagedVOs(list, page, rows);
 				grid.setRows(list);
 				grid.setTotal((long) (len));

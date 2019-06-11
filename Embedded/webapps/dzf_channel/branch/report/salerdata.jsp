@@ -25,7 +25,7 @@
 					<span class="cur"></span>
 				</div>
 				<div class="right">
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="export" data-options="plain:true" onclick="doExport()">导出</a>
 				</div>
 			</div>
 		</div>
