@@ -48,14 +48,14 @@ function initCpname() {
 function initPcount() {
 	$('#cpcount').searchbox({
 		editable : false,
-		prompt : '选择客户',
+		prompt : '选择会计',
 		searcher : function() {
 			$('#kjdlg').dialog({
 				width : 500,
 				height : 500,
 				readonly : true,
 				close : true,
-				title : '选择客户',
+				title : '选择会计',
 				modal : true,
 				href : DZF.contextPath + '/branch/ref/kj_select.jsp',
 				queryParams : {

@@ -113,7 +113,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if (isqrynum) {
-			sql.append(" SELECT count(DISTINCT p.pk_corp) \n");
+			sql.append(" SELECT count(DISTINCT p.vsuperaccount) \n");
 		} else {
 			sql.append("SELECT DISTINCT p.vsuperaccount AS id,  \n");
 			sql.append("       r.user_code AS code, \n");
