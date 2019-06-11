@@ -364,7 +364,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			DZFDouble countmny = SafeCompute.add(cvo.getNyhmny(), cvo.getNreceivemny());
 			countmny = SafeCompute.sub(countmny, cvo.getNbookmny());
 			countmny = SafeCompute.div(countmny, cvo.getNmservicemny());
-			int num = (int) Math.round(countmny.doubleValue());
+			int num = (int) Math.ceil(countmny.doubleValue());//只入不舍
 			int cnum = ToolsUtil.getCyclenum(cvo.getDbegindate(), new DZFDate());
 			int rnum = num - cnum + 1;
 			if (rnum < 0) {
