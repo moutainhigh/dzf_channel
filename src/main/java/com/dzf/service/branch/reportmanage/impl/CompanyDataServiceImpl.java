@@ -199,13 +199,13 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append(" where nvl(t.dr, 0) = 0 ");
 		sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
 		sql.append("   and nvl(t.icosttype, 0) = 0 ");
+		sql.append(" and ").append(SqlUtil.buildSqlForIn("t.pk_corp", pks));
 		sql.append("   and exists (select p.pk_corp ");
 		sql.append("          from bd_corp p ");
 		sql.append("         where nvl(p.dr, 0) = 0 ");
 		sql.append("           and nvl(p.isaccountcorp, 'N') = 'N' ");
 		sql.append("           and createdate >= ? ");
 		sql.append("           and createdate <= ? ");
-		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp", pks));
 		sql.append("           and p.pk_corp = t.pk_corpk) ");
 		sql.append(" group by pk_corp ");
 		List<CompanyDataVO> contracts = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
