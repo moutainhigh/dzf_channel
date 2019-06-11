@@ -103,7 +103,7 @@
 			params['dr']=ovince
 		}
 		grid = $('#gsTable').datagrid({
-			url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
+		    url: DZF.contextPath + '/corp/channel!queryChannel.action',
 		    method: 'post',
 			fitColumns: true,
 			idField:'pk_gs',
