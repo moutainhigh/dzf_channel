@@ -453,7 +453,6 @@ function queryCorpInfo(){
 							$('#phone').textbox('setValue',data.rows.phone);
 							$('#pk_corp').val(data.rows.corpid);
 						}
-						$('#cname').textbox('readonly',true);
 					}
 				},
 			});

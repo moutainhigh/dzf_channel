@@ -14,7 +14,7 @@
 </head>
 <body class="wrapper char" style="height:100%"> 
     <div class="easyui-layout" style="height:100%;">
-	    <div class="char" data-options="region:'west',border:false,split:true" style="width:22%;border-width:1px 1px 1px 1px;" id="leftGrid">
+	    <div class="char" data-options="region:'west',border:false,split:true" style="width:22%;border-width:1px 0px 0px 0px;" id="leftGrid">
 			<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
     		<div class="index_top mod-toolbar-top"  >
 		 		<div class="right mod-btn" id="view_buttons">
@@ -28,7 +28,7 @@
 			<table id="instgrid" ></table>
 		</div>
 		
-	 	<div class="char" data-options="region:'center',border:true,split:true" style="width:50%;border-width:1px 1px 1px 1px;" id="rightGrid" >
+	 	<div class="char" data-options="region:'center',border:true,split:true" style="width:48%;border-width:1px 0px 0px 0px;" id="rightGrid" >
 	    	<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
     		<div class="index_top mod-toolbar-top"  >
 		 		<div class="right mod-btn" id="view_buttons">
@@ -79,7 +79,7 @@
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">公司名称：</label> 
-					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;"/>
+					    <input class="easyui-textbox" id="cname" name="uname" style="width:200px;height:28px;" readonly/>
 				</div>
 				<div class="time_col time_colp10">
 						<label style="width:100px;text-align:right;margin-left:52px;">联系人：</label> 

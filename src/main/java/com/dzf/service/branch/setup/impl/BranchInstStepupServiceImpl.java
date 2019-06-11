@@ -112,6 +112,7 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 	 * @param vo
 	 */
 	private void checkIsAdd(BranchInstSetupBVO vo) {
+		
 		StringBuffer esql = new StringBuffer();
 		SQLParameter espm=new SQLParameter();
 		espm.addParam(vo.getVname());
@@ -123,6 +124,10 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		CorpVO corp = (CorpVO) singleObjectBO.executeQuery(esql.toString(), espm, new BeanProcessor(CorpVO.class));
 		if(corp==null){
 			throw new BusinessException("此企业识别号不存在");
+		}
+		
+		if(StringUtil.isEmpty(vo.getUnitname())){
+			throw new BusinessException("公司名称不能为空");
 		}
 		
 		StringBuffer sql = new StringBuffer();
