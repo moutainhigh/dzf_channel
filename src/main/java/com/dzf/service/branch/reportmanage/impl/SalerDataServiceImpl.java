@@ -110,8 +110,8 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("  from bd_corp p ");
 			sql.append(" where nvl(p.dr,0) = 0 ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
-			sql.append("   and substr(createdate, 0, 7) >= ? ");
-			sql.append("   and substr(createdate, 0, 7) <= ? ");
+			sql.append("   and createdate >= ? ");
+			sql.append("   and createdate <= ? ");
 			sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
 			sql.append(" group by p.foreignname ");
 			List<CompanyDataVO> addCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), sp,
@@ -133,8 +133,8 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append(" where nvl(p.dr,0) = 0 ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 			sql.append("   and nvl(p.isseal, 'N') = 'Y' ");
-			sql.append("   and substr(p.sealeddate, 0, 7) >= ? ");
-			sql.append("   and substr(p.sealeddate, 0, 7) <= ? ");
+			sql.append("   and p.sealeddate >= ? ");
+			sql.append("   and p.sealeddate <= ? ");
 			sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
 			sql.append(" group by p.foreignname ");
 			List<CompanyDataVO> loseCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), sp,
@@ -168,8 +168,8 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
 			sql.append("   and nvl(p.dr, 0) = 0 ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
-			sql.append("   and substr(createdate, 0, 7) >= ? ");
-			sql.append("   and substr(createdate, 0, 7) <= ? ");
+			sql.append("   and p.createdate >= ? ");
+			sql.append("   and p.createdate <= ? ");
 			sql.append(" and ").append(SqlUtil.buildSqlForIn("t.pk_corp ", pks));
 			sql.append(" group by p.foreignname  ");
 
