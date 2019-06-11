@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.branch.reportmanage.CompanyDataVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
@@ -187,12 +186,12 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql = new StringBuffer();// 合同
 		sql.append("select count(t.pk_contract) contcorp, ");
 		sql.append("       sum(t.ntotalmny) totalmny, ");
-		sql.append("       sum(w.nunyhys) ysmny, ");
+		sql.append("       sum(w.ysreceivemny) ysmny, ");
 		sql.append("       sum(w.wsreceivemny) wsmny, ");
 		sql.append("       t.pk_corp ");
 		sql.append("  from ynt_contract t ");
 		sql.append("  left join (select distinct b.pk_contract, ");
-		sql.append("                             sum(nvl(b.nunyhys, 0)) nunyhys, ");
+		sql.append("                             sum(nvl(b.ysreceivemny, 0)) ysreceivemny, ");
 		sql.append("                             sum(nvl(b.wsreceivemny, 0)) wsreceivemny ");
 		sql.append("               from ynt_contract_b b ");
 		sql.append("              where nvl(b.dr, 0) = 0 ");

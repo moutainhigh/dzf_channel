@@ -153,12 +153,12 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql = new StringBuffer();// 合同
 			sql.append("select count(t.pk_contract) contcorp, ");
 			sql.append("       sum(t.ntotalmny) totalmny, ");
-			sql.append("       sum(w.nunyhys) ysmny, ");
+			sql.append("       sum(w.ysreceivemny) ysmny, ");
 			sql.append("       sum(w.wsreceivemny) wsmny, ");
 			sql.append("       nvl(p.foreignname,'null') branchname ");
 			sql.append("  from ynt_contract t ");
 			sql.append("  left join (select distinct b.pk_contract, ");
-			sql.append("                             sum(nvl(b.nunyhys, 0)) nunyhys, ");
+			sql.append("                             sum(nvl(b.ysreceivemny, 0)) ysreceivemny, ");
 			sql.append("                             sum(nvl(b.wsreceivemny, 0)) wsreceivemny ");
 			sql.append("               from ynt_contract_b b ");
 			sql.append("              where nvl(b.dr, 0) = 0 ");
