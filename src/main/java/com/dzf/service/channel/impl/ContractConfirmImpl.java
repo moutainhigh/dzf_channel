@@ -84,7 +84,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
 		QrySqlSpmVO sqpvo =  getQryCondition(paramvo, "listqry", true);
-//		return multBodyObjectBO.queryDataTotal(ContractConfrimVO.class,sqpvo.getSql(), sqpvo.getSpm());
 		return multBodyObjectBO.getDataTotal(sqpvo.getSql(), sqpvo.getSpm());
 	}
 
@@ -285,18 +284,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(8);
-//						}else{
-//							confvo.setIdeductpropor(10);
-//						}
 						confvo.setIdeductpropor(10);
 					}else{
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(ratevo.getIrenewrate());
-//						}else{
-//							confvo.setIdeductpropor(ratevo.getInewrate());
-//						}
 						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
@@ -311,18 +300,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(5);
-//						}else{
-//							confvo.setIdeductpropor(5);
-//						}
 						confvo.setIdeductpropor(10);
 					}else{
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(ratevo.getIrenewrate());
-//						}else{
-//							confvo.setIdeductpropor(ratevo.getInewrate());
-//						}
 						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
@@ -337,18 +316,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 					confvo.setIscanedit(DZFBoolean.TRUE);
 				}else{
 					if(ratevo == null){//没有设置
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(8);
-//						}else{
-//							confvo.setIdeductpropor(10);
-//						}
 						confvo.setIdeductpropor(10);
 					}else{
-//						if(confvo.getIsxq() != null && confvo.getIsxq().booleanValue()){
-//							confvo.setIdeductpropor(ratevo.getIrenewrate());
-//						}else{
-//							confvo.setIdeductpropor(ratevo.getInewrate());
-//						}
 						if(confvo.getIchargetype() != null && confvo.getIchargetype() == 2){
 							confvo.setIdeductpropor(ratevo.getIrenewrate());
 						}else{
@@ -424,7 +393,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("       cn.tstamp,  \n") ; 
 			sql.append("       cn.deductdata,  \n") ; 
 			sql.append("       cn.deductime,  \n") ; 
-//		sql.append("       cn.vconmemo,  \n") ; 
 			sql.append("       cn.voperator,  \n") ; 
 			sql.append("       cn.ndedsummny,  \n") ; 
 			sql.append("       cn.ndeductmny,  \n") ; 
@@ -449,8 +417,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("       cn.nsubdeductmny,  \n") ; 
 			sql.append("       cn.nsubdedrebamny  \n") ; 
 		}
-		
-		
 		sql.append("  FROM ynt_contract t  \n") ; 
 		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
@@ -466,11 +432,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND t.isflag = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
-//		sql.append("   AND nvl(t.vstatus,0) != 0  \n") ; //未提交合同不查询
 		
-		//合同状态过滤
-//		sql.append(" AND ((t.vstatus > 0 and nvl(t.iversion,4) >= 4))") ;
-		//合同状态过滤：1、未提交的合同显示；2、待审核的合同，申请状态为待运营处理（过滤非常规套餐）；
+		//合同状态过滤：1、未提交的合同不显示；2、待审核的合同，申请状态为待运营处理（过滤非常规套餐）；
 		sql.append("   AND ((t.vstatus != 0 AND t.vstatus != 5) OR  \n") ; 
 		sql.append("        (t.vstatus = 5 AND nvl(t.iversion, 4) >= 4))  \n") ; 
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
@@ -533,7 +496,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				sql.append("   AND iapplystatus = 4  \n");
 				sql.append(" ) \n");
 			}
-			
 		}
 		if(paramvo.getCorptype() != null){
 			if(paramvo.getCorptype() == 1){
@@ -560,15 +522,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append(" AND cn.ideductpropor = ? \n") ; 
 			spm.addParam(paramvo.getSeletype());
 		}
-		//非常规套餐数据过滤：（未提交合同不查询，已在上边过滤状态）1、常规套餐；2、非常规套餐状态不等于待审核、待提交；3、常规套餐状态为待审核，需从申请表过滤；
-//		sql.append("   AND ( nvl(t.iyear,0) = 0  OR ( nvl(t.iyear,0) = 1 AND t.vstatus != 5 )  \n") ; 
-//		sql.append("    OR ( nvl(t.iyear,0) = 1 AND t.vstatus = 5 AND t.pk_contract IN  \n") ; 
-//		sql.append("   (SELECT pk_contract  \n") ; 
-//		sql.append("    FROM cn_changeapply  \n") ; 
-//		sql.append("   WHERE nvl(dr, 0) = 0  \n") ; 
-//		sql.append("     AND ichangetype = 3  \n") ; 
-//		sql.append("     AND iapplystatus = 4  \n") ; 
-//		sql.append("   )))  \n") ; 
 		
 		sql.append(" ORDER BY t.dsubmitime DESC \n");
 		qryvo.setSql(sql.toString());
@@ -1314,14 +1267,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 							}else{
 								detvo.setVmemo("存量客户");
 							}
-							//detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						} else {
 							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
 								detvo.setVmemo("小规模转一般人");
 							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
 								detvo.setVmemo("一般人转小规模");
 							}
-							//detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						}
 						detvo.setCoperatorid(cuserid);
 						detvo.setDoperatedate(new DZFDate());
@@ -1375,14 +1326,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 							}else{
 								detvo.setVmemo("存量客户");
 							}
-							//detvo.setVmemo("存量客户：" + datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						} else {
 							if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_2 == datavo.getPatchstatus()){
 								detvo.setVmemo("小规模转一般人");
 							}else if(datavo.getPatchstatus() != null && IStatusConstant.ICONTRACTTYPE_5 == datavo.getPatchstatus()){
 								detvo.setVmemo("一般人转小规模");
 							}
-							//detvo.setVmemo(datavo.getCorpkname() + "、" + datavo.getVcontcode());
 						}
 						detvo.setCoperatorid(cuserid);
 						detvo.setDoperatedate(new DZFDate());
@@ -1418,11 +1367,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private Map<String,Object> CheckBeforeAudit(ContractConfrimVO confrimvo, String checktype) throws DZFWarpException{
 		Map<String,Object> map = new HashMap<String,Object>();
 		String errmsg = "";
-		String corpname = "";
-		CorpVO corpvo = CorpCache.getInstance().get(null, confrimvo.getPk_corp());
-		if(corpvo != null){
-			corpname = corpvo.getUnitname();
-		}
 		// 1、审核数据状态校验
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -1488,8 +1432,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				errmsg = "合同号：" + confrimvo.getVcontcode() + "扣款金额大于预付款余额与返点余额之和；";
 				throw new BusinessException(errmsg);
 			}
-			
-			
 		}
 
 		// 3、套餐发布个数校验（补提交的合同不校验套餐数量）
@@ -2104,7 +2046,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 					sql.append("   AND l.pk_corp = ?  \n");
 					spm.addParam(paramvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
-					
 					if(res == 1){
 						ChnDetailVO detvo = new ChnDetailVO();
 						detvo.setPk_corp(paramvo.getPk_corp());
@@ -2225,11 +2166,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (list != null && list.size() > 0) {
 			ContractConfrimVO confvo = list.get(0);
-			
-//			UserVO uservo = UserCache.getInstance().get(confvo.getVadviser(), null);
-//			if (uservo != null) {
-//				confvo.setVadviser(uservo.getUser_name());// 销售顾问
-//			}
 			UserVO uservo = userServiceImpl.queryUserJmVOByID(confvo.getVoperator());
 			if (uservo != null) {
 				confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
