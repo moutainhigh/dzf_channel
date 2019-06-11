@@ -166,6 +166,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("  left join bd_corp p on t.pk_corpk=p.pk_corp ");
 			sql.append(" where nvl(t.dr, 0) = 0 ");
 			sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
+			sql.append("   and nvl(t.icosttype, 0) = 0 ");
 			sql.append("   and nvl(p.dr, 0) = 0 ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 			sql.append("   and p.createdate >= ? ");

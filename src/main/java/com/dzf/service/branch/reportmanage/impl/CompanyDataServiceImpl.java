@@ -198,6 +198,7 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("              group by b.pk_contract) w on t.pk_contract = w.pk_contract ");
 		sql.append(" where nvl(t.dr, 0) = 0 ");
 		sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
+		sql.append("   and nvl(t.icosttype, 0) = 0 ");
 		sql.append("   and exists (select p.pk_corp ");
 		sql.append("          from bd_corp p ");
 		sql.append("         where nvl(p.dr, 0) = 0 ");
