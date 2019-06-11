@@ -453,6 +453,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("       corp.foreignname,  \n");
 		sql.append("       corp.createdate,  \n");
 		sql.append("       corp.vbsstatues,  \n");
+		sql.append("       corp.pk_corp,  \n");
 
 		sql.append("       cont.dbegindate,  \n");
 		sql.append("       cont.denddate,  \n");
