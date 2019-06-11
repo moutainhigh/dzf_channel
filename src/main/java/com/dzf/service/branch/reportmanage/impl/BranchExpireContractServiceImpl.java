@@ -82,11 +82,11 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 						querysql.append("  select  \n");
 						querysql.append("     nvl(sum(case when corp.isseal = 'Y' and substr(con.denddate, 1, 7) = ? then 1 else 0 end),0) losscorpnum, \n");
 						querysql.append("     nvl(sum(distinct case when substr(con.dbegindate, 1, 7) >= ? then 1 else 0 end),0) signednum,  \n");
-						querysql.append("     corp.fathercorp \n");
+						querysql.append("     con.pk_corp \n");
 						querysql.append("     from ynt_contract con left join bd_corp corp on  \n");
 						querysql.append("     con.pk_corpk  = corp.pk_corp \n");
 						querysql.append("     left join br_branchcorp bc on \n");
-						querysql.append("     corp.fathercorp = bc.pk_corp \n");
+						querysql.append("     con.pk_corp = bc.pk_corp \n");
 						querysql.append("     where nvl(con.dr,0) = 0 \n");
 						querysql.append("     and nvl(corp.dr,0) = 0 \n");
 						querysql.append("     and nvl(bc.dr,0) = 0 \n");
@@ -97,8 +97,8 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 						querysql.append("     and con.pk_corp = ? \n");
 						querysql.append("     and " + condition + "\n");
 						querysql.append("     and " + setcondition + "\n");
-						querysql.append("     group by corp.fathercorp \n");
-						querysql.append("     order by corp.fathercorp \n");
+						querysql.append("     group by con.pk_corp \n");
+						querysql.append("     order by con.pk_corp \n");
 
 						QueryContractVO cvo = (QueryContractVO) singleObjectBO.executeQuery(querysql.toString(),
 								queryspm, new BeanProcessor(QueryContractVO.class));
@@ -186,12 +186,12 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 		sql.append("select  \n");
 		//sql.append("    nvl(sum(case when corp.isseal = 'Y' then 1 else 0 end),0) losscorpnum,  \n");
 		sql.append("	wmsys.wm_concat(distinct con.pk_corpk) corpids, \n");
-		sql.append("	corp.pk_corp,corp.unitname,corp.innercode, \n");
+		sql.append("	con.pk_corp,corp.unitname,corp.innercode, \n");
 		sql.append("	nvl(count(distinct con.pk_corpk),0) expirenum \n");
 		sql.append(" 	from ynt_contract con left join bd_corp corp on \n");
 		sql.append("	con.pk_corp  = corp.pk_corp   \n");
 		sql.append("    left join br_branchcorp bc on \n");
-		sql.append("    corp.pk_corp = bc.pk_corp \n");
+		sql.append("    con.pk_corp = bc.pk_corp \n");
 		sql.append("	where nvl(con.dr,0) = 0   \n");
 		sql.append("	and nvl(corp.dr,0) = 0   \n");
 		sql.append("	and nvl(bc.dr,0) = 0   \n");
@@ -209,8 +209,8 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 			spm.addParam("%" + qvo.getInnercode() + "%");
 		}
 
-		sql.append("	group by corp.pk_corp,corp.unitname,corp.innercode \n");
-		sql.append("	order by corp.pk_corp \n");
+		sql.append("	group by con.pk_corp,corp.unitname,corp.innercode \n");
+		sql.append("	order by con.pk_corp \n");
 
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
