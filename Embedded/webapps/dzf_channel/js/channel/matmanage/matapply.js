@@ -608,6 +608,20 @@ function initCard(){
 			}
 		}, {
 			width : '91',
+			title : '可申请数量',
+			field : 'enapplynum',
+            halign : 'center',
+			align : 'right',
+			editor : {
+				type : 'numberbox',
+				options : {
+					height : 28,
+					required:true,
+					min : 1,
+				}
+			}
+		}, {
+			width : '91',
 			title : '申请数量',
 			field : 'applynum',
             halign : 'center',
@@ -941,12 +955,14 @@ function dClickMat(rowTable){
 				var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
 				var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
 				var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
+				var enapplynum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'enapplynum'});
 				var appnum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'applynum'});
 				
 				
 				$(wlname.target).textbox('setValue', rowTable[i].wlname);
 				$(unit.target).textbox('setValue', rowTable[i].unit);
 				$(matfileid.target).textbox('setValue', rowTable[i].matfileid);
+				$(enapplynum.target).textbox('setValue', rowTable[i].enapplynum);
 				$(appnum.target).textbox('setValue', 1);
 				
 				if(i!=rowTable.length-1){
@@ -1147,6 +1163,7 @@ function onSave(t){
 	
 	var postdata = new Object();
 	var body = "";
+	var name = [];
 	//物料数据
 	var rows = $('#cardGrid').datagrid('getRows');
 	for(var j = 0;j< rows.length; j++){
@@ -1155,6 +1172,22 @@ function onSave(t){
 	postdata["body"] = body;
 	
 	if(t==1){//新增保存
+		for(var i = 0; i < rows.length; i++){
+			if(parseInt(rows[i].enapplynum) < parseInt(rows[i].applynum)){
+				name.push(rows[i].wlname);
+			}
+		}
+		if(!isEmpty(name)){
+			for(var i=0;i<name.length;i++){
+				Public.tips({
+					content : name+"可申请数量不足，请调整",
+					type : 2
+				});
+			}
+			
+		}
+		
+		return;
 		onSaveSubmit(postdata,t);
 	}else{
 		onSaveSubmit(postdata,null);
