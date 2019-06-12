@@ -37,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:230px;">
+		<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:258px;">
 			<s class="s"><i class="i"></i></s>
 			<h3>
 				<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -57,6 +57,11 @@
 				</span>
 				</div>
 		    </div>
+		    <div class="time_col time_colp10">
+				<label style="text-align:right;width:85px;">机构名称：</label> 
+				<input id="pk_bset" class="easyui-combobox" style="width:286px;height:28px;"
+				    editable="false" data-options="valueField:'pk_bset', textField:'name', panelHeight:'200'" />
+			</div>
 			<div class="time_col time_colp10">
 				<label style="text-align:right;width: 85px;">公司编码：</label> 
 				<input id="ucode"  name="ucode" class="easyui-textbox" style="width: 286px; height: 28px;"/>  

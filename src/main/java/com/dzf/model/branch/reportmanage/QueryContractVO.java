@@ -14,6 +14,9 @@ public class QueryContractVO extends SuperVO {
 
 	@FieldAlias("uname")
 	public String unitname;// 公司名称
+	
+	@FieldAlias("pk_bset")
+	public String pk_branchset;// 机构id
 
 	@FieldAlias("ucode")
 	public String innercode;// 公司编码
@@ -41,10 +44,6 @@ public class QueryContractVO extends SuperVO {
 	
 	@FieldAlias("pk_corp")
 	public String  pk_corp;//公司ID
-	
-	@FieldAlias("kcount")
-	public Integer kcount;//不同公司的客户数
-
 	
 	public String getPk_contract() {
 		return pk_contract;
@@ -126,20 +125,20 @@ public class QueryContractVO extends SuperVO {
 		this.pk_corp = pk_corp;
 	}
 	
-	public Integer getKcount() {
-		return kcount;
-	}
-
-	public void setKcount(Integer kcount) {
-		this.kcount = kcount;
-	}
-
 	public String getNextqjq() {
 		return nextqjq;
 	}
 
 	public void setNextqjq(String nextqjq) {
 		this.nextqjq = nextqjq;
+	}
+	
+	public String getPk_branchset() {
+		return pk_branchset;
+	}
+
+	public void setPk_branchset(String pk_branchset) {
+		this.pk_branchset = pk_branchset;
 	}
 
 	@Override

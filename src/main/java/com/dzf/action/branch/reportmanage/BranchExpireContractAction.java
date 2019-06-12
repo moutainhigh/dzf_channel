@@ -23,6 +23,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ExpireContractExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.branch.reportmanage.QueryContractVO;
+import com.dzf.model.branch.setup.BranchInstSetupVO;
+import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -111,6 +113,30 @@ public class BranchExpireContractAction extends BaseAction<QueryContractVO>{
 		}
 		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
 		return cvos;
+	}
+	
+	
+	/**
+	 * 查询所有机构名称
+	 */
+	public void queryComboBox(){
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			List<BranchInstSetupVO> list = exconser.queryComboBox(uservo);
+			if (list == null || list.size() == 0) {
+				grid.setRows(new ArrayList<MaterielFileVO>());
+				grid.setSuccess(true);
+				grid.setMsg("查询数据为空");
+			} else {
+				grid.setRows(list);
+				grid.setSuccess(true);
+				grid.setMsg("查询成功");
+			}
+		} catch (Exception e) {
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
 	}
 	
 	

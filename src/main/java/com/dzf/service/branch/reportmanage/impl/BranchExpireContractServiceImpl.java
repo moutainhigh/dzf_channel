@@ -13,6 +13,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
 import com.dzf.model.branch.reportmanage.QueryContractVO;
+import com.dzf.model.branch.setup.BranchInstSetupVO;
 import com.dzf.model.branch.setup.UserBranchVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -158,6 +159,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 	 * @param setids
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private QrySqlSpmVO getQrySqlSpm(QueryContractVO qvo, UserVO uservo, List<String> setids) {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
@@ -208,6 +210,11 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 			sql.append(" AND corp.innercode like ? ");
 			spm.addParam("%" + qvo.getInnercode() + "%");
 		}
+		
+		if (!StringUtil.isEmpty(qvo.getPk_branchset())) {
+			sql.append(" AND bc.pk_branchset = ? ");
+			spm.addParam(qvo.getPk_branchset());
+		}
 
 		sql.append("	group by con.pk_corp,corp.unitname,corp.innercode \n");
 		sql.append("	order by con.pk_corp \n");
@@ -215,5 +222,40 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BranchInstSetupVO> queryComboBox(UserVO uservo) {
+		
+		StringBuffer qsql = new StringBuffer();
+		SQLParameter qspm = new SQLParameter();
+		qspm.addParam(uservo.getCuserid());
+		qsql.append("  select \n");
+		qsql.append("    wmsys.wm_concat(pk_branchset) pk_branchset \n");
+		qsql.append("    from  br_user_branch  \n");
+		qsql.append("    where nvl(dr,0) = 0 and \n");
+		qsql.append("    cuserid = ? \n");
+		BranchInstSetupVO vo= (BranchInstSetupVO) singleObjectBO.executeQuery(qsql.toString(), qspm, new BeanProcessor(BranchInstSetupVO.class));
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pk_branchset,vname  \n");
+		sql.append("  FROM br_branchset  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		if(vo.getPk_branchset()!=null){
+			List<String> asList = Arrays.asList(vo.getPk_branchset().split(","));
+			String condition = SqlUtil.buildSqlForIn("pk_branchset",
+					asList.toArray(new String[asList.size()]));
+			sql.append("  and "+condition +"\n");
+			sql.append(" order by ts desc \n");
+			return (List<BranchInstSetupVO>) singleObjectBO.executeQuery(sql.toString(), null,
+					new BeanListProcessor(BranchInstSetupVO.class));
+		}else{
+			return null;
+		}
+		
+		
 	}
 }

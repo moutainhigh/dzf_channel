@@ -11,6 +11,7 @@ $(function(){
 	$("#jqj").html(qjq);
 	
 	reloadData();
+	initInstName();
 });
 
 
@@ -65,6 +66,7 @@ function reloadData() {
 	queryParams['qjq'] = qjq;
 	queryParams['uname'] = $('#uname').textbox('getValue');
 	queryParams['ucode'] = $('#ucode').textbox('getValue');
+	queryParams['pk_bset'] = $('#pk_bset').combobox('getValue');
 	
   	$('#grid').datagrid('options').queryParams = queryParams;
   	$('#grid').datagrid('reload');
@@ -90,6 +92,29 @@ function clearQuery(){
 function closeCx(){
 	$("#qrydialog").css("visibility","hidden");
 }
+
+
+
+/**
+ * 查询机构名称下拉
+ */
+
+function initInstName(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/branch/expcontract!queryComboBox.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$("#pk_bset").combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+	});
+};
 
 
 /**
