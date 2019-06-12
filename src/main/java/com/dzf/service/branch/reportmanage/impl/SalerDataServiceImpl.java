@@ -91,6 +91,9 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			if (wjzCorps != null && wjzCorps.size() > 0) {
 				for (CompanyDataVO companyDataVO : wjzCorps) {
 					getVO = map.get(companyDataVO.getBranchname());
+					if(getVO == null){
+						continue;
+					}	
 					getVO.setWjzcorp(companyDataVO.getWjzcorp());
 				}
 			}
