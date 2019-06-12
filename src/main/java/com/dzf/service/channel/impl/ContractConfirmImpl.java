@@ -430,9 +430,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		sql.append("   AND account.ischannel = 'Y' \n");
 		sql.append("   AND account.isaccountcorp = 'Y' \n");
+		//公司类型过滤：9：演示加盟商
 		if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
 			sql.append(" AND account.channeltype = ? \n");
 			spm.addParam(paramvo.getIpaymode());
+		}else{
+			sql.append(" AND account.channeltype != 9 \n");
 		}
 //		if(!"info".equals(qrytype)){
 //			sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 

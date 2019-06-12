@@ -916,18 +916,24 @@ function formatDocLink(val,row,index){
 
 /**
  * 标签查询
- * @param type  1：待审核；2：存量待审；3：待变更；
+ * @param type  1：待审核；2：存量待审；3：待变更；4：演示待审核
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	clearQryParam(queryParams);
-	if(type == 3){
+	if(type == 1){
+		queryParams.ipmode = -1;
+		queryParams.destatus = 5;
+	}else if(type == 2){
+		queryParams.ipmode = -1;
+		queryParams.isncust = "Y";
+		queryParams.destatus = 5;
+	}else if(type == 3){
+		queryParams.ipmode = -1;
 		queryParams.qtype = 3;
-	}else{
-		if(type == 2){
-			queryParams.isncust = "Y";
-		}
+	}else if(type == 4){
+		queryParams.ipmode = 9;
 		queryParams.destatus = 5;
 	}
 	grid.datagrid('options').url =contextPath + '/contract/contractconf!query.action';
