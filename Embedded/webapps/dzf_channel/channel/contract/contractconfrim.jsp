@@ -162,7 +162,7 @@
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">纳税人资格：</label>
 					<select id="corptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
-						style="width:100px;height:28px;">
+						style="width:100px;height:28px;" editable="false">
 						<option value="-1">全部</option>
 						<option value="1">小规模</option>
 						<option value="2">一般人</option>
@@ -174,6 +174,12 @@
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">扣费比例：</label>
 					<input id="qpropor" class="easyui-numberbox" style="width:100px;height:28px;" />
+					<label style="width:73px;text-align:right">公司类型：</label>
+					<select id="ipmode" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:105px;height:28px;" editable="false">
+						<option value="-1">正式加盟商</option>
+						<option value="9">演示加盟商</option>
+					</select>
 				</div>
 			</form>
 			<p>

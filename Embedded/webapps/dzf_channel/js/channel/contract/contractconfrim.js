@@ -249,7 +249,7 @@ function initChannel(){
                     readonly: true,
                     title: '选择加盟商',
                     modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    href: DZF.contextPath + '/ref/channelys_select.jsp',
                     queryParams : {
     					ovince :"-1"
     				},
@@ -463,6 +463,8 @@ function reloadData(){
 		stype = -1;
 	}
 	queryParams.stype = stype;
+	queryParams.ipmode = $('#ipmode').combobox('getValue');
+	
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	if(ischeck){
@@ -494,6 +496,7 @@ function clearQryParam(queryParams){
 	queryParams.mid = null;
 	queryParams.oid = null;
 	queryParams.stype = null;
+	queryParams.ipmode = -1;
 	delete queryParams.stype;
 }
 
