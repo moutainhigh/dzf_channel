@@ -224,6 +224,8 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			if (pklist != null && pklist.size() > 0) {
 				corpks = pklist.toArray(new String[0]);
 				corpks = getPagedPKs(corpks, pamvo.getPage(), pamvo.getRows());
+			}else{
+				return null;
 			}
 			
 			DZFDate date = new DZFDate();
