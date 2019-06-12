@@ -422,7 +422,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		}
 		// 销售人员
 		if (!StringUtil.isEmpty(pamvo.getUser_name())) {
-			sql.append(" AND p.foreignname like ? \n");
+			sql.append(" AND c.foreignname like ? \n");
 			spm.addParam("%" + pamvo.getUser_name() + "%");
 		}
 		// 主办会计
