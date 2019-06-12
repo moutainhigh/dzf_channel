@@ -31,6 +31,8 @@
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(-1)">全部</a>
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px;" 
 							onclick="qryData(2)">待审批</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:0px;margin-right:15px;" 
+							onclick="qryData(3)">演示待审批</a>
 					</div>
 				</div>
 				
@@ -47,7 +49,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 230px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 260px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -95,6 +97,14 @@
 					<label style="text-align:right;width: 43px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width:118px;height:28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" /> 
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">公司类型：</label>
+					<select id="stype" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:120px;height:28px;" editable="false">
+						<option value="-1">正式加盟商</option>
+						<option value="9">演示加盟商</option>
+					</select>
 				</div>
 			</form>
 			<p>

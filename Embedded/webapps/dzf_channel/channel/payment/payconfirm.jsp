@@ -29,8 +29,9 @@
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
 						单据状态：
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;" onclick="qryData(-1)">全部</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(5)">待确认</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(3)">已确认</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(5)">待确认</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(3)">已确认</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(6)">演示待确认</a>
 					</div>
 				</div>
 				
@@ -47,7 +48,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 230px">
+		<div class="qijian_box" id="qrydialog" style="display: none; width: 450px; height: 260px">
 			<s class="s" style="left: 25px;"><i class="i"></i> </s>
 			<form id="query_form">
 				<h3>
@@ -94,6 +95,14 @@
 						<option value="-1">全部</option>
 						<option value="1">首次充值</option>
 						<option value="2">后续充值</option>
+					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="width:80px;text-align:right">公司类型：</label>
+					<select id="corptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:120px;height:28px;" editable="false">
+						<option value="-1">正式加盟商</option>
+						<option value="9">演示加盟商</option>
 					</select>
 				</div>
 			</form>
