@@ -427,7 +427,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		}
 		// 主办会计
 		if (!StringUtil.isEmpty(pamvo.getVmanager())) {
-			sql.append(" AND p.vsuperaccount = ? \n");
+			sql.append(" AND c.vsuperaccount = ? \n");
 			spm.addParam(pamvo.getVmanager());
 		}
 		qryvo.setSql(sql.toString());
