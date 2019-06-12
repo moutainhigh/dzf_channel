@@ -39,6 +39,7 @@ import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.ICarryOverService;
@@ -149,6 +150,8 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("   AND nvl(s.dr, 0) = 0  \n");
 		sql.append("   AND nvl(u.dr, 0) = 0  \n");
 		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append("   AND "+QueryUtil.getWhereSql()+"\n");
+		
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			sql.append("   AND l.vbillcode = ?  \n");
 			spm.addParam(pamvo.getVbillcode());

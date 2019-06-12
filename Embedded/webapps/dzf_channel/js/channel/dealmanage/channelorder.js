@@ -519,7 +519,7 @@ function initRef(){
                     readonly: true,
                     title: '选择加盟商',
                     modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    href: DZF.contextPath + '/ref/channelys_select.jsp',
                     queryParams : {
     					ovince :"-4"
     				},
