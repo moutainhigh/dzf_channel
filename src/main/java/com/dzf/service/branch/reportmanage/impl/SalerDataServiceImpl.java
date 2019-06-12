@@ -52,9 +52,9 @@ public class SalerDataServiceImpl implements ISalerDataService {
 		sql.append("select count(p.pk_corp) allcorp,nvl(p.foreignname,'null') branchname");
 		sql.append("  from bd_corp p ");
 		sql.append(" where nvl(p.dr, 0) = 0 ");
-		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
 		if(qvo.getIpaytype()==1){
 			sql.append(" and p.foreignname = ? ");
 			sp.addParam(qvo.getUser_name());
@@ -75,12 +75,33 @@ public class SalerDataServiceImpl implements ISalerDataService {
 		if(!map.isEmpty()){
 			CompanyDataVO getVO;
 			
+			sql = new StringBuffer();// 未建账客户数
+			sql.append("select count(p.pk_corp) wjzcorp,nvl(p.foreignname,'null') branchname");
+			sql.append("  from bd_corp p ");
+			sql.append(" where nvl(p.dr, 0) = 0 ");
+			sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
+			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+			sql.append("   and nvl(p.isseal, 'N') = 'N' ");
+			sql.append("   and p.begindate is null ");
+//			sql.append("   and p.chargedeptname is not null ");
+			sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
+			sql.append(" group by p.foreignname ");
+			List<CompanyDataVO> wjzCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), null,
+					new BeanListProcessor(CompanyDataVO.class));
+			if (wjzCorps != null && wjzCorps.size() > 0) {
+				for (CompanyDataVO companyDataVO : wjzCorps) {
+					getVO = map.get(companyDataVO.getBranchname());
+					getVO.setWjzcorp(companyDataVO.getWjzcorp());
+				}
+			}
+			
 			sql = new StringBuffer();// 建账客户数
 			sql.append("select count(p.pk_corp) ybrcorp, nvl(p.foreignname,'null') branchname, p.chargedeptname corpname ");
 			sql.append("  from bd_corp p ");
 			sql.append(" where nvl(p.dr, 0) = 0 ");
-			sql.append("   and nvl(p.isseal, 'N') = 'N' ");
+			sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+			sql.append("   and nvl(p.isseal, 'N') = 'N' ");
 			sql.append("   and p.begindate is not null ");
 			sql.append("   and p.chargedeptname is not null ");
 			sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
@@ -109,6 +130,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("select count(p.pk_corp) addcorp, nvl(p.foreignname,'null') branchname ");
 			sql.append("  from bd_corp p ");
 			sql.append(" where nvl(p.dr,0) = 0 ");
+			sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 			sql.append("   and createdate >= ? ");
 			sql.append("   and createdate <= ? ");
@@ -131,6 +153,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("select count(p.pk_corp) losecorp, nvl(p.foreignname,'null') branchname ");
 			sql.append("  from bd_corp p ");
 			sql.append(" where nvl(p.dr,0) = 0 ");
+			sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 			sql.append("   and nvl(p.isseal, 'N') = 'Y' ");
 			sql.append("   and p.sealeddate >= ? ");
@@ -168,6 +191,7 @@ public class SalerDataServiceImpl implements ISalerDataService {
 			sql.append("   and nvl(t.isflag, 'N') = 'Y' ");
 			sql.append("   and nvl(t.icosttype, 0) = 0 ");
 			sql.append("   and nvl(p.dr, 0) = 0 ");
+			sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 			sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 			sql.append("   and p.createdate >= ? ");
 			sql.append("   and p.createdate <= ? ");

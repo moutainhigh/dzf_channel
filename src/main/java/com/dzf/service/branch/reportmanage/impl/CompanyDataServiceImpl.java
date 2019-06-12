@@ -104,9 +104,9 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("select count(p.pk_corp) allcorp, p.fathercorp pk_corp ");
 		sql.append("  from bd_corp p ");
 		sql.append(" where nvl(p.dr, 0) = 0 ");
-		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
 		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
 		sql.append(" group by p.fathercorp ");
 		List<CompanyDataVO> allCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), null,
@@ -117,13 +117,34 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 				getVO.setAllcorp(companyDataVO.getAllcorp());
 			}
 		}
+		
+		sql = new StringBuffer();// 未建账客户数
+		sql.append("select count(p.pk_corp) wjzcorp, p.fathercorp pk_corp");
+		sql.append("  from bd_corp p ");
+		sql.append(" where nvl(p.dr, 0) = 0 ");
+		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
+		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
+		sql.append("   and p.begindate is null ");
+//		sql.append("   and p.chargedeptname is not null ");
+		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
+		sql.append(" group by p.fathercorp ");
+		List<CompanyDataVO> wjzCorps = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), null,
+				new BeanListProcessor(CompanyDataVO.class));
+		if (wjzCorps != null && wjzCorps.size() > 0) {
+			for (CompanyDataVO companyDataVO : wjzCorps) {
+				getVO = map.get(companyDataVO.getPk_corp());
+				getVO.setWjzcorp(companyDataVO.getWjzcorp());
+			}
+		}
 
 		sql = new StringBuffer();// 建账客户数
 		sql.append("select count(p.pk_corp) ybrcorp, p.fathercorp pk_corp, p.chargedeptname corpname ");
 		sql.append("  from bd_corp p ");
 		sql.append(" where nvl(p.dr, 0) = 0 ");
-		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
+		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("   and nvl(p.isseal, 'N') = 'N' ");
 		sql.append("   and p.begindate is not null ");
 		sql.append("   and p.chargedeptname is not null ");
 		sql.append(" and ").append(SqlUtil.buildSqlForIn("p.fathercorp ", pks));
@@ -150,6 +171,7 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("select count(p.pk_corp) addcorp, p.fathercorp pk_corp ");
 		sql.append("  from bd_corp p ");
 		sql.append(" where nvl(p.dr,0) = 0 ");
+		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 		sql.append("   and p.createdate >= ? ");
 		sql.append("   and p.createdate <= ? ");
@@ -168,6 +190,7 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("select count(p.pk_corp) losecorp, p.fathercorp pk_corp ");
 		sql.append("  from bd_corp p ");
 		sql.append(" where nvl(p.dr,0) = 0 ");
+		sql.append("   and nvl(p.isformal, 'N') = 'Y' ");
 		sql.append("   and nvl(p.isaccountcorp, 'N') = 'N' ");
 		sql.append("   and nvl(p.isseal, 'N') = 'Y' ");
 		sql.append("   and p.sealeddate >= ? ");
@@ -203,9 +226,10 @@ public class CompanyDataServiceImpl implements ICompanyDataService {
 		sql.append("   and exists (select p.pk_corp ");
 		sql.append("          from bd_corp p ");
 		sql.append("         where nvl(p.dr, 0) = 0 ");
-		sql.append("           and nvl(p.isaccountcorp, 'N') = 'N' ");
-		sql.append("           and createdate >= ? ");
-		sql.append("           and createdate <= ? ");
+		sql.append("  		   and nvl(p.isformal, 'N') = 'Y' ");
+		sql.append("   		   and nvl(p.isaccountcorp, 'N') = 'N' ");
+		sql.append("           and p.createdate >= ? ");
+		sql.append("           and p.createdate <= ? ");
 		sql.append("           and p.pk_corp = t.pk_corpk) ");
 		sql.append(" group by pk_corp ");
 		List<CompanyDataVO> contracts = (List<CompanyDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,

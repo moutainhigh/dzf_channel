@@ -24,6 +24,8 @@ public class CompanyDataVO extends SuperVO {
 	
 	private Integer xgmcorp;//小规模
 	
+	private Integer wjzcorp;//小规模
+	
 	private Integer addcorp;//新增客户
 	
 	private Integer losecorp;//流失客户
@@ -62,6 +64,14 @@ public class CompanyDataVO extends SuperVO {
 
 	public String getCorpname() {
 		return corpname;
+	}
+
+	public Integer getWjzcorp() {
+		return wjzcorp;
+	}
+
+	public void setWjzcorp(Integer wjzcorp) {
+		this.wjzcorp = wjzcorp;
 	}
 
 	public void setCorpname(String corpname) {

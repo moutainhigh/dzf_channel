@@ -117,9 +117,10 @@ public class SalerDataAction extends PrintUtil<CompanyDataVO> {
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();//字符串
-		int num = 2;
+		int num = 3;
 		fieldlist.add("branchname");
 		fieldlist.add("allcorp");
+		fieldlist.add("wjzcorp");
 		fieldlist.add("ybrcorp");
 		fieldlist.add("xgmcorp");
 		fieldlist.add("addcorp");

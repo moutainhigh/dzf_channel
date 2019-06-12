@@ -113,11 +113,12 @@ public class CompanyDataAction extends PrintUtil<CompanyDataVO> {
 		List<String> fieldslist = new ArrayList<String>();
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();//字符串
-		int num = 4;
+		int num = 5;
 		fieldlist.add("branchname");
 		fieldlist.add("innercode");
 		fieldlist.add("corpname");
 		fieldlist.add("allcorp");
+		fieldlist.add("wjzcorp");
 		fieldlist.add("ybrcorp");
 		fieldlist.add("xgmcorp");
 		fieldlist.add("addcorp");

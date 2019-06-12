@@ -36,6 +36,7 @@ function load(){
 		showFooter:true,
 		columns : [[	{ field : 'branchname',  title : '销售人员', width : 100,halign:'center',align:'left',rowspan:2,formatter:formatSaler},
 		                { field : 'allcorp',  title : '负责客户数', width : 90,halign:'center',align:'center',rowspan:2},
+		                { field : 'wjzcorp',  title : '未建账客户数', width : 100,halign:'center',align:'center',rowspan:2},
 		                { field : 'jz', title : '建账客户数', width:240,halign:'center',align:'left',colspan:2,},
 			            { field : 'bq', title : '本期', width:100,halign:'center',align:'left',colspan:6},
 	                ],[
@@ -75,6 +76,7 @@ function calFooter(){
 	var rows = $('#grid').datagrid('getRows');
 	var footerData = new Object();
 	var allcorp = 0;	
+	var wjzcorp = 0;	
 	var ybrcorp = 0;
 	var xgmcorp = 0;
 	var addcorp = 0;
@@ -86,6 +88,7 @@ function calFooter(){
 	
 	for (var i = 0; i < rows.length; i++) {
 		allcorp += getFloatValue(rows[i].allcorp);
+		wjzcorp += getFloatValue(rows[i].wjzcorp);
 		ybrcorp += getFloatValue(rows[i].ybrcorp);
 		xgmcorp += getFloatValue(rows[i].xgmcorp);
 		addcorp += getFloatValue(rows[i].addcorp);
@@ -96,6 +99,7 @@ function calFooter(){
 		wsmny += getFloatValue(rows[i].wsmny);
 	}
 	 footerData['allcorp'] = allcorp;
+	 footerData['wjzcorp'] = wjzcorp;
 	 footerData['ybrcorp'] = ybrcorp;
 	 footerData['xgmcorp'] = xgmcorp;
 	 footerData['addcorp'] = addcorp;
