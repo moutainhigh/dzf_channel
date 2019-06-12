@@ -74,16 +74,21 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 							&& list.get(i).getUnitname().indexOf(qvo.getUnitname()) >= 0)) {
 						b = true;
 						//Integer count = 0;
+						StringBuffer sql = new StringBuffer();
+						//StringBuffer ssql = new StringBuffer();
+						StringBuffer qsql = new StringBuffer();
 						StringBuffer querysql = new StringBuffer();
 						SQLParameter queryspm = new SQLParameter();
+						SQLParameter qspm = new SQLParameter();
 						queryspm.addParam(qvo.getQjq());
-						queryspm.addParam(qvo.getNextqjq());
 						queryspm.addParam(list.get(i).getPk_corp());
+						qspm.addParam(list.get(i).getPk_corp());
+						qspm.addParam(qvo.getNextqjq());
 
-						querysql.append("  select  \n");
-						querysql.append("     nvl(sum(case when corp.isseal = 'Y' and substr(con.denddate, 1, 7) = ? then 1 else 0 end),0) losscorpnum, \n");
-						querysql.append("     nvl(sum(distinct case when substr(con.dbegindate, 1, 7) >= ? then 1 else 0 end),0) signednum,  \n");
-						querysql.append("     con.pk_corp \n");
+						sql.append("  select  \n");
+						sql.append("     nvl(sum(case when corp.isseal = 'Y' and substr(con.denddate, 1, 7) = ? then 1 else 0 end),0) losscorpnum \n");
+						//querysql.append("     nvl(sum(distinct case when substr(con.dbegindate, 1, 7) >= ? then 1 else 0 end),0) signednum,  \n");
+						//sql.append("     con.pk_corp \n");
 						querysql.append("     from ynt_contract con left join bd_corp corp on  \n");
 						querysql.append("     con.pk_corpk  = corp.pk_corp \n");
 						querysql.append("     left join br_branchcorp bc on \n");
@@ -98,44 +103,26 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 						querysql.append("     and con.pk_corp = ? \n");
 						querysql.append("     and " + condition + "\n");
 						querysql.append("     and " + setcondition + "\n");
-						querysql.append("     group by con.pk_corp \n");
-						querysql.append("     order by con.pk_corp \n");
+						//ssql.append("     group by con.pk_corp \n");
+						//ssql.append("     order by con.pk_corp \n");
 
-						QueryContractVO cvo = (QueryContractVO) singleObjectBO.executeQuery(querysql.toString(),
+						QueryContractVO cvo = (QueryContractVO) singleObjectBO.executeQuery(sql.toString()+querysql.toString(),
 								queryspm, new BeanProcessor(QueryContractVO.class));
-						/*
-						 * for (String id : corplist) { StringBuffer querysql =
-						 * new StringBuffer(); SQLParameter queryspm = new
-						 * SQLParameter(); queryspm.addParam(qvo.getNextqjq());
-						 * queryspm.addParam(list.get(i).getPk_corp());
-						 * queryspm.addParam(id); querysql.append(
-						 * "  select sign(count(1)) kcount \n");
-						 * querysql.append("    from ynt_contract \n");
-						 * querysql.append("    where nvl(dr,0) = 0 \n");
-						 * querysql.append(
-						 * "    and substr(dbegindate,1,7) >= ? \n");
-						 * querysql.append("    and pk_corp = ? \n");
-						 * querysql.append("    and pk_corpk = ? \n");
-						 * querysql.append("    and vstatus in (1,3,4) \n");
-						 * querysql.append("    and isflag = 'Y'  \n");
-						 * querysql.append("    and icosttype = 0  \n");
-						 * 
-						 * QueryContractVO cvo = (QueryContractVO)
-						 * singleObjectBO.executeQuery(querysql.toString(),
-						 * queryspm, new BeanProcessor(QueryContractVO.class));
-						 * count = count + cvo.getKcount();//一个公司下所有客户的合同数 }
-						 */
-                        if(cvo!=null){
-                        	if(list.get(i).getExpirenum()<cvo.getSignednum()){
+						
+						qsql.append("  select  \n");
+						qsql.append("    nvl(count(distinct con.pk_corpk),0) signednum  \n");
+						
+						QueryContractVO qcvo = (QueryContractVO) singleObjectBO.executeQuery(qsql.toString()+querysql.toString()+
+								" and substr(con.dbegindate, 1, 7) >= ?", qspm, new BeanProcessor(QueryContractVO.class));
+						
+                        if(cvo!=null && qcvo!=null){
+                        	if(list.get(i).getExpirenum()<qcvo.getSignednum()){
                         		list.get(i).setSignednum(list.get(i).getExpirenum());// 已续签合同数
                         	}else{
-                        		list.get(i).setSignednum(cvo.getSignednum());
+                        		list.get(i).setSignednum(qcvo.getSignednum());
                         	}
                         	list.get(i).setUnsignednum(list.get(i).getExpirenum() - list.get(i).getSignednum());// 未续签合同数
-                        	list.get(i).setLosscorpnum(cvo.getLosscorpnum());
-                        }else{
-                        	list.get(i).setSignednum(0);
-                        	list.get(i).setUnsignednum(list.get(i).getExpirenum());
+                        	list.get(i).setLosscorpnum(cvo.getLosscorpnum());//流失客户数
                         }
 					} else {
 						list.remove(i);
@@ -146,7 +133,6 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 				}
 			}
 			
-
 		}
 		return list;
 	}
