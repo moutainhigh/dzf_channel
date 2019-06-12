@@ -84,6 +84,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 						queryspm.addParam(list.get(i).getPk_corp());
 						qspm.addParam(list.get(i).getPk_corp());
 						qspm.addParam(qvo.getNextqjq());
+						qspm.addParam(qvo.getNextqjq());
 
 						sql.append("  select  \n");
 						sql.append("     nvl(sum(case when corp.isseal = 'Y' and substr(con.denddate, 1, 7) = ? then 1 else 0 end),0) losscorpnum \n");
@@ -113,7 +114,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 						qsql.append("    nvl(count(distinct con.pk_corpk),0) signednum  \n");
 						
 						QueryContractVO qcvo = (QueryContractVO) singleObjectBO.executeQuery(qsql.toString()+querysql.toString()+
-								" and substr(con.dbegindate, 1, 7) >= ?", qspm, new BeanProcessor(QueryContractVO.class));
+								" and (substr(con.dbegindate, 1, 7) >= ? or substr(con.denddate, 1, 7) >= ? )", qspm, new BeanProcessor(QueryContractVO.class));
 						
                         if(cvo!=null && qcvo!=null){
                         	if(list.get(i).getExpirenum()<qcvo.getSignednum()){
@@ -175,7 +176,7 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 		//sql.append("    nvl(sum(case when corp.isseal = 'Y' then 1 else 0 end),0) losscorpnum,  \n");
 		sql.append("	wmsys.wm_concat(distinct con.pk_corpk) corpids, \n");
 		sql.append("	con.pk_corp,corp.unitname,corp.innercode, \n");
-		sql.append("	nvl(count(distinct con.pk_corpk),0) expirenum \n");
+		sql.append("	nvl(count(con.pk_corpk),0) expirenum \n");
 		sql.append(" 	from ynt_contract con left join bd_corp corp on \n");
 		sql.append("	con.pk_corp  = corp.pk_corp   \n");
 		sql.append("    left join br_branchcorp bc on \n");
