@@ -14,6 +14,7 @@ import com.dzf.model.branch.reportmanage.CorpDataVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
@@ -36,17 +37,28 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ComboBoxVO> queryAccount(String cuserid) throws DZFWarpException {
+	public List<ComboBoxVO> queryAccount(UserVO uservo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT DISTINCT p.pk_corp AS id, p.unitname AS name  \n");
 		sql.append("  FROM br_branchcorp p  \n");
 		sql.append("  LEFT JOIN sm_user r ON r.pk_department = p.pk_branchset  \n");
+		sql.append("  INNER JOIN ");
+		sql.append("( SELECT DISTINCT p.fathercorp AS pk_corp  \n") ;
+		sql.append("  FROM bd_corp p  \n") ; 
+		sql.append(" WHERE nvl(p.dr, 0) = 0  \n") ; 
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  \n") ; 
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n") ; 
+		sql.append("   AND p.isformal = 'Y'  \n") ; 
+		sql.append("   AND p.foreignname = ?  \n");
+		spm.addParam(uservo.getUser_name());
+		sql.append("    ) f ON p.pk_corp = f.pk_corp \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
 		sql.append("   AND nvl(r.dr, 0) = 0  \n");
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'  \n");
 		sql.append("   AND r.cuserid = ?  \n");
-		spm.addParam(cuserid);
+		spm.addParam(uservo.getCuserid());
+		
 		List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ComboBoxVO.class));
 		if (list != null && list.size() > 0) {

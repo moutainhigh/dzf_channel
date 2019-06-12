@@ -118,7 +118,7 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 		Grid grid = new Grid();
 		try {
 			checkUser();
-			List<ComboBoxVO> list = salecorpser.queryAccount(getLoginUserid());
+			List<ComboBoxVO> list = salecorpser.queryAccount(getLoginUserInfo());
 			grid.setRows(list);
 			grid.setMsg("查询成功");
 			grid.setSuccess(true);

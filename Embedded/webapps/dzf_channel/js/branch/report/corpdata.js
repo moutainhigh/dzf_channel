@@ -37,7 +37,9 @@ function initCpname() {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				$('#cpname').combobox('loadData', result.rows);
-				$("#cpname").combobox('setValue', 'pk_all');
+				if(result.rows != null && result.rows.length > 0){
+					$("#cpname").combobox('setValue', 'pk_all');
+				}
 			}
 		}
 	});

@@ -55,7 +55,7 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:90px;">公司名称：</label> 
 					<input id="cpname"  name="cpname" class="easyui-combobox" style="width:284px; height: 28px;" 
-						data-options="valueField:'id',textField:'name',panelHeight:100" editable="false" />  
+						data-options="valueField:'id',textField:'name',panelHeight:'auto'" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:90px;text-align:right">客户编码：</label>

@@ -5,17 +5,18 @@ import java.util.List;
 import com.dzf.model.branch.reportmanage.CorpDataVO;
 import com.dzf.model.pub.ComboBoxVO;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface ISaleCorpDataService {
 
 	/**
 	 * 查询会计公司下拉
-	 * @param cuserid
+	 * @param uservo
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<ComboBoxVO> queryAccount(String cuserid) throws DZFWarpException;
+	public List<ComboBoxVO> queryAccount(UserVO uservo) throws DZFWarpException;
 	
 	/**
 	 * 查询数据总条数
