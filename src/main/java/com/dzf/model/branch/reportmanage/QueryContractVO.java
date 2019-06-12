@@ -1,5 +1,7 @@
 package com.dzf.model.branch.reportmanage;
 
+import java.util.List;
+
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
 
@@ -44,6 +46,8 @@ public class QueryContractVO extends SuperVO {
 	
 	@FieldAlias("pk_corp")
 	public String  pk_corp;//公司ID
+	
+	public List<Integer> iList;//需要过滤的数据
 	
 	public String getPk_contract() {
 		return pk_contract;
@@ -139,6 +143,14 @@ public class QueryContractVO extends SuperVO {
 
 	public void setPk_branchset(String pk_branchset) {
 		this.pk_branchset = pk_branchset;
+	}
+	
+	public List<Integer> getiList() {
+		return iList;
+	}
+
+	public void setiList(List<Integer> iList) {
+		this.iList = iList;
 	}
 
 	@Override

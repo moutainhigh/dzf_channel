@@ -73,6 +73,10 @@ public class BranchExpireContractAction extends BaseAction<QueryContractVO>{
 			
 			List<QueryContractVO> list = exconser.query(param,uservo);
 			if (list != null && list.size() > 0) {
+				List<Integer> ilist = list.get(0).getiList();
+				for (Integer i : ilist) {
+					list.remove(i.intValue());
+				}
 				QueryContractVO[] cvos = getPagedVOs(list.toArray(new QueryContractVO[0]), page, rows);
 				grid.setRows(Arrays.asList(cvos));
 				grid.setTotal((long) (list.size()));

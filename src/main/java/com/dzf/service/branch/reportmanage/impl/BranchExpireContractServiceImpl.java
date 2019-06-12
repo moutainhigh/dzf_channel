@@ -57,11 +57,11 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
 
 		List<String> corplist = new ArrayList<String>();
 		Boolean b = false;
+		List<Integer> ilist = new ArrayList<Integer>();
 		if (list != null && list.size() > 0) {
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, list, 1);
-
-			for (int i = 0; i < list.size(); i++) {
-
+            Integer length = list.size();
+			for (int i = 0; i < length; i++) {
 				if (list.get(i).getCorpids() != null && list.get(i).getCorpids().length() > 0) {
 					corplist = Arrays.asList(list.get(i).getCorpids().split(","));
 					String condition = SqlUtil.buildSqlForIn("con.pk_corpk",
@@ -126,14 +126,15 @@ public class BranchExpireContractServiceImpl implements IBranchExpireContractSer
                         	list.get(i).setLosscorpnum(cvo.getLosscorpnum());//流失客户数
                         }
 					} else {
-						list.remove(i);
+						//list.remove(i);
+						ilist.add(i);
 					}
 				}
-				if (!b) {
-					return new ArrayList<QueryContractVO>();
-				}
 			}
-			
+			if (!b) {
+				return new ArrayList<QueryContractVO>();
+			}
+			list.get(0).setiList(ilist);
 		}
 		return list;
 	}
