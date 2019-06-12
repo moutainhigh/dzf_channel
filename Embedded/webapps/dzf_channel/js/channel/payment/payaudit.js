@@ -11,6 +11,15 @@ $(function() {
  * 监听事件
  */
 function initListener(){
+	initQryDlg();	
+	initChannel();//加盟商参照初始化
+	initArea();//查询大区初始化
+}
+
+/**
+ * 查询初始化
+ */
+function initQryDlg(){
 	$("#querydate").on("mouseover", function() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
@@ -18,9 +27,6 @@ function initListener(){
 	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
 	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
-	
-	initChannel();//加盟商参照初始化
-	initArea();//查询大区初始化
 }
 
 /**
@@ -66,7 +72,7 @@ function initChannel(){
                     readonly: true,
                     title: '选择加盟商',
                     modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    href: DZF.contextPath + '/ref/channelys_select.jsp',
                     queryParams : {
     					ovince :"-1"
     				},
@@ -136,6 +142,7 @@ function reloadData(){
 	queryParams.enddate = edate;
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
+	queryParams.stype = $('#stype').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;
@@ -317,13 +324,19 @@ function calFooter(){
 
 /**
  * 标签查询
- * @param type  -1：全部；2：待审批；
+ * @param type  -1：全部；2：待审批；3：演示待审批
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayaudit!query.action';
-	queryParams.qtype = type;
+	if(type == -1 || type == 2){
+		queryParams.qtype = type;
+		queryParams.stype = -1;
+	}else if(type == 3){
+		queryParams.qtype = 2;
+		queryParams.stype = 9;
+	}
 	queryParams.begdate = '';
 	queryParams.enddate = '';
 	queryParams.iptype = -1;

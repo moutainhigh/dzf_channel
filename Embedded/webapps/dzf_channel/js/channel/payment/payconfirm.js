@@ -5,6 +5,7 @@ $(function() {
 	load();
 //	fastQry();
 	initListener();
+	initChannel();
 	loadJumpData();
 });
 
@@ -44,7 +45,6 @@ function initListener(){
 	$('#querydate').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
 	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
-	initChannel();
 }
 
 /**
@@ -69,7 +69,7 @@ function initChannel(){
                     readonly: true,
                     title: '选择加盟商',
                     modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    href: DZF.contextPath + '/ref/channelys_select.jsp',
                     buttons: '#chnBtn'
                 });
             }
@@ -137,6 +137,7 @@ function reloadData(){
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	queryParams.stype = $('#stype').combobox('getValue');
+	queryParams.corptype = $('#corptype').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;
@@ -332,7 +333,13 @@ function qryData(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
-	queryParams.qtype = type;
+	if(type == -1 || type == 5 || type == 3){
+		queryParams.corptype = -1;
+		queryParams.qtype = type;
+	}else if(type == 6){
+		queryParams.corptype = 9;
+		queryParams.qtype = 5;
+	}
 	queryParams.begdate = '';
 	queryParams.enddate = '';
 	queryParams.iptype = -1;

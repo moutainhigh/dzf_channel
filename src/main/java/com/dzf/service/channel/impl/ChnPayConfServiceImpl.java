@@ -123,7 +123,11 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		sql.append("       us.user_name as vconfirmname  \n");
 		sql.append("  FROM cn_paybill t\n");
 		sql.append("  LEFT JOIN sm_user us ON us.cuserid = t.vconfirmid");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
 		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND account.ischannel = 'Y' \n");
+		sql.append("   AND account.isaccountcorp = 'Y' \n");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
@@ -140,6 +144,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
             sql.append(" AND t.ipaymode = ? \n");
             spm.addParam(paramvo.getIpaymode());
         }
+		if(paramvo.getCorptype() != null && paramvo.getCorptype() != -1){
+			sql.append(" AND account.channeltype = ? \n");
+			spm.addParam(paramvo.getCorptype());
+		}else{
+			sql.append(" AND account.channeltype != 9 \n");
+		}
 		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
 		    sql.append(" AND t.ichargetype = ? \n");
             spm.addParam(paramvo.getSeletype());

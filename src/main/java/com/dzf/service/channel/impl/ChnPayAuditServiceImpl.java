@@ -105,6 +105,8 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		sql.append(" left join sm_user us on us.cuserid = t.vapproveid");
 		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
 		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   AND account.ischannel = 'Y' \n");
+		sql.append("   AND account.isaccountcorp = 'Y' \n");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
 			sql.append(" AND t.vstatus = ? \n");
 			spm.addParam(paramvo.getQrytype());
@@ -123,6 +125,12 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
             sql.append(" AND t.ipaymode = ? \n");
             spm.addParam(paramvo.getIpaymode());
         }
+		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
+			sql.append(" AND account.channeltype = ? \n");
+			spm.addParam(paramvo.getSeletype());
+		}else{
+			sql.append(" AND account.channeltype != 9 \n");
+		}
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
 		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
             spm.addParam(paramvo.getBegdate());
