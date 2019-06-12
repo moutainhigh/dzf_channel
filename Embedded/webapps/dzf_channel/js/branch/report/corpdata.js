@@ -37,6 +37,7 @@ function initCpname() {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				$('#cpname').combobox('loadData', result.rows);
+				$("#cpname").combobox('setValue', 'pk_all');
 			}
 		}
 	});
@@ -222,7 +223,7 @@ function reloadData() {
  * @returns
  */
 function clearQuery(){
-	$("#cpname").combobox('setValue', null);
+	$("#cpname").combobox('setValue', 'pk_all');
 	$("#cpkcode").textbox('setValue', null);
 	$("#cpkname").textbox('setValue', null);
 	$("#saler").textbox('setValue', null);
