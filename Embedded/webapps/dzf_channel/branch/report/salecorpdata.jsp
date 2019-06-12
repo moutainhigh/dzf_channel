@@ -28,9 +28,9 @@
 						<span class="arrow-date"></span>
 					</div>
 				</div>
-				<div class="right">
+				<!-- <div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="doExport()">导出</a>
-				</div>
+				</div> -->
 			</div>
 		</div>
 		
