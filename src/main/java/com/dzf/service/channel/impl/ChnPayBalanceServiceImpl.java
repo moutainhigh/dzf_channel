@@ -80,156 +80,222 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			// 0扣款按照预付款扣款统计
 			qryNoDeductConData(paramvo, pklist);
 		}
+		
+		if (pklist != null && pklist.size() > 0) {
+			setReturnValue(paramvo, initmap, datamap, pklist, retlist, areaname);
+		}
+		return retlist;
+	}
+	
+	/**
+	 * 设置返回值
+	 * @param paramvo
+	 * @param initmap
+	 * @param datamap
+	 * @param pklist
+	 * @param retlist
+	 * @param areaname
+	 * @throws DZFWarpException
+	 */
+	private void setReturnValue(QryParamVO paramvo, Map<String, ChnBalanceRepVO> initmap,
+			Map<String, ChnBalanceRepVO> datamap, List<String> pklist, List<ChnBalanceRepVO> retlist, String areaname)
+			throws DZFWarpException {
 		Map<String, ChnBalanceRepVO> posimap = null;// 扣款合同信息
 		Map<String, ChnBalanceRepVO> negamap = null;// 退款合同信息
 		ChnBalanceRepVO contvo = null;
-		if (pklist != null && pklist.size() > 0) {
-			// 全部查询、预付款查询、返点查询
-			if (paramvo.getQrytype() != null
-					&& (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
-				posimap = qryPositiveData(paramvo, pklist);
-				negamap = qryNegativeData(paramvo, pklist);
+		// 全部查询、预付款查询、返点查询
+		if (paramvo.getQrytype() != null
+				&& (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2 || paramvo.getQrytype() == 3)) {
+			posimap = qryPositiveData(paramvo, pklist);
+			negamap = qryNegativeData(paramvo, pklist);
+		}
+		ChnBalanceRepVO repvo = null;
+		ChnBalanceRepVO vo = null;
+		String pk_corp = "";
+		CorpVO accvo = null;
+		String ipaytype = null;
+		Integer paytype = null;
+		Map<Integer, String> areaMap = pubService.getAreaMap(areaname, 3);// 运营区域
+		Map<String, UserVO> marmap = pubService.getManagerMap(1);// 渠道经理
+		UserVO uservo = null;
+		for (String pk : pklist) {
+			repvo = new ChnBalanceRepVO();
+			ipaytype = pk.substring(pk.indexOf(",") + 1);
+			pk_corp = pk.substring(0, pk.indexOf(","));
+			repvo.setPk_corp(pk_corp);
+			accvo = CorpCache.getInstance().get(null, pk_corp);
+			if (accvo != null) {
+				repvo.setCorpname(accvo.getUnitname());
+				repvo.setInnercode(accvo.getInnercode());
+				if (areaMap != null && !areaMap.isEmpty()) {
+					repvo.setAreaname(areaMap.get(accvo.getVprovince()));
+				}
 			}
-			ChnBalanceRepVO repvo = null;
-			ChnBalanceRepVO vo = null;
-			String pk_corp = "";
-			CorpVO accvo = null;
-			String ipaytype = null;
-			Integer paytype = null;
-			Map<Integer, String> areaMap = pubService.getAreaMap(areaname, 3);//运营区域
-			Map<String,UserVO> marmap = pubService.getManagerMap(1);//渠道经理
-			String manager = "";
-			UserVO uservo = null;
-			for (String pk : pklist) {
-				repvo = new ChnBalanceRepVO();
-				ipaytype = pk.substring(pk.indexOf(",") + 1);
-				pk_corp = pk.substring(0, pk.indexOf(","));
-				repvo.setPk_corp(pk_corp);
-				accvo = CorpCache.getInstance().get(null, pk_corp);
-				if (accvo != null) {
-					repvo.setCorpname(accvo.getUnitname());
-					repvo.setInnercode(accvo.getInnercode());
-					if (areaMap != null && !areaMap.isEmpty()) {
-						repvo.setAreaname(areaMap.get(accvo.getVprovince()));
-					}
+			if (!StringUtil.isEmpty(paramvo.getCorpname())) {
+				if (repvo.getInnercode().indexOf(paramvo.getCorpname()) == -1
+						&& repvo.getCorpname().indexOf(paramvo.getCorpname()) == -1) {
+					continue;
 				}
-				if (!StringUtil.isEmpty(paramvo.getCorpname())) {
-					if (repvo.getInnercode().indexOf(paramvo.getCorpname()) == -1
-							&& repvo.getCorpname().indexOf(paramvo.getCorpname()) == -1) {
-						continue;
-					}
-				}
-				paytype = Integer.parseInt(ipaytype);
-				repvo.setIpaytype(paytype);
-				if (paytype == 1) {
-					repvo.setVpaytypename("保证金");
-				} else if (paytype == 2) {
-					repvo.setVpaytypename("预付款");
-				} else if (paytype == 3) {
-					repvo.setVpaytypename("返点");
-				}
-				if(marmap != null && !marmap.isEmpty()){
-					uservo = marmap.get(pk_corp);
-					if (uservo != null) {
-						repvo.setVmanagername(uservo.getUser_name());//渠道经理
-					}
-				}
-				// 全部查询、预付款查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在预付款上
-				if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
-					if (paytype == 2) {
-						if (posimap != null && !posimap.isEmpty()) {
-							contvo = posimap.get(repvo.getPk_corp());
-							if (contvo != null) {
-								repvo.setIcustnum(contvo.getIcustnum());
-								repvo.setIzeronum(contvo.getIzeronum());
-								repvo.setIdednum(contvo.getIdednum());
-								repvo.setNaccountmny(contvo.getNaccountmny());
-								repvo.setNbookmny(contvo.getNbookmny());
-							}
-						}
-						if (negamap != null && !negamap.isEmpty()) {
-							contvo = negamap.get(repvo.getPk_corp());
-							if (contvo != null) {
-								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
-								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
-								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
-								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
-								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
-							}
-						}
-						repvo.setNum(
-								CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
-										+ CommonUtil.getInteger(repvo.getIdednum()));
-					}
-					// 返点查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在返点上
-				} else if (paramvo.getQrytype() != null && (paramvo.getQrytype() == 3)) {
-					if (paytype == 3) {
-						if (posimap != null && !posimap.isEmpty()) {
-							contvo = posimap.get(repvo.getPk_corp());
-							if (contvo != null) {
-								repvo.setIcustnum(contvo.getIcustnum());
-								repvo.setIzeronum(contvo.getIzeronum());
-								repvo.setIdednum(contvo.getIdednum());
-								repvo.setNaccountmny(contvo.getNaccountmny());
-								repvo.setNbookmny(contvo.getNbookmny());
-							}
-						}
-						if (negamap != null && !negamap.isEmpty()) {
-							contvo = negamap.get(repvo.getPk_corp());
-							if (contvo != null) {
-								repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
-								repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
-								repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
-								repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
-								repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
-							}
-						}
-						repvo.setNum(
-								CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
-										+ CommonUtil.getInteger(repvo.getIdednum()));
-					}
-				}
+			}
+			paytype = Integer.parseInt(ipaytype);
 
-				//期初余额
-				if (initmap != null && !initmap.isEmpty()) {
-					vo = initmap.get(pk);
-					if (vo != null) {
-						if (paytype == 1) {
-							repvo.setInitbalance(vo.getBail());
-						} else if (paytype == 2) {
-							repvo.setInitbalance(vo.getCharge());
-						} else if (paytype == 3) {
-							repvo.setInitbalance(vo.getRebate());
-						}
-					}
-				}
-				
-				//使用金额
-				if (datamap != null && !datamap.isEmpty()) {
-					vo = datamap.get(pk);
-					if (vo != null) {
-						if (paytype == 1) {
-							repvo.setNpaymny(vo.getBail());
-						} else if (paytype == 2) {
-							repvo.setNpaymny(vo.getNpaymny());
-							repvo.setNusedmny(vo.getNusedmny());
-							repvo.setIdeductpropor(vo.getIdeductpropor());
-							repvo.setNcondedmny(vo.getNyfhtmny());
-							repvo.setNbuymny(vo.getNyfspmny());
-						} else if (paytype == 3) {
-							repvo.setNpaymny(vo.getNpaymny());
-							repvo.setNusedmny(vo.getNusedmny());
-							repvo.setIdeductpropor(vo.getIdeductpropor());
-							repvo.setNcondedmny(vo.getNfdhtmny());
-							repvo.setNbuymny(vo.getNfdspmny());
-						}
-					}
-				}
-				countBalance(repvo);
-				retlist.add(repvo);
+			setShowName(repvo, paytype, marmap, uservo, pk_corp);
+
+			// 设置合同相关数量及金额
+			setContValue(paramvo, repvo, paytype, posimap, negamap, contvo);
+
+			// 设置期初及使用金额
+			setInitAndUsedMny(initmap, datamap, vo, paytype, repvo, pk);
+
+			// 计算余额
+			countBalance(repvo);
+
+			retlist.add(repvo);
+		}
+	}
+	
+	/**
+	 * 设置显示名称
+	 * @param repvo
+	 * @param paytype
+	 * @param marmap
+	 * @param uservo
+	 * @param pk_corp
+	 * @throws DZFWarpException
+	 */
+	private void setShowName(ChnBalanceRepVO repvo, Integer paytype, Map<String, UserVO> marmap, UserVO uservo,
+			String pk_corp) throws DZFWarpException {
+		repvo.setIpaytype(paytype);
+		if (paytype == 1) {
+			repvo.setVpaytypename("保证金");
+		} else if (paytype == 2) {
+			repvo.setVpaytypename("预付款");
+		} else if (paytype == 3) {
+			repvo.setVpaytypename("返点");
+		}
+		if (marmap != null && !marmap.isEmpty()) {
+			uservo = marmap.get(pk_corp);
+			if (uservo != null) {
+				repvo.setVmanagername(uservo.getUser_name());// 渠道经理
 			}
 		}
-		return retlist;
+	}
+	
+	/**
+	 * 设置期初及使用金额
+	 * @param initmap
+	 * @param datamap
+	 * @param vo
+	 * @param paytype
+	 * @param repvo
+	 * @param pk
+	 * @throws DZFWarpException
+	 */
+	private void setInitAndUsedMny(Map<String, ChnBalanceRepVO> initmap, Map<String, ChnBalanceRepVO> datamap,
+			ChnBalanceRepVO vo, Integer paytype, ChnBalanceRepVO repvo, String pk) throws DZFWarpException {
+		// 期初余额
+		if (initmap != null && !initmap.isEmpty()) {
+			vo = initmap.get(pk);
+			if (vo != null) {
+				if (paytype == 1) {
+					repvo.setInitbalance(vo.getBail());
+				} else if (paytype == 2) {
+					repvo.setInitbalance(vo.getCharge());
+				} else if (paytype == 3) {
+					repvo.setInitbalance(vo.getRebate());
+				}
+			}
+		}
+
+		// 使用金额
+		if (datamap != null && !datamap.isEmpty()) {
+			vo = datamap.get(pk);
+			if (vo != null) {
+				if (paytype == 1) {
+					repvo.setNpaymny(vo.getBail());
+				} else if (paytype == 2) {
+					repvo.setNpaymny(vo.getNpaymny());
+					repvo.setNusedmny(vo.getNusedmny());
+					repvo.setIdeductpropor(vo.getIdeductpropor());
+					repvo.setNcondedmny(vo.getNyfhtmny());
+					repvo.setNbuymny(vo.getNyfspmny());
+				} else if (paytype == 3) {
+					repvo.setNpaymny(vo.getNpaymny());
+					repvo.setNusedmny(vo.getNusedmny());
+					repvo.setIdeductpropor(vo.getIdeductpropor());
+					repvo.setNcondedmny(vo.getNfdhtmny());
+					repvo.setNbuymny(vo.getNfdspmny());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 设置合同相关数量及金额
+	 * @param paramvo
+	 * @param repvo
+	 * @param paytype
+	 * @param posimap
+	 * @param negamap
+	 * @param contvo
+	 * @throws DZFWarpException
+	 */
+	private void setContValue(QryParamVO paramvo, ChnBalanceRepVO repvo, Integer paytype,
+			Map<String, ChnBalanceRepVO> posimap, Map<String, ChnBalanceRepVO> negamap, ChnBalanceRepVO contvo)
+			throws DZFWarpException {
+		// 全部查询、预付款查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在预付款上
+		if (paramvo.getQrytype() != null && (paramvo.getQrytype() == -1 || paramvo.getQrytype() == 2)) {
+			if (paytype == 2) {
+				if (posimap != null && !posimap.isEmpty()) {
+					contvo = posimap.get(repvo.getPk_corp());
+					if (contvo != null) {
+						repvo.setIcustnum(contvo.getIcustnum());
+						repvo.setIzeronum(contvo.getIzeronum());
+						repvo.setIdednum(contvo.getIdednum());
+						repvo.setNaccountmny(contvo.getNaccountmny());
+						repvo.setNbookmny(contvo.getNbookmny());
+					}
+				}
+				if (negamap != null && !negamap.isEmpty()) {
+					contvo = negamap.get(repvo.getPk_corp());
+					if (contvo != null) {
+						repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
+						repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
+						repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
+						repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
+						repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
+					}
+				}
+				repvo.setNum(CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
+						+ CommonUtil.getInteger(repvo.getIdednum()));
+			}
+			// 返点查询时，存量合同数、0扣款(非存量)合同数、非存量合同数、合同代账费、账本费显示在返点上
+		} else if (paramvo.getQrytype() != null && (paramvo.getQrytype() == 3)) {
+			if (paytype == 3) {
+				if (posimap != null && !posimap.isEmpty()) {
+					contvo = posimap.get(repvo.getPk_corp());
+					if (contvo != null) {
+						repvo.setIcustnum(contvo.getIcustnum());
+						repvo.setIzeronum(contvo.getIzeronum());
+						repvo.setIdednum(contvo.getIdednum());
+						repvo.setNaccountmny(contvo.getNaccountmny());
+						repvo.setNbookmny(contvo.getNbookmny());
+					}
+				}
+				if (negamap != null && !negamap.isEmpty()) {
+					contvo = negamap.get(repvo.getPk_corp());
+					if (contvo != null) {
+						repvo.setIcustnum(ToolsUtil.addInteger(repvo.getIcustnum(), contvo.getIcustnum()));
+						repvo.setIzeronum(ToolsUtil.addInteger(repvo.getIzeronum(), contvo.getIzeronum()));
+						repvo.setIdednum(ToolsUtil.addInteger(repvo.getIdednum(), contvo.getIdednum()));
+						repvo.setNaccountmny(SafeCompute.add(repvo.getNaccountmny(), contvo.getNaccountmny()));
+						repvo.setNbookmny(SafeCompute.add(repvo.getNbookmny(), contvo.getNbookmny()));
+					}
+				}
+				repvo.setNum(CommonUtil.getInteger(repvo.getIcustnum()) + CommonUtil.getInteger(repvo.getIzeronum())
+						+ CommonUtil.getInteger(repvo.getIdednum()));
+			}
+		}
 	}
 	
 	/**
