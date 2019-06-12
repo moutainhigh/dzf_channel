@@ -38,6 +38,7 @@ public class ChannelServiceImpl implements IChannelService {
 		sql.append(" from bd_account account ");
 		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
 		sql.append("  and nvl(ischannel,'N') = 'Y'  ");
+		sql.append("  and "+ QueryUtil.getWhereSql());
 		String smallCondition = getSmallCondition(paramvo);
 		if(StringUtil.isEmpty(smallCondition)){
 			sql.append(" and 1 != 1 ");
@@ -97,11 +98,10 @@ public class ChannelServiceImpl implements IChannelService {
 	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select pk_corp, unitname, innercode, vprovince  \n") ;
-		sql.append("  from bd_account account  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(isaccountcorp, 'N') = 'Y'  \n") ; 
-		sql.append("   and nvl(ischannel, 'N') = 'Y'  \n");
+		sql.append("select pk_corp,unitname,innercode,vprovince from bd_account account");
+		sql.append(" where nvl(dr,0) = 0 and nvl(isaccountcorp,'N') = 'Y' ");
+		sql.append(" and nvl(ischannel,'N') = 'Y' ");
+		sql.append(" and "+QueryUtil.getWhereSql());
 		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
 			sql.append(" and vprovince=? ");
 			sp.addParam(vo.getDr());
