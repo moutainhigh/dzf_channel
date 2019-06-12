@@ -122,6 +122,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}else if("audit".equals(showtype)){//审核查询
 				setAuditQryData(confvo);
 			}
+			QueryDeCodeUtils.decKeyUtil(new String[]{"corpname"}, confvo, 1);
 			setShowData(map,confvo, marmap, opermap);
 		}
 	}
@@ -138,12 +139,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if (uservo != null) {
 			confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
 		}
-		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
-		if (corpvo != null) {
-			confvo.setVarea(corpvo.getCitycounty());// 地区
-			confvo.setCorpname(corpvo.getUnitname());// 加盟商
-		}
-		corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
+//		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
+//		if (corpvo != null) {
+//			confvo.setVarea(corpvo.getCitycounty());// 地区
+//			confvo.setCorpname(corpvo.getUnitname());// 加盟商
+//		}
+		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
 		if (corpvo != null) {
 			confvo.setCorpkname(corpvo.getUnitname());// 客户名称
 		}
@@ -362,6 +363,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			if("listqry".equals(qrytype)){
 				sql.append("       account.vprovince,  \n") ; //省份
 			}
+			sql.append("       account.citycounty AS varea,  \n");
+			sql.append("       account.unitname AS corpname,  \n");
 			sql.append("       t.vcontcode,  \n") ; 
 			sql.append("       t.pk_packagedef,  \n") ; 
 			sql.append("       nvl(t.isncust,'N') AS isncust,  \n") ; // 是否存量客户
