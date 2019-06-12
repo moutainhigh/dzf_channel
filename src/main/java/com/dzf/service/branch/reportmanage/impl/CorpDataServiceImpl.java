@@ -301,6 +301,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("SELECT DISTINCT pk_corp, period  \n");
 		sql.append("  FROM ynt_qmcl  \n");
 		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("   AND nvl(isqjsyjz, 'N') = 'Y' \n");
 		sql.append("   AND period = ?  \n");
 		spm.addParam(period);
 		if (corpks != null && corpks.length > 0) {
