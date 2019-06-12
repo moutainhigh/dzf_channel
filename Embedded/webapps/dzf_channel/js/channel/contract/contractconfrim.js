@@ -465,6 +465,18 @@ function reloadData(){
 	queryParams.stype = stype;
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	
+	var iptype = $("#iptype").numberbox('getValue');
+	if(isEmpty(iptype)){
+		iptype = -1;
+	}
+	queryParams.iptype = iptype;
+	
+	var ovince = $("#ovince").numberbox('getValue');
+	if(isEmpty(ovince)){
+		ovince = -1;
+	}
+	queryParams.ovince = ovince;
+	
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	if(ischeck){
@@ -497,6 +509,8 @@ function clearQryParam(queryParams){
 	queryParams.oid = null;
 	queryParams.stype = null;
 	queryParams.ipmode = -1;
+	queryParams.iptype = -1;
+	queryParams.ovince = -1;
 	delete queryParams.stype;
 }
 

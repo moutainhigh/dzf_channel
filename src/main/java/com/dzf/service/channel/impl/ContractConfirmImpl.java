@@ -536,7 +536,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append(" AND cn.ideductpropor = ? \n") ; 
 			spm.addParam(paramvo.getSeletype());
 		}
-		
+		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
+			//合同周期
+			sql.append(" AND t.icontractcycle = ?  \n") ; 
+			spm.addParam(paramvo.getVprovince());
+		}
+		if(paramvo.getVprovince() != null && paramvo.getVprovince() != -1){
+			//收款周期
+			sql.append(" AND t.ireceivcycle = ?  \n") ; 
+			spm.addParam(paramvo.getVprovince());
+		}
 		sql.append(" ORDER BY t.dsubmitime DESC \n");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
