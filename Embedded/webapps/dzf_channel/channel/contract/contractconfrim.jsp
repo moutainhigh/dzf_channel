@@ -186,7 +186,7 @@
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">合同周期：</label>
 					<input id="iptype" class="easyui-numberbox" style="width:100px;height:28px;" />
-					<label style="width:85px;text-align:right">收款周期：</label>
+					<label style="width:73px;text-align:right">收款周期：</label>
 					<input id="ovince" class="easyui-numberbox" style="width:100px;height:28px;" />
 				</div>
 			</form>
