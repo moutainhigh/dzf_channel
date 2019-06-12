@@ -61,6 +61,9 @@ $(function() {
 function load() {
 	$('#grid').datagrid({
 		url : contextPath + '/branch/managersetup!query.action',
+		queryParams :{
+			'lock_flag' : 'N',
+		},
 		rownumbers : true,
 		singleSelect : true,
 		idField : 'uid',
