@@ -63,7 +63,7 @@ public class ChannelAction extends BaseAction<UserVO> {
 	
 	
 	/**
-	 * 查询渠道商(目前逻辑：过滤掉演示的)
+	 * 查询渠道商(包含演示加盟商)
 	 */
 	public void queryChannel() {
 		Grid grid = new Grid();
