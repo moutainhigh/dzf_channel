@@ -84,6 +84,7 @@ function reloadData() {
 function clearQuery(){
 	$("#ucode").textbox('setValue', null);
 	$("#uname").textbox('setValue', null);
+	$("#pk_bset").combobox('setValue', null);
 }
 
 /**
