@@ -424,9 +424,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
 		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
 		sql.append(" INNER JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
-//		if(!"info".equals(qrytype)){
-//			sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
-//		}
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
 		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
@@ -440,9 +437,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}else{
 			sql.append(" AND account.channeltype != 9 \n");
 		}
-//		if(!"info".equals(qrytype)){
-//			sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
-//		}
 		sql.append("   AND t.isflag = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
