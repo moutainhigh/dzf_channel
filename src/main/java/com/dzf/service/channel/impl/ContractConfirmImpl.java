@@ -430,13 +430,6 @@ public class ContractConfirmImpl implements IContractConfirm {
 		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
 		sql.append("   AND account.ischannel = 'Y' \n");
 		sql.append("   AND account.isaccountcorp = 'Y' \n");
-		//公司类型过滤：9：演示加盟商
-		if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
-			sql.append(" AND account.channeltype = ? \n");
-			spm.addParam(paramvo.getIpaymode());
-		}else{
-			sql.append(" AND account.channeltype != 9 \n");
-		}
 		sql.append("   AND t.isflag = 'Y'  \n") ; 
 		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
 		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
@@ -514,11 +507,22 @@ public class ContractConfirmImpl implements IContractConfirm {
 	            spm.addParam("一般纳税人");
 			}
 		}
+		//加盟商主键 如果不为空，则按照加盟商主键查询所有数据；
+		//如果加盟商主键为空，则判断是否为演示加盟商快速查询，如果是，则只查询演示加盟商；否则只查询正式加盟商；
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 		    String[] strs = paramvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
+		}else{
+			//公司类型过滤：9：演示加盟商
+			if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
+				sql.append(" AND account.channeltype = ? \n");
+				spm.addParam(paramvo.getIpaymode());
+			}else{
+				sql.append(" AND account.channeltype != 9 \n");
+			}
 		}
+		//客户主键
 		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
 			sql.append(" AND t.pk_corpk = ? \n") ; 
 			spm.addParam(paramvo.getPk_corpk());

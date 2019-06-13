@@ -463,7 +463,6 @@ function reloadData(){
 		stype = -1;
 	}
 	queryParams.stype = stype;
-	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	
 	var iptype = $("#iptype").numberbox('getValue');
 	if(isEmpty(iptype)){
@@ -937,14 +936,11 @@ function qryData(type){
 	var queryParams = $('#grid').datagrid('options').queryParams;
 	clearQryParam(queryParams);
 	if(type == 1){
-		queryParams.ipmode = -1;
 		queryParams.destatus = 5;
 	}else if(type == 2){
-		queryParams.ipmode = -1;
 		queryParams.isncust = "Y";
 		queryParams.destatus = 5;
 	}else if(type == 3){
-		queryParams.ipmode = -1;
 		queryParams.qtype = 3;
 	}else if(type == 4){
 		queryParams.ipmode = 9;

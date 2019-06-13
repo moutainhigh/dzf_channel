@@ -176,12 +176,6 @@
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">扣费比例：</label>
 					<input id="qpropor" class="easyui-numberbox" style="width:100px;height:28px;" />
-					<label style="width:73px;text-align:right">公司类型：</label>
-					<select id="ipmode" class="easyui-combobox" data-options="panelHeight:'auto'" 
-						style="width:105px;height:28px;" editable="false">
-						<option value="-1">正式加盟商</option>
-						<option value="9">演示加盟商</option>
-					</select>
 				</div>
 				<div class="time_col time_colp10">
 					<label style="width:85px;text-align:right">合同周期：</label>
