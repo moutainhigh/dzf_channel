@@ -3,7 +3,6 @@ var grid;
 
 $(function() {
 	load();
-//	fastQry();
 	initListener();
 	initChannel();
 	loadJumpData();
@@ -351,34 +350,6 @@ function qryData(type){
 	$('#grid').datagrid('reload');
 }
 
-///**
-// * 快速过滤
-// */
-//function fastQry(){
-//	$('#filter_value').textbox('textbox').keydown(function (e) {
-//		 if (e.keyCode == 13) {
-//            var filtername = $("#filter_value").val(); 
-//            if(filtername != ""){
-//            	var queryParams = $('#grid').datagrid('options').queryParams;
-//            	$('#grid').datagrid('options').url =contextPath + '/chnpay/chnpayconf!query.action';
-//            	var rows = $('#grid').datagrid('getRows');
-//            	if(rows != null && rows.length > 0){
-//            		queryParams.qtype = $('#status').combobox('getValue');
-//            		queryParams.iptype = $('#iptype').combobox('getValue');
-//            		queryParams.ipmode = $('#ipmode').combobox('getValue');
-//            		queryParams.cpid = $("#pk_account").val();
-//            		queryParams.id = null;
-//            	}
-//            	queryParams.begdate = $('#bdate').datebox('getValue');
-//            	queryParams.enddate = $('#edate').datebox('getValue');
-//            	queryParams.cpname = filtername;
-//            	$('#grid').datagrid('options').queryParams = queryParams;
-//            	$('#grid').datagrid('reload');
-//            }
-//         }
-//   });
-//}
-
 /**
  * 取消确认 
  * @param type 5：取消确认；
@@ -587,11 +558,6 @@ function operatData(postdata, rows){
 function showImage(billid){
 	var src = DZF.contextPath + "/chnpay/chnpayconf!getAttachImage.action?billid=" + billid +"&time=" +Math.random();
 	$("#tpfd").empty();
-//	parent.openFullViewDlg('<div style="overflow:scroll;height:80%"  >'
-//			+'<a  onclick="downFile(\'' +billid + '\',1)"><img id="conturnid" alt="无法显示图片"  onmouseover="showTips()" onmouseout="hideTips()"  src="' + src 
-//			+ '" style="height: " + $(window).height()-10 + ";width: " + $(window).width()-10 +" ">'
-//			+'<div id="reUpload" style="width: 100%; height:25px; position:absolute; top:30%; left:30%; display:none;" >' + 
-//	  		+'</a></div>','原图');
 	var img = '<img id="conturnid" alt="无法显示图片" ondblclick="downFile(\'' +billid + '\',1)" '
 	+ ' onmouseover="showTips()" onmouseout="hideTips()"'
 	+ 'src="' + src + '" style="position: absolute;z-index: 1;left:50px;top:50px;">'

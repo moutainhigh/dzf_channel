@@ -135,14 +135,6 @@ public class ChnPayConfAction extends BaseAction<ChnPayBillVO>{
 					errnum ++;
 					errmsg.append(e.getMessage()).append("<br>");
 				}
-				
-//				if(!StringUtil.isEmpty(billvo.getVerrmsg())){
-//					errnum ++;
-//					errmsg.append(billvo.getVerrmsg()).append("<br>");
-//				}else{
-//					rignum ++;
-//					rightlist.add(billvo);
-//				}
 			}
 			json.setSuccess(true);
 			if(rignum > 0 && rignum == billVOs.length){

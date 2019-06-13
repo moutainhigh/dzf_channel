@@ -34,13 +34,6 @@
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;" onclick="qryData(6)">演示待确认</a>
 					</div>
 				</div>
-				
-<!-- 				<div class="left mod-crumb">
-					<div class="h30 h30-arrow" id="filter">
-						<label class="mr5">加盟商：</label>
-						<input style="height:28px;width:250px" class="easyui-textbox" id="filter_value" prompt="请输入加盟商名称,按Enter键 "/> 
-					</div>
-				</div> -->
 				<div class="right">
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="certain()" >收款确认</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options="plain:true" onclick="operate(5)" >取消确认</a>
