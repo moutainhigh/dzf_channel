@@ -62,7 +62,6 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
 		if(list != null && list.size() > 0){
-//			List<ChnPayBillVO> retlist = new ArrayList<ChnPayBillVO>();
 			CorpVO accvo = null;
 			Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), 3);//渠道运营区域设置
 			QueryDeCodeUtils.decKeyUtils(new String[]{"vapprovename"}, list, 1);
@@ -70,12 +69,6 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
-					//此代码为界面 加盟商名称 快速过滤，暂时注释
-//					if(!StringUtil.isEmpty(paramvo.getCorpname())){
-//						if(vo.getCorpname().indexOf(paramvo.getCorpname()) != -1){
-//							retlist.add(vo);
-//						}
-//					}
 				}
 				if(areamap != null && !areamap.isEmpty()){
 					String area = areamap.get(vo.getVprovince());
@@ -84,9 +77,6 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 					}
 				}
 			}
-//			if(!StringUtil.isEmpty(paramvo.getCorpname())){
-//				return retlist;
-//			}
 		}
 		return list;
 	}
