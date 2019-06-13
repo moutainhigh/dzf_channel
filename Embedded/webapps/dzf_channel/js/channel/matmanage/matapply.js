@@ -1038,8 +1038,8 @@ function showApplyData(fcorp){
  */
 function edit(index){
 	status = "edit";
-	var erow = $('#grid').datagrid('getSelected');
-	if(erow==null){
+	//var erow = $('#grid').datagrid('getSelected');
+	if(index==undefined){
 		Public.tips({content:'请选择数据行',type:2});
 		return;
 	}
