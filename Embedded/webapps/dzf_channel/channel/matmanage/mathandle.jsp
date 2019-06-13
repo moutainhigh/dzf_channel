@@ -84,9 +84,9 @@
 				<label style="width:85px;text-align:right">单据状态：</label>
 				<!-- 单据状态：全部、待审核、待发货、已发货、已驳回 -->
 				<select id="status" class="easyui-combobox" data-options="panelHeight:'auto'" style="width:282px;height:28px;">
-					<option value="0">全部</option>
 					<!-- <option value="1">待审核</option> -->
 					<option value="2">待发货</option>
+					<option value="0">全部</option>
 					<option value="3">已发货</option>
 					<!-- <option value="4">已驳回</option> -->
 				</select>
