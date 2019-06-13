@@ -106,6 +106,7 @@ function initQry() {
 	 * $("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);
 	 */
 
+	$("#status").combobox("setValue", 2);
 	$("#begdate").datebox("setValue", null);
 	$("#enddate").datebox("setValue", null);
 	// $("#jqj").html(parent.SYSTEM.PreDate+" 至 "+parent.SYSTEM.LoginDate);
