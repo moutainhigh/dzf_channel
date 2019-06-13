@@ -330,7 +330,13 @@ function load(queryData) {
 	columns1[2]={width : '110',title : '省（市）',field : 'provname',align:'left',rowspan:2};
 	columns1[3]={width : '100',title : '渠道经理',field : 'cuname',align:'left',rowspan:2}; 
 	columns1[4]={width : '110',title : '加盟商编码',field : 'ccode',align:'left', rowspan:2};
-	columns1[5]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2};
+	columns1[5]={width : '200',title : '加盟商名称',field : 'cname',align:'left', rowspan:2,
+			styler: function (value, row, index) {
+                if (!isEmpty(row.dreldate)) {
+                    return 'background:url(../../images/rescission.png) no-repeat 120px 5px;';
+                }
+            }
+	};
 	columns1[6]={width : '100',title : '加盟商类型',field : 'chtype',align:'left', rowspan:2,formatter :ftype};
 	columns1[7]={width : '100',title : '加盟日期',field : 'chndate',align:'left', rowspan:2};
 	columns1[8]={width : '200',title : '余额',field : 'double1',align:'right',colspan:2};

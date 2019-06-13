@@ -296,6 +296,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append("        account.unitname as corpname, \n");
 		sql.append("        account.djoindate as chndate, \n");
 		sql.append("        account.channeltype, \n");
+		sql.append("        account.drelievedate, \n");//解约日期
 		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
 		sql.append("        cn.areacode,cb.vprovince, \n");
 		sql.append("        cb.userid   as cuserid \n");
@@ -341,6 +342,7 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 		sql.append("        account.unitname as corpname, \n");
 		sql.append("        account.djoindate as chndate, \n");
 		sql.append("        account.channeltype, \n");
+		sql.append("        account.drelievedate, \n");//解约日期
 		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
 		sql.append("        cn.areacode,cb.vprovince, \n");
 		sql.append("        case when cb.pk_corp = account.pk_corp then cb.userid else null end as cuserid \n");

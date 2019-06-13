@@ -74,6 +74,9 @@ public class DebitQueryVO extends SuperVO {
 	@FieldAlias("num")
 	private Integer num;// 查询量
 	
+    @FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
+	
 	/***************前台展示使用************/
 	private String head;
 	private DZFDouble one1;
@@ -154,7 +157,15 @@ public class DebitQueryVO extends SuperVO {
 	private DZFDouble thirty62;
 	private DZFDouble thirty72;
 
-	@Override
+	public DZFDate getDrelievedate() {
+        return drelievedate;
+    }
+
+    public void setDrelievedate(DZFDate drelievedate) {
+        this.drelievedate = drelievedate;
+    }
+
+    @Override
 	public String getPKFieldName() {
 		return null;
 	}
