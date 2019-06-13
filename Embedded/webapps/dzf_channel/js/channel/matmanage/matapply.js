@@ -1184,10 +1184,8 @@ function onSave(t){
 					type : 2
 				});
 			}
-			
+			return;
 		}
-		
-		return;
 		onSaveSubmit(postdata,t);
 	}else{
 		onSaveSubmit(postdata,null);
