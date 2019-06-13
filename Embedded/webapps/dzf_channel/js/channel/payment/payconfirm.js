@@ -136,7 +136,6 @@ function reloadData(){
 	queryParams.iptype = $('#iptype').combobox('getValue');
 	queryParams.ipmode = $('#ipmode').combobox('getValue');
 	queryParams.stype = $('#stype').combobox('getValue');
-	queryParams.corptype = $('#corptype').combobox('getValue');
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;

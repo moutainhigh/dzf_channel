@@ -135,12 +135,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			sql.append(" AND t.ipaymode = ? \n");
 			spm.addParam(paramvo.getIpaymode());
 		}
-		if (paramvo.getCorptype() != null && paramvo.getCorptype() != -1) {
-			sql.append(" AND account.channeltype = ? \n");
-			spm.addParam(paramvo.getCorptype());
-		} else {
-			sql.append(" AND account.channeltype != 9 \n");
-		}
 		if (paramvo.getSeletype() != null && paramvo.getSeletype() != -1) {
 			sql.append(" AND t.ichargetype = ? \n");
 			spm.addParam(paramvo.getSeletype());
@@ -150,10 +144,18 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			spm.addParam(paramvo.getBegdate());
 			spm.addParam(paramvo.getEnddate());
 		}
+		//加盟商过滤：
 		if (!StringUtil.isEmpty(paramvo.getPk_corp())) {
 			String[] strs = paramvo.getPk_corp().split(",");
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND t.pk_corp in (").append(inSql).append(")");
+		}else{
+			if (paramvo.getCorptype() != null && paramvo.getCorptype() != -1) {
+				sql.append(" AND account.channeltype = ? \n");
+				spm.addParam(paramvo.getCorptype());
+			} else {
+				sql.append(" AND account.channeltype != 9 \n");
+			}
 		}
 		if (!StringUtil.isEmpty(paramvo.getPk_bill())) {
 			sql.append(" AND t.pk_paybill = ? \n");
@@ -398,6 +400,7 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * 
 	 * @param billvo
 	 */
+	@SuppressWarnings("unchecked")
 	private void checkIsCancel(ChnPayBillVO billvo) throws DZFWarpException {
 		if (billvo.getIpaytype() == 2) {
 			SQLParameter sp = new SQLParameter();
@@ -430,14 +433,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 */
 	private ChnPayBillVO updateCancelData(ChnPayBillVO billvo, Integer opertype, String cuserid)
 			throws DZFWarpException {
-		// if (StringUtil.isEmpty(billvo.getTableName()) ||
-		// StringUtil.isEmpty(billvo.getPk_paybill())) {
-		// throw new BusinessException("单据号" + billvo.getVbillcode() + "数据错误");
-		// }
-		// String uuid = UUID.randomUUID().toString();
-		// try {
-		// LockUtil.getInstance().tryLockKey(billvo.getTableName(),
-		// billvo.getPk_paybill(), uuid, 120);
 		if (billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_3) {
 			throw new BusinessException("单据号" + billvo.getVbillcode() + "状态不为【已确认】");
 		}
@@ -512,15 +507,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		billvo.setTstamp(new DZFDateTime());// 操作时间
 		singleObjectBO.update(billvo,
 				new String[] { "vstatus", "vconfirmid", "dconfirmtime", "tstamp", "ichargetype" });
-		// } catch (Exception e) {
-		// if (e instanceof BusinessException)
-		// throw new BusinessException(e.getMessage());
-		// else
-		// throw new WiseRunException(e);
-		// } finally {
-		// LockUtil.getInstance().unLock_Key(billvo.getTableName(),
-		// billvo.getPk_paybill(), uuid);
-		// }
 		return billvo;
 	}
 
@@ -534,14 +520,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 	 * @throws DZFWarpException
 	 */
 	private ChnPayBillVO updateRejectData(ChnPayBillVO billvo, String vreason, String cuserid) throws DZFWarpException {
-		// if (StringUtil.isEmpty(billvo.getTableName()) ||
-		// StringUtil.isEmpty(billvo.getPk_paybill())) {
-		// throw new BusinessException("单据号"+billvo.getVbillcode()+"数据错误");
-		// }
-		// String uuid = UUID.randomUUID().toString();
-		// try {
-		// LockUtil.getInstance().tryLockKey(billvo.getTableName(),
-		// billvo.getPk_paybill(),uuid, 60);
 		if (billvo.getVstatus() != null && billvo.getVstatus() != IStatusConstant.IPAYSTATUS_5) {
 			throw new BusinessException("单据号" + billvo.getVbillcode() + "状态不为【待确认】");
 		}
@@ -553,15 +531,6 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		billvo.setTstamp(new DZFDateTime());// 操作时间
 		String[] str = new String[] { "irejectype", "vconfirmid", "dconfirmtime", "vreason", "vstatus", "tstamp" };
 		singleObjectBO.update(billvo, str);
-		// } catch (Exception e) {
-		// if (e instanceof BusinessException)
-		// throw new BusinessException(e.getMessage());
-		// else
-		// throw new WiseRunException(e);
-		// } finally {
-		// LockUtil.getInstance().unLock_Key(billvo.getTableName(),
-		// billvo.getPk_paybill(),uuid);
-		// }
 		UserVO uservo = userServiceImpl.queryUserJmVOByID(billvo.getVconfirmid());
 		if (uservo != null) {
 			billvo.setVconfirmname(uservo.getUser_name());
