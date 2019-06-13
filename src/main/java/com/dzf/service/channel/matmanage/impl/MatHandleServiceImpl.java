@@ -9,6 +9,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
@@ -123,13 +124,18 @@ public class MatHandleServiceImpl implements IMatHandleService {
 
 	@Override
 	public MatOrderVO[] saveImoprt(MatOrderVO[] vos) {
+		
+		String sql = "select vname from cn_materiel where nvl(dr,0) = 0 ";
+		List<String> nameList = (List<String>) singleObjectBO.executeQuery(sql, null, new ColumnProcessor("vname"));
 		for (MatOrderVO mvo : vos) {
 			MatOrderBVO[] bvo = (MatOrderBVO[]) mvo.getChildren();
 			mvo.setChildren(null);
 			singleObjectBO.insertVO("000001", mvo);
 			for (MatOrderBVO mbvo : bvo) {
-				mbvo.setPk_materielbill(mvo.getPk_materielbill());
-				singleObjectBO.insertVO("000001", mbvo);
+				if(nameList.contains(mbvo.getVname())){
+					mbvo.setPk_materielbill(mvo.getPk_materielbill());
+					singleObjectBO.insertVO("000001", mbvo);
+				}
 			}
 		}
 		return vos;
