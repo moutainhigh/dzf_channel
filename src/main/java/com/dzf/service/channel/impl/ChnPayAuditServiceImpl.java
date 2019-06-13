@@ -115,21 +115,23 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
             sql.append(" AND t.ipaymode = ? \n");
             spm.addParam(paramvo.getIpaymode());
         }
-		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
-			sql.append(" AND account.channeltype = ? \n");
-			spm.addParam(paramvo.getSeletype());
-		}else{
-			sql.append(" AND account.channeltype != 9 \n");
-		}
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
 		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
             spm.addParam(paramvo.getBegdate());
             spm.addParam(paramvo.getEnddate());
 		}
+		//加盟商过滤
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
 		    String[] strs = paramvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
+		}else{
+			if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
+				sql.append(" AND account.channeltype = ? \n");
+				spm.addParam(paramvo.getSeletype());
+			}else{
+				sql.append(" AND account.channeltype != 9 \n");
+			}
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
 			sql.append(" AND t.pk_paybill = ? \n");
