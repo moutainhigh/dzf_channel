@@ -69,7 +69,16 @@ function load(){
 		            { field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
 		            { field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',rowspan:2}, 
 		            { field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
-		            { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2},
+		            { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2,
+		            	formatter: function (value,row,index) {
+		            		if (!isEmpty(row.dreldate)) {
+		            			return "<div style='position: relative;'>" + value 
+		            				+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
+		            		}else{
+		            			return value;
+		            		}
+		            	}
+		            },
 		            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
 		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		            

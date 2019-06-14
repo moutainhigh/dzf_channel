@@ -67,6 +67,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
+					retvo.setDrelievedate(corpvo.getDrelievedate());
 				}
 				// 1 、客户数量、合同金额：
 				if (custmap != null && !custmap.isEmpty()) {
@@ -157,6 +158,7 @@ public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMo
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
+					retvo.setDrelievedate(corpvo.getDrelievedate());
 				}
 				
 				// 1 、客户数量、合同金额：
