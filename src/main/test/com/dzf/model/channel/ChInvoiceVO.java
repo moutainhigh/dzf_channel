@@ -141,6 +141,9 @@ public class ChInvoiceVO extends SuperVO{
 	
 	@FieldAlias("oid")
 	private String voperater;//渠道运营
+	
+    @FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
     
     public String getVmanager() {
 		return vmanager;
@@ -168,6 +171,14 @@ public class ChInvoiceVO extends SuperVO{
 
 	public String getVbillcode() {
 		return vbillcode;
+	}
+
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
 	}
 
 	public void setVbillcode(String vbillcode) {

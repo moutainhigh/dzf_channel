@@ -113,7 +113,8 @@ public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChan
 	private List<ManagerVO> qryCharge(ManagerVO qvo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select account.pk_corp, account.innercode, account.unitname corpname,account.vprovince ");
+		sql.append("select account.pk_corp, account.innercode, account.unitname corpname,");
+		sql.append("       account.drelievedate,account.vprovince  \n");
 		sql.append("  from bd_account account ");
 		sql.append(" where ").append(wheresql);
 		sql.append("   and nvl(account.dr, 0) = 0 ");
@@ -141,6 +142,7 @@ public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChan
 		sql.append("select account.pk_corp, ");
 		sql.append("       account.innercode, ");
 		sql.append("       account.unitname corpname,");
+		sql.append("       account.drelievedate, ");//解约日期
 		sql.append("       a.areaname, ");
 		sql.append("       a.areacode, ");
 		sql.append("       a.userid, ");

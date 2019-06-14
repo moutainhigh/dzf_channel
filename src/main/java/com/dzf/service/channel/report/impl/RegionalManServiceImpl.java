@@ -61,6 +61,7 @@ public class RegionalManServiceImpl extends ManCommonServiceImpl implements IReg
 		sql.append(" account.pk_corp, ");
 		sql.append(" account.innercode, ");
 		sql.append(" account.unitname corpname, ");
+		sql.append(" account.drelievedate, ");//解约日期
 		sql.append(" account.vprovince, ");
 		sql.append(" y.region_name vprovname");
 		sql.append("  from bd_account account ");

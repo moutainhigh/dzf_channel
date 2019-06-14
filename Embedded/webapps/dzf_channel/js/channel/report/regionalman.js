@@ -99,7 +99,12 @@ function load() {
 						}else if(value=="合计"){
 							return "合计";
 						}else{
-							return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
+							value= "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
+			            	if (!isEmpty(row.dreldate)) {
+			            		return "<div style='position: relative;'>" + value + "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
+			            	}else{
+			            		return value
+			            	}
 						}
 			}}, 
 			{width : '60',title : '小规模',field : 'xgmNum',align:'right',rowspan:2}, 

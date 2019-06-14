@@ -194,7 +194,15 @@ function load(){
 		            {width : '140',title : '大区',field : 'aname',align : 'left'},
 		            {width : '80',title : '渠道经理',field : 'mid',align : 'left'},
 		            {width : '80',title : '渠道运营',field : 'oid',align : 'left'},
-		            {width : '150',title : '加盟商',field : 'cname',align:'left'},
+		            {width : '150',title : '加盟商',field : 'cname',align:'left',
+		                formatter: function (value,row,index) {
+		                	if (!isEmpty(row.dreldate)) {
+		                		return "<div style='position: relative;'>" + value + "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
+		                	}else{
+		                		return value
+		                	}
+		                }
+		            },
 		            {width : '80',title : '付款类型',field : 'paytype',align:'left',
 						formatter: function(value,row,index){
 			          		if (value == 0){

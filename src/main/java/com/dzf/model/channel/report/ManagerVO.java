@@ -93,6 +93,9 @@ public class ManagerVO extends SuperVO {
     
     @FieldAlias("vccode")
     private String vcontcode; // 合同编码
+    
+    @FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
 
 	public String getInnercode() {
 		return innercode;
@@ -116,6 +119,14 @@ public class ManagerVO extends SuperVO {
 
 	public void setDenddate(DZFDate denddate) {
 		this.denddate = denddate;
+	}
+
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
 	}
 
 	public Integer getXgmNum() {

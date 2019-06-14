@@ -64,6 +64,7 @@ public class FranchiseeManServiceImpl extends ManCommonServiceImpl implements IF
 		sql.append("       account.pk_corp, ");
 		sql.append("       account.innercode, ");
 		sql.append("       account.unitname corpname, ");
+		sql.append("        account.drelievedate, \n");//解约日期
 		sql.append("       account.vprovince ");
 		sql.append("  from bd_account account ");
 		sql.append("  left join ynt_area y on account.vprovince = y.region_id ");
