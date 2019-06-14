@@ -126,7 +126,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 								mny = SafeCompute.add(mny, addmny);
 								smap.put(key, mny.setScale(2, DZFDouble.ROUND_HALF_UP));
 							}else{
-								num = (Integer) smap.get(key);
+								num = CommonUtil.getInteger(smap.get(key));
 								addnum = CommonUtil.getInteger(map.get(key));
 								num = num + addnum;
 								smap.put(key, num);
@@ -296,6 +296,7 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
 		nlist.add("corpname");
 		nlist.add("mid");
 		nlist.add("oid");
+		nlist.add("dreldate");
 		return nlist;
 	}
 	

@@ -67,6 +67,9 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		if (corpvo != null) {
 			retvo.setCorpcode(corpvo.getInnercode());
 			retvo.setCorpname(corpvo.getUnitname());
+			if(corpvo.getDrelievedate() != null){
+				retvo.setDrelievedate(corpvo.getDrelievedate());
+			}
 		}
 		retvo.setNdeducmny(dvo.getNdeducmny());
 		retvo.setIcorpnums(dvo.getIcorpnums());
@@ -843,6 +846,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 			map.put("corpid", retvo.getPk_corp());
 			map.put("corpcode", retvo.getCorpcode());
 			map.put("corpname", retvo.getCorpname());
+			map.put("dreldate", retvo.getDrelievedate());
 			
 			if(retvo.getIretnum()!= null){
 				map.put("retnum", retvo.getIretnum());

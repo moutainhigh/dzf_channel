@@ -258,10 +258,11 @@ function getFloatValue(code){
  * @param code
  * @returns {Boolean}
  */
-function isEmpty(code){
-	if(code != "" && code != null && code != undefined && code != "undefined" && typeof(code) != 'undefined'){
+function isEmpty(code) {
+	if (code != "" && code != null && code != undefined && code != "undefined"
+			&& typeof (code) != "undefined" && code != "null") {
 		return false;
-	}else{
+	} else {
 		return true;
 	}
 }

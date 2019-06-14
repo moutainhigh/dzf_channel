@@ -287,7 +287,19 @@ function load(){
 						{ field : 'mid',  title : '渠道经理', width : 100, halign:'center',align:'left'}, 
 						{ field : 'oid',  title : '渠道运营', width : 100, halign:'center',align:'left'}, 
 		                { field : 'corpcode',  title : '加盟商编码', width : 100, halign:'center',align:'left'}, 
-		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left'},
+		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left',
+		                	formatter: function (value,row,index) {
+		                		if(!isEmpty(value)){
+		                			console.info(row.dreldate);
+		                			if (!isEmpty(row.dreldate)) {
+		                				return "<div style='position: relative;'>" + value 
+		                				+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
+		                			}else{
+		                				return value;
+		                			}
+		                		}
+		                	}
+		                },
 		                { field : 'stocknum',  title : '存量<br/>客户', width : 50, halign:'center',align:'right'},
 		                { field : 'custnum',  title : '存量<br/>合同数', width : 60, halign:'center',align:'right', },
 		                { field : 'zeronum',  title : '0扣款<br/>(非存量)<br/>合同数', width : 70, halign:'center',align:'right', },

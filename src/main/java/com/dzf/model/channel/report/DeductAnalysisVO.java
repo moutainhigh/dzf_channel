@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
@@ -26,6 +27,9 @@ public class DeductAnalysisVO extends SuperVO {
 	
 	@FieldAlias("corpname")
 	private String corpname;//加盟商名称
+	
+	@FieldAlias("dreldate")
+	private DZFDate drelievedate;//解约日期（不存库，取客户）
 	
 	@FieldAlias("corpnum")
 	private Integer icorpnums;//扣款户数
@@ -62,6 +66,14 @@ public class DeductAnalysisVO extends SuperVO {
 	
 	@FieldAlias("oid")
 	private String voperater;//渠道运营
+
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
 
 	public HashMap<String, Object> getHash() {
 		return hash;
