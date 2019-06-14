@@ -141,7 +141,13 @@ function nameFormat(value, row, index){
 	if(isEmpty(value)){
 		return;
 	}
-	return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+	if (!isEmpty(row.dreldate)) {
+		return  "<div style='position: relative;'>" + "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>"
+		+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
+	}else{
+		return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+	}
+	
 }
 
 /**

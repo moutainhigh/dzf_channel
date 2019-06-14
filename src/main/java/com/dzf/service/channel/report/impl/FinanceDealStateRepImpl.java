@@ -53,13 +53,17 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		// 1、按照所选则的大区、省（市）、会计运营经理和当前登陆人过滤出符合条件的加盟商信息
 		HashMap<String, DataVO> map = queryCorps(pamvo, FinanceDealStateRepVO.class);
 		List<String> corplist = null;
+		List<DataVO> corpvaluelist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
+			Collection<DataVO> values = map.values();
 			corplist = new ArrayList<String>(col);
+			corpvaluelist = new ArrayList<DataVO>(values);
 		}
 
-		if (corplist != null && corplist.size() > 0) {
-			return getRetList(pamvo, corplist, map);
+		if (corplist != null && corplist.size() > 0 && 
+				corpvaluelist!= null && corpvaluelist.size() > 0 ) {
+			return getRetList(pamvo, corplist,corpvaluelist, map);
 		}
 		return null;
 	}
@@ -69,11 +73,12 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 * 
 	 * @param pamvo
 	 * @param corplist
+	 * @param corpvaluelist 
 	 * @param map
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private List<FinanceDealStateRepVO> getRetList(QryParamVO pamvo, List<String> corplist, HashMap<String, DataVO> map)
+	private List<FinanceDealStateRepVO> getRetList(QryParamVO pamvo, List<String> corplist, List<DataVO> corpvaluelist, HashMap<String, DataVO> map)
 			throws DZFWarpException {
 		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
 		List<String> replist = new ArrayList<String>();// 统计凭证的加盟商主键
@@ -97,6 +102,13 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 					retvo.setPk_corp(pk_corp);
 				}
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
+				if(corpvo.getDrelievedate()==null){
+					for(int i=0;i<corpvaluelist.size();i++){
+					      if(corpvo.getPk_corp().equals(corpvaluelist.get(i).getPk_corp())){
+					         corpvo.setDrelievedate(corpvaluelist.get(i).getDrelievedate());
+					      }        
+					   }
+				}
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
@@ -125,6 +137,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 					}
 
 				}
+				retvo.setDrelievedate(corpvo.getDrelievedate());
 				retlist.add(retvo);
 			}
 		}
@@ -215,7 +228,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
 		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
 		sql.append("       COUNT(p.pk_corp) AS num,  \n");
-		sql.append("       nvl(p.isncust, 'N') AS isncust  \n");
+		sql.append("       nvl(p.isncust, 'N') AS isncust \n");
 		sql.append("  FROM bd_corp p  \n");
 		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");

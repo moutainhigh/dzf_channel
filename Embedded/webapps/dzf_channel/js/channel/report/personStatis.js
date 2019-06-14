@@ -56,7 +56,11 @@ function load(){
 		                { field : 'incode',  title : '加盟商编码', width : 140,halign:'center',align:'left',rowspan:2},
 		                { field : 'corpnm', title : '加盟商名称', width:240,halign:'center',align:'left',rowspan:2,
 		                	formatter: function(value,row,index){
-		                		return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
+		                		if (!isEmpty(row.dreldate)) {
+		                			return  "<div style='position: relative;'>" + "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>" + "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
+		                    	}else{
+		                    		return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryUserDetail('"+row.corpid+"')\">" + value + "</a>";
+		                    	}
 			            }},
 			            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
 			            { field : 'custnum', title : '总客户数', width:80,halign:'center',align:'right',rowspan:2},

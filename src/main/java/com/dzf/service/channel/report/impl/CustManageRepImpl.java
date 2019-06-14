@@ -378,7 +378,8 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
 		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
-		sql.append("       COUNT(p.pk_corp) AS num  \n");
+		sql.append("       COUNT(p.pk_corp) AS num, \n");
+		sql.append("       t.drelievedate  \n");
 		sql.append("  FROM bd_corp p  \n");
 		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
@@ -401,7 +402,7 @@ public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageR
 			sql.append(" AND ");
 			sql.append(filter);
 		}
-		sql.append(" GROUP BY t.pk_corp,  \n");
+		sql.append(" GROUP BY t.pk_corp,t.drelievedate,  \n");
 		sql.append("          nvl(p.chargedeptname, '小规模纳税人') \n");
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));

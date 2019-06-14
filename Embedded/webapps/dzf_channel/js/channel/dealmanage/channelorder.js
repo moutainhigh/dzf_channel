@@ -187,6 +187,13 @@ function load(){
 			field : 'pname',
 			align : 'left',
             halign : 'center',
+            formatter: function (value,row,index) {
+            	if (!isEmpty(row.dreldate)) {
+            		return "<div style='position: relative;'>" + value + "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
+            	}else{
+            		return value
+            	}
+            }
 		}, {
 			width : '100',
 			title : '订单金额',

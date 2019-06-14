@@ -3,6 +3,8 @@ package com.dzf.model.channel.report;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
 @SuppressWarnings({ "rawtypes", "serial" })
@@ -33,6 +35,9 @@ public class PersonStatisVO extends DataVO{
 	private Integer xnum;//销售人员用户总数
 	
 	private Integer custnum;//客户总数
+	
+	@FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
 	
 	public Integer getLznum() {
 		return lznum;
@@ -149,7 +154,12 @@ public class PersonStatisVO extends DataVO{
 	public void setTotal(Integer total) {
 		this.total = total;
 	}
-	
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
 	@Override  
 	public boolean equals(Object o) {  
         if (o == this) return true;  

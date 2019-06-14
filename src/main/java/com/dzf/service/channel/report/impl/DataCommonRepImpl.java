@@ -115,6 +115,7 @@ public class DataCommonRepImpl {
 		sql.append("       y.region_name vprovname,  \n");
 		sql.append("       p.pk_corp,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.drelievedate,  \n");//解约日期
 		sql.append("       p.djoindate chndate, \n");
 		sql.append("       p.vprovince,  \n");
 		sql.append("       b.ischarge,  \n");
@@ -221,6 +222,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,  \n");
 		sql.append("       b.vprovince,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.drelievedate,  \n");//解约日期
 		sql.append("       p.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname,  \n");
 		sql.append("       (case  \n");
@@ -285,6 +287,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,  \n");
 		sql.append("       b.vprovince,  \n");
 		sql.append("       p.innercode,  \n");
+		sql.append("       p.drelievedate,  \n");//解约日期
 		sql.append("       p.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname  \n");
 		sql.append("  from bd_account p  \n");

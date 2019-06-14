@@ -121,6 +121,9 @@ public class GoodsBillVO extends MultSuperVO {
 	@FieldAlias("qrysql")
 	private String vqrysql;//查询语句
 	
+	@FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
+	
 	//&&&&&&&&&&&&&&&&&仅作展示用字段end&&&&&&&&&&&&&&&
 
 	public Integer getVtistatus() {
@@ -417,6 +420,14 @@ public class GoodsBillVO extends MultSuperVO {
 
 	public void setTs(DZFDateTime ts) {
 		this.ts = ts;
+	}
+	
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.dzf.model.channel.report;
 
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
 @SuppressWarnings("serial")
@@ -85,6 +86,9 @@ public class CustManageRepVO extends DataVO{
 	
 	@FieldAlias("ratet6")
 	private DZFDouble icustratetaxpay6;//其他类行业占比-一般纳税人
+	
+	@FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期
 
 	public Integer getIcustsmall() {
 		return icustsmall;
@@ -345,5 +349,14 @@ public class CustManageRepVO extends DataVO{
 	public void setIcustratetaxpay6(DZFDouble icustratetaxpay6) {
 		this.icustratetaxpay6 = icustratetaxpay6;
 	}
+
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
+	
 
 }

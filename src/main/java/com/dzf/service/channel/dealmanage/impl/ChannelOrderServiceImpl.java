@@ -131,6 +131,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		sql.append("       account.innercode corpcode, \n");
 		sql.append("       account.unitname corpname, \n");
 		sql.append("       account.vprovince, \n");
+		sql.append("       account.drelievedate, \n");//解约日期
 		sql.append("       account.citycounty as vprovname, \n");
 		sql.append("       nvl(l.vtistatus,1) AS vtistatus, \n");
 		sql.append("       l.updatets,  \n");
