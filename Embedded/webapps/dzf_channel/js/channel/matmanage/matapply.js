@@ -2,7 +2,7 @@ var contextPath = DZF.contextPath;
 //var hjcols = null;//汇总列字段
 var editIndex;
 var status="brows";
-
+var flag = true;
 $(window).resize(function () {
     $('#grid').datagrid('resize', {
         height: Public.setGrid().h,
@@ -941,6 +941,9 @@ function dClickMat(rowTable){
 					names.push(rows[i].wlname);
 				}
 			}
+			if(!flag){
+				names.pop();
+			}
 			for(var j=0;j<rowTable.length;j++){
 				if(names.indexOf(rowTable[j].wlname)!=-1){
 					Public.tips({content : "不能选择重复物料",type : 2});
@@ -1186,6 +1189,7 @@ function onSave(t){
 					type : 2
 				});
 			}
+			flag = false;
 			return;
 		}
 		
