@@ -14,7 +14,7 @@
 </head>
 <body class="wrapper char" style="height:100%"> 
     <div class="easyui-layout" style="height:100%;">
-	    <div class="char" data-options="region:'west',border:false,split:true" style="width:22%;border-width:1px 0px 0px 0px;" id="leftGrid">
+	    <div class="char" data-options="region:'west',border:false,split:true" style="width:22%;border-width:1px 0px 0px 0px;overflow:hidden" id="leftGrid">
 			<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
     		<div class="index_top mod-toolbar-top"  >
 		 		<div class="right mod-btn" id="view_buttons">
@@ -28,7 +28,7 @@
 			<table id="instgrid" ></table>
 		</div>
 		
-	 	<div class="char" data-options="region:'center',border:true,split:true" style="width:48%;border-width:1px 0px 0px 0px;" id="rightGrid" >
+	 	<div class="char" data-options="region:'center',border:true,split:true" style="width:48%;border-width:1px 0px 0px 0px;overflow:hidden" id="rightGrid" >
 	    	<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
     		<div class="index_top mod-toolbar-top"  >
 		 		<div class="right mod-btn" id="view_buttons">

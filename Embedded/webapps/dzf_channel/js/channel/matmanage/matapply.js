@@ -1038,8 +1038,8 @@ function showApplyData(fcorp){
  */
 function edit(index){
 	status = "edit";
-	//var erow = $('#grid').datagrid('getSelected');
-	if(index==undefined){
+	var erow = $('#grid').datagrid('getSelected');
+	if(erow==null){
 		Public.tips({content:'请选择数据行',type:2});
 		return;
 	}
@@ -1141,6 +1141,7 @@ function del(ths){
 						});
 					} else {
 						load(0);
+						$('#grid').datagrid('clearSelections');
 						Public.tips({
 							content : data.msg,
 						});
@@ -1163,7 +1164,6 @@ function onSave(t){
 	var postdata = new Object();
 	var body = "";
 	var name = [];
-	var lossname = [];
 	//物料数据
 	var rows = $('#cardGrid').datagrid('getRows');
 	for(var j = 0;j< rows.length; j++){
@@ -1173,24 +1173,16 @@ function onSave(t){
 	
 	if(t==1){//新增保存
 		for(var i = 0; i < rows.length; i++){
-			if(parseInt(rows[i].enapplynum) < parseInt(rows[i].applynum)
-					&& parseInt(rows[i].enapplynum) > 0){
+			if((parseInt(rows[i].enapplynum) < parseInt(rows[i].applynum)
+					&& parseInt(rows[i].enapplynum) >= 0) || 
+					(rows[i].enapplynum.indexOf("-")==0)){
 				name.push(rows[i].wlname);
-			}
-			if(rows[i].enapplynum.indexOf("-")==0){
-				lossname.push(rows[i].wlname);
 			}
 		}
 		if(!isEmpty(name) || !isEmpty(lossname)){
 			for(var i=0;i<name.length;i++){
 				Public.tips({
 					content : name+"可申请数量不足，请调整",
-					type : 2
-				});
-			}
-			for(var i=0;i<lossname.length;i++){
-				Public.tips({
-					content : lossname+"可申请数量为负，小于申请数量",
 					type : 2
 				});
 			}
