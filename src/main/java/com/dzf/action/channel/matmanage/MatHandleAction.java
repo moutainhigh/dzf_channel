@@ -80,7 +80,7 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 		{ 6, "宣传单页" }, 
 		{ 7, "工牌" },
 		{ 8, "文件" },				
-		{ 9, "授权书" }, 	
+		{ 9, "授权书/牌" }, 	
 		{ 10, "快递公司" },	
 		{ 11, "金额" },		
 		{ 12, "单号" },		

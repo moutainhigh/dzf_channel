@@ -3,7 +3,6 @@ package com.dzf.service.channel.matmanage.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,6 +124,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public MatOrderVO[] saveImoprt(MatOrderVO[] vos) {
 		
@@ -132,7 +132,6 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		List<String> nameList = (List<String>) singleObjectBO.executeQuery(sql, null, new ColumnListProcessor("vname"));
 		
 		Map<String,Integer> map = new HashMap<String,Integer>(); 
-		Set<String> nameSet = map.keySet();
 		for (MatOrderVO mvo : vos) {
 			MatOrderBVO[] bvo = (MatOrderBVO[]) mvo.getChildren();
 			mvo.setChildren(null);
@@ -141,7 +140,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 				if(nameList.contains(mbvo.getVname())){
 					mbvo.setPk_materielbill(mvo.getPk_materielbill());
 					singleObjectBO.insertVO("000001", mbvo);
-				     //导入的物料在物料档案表中加上物料发货数量
+				     //导入的物料在物料档案表中累加物料发货数量
 					if(!map.containsKey(mbvo.getVname())){
 						map.put(mbvo.getVname(), mbvo.getOutnum());
 					}else{
