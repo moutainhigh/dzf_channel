@@ -365,6 +365,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			}
 			sql.append("       account.citycounty AS varea,  \n");
 			sql.append("       account.unitname AS corpname,  \n");
+			sql.append("       account.drelievedate AS drelievedate,  \n");
 			sql.append("       t.vcontcode,  \n") ; 
 			sql.append("       t.pk_packagedef,  \n") ; 
 			sql.append("       nvl(t.isncust,'N') AS isncust,  \n") ; // 是否存量客户

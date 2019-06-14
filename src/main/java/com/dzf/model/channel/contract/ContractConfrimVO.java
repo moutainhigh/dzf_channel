@@ -46,13 +46,16 @@ public class ContractConfrimVO extends SuperVO {
 	// 取原合同或缓存字段 begin*************************
 
 	@FieldAlias("area")
-	private String varea;// 地区：取客户的省+市 （不存库，取客户缓存）
+	private String varea;// 地区：取客户的省+市 （不存库，取客户）
 
 	@FieldAlias("corpnm")
-	private String corpname; // 渠道商名称（不存库，取客户缓存）
+	private String corpname; // 渠道商名称（不存库，取客户）
 
 	@FieldAlias("corpkna")
 	private String corpkname; // 客户名称（不存库，取客户缓存）
+	
+    @FieldAlias("dreldate")
+    private DZFDate drelievedate;//解约日期（不存库，取客户）
 	
 	@FieldAlias("vccode")
 	private String vcontcode; // 合同编码（不存库，取原合同）
@@ -309,6 +312,14 @@ public class ContractConfrimVO extends SuperVO {
 	
 	// 查询及其他用途 begin@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
+
 	public String getPk_changeapply() {
 		return pk_changeapply;
 	}
