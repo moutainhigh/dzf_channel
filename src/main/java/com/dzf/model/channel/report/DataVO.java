@@ -20,6 +20,9 @@ public class DataVO extends SuperVO {
     
 	@FieldAlias("corpnm")
 	public String corpname;//加盟商名称
+	
+	@FieldAlias("dreldate")
+	private DZFDate drelievedate;//解约日期（不存库，取客户）
     
 	@FieldAlias("chndate")
 	private DZFDate chndate;//加盟商时间
@@ -44,6 +47,14 @@ public class DataVO extends SuperVO {
     
 	@FieldAlias("isCharge")
 	public DZFBoolean isCharge;//是否省/市负责人
+
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
 
 	public String getAreaname() {
 		return areaname;
