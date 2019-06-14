@@ -17,6 +17,7 @@ import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.service.channel.matmanage.IMatHandleService;
@@ -134,12 +135,16 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		Map<String,Integer> map = new HashMap<String,Integer>(); 
 		for (MatOrderVO mvo : vos) {
 			MatOrderBVO[] bvo = (MatOrderBVO[]) mvo.getChildren();
+			
 			mvo.setChildren(null);
 			singleObjectBO.insertVO("000001", mvo);
 			for (MatOrderBVO mbvo : bvo) {
-				if(nameList.contains(mbvo.getVname())){
+				if(nameList.contains(mbvo.getVname())
+				   && !StringUtil.isEmpty(mbvo.getOutnum().toString())){
 					mbvo.setPk_materielbill(mvo.getPk_materielbill());
 					singleObjectBO.insertVO("000001", mbvo);
+					
+					
 				     //导入的物料在物料档案表中累加物料发货数量
 					if(!map.containsKey(mbvo.getVname())){
 						map.put(mbvo.getVname(), mbvo.getOutnum());
