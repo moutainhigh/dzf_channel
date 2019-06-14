@@ -56,14 +56,11 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		List<DataVO> corpvaluelist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
-			Collection<DataVO> values = map.values();
 			corplist = new ArrayList<String>(col);
-			corpvaluelist = new ArrayList<DataVO>(values);
 		}
 
-		if (corplist != null && corplist.size() > 0 && 
-				corpvaluelist!= null && corpvaluelist.size() > 0 ) {
-			return getRetList(pamvo, corplist,corpvaluelist, map);
+		if (corplist != null && corplist.size() > 0  ) {
+			return getRetList(pamvo, corplist, map);
 		}
 		return null;
 	}
@@ -73,12 +70,11 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	 * 
 	 * @param pamvo
 	 * @param corplist
-	 * @param corpvaluelist 
 	 * @param map
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private List<FinanceDealStateRepVO> getRetList(QryParamVO pamvo, List<String> corplist, List<DataVO> corpvaluelist, HashMap<String, DataVO> map)
+	private List<FinanceDealStateRepVO> getRetList(QryParamVO pamvo, List<String> corplist, HashMap<String, DataVO> map)
 			throws DZFWarpException {
 		List<FinanceDealStateRepVO> retlist = new ArrayList<FinanceDealStateRepVO>();
 		List<String> replist = new ArrayList<String>();// 统计凭证的加盟商主键
@@ -102,13 +98,6 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 					retvo.setPk_corp(pk_corp);
 				}
 				corpvo = CorpCache.getInstance().get(null, pk_corp);
-				if(corpvo.getDrelievedate()==null){
-					for(int i=0;i<corpvaluelist.size();i++){
-					      if(corpvo.getPk_corp().equals(corpvaluelist.get(i).getPk_corp())){
-					         corpvo.setDrelievedate(corpvaluelist.get(i).getDrelievedate());
-					      }        
-					   }
-				}
 				if (corpvo != null) {
 					retvo.setCorpname(corpvo.getUnitname());
 					retvo.setVprovname(corpvo.getCitycounty());
@@ -116,10 +105,12 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 				}
 				showvo = (FinanceDealStateRepVO) map.get(pk_corp);
 				if (showvo != null) {
+					DataVO data = map.get(pk_corp);
 					retvo.setChndate(showvo.getChndate());
 					retvo.setAreaname(showvo.getAreaname());// 大区
 					retvo.setUsername(showvo.getUsername());// 区总
 					retvo.setCusername(showvo.getCusername());// 会计运营经理
+					corpvo.setDrelievedate(data.getDrelievedate());
 				}
 				retvo.setIcustratesmall(getCustRate(retvo.getIcustsmall(), retvo.getIcusttaxpay()));
 				retvo.setIcustratetaxpay(getCustRate(retvo.getIcusttaxpay(), retvo.getIcustsmall()));
