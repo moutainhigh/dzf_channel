@@ -51,9 +51,14 @@ function load(){
 			field : 'corpnm',
 			formatter : 
 				function(value, row, index) {
-					if(value == undefined)
-						return;
-	  				return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\">" + value + "</a>";
+	  				if(!isEmpty(value)){
+	  					if (!isEmpty(row.dreldate)) {
+	  						return "<div style='position:relative;color:blue;' onclick=\"qryDetail('"+index+"')\" >" + value 
+	  							+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
+	  					}else{
+	  						return "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+index+"')\" >" + value + "</a>";
+	  					}
+	  				}
 	  			}
 		},{
 			width : '100',

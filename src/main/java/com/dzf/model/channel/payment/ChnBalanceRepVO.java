@@ -2,6 +2,7 @@ package com.dzf.model.channel.payment;
 
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.Field.FieldAlias;
+import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
@@ -19,6 +20,9 @@ public class ChnBalanceRepVO extends SuperVO{
 	
 	@FieldAlias("corpnm")
 	private String corpname;// 机构名称
+	
+	@FieldAlias("dreldate")
+	private DZFDate drelievedate;//解约日期（不存库，取客户）
 	
 	@FieldAlias("incode")
 	private String innercode;//机构编码
@@ -101,6 +105,14 @@ public class ChnBalanceRepVO extends SuperVO{
 	@FieldAlias("fdspmny")
 	private DZFDouble nfdspmny;//返点商品扣款
     
+	public DZFDate getDrelievedate() {
+		return drelievedate;
+	}
+
+	public void setDrelievedate(DZFDate drelievedate) {
+		this.drelievedate = drelievedate;
+	}
+
 	public DZFDouble getNyfhtmny() {
 		return nyfhtmny;
 	}

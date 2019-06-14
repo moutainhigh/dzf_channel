@@ -25,7 +25,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.channel.expfield.ChnPayBalExcelField;
 import com.dzf.action.pub.BaseAction;
-import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.payment.ChnBalanceRepVO;
 import com.dzf.model.channel.payment.ChnDetailRepVO;
 import com.dzf.model.pub.Grid;
@@ -57,7 +56,7 @@ import com.itextpdf.text.DocumentException;
 @ParentPackage("basePackage")
 @Namespace("/chnpay")
 @Action(value = "chnpaybalance")
-public class ChnPayBalanceAction extends BaseAction<ChnBalanceVO> {
+public class ChnPayBalanceAction extends BaseAction<ChnBalanceRepVO> {
 
 	private static final long serialVersionUID = -750029782321770916L;
 

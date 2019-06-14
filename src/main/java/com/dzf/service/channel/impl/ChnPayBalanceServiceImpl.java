@@ -130,6 +130,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			if (accvo != null) {
 				repvo.setCorpname(accvo.getUnitname());
 				repvo.setInnercode(accvo.getInnercode());
+				repvo.setDrelievedate(accvo.getDrelievedate());
 				if (areaMap != null && !areaMap.isEmpty()) {
 					repvo.setAreaname(areaMap.get(accvo.getVprovince()));
 				}
