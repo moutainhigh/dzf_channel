@@ -617,6 +617,7 @@ function initCard(){
 				options : {
 					height : 28,
 					required:true,
+					readonly:true,
 				}
 			}
 		}, {
@@ -975,6 +976,8 @@ function dClickMat(rowTable){
 			}
 		
 	}
+	
+	//$(enapplynum.target).textbox('readonly',true);
 	 $("#matDlg").dialog('close');
 }
 
