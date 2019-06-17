@@ -20,6 +20,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.refund.IRefundDetailService;
@@ -142,10 +143,11 @@ public class RefundDetailServiceImpl implements IRefundDetailService {
 		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp  \n");
 		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		//sql.append("   AND nvl(account.dr, 0) = 0  \n");
 		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n");
 		sql.append("   AND ct.patchstatus = 3 \n");
 		sql.append("   AND ct.vstatus IN (?, ?) \n");
+		sql.append("   AND"+QueryUtil.getWhereSql()+" \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if (!StringUtil.isEmpty(addWhere)) {

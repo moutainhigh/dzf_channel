@@ -21,7 +21,6 @@ import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
-import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
@@ -29,6 +28,7 @@ import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
@@ -75,7 +75,10 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			sql.append(" and t.doperatedate <= ?");
 			spm.addParam(paramvo.getBdate());
 		}
-		sql.append(" where account.ischannel = 'Y'  ");
+		//sql.append(" where account.ischannel = 'Y'  ");
+		sql.append(" where " + QueryUtil.getWhereSql());
+		
+		
 		if (null != paramvo.getCorps() && paramvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 			sql.append(" and account.pk_corp  in (" + corpIdS + ")");

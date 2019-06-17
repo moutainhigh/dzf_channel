@@ -18,6 +18,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IRebateCountService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -54,7 +55,9 @@ public class RebateCountServiceImpl implements IRebateCountService {
         sql.append(" join bd_account account on reb.pk_corp = account.pk_corp ");
         sql.append(" join ynt_area area on area.region_id = account.vprovince ");
         sql.append(" where reb.fathercorp = ? and reb.vyear = ? and nvl(reb.dr,0) = 0 and reb.istatus = 3");
-     	if(!condition.equals("alldata")){
+        sql.append(" and "+QueryUtil.getWhereSql());
+     	
+        if(!condition.equals("alldata")){
     		sql.append(condition);
     	}
         sql.append(" group by reb.pk_corp,account.innercode,account.unitname,area.region_name");
