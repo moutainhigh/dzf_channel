@@ -103,7 +103,7 @@
 var indexContextPath = "<%=request.getContextPath() %>";
 DZF.contextPath = indexContextPath;
 var islogin =  "<%=userVo.getIslogin() != null ? userVo.getIslogin() : "N"%>";
-
+var xsstyle = "<%=userVo.getXsstyle() != null ? userVo.getXsstyle() : "0"%>";
 var SYSTEM = {
 	login_corp_id:"<%=corpVo.getPk_corp() %>",
 	login_corp_code:"<%=corpVo.getUnitcode()%>",
@@ -238,7 +238,7 @@ var exponent = "<%=exponent%>";
 		<div class="main_cont" id="main">
 			<div class="mian_content" title="首页">
 				<div class="mian_content1">
-					<div clearfix row_customer style="height:100%;">
+					<div id="main_c" clearfix row_customer style="height:100%;">
 						<div class="week_AA">
 							<form id = "tsweek">
 								<div class="week">

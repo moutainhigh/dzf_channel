@@ -20,7 +20,11 @@ var dtype;//图片下载专用类型
 
 $(function() {
 	initListener();
-	initBusiData();
+	if(xsstyle == "8"){
+		$('#main_c').hide();
+	}else{
+		initBusiData();
+	}
 });
 
 /**
