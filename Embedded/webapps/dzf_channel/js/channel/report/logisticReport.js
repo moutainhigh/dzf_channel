@@ -1,5 +1,5 @@
 var contextPath = DZF.contextPath;
-
+var hjcols = null;
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
 		height : Public.setGrid().h,
@@ -109,7 +109,7 @@ function setMaterGrid(headData){
 		remoteSort:false,
 		columns : columns,
 		onLoadSuccess : function(data) {
-			
+			calFooter();
 		},
 	});		
 }
@@ -307,6 +307,7 @@ function getMaterColumn(headData){
 	var columns = new Array(); 
 	var columnl = new Array();
 	var columnh = new Array();
+	 hjcols = new Array();
 	
 	var columnl1 = {};
 	columnl1["title"] = '大区';  
@@ -349,6 +350,7 @@ function getMaterColumn(headData){
 			column["halign"] = 'center';
 			column["align"] = 'center'; 
 			columnh.push(column);
+			hjcols.push(new Array(headData[i].id, 0));
 		}
 	}
 	
@@ -432,6 +434,43 @@ function getMaterColumn(headData){
 	columns.push(columnl);
 	columns.push(columnh);
 	return columns;
+}
+
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+	var fcost = 0;
+	
+    for (var i = 0; i < rows.length; i++) {
+    	fcost += getFloatValue(rows[i].fcost);
+		if(hjcols != null && hjcols.length > 0){
+			for(var j = 0; j < hjcols.length; j++){
+				var col = hjcols[j][0];
+				for(var m = 0;m<rows[i].children.length;m++){
+					if(rows[i].children[m].id==col){
+						hjcols[j][1] += getFloatValue(rows[i].children[m].name);
+					}
+				}
+				
+	    	}
+	    }
+    }
+    
+    footerData['corpname'] = '合计';
+    if(hjcols != null && hjcols.length > 0){
+		for(var j = 0; j < hjcols.length; j++){
+			var col = hjcols[j][0];
+			if(rows.length>0){
+				footerData[col] = hjcols[j][1];
+			}
+			
+    	}
+    }
+    footerData['fcost'] = fcost;
+    
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 /**

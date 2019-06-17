@@ -1,5 +1,5 @@
 var contextPath = DZF.contextPath;
-// var hjcols = null;//汇总列字段
+var hjcols = null;//汇总列字段
 var editIndex = undefined;
 var status = "brows";
 
@@ -330,7 +330,7 @@ function load(type) {
 		idField : 'matbillid',
 		columns : columns,
 		onLoadSuccess : function(data) {
-
+			calFooter();
 			var edate = new Date();
 			var time = edate.getTime() - bdate.getTime();
 
@@ -365,13 +365,48 @@ function load(type) {
 }
 
 /**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+	var fcost = 0;
+	
+    for (var i = 0; i < rows.length; i++) {
+    	fcost += getFloatValue(rows[i].fcost);
+		if(hjcols != null && hjcols.length > 0){
+			for(var j = 0; j < hjcols.length; j++){
+				var col = hjcols[j][0];
+				hjcols[j][1] += getFloatValue(rows[i][col]);
+	    	}
+	    }
+    }
+    
+    footerData['corpname'] = '合计';
+    if(hjcols != null && hjcols.length > 0){
+		for(var j = 0; j < hjcols.length; j++){
+			var col = hjcols[j][0];
+			if(rows.length>0){
+				footerData[col] = hjcols[j][1];
+			}
+			
+    	}
+    }
+    footerData['fcost'] = fcost;
+    
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
+}
+
+/**
  * 获取标题列
  * 
  * @param onlymap
  */
 function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 		status, corpname) {
-	// hjcols = new Array();
+	 hjcols = new Array();
 	var columns = new Array();
 	var columnsh = new Array();// 列及合并列名称
 	var columnsb = new Array();// 子列表名称集合
@@ -483,8 +518,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 									column1["align"] = 'right';
 									columnsb.push(column1);
 
-									// hjcols.push(new
-									// Array('applynum'+(i+1)+'', 0));
+									 hjcols.push(new Array('applynum'+(i+1)+'', 0));
 
 									var column2 = {};
 									column2["title"] = '实发';
@@ -494,8 +528,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 									column2["align"] = 'right';
 									columnsb.push(column2);
 
-									// hjcols.push(new Array('outnum'+(i+1)+'',
-									// 0));
+									 hjcols.push(new Array('outnum'+(i+1)+'', 0));
 
 									onlycol.add(rows[i].wlname + "/"
 											+ rows[i].unit);

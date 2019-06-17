@@ -144,7 +144,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                bi.vreceiver,  \n") ; 
 		sql.append("                bi.phone,  \n") ; 
 		sql.append("                bi.fastcode,  \n") ; 
-		sql.append("                bi.fastcost,  \n") ; 
+		sql.append("                nvl(bi.fastcost,0) fastcost,  \n") ; 
 		sql.append("                bi.deliverdate,  \n") ; 
 		sql.append("                bi.vmemo,  \n") ; 
 		sql.append("                bi.vreason,  \n") ; 
