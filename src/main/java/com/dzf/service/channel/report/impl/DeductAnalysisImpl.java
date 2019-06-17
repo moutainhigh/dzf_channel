@@ -23,6 +23,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
@@ -622,17 +623,18 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		sql.append("SELECT p.fathercorp as pk_corp,\n");
 		sql.append("       COUNT(DISTINCT p.pk_corp) AS istocknum \n");
 		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
+		sql.append("  LEFT JOIN bd_account account ON p.fathercorp = account.pk_corp \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
 		if (!StringUtil.isEmpty(paramvo.getPk_corp())) {
 			String[] corps = paramvo.getPk_corp().split(",");
-			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
+			String where = SqlUtil.buildSqlForIn(" account.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		}
-		sql.append("   AND nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'\n"); // 渠道客户
+		//sql.append("   AND nvl(account.dr, 0) = 0 \n");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'\n"); // 渠道客户
 		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
 		sql.append("   AND nvl(p.isncust,'N') = 'Y' \n"); // 存量客户
+		sql.append("   AND "+QueryUtil.getWhereSql()+"\n"); 
 		if (!StringUtil.isEmpty(paramvo.getVqrysql())) {
 			sql.append(paramvo.getVqrysql());
 		}

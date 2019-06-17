@@ -1,10 +1,7 @@
 package com.dzf.service.channel.dealmanage.impl;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,32 +10,16 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
-import com.dzf.model.channel.ChnBalanceVO;
-import com.dzf.model.channel.ChnDetailVO;
-import com.dzf.model.channel.dealmanage.GoodsBillBVO;
-import com.dzf.model.channel.dealmanage.GoodsBillSVO;
-import com.dzf.model.channel.dealmanage.GoodsBillVO;
 import com.dzf.model.channel.dealmanage.GoodsBillMxVO;
 import com.dzf.model.channel.dealmanage.GoodsBoxVO;
-import com.dzf.model.channel.dealmanage.StockInBVO;
-import com.dzf.model.channel.stock.StockNumVO;
-import com.dzf.model.pub.CommonUtil;
-import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.CorpVO;
-import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.lang.DZFDate;
-import com.dzf.pub.lang.DZFDateTime;
-import com.dzf.pub.lang.DZFDouble;
-import com.dzf.pub.lock.LockUtil;
-import com.dzf.pub.util.SafeCompute;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.dealmanage.IChannelOrderMxService;
-import com.dzf.service.channel.dealmanage.IChannelOrderService;
 
 @Service("channelmxorderser")
 public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
@@ -112,9 +93,12 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 		sql.append("  gsillq.pk_goodsbill  and gsillq.vstatus = 1 \n");
 		sql.append("   left join cn_goodsbill_s gsillf on gill.pk_goodsbill =  \n");
 		sql.append("    gsillf.pk_goodsbill  and gsillf.vstatus = 2 \n");
+		sql.append("    left join bd_account account on  \n");
+		sql.append("    account.pk_corp = gill.pk_corp \n");
 		sql.append("   where nvl(gill.dr,0) =0  \n");
 		sql.append("  and nvl(gbill.dr,0) =0  \n");
 		sql.append("  and nvl(gsillt.dr,0) =0  \n");
+		sql.append("  and "+QueryUtil.getWhereSql()+"\n");
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
 			sql.append(" AND gill.vbillcode like ? \n");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
