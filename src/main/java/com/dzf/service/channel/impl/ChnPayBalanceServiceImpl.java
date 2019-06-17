@@ -353,7 +353,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		List<ChnBalanceRepVO> list = (List<ChnBalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -662,7 +662,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(" AND a.pk_corp = ? \n");
 			spm.addParam(paramvo.getPk_corp());
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		sql.append(" GROUP BY a.pk_corp, a.ipaytype \n");
@@ -726,7 +726,7 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		sql.append(" GROUP BY a.pk_corp,a.ipaytype \n");
