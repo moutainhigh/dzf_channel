@@ -602,6 +602,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException {
 		//1、查询合同信息：
 		ContractConfrimVO retvo = queryContractById(paramvo.getPk_contract(), paramvo.getPk_corp());
+		if(retvo == null){
+			throw new BusinessException("待审核数据查询错误");
+		}
 		//2、查询预付款和返点信息：
 		SQLParameter spm = new SQLParameter();
 		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND ipaytype in (?,?) ";//只查询预付款和返点款
