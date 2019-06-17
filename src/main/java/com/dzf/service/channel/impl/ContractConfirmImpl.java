@@ -582,7 +582,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		QryParamVO paramvo = new QryParamVO();
 		paramvo.setPk_bill(pk_contract);
 		if(!StringUtil.isEmpty(pk_corp)){
-			CorpVO corpvo = CorpCache.getInstance().get(null, pk_corp);
+			CorpVO corpvo = (CorpVO) singleObjectBO.queryByPrimaryKey(CorpVO.class, pk_corp);
 			if(corpvo != null && corpvo.getChanneltype() != null && corpvo.getChanneltype() == 9){
 				paramvo.setIpaymode(9);
 			}
