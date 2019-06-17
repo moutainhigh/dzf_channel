@@ -317,6 +317,8 @@ function clearParams(){
 	$("#operater").textbox("setValue",null);
 	$("#operaterid").val(null);
 	$("#qpropor").numberbox('setValue',null);
+	$("#iptype").numberbox('setValue',null);
+	$("#ovince").numberbox('setValue',null);
 }
 
 /**
