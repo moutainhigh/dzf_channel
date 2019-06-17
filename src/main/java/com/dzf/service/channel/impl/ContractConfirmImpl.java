@@ -578,9 +578,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @throws DZFWarpException
 	 */
 	@SuppressWarnings("unchecked")
-	private ContractConfrimVO queryContractById(String pk_contract) throws DZFWarpException{
+	private ContractConfrimVO queryContractById(String pk_contract, String pk_corp) throws DZFWarpException{
 		QryParamVO paramvo = new QryParamVO();
 		paramvo.setPk_bill(pk_contract);
+		if(!StringUtil.isEmpty(pk_corp)){
+			CorpVO corpvo = CorpCache.getInstance().get(null, pk_corp);
+			if(corpvo != null && corpvo.getChanneltype() != null && corpvo.getChanneltype() == 9){
+				paramvo.setIpaymode(9);
+			}
+		}
 		QrySqlSpmVO qryvo =  getQryCondition(paramvo, "audit", false);
 		List<ContractConfrimVO> list = (List<ContractConfrimVO>) singleObjectBO.executeQuery(qryvo.getSql(),
 				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
@@ -595,7 +601,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	@Override
 	public ContractConfrimVO queryDebitData(ContractConfrimVO paramvo) throws DZFWarpException {
 		//1、查询合同信息：
-		ContractConfrimVO retvo = queryContractById(paramvo.getPk_contract());
+		ContractConfrimVO retvo = queryContractById(paramvo.getPk_contract(), paramvo.getPk_corp());
 		//2、查询预付款和返点信息：
 		SQLParameter spm = new SQLParameter();
 		String sql = " nvl(dr,0) = 0 AND pk_corp = ? AND ipaytype in (?,?) ";//只查询预付款和返点款
@@ -632,7 +638,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}
 		//5、查询原合同信息
 		if(retvo.getPatchstatus() != null && (retvo.getPatchstatus() == 2 || retvo.getPatchstatus() == 5)){
-			ContractConfrimVO oldtvo = queryContractById(retvo.getPk_source());
+			ContractConfrimVO oldtvo = queryContractById(retvo.getPk_source(), retvo.getPk_corpk());
 			retvo.setBodys(new ContractConfrimVO[]{oldtvo});
 		}
 		//6、查询申请信息
