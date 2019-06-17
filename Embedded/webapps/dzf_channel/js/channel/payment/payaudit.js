@@ -145,6 +145,7 @@ function reloadData(){
 	queryParams.id = null;
 	queryParams.cpname = null;
 	queryParams.aname = $("#aname").combobox('getValue');//查询大区
+	queryParams.stype = -1;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);

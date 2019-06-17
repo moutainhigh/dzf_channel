@@ -139,6 +139,7 @@ function reloadData(){
 	queryParams.cpid = $("#pk_account").val();
 	queryParams.id = null;
 	queryParams.cpname = null;
+	queryParams.corptype = -1;
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('reload');
 	$('#querydate').html(bdate + ' 至 ' + edate);
