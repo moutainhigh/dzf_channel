@@ -28,7 +28,8 @@
 				<div class="left mod-crumb">
 					<div style="margin:6px 0px 0px 10px;float:right;font-size:14px;">
 						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(1)">待审核</a>
-						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(2)">已审核</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px; " onclick="qryData(2)">已审核</a>
+						<a href="javascript:void(0)"  style="font-size:14;color:blue;margin-left:15px;margin-right:15px; " onclick="qryData(5)">演示待审核</a>
 					</div>
 				</div>
 				<div class="right">

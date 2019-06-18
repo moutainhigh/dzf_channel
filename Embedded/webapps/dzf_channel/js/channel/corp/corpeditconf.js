@@ -43,7 +43,7 @@ function initChannel(){
                     readonly: true,
                     title: '选择加盟商',
                     modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    href: DZF.contextPath + '/ref/channelys_select.jsp',
                     queryParams : {
     					ovince :"-1"
     				},
@@ -262,7 +262,7 @@ function load(){
 
 /**
  * 标签查询
- * @param type  -1：全部；2：待确认；3：已确认；
+ * @param type  -1：全部；1待审核；2已审核；  5:演示待审核
  */
 function qryData(type){
 	$('#grid').datagrid('unselectAll');

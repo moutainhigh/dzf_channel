@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,7 +91,7 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		SQLParameter spm = new SQLParameter();
 		sql.append(" SELECT a.*,account.vprovince FROM cn_corpnameedit a \n") ;
 		sql.append(" LEFT JOIN bd_account account on a.fathercorp=account.pk_corp ");
-		sql.append(" WHERE nvl(a.dr,0) = 0 and nvl(account.dr,0) = 0 ");
+		sql.append(" WHERE nvl(a.dr,0) = 0 ");
     	if(!StringUtil.isEmpty(paramvo.getVqrysql())){
     		sql.append(paramvo.getVqrysql());
     	}
@@ -99,11 +100,14 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND a.fathercorp in (").append(inSql).append(")");
 		}
-		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append("   AND a.istatus = ? \n");
+		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 5){
+			sql.append("   AND a.istatus = ? AND account.channeltype = 9 and nvl(account.dr,0) = 0  \n");
+			spm.addParam(IStatusConstant.ICORPEDITSTATUS_1);
+		}else if(paramvo.getQrytype() != -1){
+			sql.append("   AND a.istatus = ? AND ").append( QueryUtil.getWhereSql());
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append("   AND a.istatus != ? \n");
+			sql.append("   AND a.istatus != ? AND ").append( QueryUtil.getWhereSql());
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_0);
 		}
 		if(paramvo.getBegdate() != null){
