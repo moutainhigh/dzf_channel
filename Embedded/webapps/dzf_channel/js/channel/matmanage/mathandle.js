@@ -638,11 +638,12 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 							title : '金额',
 							field : 'fcost',
 							align : 'center',
-							formatter : function(value, row) {
+							/*formatter : function(value, row) {
 								if (!isEmpty(row.matbillid)) {
 									return formatMny(value);
 								}
-							},
+							},*/
+							formatter : formatMny,
 						};
 						columnsb[5 + len * 2] = {
 							width : '80',
