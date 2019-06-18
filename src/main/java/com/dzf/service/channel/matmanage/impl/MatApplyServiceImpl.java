@@ -288,7 +288,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		StringBuffer sql = new StringBuffer();
 		sql.append("select vname, vunit  \n") ;
 		sql.append("  from cn_materiel  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
+		sql.append(" where nvl(dr, 0) = 0  \n"); 
 		sql.append("   and isseal = 1  \n");
 
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), null,

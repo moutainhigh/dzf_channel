@@ -171,4 +171,10 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		return vos;
 	}
 
+	@Override
+	public List<String> queryAllMatName() {
+		String sql = "select vname from cn_materiel where nvl(dr,0) = 0";
+		return (List<String>) singleObjectBO.executeQuery(sql, null, new ColumnListProcessor("vname"));
+	}
+
 }

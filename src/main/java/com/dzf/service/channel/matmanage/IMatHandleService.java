@@ -1,9 +1,7 @@
 package com.dzf.service.channel.matmanage;
 
 import java.util.List;
-import java.util.Map;
 
-import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
@@ -41,5 +39,11 @@ public interface IMatHandleService {
 	 * @return
 	 */
 	MatOrderVO[] saveImoprt(MatOrderVO[] vos);
+
+	/**
+	 * 查询所有物料
+	 * @return
+	 */
+	List<String> queryAllMatName();
 
 }

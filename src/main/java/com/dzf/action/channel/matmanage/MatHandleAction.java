@@ -152,10 +152,12 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 			String date="";
 			String logname="";
 			Integer num = 0;
+			//Integer matnum = 0;
 			for (int iBegin = startRow; iBegin < (sheets.getLastRowNum() + 1); iBegin++) {
 				MatOrderVO excelvo = new MatOrderVO();
 				List<MatOrderBVO> blist = new ArrayList<MatOrderBVO>();
 				num = 0;
+				List<String> list = new ArrayList<String>();
 				for (int j = 0; j < STYLE_1.length; j++) {
 					XSSFRow xssFRow = sheets.getRow(iBegin);
 					XSSFCell aCell = xssFRow.getCell(Integer.parseInt(STYLE_1[j][0].toString()));
@@ -186,6 +188,10 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 						}
 						//物料
 						if ( j == 2 || j == 3 || j == 4 || j == 5 || j == 6 || j == 7 || j == 8 || j == 9 ) {
+							 list = mathandle.queryAllMatName();
+								if(list.contains(STYLE_NAME_1[j][1].toString().trim())){
+									num++;//有值的物料
+								}
 							counter++;
 							MatOrderBVO bvo = new MatOrderBVO();
 							bvo.setOutnum(Integer.parseInt(sTmp.trim()));
@@ -193,12 +199,9 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 							blist.add(bvo);
 						}
 						excelvo.setAttributeValue(STYLE_1[j][1].toString(), sTmp.replaceAll(" ", ""));
-					}else if(StringUtil.isEmpty(sTmp) && 
-							(j == 2 || j == 3 || j == 4 || j == 5 || j == 6 || j == 7 || j == 8 || j == 9) ){
-						num++;
 					}
 				}
-				if(num!=8){//至少有一个物料有值
+				if(num!=0){//至少有一个物料有值
 					MatOrderBVO[] bvos =  blist.toArray(new MatOrderBVO[0]);
 					excelvo.setChildren(bvos);
 					excelvo = mathandle.getFullVO(excelvo,corpname,managname,date,logname,uservo);
