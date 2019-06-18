@@ -106,7 +106,7 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		}else if(paramvo.getQrytype() != -1){
 			sql.append("   AND a.istatus = ? AND ").append( QueryUtil.getWhereSql());
 			spm.addParam(paramvo.getQrytype());
-		}else{
+		}else if(StringUtil.isEmpty(paramvo.getPk_corp())){
 			sql.append("   AND a.istatus != ? AND ").append( QueryUtil.getWhereSql());
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_0);
 		}
