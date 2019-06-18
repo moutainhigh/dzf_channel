@@ -155,6 +155,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		sql.append("  left join bd_account account on t.pk_corp = account.pk_corp  \n");
 		sql.append(" where nvl(t.dr, 0) = 0  \n");
 		sql.append("   and nvl(account.dr, 0) = 0  \n");
+		sql.append("   and "+QueryUtil.getWhereSql()+"\n");
 		if (!StringUtil.isEmpty(paramvo.getVprovname())) {
 			sql.append(paramvo.getVprovname());
 		}
