@@ -1185,7 +1185,7 @@ function onSave(t){
 				name.push(rows[i].wlname);
 			}
 		}
-		if(!isEmpty(name) || !isEmpty(lossname)){
+		if(!isEmpty(name)){
 			for(var i=0;i<name.length;i++){
 				Public.tips({
 					content : name+"可申请数量不足，请调整",
