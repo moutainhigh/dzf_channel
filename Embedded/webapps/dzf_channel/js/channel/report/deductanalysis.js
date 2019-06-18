@@ -1,6 +1,7 @@
 var contextPath = DZF.contextPath;
 var hbstr = new Array();
 var str = new Array();
+var currcolumns = null;
 
 $(function(){
 	initQueryDlg();
@@ -309,6 +310,7 @@ function load(){
 		onLoadSuccess : function(data) {
 		},
 	});
+	currcolumns = $("#grid").datagrid("options").columns;
 }
 
 
@@ -355,7 +357,7 @@ function reloadData(type){
 	$.messager.progress({
 		text : '数据查询中，请稍候.....'
 	});
-	var currcolumns = $("#grid").datagrid("options").columns;
+	
     $.ajax({
     	url : DZF.contextPath + "/report/deductanalysis!query.action",
         type: "POST",  
@@ -376,7 +378,7 @@ function reloadData(type){
 			if (data.success) {
 				var options = $("#grid").datagrid("options"); //取出当前datagrid的配置     
 		        //字符串转JSON
-		        if(data.columns.length != 0 && data.hbcolumns != 0){
+		        if(data.columns != null && data.columns.length != 0 && data.hbcolumns != 0){
 		        	hbstr = JSON.stringify(data.hbcolumns);
 		        	str = JSON.stringify(data.columns);
 		        	options.columns = eval('[' + hbstr + ',' +str+ ']');
