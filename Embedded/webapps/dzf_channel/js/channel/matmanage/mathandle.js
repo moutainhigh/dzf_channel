@@ -382,7 +382,6 @@ function calFooter(){
 	    }
     }
     
-    footerData['corpname'] = '合计';
     if(hjcols != null && hjcols.length > 0){
 		for(var j = 0; j < hjcols.length; j++){
 			var col = hjcols[j][0];
@@ -473,8 +472,13 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 							align : 'center',
 							rowspan : 2,
 							formatter : function(value, row, index) {
-								return '<a href="javascript:void(0)"  style="color:blue" onclick="showDetail(\''
-										+ index + '\')">' + value + '</a>';
+								if(row.matbillid!=null){
+									return '<a href="javascript:void(0)"  style="color:blue" onclick="showDetail(\''
+									+ index + '\')">' + value + '</a>';
+								}else{
+									return '合计';
+								}
+								
 							}
 						};
 						columnsh[6] = {
