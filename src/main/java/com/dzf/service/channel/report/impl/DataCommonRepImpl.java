@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.IUserService;
@@ -116,37 +116,35 @@ public class DataCommonRepImpl {
 		sql.append("select a.areaname,  \n");
 		sql.append("       a.userid,  \n");
 		sql.append("       y.region_name vprovname,  \n");
-		sql.append("       p.pk_corp,  \n");
-		sql.append("       p.innercode,  \n");
-		sql.append("       p.drelievedate,  \n");//解约日期
-		sql.append("       p.djoindate chndate, \n");
-		sql.append("       p.vprovince,  \n");
+		sql.append("       account.pk_corp,  \n");
+		sql.append("       account.innercode,  \n");
+		sql.append("       account.drelievedate,  \n");//解约日期
+		sql.append("       account.djoindate chndate, \n");
+		sql.append("       account.vprovince,  \n");
 		sql.append("       b.ischarge,  \n");
 		sql.append("       b.userid cuserid,  \n");
 		sql.append("       b.pk_corp corpname  \n");
-		sql.append("  from bd_account p  \n");
-		sql.append("  left join ynt_area y on p.vprovince = y.region_id  \n");
+		sql.append("  from bd_account account  \n");
+		sql.append("  left join ynt_area y on account.vprovince = y.region_id  \n");
 		sql.append("                      and y.parenter_id = 1  \n");
 		sql.append("                      and nvl(y.dr, 0) = 0  \n");
-		sql.append("  left join cn_chnarea_b b on p.vprovince = b.vprovince  \n");
+		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince  \n");
 		sql.append("                          and b.type = 2  \n");
 		sql.append("                          and nvl(b.dr, 0) = 0  \n");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
 		sql.append("                        and a.type = 2  \n");
 		sql.append("                        and nvl(a.dr, 0) = 0  \n");
-		sql.append(" where nvl(p.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
-		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
-		sql.append("   and p.vprovince is not null \n");
+		sql.append(" where ").append(filtersql);
+		sql.append("   and account.vprovince is not null \n");
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
-			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
+			sql.append(" and (account.drelievedate is null or account.drelievedate >? )");
 			spm.addParam(new DZFDate().toString());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
-			sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append("   AND p.pk_corp NOT IN  \n");
+		sql.append("   AND account.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");
 		sql.append("          FROM ynt_franchisee f  \n");
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
