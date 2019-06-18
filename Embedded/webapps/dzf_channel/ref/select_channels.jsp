@@ -184,6 +184,7 @@
 		      		var params = new Object();
 		      		params["cpcode"] = filtername;
 		      		params["ovince"] = ovince;
+					params["cpid"] = corpids;
 		      		params["qtype"] = qtype;
 		      		grid.datagrid('load',params); 
 		       }
