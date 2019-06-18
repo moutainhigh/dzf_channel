@@ -89,8 +89,16 @@
 								areamap.put(rowData.id,rowData);
 							}
 						}else{
-							$('#areaGrid').treegrid('unselect',rowData.id);
-							$('#areaGrid').treegrid('uncheckRow',rowData);
+							var childs = $('#areaGrid').treegrid('getChildren',rowData.id);
+							for (i = 0; i < childs.length; i++) {
+								$('#areaGrid').treegrid('select',childs[i].id);
+								if(!aidlist.contains(childs[i].id)){
+									aidlist.add(childs[i].id);
+									arealist.add(childs[i]);
+									areamap.put(childs[i].id,childs[i]);
+								}
+							}
+							// $('#areaGrid').treegrid('unselect',rowData.id);
 						}
 					}
 				},
@@ -100,6 +108,17 @@
 							aidlist.removeObj(rowData.id);
 							arealist.removeObj(rowData);
 							areamap.remove(rowData.id);
+						}else if(rowData.parentId == '1'){
+							var childs = $('#areaGrid').treegrid('getChildren',rowData.id);
+							for (i = 0; i < childs.length; i++) {
+								if(aidlist.contains(childs[i].id)){
+									aidlist.removeObj(childs[i].id);
+									arealist.removeObj(childs[i]);
+									areamap.remove(childs[i].id,childs[i]);　
+									$('#areaGrid').treegrid('unselect',childs[i].id);
+								}
+							}
+							// $('#areaGrid').treegrid('unselect',rowData.id);
 						}
 					}
 				},
@@ -123,9 +142,9 @@
 					}
 				},
 				onClickRow : function(rowData) {
-					if(rowData.parentId == '1'){
-						return ;
-					}
+					// if(rowData.parentId == '1'){
+					//
+					// }
 				}
 			});
 	 		 $('#areaName').bind('keypress',function(event){
