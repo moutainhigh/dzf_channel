@@ -40,6 +40,7 @@ public class MatOrderBVO extends SuperVO {
 	
 	private Integer sumsucc;//上季度申请通过总数量
 	
+	private Integer enapplynum;//可申请数
 	/*******仅作展示，不存库*******/
 	
 	public String getPk_materielbill_b() {
@@ -138,6 +139,14 @@ public class MatOrderBVO extends SuperVO {
 		this.sumsucc = sumsucc;
 	}
 	
+	public Integer getEnapplynum() {
+		return enapplynum;
+	}
+
+	public void setEnapplynum(Integer enapplynum) {
+		this.enapplynum = enapplynum;
+	}
+
 	@Override
 	public String getParentPKFieldName() {
 		return null;

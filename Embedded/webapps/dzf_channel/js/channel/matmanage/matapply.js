@@ -1311,6 +1311,7 @@ function showDetail(index){
 	
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请详情');
 	initCard();
+	$('#cardGrid').datagrid('hideColumn','enapplynum');
 	$('.hid').css("display", "");
 	$('.xid').css("display", "");
 	$('.bid').css("display", "none");
