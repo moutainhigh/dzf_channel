@@ -27,6 +27,7 @@ import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.ISysFunnodeService;
@@ -123,11 +124,11 @@ public class PubServiceImpl implements IPubService {
 	public Map<Integer, List<String>> getProviceCorp() throws DZFWarpException {
 		Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT t.pk_corp, t.vprovince \n");
-		sql.append("  FROM bd_account t \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
-		sql.append("   AND nvl(t.isaccountcorp, 'N') = 'Y' \n");
+		sql.append("SELECT account.pk_corp, account.vprovince \n");
+		sql.append("  FROM bd_account account \n");
+		sql.append("   Where nvl(account.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND nvl(account.isaccountcorp, 'N') = 'Y' \n");
+		sql.append("   AND "+QueryUtil.getWhereSql()+"\n");
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(AccountVO.class));
 		if (list != null && list.size() > 0) {
@@ -266,13 +267,13 @@ public class PubServiceImpl implements IPubService {
 		Map<String, UserVO> map = new HashMap<String, UserVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp, b.userid cuserid,u.user_name \n");
-		sql.append("  FROM bd_account t  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON t.pk_corp = b.pk_corp  \n");
+		sql.append("SELECT account.pk_corp, b.userid cuserid,u.user_name \n");
+		sql.append("  FROM bd_account account  \n");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.pk_corp = b.pk_corp  \n");
 		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid  \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.dr, 0) = 0  \n");
+		sql.append("   Where nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND nvl(b.type, 0) = ? \n");
+		sql.append("   AND "+QueryUtil.getWhereSql()+"\n");
 		spm.addParam(qrytype);
 		List<UserVO> list = (List<UserVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(UserVO.class));

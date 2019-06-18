@@ -297,8 +297,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		}
 		sql.append(" COUNT(t.pk_confrim) AS icorpnums  \n");
 		sql.append("  FROM cn_contract t  \n");
+		sql.append("  LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND t.vstatus IN (?, ?, ?) \n");
+		sql.append("   AND "+QueryUtil.getWhereSql()+" \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);// 暂不统计作废数据
@@ -444,8 +446,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append(" AND nvl(ct.dr, 0) = 0  \n");
+		sql.append(" AND "+QueryUtil.getWhereSql()+" \n");
 		if (!StringUtil.isEmpty(paramvo.getBeginperiod())) {
 			sql.append(" AND SUBSTR(t.deductdata,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
@@ -553,8 +557,10 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 
 		sql.append("  FROM cn_contract t  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n");
 		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
 		sql.append(" AND nvl(ct.dr, 0) = 0  \n");
+		sql.append(" AND "+QueryUtil.getWhereSql()+" \n");
 		if (!StringUtil.isEmpty(paramvo.getBeginperiod())) {
 			sql.append(" AND SUBSTR(t.dchangetime,1,7) >= ? \n");
 			spm.addParam(paramvo.getBeginperiod());
