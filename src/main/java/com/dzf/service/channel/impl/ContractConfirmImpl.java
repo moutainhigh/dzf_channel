@@ -538,7 +538,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
 			//合同周期
 			sql.append(" AND t.icontractcycle = ?  \n") ; 
-			spm.addParam(paramvo.getVprovince());
+			spm.addParam(paramvo.getIpaytype());
 		}
 		if(paramvo.getVprovince() != null && paramvo.getVprovince() != -1){
 			//收款周期
