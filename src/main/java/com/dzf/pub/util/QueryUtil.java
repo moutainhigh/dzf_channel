@@ -32,6 +32,6 @@ public class QueryUtil {
 	 * @return
 	 */
 	public static String getWhereSql(){
-	    return " nvl(account.dr,0) = 0 and account.channeltype != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y' "; 
+	    return " nvl(account.dr,0) = 0 and nvl(account.channeltype,-1) != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y' "; 
 	}
 }
