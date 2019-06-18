@@ -3,6 +3,7 @@ package com.dzf.service.channel.report.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
+
+	private String filtersql = QueryUtil.getWhereSql();
 
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
@@ -85,31 +88,28 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count(DISTINCT t.pk_corp)  \n");
-		sql.append("  FROM bd_account t  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince  \n");
+		sql.append("SELECT count(DISTINCT account.pk_corp)  \n");
+		sql.append("  FROM bd_account account  \n");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append(" WHERE ").append(filtersql);
 		sql.append("   AND nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND b.type = 1  \n");
-		sql.append("   AND nvl(a.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(t.isaccountcorp, 'N') = 'Y'  \n");
 		if(!StringUtil.isEmpty(pamvo.getPk_corp())){
 		    String[] strs = pamvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
-		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
+		    sql.append(" AND account.pk_corp in (").append(inSql).append(")");
 		}
 		if(!StringUtil.isEmpty(pamvo.getAreaname())){
 			sql.append(" AND a.areacode = ? \n");
 			spm.addParam(pamvo.getAreaname());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
-			sql.append(" AND t.djoindate >= ? \n");
+			sql.append(" AND account.djoindate >= ? \n");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getEndperiod())){
-			sql.append(" AND t.djoindate <= ? \n");
+			sql.append(" AND account.djoindate <= ? \n");
 			spm.addParam(pamvo.getEndperiod());
 		}
 		qryvo.setSql(sql.toString());
@@ -127,31 +127,28 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT t.pk_corp  \n");
-		sql.append("  FROM bd_account t  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince  \n");
+		sql.append("SELECT DISTINCT account.pk_corp  \n");
+		sql.append("  FROM bd_account account  \n");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince  \n");
 		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append(" WHERE ").append(filtersql);
 		sql.append("   AND nvl(b.dr, 0) = 0  \n");
 		sql.append("   AND b.type = 1  \n");
-		sql.append("   AND nvl(a.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(t.isaccountcorp, 'N') = 'Y'  \n");
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
 			String[] strs = pamvo.getPk_corp().split(",");
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
-			sql.append(" AND t.pk_corp in (").append(inSql).append(")");
+			sql.append(" AND account.pk_corp in (").append(inSql).append(")");
 		}
 		if (!StringUtil.isEmpty(pamvo.getAreaname())) {
 			sql.append(" AND a.areacode = ? \n");
 			spm.addParam(pamvo.getAreaname());
 		}
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
-			sql.append(" AND t.djoindate >= ? \n");
+			sql.append(" AND account.djoindate >= ? \n");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if (!StringUtil.isEmpty(pamvo.getEndperiod())) {
-			sql.append(" AND t.djoindate <= ? \n");
+			sql.append(" AND account.djoindate <= ? \n");
 			spm.addParam(pamvo.getEndperiod());
 		}
 		qryvo.setSql(sql.toString());

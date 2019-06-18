@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,8 @@ public class DataCommonRepImpl {
 	
 	@Autowired
     private IUserService userser;
+
+	private String filtersql = QueryUtil.getWhereSql();
 
 	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class cla) throws DZFWarpException {
 		Integer level = pubService.getDataLevel(paramvo.getUser_name());
@@ -216,44 +219,42 @@ public class DataCommonRepImpl {
 	private List<DataVO> qryCharge(QryParamVO qvo, Class cla) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select p.pk_corp,  \n");
+		sql.append("select account.pk_corp,  \n");
 		sql.append("       a.areaname,  \n");
 		sql.append("       a.userid,  \n");
 		sql.append("       b.vprovname,  \n");
 		sql.append("       b.vprovince,  \n");
-		sql.append("       p.innercode,  \n");
-		sql.append("       p.drelievedate,  \n");//解约日期
-		sql.append("       p.djoindate chndate, \n");
+		sql.append("       account.innercode,  \n");
+		sql.append("       account.drelievedate,  \n");//解约日期
+		sql.append("       account.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname,  \n");
 		sql.append("       (case  \n");
 		sql.append("         when b.pk_corp is null then  \n");
 		sql.append("          null  \n");
-		sql.append("         when b.pk_corp != p.pk_corp then  \n");
+		sql.append("         when b.pk_corp != account.pk_corp then  \n");
 		sql.append("          null  \n");
 		sql.append("         else  \n");
 		sql.append("          b.userid  \n");
 		sql.append("       end) cuserid  \n");
-		sql.append("  from bd_account p  \n");
-		sql.append(" right join cn_chnarea_b b on p.vprovince = b.vprovince  \n");
+		sql.append("  from bd_account account  \n");
+		sql.append(" right join cn_chnarea_b b on account.vprovince = b.vprovince  \n");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.dr, 0) = 0  \n");
+		sql.append(" where ").append(filtersql);
+		sql.append("   and nvl(b.dr, 0) = 0  \n");
 		sql.append("   and nvl(a.dr, 0) = 0  \n");
 		sql.append("   and b.type = 2  \n");
-		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y'  \n");
 		sql.append("   and b.userid = ?  \n");
 		sql.append("   and nvl(b.ischarge, 'N') = 'Y' \n");
 		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
-			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
+			sql.append(" and (account.drelievedate is null or account.drelievedate >? )");
 			spm.addParam(new DZFDate());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
-			sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append("   AND p.pk_corp NOT IN  \n");
+		sql.append("   AND account.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");
 		sql.append("          FROM ynt_franchisee f  \n");
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
@@ -280,25 +281,23 @@ public class DataCommonRepImpl {
 	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select p.pk_corp,  \n");
+		sql.append("select account.pk_corp,  \n");
 		sql.append("       a.areaname,  \n");
 		sql.append("       a.userid,  \n");
-		sql.append("       b.userid cuserid,  \n");
-		sql.append("       b.vprovname,  \n");
-		sql.append("       b.vprovince,  \n");
-		sql.append("       p.innercode,  \n");
-		sql.append("       p.drelievedate,  \n");//解约日期
-		sql.append("       p.djoindate chndate, \n");
+		sql.append("       account.userid cuserid,  \n");
+		sql.append("       account.vprovname,  \n");
+		sql.append("       account.vprovince,  \n");
+		sql.append("       account.innercode,  \n");
+		sql.append("       account.drelievedate,  \n");//解约日期
+		sql.append("       account.djoindate chndate, \n");
 		sql.append("       b.pk_corp corpname  \n");
-		sql.append("  from bd_account p  \n");
-		sql.append(" right join cn_chnarea_b b on p.pk_corp = b.pk_corp  \n");
+		sql.append("  from bd_account account  \n");
+		sql.append(" right join cn_chnarea_b b on account.pk_corp = b.pk_corp  \n");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(p.dr, 0) = 0  \n");
+		sql.append(" where ").append(filtersql);
+		sql.append("   and nvl(b.dr, 0) = 0  \n");
 		sql.append("   and nvl(a.dr, 0) = 0  \n");
 		sql.append("   and b.type = 2  \n");
-		sql.append("   and nvl(p.ischannel, 'N') = 'Y'  \n");
-		sql.append("   and nvl(p.isaccountcorp, 'N') = 'Y' \n");
 		if (!StringUtil.isEmpty(qvo.getVqrysql())) {
 			sql.append(" and (" + qvo.getVqrysql() + " or b.userid=? ) ");
 		} else {
@@ -306,15 +305,15 @@ public class DataCommonRepImpl {
 		}
 		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
-			sql.append(" and (p.drelievedate is null or p.drelievedate >? )");
+			sql.append(" and (account.drelievedate is null or account.drelievedate >? )");
 			spm.addParam(new DZFDate());
 		}
 		if (qvo.getCorps() != null && qvo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
-			sql.append(" and p.pk_corp  in (" + corpIdS + ")");
+			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
 		sql.append(" and nvl(b.ischarge,'N')='N' ");
-		sql.append("   AND p.pk_corp NOT IN  \n");
+		sql.append("   AND account.pk_corp NOT IN  \n");
 		sql.append("       (SELECT f.pk_corp  \n");
 		sql.append("          FROM ynt_franchisee f  \n");
 		sql.append("         WHERE nvl(dr, 0) = 0  \n");
