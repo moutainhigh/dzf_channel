@@ -182,7 +182,7 @@
 		       if(event.keyCode == "13") {//Enter 键事件
 		    	    var filtername = $("#unitcode").val(); ; 
 		      		var params = new Object();
-		      		params["corpcode"] = filtername;
+		      		params["cpcode"] = filtername;
 		      		params["ovince"] = ovince;
 		      		params["qtype"] = qtype;
 		      		grid.datagrid('load',params); 
