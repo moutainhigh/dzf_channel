@@ -917,7 +917,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			SQLParameter sspm = new SQLParameter();
 			sspm.addParam(id);
 			ssql.append("  select b.pk_materielbill_b, \n");
-			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum,nvl(b.applynum,0) - nvl(b.outnum,0) enapplynum, \n");
+			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum,nvl(l.intnum,0)-nvl(l.outnum,0) enapplynum, \n");
 			ssql.append("    l.pk_materiel \n");
 			ssql.append("    from cn_materielbill_b b \n");
 			ssql.append("    left join cn_materiel l on \n");
