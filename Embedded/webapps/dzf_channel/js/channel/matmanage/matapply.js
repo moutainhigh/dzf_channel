@@ -1297,6 +1297,7 @@ function updateData(){
 	$('.bid').css("display", "none"); 
 	$('.aid').css("display", ""); 
 	$('#stat').textbox('readonly',true);
+	$('#cardGrid').datagrid('showColumn','enapplynum');
 	$('#cardGrid').datagrid('showColumn','operate');
 	var col = $('#cardGrid').datagrid('getColumnOption', 'applynum');//获取Column
 	col.width = 112;
