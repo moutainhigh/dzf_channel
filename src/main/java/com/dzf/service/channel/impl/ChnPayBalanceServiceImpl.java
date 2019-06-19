@@ -1032,7 +1032,9 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		List<ChnDetailRepVO> zerolist = new ArrayList<ChnDetailRepVO>();
 		List<String> pklist = new ArrayList<String>();
 		for (ChnDetailRepVO repvo : list) {
-			pklist.add(repvo.getPk_bill());
+			if(repvo.getPk_bill()!=null){
+				pklist.add(repvo.getPk_bill());
+			}
 		}
 		String addwhere = "";
 		if(pklist != null && pklist.size() > 0){
