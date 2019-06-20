@@ -126,9 +126,14 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		}
 		//账务检查
 		if(!"全部".equals(pamvo.getVbillcode())){
-			sql.append(" AND d_all.vcheckstatus like ? \n");
-			spm.addParam("%"+pamvo.getVbillcode()+"%");
+			if("已关账".equals(pamvo.getVbillcode())){
+				sql.append(" AND d_all.vcheckstatus like ? \n");
+				spm.addParam("%"+pamvo.getVbillcode()+"%");
+			}else{
+				sql.append(" AND d_all.vcheckstatus IS NULL \n");
+			}
 		}
+		
 		sql.append(" order by d_all.corpkcode ");
 	}
 	
