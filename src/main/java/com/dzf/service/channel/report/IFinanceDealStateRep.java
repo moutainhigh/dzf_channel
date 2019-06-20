@@ -3,7 +3,6 @@ package com.dzf.service.channel.report;
 import java.util.List;
 
 import com.dzf.model.channel.report.FinanceDealStateRepVO;
-import com.dzf.model.channel.report.FinanceDetailVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -17,19 +16,4 @@ public interface IFinanceDealStateRep {
 	 */
 	public List<FinanceDealStateRepVO> query(QryParamVO paramvo) throws  DZFWarpException;
 	
-	/**
-	 * 查询明细
-	 * @param paramvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public List<FinanceDetailVO> queryDetail(QryParamVO paramvo) throws  DZFWarpException;
-	
-	/**
-	 * 查询明细行数
-	 * @param paramvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	public Integer queryDetailRow(QryParamVO paramvo) throws DZFWarpException;
 }

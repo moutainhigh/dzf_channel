@@ -15,12 +15,14 @@ import com.dzf.model.channel.report.FinanceDealStateRepVO;
 import com.dzf.model.channel.report.FinanceDetailVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.SuperVO;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
+import com.dzf.service.channel.report.IAccountQryService;
 import com.dzf.service.channel.report.IFinanceDealStateRep;
 import com.dzf.service.pub.LogRecordEnum;
 
@@ -42,6 +44,9 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 	@Autowired
 	private IFinanceDealStateRep financeServ;
 
+	@Autowired
+	private IAccountQryService iaccqryser;
+	
 	/**
 	 * 查询
 	 */
@@ -88,11 +93,17 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 		try {
 			QryParamVO pamvo = new QryParamVO();
 			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
-			if ((pamvo.getQrytype() != null && pamvo.getQrytype() != -1)
-					|| (pamvo.getSeletype() != null && pamvo.getSeletype() != -1)) {
-				pamvo.setPage(1);
-				pamvo.setRows(100000);
-				List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);
+			if (isPageByBase(pamvo)) {
+				int total = iaccqryser.queryTotalRow(pamvo, getLoginUserInfo());
+				if (total > 0) {
+					List<FinanceDetailVO> detlist = iaccqryser.query(pamvo, getLoginUserInfo());
+					grid.setRows(detlist);
+				} else {
+					grid.setRows(new ArrayList<FinanceDetailVO>());
+				}
+				grid.setTotal((long) (total));
+			}else{
+				List<FinanceDetailVO> detlist = iaccqryser.queryAllData(pamvo, getLoginUserInfo());
 				int len = detlist == null ? 0 : detlist.size();
 				if (len > 0) {
 					grid.setTotal((long) (len));
@@ -102,16 +113,6 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 					grid.setTotal(Long.valueOf(0));
 					grid.setRows(new ArrayList<FinanceDetailVO>());
 				}
-
-			}else{
-				int total = financeServ.queryDetailRow(pamvo);
-				if (total > 0) {
-					List<FinanceDetailVO> detlist = financeServ.queryDetail(pamvo);
-					grid.setRows(detlist);
-				} else {
-					grid.setRows(new ArrayList<FinanceDetailVO>());
-				}
-				grid.setTotal((long) (total));
 			}
 
 			grid.setSuccess(true);
@@ -120,6 +121,19 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 		}
 
 		writeJson(grid);
+	}
+	
+	/**
+	 * 是否数据库分页查询
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private boolean isPageByBase(QryParamVO pamvo) throws DZFWarpException {
+		// 记账状态、账务检查
+		if ("全部".equals(pamvo.getVmanager()) && "全部".equals(pamvo.getVbillcode())) {
+			return true;
+		}
+		return false;
 	}
 
 }

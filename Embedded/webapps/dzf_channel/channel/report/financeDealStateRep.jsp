@@ -116,19 +116,18 @@
 					
 					<div style="display:inline;float:right;">
 						<label style="width:85px;text-align:right;">记账状态：</label>
-						<select id="jzstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						<select id="mid" class="easyui-combobox" data-options="panelHeight:'auto'" 
 							style="width:80px;height:28px;">
-							<option value="-1">全部</option>
-							<option value="1">未开始</option>
-							<option value="2">进行中</option>
-							<option value="3">已完成</option>
+							<option value="全部">全部</option>
+							<option value="已完成">已完成</option>
+							<option value="未完成">未完成</option>
 						</select>
 						<label style="width:85px;text-align:right;">账务检查：</label>
-						<select id="zwstatus" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						<select id="vcode" class="easyui-combobox" data-options="panelHeight:'auto'" 
 							style="width:80px;height:28px;">
-							<option value="-1">全部</option>
-							<option value="1">已关账</option>
-							<option value="2">未关账</option>
+							<option value="全部">全部</option>
+							<option value="已关账">已关账</option>
+							<option value="未关账">未关账</option>
 						</select>
 						
 						<a class="ui-btn save_input" style="margin-bottom:0px;" onclick="queryDetail()">查询</a>

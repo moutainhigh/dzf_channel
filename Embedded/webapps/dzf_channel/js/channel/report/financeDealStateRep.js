@@ -161,6 +161,8 @@ function qryDetail(index){
 	$('#gridh').datagrid('load', {
 		"cpid" : row.corpid,
 		"period" : $('#qryperiod').datebox('getValue'),
+		"mid" : "全部",
+		"vcode" : "全部",
 	});
 	
 }
@@ -174,8 +176,8 @@ function queryDetail(){
 	$('#gridh').datagrid('load', {
 		"cpid" : $("#corpid").val(),
 		"period" : $("#qrydate").text(),
-		"qtype" : $("#jzstatus").combobox('getValue'),
-		"stype" : $("#zwstatus").combobox('getValue'),
+		"mid" : $("#mid").combobox('getValue'),
+		"vcode" : $("#vcode").combobox('getValue'),
 	});
 }
 
@@ -265,7 +267,10 @@ function initDetailGrid(){
 				$('#corpid').val(data.rows[0].corpid);
 				$('#gridh').datagrid("scrollTo",0);
 			}else{
-				Public.tips({content :"暂无明细",type : 2});
+				Public.tips({
+					content : "暂无明细",
+					type : 2
+				});
 			}
 		},
 	});
