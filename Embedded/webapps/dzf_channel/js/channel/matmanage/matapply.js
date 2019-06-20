@@ -3,6 +3,7 @@ var contextPath = DZF.contextPath;
 var editIndex;
 var status="brows";
 var flag = true;
+var addflag= false;
 $(window).resize(function () {
     $('#grid').datagrid('resize', {
         height: Public.setGrid().h,
@@ -503,6 +504,7 @@ function add() {
 	$('.aid').css("display", "none");
 	$('#code').textbox({width:431});
 	status = "add";
+	addflag = true;
 }
 
 /**
@@ -643,7 +645,7 @@ function initCard(){
 			formatter:coperatorLink
 		},
 		] ],
-		onClickRow :  function(index, row){
+		onDblClickRow  :  function(index, row){
 			if(status == "brows"){
 				return;
 			}
@@ -674,9 +676,11 @@ function addRow(e) {
 	}
 	if (isCanAdd()) {
 		$('#cardGrid').datagrid('appendRow', {});
-		editIndex = $('#cardGrid').datagrid('getRows').length - 1;
+		editIndex = $('#cardGrid').datagrid('getRows').length -1;
 		$('#cardGrid').datagrid('beginEdit', editIndex);
+		//$('#cardGrid').datagrid('endEdit', editIndex-1);
 	} 
+	
 }
 
 
@@ -934,8 +938,9 @@ function selectMat(){
 function dClickMat(rowTable){
 	
 	if(rowTable.length>0){
-		
+		//endBodyEdit();
 		var rows = $('#cardGrid').datagrid('getRows');
+		var rowIndex = $('#cardGrid').datagrid('getRowIndex',$('#cardGrid').datagrid('getSelected'));
 		var names = [];
 			for(var i=0;i<rows.length;i++){
 				if(rows[i].matfileid!=null){
@@ -953,32 +958,72 @@ function dClickMat(rowTable){
 			}
 			
 			var i = 0;
-			for(var j=names.length;j<rowTable.length+names.length;j++){
-				
-				var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
-				var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
-				var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
-				var enapplynum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'enapplynum'});
-				var appnum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'applynum'});
-				
-				
-				$(wlname.target).textbox('setValue', rowTable[i].wlname);
-				$(unit.target).textbox('setValue', rowTable[i].unit);
-				$(matfileid.target).textbox('setValue', rowTable[i].matfileid);
-				$(enapplynum.target).textbox('setValue', rowTable[i].enapplynum);
-				$(appnum.target).textbox('setValue', 1);
-				
-				if(i!=rowTable.length-1){
-					addRow();
-					i++;
+			if(addflag){
+				for(var j=rows.length-1;j<rowTable.length+rows.length-j;j++){
+					
+					var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
+					var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
+					var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
+					var enapplynum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'enapplynum'});
+					var appnum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'applynum'});
+					
+					$(wlname.target).textbox('setValue', rowTable[i].wlname);
+					$(unit.target).textbox('setValue', rowTable[i].unit);
+					$(matfileid.target).textbox('setValue', rowTable[i].matfileid);
+					$(enapplynum.target).textbox('setValue', rowTable[i].enapplynum);
+					$(appnum.target).textbox('setValue', 1);
+					
+					if(i!=rowTable.length-1){
+						addRow();
+						i++;
+					}
+					
+				}
+				addflag = false;
+			}else{
+				if(rowIndex+1<=rows.length){
+					$('#cardGrid').datagrid('deleteRow',rowIndex );
+					for(var i=0;i<rowTable.length;i++){
+						$('#cardGrid').datagrid('insertRow',{
+						    index: rowIndex, 
+						    row: {
+						    	matfileid : rowTable[i].matfileid,
+						    	wlname : rowTable[i].wlname,
+						    	unit : rowTable[i].unit,
+						    	enapplynum : rowTable[i].enapplynum,
+						    	applynum : 1,
+						    }
+						});
+					}
+				}else{
+					for(var j=rowIndex+1;j<rowTable.length+rowIndex+1;j++){
+						var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
+						var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
+						var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
+						var enapplynum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'enapplynum'});
+						var appnum = $('#cardGrid').datagrid('getEditor', {index:j,field : 'applynum'});
+						
+						
+						$(wlname.target).textbox('setValue', rowTable[i].wlname);
+						$(unit.target).textbox('setValue', rowTable[i].unit);
+						$(matfileid.target).textbox('setValue', rowTable[i].matfileid);
+						$(enapplynum.target).textbox('setValue', rowTable[i].enapplynum);
+						$(appnum.target).textbox('setValue', 1);
+						
+						if(i!=rowTable.length-1){
+							addRow();
+							i++;
+						}
+					}
+					addflag = false;
 				}
 				
 			}
-		
+			
 	}
 	
-	//$(enapplynum.target).textbox('readonly',true);
 	 $("#matDlg").dialog('close');
+	 endBodyEdit();
 }
 
 
@@ -1181,7 +1226,7 @@ function onSave(t){
 		for(var i = 0; i < rows.length; i++){
 			if((parseInt(rows[i].enapplynum) < parseInt(rows[i].applynum)
 					&& parseInt(rows[i].enapplynum) >= 0) || 
-					(rows[i].enapplynum.indexOf("-")==0)){
+					(parseInt(rows[i].enapplynum)<0)){
 				name.push(rows[i].wlname);
 			}
 		}

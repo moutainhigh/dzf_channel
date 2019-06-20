@@ -382,10 +382,20 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	public RefundBillVO checkBeforeSave(RefundBillVO datavo, Integer checktype) throws DZFWarpException {
 		StringBuffer errmsg = new StringBuffer();
 		RefundBillVO refvo = queryRefundMny(datavo, checktype);
-		if(datavo.getNrefbzjmny() != null && datavo.getNrefbzjmny().compareTo(refvo.getNrefbzjmny()) > 0){
+		
+		DZFDouble nrefbzjmny = refvo.getNrefbzjmny();
+		DZFDouble nrefyfkmny = refvo.getNrefyfkmny();
+		if(refvo.getNrefbzjmny()==null){
+			nrefbzjmny = CommonUtil.getDZFDouble(nrefbzjmny);
+		}
+		if(nrefyfkmny==null){
+			nrefyfkmny = CommonUtil.getDZFDouble(nrefyfkmny);
+		}
+		
+		if(datavo.getNrefbzjmny() != null && datavo.getNrefbzjmny().compareTo(nrefbzjmny) > 0){
 			errmsg.append("保证金退款金额大于该加盟商的期末余额，退款后余额可能为负值，");
 		}
-		if(datavo.getNrefyfkmny() != null && datavo.getNrefyfkmny().compareTo(refvo.getNrefyfkmny()) > 0){
+		if(datavo.getNrefyfkmny() != null && datavo.getNrefyfkmny().compareTo(nrefyfkmny) > 0){
 			errmsg.append("预付款退款金额大于该加盟商的期末余额，退款后余额可能为负值，");
 		}
 		if(errmsg != null && errmsg.length() > 0){
