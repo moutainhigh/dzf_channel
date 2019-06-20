@@ -268,7 +268,7 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			sql.append(" AND ").append(where);
 		} else {
 			// 添加过滤查询条件
-			
+			addSqlParam(pamvo, sql, spm);
 		}
 		sql.append(" )  zwjc \n");
 		sql.append(" ON qcorp.pk_corp = zwjc.pk_corp \n");
@@ -287,19 +287,19 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			UserVO uvo) throws DZFWarpException {
 		sql.append(" LEFT JOIN ( \n");
 		sql.append("SELECT q.pk_corp,   \n");
-		sql.append(" max(q.period) as period \n");
+		sql.append(" q.period as period \n");
 		sql.append("  FROM ynt_qmcl q  \n");
 		sql.append("  JOIN bd_corp corp ON corp.pk_corp = q.pk_corp  \n");
 		sql.append(" WHERE q.isqjsyjz = 'Y' \n");
-		sql.append(" AND q.period <= ? ");
+		sql.append(" AND q.period = ? ");
 		spm.addParam(pamvo.getPeriod());
 		if (pks != null && pks.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" q.pk_corp ", pks);
 			sql.append(" AND ").append(where);
 		} else {
 			// 添加过滤查询条件
+			addSqlParam(pamvo, sql, spm);
 		}
-		sql.append(" GROUP BY q.pk_corp \n");
 		sql.append("  ) jzzt \n");
 		sql.append(" ON qcorp.pk_corp = jzzt.pk_corp  \n");
 	}
