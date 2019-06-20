@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.190626"><cite>V1.190626</cite></a></li>';
 res = res+'<li><a href="#V1.190528"><cite>V1.190528</cite></a></li>';
 res = res+'<li><a href="#V1.190427"><cite>V1.190427</cite></a></li>';
 res = res+'<li><a href="#V1.190328"><cite>V1.190328</cite></a></li>';
@@ -73,12 +74,73 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2019年05月28日重磅更新
+	 &nbsp;2019年06月26日重磅更新
     </blockquote>
     <ul class="layui-timeline">
 
+
         <li class="layui-timeline-item">
-            <a name="V1.190520"></a>
+            <a name="V1.190626"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.190626&nbsp;&nbsp;<span class="layui-badge-rim">2019-06-26</span></h2>
+                </div>
+                <ul>
+                    <li style="list-style:none">
+                        <h3 >新增物料数量统计表</h3>
+                        <ul>
+                            <li style="list-style:none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190626/01.png')" src="./20190626/01.png">
+                            </li>
+                        </ul>
+
+                        <h4 style="margin-top:10px;">a.累计入库数量：截止到当前系统时间入库单物料的入库数量合计</h4>
+                        <h4 style="margin-top:10px;">b.累计发出数量：截止到当前系统时间物料处理累计发出数量合计</h4>
+                        <h4 style="margin-top:10px;">c.待发出数量：待处理的物料申请单，物料申请数合计</h4>
+                        <h4 style="margin-top:10px;">d.可申请数量：截止到当前系统时间累计入库-累计发出</h4>
+
+                        <h3 style="margin-top:10px;">物料申请数需小于可申请数量</h3>
+                        <ul>
+                            <li>物料申请时，页面增加选择物料的可申请数量，申请数量需小于可申请数量<br>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190626/02.png')" src="./20190626/02.png">
+                            </li>
+                        </ul>
+
+                        <h3>合同审核增加按收款周期、合同周期查询</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190626/03.png')" src="./20190626/03.png">
+                            </li>
+
+                        </ul>
+
+                        <h3>已解约的加盟商显示解约标识</h3>
+                        <ul>
+                            <li>以下节点已解约加盟商显示加盟商解约标识：合同审核、加盟商扣款查询、扣款统计表、付款余额查询<br/>
+                                发票管理、渠道总数据分析、大区数据分析、省数据分析、新增统计、续费统计、账务处理分析、行业<br/>
+                                分析、加盟商人员统计、加盟商订单<br/>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190626/04.png')" src="./20190626/04.png">
+                            </li>
+                        </ul>
+                        <h3>演示加盟商相关处理说明</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                1.页面不显示演示相关数据，则当前节点仅显示正式加盟商数据<br/>
+                                2.页面显示“演示”相关数据，点击可查询演示待处理数据，且查询框可单独根据演示加盟 <br/>
+                                商的名称查询
+                                <br/>
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190626/05.png')" src="./20190626/05.png">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+        <li class="layui-timeline-item">
+            <a name="V1.190528"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
             <div class="layui-timeline-content layui-text">
                 <div class="layui-timeline-title" >
