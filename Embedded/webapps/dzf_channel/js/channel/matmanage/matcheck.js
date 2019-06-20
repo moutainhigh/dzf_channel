@@ -14,7 +14,8 @@ $(function(){
 	initQry();
 	initCombobox();
 	initRadioListen();
-	load(0);
+	//load(0);
+	showColumn();
 });
 
 
@@ -332,6 +333,73 @@ function load(type){
 	
 }
 
+
+/**
+ * 首先加载固定列
+ */
+function showColumn(){
+	grid = $('#grid').datagrid({
+		border : true,
+		striped : true,
+		rownumbers : true,
+		height : Public.setGrid().h,
+		singleSelect : true,
+		checkOnSelect :false,
+		showFooter: true,
+		remoteSort : false,
+		idField : 'matbillid',
+		columns : [ [  
+        { field : 'matbillid',    title : '主键',hidden:true,rowspan:2}, 
+        { field : 'updatets',    title : '时间戳', hidden:true,rowspan:2},
+        { field : 'aname',  title : '大区', width : 100, halign:'center',align:'center',rowspan:2},
+        { field : 'uname',  title : '渠道经理', width : 100, halign:'center',align:'center',rowspan:2},
+        { field : 'proname',  title : '省/市', width : 100, halign:'center',align:'center',rowspan:2}, 
+		{ field : 'corpname',  title : '加盟商', width : 130, halign:'center',align:'center',rowspan:2,
+        	formatter : function(value, row, index) {
+				return '<a href="javascript:void(0)"  style="color:blue" onclick="showDetail(\''
+						+ index
+						+ '\')">'
+						+ value
+						+ '</a>';
+			}
+		},
+		{ field : 'code',  title : '合同编号', width : 100, halign:'center',align:'center',rowspan:2},
+		{ field : 'reinfo',  title : '收货信息', width : 280, halign:'center',align:'center',colspan:3},
+		{ field : 'expressinfo',  title : '快递信息', width : 360, halign:'center',align:'center',colspan:4}, 
+		
+		{ field : 'memo',  title : '备注', width : 100, halign:'center',align:'center',rowspan:2},
+		{ field : 'status',  title : '状态', width : 100, halign:'center',align:'center',rowspan:2, 
+				formatter : staForma,
+		},
+		{ field : 'reason',  title : '驳回原因', width : 100, halign:'center',align:'center',rowspan:2},
+		{ field : 'operdate',  title : '录入时间', width : 100, halign:'center',align:'center',rowspan:2}, 
+		{ field : 'applyname',  title : '申请人', width : 100, halign:'center',align:'center',rowspan:2}, 
+		{ field : 'adate',  title : '申请时间', width : 100, halign:'center',align:'center',rowspan:2},
+        
+		 ],
+		 [
+		  
+		  {width : '80',title : '收货人',field : 'receiver',align:'center',},
+		  {width : '100',title : '联系电话',field : 'phone',align:'center',},
+		  {width : '100',title : '地址',field : 'address',align:'center',},
+	
+		  {width : '100',title : '快递公司',field : 'logname',align:'center',},
+		  {width : '80',title : '金额',field : 'fcost',align:'center',
+		 		formatter : function(value,row) {
+          		if(!isEmpty(row.matbillid)){
+          			return formatMny(value);
+          		}
+          	}, 	
+		  },
+		  {width : '80',title : '单号',field : 'fcode',align:'right',},
+		  {width : '100',title : '发货时间',field : 'dedate',align:'right',},
+		  
+		] ],
+		onLoadSuccess : function(data) {
+			
+		},
+	});
+}
 
 
 /**
