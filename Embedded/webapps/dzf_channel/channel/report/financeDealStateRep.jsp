@@ -115,6 +115,7 @@
 					</div>
 					
 					<div style="display:inline;float:right;">
+					    <input style="height:28px;width:160px;" class="easyui-textbox" id="cpkname" prompt="录入客户编码或名称 "/>
 						<label style="width:85px;text-align:right;">记账状态：</label>
 						<select id="mid" class="easyui-combobox" data-options="panelHeight:'auto'" 
 							style="width:80px;height:28px;">

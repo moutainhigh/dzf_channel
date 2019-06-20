@@ -78,9 +78,9 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		List<FinanceDetailVO> rlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
 		if(rlist != null && rlist.size() > 0){
-			setShowName(rlist, pamvo, pks);
+			return setShowName(rlist, pamvo, pks);
 		}
-		return rlist;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -104,9 +104,9 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		List<FinanceDetailVO> rlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
 		if(rlist != null && rlist.size() > 0){
-			setShowName(rlist, pamvo, null);
+			return setShowName(rlist, pamvo, null);
 		}
-		return rlist;
+		return null;
 	}
 	
 	/**
@@ -159,16 +159,21 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @param pks
 	 * @throws DZFWarpException
 	 */
-	private void setShowName(List<FinanceDetailVO> rlist, QryParamVO pamvo, String[] pks) throws DZFWarpException {
+	private List<FinanceDetailVO> setShowName(List<FinanceDetailVO> rlist, QryParamVO pamvo, String[] pks)
+			throws DZFWarpException {
 		Map<String, String> dmap = qryDeptMap(pamvo, pks);
+		List<FinanceDetailVO> flist = null;
+		if (!StringUtil.isEmpty(pamvo.getCorpkname())) {
+			flist = new ArrayList<FinanceDetailVO>();
+		}
 		String dname = null;
 		String corpname = "";
 		CorpVO corpvo = CorpCache.getInstance().get(null, pamvo.getPk_corp());
-		if(corpvo != null){
+		if (corpvo != null) {
 			corpname = corpvo.getUnitname();
 		}
-		for(FinanceDetailVO avo : rlist){
-			QueryDeCodeUtils.decKeyUtil(new String[]{"corpkname"}, avo, 1);
+		for (FinanceDetailVO avo : rlist) {
+			QueryDeCodeUtils.decKeyUtil(new String[] { "corpkname" }, avo, 1);
 			if (dmap != null && !dmap.isEmpty()) {
 				dname = dmap.get(avo.getPk_corpk());
 				if (!StringUtil.isEmpty(dname)) {
@@ -177,6 +182,18 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			}
 			avo.setCorpname(corpname);
 			avo.setVperiod(pamvo.getPeriod());
+			if (!StringUtil.isEmpty(pamvo.getCorpkname())) {
+				if ((!StringUtil.isEmpty(avo.getCorpkcode()) && avo.getCorpkcode().indexOf(pamvo.getCorpkname()) != -1)
+						|| (!StringUtil.isEmpty(avo.getCorpkname())
+								&& avo.getCorpkname().indexOf(pamvo.getCorpkname()) != -1)) {
+					flist.add(avo);
+				}
+			}
+		}
+		if (!StringUtil.isEmpty(pamvo.getCorpkname())) {
+			return flist;
+		} else {
+			return rlist;
 		}
 	}
 	
@@ -303,10 +320,10 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		sql.append("         ELSE  \n");
 		sql.append("          ''  \n");
 		sql.append("       END AS chargedeptname,  \n");
-		sql.append("       corp.pk_corp as pk_corpk,  \n");
+		sql.append("       corp.pk_corp,  \n");
 		sql.append("       corp.createdate,  \n");
 		sql.append("       corp.begindate,  \n");
-		sql.append("       corp.fathercorp as pk_corp  \n");
+		sql.append("       corp.fathercorp  \n");
 		sql.append("  from bd_corp corp \n");
 		sql.append(" where nvl(corp.dr,0) = 0   \n");
 		sql.append("   and corp.fathercorp = ? \n");
@@ -335,8 +352,8 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		sql.append("SELECT qcorp.corpkcode,  \n");
 		sql.append("       qcorp.corpkname,  \n");
 		sql.append("       qcorp.chargedeptname,  \n");
-		sql.append("       qcorp.pk_corpk,  \n");
-		sql.append("       qcorp.pk_corp,  \n");
+		sql.append("       qcorp.pk_corp AS pk_corpk,  \n");
+		sql.append("       qcorp.fathercorp AS pk_corp,  \n");
 		sql.append("       qcorp.createdate,  \n");
 		sql.append("       qcorp.begindate,  \n");
 		//1、记账状态
@@ -395,8 +412,9 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 */
 	private void addSqlParam(QryParamVO pamvo, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
         sql.append(" and nvl(corp.dr,0) = 0   \n");
-        sql.append(" and nvl(corp.isaccountcorp, 'N') = 'N'   \n");
-        sql.append(" and nvl(corp.isseal,'N') = 'N' \n");
+		sql.append("   AND nvl(corp.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(corp.isseal, 'N') = 'N'\n"); // 未封存客户
+		sql.append("   AND nvl(corp.isaccountcorp,'N') = 'N' \n");// 非分支机构
         sql.append(" and corp.fathercorp = ?   \n");
         spm.addParam(pamvo.getPk_corp());
 	}

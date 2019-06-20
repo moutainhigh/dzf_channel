@@ -173,11 +173,14 @@ function qryDetail(index){
 function queryDetail(){
 	var url = DZF.contextPath + "/report/financedealstaterep!queryDetail.action";
 	$('#gridh').datagrid('options').url = url;
+	var cpkname = $("#cpkname").textbox('getValue');
+	cpkname = trimStr(cpkname,'g');
 	$('#gridh').datagrid('load', {
 		"cpid" : $("#corpid").val(),
 		"period" : $("#qrydate").text(),
 		"mid" : $("#mid").combobox('getValue'),
 		"vcode" : $("#vcode").combobox('getValue'),
+		"cpkname" : $("#cpkname").textbox('getValue'),
 	});
 }
 

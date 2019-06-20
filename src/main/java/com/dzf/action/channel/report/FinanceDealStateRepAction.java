@@ -130,7 +130,8 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 	 */
 	private boolean isPageByBase(QryParamVO pamvo) throws DZFWarpException {
 		// 记账状态、账务检查
-		if ("全部".equals(pamvo.getVmanager()) && "全部".equals(pamvo.getVbillcode())) {
+		if (StringUtil.isEmpty(pamvo.getCorpkname()) && "全部".equals(pamvo.getVmanager())
+				&& "全部".equals(pamvo.getVbillcode())) {
 			return true;
 		}
 		return false;
