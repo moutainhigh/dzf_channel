@@ -4,6 +4,7 @@ var editIndex;
 var status="brows";
 var flag = true;
 var addflag= false;
+var rowflag = false;
 $(window).resize(function () {
     $('#grid').datagrid('resize', {
         height: Public.setGrid().h,
@@ -746,8 +747,9 @@ function addRow(e) {
 		$('#cardGrid').datagrid('appendRow', {});
 		editIndex = $('#cardGrid').datagrid('getRows').length -1;
 		$('#cardGrid').datagrid('beginEdit', editIndex);
-		//$('#cardGrid').datagrid('endEdit', editIndex-1);
+		rowflag = true;
 	} 
+	
 	
 }
 
@@ -1008,9 +1010,23 @@ function dClickMat(rowTable){
 	if(rowTable.length>0){
 		//endBodyEdit();
 		var rows = $('#cardGrid').datagrid('getRows');
+		var len = rows.length;
 		var rowIndex = $('#cardGrid').datagrid('getRowIndex',$('#cardGrid').datagrid('getSelected'));
+		var r = 0;
+		var w = 0;
+		if(rowflag){
+			len = len -1;
+			rowIndex = rowIndex+1;
+			r = rowIndex;
+			w = rowIndex;
+			rowflag = false;
+		}else{
+			r = rowIndex+1;
+			w = rowIndex+1;
+		}
+		
 		var names = [];
-			for(var i=0;i<rows.length;i++){
+			for(var i=0;i<len;i++){
 				if(rows[i].matfileid!=null){
 					names.push(rows[i].wlname);
 				}
@@ -1027,7 +1043,7 @@ function dClickMat(rowTable){
 			
 			var i = 0;
 			if(addflag){
-				for(var j=rows.length-1;j<rowTable.length+rows.length-j;j++){
+				for(var j=len-1;j<rowTable.length+len-j;j++){
 					
 					var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
 					var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
@@ -1049,7 +1065,7 @@ function dClickMat(rowTable){
 				}
 				addflag = false;
 			}else{
-				if(rowIndex+1<=rows.length){
+				if(rowIndex+1<=len){
 					$('#cardGrid').datagrid('deleteRow',rowIndex );
 					for(var i=0;i<rowTable.length;i++){
 						$('#cardGrid').datagrid('insertRow',{
@@ -1064,7 +1080,7 @@ function dClickMat(rowTable){
 						});
 					}
 				}else{
-					for(var j=rowIndex+1;j<rowTable.length+rowIndex+1;j++){
+					for(var j=r;j<rowTable.length+w;j++){
 						var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
 						var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
 						var matfileid = $('#cardGrid').datagrid('getEditor', {index:j,field : 'matfileid'});
