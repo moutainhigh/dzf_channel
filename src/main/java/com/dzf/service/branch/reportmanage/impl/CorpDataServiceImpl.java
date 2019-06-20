@@ -2,7 +2,6 @@ package com.dzf.service.branch.reportmanage.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.branch.reportmanage.ICorpDataService;
+import com.dzf.service.channel.report.IAccountQryService;
 
 @Service("corpdataser")
 public class CorpDataServiceImpl implements ICorpDataService {
@@ -35,6 +35,9 @@ public class CorpDataServiceImpl implements ICorpDataService {
 
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
+	
+	@Autowired
+	private IAccountQryService iaccqryser;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -169,42 +172,6 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		return null;
 	}
 	
-	/**
-	 * 获取返回数据
-	 * @param pamvo
-	 * @param corpks
-	 * @param period
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<CorpDataVO> getReturnData(QryParamVO pamvo, String[] corpks, String period) throws DZFWarpException {
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		// 1、列表查询字段：
-		getQryColumn(sql);
-		// 2、客户相关信息：
-		getCorpSqlSpm(pamvo, corpks, sql, spm, period);
-		// 3、合同主表信息：
-		getContSqlSpm(pamvo, corpks, sql, spm);
-		// 4、合同子表信息：
-		getContbSqlSpm(pamvo, corpks, sql, spm);
-		List<CorpDataVO> rlist = (List<CorpDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CorpDataVO.class));
-		if (rlist != null && rlist.size() > 0) {
-			String[] strs = new String[] { "corpname", "unitname", "pcountname", "phone2" };
-			Map<String, String> jzmap = qryJzMap(corpks, period);
-			Map<String, String> vmap = qryVouchMap(corpks, period);
-			for (CorpDataVO cvo : rlist) {
-				QueryDeCodeUtils.decKeyUtil(strs, cvo, 1);
-				countJzStatue(cvo, jzmap, vmap, period);
-				countSerMonth(cvo, corpks, period);
-			}
-		}
-		return rlist;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CorpDataVO> queryAll(QryParamVO pamvo) throws DZFWarpException {
@@ -238,6 +205,62 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	}
 	
 	/**
+	 * 获取返回数据
+	 * @param pamvo
+	 * @param corpks
+	 * @param period
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CorpDataVO> getReturnData(QryParamVO pamvo, String[] corpks, String period) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		// 1、列表查询字段：
+		getQryColumn(sql);
+		// 2、客户相关信息：
+		getCorpSqlSpm(pamvo, corpks, sql, spm, period);
+		// 3、合同主表信息：
+		getContSqlSpm(pamvo, corpks, sql, spm);
+		// 4、合同子表信息：
+		getContbSqlSpm(pamvo, corpks, sql, spm);
+		List<CorpDataVO> rlist = (List<CorpDataVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanListProcessor(CorpDataVO.class));
+		if (rlist != null && rlist.size() > 0) {
+			String[] strs = new String[] { "corpname", "unitname", "pcountname", "phone2" };
+			Map<String, String> jzmap = iaccqryser.queryJzMap(corpks, period);
+			for (CorpDataVO cvo : rlist) {
+				QueryDeCodeUtils.decKeyUtil(strs, cvo, 1);
+				setJzBsStatue(cvo, jzmap, period);
+				countSerMonth(cvo, corpks, period);
+			}
+		}
+		return rlist;
+	}
+	
+	/**
+	 * 设置记账、报税显示状态
+	 * @param cvo
+	 * @param jzmap
+	 * @param period
+	 * @throws DZFWarpException
+	 */
+	private void setJzBsStatue(CorpDataVO cvo, Map<String, String> jzmap, String period) throws DZFWarpException {
+		if(jzmap != null && !jzmap.isEmpty()){
+			cvo.setVjzstatues(jzmap.get(cvo.getPk_corp()));
+		}
+		if(cvo.getBegindate() != null){
+			String jzperid = cvo.getBegindate().getYear() + "-" + cvo.getBegindate().getStrMonth();
+			if(jzperid.compareTo(period) > 0){
+				cvo.setVbsstatues("");
+			}else{
+				cvo.setVbsstatues("");
+			}
+		}
+	}
+	
+	/**
 	 * 分页
 	 * @param pks
 	 * @param page
@@ -253,103 +276,6 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		}
 		pks = Arrays.copyOfRange(pks, beginIndex, endIndex);
 		return pks;
-	}
-
-	/**
-	 * 计算记账状态、报税状态
-	 * 
-	 * @param cvo
-	 * @param jzmap
-	 * @param vmap
-	 * @throws DZFWarpException
-	 */
-	private void countJzStatue(CorpDataVO cvo, Map<String, String> jzmap, Map<String, String> vmap, String period)
-			throws DZFWarpException {
-		if(cvo.getBegindate() != null){
-			String jzperid = cvo.getBegindate().getYear() + "-" + cvo.getBegindate().getStrMonth();
-			//记账状态
-			if(jzmap != null && !jzmap.isEmpty() && !StringUtil.isEmpty(jzmap.get(cvo.getPk_corp()))){
-				cvo.setVjzstatues("已完成");
-			}else{
-				if(vmap != null && !vmap.isEmpty() && !StringUtil.isEmpty(vmap.get(cvo.getPk_corp()))){
-					cvo.setVjzstatues("进行中");
-				}else{
-					if(jzperid.compareTo(period) <= 0){
-						cvo.setVjzstatues("未开始");
-					}
-				}
-			}
-			if(jzperid.compareTo(period) > 0){
-				cvo.setVbsstatues("");
-			}
-		}else{
-			cvo.setVbsstatues("");
-		}
-	}
-
-	/**
-	 * 损益结转
-	 * 
-	 * @param corpks
-	 * @param period
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<String, String> qryJzMap(String[] corpks, String period) throws DZFWarpException {
-		Map<String, String> jzmap = new HashMap<String, String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT pk_corp, period  \n");
-		sql.append("  FROM ynt_qmcl  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND nvl(isqjsyjz, 'N') = 'Y' \n");
-		sql.append("   AND period = ?  \n");
-		spm.addParam(period);
-		if (corpks != null && corpks.length > 0) {
-			String where = SqlUtil.buildSqlForIn("pk_corp", corpks);
-			sql.append(" AND ").append(where);
-		}
-		List<QryParamVO> list = (List<QryParamVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(QryParamVO.class));
-		if (list != null && list.size() > 0) {
-			for (QryParamVO jzvo : list) {
-				jzmap.put(jzvo.getPk_corp(), jzvo.getPeriod());
-			}
-		}
-		return jzmap;
-	}
-
-	/**
-	 * 凭证信息
-	 * 
-	 * @param corpks
-	 * @param period
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<String, String> qryVouchMap(String[] corpks, String period) throws DZFWarpException {
-		Map<String, String> vmap = new HashMap<String, String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT pk_corp, period  \n");
-		sql.append("  FROM ynt_tzpz_h  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND period = ?  \n");
-		spm.addParam(period);
-		if (corpks != null && corpks.length > 0) {
-			String where = SqlUtil.buildSqlForIn("pk_corp", corpks);
-			sql.append(" AND ").append(where);
-		}
-		List<QryParamVO> list = (List<QryParamVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(QryParamVO.class));
-		if (list != null && list.size() > 0) {
-			for (QryParamVO jzvo : list) {
-				vmap.put(jzvo.getPk_corp(), jzvo.getPeriod());
-			}
-		}
-		return vmap;
 	}
 
 	/**

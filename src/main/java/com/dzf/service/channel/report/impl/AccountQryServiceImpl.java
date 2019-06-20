@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
+import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.report.FinanceDetailVO;
@@ -422,6 +423,50 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		sql.append("   AND nvl(corp.isaccountcorp,'N') = 'N' \n");// 非分支机构
         sql.append(" and corp.fathercorp = ?   \n");
         spm.addParam(pamvo.getPk_corp());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, String> queryJzMap(String[] corpks, String period) throws DZFWarpException {
+		Map<String, String> jzmap = new HashMap<String, String>();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_corp,  \n");
+		sql.append("       CASE  \n");
+		sql.append("         WHEN jzperiod IS NOT NULL THEN  \n");
+		sql.append("          '已完成'  \n");
+		sql.append("         WHEN jzperiod IS NULL AND substr(begindate, 0, 7) <= ? THEN  \n");
+		spm.addParam(period);
+		sql.append("          '未完成'  \n");
+		sql.append("       END AS jzstatus  \n");
+		sql.append("  FROM (SELECT corp.pk_corp,  \n");
+		sql.append("               q.period AS jzperiod,  \n");
+		sql.append("               corp.begindate AS begindate  \n");
+		sql.append("          FROM bd_corp corp  \n");
+		sql.append("          LEFT JOIN ynt_qmcl q ON corp.pk_corp = q.pk_corp  \n");
+		sql.append("                              AND q.isqjsyjz = 'Y'  \n");
+		sql.append("                              AND q.period = ?  \n");
+		spm.addParam(period);
+		sql.append("         WHERE nvl(corp.dr, 0) = 0  \n");
+		sql.append("           AND nvl(corp.isaccountcorp, 'N') = 'N'  \n");
+		sql.append("           AND nvl(corp.isseal, 'N') = 'N'  \n");
+		if(corpks != null && corpks.length > 0){
+			String where = SqlUtil.buildSqlForIn("corp.pk_corp", corpks);
+			sql.append(" AND ").append(where);
+		}else{
+			return null;
+		}
+		sql.append(" ) \n");
+		List<Object> list = (List<Object>)singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
+		if(list != null && list.size() > 0){
+			for (int i = 0; i < list.size(); i++) {
+				Object[] obj = (Object[]) list.get(i);
+				if(!StringUtil.isEmpty(String.valueOf(obj[1]))){
+					jzmap.put(String.valueOf(obj[0]), String.valueOf(obj[1]));
+				}
+			}
+		}
+		return jzmap;
 	}
 
 }

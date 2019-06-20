@@ -1,6 +1,7 @@
 package com.dzf.service.channel.report;
 
 import java.util.List;
+import java.util.Map;
 
 import com.dzf.model.channel.report.FinanceDetailVO;
 import com.dzf.model.pub.QryParamVO;
@@ -35,5 +36,14 @@ public interface IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	public List<FinanceDetailVO> queryAllData(QryParamVO pamvo, UserVO uvo) throws DZFWarpException;
+	
+	/**
+	 * 查询记账状态月数据 （分部管理系统使用）
+	 * @param corpks
+	 * @param period
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public Map<String, String> queryJzMap(String[] corpks, String period) throws DZFWarpException;
 	
 }
