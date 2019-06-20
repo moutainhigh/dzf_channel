@@ -8,41 +8,47 @@
 <link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/branch/setup/inststepup.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
-<style>
- 
+
+<style type="text/css">
+ [data-options="region:'north'"]{
+   		overflow: hidden;
+ }
+ .mod-toolbar-content{
+   	    height: 39px;
+ }
 </style>
 </head>
 <body class="wrapper char" style="height:100%"> 
-    <div class="easyui-layout" style="height:100%;">
-	    <div class="char" data-options="region:'west',border:false,split:true" style="width:22%;border-width:1px 0px 0px 0px;overflow:hidden" id="leftGrid">
-			<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
-    		<div class="index_top mod-toolbar-top"  >
-		 		<div class="right mod-btn" id="view_buttons">
-	    	     	<div class="h30 h30-arrow" style="margin-left:60px;" id="filter">
+    <div class="easyui-layout" style="height:100%;" id="aaa">
+		<div data-options="region:'north'" style="border-width:0px 0px 0px 0px">
+    		<div class="mod-toolbar-top"  >
+    		  <div class="mod-toolbar-content"> 
+		 		<div class="left mod-btn" id="view_buttons" >
+	    	     	 <div class="h30 h30-arrow" style="margin-left:60px;">
 	    	     		<span style="font-size:18px;font-weight:bold">机构设置</span>&nbsp;&nbsp;&nbsp;
 					 </div>
-					 <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addInst()">新增</a> 
-		        </div>
-        	</div>
-    	   </div>
-			<table id="instgrid" ></table>
-		</div>
-		
-	 	<div class="char" data-options="region:'center',border:true,split:true" style="width:48%;border-width:1px 0px 0px 0px;overflow:hidden" id="rightGrid" >
-	    	<div data-options="region:'north'" style="border-width:0px 0px 0px 0px;">
-    		<div class="index_top mod-toolbar-top"  >
-		 		<div class="right mod-btn" id="view_buttons">
-	    	     	<div class="h30 h30-arrow" style="margin-left:60px;">
+					<!--  <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addInst()">新增</a>  -->
+					<input type="button" class="ui-btn ui-btn-xz" value="新增" onclick="addInst()" >
+		        	 <div class="h30 h30-arrow" style="margin-left:166px;">
 	    	     		<span id="instname" style="font-size:18px;font-weight:bold"></span>&nbsp;&nbsp;&nbsp;
 					 </div>
-					  <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addCorp()">新增</a>
-			          <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="updateInst()">更换机构</a>
+					  <!-- <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addCorp()">新增</a>
+			          <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="updateInst()">更换机构</a> -->
+			          <input type="button" class="ui-btn ui-btn-xz" value="新增" onclick="addCorp()">
+			          <input type="button" class="ui-btn ui-btn-xz" value="更换机构" onclick="updateInst()">
 		        </div>
+		      </div>
         	</div>
-    	   </div>
-			<table id="corpgrid" ></table>
-	    </div>	
+    	</div>
+    	   <div class="char" data-options="region:'west',border:true,split:true" style="width:22%;border-width:0px 0px 0px 0px;overflow:hidden" id="leftGrid">
+				<table id="instgrid"></table>
+		   </div>
+	 	
+         <div class="char" data-options="region:'center',border:true,split:true" style="width:48%;border-width:0px 0px 0px 0px;overflow:hidden" id="rightGrid" > 
+			<table id="corpgrid"></table>
+	     </div>	
 	    
+	</div>
 	    <!-- 新增机构对话框  begin-->
 		<div id="addInstDialog" class="easyui-dialog" style="height:200px;width:360px;overflow:hidden;padding-top:18px;" 
 			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
@@ -121,9 +127,6 @@
 			</form>
 		</div>
 		<!-- 更换机构对话框  end-->
-		
-		
-	</div>
 	
 </body>
 </html>

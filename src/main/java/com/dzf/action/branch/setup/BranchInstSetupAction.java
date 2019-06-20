@@ -1,8 +1,8 @@
 package com.dzf.action.branch.setup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -46,7 +46,7 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 	 * 查询列表
 	 */
 	public void query(){
-		Json json = new Json();
+		/*Json json = new Json();
 		try {
 			QueryParamVO param = new QueryParamVO();
 			param = (QueryParamVO) DzfTypeUtils.cast(getRequest(), param);
@@ -60,20 +60,60 @@ public class BranchInstSetupAction extends BaseAction<BranchInstSetupVO>{
 					json.setRows(map.get("0"));//第一次加载
 				}
 				json.setMsg("查询成功");
-				json.setData(map.get("1"));
+			    if(map.get("1")!=null && map.get("1").size()>0){
+			    	int page = param.getPage();
+					int rows = 1000;
+					BranchInstSetupBVO[] bvolist = getPagedVOs((BranchInstSetupBVO[]) map.get("1").toArray(new BranchInstSetupBVO[0]), page, rows);
+					json.setTotal((long) (map.get("1").size()));
+			    	json.setData(Arrays.asList(bvolist));
+			    }
 			}
 			json.setSuccess(true);
 		}catch (Exception e) {
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "查询失败");
 		}
-		writeJson(json);
+		writeJson(json);*/
+		
+		Grid grid = new Grid();
+		try{
+			QueryParamVO param = new QueryParamVO();
+			param = (QueryParamVO) DzfTypeUtils.cast(getRequest(), param);
+			List<BranchInstSetupVO> vosList = branchser.queryList(param);
+			int page = param.getPage();
+			int rows = param.getRows();
+			if(vosList!=null && vosList.size()>0){
+				if(vosList.get(0).getChildren()!=null){
+					BranchInstSetupBVO[] bvolist = getPagedVOs((BranchInstSetupBVO[]) vosList.get(0).getChildren(), page, rows);
+					grid.setRows(Arrays.asList(bvolist));
+					grid.setTotal((long) vosList.get(0).getChildren().length);
+				}else{
+					grid.setRows(vosList);
+				}
+			}
+            grid.setSuccess(true);
+            grid.setMsg("查询成功");
+		}catch (Exception e) {
+			grid.setSuccess(false);
+			printErrorLog(grid, log, e, "查询失败");
+		}
+		writeJson(grid);
+		
 	}
 	
 	
-	
-	
-	
+	private BranchInstSetupBVO[] getPagedVOs(BranchInstSetupBVO[] cvos, int page, int rows) {
+		int beginIndex = rows * (page - 1);
+		int endIndex = rows * page;
+		if (endIndex >= cvos.length) {// 防止endIndex数组越界
+			endIndex = cvos.length;
+		}
+		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+		return cvos;
+	}
+
+
+
 	/**
 	 * 新增机构
 	 */

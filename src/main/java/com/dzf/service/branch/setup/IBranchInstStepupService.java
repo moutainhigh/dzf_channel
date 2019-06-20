@@ -78,4 +78,7 @@ public interface IBranchInstStepupService {
 	 */
 	public List<ComboBoxVO> qryBranchs(String cuserid) throws DZFWarpException;
 
+	List<BranchInstSetupVO> queryList(QueryParamVO param);
+
+
 }

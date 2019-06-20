@@ -1,5 +1,6 @@
 package com.dzf.service.branch.setup.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -300,6 +301,44 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		}	
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BranchInstSetupVO> queryList(QueryParamVO param) {
+		StringBuffer ssql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		
+		BranchInstSetupVO vo = new BranchInstSetupVO();
+		String sql ="select * from br_branchset where nvl(dr,0) = 0 order by ts desc";
+		List<BranchInstSetupVO> list = (List<BranchInstSetupVO>) singleObjectBO.executeQuery(sql, null, new BeanListProcessor(BranchInstSetupVO.class));
+		if(param.getQrytype()!=null && param.getQrytype()==0){//第一次加载  先显示机构名称
+			return list;
+		}else{
+			if(!StringUtil.isEmpty(param.getPk_currency())){
+				spm.addParam(param.getPk_currency());
+			}else{
+				spm.addParam(list.get(0).getPk_branchset());
+			}
+			ssql.append(" select \n");
+			ssql.append("   bc.pk_branchcorp,bc.vname,\n");
+			ssql.append("   bc.linkman,bc.phone,bc.unitname,\n");
+			ssql.append("   bc.isseal,bc.vmemo,bc.updatets \n");
+			ssql.append("   from br_branchset bs \n");
+			ssql.append("   right join br_branchcorp bc on \n");
+			ssql.append("   bs.pk_branchset = bc.pk_branchset \n");
+			ssql.append("   where nvl(bs.dr,0) = 0 and \n");
+			ssql.append("   nvl(bc.dr,0) = 0 and \n");
+			ssql.append("   bs.pk_branchset = ? \n");
+			List<BranchInstSetupBVO> bvolist = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(ssql.toString(), spm, new BeanListProcessor(BranchInstSetupBVO.class));
+			List<BranchInstSetupVO> newlist = new ArrayList<BranchInstSetupVO>();
+			newlist.add(vo);
+			BranchInstSetupBVO[] b = new BranchInstSetupBVO[bvolist.size()];
+			BranchInstSetupBVO[] bvos = (BranchInstSetupBVO[]) bvolist.toArray(b);
+			vo.setChildren(bvos);
+			return newlist;
+		}
+	}
+	
 
 	@Override
 	public Map<String, List> query(QueryParamVO param) {
@@ -363,6 +402,8 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
     	param.addParam(cuserid);
         return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), param, new BeanListProcessor(ComboBoxVO.class));
     }
+
+	
 
 
 }

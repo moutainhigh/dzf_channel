@@ -5,7 +5,7 @@ $(function(){
 	initCorpGrid();
 	initListColumn(0);
 	queryCorpInfo();
-	initInstName();
+	//initInstName();
 });
 
 
@@ -19,7 +19,9 @@ $(window).resize(function() {
 
 function initInstName(){
 	var row = $("#instgrid").datagrid("getSelected");
-	document.getElementById("instname").innerText = "公司设置-"+row.name;
+	if(row!=null){
+		document.getElementById("instname").innerText = "公司设置-"+row.name;
+	}
 }
 
 /**
@@ -54,6 +56,10 @@ function initInstGrid(){
 		] ],onLoadSuccess:function(data){
             $("#instgrid").datagrid("selectRow",0);
             $('#instgrid').datagrid("scrollTo",0);
+            var rows = $("#instgrid").datagrid("getRows");
+    		if(rows[0]!=null){
+    			document.getElementById("instname").innerText = "公司设置-"+rows[0].name;
+    		}
 		},
 		onClickRow:function(index,row){
 			$("#corpgrid").datagrid("loadData",{total:0,rows:[]});
@@ -69,11 +75,14 @@ function initInstGrid(){
  */
 function initCorpGrid(){
 	$("#corpgrid").datagrid({
-		rownumbers : true,
 		fit:true,
-		singleSelect : false,
-        checkbox : true,
-	    idField:'pk_bcorp',
+		rownumbers : true,
+		singleSelect : true,
+		idField : 'pk_bcorp',
+		pagination:true,
+        pagePosition:'bottom',
+        pageSize:10,
+        pageList:[10,20,30,40,50],
 		columns  : [ [
 			{field:'ck',checkbox:true},   
 			{field:'operater',title:'操作',width:100,align:'center',halign:'center',
@@ -114,13 +123,17 @@ function initCorpGrid(){
 	});
 }
 
+
+
 /**
  * 列表查询
  * @param qtype
  * @param pk_id
  */
 function initListColumn(qtype,pk_id){
-	$.ajax({
+	
+	 
+	/*$.ajax({
 		type : "POST",
 		url : contextPath+'/branch/instSetupAct!query.action',
 		data:{qrytype:qtype,pk_currency:pk_id},
@@ -143,7 +156,24 @@ function initListColumn(qtype,pk_id){
         	}
         	initInstName();
         }
+	});*/
+	if(qtype==0){
+		var url = DZF.contextPath + '/branch/instSetupAct!query.action';
+		$('#instgrid').datagrid('options').url = url;
+		$('#instgrid').datagrid('load', {
+			'qrytype' : qtype,
+			'pk_currency' : pk_id,
+		});
+	}
+	
+	var url = DZF.contextPath + '/branch/instSetupAct!query.action';
+	$('#corpgrid').datagrid('options').url = url;
+	$('#corpgrid').datagrid('load', {
+		'qrytype' : 1,
+		'pk_currency' : pk_id,
 	});
+	
+	initInstName();
 }
 
 /**
