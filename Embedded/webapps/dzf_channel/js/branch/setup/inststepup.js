@@ -57,6 +57,7 @@ function initInstGrid(){
             $("#instgrid").datagrid("selectRow",0);
             $('#instgrid').datagrid("scrollTo",0);
             var rows = $("#instgrid").datagrid("getRows");
+            $('#pk_bset').combobox('loadData',rows);
     		if(rows[0]!=null){
     			document.getElementById("instname").innerText = "公司设置-"+rows[0].name;
     		}
@@ -77,7 +78,7 @@ function initCorpGrid(){
 	$("#corpgrid").datagrid({
 		fit:true,
 		rownumbers : true,
-		singleSelect : true,
+		singleSelect : false,
 		idField : 'pk_bcorp',
 		pagination:true,
         pagePosition:'bottom',

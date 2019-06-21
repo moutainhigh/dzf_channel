@@ -16,6 +16,7 @@
  .mod-toolbar-content{
    	    height: 39px;
  }
+
 </style>
 </head>
 <body class="wrapper char" style="height:100%"> 
