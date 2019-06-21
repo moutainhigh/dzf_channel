@@ -29,7 +29,6 @@
 					 </div>
 					<div class="left">
 					 	<a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addInst()">新增</a> 
-						<!-- <input type="button" class="ui-btn ui-btn-xz" value="新增" onclick="addInst()" > -->
 		        	</div>
 		        	 <div class="h30 h30-arrow" style="margin-left:166px;">
 	    	     		<span id="instname" style="font-size:18px;font-weight:bold"></span>&nbsp;&nbsp;&nbsp;
@@ -37,8 +36,6 @@
 			          <div class="right">
 						  <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="addCorp()">新增</a>
 			          	  <a href="javascript:void(0)" class="ui-btn ui-btn-xz" data-options=" plain:true" onclick="updateInst()">更换机构</a> 
-			          	<!-- <input type="button" class="ui-btn ui-btn-xz" value="新增" onclick="addCorp()">
-			          	<input type="button" class="ui-btn ui-btn-xz" value="更换机构" onclick="updateInst()"> -->
 		              </div>
 		        </div>
 		      </div>
