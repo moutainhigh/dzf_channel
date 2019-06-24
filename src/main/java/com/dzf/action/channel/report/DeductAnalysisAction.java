@@ -254,14 +254,12 @@ public class DeductAnalysisAction extends BaseAction<DeductAnalysisVO>{
                 fileName=URLEncoder.encode("扣款统计表","UTF8"); //其他浏览器  
             }  
 			response.addHeader("Content-Disposition", "attachment;filename=" + fileName
-					+ new String(date+".xls"));
+					+ new String(date+".xlsx"));
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.expDeductExcel("扣款统计表", exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
+			ex.expDeductExcel("扣款统计表", exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
 					hbhindexs, array, toClient, "",strslist,mnylist);
-			String srt2 = new String(length, "UTF-8");
-			response.addHeader("Content-Length", srt2);
 		} catch (IOException e) {
 			log.error(e);
 		} finally {
