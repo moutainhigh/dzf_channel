@@ -115,7 +115,7 @@ public class IndexRepImpl implements IIndexRep {
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -166,7 +166,7 @@ public class IndexRepImpl implements IIndexRep {
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		List<BalanceRepVO> list = (List<BalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -216,7 +216,7 @@ public class IndexRepImpl implements IIndexRep {
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -293,7 +293,7 @@ public class IndexRepImpl implements IIndexRep {
 		if (!"alldata".equals(addsql)) {
 			sql.append(addsql);
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -348,7 +348,7 @@ public class IndexRepImpl implements IIndexRep {
 		if (!"alldata".equals(addsql)) {
 			sql.append(addsql);
 		}
-		if(StringUtil.isEmpty(filtersql)){
+		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
