@@ -27,6 +27,7 @@ import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
 import com.dzf.pub.jm.CodeUtils1;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.ISysFunnodeService;
@@ -47,6 +48,8 @@ public class PubServiceImpl implements IPubService {
 
 	@Autowired
 	private IUserService userser;
+	
+	private String filtersql = QueryUtil.getWhereSql();
 
 	@Override
 	public HashMap<Integer, String> queryAreaMap(String parenter_id) throws DZFWarpException {
@@ -612,7 +615,7 @@ public class PubServiceImpl implements IPubService {
 			}else if (datalevel == 2) {
 				List<String> qryProvince = queryProvince(cuserid, datalevel, datatype);
 				if (qryProvince != null && qryProvince.size() > 0) {
-					sql.append(" AND t.vprovince  in (");
+					sql.append(" AND account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[0])));
 					sql.append(" )");
 				}
@@ -620,18 +623,18 @@ public class PubServiceImpl implements IPubService {
 				List<String> corlist = queryCorpIds(cuserid, datatype);
 				List<String> prolist = queryProvince(cuserid, datalevel, datatype);
 				if (prolist != null && prolist.size() > 0 && corlist != null && corlist.size() > 0) {
-					sql.append(" AND (t.vprovince  in (");
+					sql.append(" AND (account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
 					sql.append(" ) OR ");
-					sql.append("  t.pk_corp  in (");
+					sql.append("  account.pk_corp  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
 					sql.append(" ))");
 				} else if (prolist != null && prolist.size() > 0) {
-					sql.append(" AND t.vprovince  in (");
+					sql.append(" AND account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(prolist.toArray(new String[0])));
 					sql.append(" )");
 				} else if (corlist != null && corlist.size() > 0) {
-					sql.append(" AND t.pk_corp  in (");
+					sql.append(" AND account.pk_corp  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(corlist.toArray(new String[0])));
 					sql.append(" )");
 				}

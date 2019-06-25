@@ -100,15 +100,15 @@ public class ChannelServiceImpl implements IChannelService {
 		SQLParameter sp = new SQLParameter();
 		sql.append("select pk_corp, unitname, innercode, vprovince  \n") ;
 		sql.append("  from bd_account account  \n") ; 
-		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(isaccountcorp, 'N') = 'Y'  \n") ; 
-		sql.append("   and nvl(ischannel, 'N') = 'Y'  \n");
+		sql.append(" where nvl(account.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(account.isaccountcorp, 'N') = 'Y'  \n") ; 
+		sql.append("   and nvl(account.ischannel, 'N') = 'Y'  \n");
 		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
-			sql.append(" and vprovince=? ");
+			sql.append(" and account.vprovince=? ");
 			sp.addParam(vo.getDr());
 			if (!StringUtil.isEmpty(vo.getVmome())) {
 				String[] split = vo.getVmome().split(",");
-				sql.append(" and pk_corp not in (");
+				sql.append(" and account.pk_corp not in (");
 				sql.append(SqlUtil.buildSqlConditionForIn(split));
 				sql.append(" )");
 			}
@@ -120,7 +120,7 @@ public class ChannelServiceImpl implements IChannelService {
 				return null;
 			}
 			if (vo.getDr() == -5) {// 数据运营管理，4个报表
-				sql.append(" and pk_corp not in (");
+				sql.append(" and account.pk_corp not in (");
 				sql.append("       (SELECT f.pk_corp  \n");
 				sql.append("          FROM ynt_franchisee f  \n");
 				sql.append("         WHERE nvl(dr, 0) = 0  \n");

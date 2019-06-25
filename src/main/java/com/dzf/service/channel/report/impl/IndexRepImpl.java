@@ -24,6 +24,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.ToolsUtil;
 import com.dzf.service.channel.report.IIndexRep;
@@ -37,6 +38,8 @@ public class IndexRepImpl implements IIndexRep {
     
     @Autowired
     private IPubService pubser;
+    
+    private String filtersql = QueryUtil.getWhereSql();
 
 	@Override
 	public WeekBusimngVO queryBusiByWeek(QryParamVO paramvo) throws DZFWarpException {
@@ -87,30 +90,33 @@ public class IndexRepImpl implements IIndexRep {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT t.pk_corp FROM bd_account t");
-		sql.append("  WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("    AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append(" SELECT account.pk_corp FROM bd_account account \n");
+		sql.append("  WHERE nvl(account.dr, 0) = 0 \n");
+		sql.append("    AND nvl(account.ischannel, 'N') = 'Y' \n");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("  AND t.begindate >= ? \n");
+				sql.append("  AND account.begindate >= ? \n");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("  AND t.begindate <= ? ");
+				sql.append("  AND account.begindate <= ? ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(t.begindate,1,7) = ? \n") ; //初始化日期  = 当前月份
+			sql.append(" AND SUBSTR(account.begindate,1,7) = ? \n") ; //初始化日期  = 当前月份
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append("  AND t.begindate <= ? ");
+			sql.append("  AND account.begindate <= ? ");
 			spm.addParam(date);
 		}
-		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");
-		sql.append(" AND (t.drelievedate is null OR t.drelievedate > ? )" );
+		sql.append(" AND nvl(account.isseal,'N') = 'N' \n");
+		sql.append(" AND (account.drelievedate is null OR account.drelievedate > ? )" );
 		spm.addParam(new DZFDate());
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
+		}
+		if(StringUtil.isEmpty(filtersql)){
+			sql.append(" AND ").append(filtersql);
 		}
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(AccountVO.class));
@@ -136,9 +142,9 @@ public class IndexRepImpl implements IIndexRep {
 		sql.append("        nvl(sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ; 
 		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny  \n") ; 
 		sql.append("  FROM cn_detail l  \n") ; 
-		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp  \n") ; 
+		sql.append("  LEFT JOIN bd_account account ON l.pk_corp = account.pk_corp  \n") ; 
 		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append(" AND nvl(t.dr,0) = 0  \n") ; 
+		sql.append(" AND nvl(account.dr,0) = 0  \n") ; 
 		sql.append(" AND l.ipaytype IN (1, 2)  \n") ; 
 		sql.append(" AND l.iopertype IN (1,4) \n");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
@@ -159,6 +165,9 @@ public class IndexRepImpl implements IIndexRep {
 		}
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
+		}
+		if(StringUtil.isEmpty(filtersql)){
+			sql.append(" AND ").append(filtersql);
 		}
 		List<BalanceRepVO> list = (List<BalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(BalanceRepVO.class));
@@ -181,10 +190,10 @@ public class IndexRepImpl implements IIndexRep {
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT p.pk_corp \n");
 		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
+		sql.append("  LEFT JOIN bd_account account ON p.fathercorp = account.pk_corp \n");
 		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y' \n");
+		sql.append("   AND nvl(account.dr, 0) = 0 \n");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y' \n");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
 				sql.append("   AND p.createdate >= ? \n");
@@ -201,11 +210,14 @@ public class IndexRepImpl implements IIndexRep {
 			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
 			spm.addParam(date.getYear());
 		}
-		sql.append(" AND nvl(t.isseal,'N') = 'N' \n");//已封存的加盟商数据不统计，加盟商的已封存客户统计
-		sql.append(" AND (t.drelievedate is null OR t.drelievedate > ? )" );
+		sql.append(" AND nvl(account.isseal,'N') = 'N' \n");//已封存的加盟商数据不统计，加盟商的已封存客户统计
+		sql.append(" AND (account.drelievedate is null OR account.drelievedate > ? )" );
 		spm.addParam(new DZFDate());
 		if(!"alldata".equals(addsql)){
 			sql.append(addsql);
+		}
+		if(StringUtil.isEmpty(filtersql)){
+			sql.append(" AND ").append(filtersql);
 		}
 		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpVO.class));
@@ -253,10 +265,10 @@ public class IndexRepImpl implements IIndexRep {
 		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
 		sql.append("  FROM cn_contract cn  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account t ON cn.pk_corp = t.pk_corp  \n");
+		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp  \n");
 		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND cn.vdeductstatus in (?, ?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -280,6 +292,9 @@ public class IndexRepImpl implements IIndexRep {
 		}
 		if (!"alldata".equals(addsql)) {
 			sql.append(addsql);
+		}
+		if(StringUtil.isEmpty(filtersql)){
+			sql.append(" AND ").append(filtersql);
 		}
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
@@ -306,10 +321,10 @@ public class IndexRepImpl implements IIndexRep {
 		sql.append("           END) AS naccountmny  \n") ; 
 		sql.append("  FROM cn_contract cn  \n");
 		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account t ON cn.pk_corp = t.pk_corp  \n");
+		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp  \n");
 		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND nvl(account.dr, 0) = 0  \n");
 		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
 		sql.append("   AND cn.vdeductstatus in (?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -332,6 +347,9 @@ public class IndexRepImpl implements IIndexRep {
 		}
 		if (!"alldata".equals(addsql)) {
 			sql.append(addsql);
+		}
+		if(StringUtil.isEmpty(filtersql)){
+			sql.append(" AND ").append(filtersql);
 		}
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
