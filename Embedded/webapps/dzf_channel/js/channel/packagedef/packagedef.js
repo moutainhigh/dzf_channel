@@ -923,7 +923,7 @@ function startSort(){
 }
 
 function sortSave(){
-	var rows = grid.datagrid('getRows');
+	var rows = $('#grid').datagrid('getRows');
 	$.ajax({
 		type : "post",
 		dataType : "json",
