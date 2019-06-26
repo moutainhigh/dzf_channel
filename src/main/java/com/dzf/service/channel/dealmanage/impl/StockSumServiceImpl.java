@@ -44,7 +44,12 @@ public class StockSumServiceImpl implements IStockSumService {
 			
 			getVO = endList.get(i);
 			stockOutInMVO.setNnumend(getVO.getBalanceNum());//1、期末余额
-			stockOutInMVO.setTotalmoneye(getVO.getTotalmoneyb());
+			if(stockOutInMVO.getNnumend()==0){
+				DZFDouble money = new DZFDouble(0);
+				stockOutInMVO.setTotalmoneye(money);
+			}else{
+				stockOutInMVO.setTotalmoneye(getVO.getTotalmoneyb());
+			}
 			if(getVO.getBalanceNum()!=0){
 				stockOutInMVO.setNpriceend(getVO.getTotalmoneyb().div(getVO.getBalanceNum()));
 			}

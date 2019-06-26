@@ -105,7 +105,13 @@ public class StockOutInServiceImpl implements IStockOutInService {
 			Integer num = lastVO.getBalanceNum() ;
 			nowVO.setBalanceNum(num - nowVO.getNnumout());// 结存数量
 			DZFDouble toatal =lastVO.getTotalmoneyb();
-			nowVO.setTotalmoneyb(toatal.sub(nowVO.getTotalmoneyout()));// 结存金额
+			if(nowVO.getBalanceNum()==0){
+				DZFDouble money = new DZFDouble(0);
+				nowVO.setTotalmoneyb(money);
+			}else{
+				nowVO.setTotalmoneyb(toatal.sub(nowVO.getTotalmoneyout()));// 结存金额
+			}
+			
 		}
 		if (nowVO.getTotalmoneyb().compareTo(DZFDouble.ZERO_DBL)>0) {
 			nowVO.setBalancePrice(nowVO.getTotalmoneyb().div(nowVO.getBalanceNum()).setScale(4, DZFDouble.ROUND_HALF_UP));
