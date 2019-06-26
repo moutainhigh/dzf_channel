@@ -574,6 +574,7 @@ function add() {
 	$('#code').textbox({width:431});
 	status = "add";
 	addflag = true;
+	rowflag = false;
 }
 
 /**
@@ -1043,7 +1044,7 @@ function dClickMat(rowTable){
 			
 			var i = 0;
 			if(addflag){
-				for(var j=len-1;j<rowTable.length+len-j;j++){
+				for(var j=len-1;j<rowTable.length;j++){
 					
 					var wlname = $('#cardGrid').datagrid('getEditor', {index:j,field : 'wlname'});
 					var unit = $('#cardGrid').datagrid('getEditor', {index:j,field : 'unit'});
@@ -1064,6 +1065,7 @@ function dClickMat(rowTable){
 					
 				}
 				addflag = false;
+				rowflag = false;
 			}else{
 				if(rowIndex+1<=len){
 					$('#cardGrid').datagrid('deleteRow',rowIndex );
@@ -1099,6 +1101,7 @@ function dClickMat(rowTable){
 						}
 					}
 					addflag = false;
+					rowflag = false;
 				}
 			}
 	}
