@@ -282,8 +282,8 @@ public class DataCommonRepImpl {
 		sql.append("select account.pk_corp,  \n");
 		sql.append("       a.areaname,  \n");
 		sql.append("       a.userid,  \n");
-		sql.append("       account.userid cuserid,  \n");
-		sql.append("       account.vprovname,  \n");
+		sql.append("       b.userid cuserid,  \n");
+		sql.append("       b.vprovname,  \n");
 		sql.append("       account.vprovince,  \n");
 		sql.append("       account.innercode,  \n");
 		sql.append("       account.drelievedate,  \n");//解约日期
