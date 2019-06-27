@@ -28,16 +28,16 @@
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/deductanalysis.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-.datagrid-view2 .datagrid-body {
-	overflow-y: scroll !important;;
+.gridCD .datagrid-view2 .datagrid-body {
+	overflow-y: scroll !important;
 }
 
-.datagrid-view2 .datagrid-header {
+.gridCD .datagrid-view2 .datagrid-header {
 	overflow-y: scroll !important;
 	height: 78px !important;
 }
 
-.datagrid-view1 .datagrid-header {
+.gridCD .datagrid-view1 .datagrid-header {
 	height: 78px !important;
 }
 </style>
@@ -68,7 +68,7 @@
 			</div>
 			
 			<div class="mod-inner">
-				<div id="dataGrid" class="grid-wrap">
+				<div id="dataGrid" class="grid-wrap gridCD">
 					<table id="grid"></table>
 				</div>
 			</div>

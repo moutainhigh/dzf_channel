@@ -403,6 +403,8 @@ function reloadData(type){
 				if(data.sumdata != undefined && data.sumdata.length > 0){
 					var sumdata = eval(data.sumdata);
 					$('#grid').datagrid('reloadFooter', sumdata);
+				}else{
+					$('#grid').datagrid('reloadFooter', { total:0, rows:[]});
 				}
 				
 				if(type == 1){

@@ -660,7 +660,7 @@ public class DeductAnalysisImpl implements IDeductAnalysis {
 		StringBuffer sql = new StringBuffer();
 		String[] corps = pubser.getManagerCorp(cuserid, qrytype);
 		if (corps != null && corps.length > 0) {
-			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
+			String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		} else {
 			sql.append(" AND t.pk_corp is null \n");
