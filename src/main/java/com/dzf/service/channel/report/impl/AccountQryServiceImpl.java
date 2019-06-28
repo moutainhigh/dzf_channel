@@ -76,6 +76,7 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		getJzztSqlSpm(pamvo, pks, sql, spm, uvo);
 		//4、账务检查状态
 		getZwjcSqlSpm(pamvo, pks, sql, spm, uvo);
+		sql.append(" ORDER BY qcorp.corpkcode ");
 		List<FinanceDetailVO> rlist = (List<FinanceDetailVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(FinanceDetailVO.class));
 		if(rlist != null && rlist.size() > 0){
