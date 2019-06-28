@@ -2,6 +2,7 @@ package com.dzf.service.channel.matmanage.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +12,25 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
+import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
+import com.dzf.model.pub.IStatusConstant;
+import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
+import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.service.channel.matmanage.IMatCheckService;
+import com.dzf.service.channel.matmanage.IMatCommonService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("matcheck")
@@ -33,6 +41,16 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	
 	@Autowired
 	private IUserService userser;
+	
+	@Autowired
+	private IPubService pubser;
+	
+	@Autowired
+	private IMatCommonService matcomm;
+	
+	@Autowired
+	private MultBodyObjectBO multBodyObjectBO;
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -50,7 +68,6 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		corpsql.append(" order by a.ts desc");
 		sp.addParam(uservo.getCuserid());
 		List<ChnAreaBVO> bvolist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(), sp, new BeanListProcessor(ChnAreaBVO.class));
-		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 		if(bvolist!=null && bvolist.size()>0){
 			for (ChnAreaBVO bvo : bvolist) {
 				  uservo = userser.queryUserJmVOByID(bvo.getUserid());
@@ -151,6 +168,141 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		mvo.setApplyname(uservo.getUser_name());//申请人
 		QueryDeCodeUtils.decKeyUtil(new String[] { "applyname","audname" }, mvo, 1);
 		return mvo;
+	}
+	
+	@Override
+	public int queryTotalRow(QryParamVO qvo,MatOrderVO parm) throws DZFWarpException{
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,parm,null,null);
+		return multBodyObjectBO.queryDataTotal(MatOrderVO.class, sqpvo.getSql(), sqpvo.getSpm());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo)  throws DZFWarpException {
+		String vpro = "";
+		String vcorp = "";
+		// 添加数据权限
+		List<ChnAreaBVO> list = matcomm.queryPro(uservo, "2",vpro,vcorp);
+
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo, pamvo, list.get(0).getVprovname(), list.get(0).getCorpname());
+		List<MatOrderVO> mlist = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
+				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
+		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		if(mlist!=null && mlist.size()>0){
+			for (MatOrderVO mvo : mlist) {
+				if (mvo.getCoperatorid() != null) {
+					uservo = map.get(mvo.getCoperatorid());
+					if(uservo!=null){
+						mvo.setApplyname(uservo.getUser_name());
+					}
+				}
+				uservo = marmap.get(mvo.getFathercorp());
+				if (uservo != null) {
+					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
+				}
+			}
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, mlist, 1);
+		}
+			if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
+				mlist = null;
+			}
+		return mlist;
+	}
+
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
+			 String vpro, String vcorp)  throws DZFWarpException {
+		
+		QrySqlSpmVO qryvo = new QrySqlSpmVO();
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT distinct bi.pk_materielbill,  \n") ;
+		sql.append("                bi.vcontcode,  \n") ; 
+		sql.append("                bi.vaddress,  \n") ; 
+		sql.append("                bi.vreceiver,  \n") ; 
+		sql.append("                bi.phone,  \n") ; 
+		sql.append("                bi.fastcode,  \n") ; 
+		sql.append("                nvl(bi.fastcost,0) fastcost,  \n") ; 
+		sql.append("                bi.deliverdate,  \n") ; 
+		sql.append("                bi.vmemo,  \n") ; 
+		sql.append("                bi.vreason,  \n") ; 
+		sql.append("                bi.vstatus,  \n") ; 
+		sql.append("                bi.doperatedate,  \n") ; 
+		sql.append("                bi.coperatorid,  \n") ; 
+		sql.append("                bi.applydate,  \n") ; 
+		sql.append("                bi.fathercorp,  \n") ; 
+		sql.append("                bi.corpname,  \n") ; 
+		sql.append("                bi.vmanagerid,  \n") ; 
+		sql.append("                bi.ts,  \n") ; 
+		sql.append("                b.vname,  \n") ; 
+		sql.append("                b.vunit,  \n") ; 
+		sql.append("                nvl(b.outnum, 0) outnum,  \n") ; 
+		sql.append("                nvl(b.applynum, 0) applynum,  \n") ; 
+		sql.append("                log.vname logname,  \n") ; 
+		sql.append("                ba.vprovname proname,  \n") ; 
+		sql.append("                ba.vprovince,  \n") ;
+		sql.append("                c.areaname \n") ; 
+		sql.append("  from cn_materielbill bi  \n") ; 
+		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill  \n") ; 
+		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
+		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
+		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
+		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
+		sql.append("   and nvl(ba.dr, 0) = 0 and ba.type = 1 \n") ; 
+		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ;
+		sql.append("   and b.applynum >=0 \n") ;
+		
+		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
+			sql.append(" AND  bi.corpname like ? ");
+			spm.addParam("%" + pamvo.getCorpname() + "%");
+		}
+		if (!StringUtil.isEmpty(pamvo.getVmanagerid())) {
+			sql.append(" AND  bi.vmanagerid = ? ");
+			spm.addParam(pamvo.getVmanagerid());
+		}
+		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
+			sql.append("   AND bi.vstatus = ? \n");
+			spm.addParam(pamvo.getVstatus());
+		}
+		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
+			sql.append(" and bi.doperatedate >= ? ");
+			spm.addParam(pamvo.getBegindate());
+		}
+		if (!StringUtil.isEmptyWithTrim(pamvo.getEnddate())) {
+			sql.append(" and bi.doperatedate <= ? ");
+			spm.addParam(pamvo.getEnddate());
+		}
+		if (!StringUtil.isEmptyWithTrim(pamvo.getApplybegindate())) {
+			sql.append(" and bi.applydate>= ? ");
+			spm.addParam(pamvo.getApplybegindate());
+		}
+		if (!StringUtil.isEmptyWithTrim(pamvo.getApplyenddate())) {
+			sql.append(" and bi.applydate <= ? ");
+			spm.addParam(pamvo.getApplyenddate());
+		}
+		if(!StringUtil.isEmpty(vpro) && !StringUtil.isEmpty(vcorp)){
+			sql.append(" and (ba.vprovince in "+vpro);
+			sql.append(" or ba.pk_corp in "+vcorp+")");
+		}
+		if(!StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){
+			sql.append(" and ba.vprovince in "+vpro);
+		}
+		if(!StringUtil.isEmpty(vcorp) && StringUtil.isEmpty(vpro)){
+			sql.append(" and ba.pk_corp in "+vcorp);
+		}
+		
+		if(!StringUtil.isEmpty(qvo.getVqrysql())){
+			sql.append(qvo.getVqrysql());
+		}
+		
+		sql.append(" order by bi.ts desc");
+		
+		qryvo.setSql(sql.toString());
+		qryvo.setSpm(spm);
+		return qryvo;
+		
 	}
 	
 }

@@ -1,9 +1,11 @@
 package com.dzf.service.channel.matmanage;
 
 import java.util.List;
+
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.channel.sale.ChnAreaBVO;
+import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException; ;
 
@@ -35,5 +37,22 @@ public interface IMatCheckService {
 	 * @return
 	 */
 	MatOrderVO queryUserData(UserVO uservo, String mid);
+
+	/**
+	 * 查询数据条数
+	 * @param qvo
+	 * @param pamvo
+	 * @return
+	 */
+	int queryTotalRow(QryParamVO qvo, MatOrderVO pamvo);
+
+	/**
+	 * 查询数据
+	 * @param qvo
+	 * @param pamvo
+	 * @param uservo
+	 * @return
+	 */
+	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo);
 
 }

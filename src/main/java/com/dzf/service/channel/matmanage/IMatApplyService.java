@@ -16,10 +16,9 @@ public interface IMatApplyService {
 	 * 查询数据条数
 	 * @param qvo
 	 * @param pamvo
-	 * @param stype
 	 * @return
 	 */
-	int queryTotalRow(QryParamVO qvo,MatOrderVO pamvo, String stype) throws DZFWarpException;
+	int queryTotalRow(QryParamVO qvo,MatOrderVO pamvo) throws DZFWarpException;
 
 	/**
 	 * 查询数据
@@ -29,7 +28,7 @@ public interface IMatApplyService {
 	 * @param stype
 	 * @return
 	 */
-	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo, String stype) throws DZFWarpException;
+	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo) throws DZFWarpException;
 
 	/**
 	 * 查询申请的物料信息

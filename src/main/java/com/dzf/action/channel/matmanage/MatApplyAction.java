@@ -50,14 +50,14 @@ import com.dzf.service.pub.report.ExportExcel;
 @Action(value = "matapply")
 public class MatApplyAction extends BaseAction<MatOrderVO> {
 
-    private Logger log = Logger.getLogger(this.getClass());
-	
+	private Logger log = Logger.getLogger(this.getClass());
+
 	@Autowired
 	private IMatApplyService matapply;
-	
+
 	@Autowired
 	private IPubService pubser;
-	
+
 	/**
 	 * 查询数据
 	 */
@@ -66,30 +66,20 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			List<MatOrderVO>  mList = new ArrayList<MatOrderVO>();
-			String stype =getRequest().getParameter("stype");
-			
+			List<MatOrderVO> mList = new ArrayList<MatOrderVO>();
+			//String stype = getRequest().getParameter("stype");
+
 			MatOrderVO pamvo = new MatOrderVO();
 			QryParamVO qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
 			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
 			pamvo.setPk_corp(getLogincorppk());
-			
-			if(stype!=null && "1".equals(stype)){//物料处理数据权限
-				String powSql = pubser.makeCondition(uservo.getCuserid(), pamvo.getAreaname(), 1);
-				if (powSql != null && !powSql.equals("alldata")) {
-					qvo.setVqrysql(powSql);
-					mList = matapply.query(qvo,pamvo,uservo,stype);
-				} else if (powSql != null) {
-					mList = matapply.query(qvo,pamvo,uservo,stype);
-				}
-			}else{
-				int total = matapply.queryTotalRow(qvo,pamvo,stype);
-				grid.setTotal((long)(total));
-				if(total > 0){
-					mList = matapply.query(qvo,pamvo,uservo,stype);
-				}
+
+			int total = matapply.queryTotalRow(qvo, pamvo);
+			grid.setTotal((long) (total));
+			if (total > 0) {
+				mList = matapply.query(qvo, pamvo, uservo);
 			}
-			
+
 			grid.setRows(mList);
 			grid.setMsg("查询成功");
 			grid.setSuccess(true);
@@ -99,61 +89,60 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * 查询物料信息
 	 */
 	public void queryNumber() {
 		Json json = new Json();
-		try{
+		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			MatOrderVO pamvo = new MatOrderVO();
 			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
-			List<MatOrderBVO> bvos=matapply.queryNumber(pamvo);
-			if(bvos==null || bvos.size()==0){//还没有申请，查询所有启用的物料
-				List<MaterielFileVO> mvos=matapply.queryMatFile();
-				if(mvos!=null && mvos.size()>0){
+			List<MatOrderBVO> bvos = matapply.queryNumber(pamvo);
+			if (bvos == null || bvos.size() == 0) {// 还没有申请，查询所有启用的物料
+				List<MaterielFileVO> mvos = matapply.queryMatFile();
+				if (mvos != null && mvos.size() > 0) {
 					for (MaterielFileVO mvo : mvos) {
 						mvo.setApplynum(0);
 						mvo.setOutnum(0);
 					}
 				}
-				
+
 				json.setRows(mvos);
-			}else{
+			} else {
 				json.setRows(bvos);
 			}
 			json.setMsg("查询成功");
 			json.setSuccess(true);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
 	}
-	
-	
+
 	/**
 	 * 查询登录人
 	 */
 	public void queryUserData() {
 		Json json = new Json();
-		try{
+		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			MatOrderVO  vo = matapply.queryUserData(uservo);
-			if(vo!=null){
+			MatOrderVO vo = matapply.queryUserData(uservo);
+			if (vo != null) {
 				json.setRows(vo);
 				json.setMsg("查询成功");
 				json.setSuccess(true);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
+
 	/**
 	 * 查询所有的省份
 	 */
@@ -174,16 +163,16 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
-		
+
 	}
-	
+
 	/**
 	 * 根据省份查询市
 	 */
 	public void queryCityByProId() {
 		Json json = new Json();
 		try {
-			String pid =getRequest().getParameter("provinceid");
+			String pid = getRequest().getParameter("provinceid");
 			if (!StringUtil.isEmpty(pid)) {
 				List<MatOrderVO> list = matapply.queryCityByProId(Integer.parseInt(pid));
 				if (list == null || list.size() == 0) {
@@ -200,17 +189,16 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
-	
+
 	/**
 	 * 根据市查询区县
 	 */
 	public void queryAreaByCid() {
 		Json json = new Json();
 		try {
-			String cid =getRequest().getParameter("cityid");
+			String cid = getRequest().getParameter("cityid");
 			if (!StringUtil.isEmpty(cid)) {
 				List<MatOrderVO> list = matapply.queryAreaByCid(Integer.parseInt(cid));
 				if (list == null || list.size() == 0) {
@@ -223,21 +211,21 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 					json.setMsg("查询成功");
 				}
 			}
-			
+
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
+
 	/**
 	 * 根据加盟商查询申请单信息
 	 */
 	public void showDataByCorp() {
 		Json json = new Json();
 		try {
-			String corpid =getRequest().getParameter("fcorp");
+			String corpid = getRequest().getParameter("fcorp");
 			if (!StringUtil.isEmpty(corpid)) {
 				MatOrderVO mvo = matapply.showDataByCorp(corpid);
 				if (mvo == null) {
@@ -249,72 +237,72 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 					json.setMsg("查询成功");
 				}
 			}
-			
+
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
+
 	/**
 	 * 新增物料申请单
 	 */
 	public void save() {
 		Json json = new Json();
-		try{
+		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			String type = getRequest().getParameter("type");
 			String stype = getRequest().getParameter("stype");
 			String kind = getRequest().getParameter("kind");
-			if("1".equals(type)){
+			if ("1".equals(type)) {
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
-			}else{
+			} else {
 				pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
 			}
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
-			
+
 			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
 			String body = getRequest().getParameter("body"); // 物料数据
 			String message = "";
-			if(body!=null){
+			if (body != null) {
 				body = body.replace("}{", "},{");
 				body = "[" + body + "]";
 				JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
 				MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
 						JSONConvtoJAVA.getParserConfig());
-				
+
 				if (bodyVOs == null || bodyVOs.length == 0) {
 					throw new BusinessException("物料数据不能为空");
 				}
-				message = matapply.saveApply(vo,uservo,bodyVOs,type,stype,kind);
-			}else{
+				message = matapply.saveApply(vo, uservo, bodyVOs, type, stype, kind);
+			} else {
 				matapply.editSave(vo);
 			}
-			
-			if(!StringUtil.isEmpty(message)){//需要提示信息
+
+			if (!StringUtil.isEmpty(message)) {// 需要提示信息
 				json.setMsg("提示");
 				json.setRows(message);
-			}else{
+			} else {
 				json.setMsg("保存成功");
 				json.setSuccess(true);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			json.setMsg("保存失败");
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "保存失败");
 		}
 		writeJson(json);
 	}
-	
+
 	/**
 	 * 编辑回显
 	 */
 	public void queryById() {
 		Json json = new Json();
-		try{
+		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			MatOrderVO vo = new MatOrderVO();
@@ -322,32 +310,32 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			String id = getRequest().getParameter("id");
 			String type = getRequest().getParameter("type");
 			String stype = getRequest().getParameter("stype");
-			if(!StringUtil.isEmpty(id)){
-			    vo=matapply.queryDataById(vo,id,uservo,type,stype);
+			if (!StringUtil.isEmpty(id)) {
+				vo = matapply.queryDataById(vo, id, uservo, type, stype);
 			}
-			if(!StringUtil.isEmpty(vo.getMessage())){
+			if (!StringUtil.isEmpty(vo.getMessage())) {
 				json.setMsg("提示");
 				json.setRows(vo);
-			}else{
+			} else {
 				json.setRows(vo);
 				json.setMsg("查询成功");
 				json.setSuccess(true);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			json.setMsg("查询失败");
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "查询失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
+
 	/**
 	 * 删除
 	 */
 	public void delete() {
 		Json json = new Json();
-		try{
+		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			MatOrderVO pamvo = new MatOrderVO();
@@ -355,40 +343,40 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			matapply.delete(pamvo);
 			json.setMsg("删除成功");
 			json.setSuccess(true);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			json.setMsg("删除失败");
 			json.setSuccess(false);
 			printErrorLog(json, log, e, "删除失败");
 		}
 		writeJson(json);
-		
+
 	}
-	
+
 	/**
 	 * 查询符合条件的加盟商
 	 */
 	public void queryChannel() {
-		 Grid grid = new Grid();
-		 try {
-			 UserVO uservo = getLoginUserInfo();
-		     checkUser(uservo);
-		     List<CorpVO> list = matapply.queryChannel(uservo);
-		     if (list != null && list.size() > 0) {
-					CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
-					grid.setRows(Arrays.asList(corpvos));
-					grid.setTotal((long) (list.size()));
-				} else {
-					grid.setRows(list);
-					grid.setTotal(0L);
-				}
-				grid.setMsg("查询成功！");
-				grid.setSuccess(true);
+		Grid grid = new Grid();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			List<CorpVO> list = matapply.queryChannel(uservo);
+			if (list != null && list.size() > 0) {
+				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
+				grid.setRows(Arrays.asList(corpvos));
+				grid.setTotal((long) (list.size()));
+			} else {
+				grid.setRows(list);
+				grid.setTotal(0L);
+			}
+			grid.setMsg("查询成功！");
+			grid.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
-		 writeJson(grid);
+		writeJson(grid);
 	}
-	
+
 	private CorpVO[] getPagedVOs(CorpVO[] cvos, int page, int rows) {
 		int beginIndex = rows * (page - 1);
 		int endIndex = rows * page;
@@ -398,23 +386,23 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
 		return cvos;
 	}
-	
+
 	/**
 	 * 物料申请表导出
 	 */
 	public void exportAuditExcel() {
-		
+
 		String reportName = "";
-		//导出表类型
+		// 导出表类型
 		String type = getRequest().getParameter("type");
-		if("1".equals(type)){
+		if ("1".equals(type)) {
 			reportName = "物料申请表";
-		}else if("2".equals(type)){
+		} else if ("2".equals(type)) {
 			reportName = "物料审核表";
-		}else if("3".equals(type)){
+		} else if ("3".equals(type)) {
 			reportName = "物料处理表";
 		}
-		
+
 		// 获取需要导出数据
 		String strlist = getRequest().getParameter("strlist");
 		if (StringUtil.isEmpty(strlist)) {
@@ -453,7 +441,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		mnylist.add("fcost");
 
 		Map<String, String> field = null;
-		
+
 		List<Integer> hbhindexs = new ArrayList<Integer>();
 
 		int hblnum = 0;
@@ -461,18 +449,18 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		int countnum = 1;
 		for (int i = 0; i < hblcolsarray.size(); i++) {
 			field = (Map<String, String>) hblcolsarray.get(i);
-			
-			//合并行且不为隐藏字字段标题
+
+			// 合并行且不为隐藏字字段标题
 			if ("2".equals(String.valueOf(field.get("rowspan")))
 					&& !"true".equals(String.valueOf(field.get("hidden")))) {
 				exptitlist.add(String.valueOf(field.get("title")));
 				hbhtitlist.add(String.valueOf(field.get("title")));
-				
-				if(hblnum > 0){
-					hbhindexs.add(largenum+countnum);
-					countnum ++;
-				}else{
-					hbhindexs.add(i-2);
+
+				if (hblnum > 0) {
+					hbhindexs.add(largenum + countnum);
+					countnum++;
+				} else {
+					hbhindexs.add(i - 2);
 				}
 			}
 
@@ -485,27 +473,27 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			if ("2".equals(String.valueOf(field.get("colspan")))) {
 				exptitlist.add("申请");
 				exptitlist.add("实发");
-				if(hblnum == 0){
-					hblindexlist.add(i-2);
-				}else{
-					hblindexlist.add(i-2+hblnum);
+				if (hblnum == 0) {
+					hblindexlist.add(i - 2);
+				} else {
+					hblindexlist.add(i - 2 + hblnum);
 				}
 				hblnum++;
-			//合并三列的标题
-			}else if("3".equals(String.valueOf(field.get("colspan")))){
+				// 合并三列的标题
+			} else if ("3".equals(String.valueOf(field.get("colspan")))) {
 				exptitlist.add("收货人");
 				exptitlist.add("联系电话");
 				exptitlist.add("地址");
-				hblindexlist.add(i-2+hblnum);
+				hblindexlist.add(i - 2 + hblnum);
 				hblnum++;
-			//合并四列的标题
-			}else if("4".equals(String.valueOf(field.get("colspan")))){
+				// 合并四列的标题
+			} else if ("4".equals(String.valueOf(field.get("colspan")))) {
 				exptitlist.add("快递公司");
 				exptitlist.add("金额");
 				exptitlist.add("单号");
 				exptitlist.add("发货时间");
-				hblindexlist.add(i-2+hblnum+1);
-				largenum = i-2+hblnum+1+3;
+				hblindexlist.add(i - 2 + hblnum + 1);
+				largenum = i - 2 + hblnum + 1 + 3;
 			}
 
 		}
@@ -561,18 +549,16 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			}
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * 登录用户校验
+	 * 
 	 * @throws DZFWarpException
 	 */
 	private void checkUser(UserVO uservo) throws DZFWarpException {
-		if(uservo != null && !"000001".equals(uservo.getPk_corp()) ){
+		if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
 			throw new BusinessException("登陆用户错误！");
-		}else if(uservo == null){
+		} else if (uservo == null) {
 			throw new BusinessException("请先登录！");
 		}
 	}
