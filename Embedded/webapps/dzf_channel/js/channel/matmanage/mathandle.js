@@ -180,7 +180,7 @@ function load(type) {
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/matmanage/matapply!query.action',
+		url : contextPath + '/matmanage/mathandle!query.action',
 		traditional : true,
 		data : {
 			bperiod : bperiod,
@@ -190,7 +190,6 @@ function load(type) {
 			corpname : corpname,
 			status : status,
 			uid : uid,
-			stype : 1,// 物料处理节点只显示待发货和已发货的数据
 		},
 		async : false,
 		success : function(data) {

@@ -204,7 +204,8 @@ public class MatCheckServiceImpl implements IMatCheckService {
 			}
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, mlist, 1);
 		}
-			if(StringUtil.isEmpty(vpro) && StringUtil.isEmpty(vcorp)){//没有数据可以查看
+			if(StringUtil.isEmpty(list.get(0).getVprovname()) && 
+					StringUtil.isEmpty(list.get(0).getVprovname())){//没有数据可以查看
 				mlist = null;
 			}
 		return mlist;

@@ -158,7 +158,7 @@ function load(type){
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : contextPath + '/matmanage/matapply!query.action',
+		url : contextPath + '/matmanage/matcheck!query.action',
 		traditional : true,
 		data : {
 			bperiod : bperiod,
@@ -168,7 +168,6 @@ function load(type){
 			corpname : corpname,
 			status : status,
 			uid : uid,
-			stype : 2,//表示是物料审核
 		},
 		async : false,
 		success : function(data) {

@@ -198,7 +198,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 	@Override
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo)  throws DZFWarpException {
 		
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo,"1");
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo);
 		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
 		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
@@ -221,8 +221,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		return list;
 	}
 
-	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
-			String stype)  throws DZFWarpException {
+	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo)  throws DZFWarpException {
 		
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
