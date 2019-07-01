@@ -308,7 +308,7 @@ function opermatter(val, row, index) {
 		}else{
 			url += '<span style="margin-bottom:0px;margin-left:10px;">出库</span>';
 		}
-		if((row.vstatus == 1 || row.vstatus == 2 || row.vstatus == 3) && row.tistatus != 2){
+		if((row.vstatus == 1 || row.vstatus == 2 || row.vstatus == 3) && row.tistatus != 2 && getFloatValue(row.ndemny) > parseFloat(0)){
 			url += 	'<a href="#" style="margin-bottom:0px;margin-left:10px;color:blue;" onclick="onBilling(\''+index+'\')">开票申请</a>';
 		}else{
 			url += '<span style="margin-bottom:0px;margin-left:10px;">开票申请</span>';
