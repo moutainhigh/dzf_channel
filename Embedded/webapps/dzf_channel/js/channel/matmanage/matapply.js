@@ -375,7 +375,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : DZF.contextPath + "/matmanage/matapply!queryNumber.action",
+		url : DZF.contextPath + "/matmanage/matcomm!queryNumber.action",
 		traditional : true,
 		data : {
 			bperiod : bperiod,
@@ -608,7 +608,7 @@ function initCard(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : contextPath + '/matmanage/matfile!queryMatFile.action',
+		url : contextPath + '/matmanage/matcomm!queryMatFile.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -815,7 +815,7 @@ function queryAllProvince(){
 			$.ajax({
 				type : 'POST',
 				async : false,
-			    url : DZF.contextPath + '/matmanage/matapply!queryAllProvince.action',
+			    url : DZF.contextPath + '/matmanage/matcomm!queryAllProvince.action',
 				dataTye : 'json',
 				success : function(result) {
 					var result = eval('(' + result+ ')');
@@ -840,7 +840,7 @@ $(function(){                                 �
 		      $.ajax({
 		    	    type : 'POST',
 					async : false,
-				    url : DZF.contextPath + '/matmanage/matapply!queryCityByProId.action',
+				    url : DZF.contextPath + '/matmanage/matcomm!queryCityByProId.action',
 					dataTye : 'json',
 					data : "provinceid="+provinceid,
 					success : function(result) {
@@ -863,7 +863,7 @@ $(function(){                                 �
 	        $.ajax({
 	    	    type : 'POST',
 				async : false,
-			    url : DZF.contextPath + '/matmanage/matapply!queryAreaByCid.action',
+			    url : DZF.contextPath + '/matmanage/matcomm!queryAreaByCid.action',
 				dataTye : 'json',
 				data : "cityid="+cityid,
 				success : function(result) {
@@ -1553,7 +1553,7 @@ function doExport(){
 		var hblcols = $('#grid').datagrid("options").columns[0];//  title+field名称
 		
 		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
-		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
+		Business.getFile(DZF.contextPath + "/matmanage/matcomm!exportAuditExcel.action", {
 			"strlist": JSON.stringify(datarows),
 			'hblcols':JSON.stringify(hblcols), 
 			'cols':JSON.stringify(cols),

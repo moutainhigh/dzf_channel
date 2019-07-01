@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -17,6 +18,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
@@ -28,9 +31,12 @@ import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.ICommonContstant;
+import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.ExcelComMethod;
 import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.matmanage.IMatApplyService;
 import com.dzf.service.channel.matmanage.IMatHandleService;
 import com.dzf.service.pub.IPubService;
@@ -134,7 +140,88 @@ public class MatHandleAction extends BaseAction<MatOrderVO> {
 		}
 		writeJson(grid);
 	}
+	
+	/**
+	 * 发货保存、修改保存
+	 */
+	public void save() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			String stype = getRequest().getParameter("stype");
+			String type = getRequest().getParameter("type");
+			
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
+			MatOrderVO vo = new MatOrderVO();
+			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 
+			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
+			String body = getRequest().getParameter("body"); // 物料数据
+			String message = "";
+			if (body != null) {
+				body = body.replace("}{", "},{");
+				body = "[" + body + "]";
+				JSONArray bodyarray = (JSONArray) JSON.parseArray(body);
+				MatOrderBVO[] bodyVOs = DzfTypeUtils.cast(bodyarray, bmapping, MatOrderBVO[].class,
+						JSONConvtoJAVA.getParserConfig());
+
+				if (bodyVOs == null || bodyVOs.length == 0) {
+					throw new BusinessException("物料数据不能为空");
+				}
+				message = mathandle.saveApply(vo, uservo, bodyVOs, stype,type);
+			} else {
+				matapply.editSave(vo);
+			}
+
+			if (!StringUtil.isEmpty(message)) {// 需要提示信息
+				json.setMsg("提示");
+				json.setRows(message);
+			} else {
+				json.setMsg("保存成功");
+				json.setSuccess(true);
+			}
+		} catch (Exception e) {
+			json.setMsg("保存失败");
+			json.setSuccess(false);
+			printErrorLog(json, log, e, "保存失败");
+		}
+		writeJson(json);
+	}
+
+	
+	/**
+	 * 编辑回显
+	 */
+	public void queryById() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			MatOrderVO vo = new MatOrderVO();
+			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
+			String id = getRequest().getParameter("id");
+			String stype = getRequest().getParameter("stype");
+			if (!StringUtil.isEmpty(id)) {
+				vo = mathandle.queryDataById(vo, id, uservo,stype);
+			}
+			if (!StringUtil.isEmpty(vo.getMessage())) {
+				json.setMsg("提示");
+				json.setRows(vo);
+			} else {
+				json.setRows(vo);
+				json.setMsg("查询成功");
+				json.setSuccess(true);
+			}
+		} catch (Exception e) {
+			json.setMsg("查询失败");
+			json.setSuccess(false);
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+
+	}
+	
 	/**
 	 * 处理单导入
 	 */

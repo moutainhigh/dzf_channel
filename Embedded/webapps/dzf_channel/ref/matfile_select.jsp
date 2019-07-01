@@ -97,7 +97,7 @@
 			
 		var params = new Object();
 		grid = $('#matTable').datagrid({
-		    url: DZF.contextPath + '/matmanage/matfile!queryMatFile.action',
+		    url: DZF.contextPath + '/matmanage/matcomm!queryMatFile.action',
 		    method: 'post',
 			fitColumns: true,
 			idField:'matfileid',

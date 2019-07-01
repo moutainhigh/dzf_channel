@@ -2,6 +2,7 @@ package com.dzf.service.channel.matmanage;
 
 import java.util.List;
 
+import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -56,5 +57,27 @@ public interface IMatHandleService {
 	 * @return
 	 */
 	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo) throws DZFWarpException;
+
+	/**
+	 * 发货保存，修改保存
+	 * @param vo
+	 * @param uservo
+	 * @param bvos
+	 * @param type
+	 * @param stype
+	 * @param kind 
+	 * @return
+	 */
+	public String saveApply(MatOrderVO vo, UserVO uservo, MatOrderBVO[] bvos, String stype, String kind) throws DZFWarpException;
+
+	/**
+	 * 编辑回显
+	 * @param vo
+	 * @param id
+	 * @param uservo
+	 * @param stype 
+	 * @return
+	 */
+	public MatOrderVO queryDataById(MatOrderVO vo, String id, UserVO uservo, String stype);
 
 }

@@ -414,7 +414,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate, status,
 	$.ajax({
 		type : "post",
 		dataType : "json",
-		url : DZF.contextPath + "/matmanage/matapply!queryNumber.action",
+		url : DZF.contextPath + "/matmanage/matcomm!queryNumber.action",
 		traditional : true,
 		data : {
 			bperiod : bperiod,
@@ -629,7 +629,7 @@ function initCard(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : contextPath + '/matmanage/matfile!queryMatFile.action',
+		url : contextPath + '/matmanage/matcomm!queryMatFile.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -785,11 +785,6 @@ function checked(type){
 						return;
 					}
 				}
-				/*if(type==0){
-					if (result.success) {
-					    showCard(row);
-				   }
-				}*/
 			
 		}
 	});
@@ -1043,7 +1038,7 @@ function doExport(){
 		var hblcols = $('#grid').datagrid("options").columns[0];//  title+field名称
 		
 		var cols = $('#grid').datagrid('getColumnFields');  // 字段编码
-		Business.getFile(DZF.contextPath + "/matmanage/matapply!exportAuditExcel.action", {
+		Business.getFile(DZF.contextPath + "/matmanage/matcomm!exportAuditExcel.action", {
 			"strlist": JSON.stringify(datarows),
 			'hblcols':JSON.stringify(hblcols), 
 			'cols':JSON.stringify(cols),

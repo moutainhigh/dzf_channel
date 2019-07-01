@@ -487,7 +487,7 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 				type : "post",
 				dataType : "json",
 				url : DZF.contextPath
-						+ "/matmanage/matapply!queryNumber.action",
+						+ "/matmanage/matcomm!queryNumber.action",
 				traditional : true,
 				data : {
 					bperiod : bperiod,
@@ -811,7 +811,7 @@ function initCard() {
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : contextPath + '/matmanage/matfile!queryMatFile.action',
+		url : contextPath + '/matmanage/matcomm!queryMatFile.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -925,7 +925,7 @@ function edit() {
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/matmanage/matapply!queryById.action',
+		url : DZF.contextPath + '/matmanage/mathandle!queryById.action',
 		dataTye : 'json',
 		data : {
 			id : id,
@@ -959,7 +959,7 @@ function queryAllProvince() {
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/matmanage/matapply!queryAllProvince.action',
+		url : DZF.contextPath + '/matmanage/matcomm!queryAllProvince.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -992,7 +992,7 @@ $(function() {
 										type : 'POST',
 										async : false,
 										url : DZF.contextPath
-												+ '/matmanage/matapply!queryCityByProId.action',
+												+ '/matmanage/matcomm!queryCityByProId.action',
 										dataTye : 'json',
 										data : "provinceid=" + provinceid,
 										success : function(result) {
@@ -1022,7 +1022,7 @@ $(function() {
 						type : 'POST',
 						async : false,
 						url : DZF.contextPath
-								+ '/matmanage/matapply!queryAreaByCid.action',
+								+ '/matmanage/matcomm!queryAreaByCid.action',
 						dataTye : 'json',
 						data : "cityid=" + cityid,
 						success : function(result) {
@@ -1069,7 +1069,7 @@ $(function() {
 										type : 'POST',
 										async : false,
 										url : DZF.contextPath
-												+ '/matmanage/matapply!queryCityByProId.action',
+												+ '/matmanage/matcomm!queryCityByProId.action',
 										dataTye : 'json',
 										data : "provinceid=" + provinceid,
 										success : function(result) {
@@ -1099,7 +1099,7 @@ $(function() {
 						type : 'POST',
 						async : false,
 						url : DZF.contextPath
-								+ '/matmanage/matapply!queryAreaByCid.action',
+								+ '/matmanage/matcomm!queryAreaByCid.action',
 						dataTye : 'json',
 						data : "cityid=" + cityid,
 						success : function(result) {
@@ -1150,7 +1150,7 @@ function send() {
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/matmanage/matapply!queryById.action',
+		url : DZF.contextPath + '/matmanage/mathandle!queryById.action',
 		dataTye : 'json',
 		data : {
 			id : id,
@@ -1258,7 +1258,7 @@ function onSave() {
 
 	if ($("#mat_add").form('validate')) {
 		$('#mat_add').form('submit', {
-			url : DZF.contextPath + '/matmanage/matapply!save.action',
+			url : DZF.contextPath + '/matmanage/mathandle!save.action',
 			queryParams : postdata,
 			success : function(result) {
 				var result = eval('(' + result + ')');
@@ -1300,7 +1300,7 @@ function editSave() {
 	
 	if ($("#infoform").form('validate')) {
 		$('#infoform').form('submit', {
-			url : DZF.contextPath + '/matmanage/matapply!save.action',
+			url : DZF.contextPath + '/matmanage/mathandle!save.action',
 			success : function(result) {
 				var result = eval('(' + result + ')');
 				if (result.success) {
@@ -1338,7 +1338,7 @@ function queryByID(matbillid) {
 		dataType : "json",
 		traditional : true,
 		async : false,
-		url : contextPath + '/matmanage/matapply!queryById.action',
+		url : contextPath + '/matmanage/mathandle!queryById.action',
 		data : {
 			"id" : matbillid,
 			type : type,
@@ -1459,7 +1459,7 @@ function initCardDetail() {
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : contextPath + '/matmanage/matfile!queryMatFile.action',
+		url : contextPath + '/matmanage/matcomm!queryMatFile.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
@@ -1587,7 +1587,7 @@ function doExport() {
 
 	var cols = $('#grid').datagrid('getColumnFields'); // 字段编码
 	Business.getFile(DZF.contextPath
-			+ "/matmanage/matapply!exportAuditExcel.action", {
+			+ "/matmanage/matcomm!exportAuditExcel.action", {
 		"strlist" : JSON.stringify(datarows),
 		'hblcols' : JSON.stringify(hblcols),
 		'cols' : JSON.stringify(cols),

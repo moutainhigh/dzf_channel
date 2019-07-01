@@ -3,7 +3,6 @@ package com.dzf.service.channel.matmanage;
 import java.util.List;
 
 import com.dzf.model.channel.matmanage.MaterielFileVO;
-import com.dzf.model.channel.matmanage.MaterielStockInVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
@@ -73,13 +72,6 @@ public interface IMatFileService {
 	 */
 	void deleteWl(MaterielFileVO mvo)  throws DZFWarpException;
 
-	/**
-	 * 下拉查询所有物料档案
-	 * @param pamvo
-	 * @param uservo
-	 * @return
-	 */
-	List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo, UserVO uservo)  throws DZFWarpException;
 
 	
 }

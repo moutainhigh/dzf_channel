@@ -24,7 +24,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
-import com.dzf.model.channel.matmanage.MaterielFileVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
@@ -90,37 +89,6 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		writeJson(grid);
 	}
 
-	/**
-	 * 查询物料信息
-	 */
-	public void queryNumber() {
-		Json json = new Json();
-		try {
-			UserVO uservo = getLoginUserInfo();
-			checkUser(uservo);
-			MatOrderVO pamvo = new MatOrderVO();
-			pamvo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), pamvo);
-			List<MatOrderBVO> bvos = matapply.queryNumber(pamvo);
-			if (bvos == null || bvos.size() == 0) {// 还没有申请，查询所有启用的物料
-				List<MaterielFileVO> mvos = matapply.queryMatFile();
-				if (mvos != null && mvos.size() > 0) {
-					for (MaterielFileVO mvo : mvos) {
-						mvo.setApplynum(0);
-						mvo.setOutnum(0);
-					}
-				}
-
-				json.setRows(mvos);
-			} else {
-				json.setRows(bvos);
-			}
-			json.setMsg("查询成功");
-			json.setSuccess(true);
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "查询失败");
-		}
-		writeJson(json);
-	}
 
 	/**
 	 * 查询登录人
@@ -143,81 +111,6 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 
 	}
 
-	/**
-	 * 查询所有的省份
-	 */
-	public void queryAllProvince() {
-		Grid grid = new Grid();
-		try {
-			List<MatOrderVO> list = matapply.queryAllProvince();
-			if (list == null || list.size() == 0) {
-				grid.setRows(new ArrayList<MatOrderVO>());
-				grid.setSuccess(true);
-				grid.setMsg("查询数据为空");
-			} else {
-				grid.setRows(list);
-				grid.setSuccess(true);
-				grid.setMsg("查询成功");
-			}
-		} catch (Exception e) {
-			printErrorLog(grid, log, e, "查询失败");
-		}
-		writeJson(grid);
-
-	}
-
-	/**
-	 * 根据省份查询市
-	 */
-	public void queryCityByProId() {
-		Json json = new Json();
-		try {
-			String pid = getRequest().getParameter("provinceid");
-			if (!StringUtil.isEmpty(pid)) {
-				List<MatOrderVO> list = matapply.queryCityByProId(Integer.parseInt(pid));
-				if (list == null || list.size() == 0) {
-					json.setRows(new ArrayList<MatOrderVO>());
-					json.setSuccess(true);
-					json.setMsg("查询数据为空");
-				} else {
-					json.setRows(list);
-					json.setSuccess(true);
-					json.setMsg("查询成功");
-				}
-			}
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "查询失败");
-		}
-		writeJson(json);
-
-	}
-
-	/**
-	 * 根据市查询区县
-	 */
-	public void queryAreaByCid() {
-		Json json = new Json();
-		try {
-			String cid = getRequest().getParameter("cityid");
-			if (!StringUtil.isEmpty(cid)) {
-				List<MatOrderVO> list = matapply.queryAreaByCid(Integer.parseInt(cid));
-				if (list == null || list.size() == 0) {
-					json.setRows(new ArrayList<MatOrderVO>());
-					json.setSuccess(true);
-					json.setMsg("查询数据为空");
-				} else {
-					json.setRows(list);
-					json.setSuccess(true);
-					json.setMsg("查询成功");
-				}
-			}
-
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "查询失败");
-		}
-		writeJson(json);
-
-	}
 
 	/**
 	 * 根据加盟商查询申请单信息
@@ -253,14 +146,10 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 		try {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
-			String type = getRequest().getParameter("type");
-			String stype = getRequest().getParameter("stype");
-			String kind = getRequest().getParameter("kind");
-			if ("1".equals(type)) {
-				pubser.checkFunnode(uservo, IFunNode.CHANNEL_68);
-			} else {
-				pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
-			}
+			String stype = getRequest().getParameter("stype");//提示后保存
+			String kind = getRequest().getParameter("kind");//区分是否需要校验
+
+			pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 
@@ -277,7 +166,7 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 				if (bodyVOs == null || bodyVOs.length == 0) {
 					throw new BusinessException("物料数据不能为空");
 				}
-				message = matapply.saveApply(vo, uservo, bodyVOs, type, stype, kind);
+				message = matapply.saveApply(vo, uservo, bodyVOs, stype, kind);
 			} else {
 				matapply.editSave(vo);
 			}
@@ -308,10 +197,8 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
 			String id = getRequest().getParameter("id");
-			String type = getRequest().getParameter("type");
-			String stype = getRequest().getParameter("stype");
 			if (!StringUtil.isEmpty(id)) {
-				vo = matapply.queryDataById(vo, id, uservo, type, stype);
+				vo = matapply.queryDataById(vo, id, uservo);
 			}
 			if (!StringUtil.isEmpty(vo.getMessage())) {
 				json.setMsg("提示");
