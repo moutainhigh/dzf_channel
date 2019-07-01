@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.dzf.file.fastdfs.FastDfsUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1486,10 +1487,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ContractDocVO[] getAttatches(ContractDocVO qvo) throws DZFWarpException {
-		if (qvo == null) {
-			return null;
-		}
+	public List<ContractDocVO> getAttatches(ContractDocVO qvo) throws DZFWarpException {
 		if (StringUtil.isEmpty(qvo.getPk_contract()) && StringUtil.isEmpty(qvo.getPk_contract_doc())) {
 			throw new BusinessException("获取附件参数有误");
 		}
@@ -1505,13 +1503,13 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append(" and pk_contract_doc = ? ");
 			spm.addParam(qvo.getPk_contract_doc());
 		}
-		String orderBy = " ts desc ";
+		String orderBy = " ts asc ";
 		List<ContractDocVO> list = (List<ContractDocVO>) singleObjectBO.retrieveByClause(ContractDocVO.class,
 				sql.toString(), orderBy, spm);
 		if (list != null && list.size() > 0) {
-			return list.toArray(new ContractDocVO[0]);
+			return list;
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -1980,12 +1978,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 			throw new BusinessException("会计公司信息错误");
 		}
 		if (files != null && files.length > 0) {
-			String uploadPath = ImageCommonPath.getContractFilePath(corpvo.getInnercode(), vo.getPk_contract(), null);
 			ArrayList<ContractDocVO> list = new ArrayList<>();
 			ContractDocVO docvo = null;
 			for (int i = 0; i < files.length; i++) {
-				String fname = System.nanoTime() + filenames[i].substring(filenames[i].indexOf("."));
-				String filepath = uploadPath + File.separator + fname;
 				docvo = new ContractDocVO();
 				docvo.setPk_corp(vo.getPk_corp());
 				docvo.setPk_contract(vo.getPk_contract());
@@ -1994,39 +1989,17 @@ public class ContractConfirmImpl implements IContractConfirm {
 				docvo.setDocOwner(cuserid);
 				docvo.setDocTime(new DZFDateTime());
 				docvo.setDocName(filenames[i]);
-				docvo.setDocTemp(fname);
-				docvo.setVfilepath(filepath);
+//				docvo.setDocTemp(fname);
 				docvo.setDr(0);
 				docvo.setIdoctype(3);
-				list.add(docvo);
-				InputStream is = null;
-				OutputStream os = null;
-				try {
-					File ff = new File(filepath);
-					if (!ff.getParentFile().exists()) {
-						ff.getParentFile().mkdirs();
-					}
-					is = new FileInputStream(files[i]);
-					os = new FileOutputStream(filepath);
-					IOUtils.copy(is, os);
+				docvo.setIstoretype(2);
+				try{
+					String filepath = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).upload(files[0], filenames[0], null);
+					docvo.setVfilepath(filepath.substring(1));
 				} catch (Exception e) {
-				    Logger.error(this, e.getMessage(),e);
-				} finally {
-					if (is != null) {
-						try {
-							is.close();
-						} catch (IOException e) {
-						    Logger.error(this, e.getMessage(),e);
-						}
-					}
-					if (os != null) {
-						try {
-							os.close();
-						} catch (IOException e) {
-						    Logger.error(this, e.getMessage(),e);
-						}
-					}
+					throw new BusinessException("网络繁忙，请重新上传！");
 				}
+				list.add(docvo);
 			}
 			singleObjectBO.insertVOArr(vo.getPk_corp(), list.toArray(new ContractDocVO[0]));
 		}

@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dzf.file.fastdfs.FastDfsUtil;
+import com.dzf.spring.SpringUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -301,12 +303,8 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			ContractDocVO[] resvos = contractconfser.getAttatches(paramvo);
-			if (resvos != null) {
-				json.setRows(Arrays.asList(resvos));
-			} else {
-				json.setRows(0);
-			}
+			List<ContractDocVO>  resvos = contractconfser.getAttatches(paramvo);
+			json.setRows(resvos);
 			json.setSuccess(true);
 			json.setMsg("获取附件成功");
 		} catch (Exception e) {
@@ -319,7 +317,6 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 	 * 获取附件显示图片
 	 */
 	public void getAttachImage() {
-
 		InputStream is = null;
 		OutputStream os = null;
 		try {
@@ -328,50 +325,48 @@ public class ContractConfirmAction extends BaseAction<ContractConfrimVO> {
 			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			ContractDocVO[] resvos = contractconfser.getAttatches(paramvo);
-			boolean isexists = true;
-			if (resvos == null || resvos[0] == null) {
-				isexists = false;
+			List<ContractDocVO> docVOS = contractconfser.getAttatches(paramvo);
+			if(docVOS.size()<1){
+				throw new BusinessException("没有图片");
 			}
-			String fpath = "";
-			if (resvos != null && resvos.length > 0) {
-				fpath = resvos[0].getVfilepath();
-			}
-			if (StringUtil.isEmpty(fpath)) {
-				throw new BusinessException("附件路径不能为空");
-			}
-			File afile = new File(fpath);
-			if (!afile.exists()) {
-				isexists = false;
-			}
-			if (isexists) {
-				String path = getRequest().getSession().getServletContext().getRealPath("/");
-				String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
-				if (fpath.toLowerCase().lastIndexOf(".pdf") > 0) {
-					/*
-					 * typeiconpath += "pdf.jpg"; afile = new
-					 * File(typeiconpath);
-					 */
-				} else if (fpath.toLowerCase().lastIndexOf(".doc") > 0) {
-					typeiconpath += "word.jpg";
-					afile = new File(typeiconpath);
-				} else if (fpath.toLowerCase().lastIndexOf(".xls") > 0) {
-					typeiconpath += "excel.jpg";
-					afile = new File(typeiconpath);
-				} else if (fpath.toLowerCase().lastIndexOf(".ppt") > 0) {
-					typeiconpath += "powerpoint.jpg";
-					afile = new File(typeiconpath);
-				} else if (fpath.toLowerCase().lastIndexOf(".zip") > 0 || fpath.toLowerCase().lastIndexOf(".rar") > 0) {
+			ContractDocVO resvo = docVOS.get(0);
+			String fpath = resvo.getVfilepath();
+			if (!StringUtil.isEmpty(fpath)) {
+				if(resvo.getIstoretype()==1){
+					File afile = new File(fpath);
+					if (afile.exists()) {
+						String path = getRequest().getSession().getServletContext().getRealPath("/");
+						String typeiconpath = path + "images" + File.separator + "typeicon" + File.separator;
+						if (fpath.toLowerCase().lastIndexOf(".pdf") > 0) {
+							/*
+							 * typeiconpath += "pdf.jpg"; afile = new
+							 * File(typeiconpath);
+							 */
+						} else if (fpath.toLowerCase().lastIndexOf(".doc") > 0) {
+							typeiconpath += "word.jpg";
+							afile = new File(typeiconpath);
+						} else if (fpath.toLowerCase().lastIndexOf(".xls") > 0) {
+							typeiconpath += "excel.jpg";
+							afile = new File(typeiconpath);
+						} else if (fpath.toLowerCase().lastIndexOf(".ppt") > 0) {
+							typeiconpath += "powerpoint.jpg";
+							afile = new File(typeiconpath);
+						} else if (fpath.toLowerCase().lastIndexOf(".zip") > 0 || fpath.toLowerCase().lastIndexOf(".rar") > 0) {
+							typeiconpath += "zip.jpg";
+							afile = new File(typeiconpath);
+						} else {
 
-					typeiconpath += "zip.jpg";
-					afile = new File(typeiconpath);
-
-				} else {
-
+						}
+						os = getResponse().getOutputStream();
+						is = new FileInputStream(afile);
+						IOUtils.copy(is, os);
+					}
+				}else if(resvo.getIstoretype()==2){
+					byte[] bytes = ((FastDfsUtil) SpringUtils.getBean("connectionPool")).downFile(fpath);
+					os = getResponse().getOutputStream();
+					os.write(bytes);
+					os.flush();
 				}
-				os = getResponse().getOutputStream();
-				is = new FileInputStream(afile);
-				IOUtils.copy(is, os);
 			}
 		} catch (Exception e) {
 		    log.error(e);

@@ -40,7 +40,7 @@ public interface IContractConfirm {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public ContractDocVO[] getAttatches(ContractDocVO qvo) throws DZFWarpException;
+	public List<ContractDocVO> getAttatches(ContractDocVO qvo) throws DZFWarpException;
 	
 	/**
 	 * 变更

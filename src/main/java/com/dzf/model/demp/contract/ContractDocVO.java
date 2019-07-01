@@ -41,6 +41,8 @@ public class ContractDocVO extends SuperVO {
 	@FieldAlias("fpath")
 	private String vfilepath;// 文件存储路径
 
+	private Integer istoretype;//存储类型 1：服务器硬盘； 2：图片服务器
+
 	private String coperatorid;
 	
 	private DZFDate doperatedate;
@@ -130,6 +132,14 @@ public class ContractDocVO extends SuperVO {
 
 	public DZFDateTime getTs() {
 		return ts;
+	}
+
+	public Integer getIstoretype() {
+		return istoretype;
+	}
+
+	public void setIstoretype(Integer istoretype) {
+		this.istoretype = istoretype;
 	}
 
 	public void setTs(DZFDateTime ts) {
