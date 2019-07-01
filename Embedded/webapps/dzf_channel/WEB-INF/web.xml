@@ -10,6 +10,11 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	<!-- 账务设置监听 -->
+	<listener>
+    	<listener-class>com.dzf.action.listener.AccountProcListenter</listener-class>
+	</listener>
+	
 	<!--dzf session管理监听 -->
 	<listener>  
 		<listener-class>com.dzf.pub.DzfSessionListener</listener-class>  
@@ -79,4 +84,15 @@
     <session-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
+	
+	<!-- druid监控  begin-->
+  	<servlet>  
+	    <servlet-name>DruidStatView</servlet-name>  
+	    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>  
+	</servlet>  
+	<servlet-mapping>  
+	    <servlet-name>DruidStatView</servlet-name>  
+	    <url-pattern>/druid/*</url-pattern>  
+	</servlet-mapping>
+	<!-- druid监控  end-->
 </web-app>

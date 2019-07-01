@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.ServletContextEvent;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,6 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-	
 	
 	@Override
 	public List<AccountSetVO> query(QryParamVO paramvo) throws DZFWarpException{
@@ -186,7 +187,7 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 			}
 			Integer diff = calPeriodDiff(vo.getVchangeperiod(),oldVO.getVendperiod());
 			vo.setIdiff(diff);
-			singleObjectBO.update(vo, new String[]{"vchangeperiod","idiff"});
+			singleObjectBO.update(vo, new String[]{"vchangeperiod","idiff","stopperiod"});
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
 		        throw new BusinessException(e.getMessage());
@@ -265,6 +266,35 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 			throw new BusinessException("该行数据已发生变化,请取消操作刷新再试!");
 		}
 		return vo;
+	}
+
+	@Override
+	public void updatedate(ServletContextEvent sce) {
+		
+		//获取账务设置的停用时间
+		String ids = "";
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(new DZFDate());
+		sql.append("  select \n");
+		sql.append("    from cn_accountset ac \n");
+		sql.append("    where nvl(ac.dr,0) = 0 and \n");
+		sql.append("    ac.stopperiod = ? \n");
+		List<AccountSetVO> acclist = (List<AccountSetVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(AccountSetVO.class));
+		if(acclist!=null && acclist.size()>0){
+			for (AccountSetVO vo : acclist) {
+				ids = ids + "," +vo.getPk_accountset();
+			}
+			ids = ids.substring(1);
+		}
+		
+		String querysql = "select pk_accountset,istatus from cn_accountset where nvl(dr,0)=0 and pk_accountset in ("+ids+")";
+		List<AccountSetVO> list = (List<AccountSetVO>) singleObjectBO.executeQuery(querysql, null, new BeanListProcessor(AccountSetVO.class));
+		for (AccountSetVO accountSetVO : list) {
+			accountSetVO.setIstatus(1);
+		}
+		AccountSetVO[] array = (AccountSetVO[]) list.toArray();
+		singleObjectBO.updateAry(array, new String[]{"istatus"});
 	}
 	
 }

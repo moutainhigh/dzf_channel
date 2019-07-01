@@ -2,6 +2,8 @@ package com.dzf.service.channel.chn_set;
 
 import java.util.List;
 
+import javax.servlet.ServletContextEvent;
+
 import com.dzf.model.channel.sale.AccountSetVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
@@ -51,5 +53,11 @@ public interface IAccountSetService {
 	 * @throws DZFWarpException
 	 */
 	public void delete(String[] ids) throws DZFWarpException;
+
+	/**
+	 * 禁用
+	 * @param sce
+	 */
+	public void updatedate(ServletContextEvent sce);
 
 }

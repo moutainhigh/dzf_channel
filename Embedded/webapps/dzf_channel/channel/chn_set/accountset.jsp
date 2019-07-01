@@ -125,6 +125,11 @@
 							style="width:100px; height: 28px; display: none;" >
 					</font> 
 				</div>
+				<div class="time_col time_colp11">
+					<label style="text-align:right;width: 140px;">停用时间</label> 
+					<input id="speriod" name="speriod" type="text"  class="easyui-datebox" data-options="editable:false,required:true" 
+							style="width: 100px; height: 28px; display: none;" />
+				</div>
 			</form>
 			<div style="text-align:center;margin-top:30px;">
 			    <a href="javascript:void(0)" class="ui-btn ui-btn-xz"  onclick="save()">确定</a> 

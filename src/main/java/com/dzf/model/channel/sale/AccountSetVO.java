@@ -32,6 +32,9 @@ public class AccountSetVO extends DataVO{
     @FieldAlias("cperiod")
     private String vchangeperiod;//调整期间
     
+    @FieldAlias("speriod")
+    private String stopperiod;//停用时间
+    
     private Integer idiff;//差异月份
     
     private Integer istatus;//状态 0：启用；1：禁用
@@ -179,6 +182,14 @@ public class AccountSetVO extends DataVO{
 		this.doperatedate = doperatedate;
 	}
 	
+	public String getStopperiod() {
+		return stopperiod;
+	}
+
+	public void setStopperiod(String stopperiod) {
+		this.stopperiod = stopperiod;
+	}
+
 	@Override
 	public String getPKFieldName() {
 		return "pk_accountset";
