@@ -13,7 +13,7 @@ import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.service.channel.report.IIndexRep;
+import com.dzf.service.channel.report.IIndexRepService;
 
 /**
  * 首页
@@ -30,7 +30,7 @@ public class IndexRepAction extends BaseAction<QryParamVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private IIndexRep indexSer;
+	private IIndexRepService indexSer;
 
 	/**
 	 * 周业务情况查询

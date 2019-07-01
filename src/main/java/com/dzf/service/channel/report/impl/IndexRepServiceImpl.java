@@ -27,11 +27,11 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.report.IIndexRep;
+import com.dzf.service.channel.report.IIndexRepService;
 import com.dzf.service.pub.IPubService;
 
 @Service("indexrepimpl")
-public class IndexRepImpl implements IIndexRep {
+public class IndexRepServiceImpl implements IIndexRepService {
 	
     @Autowired
     private SingleObjectBO singleObjectBO;

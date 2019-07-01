@@ -5,7 +5,7 @@ import com.dzf.model.channel.report.WeekBusimngVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
-public interface IIndexRep {
+public interface IIndexRepService {
 
 	/**
 	 * 查询本周业务情况

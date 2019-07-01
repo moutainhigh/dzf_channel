@@ -20,7 +20,7 @@ import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.util.QueryUtil;
-import com.dzf.service.channel.report.ICustManageRep;
+import com.dzf.service.channel.report.ICustManageService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
@@ -38,7 +38,7 @@ public class CustManageRepAction extends BaseAction<CustManageRepVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private ICustManageRep custServ;
+	private ICustManageService custServ;
 
 	/**
 	 * 查询

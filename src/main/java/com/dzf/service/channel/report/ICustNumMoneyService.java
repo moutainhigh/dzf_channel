@@ -8,7 +8,7 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.lang.DZFDouble;
 
-public interface ICustNumMoneyRep {
+public interface ICustNumMoneyService {
 
 	/**
 	 * 查询新增客户相关信息

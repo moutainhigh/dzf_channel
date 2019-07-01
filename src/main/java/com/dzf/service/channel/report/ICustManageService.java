@@ -7,7 +7,7 @@ import com.dzf.model.channel.report.CustManageRepVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.DZFWarpException;
 
-public interface ICustManageRep {
+public interface ICustManageService {
 	/**
 	 * 查询
 	 * @param paramvo

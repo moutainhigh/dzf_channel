@@ -26,10 +26,10 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.report.ICustManageRep;
+import com.dzf.service.channel.report.ICustManageService;
 
 @Service("custmanagerepser")
-public class CustManageRepImpl extends DataCommonRepImpl implements ICustManageRep {
+public class CustManageServiceImpl extends DataCommonRepImpl implements ICustManageService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;

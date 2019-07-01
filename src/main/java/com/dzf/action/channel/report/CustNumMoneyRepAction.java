@@ -31,7 +31,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.QueryUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.channel.report.ICustNumMoneyService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
@@ -52,7 +52,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private ICustNumMoneyRep custServ;
+	private ICustNumMoneyService custServ;
 	
 	@Autowired
 	private IPubService pubService;

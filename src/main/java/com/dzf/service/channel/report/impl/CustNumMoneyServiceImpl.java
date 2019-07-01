@@ -25,10 +25,10 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.channel.report.ICustNumMoneyService;
 
 @Service("custnummoneyrepser")
-public class CustNumMoneyRepImpl extends DataCommonRepImpl implements ICustNumMoneyRep {
+public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustNumMoneyService {
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;

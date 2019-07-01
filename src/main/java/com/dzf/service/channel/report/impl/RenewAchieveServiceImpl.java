@@ -21,7 +21,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.pub.util.ToolsUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.channel.report.ICustNumMoneyService;
 import com.dzf.service.channel.report.IRenewAchieveService;
 
 @Service("renewachieveser")
@@ -31,7 +31,7 @@ public class RenewAchieveServiceImpl extends DataCommonRepImpl implements IRenew
 	private SingleObjectBO singleObjectBO;
 
 	@Autowired
-	private ICustNumMoneyRep custServ;
+	private ICustNumMoneyService custServ;
 
 	@Override
 	public List<CustNumMoneyRepVO> queryRenew(QryParamVO paramvo) throws DZFWarpException {
