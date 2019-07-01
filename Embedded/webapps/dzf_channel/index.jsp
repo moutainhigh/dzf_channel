@@ -31,6 +31,7 @@
 	String preDate = AdminDateUtil.getPreviousDate();
 	String preYear = AdminDateUtil.getPreviousYear();
 	String serverTime = AdminDateUtil.getServerDateTime();
+	String period = AdminDateUtil.getPeriod();
 	CorpVO corpVo = CorpCache.getInstance().get(null, corp);
 	ServletContext servletContext = session.getServletContext();
 	ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -113,6 +114,7 @@ var SYSTEM = {
 	PreDate:"<%=preDate!= null ? preDate:"" %>",
 	PreYear:"<%=preYear!= null ? preYear:"" %>",
 	ServerTime:"<%=serverTime!= null ? serverTime:"" %>",
+	period:"<%=period!= null ? period:"" %>",
 };
 var modulus = "<%=modulus%>";
 var exponent = "<%=exponent%>";
