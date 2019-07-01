@@ -40,15 +40,25 @@
 					</div>
 		        </div>
 		    </div>
-		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
+		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:330px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 100px;">查询期间：</label>
+					<input id="tddate" type="radio" name="seledate" style="margin-left:12px;" checked />
+					<label style="text-align:right;width: 72px;">查询期间：</label>
+					<input name="bdate" type="text" id="bdate" class="easyui-datebox" 
+						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
+					-
+					<input name="edate" type="text" id="edate" class="easyui-datebox" 
+						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
+				</div>
+				<div class="time_col time_colp10">
+				    <input id="kkdate" type="radio" name="seledate" style="margin-left:12px;" />
+					<label style="text-align:right;width: 72px;">查询月份：</label>
 					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=ym%> />
+						style="width:116px;height:28px;" />
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">大区：</label> 
