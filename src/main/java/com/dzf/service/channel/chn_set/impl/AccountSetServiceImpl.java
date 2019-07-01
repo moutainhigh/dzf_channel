@@ -1,3 +1,4 @@
+
 package com.dzf.service.channel.chn_set.impl;
 
 import java.util.ArrayList;
@@ -277,9 +278,9 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(new DZFDate());
 		sql.append("  update cn_accountset ac \n");
-		sql.append("    set ac.stopperiod = 1 \n");
+		sql.append("    set ac.istatus = 1 \n");
 		sql.append("    where nvl(ac.dr,0) = 0 and \n");
-		sql.append("    ac.stopperiod = ? and ac.stopperiod= 0 \n");
+		sql.append("    ac.stopperiod = ? and ac.istatus= 0 \n");
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	
