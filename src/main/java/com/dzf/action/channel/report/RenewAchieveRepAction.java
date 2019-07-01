@@ -31,7 +31,7 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.QueryUtil;
-import com.dzf.service.channel.report.ICustNumMoneyRep;
+import com.dzf.service.channel.report.IRenewAchieveService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
@@ -53,10 +53,10 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@Autowired
-	private ICustNumMoneyRep custServ;
-
-	@Autowired
 	private IPubService pubService;
+	
+	@Autowired
+	private IRenewAchieveService renewser;
 
 	/**
 	 * 查询
@@ -72,7 +72,7 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 			if (paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
-			List<CustNumMoneyRepVO> list = custServ.queryRenew(paramvo);
+			List<CustNumMoneyRepVO> list = renewser.queryRenew(paramvo);
 			int page = paramvo == null ? 1 : paramvo.getPage();
 			int rows = paramvo == null ? 10000 : paramvo.getRows();
 			int len = list == null ? 0 : list.size();
