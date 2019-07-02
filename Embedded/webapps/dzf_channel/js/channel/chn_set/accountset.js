@@ -143,6 +143,12 @@ function load(){
 				if (value == '1')
 					return '停用';
 			}
+		},{
+			width : '90',
+			title : '停用时间',
+			field : 'speriod',
+            halign : 'center',
+			align : 'center',
 		}, {
 			width : '100',
 			title : '录入人',
@@ -224,6 +230,10 @@ function add(){
     
     $('#c_corpnm').textbox('readonly', false);
     $('#c_corpkname').textbox('readonly', true);
+    //停用时间默认取当前日期后15天
+    var date=new Date();
+    date.setDate(date.getDate()+15);
+    $("#speriod").datebox("setValue",date);
 }
 
 function save(){

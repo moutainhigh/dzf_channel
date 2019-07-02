@@ -51,6 +51,7 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		sql.append("       a.vchangeperiod, ");
 		sql.append("       a.idiff, ");
 		sql.append("       a.istatus, ");
+		sql.append("       a.stopperiod, ");
 		sql.append("       a.doperatedate, ");
 		sql.append("       a.updatets, ");
 		sql.append("       a.pk_accountset, ");
@@ -271,30 +272,15 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 	@Override
 	public void updatedate(ServletContextEvent sce) {
 		
-		//获取账务设置的停用时间
-		String ids = "";
+		//停用在线会计记账服务
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(new DZFDate());
-		sql.append("  select \n");
-		sql.append("    from cn_accountset ac \n");
+		sql.append("  update cn_accountset ac \n");
+		sql.append("    set ac.stopperiod = 1 \n");
 		sql.append("    where nvl(ac.dr,0) = 0 and \n");
-		sql.append("    ac.stopperiod = ? \n");
-		List<AccountSetVO> acclist = (List<AccountSetVO>) singleObjectBO.executeQuery(sql.toString(), null, new BeanListProcessor(AccountSetVO.class));
-		if(acclist!=null && acclist.size()>0){
-			for (AccountSetVO vo : acclist) {
-				ids = ids + "," +vo.getPk_accountset();
-			}
-			ids = ids.substring(1);
-		}
-		
-		String querysql = "select pk_accountset,istatus from cn_accountset where nvl(dr,0)=0 and pk_accountset in ("+ids+")";
-		List<AccountSetVO> list = (List<AccountSetVO>) singleObjectBO.executeQuery(querysql, null, new BeanListProcessor(AccountSetVO.class));
-		for (AccountSetVO accountSetVO : list) {
-			accountSetVO.setIstatus(1);
-		}
-		AccountSetVO[] array = (AccountSetVO[]) list.toArray();
-		singleObjectBO.updateAry(array, new String[]{"istatus"});
+		sql.append("    ac.stopperiod = ? and ac.stopperiod= 0 \n");
+		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	
 }
