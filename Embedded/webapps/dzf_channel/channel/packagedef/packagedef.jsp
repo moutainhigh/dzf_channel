@@ -25,7 +25,8 @@
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="addBtn" onclick="addType()">新增</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="editBtn" onclick="modify()">修改</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="publishBtn" onclick="publish()">发布</a> 
-					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="offBtn" onclick="updateOff()">下架</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="offBtn" onclick="updateOff()">下架</a>
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="copyeBtn" onclick="copy()">复制</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="delBtn" onclick="del()">删除</a>
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="saveBtn" onclick="save()">保存</a> 
 					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" id="cancelBtn" onclick="cancel()">取消</a> 

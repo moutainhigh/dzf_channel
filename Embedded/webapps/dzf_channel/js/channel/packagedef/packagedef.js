@@ -411,6 +411,7 @@ function initDgEditor(){
                     		value: '99',
                     		text: '非个体户'
                     	},],
+						onSelect:setDefMny,
                     	required:true,
                     }
                 };
@@ -502,6 +503,23 @@ function initDgEditor(){
 		};
 }
 
+
+function setDefMny(data) {
+	if(data.value=='20'){
+		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
+		$(nmsmnyE.target).numberbox('setValue',100);
+	}else if(data.value=='99'){
+		var taxtypeE = $('#grid').datagrid('getEditor', {index:editIndex,field:'taxtype'});
+		var taxtype = $(taxtypeE.target).numberbox('getValue');
+		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
+		if(taxtype=="一般纳税人"){
+			$(nmsmnyE.target).numberbox('setValue',400);
+		}else if(taxtype=="小规模纳税人"){
+			$(nmsmnyE.target).numberbox('setValue',200);
+		}
+	}
+}
+
 function showTitle(value){
 	if(value!=undefined){
 		return "<span title='" + value + "'>" + value + "</span>";
@@ -585,6 +603,55 @@ function reloadData(){
     $('#grid').datagrid('unselectAll');
 	$('#grid').datagrid('reload');
 	showButtons("brows");
+}
+
+function copy(){
+	var rows = $("#grid").datagrid("getChecked");
+	if(rows==null || rows.length!=1){
+		Public.tips({
+			content : "请选择一行数据",
+			type : 2
+		});
+		return;
+	}
+	showButtons("add");
+	var row = rows[0];
+	row.pid =null;
+	row.vstatus = 1;
+	row.iusenum = 0;
+	row.dpubdate =null;
+	row.offdate =null;
+	row.memo =null;
+	row.coperatorid =null;
+	row.doperatedate =null;
+	row.coperatorname =null;
+	$('#grid').datagrid('insertRow',{index: 0,row: row });
+
+	var typecodeO = $('#grid').datagrid('getColumnOption', 'typecode');
+	typecodeO.editor=typecode;
+	var taxtypeO = $('#grid').datagrid('getColumnOption', 'taxtype');
+	taxtypeO.editor=taxtype;
+	var comptypeO = $('#grid').datagrid('getColumnOption', 'comptype');
+	comptypeO.editor=comptype;
+	var itypeO = $('#grid').datagrid('getColumnOption', 'itype');
+	itypeO.editor=itype;
+	var nmsmnyO = $('#grid').datagrid('getColumnOption', 'nmsmny');
+	nmsmnyO.editor=nmsmny;
+	var cylnumO = $('#grid').datagrid('getColumnOption', 'cylnum');
+	cylnumO.editor=cylnum;
+	var contcycleO = $('#grid').datagrid('getColumnOption', 'contcycle');
+	contcycleO.editor=contcycle;
+	var pubnumO = $('#grid').datagrid('getColumnOption', 'pubnum');
+	pubnumO.editor=pubnum;
+	var isproO = $('#grid').datagrid('getColumnOption', 'ispro');
+	isproO.editor=ispro;
+	var citynmsO = $('#grid').datagrid('getColumnOption', 'citynms');
+	citynmsO.editor=citynms;
+	var corpnmsO = $('#grid').datagrid('getColumnOption', 'corpnms');
+	corpnmsO.editor=corpnms;
+
+	$('#grid').datagrid("beginEdit", 0);
+	editIndex = 0;
 }
 
 function addType () {
@@ -854,6 +921,7 @@ function showButtons(type) {
 		$("#editBtn").hide();
 		$("#publishBtn").hide();
 		$("#offBtn").hide();
+		$("#copyeBtn").hide();
 		$("#delBtn").hide();
 		$("#saveBtn").hide();
 		$("#cancelBtn").hide();
@@ -867,6 +935,7 @@ function showButtons(type) {
 		$("#editBtn").show();
 		$("#publishBtn").show();
 		$("#offBtn").show();
+		$("#copyeBtn").show();
 		$("#delBtn").show();
 		$("#saveBtn").hide();
 		$("#cancelBtn").hide();
@@ -880,6 +949,7 @@ function showButtons(type) {
 		$("#editBtn").hide();
 		$("#publishBtn").hide();
 		$("#offBtn").hide();
+		$("#copyeBtn").hide();
 		$("#delBtn").hide();
 		$("#saveBtn").show();
 		$("#cancelBtn").show();
