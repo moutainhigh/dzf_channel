@@ -151,10 +151,6 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldslist.add("renewcustt");
 		fieldslist.add("renewconts");
 		fieldslist.add("renewcontt");
-		fieldslist.add("renewcustrates");
-		fieldslist.add("renewcustratet");
-		fieldslist.add("renewcontrates");
-		fieldslist.add("renewcontratet");
 		
 		fieldslist.add("yrenewnum");
 		fieldslist.add("renewnum");

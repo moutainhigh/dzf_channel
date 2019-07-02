@@ -86,10 +86,6 @@ function load(){
 		            { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
 		            { field : 'renewcust', title : '续费客户数量', halign:'center',align:'center',colspan:2},
 		            { field : 'renewcont', title : '续费客户合同金额', halign:'center',align:'center',colspan:2},
-		             
-		            { field : 'renewcustrate', title : '续费客户占比(%)', width:100,halign:'center',align:'right',colspan:2},
-		            { field : 'renewcontrate', title : '续费合同占比(%)', width:100,halign:'center',align:'right',colspan:2},
-		            
 		            { field : 'xqnum', title : '续签客户数', width:100,halign:'center',align:'right',colspan:2},
 		           ] ,
         [
@@ -101,12 +97,6 @@ function load(){
             { field : 'renewcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
             { field : 'renewconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
             { field : 'renewcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            
-            { field : 'renewcustrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'renewcustratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'renewcontrates', title : '小规模', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            { field : 'renewcontratet', title : '一般纳税人', width : 100, formatter:formatLocalMny,halign:'center',align:'right'}, 
-            
             { field : 'yrenewnum', title : '应续签', width : 100, halign:'center',align:'center'},
             { field : 'renewnum', title : '已续签', width : 100, halign:'center',align:'center',},
             
