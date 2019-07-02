@@ -111,6 +111,12 @@ public class ChangeApplyVO extends SuperVO {
 	
 	@FieldAlias("mname")
 	private String vmanagername; // 渠道经理（只做界面展示）
+	
+	@FieldAlias("areaname")
+	private String vareaername;//区总（只做界面展示）
+	
+	@FieldAlias("direname")
+	private String vdirectorname;//总经理（只做界面展示）
 
 	@FieldAlias("corpnm")
 	private String corpname; // 渠道商名称（不存库，取客户缓存）
@@ -165,8 +171,46 @@ public class ChangeApplyVO extends SuperVO {
 	
 	@FieldAlias("auditer")
 	private String vauditer;//下一审核人（仅作数据传递）
+	
+	@FieldAlias("auinfo")
+    private String vauditinfo;//审批流程详情
+	
+    @FieldAlias("uname")
+    private String user_name;//操作人名称
 
 	// 不存只作展示 end***************************
+
+	public String getVareaername() {
+		return vareaername;
+	}
+
+	public void setVareaername(String vareaername) {
+		this.vareaername = vareaername;
+	}
+
+	public String getVdirectorname() {
+		return vdirectorname;
+	}
+
+	public void setVdirectorname(String vdirectorname) {
+		this.vdirectorname = vdirectorname;
+	}
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getVauditinfo() {
+		return vauditinfo;
+	}
+
+	public void setVauditinfo(String vauditinfo) {
+		this.vauditinfo = vauditinfo;
+	}
 
 	public SuperVO<?>[] getBodys() {
 		return bodys;

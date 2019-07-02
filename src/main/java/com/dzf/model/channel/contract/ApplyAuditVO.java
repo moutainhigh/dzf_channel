@@ -57,6 +57,17 @@ public class ApplyAuditVO extends SuperVO {
     
     @FieldAlias("memo")
     private String vmemo;//备注
+    
+    @FieldAlias("uname")
+    private String user_name;//操作人名称
+    
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
 
 	public Integer getIopertype() {
 		return iopertype;

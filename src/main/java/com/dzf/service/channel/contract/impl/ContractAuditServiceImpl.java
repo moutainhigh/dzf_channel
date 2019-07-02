@@ -33,6 +33,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.contract.IContractAuditService;
 import com.dzf.service.pub.IPubService;
+import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("contractauditser")
 public class ContractAuditServiceImpl implements IContractAuditService {
@@ -45,6 +46,9 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	
 	@Autowired
 	private IPubService pubser;
+	
+	@Autowired
+	private IUserService userSer;
 
 	@Override
 	public Integer queryTotalNum(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
@@ -267,6 +271,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 				new BeanListProcessor(ChangeApplyVO.class));
 		if (list != null && list.size() > 0) {
 			ChangeApplyVO vo = list.get(0);
+			QueryDeCodeUtils.decKeyUtil(new String[]{"vmanagername", "vareaername", "vdirectorname"}, vo, 1);
 			CorpVO corpvo = CorpCache.getInstance().get(null, vo.getPk_corpk());
 			if(corpvo != null){
 				vo.setCorpkname(corpvo.getUnitname());
@@ -291,8 +296,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			}
 			//2、查询审批历史
 			if(pamvo.getIopertype() != null && pamvo.getIopertype() == 1){
-				ApplyAuditVO[] child =  queryAuditHistory(pamvo, uservo);
-				vo.setChildren(child);
+				String ainfo = queryAuditInfo(vo);
+				vo.setVauditinfo(ainfo);
 			}
 			//3、查询驳回历史
 			if(!StringUtil.isEmpty(vo.getVconfreason())){
@@ -334,29 +339,47 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		return null;
 	}
 	
-	/**
-	 * 查询审批历史
-	 * @param pamvo
-	 * @param uservo
-	 * @return
-	 * @throws DZFWarpException
-	 */
 	@SuppressWarnings("unchecked")
-	private ApplyAuditVO[] queryAuditHistory(ChangeApplyVO pamvo, UserVO uservo) throws DZFWarpException {
+	private String queryAuditInfo(ChangeApplyVO vo) throws DZFWarpException {
+		StringBuffer msg = new StringBuffer();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_applyaudit  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_changeapply = ?  \n");
-		sql.append(" ORDER BY ts ASC \n");
-		spm.addParam(pamvo.getPk_changeapply());
+		sql.append("SELECT t.vmemo, r.user_name AS user_name \n");
+		sql.append("  FROM cn_applyaudit t \n");
+		sql.append("  LEFT JOIN sm_user r ON t.coperatorid = r.cuserid \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
+		sql.append("   AND t.pk_changeapply = ?  \n");
+		sql.append(" ORDER BY t.ts ASC \n");
+		spm.addParam(vo.getPk_changeapply());
 		List<ApplyAuditVO> list = (List<ApplyAuditVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ApplyAuditVO.class));
-		if(list != null){
-			return list.toArray(new ApplyAuditVO[0]);
+		msg.append("已申请");
+		if(list != null && list.size() > 0){
+			for(ApplyAuditVO avo :  list){
+				QueryDeCodeUtils.decKeyUtil(new String[]{"user_name"}, avo, 1);
+				msg.append("--->").append("(").append(avo.getUser_name()).append(")").append(avo.getVmemo());
+			}
 		}
-		return null;
+		if(vo.getIchangetype() != null && vo.getIchangetype() != 3){
+			if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
+				msg.append("--->").append("(").append(vo.getVmanagername()).append(")").append("渠道待审");
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 2){
+				msg.append("--->").append("(").append(vo.getVareaername()).append(")").append("区总待审");
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 3){
+				msg.append("--->").append("(").append(vo.getVdirectorname()).append(")").append("总经理待审");
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 4){
+				msg.append("--->").append("运营待审");
+			}
+		}else{
+			if(vo.getIapplystatus() != null && vo.getIapplystatus() == 1){
+				msg.append("--->").append("(").append(vo.getVmanagername()).append(")").append("渠道待审");
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 2){
+				msg.append("--->").append("(").append(vo.getVareaername()).append(")").append("区总待审");
+			}else if(vo.getIapplystatus() != null && vo.getIapplystatus() == 4){
+				msg.append("--->").append("运营待审");
+			}
+		}
+		return msg.toString();
 	}
 	
 	/**
@@ -411,10 +434,19 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.vdirector,  \n");
 		sql.append("       y.ichangetype,  \n");
 
+//		sql.append("       r.user_name, \n ");
+		sql.append("       u.user_name AS vmanagername, \n ");
+		sql.append("       v.user_name AS vareaername, \n ");
+		sql.append("       w.user_name AS vdirectorname, \n ");
 		sql.append("       y.iapplystatus  \n");
+		
 		sql.append("  FROM cn_changeapply y  \n");
 		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract  \n");
 		sql.append("  LEFT JOIN cn_contract n ON y.pk_contract = n.pk_contract  \n");
+//		sql.append("  LEFT JOIN sm_user r ON y.coperatorid = r.cuserid \n");
+		sql.append("  LEFT JOIN sm_user u ON y.vchannelid = u.cuserid \n");
+		sql.append("  LEFT JOIN sm_user v ON y.vareaer = v.cuserid \n");
+		sql.append("  LEFT JOIN sm_user w ON y.vdirector = w.cuserid \n");
 		sql.append(" WHERE nvl(y.dr, 0) = 0  \n");
 		sql.append("   AND nvl(t.dr, 0) = 0  \n");
 		sql.append("   AND nvl(n.dr, 0) = 0  \n");

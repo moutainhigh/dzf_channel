@@ -1068,32 +1068,7 @@ function showChangeInfoDlg(row){
 	showChangeDetImage(row);
 	
 	$("#ihistory").empty();
-	$("#ihistory").append("已申请");
-	var children = row.children;
-	if(children != null && children.length > 0){
-		for(var i = 0; i < children.length; i++){
-			$("#ihistory").append("--->").append(children[i].memo);
-		}
-		if(row.apstatus == 1){
-			$("#ihistory").append("--->渠道待审");
-		}else if(row.apstatus == 2){
-			$("#ihistory").append("--->区总待审");
-		}else if(row.apstatus == 3){
-			$("#ihistory").append("--->总经理待审");
-		}else if(row.apstatus == 4){
-			$("#ihistory").append("--->运营待审");
-		}
-	}else{
-		if(row.apstatus == 1){
-			$("#ihistory").append("--->渠道待审");
-		}else if(row.apstatus == 2){
-			$("#ihistory").append("--->区总待审");
-		}else if(row.apstatus == 3){
-			$("#ihistory").append("--->总经理待审");
-		}else if(row.apstatus == 4){
-			$("#ihistory").append("--->运营待审");
-		}
-	}
+	$("#ihistory").append(row.auinfo);
 }
 
 /**
@@ -1109,27 +1084,6 @@ function showAuditInfoDlg(row){
 	showAuditDetImage(row);
 	
 	$("#ahistory").empty();
-	$("#ahistory").append("已申请");
-	var children = row.children;
-	if(children != null && children.length > 0){
-		for(var i = 0; i < children.length; i++){
-			$("#ahistory").append("--->").append(children[i].memo);
-		}
-		if(row.apstatus == 1){
-			$("#ahistory").append("--->渠道待审");
-		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->区总待审");
-		}else if(row.apstatus == 4){
-			$("#ahistory").append("--->运营待审");
-		}
-	}else{
-		if(row.apstatus == 1){
-			$("#ahistory").append("--->渠道待审");
-		}else if(row.apstatus == 2){
-			$("#ahistory").append("--->区总待审");
-		}else if(row.apstatus == 4){
-			$("#ahistory").append("--->运营待审");
-		}
-	}
+	$("#ahistory").append(row.auinfo);
 }
 
