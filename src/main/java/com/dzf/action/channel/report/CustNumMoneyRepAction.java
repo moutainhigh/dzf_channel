@@ -65,10 +65,11 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		try {
 			QryParamVO paramvo = new QryParamVO();
 			paramvo = (QryParamVO)DzfTypeUtils.cast(getRequest(), paramvo);
-			if(paramvo != null){
-				paramvo.setUser_name(getLoginUserid());
+			if(paramvo == null){
+				paramvo = new QryParamVO();
 			}
-			if(paramvo != null && StringUtil.isEmpty(paramvo.getPk_corp())){
+			paramvo.setUser_name(getLoginUserid());
+			if(StringUtil.isEmpty(paramvo.getPk_corp())){
 				paramvo.setPk_corp(getLogincorppk());
 			}
 			List<CustNumMoneyRepVO> list = custServ.query(paramvo);
