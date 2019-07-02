@@ -13,11 +13,6 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/renewAchieveRep.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
-<%
-	//获取当前月期间
-	Calendar e = Calendar.getInstance();
-	String ym = new SimpleDateFormat("yyyy-MM").format(e.getTime());
-%>
 <body>
 	<div class="wrapper">
 		<div id="List_panel" class="wrapper" style="width: 100%; height: 100%;" data-options="closed:false">
@@ -40,16 +35,28 @@
 					</div>
 		        </div>
 		    </div>
-		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
+		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:330px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
 				</h3>
+				
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 100px;">查询期间：</label>
-					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=ym%> />
+					<input id="tddate" type="radio" name="seledate" style="margin-left:12px;" checked />
+					<label style="text-align:right;width: 72px;">查询期间：</label>
+					<input name="bdate" type="text" id="bdate" class="easyui-datebox" 
+						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
+					-
+					<input name="edate" type="text" id="edate" class="easyui-datebox" 
+						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
 				</div>
+				<div class="time_col time_colp10">
+				    <input id="kkdate" type="radio" name="seledate" style="margin-left:12px;" />
+					<label style="text-align:right;width: 72px;">查询月份：</label>
+					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
+						style="width:116px;height:28px;" />
+				</div>
+				
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 245px; height: 28px;" 

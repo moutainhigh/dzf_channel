@@ -9,27 +9,50 @@ $(window).resize(function(){
 
 $(function() {
 	initPeriod("#qryperiod");
-	initQry();
+	initQryData();
+	//大区、省（市）、会计运营经理下拉初始化
+	initQryCommbox();
+	//加盟商参照初始化
+	initChannel();
 	load();
+	reloadData();
 });
 
-//初始化
-function initQry(){
-	$("#jqj").html($("#qryperiod").datebox('getValue'));
-	// 下拉按钮的事件
-	$("#jqj").on("mouseover", function() {
-		$("#qrydialog").show();
-		$("#qrydialog").css("visibility", "visible");
-	});
-	initQryCommbox();
-	changeDate();
-	initChannel();
+/**
+ * 查询日期初始化
+ */
+function initQryData(){
+	$('#jqj').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
+	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
+	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+	
+	$("#qryperiod").datebox("setValue", parent.SYSTEM.period);
 }
 
-function changeDate(){
-	$("#qryperiod").datebox({
-		onChange : function(n, o) {
-			$("#jqj").html(n);
+/**
+ * 查询框监听事件
+ */
+function initQryLitener(){
+	$("#bdate").datebox("readonly", false);
+	$("#edate").datebox("readonly", false);
+	
+	$('#qryperiod').datebox("readonly", true);
+	
+	$('input:radio[name="seledate"]').change( function(){  
+		var ischeck = $('#tddate').is(':checked');
+		if(ischeck){
+			var sdv = $('#bdate').datebox('getValue');
+			var edv = $('#edate').datebox('getValue');
+			$('#jqj').html(sdv + ' 至 ' + edv);
+			$("#bdate").datebox("readonly", false);
+			$("#edate").datebox("readonly", false);
+			$('#qryperiod').datebox("readonly", true);
+		}else{
+			$("#qryperiod").datebox("setValue", parent.SYSTEM.period);
+			$('#jqj').html(parent.SYSTEM.period);
+			$("#bdate").datebox("readonly", true);
+			$("#edate").datebox("readonly", true);
+			$('#qryperiod').datebox("readonly", false);
 		}
 	});
 }
@@ -38,19 +61,7 @@ function changeDate(){
  * 数据表格初始化
  */
 function load(){
-	var vince = $('#ovince').combobox('getValue');
-	if(isEmpty(vince)){
-		vince = -1;
-	}
 	$('#grid').datagrid({
-		url : DZF.contextPath + "/report/renewachieverep!queryRenew.action",
-		queryParams:{
-			'period' : $('#qryperiod').datebox('getValue'),//查询期间
-			'aname' : $('#aname').combobox('getValue'),
-			'ovince' : vince ,
-			'uid' : $('#uid').combobox('getValue'),
-			'stype' : $('#stype').is(':checked') ? 0 : 1,
-		},
 		striped : true,
 		title : '',
 		rownumbers : true,
@@ -196,21 +207,72 @@ function formatLocalMny(value){
 /**
  * 查询
  */
-function reloadData(){
-	$('#grid').datagrid('options').url = DZF.contextPath + "/report/renewachieverep!queryRenew.action";
-	var queryParams = $('#grid').datagrid('options').queryParams;
-	queryParams.period = $('#qryperiod').datebox('getValue');
-	queryParams.aname = $('#aname').combobox('getValue');
-	var vince=$('#ovince').combobox('getValue');
-	if(isEmpty(vince)){
-		vince = -1;
+function reloadData() {
+	var url = DZF.contextPath + "/report/renewachieverep!queryRenew.action";
+	$('#grid').datagrid('options').url = url;
+	
+	var bdate = null;//查询开始日期
+	var edate = null;//查询结束日期
+	var period = null;//查询月份
+	
+	var jqj = null;//查询期间
+	
+	var ischeck = $('#tddate').is(':checked');
+	if(ischeck){
+		bdate = $('#bdate').datebox('getValue'); 
+		edate = $('#edate').datebox('getValue'); 
+		if(isEmpty(bdate)){
+			Public.tips({
+				content : '查询开始日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(isEmpty(edate)){
+			Public.tips({
+				content : '查询结束日期不能为空',
+				type : 2
+			});
+			return;
+		}
+		if(!isEmpty(bdate) && !isEmpty(edate)){
+			if(!checkdate1("bdate","edate")){
+				return;
+			}		
+		}
+		jqj = bdate + ' 至 ' + edate;
+	}else{
+		period = $('#qryperiod').datebox('getValue');
+		if(isEmpty(period)){
+			Public.tips({
+				content : '查询月份不能为空',
+				type : 2
+			});
+			return;
+		}
+		jqj = period;
 	}
-	queryParams.ovince = vince;
-	queryParams.uid = $('#uid').combobox('getValue');
-	queryParams.corps = $("#pk_account").val();
-	queryParams.stype = $('#stype').is(':checked')?0:1,
-	$('#grid').datagrid('options').queryParams = queryParams;
-	$('#grid').datagrid('reload');
+	
+	//省（市）
+	var ovince = $('#ovince').combobox('getValue');
+	if (isEmpty(ovince)) {
+		ovince = -1;
+	}
+	//包含已解约加盟商
+	var stype = $('#stype').is(':checked') ? 0 : 1;
+
+	$('#grid').datagrid('load', {
+		"aname" : $('#aname').combobox('getValue'),//大区
+		"ovince" : ovince,//省（市）
+		"uid" : $('#uid').combobox('getValue'),//会计运营经理
+		"corps" : $("#pk_account").val(),//加盟商
+		"stype" : stype,//包含已解约加盟商
+		"begdate" : bdate,
+		"enddate" : edate,
+		"period" : period,
+	});
+	
+	$('#jqj').html(jqj);
 	$("#qrydialog").hide();
 }
 

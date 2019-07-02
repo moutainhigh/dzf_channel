@@ -223,16 +223,38 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
 			if (qrytype != null && qrytype == 3) {
 				if (paramvo.getQrytype() != null && paramvo.getQrytype() == 1) {// 查询扣款客户
-					sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
-					spm.addParam(paramvo.getPeriod());
-					sql.append("   AND t.vdeductstatus in (?, ?, ? )  \n");
+					if(!StringUtil.isEmpty(paramvo.getPeriod())){
+						sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
+						spm.addParam(paramvo.getPeriod());
+					}else{
+						if(paramvo.getBegdate() != null){
+							sql.append(" AND t.deductdata >= ? ");
+							spm.addParam(paramvo.getBegdate());
+						}
+						if(paramvo.getEnddate() != null){
+							sql.append(" AND t.deductdata <= ? ");
+							spm.addParam(paramvo.getEnddate());
+						}
+					}
+					sql.append(" AND t.vdeductstatus in (?, ?, ? )  \n");
 					spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 					spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 				} else if (paramvo.getQrytype() != null && paramvo.getQrytype() == 2) {// 查询退款客户
-					sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
-					spm.addParam(paramvo.getPeriod());
-					sql.append("   AND t.vdeductstatus = ?  \n");
+					if(!StringUtil.isEmpty(paramvo.getPeriod())){
+						sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
+						spm.addParam(paramvo.getPeriod());
+					}else{
+						if(paramvo.getBegdate() != null){
+							sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
+							spm.addParam(paramvo.getBegdate());
+						}
+						if(paramvo.getEnddate() != null){
+							sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
+							spm.addParam(paramvo.getEnddate());
+						}
+					}
+					sql.append(" AND t.vdeductstatus = ?  \n");
 					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 				}
 			}
@@ -333,7 +355,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			if (qrytype != null && qrytype == 1) {
 				if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 					// 按照查询月份查询
-					sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
+					sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
 					spm.addParam(paramvo.getPeriod());
 				} else {
 					// 按照查询期间查询
@@ -347,14 +369,28 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 					}
 				}
 			} else if (qrytype != null && qrytype == 2) {
-				sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
+				sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
 				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
 				spm.addParam(preperiod);
 			}
 		} else if (qrytype != null && qrytype == 3) {
 			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			sql.append(" AND SUBSTR(t.deductdata, 1, 7) = ? ");
-			spm.addParam(paramvo.getPeriod());
+			
+			if (!StringUtil.isEmpty(paramvo.getPeriod())) {
+				// 按照查询月份查询
+				sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
+				spm.addParam(paramvo.getPeriod());
+			} else {
+				// 按照查询期间查询
+				if (paramvo.getBegdate() != null) {
+					sql.append(" AND t.deductdata >= ? \n");
+					spm.addParam(paramvo.getBegdate());
+				}
+				if (paramvo.getEnddate() != null) {
+					sql.append(" AND t.deductdata <= ? \n");
+					spm.addParam(paramvo.getEnddate());
+				}
+			}
 		}
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -404,28 +440,41 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			if (qrytype != null && qrytype == 1) {
 				if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 					// 按照查询月份查询
-					sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
+					sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
 					spm.addParam(paramvo.getPeriod());
 				} else {
 					// 按照查询期间查询
 					if (paramvo.getBegdate() != null) {
-						sql.append(" AND SUBSTR(t.dchangetime, 1, 10) >= ? ");
+						sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
 						spm.addParam(paramvo.getBegdate());
 					}
 					if (paramvo.getEnddate() != null) {
-						sql.append(" AND SUBSTR(t.dchangetime, 1, 10) <= ? ");
+						sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
 						spm.addParam(paramvo.getEnddate());
 					}
 				}
 			} else if (qrytype != null && qrytype == 2) {
-				sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
+				sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
 				String preperiod = ToolsUtil.getPreviousMonth(paramvo.getPeriod());
 				spm.addParam(preperiod);
 			}
 		} else if (qrytype != null && qrytype == 3) {
 			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			sql.append(" AND SUBSTR(t.dchangetime, 1, 7) = ? ");
-			spm.addParam(paramvo.getPeriod());
+			if (!StringUtil.isEmpty(paramvo.getPeriod())) {
+				// 按照查询月份查询
+				sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
+				spm.addParam(paramvo.getPeriod());
+			} else {
+				// 按照查询期间查询
+				if (paramvo.getBegdate() != null) {
+					sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
+					spm.addParam(paramvo.getBegdate());
+				}
+				if (paramvo.getEnddate() != null) {
+					sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
+					spm.addParam(paramvo.getEnddate());
+				}
+			}
 		}
 		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
 		sql.append(" GROUP BY t.pk_corp, NVL(p.chargedeptname, '小规模纳税人') \n");
@@ -547,7 +596,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		sql.append("          FROM ynt_franchisee f \n");
 		sql.append("         WHERE nvl(dr, 0) = 0 \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("           AND SUBSTR(ct.dsigndate, 1, 7) = ? \n");
+		sql.append("           AND substr(ct.dsigndate, 1, 7) = ? \n");
 		spm.addParam(paramvo.getPeriod());
 		// 合同状态 = 已审核 或已终止
 		sql.append("           AND t.vdeductstatus in ( 1 , 9) \n");
@@ -567,7 +616,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		sql.append("          FROM ynt_franchisee f \n");
 		sql.append("         WHERE nvl(dr, 0) = 0 \n");
 		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
-		sql.append("                   AND SUBSTR(ct.dsigndate, 1, 7) < ? \n");
+		sql.append("                   AND substr(ct.dsigndate, 1, 7) < ? \n");
 		spm.addParam(paramvo.getPeriod());
 		// 合同状态 = 已审核 或已终止
 		sql.append("                   AND t.vdeductstatus in ( 1 , 9))) cu\n");//
@@ -650,17 +699,17 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		// 合同数量去掉补提单合同数
 		sql.append("       SUM(CASE  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
-		sql.append("             AND SUBSTR(t.deductdata, 1, 7) = ?  \n");
-		sql.append("             AND ( ( nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') = ? \n");
+		sql.append("             AND substr(t.deductdata, 1, 7) = ?  \n");
+		sql.append("             AND ( ( nvl(substr(t.dchangetime, 1, 7),'1970-01') = ? \n");
 		sql.append("             AND t.vdeductstatus != 10 )  \n");
-		sql.append("             OR nvl(SUBSTR(t.dchangetime, 1, 7),'1970-01') != ? )THEN \n");
+		sql.append("             OR nvl(substr(t.dchangetime, 1, 7),'1970-01') != ? )THEN \n");
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		sql.append("              1  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
-		sql.append("                  AND t.vdeductstatus = 10 AND SUBSTR(t.dchangetime, 1, 7) = ?   \n");
-		sql.append("                  AND nvl(SUBSTR(t.deductdata, 1, 7),'1970-01') != ? THEN \n");
+		sql.append("                  AND t.vdeductstatus = 10 AND substr(t.dchangetime, 1, 7) = ?   \n");
+		sql.append("                  AND nvl(substr(t.deductdata, 1, 7),'1970-01') != ? THEN \n");
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 		sql.append("              -1  \n");
@@ -683,8 +732,8 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			sql.append(condition);
 		}
 
-		sql.append("   AND ( SUBSTR(t.deductdata, 1, 7) = ? OR  \n");
-		sql.append("         SUBSTR(t.dchangetime, 1, 7) = ? )  \n");
+		sql.append("   AND ( substr(t.deductdata, 1, 7) = ? OR  \n");
+		sql.append("         substr(t.dchangetime, 1, 7) = ? )  \n");
 		spm.addParam(paramvo.getPeriod());
 		spm.addParam(paramvo.getPeriod());
 
@@ -720,10 +769,10 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		sql.append("       SUM(CASE  \n");
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
 		sql.append("             AND t.deductdata >= ? AND t.deductdata <= ?  \n");
-		sql.append("             AND ( ( nvl(SUBSTR(t.dchangetime, 1, 10), '1970-01-01') >= ?  \n");
-		sql.append("             AND nvl(SUBSTR(t.dchangetime, 1, 10), '1970-01-01') <= ?  \n");
+		sql.append("             AND ( ( nvl(substr(t.dchangetime, 1, 10), '1970-01-01') >= ?  \n");
+		sql.append("             AND nvl(substr(t.dchangetime, 1, 10), '1970-01-01') <= ?  \n");
 		sql.append("             AND t.vdeductstatus != 10 )  \n");
-		sql.append("             OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? ) THEN \n");
+		sql.append("             OR nvl(substr(t.dchangetime, 1, 10),'1970-01-01') > ? ) THEN \n");
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
 		spm.addParam(paramvo.getBegdate());
@@ -733,8 +782,8 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		// 作废日期在查询期间，且扣款日期不在查询期间
 		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
 		sql.append("                  AND t.vdeductstatus = 10  \n");
-		sql.append("                  AND SUBSTR(t.dchangetime, 1, 10) >= ? \n");
-		sql.append("                  AND SUBSTR(t.dchangetime, 1, 10) <= ? ");
+		sql.append("                  AND substr(t.dchangetime, 1, 10) >= ? \n");
+		sql.append("                  AND substr(t.dchangetime, 1, 10) <= ? ");
 		sql.append("                  AND t.deductdata > ? THEN \n");
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
@@ -760,7 +809,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		}
 
 		sql.append("   AND  ( ( t.deductdata >= ? AND t.deductdata <= ? ) \n");
-		sql.append("       OR (SUBSTR(t.dchangetime, 1, 10) >= ? AND SUBSTR(t.dchangetime, 1, 10) <= ? ) ) \n");
+		sql.append("       OR (substr(t.dchangetime, 1, 10) >= ? AND substr(t.dchangetime, 1, 10) <= ? ) ) \n");
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
 		spm.addParam(paramvo.getBegdate());

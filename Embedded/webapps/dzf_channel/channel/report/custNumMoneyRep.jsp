@@ -13,11 +13,6 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/custNumMoneyRep.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
-<%
-	//获取当前月期间
-	Calendar e = Calendar.getInstance();
-	String ym = new SimpleDateFormat("yyyy-MM").format(e.getTime());
-%>
 <body>
 	<div class="wrapper">
 		<div id="List_panel" class="wrapper" style="width: 100%; height: 100%;" data-options="closed:false">
