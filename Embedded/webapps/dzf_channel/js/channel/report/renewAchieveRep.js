@@ -74,22 +74,23 @@ function load(){
 		showFooter : true,
 		border : true,
 		remoteSort:false,
-		columns : [ 
-		            [ 
-		            { field : 'aname',  title : '大区', width : 60,halign:'center',align:'left',rowspan:2},
-		            { field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',rowspan:2},
-		            { field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',rowspan:2}, 
-		            { field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',rowspan:2},
-		            { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',rowspan:2,
-		            	formatter: function (value,row,index) {
-		            		if (!isEmpty(row.dreldate)) {
-		            			return "<div style='position: relative;'>" + value 
-		            				+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
-		            		}else{
-		            			return value;
-		            		}
-		            	}
-		            },
+		frozenColumns:[[
+		                { field : 'aname',  title : '大区', width : 60,halign:'center',align:'left',},
+		                { field : 'uname',  title : '区总', width : 90,halign:'center',align:'left',},
+		                { field : 'provname',  title : '省份', width : 140,halign:'center',align:'left',}, 
+		                { field : 'incode',  title : '加盟商编码', width : 120,halign:'center',align:'left',},
+		                { field : 'corpnm', title : '加盟商名称', width:180,halign:'center',align:'left',
+		                	formatter: function (value,row,index) {
+		                		if (!isEmpty(row.dreldate)) {
+		                			return "<div style='position: relative;'>" + value 
+		                			+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
+		                		}else{
+		                			return value;
+		                		}
+		                	}
+		                },
+        ]],
+		columns : [ [ 
 		            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
 		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		            
@@ -279,16 +280,24 @@ function reloadData() {
 /**
  * 导出
  */
-function doExport(){
+function doExport() {
 	var datarows = $('#grid').datagrid("getRows");
-	if(datarows == null || datarows.length == 0){
-		Public.tips({content:'当前界面数据为空',type:2});
+	if (datarows == null || datarows.length == 0) {
+		Public.tips({
+			content : '当前界面数据为空',
+			type : 2
+		});
 		return;
 	}
-	var callback=function(){
+	var callback = function() {
 		var columns = $('#grid').datagrid("options").columns[0];
-		Business.getFile(DZF.contextPath+ '/report/renewachieverep!exportExcel.action',
-				{'strlist':JSON.stringify(datarows),'columns':JSON.stringify(columns)}, true, true);
+		var djcols = $('#grid').datagrid('getColumnFields', true);
+		Business.getFile(DZF.contextPath
+				+ '/report/renewachieverep!exportExcel.action', {
+			'strlist' : JSON.stringify(datarows),
+			'columns' : JSON.stringify(columns),
+			'djcols':JSON.stringify(djcols)
+		}, true, true);
 	}
-	checkBtnPower('export',"channel47",callback);
+	checkBtnPower('export', "channel47", callback);
 }
