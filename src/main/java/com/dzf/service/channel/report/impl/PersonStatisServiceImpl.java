@@ -125,13 +125,13 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			key=setVO.getPk_corp()+"xs"+vo.getUserid();
 			if(!Tmap.containsKey(key)){
 				Tmap.put(key,1);
-				setVO.setXnum((setVO.getXnum()==null?1:setVO.getXnum())+1);
+				setVO.setXnum((setVO.getXnum()==null?1:(setVO.getXnum())+1));
 			}
 		}else if(!"jms01".equals(vo.getAreaname())){
 			key=setVO.getPk_corp()+"kj"+vo.getUserid();
 			if(!Tmap.containsKey(key)){
 				Tmap.put(key,1);
-				setVO.setKnum((setVO.getKnum()==null?1:setVO.getKnum())+1);
+				setVO.setKnum((setVO.getKnum()==null?1:(setVO.getKnum())+1));
 			}
 		}
 		if(setVO.getXnum()!=null && setVO.getXnum()>0){
