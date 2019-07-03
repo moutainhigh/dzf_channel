@@ -98,20 +98,24 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 	 * Excel导出方法
 	 */
 	public void exportExcel() {
+		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_46, IButtonName.BTN_EXPORT);
 		String strlist = getRequest().getParameter("strlist");
 		if (StringUtil.isEmpty(strlist)) {
 			throw new BusinessException("导出数据不能为空!");
 		}
 		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
+		
 		String columns = getRequest().getParameter("columns");
 		JSONArray headlist = (JSONArray) JSON.parseArray(columns);
+		
+		String djcols = getRequest().getParameter("djcols");
+		JSONArray djlist = (JSONArray) JSON.parseArray(djcols);
+		
 		List<String> heads = new ArrayList<String>();
 		List<String> heads1 = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
-		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();
-		int num = 8;
-		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_46, IButtonName.BTN_EXPORT);
+		int num = 3;
 		fieldlist.add("aname");
 		fieldlist.add("uname");
 		fieldlist.add("provname");
@@ -124,6 +128,17 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		fieldlist.add("stockcustt");
 		fieldlist.add("newcusts");
 		fieldlist.add("newcustt");
+		
+		heads.add("大区");
+		heads.add("区总");
+		heads.add("省份");
+		heads.add("加盟商编码");
+		heads.add("加盟商名称");
+		Map<String, String> name = null;
+		for(int i = 0; i < djlist.size(); i++){
+			fieldslist.add(djlist.getString(i));
+		}
+		
 		for (int i = 0; i < headlist.size(); i++) {
 			name = (Map<String, String>) headlist.get(i);
 			if (i >= num) {
@@ -135,6 +150,7 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 				fieldslist.add(name.get("field"));
 			}
 		}
+		num = 8;
 		fieldslist.add("stockcusts");
 		fieldslist.add("stockcustt");
 		fieldslist.add("stockconts");
