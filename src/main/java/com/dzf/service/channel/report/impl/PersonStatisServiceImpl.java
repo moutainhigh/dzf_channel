@@ -1,10 +1,10 @@
 package com.dzf.service.channel.report.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.DataVO;
+import com.dzf.model.channel.report.MarketTeamVO;
 import com.dzf.model.channel.report.PersonStatisVO;
 import com.dzf.model.channel.report.UserDetailVO;
 import com.dzf.model.jms.basicset.JMUserRoleVO;
@@ -20,10 +21,14 @@ import com.dzf.model.pub.CommonUtil;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
+import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
+import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
+import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IPersonStatis;
 
@@ -34,6 +39,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	private SingleObjectBO singleObjectBO;
 	
 	private static String[] str={"jms03","jms04","jms10"};
+	
+	Integer num = null;
 
 	@Override
 	public List<PersonStatisVO> query(QryParamVO paramvo) throws DZFWarpException, IllegalAccessException, Exception {
@@ -45,8 +52,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			corplist = new ArrayList<String>(col);
 		}
 		if (corplist != null && corplist.size() > 0) {
-			List<PersonStatisVO> queryEmployNum = queryEmployNum(corplist);
-			HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
+			HashMap<String, Integer> queryEmployNum = queryEmployNum(corplist);
+			//HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
 			HashMap<String, Integer> queryCustNum = queryCustNum(corplist);
 			List<PersonStatisVO> list = queryPersonStatis(corplist);
 			PersonStatisVO setVO=new PersonStatisVO();
@@ -64,20 +71,46 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					data =map.get(pk_corp);
 					setVO = (PersonStatisVO)data;
 					
+					/*StringBuffer sql = new StringBuffer();
+					SQLParameter spm = new SQLParameter();
+					spm.addParam(pk_corp);
+					sql.append("  select * \n");
+					sql.append("   from cn_marketteam \n");
+					sql.append("   where nvl(dr,0)=0 and \n");
+					sql.append("   pk_corp = ? \n");
+					MarketTeamVO mvo = (MarketTeamVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MarketTeamVO.class));
+				    if(mvo!=null){
+						setVO.setJms03(mvo.getManagernum());
+						setVO.setJms04(mvo.getDepartnum());
+						setVO.setJms10(mvo.getSellnum());
+						setVO.setPk_marketeam(mvo.getPk_marketeam());
+						setVO.setXnum(mvo.getManagernum()+mvo.getDepartnum()+mvo.getSellnum());
+				    }*/
+					setVO.setJms03(personStatisVO.getManagernum());
+					setVO.setJms04(personStatisVO.getDepartnum());
+					setVO.setJms10(personStatisVO.getSellnum());
+					setVO.setPk_marketeam(personStatisVO.getPk_marketeam());
+					if(personStatisVO.getManagernum()!=null &&
+							personStatisVO.getDepartnum()!=null&&
+							personStatisVO.getSellnum()!=null){
+						setVO.setXnum(personStatisVO.getManagernum()+personStatisVO.getDepartnum()+personStatisVO.getSellnum());
+					}
+					
 					corpvo = CorpCache.getInstance().get(null, pk_corp);
 					if (corpvo != null) {
 						setVO.setCorpname(corpvo.getUnitname());
 						setVO.setVprovname(corpvo.getCitycounty());
 					}
-					
-					setVO.setTotal(queryUserNum.get(pk_corp));
+					//setVO.setTotal(queryUserNum.get(pk_corp));
 					setVO.setCustnum(queryCustNum.get(pk_corp));
-					if(queryEmployNum!=null && queryEmployNum.indexOf(setVO)>=0){
+					/*if(queryEmployNum!=null && queryEmployNum.indexOf(setVO)>=0){
 						getvo=queryEmployNum.get(queryEmployNum.indexOf(setVO));
 						setVO.setLznum(getvo.getLznum());
 						setVO.setLtotal(new DZFDouble(getvo.getLznum()).div(setVO.getTotal()+getvo.getLznum()).multiply(100));
-					}
+					}*/
+					
 					setVO.setAttributeValue(personStatisVO.getAreaname(),1);
+					
 					setZhanBi(setVO,Tmap,personStatisVO);
 					retlist.add(setVO);
 				}else{
@@ -91,6 +124,33 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					setZhanBi(getvo,Tmap,personStatisVO);
 				}
 			}
+			
+			for (PersonStatisVO pervo : retlist) {
+				Integer lznum = queryEmployNum.get(pervo.getPk_corp())==null?0:queryEmployNum.get(pervo.getPk_corp());
+				pervo.setLznum(lznum);
+				if(pervo.getXnum()==null && pervo.getKnum()!=null){
+					pervo.setXtotal(null);
+					pervo.setTotal(pervo.getJms01()+pervo.getKnum());
+					pervo.setKtotal(new DZFDouble(pervo.getKnum()).div(pervo.getTotal()).multiply(100));
+				}
+				if(pervo.getKnum()==null && pervo.getXnum()!=null){
+					pervo.setKtotal(null);
+					pervo.setTotal(pervo.getJms01()+pervo.getXnum());
+					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
+				}
+				if(pervo.getKnum()==null && pervo.getXnum()==null){
+					pervo.setTotal(pervo.getJms01());
+					pervo.setKtotal(null);
+					pervo.setXtotal(null);
+				}
+				if(pervo.getKnum()!=null && pervo.getXnum()!=null){
+					pervo.setTotal(pervo.getKnum()+pervo.getJms01()+pervo.getXnum());
+					pervo.setKtotal(new DZFDouble(pervo.getKnum()).div(pervo.getTotal()).multiply(100));
+					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
+				}
+				pervo.setLtotal(new DZFDouble(pervo.getLznum()).div(pervo.getTotal()+pervo.getLznum()).multiply(100));
+			}
+			
 		}
 		return retlist;
 	}
@@ -98,16 +158,19 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	
 	private List<PersonStatisVO> queryPersonStatis(List<String> corplist) {
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select sur.cuserid userid, sr.role_code areaname, su.pk_corp, ba.innercode,ba.drelievedate");
+		sql.append(" select ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, ba.innercode,ba.drelievedate");
 		sql.append("          from sm_user_role sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
 		sql.append("         inner join sm_user su on sur.cuserid = su.cuserid");
 		sql.append("                              and nvl(su.locked_tag,'N')= 'N'");
-		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp where");
+		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp ");
+		sql.append("          left join cn_marketteam ma on ma.pk_corp = su.pk_corp where");
 		sql.append(SqlUtil.buildSqlForIn("su.pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0 and nvl(su.dr,0)=0 ");
-		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode,ba.drelievedate");
+		sql.append("         	and sr.role_code not in('jms03','jms04','jms10') ");
+		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode,ba.drelievedate,");
+		sql.append("         ma.managernum,ma.departnum,ma.sellnum");
 		sql.append(" order by ba.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		return list;
@@ -121,25 +184,26 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 */
 	private void setZhanBi(PersonStatisVO setVO,HashMap<String,Integer> Tmap,PersonStatisVO vo) {
 		String key=null;
-		if(Arrays.asList(str).contains(vo.getAreaname())){
+		/*if(Arrays.asList(str).contains(vo.getAreaname())){
 			key=setVO.getPk_corp()+"xs"+vo.getUserid();
 			if(!Tmap.containsKey(key)){
 				Tmap.put(key,1);
-				setVO.setXnum((setVO.getXnum()==null?1:(setVO.getXnum())+1));
+				setVO.setXnum(setVO.getXnum()==null?1:(setVO.getXnum())+1);
 			}
-		}else if(!"jms01".equals(vo.getAreaname())){
+		}else*/ 
+		if(!"jms01".equals(vo.getAreaname())){
 			key=setVO.getPk_corp()+"kj"+vo.getUserid();
 			if(!Tmap.containsKey(key)){
 				Tmap.put(key,1);
 				setVO.setKnum((setVO.getKnum()==null?1:(setVO.getKnum())+1));
 			}
 		}
-		if(setVO.getXnum()!=null && setVO.getXnum()>0){
+		/*if(setVO.getXnum()!=null && setVO.getXnum()>0){
 			setVO.setXtotal(new DZFDouble(setVO.getXnum()).div(setVO.getTotal()).multiply(100));
 		}
 		if(setVO.getKnum()!=null && setVO.getKnum()>0){
 			setVO.setKtotal(new DZFDouble(setVO.getKnum()).div(setVO.getTotal()).multiply(100));
-		}
+		}*/
 	}
 
 	/**
@@ -183,8 +247,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param corplist
 	 * @return
 	 */
-	private List<PersonStatisVO> queryEmployNum(List<String> corplist) {
-		HashMap<String, PersonStatisVO> map=new HashMap<>();
+	private HashMap<String, Integer> queryEmployNum(List<String> corplist) {
+		HashMap<String, Integer> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select count(u.pk_employee) lznum, u.pk_corp");
 		sql.append(" 	from sm_user u left join ynt_employee e");
@@ -195,7 +259,10 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		sql.append(SqlUtil.buildSqlForIn("u.pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append("    group by u.pk_corp ");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
-		return list;
+		for (PersonStatisVO personStatisVO : list) {
+			map.put(personStatisVO.getPk_corp(), personStatisVO.getLznum());
+		}
+		return map;
 	}
 
 
@@ -314,5 +381,50 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
         }
         return map;
     }
+
+
+	@Override
+	public void save(MarketTeamVO marketvo) {
+		if(StringUtil.isEmpty(marketvo.getPk_marketeam())){
+			singleObjectBO.insertVO("000001", marketvo);
+		}else{
+			String uuid = UUID.randomUUID().toString();
+			try{
+				boolean lockKey = LockUtil.getInstance().addLockKey(marketvo.getTableName(), marketvo.getPk_marketeam(), uuid, 60);
+				if (!lockKey) {
+					throw new BusinessException("加盟商编码：" + marketvo.getInnercode() + ",其他用户正在操作此数据;<br>");
+				}
+				checkData(marketvo.getPk_marketeam(), marketvo.getUpdatets());
+				singleObjectBO.update(marketvo, new String[] { "managernum","departnum","sellnum"});
+			}catch (Exception e) {
+				if (e instanceof BusinessException)
+					throw new BusinessException(e.getMessage());
+				else
+					throw new WiseRunException(e);
+			} finally {
+				LockUtil.getInstance().unLock_Key(marketvo.getTableName(), marketvo.getPk_marketeam(), uuid);
+			}
+
+			singleObjectBO.update(marketvo);
+		}
+	}
+
+
+	/**
+	 * 检验是否是最新数据
+	 */
+	private void checkData(String pk_marketeam, DZFDateTime updatets) {
+		MarketTeamVO vo = (MarketTeamVO) singleObjectBO.queryByPrimaryKey(MarketTeamVO.class, pk_marketeam);
+		if (!updatets.equals(vo.getUpdatets())) {
+			throw new BusinessException("加盟商编码：" + vo.getInnercode() + ",数据已发生变化;<br>");
+		}
+	}
+
+
+	@Override
+	public MarketTeamVO queryDataById(String id) {
+		return (MarketTeamVO) singleObjectBO.queryByPrimaryKey(MarketTeamVO.class, id);
+	}
+
 
 }

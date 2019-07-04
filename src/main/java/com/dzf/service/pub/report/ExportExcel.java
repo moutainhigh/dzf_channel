@@ -259,7 +259,7 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 合并单元格设置边框
 	 * 
@@ -371,7 +371,7 @@ public class ExportExcel<T> {
 			XSSFCell titlecell = rowtitle.createCell(0);
 			titlecell.setCellValue(title);
 			titlecell.setCellStyle(headstyle);
-			//起始行号，终止行号， 起始列号，终止列号
+			// 起始行号，终止行号， 起始列号，终止列号
 			CellRangeAddress region = new CellRangeAddress(0, (short) 2, 0, (short) (fieldlength - 1));// 合并前三行
 			sheet.addMergedRegion(region);// 合并标题
 
@@ -384,8 +384,8 @@ public class ExportExcel<T> {
 					XSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new XSSFRichTextString(String.valueOf(hbhtitls.get(i))));
 					cell.setCellStyle(style);
-					//起始行号，终止行号， 起始列号，终止列号
-					CellRangeAddress reg = new CellRangeAddress(3,  4, (short) (begindex),(short) (begindex));
+					// 起始行号，终止行号， 起始列号，终止列号
+					CellRangeAddress reg = new CellRangeAddress(3, 4, (short) (begindex), (short) (begindex));
 					sheet.addMergedRegion(reg);
 				}
 			}
@@ -401,8 +401,8 @@ public class ExportExcel<T> {
 					XSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new XSSFRichTextString(String.valueOf(hbltitls.get(i))));
 					cell.setCellStyle(style);
-					//起始行号，终止行号， 起始列号，终止列号
-					reg = new CellRangeAddress(3,  3, (short) (begindex), (short) (begindex + 1));
+					// 起始行号，终止行号， 起始列号，终止列号
+					reg = new CellRangeAddress(3, 3, (short) (begindex), (short) (begindex + 1));
 					sheet.addMergedRegion(reg);
 				}
 			}
@@ -433,7 +433,7 @@ public class ExportExcel<T> {
 					try {
 						XSSFRichTextString richString;
 						XSSFCell cell = row1.createCell(count);
-						if (map.get(key) != null ) {
+						if (map.get(key) != null) {
 							if (mnylist != null && mnylist.contains(key)) {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
 								cell.setCellValue(doublevalue.toString());
@@ -491,9 +491,9 @@ public class ExportExcel<T> {
 			JSONArray array, OutputStream out, String pattern, List<String> fieldlist) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
-			int index =4;
-			int num=8;
-			
+			int index = 4;
+			int num = 8;
+
 			HSSFSheet sheet = workbook.createSheet(title);
 			// 行宽
 			sheet.setDefaultColumnWidth(15);
@@ -555,7 +555,7 @@ public class ExportExcel<T> {
 				HSSFCell celltitle1m = rowtitle1m.createCell(i);
 				celltitle1m.setCellStyle(style);
 			}
-			
+
 			for (int i = 0; i * 2 < fieldlength - num; i++) {
 				HSSFCell celltitle1m = rowtitle1m.createCell(num + 2 * i);
 				celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
@@ -775,9 +775,9 @@ public class ExportExcel<T> {
 								richString = new HSSFRichTextString(value);
 								cell.setCellValue(richString);
 							}
-						} else if(key.equals("retmny")){
+						} else if (key.equals("retmny")) {
 							cell.setCellValue("0.00");
-						}else{
+						} else {
 							cell.setCellValue("");
 						}
 						if (!fieldlist.contains(key)) {
@@ -980,7 +980,7 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 出入库明细表导出
 	 * 
@@ -995,8 +995,9 @@ public class ExportExcel<T> {
 	 * @param num
 	 * @return
 	 */
-	public byte[] exportOutInExcel(String title, String qj,List<String> headers, List<String> headers1, List<String> fields,
-			JSONArray array, OutputStream out, String pattern, List<String> fieldlist, Integer num) {
+	public byte[] exportOutInExcel(String title, String qj, List<String> headers, List<String> headers1,
+			List<String> fields, JSONArray array, OutputStream out, String pattern, List<String> fieldlist,
+			Integer num) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
@@ -1101,40 +1102,40 @@ public class ExportExcel<T> {
 						HSSFCell cell = row1.createCell(count);
 						if (map.get(key) != null) {
 							if (key.equals("itype")) {
-								 if(map.get(key).equals(0)) {
-									 cell.setCellValue("期初余额");
-								 }else if(map.get(key).equals(1)) {
-									 cell.setCellValue("商品入库");
-								 }else if(map.get(key).equals(2)) {
-									 cell.setCellValue("销售出库");
-								 }else{
-									 cell.setCellValue("其他出库");
-								 }
-							} else if (key.equals("contime")) {
-								if(map.get(key).equals("1999-01-01 00:00:00")) {
-									cell.setCellValue(qj.substring(0,10));
-								}else{
-									cell.setCellValue(((String) map.get(key)).substring(0,10));
+								if (map.get(key).equals(0)) {
+									cell.setCellValue("期初余额");
+								} else if (map.get(key).equals(1)) {
+									cell.setCellValue("商品入库");
+								} else if (map.get(key).equals(2)) {
+									cell.setCellValue("销售出库");
+								} else {
+									cell.setCellValue("其他出库");
 								}
-							} else if(key.contains("price")||key.contains("money")){
+							} else if (key.equals("contime")) {
+								if (map.get(key).equals("1999-01-01 00:00:00")) {
+									cell.setCellValue(qj.substring(0, 10));
+								} else {
+									cell.setCellValue(((String) map.get(key)).substring(0, 10));
+								}
+							} else if (key.contains("price") || key.contains("money")) {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
 								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(doublevalue.toString());
-								if(!map.get(key).equals(0)) {
+								if (!map.get(key).equals(0)) {
 									DZFDouble doublevalue2 = new DZFDouble(map.get(key).toString());
 									doublevalue2 = doublevalue2.setScale(4, DZFDouble.ROUND_HALF_UP);
 									cell.setCellValue(doublevalue2.toString());
-								}else if(map.get(key).equals(0) &&(key.equals("moneyb") || key.equals("priceb"))){
+								} else if (map.get(key).equals(0) && (key.equals("moneyb") || key.equals("priceb"))) {
 									cell.setCellValue("0.0000");
-								}else{
+								} else {
 									cell.setCellValue("");
 								}
-							}else if(key.contains("in")||key.contains("out")){
-								if(!map.get(key).equals(0)) {
+							} else if (key.contains("in") || key.contains("out")) {
+								if (!map.get(key).equals(0)) {
 									String value = map.get(key).toString();
 									richString = new HSSFRichTextString(value);
 									cell.setCellValue(richString);
-								}else{
+								} else {
 									cell.setCellValue("");
 								}
 							} else {
@@ -1178,6 +1179,7 @@ public class ExportExcel<T> {
 
 	/**
 	 * 物料申请表导出
+	 * 
 	 * @param string
 	 * @param exptitlist
 	 * @param expfieidlist
@@ -1192,13 +1194,11 @@ public class ExportExcel<T> {
 	 * @param mnylist
 	 * @return
 	 */
-	public byte[] expMatApply(String title, List<String> exptitls,List<String> expfieids,
-			List<String> hbltitls, List<Integer> hblindexs, 
-			List<String> hbhtitls, List<Integer> hbhindexs,
-			JSONArray array, OutputStream out, 
+	public byte[] expMatApply(String title, List<String> exptitls, List<String> expfieids, List<String> hbltitls,
+			List<Integer> hblindexs, List<String> hbhtitls, List<Integer> hbhindexs, JSONArray array, OutputStream out,
 			String pattern, List<String> strslist, List<String> mnylist) {
-		 
-	    HSSFWorkbook workbook = new HSSFWorkbook();
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
 			HSSFSheet sheet = workbook.createSheet(title);
@@ -1288,11 +1288,11 @@ public class ExportExcel<T> {
 					HSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new HSSFRichTextString(String.valueOf(hbltitls.get(i))));
 					cell.setCellStyle(style);
-					if(i == hbltitls.size() - 1){
+					if (i == hbltitls.size() - 1) {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 3));
-					}else if(i == hbltitls.size() - 2){
+					} else if (i == hbltitls.size() - 2) {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 2));
-					}else{
+					} else {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 1));
 					}
 					sheet.addMergedRegion(reg);
@@ -1300,7 +1300,7 @@ public class ExportExcel<T> {
 			}
 
 			// 合并列 end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-			
+
 			// 添加导出行信息
 			HSSFRow row2 = null;
 			if (headerlength != fieldlength) {
@@ -1327,26 +1327,26 @@ public class ExportExcel<T> {
 					try {
 						HSSFRichTextString richString;
 						HSSFCell cell = row1.createCell(count);
-						if (map.get(key) != null && !map.get(key).toString().equals("0") ) {
+						if (map.get(key) != null && !map.get(key).toString().equals("0")) {
 							if (mnylist != null && mnylist.contains(key)) {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
 								// doublevalue = doublevalue.setScale(0,
 								// DZFDouble.ROUND_HALF_UP);//四舍五入
 								cell.setCellValue(doublevalue.toString());
 							} else if (strslist != null && strslist.contains(key)) {
-								if("status".equals(key)){
-									//合同状态   1-待审核、2-待发货、3-已发货、4-已驳回
-									if("1".equals(map.get(key).toString())){
+								if ("status".equals(key)) {
+									// 合同状态 1-待审核、2-待发货、3-已发货、4-已驳回
+									if ("1".equals(map.get(key).toString())) {
 										showname = "待审核";
-									}else if("2".equals(map.get(key).toString())){
+									} else if ("2".equals(map.get(key).toString())) {
 										showname = "待发货";
-									}else if("3".equals(map.get(key).toString())){
+									} else if ("3".equals(map.get(key).toString())) {
 										showname = "已发货";
-									}else if("4".equals(map.get(key).toString())){
+									} else if ("4".equals(map.get(key).toString())) {
 										showname = "已驳回";
 									}
 									richString = new HSSFRichTextString(showname);
-								}else{
+								} else {
 									richString = new HSSFRichTextString(map.get(key).toString());
 								}
 								cell.setCellValue(richString);
@@ -1382,9 +1382,10 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 导出快递统计表
+	 * 
 	 * @param title
 	 * @param exptitls
 	 * @param expfieids
@@ -1399,13 +1400,11 @@ public class ExportExcel<T> {
 	 * @param mnylist
 	 * @return
 	 */
-	public byte[] exportLogistic(String title, List<String> exptitls,List<String> expfieids,
-			List<String> hbltitls, List<Integer> hblindexs, 
-			List<String> hbhtitls, List<Integer> hbhindexs,
-			JSONArray array, OutputStream out, 
+	public byte[] exportLogistic(String title, List<String> exptitls, List<String> expfieids, List<String> hbltitls,
+			List<Integer> hblindexs, List<String> hbhtitls, List<Integer> hbhindexs, JSONArray array, OutputStream out,
 			String pattern, List<String> strslist, List<String> mnylist) {
-		 
-	    HSSFWorkbook workbook = new HSSFWorkbook();
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
 			HSSFSheet sheet = workbook.createSheet(title);
@@ -1495,11 +1494,11 @@ public class ExportExcel<T> {
 					HSSFCell cell = rowthree.createCell(begindex);
 					cell.setCellValue(new HSSFRichTextString(String.valueOf(hbltitls.get(i))));
 					cell.setCellStyle(style);
-					if(i == hbltitls.size() - 1){
+					if (i == hbltitls.size() - 1) {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 3));
-					}else if(i == hbltitls.size() - 2){
+					} else if (i == hbltitls.size() - 2) {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 2));
-					}else{
+					} else {
 						reg = new Region(3, (short) (begindex), 3, (short) (begindex + 1));
 					}
 					sheet.addMergedRegion(reg);
@@ -1507,7 +1506,7 @@ public class ExportExcel<T> {
 			}
 
 			// 合并列 end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-			
+
 			// 添加导出行信息
 			HSSFRow row2 = null;
 			if (headerlength != fieldlength) {
@@ -1523,7 +1522,7 @@ public class ExportExcel<T> {
 			// 合并单元格设置边框
 			setRegionStyle(sheet, region, headstyle);
 			setRegionStyle(sheet, reg, style);
-			
+
 			String showname = "";
 			for (int i = 0; i < array.size(); i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
@@ -1533,7 +1532,7 @@ public class ExportExcel<T> {
 					try {
 						HSSFRichTextString richString;
 						HSSFCell cell = row1.createCell(count);
-						if (map.get(key) != null && !map.get(key).toString().equals("0") ) {
+						if (map.get(key) != null && !map.get(key).toString().equals("0")) {
 							if (mnylist != null && mnylist.contains(key)) {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
 								cell.setCellValue(doublevalue.toString());
@@ -1572,15 +1571,16 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 渠道业绩统计表
+	 * 
 	 * @param string
 	 * @param conameList
 	 * @param codeList
 	 * @param array
-	 * @param mnylist 
-	 * @param strslist 
+	 * @param mnylist
+	 * @param strslist
 	 * @param toClient
 	 * @param string2
 	 * @return
@@ -1593,139 +1593,139 @@ public class ExportExcel<T> {
 		codeindexList.add(2);
 		codeindexList.add(3);
 		codeindexList.add(4);
-		 HSSFWorkbook workbook = new HSSFWorkbook();
-			try {
-				int index = 4;
-				HSSFSheet sheet = workbook.createSheet(title);
-				// 行宽
-				sheet.setDefaultColumnWidth((short) 15);
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		try {
+			int index = 4;
+			HSSFSheet sheet = workbook.createSheet(title);
+			// 行宽
+			sheet.setDefaultColumnWidth((short) 15);
 
-				// 数字类型样式
-				HSSFCellStyle numsty = workbook.createCellStyle();
-				numsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-				numsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-				numsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
-				numsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
-				numsty.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			// 数字类型样式
+			HSSFCellStyle numsty = workbook.createCellStyle();
+			numsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			numsty.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
-				// 字符、日期类型样式
-				HSSFCellStyle strsty = workbook.createCellStyle();
-				strsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-				strsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-				strsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
-				strsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
-				strsty.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+			// 字符、日期类型样式
+			HSSFCellStyle strsty = workbook.createCellStyle();
+			strsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			strsty.setAlignment(HSSFCellStyle.ALIGN_LEFT);
 
-				// 通用样式
-				HSSFCellStyle style = workbook.createCellStyle();
-				style.setFillForegroundColor(HSSFColor.WHITE.index);
-				style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-				style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-				style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-				style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-				style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-				// 生成一个字体
-				HSSFFont font = workbook.createFont();
-				font.setFontHeightInPoints((short) 12);
-				font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
-				// 把字体应用到当前的样式
-				style.setFont(font);
+			// 通用样式
+			HSSFCellStyle style = workbook.createCellStyle();
+			style.setFillForegroundColor(HSSFColor.WHITE.index);
+			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+			// 生成一个字体
+			HSSFFont font = workbook.createFont();
+			font.setFontHeightInPoints((short) 12);
+			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+			// 把字体应用到当前的样式
+			style.setFont(font);
 
-				HSSFCellStyle headstyle = workbook.createCellStyle();
-				HSSFFont f = workbook.createFont();
-				f.setFontHeightInPoints((short) 20);// 字号
-				f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
-				headstyle.setFont(f);
-				headstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
-				headstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
-																				
-				headstyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-				headstyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-				headstyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-				headstyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-				
-				int headerlength = conameList.size();
-				int fieldlength = codeList.size();
+			HSSFCellStyle headstyle = workbook.createCellStyle();
+			HSSFFont f = workbook.createFont();
+			f.setFontHeightInPoints((short) 20);// 字号
+			f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+			headstyle.setFont(f);
+			headstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
+			headstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
 
-				
-				// 大标题
-				HSSFRow rowtitle = sheet.createRow(0);
-				HSSFCell titlecell = rowtitle.createCell(0);
-				titlecell.setCellValue(title);
-				titlecell.setCellStyle(headstyle);
-				Region region = new Region(0, (short) 0, 2, (short) (fieldlength - 1));// 合并前三行
-				sheet.addMergedRegion(region);// 合并标题
+			headstyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 
-				// 添加导出行信息
-				HSSFRow rowfour = sheet.createRow(3);
-				Region reg = null;
-				for (int i = 0; i < headerlength; i++) {
-					HSSFCell cell1 = rowfour.createCell(i);
-					cell1.setCellValue(new HSSFRichTextString(String.valueOf(conameList.get(i))));
-					cell1.setCellStyle(style);
-				}
-				
-				// 大标题合并行设置边框
-				setRegionStyle(sheet, region, headstyle);
-				
-				for (int i = 0; i < array.size(); i++) {
-					HSSFRow row1 = sheet.createRow(i + index);
-					Map<String, Object> map = (Map<String, Object>) array.get(i);
-					
-					int count = 0;
-					for (String key : codeList) {
-						try {
-							HSSFRichTextString richString;
-							HSSFCell cell = row1.createCell(count);
-							if (map.get(key) != null && !map.get(key).toString().equals("0") ) {
-								if (mnylist != null && mnylist.contains(key)) {
-									DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
-									cell.setCellValue(doublevalue.toString());
-										
-								} else if (strslist != null && strslist.contains(key)) {
-								    richString = new HSSFRichTextString(map.get(key).toString());
-									cell.setCellValue(richString);
-								}
-							} else {
-								richString = new HSSFRichTextString("");
+			int headerlength = conameList.size();
+			int fieldlength = codeList.size();
+
+			// 大标题
+			HSSFRow rowtitle = sheet.createRow(0);
+			HSSFCell titlecell = rowtitle.createCell(0);
+			titlecell.setCellValue(title);
+			titlecell.setCellStyle(headstyle);
+			Region region = new Region(0, (short) 0, 2, (short) (fieldlength - 1));// 合并前三行
+			sheet.addMergedRegion(region);// 合并标题
+
+			// 添加导出行信息
+			HSSFRow rowfour = sheet.createRow(3);
+			Region reg = null;
+			for (int i = 0; i < headerlength; i++) {
+				HSSFCell cell1 = rowfour.createCell(i);
+				cell1.setCellValue(new HSSFRichTextString(String.valueOf(conameList.get(i))));
+				cell1.setCellStyle(style);
+			}
+
+			// 大标题合并行设置边框
+			setRegionStyle(sheet, region, headstyle);
+
+			for (int i = 0; i < array.size(); i++) {
+				HSSFRow row1 = sheet.createRow(i + index);
+				Map<String, Object> map = (Map<String, Object>) array.get(i);
+
+				int count = 0;
+				for (String key : codeList) {
+					try {
+						HSSFRichTextString richString;
+						HSSFCell cell = row1.createCell(count);
+						if (map.get(key) != null && !map.get(key).toString().equals("0")) {
+							if (mnylist != null && mnylist.contains(key)) {
+								DZFDouble doublevalue = new DZFDouble(map.get(key).toString(), 2);
+								cell.setCellValue(doublevalue.toString());
+
+							} else if (strslist != null && strslist.contains(key)) {
+								richString = new HSSFRichTextString(map.get(key).toString());
 								cell.setCellValue(richString);
 							}
-							if (mnylist != null && mnylist.contains(key)) {
-								cell.setCellStyle(numsty);
-								if(map.get(key).toString().equals("0")){
-									cell.setCellValue("0.00");
-								}
-							} else if (strslist != null && strslist.contains(key)) {
-								cell.setCellStyle(strsty);
-							}
-							count++;
-						} catch (SecurityException e) {
-							throw new WiseRunException(e);
-						} catch (IllegalArgumentException e) {
-							throw new WiseRunException(e);
-						} catch (Exception e) {
-							log.error("文件打印", e);
-						} finally {
-							// 清理资源
+						} else {
+							richString = new HSSFRichTextString("");
+							cell.setCellValue(richString);
 						}
+						if (mnylist != null && mnylist.contains(key)) {
+							cell.setCellStyle(numsty);
+							if (map.get(key).toString().equals("0")) {
+								cell.setCellValue("0.00");
+							}
+						} else if (strslist != null && strslist.contains(key)) {
+							cell.setCellStyle(strsty);
+						}
+						count++;
+					} catch (SecurityException e) {
+						throw new WiseRunException(e);
+					} catch (IllegalArgumentException e) {
+						throw new WiseRunException(e);
+					} catch (Exception e) {
+						log.error("文件打印", e);
+					} finally {
+						// 清理资源
 					}
 				}
-				
-				try {
-					workbook.write(out);
-				} catch (IOException e) {
-					throw new WiseRunException(e);
-				}	
-			}catch (Exception e) {
-				log.error("文件打印", e);
 			}
-			return workbook.getBytes();
+
+			try {
+				workbook.write(out);
+			} catch (IOException e) {
+				throw new WiseRunException(e);
+			}
+		} catch (Exception e) {
+			log.error("文件打印", e);
+		}
+		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 加盟商数据分析导出
+	 * 
 	 * @param title
 	 * @param exptitls
 	 * @param expfieids
@@ -1741,8 +1741,8 @@ public class ExportExcel<T> {
 	 * @return
 	 */
 	public byte[] expSjfxExcel(String title, List<String> exptitls, List<String> expfieids, List<String> hbltitls,
-			List<Integer> hblindexs, List<String> hbhtitls, Integer[] hbhindexs, DataAnalysisVO[] expVOs, OutputStream out,
-			String pattern, List<String> strslist, List<String> mnylist, List<String> strnmylist) {
+			List<Integer> hblindexs, List<String> hbhtitls, Integer[] hbhindexs, DataAnalysisVO[] expVOs,
+			OutputStream out, String pattern, List<String> strslist, List<String> mnylist, List<String> strnmylist) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
@@ -1858,6 +1858,7 @@ public class ExportExcel<T> {
 			setRegionStyle(sheet, reg, style);
 			// setRegionStyle(sheet, reg3_1, rightstyle);
 
+			
 			for (int i = 0; i < expVOs.length; i++) {
 				HSSFRow row1 = sheet.createRow(i + index + 1);
 				int count = 0;
@@ -1880,9 +1881,9 @@ public class ExportExcel<T> {
 						if (mnylist != null && mnylist.contains(key)) {
 							cell.setCellStyle(numsty);
 						} else if (strslist != null && strslist.contains(key)) {
-							if(strnmylist != null && strnmylist.contains(key)){
+							if (strnmylist != null && strnmylist.contains(key)) {
 								cell.setCellStyle(numsty);
-							}else{
+							} else {
 								cell.setCellStyle(strsty);
 							}
 						}
@@ -1908,9 +1909,10 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 分部管理-导出客户数据
+	 * 
 	 * @param title
 	 * @param exptitls
 	 * @param expfieids
@@ -2065,9 +2067,9 @@ public class ExportExcel<T> {
 						if (mnylist != null && mnylist.contains(key)) {
 							cell.setCellStyle(numsty);
 						} else if (strslist != null && strslist.contains(key)) {
-							if(strnmylist != null && strnmylist.contains(key)){
+							if (strnmylist != null && strnmylist.contains(key)) {
 								cell.setCellStyle(numsty);
-							}else{
+							} else {
 								cell.setCellStyle(strsty);
 							}
 						}
@@ -2093,9 +2095,10 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
 	/**
 	 * 公司数据统计/销售业绩统计 导出
+	 * 
 	 * @param title
 	 * @param qj
 	 * @param headers
@@ -2108,7 +2111,7 @@ public class ExportExcel<T> {
 	 * @param num
 	 * @return
 	 */
-	public byte[] exportCompanyDataExcel(String title,List<String> headers, List<String> headers1, List<String> fields,
+	public byte[] exportCompanyDataExcel(String title, List<String> headers, List<String> headers1, List<String> fields,
 			JSONArray array, OutputStream out, String pattern, List<String> fieldlist, Integer num) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
@@ -2175,18 +2178,17 @@ public class ExportExcel<T> {
 				HSSFCell celltitle1m = rowtitle1m.createCell(i);
 				celltitle1m.setCellStyle(style);
 			}
-			
+
 			HSSFCell celltitle1m = rowtitle1m.createCell(num);
 			celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(0)));
 			celltitle1m.setCellStyle(style); // 居中
-			sheet.addMergedRegion(new CellRangeAddress(3, 3, num , num + 1));
-			
-			celltitle1m = rowtitle1m.createCell(num + 2 );
+			sheet.addMergedRegion(new CellRangeAddress(3, 3, num, num + 1));
+
+			celltitle1m = rowtitle1m.createCell(num + 2);
 			celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(1)));
 			celltitle1m.setCellStyle(style); // 居中
 			sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 2, num + 2 + 5));
-			
-			
+
 			HSSFCellStyle stylegsm = workbook.createCellStyle();// 表头样式
 			stylegsm.cloneStyleFrom(style);
 			stylegsm.setAlignment(HSSFCellStyle.ALIGN_LEFT);
@@ -2265,5 +2267,188 @@ public class ExportExcel<T> {
 		}
 		return workbook.getBytes();
 	}
-	
+
+	/**
+	 * 加盟商人员统计表导出
+	 * 
+	 * @param string
+	 * @param heads
+	 * @param headindexs
+	 * @param heads1
+	 * @param head1indexs
+	 * @param heads2
+	 * @param fieldslist
+	 * @param exparray
+	 * @param toClient
+	 * @param string2
+	 * @param fieldlist
+	 * @param strnmylist 
+	 * @param num
+	 * @return
+	 */
+	public byte[] exportPersonStatisExcel(String title, List<String> heads, Integer[] headindexs, List<String> heads1,
+			List<Integer> head1indexs, List<String> heads2, List<String> fieldslist, JSONArray exparray,
+			OutputStream out, String string2, List<String> fieldlist, int num) {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		try {
+			int index = 4;
+			HSSFSheet sheet = workbook.createSheet(title);
+			// 行宽
+			sheet.setDefaultColumnWidth((short) 15);
+
+			// 数字类型样式
+			HSSFCellStyle numsty = workbook.createCellStyle();
+			numsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			numsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			numsty.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+
+			// 字符、日期类型样式
+			HSSFCellStyle strsty = workbook.createCellStyle();
+			strsty.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			strsty.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			strsty.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+
+			// 通用样式
+			HSSFCellStyle style = workbook.createCellStyle();
+			style.setFillForegroundColor(HSSFColor.WHITE.index);
+			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+			// 生成一个字体
+			HSSFFont font = workbook.createFont();
+			// font.setColor(HSSFColor.VIOLET.index);
+			font.setFontHeightInPoints((short) 12);
+			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+			// 把字体应用到当前的样式
+			style.setFont(font);
+
+			HSSFCellStyle headstyle = workbook.createCellStyle();
+			HSSFFont f = workbook.createFont();
+			f.setFontHeightInPoints((short) 20);// 字号
+			f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 加粗
+			headstyle.setFont(f);
+			headstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
+			headstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
+																		
+			headstyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			headstyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+																		
+			int header2length = heads2.size();
+			int fieldlength = fieldlist.size();
+
+			// 大标题
+			HSSFRow rowtitle = sheet.createRow(0);
+			HSSFCell titlecell = rowtitle.createCell(0);
+			titlecell.setCellValue(title);
+			titlecell.setCellStyle(headstyle);
+			Region region = new Region(0, (short) 0, 2, (short) (fieldlength - 1));// 合并前三行
+			sheet.addMergedRegion(region);// 合并标题
+
+			// 合并行标题赋值 begin##############################################
+			HSSFRow rowthree = sheet.createRow(3);
+			if (heads != null && heads.size() > 0) {
+				int begindex = 0;
+				for (int i = 0; i < heads.size(); i++) {
+					begindex = headindexs[i];
+					HSSFCell cell = rowthree.createCell(begindex);
+					cell.setCellValue(new HSSFRichTextString(String.valueOf(heads.get(i))));
+					cell.setCellStyle(style);
+					Region reg = new Region(3, (short) (begindex), 4, (short) (begindex));
+					sheet.addMergedRegion(reg);
+				}
+			}
+			// 合并行标题赋值 end################################################
+
+			// 合并列 begin&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+			HSSFRow rowfour = sheet.createRow(4);
+			Region reg = null;
+			if (heads1 != null && heads1.size() > 0) {
+				int begindex = 0;
+				for (int i = 0; i < heads1.size(); i++) {
+					begindex = head1indexs.get(i);
+					HSSFCell cell = rowthree.createCell(begindex);
+					cell.setCellValue(new HSSFRichTextString(String.valueOf(heads1.get(i))));
+					cell.setCellStyle(style);
+					reg = i == 0 ? new Region(3, (short) (begindex), 3, (short) (begindex + 7))
+							: new Region(3, (short) (begindex), 3, (short) (begindex + 3));
+					sheet.addMergedRegion(reg);
+				}
+			}
+
+			// 合并列 end&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+			// 添加导出行信息
+			HSSFRow row2 = null;
+			if (header2length != fieldlength) {
+				index++;
+				row2 = sheet.createRow(index);
+			}
+			for (int i = 0; i < header2length; i++) {
+				HSSFCell cell1 = rowfour.createCell(i);
+				cell1.setCellValue(new HSSFRichTextString(String.valueOf(heads2.get(i))));
+				cell1.setCellStyle(style);
+			}
+
+			// 合并单元格设置边框
+			setRegionStyle(sheet, region, headstyle);
+			setRegionStyle(sheet, reg, style);
+			
+			for (int i = 0; i < exparray.size(); i++) {
+				HSSFRow row1 = sheet.createRow(i + index + 1);
+				Map<String, Object> map = (Map<String, Object>) exparray.get(i);
+				int count = 0;
+				for (String key : fieldlist) {
+					try {
+						HSSFRichTextString richString;
+						HSSFCell cell = row1.createCell(count);
+						if (map.get(key)!= null) {
+							if(key.equals("ktotal")||key.equals("lznum")||key.equals("xtotal")){
+								DZFDouble value = new DZFDouble(map.get(key).toString());
+								value = value.setScale(2, DZFDouble.ROUND_HALF_UP);
+								cell.setCellValue(value.toString());
+							}else{
+								String value = map.get(key).toString();
+								richString = new HSSFRichTextString(value);
+								cell.setCellValue(richString);	
+							}
+						} else {
+							richString = new HSSFRichTextString("");
+							cell.setCellValue(richString);
+						}
+						cell.setCellStyle(strsty);
+						count++;
+					} catch (SecurityException e) {
+						throw new WiseRunException(e);
+					} catch (IllegalArgumentException e) {
+						throw new WiseRunException(e);
+					} catch (Exception e) {
+						log.error("文件打印", e);
+					} finally {
+						// 清理资源
+					}
+				}
+			}
+
+			try {
+				workbook.write(out);
+			} catch (IOException e) {
+				throw new WiseRunException(e);
+			}
+		} catch (Exception e) {
+			log.error("加盟商人员统计表导出", e);
+		}
+		return workbook.getBytes();
+
+	}
+
 }

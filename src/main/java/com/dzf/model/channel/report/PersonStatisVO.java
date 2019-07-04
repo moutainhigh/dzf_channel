@@ -18,7 +18,7 @@ public class PersonStatisVO extends DataVO{
 	private Integer jms08;//记账会计
 	private Integer jms09;//财税支持
 	private Integer jms05;//外勤主管
-	private Integer jms11;//外勤
+	private Integer jms11;//助理会计
 	
 	private Integer jms03;//销售经理
 	private Integer jms04;//销售主管
@@ -38,6 +38,18 @@ public class PersonStatisVO extends DataVO{
 	
 	@FieldAlias("dreldate")
     private DZFDate drelievedate;//解约日期
+	
+	@FieldAlias("marketid")
+	private String pk_marketeam;//销售团队主键
+	
+	@FieldAlias("mnum")
+	private Integer managernum;//销售经理人数
+	
+	@FieldAlias("dnum")
+	private Integer departnum;//销售主管人数
+	
+	@FieldAlias("snum")
+	private Integer sellnum;//销售人数
 	
 	public Integer getLznum() {
 		return lznum;
@@ -159,6 +171,30 @@ public class PersonStatisVO extends DataVO{
 	}
 	public void setDrelievedate(DZFDate drelievedate) {
 		this.drelievedate = drelievedate;
+	}
+	public String getPk_marketeam() {
+		return pk_marketeam;
+	}
+	public void setPk_marketeam(String pk_marketeam) {
+		this.pk_marketeam = pk_marketeam;
+	}
+	public Integer getManagernum() {
+		return managernum;
+	}
+	public void setManagernum(Integer managernum) {
+		this.managernum = managernum;
+	}
+	public Integer getDepartnum() {
+		return departnum;
+	}
+	public void setDepartnum(Integer departnum) {
+		this.departnum = departnum;
+	}
+	public Integer getSellnum() {
+		return sellnum;
+	}
+	public void setSellnum(Integer sellnum) {
+		this.sellnum = sellnum;
 	}
 	@Override  
 	public boolean equals(Object o) {  

@@ -28,7 +28,11 @@
 					</div>
 				  	<div class="right">
 						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
-							data-options=" plain:true" onclick="load()" id="">刷新</a> 
+							data-options=" plain:true" onclick="load()">刷新</a> 
+						<a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
+							data-options=" plain:true" onclick="edit()">修改</a> 
+					    <a href="javascript:void(0)" class="ui-btn ui-btn-xz conn"
+							data-options=" plain:true" onclick="doExport()">导出</a> 	
 					</div>
 		        </div>
 		    </div>
@@ -74,6 +78,39 @@
 				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
 			</div>
+			
+			<!-- 编辑对话框  begin-->
+		 <div id="cbDialog" class="easyui-dialog" style="height:300px;width:400px;overflow:hidden;padding-top:18px;" 
+			data-options="closed:true,buttons:'#dlg-buttons'" modal=true>
+			<form id="market_edit" method="post">
+				<input id="marketid" name="marketid" type="hidden">
+				<input id="updatets" name="updatets" type="hidden">
+				<input id="corpid" name="corpid" type="hidden">
+				<input id="code" name="code" type="hidden">
+				<div class="time_col time_colp10">
+						<label style="text-align:right; width: 124px;">加盟商：</label> 
+						<input id="corpname" class="easyui-textbox" data-options="readonly:true" style="width:168px;height:28px;"/>
+			    </div>
+			    <div class="time_col time_colp10">
+						<label style="text-align:right; width: 124px;">销售经理：</label> 
+						<input id="mnum" name="mnum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+			    </div>
+			    <div class="time_col time_colp10">
+						<label style="text-align:right; width: 124px;">销售主管：</label> 
+						<input id="dnum" name="dnum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+			    </div>
+			    <div class="time_col time_colp10">
+						<label style="text-align:right; width: 124px;">销售：</label> 
+						<input id="snum" name="snum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+			    </div>
+				<div style="float:right;margin-top:25px;margin-right:118px;">
+				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
+					<a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onCancel()">取消</a>
+				</div>
+			</form>
+		</div>
+		<!-- 新增对话框  end-->
+			
 		</div>
 		<div id="userDetail" class="easyui-dialog" title="加盟商人员明细表" 
 			data-options="modal:true,closed:true" style="width:940px;height:500px;">

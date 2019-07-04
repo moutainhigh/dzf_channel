@@ -44,13 +44,14 @@ function load(){
 		title : '',
 		rownumbers : true,
 		height : Public.setGrid().h,
-		singleSelect : false,
+		singleSelect : true,
 		showRefresh : false,// 不显示分页的刷新按钮
 		showFooter : true,
 		border : true,
 		remoteSort:false,
 		frozenColumns:[[
 					{ field : 'corpid',    title : '会计公司主键', hidden : true,},
+					{ field : 'marketid',    title : '销售团队主键', hidden : true,},
 					{ field : 'aname',  title : '大区', width : 100,halign:'center',align:'left',},
 					{ field : 'uname',  title : '区总', width : 100,halign:'center',align:'left',},
 					{ field : 'provname',  title : '省份', width : 160,halign:'center',align:'left',}, 
@@ -70,11 +71,11 @@ function load(){
 			            { field : 'custnum', title : '总客户数', width:80,halign:'center',align:'right',rowspan:2},
 		                { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
-		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:7},
+		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:8},
 		                { field : 'ktotal',  title : '人员占比(%)', width : 90,halign:'center',align:'right',rowspan:2,formatter:formatMny},
 		                { field : 'lznum',  title : '离职数', width : 60,halign:'center',align:'right',rowspan:2},
 		                { field : 'ltotal',  title : '流失率(%)', width : 80,halign:'center',align:'right',rowspan:2,formatter:formatMny},
-		                { field : 'meiyong2',  title : '销售团队总人数', width : 160,halign:'center',align:'right',colspan:3},
+		                { field : 'meiyong2',  title : '销售团队总人数', width : 160,halign:'center',align:'right',colspan:4},
 		                { field : 'xtotal',  title : '人员占比(%)', width : 90,halign:'center',align:'right',rowspan:2,formatter:formatMny},
 		                { field : 'total',  title : '总用户数', width : 70,halign:'center',align:'right',rowspan:2},
 	                ],[
@@ -85,10 +86,12 @@ function load(){
 	                   	{ field : 'jms09', title : '财税支持', width : 70,align:'right' },
 	                   	{ field : 'jms05', title : '外勤主管', width : 70,align:'right' },
 	                   	{ field : 'jms11', title : '助理会计', width : 70,align:'right' },
+	                   	{ field : 'knum', title : '合计', width : 70,align:'right' },
 	                   	
 	                   	{ field : 'jms03', title : '销售经理', width : 70,align:'right' },
 	                   	{ field : 'jms04', title : '销售主管', width : 70,align:'right' },
 	                   	{ field : 'jms10', title : '销售', width : 70,align:'right' },
+	                   	{ field : 'xnum', title : '合计', width : 70,align:'right' },
 	                ]],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
@@ -236,5 +239,117 @@ function initUserGrid(){
 			
 		},
 	});
+}
+
+
+function edit(){
+	
+	$('#market_edit').form('clear');
+	var row = $('#grid').datagrid('getSelected');
+	if(row==null){
+		Public.tips({content:'请选择数据行',type:2});
+		return;
+	}
+	$("#corpname").textbox("setValue",row.corpnm);
+	$("#corpid").val(row.corpid);
+	$("#code").val(row.incode);
+	
+	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '销售团队修改');
+	var data = queryById(row.marketid);
+	if(isEmpty(data)){
+		return;
+	}
+	
+	$('#market_edit').form('load', data);
+	
+}
+
+function queryById(marketid){
+	var row;
+	$.ajax({
+		type : "post",
+		dataType : "json",
+		traditional : true,
+		async : false,
+		url : DZF.contextPath + '/report/personStatis!queryById.action',
+		data : {
+			"id" : marketid,
+		},
+		success : function(data) {
+			if (!data.success) {
+				Public.tips({
+					content :  data.msg,
+					type : 2
+				});	
+				return;
+			} else {
+				row = data.rows;
+			}
+		},
+	});
+	return row;
+}
+
+
+function onSave(){
+	if ($("#market_edit").form('validate')) {
+		$('#market_edit').form('submit', {
+			url : DZF.contextPath + '/report/personStatis!save.action',
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				if (result.success) {
+					$('#cbDialog').dialog('close');
+					load();
+					Public.tips({
+						content : result.msg,
+					});
+				} else {
+					Public.tips({
+						content : result.msg,
+						type : 2
+					});
+				}
+			}
+		});
+	} else {
+		Public.tips({
+			content : "必输信息为空或信息输入不正确",
+			type : 2
+		});
+		return; 
+	}
+}
+
+
+function onCancel(){
+	$('#cbDialog').dialog('close');
+}
+
+
+
+/**
+ * 导出
+ */
+function doExport(){
+	var datarows = $('#grid').datagrid("getRows");
+	if(datarows == null || datarows.length == 0){
+		Public.tips({content:'当前界面数据为空',type:2});
+		return;
+	}
+	
+		var columns = $('#grid').datagrid("options").columns[0];
+		var coltwo = $('#grid').datagrid("options").columns[1];
+		var cols = $('#grid').datagrid('getColumnFields');//解冻列的字段
+		var frozencols = $('#grid').datagrid('getColumnFields', true); //冻结列的字段
+		Business.getFile(DZF.contextPath+ '/report/personStatis!exportAuditExcel.action',
+				{
+					'strlist':JSON.stringify(datarows),
+					'columns':JSON.stringify(columns),
+					'cols':JSON.stringify(cols),
+					'coltwo':JSON.stringify(coltwo),
+					'frozencols':JSON.stringify(frozencols),
+				},true, true);
+				
+
 }
 
