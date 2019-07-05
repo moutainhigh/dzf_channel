@@ -34,6 +34,8 @@ import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.excel.Excelexport2003;
+import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.channel.chn_set.IAccountSetService;
 import com.dzf.service.pub.IPubService;
@@ -110,6 +112,11 @@ public class AccountSetAction extends BaseAction<AccountSetVO> {
 				throw new BusinessException("登陆用户错误");
 			}else if(uservo == null){
 				throw new BusinessException("登陆用户错误");
+			}
+			DZFDate stopdate = new DZFDate(data.getStopperiod());
+			int days = DateUtils.getDaysDiff(stopdate.getMillis(),new DZFDate().getMillis());
+			if(!StringUtil.isEmpty(data.getStopperiod()) && days>15){
+				throw new BusinessException("停用时间需在15天之内！");
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_73);
 			if(StringUtil.isEmpty(data.getPk_accountset())){
