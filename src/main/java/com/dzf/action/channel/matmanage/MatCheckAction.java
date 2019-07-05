@@ -97,6 +97,39 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 		}
 		writeJson(grid);
 	}
+	
+	
+	/**
+	 * 编辑回显
+	 */
+	public void queryById() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			checkUser(uservo);
+			MatOrderVO vo = new MatOrderVO();
+			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
+			String id = getRequest().getParameter("id");
+			String stype = getRequest().getParameter("stype");
+			if (!StringUtil.isEmpty(id)) {
+				vo = matcheck.queryDataById(vo, id, uservo,stype);
+			}
+			if (!StringUtil.isEmpty(vo.getMessage())) {
+				json.setMsg("提示");
+				json.setRows(vo);
+			} else {
+				json.setRows(vo);
+				json.setMsg("查询成功");
+				json.setSuccess(true);
+			}
+		} catch (Exception e) {
+			json.setMsg("查询失败");
+			json.setSuccess(false);
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+
+	}
 
 	/**
 	 * 申请单审核确认

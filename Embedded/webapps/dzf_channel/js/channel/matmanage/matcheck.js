@@ -753,7 +753,7 @@ function checked(type){
 	$.ajax({
 	    type : 'POST',
 		async : false,
-	    url : DZF.contextPath + '/matmanage/matapply!queryById.action',
+	    url : DZF.contextPath + '/matmanage/matcheck!queryById.action',
 		dataTye : 'json',
 		data : {
 			id : id,
@@ -838,7 +838,7 @@ function queryByID(matbillid){
 		dataType : "json",
 		traditional : true,
 		async : false,
-		url : contextPath + '/matmanage/matapply!queryById.action',
+		url : contextPath + '/matmanage/matcheck!queryById.action',
 		data : {
 			"id" : matbillid,
 		},

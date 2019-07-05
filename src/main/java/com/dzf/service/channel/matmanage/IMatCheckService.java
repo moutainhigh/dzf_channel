@@ -55,4 +55,14 @@ public interface IMatCheckService {
 	 */
 	List<MatOrderVO> query(QryParamVO qvo, MatOrderVO pamvo, UserVO uservo);
 
+	/**
+	 * 根据id查询详情
+	 * @param vo
+	 * @param id
+	 * @param uservo
+	 * @param stype
+	 * @return
+	 */
+	MatOrderVO queryDataById(MatOrderVO vo, String id, UserVO uservo, String stype);
+
 }

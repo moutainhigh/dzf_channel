@@ -472,7 +472,7 @@ function doExport(){
 	var columns = $('#grid').datagrid("options").columns[0];
 	//var qj = $('#begdate').datebox('getValue')+"至"+$('#enddate').datebox('getValue');
 	var qj = $('#jqj').html();
-	Business.getFile(DZF.contextPath+ '/matmanage/matfile!exportAuditExcel.action',
+	Business.getFile(DZF.contextPath+ '/matmanage/matcomm!exportAuditExcel.action',
 			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
 }
 

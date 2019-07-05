@@ -618,7 +618,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 				vo.setChildren(bvos);
 			}
 
-			setCitycountry(vo);
+			matcomm.setCitycountry(vo);
 
 			if (!StringUtil.isEmpty(mvo.getDedubegdate()) && !StringUtil.isEmpty(mvo.getDuduenddate())) {
 				// 获取上个季度时间
@@ -642,32 +642,6 @@ public class MatHandleServiceImpl implements IMatHandleService {
 			return vo;
 		}
 		return null;
-	}
-
-	private void setCitycountry(MatOrderVO vo) throws DZFWarpException {
-		if (vo.getCitycounty() != null) {
-			String[] citycountry = vo.getCitycounty().split("-");
-			if (citycountry.length == 3) {
-				vo.setPname(citycountry[0]);
-				vo.setCityname(citycountry[1]);
-				vo.setCountryname(citycountry[2]);
-			} else if (citycountry.length == 2) {
-				String str = "";
-				if (citycountry[1] != null) {
-					str = citycountry[1].substring(citycountry[1].length() - 1);
-				}
-				if ("区".equals(str)) {
-					vo.setCityname("市辖区");
-				} else if ("县".equals(str)) {
-					vo.setCityname("县");
-				} else if ("市".equals(str)) {
-					vo.setCityname("市");
-				}
-				vo.setPname(citycountry[0]);
-				vo.setCountryname(citycountry[1]);
-			}
-
-		}
 	}
 
 	

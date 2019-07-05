@@ -1,10 +1,12 @@
 package com.dzf.service.channel.matmanage.impl;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +38,13 @@ import com.dzf.service.sys.sys_power.IUserService;
 @Service("matcheck")
 public class MatCheckServiceImpl implements IMatCheckService {
 
+	private Logger logger = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private SingleObjectBO singleObjectBO;
+	
+	@Autowired
+	private MultBodyObjectBO multBodyObjectBO;
 	
 	@Autowired
 	private IUserService userser;
@@ -48,10 +55,6 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	@Autowired
 	private IMatCommonService matcomm;
 	
-	@Autowired
-	private MultBodyObjectBO multBodyObjectBO;
-	
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ChnAreaBVO> queryComboBox(UserVO uservo)   throws DZFWarpException{
@@ -305,6 +308,109 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		return qryvo;
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public MatOrderVO queryDataById(MatOrderVO mvo, String id, UserVO uservo,String stype)
+			throws DZFWarpException {
+		String message = "";
+
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(id);
+		sql.append("select  m.pk_materielbill, \n ");
+		sql.append("   m.vcontcode, \n");
+		sql.append("   m.vstatus,m.vreason, \n");
+		sql.append("   m.fathercorp,m.corpname, \n");
+		sql.append("   m.vprovince,m.vcity,m.varea,m.citycounty, \n ");
+		sql.append("   m.vaddress,m.vreceiver,m.phone,m.vmemo, \n ");
+		sql.append("   m.coperatorid,m.applydate, \n");
+		sql.append("   m.pk_logistics, \n");
+		sql.append("   m.fastcode,m.fastcost, \n");
+		sql.append("   m.deliverid,m.deliverdate, \n");
+		sql.append("   m.auditerid,m.auditdate, \n");
+		sql.append("   lg.vname logname \n");
+
+		sql.append("     from cn_materielbill m \n");
+		sql.append("     left join cn_logistics lg on \n");
+		sql.append("     lg.pk_logistics = m.pk_logistics \n");
+		sql.append("     where nvl(m.dr,0) = 0 and nvl(lg.dr,0) = 0 \n");
+		sql.append("     and m.pk_materielbill = ? \n");
+
+		MatOrderVO vo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm,
+				new BeanProcessor(MatOrderVO.class));
+		if (vo != null) {
+				if (vo.getDeliverid() != null) {
+					uservo = userser.queryUserJmVOByID(vo.getDeliverid());
+					if (uservo != null) {
+						vo.setDename(uservo.getUser_name());
+					}
+				} else {
+					uservo = userser.queryUserJmVOByID(uservo.getCuserid());
+					if (uservo != null) {
+						vo.setDename(uservo.getUser_name());// 发货人
+					}
+				}
+			if (vo.getCoperatorid() != null) {
+				uservo = userser.queryUserJmVOByID(vo.getCoperatorid());
+				if (uservo != null) {
+					vo.setApplyname(uservo.getUser_name());// 申请人
+				}
+			}
+			if (vo.getAuditerid() != null) {
+				uservo = userser.queryUserJmVOByID(vo.getAuditerid());
+				if (uservo != null) {
+					vo.setAudname(uservo.getUser_name());// 审核人
+				}
+			}
+
+			StringBuffer ssql = new StringBuffer();
+			SQLParameter sspm = new SQLParameter();
+			sspm.addParam(id);
+			ssql.append("  select b.pk_materielbill_b, \n");
+			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum,nvl(l.intnum,0)-nvl(l.outnum,0) enapplynum, \n");
+			ssql.append("    l.pk_materiel \n");
+			ssql.append("    from cn_materielbill_b b \n");
+			ssql.append("    left join cn_materiel l on \n");
+			ssql.append("    b.pk_materiel = l.pk_materiel \n");
+			ssql.append("    where nvl(b.dr,0) = 0 \n");
+			ssql.append("    and b.pk_materielbill = ? \n");
+			List<MatOrderBVO> bvolist = (List<MatOrderBVO>) singleObjectBO.executeQuery(ssql.toString(), sspm,
+					new BeanListProcessor(MatOrderBVO.class));
+			MatOrderBVO[] b = new MatOrderBVO[bvolist.size()];
+			MatOrderBVO[] bvos = (MatOrderBVO[]) bvolist.toArray(b);
+			if (bvolist != null && bvolist.size() > 0) {
+				vo.setChildren(bvos);
+			}
+
+			matcomm.setCitycountry(vo);
+
+			if (!StringUtil.isEmpty(mvo.getDedubegdate()) && !StringUtil.isEmpty(mvo.getDuduenddate())) {
+				// 获取上个季度时间
+				try {
+					String lastQuarter = matcomm.getLastQuarter(mvo.getDedubegdate(), mvo.getDuduenddate());
+					String[] quarter = lastQuarter.split(",");
+					vo.setDedubegdate(quarter[0]);
+					vo.setDuduenddate(quarter[1]);
+				} catch (ParseException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+
+			if (stype != null && "1".equals(stype)) {
+				// 点击审核校验
+				message = matcomm.checkIsInfo(vo, bvos, message);
+				if (!message.isEmpty()) {
+					vo.setMessage(message);
+				}
+			}
+			return vo;
+		}
+		return null;
+	}
+	
+	
+	
 	
 }
 
