@@ -42,7 +42,7 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		}
 
 		// 1、按照所选则的大区、省（市）、会计运营经理和当前登陆人过滤出符合条件的加盟商信息
-		HashMap<String, DataVO> map = queryCorps(pamvo, FinanceDealStateRepVO.class);
+		HashMap<String, DataVO> map = queryCorps(pamvo, FinanceDealStateRepVO.class,2);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();

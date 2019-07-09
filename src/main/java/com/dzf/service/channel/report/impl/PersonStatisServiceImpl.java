@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.MarketTeamVO;
 import com.dzf.model.channel.report.PersonStatisVO;
 import com.dzf.model.channel.report.UserDetailVO;
 import com.dzf.model.jms.basicset.JMUserRoleVO;
 import com.dzf.model.pub.CommonUtil;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -31,6 +33,7 @@ import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IPersonStatis;
+import com.dzf.service.pub.IPubService;
 
 @Service("statisPerson")
 public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPersonStatis {
@@ -38,24 +41,29 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Autowired
 	private SingleObjectBO singleObjectBO;
 	
+	@Autowired
+	private IPubService pubser;
+	
 	private static String[] str={"jms03","jms04","jms10"};
 	
 	Integer num = null;
 
 	@Override
-	public List<PersonStatisVO> query(QryParamVO paramvo) throws DZFWarpException, IllegalAccessException, Exception {
+	public List<PersonStatisVO> query(QryParamVO paramvo,UserVO user) throws DZFWarpException, IllegalAccessException, Exception {
 		List<PersonStatisVO> retlist = new ArrayList<PersonStatisVO>();
-		HashMap<String, DataVO> map = queryCorps(paramvo,PersonStatisVO.class);
+		int type = queryRole(user.getCuserid());
+		HashMap<String, DataVO> map = queryCorps(paramvo,PersonStatisVO.class,type);
 		List<String> corplist = null;
 		if(map!=null && !map.isEmpty()){
 			Collection<String> col = map.keySet();
 			corplist = new ArrayList<String>(col);
 		}
 		if (corplist != null && corplist.size() > 0) {
+			
 			HashMap<String, Integer> queryEmployNum = queryEmployNum(corplist);
 			//HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
 			HashMap<String, Integer> queryCustNum = queryCustNum(corplist);
-			List<PersonStatisVO> list = queryPersonStatis(corplist);
+			List<PersonStatisVO> list = queryPersonStatis(corplist,user,type);
 			PersonStatisVO setVO=new PersonStatisVO();
 			PersonStatisVO getvo=new PersonStatisVO();
 			DataVO data=null;
@@ -156,22 +164,53 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	}
 	
 	
-	private List<PersonStatisVO> queryPersonStatis(List<String> corplist) {
+	private int queryRole(String cuserid) {
+		
+		int type = 0;
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, ba.innercode,ba.drelievedate");
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(cuserid);
+		sql.append("  select distinct sr.role_name \n");
+		sql.append("    from sm_user_role ur \n");
+		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role \n");
+		sql.append("    where nvl(ur.dr,0)=0 \n");
+		sql.append("    and nvl(sr.dr,0)=0 \n");
+		sql.append("    and ur.cuserid = ? \n");
+		List<String> rolename = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor());
+		for (String string : rolename) {
+			if("渠道经理".equals(string) || "大区总".equals(string)){
+				type = IStatusConstant.IQUDAO;
+				break;
+			}else if("培训师".equals(string) || "运营培训经理".equals(string)){
+				type = IStatusConstant.IPEIXUN;
+				break;
+			}
+		}
+		return type;
+	}
+
+
+	private List<PersonStatisVO> queryPersonStatis(List<String> corplist, UserVO uservo,int type) {
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, account.innercode,account.drelievedate");
 		sql.append("          from sm_user_role sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
 		sql.append("         inner join sm_user su on sur.cuserid = su.cuserid");
 		sql.append("                              and nvl(su.locked_tag,'N')= 'N'");
-		sql.append("          left join bd_account ba on ba.pk_corp = su.pk_corp ");
+		sql.append("          left join bd_account account on account.pk_corp = su.pk_corp ");
 		sql.append("          left join cn_marketteam ma on ma.pk_corp = su.pk_corp where");
 		sql.append(SqlUtil.buildSqlForIn("su.pk_corp", corplist.toArray(new String[corplist.size()])));
 		sql.append("         	and nvl(sur.dr,0)=0 and nvl(sr.dr,0)=0 and nvl(su.dr,0)=0 ");
 		sql.append("         	and sr.role_code not in('jms03','jms04','jms10') ");
-		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, ba.innercode,ba.drelievedate,");
+		
+		String condition = pubser.makeCondition(uservo.getCuserid(), null,type);
+		if (!condition.equals("alldata")) {
+			sql.append(condition);
+		}
+		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, account.innercode,account.drelievedate,");
 		sql.append("         ma.managernum,ma.departnum,ma.sellnum");
-		sql.append(" order by ba.innercode");
+		sql.append(" order by account.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		return list;
 	}
@@ -424,6 +463,12 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Override
 	public MarketTeamVO queryDataById(String id) {
 		return (MarketTeamVO) singleObjectBO.queryByPrimaryKey(MarketTeamVO.class, id);
+	}
+
+
+	@Override
+	public int queryQtype(UserVO uservo) {
+		return queryRole(uservo.getCuserid());
 	}
 
 

@@ -79,7 +79,7 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		}
 		List<AccountSetVO> list=(List<AccountSetVO>)singleObjectBO.executeQuery(sql.toString(),spm, new BeanListProcessor(AccountSetVO.class));
 		if(list!=null && list.size()>0){
-			HashMap<String, DataVO> map = queryCorps(paramvo,AccountSetVO.class);
+			HashMap<String, DataVO> map = queryCorps(paramvo,AccountSetVO.class,2);
 			CorpVO cvo;
 			DataVO dataVO;
 			if(!map.isEmpty()){

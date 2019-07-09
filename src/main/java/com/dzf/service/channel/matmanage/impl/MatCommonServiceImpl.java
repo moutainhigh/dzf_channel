@@ -92,8 +92,11 @@ public class MatCommonServiceImpl implements IMatCommonService{
 			vcorp = "(" + vcorp + ")";
 		}
 		
-		list.get(0).setCorpname(vcorp);
-		list.get(0).setVprovname(vpro);
+		if(list!=null && list.size()>0){
+			list.get(0).setCorpname(vcorp);
+			list.get(0).setVprovname(vpro);
+		}
+		
 
 		return list;
 	}

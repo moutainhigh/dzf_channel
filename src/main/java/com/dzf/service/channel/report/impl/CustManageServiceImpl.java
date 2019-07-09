@@ -37,7 +37,7 @@ public class CustManageServiceImpl extends DataCommonRepImpl implements ICustMan
 	@Override
 	public List<CustManageRepVO> query(QryParamVO pamvo) throws DZFWarpException, IllegalAccessException, Exception {
 
-		Map<String, DataVO> map = queryCorps(pamvo, CustManageRepVO.class);
+		Map<String, DataVO> map = queryCorps(pamvo, CustManageRepVO.class,2);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();

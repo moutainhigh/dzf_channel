@@ -6,8 +6,8 @@
 	<title>加盟商人员统计</title>
 	<jsp:include page="../../inc/easyui.jsp"></jsp:include>   
 	<link href=<%UpdateGradeVersion.outversion(out, "../../css/index.css");%> rel="stylesheet">
-	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/personStatis.js");%> charset="UTF-8" type="text/javascript"></script>
-	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
+	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/personStatis.js");%> charset="UTF-8" type="text/javascript"></script>	
+	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script> 
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 </head>
 

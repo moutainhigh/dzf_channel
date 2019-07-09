@@ -1,4 +1,6 @@
 var grid;
+var type;
+var ovince;
 
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -11,6 +13,8 @@ $(function() {
 	initQry();
 	load();
 	initUserGrid();
+	
+	
 });
 
 //初始化
@@ -20,9 +24,124 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
-	initQryCommbox();
-	initChannel();
+	//initQryCommbox();
+	queryQtype();
+	changeAreaName();
+	changeProvinceName();
+	initArea({"qtype" :type});
+	initProvince({"qtype" :type});
+	initManager({"qtype" :type});
+	initChannelName();
 }
+
+function queryQtype(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/report/personStatis!queryQtype.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    type = result.rows;
+			    ovince = type==1?-2:-3;
+			   /* if(type==1){
+			    	 ovince = -2;
+			    }else if(type==2){
+			    	
+			    }
+			   */
+			} 
+		}
+	});
+}
+
+function changeAreaName(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :type};
+			if(!isEmpty(n)){
+				queryData={'aname' : n,"qtype" :type};
+				$('#ovince').combobox('setValue',null);
+				$('#uid').combobox('setValue',null);
+			}
+			initProvince(queryData);
+			initManager(queryData);
+		}
+	});
+}
+
+function changeProvinceName(){
+	 $("#ovince").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :type};
+			if(!isEmpty(n)){
+				queryData={'aname' : $("#aname").combobox('getValue'),'ovince':n,"qtype" :type};
+				$('#uid').combobox('setValue',null);
+			}
+			initManager(queryData);
+		}
+	});
+}
+
+
+
+//初始化加盟商
+function initChannelName(){
+    $('#channel_select').textbox({
+        editable: false,
+        icons: [{
+            iconCls: 'icon-search',
+            handler: function(e) {
+                $("#kj_dialog").dialog({
+                    width: 600,
+                    height: 480,
+                    readonly: true,
+                    title: '选择加盟商',
+                    modal: true,
+                    href: DZF.contextPath + '/ref/channel_select.jsp',
+                    queryParams : {
+                    	ovince : ovince
+    				},
+                    buttons: '#kj_buttons'
+                });
+            }
+        }]
+    });
+}
+
+//双击选择公司
+function dClickCompany(rowTable){
+	var str = "";
+	var corpIds = [];
+	if(rowTable){
+		if(rowTable.length>300){
+			Public.tips({content : "一次最多只能选择300个客户!" ,type:2});
+			return;
+		}
+		for(var i=0;i<rowTable.length;i++){
+			if(i == rowTable.length - 1){
+				str += rowTable[i].uname;
+			}else{
+				str += rowTable[i].uname+",";
+			}
+			corpIds.push(rowTable[i].pk_gs);
+		}
+		$("#channel_select").textbox("setValue",str);
+		$("#pk_account").val(corpIds);
+	}
+	$("#kj_dialog").dialog('close');
+}
+
+//清空查询条件
+function clearCondition(){
+	$('#aname').combobox('select',null);
+	$('#ovince').combobox('select',null);
+	$('#uid').combobox('select',null);
+	$("#pk_account").val(null);
+	$("#channel_select").textbox("setValue",null);
+}
+
 
 /**
  * 数据表格初始化

@@ -35,7 +35,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 
 	@Override
 	public List<CustNumMoneyRepVO> query(QryParamVO paramvo) throws DZFWarpException {
-		HashMap<String, DataVO> map = queryCorps(paramvo, CustNumMoneyRepVO.class);
+		HashMap<String, DataVO> map = queryCorps(paramvo, CustNumMoneyRepVO.class,2);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();

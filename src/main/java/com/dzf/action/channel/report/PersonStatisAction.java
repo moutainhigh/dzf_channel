@@ -69,8 +69,9 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
 				paramvo.setPk_corp(getLogincorppk());
 			}
+			UserVO uservo = getLoginUserInfo();
 			paramvo.setBegdate(new DZFDate());
-			List<PersonStatisVO> list = personStatis.query(paramvo);
+			List<PersonStatisVO> list = personStatis.query(paramvo,uservo);
 			grid.setTotal(Long.valueOf(0));
 			grid.setRows(list);
 			grid.setSuccess(true);
@@ -97,6 +98,24 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 		writeJson(grid);
 	}
 
+	/**
+	 * 查询当前登录用户角色
+	 */
+	public void queryQtype() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			int type = personStatis.queryQtype(uservo);
+			json.setRows(type);
+			json.setMsg("查询成功");
+			json.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	
 	/**
 	 * 编辑销售团队人数
 	 */

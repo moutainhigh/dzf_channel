@@ -39,18 +39,17 @@ public class DataCommonRepImpl {
 
 	private String filtersql = QueryUtil.getWhereSql();
 
-	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class cla) throws DZFWarpException {
+	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class cla,int type) throws DZFWarpException {
 		Integer level = pubService.getDataLevel(paramvo.getUser_name());
-
 		HashMap<String, DataVO> map = new HashMap<>();
 		if (level == null) {
 			
 		} else if (level <= 2) {
 			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			map = qryBoth(paramvo, level, cla,queryUserMap);// 2大区+3渠道总
+			map = qryBoth(paramvo, level, cla,queryUserMap,type);// 2大区+3渠道总
 		} else if (level == 3) {
 			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			map = qryChannel(paramvo, cla,queryUserMap);// 1省
+			map = qryChannel(paramvo, cla,queryUserMap,type);// 1省
 		}
 		return map;
 	}
@@ -59,10 +58,11 @@ public class DataCommonRepImpl {
 	 * 查询省市数据分析
 	 * 
 	 * @param qvo
+	 * @param type 
 	 * @return
 	 */
-	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla,HashMap<String, UserVO> queryUserMap) {
-		List<DataVO> qryCharge = qryCharge(qvo, cla); // 查询 是 省/市负责人相关的数据
+	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla,HashMap<String, UserVO> queryUserMap, int type) {
+		List<DataVO> qryCharge = qryCharge(qvo, cla,type); // 查询 是 省/市负责人相关的数据
 		String condition = null;
 		if (qryCharge == null || qryCharge.size() == 0) {
 			qryCharge = new ArrayList<>();
@@ -73,7 +73,7 @@ public class DataCommonRepImpl {
 				qvo.setVqrysql(condition);
 			}
 		}
-		List<DataVO> qryNotCharge = qryNotCharge(qvo, cla);// 查询 非 省/市负责人相关的数据
+		List<DataVO> qryNotCharge = qryNotCharge(qvo, cla,type);// 查询 非 省/市负责人相关的数据
 		if (qryNotCharge != null && qryNotCharge.size() > 0) {
 			qryCharge.addAll(qryNotCharge);
 		}
@@ -110,7 +110,7 @@ public class DataCommonRepImpl {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,HashMap<String, UserVO> queryUserMap) {
+	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,HashMap<String, UserVO> queryUserMap,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select a.areaname,  \n");
@@ -129,13 +129,15 @@ public class DataCommonRepImpl {
 		sql.append("                      and y.parenter_id = 1  \n");
 		sql.append("                      and nvl(y.dr, 0) = 0  \n");
 		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince  \n");
-		sql.append("                          and b.type = 2  \n");
+		sql.append("                          and b.type = ?  \n");
 		sql.append("                          and nvl(b.dr, 0) = 0  \n");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append("                        and a.type = 2  \n");
+		sql.append("                        and a.type = ?  \n");
 		sql.append("                        and nvl(a.dr, 0) = 0  \n");
 		sql.append(" where ").append(filtersql);
 		sql.append("   and account.vprovince is not null \n");
+		spm.addParam(type);
+		spm.addParam(type);
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (account.drelievedate is null or account.drelievedate >? )");
 			spm.addParam(new DZFDate().toString());
@@ -214,7 +216,7 @@ public class DataCommonRepImpl {
 	 * @param cla
 	 * @return
 	 */
-	private List<DataVO> qryCharge(QryParamVO qvo, Class cla) {
+	private List<DataVO> qryCharge(QryParamVO qvo, Class cla,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select account.pk_corp,  \n");
@@ -240,9 +242,10 @@ public class DataCommonRepImpl {
 		sql.append(" where ").append(filtersql);
 		sql.append("   and nvl(b.dr, 0) = 0  \n");
 		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = 2  \n");
+		sql.append("   and b.type = ?  \n");
 		sql.append("   and b.userid = ?  \n");
 		sql.append("   and nvl(b.ischarge, 'N') = 'Y' \n");
+		spm.addParam(type);
 		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
 			sql.append(" and (account.drelievedate is null or account.drelievedate >? )");
@@ -276,7 +279,7 @@ public class DataCommonRepImpl {
 	 * @param cla
 	 * @return
 	 */
-	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla) {
+	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select account.pk_corp,  \n");
@@ -295,7 +298,8 @@ public class DataCommonRepImpl {
 		sql.append(" where ").append(filtersql);
 		sql.append("   and nvl(b.dr, 0) = 0  \n");
 		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = 2  \n");
+		sql.append("   and b.type = ?  \n");
+		spm.addParam(type);
 		if (!StringUtil.isEmpty(qvo.getVqrysql())) {
 			sql.append(" and (" + qvo.getVqrysql() + " or b.userid=? ) ");
 		} else {

@@ -37,7 +37,7 @@ public class RenewAchieveServiceImpl extends DataCommonRepImpl implements IRenew
 	@Override
 	public List<CustNumMoneyRepVO> queryRenew(QryParamVO paramvo) throws DZFWarpException {
 		
-		HashMap<String, DataVO> map = queryCorps(paramvo, CustNumMoneyRepVO.class);
+		HashMap<String, DataVO> map = queryCorps(paramvo, CustNumMoneyRepVO.class,2);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
