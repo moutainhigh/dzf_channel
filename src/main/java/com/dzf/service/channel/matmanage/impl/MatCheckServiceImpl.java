@@ -186,8 +186,10 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		String vcorp = "";
 		// 添加数据权限
 		List<ChnAreaBVO> list = matcomm.queryPro(uservo, "2",vpro,vcorp);
-
-		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo, pamvo, list.get(0).getVprovname(), list.get(0).getCorpname());
+		String pro = list!=null && list.size()>0 ? list.get(0).getVprovname() : null; 
+		String corp = list!=null && list.size()>0 ? list.get(0).getCorpname() : null; 
+		
+		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo, pamvo, pro, corp);
 		List<MatOrderVO> mlist = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
 		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
@@ -207,10 +209,9 @@ public class MatCheckServiceImpl implements IMatCheckService {
 			}
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, mlist, 1);
 		}
-			if(StringUtil.isEmpty(list.get(0).getVprovname()) && 
-					StringUtil.isEmpty(list.get(0).getVprovname())){//没有数据可以查看
-				mlist = null;
-			}
+		if (StringUtil.isEmpty(pro) && StringUtil.isEmpty( corp)) {// 没有数据可以查看
+			mlist = null;
+		}
 		return mlist;
 	}
 
