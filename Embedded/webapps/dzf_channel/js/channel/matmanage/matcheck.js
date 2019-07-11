@@ -2,7 +2,6 @@ var contextPath = DZF.contextPath;
 //var hjcols = null;//汇总列字段
 var editIndex;
 var status="brows";
-//var lastreason = "";
 
 $(window).resize(function () {
     $('#grid').datagrid('resize', {
@@ -887,7 +886,6 @@ function onSave(vstatus){
 	
 	var matbillid = $('#matbillid').val();
 	var reason = $('#reason').val();
-	//lastreason = reason;
 	var status = null;
 	if($('#false').is(':checked')){
 		status = 4;

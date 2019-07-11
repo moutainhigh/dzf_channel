@@ -415,10 +415,12 @@ public class MatCheckServiceImpl implements IMatCheckService {
 
 	@Override
 	public String queryLastReason(UserVO uservo) {
-		
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(uservo.getCuserid());
 		String sql = "select vreason from cn_materielbill where updatets = "+
-		"(select max(updatets) from cn_materielbill where vreason is not null)";
-		return (String) singleObjectBO.executeQuery(sql, null, new ColumnProcessor("vreason"));
+		"(select max(updatets) from cn_materielbill"+
+		" where nvl(dr,0) = 0 and vreason is not null and auditerid = ? )";
+		return (String) singleObjectBO.executeQuery(sql, spm, new ColumnProcessor("vreason"));
 	
 	}
 	
