@@ -241,7 +241,7 @@ function load(){
 			field : 'fj',
 			align : 'center',
 			formatter : function(value, row, index) {
-				if(!isEmpty(row.billid)){
+				if(!isEmpty(row.fpath)){
 					return '<a href="javascript:void(0)"  style="color:blue" onclick="showImage(\''+row.billid+'\')" >' + "附件"+ '</a>';
 				}
 			}
