@@ -189,7 +189,7 @@ public class MatCommonAction extends BaseAction<MatOrderVO>{
 	}
 
 	/**
-	 * 物料申请表导出
+	 * 物料订单表导出
 	 */
 	public void exportAuditExcel() {
 
