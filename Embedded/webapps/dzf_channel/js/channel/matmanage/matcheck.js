@@ -2,6 +2,7 @@ var contextPath = DZF.contextPath;
 //var hjcols = null;//汇总列字段
 var editIndex;
 var status="brows";
+//var lastreason = "";
 
 $(window).resize(function () {
     $('#grid').datagrid('resize', {
@@ -22,13 +23,32 @@ $(function(){
 function review(){
 	if($('#false').is(':checked')){
     	$('#reason').textbox({required:true});
+    	 $('#reason').textbox({readonly:false});
     	$('#reason').textbox({prompt:'最多输入100字'});
+    	queryLastReason();
     }
 	if($('#true').is(':checked')){
     	$('#reason').textbox({required:false});
+    	$('#reason').textbox({readonly:true});
     	$('#reason').textbox({prompt:''});
+    	$('#reason').textbox('setValue','');
     }
 }
+
+function queryLastReason(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/matmanage/matcheck!queryLastReason.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$('#reason').textbox('setValue',result.rows);
+			} 
+		}
+	});
+};
 
 function initCombobox(){
 	$("#uid").combobox({
@@ -68,6 +88,8 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	queryBoxChange('#begdate','#enddate');
+	queryBoxChange('#bperiod','#eperiod');
 	/*$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
@@ -806,6 +828,7 @@ function showCard(row){
 	    readonly();
 	    $('#stat').textbox('setValue','待审核');
 	    $('#reason').textbox({required:false});
+	    $('#reason').textbox({readonly:true});
     	$('#reason').textbox({prompt:''});
 	    if(row.children != null && row.children.length > 0){
 			$('#cardGrid').datagrid('loadData', row.children);
@@ -864,6 +887,7 @@ function onSave(vstatus){
 	
 	var matbillid = $('#matbillid').val();
 	var reason = $('#reason').val();
+	//lastreason = reason;
 	var status = null;
 	if($('#false').is(':checked')){
 		status = 4;
@@ -1017,7 +1041,9 @@ function readonly(){
 	$("#phone").textbox('readonly',true);
 	//$("#memo").attr('readonly','readonly');
 	$("#applyname").textbox('readonly',true);
+	$("#audname").textbox('readonly',true);
 	$("#adate").textbox('readonly',true);
+	$("#audate").textbox('readonly',true);
 	$("#address").textbox('readonly',true);
 	$("#memo").textbox('readonly',true);
 	

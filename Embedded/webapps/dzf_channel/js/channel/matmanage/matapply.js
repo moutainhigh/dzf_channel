@@ -29,19 +29,24 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	
+	queryBoxChange('#begdate','#enddate');
+	queryBoxChange('#bperiod','#eperiod'); 
 	/*$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);*/
 	
-	$("#begdate").datebox("setValue", null);
-	$("#enddate").datebox("setValue",null);
+	$("#begdate").datebox("setValue", '');
+	$("#enddate").datebox("setValue",'');
 	//$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
-	$("#bperiod").datebox("setValue", null);
-	$("#eperiod").datebox("setValue", null);
+	$("#bperiod").datebox("setValue", '');
+	$("#eperiod").datebox("setValue", '');
 	
 }
+
+
 
 /**
  * 表格初始化
@@ -566,6 +571,8 @@ function add() {
 	editable();
 	getLastQuarter();//获取上个季度日期
 	operCard();
+	$("#applyname").textbox('readonly',true);
+	$("#adate").textbox('readonly',true);
     $('.hid').css("display", "none"); 
     $('.xid').css("display", "none");
 	$('.bid').css("display", "");
@@ -1188,7 +1195,20 @@ function edit(index){
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '编辑物料申请单');
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
+	
+	$("#code").textbox('readonly',false);
+	$("#stat").textbox('readonly',false);
+	$("#corpnm").textbox('readonly',false);
+	$("#pname").combobox('readonly',false);
+	$("#cityname").combobox('readonly',false);
+	$("#countryname").combobox('readonly',false);
+	$("#address").textbox('readonly',false);
+	$("#receiver").textbox('readonly',false);
+	$("#phone").textbox('readonly',false);
+	$("#memo").textbox('readonly',false);
 	$('#applyname').textbox('readonly',true);
+	$("#adate").textbox('readonly',true);
+	
 	queryAllProvince();
 	initCard();
 	operCard();

@@ -97,8 +97,7 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 		}
 		writeJson(grid);
 	}
-	
-	
+
 	/**
 	 * 编辑回显
 	 */
@@ -112,7 +111,7 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 			String id = getRequest().getParameter("id");
 			String stype = getRequest().getParameter("stype");
 			if (!StringUtil.isEmpty(id)) {
-				vo = matcheck.queryDataById(vo, id, uservo,stype);
+				vo = matcheck.queryDataById(vo, id, uservo, stype);
 			}
 			if (!StringUtil.isEmpty(vo.getMessage())) {
 				json.setMsg("提示");
@@ -188,6 +187,21 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 				json.setMsg("查询成功");
 				json.setSuccess(true);
 			}
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+
+	}
+
+	public void queryLastReason() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			String reason = matcheck.queryLastReason(uservo);
+			json.setRows(reason);
+			json.setMsg("查询成功");
+			json.setSuccess(true);
 		} catch (Exception e) {
 			printErrorLog(json, log, e, "查询失败");
 		}

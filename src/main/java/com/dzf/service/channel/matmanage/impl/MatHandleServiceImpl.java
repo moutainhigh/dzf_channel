@@ -1,6 +1,7 @@
 package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -207,26 +208,28 @@ public class MatHandleServiceImpl implements IMatHandleService {
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo)  throws DZFWarpException {
 		
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo,pamvo);
+		List<MatOrderVO> retlist = new ArrayList<MatOrderVO>();
 		List<MatOrderVO> list = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
-		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
+		//HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list!=null && list.size()>0){
 			for (MatOrderVO mvo : list) {
-				if (mvo.getCoperatorid() != null) {
-					uservo = map.get(mvo.getCoperatorid());
-					if(uservo!=null){
-						mvo.setApplyname(uservo.getUser_name());
-					}
-				}
 				uservo = marmap.get(mvo.getFathercorp());
-				if (uservo != null) {
-					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
-				}
+					if(uservo != null ){
+						mvo.setVmanagername(uservo.getUser_name());// 渠道经理
+						if(!StringUtil.isEmpty(pamvo.getVmanagerid()) 
+								&& uservo.getCuserid().equals(pamvo.getVmanagerid())){
+							retlist.add(mvo);
+						}
+					}
 			}
-			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, list, 1);
+			if(StringUtil.isEmpty(pamvo.getVmanagerid())){
+				retlist.addAll(list);
+			}
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname","applyname" }, list, 1);
 		}
-		return list;
+		return retlist;
 	}
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo)  throws DZFWarpException {
@@ -246,11 +249,12 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		sql.append("                bi.vreason,  \n") ; 
 		sql.append("                bi.vstatus,  \n") ; 
 		sql.append("                bi.doperatedate,  \n") ; 
-		sql.append("                bi.coperatorid,  \n") ; 
+		//sql.append("                bi.coperatorid,  \n") ; 
+		sql.append("                su1.user_name applyname,  \n") ; 
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
-		sql.append("                bi.vmanagerid,  \n") ; 
+		//sql.append("                bi.vmanagerid,  \n") ; 
 		sql.append("                bi.ts,  \n") ; 
 		sql.append("                b.vname,  \n") ; 
 		sql.append("                b.vunit,  \n") ; 
@@ -266,6 +270,7 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
 		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
 		sql.append("  left join bd_account co on co.pk_corp = bi.fathercorp  \n") ; 
+		sql.append("  left join sm_user su1 on su1.cuserid = bi.coperatorid \n") ; 
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
@@ -277,10 +282,6 @@ public class MatHandleServiceImpl implements IMatHandleService {
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
 			sql.append(" AND  bi.corpname like ? ");
 			spm.addParam("%" + pamvo.getCorpname() + "%");
-		}
-		if (!StringUtil.isEmpty(pamvo.getVmanagerid())) {
-			sql.append(" AND  bi.vmanagerid = ? ");
-			spm.addParam(pamvo.getVmanagerid());
 		}
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
 			sql.append("   AND bi.vstatus = ? \n");

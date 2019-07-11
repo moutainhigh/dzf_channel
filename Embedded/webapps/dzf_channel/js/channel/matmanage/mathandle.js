@@ -99,6 +99,8 @@ function initQry() {
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	queryBoxChange('#begdate','#enddate');
+	queryBoxChange('#bperiod','#eperiod');
 	/*
 	 * $("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	 * $("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);

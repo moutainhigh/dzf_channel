@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.dzf.action.channel.expfield.MatFileExcelField;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
@@ -30,13 +30,10 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.Field.FieldMapping;
-import com.dzf.pub.excel.Excelexport2003;
-import com.dzf.pub.util.JSONConvtoJAVA;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.matmanage.IMatCommonService;
-import com.dzf.service.pub.LogRecordEnum;
+import com.dzf.service.pub.report.ExportExcel;
 
 @ParentPackage("basePackage")
 @Namespace("/matmanage")
@@ -191,59 +188,170 @@ public class MatCommonAction extends BaseAction<MatOrderVO>{
 
 	}
 
-
-	
 	/**
-	 * 导出
+	 * 物料申请表导出
 	 */
 	public void exportAuditExcel() {
-		String strlist =getRequest().getParameter("strlist");
-		String qj = getRequest().getParameter("qj");
-		if(StringUtil.isEmpty(strlist)){
-			throw new BusinessException("导出数据不能为空!");
-		}	
-		JSONArray exparray = (JSONArray) JSON.parseArray(strlist);
-		Map<String, String> mapping = FieldMapping.getFieldMapping(new MaterielFileVO());
-		MaterielFileVO[] expVOs = DzfTypeUtils.cast(exparray, mapping,MaterielFileVO[].class, JSONConvtoJAVA.getParserConfig());
-		HttpServletResponse response = getResponse();
-		Excelexport2003<MaterielFileVO> ex = new Excelexport2003<>();
-		MatFileExcelField fields = new MatFileExcelField();
-		fields.setVos(expVOs);
-		fields.setQj(qj);
+
+		String reportName = "";
+		// 导出表类型
+		String type = getRequest().getParameter("type");
+		if ("1".equals(type)) {
+			reportName = "物料申请表";
+		} else if ("2".equals(type)) {
+			reportName = "物料审核表";
+		} else if ("3".equals(type)) {
+			reportName = "物料处理表";
+		}
+
+		// 获取需要导出数据
+		String strlist = getRequest().getParameter("strlist");
+		if (StringUtil.isEmpty(strlist)) {
+			return;
+		}
+		JSONArray array = (JSONArray) JSON.parseArray(strlist);
+
+		// 第一行单元格元素
+		String hblcols = getRequest().getParameter("hblcols");
+		JSONArray hblcolsarray = (JSONArray) JSON.parseArray(hblcols);// title+field
+
+		// 导出字段编码
+		String cols = getRequest().getParameter("cols");
+		JSONArray colsarray = (JSONArray) JSON.parseArray(cols);// 字段编码
+
+		// 1、导出字段名称
+		List<String> exptitlist = new ArrayList<String>();
+
+		// 2、导出字段编码
+		List<String> expfieidlist = new ArrayList<String>();
+
+		// 3、合并列名称
+		List<String> hbltitlist = new ArrayList<String>();
+
+		// 4、合并列字段下标
+		List<Integer> hblindexlist = new ArrayList<Integer>();
+
+		// 5、合并行字段名称
+		List<String> hbhtitlist = new ArrayList<String>();
+
+		// 7、字符集合
+		List<String> strslist = new ArrayList<String>();
+
+		// 8、金额集合
+		List<String> mnylist = new ArrayList<String>();
+		mnylist.add("fcost");
+
+		Map<String, String> field = null;
+
+		List<Integer> hbhindexs = new ArrayList<Integer>();
+
+		int hblnum = 0;
+		int largenum = 0;
+		int countnum = 1;
+		for (int i = 0; i < hblcolsarray.size(); i++) {
+			field = (Map<String, String>) hblcolsarray.get(i);
+
+			// 合并行且不为隐藏字字段标题
+			if ("2".equals(String.valueOf(field.get("rowspan")))
+					&& !"true".equals(String.valueOf(field.get("hidden")))) {
+				exptitlist.add(String.valueOf(field.get("title")));
+				hbhtitlist.add(String.valueOf(field.get("title")));
+
+				if (hblnum > 0) {
+					hbhindexs.add(largenum + countnum);
+					countnum++;
+				} else {
+					hbhindexs.add(i - 2);
+				}
+			}
+
+			// 合并列的标题
+			if (!StringUtil.isEmpty(String.valueOf(field.get("colspan")))) {
+				hbltitlist.add(String.valueOf(field.get("title")));
+			}
+
+			// 合并两列的标题
+			if ("2".equals(String.valueOf(field.get("colspan")))) {
+				exptitlist.add("申请");
+				exptitlist.add("实发");
+				if (hblnum == 0) {
+					hblindexlist.add(i - 2);
+				} else {
+					hblindexlist.add(i - 2 + hblnum);
+				}
+				hblnum++;
+				// 合并三列的标题
+			} else if ("3".equals(String.valueOf(field.get("colspan")))) {
+				exptitlist.add("收货人");
+				exptitlist.add("联系电话");
+				exptitlist.add("地址");
+				hblindexlist.add(i - 2 + hblnum);
+				hblnum++;
+				// 合并四列的标题
+			} else if ("4".equals(String.valueOf(field.get("colspan")))) {
+				exptitlist.add("快递公司");
+				exptitlist.add("金额");
+				exptitlist.add("单号");
+				exptitlist.add("发货时间");
+				hblindexlist.add(i - 2 + hblnum + 1);
+				largenum = i - 2 + hblnum + 1 + 3;
+			}
+
+		}
+
+		for (int i = 2; i < colsarray.size(); i++) {
+			expfieidlist.add(String.valueOf(colsarray.get(i)));
+			if (!"fcost".equals(String.valueOf(colsarray.get(i)))) {
+				strslist.add(String.valueOf(colsarray.get(i)));
+			}
+		}
+
+		ExportExcel<MatOrderVO> ex = new ExportExcel<MatOrderVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
 		try {
+			HttpServletResponse response = getResponse();
 			response.reset();
-			// 设置response的Header
-			String filename = fields.getExcelport2003Name();
-			String formattedName = URLEncoder.encode(filename, "UTF-8");
-	        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ";filename*=UTF-8''" + formattedName);
+			String date = DateUtils.getDate(new Date());
+			String fileName = null;
+			String userAgent = getRequest().getHeader("user-agent");
+			if (!StringUtil.isEmpty(userAgent) && (userAgent.indexOf("Firefox") >= 0 || userAgent.indexOf("Chrome") >= 0
+					|| userAgent.indexOf("Safari") >= 0)) {
+				fileName = new String((reportName).getBytes(), "ISO8859-1");
+			} else {
+				fileName = URLEncoder.encode(reportName, "UTF8"); // 其他浏览器
+			}
+			response.addHeader("Content-Disposition", "attachment;filename=" + fileName + new String(date + ".xls"));
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
-			response.setContentType("applicationnd.ms-excel;charset=gb2312");
-			ex.exportExcel(fields, toClient);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出物料档案", ISysConstants.SYS_3);
-		} catch (Exception e) {
-			log.error("导出失败",e);
-		}  finally {
-			if(toClient != null){
+			response.setContentType("application/vnd.ms-excel;charset=gb2312");
+			byte[] length = ex.expMatApply(reportName, exptitlist, expfieidlist, hbltitlist, hblindexlist, hbhtitlist,
+					hbhindexs, array, toClient, "", strslist, mnylist);
+			String srt2 = new String(length, "UTF-8");
+			response.addHeader("Content-Length", srt2);
+		} catch (IOException e) {
+			log.error(e);
+		} finally {
+			if (toClient != null) {
 				try {
+					toClient.flush();
 					toClient.close();
 				} catch (IOException e) {
-					log.error("导出失败",e);
+					log.error(e);
 				}
 			}
-			if(servletOutputStream != null){
+			if (servletOutputStream != null) {
 				try {
 					servletOutputStream.flush();
 					servletOutputStream.close();
 				} catch (IOException e) {
-					log.error("导出失败",e);
+					log.error(e);
 				}
 			}
 		}
 	}
-		
+
+	
 	
 	/**
 	 * 登录用户校验

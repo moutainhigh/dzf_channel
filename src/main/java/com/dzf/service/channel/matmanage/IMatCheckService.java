@@ -65,4 +65,11 @@ public interface IMatCheckService {
 	 */
 	MatOrderVO queryDataById(MatOrderVO vo, String id, UserVO uservo, String stype);
 
+	/**
+	 * 查询上一次驳回原因
+	 * @param uservo
+	 * @return
+	 */
+	String queryLastReason(UserVO uservo);
+
 }

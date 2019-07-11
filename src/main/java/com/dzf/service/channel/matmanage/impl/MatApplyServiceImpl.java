@@ -2,7 +2,6 @@ package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -76,22 +75,16 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo, pamvo,pro,corp);
 		List<MatOrderVO> mlist = (List<MatOrderVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
 				new BeanListProcessor(MatOrderVO.class));
-		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
+		//HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if (mlist != null && mlist.size() > 0) {
 			for (MatOrderVO mvo : mlist) {
-				if (mvo.getCoperatorid() != null) {
-					uservo = map.get(mvo.getCoperatorid());
-					if (uservo != null) {
-						mvo.setApplyname(uservo.getUser_name());
-					}
-				}
 				uservo = marmap.get(mvo.getFathercorp());
 				if (uservo != null) {
 					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
 			}
-			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, mlist, 1);
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname","applyname" }, mlist, 1);
 		}
 
 		if (StringUtil.isEmpty(pro) && StringUtil.isEmpty( corp)) {// 没有数据可以查看
@@ -117,7 +110,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("                bi.vreason,  \n") ; 
 		sql.append("                bi.vstatus,  \n") ; 
 		sql.append("                bi.doperatedate,  \n") ; 
-		sql.append("                bi.coperatorid,  \n") ; 
+		//sql.append("                bi.coperatorid,  \n") ; 
+		sql.append("                su1.user_name applyname,  \n") ; 
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
@@ -136,6 +130,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
 		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
 		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
+		sql.append("  left join sm_user su1 on su1.cuserid = bi.coperatorid \n") ; 
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
@@ -147,10 +142,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			sql.append(" AND  bi.corpname like ? ");
 			spm.addParam("%" + pamvo.getCorpname() + "%");
 		}
-		if (!StringUtil.isEmpty(pamvo.getVmanagerid())) {
-			sql.append(" AND  bi.vmanagerid = ? ");
-			spm.addParam(pamvo.getVmanagerid());
-		}
+		
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
 			sql.append("   AND bi.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());

@@ -277,12 +277,18 @@ function queryBoxChange(start,end){
 		onChange: function(newValue, oldValue){
 			var edv = $(end).datebox('getValue');
 			$('#jqj').text(newValue + ' 至 ' + edv);
+			if(isEmpty(newValue) && isEmpty(edv)){
+				$('#jqj').text('');
+			}
 		}
 	});
 	$(end).datebox({
 		onChange: function(newValue, oldValue){
 			var sdv = $(start).datebox('getValue');
 			$('#jqj').text(sdv + ' 至 ' + newValue);
+			if(isEmpty(newValue) && isEmpty(sdv)){
+				$('#jqj').text('');
+			}
 		}
 	});
 }

@@ -14,6 +14,7 @@ function initQry(){
 		$("#qrydialog").show();
 		$("#qrydialog").css("visibility", "visible");
 	});
+	queryBoxChange('#begdate','#enddate');
 	$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
 	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
 	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
@@ -472,7 +473,7 @@ function doExport(){
 	var columns = $('#grid').datagrid("options").columns[0];
 	//var qj = $('#begdate').datebox('getValue')+"至"+$('#enddate').datebox('getValue');
 	var qj = $('#jqj').html();
-	Business.getFile(DZF.contextPath+ '/matmanage/matcomm!exportAuditExcel.action',
+	Business.getFile(DZF.contextPath+ '/matmanage/matfile!exportAuditExcel.action',
 			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
 }
 

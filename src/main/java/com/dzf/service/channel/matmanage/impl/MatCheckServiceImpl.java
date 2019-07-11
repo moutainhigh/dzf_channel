@@ -1,7 +1,7 @@
 package com.dzf.service.channel.matmanage.impl;
 
 import java.text.ParseException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,6 +14,7 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
@@ -61,14 +62,13 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		
 		StringBuffer corpsql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		corpsql.append(" SELECT distinct  b.userid,a.ts \n");
+		corpsql.append(" SELECT distinct  b.userid \n");
 		corpsql.append(" FROM cn_chnarea_b b \n");
 		corpsql.append(" left join cn_chnarea a on \n");
 		corpsql.append(" a.pk_chnarea = b.pk_chnarea \n");
 		corpsql.append("  where nvl(a.dr,0)= 0 and \n");
 		corpsql.append("  nvl(b.dr,0)= 0 and \n");
 		corpsql.append("  a.userid = ? \n");
-		corpsql.append(" order by a.ts desc");
 		sp.addParam(uservo.getCuserid());
 		List<ChnAreaBVO> bvolist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(corpsql.toString(), sp, new BeanListProcessor(ChnAreaBVO.class));
 		if(bvolist!=null && bvolist.size()>0){
@@ -184,6 +184,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	public List<MatOrderVO> query(QryParamVO qvo,MatOrderVO pamvo, UserVO uservo)  throws DZFWarpException {
 		String vpro = "";
 		String vcorp = "";
+		List<MatOrderVO> retlist = new ArrayList<MatOrderVO>();
 		// 添加数据权限
 		List<ChnAreaBVO> list = matcomm.queryPro(uservo, "2",vpro,vcorp);
 		String pro = list!=null && list.size()>0 ? list.get(0).getVprovname() : null; 
@@ -192,27 +193,28 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(qvo, pamvo, pro, corp);
 		List<MatOrderVO> mlist = (List<MatOrderVO>)singleObjectBO.executeQuery(sqpvo.getSql(),
 				sqpvo.getSpm(),new BeanListProcessor(MatOrderVO.class));
-		HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
+		//HashMap<String, UserVO> map = userser.queryUserMap(uservo.getPk_corp(), true);
 		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(mlist!=null && mlist.size()>0){
 			for (MatOrderVO mvo : mlist) {
-				if (mvo.getCoperatorid() != null) {
-					uservo = map.get(mvo.getCoperatorid());
-					if(uservo!=null){
-						mvo.setApplyname(uservo.getUser_name());
+				uservo = marmap.get(mvo.getFathercorp());
+				if(uservo != null ){
+					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
+					if(!StringUtil.isEmpty(pamvo.getVmanagerid()) 
+							&& uservo.getCuserid().equals(pamvo.getVmanagerid())){
+						retlist.add(mvo);
 					}
 				}
-				uservo = marmap.get(mvo.getFathercorp());
-				if (uservo != null) {
-					mvo.setVmanagername(uservo.getUser_name());// 渠道经理
-				}
 			}
-			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname" }, mlist, 1);
+			if(StringUtil.isEmpty(pamvo.getVmanagerid())){
+				retlist.addAll(mlist);
+			}
+			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname", "corpname","applyname" }, mlist, 1);
 		}
 		if (StringUtil.isEmpty(pro) && StringUtil.isEmpty( corp)) {// 没有数据可以查看
-			mlist = null;
+			retlist = null;
 		}
-		return mlist;
+		return retlist;
 	}
 
 	private QrySqlSpmVO getQrySqlSpm(QryParamVO qvo,MatOrderVO pamvo,
@@ -233,11 +235,13 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		sql.append("                bi.vreason,  \n") ; 
 		sql.append("                bi.vstatus,  \n") ; 
 		sql.append("                bi.doperatedate,  \n") ; 
-		sql.append("                bi.coperatorid,  \n") ; 
+		//sql.append("                bi.coperatorid,  \n") ; 
+		sql.append("                su1.user_name applyname,  \n") ; 
 		sql.append("                bi.applydate,  \n") ; 
 		sql.append("                bi.fathercorp,  \n") ; 
 		sql.append("                bi.corpname,  \n") ; 
-		sql.append("                bi.vmanagerid,  \n") ; 
+		//sql.append("                bi.vmanagerid,  \n") ; 
+		//sql.append("                su.user_name vmanagername,  \n") ; 
 		sql.append("                bi.ts,  \n") ; 
 		sql.append("                b.vname,  \n") ; 
 		sql.append("                b.vunit,  \n") ; 
@@ -252,6 +256,8 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
 		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
 		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
+		//sql.append("  left join sm_user su on su.cuserid = bi.vmanagerid \n") ; 
+		sql.append("  left join sm_user su1 on su1.cuserid = bi.coperatorid \n") ; 
 		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
 		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
@@ -263,10 +269,7 @@ public class MatCheckServiceImpl implements IMatCheckService {
 			sql.append(" AND  bi.corpname like ? ");
 			spm.addParam("%" + pamvo.getCorpname() + "%");
 		}
-		if (!StringUtil.isEmpty(pamvo.getVmanagerid())) {
-			sql.append(" AND  bi.vmanagerid = ? ");
-			spm.addParam(pamvo.getVmanagerid());
-		}
+		
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
 			sql.append("   AND bi.vstatus = ? \n");
 			spm.addParam(pamvo.getVstatus());
@@ -409,9 +412,15 @@ public class MatCheckServiceImpl implements IMatCheckService {
 		}
 		return null;
 	}
+
+	@Override
+	public String queryLastReason(UserVO uservo) {
+		
+		String sql = "select vreason from cn_materielbill where updatets = "+
+		"(select max(updatets) from cn_materielbill where vreason is not null)";
+		return (String) singleObjectBO.executeQuery(sql, null, new ColumnProcessor("vreason"));
 	
-	
-	
+	}
 	
 }
 
