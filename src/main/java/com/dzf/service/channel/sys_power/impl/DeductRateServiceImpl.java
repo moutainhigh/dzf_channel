@@ -103,7 +103,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		sql.append("       d.inewrate,  \n"); 
 		sql.append("       d.irenewrate,  \n"); 
 		sql.append("       d.lastmodifypsnid,  \n"); 
-		sql.append("       u.user_name astmodifypsn,  \n"); 
+		sql.append("       u.user_name lastmodifypsn,  \n"); 
 		sql.append("       d.lastmodifydate  \n") ; 
 		sql.append("  FROM bd_account account  \n");
 		sql.append("  LEFT JOIN cn_deductrate d ON account.pk_corp = d.pk_corp  \n");
