@@ -392,6 +392,7 @@ function initDgEditor(){
 	               		value: '小规模纳税人',
 	               		text: '小规模纳税人'
 	               	},],
+				    onSelect:setDefMnyByTax,
 	               	required:true,
                }
            };
@@ -411,7 +412,7 @@ function initDgEditor(){
                     		value: '99',
                     		text: '非个体户'
                     	},],
-						onSelect:setDefMny,
+						onSelect:setDefMnyByCom,
                     	required:true,
                     }
                 };
@@ -503,14 +504,36 @@ function initDgEditor(){
 		};
 }
 
+function setDefMnyByTax(data) {
+	if(data.value=='一般纳税人'){
+		var comptypeE = $('#grid').datagrid('getEditor', {index:editIndex,field:'comptype'});
+		var comptype = $(comptypeE.target).combobox('getValue');
+		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
+		if(comptype=='20'){
+			$(nmsmnyE.target).numberbox('setValue',100);
+		}else if(comptype=='99'){
+			$(nmsmnyE.target).numberbox('setValue',400);
+		}
+	}else if(data.value=='小规模纳税人'){
+		var comptypeE = $('#grid').datagrid('getEditor', {index:editIndex,field:'comptype'});
+		var comptype = $(comptypeE.target).combobox('getValue');
+		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
+		if(comptype=='20'){
+			$(nmsmnyE.target).numberbox('setValue',100);
+		}else if(comptype=='99'){
+			$(nmsmnyE.target).numberbox('setValue',200);
+		}
+	}
+}
 
-function setDefMny(data) {
+
+function setDefMnyByCom(data) {
 	if(data.value=='20'){
 		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
 		$(nmsmnyE.target).numberbox('setValue',100);
 	}else if(data.value=='99'){
 		var taxtypeE = $('#grid').datagrid('getEditor', {index:editIndex,field:'taxtype'});
-		var taxtype = $(taxtypeE.target).numberbox('getValue');
+		var taxtype = $(taxtypeE.target).combobox('getValue');
 		var nmsmnyE = $('#grid').datagrid('getEditor', {index:editIndex,field:'nmsmny'});
 		if(taxtype=="一般纳税人"){
 			$(nmsmnyE.target).numberbox('setValue',400);
