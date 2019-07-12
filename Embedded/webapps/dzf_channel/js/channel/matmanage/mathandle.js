@@ -1203,6 +1203,7 @@ function showCard(row) {
 		min : 0,
 	});
 	$('#dedate').datebox('setValue', parent.SYSTEM.LoginDate);
+	$("#dename").textbox('setValue', '');
 	initCard();
 	$('.hid').css("display", "none");
 	$('.sid').css("display", "");
@@ -1214,7 +1215,6 @@ function showCard(row) {
 	$("#fcost").numberbox('readonly', false);
 	$("#fcode").textbox('readonly', false);
 	$("#dedate").datebox('readonly', false);
-	$("#dename").textbox('readonly', false);
 	
 	$("#pname").combobox('readonly', false);
 	$("#cityname").combobox('readonly', false);
@@ -1367,6 +1367,9 @@ function showDetail(index) {
 	initCardDetail();
 	$('#infoform').form('clear');
 	$('#infoform').form('load', row);
+	if(row.status!=3){
+		$('#idename').textbox('setValue','');
+	}
 	$('#ilogid').textbox('setValue', row.logname);
 	if (row.children != null && row.children.length > 0) {
 		$('#icardGrid').datagrid('loadData', row.children);

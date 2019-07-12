@@ -137,8 +137,8 @@ function reloadData(){
 	$('#grid').datagrid('load', {
 		'wlname' : $("#wlname").val(),
 		'sseal' : $('#sseal').combobox('getValue'),
-		/*'begdate' : $('#begdate').datebox('getValue'),
-	    'enddate' : $('#enddate').datebox('getValue'), */
+		'begdate' : $('#begdate').datebox('getValue'),
+	    'enddate' : $('#enddate').datebox('getValue'), 
 	});
 	$('#grid').datagrid('clearSelections');
 	$('#grid').datagrid('clearChecked');
