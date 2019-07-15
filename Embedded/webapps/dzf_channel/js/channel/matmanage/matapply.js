@@ -18,6 +18,10 @@ $(function(){
 	initRadioListen();
 	//load(0);
 	showColumn();
+	$("#bperiod").datebox('readonly',true);
+	$("#eperiod").datebox('readonly',true);
+	$("#begdate").datebox('readonly',false);
+	$("#enddate").datebox('readonly',false);
 });
 
 /**
@@ -837,13 +841,7 @@ function queryAllProvince(){
 }
 
 
-$(function(){                                                            
-	 //触发省选项  
-	 $("#pname").combobox({  
-		 onSelect:function(record){  
-		      $("#cityname").combobox("setValue",''); //清空市  
-		      $("#countryname").combobox("setValue",''); //清空县  
-		      var provinceid=$('#pname').combobox('getValue'); 
+function querycity(provinceid){
 		      $.ajax({
 		    	    type : 'POST',
 					async : false,
@@ -859,14 +857,11 @@ $(function(){                                 �
 						}
 					}
 		   }); 
-		}         
-	              
-	});
-    //触发市选项  
-     $("#cityname").combobox({  
-	    onSelect:function(record){  
-	        $("#countryname").combobox("setValue",''); //清空县  
-	        var cityid=$('#cityname').combobox('getValue'); 
+	
+}
+
+
+function queryCountry(cityid){
 	        $.ajax({
 	    	    type : 'POST',
 				async : false,
@@ -883,9 +878,44 @@ $(function(){                                 �
 					}
 				}
 	   }); 
-	}         
-              
-   }); 
+}
+
+
+$(function(){ 
+	 //触发省选项  
+	 $("#pname").combobox({ 
+		 onSelect:function(record){  
+			$("#cityname").combobox("setValue",''); //清空市  
+			$("#countryname").combobox("setValue",''); //清空县  
+		    querycity($('#pname').combobox('getValue'));
+			$('#vprovince').val($('#pname').combobox('getValue'));
+		}         
+	 });
+	 $("#cityname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#vprovince').val())){
+				querycity($('#vprovince').val());
+			}
+		}         
+	 });
+
+    //触发市选项  
+     $("#cityname").combobox({  
+	    onSelect:function(record){
+		 	$("#countryname").combobox("setValue",''); //清空县  
+			queryCountry($('#cityname').combobox('getValue'));
+		 	$('#vcity').val($('#cityname').combobox('getValue'));
+	 	}         
+    });
+
+	$("#countryname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#vcity').val())){
+				queryCountry($('#vcity').val());
+			}
+		}         
+	 });
+
 
 });		
 	
@@ -1445,6 +1475,8 @@ function updateData(){
 	$('.bid').css("display", "none"); 
 	$('.aid').css("display", ""); 
 	$('#stat').textbox('readonly',true);
+	$('#adate').datebox('readonly',true);
+	$('#applyname').textbox('readonly',true);
 	$('#cardGrid').datagrid('showColumn','enapplynum');
 	$('#cardGrid').datagrid('showColumn','operate');
 	var col = $('#cardGrid').datagrid('getColumnOption', 'applynum');//获取Column

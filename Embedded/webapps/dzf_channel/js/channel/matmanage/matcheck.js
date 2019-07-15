@@ -16,6 +16,10 @@ $(function(){
 	initRadioListen();
 	//load(0);
 	showColumn();
+	$("#bperiod").datebox('readonly',true);
+	$("#eperiod").datebox('readonly',true);
+	$("#begdate").datebox('readonly',false);
+	$("#enddate").datebox('readonly',false);
 });
 
 

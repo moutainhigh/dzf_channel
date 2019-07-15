@@ -17,6 +17,10 @@ $(function() {
 	initRadioListen();
 	//load(0);
 	showColumn();
+	$("#bperiod").datebox('readonly',true);
+	$("#eperiod").datebox('readonly',true);
+	$("#begdate").datebox('readonly',false);
+	$("#enddate").datebox('readonly',false);
 });
 
 function initCombobox() {
@@ -981,7 +985,43 @@ function queryAllProvince() {
 /**
  * 详情和修改界面
  */
-$(function() {
+$(function(){ 
+	 //触发省选项  
+	 $("#ipname").combobox({ 
+		 onSelect:function(record){  
+			$("#icityname").combobox("setValue",''); //清空市  
+			$("#icountryname").combobox("setValue",''); //清空县  
+		    querycity($('#ipname').combobox('getValue'));
+			$('#ivprovince').val($('#ipname').combobox('getValue'));
+		}         
+	 });
+	 $("#icityname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#ivprovince').val())){
+				querycity($('#ivprovince').val());
+			}
+		}         
+	 });
+
+    //触发市选项  
+     $("#icityname").combobox({  
+	    onSelect:function(record){
+		 	$("#icountryname").combobox("setValue",''); //清空县  
+			queryCountry($('#icityname').combobox('getValue'));
+		 	$('#ivcity').val($('#icityname').combobox('getValue'));
+	 	}         
+    });
+
+	$("#icountryname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#ivcity').val())){
+				queryCountry($('#ivcity').val());
+			}
+		}         
+	 });
+
+});		
+/*$(function() {
 	// 触发省选项  
 	$("#ipname").combobox(
 					{
@@ -1053,12 +1093,91 @@ $(function() {
 			
 
 });
+*/
+
+function querycity(provinceid){
+    $.ajax({
+  	    type : 'POST',
+			async : false,
+		    url : DZF.contextPath + '/matmanage/matcomm!queryCityByProId.action',
+			dataTye : 'json',
+			data : "provinceid="+provinceid,
+			success : function(result) {
+				var result = eval('(' + result+ ')');
+				if (result.success) {
+					$("#cityname").combobox('loadData',result.rows);
+					$("#icityname").combobox('loadData',result.rows);
+				} else {
+					Public.tips({content : result.msg,type : 2});
+				}
+			}
+ }); 
+
+}
+
+
+function queryCountry(cityid){
+  $.ajax({
+	    type : 'POST',
+		async : false,
+	    url : DZF.contextPath + '/matmanage/matcomm!queryAreaByCid.action',
+		dataTye : 'json',
+		data : "cityid="+cityid,
+		success : function(result) {
+			var result = eval('(' + result+ ')');
+			if (result.success) {
+				$("#countryname").combobox('loadData',result.rows);
+				$("#icountryname").combobox('loadData',result.rows);
+			} else {
+				Public.tips({content : result.msg,type : 2});
+			}
+		}
+}); 
+}
+
 
 
 /**
  * 发货界面
  */
-$(function() {
+
+$(function(){ 
+	 //触发省选项  
+	 $("#pname").combobox({ 
+		 onSelect:function(record){  
+			$("#cityname").combobox("setValue",''); //清空市  
+			$("#countryname").combobox("setValue",''); //清空县  
+		    querycity($('#pname').combobox('getValue'));
+			$('#vprovince').val($('#pname').combobox('getValue'));
+		}         
+	 });
+	 $("#cityname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#vprovince').val())){
+				querycity($('#vprovince').val());
+			}
+		}         
+	 });
+
+    //触发市选项  
+     $("#cityname").combobox({  
+	    onSelect:function(record){
+		 	$("#countryname").combobox("setValue",''); //清空县  
+			queryCountry($('#cityname').combobox('getValue'));
+		 	$('#vcity').val($('#cityname').combobox('getValue'));
+	 	}         
+    });
+
+	$("#countryname").combobox({  
+	 	onShowPanel:function(record){
+			if(!isEmpty($('#vcity').val())){
+				queryCountry($('#vcity').val());
+			}
+		}         
+	 });
+
+});		
+/*$(function() {
 	// 触发省选项  
 	$("#pname").combobox(
 					{
@@ -1129,7 +1248,7 @@ $(function() {
 	});
 			
 
-});
+});*/
 
 
 /**
