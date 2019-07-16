@@ -142,7 +142,6 @@ public class MatApplyAction extends BaseAction<MatOrderVO> {
 			pubser.checkFunnode(uservo, IFunNode.CHANNEL_70);
 			MatOrderVO vo = new MatOrderVO();
 			vo = (MatOrderVO) DzfTypeUtils.cast(getRequest(), vo);
-
 			Map<String, String> bmapping = FieldMapping.getFieldMapping(new MatOrderBVO());
 			String body = getRequest().getParameter("body"); // 物料数据
 			String message = "";

@@ -266,10 +266,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			if (!lockKey) {
 				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
 			}
-			MatOrderVO mvo = matcomm.queryById(data.getPk_materielbill());
-			if (mvo.getUpdatets() != null) {
-				data.setUpdatets(mvo.getUpdatets());
-			}
+			
 			matcomm.checkData(data.getPk_materielbill(), data.getUpdatets());
 
 			data.setCitycounty(data.getPname() + "-" + data.getCityname() + "-" + data.getCountryname());
@@ -296,7 +293,6 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			if (!lockKey) {
 				throw new BusinessException("合同编号：" + data.getVcontcode() + ",其他用户正在操作此数据;<br>");
 			}
-
 			matcomm.checkData(data.getPk_materielbill(), data.getUpdatets());
 			
 				// 1.修改主订单
@@ -372,10 +368,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		} else {
 			// 编辑保存
 			MatOrderVO mvo = matcomm.queryById(vo.getPk_materielbill());
-			if (mvo.getUpdatets() != null) {
-				vo.setUpdatets(mvo.getUpdatets());
-				vo.setVstatus(mvo.getVstatus());
-			}
+			vo.setVstatus(mvo.getVstatus());
 			saveEdit(vo, bvos, uservo);
 		}
 	}
@@ -401,6 +394,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		sql.append("   m.fastcode,m.fastcost, \n");
 		sql.append("   m.deliverid,m.deliverdate, \n");
 		sql.append("   m.auditerid,m.auditdate, \n");
+		sql.append("   m.updatets, \n");
 		sql.append("   lg.vname logname \n");
 
 		sql.append("     from cn_materielbill m \n");
