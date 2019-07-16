@@ -221,40 +221,40 @@ public class CustManageServiceImpl extends DataCommonRepImpl implements ICustMan
 	private List<CustCountVO> qryIndustryNum(QryParamVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT fathercorp as pk_corp, \n");
-		sql.append("       chargedeptname, \n");
-		sql.append("       industrycode,\n");
-		sql.append("       count(pk_corp) as num \n");
-		sql.append("  FROM (SELECT p.fathercorp,\n");
-		sql.append("               p.pk_corp,\n");
-		sql.append("               p.chargedeptname,\n");
-		sql.append("               (case \n");
-		sql.append("                 when instr(trade.tradecode, 'Z') > 0 then \n");
-		sql.append("                  trade.tradecode \n");
-		sql.append("                 else \n");
-		sql.append("                  substr(trade.tradecode, 0, 2) \n");
-		sql.append("               end) industrycode \n");
-		sql.append("          FROM bd_corp p \n");
-		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
-		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
-		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("           AND nvl(t.dr, 0) = 0 \n");
+		sql.append("SELECT fathercorp as pk_corp,   ");
+		sql.append("       chargedeptname,   ");
+		sql.append("       industrycode,  ");
+		sql.append("       count(pk_corp) as num   ");
+		sql.append("  FROM (SELECT p.fathercorp,  ");
+		sql.append("               p.pk_corp,  ");
+		sql.append("               p.chargedeptname,  ");
+		sql.append("               (case   ");
+		sql.append("                 when instr(trade.tradecode, 'Z') > 0 then   ");
+		sql.append("                  trade.tradecode   ");
+		sql.append("                 else   ");
+		sql.append("                  substr(trade.tradecode, 0, 2)   ");
+		sql.append("               end) industrycode   ");
+		sql.append("          FROM bd_corp p   ");
+		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp   ");
+		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade   ");
+		sql.append("         WHERE nvl(p.dr, 0) = 0   ");
+		sql.append("           AND nvl(t.dr, 0) = 0   ");
 
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'    ");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'    ");// 非分支机构
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  "); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y'   ");// 已建账
 
-		sql.append("           AND p.fathercorp NOT IN \n");
-		sql.append("               (SELECT f.pk_corp \n");
-		sql.append("                  FROM ynt_franchisee f \n");
-		sql.append("                 WHERE nvl(dr, 0) = 0 \n");
-		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')\n");
-		sql.append("           AND p.chargedeptname IS NOT NULL \n");
-		sql.append("           AND p.Industry IS NOT NULL )\n");
-		sql.append(" WHERE industrycode IS NOT NULL \n");
-		sql.append("   AND chargedeptname IS NOT NULL \n");
-		sql.append(" GROUP BY fathercorp, chargedeptname, industrycode \n");
+		sql.append("           AND p.fathercorp NOT IN   ");
+		sql.append("               (SELECT f.pk_corp   ");
+		sql.append("                  FROM ynt_franchisee f   ");
+		sql.append("                 WHERE nvl(dr, 0) = 0   ");
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')  ");
+		sql.append("           AND p.chargedeptname IS NOT NULL   ");
+		sql.append("           AND p.Industry IS NOT NULL )  ");
+		sql.append(" WHERE industrycode IS NOT NULL   ");
+		sql.append("   AND chargedeptname IS NOT NULL   ");
+		sql.append(" GROUP BY fathercorp, chargedeptname, industrycode   ");
 		sql.append(" ORDER BY num DESC");
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
@@ -289,35 +289,35 @@ public class CustManageServiceImpl extends DataCommonRepImpl implements ICustMan
 		List<CustCountVO> retlist = new ArrayList<CustCountVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT industrycode, count(pk_corp) as num \n");
-		sql.append("  FROM (SELECT p.pk_corp,\n");
-		sql.append("               (case \n");
-		sql.append("                 when instr(trade.tradecode, 'Z') > 0  then \n");
-		sql.append("                  trade.tradecode \n");
-		sql.append("                 else \n");
-		sql.append("                  substr(trade.tradecode, 0, 2)  \n");
-		sql.append("               end) industrycode \n");
-		sql.append("          FROM bd_corp p \n");
-		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp \n");
-		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade \n");
-		sql.append("         WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("           AND nvl(t.dr, 0) = 0 \n");
+		sql.append("SELECT industrycode, count(pk_corp) as num   ");
+		sql.append("  FROM (SELECT p.pk_corp,  ");
+		sql.append("               (case   ");
+		sql.append("                 when instr(trade.tradecode, 'Z') > 0  then   ");
+		sql.append("                  trade.tradecode   ");
+		sql.append("                 else   ");
+		sql.append("                  substr(trade.tradecode, 0, 2)    ");
+		sql.append("               end) industrycode   ");
+		sql.append("          FROM bd_corp p   ");
+		sql.append("          LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp   ");
+		sql.append("          LEFT JOIN ynt_bd_trade trade ON p.industry = trade.pk_trade   ");
+		sql.append("         WHERE nvl(p.dr, 0) = 0   ");
+		sql.append("           AND nvl(t.dr, 0) = 0   ");
 
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'    ");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'    ");// 非分支机构
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  "); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y'   ");// 已建账
 
-		sql.append("           AND p.fathercorp NOT IN \n");
-		sql.append("               (SELECT f.pk_corp \n");
-		sql.append("                  FROM ynt_franchisee f \n");
-		sql.append("                 WHERE nvl(dr, 0) = 0 \n");
-		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')\n");
-		sql.append("           AND p.chargedeptname IS NOT NULL \n");
-		sql.append("           AND p.Industry IS NOT NULL )\n");
-		sql.append(" WHERE industrycode IS NOT NULL \n");
-		sql.append(" GROUP BY industrycode \n");
-		sql.append(" ORDER BY num DESC \n");
+		sql.append("           AND p.fathercorp NOT IN   ");
+		sql.append("               (SELECT f.pk_corp   ");
+		sql.append("                  FROM ynt_franchisee f   ");
+		sql.append("                 WHERE nvl(dr, 0) = 0   ");
+		sql.append("                   AND nvl(f.isreport, 'N') = 'Y')  ");
+		sql.append("           AND p.chargedeptname IS NOT NULL   ");
+		sql.append("           AND p.Industry IS NOT NULL )  ");
+		sql.append(" WHERE industrycode IS NOT NULL   ");
+		sql.append(" GROUP BY industrycode   ");
+		sql.append(" ORDER BY num DESC   ");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 		if (list != null && list.size() > 0) {
@@ -376,20 +376,20 @@ public class CustManageServiceImpl extends DataCommonRepImpl implements ICustMan
 	private List<CustCountVO> queryCustNum(QryParamVO pamvo, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
-		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
-		sql.append("       COUNT(p.pk_corp) AS num, \n");
-		sql.append("       t.drelievedate  \n");
-		sql.append("  FROM bd_corp p  \n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");// 非分支机构
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
+		sql.append("SELECT t.pk_corp AS pk_corp,    ");
+		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,    ");
+		sql.append("       COUNT(p.pk_corp) AS num,   ");
+		sql.append("       t.drelievedate    ");
+		sql.append("  FROM bd_corp p    ");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp    ");
+		sql.append(" WHERE nvl(p.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'    ");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'    ");// 非分支机构
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  "); // 未封存
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y'   ");// 已建账
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
-			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
+			sql.append("   AND substr(p.createdate,1,7) <= ?   ");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if (corplist != null && corplist.size() > 0) {
@@ -402,8 +402,8 @@ public class CustManageServiceImpl extends DataCommonRepImpl implements ICustMan
 			sql.append(" AND ");
 			sql.append(filter);
 		}
-		sql.append(" GROUP BY t.pk_corp,t.drelievedate,  \n");
-		sql.append("          nvl(p.chargedeptname, '小规模纳税人') \n");
+		sql.append(" GROUP BY t.pk_corp,t.drelievedate,    ");
+		sql.append("          nvl(p.chargedeptname, '小规模纳税人')   ");
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 	}

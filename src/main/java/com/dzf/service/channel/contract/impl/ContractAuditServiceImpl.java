@@ -399,7 +399,8 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		sql.append("       y.pk_confrim,    ");
 		sql.append("       y.applytime,    ");
 		sql.append("       t.vcontcode,    ");
-		sql.append("       y.pk_corp,    ");
+//		sql.append("       y.pk_corp,    ");
+		sql.append("       t.pk_corp,  ");
 		sql.append("       y.pk_corpk,    ");
 		sql.append("       t.chargedeptname,    ");
 		sql.append("       t.ntotalmny,    ");

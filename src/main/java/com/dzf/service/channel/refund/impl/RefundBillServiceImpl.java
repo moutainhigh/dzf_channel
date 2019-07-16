@@ -106,35 +106,35 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT f.*,us.user_name as voperator  \n") ;
-		sql.append("  FROM cn_refund f  \n") ;
+		sql.append("SELECT f.*,us.user_name as voperator    ") ;
+		sql.append("  FROM cn_refund f    ") ;
 		sql.append(" left join sm_user us on us.cuserid = f.coperatorid");
-		sql.append(" WHERE nvl(f.dr, 0) = 0  \n") ; 
+		sql.append(" WHERE nvl(f.dr, 0) = 0    ") ; 
 		if(paramvo.getBegdate() != null){
-			sql.append("   AND f.drefunddate >= ?  \n") ; 
+			sql.append("   AND f.drefunddate >= ?    ") ; 
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append("   AND f.drefunddate <= ?  \n") ; 
+			sql.append("   AND f.drefunddate <= ?    ") ; 
 			spm.addParam(paramvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-			sql.append("   AND f.pk_corp = ?  \n") ; 
+			sql.append("   AND f.pk_corp = ?    ") ; 
 			spm.addParam(paramvo.getPk_corp());
 		}
 		if(!StringUtil.isEmpty(paramvo.getVbillcode())){
-			sql.append("   AND f.vbillcode = ?  \n") ; 
+			sql.append("   AND f.vbillcode = ?    ") ; 
 			spm.addParam(paramvo.getVbillcode());
 		}
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
-			sql.append("   AND f.istatus = ? \n");
+			sql.append("   AND f.istatus = ?   ");
 			spm.addParam(paramvo.getVdeductstatus());
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-			sql.append("   AND f.pk_refund = ? \n");
+			sql.append("   AND f.pk_refund = ?   ");
 			spm.addParam(paramvo.getPk_bill());
 		}
-		sql.append("   ORDER BY f.updatets DESC \n");
+		sql.append("   ORDER BY f.updatets DESC   ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -321,12 +321,12 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		// 1、计算付款余额表余额
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.nusedmny, b.npaymny, b.ipaytype  \n");
-		sql.append("  FROM cn_balance b  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND b.pk_corp = ? \n");
+		sql.append("SELECT b.nusedmny, b.npaymny, b.ipaytype    ");
+		sql.append("  FROM cn_balance b    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND b.pk_corp = ?   ");
 		spm.addParam(paramvo.getPk_corp());
-		sql.append("   AND b.ipaytype in (1, 2) \n");
+		sql.append("   AND b.ipaytype in (1, 2)   ");
 		List<ChnBalanceVO> blist = (List<ChnBalanceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnBalanceVO.class));
 		if(blist != null && blist.size() > 0){
@@ -356,15 +356,15 @@ public class RefundBillServiceImpl implements IRefundBillService {
 		SQLParameter spm = new SQLParameter();
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("SELECT SUM(d.nrefbzjmny) AS nrefbzjmny, SUM(d.nrefyfkmny) AS nrefyfkmny  \n") ;
-		sql.append("  FROM cn_refund d  \n") ; 
-		sql.append(" WHERE nvl(d.dr, 0) = 0  \n") ; 
-		sql.append("   AND d.pk_corp = ?  \n") ; 
+		sql.append("SELECT SUM(d.nrefbzjmny) AS nrefbzjmny, SUM(d.nrefyfkmny) AS nrefyfkmny    ") ;
+		sql.append("  FROM cn_refund d    ") ; 
+		sql.append(" WHERE nvl(d.dr, 0) = 0    ") ; 
+		sql.append("   AND d.pk_corp = ?    ") ; 
 		spm.addParam(paramvo.getPk_corp());
-		sql.append("   AND d.istatus = ? \n");
+		sql.append("   AND d.istatus = ?   ");
 		spm.addParam(IStatusConstant.IREFUNDSTATUS_0);//待确认
 		if(!StringUtil.isEmpty(paramvo.getPk_refund())){
-			sql.append("   AND d.pk_refund != ? \n");
+			sql.append("   AND d.pk_refund != ?   ");
 			spm.addParam(paramvo.getPk_refund());
 		}
 		List<RefundBillVO> flist = (List<RefundBillVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -451,12 +451,12 @@ public class RefundBillServiceImpl implements IRefundBillService {
 	private RefundBillVO updateBalance(RefundBillVO datavo, Integer opertype, String cuserid) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.* \n");
-		sql.append("  FROM cn_balance b  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND b.pk_corp = ? \n");
+		sql.append("SELECT b.*   ");
+		sql.append("  FROM cn_balance b    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND b.pk_corp = ?   ");
 		spm.addParam(datavo.getPk_corp());
-		sql.append("   AND b.ipaytype in (1, 2) \n");
+		sql.append("   AND b.ipaytype in (1, 2)   ");
 		List<ChnBalanceVO> blist = (List<ChnBalanceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnBalanceVO.class));
 		Map<Integer, ChnBalanceVO> bmap = new HashMap<Integer, ChnBalanceVO>();
@@ -517,12 +517,12 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					//更新余额表：
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?    ");
 					spm.addParam(refvo.getNrefbzjmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_1);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(refvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
@@ -579,12 +579,12 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					//更新余额表：
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?    ");
 					spm.addParam(refvo.getNrefyfkmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(refvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
@@ -652,23 +652,23 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					//更新余额表：
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?    ");
 					spm.addParam(refvo.getNrefbzjmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_1);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(refvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
 						//删除保证金退款明细：
 						sql = new StringBuffer();
 						spm = new SQLParameter();
-						sql.append("DELETE FROM cn_detail  \n") ;
-						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?  \n") ; 
-						sql.append("   AND ipaytype = ?  \n") ; 
-						sql.append("   AND pk_bill = ?  \n") ; 
-						sql.append("   AND iopertype = ? \n");
+						sql.append("DELETE FROM cn_detail    ") ;
+						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?    ") ; 
+						sql.append("   AND ipaytype = ?    ") ; 
+						sql.append("   AND pk_bill = ?    ") ; 
+						sql.append("   AND iopertype = ?   ");
 						spm.addParam(refvo.getPk_corp());
 						spm.addParam(IStatusConstant.IPAYTYPE_1);//保证金
 						spm.addParam(refvo.getPk_refund());//退款单主键
@@ -715,23 +715,23 @@ public class RefundBillServiceImpl implements IRefundBillService {
 					//更新余额表：
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?    ");
 					spm.addParam(refvo.getNrefyfkmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(refvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
 						//删除预付款退款明细：
 						sql = new StringBuffer();
 						spm = new SQLParameter();
-						sql.append("DELETE FROM cn_detail  \n") ;
-						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?  \n") ; 
-						sql.append("   AND ipaytype = ?  \n") ; 
-						sql.append("   AND pk_bill = ?  \n") ; 
-						sql.append("   AND iopertype = ? \n");
+						sql.append("DELETE FROM cn_detail    ") ;
+						sql.append(" WHERE nvl(dr,0) = 0 AND pk_corp = ?    ") ; 
+						sql.append("   AND ipaytype = ?    ") ; 
+						sql.append("   AND pk_bill = ?    ") ; 
+						sql.append("   AND iopertype = ?   ");
 						spm.addParam(refvo.getPk_corp());
 						spm.addParam(IStatusConstant.IPAYTYPE_2);//预付款
 						spm.addParam(refvo.getPk_refund());//退款单主键

@@ -93,7 +93,7 @@ public class RegionalManServiceImpl extends ManCommonServiceImpl implements IReg
 				String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 				sql.append(" AND ").append(where);
 			} else {
-				sql.append(" AND account.pk_corp is null \n");
+				sql.append(" AND account.pk_corp is null   ");
 			}
 		}
 		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,

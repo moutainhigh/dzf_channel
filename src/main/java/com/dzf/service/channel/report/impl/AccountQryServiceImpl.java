@@ -119,20 +119,20 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	private void getAllFilter(StringBuffer sql, SQLParameter spm, QryParamVO pamvo) throws DZFWarpException {
-		sql.append(" ) d_all \n");
-		sql.append(" WHERE d_all.pk_corpk is not null \n");
+		sql.append(" ) d_all   ");
+		sql.append(" WHERE d_all.pk_corpk is not null   ");
 		//记账状态
 		if(!"全部".equals(pamvo.getVmanager())){
-			sql.append(" AND d_all.jzstatus like ? \n");
+			sql.append(" AND d_all.jzstatus like ?   ");
 			spm.addParam("%"+pamvo.getVmanager()+"%");
 		}
 		//账务检查
 		if(!"全部".equals(pamvo.getVbillcode())){
 			if("已关账".equals(pamvo.getVbillcode())){
-				sql.append(" AND d_all.vcheckstatus like ? \n");
+				sql.append(" AND d_all.vcheckstatus like ?   ");
 				spm.addParam("%"+pamvo.getVbillcode()+"%");
 			}else{
-				sql.append(" AND d_all.vcheckstatus IS NULL \n");
+				sql.append(" AND d_all.vcheckstatus IS NULL   ");
 			}
 		}
 		
@@ -145,18 +145,18 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	private void getAllColumn(StringBuffer sql) throws DZFWarpException {
-		sql.append("SELECT d_all.corpkcode,  \n");
-		sql.append("       d_all.corpkname,  \n");
-		sql.append("       d_all.chargedeptname,  \n");
-		sql.append("       d_all.pk_corp,  \n");
-		sql.append("       d_all.pk_corpk,  \n");
-		sql.append("       d_all.createdate,  \n");
-		sql.append("       d_all.begindate,  \n");
+		sql.append("SELECT d_all.corpkcode,    ");
+		sql.append("       d_all.corpkname,    ");
+		sql.append("       d_all.chargedeptname,    ");
+		sql.append("       d_all.pk_corp,    ");
+		sql.append("       d_all.pk_corpk,    ");
+		sql.append("       d_all.createdate,    ");
+		sql.append("       d_all.begindate,    ");
 		//记账状态
-		sql.append("       d_all.jzstatus, \n");
+		sql.append("       d_all.jzstatus,   ");
 		//账务检查
-		sql.append("       d_all.vcheckstatus \n");
-		sql.append(" FROM  ( \n");
+		sql.append("       d_all.vcheckstatus   ");
+		sql.append(" FROM  (   ");
 	}
 	
 	/**
@@ -216,13 +216,13 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		Map<String, String> deptmap = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select distinct uc.pk_corpk as pk_corp, dept.deptname  \n");
-		sql.append("  from sm_user_corp uc  \n");
-		sql.append("  join sm_user su on su.cuserid = uc.cuserid  \n");
-		sql.append("  join ynt_department dept on dept.pk_department = su.pk_department  \n");
-		sql.append(" where nvl(uc.dr, 0) = 0 \n");
-		sql.append("   and nvl(su.dr, 0) = 0  \n");
-		sql.append("   and uc.pk_corp = ?  \n");
+		sql.append("select distinct uc.pk_corpk as pk_corp, dept.deptname    ");
+		sql.append("  from sm_user_corp uc    ");
+		sql.append("  join sm_user su on su.cuserid = uc.cuserid    ");
+		sql.append("  join ynt_department dept on dept.pk_department = su.pk_department    ");
+		sql.append(" where nvl(uc.dr, 0) = 0   ");
+		sql.append("   and nvl(su.dr, 0) = 0    ");
+		sql.append("   and uc.pk_corp = ?    ");
 		spm.addParam(pamvo.getPk_corp());
 		if(pks != null && pks.length > 0){
 			String where = SqlUtil.buildSqlForIn("uc.pk_corpk", pks);
@@ -258,12 +258,12 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 */
 	private void getZwjcSqlSpm(QryParamVO pamvo, String[] pks, StringBuffer sql, SQLParameter spm, UserVO uvo)
 			throws DZFWarpException {
-		sql.append(" LEFT JOIN ( \n");
-		sql.append("SELECT q.pk_corp, q.period  \n");
-		sql.append("  FROM ynt_qmcl q  \n");
-		sql.append("  JOIN bd_corp corp on corp.pk_corp = q.pk_corp  \n");
-		sql.append(" WHERE q.isgz = 'Y'  \n");
-		sql.append("   AND q.period = ?  \n");
+		sql.append(" LEFT JOIN (   ");
+		sql.append("SELECT q.pk_corp, q.period    ");
+		sql.append("  FROM ynt_qmcl q    ");
+		sql.append("  JOIN bd_corp corp on corp.pk_corp = q.pk_corp    ");
+		sql.append(" WHERE q.isgz = 'Y'    ");
+		sql.append("   AND q.period = ?    ");
 		spm.addParam(pamvo.getPeriod());
 		if (pks != null && pks.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" q.pk_corp ", pks);
@@ -272,8 +272,8 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			// 添加过滤查询条件
 			addSqlParam(pamvo, sql, spm);
 		}
-		sql.append(" )  zwjc \n");
-		sql.append(" ON qcorp.pk_corp = zwjc.pk_corp \n");
+		sql.append(" )  zwjc   ");
+		sql.append(" ON qcorp.pk_corp = zwjc.pk_corp   ");
 	}
 	
 	/**
@@ -287,12 +287,12 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 */
 	private void getJzztSqlSpm(QryParamVO pamvo, String[] pks, StringBuffer sql, SQLParameter spm,
 			UserVO uvo) throws DZFWarpException {
-		sql.append(" LEFT JOIN ( \n");
-		sql.append("SELECT q.pk_corp,   \n");
-		sql.append(" q.period as period \n");
-		sql.append("  FROM ynt_qmcl q  \n");
-		sql.append("  JOIN bd_corp corp ON corp.pk_corp = q.pk_corp  \n");
-		sql.append(" WHERE q.isqjsyjz = 'Y' \n");
+		sql.append(" LEFT JOIN (   ");
+		sql.append("SELECT q.pk_corp,     ");
+		sql.append(" q.period as period   ");
+		sql.append("  FROM ynt_qmcl q    ");
+		sql.append("  JOIN bd_corp corp ON corp.pk_corp = q.pk_corp    ");
+		sql.append(" WHERE q.isqjsyjz = 'Y'   ");
 		sql.append(" AND q.period = ? ");
 		spm.addParam(pamvo.getPeriod());
 		if (pks != null && pks.length > 0) {
@@ -302,8 +302,8 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			// 添加过滤查询条件
 			addSqlParam(pamvo, sql, spm);
 		}
-		sql.append("  ) jzzt \n");
-		sql.append(" ON qcorp.pk_corp = jzzt.pk_corp  \n");
+		sql.append("  ) jzzt   ");
+		sql.append(" ON qcorp.pk_corp = jzzt.pk_corp    ");
 	}
 	
 	/**
@@ -317,23 +317,23 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 */
 	private void getCorpSqlSpm(QryParamVO pamvo, String[] pks, StringBuffer sql, SQLParameter spm,
 			UserVO uvo) throws DZFWarpException {
-		sql.append("(SELECT corp.innercode as corpkcode,  \n");
-		sql.append("       corp.unitname as corpkname,  \n");
-		sql.append("       CASE corp.chargedeptname  \n");
-		sql.append("         WHEN '一般纳税人' THEN  \n");
-		sql.append("          '一般人'  \n");
-		sql.append("         WHEN '小规模纳税人' THEN  \n");
-		sql.append("          '小规模'  \n");
-		sql.append("         ELSE  \n");
-		sql.append("          ''  \n");
-		sql.append("       END AS chargedeptname,  \n");
-		sql.append("       corp.pk_corp,  \n");
-		sql.append("       corp.createdate,  \n");
-		sql.append("       corp.begindate,  \n");
-		sql.append("       corp.fathercorp  \n");
-		sql.append("  from bd_corp corp \n");
-		sql.append(" where nvl(corp.dr,0) = 0   \n");
-		sql.append("   and corp.fathercorp = ? \n");
+		sql.append("(SELECT corp.innercode as corpkcode,    ");
+		sql.append("       corp.unitname as corpkname,    ");
+		sql.append("       CASE corp.chargedeptname    ");
+		sql.append("         WHEN '一般纳税人' THEN    ");
+		sql.append("          '一般人'    ");
+		sql.append("         WHEN '小规模纳税人' THEN    ");
+		sql.append("          '小规模'    ");
+		sql.append("         ELSE    ");
+		sql.append("          ''    ");
+		sql.append("       END AS chargedeptname,    ");
+		sql.append("       corp.pk_corp,    ");
+		sql.append("       corp.createdate,    ");
+		sql.append("       corp.begindate,    ");
+		sql.append("       corp.fathercorp    ");
+		sql.append("  from bd_corp corp   ");
+		sql.append(" where nvl(corp.dr,0) = 0     ");
+		sql.append("   and corp.fathercorp = ?   ");
 		spm.addParam(pamvo.getPk_corp());
 		
 		if (pks != null && pks.length > 0) {
@@ -343,7 +343,7 @@ public class AccountQryServiceImpl implements IAccountQryService {
 			// 添加过滤查询条件
 			addSqlParam(pamvo, sql, spm);
 		}
-		sql.append(" ) qcorp \n");
+		sql.append(" ) qcorp   ");
 	}
 	
 	/**
@@ -356,28 +356,28 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	private void getQryColumn(StringBuffer sql, SQLParameter spm, QryParamVO pamvo) throws DZFWarpException {
-		sql.append("SELECT qcorp.corpkcode,  \n");
-		sql.append("       qcorp.corpkname,  \n");
-		sql.append("       qcorp.chargedeptname,  \n");
-		sql.append("       qcorp.pk_corp AS pk_corpk,  \n");
-		sql.append("       qcorp.fathercorp AS pk_corp,  \n");
-		sql.append("       qcorp.createdate,  \n");
-		sql.append("       qcorp.begindate,  \n");
+		sql.append("SELECT qcorp.corpkcode,    ");
+		sql.append("       qcorp.corpkname,    ");
+		sql.append("       qcorp.chargedeptname,    ");
+		sql.append("       qcorp.pk_corp AS pk_corpk,    ");
+		sql.append("       qcorp.fathercorp AS pk_corp,    ");
+		sql.append("       qcorp.createdate,    ");
+		sql.append("       qcorp.begindate,    ");
 		//1、记账状态
-		sql.append("       CASE WHEN jzzt.period IS NOT NULL THEN  \n");
-		sql.append("            jzzt.period || '已完成' \n");
+		sql.append("       CASE WHEN jzzt.period IS NOT NULL THEN    ");
+		sql.append("            jzzt.period || '已完成'   ");
 		//查询月
-		sql.append("            WHEN jzzt.period IS NULL AND substr(qcorp.begindate,0,7) <= ? THEN \n");
+		sql.append("            WHEN jzzt.period IS NULL AND substr(qcorp.begindate,0,7) <= ? THEN   ");
 		spm.addParam(pamvo.getPeriod());
 		sql.append("'").append(pamvo.getPeriod()).append("'").append(" || '未完成'");
-		sql.append("       END AS jzstatus, \n");
+		sql.append("       END AS jzstatus,   ");
 		
 		//2、账务检查
-		sql.append("       CASE WHEN zwjc.period IS NOT NULL THEN  \n");
-		sql.append("            zwjc.period || '已关账' \n");
-		sql.append("            ELSE '' END AS vcheckstatus \n");
+		sql.append("       CASE WHEN zwjc.period IS NOT NULL THEN    ");
+		sql.append("            zwjc.period || '已关账'   ");
+		sql.append("            ELSE '' END AS vcheckstatus   ");
 		
-		sql.append(" FROM \n");
+		sql.append(" FROM   ");
 	}
 	
 	/**
@@ -393,17 +393,17 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if(isqrynum){
-			sql.append("SELECT COUNT(pk_corp) \n");
+			sql.append("SELECT COUNT(pk_corp)   ");
 		}else{
-			sql.append("SELECT pk_corp AS pk_corpk  \n") ; 
+			sql.append("SELECT pk_corp AS pk_corpk    ") ; 
 		}
-		sql.append("  FROM bd_corp \n");
-		sql.append(" WHERE nvl(dr,0) = 0   \n");
-		sql.append("   AND fathercorp = ? \n");
+		sql.append("  FROM bd_corp   ");
+		sql.append(" WHERE nvl(dr,0) = 0     ");
+		sql.append("   AND fathercorp = ?   ");
 		spm.addParam(pamvo.getPk_corp());
-		sql.append("   AND nvl(ishasaccount,'N') = 'Y' \n");// 已建账
-		sql.append("   AND nvl(isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(isaccountcorp,'N') = 'N' \n");// 非分支机构
+		sql.append("   AND nvl(ishasaccount,'N') = 'Y'   ");// 已建账
+		sql.append("   AND nvl(isseal, 'N') = 'N'  "); // 未封存客户
+		sql.append("   AND nvl(isaccountcorp,'N') = 'N'   ");// 非分支机构
 		sql.append(" order by innercode ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
@@ -418,11 +418,11 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	private void addSqlParam(QryParamVO pamvo, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-        sql.append(" and nvl(corp.dr,0) = 0   \n");
-		sql.append("   AND nvl(corp.ishasaccount,'N') = 'Y' \n");// 已建账
-		sql.append("   AND nvl(corp.isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(corp.isaccountcorp,'N') = 'N' \n");// 非分支机构
-        sql.append(" and corp.fathercorp = ?   \n");
+        sql.append(" and nvl(corp.dr,0) = 0     ");
+		sql.append("   AND nvl(corp.ishasaccount,'N') = 'Y'   ");// 已建账
+		sql.append("   AND nvl(corp.isseal, 'N') = 'N'  "); // 未封存客户
+		sql.append("   AND nvl(corp.isaccountcorp,'N') = 'N'   ");// 非分支机构
+        sql.append(" and corp.fathercorp = ?     ");
         spm.addParam(pamvo.getPk_corp());
 	}
 	
@@ -432,32 +432,32 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		Map<String, String> jzmap = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_corp,  \n");
-		sql.append("       CASE  \n");
-		sql.append("         WHEN jzperiod IS NOT NULL THEN  \n");
-		sql.append("          '已完成'  \n");
-		sql.append("         WHEN jzperiod IS NULL AND substr(begindate, 0, 7) <= ? THEN  \n");
+		sql.append("SELECT pk_corp,    ");
+		sql.append("       CASE    ");
+		sql.append("         WHEN jzperiod IS NOT NULL THEN    ");
+		sql.append("          '已完成'    ");
+		sql.append("         WHEN jzperiod IS NULL AND substr(begindate, 0, 7) <= ? THEN    ");
 		spm.addParam(period);
-		sql.append("          '未完成'  \n");
-		sql.append("       END AS jzstatus  \n");
-		sql.append("  FROM (SELECT corp.pk_corp,  \n");
-		sql.append("               q.period AS jzperiod,  \n");
-		sql.append("               corp.begindate AS begindate  \n");
-		sql.append("          FROM bd_corp corp  \n");
-		sql.append("          LEFT JOIN ynt_qmcl q ON corp.pk_corp = q.pk_corp  \n");
-		sql.append("                              AND q.isqjsyjz = 'Y'  \n");
-		sql.append("                              AND q.period = ?  \n");
+		sql.append("          '未完成'    ");
+		sql.append("       END AS jzstatus    ");
+		sql.append("  FROM (SELECT corp.pk_corp,    ");
+		sql.append("               q.period AS jzperiod,    ");
+		sql.append("               corp.begindate AS begindate    ");
+		sql.append("          FROM bd_corp corp    ");
+		sql.append("          LEFT JOIN ynt_qmcl q ON corp.pk_corp = q.pk_corp    ");
+		sql.append("                              AND q.isqjsyjz = 'Y'    ");
+		sql.append("                              AND q.period = ?    ");
 		spm.addParam(period);
-		sql.append("         WHERE nvl(corp.dr, 0) = 0  \n");
-		sql.append("           AND nvl(corp.isaccountcorp, 'N') = 'N'  \n");
-		sql.append("           AND nvl(corp.isseal, 'N') = 'N'  \n");
+		sql.append("         WHERE nvl(corp.dr, 0) = 0    ");
+		sql.append("           AND nvl(corp.isaccountcorp, 'N') = 'N'    ");
+		sql.append("           AND nvl(corp.isseal, 'N') = 'N'    ");
 		if(corpks != null && corpks.length > 0){
 			String where = SqlUtil.buildSqlForIn("corp.pk_corp", corpks);
 			sql.append(" AND ").append(where);
 		}else{
 			return null;
 		}
-		sql.append(" ) \n");
+		sql.append(" )   ");
 		List<Object> list = (List<Object>)singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
 		if(list != null && list.size() > 0){
 			for (int i = 0; i < list.size(); i++) {

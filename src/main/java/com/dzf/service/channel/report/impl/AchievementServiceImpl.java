@@ -473,15 +473,15 @@ public class AchievementServiceImpl implements IAchievementService {
 			throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
-		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
-		sql.append("  FROM cn_contract t  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
+		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny    ");
+		sql.append("  FROM cn_contract t    ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
 		if (!StringUtil.isEmpty(powmap.get(1))) {
 			sql.append(" AND ").append(powmap.get(1));
 		} else if (!StringUtil.isEmpty(powmap.get(2))) {
@@ -489,8 +489,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		} else if (!StringUtil.isEmpty(powmap.get(3))) {
 			sql.append(" AND ").append(powmap.get(3));
 		}
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
@@ -500,8 +500,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
-		sql.append(" GROUP BY ").append(qrtdate).append(" \n");
-		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
+		sql.append(" GROUP BY ").append(qrtdate).append("   ");
+		sql.append(" ORDER BY ").append(qrtdate).append("   ");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}
@@ -519,20 +519,20 @@ public class AchievementServiceImpl implements IAchievementService {
 			throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
-		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(CASE t.vstatus  \n") ; 
-		sql.append("             WHEN 9 THEN  \n") ; 
-		sql.append("              nvl(t.nsubtotalmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("           END) AS naccountmny  \n") ; 
-		sql.append("  FROM cn_contract t  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
+		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(CASE t.vstatus    ") ; 
+		sql.append("             WHEN 9 THEN    ") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("           END) AS naccountmny    ") ; 
+		sql.append("  FROM cn_contract t    ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
 		if (!StringUtil.isEmpty(powmap.get(1))) {
 			sql.append(" AND ").append(powmap.get(1));
 		} else if (!StringUtil.isEmpty(powmap.get(2))) {
@@ -540,8 +540,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		} else if (!StringUtil.isEmpty(powmap.get(3))) {
 			sql.append(" AND ").append(powmap.get(3));
 		}
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND t.vdeductstatus in (?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if (!StringUtil.isEmpty(qrysql)) {
@@ -550,8 +550,8 @@ public class AchievementServiceImpl implements IAchievementService {
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
-		sql.append(" GROUP BY ").append(qrtdate).append("  \n");
-		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
+		sql.append(" GROUP BY ").append(qrtdate).append("    ");
+		sql.append(" ORDER BY ").append(qrtdate).append("   ");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}
@@ -919,10 +919,10 @@ public class AchievementServiceImpl implements IAchievementService {
 //		StringBuffer sql = new StringBuffer();
 //		SQLParameter spm = new SQLParameter();
 //		// 1、区域总经理；
-//		sql.append("SELECT t.pk_leaderset  \n");
-//		sql.append("  FROM cn_leaderset t  \n");
-//		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-//		sql.append("   AND (t.vdeptuserid = ? OR t.vcomuserid = ? OR t.vgroupuserid = ? ) \n");
+//		sql.append("SELECT t.pk_leaderset    ");
+//		sql.append("  FROM cn_leaderset t    ");
+//		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+//		sql.append("   AND (t.vdeptuserid = ? OR t.vcomuserid = ? OR t.vgroupuserid = ? )   ");
 //		spm.addParam(paramvo.getCuserid());
 //		spm.addParam(paramvo.getCuserid());
 //		spm.addParam(paramvo.getCuserid());
@@ -933,11 +933,11 @@ public class AchievementServiceImpl implements IAchievementService {
 //		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT account.vprovince  \n");
-		sql.append("  FROM bd_account account \n");
-		sql.append(" WHERE nvl(account.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.ischannel, 'N') = 'Y' \n");
-		sql.append("   AND account.vprovince is not null \n");
+		sql.append("SELECT account.vprovince    ");
+		sql.append("  FROM bd_account account   ");
+		sql.append(" WHERE nvl(account.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'   ");
+		sql.append("   AND account.vprovince is not null   ");
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
@@ -972,18 +972,18 @@ public class AchievementServiceImpl implements IAchievementService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		List<String> pklist = new ArrayList<String>();
-		sql.append("SELECT DISTINCT b.vprovince  \n");
-		sql.append("  FROM cn_chnarea_b b  \n");
-		sql.append("  LEFT JOIN cn_chnarea a ON a.pk_chnarea = b.pk_chnarea  \n");
-		sql.append("  LEFT JOIN bd_account account ON b.vprovince = account.vprovince  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.type, 0) = 1  \n");
-		sql.append("   AND nvl(account.ischannel, 'N') = 'Y' \n");
+		sql.append("SELECT DISTINCT b.vprovince    ");
+		sql.append("  FROM cn_chnarea_b b    ");
+		sql.append("  LEFT JOIN cn_chnarea a ON a.pk_chnarea = b.pk_chnarea    ");
+		sql.append("  LEFT JOIN bd_account account ON b.vprovince = account.vprovince    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(b.type, 0) = 1    ");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'   ");
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
 		if(paramvo.getCorptype() != null && paramvo.getCorptype() == 2){
-			sql.append("   AND a.userid = ? \n");
+			sql.append("   AND a.userid = ?   ");
 			spm.addParam(paramvo.getCuserid());
 		}
 		List<ChnAreaBVO> clist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -1017,15 +1017,15 @@ public class AchievementServiceImpl implements IAchievementService {
 		SQLParameter spm = new SQLParameter();
 //		List<String> pklist = new ArrayList<String>();
 //		// 3.1、区域负责人
-//		sql.append("SELECT account.pk_corp  \n");
-//		sql.append("  FROM cn_chnarea_b b  \n");
-//		sql.append("  LEFT JOIN bd_account account ON b.vprovince = account.vprovince  \n");
-//		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-//		sql.append("   AND nvl(account.dr, 0) = 0  \n");
-//		sql.append("   AND nvl(b.type, 0) = 1  \n");
-//		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'  \n");
-//		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'  \n");
-//		sql.append("   AND b.userid = ? \n");
+//		sql.append("SELECT account.pk_corp    ");
+//		sql.append("  FROM cn_chnarea_b b    ");
+//		sql.append("  LEFT JOIN bd_account account ON b.vprovince = account.vprovince    ");
+//		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+//		sql.append("   AND nvl(account.dr, 0) = 0    ");
+//		sql.append("   AND nvl(b.type, 0) = 1    ");
+//		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'    ");
+//		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'    ");
+//		sql.append("   AND b.userid = ?   ");
 //		spm.addParam(paramvo.getCuserid());
 //		if(!StringUtil.isEmpty(filtersql)){
 //			sql.append(" AND ").append(filtersql);
@@ -1042,12 +1042,12 @@ public class AchievementServiceImpl implements IAchievementService {
 //		//3.2、其他区域非负责人
 //		sql = new StringBuffer();
 //		spm = new SQLParameter();
-//		sql.append("SELECT b.pk_corp  \n") ;
-//		sql.append("  FROM cn_chnarea_b b  \n") ; 
-//		sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
-//		sql.append("   AND nvl(b.ischarge, 'N') = 'N'  \n") ; 
-//		sql.append("   AND nvl(b.type, 0) = 1  \n");
-//		sql.append("   AND b.userid = ? \n");
+//		sql.append("SELECT b.pk_corp    ") ;
+//		sql.append("  FROM cn_chnarea_b b    ") ; 
+//		sql.append(" WHERE nvl(b.dr, 0) = 0    ") ; 
+//		sql.append("   AND nvl(b.ischarge, 'N') = 'N'    ") ; 
+//		sql.append("   AND nvl(b.type, 0) = 1    ");
+//		sql.append("   AND b.userid = ?   ");
 //		spm.addParam(paramvo.getCuserid());
 //		List<AccountVO> klist = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 //				new BeanListProcessor(AccountVO.class));

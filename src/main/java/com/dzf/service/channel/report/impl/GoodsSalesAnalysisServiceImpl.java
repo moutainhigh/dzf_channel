@@ -233,36 +233,36 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 	private List<GoodsSalesCountVO> queryDetailData(QryParamVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT l.pk_corp,  \n");
-		sql.append("       l.ndedsummny,  \n");
-		sql.append("       l.ndeductmny,  \n");
-		sql.append("       l.ndedrebamny,  \n");
-		sql.append("       b.pk_goods,  \n");
-		sql.append("       b.pk_goodsspec,  \n");
-		sql.append("       b.invspec,  \n");
-		sql.append("       b.invtype,  \n");
-		sql.append("       b.amount,  \n"); // 数量
-		sql.append("       c.nprice,  \n");
-		sql.append("       b.nprice AS nbprice,  \n");
-		sql.append("       g.vgoodsname,  \n");
-		sql.append("       nvl(co.ncost,0) AS ncost  \n");
-		sql.append("  FROM cn_goodsbill_b b  \n");
-		sql.append("  LEFT JOIN cn_goods g ON b.pk_goods = g.pk_goods  \n");
-		sql.append("  LEFT JOIN cn_goodsbill l ON b.pk_goodsbill = l.pk_goodsbill  \n");
-		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
-		sql.append("                            AND s.vstatus = 1  \n");
-		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec  \n");
-		sql.append("  LEFT JOIN cn_goodscost co on b.pk_goodsspec = co.pk_goodsspec \n");
-		sql.append("  							AND substr(s.doperatetime, 0, 7)=co.period \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(g.dr, 0) = 0  \n");
-		sql.append("   AND nvl(l.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND nvl(c.dr, 0) = 0  \n");
-		sql.append("   AND nvl(co.dr, 0) = 0  \n");
-		sql.append("   AND l.vstatus IN (1, 2, 3)  \n");
+		sql.append("SELECT l.pk_corp,    ");
+		sql.append("       l.ndedsummny,    ");
+		sql.append("       l.ndeductmny,    ");
+		sql.append("       l.ndedrebamny,    ");
+		sql.append("       b.pk_goods,    ");
+		sql.append("       b.pk_goodsspec,    ");
+		sql.append("       b.invspec,    ");
+		sql.append("       b.invtype,    ");
+		sql.append("       b.amount,    "); // 数量
+		sql.append("       c.nprice,    ");
+		sql.append("       b.nprice AS nbprice,    ");
+		sql.append("       g.vgoodsname,    ");
+		sql.append("       nvl(co.ncost,0) AS ncost    ");
+		sql.append("  FROM cn_goodsbill_b b    ");
+		sql.append("  LEFT JOIN cn_goods g ON b.pk_goods = g.pk_goods    ");
+		sql.append("  LEFT JOIN cn_goodsbill l ON b.pk_goodsbill = l.pk_goodsbill    ");
+		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill    ");
+		sql.append("                            AND s.vstatus = 1    ");
+		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec    ");
+		sql.append("  LEFT JOIN cn_goodscost co on b.pk_goodsspec = co.pk_goodsspec   ");
+		sql.append("  							AND substr(s.doperatetime, 0, 7)=co.period   ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(g.dr, 0) = 0    ");
+		sql.append("   AND nvl(l.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND nvl(c.dr, 0) = 0    ");
+		sql.append("   AND nvl(co.dr, 0) = 0    ");
+		sql.append("   AND l.vstatus IN (1, 2, 3)    ");
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-			sql.append("   AND SUBSTR(s.doperatedate, 0, 7) = ?  \n");
+			sql.append("   AND SUBSTR(s.doperatedate, 0, 7) = ?    ");
 			spm.addParam(pamvo.getPeriod());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -270,7 +270,7 @@ public class GoodsSalesAnalysisServiceImpl implements IGoodsSalesAnalysisService
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
-		sql.append("   ORDER BY l.pk_corp  \n");
+		sql.append("   ORDER BY l.pk_corp    ");
 		return (List<GoodsSalesCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsSalesCountVO.class));
 	}

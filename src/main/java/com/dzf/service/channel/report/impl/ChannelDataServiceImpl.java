@@ -122,25 +122,25 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 	private List<ContQryVO> qryPositiveData(String qrysql, String qrtdate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
-		sql.append("       SUM(nvl(t.ndeductmny, 0)) AS ndedsummny,  \n");//扣款
-		sql.append("       SUM(nvl(t.ndedrebamny, 0)) AS naccountmny  \n");//预付款
-		sql.append("  FROM cn_contract t  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
+		sql.append("       SUM(nvl(t.ndeductmny, 0)) AS ndedsummny,    ");//扣款
+		sql.append("       SUM(nvl(t.ndedrebamny, 0)) AS naccountmny    ");//预付款
+		sql.append("  FROM cn_contract t    ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp   ");
 		sql.append(" WHERE ").append(wheresql);
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND t.vdeductstatus in (?, ?, ?)  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if (!StringUtil.isEmpty(qrysql)) {
 			sql.append(" AND ").append(qrysql);
 		}
-		sql.append(" GROUP BY ").append(qrtdate).append(" \n");
-		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
+		sql.append(" GROUP BY ").append(qrtdate).append("   ");
+		sql.append(" ORDER BY ").append(qrtdate).append("   ");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}
@@ -156,24 +156,24 @@ public class ChannelDataServiceImpl implements IChannelDataService{
 	private List<ContQryVO> qryNegativeData(String qrysql, String qrtdate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,  \n");
-		sql.append("       SUM(nvl(t.nsubdeductmny, 0)) AS ndedsummny,  \n");//扣款
-		sql.append("       SUM(nvl(t.nsubdedrebamny, 0)) AS naccountmny  \n");//预付款 
-		sql.append("  FROM cn_contract t  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp \n");
+		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
+		sql.append("       SUM(nvl(t.nsubdeductmny, 0)) AS ndedsummny,    ");//扣款
+		sql.append("       SUM(nvl(t.nsubdedrebamny, 0)) AS naccountmny    ");//预付款 
+		sql.append("  FROM cn_contract t    ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON ct.pk_corp = account.pk_corp   ");
 		sql.append(" WHERE ").append(wheresql);
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND t.vdeductstatus in (?, ?)  \n");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND t.vdeductstatus in (?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if (!StringUtil.isEmpty(qrysql)) {
 			sql.append(" AND ").append(qrysql);
 		}
-		sql.append(" GROUP BY ").append(qrtdate).append("  \n");
-		sql.append(" ORDER BY ").append(qrtdate).append(" \n");
+		sql.append(" GROUP BY ").append(qrtdate).append("    ");
+		sql.append(" ORDER BY ").append(qrtdate).append("   ");
 		return (List<ContQryVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ContQryVO.class));
 	}

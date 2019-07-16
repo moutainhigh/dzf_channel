@@ -154,16 +154,16 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 		Map<String, CustCountVO> voumap = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.fathercorp as pk_corp, \n");
-		sql.append("  nvl(p.chargedeptname,'小规模纳税人') AS chargedeptname,  \n");
-		sql.append("  count(DISTINCT h.pk_tzpz_h) as num \n");
-		sql.append("  FROM ynt_tzpz_h h \n");
-		sql.append("  LEFT JOIN bd_corp p ON h.pk_corp = p.pk_corp \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0 and h.period = ? \n");
-		sql.append("   AND nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");// 非分支机构
+		sql.append("SELECT p.fathercorp as pk_corp,   ");
+		sql.append("  nvl(p.chargedeptname,'小规模纳税人') AS chargedeptname,    ");
+		sql.append("  count(DISTINCT h.pk_tzpz_h) as num   ");
+		sql.append("  FROM ynt_tzpz_h h   ");
+		sql.append("  LEFT JOIN bd_corp p ON h.pk_corp = p.pk_corp   ");
+		sql.append(" WHERE nvl(h.dr, 0) = 0 and h.period = ?   ");
+		sql.append("   AND nvl(p.dr, 0) = 0   ");
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y'   ");// 已建账
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  "); // 未封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非分支机构
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", countcorplist.toArray(new String[0]));
 		sql.append(" AND ").append(where);
 		sql.append(" GROUP BY (p.chargedeptname, p.fathercorp)");
@@ -203,21 +203,21 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 	private List<CustCountVO> queryCustNum(QryParamVO pamvo, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp AS pk_corp,  \n");
-		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,  \n");
-		sql.append("       COUNT(p.pk_corp) AS num,  \n");
-		sql.append("       nvl(p.isncust, 'N') AS isncust \n");
-		sql.append("  FROM bd_corp p  \n");
-		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp  \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n");
-		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y' \n");// 已建账
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'\n"); // 未封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");// 非分支机构
+		sql.append("SELECT t.pk_corp AS pk_corp,    ");
+		sql.append("       nvl(p.chargedeptname, '小规模纳税人') AS chargedeptname,    ");
+		sql.append("       COUNT(p.pk_corp) AS num,    ");
+		sql.append("       nvl(p.isncust, 'N') AS isncust   ");
+		sql.append("  FROM bd_corp p    ");
+		sql.append("  LEFT JOIN bd_account t ON p.fathercorp = t.pk_corp    ");
+		sql.append(" WHERE nvl(p.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.ischannel, 'N') = 'Y'    ");
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'    ");
+		sql.append("   AND nvl(p.ishasaccount,'N') = 'Y'   ");// 已建账
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'  "); // 未封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非分支机构
 		if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-			sql.append("   AND substr(p.createdate,1,7) <= ? \n");
+			sql.append("   AND substr(p.createdate,1,7) <= ?   ");
 			spm.addParam(pamvo.getPeriod());
 		}
 		if (corplist != null && corplist.size() > 0) {
@@ -230,9 +230,9 @@ public class FinanceDealStateRepImpl extends DataCommonRepImpl implements IFinan
 			sql.append(" AND ");
 			sql.append(filter);
 		}
-		sql.append(" GROUP BY t.pk_corp,  \n");
-		sql.append("          nvl(p.chargedeptname, '小规模纳税人'),  \n");
-		sql.append("          nvl(p.isncust, 'N') \n");
+		sql.append(" GROUP BY t.pk_corp,    ");
+		sql.append("          nvl(p.chargedeptname, '小规模纳税人'),    ");
+		sql.append("          nvl(p.isncust, 'N')   ");
 		return (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
 	}

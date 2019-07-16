@@ -64,7 +64,7 @@ public class FranchiseeManServiceImpl extends ManCommonServiceImpl implements IF
 		sql.append("       account.pk_corp, ");
 		sql.append("       account.innercode, ");
 		sql.append("       account.unitname corpname, ");
-		sql.append("        account.drelievedate, \n");//解约日期
+		sql.append("        account.drelievedate,   ");//解约日期
 		sql.append("       account.vprovince ");
 		sql.append("  from bd_account account ");
 		sql.append("  left join ynt_area y on account.vprovince = y.region_id ");
@@ -82,7 +82,7 @@ public class FranchiseeManServiceImpl extends ManCommonServiceImpl implements IF
 				String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 				sql.append(" AND ").append(where);
 			}else{
-				sql.append(" AND account.pk_corp is null \n") ; 
+				sql.append(" AND account.pk_corp is null   ") ; 
 			}
 		}
 		List<ManagerVO> list =(List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(ManagerVO.class));

@@ -345,10 +345,10 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 	@Override
 	public List<ComboBoxVO> qryGoodsHead() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_goods AS id,  \n") ;
-		sql.append("       vgoodsname AS name  \n") ; 
-		sql.append("  FROM cn_goods \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("SELECT pk_goods AS id,    ") ;
+		sql.append("       vgoodsname AS name    ") ; 
+		sql.append("  FROM cn_goods   ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsBoxVO.class));
 	}
@@ -356,10 +356,10 @@ public class LogisticRepServiceImpl implements ILogisticRepService{
 	@Override
 	public List<ComboBoxVO> qryMaterHead() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_materiel AS id,  \n") ;
-		sql.append("       vname ||'/'|| vunit AS name  \n") ; 
-		sql.append("  FROM cn_materiel \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("SELECT pk_materiel AS id,    ") ;
+		sql.append("       vname ||'/'|| vunit AS name    ") ; 
+		sql.append("  FROM cn_materiel   ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsBoxVO.class));
 	}

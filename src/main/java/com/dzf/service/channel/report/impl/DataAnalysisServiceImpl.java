@@ -88,28 +88,28 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count(DISTINCT account.pk_corp)  \n");
-		sql.append("  FROM bd_account account  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince  \n");
-		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("SELECT count(DISTINCT account.pk_corp)    ");
+		sql.append("  FROM bd_account account    ");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince    ");
+		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea    ");
 		sql.append(" WHERE ").append(filtersql);
-		sql.append("   AND nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND b.type = 1  \n");
+		sql.append("   AND nvl(b.dr, 0) = 0    ");
+		sql.append("   AND b.type = 1    ");
 		if(!StringUtil.isEmpty(pamvo.getPk_corp())){
 		    String[] strs = pamvo.getPk_corp().split(",");
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    sql.append(" AND account.pk_corp in (").append(inSql).append(")");
 		}
 		if(!StringUtil.isEmpty(pamvo.getAreaname())){
-			sql.append(" AND a.areacode = ? \n");
+			sql.append(" AND a.areacode = ?   ");
 			spm.addParam(pamvo.getAreaname());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
-			sql.append(" AND account.djoindate >= ? \n");
+			sql.append(" AND account.djoindate >= ?   ");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getEndperiod())){
-			sql.append(" AND account.djoindate <= ? \n");
+			sql.append(" AND account.djoindate <= ?   ");
 			spm.addParam(pamvo.getEndperiod());
 		}
 		qryvo.setSql(sql.toString());
@@ -127,28 +127,28 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT account.pk_corp  \n");
-		sql.append("  FROM bd_account account  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince  \n");
-		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("SELECT DISTINCT account.pk_corp    ");
+		sql.append("  FROM bd_account account    ");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.vprovince = b.vprovince    ");
+		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea    ");
 		sql.append(" WHERE ").append(filtersql);
-		sql.append("   AND nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND b.type = 1  \n");
+		sql.append("   AND nvl(b.dr, 0) = 0    ");
+		sql.append("   AND b.type = 1    ");
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
 			String[] strs = pamvo.getPk_corp().split(",");
 			String inSql = SqlUtil.buildSqlConditionForIn(strs);
 			sql.append(" AND account.pk_corp in (").append(inSql).append(")");
 		}
 		if (!StringUtil.isEmpty(pamvo.getAreaname())) {
-			sql.append(" AND a.areacode = ? \n");
+			sql.append(" AND a.areacode = ?   ");
 			spm.addParam(pamvo.getAreaname());
 		}
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
-			sql.append(" AND account.djoindate >= ? \n");
+			sql.append(" AND account.djoindate >= ?   ");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if (!StringUtil.isEmpty(pamvo.getEndperiod())) {
-			sql.append(" AND account.djoindate <= ? \n");
+			sql.append(" AND account.djoindate <= ?   ");
 			spm.addParam(pamvo.getEndperiod());
 		}
 		qryvo.setSql(sql.toString());
@@ -162,37 +162,37 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getQryColumn(StringBuffer sql) throws DZFWarpException {
-		sql.append("SELECT DISTINCT acc.pk_corp,  \n");
-		sql.append("       acc.corpname,  \n");
-		sql.append("       acc.djoindate,  \n");
-		sql.append("       acc.drelievedate,  \n");
-		sql.append("       acc.citycounty AS vprovname,  \n");
-		sql.append("       acc.areaname,  \n");
+		sql.append("SELECT DISTINCT acc.pk_corp,    ");
+		sql.append("       acc.corpname,    ");
+		sql.append("       acc.djoindate,    ");
+		sql.append("       acc.drelievedate,    ");
+		sql.append("       acc.citycounty AS vprovname,    ");
+		sql.append("       acc.areaname,    ");
 		
-		sql.append("       corp.ismcustnum,  \n");
-		sql.append("       corp.igecustnum,  \n");
-		sql.append("       corp.ismstocknum,  \n");
-		sql.append("       corp.igestocknum,  \n");
-		sql.append("       corp.ismnstocknum,  \n");
-		sql.append("       corp.igenstocknum,  \n");
+		sql.append("       corp.ismcustnum,    ");
+		sql.append("       corp.igecustnum,    ");
+		sql.append("       corp.ismstocknum,    ");
+		sql.append("       corp.igestocknum,    ");
+		sql.append("       corp.ismnstocknum,    ");
+		sql.append("       corp.igenstocknum,    ");
 		
-		sql.append("       nvl(cont.istockconnum_s,0) - nvl(cont.istockconnum_b,0) AS istockconnum,  \n");
-		sql.append("       nvl(cont.izeroconnum_s,0) - nvl(cont.izeroconnum_b,0) AS izeroconnum,  \n");
-		sql.append("       nvl(cont.instockconnum_s,0) - nvl(cont.instockconnum_b,0) AS instockconnum,  \n");
+		sql.append("       nvl(cont.istockconnum_s,0) - nvl(cont.istockconnum_b,0) AS istockconnum,    ");
+		sql.append("       nvl(cont.izeroconnum_s,0) - nvl(cont.izeroconnum_b,0) AS izeroconnum,    ");
+		sql.append("       nvl(cont.instockconnum_s,0) - nvl(cont.instockconnum_b,0) AS instockconnum,    ");
 		//因为差额为负数，所以要加
-		sql.append("       nvl(cont.ntotalmny_s,0) + nvl(cont.ntotalmny_b,0) - \n");
-		sql.append("       (nvl(cont.nbookmny_s,0) - nvl(cont.nbookmny_b,0)) AS naccountmny, \n");
-		sql.append("       nvl(cont.nbookmny_s,0) - nvl(cont.nbookmny_b,0) AS nbookmny,  \n");
-		sql.append("       nvl(cont.ndeductmny_s,0) + nvl(cont.ndeductmny_b,0) AS ndeductmny, \n");
+		sql.append("       nvl(cont.ntotalmny_s,0) + nvl(cont.ntotalmny_b,0) -   ");
+		sql.append("       (nvl(cont.nbookmny_s,0) - nvl(cont.nbookmny_b,0)) AS naccountmny,   ");
+		sql.append("       nvl(cont.nbookmny_s,0) - nvl(cont.nbookmny_b,0) AS nbookmny,    ");
+		sql.append("       nvl(cont.ndeductmny_s,0) + nvl(cont.ndeductmny_b,0) AS ndeductmny,   ");
 		
-		sql.append("       pay.ndepositmny, \n");
-		sql.append("       pay.npaymentmny, \n");
-		sql.append("       pay.nrebatemny, \n");
+		sql.append("       pay.ndepositmny,   ");
+		sql.append("       pay.npaymentmny,   ");
+		sql.append("       pay.nrebatemny,   ");
 		
-		sql.append("       buy.ngoodsbuymny, \n");
+		sql.append("       buy.ngoodsbuymny,   ");
 		
-		sql.append("       usr.isumcustnum \n");
-		sql.append("  FROM  \n");
+		sql.append("       usr.isumcustnum   ");
+		sql.append("  FROM    ");
 	}
 	
 	/**
@@ -205,22 +205,22 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 */
 	private void getAccSqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
 		//1、加盟商相关信息：
-		sql.append("(SELECT DISTINCT t.pk_corp,  \n");
-		sql.append("       t.unitname AS corpname,  \n");
-		sql.append("       t.djoindate,  \n");
-		sql.append("       t.drelievedate,  \n");
-		sql.append("       t.citycounty,  \n");
-		sql.append("       a.areaname  \n");
-		sql.append("  FROM bd_account t  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince  \n");
-		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND b.type = 1  \n");
-		sql.append("   AND nvl(a.dr, 0) = 0  \n");
+		sql.append("(SELECT DISTINCT t.pk_corp,    ");
+		sql.append("       t.unitname AS corpname,    ");
+		sql.append("       t.djoindate,    ");
+		sql.append("       t.drelievedate,    ");
+		sql.append("       t.citycounty,    ");
+		sql.append("       a.areaname    ");
+		sql.append("  FROM bd_account t    ");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON t.vprovince = b.vprovince    ");
+		sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(b.dr, 0) = 0    ");
+		sql.append("   AND b.type = 1    ");
+		sql.append("   AND nvl(a.dr, 0) = 0    ");
 	    String where = SqlUtil.buildSqlForIn("t.pk_corp", corpks);
 	    sql.append(" AND  ").append(where);
-		sql.append("   ) acc  \n");
+		sql.append("   ) acc    ");
 	}
 	
 	/**
@@ -232,64 +232,64 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getCorpSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT DISTINCT p.fathercorp AS pk_corp,  \n") ;
-		sql.append("              SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ismcustnum,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS igecustnum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' AND  \n") ; 
-		sql.append("                  nvl(p.isncust, 'N') = 'Y' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ismstocknum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' AND  \n") ; 
-		sql.append("                  nvl(p.isncust, 'N') = 'Y' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS igestocknum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' AND  \n") ; 
-		sql.append("                  nvl(p.isncust, 'N') = 'N' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ismnstocknum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' AND  \n") ; 
-		sql.append("                  nvl(p.isncust, 'N') = 'N' THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS igenstocknum  \n") ; 
-		sql.append("  FROM bd_corp p  \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.isseal,'N') = 'N' \n");//非封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N' \n");//非分支机构
+		sql.append("LEFT JOIN    ");
+		sql.append("(SELECT DISTINCT p.fathercorp AS pk_corp,    ") ;
+		sql.append("              SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ismcustnum,    ") ;
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS igecustnum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' AND    ") ; 
+		sql.append("                  nvl(p.isncust, 'N') = 'Y' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ismstocknum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' AND    ") ; 
+		sql.append("                  nvl(p.isncust, 'N') = 'Y' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS igestocknum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '小规模纳税人' AND    ") ; 
+		sql.append("                  nvl(p.isncust, 'N') = 'N' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ismnstocknum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(p.chargedeptname, '小规模纳税人') = '一般纳税人' AND    ") ; 
+		sql.append("                  nvl(p.isncust, 'N') = 'N' THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS igenstocknum    ") ; 
+		sql.append("  FROM bd_corp p    ");
+		sql.append(" WHERE nvl(p.dr, 0) = 0    ");
+		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");//非封存客户
+		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");//非分支机构
 		String where = SqlUtil.buildSqlForIn("p.fathercorp", corpks);
 	    sql.append(" AND  ").append(where);
 		if(pamvo.getBegdate() != null){
-			sql.append(" AND p.createdate >= ? \n");
+			sql.append(" AND p.createdate >= ?   ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null){
-			sql.append(" AND p.createdate <= ? \n");
+			sql.append(" AND p.createdate <= ?   ");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append("  GROUP BY p.fathercorp) corp  \n");
-		sql.append("ON acc.pk_corp = corp.pk_corp  \n");
+		sql.append("  GROUP BY p.fathercorp) corp    ");
+		sql.append("ON acc.pk_corp = corp.pk_corp    ");
 	}
 	
 	/**
@@ -301,138 +301,138 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getContSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT DISTINCT ct.pk_corp,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND  \n") ; 
+		sql.append("LEFT JOIN    ");
+		sql.append("(SELECT DISTINCT ct.pk_corp,    ") ;
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("                  nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 5 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS istockconnum_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 5 AND ct.vstatus = 10 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS istockconnum_b,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND  \n") ; 
+		sql.append("                  nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 5 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS istockconnum_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 5 AND ct.vstatus = 10 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS istockconnum_b,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("                  nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) = 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS izeroconnum_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) = 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND  \n") ; 
-		sql.append("                  ct.vstatus = 10 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS izeroconnum_b,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND  \n") ; 
+		sql.append("                  nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) = 0 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS izeroconnum_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) = 0 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND    ") ; 
+		sql.append("                  ct.vstatus = 10 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS izeroconnum_b,    ") ;
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND cn.deductdata <= ? AND    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("                  nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND  \n") ; 
-		sql.append("                  ct.vstatus = 10 THEN  \n") ; 
-		sql.append("              -1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS instockconnum_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND  \n") ; 
-		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND  \n") ; 
-		sql.append("                  ct.vstatus = 10 THEN  \n") ; 
-		sql.append("              1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS instockconnum_b,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND  \n") ; 
-		sql.append("                  cn.deductdata <= ? THEN  \n") ; 
+		sql.append("                  nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND    ") ; 
+		sql.append("                  ct.vstatus = 10 THEN    ") ; 
+		sql.append("              -1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS instockconnum_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(cn.ideductpropor, 0) != 0 AND    ") ; 
+		sql.append("                  nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 AND    ") ; 
+		sql.append("                  ct.vstatus = 10 THEN    ") ; 
+		sql.append("              1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS instockconnum_b,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND    ") ; 
+		sql.append("                  cn.deductdata <= ? THEN    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("              nvl(ct.nchangetotalmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ntotalmny_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN substr(cn.dchangetime, 0, 10) >= ? AND  \n") ; 
-		sql.append("                  substr(cn.dchangetime, 0, 10) <= ? THEN  \n") ; 
+		sql.append("              nvl(ct.nchangetotalmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ntotalmny_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN substr(cn.dchangetime, 0, 10) >= ? AND    ") ; 
+		sql.append("                  substr(cn.dchangetime, 0, 10) <= ? THEN    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("              nvl(cn.nsubtotalmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ntotalmny_b,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND  \n") ; 
-		sql.append("                  cn.deductdata <= ? THEN  \n") ; 
+		sql.append("              nvl(cn.nsubtotalmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ntotalmny_b,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND    ") ; 
+		sql.append("                  cn.deductdata <= ? THEN    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("              nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS nbookmny_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN ct.vstatus = 10 THEN \n") ; 
-		sql.append("              nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS nbookmny_b,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN cn.deductdata >= ? AND  \n") ; 
-		sql.append("                  cn.deductdata <= ? THEN  \n") ; 
+		sql.append("              nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS nbookmny_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN ct.vstatus = 10 THEN   ") ; 
+		sql.append("              nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS nbookmny_b,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN cn.deductdata >= ? AND    ") ; 
+		sql.append("                  cn.deductdata <= ? THEN    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("              nvl(cn.ndedsummny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ndeductmny_s,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN substr(cn.dchangetime, 0, 10) >= ? AND  \n") ; 
-		sql.append("                  substr(cn.dchangetime, 0, 10) <= ? THEN  \n") ; 
+		sql.append("              nvl(cn.ndedsummny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ndeductmny_s,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN substr(cn.dchangetime, 0, 10) >= ? AND    ") ; 
+		sql.append("                  substr(cn.dchangetime, 0, 10) <= ? THEN    ") ; 
 		spm.addParam(pamvo.getBegdate());
 		spm.addParam(pamvo.getEnddate());
-		sql.append("              nvl(cn.nsubdedsummny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ndeductmny_b  \n") ; 
-		sql.append("  FROM cn_contract cn  \n") ; 
-		sql.append(" INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract  \n") ; 
-		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND ct.vstatus IN (1, 9, 10) \n") ; 
-		sql.append("   AND ct.icontracttype = 2  \n") ; 
+		sql.append("              nvl(cn.nsubdedsummny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ndeductmny_b    ") ; 
+		sql.append("  FROM cn_contract cn    ") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract    ") ; 
+		sql.append(" WHERE nvl(cn.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0    ") ; 
+		sql.append("   AND ct.vstatus IN (1, 9, 10)   ") ; 
+		sql.append("   AND ct.icontracttype = 2    ") ; 
 		String where = SqlUtil.buildSqlForIn("ct.pk_corp", corpks);
 	    sql.append(" AND  ").append(where);
 		if(pamvo.getBegdate() != null){
-			sql.append(" AND (cn.deductdata >= ? \n");
+			sql.append(" AND (cn.deductdata >= ?   ");
 			spm.addParam(pamvo.getBegdate());
-			sql.append("  OR substr(cn.dchangetime, 0, 10) >= ?) \n");
+			sql.append("  OR substr(cn.dchangetime, 0, 10) >= ?)   ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null){
-			sql.append(" AND (cn.deductdata <= ? \n");
+			sql.append(" AND (cn.deductdata <= ?   ");
 			spm.addParam(pamvo.getEnddate());
-			sql.append("  OR substr(cn.dchangetime, 0, 10) <= ?) \n");
+			sql.append("  OR substr(cn.dchangetime, 0, 10) <= ?)   ");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY ct.pk_corp ) cont \n");
-		sql.append("    ON acc.pk_corp = cont.pk_corp  \n");
+		sql.append(" GROUP BY ct.pk_corp ) cont   ");
+		sql.append("    ON acc.pk_corp = cont.pk_corp    ");
 	}
 	
 	/**
@@ -444,19 +444,19 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getPaySqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT DISTINCT b.pk_corp,  \n") ;
-		sql.append("       SUM(decode(b.ipaytype, 1, nvl(b.npaymny, 0), 0)) AS ndepositmny,  \n") ; 
-		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.npaymny, 0), 0)) -  \n") ; 
-		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.nusedmny, 0), 0)) AS npaymentmny,  \n") ; 
-		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.npaymny, 0), 0)) -  \n") ; 
-		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.nusedmny, 0), 0)) AS nrebatemny  \n") ; 
-		sql.append("  FROM cn_balance b  \n") ; 
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
+		sql.append("LEFT JOIN    ");
+		sql.append("(SELECT DISTINCT b.pk_corp,    ") ;
+		sql.append("       SUM(decode(b.ipaytype, 1, nvl(b.npaymny, 0), 0)) AS ndepositmny,    ") ; 
+		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.npaymny, 0), 0)) -    ") ; 
+		sql.append("       SUM(decode(b.ipaytype, 2, nvl(b.nusedmny, 0), 0)) AS npaymentmny,    ") ; 
+		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.npaymny, 0), 0)) -    ") ; 
+		sql.append("       SUM(decode(b.ipaytype, 3, nvl(b.nusedmny, 0), 0)) AS nrebatemny    ") ; 
+		sql.append("  FROM cn_balance b    ") ; 
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ") ; 
 		String where = SqlUtil.buildSqlForIn("b.pk_corp", corpks);
 	    sql.append(" AND  ").append(where);
-	    sql.append(" GROUP BY b.pk_corp ) pay \n");
-		sql.append("    ON acc.pk_corp = pay.pk_corp  \n");
+	    sql.append(" GROUP BY b.pk_corp ) pay   ");
+		sql.append("    ON acc.pk_corp = pay.pk_corp    ");
 	}
 	
 	/**
@@ -469,28 +469,28 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getBuySqlSpm(QryParamVO pamvo, String[] corpks, StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT DISTINCT dl.pk_corp,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN (dl.ipaytype = 2 OR dl.ipaytype = 3) AND dl.iopertype = 5 THEN  \n") ; 
-		sql.append("              nvl(dl.nusedmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS ngoodsbuymny  \n") ; 
-		sql.append("  FROM cn_detail dl  \n") ; 
-		sql.append(" WHERE nvl(dl.dr, 0) = 0  \n") ; 
+		sql.append("LEFT JOIN    ");
+		sql.append("(SELECT DISTINCT dl.pk_corp,    ") ;
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN (dl.ipaytype = 2 OR dl.ipaytype = 3) AND dl.iopertype = 5 THEN    ") ; 
+		sql.append("              nvl(dl.nusedmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS ngoodsbuymny    ") ; 
+		sql.append("  FROM cn_detail dl    ") ; 
+		sql.append(" WHERE nvl(dl.dr, 0) = 0    ") ; 
 		String where = SqlUtil.buildSqlForIn("dl.pk_corp", corpks);
 	    sql.append(" AND  ").append(where);
 		if(pamvo.getBegdate() != null){
-			sql.append(" AND dl.doperatedate >= ? \n");
+			sql.append(" AND dl.doperatedate >= ?   ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null){
-			sql.append(" AND dl.doperatedate <= ? \n");
+			sql.append(" AND dl.doperatedate <= ?   ");
 			spm.addParam(pamvo.getEnddate());
 		}
-		sql.append(" GROUP BY dl.pk_corp) buy \n");
-		sql.append("    ON acc.pk_corp = buy.pk_corp  \n");
+		sql.append(" GROUP BY dl.pk_corp) buy   ");
+		sql.append("    ON acc.pk_corp = buy.pk_corp    ");
 	}
 	
 	/**
@@ -502,23 +502,23 @@ public class DataAnalysisServiceImpl implements IDataAnalysisService {
 	 * @throws DZFWarpException
 	 */
 	private void getUserSqlSpm(QryParamVO pamvo, String[] corpks,StringBuffer sql, SQLParameter spm) throws DZFWarpException {
-		sql.append("LEFT JOIN  \n");
-		sql.append("(SELECT DISTINCT r.pk_corp, COUNT(r.cuserid) AS isumcustnum \n") ;
-		sql.append("  FROM sm_user r  \n") ; 
-		sql.append(" WHERE nvl(r.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(r.locked_tag, 'N') = 'N'  \n") ; 
+		sql.append("LEFT JOIN    ");
+		sql.append("(SELECT DISTINCT r.pk_corp, COUNT(r.cuserid) AS isumcustnum   ") ;
+		sql.append("  FROM sm_user r    ") ; 
+		sql.append(" WHERE nvl(r.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(r.locked_tag, 'N') = 'N'    ") ; 
 //		if(pamvo.getBegdate() != null){
-//			sql.append(" AND r.able_time >= ? \n");
+//			sql.append(" AND r.able_time >= ?   ");
 //			spm.addParam(pamvo.getBegdate() );
 //		}
 //		if(pamvo.getEnddate() != null){
-//			sql.append(" AND r.able_time <= ? \n");
+//			sql.append(" AND r.able_time <= ?   ");
 //			spm.addParam(pamvo.getEnddate() );
 //		}
 		String where = SqlUtil.buildSqlForIn("r.pk_corp", corpks);
 		sql.append(" AND  ").append(where);
-		sql.append(" GROUP BY r.pk_corp) usr \n");
-		sql.append("    ON acc.pk_corp = usr.pk_corp \n");
+		sql.append(" GROUP BY r.pk_corp) usr   ");
+		sql.append("    ON acc.pk_corp = usr.pk_corp   ");
 	}
 
 }

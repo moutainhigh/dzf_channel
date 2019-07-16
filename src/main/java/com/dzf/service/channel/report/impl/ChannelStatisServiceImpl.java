@@ -72,8 +72,8 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		buf.append("     yt.pk_corp,yt.vchannelid as userid,u.user_name username");
 		buf.append("  from cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
-		buf.append(" LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid  \n") ; 
-		buf.append(" LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp  \n") ; 
+		buf.append(" LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid    ") ; 
+		buf.append(" LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp    ") ; 
 		buf.append(" where nvl(yt.isncust, 'N') = 'N' ");
 		buf.append("   and nvl(t.dr, 0) = 0 ");
 		buf.append("   and nvl(yt.dr, 0) = 0 ");

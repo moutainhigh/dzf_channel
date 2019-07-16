@@ -113,29 +113,29 @@ public class DataCommonRepImpl {
 	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,HashMap<String, UserVO> queryUserMap,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname,  \n");
-		sql.append("       a.userid,  \n");
-		sql.append("       y.region_name vprovname,  \n");
-		sql.append("       account.pk_corp,  \n");
-		sql.append("       account.innercode,  \n");
-		sql.append("       account.drelievedate,  \n");//解约日期
-		sql.append("       account.djoindate chndate, \n");
-		sql.append("       account.vprovince,  \n");
-		sql.append("       b.ischarge,  \n");
-		sql.append("       b.userid cuserid,  \n");
-		sql.append("       b.pk_corp corpname  \n");
-		sql.append("  from bd_account account  \n");
-		sql.append("  left join ynt_area y on account.vprovince = y.region_id  \n");
-		sql.append("                      and y.parenter_id = 1  \n");
-		sql.append("                      and nvl(y.dr, 0) = 0  \n");
-		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince  \n");
-		sql.append("                          and b.type = ?  \n");
-		sql.append("                          and nvl(b.dr, 0) = 0  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append("                        and a.type = ?  \n");
-		sql.append("                        and nvl(a.dr, 0) = 0  \n");
+		sql.append("select a.areaname,    ");
+		sql.append("       a.userid,    ");
+		sql.append("       y.region_name vprovname,    ");
+		sql.append("       account.pk_corp,    ");
+		sql.append("       account.innercode,    ");
+		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.djoindate chndate,   ");
+		sql.append("       account.vprovince,    ");
+		sql.append("       b.ischarge,    ");
+		sql.append("       b.userid cuserid,    ");
+		sql.append("       b.pk_corp corpname    ");
+		sql.append("  from bd_account account    ");
+		sql.append("  left join ynt_area y on account.vprovince = y.region_id    ");
+		sql.append("                      and y.parenter_id = 1    ");
+		sql.append("                      and nvl(y.dr, 0) = 0    ");
+		sql.append("  left join cn_chnarea_b b on account.vprovince = b.vprovince    ");
+		sql.append("                          and b.type = ?    ");
+		sql.append("                          and nvl(b.dr, 0) = 0    ");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
+		sql.append("                        and a.type = ?    ");
+		sql.append("                        and nvl(a.dr, 0) = 0    ");
 		sql.append(" where ").append(filtersql);
-		sql.append("   and account.vprovince is not null \n");
+		sql.append("   and account.vprovince is not null   ");
 		spm.addParam(type);
 		spm.addParam(type);
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
@@ -146,11 +146,11 @@ public class DataCommonRepImpl {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
 			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append("   AND account.pk_corp NOT IN  \n");
-		sql.append("       (SELECT f.pk_corp  \n");
-		sql.append("          FROM ynt_franchisee f  \n");
-		sql.append("         WHERE nvl(dr, 0) = 0  \n");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+		sql.append("   AND account.pk_corp NOT IN    ");
+		sql.append("       (SELECT f.pk_corp    ");
+		sql.append("          FROM ynt_franchisee f    ");
+		sql.append("         WHERE nvl(dr, 0) = 0    ");
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
 		if (level == 2) {// 区域总经理
 			sql.append(" and a.userid=? ");
 			spm.addParam(qvo.getUser_name());
@@ -219,32 +219,32 @@ public class DataCommonRepImpl {
 	private List<DataVO> qryCharge(QryParamVO qvo, Class cla,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select account.pk_corp,  \n");
-		sql.append("       a.areaname,  \n");
-		sql.append("       a.userid,  \n");
-		sql.append("       b.vprovname,  \n");
-		sql.append("       b.vprovince,  \n");
-		sql.append("       account.innercode,  \n");
-		sql.append("       account.drelievedate,  \n");//解约日期
-		sql.append("       account.djoindate chndate, \n");
-		sql.append("       b.pk_corp corpname,  \n");
-		sql.append("       (case  \n");
-		sql.append("         when b.pk_corp is null then  \n");
-		sql.append("          null  \n");
-		sql.append("         when b.pk_corp != account.pk_corp then  \n");
-		sql.append("          null  \n");
-		sql.append("         else  \n");
-		sql.append("          b.userid  \n");
-		sql.append("       end) cuserid  \n");
-		sql.append("  from bd_account account  \n");
-		sql.append(" right join cn_chnarea_b b on account.vprovince = b.vprovince  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("select account.pk_corp,    ");
+		sql.append("       a.areaname,    ");
+		sql.append("       a.userid,    ");
+		sql.append("       b.vprovname,    ");
+		sql.append("       b.vprovince,    ");
+		sql.append("       account.innercode,    ");
+		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.djoindate chndate,   ");
+		sql.append("       b.pk_corp corpname,    ");
+		sql.append("       (case    ");
+		sql.append("         when b.pk_corp is null then    ");
+		sql.append("          null    ");
+		sql.append("         when b.pk_corp != account.pk_corp then    ");
+		sql.append("          null    ");
+		sql.append("         else    ");
+		sql.append("          b.userid    ");
+		sql.append("       end) cuserid    ");
+		sql.append("  from bd_account account    ");
+		sql.append(" right join cn_chnarea_b b on account.vprovince = b.vprovince    ");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
 		sql.append(" where ").append(filtersql);
-		sql.append("   and nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = ?  \n");
-		sql.append("   and b.userid = ?  \n");
-		sql.append("   and nvl(b.ischarge, 'N') = 'Y' \n");
+		sql.append("   and nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(a.dr, 0) = 0    ");
+		sql.append("   and b.type = ?    ");
+		sql.append("   and b.userid = ?    ");
+		sql.append("   and nvl(b.ischarge, 'N') = 'Y'   ");
 		spm.addParam(type);
 		spm.addParam(qvo.getUser_name());
 		if (qvo.getSeletype() != null && qvo.getSeletype() != 0) {// 不包含已解约加盟商
@@ -255,11 +255,11 @@ public class DataCommonRepImpl {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(qvo.getCorps());
 			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append("   AND account.pk_corp NOT IN  \n");
-		sql.append("       (SELECT f.pk_corp  \n");
-		sql.append("          FROM ynt_franchisee f  \n");
-		sql.append("         WHERE nvl(dr, 0) = 0  \n");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+		sql.append("   AND account.pk_corp NOT IN    ");
+		sql.append("       (SELECT f.pk_corp    ");
+		sql.append("          FROM ynt_franchisee f    ");
+		sql.append("         WHERE nvl(dr, 0) = 0    ");
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
 			spm.addParam(qvo.getAreaname());
@@ -282,23 +282,23 @@ public class DataCommonRepImpl {
 	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla,int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select account.pk_corp,  \n");
-		sql.append("       a.areaname,  \n");
-		sql.append("       a.userid,  \n");
-		sql.append("       b.userid cuserid,  \n");
-		sql.append("       b.vprovname,  \n");
-		sql.append("       account.vprovince,  \n");
-		sql.append("       account.innercode,  \n");
-		sql.append("       account.drelievedate,  \n");//解约日期
-		sql.append("       account.djoindate chndate, \n");
-		sql.append("       b.pk_corp corpname  \n");
-		sql.append("  from bd_account account  \n");
-		sql.append(" right join cn_chnarea_b b on account.pk_corp = b.pk_corp  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
+		sql.append("select account.pk_corp,    ");
+		sql.append("       a.areaname,    ");
+		sql.append("       a.userid,    ");
+		sql.append("       b.userid cuserid,    ");
+		sql.append("       b.vprovname,    ");
+		sql.append("       account.vprovince,    ");
+		sql.append("       account.innercode,    ");
+		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.djoindate chndate,   ");
+		sql.append("       b.pk_corp corpname    ");
+		sql.append("  from bd_account account    ");
+		sql.append(" right join cn_chnarea_b b on account.pk_corp = b.pk_corp    ");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
 		sql.append(" where ").append(filtersql);
-		sql.append("   and nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = ?  \n");
+		sql.append("   and nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(a.dr, 0) = 0    ");
+		sql.append("   and b.type = ?    ");
 		spm.addParam(type);
 		if (!StringUtil.isEmpty(qvo.getVqrysql())) {
 			sql.append(" and (" + qvo.getVqrysql() + " or b.userid=? ) ");
@@ -315,11 +315,11 @@ public class DataCommonRepImpl {
 			sql.append(" and account.pk_corp  in (" + corpIdS + ")");
 		}
 		sql.append(" and nvl(b.ischarge,'N')='N' ");
-		sql.append("   AND account.pk_corp NOT IN  \n");
-		sql.append("       (SELECT f.pk_corp  \n");
-		sql.append("          FROM ynt_franchisee f  \n");
-		sql.append("         WHERE nvl(dr, 0) = 0  \n");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+		sql.append("   AND account.pk_corp NOT IN    ");
+		sql.append("       (SELECT f.pk_corp    ");
+		sql.append("          FROM ynt_franchisee f    ");
+		sql.append("         WHERE nvl(dr, 0) = 0    ");
+		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
 		if (!StringUtil.isEmpty(qvo.getAreaname())) {
 			sql.append(" and a.areaname=? "); // 大区
 			spm.addParam(qvo.getAreaname());

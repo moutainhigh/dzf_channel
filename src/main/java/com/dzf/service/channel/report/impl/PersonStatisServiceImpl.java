@@ -145,12 +145,12 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(cuserid);
-		sql.append("  select distinct sr.role_name \n");
-		sql.append("    from sm_user_role ur \n");
-		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role \n");
-		sql.append("    where nvl(ur.dr,0)=0 \n");
-		sql.append("    and nvl(sr.dr,0)=0 \n");
-		sql.append("    and ur.cuserid = ? \n");
+		sql.append("  select distinct sr.role_name   ");
+		sql.append("    from sm_user_role ur   ");
+		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role   ");
+		sql.append("    where nvl(ur.dr,0)=0   ");
+		sql.append("    and nvl(sr.dr,0)=0   ");
+		sql.append("    and ur.cuserid = ?   ");
 		List<String> rolename = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor());
 		for (String string : rolename) {
 			if("渠道经理".equals(string) || "大区总".equals(string)){

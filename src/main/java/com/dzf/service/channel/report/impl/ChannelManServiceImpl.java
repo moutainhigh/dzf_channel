@@ -114,7 +114,7 @@ public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChan
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
 		sql.append("select account.pk_corp, account.innercode, account.unitname corpname,");
-		sql.append("       account.drelievedate,account.vprovince  \n");
+		sql.append("       account.drelievedate,account.vprovince    ");
 		sql.append("  from bd_account account ");
 		sql.append(" where ").append(wheresql);
 		sql.append("   and nvl(account.dr, 0) = 0 ");

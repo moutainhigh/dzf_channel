@@ -193,34 +193,34 @@ public class RenewAchieveServiceImpl extends DataCommonRepImpl implements IRenew
 	private List<CustNumMoneyRepVO> queryShouldNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,  \n");
-		sql.append("       COUNT(t.pk_corpk) AS iyrenewnum \n");
-		sql.append("  FROM ynt_contract t  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND t.icontracttype = 2  \n");
-		sql.append("   AND t.icosttype = 0  \n");
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
-		sql.append("   AND nvl(t.patchstatus, 0) != 2 \n");
-		sql.append("   AND nvl(t.patchstatus, 0) != 5 \n");
+		sql.append("SELECT t.pk_corp,    ");
+		sql.append("       COUNT(t.pk_corpk) AS iyrenewnum   ");
+		sql.append("  FROM ynt_contract t    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND t.icontracttype = 2    ");
+		sql.append("   AND t.icosttype = 0    ");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'    ");
+		sql.append("   AND nvl(t.patchstatus, 0) != 2   ");
+		sql.append("   AND nvl(t.patchstatus, 0) != 5   ");
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
-			sql.append("   AND t.vendperiod = ?  \n");
+			sql.append("   AND t.vendperiod = ?    ");
 			spm.addParam(paramvo.getPeriod());
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append("   AND t.denddate >= ?  \n");
+				sql.append("   AND t.denddate >= ?    ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append("   AND t.denddate <= ?  \n");
+				sql.append("   AND t.denddate <= ?    ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append("   AND t.vstatus IN (1, 9)  \n");
+		sql.append("   AND t.vstatus IN (1, 9)    ");
 		if (corplist != null && corplist.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ").append(where);
 		}
-		sql.append(" GROUP BY t.pk_corp  \n");
+		sql.append(" GROUP BY t.pk_corp    ");
 		return (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustNumMoneyRepVO.class));
 	}
@@ -237,25 +237,25 @@ public class RenewAchieveServiceImpl extends DataCommonRepImpl implements IRenew
 	private List<CustNumMoneyRepVO> queryAlreadyNum(QryParamVO paramvo, List<String> corplist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,  \n");
-		sql.append("       COUNT(t.pk_corpk) AS irenewnum \n");
-		sql.append("  FROM ynt_contract t  \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND t.icontracttype = 2  \n");
-		sql.append("   AND t.icosttype = 0  \n");
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
-		sql.append("   AND nvl(t.patchstatus, 0) != 2 \n");
-		sql.append("   AND nvl(t.patchstatus, 0) != 5 \n");
+		sql.append("SELECT t.pk_corp,    ");
+		sql.append("       COUNT(t.pk_corpk) AS irenewnum   ");
+		sql.append("  FROM ynt_contract t    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND t.icontracttype = 2    ");
+		sql.append("   AND t.icosttype = 0    ");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'    ");
+		sql.append("   AND nvl(t.patchstatus, 0) != 2   ");
+		sql.append("   AND nvl(t.patchstatus, 0) != 5   ");
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
-			sql.append("   AND t.vendperiod = ?  \n");
+			sql.append("   AND t.vendperiod = ?    ");
 			spm.addParam(paramvo.getPeriod());
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append("   AND t.denddate >= ?  \n");
+				sql.append("   AND t.denddate >= ?    ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append("   AND t.denddate <= ?  \n");
+				sql.append("   AND t.denddate <= ?    ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
@@ -263,28 +263,28 @@ public class RenewAchieveServiceImpl extends DataCommonRepImpl implements IRenew
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ").append(where);
 		}
-		sql.append("   AND t.vstatus IN (1, 9)  \n");
-		sql.append("   AND t.pk_corpk IN (SELECT DISTINCT t.pk_corpk  \n");
-		sql.append("                       FROM ynt_contract t  \n");
-		sql.append("                      WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("                        AND t.icontracttype = 2  \n");
-		sql.append("                        AND t.icosttype = 0  \n");
-		sql.append("                        AND nvl(t.isncust, 'N') = 'N'  \n");
-		sql.append("   						AND nvl(t.patchstatus, 0) != 2 \n");
-		sql.append("  						AND nvl(t.patchstatus, 0) != 5 \n");
+		sql.append("   AND t.vstatus IN (1, 9)    ");
+		sql.append("   AND t.pk_corpk IN (SELECT DISTINCT t.pk_corpk    ");
+		sql.append("                       FROM ynt_contract t    ");
+		sql.append("                      WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("                        AND t.icontracttype = 2    ");
+		sql.append("                        AND t.icosttype = 0    ");
+		sql.append("                        AND nvl(t.isncust, 'N') = 'N'    ");
+		sql.append("   						AND nvl(t.patchstatus, 0) != 2   ");
+		sql.append("  						AND nvl(t.patchstatus, 0) != 5   ");
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
-			sql.append("                    AND t.vendperiod > ?  \n");
+			sql.append("                    AND t.vendperiod > ?    ");
 			spm.addParam(paramvo.getPeriod());
 		}else{
-			sql.append("                    AND t.denddate > ?  \n");
+			sql.append("                    AND t.denddate > ?    ");
 			spm.addParam(paramvo.getEnddate());
 		}
 		if (corplist != null && corplist.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[0]));
 			sql.append(" AND ").append(where);
 		}
-		sql.append("                        AND t.vstatus IN (1, 9))  \n");
-		sql.append(" GROUP BY t.pk_corp  \n");
+		sql.append("                        AND t.vstatus IN (1, 9))    ");
+		sql.append(" GROUP BY t.pk_corp    ");
 		return (List<CustNumMoneyRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustNumMoneyRepVO.class));
 	}

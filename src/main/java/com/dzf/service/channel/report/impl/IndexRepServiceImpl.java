@@ -90,12 +90,12 @@ public class IndexRepServiceImpl implements IIndexRepService {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT account.pk_corp FROM bd_account account \n");
-		sql.append("  WHERE nvl(account.dr, 0) = 0 \n");
-		sql.append("    AND nvl(account.ischannel, 'N') = 'Y' \n");
+		sql.append(" SELECT account.pk_corp FROM bd_account account   ");
+		sql.append("  WHERE nvl(account.dr, 0) = 0   ");
+		sql.append("    AND nvl(account.ischannel, 'N') = 'Y'   ");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("  AND account.begindate >= ? \n");
+				sql.append("  AND account.begindate >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
@@ -103,13 +103,13 @@ public class IndexRepServiceImpl implements IIndexRepService {
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(account.begindate,1,7) = ? \n") ; //初始化日期  = 当前月份
+			sql.append(" AND SUBSTR(account.begindate,1,7) = ?   ") ; //初始化日期  = 当前月份
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
 			sql.append("  AND account.begindate <= ? ");
 			spm.addParam(date);
 		}
-		sql.append(" AND nvl(account.isseal,'N') = 'N' \n");
+		sql.append(" AND nvl(account.isseal,'N') = 'N'   ");
 		sql.append(" AND (account.drelievedate is null OR account.drelievedate > ? )" );
 		spm.addParam(new DZFDate());
 		if(!"alldata".equals(addsql)){
@@ -137,30 +137,30 @@ public class IndexRepServiceImpl implements IIndexRepService {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT  nvl(sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ;
-		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nbzjmny,  \n") ; 
-		sql.append("        nvl(sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )  \n") ; 
-		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny  \n") ; 
-		sql.append("  FROM cn_detail l  \n") ; 
-		sql.append("  LEFT JOIN bd_account account ON l.pk_corp = account.pk_corp  \n") ; 
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append(" AND nvl(account.dr,0) = 0  \n") ; 
-		sql.append(" AND l.ipaytype IN (1, 2)  \n") ; 
-		sql.append(" AND l.iopertype IN (1,4) \n");
+		sql.append("SELECT  nvl(sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )    ") ;
+		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 1 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nbzjmny,    ") ; 
+		sql.append("        nvl(sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 1 THEN nvl(l.npaymny,0) ELSE 0 END,0) )    ") ; 
+		sql.append("      + sum(nvl(CASE WHEN l.ipaytype = 2 AND l.iopertype = 4 THEN nvl(l.npaymny,0) ELSE 0 END,0) ),0) AS nyfkmny    ") ; 
+		sql.append("  FROM cn_detail l    ") ; 
+		sql.append("  LEFT JOIN bd_account account ON l.pk_corp = account.pk_corp    ") ; 
+		sql.append(" WHERE nvl(l.dr, 0) = 0    ") ; 
+		sql.append(" AND nvl(account.dr,0) = 0    ") ; 
+		sql.append(" AND l.ipaytype IN (1, 2)    ") ; 
+		sql.append(" AND l.iopertype IN (1,4)   ");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND l.doperatedate >= ? \n");
+				sql.append("   AND l.doperatedate >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   and l.doperatedate <= ? \n");
+				sql.append("   and l.doperatedate <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(l.doperatedate,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(l.doperatedate,1,7) = ?   ") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(l.doperatedate,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(l.doperatedate,1,4) = ?   ") ; 
 			spm.addParam(date.getYear());
 		}
 		if(!"alldata".equals(addsql)){
@@ -188,29 +188,29 @@ public class IndexRepServiceImpl implements IIndexRepService {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT p.pk_corp \n");
-		sql.append("  FROM bd_corp p \n");
-		sql.append("  LEFT JOIN bd_account account ON p.fathercorp = account.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0 \n");
-		sql.append("   AND nvl(account.dr, 0) = 0 \n");
-		sql.append("   AND nvl(account.ischannel, 'N') = 'Y' \n");
+		sql.append("SELECT p.pk_corp   ");
+		sql.append("  FROM bd_corp p   ");
+		sql.append("  LEFT JOIN bd_account account ON p.fathercorp = account.pk_corp   ");
+		sql.append(" WHERE nvl(p.dr, 0) = 0   ");
+		sql.append("   AND nvl(account.dr, 0) = 0   ");
+		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'   ");
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND p.createdate >= ? \n");
+				sql.append("   AND p.createdate >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   AND p.createdate <= ? \n");
+				sql.append("   AND p.createdate <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(p.createdate,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(p.createdate,1,7) = ?   ") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(p.createdate,1,4) <= ? \n") ; 
+			sql.append(" AND SUBSTR(p.createdate,1,4) <= ?   ") ; 
 			spm.addParam(date.getYear());
 		}
-		sql.append(" AND nvl(account.isseal,'N') = 'N' \n");//已封存的加盟商数据不统计，加盟商的已封存客户统计
+		sql.append(" AND nvl(account.isseal,'N') = 'N'   ");//已封存的加盟商数据不统计，加盟商的已封存客户统计
 		sql.append(" AND (account.drelievedate is null OR account.drelievedate > ? )" );
 		spm.addParam(new DZFDate());
 		if(!"alldata".equals(addsql)){
@@ -261,33 +261,33 @@ public class IndexRepServiceImpl implements IIndexRepService {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(cn.ndedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny  \n");
-		sql.append("  FROM cn_contract cn  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp  \n");
-		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND cn.vdeductstatus in (?, ?, ?)  \n");
+		sql.append("SELECT SUM(nvl(cn.ndedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny    ");
+		sql.append("  FROM cn_contract cn    ");
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp    ");
+		sql.append(" WHERE nvl(cn.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND cn.vdeductstatus in (?, ?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND cn.deductdata >= ? \n");
+				sql.append("   AND cn.deductdata >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   AND cn.deductdata <= ? \n");
+				sql.append("   AND cn.deductdata <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ?   ") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ?   ") ; 
 			spm.addParam(date.getYear());
 		}
 		if (!"alldata".equals(addsql)) {
@@ -312,37 +312,37 @@ public class IndexRepServiceImpl implements IIndexRepService {
 		DZFDate date = new DZFDate();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(cn.nsubdedsummny, 0)) AS ndedsummny,  \n");
-		sql.append("       SUM(CASE cn.vstatus  \n") ; 
-		sql.append("             WHEN 9 THEN  \n") ; 
-		sql.append("              nvl(cn.nsubtotalmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              nvl(cn.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("           END) AS naccountmny  \n") ; 
-		sql.append("  FROM cn_contract cn  \n");
-		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp  \n");
-		sql.append(" WHERE nvl(cn.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N'  \n");
-		sql.append("   AND cn.vdeductstatus in (?, ?)  \n");
+		sql.append("SELECT SUM(nvl(cn.nsubdedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(CASE cn.vstatus    ") ; 
+		sql.append("             WHEN 9 THEN    ") ; 
+		sql.append("              nvl(cn.nsubtotalmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              nvl(cn.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("           END) AS naccountmny    ") ; 
+		sql.append("  FROM cn_contract cn    ");
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN bd_account account ON cn.pk_corp = account.pk_corp    ");
+		sql.append(" WHERE nvl(cn.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'    ");
+		sql.append("   AND cn.vdeductstatus in (?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		if(IStatusConstant.IINDEXQRYTYPE_1 == paramvo.getQrytype()){
 			if (paramvo.getBegdate() != null) {
-				sql.append("   AND cn.deductdata >= ? \n");
+				sql.append("   AND cn.deductdata >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append("   AND cn.deductdata <= ? \n");
+				sql.append("   AND cn.deductdata <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}else if(IStatusConstant.IINDEXQRYTYPE_2 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,7) = ?   ") ; 
 			spm.addParam(date.getYear()+"-"+date.getStrMonth());
 		}else if(IStatusConstant.IINDEXQRYTYPE_3 == paramvo.getQrytype()){
-			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ? \n") ; 
+			sql.append(" AND SUBSTR(cn.deductdata,1,4) = ?   ") ; 
 			spm.addParam(date.getYear());
 		}
 		if (!"alldata".equals(addsql)) {

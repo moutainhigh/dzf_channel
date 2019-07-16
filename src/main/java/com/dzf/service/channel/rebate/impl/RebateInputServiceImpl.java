@@ -211,9 +211,9 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.*,account.vprovince FROM cn_rebate t \n");
+		sql.append("SELECT t.*,account.vprovince FROM cn_rebate t   ");
 		sql.append(" LEFT JOIN bd_account account on t.pk_corp = account.pk_corp ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(account.dr,0)=0 \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0 and nvl(account.dr,0)=0   ");
 		String condition = pubser.makeCondition(paramvo.getCuserid(), paramvo.getAreaname(), IStatusConstant.IYUNYING);
 		if (condition != null && !condition.equals("alldata")) {
 			sql.append(condition);
@@ -221,29 +221,29 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			return null;
 		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() != -1) {
-			sql.append("   AND t.istatus = ? \n");
+			sql.append("   AND t.istatus = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		} else {
 			if (!StringUtil.isEmpty(paramvo.getVyear())) {
-				sql.append("   AND t.vyear = ? \n");
+				sql.append("   AND t.vyear = ?   ");
 				spm.addParam(paramvo.getVyear());
 			}
 			if (paramvo.getIseason() != null && paramvo.getIseason() != -1) {
-				sql.append("   AND t.iseason = ? \n");
+				sql.append("   AND t.iseason = ?   ");
 				spm.addParam(paramvo.getIseason());
 			}
 			if (paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1) {
 				if (paramvo.getVdeductstatus() == -2) {
-					sql.append("   AND t.istatus in (?,?,?) \n");
+					sql.append("   AND t.istatus in (?,?,?)   ");
 					spm.addParam(IStatusConstant.IREBATESTATUS_1);
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
 				} else if (paramvo.getVdeductstatus() == -3) {
-					sql.append("   AND t.istatus in (?,?) \n");
+					sql.append("   AND t.istatus in (?,?)   ");
 					spm.addParam(IStatusConstant.IREBATESTATUS_2);
 					spm.addParam(IStatusConstant.IREBATESTATUS_3);
 				} else {
-					sql.append("   AND t.istatus = ? \n");
+					sql.append("   AND t.istatus = ?   ");
 					spm.addParam(paramvo.getVdeductstatus());
 				}
 			}
@@ -253,7 +253,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			// String where = SqlUtil.buildSqlForIn("pk_corp", corps);
 			// sql.append(" AND ").append(where);
 			// }else{
-			// sql.append(" AND pk_corp is null \n") ;
+			// sql.append(" AND pk_corp is null   ") ;
 			// }
 			// }
 			if (!StringUtil.isEmpty(paramvo.getPk_corp())) {
@@ -262,7 +262,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				sql.append(" AND ").append(where);
 			}
 			if (!StringUtil.isEmpty(paramvo.getPk_bill())) {
-				sql.append("   AND t.pk_rebate = ? \n");
+				sql.append("   AND t.pk_rebate = ?   ");
 				spm.addParam(paramvo.getPk_bill());
 			}
 			if (!StringUtil.isEmpty(paramvo.getVqrysql())) {// 渠道经理过滤
@@ -457,39 +457,39 @@ public class RebateInputServiceImpl implements IRebateInputService {
 				if(power == -1){
 					return new ArrayList<ManagerRefVO>();
 				}else if(power == 1){
-					sql.append("SELECT DISTINCT userid  \n") ;
-					sql.append("  FROM cn_chnarea_b  \n") ; 
-					sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+					sql.append("SELECT DISTINCT userid    ") ;
+					sql.append("  FROM cn_chnarea_b    ") ; 
+					sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 					//1：渠道经理；2：培训师；3：渠道运营；
-					sql.append("   AND nvl(type, 0) = ?  \n");
+					sql.append("   AND nvl(type, 0) = ?    ");
 					spm.addParam(pamvo.getQrytype());
 				}else if(power == 2){
-					sql.append("SELECT DISTINCT b.userid  \n") ;
-					sql.append("  FROM cn_chnarea_b b  \n") ; 
-					sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea  \n") ; 
-					sql.append(" WHERE nvl(b.dr, 0) = 0  \n") ; 
-					sql.append("   AND nvl(a.dr, 0) = 0  \n") ; 
-					sql.append("   AND b.type = ?  \n") ; 
-					sql.append("   AND a.userid = ?  \n");
+					sql.append("SELECT DISTINCT b.userid    ") ;
+					sql.append("  FROM cn_chnarea_b b    ") ; 
+					sql.append("  LEFT JOIN cn_chnarea a ON b.pk_chnarea = a.pk_chnarea    ") ; 
+					sql.append(" WHERE nvl(b.dr, 0) = 0    ") ; 
+					sql.append("   AND nvl(a.dr, 0) = 0    ") ; 
+					sql.append("   AND b.type = ?    ") ; 
+					sql.append("   AND a.userid = ?    ");
 					spm.addParam(pamvo.getQrytype());
 					spm.addParam(pamvo.getCuserid());
 				}else if(power == 3){
-					sql.append("SELECT DISTINCT userid  \n") ;
-					sql.append("  FROM cn_chnarea_b  \n") ; 
-					sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+					sql.append("SELECT DISTINCT userid    ") ;
+					sql.append("  FROM cn_chnarea_b    ") ; 
+					sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 					//1：渠道经理；2：培训师；3：渠道运营；
-					sql.append("   AND nvl(type, 0) = ?  \n");
+					sql.append("   AND nvl(type, 0) = ?    ");
 					spm.addParam(pamvo.getQrytype());
-					sql.append("   AND userid = ?  \n");
+					sql.append("   AND userid = ?    ");
 					spm.addParam(pamvo.getCuserid());
 				}
 			}
 		}else{
-			sql.append("SELECT DISTINCT userid  \n") ;
-			sql.append("  FROM cn_chnarea_b  \n") ; 
-			sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+			sql.append("SELECT DISTINCT userid    ") ;
+			sql.append("  FROM cn_chnarea_b    ") ; 
+			sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 			//1：渠道经理；2：培训师；3：渠道运营；
-			sql.append("   AND nvl(type, 0) = ?  \n");
+			sql.append("   AND nvl(type, 0) = ?    ");
 			spm.addParam(pamvo.getQrytype());
 		}
 		
@@ -577,25 +577,25 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		RebateVO retvo = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny, \n");
-		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny, \n");
+		sql.append("SELECT SUM(nvl(t.ndeductmny,0)) AS ndebitmny,   ");
+		sql.append("  SUM(nvl(t.ndeductmny,0)) AS nbasemny,   ");
 		// 合同数量去掉补提单合同数
-		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 THEN  \n");
-		sql.append("              1  \n");
-		sql.append("             ELSE  \n");
-		sql.append("              0  \n");
-		sql.append("           END) AS icontractnum  \n");
-		sql.append("  FROM cn_contract t \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0 \n");
-		sql.append("   AND nvl(ct.isncust, 'N') = 'N' \n");
-		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 THEN    ");
+		sql.append("              1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) AS icontractnum    ");
+		sql.append("  FROM cn_contract t   ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
+		sql.append("   AND nvl(ct.dr, 0) = 0   ");
+		sql.append("   AND nvl(ct.isncust, 'N') = 'N'   ");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?)   ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		sql.append("   AND t.pk_corp = ? \n");
+		sql.append("   AND t.pk_corp = ?   ");
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
@@ -604,7 +604,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 		} else {
 			throw new BusinessException("返点单所属年、所属季度不能为空");
 		}
-		sql.append("   GROUP BY t.pk_corp \n");
+		sql.append("   GROUP BY t.pk_corp   ");
 		List<RebateVO> list = (List<RebateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RebateVO.class));
 		if (list != null && list.size() > 0) {
@@ -649,28 +649,28 @@ public class RebateInputServiceImpl implements IRebateInputService {
 	private RebateVO queryRetMny(RebateVO data) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT SUM(nvl(ct.nsubdeductmny, 0)) AS ndebitmny,  \n");
-		sql.append("       SUM(nvl(ct.nsubdeductmny, 0)) AS nbasemny,  \n");
-		sql.append("       SUM(case ct.vstatus  \n");
-		sql.append("             when 10 then  \n");
-		sql.append("              1  \n");
-		sql.append("             else  \n");
-		sql.append("              0  \n");
-		sql.append("           end) AS icontractnum  \n");
-		sql.append("  FROM cn_contract ct  \n");
-		sql.append(" INNER JOIN ynt_contract t ON ct.pk_contract = t.pk_contract  \n");
-		sql.append(" WHERE nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.isncust, 'N') = 'N'  \n");
-		sql.append("   AND ct.vdeductstatus in (?, ?) \n");
+		sql.append("SELECT SUM(nvl(ct.nsubdeductmny, 0)) AS ndebitmny,    ");
+		sql.append("       SUM(nvl(ct.nsubdeductmny, 0)) AS nbasemny,    ");
+		sql.append("       SUM(case ct.vstatus    ");
+		sql.append("             when 10 then    ");
+		sql.append("              1    ");
+		sql.append("             else    ");
+		sql.append("              0    ");
+		sql.append("           end) AS icontractnum    ");
+		sql.append("  FROM cn_contract ct    ");
+		sql.append(" INNER JOIN ynt_contract t ON ct.pk_contract = t.pk_contract    ");
+		sql.append(" WHERE nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.isncust, 'N') = 'N'    ");
+		sql.append("   AND ct.vdeductstatus in (?, ?)   ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-		sql.append("   AND ct.pk_corp = ? \n");
+		sql.append("   AND ct.pk_corp = ?   ");
 		spm.addParam(data.getPk_corp());
 		List<String> pliat = getDebatePeriod(data);
 		if (pliat != null && pliat.size() > 0) {
 			String where = SqlUtil.buildSqlForIn("SUBSTR(ct.dchangetime,1,7)", pliat.toArray(new String[0]));
-			sql.append(" AND ").append(where).append(" \n");
+			sql.append(" AND ").append(where).append("   ");
 		} else {
 			throw new BusinessException("返点单所属年、所属季度不能为空");
 		}
@@ -825,7 +825,7 @@ public class RebateInputServiceImpl implements IRebateInputService {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp ", corps);
 			sql.append(" AND ").append(where);
 		} else {
-			sql.append(" AND t.pk_corp is null \n");
+			sql.append(" AND t.pk_corp is null   ");
 		}
 		return sql.toString();
 	}

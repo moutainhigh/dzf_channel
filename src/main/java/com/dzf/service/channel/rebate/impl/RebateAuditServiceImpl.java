@@ -165,12 +165,12 @@ public class RebateAuditServiceImpl implements IRebateAuditService {
 						data.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uid, 120);
 				StringBuffer usql = new StringBuffer();
 				spm = new SQLParameter();
-				usql.append("UPDATE cn_balance l  \n");
-				usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+				usql.append("UPDATE cn_balance l    ");
+				usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?    ");
 				spm.addParam(data.getNrebatemny());
-				usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+				usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 				spm.addParam(IStatusConstant.IPAYTYPE_3);
-				usql.append("   AND l.pk_corp = ?  \n");
+				usql.append("   AND l.pk_corp = ?    ");
 				spm.addParam(data.getPk_corp());
 				int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 				if(res != 1){

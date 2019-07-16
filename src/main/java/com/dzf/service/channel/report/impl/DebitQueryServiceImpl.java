@@ -291,30 +291,30 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	private List<DebitQueryVO> qryNChannel(DebitQueryVO paramvo,List<String> ids,HashMap<String, UserVO> queryUserMap ) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select account.pk_corp, \n");
-		sql.append("        account.innercode as corpcode, \n");
-		sql.append("        account.unitname as corpname, \n");
-		sql.append("        account.djoindate as chndate, \n");
-		sql.append("        account.channeltype, \n");
-		sql.append("        account.drelievedate, \n");//解约日期
-		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
-		sql.append("        cn.areacode,cb.vprovince, \n");
-		sql.append("        cb.userid   as cuserid \n");
-		sql.append("   from bd_account account \n");
-		sql.append("	left join cn_chnarea_b cb on account.pk_corp=cb.pk_corp \n");
-		sql.append("    left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
-		sql.append("      where nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
-		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='N'  \n");
+		sql.append(" select account.pk_corp,   ");
+		sql.append("        account.innercode as corpcode,   ");
+		sql.append("        account.unitname as corpname,   ");
+		sql.append("        account.djoindate as chndate,   ");
+		sql.append("        account.channeltype,   ");
+		sql.append("        account.drelievedate,   ");//解约日期
+		sql.append("        cn.areaname,cn.userid, cb.vprovname,   ");
+		sql.append("        cn.areacode,cb.vprovince,   ");
+		sql.append("        cb.userid   as cuserid   ");
+		sql.append("   from bd_account account   ");
+		sql.append("	left join cn_chnarea_b cb on account.pk_corp=cb.pk_corp   ");
+		sql.append("    left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea    ");
+		sql.append("      where nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0    ");
+		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='N'    ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and account.pk_corp  in (" + corpIdS + ")");
         }
         if(!StringUtil.isEmpty(paramvo.getCuserid())){
-        	sql.append(" and cb.userid=?   \n");
+        	sql.append(" and cb.userid=?     ");
         	sp.addParam(paramvo.getCuserid());
         }
         sql.append(" and "+ QueryUtil.getWhereSql());
-		sql.append(" order by cn.areacode ,account.innercode \n");
+		sql.append(" order by cn.areacode ,account.innercode   ");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
 		for (DebitQueryVO debitQueryVO : list) {
@@ -337,20 +337,20 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
 	private List<DebitQueryVO> qryYChannel(DebitQueryVO paramvo,List<String> ids,HashMap<String, UserVO> queryUserMap ) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append(" select account.pk_corp, \n");
-		sql.append("        account.innercode as corpcode, \n");
-		sql.append("        account.unitname as corpname, \n");
-		sql.append("        account.djoindate as chndate, \n");
-		sql.append("        account.channeltype, \n");
-		sql.append("        account.drelievedate, \n");//解约日期
-		sql.append("        cn.areaname,cn.userid, cb.vprovname, \n");
-		sql.append("        cn.areacode,cb.vprovince, \n");
-		sql.append("        case when cb.pk_corp = account.pk_corp then cb.userid else null end as cuserid \n");
-		sql.append("   from bd_account account \n");
-		sql.append("   left join cn_chnarea_b cb on account.vprovince=cb.vprovince \n");
-		sql.append("   left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea  \n");
-		sql.append("      where nvl(account.dr,0)=0 and nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0  \n");
-		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='Y'  \n");
+		sql.append(" select account.pk_corp,   ");
+		sql.append("        account.innercode as corpcode,   ");
+		sql.append("        account.unitname as corpname,   ");
+		sql.append("        account.djoindate as chndate,   ");
+		sql.append("        account.channeltype,   ");
+		sql.append("        account.drelievedate,   ");//解约日期
+		sql.append("        cn.areaname,cn.userid, cb.vprovname,   ");
+		sql.append("        cn.areacode,cb.vprovince,   ");
+		sql.append("        case when cb.pk_corp = account.pk_corp then cb.userid else null end as cuserid   ");
+		sql.append("   from bd_account account   ");
+		sql.append("   left join cn_chnarea_b cb on account.vprovince=cb.vprovince   ");
+		sql.append("   left join cn_chnarea cn on cb.pk_chnarea = cn.pk_chnarea    ");
+		sql.append("      where nvl(account.dr,0)=0 and nvl(cb.dr,0)=0 and nvl(cn.dr,0)=0    ");
+		sql.append("      and cb.type=1 and nvl(cb.ischarge,'N')='Y'    ");
         if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
             String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
             sql.append(" and account.pk_corp  in (" + corpIdS + ")");
@@ -360,11 +360,11 @@ public class DebitQueryServiceImpl implements IDebitQueryService {
               sql.append(" and account.pk_corp not in (" + corpIdS + ")");
         }
         if(!StringUtil.isEmpty(paramvo.getCuserid())){
-        	sql.append(" and cb.userid=?   \n");
+        	sql.append(" and cb.userid=?     ");
         	sp.addParam(paramvo.getCuserid());
         }
         sql.append(" and "+ QueryUtil.getWhereSql());
-		sql.append(" order by cn.areacode ,account.innercode \n");
+		sql.append(" order by cn.areacode ,account.innercode   ");
 		List<DebitQueryVO> list =(List<DebitQueryVO>) singleObjectBO.executeQuery(sql.toString(), sp,new BeanListProcessor(DebitQueryVO.class));
 		UserVO uvo = null;
 		HashMap<String, DebitQueryVO> map =new HashMap<>();
