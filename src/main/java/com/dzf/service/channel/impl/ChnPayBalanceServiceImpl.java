@@ -312,20 +312,20 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private void qryNoDeductConData(QryParamVO paramvo,List<String> pklist) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT t.pk_corp \n") ;
-		sql.append("  FROM cn_contract t  \n") ; 
+		sql.append("SELECT DISTINCT t.pk_corp   ") ;
+		sql.append("  FROM cn_contract t    ") ; 
 		sql.append(" LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(t.ndedsummny, 0) = 0  \n") ; 
-		sql.append("   AND t.vstatus = 1  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(t.ndedsummny, 0) = 0    ") ; 
+		sql.append("   AND t.vstatus = 1    ") ; 
 //		String[] billids = getbillids();
 //		if(billids != null && billids.length > 0){
 //			String where = ToolsUtil.buildSqlForNotIn("t.pk_confrim", billids);
 //			sql.append(" AND ").append(where);
 //		}
-		sql.append(" and not exists ( SELECT pk_bill FROM cn_detail det \n");
-		sql.append("  WHERE det.pk_bill = t.pk_confrim and nvl(dr, 0) = 0 AND ipaytype = 2) \n");
+		sql.append(" and not exists ( SELECT pk_bill FROM cn_detail det   ");
+		sql.append("  WHERE det.pk_bill = t.pk_confrim and nvl(dr, 0) = 0 AND ipaytype = 2)   ");
 		if(paramvo.getCorps() != null && paramvo.getCorps().length > 0){
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -336,20 +336,20 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(t.deductdata,1,7) <= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND t.deductdata >= ? \n");
+				sql.append(" AND t.deductdata >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND t.deductdata <= ? \n");
+				sql.append(" AND t.deductdata <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
@@ -381,36 +381,36 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		Map<String, ChnBalanceRepVO> posimap = new HashMap<String, ChnBalanceRepVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,  \n");
-		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2   \n");
-		sql.append("                  AND nvl(ct.patchstatus, 0) != 5 THEN \n");
-		sql.append("              1  \n");
-		sql.append("             ELSE  \n");
-		sql.append("              0  \n");
-		sql.append("           END) AS icustnum,  \n");//存量合同数：不包含小规模转一般人和一般人转小规模
-		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0   \n");
-		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
-		sql.append("              1  \n");
-		sql.append("             ELSE  \n");
-		sql.append("              0  \n");
-		sql.append("           END) AS izeronum,  \n");//0扣款(非存量)合同数：不包含小规模转一般人和一般人转小规模
-		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0   \n");
-		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN  \n");
-		sql.append("              1  \n");
-		sql.append("             ELSE  \n");
-		sql.append("              0  \n");
-		sql.append("           END) AS idednum,  \n");//非存量合同数：不包含小规模转一般人和一般人转小规模
-		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny,  \n");
-		sql.append("       SUM(nvl(ct.nbookmny, 0)) AS nbookmny  \n");
-		sql.append("  FROM cn_contract t  \n");
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n");
+		sql.append("SELECT t.pk_corp,    ");
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2     ");
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 5 THEN   ");
+		sql.append("              1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) AS icustnum,    ");//存量合同数：不包含小规模转一般人和一般人转小规模
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0     ");
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN    ");
+		sql.append("              1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) AS izeronum,    ");//0扣款(非存量)合同数：不包含小规模转一般人和一般人转小规模
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0     ");
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 2 AND nvl(ct.patchstatus, 0) != 5 THEN    ");
+		sql.append("              1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) AS idednum,    ");//非存量合同数：不包含小规模转一般人和一般人转小规模
+		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny,    ");
+		sql.append("       SUM(nvl(ct.nbookmny, 0)) AS nbookmny    ");
+		sql.append("  FROM cn_contract t    ");
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ");
 		sql.append(" LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(ct.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -421,8 +421,8 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 2) {//预付款扣款
 			//正常和作废扣款：1、预付款扣款金额不为0；2、扣款总金额为0；
 			//变更扣款：1、状态为变更，且变更后预付款扣款金额不为0；
-			sql.append(" AND ( (  ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 )  AND t.vstatus IN (?, ?) ) \n");
-			sql.append(" OR  t.vstatus = ?  )\n");
+			sql.append(" AND ( (  ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 )  AND t.vstatus IN (?, ?) )   ");
+			sql.append(" OR  t.vstatus = ?  )  ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -430,36 +430,36 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//返点扣款
 			//正常和作废扣款：1、返点扣款金额不为0；
 			//变更扣款：1、状态为变更，返点扣款金额不为0；
-			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus IN (?, ?, ?) )  \n");
+			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus IN (?, ?, ?) )    ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		}else{
-			sql.append("   AND t.vstatus IN (?, ?, ?) \n");
+			sql.append("   AND t.vstatus IN (?, ?, ?)   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
 		if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 			if (!StringUtil.isEmpty(paramvo.getBeginperiod())) {
-				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if (!StringUtil.isEmpty(paramvo.getEndperiod())) {
-				sql.append(" AND substr(t.deductdata,1,7) <= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		} else {
 			if (paramvo.getBegdate() != null) {
-				sql.append(" AND t.deductdata >= ? \n");
+				sql.append(" AND t.deductdata >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append(" AND t.deductdata <= ? \n");
+				sql.append(" AND t.deductdata <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" GROUP BY t.pk_corp \n");
+		sql.append(" GROUP BY t.pk_corp   ");
 		List<ChnBalanceRepVO> list = (List<ChnBalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnBalanceRepVO.class));
 		if(list != null && list.size() > 0){
@@ -482,46 +482,46 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		Map<String, ChnBalanceRepVO> negamap = new HashMap<String, ChnBalanceRepVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,  \n") ;
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2   \n") ; 
-		sql.append("             	  AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
-		sql.append("              -1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS icustnum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND nvl(ct.patchstatus, 0) != 2 \n") ; 
-		sql.append("                   AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
-		sql.append("              -1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS izeronum,  \n") ; 
-		sql.append("       SUM(CASE  \n") ; 
-		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND nvl(ct.patchstatus, 0) != 2  \n") ; 
-		sql.append("                  AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN  \n") ; 
-		sql.append("              -1  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              0  \n") ; 
-		sql.append("           END) AS idednum,  \n") ; 
-		sql.append("       SUM(CASE t.vstatus  \n") ; 
-		sql.append("             WHEN 9 THEN  \n") ; 
-		sql.append("              nvl(t.nsubtotalmny, 0)  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("           END) AS naccountmny,  \n") ; 
-		sql.append("       -abs(SUM(CASE  \n") ; 
-		sql.append("                  WHEN t.vstatus = 10 THEN  \n") ; 
-		sql.append("                   nvl(ct.nbookmny, 0)  \n") ; 
-		sql.append("                  ELSE  \n") ; 
-		sql.append("                   0  \n") ; 
-		sql.append("                END)) AS nbookmny  \n") ; 
-		sql.append("  FROM cn_contract t  \n") ; 
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
+		sql.append("SELECT t.pk_corp,    ") ;
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'Y' AND nvl(ct.patchstatus, 0) != 2     ") ; 
+		sql.append("             	  AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN    ") ; 
+		sql.append("              -1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS icustnum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) = 0 AND nvl(ct.patchstatus, 0) != 2   ") ; 
+		sql.append("                   AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN    ") ; 
+		sql.append("              -1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS izeronum,    ") ; 
+		sql.append("       SUM(CASE    ") ; 
+		sql.append("             WHEN nvl(ct.isncust, 'N') = 'N' AND nvl(t.ideductpropor, 0) != 0 AND nvl(ct.patchstatus, 0) != 2    ") ; 
+		sql.append("                  AND nvl(ct.patchstatus, 0) != 5 AND t.vstatus = 10 THEN    ") ; 
+		sql.append("              -1    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              0    ") ; 
+		sql.append("           END) AS idednum,    ") ; 
+		sql.append("       SUM(CASE t.vstatus    ") ; 
+		sql.append("             WHEN 9 THEN    ") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0)    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              nvl(t.nsubtotalmny, 0) + nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("           END) AS naccountmny,    ") ; 
+		sql.append("       -abs(SUM(CASE    ") ; 
+		sql.append("                  WHEN t.vstatus = 10 THEN    ") ; 
+		sql.append("                   nvl(ct.nbookmny, 0)    ") ; 
+		sql.append("                  ELSE    ") ; 
+		sql.append("                   0    ") ; 
+		sql.append("                END)) AS nbookmny    ") ; 
+		sql.append("  FROM cn_contract t    ") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ") ; 
 		sql.append("  LEFT JOIN bd_account account on t.pk_corp=account.pk_corp ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0    ") ; 
 		if (paramvo.getCorps() != null && paramvo.getCorps().length > 0) {
 			String where = SqlUtil.buildSqlForIn("t.pk_corp", paramvo.getCorps());
 			sql.append(" AND ").append(where);
@@ -530,39 +530,39 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() == 2) {//预付款扣款
-			sql.append(" AND (  t.vstatus = ?  \n");
-			sql.append("  OR ( (nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) AND t.vstatus = ? ) ) \n");
+			sql.append(" AND (  t.vstatus = ?    ");
+			sql.append("  OR ( (nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) AND t.vstatus = ? ) )   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == 3){//返点扣款
-			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus in ( ?, ? ) )  \n");
+			sql.append(" AND ( nvl(t.ndedrebamny,0) != 0 AND t.vstatus in ( ?, ? ) )    ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}else{
-			sql.append("   AND t.vstatus IN (?, ?) \n");
+			sql.append("   AND t.vstatus IN (?, ?)   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
 		if (!StringUtil.isEmpty(paramvo.getPeriod())) {
 			if (!StringUtil.isEmpty(paramvo.getBeginperiod())) {
-				sql.append(" AND substr(t.dchangetime,1,7) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if (!StringUtil.isEmpty(paramvo.getEndperiod())) {
-				sql.append(" AND substr(t.dchangetime,1,7) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		} else {
 			if (paramvo.getBegdate() != null) {
-				sql.append(" AND substr(t.dchangetime,1,10) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if (paramvo.getEnddate() != null) {
-				sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" GROUP BY t.pk_corp \n");
+		sql.append(" GROUP BY t.pk_corp   ");
 		List<ChnBalanceRepVO> list = (List<ChnBalanceRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnBalanceRepVO.class));
 		if(list != null && list.size() > 0){
@@ -624,16 +624,16 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT a.pk_corp, \n") ;
-		sql.append("       a.ipaytype, \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; //保证金
-		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0), 0)) AS charge, \n") ; //预付款
-		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) - \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate \n") ; //返点
-		sql.append("  FROM cn_detail a \n") ; 
+		sql.append("SELECT a.pk_corp,   ") ;
+		sql.append("       a.ipaytype,   ") ; 
+		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail,   ") ; //保证金
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.npaymny,0), 0)) -   ") ; 
+		sql.append("       SUM(decode(a.ipaytype, 2, nvl(a.nusedmny,0), 0)) AS charge,   ") ; //预付款
+		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.npaymny,0), 0)) -   ") ; 
+		sql.append("       SUM(decode(a.ipaytype, 3, nvl(a.nusedmny,0), 0)) AS rebate   ") ; //返点
+		sql.append("  FROM cn_detail a   ") ; 
 		sql.append("  LEFT JOIN bd_account account on a.pk_corp = account.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ; 
+		sql.append(" WHERE nvl(a.dr, 0) = 0   ") ; 
 		if( null != paramvo.getCorps() && paramvo.getCorps().length > 0){
 	        String corpIdS = SqlUtil.buildSqlConditionForIn(paramvo.getCorps());
 	        sql.append(" and a.pk_corp in (" + corpIdS + ")");
@@ -642,31 +642,31 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND a.ipaytype = ? \n");
+			sql.append(" AND a.ipaytype = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append(" AND a.ipaytype in (2, 3) \n");
+			sql.append(" AND a.ipaytype in (2, 3)   ");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(a.doperatedate,1,7) < ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) < ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND a.doperatedate < ? \n");
+				sql.append(" AND a.doperatedate < ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_corp())){
-			sql.append(" AND a.pk_corp = ? \n");
+			sql.append(" AND a.pk_corp = ?   ");
 			spm.addParam(paramvo.getPk_corp());
 		}
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
-		sql.append(" GROUP BY a.pk_corp, a.ipaytype \n");
-		sql.append(" ORDER BY a.pk_corp \n");
+		sql.append(" GROUP BY a.pk_corp, a.ipaytype   ");
+		sql.append(" ORDER BY a.pk_corp   ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -681,19 +681,19 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT a.pk_corp, \n") ;
-		sql.append("       a.ipaytype, \n") ; 
-		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail, \n") ; 
-		sql.append("       SUM(nvl(a.npaymny,0)) AS npaymny, \n") ; 
-		sql.append("       SUM(nvl(a.nusedmny,0)) AS nusedmny, \n") ; 
-		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfhtmny, \n");
-		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfspmny, \n");
-		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdhtmny, \n");
-		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdspmny, \n");
-		sql.append("       MIN(CASE a.ideductpropor WHEN 0 THEN NULL ELSE a.ideductpropor END) AS ideductpropor \n") ; 
-		sql.append("  FROM cn_detail a \n") ; 
+		sql.append("SELECT a.pk_corp,   ") ;
+		sql.append("       a.ipaytype,   ") ; 
+		sql.append("       SUM(decode(a.ipaytype, 1, nvl(a.npaymny,0), 0)) AS bail,   ") ; 
+		sql.append("       SUM(nvl(a.npaymny,0)) AS npaymny,   ") ; 
+		sql.append("       SUM(nvl(a.nusedmny,0)) AS nusedmny,   ") ; 
+		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfhtmny,   ");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 2 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nyfspmny,   ");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 2  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdhtmny,   ");
+		sql.append("       SUM(CASE WHEN a.ipaytype = 3 AND a.iopertype = 5  THEN nvl(a.nusedmny, 0) ELSE 0 END) AS nfdspmny,   ");
+		sql.append("       MIN(CASE a.ideductpropor WHEN 0 THEN NULL ELSE a.ideductpropor END) AS ideductpropor   ") ; 
+		sql.append("  FROM cn_detail a   ") ; 
 		sql.append("  LEFT JOIN bd_account account on a.pk_corp=account.pk_corp ");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 \n") ; 
+		sql.append(" WHERE nvl(a.dr, 0) = 0   ") ; 
 		if(paramvo.getCorps() != null  && paramvo.getCorps().length > 0){
 	        String where = SqlUtil.buildSqlForIn("a.pk_corp", paramvo.getCorps());
 	        sql.append(" AND ").append(where);
@@ -702,35 +702,35 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 			sql.append(paramvo.getAreaname());//根据当前登陆人和选择的运营大区，获取有权限查询的客户
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND a.ipaytype = ? \n");
+			sql.append(" AND a.ipaytype = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append(" AND a.ipaytype in (2, 3) \n");
+			sql.append(" AND a.ipaytype in (2, 3)   ");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(a.doperatedate,1,7) >= ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(a.doperatedate,1,7) <= ? \n");
+				sql.append(" AND substr(a.doperatedate,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND a.doperatedate >= ? \n");
+				sql.append(" AND a.doperatedate >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND a.doperatedate <= ? \n");
+				sql.append(" AND a.doperatedate <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
 		if(!StringUtil.isEmpty(filtersql)){
 			sql.append(" AND ").append(filtersql);
 		}
-		sql.append(" GROUP BY a.pk_corp,a.ipaytype \n");
-		sql.append(" ORDER BY a.pk_corp \n");
+		sql.append(" GROUP BY a.pk_corp,a.ipaytype   ");
+		sql.append(" ORDER BY a.pk_corp   ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -812,16 +812,16 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		Map<String, String> nmap = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT ed.pk_corp, ed.voldname  \n");
-		sql.append("  FROM (SELECT ROW_NUMBER() OVER(PARTITION BY pk_corpnameedit ORDER BY ts DESC) rn,  \n");
-		sql.append("               e.pk_corp,  \n");
-		sql.append("               e.voldname  \n");
-		sql.append("          FROM cn_corpnameedit e  \n");
-		sql.append("         WHERE nvl(e.dr, 0) = 0  \n");
-		sql.append("           AND e.istatus = 2  \n");
-		sql.append("           AND e.fathercorp = ? ) ed  \n");
+		sql.append("SELECT ed.pk_corp, ed.voldname    ");
+		sql.append("  FROM (SELECT ROW_NUMBER() OVER(PARTITION BY pk_corpnameedit ORDER BY ts DESC) rn,    ");
+		sql.append("               e.pk_corp,    ");
+		sql.append("               e.voldname    ");
+		sql.append("          FROM cn_corpnameedit e    ");
+		sql.append("         WHERE nvl(e.dr, 0) = 0    ");
+		sql.append("           AND e.istatus = 2    ");
+		sql.append("           AND e.fathercorp = ? ) ed    ");
 		spm.addParam(fathercorp);
-		sql.append(" where ed.rn = 1  \n");
+		sql.append(" where ed.rn = 1    ");
 		List<CorpNameEVO> list = (List<CorpNameEVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpNameEVO.class));
 		if(list != null && list.size() > 0){
@@ -1067,23 +1067,23 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private List<ChnDetailRepVO> qryZeroChange(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
-		sql.append("       substr(t.dchangetime, 1, 10) AS doperatedate,  \n") ; 
-		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
-		sql.append("       t.vstatus AS dr,  \n") ; 
-		sql.append("       2 AS ipaytype,  \n") ; 
-		sql.append("       2 AS iopertype,  \n") ; 
-		sql.append("       ct.vcontcode,  \n") ; 
-		sql.append("       ct.pk_corpk,  \n") ; 
-		sql.append("       0.00 AS nusedmny,  \n") ; 
-		sql.append("       3 AS patchstatus,  \n") ;
-		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') as vmemo  \n") ; 
-		sql.append("  FROM cn_contract t  \n") ; 
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND t.pk_corp = ?  \n") ; 
-		sql.append("   AND t.ideductpropor = 0  \n") ; 
+		sql.append("SELECT t.pk_confrim AS pk_bill,    ") ;
+		sql.append("       substr(t.dchangetime, 1, 10) AS doperatedate,    ") ; 
+		sql.append("       t.pk_corpk AS pk_corp,    ") ; 
+		sql.append("       t.vstatus AS dr,    ") ; 
+		sql.append("       2 AS ipaytype,    ") ; 
+		sql.append("       2 AS iopertype,    ") ; 
+		sql.append("       ct.vcontcode,    ") ; 
+		sql.append("       ct.pk_corpk,    ") ; 
+		sql.append("       0.00 AS nusedmny,    ") ; 
+		sql.append("       3 AS patchstatus,    ") ;
+		sql.append("       decode(nvl(ct.vstatus, -1), 9, '合同终止', '合同作废') as vmemo    ") ; 
+		sql.append("  FROM cn_contract t    ") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0    ") ; 
+		sql.append("   AND t.pk_corp = ?    ") ; 
+		sql.append("   AND t.ideductpropor = 0    ") ; 
 		sql.append("   AND t.vstatus IN (?, ?)");
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1093,24 +1093,24 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(t.dchangetime,1,7) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(t.dchangetime,1,7) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND substr(t.dchangetime,1,10) >= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND substr(t.dchangetime,1,10) <= ? \n");
+				sql.append(" AND substr(t.dchangetime,1,10) <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" order by t.dchangetime \n");
+		sql.append(" order by t.dchangetime   ");
 		return (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnDetailRepVO.class));
 	}
@@ -1126,30 +1126,30 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 	private List<ChnDetailRepVO> qryZeroDeduct(List<ChnDetailRepVO> list, QryParamVO paramvo, String addwhere) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_confrim AS pk_bill,  \n") ;
-		sql.append("       t.deductdata AS doperatedate,  \n") ; 
-		sql.append("       t.pk_corpk AS pk_corp,  \n") ; 
-		sql.append("       2 AS ipaytype,  \n") ; 
-		sql.append("       2 AS iopertype,  \n") ; 
-		sql.append("       ct.vcontcode,  \n") ; 
-		sql.append("       ct.pk_corpk,  \n") ; 
-		sql.append("       0.00 AS nusedmny,  \n") ; 
-		sql.append("       1 AS patchstatus,  \n") ; 
-		sql.append("       CASE  \n") ; 
-		sql.append("         WHEN nvl(ct.patchstatus, -1) = 2 THEN  \n") ; 
-		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '小规模转一般人')  \n") ; 
-		sql.append("         WHEN nvl(ct.patchstatus, -1) = 5 THEN  \n") ; 
-		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '一般人转小规模')  \n") ; 
-		sql.append("         ELSE  \n") ; 
-		sql.append("          decode(nvl(ct.isncust, 'N'), 'Y', '存量客户', '')  \n") ; 
-		sql.append("       END as vmemo  \n") ;
-		sql.append("  FROM cn_contract t  \n") ; 
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND t.pk_corp = ?  \n") ; 
-		sql.append("   AND t.ideductpropor = 0  \n") ; 
-		sql.append("   AND t.vstatus IN (?, ? , ?) \n");
+		sql.append("SELECT t.pk_confrim AS pk_bill,    ") ;
+		sql.append("       t.deductdata AS doperatedate,    ") ; 
+		sql.append("       t.pk_corpk AS pk_corp,    ") ; 
+		sql.append("       2 AS ipaytype,    ") ; 
+		sql.append("       2 AS iopertype,    ") ; 
+		sql.append("       ct.vcontcode,    ") ; 
+		sql.append("       ct.pk_corpk,    ") ; 
+		sql.append("       0.00 AS nusedmny,    ") ; 
+		sql.append("       1 AS patchstatus,    ") ; 
+		sql.append("       CASE    ") ; 
+		sql.append("         WHEN nvl(ct.patchstatus, -1) = 2 THEN    ") ; 
+		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '小规模转一般人')    ") ; 
+		sql.append("         WHEN nvl(ct.patchstatus, -1) = 5 THEN    ") ; 
+		sql.append("          CONCAT(decode(nvl(ct.isncust, 'N'), 'Y', '存量客户：', ''), '一般人转小规模')    ") ; 
+		sql.append("         ELSE    ") ; 
+		sql.append("          decode(nvl(ct.isncust, 'N'), 'Y', '存量客户', '')    ") ; 
+		sql.append("       END as vmemo    ") ;
+		sql.append("  FROM cn_contract t    ") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0    ") ; 
+		sql.append("   AND t.pk_corp = ?    ") ; 
+		sql.append("   AND t.ideductpropor = 0    ") ; 
+		sql.append("   AND t.vstatus IN (?, ? , ?)   ");
 		spm.addParam(paramvo.getPk_corp());
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1159,24 +1159,24 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(t.deductdata,1,7) >= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(t.deductdata,1,7) <= ? \n");
+				sql.append(" AND substr(t.deductdata,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND t.deductdata >= ? \n");
+				sql.append(" AND t.deductdata >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND t.deductdata <= ? \n");
+				sql.append(" AND t.deductdata <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}
-		sql.append(" order by t.deductdata \n");
+		sql.append(" order by t.deductdata   ");
 		return (List<ChnDetailRepVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnDetailRepVO.class));
 	}
@@ -1246,50 +1246,50 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select t.pk_confrim as pk_bill,  \n") ;
+		sql.append("select t.pk_confrim as pk_bill,    ") ;
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){//查询全部时，区分该合同是否为全部返点扣款
-			sql.append(" CASE WHEN nvl(t.ndeductmny,0) = 0 AND nvl(t.ndedrebamny,0) != 0  \n");
-			sql.append("  THEN 3 ELSE 0 END AS ideductype, \n");
+			sql.append(" CASE WHEN nvl(t.ndeductmny,0) = 0 AND nvl(t.ndedrebamny,0) != 0    ");
+			sql.append("  THEN 3 ELSE 0 END AS ideductype,   ");
 		}
 		if(qrytype == 1){
-			sql.append("       t.deductdata as doperatedate,  \n") ; 
-			sql.append("       nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0) as naccountmny,  \n") ; 
-			sql.append("       nvl(ct.nbookmny, 0) as nbookmny  \n") ; 
+			sql.append("       t.deductdata as doperatedate,    ") ; 
+			sql.append("       nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0) as naccountmny,    ") ; 
+			sql.append("       nvl(ct.nbookmny, 0) as nbookmny    ") ; 
 		}else if(qrytype == 2){
-			sql.append("       substr(t.dchangetime, 0, 10) as doperatedate,  \n") ; 
-			sql.append("       nvl(t.nsubtotalmny, 0) as naccountmny,  \n") ; 
-			sql.append("       0 as nbookmny  \n") ; 
+			sql.append("       substr(t.dchangetime, 0, 10) as doperatedate,    ") ; 
+			sql.append("       nvl(t.nsubtotalmny, 0) as naccountmny,    ") ; 
+			sql.append("       0 as nbookmny    ") ; 
 		}else if(qrytype == 3){
-			sql.append("       substr(t.dchangetime, 0, 10) as doperatedate,  \n") ; 
-			sql.append("       nvl(t.nsubtotalmny, 0)  + nvl(ct.nbookmny, 0) as naccountmny,  \n") ; 
-			sql.append("       -abs(nvl(ct.nbookmny, 0)) as nbookmny  \n") ;
+			sql.append("       substr(t.dchangetime, 0, 10) as doperatedate,    ") ; 
+			sql.append("       nvl(t.nsubtotalmny, 0)  + nvl(ct.nbookmny, 0) as naccountmny,    ") ; 
+			sql.append("       -abs(nvl(ct.nbookmny, 0)) as nbookmny    ") ;
 		}
-		sql.append("  from cn_contract t  \n") ; 
-		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n") ; 
-		sql.append(" where nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(ct.dr, 0) = 0  \n") ; 
+		sql.append("  from cn_contract t    ") ; 
+		sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ") ; 
+		sql.append(" where nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   and nvl(ct.dr, 0) = 0    ") ; 
 		if(qrytype == 1){
-			sql.append("   AND t.vstatus IN (?, ?, ?) \n");
+			sql.append("   AND t.vstatus IN (?, ?, ?)   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}else if(qrytype == 2){
-			sql.append("   AND t.vstatus = ? \n");
+			sql.append("   AND t.vstatus = ?   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		}else if(qrytype == 3){
-			sql.append("   AND t.vstatus = ? \n");
+			sql.append("   AND t.vstatus = ?   ");
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 		}
 		if(qrytype == 1){
-			sql.append("   and t.deductdata >= ?  \n") ; 
-			sql.append("   and t.deductdata <= ?  \n") ; 
+			sql.append("   and t.deductdata >= ?    ") ; 
+			sql.append("   and t.deductdata <= ?    ") ; 
 		}else if(qrytype == 2 || qrytype == 3){
-			sql.append("   and substr(t.dchangetime, 0, 10) >= ?  \n") ; 
-			sql.append("   and substr(t.dchangetime, 0, 10) <= ?  \n") ; 
+			sql.append("   and substr(t.dchangetime, 0, 10) >= ?    ") ; 
+			sql.append("   and substr(t.dchangetime, 0, 10) <= ?    ") ; 
 		}
 		spm.addParam(begdate);
 		spm.addParam(enddate);
-		sql.append("   and t.pk_corp = ? \n");
+		sql.append("   and t.pk_corp = ?   ");
 		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 2){//预付款
 			sql.append(" AND ( nvl(t.ndeductmny,0) != 0 OR nvl(t.ndedsummny,0) = 0 ) ");
@@ -1359,42 +1359,42 @@ public class ChnPayBalanceServiceImpl implements IChnPayBalanceService{
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT l.*, \n") ;
-		sql.append("       ct.patchstatus, \n");
-		sql.append("       ct.vcontcode, \n");
-		sql.append("       ct.pk_corpk, \n");
-		sql.append("       ct.vstatus, \n");
-		sql.append("       ct.isncust \n");
-		sql.append("  FROM cn_detail l  \n") ; 
-		sql.append("  LEFT JOIN cn_contract t ON l.pk_bill = t.pk_confrim  \n") ; 
-		sql.append("  LEFT JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract  \n") ; 
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0  \n") ; 
-		sql.append("   AND l.pk_corp = ? \n");
+		sql.append("SELECT l.*,   ") ;
+		sql.append("       ct.patchstatus,   ");
+		sql.append("       ct.vcontcode,   ");
+		sql.append("       ct.pk_corpk,   ");
+		sql.append("       ct.vstatus,   ");
+		sql.append("       ct.isncust   ");
+		sql.append("  FROM cn_detail l    ") ; 
+		sql.append("  LEFT JOIN cn_contract t ON l.pk_bill = t.pk_confrim    ") ; 
+		sql.append("  LEFT JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ") ; 
+		sql.append(" WHERE nvl(l.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0    ") ; 
+		sql.append("   AND l.pk_corp = ?   ");
 		spm.addParam(paramvo.getPk_corp());
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
-			sql.append(" AND l.ipaytype = ? \n");
+			sql.append(" AND l.ipaytype = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		}else if(paramvo.getQrytype() != null && paramvo.getQrytype() == -1){
-			sql.append(" AND l.ipaytype in (2, 3) \n");
+			sql.append(" AND l.ipaytype in (2, 3)   ");
 		}
 		if(!StringUtil.isEmpty(paramvo.getPeriod())){
 			if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-				sql.append(" AND substr(l.doperatedate,1,7) >= ? \n");
+				sql.append(" AND substr(l.doperatedate,1,7) >= ?   ");
 				spm.addParam(paramvo.getBeginperiod());
 			}
 			if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-				sql.append(" AND substr(l.doperatedate,1,7) <= ? \n");
+				sql.append(" AND substr(l.doperatedate,1,7) <= ?   ");
 				spm.addParam(paramvo.getEndperiod());
 			}
 		}else{
 			if(paramvo.getBegdate() != null){
-				sql.append(" AND l.doperatedate >= ? \n");
+				sql.append(" AND l.doperatedate >= ?   ");
 				spm.addParam(paramvo.getBegdate());
 			}
 			if(paramvo.getEnddate() != null){
-				sql.append(" AND l.doperatedate <= ? \n");
+				sql.append(" AND l.doperatedate <= ?   ");
 				spm.addParam(paramvo.getEnddate());
 			}
 		}

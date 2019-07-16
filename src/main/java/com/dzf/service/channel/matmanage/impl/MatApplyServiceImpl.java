@@ -98,45 +98,45 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT distinct bi.pk_materielbill,  \n") ;
-		sql.append("                bi.vcontcode,  \n") ; 
-		sql.append("                bi.vaddress,  \n") ; 
-		sql.append("                bi.vreceiver,  \n") ; 
-		sql.append("                bi.phone,  \n") ; 
-		sql.append("                bi.fastcode,  \n") ; 
-		sql.append("                nvl(bi.fastcost,0) fastcost,  \n") ; 
-		sql.append("                bi.deliverdate,  \n") ; 
-		sql.append("                bi.vmemo,  \n") ; 
-		sql.append("                bi.vreason,  \n") ; 
-		sql.append("                bi.vstatus,  \n") ; 
-		sql.append("                bi.doperatedate,  \n") ; 
-		//sql.append("                bi.coperatorid,  \n") ; 
-		sql.append("                su1.user_name applyname,  \n") ; 
-		sql.append("                bi.applydate,  \n") ; 
-		sql.append("                bi.fathercorp,  \n") ; 
-		sql.append("                bi.corpname,  \n") ; 
-		sql.append("                bi.vmanagerid,  \n") ; 
-		sql.append("                bi.ts,  \n") ; 
-		sql.append("                b.vname,  \n") ; 
-		sql.append("                b.vunit,  \n") ; 
-		sql.append("                nvl(b.outnum, 0) outnum,  \n") ; 
-		sql.append("                nvl(b.applynum, 0) applynum,  \n") ; 
-		sql.append("                log.vname logname,  \n") ; 
-		sql.append("                ba.vprovname proname,  \n") ; 
-		sql.append("                ba.vprovince,  \n") ;
-		sql.append("                c.areaname \n") ; 
-		sql.append("  from cn_materielbill bi  \n") ; 
-		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill  \n") ; 
-		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics  \n") ; 
-		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince  \n") ; 
-		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea  \n") ; 
-		sql.append("  left join sm_user su1 on su1.cuserid = bi.coperatorid \n") ; 
-		sql.append("  where nvl(bi.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(b.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(log.dr, 0) = 0  \n") ; 
-		sql.append("   and nvl(ba.dr, 0) = 0 and ba.type = 1 \n") ; 
-		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1 \n") ;
-		sql.append("   and b.applynum >=0 \n") ;
+		sql.append("SELECT distinct bi.pk_materielbill,    ") ;
+		sql.append("                bi.vcontcode,    ") ; 
+		sql.append("                bi.vaddress,    ") ; 
+		sql.append("                bi.vreceiver,    ") ; 
+		sql.append("                bi.phone,    ") ; 
+		sql.append("                bi.fastcode,    ") ; 
+		sql.append("                nvl(bi.fastcost,0) fastcost,    ") ; 
+		sql.append("                bi.deliverdate,    ") ; 
+		sql.append("                bi.vmemo,    ") ; 
+		sql.append("                bi.vreason,    ") ; 
+		sql.append("                bi.vstatus,    ") ; 
+		sql.append("                bi.doperatedate,    ") ; 
+		//sql.append("                bi.coperatorid,    ") ; 
+		sql.append("                su1.user_name applyname,    ") ; 
+		sql.append("                bi.applydate,    ") ; 
+		sql.append("                bi.fathercorp,    ") ; 
+		sql.append("                bi.corpname,    ") ; 
+		sql.append("                bi.vmanagerid,    ") ; 
+		sql.append("                bi.ts,    ") ; 
+		sql.append("                b.vname,    ") ; 
+		sql.append("                b.vunit,    ") ; 
+		sql.append("                nvl(b.outnum, 0) outnum,    ") ; 
+		sql.append("                nvl(b.applynum, 0) applynum,    ") ; 
+		sql.append("                log.vname logname,    ") ; 
+		sql.append("                ba.vprovname proname,    ") ; 
+		sql.append("                ba.vprovince,    ") ;
+		sql.append("                c.areaname   ") ; 
+		sql.append("  from cn_materielbill bi    ") ; 
+		sql.append("  left join cn_materielbill_b b on bi.pk_materielbill = b.pk_materielbill    ") ; 
+		sql.append("  left join cn_logistics log on log.pk_logistics = bi.pk_logistics    ") ; 
+		sql.append("  left join cn_chnarea_b ba on ba.vprovince = bi.vprovince    ") ; 
+		sql.append("  left join cn_chnarea c on c.pk_chnarea = ba.pk_chnarea    ") ; 
+		sql.append("  left join sm_user su1 on su1.cuserid = bi.coperatorid   ") ; 
+		sql.append("  where nvl(bi.dr, 0) = 0    ") ; 
+		sql.append("   and nvl(b.dr, 0) = 0    ") ; 
+		sql.append("   and nvl(log.dr, 0) = 0    ") ; 
+		sql.append("   and nvl(ba.dr, 0) = 0 and ba.type = 1   ") ; 
+		sql.append("   and nvl(c.dr, 0) = 0 and c.type = 1   ") ;
+		sql.append("   and b.applynum >=0   ") ;
 		
 		if (!StringUtil.isEmpty(pamvo.getCorpname())) {
 			sql.append(" AND  bi.corpname like ? ");
@@ -144,7 +144,7 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		}
 		
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
-			sql.append("   AND bi.vstatus = ? \n");
+			sql.append("   AND bi.vstatus = ?   ");
 			spm.addParam(pamvo.getVstatus());
 		}
 		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
@@ -193,12 +193,12 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(corpid);
-		sql.append("  select b.citycounty,b.vprovince,b.vcity,b.varea, \n");
-		sql.append("     b.legalbodycode vreceiver,b.phone1 phone \n");
-		sql.append("     from bd_account b \n");
-		sql.append("     where nvl(b.dr,0) = 0 \n");
-		sql.append("     and vprovince is not null \n");
-		sql.append("     and b.pk_corp = ? \n");
+		sql.append("  select b.citycounty,b.vprovince,b.vcity,b.varea,   ");
+		sql.append("     b.legalbodycode vreceiver,b.phone1 phone   ");
+		sql.append("     from bd_account b   ");
+		sql.append("     where nvl(b.dr,0) = 0   ");
+		sql.append("     and vprovince is not null   ");
+		sql.append("     and b.pk_corp = ?   ");
 
 		MatOrderVO mvo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanProcessor(MatOrderVO.class));
@@ -383,25 +383,25 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(id);
-		sql.append("select  m.pk_materielbill, \n ");
-		sql.append("   m.vcontcode, \n");
-		sql.append("   m.vstatus,m.vreason, \n");
-		sql.append("   m.fathercorp,m.corpname, \n");
-		sql.append("   m.vprovince,m.vcity,m.varea,m.citycounty, \n ");
-		sql.append("   m.vaddress,m.vreceiver,m.phone,m.vmemo, \n ");
-		sql.append("   m.coperatorid,m.applydate, \n");
-		sql.append("   m.pk_logistics, \n");
-		sql.append("   m.fastcode,m.fastcost, \n");
-		sql.append("   m.deliverid,m.deliverdate, \n");
-		sql.append("   m.auditerid,m.auditdate, \n");
-		sql.append("   m.updatets, \n");
-		sql.append("   lg.vname logname \n");
+		sql.append("select  m.pk_materielbill,    ");
+		sql.append("   m.vcontcode,   ");
+		sql.append("   m.vstatus,m.vreason,   ");
+		sql.append("   m.fathercorp,m.corpname,   ");
+		sql.append("   m.vprovince,m.vcity,m.varea,m.citycounty,    ");
+		sql.append("   m.vaddress,m.vreceiver,m.phone,m.vmemo,    ");
+		sql.append("   m.coperatorid,m.applydate,   ");
+		sql.append("   m.pk_logistics,   ");
+		sql.append("   m.fastcode,m.fastcost,   ");
+		sql.append("   m.deliverid,m.deliverdate,   ");
+		sql.append("   m.auditerid,m.auditdate,   ");
+		sql.append("   m.updatets,   ");
+		sql.append("   lg.vname logname   ");
 
-		sql.append("     from cn_materielbill m \n");
-		sql.append("     left join cn_logistics lg on \n");
-		sql.append("     lg.pk_logistics = m.pk_logistics \n");
-		sql.append("     where nvl(m.dr,0) = 0 and nvl(lg.dr,0) = 0 \n");
-		sql.append("     and m.pk_materielbill = ? \n");
+		sql.append("     from cn_materielbill m   ");
+		sql.append("     left join cn_logistics lg on   ");
+		sql.append("     lg.pk_logistics = m.pk_logistics   ");
+		sql.append("     where nvl(m.dr,0) = 0 and nvl(lg.dr,0) = 0   ");
+		sql.append("     and m.pk_materielbill = ?   ");
 
 		MatOrderVO vo = (MatOrderVO) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanProcessor(MatOrderVO.class));
@@ -423,14 +423,14 @@ public class MatApplyServiceImpl implements IMatApplyService {
 			StringBuffer ssql = new StringBuffer();
 			SQLParameter sspm = new SQLParameter();
 			sspm.addParam(id);
-			ssql.append("  select b.pk_materielbill_b, \n");
-			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum,nvl(l.intnum,0)-nvl(l.outnum,0) enapplynum, \n");
-			ssql.append("    l.pk_materiel \n");
-			ssql.append("    from cn_materielbill_b b \n");
-			ssql.append("    left join cn_materiel l on \n");
-			ssql.append("    b.pk_materiel = l.pk_materiel \n");
-			ssql.append("    where nvl(b.dr,0) = 0 \n");
-			ssql.append("    and b.pk_materielbill = ? \n");
+			ssql.append("  select b.pk_materielbill_b,   ");
+			ssql.append("    b.vname,b.vunit,b.applynum,b.outnum,nvl(l.intnum,0)-nvl(l.outnum,0) enapplynum,   ");
+			ssql.append("    l.pk_materiel   ");
+			ssql.append("    from cn_materielbill_b b   ");
+			ssql.append("    left join cn_materiel l on   ");
+			ssql.append("    b.pk_materiel = l.pk_materiel   ");
+			ssql.append("    where nvl(b.dr,0) = 0   ");
+			ssql.append("    and b.pk_materielbill = ?   ");
 			List<MatOrderBVO> bvolist = (List<MatOrderBVO>) singleObjectBO.executeQuery(ssql.toString(), sspm,
 					new BeanListProcessor(MatOrderBVO.class));
 			MatOrderBVO[] b = new MatOrderBVO[bvolist.size()];
@@ -505,19 +505,19 @@ public class MatApplyServiceImpl implements IMatApplyService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(uservo.getCuserid());
-		sql.append("    select distinct \n");
-		// sql.append(" b.vprovince,b.isCharge, \n");
-		sql.append("       c.pk_corp,c.innercode,c.unitname \n");
-		sql.append("       from cn_chnarea a \n");
-		sql.append("       left join cn_chnarea_b b on \n");
-		sql.append("       a.pk_chnarea = b.pk_chnarea \n");
-		sql.append("       left join bd_account c on \n");
-		sql.append("       c.vprovince = b.vprovince \n");
-		sql.append("       where nvl(a.dr,0) = 0 \n");
-		sql.append("       and nvl(b.dr,0) = 0  \n");
-		sql.append("       and nvl(c.dr,0) = 0  \n");
-		sql.append("       and a.type =1 and b.type = 1 \n");
-		sql.append("       and b.userid = ? \n");
+		sql.append("    select distinct   ");
+		// sql.append(" b.vprovince,b.isCharge,   ");
+		sql.append("       c.pk_corp,c.innercode,c.unitname   ");
+		sql.append("       from cn_chnarea a   ");
+		sql.append("       left join cn_chnarea_b b on   ");
+		sql.append("       a.pk_chnarea = b.pk_chnarea   ");
+		sql.append("       left join bd_account c on   ");
+		sql.append("       c.vprovince = b.vprovince   ");
+		sql.append("       where nvl(a.dr,0) = 0   ");
+		sql.append("       and nvl(b.dr,0) = 0    ");
+		sql.append("       and nvl(c.dr,0) = 0    ");
+		sql.append("       and a.type =1 and b.type = 1   ");
+		sql.append("       and b.userid = ?   ");
 
 		List<CorpVO> corpList = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpVO.class));

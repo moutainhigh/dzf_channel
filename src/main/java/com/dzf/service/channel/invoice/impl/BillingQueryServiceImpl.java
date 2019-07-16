@@ -54,22 +54,22 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	public List<BillingInvoiceVO> query(BillingInvoiceVO paramvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select account.pk_corp, \n");
-		sql.append("       account.innercode as corpcode, \n");
-		sql.append("       account.unitname as corpname, \n");
-		sql.append("       account.vprovince, \n");
-		sql.append("       account.citycounty as vprovname, \n");
-		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 2 THEN nvl(t.nusedmny,0) \n");
-		sql.append("       			ELSE 0 END) AS debitconmny, \n");
-		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 5 THEN nvl(t.nusedmny,0) \n");
-		sql.append("       			ELSE 0 END) AS debitbuymny \n");
-		sql.append("  from bd_account account \n");
-		sql.append("  left join cn_detail t on account.pk_corp = t.pk_corp \n");
-		sql.append("                            and nvl(t.dr, 0) = 0 \n");
+		sql.append("select account.pk_corp,   ");
+		sql.append("       account.innercode as corpcode,   ");
+		sql.append("       account.unitname as corpname,   ");
+		sql.append("       account.vprovince,   ");
+		sql.append("       account.citycounty as vprovname,   ");
+		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 2 THEN nvl(t.nusedmny,0)   ");
+		sql.append("       			ELSE 0 END) AS debitconmny,   ");
+		sql.append("       SUM(CASE WHEN t.ipaytype = 2 AND t.iopertype = 5 THEN nvl(t.nusedmny,0)   ");
+		sql.append("       			ELSE 0 END) AS debitbuymny   ");
+		sql.append("  from bd_account account   ");
+		sql.append("  left join cn_detail t on account.pk_corp = t.pk_corp   ");
+		sql.append("                            and nvl(t.dr, 0) = 0   ");
 		// 付款类型  1：加盟费；2：预付款；3：返点；
-		sql.append("                            and t.ipaytype = 2 \n");
+		sql.append("                            and t.ipaytype = 2   ");
 		// 操作类型  1：付款单付款；2：合同扣款；3：返点单确认；4：退款单审核；5：商品购买；																
-		sql.append("                            and t.iopertype in (2, 5) \n");
+		sql.append("                            and t.iopertype in (2, 5)   ");
 
 		if (!StringUtil.isEmpty(paramvo.getBdate())) {
 			sql.append(" and t.doperatedate <= ?");
@@ -104,11 +104,11 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		} else if (where == null) {
 			return new ArrayList<BillingInvoiceVO>();
 		}
-		sql.append(" group by account.pk_corp, \n");
-		sql.append("          account.innercode, \n");
-		sql.append("          account.unitname, \n");
-		sql.append("          account.vprovince, \n");
-		sql.append("          account.citycounty \n");
+		sql.append(" group by account.pk_corp,   ");
+		sql.append("          account.innercode,   ");
+		sql.append("          account.unitname,   ");
+		sql.append("          account.vprovince,   ");
+		sql.append("          account.citycounty   ");
 
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(BillingInvoiceVO.class));
@@ -196,7 +196,7 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		} else {
-			sql.append(" AND t.pk_corp is null \n");
+			sql.append(" AND t.pk_corp is null   ");
 		}
 		return sql.toString();
 	}
@@ -211,27 +211,27 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private HashMap<String, BillingInvoiceVO> queryInvoiceMny(BillingInvoiceVO vo) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.pk_corp, \n");
+		sql.append("select a.pk_corp,   ");
 		// sql.append(" sum(nvl(i.invprice, 0)) as billtotalmny,");
-		sql.append("       sum(decode(i.isourcetype, 1, nvl(i.invprice, 0), 0)) AS billconmny, \n");// 累计合同开票金额
-		sql.append("       sum(decode(i.isourcetype, 2, nvl(i.invprice, 0), 0)) AS billbuymny \n");// 累计商品开票金额
-		sql.append("  from bd_account a \n");
-		sql.append("  left join cn_invoice i on i.pk_corp = a.pk_corp \n");
-		sql.append("                              and nvl(i.dr, 0) = 0 \n");
-		sql.append("                              and i.invstatus in (1, 2, 3) \n");// 发票状态
+		sql.append("       sum(decode(i.isourcetype, 1, nvl(i.invprice, 0), 0)) AS billconmny,   ");// 累计合同开票金额
+		sql.append("       sum(decode(i.isourcetype, 2, nvl(i.invprice, 0), 0)) AS billbuymny   ");// 累计商品开票金额
+		sql.append("  from bd_account a   ");
+		sql.append("  left join cn_invoice i on i.pk_corp = a.pk_corp   ");
+		sql.append("                              and nvl(i.dr, 0) = 0   ");
+		sql.append("                              and i.invstatus in (1, 2, 3)   ");// 发票状态
 																					// 0：待提交
 																					// ；1：待开票；2：已开票；3：开票失败；
-		sql.append("                              and i.isourcetype in (1, 2) \n");// 发票来源类型
+		sql.append("                              and i.isourcetype in (1, 2)   ");// 发票来源类型
 																					// 1：合同扣款开票；
 																					// 2：订单扣款开票；
-		sql.append("                              and i.apptime <= ? \n");
+		sql.append("                              and i.apptime <= ?   ");
 		spm.addParam(new DZFDate());
-		sql.append(" where a.ischannel = 'Y' \n");
+		sql.append(" where a.ischannel = 'Y'   ");
 		if (null != vo.getCorps() && vo.getCorps().length > 0) {
 			String corpIdS = SqlUtil.buildSqlConditionForIn(vo.getCorps());
 			sql.append(" and a.pk_corp  in (" + corpIdS + ")");
 		}
-		sql.append(" group by a.pk_corp \n");
+		sql.append(" group by a.pk_corp   ");
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(BillingInvoiceVO.class));
 		HashMap<String, BillingInvoiceVO> map = new HashMap<>();
@@ -361,15 +361,15 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private DZFDouble queryInvoiceMny(String pk_corp) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select  \n");
-		sql.append("       sum(nvl(invprice, 0)) as billconmny \n");// 累计合同开票金额
-		sql.append("  from cn_invoice \n");
-		sql.append(" where nvl(dr,0) = 0 \n");
+		sql.append("select    ");
+		sql.append("       sum(nvl(invprice, 0)) as billconmny   ");// 累计合同开票金额
+		sql.append("  from cn_invoice   ");
+		sql.append(" where nvl(dr,0) = 0   ");
 		// 发票状态 0：待提交 ；1：待开票；2：已开票；3：开票失败；
-		sql.append("   and invstatus in (1, 2, 3) \n");
-		sql.append("   and apptime <= ? \n");
-		sql.append("   and pk_corp = ? \n");
-		sql.append("   and isourcetype = 1 \n");
+		sql.append("   and invstatus in (1, 2, 3)   ");
+		sql.append("   and apptime <= ?   ");
+		sql.append("   and pk_corp = ?   ");
+		sql.append("   and isourcetype = 1   ");
 		spm.addParam(new DZFDate());
 		spm.addParam(pk_corp);
 		sql.append(" group by pk_corp ");

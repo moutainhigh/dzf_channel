@@ -81,66 +81,66 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_paybill, \n");
-		sql.append("       t.pk_corp, \n");
-		sql.append("       t.vbillcode, \n");
-		sql.append("       t.dpaydate, \n");
-		sql.append("       t.vhandleid, \n");
-		sql.append("       t.vconfirmid, \n");
-		sql.append("       t.dconfirmtime, \n");
-		sql.append("       t.vmemo, \n");
-		sql.append("       t.coperatorid, \n");
-		sql.append("       t.doperatedate, \n");
-		sql.append("       t.npaymny, \n");
-		sql.append("       t.ipaymode, \n");
-		sql.append("       t.ipaytype, \n");
-		sql.append("       t.vstatus, \n");
-		sql.append("       t.tstamp, \n");
-		sql.append("       t.docName, \n");
-		sql.append("       t.docOwner, \n");
-		sql.append("       t.docTime, \n");
-		sql.append("       t.vfilepath, \n");
-		sql.append("       t.vbankname, \n");
-		sql.append("       t.vbankcode, \n");
-		sql.append("       t.vreason, \n");
-		sql.append("       t.submitime, \n");
-		sql.append("       t.submitid, \n");
-		sql.append("       t.systype, \n");
-		sql.append("       t.vapproveid, \n");
-		sql.append("       t.dapprovedate, \n");
-		sql.append("       t.dapprovetime, \n");
-		sql.append("       t.irejectype, \n");
-		sql.append("       t.ichargetype, \n");
-		sql.append("       us.user_name as vconfirmname  \n");
-		sql.append("  FROM cn_paybill t\n");
+		sql.append("SELECT t.pk_paybill,   ");
+		sql.append("       t.pk_corp,   ");
+		sql.append("       t.vbillcode,   ");
+		sql.append("       t.dpaydate,   ");
+		sql.append("       t.vhandleid,   ");
+		sql.append("       t.vconfirmid,   ");
+		sql.append("       t.dconfirmtime,   ");
+		sql.append("       t.vmemo,   ");
+		sql.append("       t.coperatorid,   ");
+		sql.append("       t.doperatedate,   ");
+		sql.append("       t.npaymny,   ");
+		sql.append("       t.ipaymode,   ");
+		sql.append("       t.ipaytype,   ");
+		sql.append("       t.vstatus,   ");
+		sql.append("       t.tstamp,   ");
+		sql.append("       t.docName,   ");
+		sql.append("       t.docOwner,   ");
+		sql.append("       t.docTime,   ");
+		sql.append("       t.vfilepath,   ");
+		sql.append("       t.vbankname,   ");
+		sql.append("       t.vbankcode,   ");
+		sql.append("       t.vreason,   ");
+		sql.append("       t.submitime,   ");
+		sql.append("       t.submitid,   ");
+		sql.append("       t.systype,   ");
+		sql.append("       t.vapproveid,   ");
+		sql.append("       t.dapprovedate,   ");
+		sql.append("       t.dapprovetime,   ");
+		sql.append("       t.irejectype,   ");
+		sql.append("       t.ichargetype,   ");
+		sql.append("       us.user_name as vconfirmname    ");
+		sql.append("  FROM cn_paybill t  ");
 		sql.append("  LEFT JOIN sm_user us ON us.cuserid = t.vconfirmid");
-		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n");
-		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
-		sql.append("   AND account.ischannel = 'Y' \n");
-		sql.append("   AND account.isaccountcorp = 'Y' \n");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp   ");
+		sql.append(" WHERE nvl(t.dr,0) = 0   ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
+		sql.append("   AND account.ischannel = 'Y'   ");
+		sql.append("   AND account.isaccountcorp = 'Y'   ");
 		if (paramvo.getQrytype() != null && paramvo.getQrytype() != -1) {// 查询状态
-			sql.append(" AND t.vstatus = ? \n");
+			sql.append(" AND t.vstatus = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		} else {
-			sql.append(" AND t.vstatus in ( ?, ?) \n");
+			sql.append(" AND t.vstatus in ( ?, ?)   ");
 			spm.addParam(IStatusConstant.IPAYSTATUS_3);
 			spm.addParam(IStatusConstant.IPAYSTATUS_5);
 		}
 		if (paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1) {
-			sql.append(" AND t.ipaytype = ? \n");
+			sql.append(" AND t.ipaytype = ?   ");
 			spm.addParam(paramvo.getIpaytype());
 		}
 		if (paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1) {
-			sql.append(" AND t.ipaymode = ? \n");
+			sql.append(" AND t.ipaymode = ?   ");
 			spm.addParam(paramvo.getIpaymode());
 		}
 		if (paramvo.getSeletype() != null && paramvo.getSeletype() != -1) {
-			sql.append(" AND t.ichargetype = ? \n");
+			sql.append(" AND t.ichargetype = ?   ");
 			spm.addParam(paramvo.getSeletype());
 		}
 		if (paramvo.getBegdate() != null && paramvo.getEnddate() != null) {
-			sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
+			sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )  ");
 			spm.addParam(paramvo.getBegdate());
 			spm.addParam(paramvo.getEnddate());
 		}
@@ -151,14 +151,14 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 			sql.append(" AND t.pk_corp in (").append(inSql).append(")");
 		}else{
 			if (paramvo.getCorptype() != null && paramvo.getCorptype() != -1) {
-				sql.append(" AND account.channeltype = ? \n");
+				sql.append(" AND account.channeltype = ?   ");
 				spm.addParam(paramvo.getCorptype());
 			} else {
-				sql.append(" AND account.channeltype != 9 \n");
+				sql.append(" AND account.channeltype != 9   ");
 			}
 		}
 		if (!StringUtil.isEmpty(paramvo.getPk_bill())) {
-			sql.append(" AND t.pk_paybill = ? \n");
+			sql.append(" AND t.pk_paybill = ?   ");
 			spm.addParam(paramvo.getPk_bill());
 		}
 		sql.append(" order by t.dpaydate desc");
@@ -338,12 +338,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 						120);
 				StringBuffer usql = new StringBuffer();
 				spm = new SQLParameter();
-				usql.append("UPDATE cn_balance l  \n");
-				usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?  \n");
+				usql.append("UPDATE cn_balance l    ");
+				usql.append("   SET l.npaymny = nvl(l.npaymny,0) + ?    ");
 				spm.addParam(billvo.getNpaymny());
-				usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+				usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 				spm.addParam(billvo.getIpaytype());
-				usql.append("   AND l.pk_corp = ?  \n");
+				usql.append("   AND l.pk_corp = ?    ");
 				spm.addParam(billvo.getPk_corp());
 				int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 				if (res != 1) {
@@ -458,12 +458,12 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 					// 更新余额表：
 					StringBuffer usql = new StringBuffer();
 					spm = new SQLParameter();
-					usql.append("UPDATE cn_balance l  \n");
-					usql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?  \n");
+					usql.append("UPDATE cn_balance l    ");
+					usql.append("   SET l.npaymny = nvl(l.npaymny,0) - ?    ");
 					spm.addParam(billvo.getNpaymny());
-					usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					usql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(billvo.getIpaytype());
-					usql.append("   AND l.pk_corp = ?  \n");
+					usql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(billvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 					if (res == 1) {

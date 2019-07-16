@@ -37,26 +37,26 @@ public class MatNumServiceImpl implements IMatNumService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		
-		sql.append("  select \n");
-		sql.append("   m1.vcode,m1.vname,m1.vunit, \n");
-		sql.append("   nvl(sum(b.applynum ),0) waitnum, \n");
-		sql.append("   nvl(m1.intnum,0) intnum ,nvl(m1.outnum,0) outnum, \n");
-		sql.append("   (nvl(m1.intnum,0)-nvl(m1.outnum,0)) enapplynum \n");
-		sql.append("   from cn_materiel m1  \n");
-		sql.append("   left join cn_materielbill_b b on \n");
-		sql.append("   m1.vname = b.vname  \n");
-		sql.append("   left join cn_materielbill bl on \n");
-		sql.append("   bl.pk_materielbill = b.pk_materielbill \n");
-		sql.append("   where nvl(b.dr,0) =0 and \n");
-		sql.append("   nvl(bl.dr,0) =0 and \n");
-		sql.append("   nvl(m1.dr,0) =0 and \n");
-		sql.append("   bl.vstatus = 2 \n");
+		sql.append("  select   ");
+		sql.append("   m1.vcode,m1.vname,m1.vunit,   ");
+		sql.append("   nvl(sum(b.applynum ),0) waitnum,   ");
+		sql.append("   nvl(m1.intnum,0) intnum ,nvl(m1.outnum,0) outnum,   ");
+		sql.append("   (nvl(m1.intnum,0)-nvl(m1.outnum,0)) enapplynum   ");
+		sql.append("   from cn_materiel m1    ");
+		sql.append("   left join cn_materielbill_b b on   ");
+		sql.append("   m1.vname = b.vname    ");
+		sql.append("   left join cn_materielbill bl on   ");
+		sql.append("   bl.pk_materielbill = b.pk_materielbill   ");
+		sql.append("   where nvl(b.dr,0) =0 and   ");
+		sql.append("   nvl(bl.dr,0) =0 and   ");
+		sql.append("   nvl(m1.dr,0) =0 and   ");
+		sql.append("   bl.vstatus = 2   ");
 		if(!StringUtil.isEmpty(qvo.getVname())){
-			sql.append(" and m1.vname like ? \n");
+			sql.append(" and m1.vname like ?   ");
 			spm.addParam("%"+qvo.getVname()+"%");
 		}
-		sql.append("   group by m1.vcode,m1.vname,m1.vunit, \n");
-		sql.append("   m1.intnum,m1.outnum,(m1.intnum-m1.outnum) \n");
+		sql.append("   group by m1.vcode,m1.vname,m1.vunit,   ");
+		sql.append("   m1.intnum,m1.outnum,(m1.intnum-m1.outnum)   ");
 		
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
@@ -89,7 +89,7 @@ public class MatNumServiceImpl implements IMatNumService {
         	sql = sql + "and vcode not in ("+codes+")";
         }
 		if(!StringUtil.isEmpty(qvo.getVname())){
-			sql = sql +" and vname like ? \n";
+			sql = sql +" and vname like ?   ";
 			spm.addParam("%"+qvo.getVname()+"%");
 		}
 		List<MaterielFileVO> twolist = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql, spm, new BeanListProcessor(MaterielFileVO.class));

@@ -45,13 +45,13 @@ public class MatCommonServiceImpl implements IMatCommonService{
 		List<String> corp = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select b.vprovince,b.isCharge,b.pk_corp \n");
-		sql.append("    from cn_chnarea_b b \n");
-		sql.append("    right join cn_chnarea a on \n");
-		sql.append("    a.pk_chnarea = b.pk_chnarea \n");
-		sql.append("    where nvl(a.dr, 0) = 0 \n");
+		sql.append("select b.vprovince,b.isCharge,b.pk_corp   ");
+		sql.append("    from cn_chnarea_b b   ");
+		sql.append("    right join cn_chnarea a on   ");
+		sql.append("    a.pk_chnarea = b.pk_chnarea   ");
+		sql.append("    where nvl(a.dr, 0) = 0   ");
 		sql.append("    and nvl(b.dr, 0) = 0 ");
-		sql.append("    and a.type = 1 and b.type = 1 \n");
+		sql.append("    and a.type = 1 and b.type = 1   ");
 		if (stype != null && "3".equals(stype)) {// 物料申请
 			if (!StringUtil.isEmpty(uservo.getCuserid())) {
 				sql.append(" and b.userid = ? ");
@@ -106,11 +106,11 @@ public class MatCommonServiceImpl implements IMatCommonService{
 	public List<MaterielFileVO> queryMatFile(MaterielFileVO pamvo,UserVO uservo)  throws DZFWarpException {
 		StringBuffer sql=new StringBuffer();
 		SQLParameter spm=new SQLParameter();
-		sql.append("  select pk_materiel,vname,vunit,vcode, \n");
-		sql.append("     (nvl(intnum,0) - nvl(outnum,0)) enapplynum \n");
-		sql.append("     from cn_materiel  \n");
-		sql.append("     where nvl(dr,0) = 0  \n");
-		sql.append("     and isseal = 1 \n");
+		sql.append("  select pk_materiel,vname,vunit,vcode,   ");
+		sql.append("     (nvl(intnum,0) - nvl(outnum,0)) enapplynum   ");
+		sql.append("     from cn_materiel    ");
+		sql.append("     where nvl(dr,0) = 0    ");
+		sql.append("     and isseal = 1   ");
 		
 		if (!StringUtil.isEmpty(pamvo.getVcode())) {
 			sql.append(" AND (vname like ? ");
@@ -128,10 +128,10 @@ public class MatCommonServiceImpl implements IMatCommonService{
 	@Override
 	public List<MaterielFileVO> queryMat() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("select vname, vunit  \n");
-		sql.append("  from cn_materiel  \n");
-		sql.append(" where nvl(dr, 0) = 0  \n");
-		sql.append("   and isseal = 1  \n");
+		sql.append("select vname, vunit    ");
+		sql.append("  from cn_materiel    ");
+		sql.append(" where nvl(dr, 0) = 0    ");
+		sql.append("   and isseal = 1    ");
 
 		List<MaterielFileVO> bvoList = (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(MaterielFileVO.class));
@@ -145,16 +145,16 @@ public class MatCommonServiceImpl implements IMatCommonService{
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select DISTINCT b.vname,  \n");
-		sql.append("       b.vunit  \n");
-		sql.append("  from cn_materielbill_b b  \n");
-		sql.append("  left join cn_materielbill c on c.pk_materielbill = b.pk_materielbill  \n");
-		sql.append("  left join cn_materiel m on m.pk_materiel = b.pk_materiel  \n");
-		sql.append("  left join bd_account co on co.pk_corp = c.pk_corp  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(c.dr, 0) = 0  \n");
-		sql.append("   and nvl(m.dr, 0) = 0  \n");
-		sql.append("   and m.isseal = 1  \n");
+		sql.append("select DISTINCT b.vname,    ");
+		sql.append("       b.vunit    ");
+		sql.append("  from cn_materielbill_b b    ");
+		sql.append("  left join cn_materielbill c on c.pk_materielbill = b.pk_materielbill    ");
+		sql.append("  left join cn_materiel m on m.pk_materiel = b.pk_materiel    ");
+		sql.append("  left join bd_account co on co.pk_corp = c.pk_corp    ");
+		sql.append(" where nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(c.dr, 0) = 0    ");
+		sql.append("   and nvl(m.dr, 0) = 0    ");
+		sql.append("   and m.isseal = 1    ");
 
 		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
 			sql.append(" and c.doperatedate >= ? ");
@@ -177,7 +177,7 @@ public class MatCommonServiceImpl implements IMatCommonService{
 			spm.addParam("%" + pamvo.getCorpname() + "%");
 		}
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != 0) {
-			sql.append("   AND c.vstatus = ? \n");
+			sql.append("   AND c.vstatus = ?   ");
 			spm.addParam(pamvo.getVstatus());
 		}
 
@@ -191,10 +191,10 @@ public class MatCommonServiceImpl implements IMatCommonService{
 	@Override
 	public List<MatOrderVO> queryAllProvince() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("  select region_id vprovince,region_name pname,parenter_id parid \n");
-		sql.append("     from ynt_area \n");
-		sql.append("     where nvl(dr,0) = 0  \n");
-		sql.append("     and parenter_id = 1 \n");
+		sql.append("  select region_id vprovince,region_name pname,parenter_id parid   ");
+		sql.append("     from ynt_area   ");
+		sql.append("     where nvl(dr,0) = 0    ");
+		sql.append("     and parenter_id = 1   ");
 
 		List<MatOrderVO> plist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(MatOrderVO.class));
@@ -207,10 +207,10 @@ public class MatCommonServiceImpl implements IMatCommonService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pid);
-		sql.append("  select region_id vcity,region_name cityname,parenter_id parid \n");
-		sql.append("     from ynt_area \n");
-		sql.append("     where nvl(dr,0) = 0  \n");
-		sql.append("     and parenter_id = ? \n");
+		sql.append("  select region_id vcity,region_name cityname,parenter_id parid   ");
+		sql.append("     from ynt_area   ");
+		sql.append("     where nvl(dr,0) = 0    ");
+		sql.append("     and parenter_id = ?   ");
 
 		List<MatOrderVO> clist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(MatOrderVO.class));
@@ -223,10 +223,10 @@ public class MatCommonServiceImpl implements IMatCommonService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(cid);
-		sql.append("  select region_id varea,region_name countryname,parenter_id parid \n");
-		sql.append("     from ynt_area \n");
-		sql.append("     where nvl(dr,0) = 0  \n");
-		sql.append("     and parenter_id = ? \n");
+		sql.append("  select region_id varea,region_name countryname,parenter_id parid   ");
+		sql.append("     from ynt_area   ");
+		sql.append("     where nvl(dr,0) = 0    ");
+		sql.append("     and parenter_id = ?   ");
 
 		List<MatOrderVO> clist = (List<MatOrderVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(MatOrderVO.class));
@@ -239,11 +239,11 @@ public class MatCommonServiceImpl implements IMatCommonService{
 		StringBuffer str = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_materielbill);
-		str.append("  select pk_materielbill, \n");
-		str.append("     vcontcode,vstatus,updatets \n");
-		str.append("     from cn_materielbill  \n");
-		str.append("     where nvl(dr,0) = 0 and \n");
-		str.append("     pk_materielbill = ? \n");
+		str.append("  select pk_materielbill,   ");
+		str.append("     vcontcode,vstatus,updatets   ");
+		str.append("     from cn_materielbill    ");
+		str.append("     where nvl(dr,0) = 0 and   ");
+		str.append("     pk_materielbill = ?   ");
 		return (MatOrderVO) singleObjectBO.executeQuery(str.toString(), spm, new BeanProcessor(MatOrderVO.class));
 
 	}
@@ -266,14 +266,14 @@ public class MatCommonServiceImpl implements IMatCommonService{
 						SQLParameter cspm = new SQLParameter();
 						cspm.addParam(vo.getFathercorp());
 						cspm.addParam(mbvo.getPk_materiel());
-						csql.append("  select b.vname,b.applynum,b.outnum,b.succnum \n");
-						csql.append("      from cn_materielbill l  \n");
-						csql.append("      left join cn_materielbill_b b on  \n");
-						csql.append("      l.pk_materielbill = b.pk_materielbill \n");
-						csql.append("      where nvl(l.dr,0) = 0 \n");
-						csql.append("      and nvl(b.dr,0) = 0 \n");
-						csql.append("      and l.fathercorp = ? \n");
-						csql.append("      and b.pk_materiel = ? \n");
+						csql.append("  select b.vname,b.applynum,b.outnum,b.succnum   ");
+						csql.append("      from cn_materielbill l    ");
+						csql.append("      left join cn_materielbill_b b on    ");
+						csql.append("      l.pk_materielbill = b.pk_materielbill   ");
+						csql.append("      where nvl(l.dr,0) = 0   ");
+						csql.append("      and nvl(b.dr,0) = 0   ");
+						csql.append("      and l.fathercorp = ?   ");
+						csql.append("      and b.pk_materiel = ?   ");
 
 						if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
 							csql.append(" and l.deliverdate >= ? ");
@@ -342,93 +342,93 @@ public class MatCommonServiceImpl implements IMatCommonService{
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT  \n");
+		sql.append("SELECT    ");
 		// 合同数量去掉补提单合同数
-		sql.append("       SUM(CASE  \n");
-		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   \n");
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5     ");
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND SUBSTR(t.deductdata, 1, 10) >= ? \n");
+			sql.append("        AND SUBSTR(t.deductdata, 1, 10) >= ?   ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND SUBSTR(t.deductdata, 1, 10) < = ? \n");
+			sql.append("        AND SUBSTR(t.deductdata, 1, 10) < = ?   ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND ( ( nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') >= ? \n");
+			sql.append("        AND ( ( nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') >= ?   ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01')  <= ? \n");
+			sql.append("        AND nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01')  <= ?   ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') < ? \n");
+			sql.append("        AND t.vdeductstatus != 10 ) OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') < ?   ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? ) \n");
+			sql.append("      OR nvl(SUBSTR(t.dchangetime, 1, 10),'1970-01-01') > ? )   ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
-		sql.append("             THEN 1  \n");
-		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5 \n");
-		sql.append("                  AND t.vdeductstatus = 10  \n");
+		sql.append("             THEN 1    ");
+		sql.append("             WHEN nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5   ");
+		sql.append("                  AND t.vdeductstatus = 10    ");
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) >= ? \n");
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) >= ?   ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) < = ? \n");
+			sql.append("        AND SUBSTR(t.dchangetime, 1, 10) < = ?   ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("         AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') < ? \n");
+			sql.append("         AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') < ?   ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') > ?  \n");
+			sql.append("        AND nvl(SUBSTR(t.deductdata, 1, 10),'1970-01-01') > ?    ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
-		sql.append("             THEN  -1  \n");
-		sql.append("             ELSE  \n");
-		sql.append("              0  \n");
-		sql.append("           END)  AS num  \n");
-		sql.append("  FROM cn_contract t \n");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(ct.dr, 0) = 0 \n");
-		// sql.append(" AND nvl(ct.isncust, 'N') = 'N' \n");
-		sql.append("   AND t.vdeductstatus in (?, ?, ?) \n");
+		sql.append("             THEN  -1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END)  AS num    ");
+		sql.append("  FROM cn_contract t   ");
+		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
+		sql.append("   AND nvl(ct.dr, 0) = 0   ");
+		// sql.append(" AND nvl(ct.isncust, 'N') = 'N'   ");
+		sql.append("   AND t.vdeductstatus in (?, ?, ?)   ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
 
-		sql.append("   AND t.pk_corp = ? \n");
+		sql.append("   AND t.pk_corp = ?   ");
 		spm.addParam(corpid);
 
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("        AND (  SUBSTR(t.deductdata, 1, 10) >= ?  \n");
+			sql.append("        AND (  SUBSTR(t.deductdata, 1, 10) >= ?    ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("         AND SUBSTR(t.deductdata, 1, 10) <= ? OR \n");
+			sql.append("         AND SUBSTR(t.deductdata, 1, 10) <= ? OR   ");
 			spm.addParam(vo.getDeduenddate());
 		}
 
 		if (!StringUtil.isEmptyWithTrim(vo.getDedubegdate())) {
-			sql.append("          SUBSTR(t.dchangetime, 1, 10)  >= ?  \n");
+			sql.append("          SUBSTR(t.dchangetime, 1, 10)  >= ?    ");
 			spm.addParam(vo.getDedubegdate());
 		}
 		if (!StringUtil.isEmptyWithTrim(vo.getDeduenddate())) {
-			sql.append("         AND SUBSTR(t.dchangetime, 1, 10) <= ? ) \n");
+			sql.append("         AND SUBSTR(t.dchangetime, 1, 10) <= ? )   ");
 			spm.addParam(vo.getDeduenddate());
 		}
-		sql.append("   GROUP BY t.pk_corp \n");
+		sql.append("   GROUP BY t.pk_corp   ");
 
 		CustCountVO countvo = (CustCountVO) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanProcessor(CustCountVO.class));
@@ -451,12 +451,12 @@ public class MatCommonServiceImpl implements IMatCommonService{
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(id);
-		sql.append("select nvl(intnum - outnum,0) stocknum, \n");
-		sql.append("   nvl(intnum,0),nvl(outnum,0), \n");
-		sql.append("   vname \n");
-		sql.append("   from cn_materiel \n");
-		sql.append("   where nvl(dr,0) = 0 \n");
-		sql.append("   and pk_materiel = ? \n");
+		sql.append("select nvl(intnum - outnum,0) stocknum,   ");
+		sql.append("   nvl(intnum,0),nvl(outnum,0),   ");
+		sql.append("   vname   ");
+		sql.append("   from cn_materiel   ");
+		sql.append("   where nvl(dr,0) = 0   ");
+		sql.append("   and pk_materiel = ?   ");
 		MaterielFileVO mmvo = (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanProcessor(MaterielFileVO.class));
 		if (mmvo != null && mmvo.getStocknum() != null) {

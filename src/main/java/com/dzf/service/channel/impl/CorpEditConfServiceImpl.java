@@ -89,7 +89,7 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT a.*,account.vprovince FROM cn_corpnameedit a \n") ;
+		sql.append(" SELECT a.*,account.vprovince FROM cn_corpnameedit a   ") ;
 		sql.append(" LEFT JOIN bd_account account on a.fathercorp=account.pk_corp ");
 		sql.append(" WHERE nvl(a.dr,0) = 0 ");
     	if(!StringUtil.isEmpty(paramvo.getVqrysql())){
@@ -101,7 +101,7 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		    sql.append(" AND a.fathercorp in (").append(inSql).append(")");
 		}
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() == 5){
-			sql.append("   AND a.istatus = ? AND account.channeltype = 9 and nvl(account.dr,0) = 0  \n");
+			sql.append("   AND a.istatus = ? AND account.channeltype = 9 and nvl(account.dr,0) = 0    ");
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_1);
 		}else if(paramvo.getQrytype() != -1){
 			sql.append("   AND a.istatus = ? AND ").append( QueryUtil.getWhereSql());
@@ -111,11 +111,11 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 			spm.addParam(IStatusConstant.ICORPEDITSTATUS_0);
 		}
 		if(paramvo.getBegdate() != null){
-			sql.append("   AND substr(a.vsubmittime,1,10) >= ? \n");
+			sql.append("   AND substr(a.vsubmittime,1,10) >= ?   ");
 			spm.addParam(paramvo.getBegdate());
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append("   AND substr(a.vsubmittime,1,10) <= ? \n");
+			sql.append("   AND substr(a.vsubmittime,1,10) <= ?   ");
 			spm.addParam(paramvo.getEnddate());
 		}
 		qryvo.setSql(sql.toString());

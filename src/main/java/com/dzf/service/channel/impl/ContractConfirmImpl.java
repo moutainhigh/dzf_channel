@@ -343,169 +343,169 @@ public class ContractConfirmImpl implements IContractConfirm {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if(isqrynum){
-			sql.append("SELECT count(t.pk_contract)  \n") ;
+			sql.append("SELECT count(t.pk_contract)    ") ;
 		}else{
-			sql.append("SELECT t.pk_contract,  \n") ;
-			sql.append("       t.pk_corp,  \n") ; 
-			sql.append("       t.pk_corpk,  \n") ; 
-			sql.append("       t.vdeductstatus,  \n") ; 
-			sql.append("       t.vstatus,  \n") ; 
-			sql.append("       t.iversion AS iapplystatus,  \n") ; 
-			sql.append("       CASE  \n") ; 
-			sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN  \n") ; 
-			sql.append("              t.tstamp  \n") ; 
-			sql.append("             ELSE  \n") ; 
-			sql.append("              cn.tstamp  \n") ; 
-			sql.append("           END AS checkts,  \n") ;//原合同、历史合同时间戳
+			sql.append("SELECT t.pk_contract,    ") ;
+			sql.append("       t.pk_corp,    ") ; 
+			sql.append("       t.pk_corpk,    ") ; 
+			sql.append("       t.vdeductstatus,    ") ; 
+			sql.append("       t.vstatus,    ") ; 
+			sql.append("       t.iversion AS iapplystatus,    ") ; 
+			sql.append("       CASE    ") ; 
+			sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN    ") ; 
+			sql.append("              t.tstamp    ") ; 
+			sql.append("             ELSE    ") ; 
+			sql.append("              cn.tstamp    ") ; 
+			sql.append("           END AS checkts,    ") ;//原合同、历史合同时间戳
 			if("audit".equals(qrytype)){
-				sql.append("       account.channeltype,  \n") ; //加盟商类型
-				sql.append("       t.isxq,  \n") ; //是否续签
+				sql.append("       account.channeltype,    ") ; //加盟商类型
+				sql.append("       t.isxq,    ") ; //是否续签
 			}
 			if("listqry".equals(qrytype)){
-				sql.append("       account.vprovince,  \n") ; //省份
+				sql.append("       account.vprovince,    ") ; //省份
 			}
-			sql.append("       account.citycounty AS varea,  \n");
-			sql.append("       account.unitname AS corpname,  \n");
-			sql.append("       account.drelievedate AS drelievedate,  \n");
-			sql.append("       t.vcontcode,  \n") ; 
-			sql.append("       t.pk_packagedef,  \n") ; 
-			sql.append("       nvl(t.isncust,'N') AS isncust,  \n") ; // 是否存量客户
-			sql.append("       nvl(t.isnconfirm,'N') AS isnconfirm,  \n") ; // 未确定服务期限
-			sql.append("       t.chargedeptname,  \n") ; 
-			sql.append("       t.busitypemin,  \n") ;//业务小类
-			sql.append("       bs.vbusitypename,  \n") ; 
-			sql.append("       t.ntotalmny,  \n") ; 
-			sql.append("       t.nbookmny,  \n") ; 
-			sql.append("       t.nmservicemny,  \n") ; 
-			sql.append("       t.icontractcycle,  \n") ; 
-			sql.append("       t.ireceivcycle,  \n") ; 
-			sql.append("       t.dsubmitime,  \n") ; 
-			sql.append("       t.vbeginperiod,  \n") ; 
-			sql.append("       t.vendperiod,  \n") ; 
-			sql.append("       t.dbegindate,  \n") ; 
-			sql.append("       t.denddate,  \n") ; 
-			sql.append("       t.vchangeperiod,  \n") ; 
+			sql.append("       account.citycounty AS varea,    ");
+			sql.append("       account.unitname AS corpname,    ");
+			sql.append("       account.drelievedate AS drelievedate,    ");
+			sql.append("       t.vcontcode,    ") ; 
+			sql.append("       t.pk_packagedef,    ") ; 
+			sql.append("       nvl(t.isncust,'N') AS isncust,    ") ; // 是否存量客户
+			sql.append("       nvl(t.isnconfirm,'N') AS isnconfirm,    ") ; // 未确定服务期限
+			sql.append("       t.chargedeptname,    ") ; 
+			sql.append("       t.busitypemin,    ") ;//业务小类
+			sql.append("       bs.vbusitypename,    ") ; 
+			sql.append("       t.ntotalmny,    ") ; 
+			sql.append("       t.nbookmny,    ") ; 
+			sql.append("       t.nmservicemny,    ") ; 
+			sql.append("       t.icontractcycle,    ") ; 
+			sql.append("       t.ireceivcycle,    ") ; 
+			sql.append("       t.dsubmitime,    ") ; 
+			sql.append("       t.vbeginperiod,    ") ; 
+			sql.append("       t.vendperiod,    ") ; 
+			sql.append("       t.dbegindate,    ") ; 
+			sql.append("       t.denddate,    ") ; 
+			sql.append("       t.vchangeperiod,    ") ; 
 			//加盟商合同类型：null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同
-			sql.append("       t.patchstatus,  \n") ; 
-			sql.append("       t.vconfreason,  \n") ; 
-			sql.append("       t.dsigndate,  \n") ; 
-			sql.append("       t.vadviser,  \n") ; 
-			sql.append("       t.pk_source,  \n") ; //来源合同主键
-			sql.append("       t.ichargetype,  \n") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
-			sql.append("       t.icompanytype,  \n") ;// 公司类型 20-个体工商户，99-非个体户；
-			sql.append("       CASE nvl(t.icompanytype,99) WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename, \n ");
-			sql.append("       cn.pk_confrim,  \n") ; 
-			sql.append("       cn.tstamp,  \n") ; 
-			sql.append("       cn.deductdata,  \n") ; 
-			sql.append("       cn.deductime,  \n") ; 
-			sql.append("       cn.voperator,  \n") ; 
-			sql.append("       cn.ndedsummny,  \n") ; 
-			sql.append("       cn.ndeductmny,  \n") ; 
-			sql.append("       cn.ndedrebamny,  \n") ; 
-			sql.append("       cn.ideductpropor,  \n") ; 
-			sql.append("       cn.ichangetype,  \n") ; 
-			sql.append("       cn.vchangeraeson,  \n") ; 
-			sql.append("       cn.vchangememo,  \n") ; 
-			sql.append("       cn.vstopperiod,  \n") ; 
-			sql.append("       cn.nreturnmny,  \n") ; 
-			sql.append("       cn.nretdedmny,  \n") ; 
-			sql.append("       cn.nretrebmny,  \n") ; 
-			sql.append("       t.nchangetotalmny,  \n") ; //原合同金额(原合同)/变更后合同金额(历史合同-终止、作废)
-			sql.append("       cn.nchangesummny,  \n") ; 
-			sql.append("       cn.nchangededutmny,  \n") ; 
-			sql.append("       cn.nchangerebatmny,  \n") ; 
-			sql.append("       cn.vchanger,  \n") ; 
-			sql.append("       cn.dchangetime,  \n") ; 
-			sql.append("       substr(dchangetime, 0, 10) AS dchangedate,  \n") ; 
-			sql.append("       cn.nsubtotalmny,  \n") ; 
-			sql.append("       cn.nsubdedsummny,  \n") ; 
-			sql.append("       cn.nsubdeductmny,  \n") ; 
-			sql.append("       cn.nsubdedrebamny  \n") ; 
+			sql.append("       t.patchstatus,    ") ; 
+			sql.append("       t.vconfreason,    ") ; 
+			sql.append("       t.dsigndate,    ") ; 
+			sql.append("       t.vadviser,    ") ; 
+			sql.append("       t.pk_source,    ") ; //来源合同主键
+			sql.append("       t.ichargetype,    ") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
+			sql.append("       t.icompanytype,    ") ;// 公司类型 20-个体工商户，99-非个体户；
+			sql.append("       CASE nvl(t.icompanytype,99) WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename,    ");
+			sql.append("       cn.pk_confrim,    ") ; 
+			sql.append("       cn.tstamp,    ") ; 
+			sql.append("       cn.deductdata,    ") ; 
+			sql.append("       cn.deductime,    ") ; 
+			sql.append("       cn.voperator,    ") ; 
+			sql.append("       cn.ndedsummny,    ") ; 
+			sql.append("       cn.ndeductmny,    ") ; 
+			sql.append("       cn.ndedrebamny,    ") ; 
+			sql.append("       cn.ideductpropor,    ") ; 
+			sql.append("       cn.ichangetype,    ") ; 
+			sql.append("       cn.vchangeraeson,    ") ; 
+			sql.append("       cn.vchangememo,    ") ; 
+			sql.append("       cn.vstopperiod,    ") ; 
+			sql.append("       cn.nreturnmny,    ") ; 
+			sql.append("       cn.nretdedmny,    ") ; 
+			sql.append("       cn.nretrebmny,    ") ; 
+			sql.append("       t.nchangetotalmny,    ") ; //原合同金额(原合同)/变更后合同金额(历史合同-终止、作废)
+			sql.append("       cn.nchangesummny,    ") ; 
+			sql.append("       cn.nchangededutmny,    ") ; 
+			sql.append("       cn.nchangerebatmny,    ") ; 
+			sql.append("       cn.vchanger,    ") ; 
+			sql.append("       cn.dchangetime,    ") ; 
+			sql.append("       substr(dchangetime, 0, 10) AS dchangedate,    ") ; 
+			sql.append("       cn.nsubtotalmny,    ") ; 
+			sql.append("       cn.nsubdedsummny,    ") ; 
+			sql.append("       cn.nsubdeductmny,    ") ; 
+			sql.append("       cn.nsubdedrebamny    ") ; 
 		}
-		sql.append("  FROM ynt_contract t  \n") ; 
-		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
-		sql.append(" INNER JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
-		sql.append("   AND account.ischannel = 'Y' \n");
-		sql.append("   AND account.isaccountcorp = 'Y' \n");
-		sql.append("   AND t.isflag = 'Y'  \n") ; 
-		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
-		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
+		sql.append("  FROM ynt_contract t    ") ; 
+		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract    ") ; 
+		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype    ") ; 
+		sql.append(" INNER JOIN bd_account account ON t.pk_corp = account.pk_corp   ") ;
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(cn.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(bs.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(account.dr, 0) = 0    ") ; 
+		sql.append("   AND account.ischannel = 'Y'   ");
+		sql.append("   AND account.isaccountcorp = 'Y'   ");
+		sql.append("   AND t.isflag = 'Y'    ") ; 
+		sql.append("   AND nvl(t.icosttype, 0) = 0    ") ; 
+		sql.append("   AND t.icontracttype = 2    ") ; //加盟商合同
 		
 		//合同状态过滤：1、未提交的合同不显示；2、待审核的合同，申请状态为待运营处理（过滤非常规套餐）；
-		sql.append("   AND ((t.vstatus != 0 AND t.vstatus != 5) OR  \n") ; 
-		sql.append("        (t.vstatus = 5 AND nvl(t.iversion, 4) >= 4))  \n") ; 
+		sql.append("   AND ((t.vstatus != 0 AND t.vstatus != 5) OR    ") ; 
+		sql.append("        (t.vstatus = 5 AND nvl(t.iversion, 4) >= 4))    ") ; 
 		if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() != -1){
 			if(paramvo.getVdeductstatus() != null && paramvo.getVdeductstatus() == IStatusConstant.IDEDUCTSTATUS_8){
 				sql.append(" AND t.vendperiod < ? ");
 				DZFDate date = new DZFDate();
 				spm.addParam(date.getYear()+"-"+date.getStrMonth());
 			}else{
-				sql.append(" AND t.vdeductstatus = ? \n") ;
+				sql.append(" AND t.vdeductstatus = ?   ") ;
 				spm.addParam(paramvo.getVdeductstatus());
 			}
 		}
 		if(paramvo.getBegdate() != null){
-			sql.append("   AND t.dsubmitime >= ? \n") ; 
+			sql.append("   AND t.dsubmitime >= ?   ") ; 
 			spm.addParam(paramvo.getBegdate() + " 00:00:00");
 		}
 		if(paramvo.getEnddate() != null){
-			sql.append("   AND t.dsubmitime <= ? \n") ; 
+			sql.append("   AND t.dsubmitime <= ?   ") ; 
 			spm.addParam(paramvo.getEnddate() + " 23:59:59");
 		}
 		if(!StringUtil.isEmpty(paramvo.getBeginperiod())){
-			sql.append("   AND cn.deductdata >= ? \n") ; 
+			sql.append("   AND cn.deductdata >= ?   ") ; 
 			spm.addParam(paramvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(paramvo.getEndperiod())){
-			sql.append("   AND cn.deductdata <= ? \n") ; 
+			sql.append("   AND cn.deductdata <= ?   ") ; 
 			spm.addParam(paramvo.getEndperiod());
 		}
 		if(paramvo.getIsncust() != null){
-			sql.append(" AND nvl(t.isncust,'N') = ? \n") ; 
+			sql.append(" AND nvl(t.isncust,'N') = ?   ") ; 
 			spm.addParam(paramvo.getIsncust());
 		}
 		if("info".equals(qrytype) || "audit".equals(qrytype) ){
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-				sql.append("   AND t.pk_contract = ? \n") ; //原合同合同主键
+				sql.append("   AND t.pk_contract = ?   ") ; //原合同合同主键
 				spm.addParam(paramvo.getPk_bill());
 			}
 		}else{
 			if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-				sql.append("   AND cn.pk_confrim = ? \n") ; //历史合同主键
+				sql.append("   AND cn.pk_confrim = ?   ") ; //历史合同主键
 				spm.addParam(paramvo.getPk_bill());
 			}
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_contract())){
-			sql.append("   AND t.pk_contract = ? \n") ;//原合同合同主键
+			sql.append("   AND t.pk_contract = ?   ") ;//原合同合同主键
 			spm.addParam(paramvo.getPk_contract());
 		}
 		//qrytype 1：正常提单；2：纳税人变更；3：待变更；
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){
 			if(paramvo.getQrytype() == 1){
-				sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5 \n") ;
+				sql.append(" AND nvl(t.patchstatus, 0) != 2 AND nvl(t.patchstatus, 0) != 5   ") ;
 			}else if(paramvo.getQrytype() == 2){
-				sql.append(" AND ( nvl(t.patchstatus, 0) = 2 OR nvl(t.patchstatus, 0) = 5) \n") ;
+				sql.append(" AND ( nvl(t.patchstatus, 0) = 2 OR nvl(t.patchstatus, 0) = 5)   ") ;
 			}else if(paramvo.getQrytype() == 3){
-				sql.append(" AND cn.pk_confrim IN ( \n");
-				sql.append("SELECT pk_confrim  \n") ;
-				sql.append("  FROM cn_changeapply  \n") ; 
-				sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-				sql.append("   AND ichangetype IN (1, 2)  \n") ; 
-				sql.append("   AND iapplystatus = 4  \n");
-				sql.append(" ) \n");
+				sql.append(" AND cn.pk_confrim IN (   ");
+				sql.append("SELECT pk_confrim    ") ;
+				sql.append("  FROM cn_changeapply    ") ; 
+				sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+				sql.append("   AND ichangetype IN (1, 2)    ") ; 
+				sql.append("   AND iapplystatus = 4    ");
+				sql.append(" )   ");
 			}
 		}
 		if(paramvo.getCorptype() != null){
 			if(paramvo.getCorptype() == 1){
-			    sql.append(" AND t.chargedeptname = ? \n") ; 
+			    sql.append(" AND t.chargedeptname = ?   ") ; 
 	            spm.addParam("小规模纳税人");
 			}else if(paramvo.getCorptype() == 2){
-			    sql.append(" AND t.chargedeptname = ? \n") ; 
+			    sql.append(" AND t.chargedeptname = ?   ") ; 
 	            spm.addParam("一般纳税人");
 			}
 		}
@@ -518,35 +518,35 @@ public class ContractConfirmImpl implements IContractConfirm {
 		}else{
 			//公司类型过滤：9：演示加盟商
 			if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
-				sql.append(" AND account.channeltype = ? \n");
+				sql.append(" AND account.channeltype = ?   ");
 				spm.addParam(paramvo.getIpaymode());
 			}else{
-				sql.append(" AND account.channeltype != 9 \n");
+				sql.append(" AND account.channeltype != 9   ");
 			}
 		}
 		//客户主键
 		if(!StringUtil.isEmpty(paramvo.getPk_corpk())){
-			sql.append(" AND t.pk_corpk = ? \n") ; 
+			sql.append(" AND t.pk_corpk = ?   ") ; 
 			spm.addParam(paramvo.getPk_corpk());
 		}
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){
 			sql.append(paramvo.getVqrysql());
 		}
 		if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
-			sql.append(" AND cn.ideductpropor = ? \n") ; 
+			sql.append(" AND cn.ideductpropor = ?   ") ; 
 			spm.addParam(paramvo.getSeletype());
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
 			//合同周期
-			sql.append(" AND t.icontractcycle = ?  \n") ; 
+			sql.append(" AND t.icontractcycle = ?    ") ; 
 			spm.addParam(paramvo.getIpaytype());
 		}
 		if(paramvo.getVprovince() != null && paramvo.getVprovince() != -1){
 			//收款周期
-			sql.append(" AND t.ireceivcycle = ?  \n") ; 
+			sql.append(" AND t.ireceivcycle = ?    ") ; 
 			spm.addParam(paramvo.getVprovince());
 		}
-		sql.append(" ORDER BY t.dsubmitime DESC \n");
+		sql.append(" ORDER BY t.dsubmitime DESC   ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -567,7 +567,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND t.pk_corp is null \n") ; 
+			sql.append(" AND t.pk_corp is null   ") ; 
 		}
 		return sql.toString();
 	}
@@ -666,12 +666,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private ChangeApplyVO queryChangeApply(ContractConfrimVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_changeapply y  \n");
-		sql.append(" WHERE y.pk_contract = ?  \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_changeapply y    ");
+		sql.append(" WHERE y.pk_contract = ?    ");
 		spm.addParam(pamvo.getPk_contract());
-		sql.append("   AND y.iapplystatus = 4  \n");
-		sql.append("   AND y.pk_corp = ?  \n");
+		sql.append("   AND y.iapplystatus = 4    ");
+		sql.append("   AND y.pk_corp = ?    ");
 		spm.addParam(pamvo.getPk_corp());
 		List<ChangeApplyVO> list = (List<ChangeApplyVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChangeApplyVO.class));
@@ -691,14 +691,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private RejectHistoryHVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT h.*, r.user_name AS coperator \n");
-		sql.append("  FROM cn_rejecthistory_h h  \n");
-		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid  \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND h.pk_contract = ?  \n");
+		sql.append("SELECT h.*, r.user_name AS coperator   ");
+		sql.append("  FROM cn_rejecthistory_h h    ");
+		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid    ");
+		sql.append(" WHERE nvl(h.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND h.pk_contract = ?    ");
 		spm.addParam(pk_contract);
-		sql.append(" ORDER BY h.ts DESC \n");
+		sql.append(" ORDER BY h.ts DESC   ");
 		List<RejectHistoryHVO> list = (List<RejectHistoryHVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RejectHistoryHVO.class));
 		if(list != null && list.size() > 0){
@@ -875,19 +875,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 				LockUtil.getInstance().tryLockKey(packvo.getTableName(), packvo.getPk_packagedef(),uuid, 30);
 				StringBuffer sql = new StringBuffer();
 				SQLParameter spm = new SQLParameter();
-				sql.append("UPDATE cn_packagedef f \n") ;
-				sql.append("   SET f.iusenum = nvl(f.iusenum,0) \n") ; 
+				sql.append("UPDATE cn_packagedef f   ") ;
+				sql.append("   SET f.iusenum = nvl(f.iusenum,0)   ") ; 
 				if(packvo.getIusenum().equals(1) ){
 					sql.append(" + ? ");
 				}else{
 					sql.append(" - ? ");
 				}
 				spm.addParam(1);
-				sql.append(" WHERE f.pk_packagedef = ? \n") ; 
+				sql.append(" WHERE f.pk_packagedef = ?   ") ; 
 				spm.addParam(packvo.getPk_packagedef());
 				//促销套餐使用量更新时，有剩余量校验
 				if(packvo.getIusenum().equals(1) && packvo.getIspromotion() != null && packvo.getIspromotion().booleanValue()){
-					sql.append("   AND nvl(f.ipublishnum, 0) - nvl(f.iusenum, 0) >= ? \n");
+					sql.append("   AND nvl(f.ipublishnum, 0) - nvl(f.iusenum, 0) >= ?   ");
 					spm.addParam(1);
 				}
 				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -1098,9 +1098,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		//审核时，状态为5；驳回时，状态为4；
 		if (paramvo.getIapplystatus() != null && (paramvo.getIapplystatus() == 5 || paramvo.getIapplystatus() == 4)) {
 			if (IStatusConstant.IDEDUCTYPE_1 == opertype) {// 扣款
-				sql.append(" ,iversion = 5 \n");
+				sql.append(" ,iversion = 5   ");
 			} else if (IStatusConstant.IDEDUCTYPE_2 == opertype) {// 驳回
-				sql.append(" ,iversion = 6 \n");
+				sql.append(" ,iversion = 6   ");
 			}
 		}
 		if(StringUtil.isEmpty(paramvo.getVconfreason())){
@@ -1129,19 +1129,19 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateRejectHistory(ContractConfrimVO paramvo, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("DELETE FROM cn_rejecthistory  \n") ;
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_contract = ?  \n") ; 
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("DELETE FROM cn_rejecthistory    ") ;
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_contract = ?    ") ; 
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(paramvo.getPk_contract());
 		spm.addParam(paramvo.getPk_corp());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("DELETE FROM cn_rejecthistory_h  \n") ;
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_contract = ?  \n") ; 
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("DELETE FROM cn_rejecthistory_h    ") ;
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_contract = ?    ") ; 
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(paramvo.getPk_contract());
 		spm.addParam(paramvo.getPk_corp());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -1219,9 +1219,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void checkBeforeReject(ContractConfrimVO confrimvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT tstamp,vdeductstatus \n") ;
-		sql.append("  FROM ynt_contract t \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
+		sql.append("SELECT tstamp,vdeductstatus   ") ;
+		sql.append("  FROM ynt_contract t   ") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ") ; 
 		sql.append("   AND t.pk_contract = ? ");
 		spm.addParam(confrimvo.getPk_contract());
 		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm, new ArrayListProcessor());
@@ -1275,14 +1275,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 				try {
 					LockUtil.getInstance().tryLockKey("cn_balance",
 							datavo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid, 120);
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?    ");
 					spm.addParam(datavo.getNdeductmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(datavo.getPk_corp());
-					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ?   ");
 					spm.addParam(datavo.getNdeductmny());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if (res == 1) {
@@ -1334,14 +1334,14 @@ public class ContractConfirmImpl implements IContractConfirm {
 							datavo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_3, uuid, 120);
 					sql = new StringBuffer();
 					spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?    ");
 					spm.addParam(datavo.getNdedrebamny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(datavo.getPk_corp());
-					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+					sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ?   ");
 					spm.addParam(datavo.getNdedrebamny());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if (res == 1) {
@@ -1402,9 +1402,9 @@ public class ContractConfirmImpl implements IContractConfirm {
 		// 1、审核数据状态校验
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT tstamp,vdeductstatus \n");
-		sql.append("  FROM ynt_contract t \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
+		sql.append("SELECT tstamp,vdeductstatus   ");
+		sql.append("  FROM ynt_contract t   ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
 		sql.append("   AND t.pk_contract = ? ");
 		spm.addParam(confrimvo.getPk_contract());
 		ArrayList<Object> result = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -1610,16 +1610,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		// 1、更新合同申请-申请状态
-		sql.append("UPDATE cn_changeapply  \n");
+		sql.append("UPDATE cn_changeapply    ");
 		if (type == 1) {
-			sql.append("   SET iapplystatus = 5  \n");
+			sql.append("   SET iapplystatus = 5    ");
 		} else if (type == 2) {
-			sql.append("   SET iapplystatus = 6  \n");
+			sql.append("   SET iapplystatus = 6    ");
 		}
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(datavo.getPk_corp());
-		sql.append("   AND pk_changeapply = ?  \n");
+		sql.append("   AND pk_changeapply = ?    ");
 		spm.addParam(datavo.getPk_changeapply());
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 		if (res != 1) {
@@ -1683,12 +1683,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		String vreceivmonth = datavo.getVbeginperiod() + "至" + datavo.getVendperiod();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE ynt_contract_b \n") ;
-		sql.append("   SET nreceivemny = ? , wsreceivemny = ? , vreceivmonth = ? \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("   AND pk_corp = ? \n") ; 
-		sql.append("   AND pk_contract = ? \n") ; 
-		sql.append("   AND icosttype = 1 \n");
+		sql.append("UPDATE ynt_contract_b   ") ;
+		sql.append("   SET nreceivemny = ? , wsreceivemny = ? , vreceivmonth = ?   ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0   ") ; 
+		sql.append("   AND pk_corp = ?   ") ; 
+		sql.append("   AND pk_contract = ?   ") ; 
+		sql.append("   AND icosttype = 1   ");
 		spm.addParam(SafeCompute.sub(datavo.getNchangetotalmny(), datavo.getNbookmny()));
 		spm.addParam(SafeCompute.sub(datavo.getNchangetotalmny(), datavo.getNbookmny()));
 		spm.addParam(vreceivmonth);
@@ -1698,12 +1698,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 		//7.2.1 账本费
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("UPDATE ynt_contract_b \n") ;
-		sql.append("   SET vreceivmonth = ? \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("   AND pk_corp = ? \n") ; 
-		sql.append("   AND pk_contract = ? \n") ; 
-		sql.append("   AND icosttype = 0 \n");
+		sql.append("UPDATE ynt_contract_b   ") ;
+		sql.append("   SET vreceivmonth = ?   ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0   ") ; 
+		sql.append("   AND pk_corp = ?   ") ; 
+		sql.append("   AND pk_contract = ?   ") ; 
+		sql.append("   AND icosttype = 0   ");
 		spm.addParam(vreceivmonth);
 		spm.addParam(datavo.getPk_corp());
 		spm.addParam(datavo.getPk_contract());
@@ -1718,8 +1718,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private void updateContByChange(ContractConfrimVO datavo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("update ynt_contract \n") ;
-		sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ? \n") ; 
+		sql.append("update ynt_contract   ") ;
+		sql.append("   set vdeductstatus = ?, vstatus = ?, patchstatus = 3, tstamp = ?   ") ; 
 		if (datavo.getIchangetype() == IStatusConstant.ICONCHANGETYPE_1) {
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
 			spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -1732,11 +1732,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			String vbeginperiod = datavo.getVbeginperiod();//合同开始期间
 			String vstopperiod = datavo.getVstopperiod();//合同终止期间
 			Integer changenum = ToolsUtil.getCyclenum(vbeginperiod, vstopperiod);
-			sql.append(" , icontractcycle = ? , ntotalmny = ? \n") ;
+			sql.append(" , icontractcycle = ? , ntotalmny = ?   ") ;
 			spm.addParam(changenum);
 			spm.addParam(datavo.getNchangetotalmny());
 			if(datavo.getIreceivcycle().compareTo(changenum) > 0){
-				sql.append(" , ireceivcycle = ? \n");
+				sql.append(" , ireceivcycle = ?   ");
 				spm.addParam(changenum);
 			}
 			DZFDate denddate = null;
@@ -1746,7 +1746,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				if(!StringUtil.isEmpty(venddate)){
 					denddate = new DZFDate(venddate);
 					vendperiod = denddate.getYear() + "-" + denddate.getStrMonth();
-					sql.append(" , denddate = ? , vendperiod = ? \n") ;
+					sql.append(" , denddate = ? , vendperiod = ?   ") ;
 					spm.addParam(denddate);
 					spm.addParam(vendperiod);
 					datavo.setDenddate(denddate);
@@ -1757,11 +1757,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			};
 		}
 		if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
-			sql.append(" , iapplystatus = 5 \n");
+			sql.append(" , iapplystatus = 5   ");
 		}
-		sql.append(" where nvl(dr, 0) = 0 \n") ; 
-		sql.append("   and pk_corp = ? \n") ; 
-		sql.append("   and pk_contract = ? \n");
+		sql.append(" where nvl(dr, 0) = 0   ") ; 
+		sql.append("   and pk_corp = ?   ") ; 
+		sql.append("   and pk_contract = ?   ");
 
 		spm.addParam(datavo.getPk_corp());
 		spm.addParam(datavo.getPk_contract());
@@ -2042,12 +2042,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 							paramvo.getPk_corp() + "" + IStatusConstant.IPAYTYPE_2, uuid, 120);
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?    ");
 					spm.addParam(paramvo.getNretdedmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_2);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(paramvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
@@ -2088,12 +2088,12 @@ public class ContractConfirmImpl implements IContractConfirm {
 							uuid, 120);
 					StringBuffer sql = new StringBuffer();
 					SQLParameter spm = new SQLParameter();
-					sql.append("UPDATE cn_balance l  \n");
-					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+					sql.append("UPDATE cn_balance l    ");
+					sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?    ");
 					spm.addParam(paramvo.getNretrebmny());
-					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+					sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 					spm.addParam(IStatusConstant.IPAYTYPE_3);
-					sql.append("   AND l.pk_corp = ?  \n");
+					sql.append("   AND l.pk_corp = ?    ");
 					spm.addParam(paramvo.getPk_corp());
 					int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 					if(res == 1){
@@ -2204,97 +2204,97 @@ public class ContractConfirmImpl implements IContractConfirm {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_contract,  \n") ;
-		sql.append("       t.pk_corp,  \n") ; 
-		sql.append("       t.pk_corpk,  \n") ; 
-		sql.append("       t.vdeductstatus,  \n") ; 
-		sql.append("       t.vstatus,  \n") ; 
-		sql.append("       CASE  \n") ; 
-		sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN  \n") ; 
-		sql.append("              t.tstamp  \n") ; 
-		sql.append("             ELSE  \n") ; 
-		sql.append("              cn.tstamp  \n") ; 
-		sql.append("           END AS checkts,  \n") ;//原合同、历史合同时间戳
-		sql.append("       t.vcontcode,  \n") ; 
-		sql.append("       t.pk_packagedef,  \n") ; 
-		sql.append("       nvl(t.isncust,'N') AS isncust,  \n") ; // 是否存量客户
-		sql.append("       nvl(t.isnconfirm,'N') AS isnconfirm,  \n") ; // 未确定服务期限
-		sql.append("       t.chargedeptname,  \n") ; 
-		sql.append("       t.busitypemin,  \n") ;//业务小类
-		sql.append("       bs.vbusitypename,  \n") ; 
-		sql.append("       t.ntotalmny,  \n") ; 
-		sql.append("       t.nbookmny,  \n") ; 
-		sql.append("       t.nmservicemny,  \n") ; 
-		sql.append("       t.icontractcycle,  \n") ; 
-		sql.append("       t.ireceivcycle,  \n") ; 
-		sql.append("       t.dsubmitime,  \n") ; 
-		sql.append("       t.vbeginperiod,  \n") ; 
-		sql.append("       t.vendperiod,  \n") ; 
-		sql.append("       t.dbegindate,  \n") ; 
-		sql.append("       t.denddate,  \n") ; 
-		sql.append("       t.vchangeperiod,  \n") ; 
+		sql.append("SELECT t.pk_contract,    ") ;
+		sql.append("       t.pk_corp,    ") ; 
+		sql.append("       t.pk_corpk,    ") ; 
+		sql.append("       t.vdeductstatus,    ") ; 
+		sql.append("       t.vstatus,    ") ; 
+		sql.append("       CASE    ") ; 
+		sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN    ") ; 
+		sql.append("              t.tstamp    ") ; 
+		sql.append("             ELSE    ") ; 
+		sql.append("              cn.tstamp    ") ; 
+		sql.append("           END AS checkts,    ") ;//原合同、历史合同时间戳
+		sql.append("       t.vcontcode,    ") ; 
+		sql.append("       t.pk_packagedef,    ") ; 
+		sql.append("       nvl(t.isncust,'N') AS isncust,    ") ; // 是否存量客户
+		sql.append("       nvl(t.isnconfirm,'N') AS isnconfirm,    ") ; // 未确定服务期限
+		sql.append("       t.chargedeptname,    ") ; 
+		sql.append("       t.busitypemin,    ") ;//业务小类
+		sql.append("       bs.vbusitypename,    ") ; 
+		sql.append("       t.ntotalmny,    ") ; 
+		sql.append("       t.nbookmny,    ") ; 
+		sql.append("       t.nmservicemny,    ") ; 
+		sql.append("       t.icontractcycle,    ") ; 
+		sql.append("       t.ireceivcycle,    ") ; 
+		sql.append("       t.dsubmitime,    ") ; 
+		sql.append("       t.vbeginperiod,    ") ; 
+		sql.append("       t.vendperiod,    ") ; 
+		sql.append("       t.dbegindate,    ") ; 
+		sql.append("       t.denddate,    ") ; 
+		sql.append("       t.vchangeperiod,    ") ; 
 		//加盟商合同类型：null正常合同；1：被2补提交的原合同；2：小规模转一般人的合同；3：变更合同;4：被5补提交的原合同;5:一般人转小规模的合同
-		sql.append("       t.patchstatus,  \n") ; 
-		sql.append("       t.vconfreason,  \n") ; 
-		sql.append("       t.dsigndate,  \n") ; 
-		sql.append("       t.vadviser,  \n") ; 
-		sql.append("       t.pk_source,  \n") ; //来源合同主键
-		sql.append("       t.ichargetype,  \n") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
-		sql.append("       t.icompanytype,  \n") ;// 公司类型 20-个体工商户，99-非个体户；
-		sql.append("       CASE nvl(t.icompanytype,99) WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename, \n ");
-		sql.append("       cn.pk_confrim,  \n") ; 
-		sql.append("       cn.tstamp,  \n") ; 
-		sql.append("       cn.deductdata,  \n") ; 
-		sql.append("       cn.deductime,  \n") ; 
-		sql.append("       cn.voperator,  \n") ; 
-		sql.append("       cn.ndedsummny,  \n") ; 
-		sql.append("       cn.ndeductmny,  \n") ; 
-		sql.append("       cn.ndedrebamny,  \n") ; 
-		sql.append("       cn.ideductpropor,  \n") ; 
-		sql.append("       cn.ichangetype,  \n") ; 
-		sql.append("       cn.vchangeraeson,  \n") ; 
-		sql.append("       cn.vchangememo,  \n") ; 
-		sql.append("       cn.vstopperiod,  \n") ; 
-		sql.append("       cn.nreturnmny,  \n") ; 
-		sql.append("       cn.nretdedmny,  \n") ; 
-		sql.append("       cn.nretrebmny,  \n") ; 
-		sql.append("       t.nchangetotalmny,  \n") ; //原合同金额(原合同)/变更后合同金额(历史合同-终止、作废)
-		sql.append("       cn.nchangesummny,  \n") ; 
-		sql.append("       cn.nchangededutmny,  \n") ; 
-		sql.append("       cn.nchangerebatmny,  \n") ; 
-		sql.append("       cn.vchanger,  \n") ; 
-		sql.append("       cn.dchangetime,  \n") ; 
-		sql.append("       substr(dchangetime, 0, 10) AS dchangedate,  \n") ; 
-		sql.append("       cn.nsubtotalmny,  \n") ; 
-		sql.append("       cn.nsubdedsummny,  \n") ; 
-		sql.append("       cn.nsubdeductmny,  \n") ; 
-		sql.append("       cn.nsubdedrebamny,  \n") ; 
+		sql.append("       t.patchstatus,    ") ; 
+		sql.append("       t.vconfreason,    ") ; 
+		sql.append("       t.dsigndate,    ") ; 
+		sql.append("       t.vadviser,    ") ; 
+		sql.append("       t.pk_source,    ") ; //来源合同主键
+		sql.append("       t.ichargetype,    ") ;//扣费类型    1或null：新增扣费； 2：续费扣款；
+		sql.append("       t.icompanytype,    ") ;// 公司类型 20-个体工商户，99-非个体户；
+		sql.append("       CASE nvl(t.icompanytype,99) WHEN 20 THEN '个体工商户' WHEN 99 THEN '非个体户' END AS vcomptypename,    ");
+		sql.append("       cn.pk_confrim,    ") ; 
+		sql.append("       cn.tstamp,    ") ; 
+		sql.append("       cn.deductdata,    ") ; 
+		sql.append("       cn.deductime,    ") ; 
+		sql.append("       cn.voperator,    ") ; 
+		sql.append("       cn.ndedsummny,    ") ; 
+		sql.append("       cn.ndeductmny,    ") ; 
+		sql.append("       cn.ndedrebamny,    ") ; 
+		sql.append("       cn.ideductpropor,    ") ; 
+		sql.append("       cn.ichangetype,    ") ; 
+		sql.append("       cn.vchangeraeson,    ") ; 
+		sql.append("       cn.vchangememo,    ") ; 
+		sql.append("       cn.vstopperiod,    ") ; 
+		sql.append("       cn.nreturnmny,    ") ; 
+		sql.append("       cn.nretdedmny,    ") ; 
+		sql.append("       cn.nretrebmny,    ") ; 
+		sql.append("       t.nchangetotalmny,    ") ; //原合同金额(原合同)/变更后合同金额(历史合同-终止、作废)
+		sql.append("       cn.nchangesummny,    ") ; 
+		sql.append("       cn.nchangededutmny,    ") ; 
+		sql.append("       cn.nchangerebatmny,    ") ; 
+		sql.append("       cn.vchanger,    ") ; 
+		sql.append("       cn.dchangetime,    ") ; 
+		sql.append("       substr(dchangetime, 0, 10) AS dchangedate,    ") ; 
+		sql.append("       cn.nsubtotalmny,    ") ; 
+		sql.append("       cn.nsubdedsummny,    ") ; 
+		sql.append("       cn.nsubdeductmny,    ") ; 
+		sql.append("       cn.nsubdedrebamny,    ") ; 
 		
-		sql.append("       y.pk_changeapply, \n");
-		sql.append("       y.iapplystatus, \n");
-		sql.append("       y.ichangetype, \n");
-		sql.append("       y.vchangememo, \n");
-		sql.append("       y.vstopperiod, \n");
-		sql.append("       y.docName, \n");
-		sql.append("       y.docTemp, \n");
-		sql.append("       y.docTime, \n");
-		sql.append("       y.vfilepath, \n");
-		sql.append("       y.docOwner \n");
+		sql.append("       y.pk_changeapply,   ");
+		sql.append("       y.iapplystatus,   ");
+		sql.append("       y.ichangetype,   ");
+		sql.append("       y.vchangememo,   ");
+		sql.append("       y.vstopperiod,   ");
+		sql.append("       y.docName,   ");
+		sql.append("       y.docTemp,   ");
+		sql.append("       y.docTime,   ");
+		sql.append("       y.vfilepath,   ");
+		sql.append("       y.docOwner   ");
 		
-		sql.append("  FROM ynt_contract t  \n") ; 
-		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract  \n") ; 
-		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype  \n") ; 
-		sql.append("  LEFT JOIN cn_changeapply y ON t.pk_contract = y.pk_contract  \n") ; 
-		sql.append("                            AND nvl(y.dr, 0) = 0 \n");
-		sql.append("                             AND y.ichangetype != 3 \n ");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(cn.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(bs.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(t.isflag, 'N') = 'Y'  \n") ; 
-		sql.append("   AND nvl(t.icosttype, 0) = 0  \n") ; 
-		sql.append("   AND t.icontracttype = 2  \n") ; //加盟商合同
-		sql.append("   AND t.vdeductstatus = 1 \n") ;//审核通过
-		sql.append("   AND cn.pk_confrim = ? \n") ; //历史合同主键
+		sql.append("  FROM ynt_contract t    ") ; 
+		sql.append("  LEFT JOIN cn_contract cn ON t.pk_contract = cn.pk_contract    ") ; 
+		sql.append("  LEFT JOIN ynt_busitype bs ON t.busitypemin = bs.pk_busitype    ") ; 
+		sql.append("  LEFT JOIN cn_changeapply y ON t.pk_contract = y.pk_contract    ") ; 
+		sql.append("                            AND nvl(y.dr, 0) = 0   ");
+		sql.append("                             AND y.ichangetype != 3    ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(cn.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(bs.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(t.isflag, 'N') = 'Y'    ") ; 
+		sql.append("   AND nvl(t.icosttype, 0) = 0    ") ; 
+		sql.append("   AND t.icontracttype = 2    ") ; //加盟商合同
+		sql.append("   AND t.vdeductstatus = 1   ") ;//审核通过
+		sql.append("   AND cn.pk_confrim = ?   ") ; //历史合同主键
 		spm.addParam(pamvo.getPk_confrim());
 		
 		qryvo.setSql(sql.toString());

@@ -200,15 +200,15 @@ public class MatFileServiceImpl implements IMatFileService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("   SELECT pk_materiel,vcode,vname,vunit,isappl,isseal,coperatorid,doperatetime  \n");
-		sql.append("         from  cn_materiel \n");
-		sql.append("         where nvl(dr,0) =0 \n");
+		sql.append("   SELECT pk_materiel,vcode,vname,vunit,isappl,isseal,coperatorid,doperatetime    ");
+		sql.append("         from  cn_materiel   ");
+		sql.append("         where nvl(dr,0) =0   ");
 		if (!StringUtil.isEmpty(pamvo.getVname())) {
 			sql.append(" AND vname like ? ");
 			spm.addParam("%" + pamvo.getVname() + "%");
 		}
 		if (pamvo.getIsseal()!=null && pamvo.getIsseal()!=0) {
-			sql.append("   AND isseal = ? \n");
+			sql.append("   AND isseal = ?   ");
 			spm.addParam(pamvo.getIsseal());
 		}
 		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
@@ -300,9 +300,9 @@ public class MatFileServiceImpl implements IMatFileService {
 		
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(  "select pk_materiel,vname,vunit,isappl,updatets \n ");
-		sql.append(  "   from cn_materiel \n");
-		sql.append(  "   where nvl(dr,0)=0 and pk_materiel =? \n");
+		sql.append(  "select pk_materiel,vname,vunit,isappl,updatets    ");
+		sql.append(  "   from cn_materiel   ");
+		sql.append(  "   where nvl(dr,0)=0 and pk_materiel =?   ");
 		spm.addParam(id);
 		return (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
 	}
@@ -312,12 +312,12 @@ public class MatFileServiceImpl implements IMatFileService {
 		 StringBuffer sql = new StringBuffer();
 		 SQLParameter spm = new SQLParameter();
 		 spm.addParam(id);
-		 sql.append("   select distinct l.vcode \n ");
-		 sql.append("         from cn_materielin m \n");
-		 sql.append("         left join cn_materiel l on \n");
-		 sql.append("         m.pk_materiel=l.pk_materiel \n");
-		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0  \n");
-		 sql.append("         and l.pk_materiel = ? \n");
+		 sql.append("   select distinct l.vcode    ");
+		 sql.append("         from cn_materielin m   ");
+		 sql.append("         left join cn_materiel l on   ");
+		 sql.append("         m.pk_materiel=l.pk_materiel   ");
+		 sql.append("         where nvl(l.dr,0)=0 and nvl(m.dr,0)=0    ");
+		 sql.append("         and l.pk_materiel = ?   ");
 		 
 		 return (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(),spm, new BeanProcessor(MaterielStockInVO.class));
 	}

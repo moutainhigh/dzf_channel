@@ -48,10 +48,10 @@ public class MatStockInServiceImpl implements IMatStockInService {
 	@SuppressWarnings("unchecked")
 	public List<MaterielFileVO> queryComboBox()   throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_materiel ,vname  \n");
-		sql.append("  FROM cn_materiel  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append(" order by doperatetime desc \n");
+		sql.append("SELECT pk_materiel ,vname    ");
+		sql.append("  FROM cn_materiel    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append(" order by doperatetime desc   ");
 		return (List<MaterielFileVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(MaterielFileVO.class));
 	}
@@ -66,9 +66,9 @@ public class MatStockInServiceImpl implements IMatStockInService {
 			 StringBuffer sql = new StringBuffer();
 			 SQLParameter spm=new SQLParameter();
 			 spm.addParam(data.getPk_materiel());
-			 sql.append("   select vname,vunit \n ");
-			 sql.append("         from cn_materiel \n");
-			 sql.append("         where nvl(dr,0)=0 and pk_materiel =? \n");
+			 sql.append("   select vname,vunit    ");
+			 sql.append("         from cn_materiel   ");
+			 sql.append("         where nvl(dr,0)=0 and pk_materiel =?   ");
 			 MaterielFileVO mvo = (MaterielFileVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielFileVO.class));
 			 if(mvo!=null){
 				 data.setVname(mvo.getVname());
@@ -189,21 +189,21 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("   SELECT r.pk_materielin,r.vbillcode,r.ntotalmny,r.stockdate, \n");
-		sql.append("         r.vmemo,r.coperatorid,r.doperatetime, \n  ");
-		sql.append("         r.vname,r.vunit,r.nnum,r.ncost \n");
-		sql.append("         from  cn_materielin r \n");
-		sql.append("         where nvl(r.dr,0) =0  \n");
+		sql.append("   SELECT r.pk_materielin,r.vbillcode,r.ntotalmny,r.stockdate,   ");
+		sql.append("         r.vmemo,r.coperatorid,r.doperatetime,     ");
+		sql.append("         r.vname,r.vunit,r.nnum,r.ncost   ");
+		sql.append("         from  cn_materielin r   ");
+		sql.append("         where nvl(r.dr,0) =0    ");
 		if (!StringUtil.isEmpty(pamvo.getPk_materiel())) {
-			sql.append(" AND  r.pk_materiel = ? \n");
+			sql.append(" AND  r.pk_materiel = ?   ");
 			spm.addParam(pamvo.getPk_materiel());
 		}
 		if (!StringUtil.isEmptyWithTrim(pamvo.getBegindate())) {
-			sql.append(" and substr(r.doperatetime,0,10) >= ? \n");
+			sql.append(" and substr(r.doperatetime,0,10) >= ?   ");
 			spm.addParam(pamvo.getBegindate());
 		}
 		if (!StringUtil.isEmptyWithTrim(pamvo.getEnddate())) {
-			sql.append(" and substr(r.doperatetime,0,10) <= ? \n");
+			sql.append(" and substr(r.doperatetime,0,10) <= ?   ");
 			spm.addParam(pamvo.getEnddate());
 		}
 		sql.append(" order by r.doperatetime desc");
@@ -271,7 +271,7 @@ public class MatStockInServiceImpl implements IMatStockInService {
 					}
 				}
 			}
-			String sql="delete from cn_materielin where pk_materielin = ? \n";
+			String sql="delete from cn_materielin where pk_materielin = ?   ";
 			int i = singleObjectBO.executeUpdate(sql, spm);
 			if(i == 0 && fvo!=null){
 				fvo.setOutnum(num);
@@ -366,10 +366,10 @@ public class MatStockInServiceImpl implements IMatStockInService {
 		if(msvo.getPk_materiel()!=null){
 			spm.addParam(msvo.getPk_materiel());
 		}
-		sql.append("  select count(pk_materielin) count \n");
-		sql.append("      from cn_materielin \n ");
+		sql.append("  select count(pk_materielin) count   ");
+		sql.append("      from cn_materielin    ");
 		sql.append("      where nvl(dr,0) = 0  ");
-		sql.append("      and pk_materiel = ?  \n ");
+		sql.append("      and pk_materiel = ?     ");
 		MaterielStockInVO svo = (MaterielStockInVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MaterielStockInVO.class));
 	    return svo;
 	}

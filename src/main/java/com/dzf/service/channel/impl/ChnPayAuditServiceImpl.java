@@ -90,33 +90,33 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.*,account.vprovince,us.user_name as vapprovename FROM cn_paybill t \n");
-		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp \n") ;
+		sql.append("SELECT t.*,account.vprovince,us.user_name as vapprovename FROM cn_paybill t   ");
+		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp   ") ;
 		sql.append(" left join sm_user us on us.cuserid = t.vapproveid");
-		sql.append(" WHERE nvl(t.dr,0) = 0 \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n") ; 
-		sql.append("   AND account.ischannel = 'Y' \n");
-		sql.append("   AND account.isaccountcorp = 'Y' \n");
+		sql.append(" WHERE nvl(t.dr,0) = 0   ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ") ; 
+		sql.append("   AND account.ischannel = 'Y'   ");
+		sql.append("   AND account.isaccountcorp = 'Y'   ");
 		if(paramvo.getQrytype() != null && paramvo.getQrytype() != -1){//查询状态
-			sql.append(" AND t.vstatus = ? \n");
+			sql.append(" AND t.vstatus = ?   ");
 			spm.addParam(paramvo.getQrytype());
 		}else{
-			sql.append(" AND t.vstatus in ( ?, ?, ?, ?) \n");
+			sql.append(" AND t.vstatus in ( ?, ?, ?, ?)   ");
 			spm.addParam(IStatusConstant.IPAYSTATUS_2);
 			spm.addParam(IStatusConstant.IPAYSTATUS_3);
 			spm.addParam(IStatusConstant.IPAYSTATUS_4);
 			spm.addParam(IStatusConstant.IPAYSTATUS_5);
 		}
 		if(paramvo.getIpaytype() != null && paramvo.getIpaytype() != -1){
-		    sql.append(" AND t.ipaytype = ? \n");
+		    sql.append(" AND t.ipaytype = ?   ");
             spm.addParam(paramvo.getIpaytype());
 		}
 		if(paramvo.getIpaymode() != null && paramvo.getIpaymode() != -1){
-            sql.append(" AND t.ipaymode = ? \n");
+            sql.append(" AND t.ipaymode = ?   ");
             spm.addParam(paramvo.getIpaymode());
         }
 		if(paramvo.getBegdate() != null && paramvo.getEnddate() != null){
-		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )\n");
+		    sql.append(" AND (t.dpaydate >= ? AND t.dpaydate <= ? )  ");
             spm.addParam(paramvo.getBegdate());
             spm.addParam(paramvo.getEnddate());
 		}
@@ -127,14 +127,14 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		    sql.append(" AND t.pk_corp in (").append(inSql).append(")");
 		}else{
 			if(paramvo.getSeletype() != null && paramvo.getSeletype() != -1){
-				sql.append(" AND account.channeltype = ? \n");
+				sql.append(" AND account.channeltype = ?   ");
 				spm.addParam(paramvo.getSeletype());
 			}else{
-				sql.append(" AND account.channeltype != 9 \n");
+				sql.append(" AND account.channeltype != 9   ");
 			}
 		}
 		if(!StringUtil.isEmpty(paramvo.getPk_bill())){
-			sql.append(" AND t.pk_paybill = ? \n");
+			sql.append(" AND t.pk_paybill = ?   ");
             spm.addParam(paramvo.getPk_bill());
 		}
 		if(!StringUtil.isEmpty(paramvo.getVqrysql())){

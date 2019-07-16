@@ -149,13 +149,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select t.*, account.vprovince,  \n");
+		sql.append("select t.*, account.vprovince,    ");
 		sql.append("       account.drelievedate ");//解约日期
-		sql.append("  from cn_invoice t  \n");
-		sql.append("  left join bd_account account on t.pk_corp = account.pk_corp  \n");
-		sql.append(" where nvl(t.dr, 0) = 0  \n");
-		sql.append("   and nvl(account.dr, 0) = 0  \n");
-		sql.append("   and "+QueryUtil.getWhereSql()+"\n");
+		sql.append("  from cn_invoice t    ");
+		sql.append("  left join bd_account account on t.pk_corp = account.pk_corp    ");
+		sql.append(" where nvl(t.dr, 0) = 0    ");
+		sql.append("   and nvl(account.dr, 0) = 0    ");
+		sql.append("   and "+QueryUtil.getWhereSql()+"  ");
 		if (!StringUtil.isEmpty(paramvo.getVprovname())) {
 			sql.append(paramvo.getVprovname());
 		}
@@ -233,13 +233,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select pk_corp, unitname, innercode, vprovince  \n") ;
-		sql.append("  from bd_account account  \n") ; 
+		sql.append("select pk_corp, unitname, innercode, vprovince    ") ;
+		sql.append("  from bd_account account    ") ; 
 		sql.append("where ");
 		sql.append(filtersql);
-//		sql.append(" where nvl(dr, 0) = 0  \n") ; 
-//		sql.append("   and nvl(isaccountcorp, 'N') = 'Y'  \n") ; 
-//		sql.append("   and nvl(ischannel, 'N') = 'Y'  \n");
+//		sql.append(" where nvl(dr, 0) = 0    ") ; 
+//		sql.append("   and nvl(isaccountcorp, 'N') = 'Y'    ") ; 
+//		sql.append("   and nvl(ischannel, 'N') = 'Y'    ");
 		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
 			sql.append(" and account.vprovince=? ");
 			sp.addParam(vo.getDr());
@@ -258,10 +258,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 			}
 			if (vo.getDr() == -5) {// 数据运营管理，4个报表
 				sql.append(" and account.pk_corp not in (");
-				sql.append("       (SELECT f.pk_corp  \n");
-				sql.append("          FROM ynt_franchisee f  \n");
-				sql.append("         WHERE nvl(dr, 0) = 0  \n");
-				sql.append("           AND nvl(f.isreport, 'N') = 'Y') \n");
+				sql.append("       (SELECT f.pk_corp    ");
+				sql.append("          FROM ynt_franchisee f    ");
+				sql.append("         WHERE nvl(dr, 0) = 0    ");
+				sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
 				sql.append(" )");
 			}
 		}
@@ -614,13 +614,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private List<GoodsBillBVO> queryGoodsBillByYf(ChInvoiceVO cvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.*, s.vtaxclasscode  \n");
-		sql.append("  FROM cn_goodsbill_b b  \n");
-		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND b.pk_corp = ?  \n");
-		sql.append("   AND b.pk_goodsbill = ? \n");
+		sql.append("SELECT b.*, s.vtaxclasscode    ");
+		sql.append("  FROM cn_goodsbill_b b    ");
+		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND b.pk_corp = ?    ");
+		sql.append("   AND b.pk_goodsbill = ?   ");
 		spm.addParam(cvo.getPk_corp());
 		spm.addParam(cvo.getPk_source());
 		return (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -673,13 +673,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private List<ChInvoiceBVO> queryGoodsBillByAll(ChInvoiceVO cvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.*, s.vtaxclasscode  \n");
-		sql.append("  FROM cn_invoice_b b  \n");
-		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND b.pk_corp = ?  \n");
-		sql.append("   AND b.pk_goodsbill = ? \n");
+		sql.append("SELECT b.*, s.vtaxclasscode    ");
+		sql.append("  FROM cn_invoice_b b    ");
+		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND b.pk_corp = ?    ");
+		sql.append("   AND b.pk_goodsbill = ?   ");
 		spm.addParam(cvo.getPk_corp());
 		spm.addParam(cvo.getPk_source());
 		return (List<ChInvoiceBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -744,11 +744,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 		if (pklist != null && pklist.size() > 0) {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("SELECT b.*, s.vtaxclasscode  \n");
-			sql.append("  FROM cn_goodsbill_b b  \n");
-			sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
-			sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-			sql.append("   AND nvl(s.dr, 0) = 0  \n");
+			sql.append("SELECT b.*, s.vtaxclasscode    ");
+			sql.append("  FROM cn_goodsbill_b b    ");
+			sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods    ");
+			sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+			sql.append("   AND nvl(s.dr, 0) = 0    ");
 			String where = SqlUtil.buildSqlForIn("b.pk_goodsbill", pklist.toArray(new String[0]));
 			sql.append(" AND ").append(where);
 			List<GoodsBillBVO> list = (List<GoodsBillBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -841,19 +841,19 @@ public class InvManagerServiceImpl implements InvManagerService {
 	public HashMap<String, DZFDouble> queryUsedMny() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select a.pk_corp,  \n");
-		sql.append("       sum(nvl(d.nusedmny, 0)) as debitconmny \n");// 累计合同扣款金额
-		sql.append("  from bd_account a  \n");
-		sql.append("  left join cn_detail d on a.pk_corp = d.pk_corp  \n");
-		sql.append("                            and d.iopertype = 2  \n");
-		sql.append("                            and d.ipaytype = 2  \n");
-		sql.append("                            and nvl(d.dr, 0) = 0  \n");
-		sql.append("                            and d.doperatedate <= ?  \n");
+		sql.append("select a.pk_corp,    ");
+		sql.append("       sum(nvl(d.nusedmny, 0)) as debitconmny   ");// 累计合同扣款金额
+		sql.append("  from bd_account a    ");
+		sql.append("  left join cn_detail d on a.pk_corp = d.pk_corp    ");
+		sql.append("                            and d.iopertype = 2    ");
+		sql.append("                            and d.ipaytype = 2    ");
+		sql.append("                            and nvl(d.dr, 0) = 0    ");
+		sql.append("                            and d.doperatedate <= ?    ");
 		sp.addParam(new DZFDate());
-		sql.append(" where nvl(a.dr,0) = 0  \n");
-		sql.append("   and nvl(d.dr,0) = 0  \n");
-		sql.append("   and a.ischannel = 'Y'  \n");
-		sql.append(" group by a.pk_corp  \n");
+		sql.append(" where nvl(a.dr,0) = 0    ");
+		sql.append("   and nvl(d.dr,0) = 0    ");
+		sql.append("   and a.ischannel = 'Y'    ");
+		sql.append(" group by a.pk_corp    ");
 
 		List<BillingInvoiceVO> list = (List<BillingInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), sp,
 				new BeanListProcessor(BillingInvoiceVO.class));
@@ -874,14 +874,14 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private DZFDouble queryInvoiceMny(String pk_corp) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select sum(nvl(invprice, 0)) as billtotalmny  \n");// 累计合同开票金额
-		sql.append("  from cn_invoice  \n");
-		sql.append(" where nvl(dr, 0) = 0  \n");
-		sql.append("   and invstatus = 2 \n");
-		sql.append("   and isourcetype = 1 \n");// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
-		sql.append("   and apptime <= ?  \n");
+		sql.append("select sum(nvl(invprice, 0)) as billtotalmny    ");// 累计合同开票金额
+		sql.append("  from cn_invoice    ");
+		sql.append(" where nvl(dr, 0) = 0    ");
+		sql.append("   and invstatus = 2   ");
+		sql.append("   and isourcetype = 1   ");// 发票来源类型 1：合同扣款开票； 2：商品扣款开票；
+		sql.append("   and apptime <= ?    ");
 		spm.addParam(new DZFDate());
-		sql.append("   and pk_corp = ?  \n");
+		sql.append("   and pk_corp = ?    ");
 		spm.addParam(pk_corp);
 		sql.append(" group by pk_corp ");
 		Object obj = singleObjectBO.executeQuery(sql.toString(), spm, new ColumnProcessor());
@@ -909,11 +909,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 		if (vo.getIpaytype() == 0) {
 			sp.addParam(2);
 		}
-		sql.append("update cn_balance  \n");
-		sql.append("   set nticketmny = nvl(nticketmny, 0) + ?  \n");
-		sql.append(" where nvl(dr, 0) = 0  \n");
-		sql.append("   and pk_corp = ?  \n");
-		sql.append("   and ipaytype = ?  \n");
+		sql.append("update cn_balance    ");
+		sql.append("   set nticketmny = nvl(nticketmny, 0) + ?    ");
+		sql.append(" where nvl(dr, 0) = 0    ");
+		sql.append("   and pk_corp = ?    ");
+		sql.append("   and ipaytype = ?    ");
 		singleObjectBO.executeUpdate(sql.toString(), sp);
 	}
 
@@ -927,12 +927,12 @@ public class InvManagerServiceImpl implements InvManagerService {
 			SQLParameter spm = new SQLParameter();
 			// 1、预付款扣款
 			if (CommonUtil.getDZFDouble(hvo.getNdeductmny()).compareTo(DZFDouble.ZERO_DBL) > 0) {
-				sql.append("UPDATE cn_balance  \n");
-				sql.append("   SET nticketbuymny = nvl(nticketbuymny, 0) + ?  \n");
+				sql.append("UPDATE cn_balance    ");
+				sql.append("   SET nticketbuymny = nvl(nticketbuymny, 0) + ?    ");
 				spm.addParam(hvo.getNdeductmny());
-				sql.append(" WHERE nvl(dr, 0) = 0  \n");
-				sql.append("   AND pk_corp = ?  \n");
-				sql.append("   AND ipaytype = ?  \n");
+				sql.append(" WHERE nvl(dr, 0) = 0    ");
+				sql.append("   AND pk_corp = ?    ");
+				sql.append("   AND ipaytype = ?    ");
 				spm.addParam(hvo.getPk_corp());
 				spm.addParam(IStatusConstant.IPAYTYPE_2);// 预付款
 				int res = singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -945,12 +945,12 @@ public class InvManagerServiceImpl implements InvManagerService {
 			// > 0){
 			// sql = new StringBuffer();
 			// spm = new SQLParameter();
-			// sql.append("UPDATE cn_balance \n") ;
-			// sql.append(" SET nticketbuymny = nvl(nticketbuymny, 0) + ? \n") ;
+			// sql.append("UPDATE cn_balance   ") ;
+			// sql.append(" SET nticketbuymny = nvl(nticketbuymny, 0) + ?   ") ;
 			// spm.addParam(hvo.getNdedrebamny());
-			// sql.append(" WHERE nvl(dr, 0) = 0 \n") ;
-			// sql.append(" AND pk_corp = ? \n") ;
-			// sql.append(" AND ipaytype = ? \n");
+			// sql.append(" WHERE nvl(dr, 0) = 0   ") ;
+			// sql.append(" AND pk_corp = ?   ") ;
+			// sql.append(" AND ipaytype = ?   ");
 			// spm.addParam(hvo.getPk_corp());
 			// spm.addParam(IStatusConstant.IPAYTYPE_3);//返点
 			// int res = singleObjectBO.executeUpdate(sql.toString(), spm);
@@ -1048,10 +1048,10 @@ public class InvManagerServiceImpl implements InvManagerService {
 	private void updateGoodsBillStatus(ChInvoiceVO ivo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE cn_goodsbill  \n");
-		sql.append("   SET vtistatus = 1  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_goodsbill = ?  \n");
+		sql.append("UPDATE cn_goodsbill    ");
+		sql.append("   SET vtistatus = 1    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_goodsbill = ?    ");
 		spm.addParam(ivo.getPk_source());
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 		if (res != 1) {
@@ -1077,16 +1077,16 @@ public class InvManagerServiceImpl implements InvManagerService {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select nvl(sum(nvl(invprice, 0)), 0) price  \n");
-		sql.append("  from cn_invoice  \n");
-		sql.append(" where nvl(dr, 0) = 0  \n");
-		sql.append("   and pk_corp = ?  \n");
+		sql.append("select nvl(sum(nvl(invprice, 0)), 0) price    ");
+		sql.append("  from cn_invoice    ");
+		sql.append(" where nvl(dr, 0) = 0    ");
+		sql.append("   and pk_corp = ?    ");
 		//发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；9：已换票；
-		sql.append("   and invstatus NOT IN ( 0, 2)  \n");
-		sql.append("   and ipaytype = ?  \n");
+		sql.append("   and invstatus NOT IN ( 0, 2)    ");
+		sql.append("   and ipaytype = ?    ");
 		sp.addParam(pk_corp);
 		sp.addParam(ipaytype);
-		sql.append("   and isourcetype = 1 \n");// 发票来源类型 1：合同扣款开票；
+		sql.append("   and isourcetype = 1   ");// 发票来源类型 1：合同扣款开票；
 		String price = singleObjectBO.executeQuery(sql.toString(), sp, new ColumnProcessor("price")).toString();
 		DZFDouble nprice = new DZFDouble(price);
 		if (!StringUtil.isEmpty(invprice)) {
@@ -1100,13 +1100,13 @@ public class InvManagerServiceImpl implements InvManagerService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		// 1、查询合同扣款金额
-		sql.append("SELECT SUM(nvl(nusedmny, 0)) AS nusedmny  \n");// 合同扣款金额
-		sql.append("  FROM cn_detail  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("SELECT SUM(nvl(nusedmny, 0)) AS nusedmny    ");// 合同扣款金额
+		sql.append("  FROM cn_detail    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(pk_corp);
-		sql.append("   AND ipaytype = 2  \n");
-		sql.append("   AND iopertype = 2  \n");
+		sql.append("   AND ipaytype = 2    ");
+		sql.append("   AND iopertype = 2    ");
 		ArrayList<Object> res = (ArrayList<Object>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new ArrayListProcessor());
 		DZFDouble usedmny = DZFDouble.ZERO_DBL;
@@ -1118,11 +1118,11 @@ public class InvManagerServiceImpl implements InvManagerService {
 		// 2、查询合同扣款开票金额
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("select sum(nvl(nticketmny, 0)) as nticketmny \n");// 合同扣款开票金额
-		sql.append("  from cn_balance  \n");
-		sql.append(" where nvl(dr, 0) = 0  \n");
-		sql.append("   and pk_corp = ?  \n");
-		sql.append("   and ipaytype = ?  \n");
+		sql.append("select sum(nvl(nticketmny, 0)) as nticketmny   ");// 合同扣款开票金额
+		sql.append("  from cn_balance    ");
+		sql.append(" where nvl(dr, 0) = 0    ");
+		sql.append("   and pk_corp = ?    ");
+		sql.append("   and ipaytype = ?    ");
 		spm.addParam(pk_corp);
 		if (ipaytype == 0) {
 			ipaytype = 2;
@@ -1362,7 +1362,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		} else {
-			sql.append(" AND t.pk_corp is null \n");
+			sql.append(" AND t.pk_corp is null   ");
 		}
 		return sql.toString();
 	}
