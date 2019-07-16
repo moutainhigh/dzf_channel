@@ -82,7 +82,7 @@ public class OtherOutServiceImpl implements IOtherOutService{
 		corpsql.append("  FROM cn_stockout_b b");
 		corpsql.append("  LEFT JOIN cn_goods g ON b.pk_goods= g.pk_goods");
 		corpsql.append("  LEFT JOIN cn_goodsspec s ON b.pk_goodsspec= s.pk_goodsspec");
-		corpsql.append("  LEFT JOIN cn_stocknum n ON b.pk_goods = n.pk_goods and b.pk_goodsspec=n.pk_goodsspec \n") ;
+		corpsql.append("  LEFT JOIN cn_stocknum n ON b.pk_goods = n.pk_goods and b.pk_goodsspec=n.pk_goodsspec   ") ;
 		corpsql.append(" where nvl(b.dr,0)=0 and b.pk_stockout= ?  ");
 //		and nvl(n.istocknum,0)>nvl(n.isellnum,0) )
 		sp.addParam(soutid);
@@ -119,20 +119,20 @@ public class OtherOutServiceImpl implements IOtherOutService{
 	public List<StockOutBVO> queryGoodsAble() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT c.pk_goodsspec ,  \n") ;
-		sql.append("       c.invspec,  \n") ; 
-		sql.append("       c.invtype,  \n") ; 
-		sql.append("       c.pk_goods,  \n") ; 
-		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS vgoodsname,  \n") ; 
-		sql.append("       c.nprice,  \n") ; 
-		sql.append("       nvl(n.istocknum,0)-nvl(n.isellnum,0) AS usenum  \n") ; 
-		sql.append("  FROM cn_goodsspec c  \n") ; 
-		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods  \n") ; 
-		sql.append("  LEFT JOIN cn_stocknum n ON c.pk_goods = n.pk_goods and c.pk_goodsspec=n.pk_goodsspec \n") ; 
-		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0 \n");
-		sql.append("   AND nvl(n.dr, 0) = 0 \n");
-		sql.append("   AND nvl(n.istocknum,0)>nvl(n.isellnum,0) \n");
+		sql.append("SELECT c.pk_goodsspec ,    ") ;
+		sql.append("       c.invspec,    ") ; 
+		sql.append("       c.invtype,    ") ; 
+		sql.append("       c.pk_goods,    ") ; 
+		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS vgoodsname,    ") ; 
+		sql.append("       c.nprice,    ") ; 
+		sql.append("       nvl(n.istocknum,0)-nvl(n.isellnum,0) AS usenum    ") ; 
+		sql.append("  FROM cn_goodsspec c    ") ; 
+		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods    ") ; 
+		sql.append("  LEFT JOIN cn_stocknum n ON c.pk_goods = n.pk_goods and c.pk_goodsspec=n.pk_goodsspec   ") ; 
+		sql.append(" WHERE nvl(c.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0   ");
+		sql.append("   AND nvl(n.dr, 0) = 0   ");
+		sql.append("   AND nvl(n.istocknum,0)>nvl(n.isellnum,0)   ");
 		List<StockOutBVO> vos=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
 		return vos;
 	}
@@ -224,8 +224,8 @@ public class OtherOutServiceImpl implements IOtherOutService{
 			//2、删除子表
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("DELETE FROM cn_stockout_b  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout_b    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			spm.addParam(vo.getPk_stockout());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			//3、插入子表	
@@ -248,9 +248,9 @@ public class OtherOutServiceImpl implements IOtherOutService{
 	private List<StockOutBVO> queryOldChildren(String pk_stockout) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.pk_goods,b.pk_goodsspec,b.nnum \n") ;
-		sql.append(" FROM cn_stockout_b b \n") ; 
-		sql.append(" WHERE  b.pk_stockout = ?   \n") ; 
+		sql.append("SELECT b.pk_goods,b.pk_goodsspec,b.nnum   ") ;
+		sql.append(" FROM cn_stockout_b b   ") ; 
+		sql.append(" WHERE  b.pk_stockout = ?     ") ; 
 		spm.addParam(pk_stockout);
 		List<StockOutBVO> list=(List<StockOutBVO>)singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(StockOutBVO.class));
 		return list;
@@ -278,14 +278,14 @@ public class OtherOutServiceImpl implements IOtherOutService{
 			
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("DELETE FROM cn_stockout  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			spm.addParam(vo.getPk_stockout());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			
 			sql = new StringBuffer();
-			sql.append("DELETE FROM cn_stockout_b  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout_b    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)

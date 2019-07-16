@@ -136,22 +136,22 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,SaleAnalyseVO> nummap = new HashMap<String,SaleAnalyseVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.pk_corp,sum(t.iv1) ivisitnum,sum(t.iv2)iviscustnum from ( \n");
-		sql.append("SELECT count(y.pk_flowhistory) iv1, \n");
-		sql.append("  count(distinct y.pk_customno) iv2, \n");
-		sql.append("  y.pk_corp \n");
-		sql.append("  FROM ynt_porflwhistory y \n");
-		sql.append("  LEFT JOIN ynt_potcus s ON y.pk_customno = s.pk_customno \n");
-		sql.append(" WHERE nvl(y.dr, 0) = 0 AND nvl(s.dr, 0) = 0 AND s.ibusitype = 1 \n");
+		sql.append("SELECT t.pk_corp,sum(t.iv1) ivisitnum,sum(t.iv2)iviscustnum from (   ");
+		sql.append("SELECT count(y.pk_flowhistory) iv1,   ");
+		sql.append("  count(distinct y.pk_customno) iv2,   ");
+		sql.append("  y.pk_corp   ");
+		sql.append("  FROM ynt_porflwhistory y   ");
+		sql.append("  LEFT JOIN ynt_potcus s ON y.pk_customno = s.pk_customno   ");
+		sql.append(" WHERE nvl(y.dr, 0) = 0 AND nvl(s.dr, 0) = 0 AND s.ibusitype = 1   ");
 		if(qvo.getDbegindate() != null){
-			sql.append("   AND y.realfollowdate >= ? \n");
+			sql.append("   AND y.realfollowdate >= ?   ");
 			spm.addParam(qvo.getDbegindate());
 		}
 		if(qvo.getDenddate() != null){
-			sql.append("   AND y.realfollowdate <= ? \n");
+			sql.append("   AND y.realfollowdate <= ?   ");
 			spm.addParam(qvo.getDenddate());
 		}
-		sql.append("  GROUP BY y.pk_corp,y.followuser )t group by t.pk_corp \n");
+		sql.append("  GROUP BY y.pk_corp,y.followuser )t group by t.pk_corp   ");
 		List<SaleAnalyseVO> list = (List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(SaleAnalyseVO.class));
 		if(list != null && list.size() > 0){
@@ -173,19 +173,19 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,Integer> signmap = new HashMap<String,Integer>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append(" SELECT count(t.pk_customno) isignnum,t.pk_corp \n") ;
-		sql.append(" FROM ynt_potcus t \n") ; 
-		sql.append("WHERE nvl(t.ibusitype, 0) = 1 \n") ; 
-		sql.append("  AND t.irecestatus IN (2, 4) \n") ; 
+		sql.append(" SELECT count(t.pk_customno) isignnum,t.pk_corp   ") ;
+		sql.append(" FROM ynt_potcus t   ") ; 
+		sql.append("WHERE nvl(t.ibusitype, 0) = 1   ") ; 
+		sql.append("  AND t.irecestatus IN (2, 4)   ") ; 
 		if(qvo.getDbegindate() != null){
-			sql.append("   AND t.dsigndate >= ? \n");
+			sql.append("   AND t.dsigndate >= ?   ");
 			spm.addParam(qvo.getDbegindate());
 		}
 		if(qvo.getDenddate() != null){
-			sql.append("   AND t.dsigndate <= ? \n");
+			sql.append("   AND t.dsigndate <= ?   ");
 			spm.addParam(qvo.getDenddate());
 		}
-		sql.append("  GROUP BY t.pk_corp \n");
+		sql.append("  GROUP BY t.pk_corp   ");
 		List<SaleAnalyseVO> list = (List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(SaleAnalyseVO.class));
 		if(list != null && list.size() > 0){
@@ -207,19 +207,19 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,SaleAnalyseVO> contmap = new HashMap<String,SaleAnalyseVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT count(pk_signinfo) inum,icontractype,pk_corp  \n") ;
-		sql.append("  FROM ynt_signinfo \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0 \n") ; 
-		sql.append("  AND irecestatus = 4 \n") ; 
+		sql.append("SELECT count(pk_signinfo) inum,icontractype,pk_corp    ") ;
+		sql.append("  FROM ynt_signinfo   ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0   ") ; 
+		sql.append("  AND irecestatus = 4   ") ; 
 		if(qvo.getDbegindate() != null){
-			sql.append("   AND dsigndate >= ? \n");
+			sql.append("   AND dsigndate >= ?   ");
 			spm.addParam(qvo.getDbegindate());
 		}
 		if(qvo.getDenddate() != null){
-			sql.append("   AND dsigndate <= ? \n");
+			sql.append("   AND dsigndate <= ?   ");
 			spm.addParam(qvo.getDenddate());
 		}
-		sql.append(" GROUP BY pk_corp, icontractype \n");
+		sql.append(" GROUP BY pk_corp, icontractype   ");
 		List<SaleAnalyseVO> list = (List<SaleAnalyseVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(SaleAnalyseVO.class));
 		if(list != null && list.size() > 0){
@@ -260,20 +260,20 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,DZFDouble> chnmap = new HashMap<String,DZFDouble>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT cn.pk_corp, \n") ;
+		sql.append("SELECT cn.pk_corp,   ") ;
 		sql.append("  sum(decode((sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		sql.append("  sign(to_date(cn.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(ct.nchangetotalmny,0)))+");
 		sql.append("  sum(decode((sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		sql.append("  sign(to_date(substr(cn.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(cn.nsubtotalmny,0)))as contractmny");
-		sql.append("  FROM cn_contract cn \n") ;
-		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract \n");
-		sql.append("  LEFT JOIN ynt_potcus s ON cn.pk_corpk = s.pk_corpk \n") ; 
-		sql.append(" WHERE nvl(cn.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(ct.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
-		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
-		sql.append("   AND (cn.vstatus=1 or cn.vstatus=9 or cn.vstatus=10) \n") ; 
+		sql.append("  FROM cn_contract cn   ") ;
+		sql.append("  INNER JOIN ynt_contract ct ON cn.pk_contract = ct.pk_contract   ");
+		sql.append("  LEFT JOIN ynt_potcus s ON cn.pk_corpk = s.pk_corpk   ") ; 
+		sql.append(" WHERE nvl(cn.dr, 0) = 0   ") ; 
+		sql.append("   AND nvl(ct.dr, 0) = 0   ") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0   ") ; 
+		sql.append("   AND nvl(s.ibusitype, 0) = 1   ") ; 
+		sql.append("   AND s.irecestatus IN (2, 4)  ") ; 
+		sql.append("   AND (cn.vstatus=1 or cn.vstatus=9 or cn.vstatus=10)   ") ; 
 		sql.append(" GROUP BY cn.pk_corp");
 		spm.addParam(qvo.getDbegindate());
 		spm.addParam(qvo.getDenddate());
@@ -303,21 +303,21 @@ public class SaleAnalyseServiceImpl implements ISaleAnalyseService {
 		Map<String,DZFDouble> incmap = new HashMap<String,DZFDouble>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT sum(t.ntotalmny) contractmny,t.pk_corp \n") ;
-		sql.append("  FROM ynt_contract t \n") ; 
-		sql.append("  LEFT JOIN ynt_potcus s ON t.pk_corpk = s.pk_corpk \n") ; 
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0 \n") ; 
-		sql.append("   AND nvl(s.ibusitype, 0) = 1 \n") ; 
-		sql.append("   AND s.irecestatus IN (2, 4)\n") ; 
-		sql.append("   AND t.icosttype=1 AND t.isflag = 'Y' \n") ; 
-		sql.append("   AND t.vstatus = 1 AND nvl(t.icontracttype,1) = 1 \n") ; 
+		sql.append("SELECT sum(t.ntotalmny) contractmny,t.pk_corp   ") ;
+		sql.append("  FROM ynt_contract t   ") ; 
+		sql.append("  LEFT JOIN ynt_potcus s ON t.pk_corpk = s.pk_corpk   ") ; 
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0   ") ; 
+		sql.append("   AND nvl(s.ibusitype, 0) = 1   ") ; 
+		sql.append("   AND s.irecestatus IN (2, 4)  ") ; 
+		sql.append("   AND t.icosttype=1 AND t.isflag = 'Y'   ") ; 
+		sql.append("   AND t.vstatus = 1 AND nvl(t.icontracttype,1) = 1   ") ; 
 		if(qvo.getDbegindate() != null){
-			sql.append("   AND t.dbegindate >= ? \n");
+			sql.append("   AND t.dbegindate >= ?   ");
 			spm.addParam(qvo.getDbegindate());
 		}
 		if(qvo.getDenddate() != null){
-			sql.append("   AND t.dbegindate <= ? \n");
+			sql.append("   AND t.dbegindate <= ?   ");
 			spm.addParam(qvo.getDenddate());
 		}
 		sql.append(" GROUP BY t.pk_corp");

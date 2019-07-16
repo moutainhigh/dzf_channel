@@ -23,16 +23,16 @@ public class GoodsPackageServiceImpl implements IGoodsPackageService {
 	@Override
 	public List<GoodsPackageVO> query(GoodsPackageVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT e.*,  \n");
-		sql.append("       s.vgoodsname || ' ' || '(' || c.invspec || c.invtype || ')' AS vgoodsname,  \n");
-		sql.append("       c.nprice  \n");
-		sql.append("  FROM cn_goodspackage e  \n");
-		sql.append("  LEFT JOIN cn_goods s ON e.pk_goods = s.pk_goods  \n");
-		sql.append("  LEFT JOIN cn_goodsspec c ON e.pk_goodsspec = c.pk_goodsspec  \n");
-		sql.append(" WHERE nvl(e.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND nvl(c.dr, 0) = 0  \n");
-		sql.append(" ORDER BY e.ts DESC  \n");
+		sql.append("SELECT e.*,    ");
+		sql.append("       s.vgoodsname || ' ' || '(' || c.invspec || c.invtype || ')' AS vgoodsname,    ");
+		sql.append("       c.nprice    ");
+		sql.append("  FROM cn_goodspackage e    ");
+		sql.append("  LEFT JOIN cn_goods s ON e.pk_goods = s.pk_goods    ");
+		sql.append("  LEFT JOIN cn_goodsspec c ON e.pk_goodsspec = c.pk_goodsspec    ");
+		sql.append(" WHERE nvl(e.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND nvl(c.dr, 0) = 0    ");
+		sql.append(" ORDER BY e.ts DESC    ");
 		return (List<GoodsPackageVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsPackageVO.class));
 	}

@@ -85,38 +85,38 @@ public class StockInServiceImpl implements IStockInService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT sin.*,u.user_name coperatorname  \n");
-		sql.append("  FROM cn_stockin sin \n");
-		sql.append("  LEFT JOIN sm_user u ON sin.coperatorid = u.cuserid  \n") ; 
-		sql.append(" WHERE nvl(sin.dr, 0) = 0  \n");
-		sql.append("   AND sin.pk_corp = ? \n");
+		sql.append("SELECT sin.*,u.user_name coperatorname    ");
+		sql.append("  FROM cn_stockin sin   ");
+		sql.append("  LEFT JOIN sm_user u ON sin.coperatorid = u.cuserid    ") ; 
+		sql.append(" WHERE nvl(sin.dr, 0) = 0    ");
+		sql.append("   AND sin.pk_corp = ?   ");
 		spm.addParam(pamvo.getPk_corp());
 		if (!StringUtil.isEmpty(pamvo.getCuserid())) {
-			sql.append("   AND sin.coperatorid = ? \n");
+			sql.append("   AND sin.coperatorid = ?   ");
 			spm.addParam(pamvo.getCuserid());
 		}
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
-			sql.append("   AND sin.vbillcode like ? \n");
+			sql.append("   AND sin.vbillcode like ?   ");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
 		}
 		if(pamvo.getQrytype() != null && pamvo.getQrytype() != -1){
-			sql.append("   AND sin.vstatus = ? \n");
+			sql.append("   AND sin.vstatus = ?   ");
 			spm.addParam(pamvo.getQrytype());
 		}
 		if(pamvo.getBegdate() != null){
-			sql.append("   AND sin.dstockdate >= ? \n");
+			sql.append("   AND sin.dstockdate >= ?   ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if(pamvo.getEnddate() != null ){
-			sql.append("   AND sin.dstockdate <= ? \n");
+			sql.append("   AND sin.dstockdate <= ?   ");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if(!StringUtil.isEmpty(pamvo.getBeginperiod())){
-			sql.append(" AND substr(sin.dconfirmtime, 0, 10) >= ? \n");
+			sql.append(" AND substr(sin.dconfirmtime, 0, 10) >= ?   ");
 			spm.addParam(pamvo.getBeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getEndperiod())){
-			sql.append(" AND substr(sin.dconfirmtime, 0, 10) <= ? \n");
+			sql.append(" AND substr(sin.dconfirmtime, 0, 10) <= ?   ");
 			spm.addParam(pamvo.getEndperiod());
 		}
 		sql.append(" ORDER BY sin.ts DESC");
@@ -306,12 +306,12 @@ public class StockInServiceImpl implements IStockInService {
 	public StockInVO queryById(String pk_stockin, String pk_corp, Integer qrytype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_stockin  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_stockin = ? \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_stockin    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_stockin = ?   ");
 		spm.addParam(pk_stockin);
-		sql.append("   AND pk_corp = ? \n");
+		sql.append("   AND pk_corp = ?   ");
 		spm.addParam(pk_corp);
 		List<StockInVO> list = (List<StockInVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockInVO.class));
@@ -338,20 +338,20 @@ public class StockInServiceImpl implements IStockInService {
 	private StockInBVO[] queryBody(String pk_stockin, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT b.*,  \n");
-		sql.append("       r.vname AS vsuppliername,  \n");
-		sql.append("       s.vgoodsname || ' ' || '(' || c.invspec || c.invtype || ')' AS vgoodsname  \n");
-		sql.append("  FROM cn_stockin_b b  \n");
-		sql.append("  LEFT JOIN cn_supplier r ON b.pk_supplier = r.pk_supplier  \n");
-		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods  \n");
-		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND nvl(c.dr, 0) = 0  \n");
-		sql.append("   AND b.pk_stockin = ? \n");
+		sql.append("SELECT b.*,    ");
+		sql.append("       r.vname AS vsuppliername,    ");
+		sql.append("       s.vgoodsname || ' ' || '(' || c.invspec || c.invtype || ')' AS vgoodsname    ");
+		sql.append("  FROM cn_stockin_b b    ");
+		sql.append("  LEFT JOIN cn_supplier r ON b.pk_supplier = r.pk_supplier    ");
+		sql.append("  LEFT JOIN cn_goods s ON b.pk_goods = s.pk_goods    ");
+		sql.append("  LEFT JOIN cn_goodsspec c ON b.pk_goodsspec = c.pk_goodsspec    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND nvl(c.dr, 0) = 0    ");
+		sql.append("   AND b.pk_stockin = ?   ");
 		spm.addParam(pk_stockin);
-		sql.append("   AND b.pk_corp = ? \n");
+		sql.append("   AND b.pk_corp = ?   ");
 		spm.addParam(pk_corp);
 		List<StockInBVO> list = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockInBVO.class));
@@ -427,13 +427,13 @@ public class StockInServiceImpl implements IStockInService {
 	private void updateStockNum(StockInBVO bvo, String cuserid) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_stocknum  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
-		sql.append("   AND pk_warehouse = ?  \n");
-		sql.append("   AND pk_goods = ?  \n");
-		sql.append("   AND pk_goodsspec = ? \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_stocknum    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
+		sql.append("   AND pk_warehouse = ?    ");
+		sql.append("   AND pk_goods = ?    ");
+		sql.append("   AND pk_goodsspec = ?   ");
 		spm.addParam(bvo.getPk_corp());
 		spm.addParam(bvo.getPk_warehouse());
 		spm.addParam(bvo.getPk_goods());
@@ -473,13 +473,13 @@ public class StockInServiceImpl implements IStockInService {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			
-			sql.append("UPDATE cn_stocknum \n");
-			sql.append("   SET istocknum = nvl(istocknum,0) + ?  \n");
+			sql.append("UPDATE cn_stocknum   ");
+			sql.append("   SET istocknum = nvl(istocknum,0) + ?    ");
 			spm.addParam(bvo.getNnum());
-			sql.append(" WHERE nvl(dr,0) = 0 \n");
-			sql.append("   AND pk_corp = ? \n");
+			sql.append(" WHERE nvl(dr,0) = 0   ");
+			sql.append("   AND pk_corp = ?   ");
 			spm.addParam(numvo.getPk_corp());
-			sql.append("   AND pk_stocknum = ?  \n");
+			sql.append("   AND pk_stocknum = ?    ");
 			spm.addParam(numvo.getPk_stocknum());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res != 1) {
@@ -508,11 +508,11 @@ public class StockInServiceImpl implements IStockInService {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 			
-			sql.append("UPDATE cn_stocknum \n");
-			sql.append("   SET istocknum = nvl(istocknum,0) - ?  \n");
+			sql.append("UPDATE cn_stocknum   ");
+			sql.append("   SET istocknum = nvl(istocknum,0) - ?    ");
 			spm.addParam(bvo.getNnum());
-			sql.append(" WHERE nvl(dr,0) = 0 \n");
-			sql.append("   AND pk_corp = ? \n");
+			sql.append(" WHERE nvl(dr,0) = 0   ");
+			sql.append("   AND pk_corp = ?   ");
 			spm.addParam(bvo.getPk_corp());
 			
 			sql.append("   AND pk_goods = ? ");

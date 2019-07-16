@@ -196,8 +196,8 @@ public class StockOutServiceImpl implements IStockOutService{
 			//2、删除子表
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("DELETE FROM cn_stockout_b  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout_b    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			spm.addParam(vo.getPk_stockout());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			checkBillIsQuote(vo.getPk_corp(),billids);
@@ -245,14 +245,14 @@ public class StockOutServiceImpl implements IStockOutService{
 			checkData(vo);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("DELETE FROM cn_stockout  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			spm.addParam(vo.getPk_stockout());
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 			
 			sql = new StringBuffer();
-			sql.append("DELETE FROM cn_stockout_b  \n") ;
-			sql.append(" WHERE  pk_stockout = ? \n") ; 
+			sql.append("DELETE FROM cn_stockout_b    ") ;
+			sql.append(" WHERE  pk_stockout = ?   ") ; 
 			singleObjectBO.executeUpdate(sql.toString(), spm);
 		}catch (Exception e) {
 		    if (e instanceof BusinessException)
@@ -576,10 +576,10 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("select c.vbillcode,");
 		sql.append("       c.pk_stockout,");
 		sql.append("       c.pk_corp,");
-		sql.append("       account.innercode corpcode, \n");
-		sql.append("       account.unitname corpname, \n");
-		sql.append("       account.vprovince, \n");
-		sql.append("       account.citycounty as vprovname, \n");
+		sql.append("       account.innercode corpcode,   ");
+		sql.append("       account.unitname corpname,   ");
+		sql.append("       account.vprovince,   ");
+		sql.append("       account.citycounty as vprovname,   ");
 		sql.append("       c.logisticsunit,");
 		sql.append("       c.fastcode,");
 		sql.append("       c.vmemo,");
@@ -591,8 +591,8 @@ public class StockOutServiceImpl implements IStockOutService{
 		sql.append("       c.updatets,");
 		sql.append("       u.user_name coperatname");
 		sql.append("  from cn_stockout c");
-		sql.append("  INNER JOIN bd_account account ON c.pk_corp = account.pk_corp \n") ;
-		sql.append("  LEFT JOIN sm_user u ON c.coperatorid = u.cuserid  \n") ; 
+		sql.append("  INNER JOIN bd_account account ON c.pk_corp = account.pk_corp   ") ;
+		sql.append("  LEFT JOIN sm_user u ON c.coperatorid = u.cuserid    ") ; 
 		sql.append(" where nvl(c.dr,0)=0 and nvl(c.itype,0)=0 ");
 		if(pamvo.getBegdate()!=null){
 			sql.append("and substr(c.doperatedate,0,10)>=? ");
@@ -805,7 +805,7 @@ public class StockOutServiceImpl implements IStockOutService{
 			String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND account.pk_corp is null \n") ; 
+			sql.append(" AND account.pk_corp is null   ") ; 
 		}
 		return sql.toString();
 	}

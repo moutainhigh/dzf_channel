@@ -76,31 +76,31 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select gill.vbillcode, gill.pk_corp, gill.ndedsummny, \n");
-		sql.append("       gill.ndeductmny, gill.ndedrebamny, gbill.vgoodsname, \n");
-		sql.append("       gbill.invspec, gbill.invtype,  \n");
-		sql.append("       nvl(gbill.amount, 0) amount, gbill.nprice, \n");
-		sql.append("       gbill.amount * gbill.nprice ntotalmny,  \n");
-		sql.append("       gill.vstatus,  \n");
-		sql.append("       substr(gsillq.doperatedate,0,10) dconfirmtime, \n");
-		sql.append("       substr(gsillf.doperatedate,0,10) dsendtime,  \n");
-		sql.append("       substr(gsillt.doperatedate,0,10) dsubmittime  \n");
-		sql.append("  from cn_goodsbill_b gbill  \n");
-		sql.append("  left join cn_goodsbill gill on gbill.pk_goodsbill = gill.pk_goodsbill  \n");
-		sql.append("  left join cn_goodsbill_s gsillt on gill.pk_goodsbill =  \n");
-		sql.append("   gsillt.pk_goodsbill  and gsillt.vstatus = 0 \n");
-		sql.append("   left join cn_goodsbill_s gsillq on gill.pk_goodsbill =  \n");
-		sql.append("  gsillq.pk_goodsbill  and gsillq.vstatus = 1 \n");
-		sql.append("   left join cn_goodsbill_s gsillf on gill.pk_goodsbill =  \n");
-		sql.append("    gsillf.pk_goodsbill  and gsillf.vstatus = 2 \n");
-		sql.append("    left join bd_account account on  \n");
-		sql.append("    account.pk_corp = gill.pk_corp \n");
-		sql.append("   where nvl(gill.dr,0) =0  \n");
-		sql.append("  and nvl(gbill.dr,0) =0  \n");
-		sql.append("  and nvl(gsillt.dr,0) =0  \n");
-		sql.append("  and "+QueryUtil.getWhereSql()+"\n");
+		sql.append("select gill.vbillcode, gill.pk_corp, gill.ndedsummny,   ");
+		sql.append("       gill.ndeductmny, gill.ndedrebamny, gbill.vgoodsname,   ");
+		sql.append("       gbill.invspec, gbill.invtype,    ");
+		sql.append("       nvl(gbill.amount, 0) amount, gbill.nprice,   ");
+		sql.append("       gbill.amount * gbill.nprice ntotalmny,    ");
+		sql.append("       gill.vstatus,    ");
+		sql.append("       substr(gsillq.doperatedate,0,10) dconfirmtime,   ");
+		sql.append("       substr(gsillf.doperatedate,0,10) dsendtime,    ");
+		sql.append("       substr(gsillt.doperatedate,0,10) dsubmittime    ");
+		sql.append("  from cn_goodsbill_b gbill    ");
+		sql.append("  left join cn_goodsbill gill on gbill.pk_goodsbill = gill.pk_goodsbill    ");
+		sql.append("  left join cn_goodsbill_s gsillt on gill.pk_goodsbill =    ");
+		sql.append("   gsillt.pk_goodsbill  and gsillt.vstatus = 0   ");
+		sql.append("   left join cn_goodsbill_s gsillq on gill.pk_goodsbill =    ");
+		sql.append("  gsillq.pk_goodsbill  and gsillq.vstatus = 1   ");
+		sql.append("   left join cn_goodsbill_s gsillf on gill.pk_goodsbill =    ");
+		sql.append("    gsillf.pk_goodsbill  and gsillf.vstatus = 2   ");
+		sql.append("    left join bd_account account on    ");
+		sql.append("    account.pk_corp = gill.pk_corp   ");
+		sql.append("   where nvl(gill.dr,0) =0    ");
+		sql.append("  and nvl(gbill.dr,0) =0    ");
+		sql.append("  and nvl(gsillt.dr,0) =0    ");
+		sql.append("  and "+QueryUtil.getWhereSql()+"  ");
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
-			sql.append(" AND gill.vbillcode like ? \n");
+			sql.append(" AND gill.vbillcode like ?   ");
 			spm.addParam("%" + pamvo.getVbillcode() + "%");
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -109,7 +109,7 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 			 sql.append(" AND gill.pk_corp in (").append(inSql).append(")");
 		}
 		if ( pamvo.getVstatus() != null && !pamvo.getVstatus().equals("-1")) {
-			//sql.append(" AND gill.vstatus = ? \n");
+			//sql.append(" AND gill.vstatus = ?   ");
 			//spm.addParam(pamvo.getVstatus());
 			 String[] strs = pamvo.getVstatus().toString().split(",");
 			if(Arrays.asList(strs).contains("-1")){
@@ -124,19 +124,19 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 			spm.addParam(pamvo.getPk_goodsbill());
 		}
 		if (pamvo.getSubmitbegin() != null) {
-			sql.append("   AND substr(gsillt.doperatedate,0,10) >= ? \n");
+			sql.append("   AND substr(gsillt.doperatedate,0,10) >= ?   ");
 			spm.addParam(pamvo.getSubmitbegin());
 		}
 		if (pamvo.getSubmitend() != null) {
-			sql.append("   AND substr(gsillt.doperatedate,0,10) <= ? \n");
+			sql.append("   AND substr(gsillt.doperatedate,0,10) <= ?   ");
 			spm.addParam(pamvo.getSubmitend());
 		}
 		if (pamvo.getKbegin() != null) {
-			sql.append("   AND substr(gsillq.doperatedate,0,10) >= ? \n");
+			sql.append("   AND substr(gsillq.doperatedate,0,10) >= ?   ");
 			spm.addParam(pamvo.getKbegin());
 		}
 		if (pamvo.getKend() != null) {
-			sql.append("   AND substr(gsillq.doperatedate,0,10) <= ? \n");
+			sql.append("   AND substr(gsillq.doperatedate,0,10) <= ?   ");
 			spm.addParam(pamvo.getKend());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goods())) {
@@ -154,9 +154,9 @@ public class ChannelOrderMxServiceImpl implements IChannelOrderMxService {
 	@Override
 	public List<GoodsBoxVO> queryComboBox() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_goods AS id, vgoodsname AS name \n");
-		sql.append("  FROM cn_goods  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("SELECT pk_goods AS id, vgoodsname AS name   ");
+		sql.append("  FROM cn_goods    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		return (List<GoodsBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsBoxVO.class));
 	}

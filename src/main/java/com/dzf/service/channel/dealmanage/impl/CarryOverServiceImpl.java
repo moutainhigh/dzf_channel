@@ -47,11 +47,11 @@ public class CarryOverServiceImpl implements ICarryOverService {
 		List<CarryOverVO> retlist = new ArrayList<>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT c.pk_carryover,c.iscarryover,c.period,c.updatets \n") ;
-		sql.append("  FROM cn_carryover c  \n") ; 
-		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
-		sql.append(" 	AND  c.period >= ? AND c.period <=? \n") ; 
-		sql.append(" ORDER BY c.period  \n");
+		sql.append("SELECT c.pk_carryover,c.iscarryover,c.period,c.updatets   ") ;
+		sql.append("  FROM cn_carryover c    ") ; 
+		sql.append(" WHERE nvl(c.dr, 0) = 0    ") ; 
+		sql.append(" 	AND  c.period >= ? AND c.period <=?   ") ; 
+		sql.append(" ORDER BY c.period    ");
 		spm.addParam(qvo.getBeginperiod());
 		spm.addParam(qvo.getEndperiod());
 		List<CarryOverVO> list = (List<CarryOverVO>) singleObjectBO.executeQuery(sql.toString(),

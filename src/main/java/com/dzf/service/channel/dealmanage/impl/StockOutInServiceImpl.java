@@ -232,9 +232,9 @@ public class StockOutInServiceImpl implements IStockOutInService {
 	@SuppressWarnings("unchecked")
 	public List<GoodsBoxVO> queryComboBox() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_goods AS id, vgoodsname AS name \n");
-		sql.append("  FROM cn_goods  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("SELECT pk_goods AS id, vgoodsname AS name   ");
+		sql.append("  FROM cn_goods    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		return (List<GoodsBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsBoxVO.class));
 	}

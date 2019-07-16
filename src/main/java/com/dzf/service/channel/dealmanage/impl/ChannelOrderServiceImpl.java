@@ -117,44 +117,44 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT l.pk_goodsbill,  \n");
-		sql.append("       l.vbillcode,  \n");
-		sql.append("       l.vreceivername,  \n");
-		sql.append("       l.phone,  \n");
-		sql.append("       l.vzipcode,  \n");
-		sql.append("       l.vreceiveaddress,  \n");
-		sql.append("       l.pk_corp,  \n");
-		sql.append("       l.ndedsummny,  \n");
-		sql.append("       l.ndeductmny,  \n");
-		sql.append("       l.ndedrebamny,  \n");
-		sql.append("       l.vstatus,  \n");
-		sql.append("       account.innercode corpcode, \n");
-		sql.append("       account.unitname corpname, \n");
-		sql.append("       account.vprovince, \n");
-		sql.append("       account.drelievedate, \n");//解约日期
-		sql.append("       account.citycounty as vprovname, \n");
-		sql.append("       nvl(l.vtistatus,1) AS vtistatus, \n");
-		sql.append("       l.updatets,  \n");
-		sql.append("       t.logisticsunit,  \n");
-		sql.append("       t.fastcode,  \n");
-		sql.append("       s.doperatetime AS dsubmittime,  \n");
-		sql.append("       u.doperatedate AS dconfdate  \n");
-		sql.append("  FROM cn_goodsbill l  \n");
-		sql.append("  INNER JOIN bd_account account ON l.pk_corp = account.pk_corp \n") ;
-		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill  \n");
-		sql.append("                            AND s.vstatus = 0  \n");
-		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill  \n");
-		sql.append("                            AND t.vstatus = 2  \n");
-		sql.append("  LEFT JOIN cn_goodsbill_s u ON l.pk_goodsbill = u.pk_goodsbill  \n");
-		sql.append("                            AND u.vstatus = 1  \n");
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
-		sql.append("   AND nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND nvl(u.dr, 0) = 0  \n");
-		sql.append("   AND nvl(account.dr, 0) = 0  \n");
-		sql.append("   AND "+QueryUtil.getWhereSql()+"\n");
+		sql.append("SELECT l.pk_goodsbill,    ");
+		sql.append("       l.vbillcode,    ");
+		sql.append("       l.vreceivername,    ");
+		sql.append("       l.phone,    ");
+		sql.append("       l.vzipcode,    ");
+		sql.append("       l.vreceiveaddress,    ");
+		sql.append("       l.pk_corp,    ");
+		sql.append("       l.ndedsummny,    ");
+		sql.append("       l.ndeductmny,    ");
+		sql.append("       l.ndedrebamny,    ");
+		sql.append("       l.vstatus,    ");
+		sql.append("       account.innercode corpcode,   ");
+		sql.append("       account.unitname corpname,   ");
+		sql.append("       account.vprovince,   ");
+		sql.append("       account.drelievedate,   ");//解约日期
+		sql.append("       account.citycounty as vprovname,   ");
+		sql.append("       nvl(l.vtistatus,1) AS vtistatus,   ");
+		sql.append("       l.updatets,    ");
+		sql.append("       t.logisticsunit,    ");
+		sql.append("       t.fastcode,    ");
+		sql.append("       s.doperatetime AS dsubmittime,    ");
+		sql.append("       u.doperatedate AS dconfdate    ");
+		sql.append("  FROM cn_goodsbill l    ");
+		sql.append("  INNER JOIN bd_account account ON l.pk_corp = account.pk_corp   ") ;
+		sql.append("  LEFT JOIN cn_goodsbill_s s ON l.pk_goodsbill = s.pk_goodsbill    ");
+		sql.append("                            AND s.vstatus = 0    ");
+		sql.append("  LEFT JOIN cn_goodsbill_s t ON l.pk_goodsbill = t.pk_goodsbill    ");
+		sql.append("                            AND t.vstatus = 2    ");
+		sql.append("  LEFT JOIN cn_goodsbill_s u ON l.pk_goodsbill = u.pk_goodsbill    ");
+		sql.append("                            AND u.vstatus = 1    ");
+		sql.append(" WHERE nvl(l.dr, 0) = 0    ");
+		sql.append("   AND nvl(s.dr, 0) = 0    ");
+		sql.append("   AND nvl(u.dr, 0) = 0    ");
+		sql.append("   AND nvl(account.dr, 0) = 0    ");
+		sql.append("   AND "+QueryUtil.getWhereSql()+"  ");
 		
 		if (!StringUtil.isEmpty(pamvo.getVbillcode())) {
-			sql.append("   AND l.vbillcode = ?  \n");
+			sql.append("   AND l.vbillcode = ?    ");
 			spm.addParam(pamvo.getVbillcode());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_corp())) {
@@ -163,7 +163,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			sql.append(" AND l.pk_corp in (").append(inSql).append(")");
 		}
 		if (pamvo.getVstatus() != null && pamvo.getVstatus() != -1) {// 订单状态，界面快速查询
-			sql.append("   AND l.vstatus = ? \n");
+			sql.append("   AND l.vstatus = ?   ");
 			spm.addParam(pamvo.getVstatus());
 		}
 		if (!StringUtil.isEmpty(pamvo.getLogisticsunit())) {// 订单状态，下拉多选查询
@@ -172,7 +172,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			sql.append(" AND ").append(where);
 		}
 		if (pamvo.getVtistatus() != null && pamvo.getVtistatus() != -1) {// 开票状态
-			sql.append("   AND nvl(l.vtistatus,1) = ? \n");
+			sql.append("   AND nvl(l.vtistatus,1) = ?   ");
 			spm.addParam(pamvo.getVtistatus());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_goodsbill())) {
@@ -180,19 +180,19 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			spm.addParam(pamvo.getPk_goodsbill());
 		}
 		if (pamvo.getBegdate() != null) {
-			sql.append(" AND s.doperatedate >= ?  \n");
+			sql.append(" AND s.doperatedate >= ?    ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if (pamvo.getEnddate() != null) {
-			sql.append(" AND s.doperatedate <= ?  \n");
+			sql.append(" AND s.doperatedate <= ?    ");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if (pamvo.getBbegdate() != null) {
-			sql.append(" AND u.doperatedate >= ?  \n");
+			sql.append(" AND u.doperatedate >= ?    ");
 			spm.addParam(pamvo.getBbegdate());
 		}
 		if (pamvo.getEenddate() != null) {
-			sql.append(" AND u.doperatedate <= ?  \n");
+			sql.append(" AND u.doperatedate <= ?    ");
 			spm.addParam(pamvo.getEenddate());
 		}
 		if(!StringUtil.isEmpty(pamvo.getVqrysql())){
@@ -338,13 +338,13 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private void updateStockOffNum(GoodsBillBVO bvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_stocknum  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
-		sql.append("   AND pk_warehouse = ?  \n");
-		sql.append("   AND pk_goods = ?  \n");
-		sql.append("   AND pk_goodsspec = ? \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_stocknum    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
+		sql.append("   AND pk_warehouse = ?    ");
+		sql.append("   AND pk_goods = ?    ");
+		sql.append("   AND pk_goodsspec = ?   ");
 		spm.addParam("000001");
 		spm.addParam(IStatusConstant.CK_ID);// 大账房默认库存
 		spm.addParam(bvo.getPk_goods());
@@ -374,13 +374,13 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
 
-			sql.append("UPDATE cn_stocknum \n");
-			sql.append("   SET isellnum = nvl(isellnum,0) - ?  \n");
+			sql.append("UPDATE cn_stocknum   ");
+			sql.append("   SET isellnum = nvl(isellnum,0) - ?    ");
 			spm.addParam(bvo.getAmount());
-			sql.append(" WHERE nvl(dr,0) = 0 \n");
-			sql.append("   AND pk_corp = ? \n");
+			sql.append(" WHERE nvl(dr,0) = 0   ");
+			sql.append("   AND pk_corp = ?   ");
 			spm.addParam(numvo.getPk_corp());
-			sql.append("   AND pk_stocknum = ?  \n");
+			sql.append("   AND pk_stocknum = ?    ");
 			spm.addParam(numvo.getPk_stocknum());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res != 1) {
@@ -436,16 +436,16 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private void checkStockOut(GoodsBillVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.* \n");
-		sql.append("  FROM cn_stockout t \n");
-		sql.append("  LEFT JOIN cn_stockout_b b ON t.pk_stockout = b.pk_stockout \n");
-		sql.append(" INNER JOIN cn_goodsbill_b g ON b.pk_goodsbill_b = g.pk_goodsbill_b \n");
-		sql.append("  lEFT JOIN cn_goodsbill l ON g.pk_goodsbill = l.pk_goodsbill \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0 \n");
-		sql.append("   AND nvl(b.dr, 0) = 0 \n");
-		sql.append("   AND nvl(g.dr, 0) = 0 \n");
-		sql.append("   AND nvl(l.dr, 0) = 0 \n");
-		sql.append("   AND l.pk_goodsbill = ? \n");
+		sql.append("SELECT t.*   ");
+		sql.append("  FROM cn_stockout t   ");
+		sql.append("  LEFT JOIN cn_stockout_b b ON t.pk_stockout = b.pk_stockout   ");
+		sql.append(" INNER JOIN cn_goodsbill_b g ON b.pk_goodsbill_b = g.pk_goodsbill_b   ");
+		sql.append("  lEFT JOIN cn_goodsbill l ON g.pk_goodsbill = l.pk_goodsbill   ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
+		sql.append("   AND nvl(b.dr, 0) = 0   ");
+		sql.append("   AND nvl(g.dr, 0) = 0   ");
+		sql.append("   AND nvl(l.dr, 0) = 0   ");
+		sql.append("   AND l.pk_goodsbill = ?   ");
 		spm.addParam(pamvo.getPk_goodsbill());
 		List<StockOutVO> list = (List<StockOutVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockOutVO.class));
@@ -512,16 +512,16 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("DELETE FROM cn_goodsbill_s \n");
-		sql.append(" WHERE pk_goodsbill = ? \n");
+		sql.append("DELETE FROM cn_goodsbill_s   ");
+		sql.append(" WHERE pk_goodsbill = ?   ");
 		spm.addParam(pamvo.getPk_goodsbill());
-		sql.append("   AND pk_corp = ? \n");
+		sql.append("   AND pk_corp = ?   ");
 		spm.addParam(pamvo.getPk_corp());
-		sql.append("   AND vsaction = ? \n");
+		sql.append("   AND vsaction = ?   ");
 		spm.addParam(IStatusConstant.IORDERACTION_1);
-		sql.append("   AND vstatus = ? \n");
+		sql.append("   AND vstatus = ?   ");
 		spm.addParam(IStatusConstant.IORDERSTATUS_1);
-		sql.append("   AND vsdescribe = ? \n");
+		sql.append("   AND vsdescribe = ?   ");
 		spm.addParam(IStatusConstant.IORDERDESCRIBE_1);
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 		if (res != 1) {
@@ -568,26 +568,26 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_balance l  \n");
-			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+			sql.append("UPDATE cn_balance l    ");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?    ");
 			spm.addParam(pamvo.getNdeductmny());
-			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 			spm.addParam(IStatusConstant.IPAYTYPE_2);
-			sql.append("   AND l.pk_corp = ?  \n");
+			sql.append("   AND l.pk_corp = ?    ");
 			spm.addParam(pamvo.getPk_corp());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res == 1) {
 				sql = new StringBuffer();
 				spm = new SQLParameter();
-				sql.append("DELETE FROM cn_detail  \n");
-				sql.append(" WHERE nvl(dr, 0) = 0  \n");
-				sql.append("   AND pk_corp = ?  \n");
+				sql.append("DELETE FROM cn_detail    ");
+				sql.append(" WHERE nvl(dr, 0) = 0    ");
+				sql.append("   AND pk_corp = ?    ");
 				spm.addParam(pamvo.getPk_corp());
-				sql.append("   AND ipaytype = ?  \n");
+				sql.append("   AND ipaytype = ?    ");
 				spm.addParam(IStatusConstant.IPAYTYPE_2);// 预付款
-				sql.append("   AND pk_bill = ?  \n");
+				sql.append("   AND pk_bill = ?    ");
 				spm.addParam(pamvo.getPk_goodsbill());
-				sql.append("   AND iopertype = ?  \n");
+				sql.append("   AND iopertype = ?    ");
 				spm.addParam(IStatusConstant.IDETAILTYPE_5);// 商品购买
 				res = singleObjectBO.executeUpdate(sql.toString(), spm);
 				if (res != 1) {
@@ -623,14 +623,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_balance l  \n");
-			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+			sql.append("UPDATE cn_balance l    ");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?    ");
 			spm.addParam(pamvo.getNdeductmny());
-			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 			spm.addParam(IStatusConstant.IPAYTYPE_2);
-			sql.append("   AND l.pk_corp = ?  \n");
+			sql.append("   AND l.pk_corp = ?    ");
 			spm.addParam(pamvo.getPk_corp());
-			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ?   ");
 			spm.addParam(pamvo.getNdeductmny());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res == 1) {
@@ -675,26 +675,26 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_balance l  \n");
-			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?  \n");
+			sql.append("UPDATE cn_balance l    ");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) - ?    ");
 			spm.addParam(pamvo.getNdedrebamny());
-			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 			spm.addParam(IStatusConstant.IPAYTYPE_3);
-			sql.append("   AND l.pk_corp = ?  \n");
+			sql.append("   AND l.pk_corp = ?    ");
 			spm.addParam(pamvo.getPk_corp());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res == 1) {
 				sql = new StringBuffer();
 				spm = new SQLParameter();
-				sql.append("DELETE FROM cn_detail  \n");
-				sql.append(" WHERE nvl(dr, 0) = 0  \n");
-				sql.append("   AND pk_corp = ?  \n");
+				sql.append("DELETE FROM cn_detail    ");
+				sql.append(" WHERE nvl(dr, 0) = 0    ");
+				sql.append("   AND pk_corp = ?    ");
 				spm.addParam(pamvo.getPk_corp());
-				sql.append("   AND ipaytype = ?  \n");
+				sql.append("   AND ipaytype = ?    ");
 				spm.addParam(IStatusConstant.IPAYTYPE_3);// 返点款
-				sql.append("   AND pk_bill = ?  \n");
+				sql.append("   AND pk_bill = ?    ");
 				spm.addParam(pamvo.getPk_goodsbill());
-				sql.append("   AND iopertype = ?  \n");
+				sql.append("   AND iopertype = ?    ");
 				spm.addParam(IStatusConstant.IDETAILTYPE_5);// 商品购买
 				res = singleObjectBO.executeUpdate(sql.toString(), spm);
 				if (res != 1) {
@@ -730,14 +730,14 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 					120);
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_balance l  \n");
-			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?  \n");
+			sql.append("UPDATE cn_balance l    ");
+			sql.append("   SET l.nusedmny = nvl(l.nusedmny,0) + ?    ");
 			spm.addParam(pamvo.getNdedrebamny());
-			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?  \n");
+			sql.append(" WHERE nvl(l.dr,0) = 0 AND l.ipaytype = ?    ");
 			spm.addParam(IStatusConstant.IPAYTYPE_3);
-			sql.append("   AND l.pk_corp = ?  \n");
+			sql.append("   AND l.pk_corp = ?    ");
 			spm.addParam(pamvo.getPk_corp());
-			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ? \n");
+			sql.append("   and nvl(npaymny,0) - nvl(l.nusedmny, 0) >= ?   ");
 			spm.addParam(pamvo.getNdedrebamny());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res == 1) {
@@ -932,23 +932,23 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private ChInvoiceBVO[] queryBodyInfo(ChInvoiceVO hvo, GoodsBillVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_goodsbill_b AS pk_source,  \n");
-		sql.append("       vgoodsname AS bspmc,  \n");
-		sql.append("       invspec || invtype AS invspec,  \n");
-		sql.append("       vmeasname AS measurename,  \n");
-		sql.append("       13 AS bspsl,  \n");//由16变更为13
-		sql.append("       amount AS bnum,  \n");
-		sql.append("       pk_goods,  \n");
-		sql.append("       pk_goodsspec,  \n");
-		sql.append("       pk_goodsbill,  \n");
-		sql.append("       ntotalmny  \n");
-		sql.append("  FROM cn_goodsbill_b  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("SELECT pk_goodsbill_b AS pk_source,    ");
+		sql.append("       vgoodsname AS bspmc,    ");
+		sql.append("       invspec || invtype AS invspec,    ");
+		sql.append("       vmeasname AS measurename,    ");
+		sql.append("       13 AS bspsl,    ");//由16变更为13
+		sql.append("       amount AS bnum,    ");
+		sql.append("       pk_goods,    ");
+		sql.append("       pk_goodsspec,    ");
+		sql.append("       pk_goodsbill,    ");
+		sql.append("       ntotalmny    ");
+		sql.append("  FROM cn_goodsbill_b    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(pamvo.getPk_corp());
-		sql.append("   AND pk_goodsbill = ?  \n");
+		sql.append("   AND pk_goodsbill = ?    ");
 		spm.addParam(pamvo.getPk_goodsbill());
-		sql.append("   ORDER BY ntotalmny DESC \n");
+		sql.append("   ORDER BY ntotalmny DESC   ");
 		List<ChInvoiceBVO> blist = (List<ChInvoiceBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChInvoiceBVO.class));
 		DZFDouble ndeductmny = CommonUtil.getDZFDouble(hvo.getNdeductmny());
@@ -994,28 +994,28 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private ChInvoiceVO queryHeadInfo(GoodsBillVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT l.pk_goodsbill AS pk_source,  \n");
-		sql.append("       l.vbillcode,  \n");
-		sql.append("       t.unitname AS corpname,  \n");
-		sql.append("       t.taxcode AS taxnum,  \n");
-		sql.append("       t.postaddr AS corpaddr,  \n");
-		sql.append("       t.vbankname AS bankname,  \n");
-		sql.append("       t.vbankcode AS bankcode,  \n");
-		sql.append("       t.phone1 AS invphone,  \n");
-		sql.append("       t.email1 AS email,  \n");
-		sql.append("       t.linkman2 AS rusername, \n");
-		sql.append("       l.ndedsummny,  \n");
-		sql.append("       l.ndedrebamny,  \n");
-		sql.append("       l.ndeductmny,  \n");
-		sql.append("       l.pk_corp,  \n");
-		sql.append("       l.updatets  \n");
-		sql.append("  FROM cn_goodsbill l  \n");
-		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp  \n");
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND l.pk_corp = ? \n");
+		sql.append("SELECT l.pk_goodsbill AS pk_source,    ");
+		sql.append("       l.vbillcode,    ");
+		sql.append("       t.unitname AS corpname,    ");
+		sql.append("       t.taxcode AS taxnum,    ");
+		sql.append("       t.postaddr AS corpaddr,    ");
+		sql.append("       t.vbankname AS bankname,    ");
+		sql.append("       t.vbankcode AS bankcode,    ");
+		sql.append("       t.phone1 AS invphone,    ");
+		sql.append("       t.email1 AS email,    ");
+		sql.append("       t.linkman2 AS rusername,   ");
+		sql.append("       l.ndedsummny,    ");
+		sql.append("       l.ndedrebamny,    ");
+		sql.append("       l.ndeductmny,    ");
+		sql.append("       l.pk_corp,    ");
+		sql.append("       l.updatets    ");
+		sql.append("  FROM cn_goodsbill l    ");
+		sql.append("  LEFT JOIN bd_account t ON l.pk_corp = t.pk_corp    ");
+		sql.append(" WHERE nvl(l.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND l.pk_corp = ?   ");
 		spm.addParam(pamvo.getPk_corp());
-		sql.append("   AND l.pk_goodsbill = ? \n");
+		sql.append("   AND l.pk_goodsbill = ?   ");
 		spm.addParam(pamvo.getPk_goodsbill());
 		List<ChInvoiceVO> list = (List<ChInvoiceVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChInvoiceVO.class));
@@ -1043,10 +1043,10 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			// 3、更新订单状态
 			StringBuffer sql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			sql.append("UPDATE cn_goodsbill  \n");
-			sql.append("   set vtistatus = 2  \n");
-			sql.append(" WHERE nvl(dr, 0) = 0  \n");
-			sql.append("   AND pk_goodsbill = ?  \n");
+			sql.append("UPDATE cn_goodsbill    ");
+			sql.append("   set vtistatus = 2    ");
+			sql.append(" WHERE nvl(dr, 0) = 0    ");
+			sql.append("   AND pk_goodsbill = ?    ");
 			spm.addParam(hvo.getPk_source());
 			int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res != 1) {
@@ -1126,12 +1126,12 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 	private void checkOpenInvoice(String pk_goodsbill, String pk_corp) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_source  \n") ;
-		sql.append("  FROM cn_invoice  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_source = ?  \n") ; 
+		sql.append("SELECT pk_source    ") ;
+		sql.append("  FROM cn_invoice    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_source = ?    ") ; 
 		spm.addParam(pk_goodsbill);
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(pk_corp);
 		boolean isexists = singleObjectBO.isExists(pk_corp, sql.toString(), spm);
 		if(isexists){
@@ -1167,7 +1167,7 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 			String where = SqlUtil.buildSqlForIn(" account.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND account.pk_corp is null \n") ; 
+			sql.append(" AND account.pk_corp is null   ") ; 
 		}
 		return sql.toString();
 	}

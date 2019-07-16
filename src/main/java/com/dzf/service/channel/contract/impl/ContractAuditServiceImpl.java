@@ -107,46 +107,46 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT  \n") ;
-		sql.append("       y.pk_changeapply,  \n") ;
-		sql.append("       y.applytime,  \n") ;
-		sql.append("       y.ichangetype,  \n") ;
-		sql.append("       y.vchangeraeson,  \n") ;
-		sql.append("       y.iapplystatus,  \n") ; 
-		sql.append("       y.updatets,  \n") ; 
-		sql.append("       y.pk_confrim,  \n");
-		sql.append("       y.pk_contract,  \n") ;
-		sql.append("       y.vchannelid,  \n") ;
-		sql.append("       y.vareaer,  \n") ;
-		sql.append("       y.vdirector,  \n") ;
-		sql.append("       t.pk_corp,  \n") ; 
-		sql.append("       t.pk_corpk,  \n") ; 
-		sql.append("       t.vcontcode,  \n") ; 
-		sql.append("       t.vbeginperiod,  \n") ; 
-		sql.append("       t.vendperiod,  \n") ; 
-		sql.append("       t.chargedeptname,  \n") ; 
-		sql.append("       t.nmservicemny,  \n") ; 
-		sql.append("       t.ireceivcycle,  \n") ; 
-		sql.append("       t.icontractcycle,  \n") ; 
-		sql.append("       nvl(t.ntotalmny,0) - nvl(t.nbookmny,0) AS naccountmny,  \n") ; 
-		sql.append("       t.nbookmny  \n") ; 
-		sql.append("  FROM cn_changeapply y  \n") ; 
-		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract  \n") ; 
+		sql.append("SELECT DISTINCT    ") ;
+		sql.append("       y.pk_changeapply,    ") ;
+		sql.append("       y.applytime,    ") ;
+		sql.append("       y.ichangetype,    ") ;
+		sql.append("       y.vchangeraeson,    ") ;
+		sql.append("       y.iapplystatus,    ") ; 
+		sql.append("       y.updatets,    ") ; 
+		sql.append("       y.pk_confrim,    ");
+		sql.append("       y.pk_contract,    ") ;
+		sql.append("       y.vchannelid,    ") ;
+		sql.append("       y.vareaer,    ") ;
+		sql.append("       y.vdirector,    ") ;
+		sql.append("       t.pk_corp,    ") ; 
+		sql.append("       t.pk_corpk,    ") ; 
+		sql.append("       t.vcontcode,    ") ; 
+		sql.append("       t.vbeginperiod,    ") ; 
+		sql.append("       t.vendperiod,    ") ; 
+		sql.append("       t.chargedeptname,    ") ; 
+		sql.append("       t.nmservicemny,    ") ; 
+		sql.append("       t.ireceivcycle,    ") ; 
+		sql.append("       t.icontractcycle,    ") ; 
+		sql.append("       nvl(t.ntotalmny,0) - nvl(t.nbookmny,0) AS naccountmny,    ") ; 
+		sql.append("       t.nbookmny    ") ; 
+		sql.append("  FROM cn_changeapply y    ") ; 
+		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract    ") ; 
 		//数据过滤：本人审核过的申请，都可以看到
 		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != 1)){
-			sql.append("  LEFT JOIN cn_applyaudit a ON a.pk_changeapply = y.pk_changeapply  \n") ; 
+			sql.append("  LEFT JOIN cn_applyaudit a ON a.pk_changeapply = y.pk_changeapply    ") ; 
 		}
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(y.dr, 0) = 0  \n");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(y.dr, 0) = 0    ");
 		if(pamvo.getIreceivcycle() == null || (pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() != 1)){
-			sql.append("   AND nvl(a.dr, 0) = 0  \n");
+			sql.append("   AND nvl(a.dr, 0) = 0    ");
 		}
 		if(!StringUtil.isEmpty(pamvo.getVbeginperiod())){
-			sql.append(" AND  SUBSTR(applytime, 0, 10) >= ? \n");
+			sql.append(" AND  SUBSTR(applytime, 0, 10) >= ?   ");
 			spm.addParam(pamvo.getVbeginperiod());
 		}
 		if(!StringUtil.isEmpty(pamvo.getVendperiod())){
-			sql.append(" AND  SUBSTR(applytime, 0, 10) <= ? \n");
+			sql.append(" AND  SUBSTR(applytime, 0, 10) <= ?   ");
 			spm.addParam(pamvo.getVendperiod());
 		}
 		
@@ -156,14 +156,14 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		    sql.append(" AND ").append(where);
 		}
 		if(pamvo.getIapplystatus() != null && pamvo.getIapplystatus() != -1){
-			sql.append(" AND y.iapplystatus = ? \n");
+			sql.append(" AND y.iapplystatus = ?   ");
 			spm.addParam(pamvo.getIapplystatus());
 		}
 		if(!StringUtil.isEmpty(pamvo.getChargedeptname())){
 			if("1".equals(pamvo.getChargedeptname())){
-				sql.append(" AND t.chargedeptname = '小规模纳税人' \n");
+				sql.append(" AND t.chargedeptname = '小规模纳税人'   ");
 			}else if("2".equals(pamvo.getChargedeptname())){
-				sql.append(" AND t.chargedeptname = '一般纳税人' \n");
+				sql.append(" AND t.chargedeptname = '一般纳税人'   ");
 			}
 		}
 		if (!StringUtil.isEmpty(pamvo.getVmanagername())) {//渠道经理
@@ -185,20 +185,20 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		
 		//待审核数据过滤
 		if(pamvo.getIreceivcycle() != null && pamvo.getIreceivcycle() == 1){
-			sql.append("   AND ((y.vchannelid = ? AND y.iapplystatus = 1) OR  \n") ; 
-			sql.append("        (y.vareaer = ? AND y.iapplystatus = 2) OR  \n") ; 
-			sql.append("        (y.vdirector = ? AND y.iapplystatus = 3))    \n");
+			sql.append("   AND ((y.vchannelid = ? AND y.iapplystatus = 1) OR    ") ; 
+			sql.append("        (y.vareaer = ? AND y.iapplystatus = 2) OR    ") ; 
+			sql.append("        (y.vdirector = ? AND y.iapplystatus = 3))      ");
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
 		}else{
 			//数据权限过滤
-			sql.append(" AND ( ( ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? ) \n");
+			sql.append(" AND ( ( ( y.vchannelid = ? OR y.vareaer = ? OR y.vdirector = ? )   ");
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
 			spm.addParam(uservo.getCuserid());
-			sql.append(" AND y.iapplystatus IN (1, 2, 3) ) \n");
-			sql.append(" OR a.coperatorid = ? ) \n");
+			sql.append(" AND y.iapplystatus IN (1, 2, 3) )   ");
+			sql.append(" OR a.coperatorid = ? )   ");
 			spm.addParam(uservo.getCuserid());
 		}
 		qryvo.setSql(sql.toString());
@@ -220,7 +220,7 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 			String where = SqlUtil.buildSqlForIn(" t.pk_corp", corps);
 			sql.append(" AND ").append(where);
 		}else{
-			sql.append(" AND t.pk_corp is null \n") ; 
+			sql.append(" AND t.pk_corp is null   ") ; 
 		}
 		return sql.toString();
 	}
@@ -237,21 +237,21 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		SQLParameter spm = new SQLParameter();
 		// 申请状态 1：渠道待审（未处理）；2： 区总待审（处理中）；3：总经理待审（处理中）；4：运营待审（处理中）；5：已处理；6：已拒绝；
 		if (oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 1) {
-			sql.append("SELECT DISTINCT a.userid AS id,us.user_name as name \n");
-			sql.append("  FROM cn_chnarea a  \n");
-			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea  \n");
+			sql.append("SELECT DISTINCT a.userid AS id,us.user_name as name   ");
+			sql.append("  FROM cn_chnarea a    ");
+			sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea    ");
 			sql.append(" left join sm_user us on us.cuserid = a.userid");
-			sql.append(" WHERE nvl(a.dr, 0) = 0  \n");
-			sql.append("   AND nvl(b.dr, 0) = 0  \n");
-			sql.append("   AND b.type = 1 \n");//渠道经理
-			sql.append("   AND b.userid = ?  \n");
+			sql.append(" WHERE nvl(a.dr, 0) = 0    ");
+			sql.append("   AND nvl(b.dr, 0) = 0    ");
+			sql.append("   AND b.type = 1   ");//渠道经理
+			sql.append("   AND b.userid = ?    ");
 			spm.addParam(uservo.getCuserid());
 		} else if (oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 2) {
-			sql.append("SELECT vdeptuserid AS id,us.user_name as name \n");
-			sql.append("  FROM cn_leaderset ld \n");
+			sql.append("SELECT vdeptuserid AS id,us.user_name as name   ");
+			sql.append("  FROM cn_leaderset ld   ");
 			sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid");
-			sql.append(" WHERE nvl(ld.dr, 0) = 0  \n");
-			sql.append("   AND nvl(us.dr, 0) = 0  \n");
+			sql.append(" WHERE nvl(ld.dr, 0) = 0    ");
+			sql.append("   AND nvl(us.dr, 0) = 0    ");
 		} else if(oldvo.getIapplystatus() != null && oldvo.getIapplystatus() == 3){
 			return null;
 		}
@@ -322,14 +322,14 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	private RejectHistoryHVO[] qryRejectHistory(String pk_contract) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT h.*, r.user_name AS coperator \n");
-		sql.append("  FROM cn_rejecthistory_h h  \n");
-		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid  \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND h.pk_contract = ?  \n");
+		sql.append("SELECT h.*, r.user_name AS coperator   ");
+		sql.append("  FROM cn_rejecthistory_h h    ");
+		sql.append("  LEFT JOIN sm_user r ON h.coperatorid = r.cuserid    ");
+		sql.append(" WHERE nvl(h.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND h.pk_contract = ?    ");
 		spm.addParam(pk_contract);
-		sql.append(" ORDER BY h.ts DESC \n");
+		sql.append(" ORDER BY h.ts DESC   ");
 		List<RejectHistoryHVO> list = (List<RejectHistoryHVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(RejectHistoryHVO.class));
 		if(list != null && list.size() > 0){
@@ -344,12 +344,12 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		StringBuffer msg = new StringBuffer();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT t.vmemo, r.user_name AS user_name \n");
-		sql.append("  FROM cn_applyaudit t \n");
-		sql.append("  LEFT JOIN sm_user r ON t.coperatorid = r.cuserid \n");
-		sql.append(" WHERE nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND t.pk_changeapply = ?  \n");
-		sql.append(" ORDER BY t.ts ASC \n");
+		sql.append("SELECT t.vmemo, r.user_name AS user_name   ");
+		sql.append("  FROM cn_applyaudit t   ");
+		sql.append("  LEFT JOIN sm_user r ON t.coperatorid = r.cuserid   ");
+		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
+		sql.append("   AND t.pk_changeapply = ?    ");
+		sql.append(" ORDER BY t.ts ASC   ");
 		spm.addParam(vo.getPk_changeapply());
 		List<ApplyAuditVO> list = (List<ApplyAuditVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ApplyAuditVO.class));
@@ -394,63 +394,63 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT y.pk_changeapply,  \n");
-		sql.append("       y.pk_contract,  \n");
-		sql.append("       y.pk_confrim,  \n");
-		sql.append("       y.applytime,  \n");
-		sql.append("       t.vcontcode,  \n");
-		sql.append("       y.pk_corp,  \n");
-		sql.append("       y.pk_corpk,  \n");
-		sql.append("       t.chargedeptname,  \n");
-		sql.append("       t.ntotalmny,  \n");
-		sql.append("       t.nmservicemny,  \n");
-		sql.append("       t.nbookmny,  \n");
-		sql.append("       t.vbeginperiod,  \n");
-		sql.append("       t.vendperiod,  \n");
-		sql.append("       t.vcontcode,  \n");
-		sql.append("       t.dsigndate,  \n"); // 签订日期
-		sql.append("       t.icontractcycle,  \n"); // 合同周期
-		sql.append("       t.ireceivcycle,  \n"); // 收款周期
-		sql.append("       SUBSTR(t.dsubmitime, 0, 10) AS dsubmidate, \n");// 提单日期
-		sql.append("       n.ndedsummny,  \n");
-		sql.append("       y.ichangetype,  \n");
-		sql.append("       y.vchangeraeson,  \n");
-		sql.append("       y.vchangememo,  \n");
-		sql.append("       y.vstopperiod,  \n");
-		sql.append("       y.updatets,  \n");
+		sql.append("SELECT y.pk_changeapply,    ");
+		sql.append("       y.pk_contract,    ");
+		sql.append("       y.pk_confrim,    ");
+		sql.append("       y.applytime,    ");
+		sql.append("       t.vcontcode,    ");
+		sql.append("       y.pk_corp,    ");
+		sql.append("       y.pk_corpk,    ");
+		sql.append("       t.chargedeptname,    ");
+		sql.append("       t.ntotalmny,    ");
+		sql.append("       t.nmservicemny,    ");
+		sql.append("       t.nbookmny,    ");
+		sql.append("       t.vbeginperiod,    ");
+		sql.append("       t.vendperiod,    ");
+		sql.append("       t.vcontcode,    ");
+		sql.append("       t.dsigndate,    "); // 签订日期
+		sql.append("       t.icontractcycle,    "); // 合同周期
+		sql.append("       t.ireceivcycle,    "); // 收款周期
+		sql.append("       SUBSTR(t.dsubmitime, 0, 10) AS dsubmidate,   ");// 提单日期
+		sql.append("       n.ndedsummny,    ");
+		sql.append("       y.ichangetype,    ");
+		sql.append("       y.vchangeraeson,    ");
+		sql.append("       y.vchangememo,    ");
+		sql.append("       y.vstopperiod,    ");
+		sql.append("       y.updatets,    ");
 		
-		sql.append("       y.docName,  \n");
-		sql.append("       y.vfilepath,  \n");
-		sql.append("       y.docTemp,  \n");
-		sql.append("       y.vfilepath,  \n");
+		sql.append("       y.docName,    ");
+		sql.append("       y.vfilepath,    ");
+		sql.append("       y.docTemp,    ");
+		sql.append("       y.vfilepath,    ");
 
-		sql.append("       y.vbchangeperiod,  \n");
-		sql.append("       y.vechangeperiod,  \n");
-		sql.append("       y.nchangetotalmny,  \n");
-		sql.append("       y.vconfreason,  \n");
+		sql.append("       y.vbchangeperiod,    ");
+		sql.append("       y.vechangeperiod,    ");
+		sql.append("       y.nchangetotalmny,    ");
+		sql.append("       y.vconfreason,    ");
 		
-		sql.append("       y.vchannelid,  \n");
-		sql.append("       y.vareaer,  \n");
-		sql.append("       y.vdirector,  \n");
-		sql.append("       y.ichangetype,  \n");
+		sql.append("       y.vchannelid,    ");
+		sql.append("       y.vareaer,    ");
+		sql.append("       y.vdirector,    ");
+		sql.append("       y.ichangetype,    ");
 
-//		sql.append("       r.user_name, \n ");
-		sql.append("       u.user_name AS vmanagername, \n ");
-		sql.append("       v.user_name AS vareaername, \n ");
-		sql.append("       w.user_name AS vdirectorname, \n ");
-		sql.append("       y.iapplystatus  \n");
+//		sql.append("       r.user_name,    ");
+		sql.append("       u.user_name AS vmanagername,    ");
+		sql.append("       v.user_name AS vareaername,    ");
+		sql.append("       w.user_name AS vdirectorname,    ");
+		sql.append("       y.iapplystatus    ");
 		
-		sql.append("  FROM cn_changeapply y  \n");
-		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract  \n");
-		sql.append("  LEFT JOIN cn_contract n ON y.pk_contract = n.pk_contract  \n");
-//		sql.append("  LEFT JOIN sm_user r ON y.coperatorid = r.cuserid \n");
-		sql.append("  LEFT JOIN sm_user u ON y.vchannelid = u.cuserid \n");
-		sql.append("  LEFT JOIN sm_user v ON y.vareaer = v.cuserid \n");
-		sql.append("  LEFT JOIN sm_user w ON y.vdirector = w.cuserid \n");
-		sql.append(" WHERE nvl(y.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND nvl(n.dr, 0) = 0  \n");
-		sql.append(" AND y.pk_changeapply = ? \n");
+		sql.append("  FROM cn_changeapply y    ");
+		sql.append("  LEFT JOIN ynt_contract t ON y.pk_contract = t.pk_contract    ");
+		sql.append("  LEFT JOIN cn_contract n ON y.pk_contract = n.pk_contract    ");
+//		sql.append("  LEFT JOIN sm_user r ON y.coperatorid = r.cuserid   ");
+		sql.append("  LEFT JOIN sm_user u ON y.vchannelid = u.cuserid   ");
+		sql.append("  LEFT JOIN sm_user v ON y.vareaer = v.cuserid   ");
+		sql.append("  LEFT JOIN sm_user w ON y.vdirector = w.cuserid   ");
+		sql.append(" WHERE nvl(y.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND nvl(n.dr, 0) = 0    ");
+		sql.append(" AND y.pk_changeapply = ?   ");
 		spm.addParam(pamvo.getPk_changeapply());
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
@@ -538,10 +538,10 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	private void deleteAuditHistory(ChangeApplyVO datavo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE cn_applyaudit  \n") ;
-		sql.append("   SET dr = 1  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_changeapply = ?  \n");
+		sql.append("UPDATE cn_applyaudit    ") ;
+		sql.append("   SET dr = 1    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_changeapply = ?    ");
 		spm.addParam(datavo.getPk_changeapply());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
@@ -590,41 +590,41 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		// 1、更新原合同-申请状态
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("UPDATE ynt_contract  \n");
+		sql.append("UPDATE ynt_contract    ");
 		if (opertype == 1) {
 			//1、合同终止审核或作废审核
 			if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-					sql.append("   SET iversion = 2  \n");
+					sql.append("   SET iversion = 2    ");
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-					sql.append("   SET iversion = 3  \n");
+					sql.append("   SET iversion = 3    ");
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-					sql.append("   SET iversion = 4  \n");
+					sql.append("   SET iversion = 4    ");
 				}
 			//2、非常规套餐审核
 			}else if(data.getIchangetype() != null && data.getIchangetype() == 3 ){
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-					sql.append("   SET iversion = 2  \n");
+					sql.append("   SET iversion = 2    ");
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-					sql.append("   SET iversion = 4  \n");
+					sql.append("   SET iversion = 4    ");
 				}
 			}
 		} else if (opertype == 2) {
 			//非常规套餐审核
 			if(data.getIchangetype() != null && data.getIchangetype() == 3 ){
-				sql.append("   SET iversion = 6,  \n");
-				sql.append("       vstatus = 7,  \n");
-				sql.append("       vdeductstatus = 7  \n");
+				sql.append("   SET iversion = 6,    ");
+				sql.append("       vstatus = 7,    ");
+				sql.append("       vdeductstatus = 7    ");
 			}else{
-				sql.append("   SET iversion = 6  \n");
+				sql.append("   SET iversion = 6    ");
 			}
 		}
-		sql.append(" , tstamp = ? \n");
+		sql.append(" , tstamp = ?   ");
 		spm.addParam(new DZFDateTime());
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(data.getPk_corp());
-		sql.append("   AND pk_contract = ?  \n");
+		sql.append("   AND pk_contract = ?    ");
 		spm.addParam(data.getPk_contract());
 		int res = singleObjectBO.executeUpdate(sql.toString(), spm);
 		if (res != 1) {
@@ -634,24 +634,24 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
 			sql = new StringBuffer();
 			spm = new SQLParameter();
-			sql.append("UPDATE cn_contract  \n");
+			sql.append("UPDATE cn_contract    ");
 			if (opertype == 1) {
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-					sql.append("   SET iapplystatus = 2  \n");
+					sql.append("   SET iapplystatus = 2    ");
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-					sql.append("   SET iapplystatus = 3  \n");
+					sql.append("   SET iapplystatus = 3    ");
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-					sql.append("   SET iapplystatus = 4  \n");
+					sql.append("   SET iapplystatus = 4    ");
 				}
 			} else if (opertype == 2) {
-				sql.append("   SET iapplystatus = 6  \n");
+				sql.append("   SET iapplystatus = 6    ");
 			}
-			sql.append(" , tstamp = ? \n");
+			sql.append(" , tstamp = ?   ");
 			spm.addParam(new DZFDateTime());
-			sql.append(" WHERE nvl(dr, 0) = 0  \n");
-			sql.append("   AND pk_corp = ?  \n");
+			sql.append(" WHERE nvl(dr, 0) = 0    ");
+			sql.append("   AND pk_corp = ?    ");
 			spm.addParam(data.getPk_corp());
-			sql.append("   AND pk_confrim = ?  \n");
+			sql.append("   AND pk_confrim = ?    ");
 			spm.addParam(data.getPk_confrim());
 			res = singleObjectBO.executeUpdate(sql.toString(), spm);
 			if (res != 1) {
@@ -661,49 +661,49 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 		//3、更新变更合同申请/非常规套餐申请-申请状态
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("UPDATE cn_changeapply  \n");
+		sql.append("UPDATE cn_changeapply    ");
 		if (opertype == 1) {
 			//1、合同终止审核或作废审核
 			if(data.getIchangetype() != null && (data.getIchangetype() == 1 || data.getIchangetype() == 2)){
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-					sql.append("   SET iapplystatus = 2,  \n");
-					sql.append("       vareaer = ?  \n");
+					sql.append("   SET iapplystatus = 2,    ");
+					sql.append("       vareaer = ?    ");
 					spm.addParam(data.getVauditer());
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-					sql.append("   SET iapplystatus = 3,  \n");
-					sql.append("       vdirector = ?  \n");
+					sql.append("   SET iapplystatus = 3,    ");
+					sql.append("       vdirector = ?    ");
 					spm.addParam(data.getVauditer());
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 3){//总经理审核
-					sql.append("   SET iapplystatus = 4  \n");
+					sql.append("   SET iapplystatus = 4    ");
 				}
 			//2、非常规套餐审核
 			}else if(data.getIchangetype() != null && data.getIchangetype() == 3){
 				if(data.getIapplystatus() != null && data.getIapplystatus() == 1){//渠道经理审核
-					sql.append("   SET iapplystatus = 2,  \n");
-					sql.append("       vareaer = ?  \n");
+					sql.append("   SET iapplystatus = 2,    ");
+					sql.append("       vareaer = ?    ");
 					spm.addParam(data.getVauditer());
 					//清空驳回历史(驳回历史待渠道运营审核之后清空)
 //					deleteRejeHistory(data, uservo);
 				}else if(data.getIapplystatus() != null && data.getIapplystatus() == 2){//区总审核
-					sql.append("   SET iapplystatus = 4  \n");
+					sql.append("   SET iapplystatus = 4    ");
 				}
 			}
 		} else if (opertype == 2) {
-			sql.append("   SET iapplystatus = 6,  \n");
-			sql.append("       vconfreason = ?, \n");
+			sql.append("   SET iapplystatus = 6,    ");
+			sql.append("       vconfreason = ?,   ");
 			spm.addParam(data.getVconfreason());
-			sql.append("       vchannelid = null, \n");
-			sql.append("       vareaer = null, \n");
-			sql.append("       vdirector = null \n");
+			sql.append("       vchannelid = null,   ");
+			sql.append("       vareaer = null,   ");
+			sql.append("       vdirector = null   ");
 			if(data.getIchangetype() != null && data.getIchangetype() == 3){
 				//添加驳回历史
 				saveRejectHistory(data, uservo);
 			}
 		}
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(data.getPk_corp());
-		sql.append("   AND pk_changeapply = ?  \n");
+		sql.append("   AND pk_changeapply = ?    ");
 		spm.addParam(data.getPk_changeapply());
 		res = singleObjectBO.executeUpdate(sql.toString(), spm);
 		if (res != 1) {
@@ -749,19 +749,19 @@ public class ContractAuditServiceImpl implements IContractAuditService {
 	private void deleteRejeHistory(ChangeApplyVO data, UserVO uservo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("DELETE FROM cn_rejecthistory  \n") ;
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_contract = ?  \n") ; 
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("DELETE FROM cn_rejecthistory    ") ;
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_contract = ?    ") ; 
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(data.getPk_contract());
 		spm.addParam(data.getPk_corp());
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("DELETE FROM cn_rejecthistory_h  \n") ;
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_contract = ?  \n") ; 
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("DELETE FROM cn_rejecthistory_h    ") ;
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_contract = ?    ") ; 
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(data.getPk_contract());
 		spm.addParam(data.getPk_corp());
 		singleObjectBO.executeUpdate(sql.toString(), spm);

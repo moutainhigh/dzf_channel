@@ -35,10 +35,10 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 	@Override
 	public List<GoodsTypeVO> query(){
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT g.vcode,g.vname,g.pk_goodstype  \n") ;
-		sql.append("  FROM cn_goodstype g  \n") ; 
-		sql.append(" WHERE nvl(g.dr, 0) = 0  \n") ; 
-		sql.append(" ORDER BY g.vcode DESC \n");
+		sql.append("SELECT g.vcode,g.vname,g.pk_goodstype    ") ;
+		sql.append("  FROM cn_goodstype g    ") ; 
+		sql.append(" WHERE nvl(g.dr, 0) = 0    ") ; 
+		sql.append(" ORDER BY g.vcode DESC   ");
 		List<GoodsTypeVO> list = (List<GoodsTypeVO>) singleObjectBO.executeQuery(sql.toString(),
 				null, new BeanListProcessor(GoodsTypeVO.class));
 		return list;
@@ -133,10 +133,10 @@ public class GoodsTypeServiceImpl implements IGoodsTypeService {
 	@Override
 	public List<ComboBoxVO> queryComboBox() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT pk_goodstype AS id, vname AS name \n");
-		sql.append("  FROM cn_goodstype  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append(" ORDER BY vcode DESC  \n");
+		sql.append("SELECT pk_goodstype AS id, vname AS name   ");
+		sql.append("  FROM cn_goodstype    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append(" ORDER BY vcode DESC    ");
 		return (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(ComboBoxVO.class));
 	}

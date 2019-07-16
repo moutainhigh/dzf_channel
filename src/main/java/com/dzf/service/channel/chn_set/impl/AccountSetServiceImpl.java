@@ -277,10 +277,10 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(new DZFDate());
-		sql.append("  update cn_accountset ac \n");
-		sql.append("    set ac.istatus = 1 \n");
-		sql.append("    where nvl(ac.dr,0) = 0 and \n");
-		sql.append("    ac.stopperiod = ? and ac.istatus= 0 \n");
+		sql.append("  update cn_accountset ac   ");
+		sql.append("    set ac.istatus = 1   ");
+		sql.append("    where nvl(ac.dr,0) = 0 and   ");
+		sql.append("    ac.stopperiod = ? and ac.istatus= 0   ");
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	

@@ -284,9 +284,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	public ArrayList queryComboxArea(String pk_area,String type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select region_id as id, region_name as name\n");
-		sql.append("  from ynt_area\n");
-		sql.append(" where nvl(dr, 0) = 0\n");
+		sql.append("select region_id as id, region_name as name  ");
+		sql.append("  from ynt_area  ");
+		sql.append(" where nvl(dr, 0) = 0  ");
 		sql.append("   and parenter_id = 1 and region_id not in  ");
 		sql.append("    (select vprovince from cn_chnarea_b where nvl(dr,0)=0 ");
 		sql.append(" and type = ? ");

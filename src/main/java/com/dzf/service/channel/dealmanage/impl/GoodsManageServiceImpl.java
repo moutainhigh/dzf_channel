@@ -119,9 +119,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	private List<String> queryStockGoods(String where) throws DZFWarpException {
 		List<String> list = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT DISTINCT pk_goods  \n") ;
-		sql.append("  FROM cn_stockin_b  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
+		sql.append("SELECT DISTINCT pk_goods    ") ;
+		sql.append("  FROM cn_stockin_b    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
 		if(!StringUtil.isEmpty(where)){
 			sql.append("   AND  ").append(where);
 		}
@@ -144,27 +144,27 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT g.*, t.vname AS vgoodstypename \n") ;
-		sql.append("  FROM cn_goods g  \n") ; 
-		sql.append("  LEFT JOIN cn_goodstype t ON g.pk_goodstype = t.pk_goodstype \n");
-		sql.append(" WHERE nvl(g.dr, 0) = 0  \n") ; 
+		sql.append("SELECT g.*, t.vname AS vgoodstypename   ") ;
+		sql.append("  FROM cn_goods g    ") ; 
+		sql.append("  LEFT JOIN cn_goodstype t ON g.pk_goodstype = t.pk_goodstype   ");
+		sql.append(" WHERE nvl(g.dr, 0) = 0    ") ; 
 		if(pamvo.getVstatus() != null && pamvo.getVstatus() != -1){
-			sql.append("   AND g.vstatus = ?  \n") ; 
+			sql.append("   AND g.vstatus = ?    ") ; 
 			spm.addParam(pamvo.getVstatus());
 		}
 		if(!StringUtil.isEmpty(pamvo.getVgoodscode())){
-			sql.append("   AND g.vgoodscode like ?  \n") ; 
+			sql.append("   AND g.vgoodscode like ?    ") ; 
 			spm.addParam("%"+pamvo.getVgoodscode()+"%");
 		}
 		if(!StringUtil.isEmpty(pamvo.getVgoodsname())){
-			sql.append("   AND g.vgoodsname like ?  \n") ; 
+			sql.append("   AND g.vgoodsname like ?    ") ; 
 			spm.addParam("%"+pamvo.getVgoodsname()+"%");
 		}
 		if(!StringUtil.isEmpty(pamvo.getPk_goodstype())){
-			sql.append(" AND g.pk_goodstype = ? \n");
+			sql.append(" AND g.pk_goodstype = ?   ");
 			spm.addParam(pamvo.getPk_goodstype());
 		}
-		sql.append(" ORDER BY g.ts DESC \n");
+		sql.append(" ORDER BY g.ts DESC   ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;
@@ -393,7 +393,7 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 
 	@Override
 	public List<ComboBoxVO> queryMeasCombox(String pk_corp) throws DZFWarpException {
-		String sql = " nvl(dr,0) = 0 AND pk_corp = ? ORDER BY ts DESC \n";
+		String sql = " nvl(dr,0) = 0 AND pk_corp = ? ORDER BY ts DESC   ";
 		SQLParameter spm = new SQLParameter();
 		spm.addParam(pk_corp);
 		MeasVO[] measVOs = (MeasVO[]) singleObjectBO.queryByCondition(MeasVO.class, sql, spm);
@@ -462,12 +462,12 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		GoodsVO oldvo = null;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT s.*, t.vname AS vgoodstypename  \n");
-		sql.append("  FROM cn_goods s  \n");
-		sql.append("  LEFT JOIN cn_goodstype t ON s.pk_goodstype = t.pk_goodstype  \n");
-		sql.append(" WHERE nvl(s.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
-		sql.append("   AND s.pk_goods = ? \n");
+		sql.append("SELECT s.*, t.vname AS vgoodstypename    ");
+		sql.append("  FROM cn_goods s    ");
+		sql.append("  LEFT JOIN cn_goodstype t ON s.pk_goodstype = t.pk_goodstype    ");
+		sql.append(" WHERE nvl(s.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
+		sql.append("   AND s.pk_goods = ?   ");
 		spm.addParam(pamvo.getPk_goods());
 		List<GoodsVO> list = (List<GoodsVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsVO.class));
@@ -532,22 +532,22 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 			
 			StringBuffer usql = new StringBuffer();
 			SQLParameter spm = new SQLParameter();
-			usql.append("UPDATE cn_goodsdoc  \n") ;
-			usql.append("   SET isfirst = 'Y'  \n") ; 
-			usql.append(" WHERE pk_goods = (SELECT pk_goods  \n") ; 
-			usql.append("                     FROM cn_goodsdoc  \n") ; 
-			usql.append("                    WHERE nvl(dr, 0) = 0  \n") ; 
-			usql.append("                      AND pk_goodsdoc = ?)  \n") ; 
+			usql.append("UPDATE cn_goodsdoc    ") ;
+			usql.append("   SET isfirst = 'Y'    ") ; 
+			usql.append(" WHERE pk_goods = (SELECT pk_goods    ") ; 
+			usql.append("                     FROM cn_goodsdoc    ") ; 
+			usql.append("                    WHERE nvl(dr, 0) = 0    ") ; 
+			usql.append("                      AND pk_goodsdoc = ?)    ") ; 
 			spm.addParam(pamvo.getPk_goodsdoc());
-			usql.append("   AND doctime = (SELECT MIN(doctime)  \n") ; 
-			usql.append("                    FROM cn_goodsdoc  \n") ; 
-			usql.append("                   WHERE nvl(dr, 0) = 0  \n") ; 
-			usql.append("                     AND pk_goods = (SELECT pk_goods  \n") ; 
-			usql.append("                                       FROM cn_goodsdoc  \n") ; 
-			usql.append("                                      WHERE nvl(dr, 0) = 0  \n") ; 
-			usql.append("                                        AND pk_goodsdoc = ?)  \n") ; 
+			usql.append("   AND doctime = (SELECT MIN(doctime)    ") ; 
+			usql.append("                    FROM cn_goodsdoc    ") ; 
+			usql.append("                   WHERE nvl(dr, 0) = 0    ") ; 
+			usql.append("                     AND pk_goods = (SELECT pk_goods    ") ; 
+			usql.append("                                       FROM cn_goodsdoc    ") ; 
+			usql.append("                                      WHERE nvl(dr, 0) = 0    ") ; 
+			usql.append("                                        AND pk_goodsdoc = ?)    ") ; 
 			spm.addParam(pamvo.getPk_goodsdoc());
-			usql.append("                     AND pk_goodsdoc != ?) \n");
+			usql.append("                     AND pk_goodsdoc != ?)   ");
 			spm.addParam(pamvo.getPk_goodsdoc());
 			int res = singleObjectBO.executeUpdate(usql.toString(), spm);
 			
@@ -650,12 +650,12 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	private void checkIsBeUsed(GoodsVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_goods  \n") ;
-		sql.append("  FROM cn_stockin_b  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND pk_goods = ?  \n");
+		sql.append("SELECT pk_goods    ") ;
+		sql.append("  FROM cn_stockin_b    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND pk_goods = ?    ");
 		spm.addParam(pamvo.getPk_goods());
-		sql.append("   AND pk_corp = ?  \n");
+		sql.append("   AND pk_corp = ?    ");
 		spm.addParam(pamvo.getPk_corp());
 		boolean flag = singleObjectBO.isExists(pamvo.getPk_corp(), sql.toString(), spm);
 		if(flag){
@@ -720,11 +720,11 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	private void CheckStockNum(GoodsVO pamvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT sum(nvl(istocknum,0) - nvl(isellnum,0)) AS istocknum \n");
-		sql.append("  FROM cn_stocknum \n");
-		sql.append(" WHERE nvl(dr, 0) = 0 \n");
-		sql.append("   AND pk_goods = ? \n");
-		sql.append("   GROUP BY pk_goods \n");
+		sql.append("SELECT sum(nvl(istocknum,0) - nvl(isellnum,0)) AS istocknum   ");
+		sql.append("  FROM cn_stocknum   ");
+		sql.append(" WHERE nvl(dr, 0) = 0   ");
+		sql.append("   AND pk_goods = ?   ");
+		sql.append("   GROUP BY pk_goods   ");
 		spm.addParam(pamvo.getPk_goods());
 		List<StockNumVO> list = (List<StockNumVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockNumVO.class));
@@ -741,17 +741,17 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	@Override
 	public List<GoodsBoxVO> queryComboBox() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT c.pk_goodsspec AS id,  \n") ;
-		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS name,  \n") ; 
-		sql.append("       c.pk_goods,  \n") ; 
-		sql.append("       c.invspec,  \n") ; 
-		sql.append("       c.invtype,  \n") ; 
-		sql.append("       c.nprice,  \n") ; 
-		sql.append("       s.updatets AS tstamp  \n") ; 
-		sql.append("  FROM cn_goodsspec c  \n") ; 
-		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods  \n") ; 
-		sql.append(" WHERE nvl(c.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(s.dr, 0) = 0 \n");
+		sql.append("SELECT c.pk_goodsspec AS id,    ") ;
+		sql.append("       s.vgoodsname ||' '|| '(' || c.invspec || c.invtype || ')' AS name,    ") ; 
+		sql.append("       c.pk_goods,    ") ; 
+		sql.append("       c.invspec,    ") ; 
+		sql.append("       c.invtype,    ") ; 
+		sql.append("       c.nprice,    ") ; 
+		sql.append("       s.updatets AS tstamp    ") ; 
+		sql.append("  FROM cn_goodsspec c    ") ; 
+		sql.append("  LEFT JOIN cn_goods s ON c.pk_goods = s.pk_goods    ") ; 
+		sql.append(" WHERE nvl(c.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(s.dr, 0) = 0   ");
 		return (List<GoodsBoxVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(GoodsBoxVO.class));
 	}
@@ -849,9 +849,9 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		Map<String, String> map = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT pk_goodsspec, invspec, invtype \n");
-		sql.append("  FROM cn_stockin_b  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
+		sql.append("SELECT DISTINCT pk_goodsspec, invspec, invtype   ");
+		sql.append("  FROM cn_stockin_b    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		sql.append("   AND pk_goods = ? ");
 		spm.addParam(pk_goods);
 		List<StockInBVO> stblist = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -881,10 +881,10 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 	public List<GoodsSpecVO> queryGoodsSet(String pk_goods) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_goodsspec  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_goods = ? \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_goodsspec    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_goods = ?   ");
 		spm.addParam(pk_goods);
 		List<GoodsSpecVO> retlist = (List<GoodsSpecVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(GoodsSpecVO.class));
@@ -910,10 +910,10 @@ public class GoodsManageServiceImpl implements IGoodsManageService {
 		List<String> list = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT pk_goodsspec  \n");
-		sql.append("  FROM cn_stockin_b  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND pk_goods = ? \n");
+		sql.append("SELECT DISTINCT pk_goodsspec    ");
+		sql.append("  FROM cn_stockin_b    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND pk_goods = ?   ");
 		spm.addParam(pk_goods);
 		List<StockInBVO> stlist = (List<StockInBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(StockInBVO.class));
