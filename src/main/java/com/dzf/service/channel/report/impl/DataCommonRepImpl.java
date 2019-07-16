@@ -167,7 +167,7 @@ public class DataCommonRepImpl {
 		if (!StringUtil.isEmpty(qvo.getCuserid())) {
 			isQuery = false;
 			String condition = null;
-			List<String> qryPros = pubService.qryPros(qvo.getCuserid(), 2);
+			List<String> qryPros = pubService.qryPros(qvo.getCuserid(), type);
 			if (qryPros != null && qryPros.size() > 0) {
 				condition = SqlUtil.buildSqlForIn("b.vprovince", qryPros.toArray(new String[qryPros.size()]));
 				sql.append(" and (" + condition + " or b.userid=? ) ");
