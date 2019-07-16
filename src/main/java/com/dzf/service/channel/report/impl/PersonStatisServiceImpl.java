@@ -44,8 +44,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Autowired
 	private IPubService pubser;
 	
-	private static String[] str={"jms03","jms04","jms10"};
-	
 	Integer num = null;
 
 	@Override
