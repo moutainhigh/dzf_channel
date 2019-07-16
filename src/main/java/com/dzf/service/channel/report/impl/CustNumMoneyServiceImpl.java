@@ -696,23 +696,23 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,   ");
+		
 		sql.append("       SUM(CASE    ");
-		sql.append("             WHEN substr(t.deductdata, 1, 7) = ?    ");
-		sql.append("             AND ( ( nvl(substr(t.dchangetime, 1, 7),'1970-01') = ?   ");
-		sql.append("             AND t.vdeductstatus != 10 )    ");
-		sql.append("             OR nvl(substr(t.dchangetime, 1, 7),'1970-01') != ? )THEN   ");
-		spm.addParam(paramvo.getPeriod());
-		spm.addParam(paramvo.getPeriod());
+		sql.append("             WHEN substr(t.deductdata, 1, 7) = ?  THEN  ");
 		spm.addParam(paramvo.getPeriod());
 		sql.append("              1    ");
-		sql.append("                  WHEN t.vdeductstatus = 10 AND substr(t.dchangetime, 1, 7) = ?     ");
-		sql.append("                  AND nvl(substr(t.deductdata, 1, 7),'1970-01') != ? THEN   ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) -    ");
+		
+		sql.append("       SUM(CASE    ");
+		sql.append("             WHEN t.vdeductstatus = 10 AND substr(t.dchangetime, 1, 7) = ?  THEN   ");
 		spm.addParam(paramvo.getPeriod());
-		spm.addParam(paramvo.getPeriod());
-		sql.append("              -1    ");
+		sql.append("              1    ");
 		sql.append("             ELSE    ");
 		sql.append("              0    ");
 		sql.append("           END) AS num    ");
+		
 		sql.append("  FROM cn_contract t   ");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
@@ -762,22 +762,29 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT t.pk_corp,   ");
+		
 		// 扣款期间在查询期间，记录1
 		sql.append("       SUM(CASE    ");
 		sql.append("             WHEN t.deductdata >= ? AND t.deductdata <= ?  THEN   ");
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
 		sql.append("              1    ");
+		sql.append("             ELSE    ");
+		sql.append("              0    ");
+		sql.append("           END) -    ");
+		
 		// 作废日期在查询期间，记录-1
-		sql.append("                  WHEN t.vdeductstatus = 10    ");
-		sql.append("                  AND substr(t.dchangetime, 1, 10) >= ?   ");
-		sql.append("                  AND substr(t.dchangetime, 1, 10) <= ? THEN ");
+		sql.append("       SUM(CASE    ");
+		sql.append("           WHEN t.vdeductstatus = 10    ");
+		sql.append("            AND substr(t.dchangetime, 1, 10) >= ?   ");
+		sql.append("            AND substr(t.dchangetime, 1, 10) <= ? THEN ");
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
-		sql.append("              -1    ");
+		sql.append("              1    ");
 		sql.append("             ELSE    ");
 		sql.append("              0    ");
 		sql.append("           END) AS num    ");
+		
 		sql.append("  FROM cn_contract t   ");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
 		sql.append(" WHERE nvl(t.dr, 0) = 0   ");
@@ -801,7 +808,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		spm.addParam(paramvo.getBegdate());
 		spm.addParam(paramvo.getEnddate());
 		// 合同数量去掉补提单合同数
-		sql.append("             AND  nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5     ");
+		sql.append("     AND  nvl(ct.patchstatus,0) != 2 AND nvl(ct.patchstatus,0) != 5     ");
 		sql.append("   GROUP BY t.pk_corp   ");
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CustCountVO.class));
