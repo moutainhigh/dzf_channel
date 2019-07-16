@@ -807,6 +807,7 @@ function closeCx() {
  */
 function onCancel() {
 	$('#cbDialog').dialog('close');
+	$('#infoDialog').dialog('close');
 }
 
 /**
@@ -1516,7 +1517,8 @@ function showEdit(row) {
 	$('#infoform').form('clear');
 	$('#infoform').form('load', row);
 	initLogistics();
-	$('#ilogid').textbox('setValue', row.logname);
+	$('#ilogid').textbox('setValue', row.logid);
+	$('#ilogid').textbox('setText', row.logname);
 	if (row.children != null && row.children.length > 0) {
 		$('#icardGrid').datagrid('loadData', row.children);
 	}
@@ -1687,6 +1689,8 @@ function readonly(type) {
 	$("#memo").textbox('readonly', true);
 	$("#applyname").textbox('readonly', true);
 	$("#adate").textbox('readonly', true);
+	$("#audname").textbox('readonly', true);
+	$("#audate").textbox('readonly', true);
 	$("#logid").combobox('readonly', true);
 	$("#fcost").numberbox('readonly', true);
 	$("#fcode").textbox('readonly', true);
