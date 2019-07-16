@@ -67,9 +67,9 @@ public interface IMatCheckService {
 
 	/**
 	 * 查询上一次驳回原因
-	 * @param uservo
+	 * @param id 
 	 * @return
 	 */
-	String queryLastReason(UserVO uservo);
+	String queryLastReason(String id);
 
 }

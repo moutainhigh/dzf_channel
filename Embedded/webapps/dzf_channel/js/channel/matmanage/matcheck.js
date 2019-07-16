@@ -24,11 +24,12 @@ $(function(){
 
 
 function review(){
+	var row = $('#grid').datagrid('getSelected');
 	if($('#false').is(':checked')){
     	$('#reason').textbox({required:true});
     	 $('#reason').textbox({readonly:false});
     	$('#reason').textbox({prompt:'最多输入100字'});
-    	queryLastReason();
+    	queryLastReason(row.matbillid);
     }
 	if($('#true').is(':checked')){
     	$('#reason').textbox({required:false});
@@ -38,11 +39,12 @@ function review(){
     }
 }
 
-function queryLastReason(){
+function queryLastReason(matbillid){
 	$.ajax({
 		type : 'POST',
 		async : false,
 	    url : DZF.contextPath + '/matmanage/matcheck!queryLastReason.action',
+	    data : {matbillid : matbillid},
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result+ ')');
@@ -823,6 +825,7 @@ function showCard(row){
 		$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请审核');
 		$('#mat_add').form('clear');
 		$('#mat_add').form('load', row);
+		$('#reason').textbox('setValue','')
 		initCard();
 		userInfo(row.matbillid);
 	    $('.hid').css("display", ""); 

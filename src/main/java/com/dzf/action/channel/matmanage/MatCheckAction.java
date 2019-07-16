@@ -51,7 +51,6 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 			UserVO uservo = getLoginUserInfo();
 			checkUser(uservo);
 			List<MatOrderVO> mList = new ArrayList<MatOrderVO>();
-			String stype = getRequest().getParameter("stype");
 
 			MatOrderVO pamvo = new MatOrderVO();
 			QryParamVO qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), new QryParamVO());
@@ -197,8 +196,8 @@ public class MatCheckAction extends BaseAction<MatOrderVO> {
 	public void queryLastReason() {
 		Json json = new Json();
 		try {
-			UserVO uservo = getLoginUserInfo();
-			String reason = matcheck.queryLastReason(uservo);
+			String id = getRequest().getParameter("matbillid");
+			String reason = matcheck.queryLastReason(id);
 			json.setRows(reason);
 			json.setMsg("查询成功");
 			json.setSuccess(true);

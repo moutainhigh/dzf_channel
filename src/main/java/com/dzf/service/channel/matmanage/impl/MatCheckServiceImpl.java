@@ -14,7 +14,6 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.matmanage.MatOrderBVO;
 import com.dzf.model.channel.matmanage.MatOrderVO;
@@ -414,14 +413,9 @@ public class MatCheckServiceImpl implements IMatCheckService {
 	}
 
 	@Override
-	public String queryLastReason(UserVO uservo) {
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(uservo.getCuserid());
-		String sql = "select vreason from cn_materielbill where updatets = "+
-		"(select max(updatets) from cn_materielbill"+
-		" where nvl(dr,0) = 0 and vreason is not null and auditerid = ? )";
-		return (String) singleObjectBO.executeQuery(sql, spm, new ColumnProcessor("vreason"));
-	
+	public String queryLastReason(String id) {
+		MatOrderVO vo = (MatOrderVO) singleObjectBO.queryByPrimaryKey(MatOrderVO.class, id);
+		return vo.getVreason();
 	}
 	
 }
