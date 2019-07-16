@@ -115,7 +115,9 @@ public class AccountSetAction extends BaseAction<AccountSetVO> {
 			}
 			DZFDate stopdate = new DZFDate(data.getStopperiod());
 			int days = DateUtils.getDaysDiff(stopdate.getMillis(),new DZFDate().getMillis());
-			if(!StringUtil.isEmpty(data.getStopperiod()) && days>15){
+			DZFDate dzfDate = new DZFDate(data.getStopperiod());
+			if(dzfDate.compareTo(new DZFDate())<0 || 
+					(!StringUtil.isEmpty(data.getStopperiod()) && days>15)){
 				throw new BusinessException("停用时间需在15天之内！");
 			}
 			pubService.checkFunnode(uservo, IFunNode.CHANNEL_73);
