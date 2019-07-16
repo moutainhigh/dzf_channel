@@ -61,14 +61,12 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		if (corplist != null && corplist.size() > 0) {
 			
 			HashMap<String, Integer> queryEmployNum = queryEmployNum(corplist);
-			//HashMap<String, Integer> queryUserNum = queryUserNum(corplist);
 			HashMap<String, Integer> queryCustNum = queryCustNum(corplist);
 			List<PersonStatisVO> list = queryPersonStatis(corplist,user,type);
 			PersonStatisVO setVO=new PersonStatisVO();
 			PersonStatisVO getvo=new PersonStatisVO();
 			DataVO data=null;
 			CorpVO corpvo = null;
-			UserVO uservo = null;
 			String pk_corp =null;
 			
 			HashMap<String,Integer> Tmap = new HashMap<String,Integer>();
@@ -79,21 +77,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					data =map.get(pk_corp);
 					setVO = (PersonStatisVO)data;
 					
-					/*StringBuffer sql = new StringBuffer();
-					SQLParameter spm = new SQLParameter();
-					spm.addParam(pk_corp);
-					sql.append("  select * \n");
-					sql.append("   from cn_marketteam \n");
-					sql.append("   where nvl(dr,0)=0 and \n");
-					sql.append("   pk_corp = ? \n");
-					MarketTeamVO mvo = (MarketTeamVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(MarketTeamVO.class));
-				    if(mvo!=null){
-						setVO.setJms03(mvo.getManagernum());
-						setVO.setJms04(mvo.getDepartnum());
-						setVO.setJms10(mvo.getSellnum());
-						setVO.setPk_marketeam(mvo.getPk_marketeam());
-						setVO.setXnum(mvo.getManagernum()+mvo.getDepartnum()+mvo.getSellnum());
-				    }*/
 					setVO.setJms03(personStatisVO.getManagernum());
 					setVO.setJms04(personStatisVO.getDepartnum());
 					setVO.setJms10(personStatisVO.getSellnum());
@@ -109,13 +92,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 						setVO.setCorpname(corpvo.getUnitname());
 						setVO.setVprovname(corpvo.getCitycounty());
 					}
-					//setVO.setTotal(queryUserNum.get(pk_corp));
 					setVO.setCustnum(queryCustNum.get(pk_corp));
-					/*if(queryEmployNum!=null && queryEmployNum.indexOf(setVO)>=0){
-						getvo=queryEmployNum.get(queryEmployNum.indexOf(setVO));
-						setVO.setLznum(getvo.getLznum());
-						setVO.setLtotal(new DZFDouble(getvo.getLznum()).div(setVO.getTotal()+getvo.getLznum()).multiply(100));
-					}*/
 					
 					setVO.setAttributeValue(personStatisVO.getAreaname(),1);
 					
@@ -223,13 +200,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 */
 	private void setZhanBi(PersonStatisVO setVO,HashMap<String,Integer> Tmap,PersonStatisVO vo) {
 		String key=null;
-		/*if(Arrays.asList(str).contains(vo.getAreaname())){
-			key=setVO.getPk_corp()+"xs"+vo.getUserid();
-			if(!Tmap.containsKey(key)){
-				Tmap.put(key,1);
-				setVO.setXnum(setVO.getXnum()==null?1:(setVO.getXnum())+1);
-			}
-		}else*/ 
+		
 		if(!"jms01".equals(vo.getAreaname())){
 			key=setVO.getPk_corp()+"kj"+vo.getUserid();
 			if(!Tmap.containsKey(key)){
@@ -237,12 +208,6 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 				setVO.setKnum((setVO.getKnum()==null?1:(setVO.getKnum())+1));
 			}
 		}
-		/*if(setVO.getXnum()!=null && setVO.getXnum()>0){
-			setVO.setXtotal(new DZFDouble(setVO.getXnum()).div(setVO.getTotal()).multiply(100));
-		}
-		if(setVO.getKnum()!=null && setVO.getKnum()>0){
-			setVO.setKtotal(new DZFDouble(setVO.getKnum()).div(setVO.getTotal()).multiply(100));
-		}*/
 	}
 
 	/**

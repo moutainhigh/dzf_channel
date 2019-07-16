@@ -248,13 +248,6 @@ function opermatter(val, row, index) {
 }
 
 
-/*function initCombobox(){
-	$("#matfileid").combobox({
-		onShowPanel: function () {
-			initMatFile();
-        }
-    })
-}*/
 
 /**
  * 查询物料下拉
@@ -347,13 +340,7 @@ function edit(index){
 	$('#matfileid').combobox("readonly",true);
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
-	//$("#cost").numberbox('setValue',row.cost);
-	/*$("#cost").numberbox({
-	      precision:2,
-	});
-	$("#tmny").numberbox({
-	      precision:2,
-	});*/
+	
 	calMoney();
 	
 }

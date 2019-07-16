@@ -105,18 +105,11 @@ function initQry() {
 	});
 	queryBoxChange('#begdate','#enddate');
 	queryBoxChange('#bperiod','#eperiod');
-	/*
-	 * $("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
-	 * $("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
-	 * $("#jqj").html(parent.SYSTEM.PreDate+" 至 "+parent.SYSTEM.LoginDate);
-	 * $("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
-	 * $("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);
-	 */
+	
 
 	$("#status").combobox("setValue", 2);
 	$("#begdate").datebox("setValue", null);
 	$("#enddate").datebox("setValue", null);
-	// $("#jqj").html(parent.SYSTEM.PreDate+" 至 "+parent.SYSTEM.LoginDate);
 	$("#bperiod").datebox("setValue", null);
 	$("#eperiod").datebox("setValue", null);
 
@@ -151,22 +144,14 @@ function load(type) {
 	if ($('#qj').is(':checked')) {
 		bperiod = $("#bperiod").datebox('getValue');
 		eperiod = $("#eperiod").datebox('getValue');
-		/*
-		 * if(isEmpty(bperiod)){ Public.tips({ content : "申请开始日期不能为空", type : 2
-		 * }); return; } if(isEmpty(eperiod)){ Public.tips({ content :
-		 * "申请结束日期不能为空", type : 2 }); return; }
-		 */
+		
 		if (!isEmpty(bperiod) && !isEmpty(eperiod)) {
 			$('#jqj').html(bperiod + ' 至 ' + eperiod);
 		}
 	} else {
 		begdate = $("#begdate").datebox('getValue');
 		enddate = $("#enddate").datebox('getValue');
-		/*
-		 * if(isEmpty(begdate)){ Public.tips({ content : "录入开始日期不能为空", type : 2
-		 * }); return; } if(isEmpty(enddate)){ Public.tips({ content :
-		 * "录入结束日期不能为空", type : 2 }); return; }
-		 */
+		
 		if (!isEmpty(begdate) && !isEmpty(enddate)) {
 			$('#jqj').html(begdate + ' 至 ' + enddate);
 		}
@@ -235,11 +220,7 @@ function load(type) {
 							obj['uname'] = rows[i].uname;// 渠道经理
 							obj['proname'] = rows[i].proname;// 省（市）
 							obj['corpname'] = rows[i].corpname;
-							// '<a href="#"
-							// style="margin-bottom:0px;color:blue;"
-							// onclick="showDetail()">'
-							// +rows[i].corpname
-							// +'</a>';//加盟商
+							
 							obj['code'] = rows[i].code;// 合同编码
 							if (i == rows.length - 1) {// 一行数据
 								colnm = onlymap.get(rows[i].wlname + "/"
@@ -293,11 +274,7 @@ function load(type) {
 								obj['uname'] = rows[i].uname;// 渠道经理
 								obj['proname'] = rows[i].proname;// 省（市）
 								obj['corpname'] = rows[i].corpname;
-								// '<a href="#"
-								// style="margin-bottom:0px;color:blue;"
-								// onclick="showDetail()">'
-								// +rows[i].corpname
-								// +'</a>';//加盟商
+								
 								obj['code'] = rows[i].code;// 合同编码
 								if (i == rows.length - 1) {// 最后一行数据
 									datarray.push(obj);
@@ -716,11 +693,6 @@ function getcolumn(onlymap, onlycol, bperiod, eperiod, begdate, enddate,
 							title : '金额',
 							field : 'fcost',
 							align : 'center',
-							/*formatter : function(value, row) {
-								if (!isEmpty(row.matbillid)) {
-									return formatMny(value);
-								}
-							},*/
 							formatter : formatMny,
 						};
 						columnsb[5 + len * 2] = {
@@ -837,9 +809,6 @@ function initCard() {
 		striped : true,
 		rownumbers : true,
 		fitColumns : true,
-		/*
-		 * onClickCell: onClickCell, onAfterEdit: onAfterEdit,
-		 */
 		scrollbarSize : 0,
 		idField : 'matbillid',
 		height : 100,
@@ -1022,79 +991,6 @@ $(function(){ 
 	 });
 
 });		
-/*$(function() {
-	// 触发省选项  
-	$("#ipname").combobox(
-					{
-						onSelect : function() {
-							$("#icityname").combobox("setValue", ''); // 清空市  
-							$("#icountryname").combobox("setValue", ''); // 清空县  
-							var provinceid = $('#ipname').combobox('getValue');
-							$("#ivprovince").val(provinceid);
-									$.ajax({
-										type : 'POST',
-										async : false,
-										url : DZF.contextPath
-												+ '/matmanage/matcomm!queryCityByProId.action',
-										dataTye : 'json',
-										data : "provinceid=" + provinceid,
-										success : function(result) {
-											var result = eval('(' + result+ ')');
-											if (result.success) {
-												$("#icityname").combobox('loadData',result.rows);
-												
-											} else {
-												Public.tips({
-													content : result.msg,
-													type : 2
-												});
-											}
-										}
-									});
-						}
-
-				});
-	// 触发市选项
-	$("#icityname").combobox(
-			{
-				onSelect : function() {
-					$("#icountryname").combobox("setValue", ''); // 清空县  
-					var cityid = $('#icityname').combobox('getValue');
-					$("#ivcity").val(cityid);
-					$.ajax({
-						type : 'POST',
-						async : false,
-						url : DZF.contextPath
-								+ '/matmanage/matcomm!queryAreaByCid.action',
-						dataTye : 'json',
-						data : "cityid=" + cityid,
-						success : function(result) {
-							var result = eval('(' + result + ')');
-							if (result.success) {
-								$("#icountryname").combobox('loadData',result.rows);
-							} else {
-								Public.tips({
-									content : result.msg,
-									type : 2
-								});
-							}
-						}
-					});
-				}
-
-			});
-	
-	//触发县选项
-	$("#icountryname").combobox({
-		onSelect : function() {
-			var countryid = $('#icountryname').combobox('getValue');
-			$("#ivarea").val(countryid);
-		}
-	});
-			
-
-});
-*/
 
 function querycity(provinceid){
     $.ajax({
@@ -1178,78 +1074,7 @@ $(function(){ 
 	 });
 
 });		
-/*$(function() {
-	// 触发省选项  
-	$("#pname").combobox(
-					{
-						onSelect : function() {
-							$("#cityname").combobox("setValue", ''); // 清空市  
-							$("#countryname").combobox("setValue", ''); // 清空县  
-							var provinceid = $('#pname').combobox('getValue');
-							$("#vprovince").val(provinceid);
-									$.ajax({
-										type : 'POST',
-										async : false,
-										url : DZF.contextPath
-												+ '/matmanage/matcomm!queryCityByProId.action',
-										dataTye : 'json',
-										data : "provinceid=" + provinceid,
-										success : function(result) {
-											var result = eval('(' + result+ ')');
-											if (result.success) {
-												$("#cityname").combobox('loadData',result.rows);
-												
-											} else {
-												Public.tips({
-													content : result.msg,
-													type : 2
-												});
-											}
-										}
-									});
-						}
 
-				});
-	// 触发市选项
-	$("#cityname").combobox(
-			{
-				onSelect : function() {
-					$("#countryname").combobox("setValue", ''); // 清空县  
-					var cityid = $('#cityname').combobox('getValue');
-					$("#vcity").val(cityid);
-					$.ajax({
-						type : 'POST',
-						async : false,
-						url : DZF.contextPath
-								+ '/matmanage/matcomm!queryAreaByCid.action',
-						dataTye : 'json',
-						data : "cityid=" + cityid,
-						success : function(result) {
-							var result = eval('(' + result + ')');
-							if (result.success) {
-								$("#countryname").combobox('loadData',result.rows);
-							} else {
-								Public.tips({
-									content : result.msg,
-									type : 2
-								});
-							}
-						}
-					});
-				}
-
-			});
-	
-	//触发县选项
-	$("#countryname").combobox({
-		onSelect : function() {
-			var countryid = $('#countryname').combobox('getValue');
-			$("#varea").val(countryid);
-		}
-	});
-			
-
-});*/
 
 
 /**
@@ -1603,10 +1428,6 @@ function initCardDetail() {
 	$('#icardGrid').datagrid({
 		striped : true,
 		rownumbers : true,
-		// fitColumns : true,
-		/*
-		 * onClickCell: onClickCell, onAfterEdit: onAfterEdit,
-		 */
 		scrollbarSize : 0,
 		idField : 'matbillid',
 		height : 100,

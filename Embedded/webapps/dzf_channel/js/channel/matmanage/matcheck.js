@@ -95,15 +95,9 @@ function initQry(){
 	});
 	queryBoxChange('#begdate','#enddate');
 	queryBoxChange('#bperiod','#eperiod');
-	/*$("#begdate").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#enddate").datebox("setValue",parent.SYSTEM.LoginDate);
-	$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
-	$("#bperiod").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#eperiod").datebox("setValue",parent.SYSTEM.LoginDate);*/
 	
 	$("#begdate").datebox("setValue", null);
 	$("#enddate").datebox("setValue",null);
-	//$("#jqj").html(parent.SYSTEM.PreDate+" 至  "+parent.SYSTEM.LoginDate);
 	$("#bperiod").datebox("setValue", null);
 	$("#eperiod").datebox("setValue", null);
 	
@@ -233,9 +227,6 @@ function load(type){
 							obj['uname'] = rows[i].uname;//渠道经理
 							obj['proname'] = rows[i].proname;//省（市）
 							obj['corpname'] = rows[i].corpname;
-//							    '<a href="#" style="margin-bottom:0px;color:blue;" onclick="showDetail()">'
-//							    +rows[i].corpname
-//							    +'</a>';//加盟商
 							obj['code'] = rows[i].code;//合同编码
 							if(i == rows.length - 1){//一行数据
 								colnm = onlymap.get(rows[i].wlname+"/"+rows[i].unit);
@@ -286,9 +277,6 @@ function load(type){
 								obj['uname'] = rows[i].uname;//渠道经理
 								obj['proname'] = rows[i].proname;//省（市）
 								obj['corpname'] = rows[i].corpname;
-//									'<a href="#" style="margin-bottom:0px;color:blue;" onclick="showDetail()">'
-//								    +rows[i].corpname
-//								    +'</a>';//加盟商
 								obj['code'] = rows[i].code;//合同编码
 								if(i == rows.length - 1){//最后一行数据
 									datarray.push(obj);

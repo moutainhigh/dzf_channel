@@ -309,8 +309,6 @@ public class MatFileServiceImpl implements IMatFileService {
 
     private MaterielStockInVO queryIsRk(String id)  throws DZFWarpException {
 		
-		 //List<String> idList = Arrays.asList(ids.split(","));
-		// String condition = SqlUtil.buildSqlForIn("l.pk_materiel ",idList.toArray(new String[idList.size()]));
 		 StringBuffer sql = new StringBuffer();
 		 SQLParameter spm = new SQLParameter();
 		 spm.addParam(id);
