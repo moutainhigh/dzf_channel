@@ -132,11 +132,11 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 	private String qryBanchId(String cuserid) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT h.cuserid, h.pk_branchset  \n");
-		sql.append("  FROM br_user_branch h  \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
+		sql.append("SELECT h.cuserid, h.pk_branchset    ");
+		sql.append("  FROM br_user_branch h    ");
+		sql.append(" WHERE nvl(h.dr, 0) = 0    ");
 		if(!StringUtil.isEmpty(cuserid)){
-			sql.append(" AND h.cuserid = ? \n");
+			sql.append(" AND h.cuserid = ?   ");
 			spm.addParam(cuserid);
 		}
 		List<UserBranchVO> list = (List<UserBranchVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -163,13 +163,13 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 		Map<String, StringBuffer> nmap = new HashMap<String, StringBuffer>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT h.cuserid AS coperatorid, t.vname  \n");
-		sql.append("  FROM br_user_branch h  \n");
-		sql.append("  LEFT JOIN br_branchset t ON h.pk_branchset = t.pk_branchset  \n");
-		sql.append(" WHERE nvl(h.dr, 0) = 0  \n");
-		sql.append("   AND nvl(t.dr, 0) = 0  \n");
+		sql.append("SELECT h.cuserid AS coperatorid, t.vname    ");
+		sql.append("  FROM br_user_branch h    ");
+		sql.append("  LEFT JOIN br_branchset t ON h.pk_branchset = t.pk_branchset    ");
+		sql.append(" WHERE nvl(h.dr, 0) = 0    ");
+		sql.append("   AND nvl(t.dr, 0) = 0    ");
 		if(!StringUtil.isEmpty(cuserid)){
-			sql.append(" AND h.cuserid = ? \n");
+			sql.append(" AND h.cuserid = ?   ");
 			spm.addParam(cuserid);
 		}
 		List<BranchInstSetupVO> list = (List<BranchInstSetupVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -204,34 +204,34 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if (isqrynum) {
-			sql.append("SELECT COUNT(u.cuserid)  \n");
+			sql.append("SELECT COUNT(u.cuserid)    ");
 		} else {
-			sql.append("SELECT u.cuserid,  \n");
-			sql.append("       u.user_code,  \n");
-			sql.append("       u.user_name,  \n");
-			sql.append("       u.able_time,  \n");
-			sql.append("       u.disable_time,  \n");
-			sql.append("       nvl(u.locked_tag,'N') AS locked_tag,  \n");
-			sql.append("       u.user_note,  \n");
-			sql.append("       u.ismanager, \n");
-			sql.append("       u.pk_creatcorp, \n");
-			sql.append("       u.pk_corp, \n");
-			sql.append("       u.user_password \n");
+			sql.append("SELECT u.cuserid,    ");
+			sql.append("       u.user_code,    ");
+			sql.append("       u.user_name,    ");
+			sql.append("       u.able_time,    ");
+			sql.append("       u.disable_time,    ");
+			sql.append("       nvl(u.locked_tag,'N') AS locked_tag,    ");
+			sql.append("       u.user_note,    ");
+			sql.append("       u.ismanager,   ");
+			sql.append("       u.pk_creatcorp,   ");
+			sql.append("       u.pk_corp,   ");
+			sql.append("       u.user_password   ");
 		}
-		sql.append("  FROM sm_user u  \n");
-		sql.append(" WHERE nvl(u.dr, 0) = 0   \n");
-		sql.append("   AND u.xsstyle = 8 \n");// 分部管理用户
-		sql.append("   AND u.ismanager = 'Y' \n");
-		sql.append("   AND u.pk_corp = ?  \n");
+		sql.append("  FROM sm_user u    ");
+		sql.append(" WHERE nvl(u.dr, 0) = 0     ");
+		sql.append("   AND u.xsstyle = 8   ");// 分部管理用户
+		sql.append("   AND u.ismanager = 'Y'   ");
+		sql.append("   AND u.pk_corp = ?    ");
 		spm.addParam(pamvo.getPk_corp());
 		// 是否锁定
 		if (pamvo.getLocked_tag() != null && pamvo.getLocked_tag().booleanValue()) {
-			sql.append(" and u.locked_tag = 'Y' \n");
+			sql.append(" and u.locked_tag = 'Y'   ");
 		} else if(pamvo.getLocked_tag() != null && !pamvo.getLocked_tag().booleanValue()){
-			sql.append(" and nvl(u.locked_tag,'N') = 'N' \n");
+			sql.append(" and nvl(u.locked_tag,'N') = 'N'   ");
 		}
 		if(!StringUtil.isEmpty(pamvo.getCuserid())){
-			sql.append(" and u.cuserid = ? \n");
+			sql.append(" and u.cuserid = ?   ");
 			spm.addParam(pamvo.getCuserid());
 		}
 		qryvo.setSql(sql.toString());
@@ -339,10 +339,10 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 	private String getRoleId() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_role  \n");
-		sql.append("  FROM sm_role  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND role_code = ?   \n");
+		sql.append("SELECT pk_role    ");
+		sql.append("  FROM sm_role    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND role_code = ?     ");
 		spm.addParam(BRTJGL);
 		return (String) singleObjectBO.executeQuery(sql.toString(), spm, new ColumnProcessor("pk_role"));
 	}

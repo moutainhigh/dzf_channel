@@ -40,23 +40,23 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 	public List<ComboBoxVO> queryAccount(UserVO uservo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT p.pk_corp AS id, p.unitname AS name  \n");
-		sql.append("  FROM br_branchcorp p  \n");
-		sql.append("  LEFT JOIN sm_user r ON r.pk_department = p.pk_branchset  \n");
+		sql.append("SELECT DISTINCT p.pk_corp AS id, p.unitname AS name    ");
+		sql.append("  FROM br_branchcorp p    ");
+		sql.append("  LEFT JOIN sm_user r ON r.pk_department = p.pk_branchset    ");
 		sql.append("  INNER JOIN ");
-		sql.append("( SELECT DISTINCT p.fathercorp AS pk_corp  \n") ;
-		sql.append("  FROM bd_corp p  \n") ; 
-		sql.append(" WHERE nvl(p.dr, 0) = 0  \n") ; 
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'  \n") ; 
-		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  \n") ; 
-		sql.append("   AND p.isformal = 'Y'  \n") ; 
-		sql.append("   AND p.foreignname = ?  \n");
+		sql.append("( SELECT DISTINCT p.fathercorp AS pk_corp    ") ;
+		sql.append("  FROM bd_corp p    ") ; 
+		sql.append(" WHERE nvl(p.dr, 0) = 0    ") ; 
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'    ") ; 
+		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'    ") ; 
+		sql.append("   AND p.isformal = 'Y'    ") ; 
+		sql.append("   AND p.foreignname = ?    ");
 		spm.addParam(uservo.getUser_name());
-		sql.append("    ) f ON p.pk_corp = f.pk_corp \n");
-		sql.append(" WHERE nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'  \n");
-		sql.append("   AND r.cuserid = ?  \n");
+		sql.append("    ) f ON p.pk_corp = f.pk_corp   ");
+		sql.append(" WHERE nvl(p.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'    ");
+		sql.append("   AND r.cuserid = ?    ");
 		spm.addParam(uservo.getCuserid());
 		
 		List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -115,41 +115,41 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		if (isqrynum) {
-			sql.append("SELECT COUNT(DISTINCT c.pk_corp)  \n");
+			sql.append("SELECT COUNT(DISTINCT c.pk_corp)    ");
 		} else {
-			sql.append("SELECT DISTINCT c.pk_corp, c.unitname  \n");
+			sql.append("SELECT DISTINCT c.pk_corp, c.unitname    ");
 		}
-		sql.append("  FROM bd_corp c  \n");
-		sql.append("  LEFT JOIN br_branchcorp p ON c.fathercorp = p.pk_corp  \n");
-		sql.append("  LEFT JOIN sm_user r ON r.pk_department = p.pk_branchset  \n");
-		sql.append(" WHERE nvl(c.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'  \n");
-		sql.append("   AND nvl(c.isseal, 'N') = 'N'  \n");
-		sql.append("   AND nvl(c.isaccountcorp, 'N') = 'N'  \n");
-		sql.append("   AND c.isformal = 'Y'  \n");
-		sql.append("   AND r.cuserid = ?  \n");
+		sql.append("  FROM bd_corp c    ");
+		sql.append("  LEFT JOIN br_branchcorp p ON c.fathercorp = p.pk_corp    ");
+		sql.append("  LEFT JOIN sm_user r ON r.pk_department = p.pk_branchset    ");
+		sql.append(" WHERE nvl(c.dr, 0) = 0    ");
+		sql.append("   AND nvl(p.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND nvl(p.isseal, 'N') = 'N'    ");
+		sql.append("   AND nvl(c.isseal, 'N') = 'N'    ");
+		sql.append("   AND nvl(c.isaccountcorp, 'N') = 'N'    ");
+		sql.append("   AND c.isformal = 'Y'    ");
+		sql.append("   AND r.cuserid = ?    ");
 		spm.addParam(pamvo.getCuserid());
 		if (pamvo.getBegdate() != null) {
-			sql.append(" AND c.createdate >= ? \n");
+			sql.append(" AND c.createdate >= ?   ");
 			spm.addParam(pamvo.getBegdate());
 		}
 		if (pamvo.getEnddate() != null) {
-			sql.append(" AND c.createdate <= ? \n");
+			sql.append(" AND c.createdate <= ?   ");
 			spm.addParam(pamvo.getEnddate());
 		}
 		if (!StringUtil.isEmpty(pamvo.getPk_corp()) && !"pk_all".equals(pamvo.getPk_corp())) {
-			sql.append(" AND p.pk_corp = ? \n");
+			sql.append(" AND p.pk_corp = ?   ");
 			spm.addParam(pamvo.getPk_corp());
 		}
 		if (!StringUtil.isEmpty(pamvo.getCorpkcode())) {
-			sql.append(" AND c.innercode like ? \n");
+			sql.append(" AND c.innercode like ?   ");
 			spm.addParam("%" + pamvo.getCorpkcode() + "%");
 		}
 		// 销售人员
 		if (!StringUtil.isEmpty(pamvo.getUser_name())) {
-			sql.append(" AND c.foreignname = ? \n");
+			sql.append(" AND c.foreignname = ?   ");
 			spm.addParam(pamvo.getUser_name());
 		}
 		

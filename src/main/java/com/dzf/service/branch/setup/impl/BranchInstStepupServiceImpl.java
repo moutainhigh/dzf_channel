@@ -57,15 +57,15 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(data.getVname());
-		sql.append("select \n");
-		sql.append("  pk_branchset \n");
-		sql.append("  from br_branchset \n");
-		sql.append("  where nvl(dr,0) = 0 and \n");
+		sql.append("select   ");
+		sql.append("  pk_branchset   ");
+		sql.append("  from br_branchset   ");
+		sql.append("  where nvl(dr,0) = 0 and   ");
 		if(type!=null && "1".equals(type.toString())){//修改机构
-			sql.append(" vname = ? and pk_branchset!= ? \n");
+			sql.append(" vname = ? and pk_branchset!= ?   ");
 			spm.addParam(data.getPk_branchset());
 		}else{
-			sql.append(" vname = ? \n");
+			sql.append(" vname = ?   ");
 		}
 		
 		BranchInstSetupVO bvo = (BranchInstSetupVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupVO.class));
@@ -117,11 +117,11 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		StringBuffer esql = new StringBuffer();
 		SQLParameter espm=new SQLParameter();
 		espm.addParam(vo.getVname());
-		esql.append("  select def12 vname \n");
-		esql.append("    from bd_corp \n");
-		esql.append("    where nvl(dr,0) = 0 and \n");
-		esql.append("    isaccountcorp = 'Y' and \n");
-		esql.append("    def12 = ? \n");
+		esql.append("  select def12 vname   ");
+		esql.append("    from bd_corp   ");
+		esql.append("    where nvl(dr,0) = 0 and   ");
+		esql.append("    isaccountcorp = 'Y' and   ");
+		esql.append("    def12 = ?   ");
 		CorpVO corp = (CorpVO) singleObjectBO.executeQuery(esql.toString(), espm, new BeanProcessor(CorpVO.class));
 		if(corp==null){
 			throw new BusinessException("此企业识别号不存在");
@@ -134,11 +134,11 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(vo.getPk_corp());
-		sql.append("select \n");
-		sql.append("  pk_corp \n");
-		sql.append("  from br_branchcorp \n");
-		sql.append("  where nvl(dr,0) = 0 and \n");
-		sql.append("  pk_corp = ? \n");
+		sql.append("select   ");
+		sql.append("  pk_corp   ");
+		sql.append("  from br_branchcorp   ");
+		sql.append("  where nvl(dr,0) = 0 and   ");
+		sql.append("  pk_corp = ?   ");
 		
 		BranchInstSetupBVO bvo = (BranchInstSetupBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupBVO.class));
 		if(bvo!=null){
@@ -210,11 +210,11 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm=new SQLParameter();
 		spm.addParam(entnumber);
-		sql.append(" select\n");
-		sql.append("    pk_corp,def12 vname,unitname,linkman2 linkman,phone1 phone \n");
-		sql.append("    from bd_corp \n");
-		sql.append("    where nvl(dr,0)=0 and def12 is not null \n");
-		sql.append("    and def12 =? \n");
+		sql.append(" select  ");
+		sql.append("    pk_corp,def12 vname,unitname,linkman2 linkman,phone1 phone   ");
+		sql.append("    from bd_corp   ");
+		sql.append("    where nvl(dr,0)=0 and def12 is not null   ");
+		sql.append("    and def12 =?   ");
 		BranchInstSetupBVO corpvo = (BranchInstSetupBVO) singleObjectBO.executeQuery(sql.toString(), spm, new BeanProcessor(BranchInstSetupBVO.class));
 		if(corpvo!=null){
 			QueryDeCodeUtils.decKeyUtil(new String[] { "unitname", "phone" }, corpvo, 1);
@@ -319,16 +319,16 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 			}else{
 				spm.addParam(list.get(0).getPk_branchset());
 			}
-			ssql.append(" select \n");
-			ssql.append("   bc.pk_branchcorp,bc.vname,\n");
-			ssql.append("   bc.linkman,bc.phone,bc.unitname,\n");
-			ssql.append("   bc.isseal,bc.vmemo,bc.updatets \n");
-			ssql.append("   from br_branchset bs \n");
-			ssql.append("   right join br_branchcorp bc on \n");
-			ssql.append("   bs.pk_branchset = bc.pk_branchset \n");
-			ssql.append("   where nvl(bs.dr,0) = 0 and \n");
-			ssql.append("   nvl(bc.dr,0) = 0 and \n");
-			ssql.append("   bs.pk_branchset = ? \n");
+			ssql.append(" select   ");
+			ssql.append("   bc.pk_branchcorp,bc.vname,  ");
+			ssql.append("   bc.linkman,bc.phone,bc.unitname,  ");
+			ssql.append("   bc.isseal,bc.vmemo,bc.updatets   ");
+			ssql.append("   from br_branchset bs   ");
+			ssql.append("   right join br_branchcorp bc on   ");
+			ssql.append("   bs.pk_branchset = bc.pk_branchset   ");
+			ssql.append("   where nvl(bs.dr,0) = 0 and   ");
+			ssql.append("   nvl(bc.dr,0) = 0 and   ");
+			ssql.append("   bs.pk_branchset = ?   ");
 			List<BranchInstSetupBVO> bvolist = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(ssql.toString(), spm, new BeanListProcessor(BranchInstSetupBVO.class));
 			List<BranchInstSetupVO> newlist = new ArrayList<BranchInstSetupVO>();
 			newlist.add(vo);
@@ -359,16 +359,16 @@ public class BranchInstStepupServiceImpl implements IBranchInstStepupService {
 			spm.addParam(param.getPk_currency());//主键id
 		}
 		
-		ssql.append(" select \n");
-		ssql.append("   bc.pk_branchcorp,bc.vname,\n");
-		ssql.append("   bc.linkman,bc.phone,bc.unitname,\n");
-		ssql.append("   bc.isseal,bc.vmemo,bc.updatets \n");
-		ssql.append("   from br_branchset bs \n");
-		ssql.append("   right join br_branchcorp bc on \n");
-		ssql.append("   bs.pk_branchset = bc.pk_branchset \n");
-		ssql.append("   where nvl(bs.dr,0) = 0 and \n");
-		ssql.append("   nvl(bc.dr,0) = 0 and \n");
-		ssql.append("   bs.pk_branchset = ? \n");
+		ssql.append(" select   ");
+		ssql.append("   bc.pk_branchcorp,bc.vname,  ");
+		ssql.append("   bc.linkman,bc.phone,bc.unitname,  ");
+		ssql.append("   bc.isseal,bc.vmemo,bc.updatets   ");
+		ssql.append("   from br_branchset bs   ");
+		ssql.append("   right join br_branchcorp bc on   ");
+		ssql.append("   bs.pk_branchset = bc.pk_branchset   ");
+		ssql.append("   where nvl(bs.dr,0) = 0 and   ");
+		ssql.append("   nvl(bc.dr,0) = 0 and   ");
+		ssql.append("   bs.pk_branchset = ?   ");
 		List<BranchInstSetupBVO> bvolist = (List<BranchInstSetupBVO>) singleObjectBO.executeQuery(ssql.toString(), spm, new BeanListProcessor(BranchInstSetupBVO.class));
 		if(bvolist!=null && bvolist.size()>0){
 			map.put("1", bvolist);
