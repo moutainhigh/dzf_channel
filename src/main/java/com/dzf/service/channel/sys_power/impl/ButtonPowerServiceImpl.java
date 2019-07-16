@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dzf.dao.bs.SingleObjectBO;
-import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.sys_power.ButtonVO;
 import com.dzf.model.channel.sys_power.RoleButtonVO;
@@ -23,11 +22,11 @@ public class ButtonPowerServiceImpl implements IButtonPowerService {
 	@Override
 	public List<ButtonVO> queryHead() throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select sr.pk_role, sr.role_name, sr.role_code \n");
-		sql.append("   from sm_role sr \n");
-		sql.append("  where sr.roletype = 8 \n");
-//		sql.append("    and sr.role_code != 'jms01' \n");
-		sql.append("    and nvl(sr.dr, 0) = 0 \n");
+		sql.append(" select sr.pk_role, sr.role_name, sr.role_code   ");
+		sql.append("   from sm_role sr   ");
+		sql.append("  where sr.roletype = 8   ");
+//		sql.append("    and sr.role_code != 'jms01'   ");
+		sql.append("    and nvl(sr.dr, 0) = 0   ");
 		List<ButtonVO> list = (List<ButtonVO>) singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(ButtonVO.class));
 		return list;
 	}
@@ -35,19 +34,19 @@ public class ButtonPowerServiceImpl implements IButtonPowerService {
     @Override
     public List<ButtonVO> query() throws DZFWarpException {
     	StringBuffer sql = new StringBuffer();
-		sql.append(" select but.but_name, \n");
-		sql.append("        but.js_id, \n");
-		sql.append("        but.js_method, \n");
-		sql.append("        but.pk_button, \n");
-		sql.append("        fun.fun_name, \n");
-		sql.append("        fun.pk_funnode, \n");
-		sql.append("        r.role_code \n");
-		sql.append("   from sm_button but \n");
-		sql.append("   left join sm_funnode fun on but.pk_funnode = fun.pk_funnode \n");
-		sql.append("   left join sm_role_button rbu on but.pk_button = rbu.pk_button \n");
-		sql.append("   left join sm_role  r on rbu.pk_role=r.pk_role \n");
-		sql.append(" where nvl(but.dr,0)=0 and nvl(but.isseal,'N')='N' \n");
-		sql.append(" order by but.ts  \n");
+		sql.append(" select but.but_name,   ");
+		sql.append("        but.js_id,   ");
+		sql.append("        but.js_method,   ");
+		sql.append("        but.pk_button,   ");
+		sql.append("        fun.fun_name,   ");
+		sql.append("        fun.pk_funnode,   ");
+		sql.append("        r.role_code   ");
+		sql.append("   from sm_button but   ");
+		sql.append("   left join sm_funnode fun on but.pk_funnode = fun.pk_funnode   ");
+		sql.append("   left join sm_role_button rbu on but.pk_button = rbu.pk_button   ");
+		sql.append("   left join sm_role  r on rbu.pk_role=r.pk_role   ");
+		sql.append(" where nvl(but.dr,0)=0 and nvl(but.isseal,'N')='N'   ");
+		sql.append(" order by but.ts    ");
 		List<ButtonVO> list = (List<ButtonVO>) singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(ButtonVO.class));
 		ButtonVO getvo=new ButtonVO();
 		List<ButtonVO> retlist =new ArrayList<>();

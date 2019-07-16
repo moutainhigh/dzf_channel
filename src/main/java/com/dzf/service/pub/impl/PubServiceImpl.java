@@ -104,11 +104,11 @@ public class PubServiceImpl implements IPubService {
 	public Map<String, ChnAreaVO> queryLargeArea() throws DZFWarpException {
 		Map<String, ChnAreaVO> lareamap = new HashMap<String, ChnAreaVO>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT b.vprovince AS coperatorid, a.areaname, a.areacode, a.userid \n");
-		sql.append("  FROM cn_chnarea a \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea \n");
-		sql.append(" WHERE nvl(a.dr, 0) = 0 \n");
-		sql.append("   AND nvl(b.dr, 0) = 0 \n");
+		sql.append("SELECT b.vprovince AS coperatorid, a.areaname, a.areacode, a.userid   ");
+		sql.append("  FROM cn_chnarea a   ");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON a.pk_chnarea = b.pk_chnarea   ");
+		sql.append(" WHERE nvl(a.dr, 0) = 0   ");
+		sql.append("   AND nvl(b.dr, 0) = 0   ");
 		List<ChnAreaVO> areaVOs = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(ChnAreaVO.class));
 		if (areaVOs != null && areaVOs.size() > 0) {
@@ -126,11 +126,11 @@ public class PubServiceImpl implements IPubService {
 	public Map<Integer, List<String>> getProviceCorp() throws DZFWarpException {
 		Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT account.pk_corp, account.vprovince \n");
-		sql.append("  FROM bd_account account \n");
-		sql.append("   Where nvl(account.ischannel, 'N') = 'Y' \n");
-		sql.append("   AND nvl(account.isaccountcorp, 'N') = 'Y' \n");
-		sql.append("   AND nvl(account.dr,0) = 0 \n");
+		sql.append("SELECT account.pk_corp, account.vprovince   ");
+		sql.append("  FROM bd_account account   ");
+		sql.append("   Where nvl(account.ischannel, 'N') = 'Y'   ");
+		sql.append("   AND nvl(account.isaccountcorp, 'N') = 'Y'   ");
+		sql.append("   AND nvl(account.dr,0) = 0   ");
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(AccountVO.class));
 		if (list != null && list.size() > 0) {
@@ -231,17 +231,17 @@ public class PubServiceImpl implements IPubService {
 			}
 		} else {
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT * \n");
-			sql.append(" FROM cn_chnarea_b \n");
-			sql.append(" WHERE vprovince = (SELECT vprovince \n");
-			sql.append(" FROM bd_account \n");
-			sql.append(" WHERE nvl(dr, 0) = 0 \n");
-			sql.append(" AND nvl(ischannel, 'N') = 'Y' \n");
-			sql.append(" AND nvl(isaccountcorp, 'N') = 'Y' \n");
-			sql.append(" AND pk_corp = ? ) \n");
-			sql.append(" AND nvl(isCharge, 'N') = 'Y' \n");
-			sql.append(" AND nvl(type,0) = 1 \n");
-			sql.append(" AND nvl(dr,0) = 0 \n");
+			sql.append("SELECT *   ");
+			sql.append(" FROM cn_chnarea_b   ");
+			sql.append(" WHERE vprovince = (SELECT vprovince   ");
+			sql.append(" FROM bd_account   ");
+			sql.append(" WHERE nvl(dr, 0) = 0   ");
+			sql.append(" AND nvl(ischannel, 'N') = 'Y'   ");
+			sql.append(" AND nvl(isaccountcorp, 'N') = 'Y'   ");
+			sql.append(" AND pk_corp = ? )   ");
+			sql.append(" AND nvl(isCharge, 'N') = 'Y'   ");
+			sql.append(" AND nvl(type,0) = 1   ");
+			sql.append(" AND nvl(dr,0) = 0   ");
 			spm = new SQLParameter();
 			spm.addParam(pk_corp);
 			List<ChnAreaBVO> blist = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -269,12 +269,12 @@ public class PubServiceImpl implements IPubService {
 		Map<String, UserVO> map = new HashMap<String, UserVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT account.pk_corp, b.userid cuserid,u.user_name \n");
-		sql.append("  FROM bd_account account  \n");
-		sql.append("  LEFT JOIN cn_chnarea_b b ON account.pk_corp = b.pk_corp  \n");
-		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid  \n") ; 
-		sql.append("   Where nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.type, 0) = ? \n");
+		sql.append("SELECT account.pk_corp, b.userid cuserid,u.user_name   ");
+		sql.append("  FROM bd_account account    ");
+		sql.append("  LEFT JOIN cn_chnarea_b b ON account.pk_corp = b.pk_corp    ");
+		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid    ") ; 
+		sql.append("   Where nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(b.type, 0) = ?   ");
 		spm.addParam(qrytype);
 		List<UserVO> list = (List<UserVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(UserVO.class));
@@ -299,11 +299,11 @@ public class PubServiceImpl implements IPubService {
 	private Map<Integer, String> qryProvMap() throws DZFWarpException {
 		Map<Integer, String> promap = new HashMap<Integer, String>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT DISTINCT b.vprovince, b.userid  \n");
-		sql.append("  FROM cn_chnarea_b b  \n");
-		sql.append(" WHERE nvl(b.dr, 0) = 0  \n");
-		sql.append("   AND nvl(b.type, 0) = 1  \n");
-		sql.append("   AND nvl(b.ischarge, 'N') = 'Y' \n");
+		sql.append("SELECT DISTINCT b.vprovince, b.userid    ");
+		sql.append("  FROM cn_chnarea_b b    ");
+		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
+		sql.append("   AND nvl(b.type, 0) = 1    ");
+		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'   ");
 		List<ChnAreaBVO> list = (List<ChnAreaBVO>) singleObjectBO.executeQuery(sql.toString(), null,
 				new BeanListProcessor(ChnAreaBVO.class));
 		if (list != null && list.size() > 0) {
@@ -323,12 +323,12 @@ public class PubServiceImpl implements IPubService {
 		Map<Integer, String> promap = new HashMap<Integer, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname vprovname, b.vprovince  \n");
-		sql.append("  from cn_chnarea_b b  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = ? \n");
+		sql.append("select a.areaname vprovname, b.vprovince    ");
+		sql.append("  from cn_chnarea_b b    ");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
+		sql.append(" where nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(a.dr, 0) = 0    ");
+		sql.append("   and b.type = ?   ");
 		spm.addParam(type);
 		if (!StringUtil.isEmpty(areaname)) {
 			sql.append(" and a.areaname = ?");
@@ -349,13 +349,13 @@ public class PubServiceImpl implements IPubService {
 		Map<Integer, ChnAreaVO> chnMap = new HashMap<Integer, ChnAreaVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr,b.vprovname vprovnames \n");
-		sql.append("  from cn_chnarea_b b  \n");
-		sql.append("  LEFT JOIN cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid  \n") ; 
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = ? \n");
+		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr,b.vprovname vprovnames   ");
+		sql.append("  from cn_chnarea_b b    ");
+		sql.append("  LEFT JOIN cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
+		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid    ") ; 
+		sql.append(" where nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(a.dr, 0) = 0    ");
+		sql.append("   and b.type = ?   ");
 		spm.addParam(type);
 		if (!StringUtil.isEmpty(areaname)) {
 			sql.append(" and a.areaname = ?");
@@ -377,14 +377,14 @@ public class PubServiceImpl implements IPubService {
 	public String getAreaName(Integer vprovince, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname \n");
-		sql.append("  from cn_chnarea_b b  \n");
-		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea  \n");
-		sql.append(" where nvl(b.dr, 0) = 0  \n");
-		sql.append("   and nvl(a.dr, 0) = 0  \n");
-		sql.append("   and b.type = ? \n");
+		sql.append("select a.areaname   ");
+		sql.append("  from cn_chnarea_b b    ");
+		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
+		sql.append(" where nvl(b.dr, 0) = 0    ");
+		sql.append("   and nvl(a.dr, 0) = 0    ");
+		sql.append("   and b.type = ?   ");
 		spm.addParam(type);
-		sql.append("   and b.vprovince = ? \n");
+		sql.append("   and b.vprovince = ?   ");
 		spm.addParam(vprovince);
 		List<ChnAreaVO> list = (List<ChnAreaVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(ChnAreaVO.class));
@@ -443,16 +443,16 @@ public class PubServiceImpl implements IPubService {
 		Integer reint = null;
 		StringBuffer buf = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		buf.append(" select to_char(cn.idatalevel) ct\n");
-		buf.append("   from sm_role sr\n");
-		buf.append("  right join sm_user_role ur on sr.pk_role = ur.pk_role \n");
-		buf.append("  right join cn_datapower cn on sr.pk_role=cn.pk_role   \n");
-		buf.append("  where sr.roletype =? \n");
-		buf.append("    and sr.pk_corp = ? \n");
-		buf.append("    and nvl(sr.dr, 0) = 0\n");
-		buf.append("    and nvl(sr.seal, 'N') = 'N'\n");
-		buf.append("     and nvl(ur.dr, 0) = 0\n");
-		buf.append("     and ur.cuserid = ?\n");
+		buf.append(" select to_char(cn.idatalevel) ct  ");
+		buf.append("   from sm_role sr  ");
+		buf.append("  right join sm_user_role ur on sr.pk_role = ur.pk_role   ");
+		buf.append("  right join cn_datapower cn on sr.pk_role=cn.pk_role     ");
+		buf.append("  where sr.roletype =?   ");
+		buf.append("    and sr.pk_corp = ?   ");
+		buf.append("    and nvl(sr.dr, 0) = 0  ");
+		buf.append("    and nvl(sr.seal, 'N') = 'N'  ");
+		buf.append("     and nvl(ur.dr, 0) = 0  ");
+		buf.append("     and ur.cuserid = ?  ");
 		sp.addParam(7);
 		sp.addParam(IDefaultValue.DefaultGroup);
 		sp.addParam(cuserid);
@@ -529,12 +529,12 @@ public class PubServiceImpl implements IPubService {
 	public List<String> qryPros(String cuserid, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("  select distinct to_char(vprovince) vprovince \n");
-		sql.append("   from cn_chnarea_b b\n");
-		sql.append("  where nvl(b.dr, 0) = 0\n");
-		sql.append("    and b.type = ?\n");
-		sql.append("    and nvl(b.ischarge, 'N') = 'Y'\n");
-		sql.append("    and b.userid = ? \n");
+		sql.append("  select distinct to_char(vprovince) vprovince   ");
+		sql.append("   from cn_chnarea_b b  ");
+		sql.append("  where nvl(b.dr, 0) = 0  ");
+		sql.append("    and b.type = ?  ");
+		sql.append("    and nvl(b.ischarge, 'N') = 'Y'  ");
+		sql.append("    and b.userid = ?   ");
 		sp.addParam(type);
 		sp.addParam(cuserid);
 		List<String> vos = (List<String>) singleObjectBO.executeQuery(sql.toString(), sp,
@@ -585,15 +585,15 @@ public class PubServiceImpl implements IPubService {
 		List<String> list = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT l.role_code  role_code \n");
-		sql.append("  FROM sm_role l  \n");
-		sql.append("  LEFT JOIN sm_user_role ul ON l.pk_role = ul.pk_role  \n");
-		sql.append("  LEFT JOIN sm_user r ON ul.cuserid = r.cuserid  \n");
-		sql.append(" WHERE nvl(l.dr, 0) = 0  \n");
-		sql.append("   AND nvl(ul.dr, 0) = 0  \n");
-		sql.append("   AND nvl(r.dr, 0) = 0  \n");
-		sql.append("   AND l.roletype = 7  \n");
-		sql.append("   AND r.cuserid = ? \n");
+		sql.append("SELECT DISTINCT l.role_code  role_code   ");
+		sql.append("  FROM sm_role l    ");
+		sql.append("  LEFT JOIN sm_user_role ul ON l.pk_role = ul.pk_role    ");
+		sql.append("  LEFT JOIN sm_user r ON ul.cuserid = r.cuserid    ");
+		sql.append(" WHERE nvl(l.dr, 0) = 0    ");
+		sql.append("   AND nvl(ul.dr, 0) = 0    ");
+		sql.append("   AND nvl(r.dr, 0) = 0    ");
+		sql.append("   AND l.roletype = 7    ");
+		sql.append("   AND r.cuserid = ?   ");
 		spm.addParam(cuserid);
 		List<UserRoleVO> ret = (List<UserRoleVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(UserRoleVO.class));
@@ -658,7 +658,7 @@ public class PubServiceImpl implements IPubService {
 	private List<String> queryProvince(String cuserid, Integer datalevel, Integer datatype) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select distinct to_char(b.vprovince) \n");
+		sql.append("select distinct to_char(b.vprovince)   ");
 		sql.append("  from cn_chnarea_b b");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea");
 		sql.append(" where nvl(b.dr, 0) = 0");
@@ -703,10 +703,10 @@ public class PubServiceImpl implements IPubService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		//1、查询是否为总经理
-		sql.append("SELECT vdeptuserid  \n") ;
-		sql.append("  FROM cn_leaderset  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND vdeptuserid = ?  \n");
+		sql.append("SELECT vdeptuserid    ") ;
+		sql.append("  FROM cn_leaderset    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND vdeptuserid = ?    ");
 		spm.addParam(cuserid);
 		boolean flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
 		if(flag){
@@ -715,12 +715,12 @@ public class PubServiceImpl implements IPubService {
 		//2、查询是否为区总
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("SELECT userid  \n") ;
-		sql.append("  FROM cn_chnarea  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND userid = ?  \n");
+		sql.append("SELECT userid    ") ;
+		sql.append("  FROM cn_chnarea    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND userid = ?    ");
 		spm.addParam(cuserid);
-		sql.append("   AND type = ?  \n");
+		sql.append("   AND type = ?    ");
 		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
 		if(flag){
@@ -729,12 +729,12 @@ public class PubServiceImpl implements IPubService {
 		//3、查询是否为渠道经理
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("SELECT userid  \n") ;
-		sql.append("  FROM cn_chnarea_b  \n") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0  \n") ; 
-		sql.append("   AND userid = ?  \n");
+		sql.append("SELECT userid    ") ;
+		sql.append("  FROM cn_chnarea_b    ") ; 
+		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("   AND userid = ?    ");
 		spm.addParam(cuserid);
-		sql.append("   AND type = ?  \n");
+		sql.append("   AND type = ?    ");
 		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
 		if(flag){

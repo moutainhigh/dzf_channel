@@ -94,23 +94,23 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT account.pk_corp,  \n");
-		sql.append("       account.fathercorp,  \n");
-		sql.append("       account.innercode AS corpcode,  \n");
-		sql.append("       account.unitname AS corpname,  \n");
-		sql.append("       account.channeltype,  \n");
-		sql.append("       d.pk_deductrate,  \n"); 
-		sql.append("       d.inewrate,  \n"); 
-		sql.append("       d.irenewrate,  \n"); 
-		sql.append("       d.lastmodifypsnid,  \n"); 
-		sql.append("       u.user_name lastmodifypsn,  \n"); 
-		sql.append("       d.lastmodifydate  \n") ; 
-		sql.append("  FROM bd_account account  \n");
-		sql.append("  LEFT JOIN cn_deductrate d ON account.pk_corp = d.pk_corp  \n");
-		sql.append("  LEFT JOIN sm_user u ON d.lastmodifypsnid = u.cuserid  \n") ; 
+		sql.append("SELECT account.pk_corp,    ");
+		sql.append("       account.fathercorp,    ");
+		sql.append("       account.innercode AS corpcode,    ");
+		sql.append("       account.unitname AS corpname,    ");
+		sql.append("       account.channeltype,    ");
+		sql.append("       d.pk_deductrate,    "); 
+		sql.append("       d.inewrate,    "); 
+		sql.append("       d.irenewrate,    "); 
+		sql.append("       d.lastmodifypsnid,    "); 
+		sql.append("       u.user_name lastmodifypsn,    "); 
+		sql.append("       d.lastmodifydate    ") ; 
+		sql.append("  FROM bd_account account    ");
+		sql.append("  LEFT JOIN cn_deductrate d ON account.pk_corp = d.pk_corp    ");
+		sql.append("  LEFT JOIN sm_user u ON d.lastmodifypsnid = u.cuserid    ") ; 
 		sql.append(" WHERE ").append(QueryUtil.getWhereSql());
-		sql.append("   AND nvl(d.dr, 0) = 0  \n"); 
-		sql.append("   AND account.fathercorp = '000001'  \n");
+		sql.append("   AND nvl(d.dr, 0) = 0    "); 
+		sql.append("   AND account.fathercorp = '000001'    ");
 		sql.append("   AND (account.drelievedate IS NULL OR account.drelievedate > ?)");
 		spm.addParam(String.valueOf(new DZFDate()));
 		sql.append(" ORDER BY account.innercode ASC");
@@ -209,10 +209,10 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	public DeductRateVO queryDeductByField(String field, String value) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT *  \n");
-		sql.append("  FROM cn_deductrate  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND ").append(field).append(" = ? \n");
+		sql.append("SELECT *    ");
+		sql.append("  FROM cn_deductrate    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND ").append(field).append(" = ?   ");
 		spm.addParam(value);
 		List<DeductRateVO> list = (List<DeductRateVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(DeductRateVO.class));
@@ -312,11 +312,11 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		Map<String, String> map = new HashMap<String, String>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT DISTINCT pk_corp, innercode \n");
-		sql.append("  FROM bd_account acc  \n");
-		sql.append(" WHERE nvl(dr, 0) = 0  \n");
-		sql.append("   AND nvl(ischannel, 'N') = 'Y'  \n");
-		sql.append("   AND (drelievedate IS NULL OR drelievedate > ?) \n");
+		sql.append("SELECT DISTINCT pk_corp, innercode   ");
+		sql.append("  FROM bd_account acc    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
+		sql.append("   AND nvl(ischannel, 'N') = 'Y'    ");
+		sql.append("   AND (drelievedate IS NULL OR drelievedate > ?)   ");
 		spm.addParam(String.valueOf(new DZFDate()));
 		List<AccountVO> list = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(AccountVO.class));
@@ -333,13 +333,13 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	public List<DeductRateLogVO> queryLog(String fathercorp, String pk_deductrate) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT g.inewrate,g.irenewrate,g.coperatorid,g.doperatedate,u.user_name coperator \n");
-		sql.append("  FROM cn_deductratelog g \n");
-		sql.append("  LEFT JOIN sm_user u ON g.coperatorid = u.cuserid  \n") ; 
-		sql.append(" WHERE nvl(g.dr, 0) = 0  \n");
-		sql.append("   AND g.fathercorp = ?  \n");
+		sql.append("SELECT g.inewrate,g.irenewrate,g.coperatorid,g.doperatedate,u.user_name coperator   ");
+		sql.append("  FROM cn_deductratelog g   ");
+		sql.append("  LEFT JOIN sm_user u ON g.coperatorid = u.cuserid    ") ; 
+		sql.append(" WHERE nvl(g.dr, 0) = 0    ");
+		sql.append("   AND g.fathercorp = ?    ");
 		spm.addParam(fathercorp);
-		sql.append("   AND g.pk_deductrate = ? \n");
+		sql.append("   AND g.pk_deductrate = ?   ");
 		spm.addParam(pk_deductrate);
 		sql.append(" ORDER BY g.ts DESC");
 		List<DeductRateLogVO> list = (List<DeductRateLogVO>) singleObjectBO.executeQuery(sql.toString(), spm,
