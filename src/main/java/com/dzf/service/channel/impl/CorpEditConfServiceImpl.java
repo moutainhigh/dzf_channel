@@ -22,6 +22,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.encrypt.CryptCodeUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
@@ -143,7 +144,8 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 				if(corpvo != null){
 					corpvo.setUnitdistinction(CodeUtils1.enCode(corpvo.getUnitname()));//原客户名称
 					corpvo.setUnitname(CodeUtils1.enCode(datavo.getVnewname()));
-					singleObjectBO.update(corpvo, new String[] { "unitname", "unitdistinction" });
+					corpvo.setRcunitname(CryptCodeUtil.enCode(datavo.getVnewname()));
+					singleObjectBO.update(corpvo, new String[] { "unitname", "unitdistinction" ,"rcunitname"});
 					CorpCache.getInstance().remove(datavo.getPk_corp());
 				} else {
 					String errmsg = "原客户名称" + CodeUtils1.deCode(datavo.getVoldname()) + "数据错误";
