@@ -381,6 +381,9 @@ function edit(){
 	}
 	
 	$('#market_edit').form('load', data);
+	$("#mnum").numberbox("setValue",data.mnum); 
+	$("#dnum").numberbox("setValue",data.dnum); 
+	$("#snum").numberbox("setValue",data.snum); 
 	
 }
 
@@ -412,6 +415,15 @@ function queryById(marketid){
 
 
 function onSave(){
+	if(!isEmpty( $('#mnum').numberbox('getValue'))){
+		 document.getElementById("mnum").name="mnum"; 
+	}
+	if(!isEmpty( $('#dnum').numberbox('getValue'))){
+		 document.getElementById("dnum").name="dnum"; 
+	}
+	if(!isEmpty( $('#snum').numberbox('getValue'))){
+		 document.getElementById("snum").name="snum"; 
+	}
 	if ($("#market_edit").form('validate')) {
 		$('#market_edit').form('submit', {
 			url : DZF.contextPath + '/report/personStatis!save.action',
