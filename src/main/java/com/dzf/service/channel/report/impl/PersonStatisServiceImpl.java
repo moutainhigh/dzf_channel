@@ -167,7 +167,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 
 	private List<PersonStatisVO> queryPersonStatis(List<String> corplist, UserVO uservo,int type) {
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, account.innercode,account.drelievedate");
+		sql.append(" select ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, account.innercode,account.drelievedate");
 		sql.append("          from sm_user_role sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
@@ -184,7 +184,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			sql.append(condition);
 		}
 		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, account.innercode,account.drelievedate,");
-		sql.append("         ma.managernum,ma.departnum,ma.sellnum");
+		sql.append("         ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum");
 		sql.append(" order by account.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		return list;

@@ -121,9 +121,9 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 	 */
 	public void save() {
 		Json json = new Json();
-		MarketTeamVO marketvo = new MarketTeamVO();
-		marketvo = (MarketTeamVO) DzfTypeUtils.cast(getRequest(), marketvo);
 		try {
+			MarketTeamVO marketvo = new MarketTeamVO();
+			marketvo = (MarketTeamVO) DzfTypeUtils.cast(getRequest(), marketvo);
 			UserVO uservo = getLoginUserInfo();
 			marketvo.setDoperatetime(new DZFDateTime());
 			marketvo.setCoperatorid(uservo.getCuserid());
@@ -144,7 +144,6 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 	public void queryById() {
 		Json json = new Json();
 		try {
-			UserVO uservo = getLoginUserInfo();
 			MarketTeamVO vo = new MarketTeamVO();
 			String id = getRequest().getParameter("id");
 			if (!StringUtil.isEmpty(id)) {
