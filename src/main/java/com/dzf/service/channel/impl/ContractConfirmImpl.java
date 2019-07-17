@@ -1,11 +1,6 @@
 package com.dzf.service.channel.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.dzf.file.fastdfs.FastDfsUtil;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +16,7 @@ import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.ArrayListProcessor;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
+import com.dzf.file.fastdfs.FastDfsUtil;
 import com.dzf.model.channel.ChnBalanceVO;
 import com.dzf.model.channel.ChnDetailVO;
 import com.dzf.model.channel.PackageDefVO;
@@ -43,12 +37,10 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.IDefaultValue;
-import com.dzf.pub.Logger;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.WiseRunException;
 import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.image.ImageCommonPath;
 import com.dzf.pub.lang.DZFBoolean;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
@@ -80,82 +72,80 @@ public class ContractConfirmImpl implements IContractConfirm {
 	private IDeductRateService rateser;
 	
 	@Autowired
-	private IUserService userServiceImpl;
+	private IUserService userSer;
 	
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
-		QrySqlSpmVO sqpvo =  getQryCondition(paramvo, "listqry", true);
+		QrySqlSpmVO sqpvo = getQryCondition(paramvo, "listqry", true);
 		return multBodyObjectBO.getDataTotal(sqpvo.getSql(), sqpvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ContractConfrimVO> query(QryParamVO paramvo) throws DZFWarpException {
-		QrySqlSpmVO sqpvo =  getQryCondition(paramvo, "listqry", false);
-		List<ContractConfrimVO> list = (List<ContractConfrimVO>) multBodyObjectBO.queryDataPage(ContractConfrimVO.class, 
-					sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
-		if(list != null && list.size() > 0){
-			setShowData(list, "listqry",paramvo.getAreaname());
+		QrySqlSpmVO sqpvo = getQryCondition(paramvo, "listqry", false);
+		List<ContractConfrimVO> list = (List<ContractConfrimVO>) multBodyObjectBO.queryDataPage(ContractConfrimVO.class,
+				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+		if (list != null && list.size() > 0) {
+			setShowData(list, "listqry", paramvo.getAreaname());
 		}
 		return list;
 	}
 	
 	/**
 	 * 设置显示内容
+	 * 
 	 * @param list
-	 * @param showtype   1、listqry：列表查询；2、audit：审核查询；3、info：明细查询；
+	 * @param showtype
+	 *            1、listqry：列表查询；2、audit：审核查询；3、info：明细查询；
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(List<ContractConfrimVO> list, String showtype,String areaname) throws DZFWarpException {
-		Map<String,UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);//渠道经理
-		Map<String,UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);//渠道运营
-		Map<Integer, String> areaMap = null;//大区集合
-		if("listqry".equals(showtype)){
+	private void setShowData(List<ContractConfrimVO> list, String showtype, String areaname) throws DZFWarpException {
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
+		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<Integer, String> areaMap = null;// 大区集合
+		if ("listqry".equals(showtype)) {
 			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IYUNYING);
 		}
-		HashMap<String, UserVO> map = userServiceImpl.queryUserMap(IDefaultValue.DefaultGroup, true);
-		for(ContractConfrimVO confvo : list){
-			confvo.setTstamp(confvo.getCheckts());//校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同
-			if("listqry".equals(showtype)){
+		HashMap<String, UserVO> map = userSer.queryUserMap(IDefaultValue.DefaultGroup, true);
+		for (ContractConfrimVO confvo : list) {
+			confvo.setTstamp(confvo.getCheckts());// 校验时间戳，5:待审批；7：已驳回；取原合同，剩余情况取历史合同
+			if ("listqry".equals(showtype)) {
 				setListQryData(confvo, areaMap);
-			}else if("info".equals(showtype)){//明细查询
+			} else if ("info".equals(showtype)) {// 明细查询
 				setDetailQryData(confvo);
-			}else if("audit".equals(showtype)){//审核查询
+			} else if ("audit".equals(showtype)) {// 审核查询
 				setAuditQryData(confvo);
 			}
-			QueryDeCodeUtils.decKeyUtil(new String[]{"corpname"}, confvo, 1);
-			setShowData(map,confvo, marmap, opermap);
+			QueryDeCodeUtils.decKeyUtil(new String[] { "corpname" }, confvo, 1);
+			setShowData(map, confvo, marmap, opermap);
 		}
 	}
 	
 	/**
 	 * 查询设置返回值
+	 * 
 	 * @param confvo
 	 * @param marmap
 	 * @throws DZFWarpException
 	 */
-	private void setShowData(HashMap<String, UserVO> map,ContractConfrimVO confvo, Map<String, UserVO> marmap, Map<String, UserVO> opermap)
-			throws DZFWarpException {
-	    UserVO uservo = map.get(confvo.getVoperator());
+	private void setShowData(HashMap<String, UserVO> map, ContractConfrimVO confvo, Map<String, UserVO> marmap,
+			Map<String, UserVO> opermap) throws DZFWarpException {
+		UserVO uservo = map.get(confvo.getVoperator());
 		if (uservo != null) {
 			confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
 		}
-//		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corp());
-//		if (corpvo != null) {
-//			confvo.setVarea(corpvo.getCitycounty());// 地区
-//			confvo.setCorpname(corpvo.getUnitname());// 加盟商
-//		}
 		CorpVO corpvo = CorpCache.getInstance().get(null, confvo.getPk_corpk());
 		if (corpvo != null) {
 			confvo.setCorpkname(corpvo.getUnitname());// 客户名称
 		}
 		if (marmap != null && !marmap.isEmpty()) {
-			uservo= marmap.get(confvo.getPk_corp());
+			uservo = marmap.get(confvo.getPk_corp());
 			if (uservo != null) {
 				confvo.setVmanagername(uservo.getUser_name());// 渠道经理
 			}
 		}
-		if(opermap != null && !opermap.isEmpty()){
+		if (opermap != null && !opermap.isEmpty()) {
 			uservo = opermap.get(confvo.getPk_corp());
 			if (uservo != null) {
 				confvo.setVoperater(uservo.getUser_name());// 渠道运营
@@ -169,36 +159,48 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param areaMap
 	 * @throws DZFWarpException
 	 */
-	private void setListQryData(ContractConfrimVO confvo, Map<Integer, String> areaMap) throws DZFWarpException{
-		if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_1){//已审核
-			//合同代账费 = 合同总金额 - 合同账本费
+	private void setListQryData(ContractConfrimVO confvo, Map<Integer, String> areaMap) throws DZFWarpException {
+		if (confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_1) {// 已审核
+			// 合同代账费 = 合同总金额 - 合同账本费
 			confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
-			confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNdeductmny()));//预付款扣款
-			confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNdedrebamny()));//返点扣款
-			confvo.setNchangetotalmny(null);//变更后合同金额
-		}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
-			confvo.setNdedsummny(confvo.getNchangesummny());//扣款总金额 = 变更后扣款总金额
-			confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNchangededutmny()));//预付款扣款 = 变更后预付款扣款
-			confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNchangerebatmny()));//返点扣款 = 变更后返点扣款
-	
-			//合同代账费 = 变更后合同总金额 - 合同账本费
+			// 预付款扣款
+			confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNdeductmny()));
+			// 返点扣款
+			confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNdedrebamny()));
+			// 变更后合同金额
+			confvo.setNchangetotalmny(null);
+		} else if (confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9) {// 已终止
+			// 扣款总金额 = 变更后扣款总金额
+			confvo.setNdedsummny(confvo.getNchangesummny());
+			// 预付款扣款 = 变更后预付款扣款
+			confvo.setNdeductmny(CommonUtil.getDZFDouble(confvo.getNchangededutmny()));
+			// 返点扣款 = 变更后返点扣款
+			confvo.setNdedrebamny(CommonUtil.getDZFDouble(confvo.getNchangerebatmny()));
+			// 合同代账费 = 变更后合同总金额 - 合同账本费
 			confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
-		}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
-			confvo.setNtotalmny(DZFDouble.ZERO_DBL);//合同总金额
-			confvo.setNdedsummny(DZFDouble.ZERO_DBL);//扣款总金额
-			confvo.setNdeductmny(DZFDouble.ZERO_DBL);//预付款扣款 
-			confvo.setNdedrebamny(DZFDouble.ZERO_DBL);//返点扣款
-			confvo.setNbookmny(DZFDouble.ZERO_DBL);//合同账本费
-			confvo.setNaccountmny(DZFDouble.ZERO_DBL);//合同代账费
-		}else{//待提交、已驳回
-			//合同代账费 = 合同总金额 - 合同账本费
+		} else if (confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10) {// 已作废
+			// 合同总金额
+			confvo.setNtotalmny(DZFDouble.ZERO_DBL);
+			// 扣款总金额
+			confvo.setNdedsummny(DZFDouble.ZERO_DBL);
+			// 预付款扣款
+			confvo.setNdeductmny(DZFDouble.ZERO_DBL);
+			// 返点扣款
+			confvo.setNdedrebamny(DZFDouble.ZERO_DBL);
+			// 合同账本费
+			confvo.setNbookmny(DZFDouble.ZERO_DBL);
+			// 合同代账费
+			confvo.setNaccountmny(DZFDouble.ZERO_DBL);
+		} else {// 待提交、已驳回
+				// 合同代账费 = 合同总金额 - 合同账本费
 			confvo.setNaccountmny(SafeCompute.sub(confvo.getNtotalmny(), confvo.getNbookmny()));
-			confvo.setNchangetotalmny(null);//变更后合同金额
+			// 变更后合同金额
+			confvo.setNchangetotalmny(null);
 		}
-		if(areaMap != null && !areaMap.isEmpty()){
+		if (areaMap != null && !areaMap.isEmpty()) {
 			String area = areaMap.get(confvo.getVprovince());
-			if(!StringUtil.isEmpty(area)){
-				confvo.setAreaname(area);//大区
+			if (!StringUtil.isEmpty(area)) {
+				confvo.setAreaname(area);// 大区
 			}
 		}
 	}
@@ -212,12 +214,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		DZFDouble totalmny = DZFDouble.ZERO_DBL;
 		DZFDouble changetotalmny = DZFDouble.ZERO_DBL;
 		if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_9){//已终止
-			totalmny = confvo.getNchangetotalmny();//合同总金额 = (原合同)变更前合同金额
-			changetotalmny = confvo.getNtotalmny();//变更后合同金额 = (原合同)现金额
+			//合同总金额 = (原合同)变更前合同金额
+			totalmny = confvo.getNchangetotalmny();
+			//变更后合同金额 = (原合同)现金额
+			changetotalmny = confvo.getNtotalmny();
 			confvo.setNtotalmny(totalmny);
 			confvo.setNchangetotalmny(changetotalmny);
 		}else if(confvo.getVstatus() != null && confvo.getVstatus() == IStatusConstant.IDEDUCTSTATUS_10){//已作废
-			totalmny = confvo.getNchangetotalmny();//合同总金额 = (原合同)变更前合同金额
+			//合同总金额 = (原合同)变更前合同金额
+			totalmny = confvo.getNchangetotalmny();
 			confvo.setNtotalmny(totalmny);
 			confvo.setNchangetotalmny(DZFDouble.ZERO_DBL);
 		}
@@ -279,7 +284,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 			confvo.setIscanedit(DZFBoolean.TRUE);
 		}else{
 			//纳税人性质变更之外的合同扣款率设置
-			if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){// 加盟商类型 1：普通加盟商；2：金牌加盟商；
+			// 加盟商类型 1：普通加盟商；2：金牌加盟商；
+			if(confvo.getChanneltype() != null && confvo.getChanneltype() == 1){
 				confvo.setCorptype("普通加盟商");
 				if(confvo.getIsncust() != null && confvo.getIsncust().booleanValue()){//存量客户
 					confvo.setIdeductpropor(0);
@@ -352,11 +358,11 @@ public class ContractConfirmImpl implements IContractConfirm {
 			sql.append("       t.vstatus,    ") ; 
 			sql.append("       t.iversion AS iapplystatus,    ") ; 
 			sql.append("       CASE    ") ; 
-			sql.append("             WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN    ") ; 
-			sql.append("              t.tstamp    ") ; 
-			sql.append("             ELSE    ") ; 
-			sql.append("              cn.tstamp    ") ; 
-			sql.append("           END AS checkts,    ") ;//原合同、历史合同时间戳
+			sql.append("       WHEN  t.vstatus = 5 OR t.vstatus = 7 THEN    ") ; 
+			sql.append("             t.tstamp    ") ; 
+			sql.append("       ELSE    ") ; 
+			sql.append("             cn.tstamp    ") ; 
+			sql.append("       END AS checkts,    ") ;//原合同、历史合同时间戳
 			if("audit".equals(qrytype)){
 				sql.append("       account.channeltype,    ") ; //加盟商类型
 				sql.append("       t.isxq,    ") ; //是否续签
@@ -907,28 +913,29 @@ public class ContractConfirmImpl implements IContractConfirm {
 	
 	/**
 	 * 保存合同审核信息
+	 * 
 	 * @param datavo
 	 * @param cuserid
 	 * @param balVOs
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private ContractConfrimVO saveContConfrim(ContractConfrimVO datavo, String cuserid)	throws DZFWarpException {
-		//保存前赋默认值
+	private ContractConfrimVO saveContConfrim(ContractConfrimVO datavo, String cuserid) throws DZFWarpException {
+		// 保存前赋默认值
 		datavo.setVdeductstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		datavo.setVstatus(IStatusConstant.IDEDUCTSTATUS_1);
 		datavo.setTstamp(new DZFDateTime());// 时间戳
 		datavo.setDeductdata(new DZFDate());// 扣款日期
 		datavo.setDeductime(new DZFDateTime());// 扣款时间
 		datavo.setDr(0);
-		UserVO uservo = userServiceImpl.queryUserJmVOByID(datavo.getVoperator());
+		UserVO uservo = userSer.queryUserJmVOByID(datavo.getVoperator());
 		if (uservo != null) {
 			datavo.setVopername(uservo.getUser_name());
 		}
-		//清空会计公司名称和客户名称
+		// 清空会计公司名称和客户名称
 		datavo.setCorpname(null);
 		datavo.setCorpkname(null);
-		if(datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4){
+		if (datavo.getIapplystatus() != null && datavo.getIapplystatus() == 4) {
 			datavo.setIapplystatus(5);
 		}
 		return (ContractConfrimVO) singleObjectBO.saveObject("000001", datavo);
@@ -1575,7 +1582,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param iopertype 操作类型1：审核；2：变更；
 	 * @throws DZFWarpException
 	 */
-	private void saveAuditHistory(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype) throws DZFWarpException{
+	private void saveAuditHistory(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype)
+			throws DZFWarpException {
 		ApplyAuditVO avo = new ApplyAuditVO();
 		avo.setPk_changeapply(datavo.getPk_changeapply());
 		avo.setPk_confrim(datavo.getPk_confrim());
@@ -1584,15 +1592,15 @@ public class ContractConfirmImpl implements IContractConfirm {
 		avo.setPk_corp(datavo.getPk_corp());
 		avo.setPk_corpk(datavo.getPk_corpk());
 		avo.setIopertype(iopertype);
-		
-		if(type == 1){
+
+		if (type == 1) {
 			avo.setIapplystatus(4);
 			avo.setVmemo("运营已审");
-		}else if(type == 2){
+		} else if (type == 2) {
 			avo.setIapplystatus(6);
 			avo.setVmemo("运营驳回");
 		}
-		
+
 		avo.setCoperatorid(cuserid);
 		avo.setDoperatedate(new DZFDate());
 		singleObjectBO.saveObject(IDefaultValue.DefaultGroup, avo);
@@ -1606,7 +1614,8 @@ public class ContractConfirmImpl implements IContractConfirm {
 	 * @param iopertype 操作类型1：审核；2：变更；
 	 * @throws DZFWarpException
 	 */
-	private void updateContApply(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype) throws DZFWarpException {
+	private void updateContApply(ContractConfrimVO datavo, String cuserid, Integer type, Integer iopertype)
+			throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		// 1、更新合同申请-申请状态
@@ -2170,7 +2179,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 				qryvo.getSpm(), new BeanListProcessor(ContractConfrimVO.class));
 		if (list != null && list.size() > 0) {
 			ContractConfrimVO confvo = list.get(0);
-			UserVO uservo = userServiceImpl.queryUserJmVOByID(confvo.getVoperator());
+			UserVO uservo = userSer.queryUserJmVOByID(confvo.getVoperator());
 			if (uservo != null) {
 				confvo.setVopername(uservo.getUser_name());// 经办人（审核人）姓名
 			}
