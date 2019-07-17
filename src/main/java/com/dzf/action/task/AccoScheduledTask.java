@@ -30,7 +30,7 @@ public class AccoScheduledTask {
 
 		if (taskType == ConnectionConst.TASKTYPE_DAILY) {//天任务
 			period = oneday;
-			delay = shedule - now;
+			//delay = shedule - now;
 			if (delay < 0){// 如果延时为负（说明已经超过了执行的时间 加一天后再执行）
 				calender_schedule.set(Calendar.DAY_OF_MONTH, calender_schedule.get(Calendar.DAY_OF_MONTH) + 1);
 				shedule = calender_schedule.getTimeInMillis();
