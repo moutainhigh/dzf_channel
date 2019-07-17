@@ -12,12 +12,11 @@ import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
-import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
-import com.dzf.pub.cache.CorpCache;
-import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.util.QueryUtil;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IChannelStatisService;
 import com.dzf.service.pub.IPubService;
@@ -31,60 +30,105 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
     @Autowired
     private IPubService pubService;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ManagerVO> query(ManagerVO vo) throws DZFWarpException{
 		Integer level = pubService.getDataLevel(vo.getCuserid());
-		if(level==null){
+		if (level == null) {
 			return new ArrayList<ManagerVO>();
-		}else if(level==1){
+		} else if (level == 1) {
 			vo.setCuserid(null);
 		}
-		SQLParameter spm=new SQLParameter();
-		spm.addParam(vo.getDbegindate());
-		spm.addParam(vo.getDenddate());
-		spm.addParam(vo.getDbegindate());
-		spm.addParam(vo.getDenddate());
-		spm.addParam(vo.getDbegindate());
-		spm.addParam(vo.getDenddate());
-		spm.addParam(vo.getDbegindate());
-		spm.addParam(vo.getDenddate());
+		SQLParameter spm = new SQLParameter();
+//		spm.addParam(vo.getDbegindate());
+//		spm.addParam(vo.getDenddate());
+//		spm.addParam(vo.getDbegindate());
+//		spm.addParam(vo.getDenddate());
+//		spm.addParam(vo.getDbegindate());
+//		spm.addParam(vo.getDenddate());
+//		spm.addParam(vo.getDbegindate());
+//		spm.addParam(vo.getDenddate());
 		
 		StringBuffer buf = new StringBuffer();
-		buf.append("select sum( ");
-		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
-		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
-		buf.append("         when 1 then  0 ");
-		buf.append("         else nvl(t.ndeductmny,0) end + ");
-		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
-		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
-		buf.append("         when 1 then 0");
-		buf.append("         else nvl(t.nsubdeductmny,0)  end) as ndeductmny,");
+//		buf.append("select sum( ");
+//		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
+//		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
+//		buf.append("         when 1 then  0 ");
+//		buf.append("         else nvl(t.ndeductmny,0) end + ");
+//		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
+//		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
+//		buf.append("         when 1 then 0");
+//		buf.append("         else nvl(t.nsubdeductmny,0)  end) as ndeductmny,");
+//		
+//		buf.append("	 sum( ");
+//		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
+//		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
+//		buf.append("         when 1 then 0 ");
+//		buf.append("         else nvl(t.ndedrebamny,0) end + ");
+//		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
+//		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
+//		buf.append("         when 1 then 0 ");
+//		buf.append("         else nvl(t.nsubdedrebamny,0) end) as ndedrebamny,");
+		buf.append("SELECT SUM(CASE  ") ;
+		buf.append("             WHEN t.deductdata >= ? AND t.deductdata <= ? THEN  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
+		buf.append("              nvl(t.ndeductmny, 0)  ") ; 
+		buf.append("             ELSE  ") ; 
+		buf.append("              0  ") ; 
+		buf.append("           END) + SUM(CASE  ") ; 
+		buf.append("                        WHEN substr(t.dchangetime, 1, 10) >= ? AND  ") ; 
+		buf.append("                             substr(t.dchangetime, 1, 10) <= ? THEN  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
+		buf.append("                         nvl(t.nsubdeductmny, 0)  ") ; 
+		buf.append("                        ELSE  ") ; 
+		buf.append("                         0  ") ; 
+		buf.append("                      END) AS ndeductmny,  ") ; 
+		buf.append("       SUM(CASE  ") ; 
+		buf.append("             WHEN t.deductdata >= ? AND t.deductdata <= ? THEN  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
+		buf.append("              nvl(t.ndedrebamny, 0)  ") ; 
+		buf.append("             ELSE  ") ; 
+		buf.append("              0  ") ; 
+		buf.append("           END) + SUM(CASE  ") ; 
+		buf.append("                        WHEN substr(t.dchangetime, 1, 10) >= ? AND  ") ; 
+		buf.append("                             substr(t.dchangetime, 1, 10) <= ? THEN  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
+		buf.append("                         nvl(t.nsubdedrebamny, 0)  ") ; 
+		buf.append("                        ELSE  ") ; 
+		buf.append("                         0  ") ; 
+		buf.append("                      END) AS ndedrebamny,  ") ; 
+		buf.append("      yt.pk_corp, ");
+		buf.append("      account.innercode AS vcontcode,  ") ; 
+		buf.append("      account.unitname AS corpname,  ") ;
+		buf.append("      yt.vchannelid AS userid, ");
+		buf.append("      u.user_name AS username ");
 		
-		buf.append("	 sum( ");
-		buf.append("       case sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) * ");
-		buf.append("            sign(to_date(t.deductdata, 'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd')) ");
-		buf.append("         when 1 then 0 ");
-		buf.append("         else nvl(t.ndedrebamny,0) end + ");
-		buf.append("       case sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))* ");
-		buf.append("            sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?, 'yyyy-MM-dd')) ");
-		buf.append("         when 1 then 0 ");
-		buf.append("         else nvl(t.nsubdedrebamny,0) end) as ndedrebamny,");
-		buf.append("     yt.pk_corp,yt.vchannelid as userid,u.user_name username");
-		buf.append("  from cn_contract t ");
+		buf.append("  FROM cn_contract t ");
 		buf.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
-		buf.append(" LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid    ") ; 
-		buf.append(" LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp    ") ; 
-		buf.append(" where nvl(yt.isncust, 'N') = 'N' ");
-		buf.append("   and nvl(t.dr, 0) = 0 ");
-		buf.append("   and nvl(yt.dr, 0) = 0 ");
-		buf.append("   and (yt.vstatus = 1 or yt.vstatus = 9 or yt.vstatus = 10) ");
+		buf.append("  LEFT JOIN sm_user u ON yt.vchannelid = u.cuserid    ") ; 
+		buf.append("  LEFT JOIN bd_account account ON account.pk_corp = t.pk_corp    ") ; 
+		buf.append(" WHERE nvl(yt.isncust, 'N') = 'N' ");
+		buf.append("   AND nvl(t.dr, 0) = 0 ");
+		buf.append("   AND nvl(yt.dr, 0) = 0 ");
+		buf.append("   AND yt.vstatus IN ( 1, 9, 10) ");
+		buf.append("   AND ((t.deductdata >= ? AND t.deductdata <= ?) OR  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
+		buf.append("        (substr(t.dchangetime, 1, 10) >= ? AND  ") ; 
+		buf.append("        substr(t.dchangetime, 1, 10) <= ? ))  ") ; 
+		spm.addParam(vo.getDbegindate());
+		spm.addParam(vo.getDenddate());
 //		buf.append("   and yt.vchannelid is not null ");
 		if(!StringUtil.isEmpty(vo.getUserid())){
-			buf.append("   and yt.vchannelid=? ");
+			buf.append("   and yt.vchannelid = ? ");
 			spm.addParam(vo.getUserid());
 		}
 		if(!StringUtil.isEmpty(vo.getCuserid())){
-			buf.append("   and yt.vchannelid=? ");
+			buf.append("   and yt.vchannelid = ? ");
 			spm.addParam(vo.getCuserid());
 		}
 		if(!StringUtil.isEmpty(vo.getPk_corp())){
@@ -92,26 +136,72 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 		    String inSql = SqlUtil.buildSqlConditionForIn(strs);
 		    buf.append(" AND yt.pk_corp in (").append(inSql).append(")");
 		}
-		buf.append(" AND "+QueryUtil.getWhereSql());
-		buf.append(" group by yt.pk_corp, yt.vchannelid,u.user_name ");
+		String where = QueryUtil.getWhereSql();
+		buf.append(" AND ").append(where);
+		buf.append(" group by yt.pk_corp,  ");
+		buf.append("          yt.vchannelid, ");
+		buf.append("          account.innercode, ");
+		buf.append("          account.unitname, ");
+		buf.append("          u.user_name ");
+
 		buf.append(" order by yt.vchannelid");
-		List<ManagerVO> list=(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(),spm, new BeanListProcessor(ManagerVO.class));
-		CorpVO cvo ;
-		String userName;
-		for (ManagerVO managerVO : list) {
-			cvo = CorpCache.getInstance().get(null, managerVO.getPk_corp());
-			if(cvo!=null){
-				managerVO.setCorpname(cvo.getUnitname());
-				managerVO.setVcontcode(cvo.getInnercode());
-			}else{
-				managerVO.setVcontcode(null);
-			}
-			userName = managerVO.getUsername();
-			if(!StringUtil.isEmpty(userName)){
-				managerVO.setUsername(CodeUtils1.deCode(userName));
-			}
+		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(buf.toString(), spm,
+				new BeanListProcessor(ManagerVO.class));
+		if(list != null && list.size() > 0){
+			return getReturnData(list);
 		}
+//		CorpVO cvo ;
+//		String userName;
+//		for (ManagerVO managerVO : list) {
+//			cvo = CorpCache.getInstance().get(null, managerVO.getPk_corp());
+//			if(cvo!=null){
+//				managerVO.setCorpname(cvo.getUnitname());
+//				managerVO.setVcontcode(cvo.getInnercode());
+//			}else{
+//				managerVO.setVcontcode(null);
+//			}
+//			userName = managerVO.getUsername();
+//			if(!StringUtil.isEmpty(userName)){
+//				managerVO.setUsername(CodeUtils1.deCode(userName));
+//			}
+//		}
 		return list;
+	}
+	
+	/**
+	 * 获取包含合计行数据
+	 * @param list
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	private List<ManagerVO> getReturnData(List<ManagerVO> list) throws DZFWarpException {
+		List<ManagerVO> rlist = new ArrayList<ManagerVO>();
+		String userid = "";
+		int i = 0;
+		ManagerVO countvo = null;
+		for(ManagerVO mvo : list){
+			if(i == 0){
+				userid = mvo.getUserid();
+				countvo = new ManagerVO();
+				countvo.setUsername("合计");
+			}else if(i != list.size() - 1){
+				if(!userid.equals(mvo.getUserid())){
+					rlist.add(countvo);
+					userid = mvo.getUserid();
+					countvo = new ManagerVO();
+					countvo.setUsername("合计");
+				}
+			}
+			QueryDeCodeUtils.decKeyUtil(new String[]{"username", "corpname"}, mvo, 1);
+			countvo.setNdeductmny(SafeCompute.add(countvo.getNdeductmny(), mvo.getNdeductmny()));
+			countvo.setNdedrebamny(SafeCompute.add(countvo.getNdedrebamny(), mvo.getNdedrebamny()));
+			rlist.add(mvo);
+			if(i == list.size() - 1){
+				rlist.add(countvo);
+			}
+			i++;
+		}
+		return rlist;
 	}
 	
 	@Override

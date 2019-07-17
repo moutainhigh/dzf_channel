@@ -41,19 +41,19 @@ import com.dzf.service.pub.report.ExportExcel;
 @Namespace("/report")
 @Action(value = "channelStatis")
 public class ChannelStatisAction extends BaseAction<ManagerVO> {
-	
+
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private IChannelStatisService chnStatis;
-	
+
 	@Autowired
 	private IPubService pubser;
 
 	/**
 	 * 查询
 	 */
-	public void query(){
+	public void query() {
 		Grid grid = new Grid();
 		try {
 			UserVO uservo = getLoginUserInfo();
@@ -62,20 +62,20 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 			qvo = (ManagerVO) DzfTypeUtils.cast(getRequest(), qvo);
 			qvo.setCuserid(uservo.getCuserid());
 			List<ManagerVO> list = chnStatis.query(qvo);
-			if(list==null||list.size()==0){
+			if (list == null || list.size() == 0) {
 				grid.setRows(new ArrayList<ManagerVO>());
 				grid.setMsg("查询数据为空!");
-			}else{
+			} else {
 				grid.setRows(list);
 				grid.setSuccess(true);
 				grid.setMsg("查询成功!");
-			}	
+			}
 		} catch (Exception e) {
 			printErrorLog(grid, log, e, "查询失败");
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * 明细查询方法
 	 */
@@ -94,18 +94,18 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 		}
 		writeJson(grid);
 	}
-	
+
 	/**
 	 * 导出
 	 */
 	public void exportAuditExcel() {
-		String strlist =getRequest().getParameter("strlist");
+		String strlist = getRequest().getParameter("strlist");
 		String qj = getRequest().getParameter("qj");
-		if(StringUtil.isEmpty(strlist)){
+		if (StringUtil.isEmpty(strlist)) {
 			throw new BusinessException("导出数据不能为空!");
-		}	
+		}
 		JSONArray array = (JSONArray) JSON.parseArray(strlist);
-		
+
 		// 1、导出字段名称
 		List<String> conameList = new ArrayList<String>();
 		conameList.add("渠道经理");
@@ -121,22 +121,22 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 		codeList.add("corpnm");
 		codeList.add("ndemny");
 		codeList.add("nderebmny");
-		
-		//3、金额集合
+
+		// 3、金额集合
 		List<String> mnylist = new ArrayList<String>();
 		mnylist.add("ndemny");
 		mnylist.add("nderebmny");
-		
-		//4、字符集合
+
+		// 4、字符集合
 		List<String> strslist = new ArrayList<String>();
 		strslist.add("uname");
 		strslist.add("vccode");
 		strslist.add("corpnm");
-		
+
 		ExportExcel<ManagerVO> ex = new ExportExcel<ManagerVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
-		
+
 		try {
 			HttpServletResponse response = getResponse();
 			response.reset();
@@ -153,8 +153,7 @@ public class ChannelStatisAction extends BaseAction<ManagerVO> {
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.expChannelStatis("渠道业绩统计表", conameList, codeList, 
-					array, toClient,mnylist,strslist);
+			byte[] length = ex.expChannelStatis("渠道业绩统计表", conameList, codeList, array, toClient, mnylist, strslist);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
 		} catch (IOException e) {

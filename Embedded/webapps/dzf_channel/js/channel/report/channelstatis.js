@@ -166,9 +166,62 @@ function load() {
 			}}
 		]],
 		onLoadSuccess : function(data) {
-			insertData(data);
+//			insertData(data);
+		},
+		rowStyler:function(index,row){
+			if (row.uname == "合计"){
+				return 'background-color:#d3dbe9;';
+			}
 		}
 	});
+}
+
+/**
+ * 插入合计行
+ * @param data
+ * @returns
+ */
+function insertData(data){
+    var sndemny = 0;	
+    var snderebmny = 0;	
+    var j=0;
+    var row;
+　　　for (var i=0; i <data.rows.length; i++) {
+		row=data.rows[i];
+		if(i==0 || (row.uid!=data.rows[i-1].uid && j==0)){
+			sndemny=parseFloat(row.ndemny);
+			snderebmny=parseFloat(row.nderebmny);
+			j++;
+		}else if(row.uid == data.rows[i-1].uid){
+			sndemny+= parseFloat(row.ndemny);
+			snderebmny+= parseFloat(row.nderebmny);
+			j++;
+		}else if(row.uid!=data.rows[i-1].uid && j>0){
+			$('#grid').datagrid('insertRow',{
+				index: i,
+				row: {
+					uid: '',
+					uname: '合计',
+					ndemny	:	sndemny,
+					nderebmny 	:	snderebmny ,
+				}
+			});
+			$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
+			j=0;
+		}
+　	}
+	if(data.rows!=null && data.rows.length>0){
+		$('#grid').datagrid('insertRow',{
+			index: data.rows.length,
+			row: {
+				uid: '',
+				uname: '合计',
+				ndemny	:	sndemny,
+				nderebmny 	:	snderebmny ,
+			}
+		});
+		$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
+	}
 }
 
 /**
@@ -275,6 +328,13 @@ function useFormat(value,row,index){
 	}
 }
 
+/**
+ * 查询明细
+ * @param cid
+ * @param uid
+ * @param corpnm
+ * @returns
+ */
 function qryDetail(cid,uid,corpnm){
 	var bdate = $("#bdate").datebox("getValue");
 	var edate = $("#edate").datebox("getValue");
@@ -319,49 +379,6 @@ function qryDetail(cid,uid,corpnm){
 	});
 }
 
-function insertData(data){
-    var sndemny = 0;	
-    var snderebmny = 0;	
-    var j=0;
-    var row;
-　　　for (var i=0; i <data.rows.length; i++) {
-		row=data.rows[i];
-		if(i==0 || (row.uid!=data.rows[i-1].uid && j==0)){
-			sndemny=parseFloat(row.ndemny);
-			snderebmny=parseFloat(row.nderebmny);
-			j++;
-		}else if(row.uid == data.rows[i-1].uid){
-			sndemny+= parseFloat(row.ndemny);
-			snderebmny+= parseFloat(row.nderebmny);
-			j++;
-		}else if(row.uid!=data.rows[i-1].uid && j>0){
-			$('#grid').datagrid('insertRow',{
-				index: i,
-				row: {
-					uid: '',
-					uname: '合计',
-					ndemny	:	sndemny,
-					nderebmny 	:	snderebmny ,
-				}
-			});
-			$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
-			j=0;
-		}
-　	}
-	if(data.rows!=null && data.rows.length>0){
-		$('#grid').datagrid('insertRow',{
-			index: data.rows.length,
-			row: {
-				uid: '',
-				uname: '合计',
-				ndemny	:	sndemny,
-				nderebmny 	:	snderebmny ,
-			}
-		});
-		$(".datagrid-view2 .datagrid-body tr").eq(i).css("background","#d3dbe9")
-	}
-}
-
 /**
  * 导出
  */
@@ -377,6 +394,3 @@ function doExport(){
 	Business.getFile(DZF.contextPath+ '/report/channelStatis!exportAuditExcel.action',
 			{'strlist':JSON.stringify(datarows), 'qj':qj,}, true, true);
 }
-
-
-
