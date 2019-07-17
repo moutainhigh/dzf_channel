@@ -266,9 +266,9 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 	@Override
 	public String queryManager(String pk_corp) throws DZFWarpException {
 		StringBuffer sql= new StringBuffer();
-		sql.append("select ld.vdeptuserid userid,us.user_name as username from cn_leaderset ld");
-		sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid");
-		sql.append(" where nvl(dr,0)=0 and pk_corp=?");
+		sql.append("select ld.vdeptuserid userid,us.user_name as username from cn_leaderset ld ");
+		sql.append(" left join sm_user us on us.cuserid = ld.vdeptuserid ");
+		sql.append(" where nvl(ld.dr,0) = 0 and ld.pk_corp = ? ");
 //		String sql="select vdeptuserid userid from cn_leaderset where nvl(dr,0)=0 and pk_corp=? ";
 		SQLParameter sp = new SQLParameter();
 		sp.addParam(pk_corp);
@@ -306,7 +306,7 @@ public class ChnAreaServiceImpl implements IChnAreaService {
 		StringBuffer buf=new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append(" select distinct a.areaname as name, a.areacode as id ");
-		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea");
+		buf.append("  from cn_chnarea_b b left join cn_chnarea a on a.pk_chnarea = b.pk_chnarea ");
 		buf.append("  where nvl(b.dr, 0) = 0 and nvl(a.dr, 0) = 0 and a.type=? ");
 		spm.addParam(paramvo.getQrytype());
 		Integer level=pubService.getDataLevel(paramvo.getCuserid());
