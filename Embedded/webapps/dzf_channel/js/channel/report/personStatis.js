@@ -294,6 +294,7 @@ function load(){
 			var fs=new Array(1);
 			fs[0] = footerData;
 			$('#grid').datagrid('reloadFooter',fs);
+			$('#qrydialog').hide();
 		},
 	});
 }
