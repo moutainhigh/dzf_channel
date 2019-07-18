@@ -302,7 +302,8 @@ public class MatApplyServiceImpl implements IMatApplyService {
 							"vaddress", "vreceiver", "phone", "vmemo", "applydate", "vstatus" };
 					singleObjectBO.update(data, updates);
 				} else {
-					String[] updates = { "vcontcode", "fathercorp", "corpname", "vprovince", "vcity", "varea",
+					 data.setCitycounty(data.getPname() + "-" + data.getCityname() + "-" + data.getCountryname());
+					String[] updates = { "vcontcode", "fathercorp", "corpname", "vprovince", "vcity", "varea","citycounty",
 							"vaddress", "vreceiver", "phone", "vmemo", "applydate" };
 					singleObjectBO.update(data, updates);
 				}
