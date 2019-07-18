@@ -1130,22 +1130,28 @@ function showApplyData(fcorp){
 						     editable:false,
 						     valueField:'vprovince',    
 						     textField:'pname',
-						     value:row.pname,
 						});
+						$('#pname').combobox('setValue',row.vprovince);
+						$('#pname').combobox('setText',row.pname);
+						
 						$('#cityname').combobox({  
 							 //readonly : true,
 						     editable:false,
 						     valueField:'vcity',    
 						     textField:'cityname',
-						     value:row.cityname,
 						});
+						$('#cityname').combobox('setValue',row.vcity);
+						$('#cityname').combobox('setText',row.cityname);
+						
 						$('#countryname').combobox({  
 							 //readonly : true,
 						     editable:false,
 						     valueField:'varea',    
 						     textField:'countryname',
-						     value:row.countryname,
 						});
+						$('#countryname').combobox('setValue',row.varea);
+						$('#countryname').combobox('setText',row.countryname);
+						
 						$('#vprovince').val(row.vprovince);
 						$('#vcity').val(row.vcity);
 						$('#varea').val(row.varea);

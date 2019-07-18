@@ -1143,6 +1143,7 @@ function showCard(row) {
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料发货');
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
+	
 	$("#fcost").numberbox({
 		precision : 2,
 		min : 0,
@@ -1175,7 +1176,26 @@ function showCard(row) {
 	}
 	queryAllProvince();
 	initLogistics();
+	showArea(row);
 
+}
+
+
+function showArea(row){
+	$('#pname').combobox('setValue',row.vprovince);
+	$('#pname').combobox('setText',row.pname);
+	$('#ipname').combobox('setValue',row.vprovince);
+	$('#ipname').combobox('setText',row.pname);
+	
+	$('#cityname').combobox('setValue',row.vcity);
+	$('#cityname').combobox('setText',row.cityname);
+	$('#icityname').combobox('setValue',row.vcity);
+	$('#icityname').combobox('setText',row.cityname);
+	
+	$('#countryname').combobox('setValue',row.varea);
+	$('#countryname').combobox('setText',row.countryname);
+	$('#icountryname').combobox('setValue',row.varea);
+	$('#icountryname').combobox('setText',row.countryname);
 }
 
 /**
@@ -1341,6 +1361,7 @@ function showEdit(row) {
 	
 	$('#infoform').form('clear');
 	$('#infoform').form('load', row);
+	showArea(row);
 	initLogistics();
 	$('#ilogid').textbox('setValue', row.logid);
 	$('#ilogid').textbox('setText', row.logname);
@@ -1365,19 +1386,22 @@ function showEdit(row) {
 	
 	$("input",$("#ipname").next("span")).blur(function(){
 		if($("#ipname").combobox('getValue')==""){
-		$("#ipname").combobox('setValue',row.pname);
+		$("#ipname").combobox('setValue',row.vprovince);
+		$("#ipname").combobox('setText',row.pname);
 		$("#ivprovince").val(row.vprovince);
 	    }
 	});
 	$("input",$("#icityname").next("span")).blur(function(){
 		if($("#icityname").combobox('getValue')==""){
-		$("#icityname").combobox('setValue',row.cityname);
+		$("#icityname").combobox('setValue',row.vcity);
+		$("#icityname").combobox('setText',row.cityname);
 		$("#ivcity").val(row.vcity);
 	    }
 	});
 	$("input",$("#icountryname").next("span")).blur(function(){
 		if($("#icountryname").combobox('getValue')==""){
-		$("#icountryname").combobox('setValue',row.countryname);
+		$("#icountryname").combobox('setValue',row.varea);
+		$("#icountryname").combobox('setText',row.countryname);
 		$("#ivarea").val(row.varea);
 	    }
 	});
