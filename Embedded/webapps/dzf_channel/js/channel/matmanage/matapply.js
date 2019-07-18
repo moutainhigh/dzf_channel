@@ -1205,7 +1205,7 @@ function edit(index){
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '编辑物料申请单');
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
-	
+	showArea(row);
 	$("#code").textbox('readonly',false);
 	$("#stat").textbox('readonly',false);
 	$("#corpnm").textbox('readonly',false);
