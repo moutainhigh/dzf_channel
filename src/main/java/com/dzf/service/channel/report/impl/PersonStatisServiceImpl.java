@@ -77,16 +77,18 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					setVO.setJms04(personStatisVO.getDepartnum());
 					setVO.setJms10(personStatisVO.getSellnum());
 					setVO.setPk_marketeam(personStatisVO.getPk_marketeam());
-					if(personStatisVO.getManagernum()!=null){
-						setVO.setXnum(personStatisVO.getManagernum());
+					if(setVO.getXnum()==null){
+						setVO.setXnum(0);
+						if(personStatisVO.getManagernum()!=null){
+							setVO.setXnum(setVO.getXnum()+personStatisVO.getManagernum());
+						}
+						if(personStatisVO.getDepartnum()!=null){
+							setVO.setXnum(setVO.getXnum()+personStatisVO.getDepartnum());
+						}
+						if(personStatisVO.getSellnum()!=null){
+							setVO.setXnum(setVO.getXnum()+personStatisVO.getSellnum());
+						}
 					}
-					if(personStatisVO.getDepartnum()!=null){
-						setVO.setXnum(setVO.getXnum()+personStatisVO.getDepartnum());
-					}
-					if(personStatisVO.getSellnum()!=null){
-						setVO.setXnum(setVO.getXnum()+personStatisVO.getSellnum());
-					}
-					
 					corpvo = CorpCache.getInstance().get(null, pk_corp);
 					if (corpvo != null) {
 						setVO.setCorpname(corpvo.getUnitname());

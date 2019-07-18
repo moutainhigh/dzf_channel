@@ -416,12 +416,15 @@ function queryById(marketid){
 
 function onSave(){
 	if(!isEmpty( $('#mnum').numberbox('getValue'))){
+		alert( $('#mnum').numberbox('getValue'));
 		 document.getElementById("mnum").name="mnum"; 
 	}
 	if(!isEmpty( $('#dnum').numberbox('getValue'))){
+		alert( $('#dnum').numberbox('getValue'));
 		 document.getElementById("dnum").name="dnum"; 
 	}
 	if(!isEmpty( $('#snum').numberbox('getValue'))){
+		alert( $('#snum').numberbox('getValue'));
 		 document.getElementById("snum").name="snum"; 
 	}
 	if ($("#market_edit").form('validate')) {
@@ -435,6 +438,9 @@ function onSave(){
 					Public.tips({
 						content : result.msg,
 					});
+					document.getElementById("mnum").name=""; 
+					document.getElementById("dnum").name=""; 
+					document.getElementById("snum").name=""; 
 				} else {
 					Public.tips({
 						content : result.msg,
