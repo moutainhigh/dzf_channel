@@ -210,7 +210,13 @@ function load(){
 	                   	{ field : 'jms03', title : '销售经理', width : 70,align:'right' },
 	                   	{ field : 'jms04', title : '销售主管', width : 70,align:'right' },
 	                   	{ field : 'jms10', title : '销售', width : 70,align:'right' },
-	                   	{ field : 'xnum', title : '合计', width : 70,align:'right' },
+	                   	{ field : 'xnum', title : '合计', width : 70,align:'right',
+	                   		formatter : function(value,row) {
+	                      		if(value=='0'){
+	                      			return null;
+	                      		}
+	                      	}, 	
+	                   	},
 	                ]],
 		onLoadSuccess : function(data) {
 			var rows = $('#grid').datagrid('getRows');
