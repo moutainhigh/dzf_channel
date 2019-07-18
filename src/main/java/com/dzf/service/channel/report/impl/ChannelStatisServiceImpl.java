@@ -177,17 +177,25 @@ public class ChannelStatisServiceImpl implements IChannelStatisService{
 	private List<ManagerVO> getReturnData(List<ManagerVO> list) throws DZFWarpException {
 		List<ManagerVO> rlist = new ArrayList<ManagerVO>();
 		String userid = "";
+		String suid = "";
 		int i = 0;
 		ManagerVO countvo = null;
 		for(ManagerVO mvo : list){
 			if(i == 0){
 				userid = mvo.getUserid();
+				if(StringUtil.isEmptyWithTrim(userid)){
+					userid = "  ";
+				}
 				countvo = new ManagerVO();
 				countvo.setUsername("合计");
 			}else if(i != list.size() - 1){
-				if(!userid.equals(mvo.getUserid())){
+				suid = mvo.getUserid();
+				if(StringUtil.isEmptyWithTrim(suid)){
+					suid = "  ";
+				}
+				if(!userid.equals(suid)){
 					rlist.add(countvo);
-					userid = mvo.getUserid();
+					userid = suid;
 					countvo = new ManagerVO();
 					countvo.setUsername("合计");
 				}
