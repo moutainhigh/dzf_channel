@@ -77,7 +77,9 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					setVO.setJms04(personStatisVO.getDepartnum());
 					setVO.setJms10(personStatisVO.getSellnum());
 					setVO.setPk_marketeam(personStatisVO.getPk_marketeam());
-					if(setVO.getXnum()==null){
+					if(personStatisVO.getManagernum()!=null ||
+							personStatisVO.getDepartnum()!=null ||
+							personStatisVO.getSellnum()!=null){
 						setVO.setXnum(0);
 						if(personStatisVO.getManagernum()!=null){
 							setVO.setXnum(setVO.getXnum()+personStatisVO.getManagernum());
