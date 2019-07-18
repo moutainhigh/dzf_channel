@@ -1131,8 +1131,8 @@ function showApplyData(fcorp){
 						     valueField:'vprovince',    
 						     textField:'pname',
 						});
-						$('#pname').combobox('setValue',row.vprovince);
-						$('#pname').combobox('setText',row.pname);
+						//$('#pname').combobox('setValue',row.vprovince);
+						//$('#pname').combobox('setText',row.pname);
 						
 						$('#cityname').combobox({  
 							 //readonly : true,
@@ -1140,8 +1140,8 @@ function showApplyData(fcorp){
 						     valueField:'vcity',    
 						     textField:'cityname',
 						});
-						$('#cityname').combobox('setValue',row.vcity);
-						$('#cityname').combobox('setText',row.cityname);
+						//$('#cityname').combobox('setValue',row.vcity);
+						//$('#cityname').combobox('setText',row.cityname);
 						
 						$('#countryname').combobox({  
 							 //readonly : true,
@@ -1149,8 +1149,9 @@ function showApplyData(fcorp){
 						     valueField:'varea',    
 						     textField:'countryname',
 						});
-						$('#countryname').combobox('setValue',row.varea);
-						$('#countryname').combobox('setText',row.countryname);
+						showArea(row);
+						//$('#countryname').combobox('setValue',row.varea);
+						//$('#countryname').combobox('setText',row.countryname);
 						
 						$('#vprovince').val(row.vprovince);
 						$('#vcity').val(row.vcity);
@@ -1169,6 +1170,17 @@ function showApplyData(fcorp){
 			}
   }); 
 	
+}
+
+function showArea(row){
+	$('#pname').combobox('setValue',row.vprovince);
+	$('#pname').combobox('setText',row.pname);
+	
+	$('#cityname').combobox('setValue',row.vcity);
+	$('#cityname').combobox('setText',row.cityname);
+	
+	$('#countryname').combobox('setValue',row.varea);
+	$('#countryname').combobox('setText',row.countryname);
 }
 
 
@@ -1459,6 +1471,7 @@ function showDetail(index){
 	var row = queryByID(erow.matbillid);
 	
 	$('#cbDialog').dialog('open').dialog('center').dialog('setTitle', '物料申请详情');
+	queryAllProvince();
 	initCard();
 	$('#cardGrid').datagrid('hideColumn','enapplynum');
 	$('.hid').css("display", "");
@@ -1474,6 +1487,7 @@ function showDetail(index){
 	
 	$('#mat_add').form('clear');
 	$('#mat_add').form('load', row);
+	showArea(row);
 	
 	if(row.status==1){
 		$('#stat').textbox('setValue','待审核');
