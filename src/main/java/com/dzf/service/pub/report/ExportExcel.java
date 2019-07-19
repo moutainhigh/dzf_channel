@@ -2412,7 +2412,7 @@ public class ExportExcel<T> {
 						HSSFRichTextString richString;
 						HSSFCell cell = row1.createCell(count);
 						if (map.get(key)!= null) {
-							if(key.equals("ktotal")||key.equals("lznum")||key.equals("xtotal")){
+							if(key.equals("ktotal")||key.equals("xtotal")||key.equals("ltotal")){
 								DZFDouble value = new DZFDouble(map.get(key).toString());
 								value = value.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(value.toString());

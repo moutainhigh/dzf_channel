@@ -192,8 +192,8 @@ function load(){
 		                { field : 'jms01',  title : '机构负责人', width : 80,halign:'center',align:'right',rowspan:2},
 		                { field : 'meiyong1',  title : '会计团队总人数', width : 160,halign:'center',align:'right',colspan:8},
 		                { field : 'ktotal',  title : '人员占比(%)', width : 90,halign:'center',align:'right',rowspan:2,formatter:formatMny},
-		                { field : 'lznum',  title : '离职数', width : 60,halign:'center',align:'right',rowspan:2},
-		                { field : 'ltotal',  title : '流失率(%)', width : 80,halign:'center',align:'right',rowspan:2,formatter:formatMny},
+		                { field : 'lznum',  title : '离职数', width : 60,halign:'center',align:'right',rowspan:2,},
+		                { field : 'ltotal',  title : '流失率(%)', width : 80,halign:'center',align:'right',rowspan:2,formatter:formatMny },
 		                { field : 'meiyong2',  title : '销售团队总人数', width : 160,halign:'center',align:'right',colspan:4},
 		                { field : 'xtotal',  title : '人员占比(%)', width : 90,halign:'center',align:'right',rowspan:2,formatter:formatMny},
 		                { field : 'total',  title : '总用户数', width : 70,halign:'center',align:'right',rowspan:2},
@@ -460,7 +460,6 @@ function onSave(){
 function onCancel(){
 	$('#cbDialog').dialog('close');
 }
-
 
 
 /**

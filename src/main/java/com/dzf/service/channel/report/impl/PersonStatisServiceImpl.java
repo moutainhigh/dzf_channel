@@ -115,7 +115,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			}
 			
 			for (PersonStatisVO pervo : retlist) {
-				Integer lznum = queryEmployNum.get(pervo.getPk_corp())==null?0:queryEmployNum.get(pervo.getPk_corp());
+				Integer lznum = queryEmployNum.get(pervo.getPk_corp())==null?null:queryEmployNum.get(pervo.getPk_corp());
 				pervo.setLznum(lznum);
 				if(pervo.getXnum()==null && pervo.getKnum()!=null){
 					pervo.setXtotal(null);
@@ -127,7 +127,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					pervo.setTotal(pervo.getJms01()+pervo.getXnum());
 					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
 				}
-				if(pervo.getKnum()==null && pervo.getXnum()==null){
+				if(pervo.getKnum()==null && pervo.getXnum()==null ){
 					pervo.setTotal(pervo.getJms01());
 					pervo.setKtotal(null);
 					pervo.setXtotal(null);
@@ -137,7 +137,10 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					pervo.setKtotal(new DZFDouble(pervo.getKnum()).div(pervo.getTotal()).multiply(100));
 					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
 				}
-				pervo.setLtotal(new DZFDouble(pervo.getLznum()).div(pervo.getTotal()+pervo.getLznum()).multiply(100));
+				if(pervo.getLznum()!=null){
+					pervo.setLtotal(new DZFDouble(pervo.getLznum()).div(pervo.getTotal()+pervo.getLznum()).multiply(100));
+				}
+				
 			}
 			
 		}
