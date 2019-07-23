@@ -140,15 +140,16 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 			}
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			int page = paramvo == null ? 1 : paramvo.getPage();
-			int rows = paramvo == null ? 100000 : paramvo.getRows();
+			if(paramvo == null){
+				paramvo = new ChInvoiceVO();
+			}
 			if(paramvo != null){
 				paramvo.setEmail(getLoginUserid());
 			}
 			List<CorpVO> list = invManagerSer.queryChannel(paramvo);
 			if (list != null && list.size() > 0) {
 				CorpVO[] corpvos = list.toArray(new CorpVO[0]);
-				corpvos = (CorpVO[]) QueryUtil.getPagedVOs(corpvos, page, rows);
+				corpvos = (CorpVO[]) QueryUtil.getPagedVOs(corpvos, paramvo.getPage(), paramvo.getRows());
 				grid.setRows(Arrays.asList(corpvos));
 				grid.setTotal((long) (list.size()));
 			} else {
