@@ -115,7 +115,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 			}
 			
 			for (PersonStatisVO pervo : retlist) {
-				Integer lznum = queryEmployNum.get(pervo.getPk_corp())==null?null:queryEmployNum.get(pervo.getPk_corp());
+				Integer lznum = queryEmployNum.get(pervo.getPk_corp());
 				pervo.setLznum(lznum);
 				if(pervo.getXnum()==null && pervo.getKnum()!=null){
 					pervo.setXtotal(null);
