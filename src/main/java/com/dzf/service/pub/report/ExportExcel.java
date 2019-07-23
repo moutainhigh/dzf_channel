@@ -737,7 +737,7 @@ public class ExportExcel<T> {
 			HSSFCellStyle stylegsm = workbook.createCellStyle();// 表头样式
 			stylegsm.cloneStyleFrom(style);
 			stylegsm.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-			for (int i = 0; i < num + 4; i++) {
+			for (int i = 0; i < num + 3; i++) {
 				int j = i;
 				if (i >= num) {
 					j = i + 4;

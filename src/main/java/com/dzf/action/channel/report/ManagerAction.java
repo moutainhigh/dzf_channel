@@ -112,7 +112,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		Map<String, String> name = null;
 		List<String> fieldlist = new ArrayList<String>();
 		String funnode=null;
-		int num=8;
+		int num=9;
 		String title="省数据分析";
 		switch (type) {
 		case 1:
@@ -123,7 +123,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 			funnode= IFunNode.CHANNEL_17;
 			break;
 		default:
-			num=10;
+			num=11;
 			title="渠道总数据分析";
 			fieldlist.add("aname");
 			fieldlist.add("uname");
@@ -136,6 +136,7 @@ public class ManagerAction extends PrintUtil<ManagerVO>{
 		fieldlist.add("corpnm");
 		fieldlist.add("xgmNum");
 		fieldlist.add("ybrNum");
+//		fieldlist.add("bondmny");
 		fieldlist.add("anum");
 		fieldlist.add("rnum");
 		for (int i = 0 ; i< headlist.size(); i ++) {
