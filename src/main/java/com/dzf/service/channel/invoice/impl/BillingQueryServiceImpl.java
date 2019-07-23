@@ -33,7 +33,6 @@ import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.invoice.IBillingQueryService;
 import com.dzf.service.pub.IPubService;
-import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("billingQueryServiceImpl")
 public class BillingQueryServiceImpl implements IBillingQueryService {
@@ -45,9 +44,6 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 	private IPubService pubser;
 
 	private final static String tablename = "cn_invoice";
-	
-	@Autowired
-	private IUserService userServiceImpl;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -218,12 +214,10 @@ public class BillingQueryServiceImpl implements IBillingQueryService {
 		sql.append("  from bd_account a   ");
 		sql.append("  left join cn_invoice i on i.pk_corp = a.pk_corp   ");
 		sql.append("                              and nvl(i.dr, 0) = 0   ");
-		sql.append("                              and i.invstatus in (1, 2, 3)   ");// 发票状态
-																					// 0：待提交
-																					// ；1：待开票；2：已开票；3：开票失败；
-		sql.append("                              and i.isourcetype in (1, 2)   ");// 发票来源类型
-																					// 1：合同扣款开票；
-																					// 2：订单扣款开票；
+		// 发票状态  0：待提交 ；1：待开票；2：已开票；3：开票失败；
+		sql.append("                              and i.invstatus in (1, 2, 3)   ");
+		// 发票来源类型 1：合同扣款开票；2：订单扣款开票；
+		sql.append("                              and i.isourcetype in (1, 2)   ");
 		sql.append("                              and i.apptime <= ?   ");
 		spm.addParam(new DZFDate());
 		sql.append(" where a.ischannel = 'Y'   ");
