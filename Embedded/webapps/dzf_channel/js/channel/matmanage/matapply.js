@@ -15,6 +15,7 @@ $(window).resize(function () {
 $(function(){
 	initQry();
 	initRef();
+	//initMatFile();
 	initRadioListen();
 	//load(0);
 	showColumn();
@@ -577,7 +578,8 @@ function userInfo(){
  * 卡片表格
  */
 function initCard(){
-	var mat = null;
+	
+	/*var mat = null;
 	$.ajax({
 		type : 'POST',
 		async : false,
@@ -594,7 +596,7 @@ function initCard(){
 				});
 			}
 		}
-	});
+	});*/
 
 	$('#cardGrid').datagrid({
 		striped : true,
@@ -890,7 +892,8 @@ function initRef(){
         icons: [{
             iconCls: 'icon-search',
             handler: function(e) {
-                $("#chnDlg").dialog({
+            	$('<div></div>').dialog({
+            	    id : 'chnDlg',
                     width: 600,
                     height: 480,
                     readonly: true,
@@ -958,14 +961,16 @@ function dClickCompany(rowTable){
 		var fcorp=	$("#fcorp").val();
 		showApplyData(fcorp);
 	}
-	 $("#chnDlg").dialog('close');
+	// $("#chnDlg").dialog('close');
+	 $('#chnDlg').panel('destroy');
 }
 
 /**
  * 物料档案参照初始化
  */
 function initMatFile(){
-	 $("#matDlg").dialog({
+	 $('<div></div>').dialog({
+		 id : 'matDlg',
          width: 600,
          height: 480,
          readonly: true,
@@ -1104,7 +1109,8 @@ function dClickMat(rowTable){
 			}
 	}
 	
-	 $("#matDlg").dialog('close');
+	// $("#matDlg").dialog('close');
+	 $('#matDlg').panel('destroy');
 	 endBodyEdit();
 }
 
@@ -1131,8 +1137,6 @@ function showApplyData(fcorp){
 						     valueField:'vprovince',    
 						     textField:'pname',
 						});
-						//$('#pname').combobox('setValue',row.vprovince);
-						//$('#pname').combobox('setText',row.pname);
 						
 						$('#cityname').combobox({  
 							 //readonly : true,
@@ -1140,8 +1144,6 @@ function showApplyData(fcorp){
 						     valueField:'vcity',    
 						     textField:'cityname',
 						});
-						//$('#cityname').combobox('setValue',row.vcity);
-						//$('#cityname').combobox('setText',row.cityname);
 						
 						$('#countryname').combobox({  
 							 //readonly : true,
@@ -1150,8 +1152,6 @@ function showApplyData(fcorp){
 						     textField:'countryname',
 						});
 						showArea(row);
-						//$('#countryname').combobox('setValue',row.varea);
-						//$('#countryname').combobox('setText',row.countryname);
 						
 						$('#vprovince').val(row.vprovince);
 						$('#vcity').val(row.vcity);

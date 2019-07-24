@@ -94,11 +94,11 @@
 		</div>
 		
 		<!-- 加盟商参照对话框begin -->
-		<div id="chnDlg"></div>
+		<!-- <div id="chnDlg"></div> -->
 		<!-- 加盟商参照对话框end -->
 		
 		<!-- 物料参照对话框begin -->
-		<div id="matDlg"></div>
+		<!-- <div id="matDlg"></div> -->
 		<!-- 物料参照对话框end -->
 		
 		<!-- 新增对话框  begin-->
