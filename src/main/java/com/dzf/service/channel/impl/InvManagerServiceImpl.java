@@ -237,9 +237,7 @@ public class InvManagerServiceImpl implements InvManagerService {
 		sql.append("  from bd_account account    ") ; 
 		sql.append("where ");
 		sql.append(filtersql);
-//		sql.append(" where nvl(dr, 0) = 0    ") ; 
-//		sql.append("   and nvl(isaccountcorp, 'N') = 'Y'    ") ; 
-//		sql.append("   and nvl(ischannel, 'N') = 'Y'    ");
+		sql.append(" and account.fathercorp = '000001' ");
 		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
 			sql.append(" and account.vprovince=? ");
 			sp.addParam(vo.getDr());
