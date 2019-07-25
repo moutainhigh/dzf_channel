@@ -47,6 +47,9 @@ public class ContractDocVO extends SuperVO {
 	
 	private DZFDate doperatedate;
 	
+	@FieldAlias("doctype")
+	private Integer idoctype;//附件类型  1或空：附件；   2:执照； 3：合同变更申请；
+	
 	public DZFDate getDoperatedate() {
 		return doperatedate;
 	}
@@ -55,9 +58,6 @@ public class ContractDocVO extends SuperVO {
 		this.doperatedate = doperatedate;
 	}
 
-	@FieldAlias("doctype")
-	private Integer idoctype;//附件类型  1或空：附件；   2:执照；
-	
 	public Integer getIdoctype() {
 		return idoctype;
 	}
