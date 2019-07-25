@@ -37,7 +37,7 @@ function viewattach(infoindex){
 						'<div id="reUpload' + i +
 							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 						'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-						'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#attachs"));
+						'<div style="width: 300px; word-break: break-all; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + 	rows[i].doc_name + '</div></a></li>').appendTo($("#attachs"));
 				
 				var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
 				rows[i].doc_id + "&corp_id=" + rows[i].corp_id;

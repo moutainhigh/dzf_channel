@@ -53,9 +53,9 @@ function showChangeDetImage(row){
 			'onmouseout="hideTips(0)"  ondblclick="doubleImage(0);" >' + 
 			'<span><img src="' +src +  '" />'+
 			'<div id="reUpload0' +
-			'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+			'" style="width: 100%; position: relative height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 			'<h4><span id="tips0"></span></h4></div></span>'+
-			'<font>' + 	row.doc_name + '</font></a></li>').appendTo($("#ifiledocs"));
+			'<div style="width: 226px; word-break: break-all; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + 	row.doc_name + '</div></a></li>').appendTo($("#ifiledocs"));
 }
 
 /**
@@ -90,7 +90,7 @@ function showAuditImage(row){
 							'<div id="reUpload' + i +
 							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#afiledocs"));
+							'<div style="width: 226px; word-break: break-all; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + 	rows[i].doc_name + '</div></a></li>').appendTo($("#afiledocs"));
 					
 					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
 					rows[i].doc_id + "&corp_id=" + rows[i].corp_id;
@@ -133,9 +133,9 @@ function showAuditDetImage(row){
 							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleAuditImage(\'' + i + 
 							'\');" ><span><img src="' +attachImgUrl +  '" />'+
 							'<div id="reUpload' + i +
-							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
+							'" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#iafiledocs"));
+							'<div>' + 	rows[i].doc_name + '</div></a></li>').appendTo($("#iafiledocs"));
 					
 					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
 					rows[i].doc_id + "&corp_id=" + rows[i].corp_id;

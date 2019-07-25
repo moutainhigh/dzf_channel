@@ -2140,7 +2140,7 @@ function showRejReason(row){
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "  <div style='height: 50px; width: 90%; float: left;'>"; 
 				showinfo = showinfo + "    <div  class='dot'>"; 
-				showinfo = showinfo + "      <font>"+rejesons[i].updatets+"</font>&emsp;<span>"+rejesons[i].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[i].operator+"</font>"; 
+				showinfo = showinfo + "      <div>"+rejesons[i].updatets+"</div>&emsp;<span>"+rejesons[i].reason+"</span>&emsp;<font color='#FF0000'>"+rejesons[i].operator+"</font>";
 				showinfo = showinfo + "    </div>"; 
 				showinfo = showinfo + "  </div>"; 
 				showinfo = showinfo + "</div>";
@@ -2194,10 +2194,10 @@ function initInfoFileDoc(row){
 					var srcpath = rows[i].fpath.replace(/\\/g, "/");
 					var attachImgUrl = getAttachImgUrl(rows[i]);
 					$('<li><a href="javascript:void(0)"  onmouseover="showTips(' + i + ')"  '+
-							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span><img src="' +attachImgUrl +  '" />'+
-							'<div id="reUpload' + i +'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
-							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#ifiledocs"));
+							'onmouseout="hideTips(' + i + ')"  ondblclick="doubleImage(\'' + i + '\');" ><span style="height: 120px"><img src="' +attachImgUrl +  '" />'+
+							'<div id="reUpload' + i +'" style="width: 100%; height: 25px; top: 105px; left: 0px; display:none;">'+
+							'<h4><span id="tips'+ i +'" ></span></h4></div></span>'+
+							'<div style="width: 221px; word-break: break-all; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + 	rows[i].doc_name + '</div></a></li>').appendTo($("#ifiledocs"));
 					
 					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
 						rows[i].doc_id + "&corp_id=" + rows[i].corp_id;
@@ -2209,6 +2209,7 @@ function initInfoFileDoc(row){
 		}
 	});
 }
+
 
 /**
  * 驳回原因参照初始化
