@@ -40,6 +40,11 @@
 .gridCD .datagrid-view1 .datagrid-header {
 	height: 78px !important;
 }
+
+.gridCD .datagrid-view1 .datagrid-header .datagrid-header-row {
+	height: 78px;
+}
+
 </style>
 </head>
 <body>

@@ -5,10 +5,10 @@ var currcolumns = null;
 
 $(function(){
 	initQueryDlg();
-	initRef();
-	initRadioListen();
 	load();
 	reloadData();
+	initRef();
+	initRadioListen();
 });
 
 /**
@@ -291,7 +291,6 @@ function load(){
 		                { field : 'corpname',  title : '加盟商', width : 160, halign:'center',align:'left',
 		                	formatter: function (value,row,index) {
 		                		if(!isEmpty(value)){
-		                			console.info(row.dreldate);
 		                			if (!isEmpty(row.dreldate)) {
 		                				return "<div style='position: relative;'>" + value 
 		                				+ "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>";
@@ -318,6 +317,10 @@ function load(){
  * 查询
  */
 function reloadData(type){
+	
+	$.messager.progress({
+		text : '数据查询中，请稍候.....'
+	});
 	
 	var bdate = new Date();
 	
@@ -353,10 +356,6 @@ function reloadData(type){
 		enddate = $("#edate").datebox('getValue');
 		$('#jqj').html(begdate + ' 至 ' + enddate);
 	}
-	
-	$.messager.progress({
-		text : '数据查询中，请稍候.....'
-	});
 	
     $.ajax({
     	url : DZF.contextPath + "/report/deductanalysis!query.action",
