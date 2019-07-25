@@ -1969,6 +1969,7 @@ public class ContractConfirmImpl implements IContractConfirm {
 		docvo.setVfilepath(vo.getVfilepath());
 		docvo.setDr(0);
 		docvo.setIdoctype(3);
+		docvo.setIstoretype(1);
 		singleObjectBO.saveObject(IDefaultValue.DefaultGroup, docvo);
 	}
 	
