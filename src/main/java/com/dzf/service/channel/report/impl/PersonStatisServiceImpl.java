@@ -45,7 +45,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	private IPubService pubser;
 	
 	@Override
-	public List<PersonStatisVO> query(QryParamVO paramvo,UserVO user) throws DZFWarpException, IllegalAccessException, Exception {
+	public List<PersonStatisVO> query(QryParamVO paramvo,UserVO user) throws DZFWarpException {
 		List<PersonStatisVO> retlist = new ArrayList<PersonStatisVO>();
 		int type = queryRole(user.getCuserid());
 		HashMap<String, DataVO> map = queryCorps(paramvo,PersonStatisVO.class,type);
@@ -192,8 +192,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 		if (!condition.equals("alldata")) {
 			sql.append(condition);
 		}
-		sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, account.innercode,account.drelievedate,");
-		sql.append("         ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum");
+		//sql.append("         group by sur.cuserid, sr.role_code, su.pk_corp, account.innercode,account.drelievedate,");
+		//sql.append("         ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum");
 		sql.append(" order by account.innercode");
 		List<PersonStatisVO> list=(List<PersonStatisVO>)singleObjectBO.executeQuery(sql.toString(),null, new BeanListProcessor(PersonStatisVO.class));
 		return list;

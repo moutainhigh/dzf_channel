@@ -18,7 +18,7 @@ public interface IPersonStatis {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	public List<PersonStatisVO> query(QryParamVO paramvo, UserVO uservo) throws DZFWarpException, IllegalAccessException, Exception;
+	public List<PersonStatisVO> query(QryParamVO paramvo, UserVO uservo) throws DZFWarpException;
 
 	public List<UserDetailVO> queryUserDetail(QryParamVO paramvo) throws DZFWarpException;
 
