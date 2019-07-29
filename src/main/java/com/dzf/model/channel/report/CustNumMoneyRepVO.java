@@ -4,7 +4,7 @@ import com.dzf.pub.Field.FieldAlias;
 import com.dzf.pub.lang.DZFDouble;
 
 /**
- * 加盟商客户数量、金额统计表
+ * 新增统计
  * @author 宗岩
  *
  */
