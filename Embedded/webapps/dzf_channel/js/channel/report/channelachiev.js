@@ -157,14 +157,13 @@ function initLineChart(row){
 	var option = {
 		    color: ['#5b9bd5', '#ed7d31'],
 		    title: {
-		        text: '业绩环比(%)'
-		        /* subtext: '副标题'*/
+		        text: '业绩环比'
 		    },
 		    tooltip: {
 		        trigger: 'axis'
 		    },
 		    legend: {
-		        data: ['扣款金额增长率', '合同金额增长率'],
+		        data: ['扣款金额', '合同金额'],
 		        right: '200',
 		    },
 
@@ -177,7 +176,6 @@ function initLineChart(row){
 		    xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-//		        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
 		        data: row.sdate,
 		    },
 		    yAxis: {
@@ -189,13 +187,11 @@ function initLineChart(row){
 		    series: [{
 		        name: '扣款金额增长率',
 		        type: 'line',
-//		        data: [11, 11, 15, 13, 12, 13],
 		        data: row.fir,
 		    },
 		    {
 		        name: '合同金额增长率',
 		        type: 'line',
-//		        data: [11, 11, 2, 5, 3, 2],
 		        data: row.sec,
 		    }]
 		};
@@ -264,7 +260,7 @@ function initBarChart(row){
 	        }
 	    },
 	    legend: {
-	        data: ['往期增长率', '本期增长率'],
+	        data: ['往期', '本期'],
 	        right: '90',
 	    },
 	    grid: {
@@ -280,23 +276,20 @@ function initBarChart(row){
 	    },
 	    xAxis: [{
 	        type: 'category',
-//	        data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06']
 	        data: row.sdate,
 	    }],
 	    yAxis: [{
 	        type: 'value'
 	    }],
 	    series: [{
-	        name: '往期增长率',
+	        name: '往期',
 	        type: 'bar',
-//	        data: [320, 332, 301, 334, 390, 330]
 	        data: row.fir,
 	    },
 	    {
-	        name: '本期增长率',
+	        name: '本期',
 	        type: 'bar',
 	        stack: '广告',
-//	        data: [120, 132, 101, 134, 90, 230]
 	        data: row.sec,
 	    }]
 	};

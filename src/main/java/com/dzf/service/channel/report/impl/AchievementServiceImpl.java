@@ -93,13 +93,10 @@ public class AchievementServiceImpl implements IAchievementService {
 		}else{
 			throw new BusinessException("年度查询条件不能为空");
 		}
-		List<String> qrylist = new ArrayList<String>();
-		qrylist.add(String.valueOf(byear-1));
-		qrylist.addAll(showdate);
-		if(qrylist != null && qrylist.size() > 0){
-			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 4)", qrylist.toArray(new String[0]));
+		if(showdate != null && showdate.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 4)", showdate.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 4)");//扣款金额
-			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 4)", qrylist.toArray(new String[0]));
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 4)", showdate.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 4)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -111,75 +108,9 @@ public class AchievementServiceImpl implements IAchievementService {
 				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
 				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 			}
-			DZFDouble submny = DZFDouble.ZERO_DBL;
-			String preyear = String.valueOf(byear - 1);
-			//如果当月金额为0且上月金额不为0，则增长率为-100；如果当月金额为0且上月金额为0，则增长率为0；如果当月金额不为0，且上月金额为0，则增长率为100；
 			for(int i = 0; i < showdate.size(); i++){
-				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preyear));
-							first.add(submny.div(getAbsValue(kkmap.get(preyear))).multiply(100));
-						}
-					}else{
-						//(当月金额 - 上一月金额) / 上一月金额
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
-				
-				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preyear));
-							second.add(submny.div(getAbsValue(jemap.get(preyear))).multiply(100));
-						}
-					}else{
-						//(当月金额 - 上一月金额) / 上一月金额
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))));
+				second.add(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -212,13 +143,10 @@ public class AchievementServiceImpl implements IAchievementService {
 		}else{
 			throw new BusinessException("季度查询条件不能为空");
 		}
-		String strperiod = ToolsUtil.getPreNumsMonth(paramvo.getBeginperiod(), 3);
-		String preseason = ToolsUtil.getSeason(strperiod);
-		List<String> qrylist = ToolsUtil.getPeriodsBp(strperiod, paramvo.getEndperiod());
-		if(qrylist != null && qrylist.size() > 0){
-			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
+		if(showdate != null && showdate.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", showdate.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
-			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", showdate.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -249,74 +177,10 @@ public class AchievementServiceImpl implements IAchievementService {
 					jemap.put(season, SafeCompute.add(jemap.get(season), fvo.getNaccountmny()));
 				}
 			}
-			DZFDouble submny = DZFDouble.ZERO_DBL;
 			//如果当月金额为0且上月金额不为0，则增长率为-100；如果当月金额为0且上月金额为0，则增长率为0；如果当月金额不为0，且上月金额为0，则增长率为100；
 			for(int i = 0; i < showdate.size(); i++){
-				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preseason));
-							first.add(submny.div(getAbsValue(kkmap.get(preseason))).multiply(100));
-						}
-					}else{
-						//(当季度金额 - 上一季度金额) / 上一季度金额
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
-				
-				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preseason)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preseason));
-							second.add(submny.div(getAbsValue(jemap.get(preseason))).multiply(100));
-						}
-					}else{
-						//(当月金额 - 上一月金额) / 上一月金额
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))));
+				second.add(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -347,14 +211,10 @@ public class AchievementServiceImpl implements IAchievementService {
 		}else{
 			throw new BusinessException("月度查询条件不能为空");
 		}
-		String preperiod = ToolsUtil.getPreviousMonth(paramvo.getBeginperiod());
-		List<String> qrylist = new ArrayList<String>();
-		qrylist.add(preperiod);
-		qrylist.addAll(showdate);
-		if(qrylist != null && qrylist.size() > 0){
-			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
+		if(showdate != null && showdate.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", showdate.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
-			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", showdate.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();
@@ -366,74 +226,9 @@ public class AchievementServiceImpl implements IAchievementService {
 				kkmap.put(fvo.getVperiod(), SafeCompute.add(kkmap.get(fvo.getVperiod()), fvo.getNdedsummny()));
 				jemap.put(fvo.getVperiod(), SafeCompute.add(jemap.get(fvo.getVperiod()), fvo.getNaccountmny()));
 			}
-			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当月金额为0且上月金额不为0，则增长率为-100；如果当月金额为0且上月金额为0，则增长率为0；如果当月金额不为0，且上月金额为0，则增长率为100；
 			for(int i = 0; i < showdate.size(); i++){
-				if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(DZFDouble.ZERO_DBL);
-						}else{
-							first.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(kkmap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(preperiod));
-							first.add(submny.div(getAbsValue(kkmap.get(preperiod))).multiply(100));
-						}
-					}else{
-						//(当月金额 - 上一月金额) / 上一月金额
-						if(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							first.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(kkmap.get(showdate.get(i)), kkmap.get(showdate.get(i-1)));
-							first.add(submny.div(getAbsValue(kkmap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
-				
-				if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}else{
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(DZFDouble.ZERO_DBL);
-						}else{
-							second.add(new DZFDouble(100.00).multiply(-1));
-						}
-					}
-				}else{
-					if(i == 0){
-						if(CommonUtil.getDZFDouble(jemap.get(preperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(preperiod));
-							second.add(submny.div(getAbsValue(jemap.get(preperiod))).multiply(100));
-						}
-					}else{
-						//(当月金额 - 上一月金额) / 上一月金额
-						if(CommonUtil.getDZFDouble(jemap.get(showdate.get(i-1))).compareTo(DZFDouble.ZERO_DBL) == 0){
-							second.add(new DZFDouble(100.00));
-						}else{
-							submny = SafeCompute.sub(jemap.get(showdate.get(i)), jemap.get(showdate.get(i-1)));
-							second.add(submny.div(getAbsValue(jemap.get(showdate.get(i-1)))).multiply(100));
-						}
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(kkmap.get(showdate.get(i))));
+				second.add(CommonUtil.getDZFDouble(jemap.get(showdate.get(i))));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -442,23 +237,6 @@ public class AchievementServiceImpl implements IAchievementService {
 			throw new BusinessException("月度查询条件不能为空");
 		}
 		return retvo;
-	}
-	
-	/**
-	 * 取金额的绝对值
-	 * @param mny
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	private DZFDouble getAbsValue(DZFDouble mny) throws DZFWarpException {
-		if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) == 0){
-			return DZFDouble.ZERO_DBL;
-		}else if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) > 0){
-			return mny;
-		}else if(CommonUtil.getDZFDouble(mny).compareTo(DZFDouble.ZERO_DBL) < 0){
-			return mny.multiply(new DZFDouble(-1));
-		}
-		return null;
 	}
 	
 	/**
@@ -601,50 +379,18 @@ public class AchievementServiceImpl implements IAchievementService {
 		List<String> showdate = new ArrayList<String>();
 		showdate.add(paramvo.getVyear());
 		List<String> qrylist = new ArrayList<String>();
-		for(int i = (year-2); i <= year; i++){
-			qrylist.add(String.valueOf(i));
-		}
+		qrylist.add(String.valueOf(year - 1));
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
-			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当期金额为0且上期金额不为0，则增长率为-100；如果当期金额为0且上期金额为0，则增长率为0；如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneyear = "";
-			String pretwoyear = "";
 			String period = "";
 			for(int i = 0; i < showdate.size(); i++){
 				period = showdate.get(i);
 				preoneyear = String.valueOf(Integer.parseInt(period) - 1);
-				pretwoyear = String.valueOf(Integer.parseInt(period) - 2);
 				//当期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(DZFDouble.ZERO_DBL);
-					}else{
-						second.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneyear));
-						second.add(submny.div(getAbsValue(mnymap.get(preoneyear))).multiply(100));
-					}
-				}
+				second.add(CommonUtil.getDZFDouble(mnymap.get(period)));
 				//往期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(preoneyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(DZFDouble.ZERO_DBL);
-					}else{
-						first.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoyear)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoyear));
-						first.add(submny.div(getAbsValue(mnymap.get(pretwoyear))).multiply(100));
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(mnymap.get(preoneyear)));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -675,51 +421,17 @@ public class AchievementServiceImpl implements IAchievementService {
 		String preOneEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 1);
 		List<String> onedate = ToolsUtil.getPeriodsBp(preOneBegPeriod, preOneEndPeriod);
 		qrylist.addAll(onedate);
-		String preTwoBegPeriod = ToolsUtil.getPreNumsYear(paramvo.getBeginperiod(), 2);//上两期期间
-		String preTwoEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 2);
-		List<String> twodate = ToolsUtil.getPeriodsBp(preTwoBegPeriod, preTwoEndPeriod);
-		qrylist.addAll(twodate);
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
-			DZFDouble submny = DZFDouble.ZERO_DBL;
-			//如果当期金额为0且上期金额不为0，则增长率为-100；如果当期金额为0且上期金额为0，则增长率为0；如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneperiod = "";
-			String pretwoperiod = "";
 			String period = "";
 			for(int i = 0; i < showdate.size(); i++){
 				period = showdate.get(i);
 				preoneperiod = ToolsUtil.getPreNumsYear(period, 1);
-				pretwoperiod = ToolsUtil.getPreNumsYear(period, 2);
 				//当期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(DZFDouble.ZERO_DBL);
-					}else{
-						second.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneperiod));
-						second.add(submny.div(getAbsValue(mnymap.get(preoneperiod))).multiply(100));
-					}
-				}
+				second.add(CommonUtil.getDZFDouble(mnymap.get(period)));
 				//往期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(DZFDouble.ZERO_DBL);
-					}else{
-						first.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoperiod));
-						first.add(submny.div(getAbsValue(mnymap.get(pretwoperiod))).multiply(100));
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -751,51 +463,18 @@ public class AchievementServiceImpl implements IAchievementService {
 		String preOneEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 1);
 		List<String> onedate = ToolsUtil.getPeriodsBp(preOneBegPeriod, preOneEndPeriod);
 		qrylist.addAll(onedate);
-		String preTwoBegPeriod = ToolsUtil.getPreNumsYear(paramvo.getBeginperiod(), 2);//上两期期间
-		String preTwoEndPeriod = ToolsUtil.getPreNumsYear(paramvo.getEndperiod(), 2);
-		List<String> twodate = ToolsUtil.getPeriodsBp(preTwoBegPeriod, preTwoEndPeriod);
-		qrylist.addAll(twodate);
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
-			DZFDouble submny = DZFDouble.ZERO_DBL;
 			//如果当期金额为0且上期金额不为0，则增长率为-100；如果当期金额为0且上期金额为0，则增长率为0；如果当期金额不为0，且上期金额为0，则增长率为100
 			String preoneperiod = "";
-			String pretwoperiod = "";
 			String period = "";
 			for(int i = 0; i < showdate.size(); i++){
 				period = showdate.get(i);
 				preoneperiod = ToolsUtil.getPreNumsYear(period, 1);
-				pretwoperiod = ToolsUtil.getPreNumsYear(period, 2);
 				//当期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(period)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(DZFDouble.ZERO_DBL);
-					}else{
-						second.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						second.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(preoneperiod));
-						second.add(submny.div(getAbsValue(mnymap.get(preoneperiod))).multiply(100));
-					}
-				}
+				second.add(CommonUtil.getDZFDouble(mnymap.get(period)));
 				//往期数据
-				if(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(DZFDouble.ZERO_DBL);
-					}else{
-						first.add(new DZFDouble(100.00).multiply(-1));
-					}
-				}else{
-					if(CommonUtil.getDZFDouble(mnymap.get(pretwoperiod)).compareTo(DZFDouble.ZERO_DBL) == 0){
-						first.add(new DZFDouble(100.00));
-					}else{
-						submny = SafeCompute.sub(mnymap.get(showdate.get(i)), mnymap.get(pretwoperiod));
-						first.add(submny.div(getAbsValue(mnymap.get(pretwoperiod))).multiply(100));
-					}
-				}
+				first.add(CommonUtil.getDZFDouble(mnymap.get(preoneperiod)));
 			}
 			retvo.setShowdate(showdate);
 			retvo.setFirst(first);
@@ -916,21 +595,6 @@ public class AchievementServiceImpl implements IAchievementService {
 	@SuppressWarnings("unchecked")
 	private Map<Integer, String> qryUserPowerOne(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> pmap = new HashMap<Integer, String>();
-//		StringBuffer sql = new StringBuffer();
-//		SQLParameter spm = new SQLParameter();
-//		// 1、区域总经理；
-//		sql.append("SELECT t.pk_leaderset    ");
-//		sql.append("  FROM cn_leaderset t    ");
-//		sql.append(" WHERE nvl(t.dr, 0) = 0    ");
-//		sql.append("   AND (t.vdeptuserid = ? OR t.vcomuserid = ? OR t.vgroupuserid = ? )   ");
-//		spm.addParam(paramvo.getCuserid());
-//		spm.addParam(paramvo.getCuserid());
-//		spm.addParam(paramvo.getCuserid());
-//		List<ManagerVO> list = (List<ManagerVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-//				new BeanListProcessor(ManagerVO.class));
-//		if (list != null && list.size() > 0) {
-//			
-//		}
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT account.vprovince    ");
@@ -1013,55 +677,6 @@ public class AchievementServiceImpl implements IAchievementService {
 	@SuppressWarnings("unchecked")
 	private Map<Integer, String> qryUserPowerThree(QryParamVO paramvo) throws DZFWarpException {
 		Map<Integer, String> pmap = new HashMap<Integer, String>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-//		List<String> pklist = new ArrayList<String>();
-//		// 3.1、区域负责人
-//		sql.append("SELECT account.pk_corp    ");
-//		sql.append("  FROM cn_chnarea_b b    ");
-//		sql.append("  LEFT JOIN bd_account account ON b.vprovince = account.vprovince    ");
-//		sql.append(" WHERE nvl(b.dr, 0) = 0    ");
-//		sql.append("   AND nvl(account.dr, 0) = 0    ");
-//		sql.append("   AND nvl(b.type, 0) = 1    ");
-//		sql.append("   AND nvl(account.ischannel, 'N') = 'Y'    ");
-//		sql.append("   AND nvl(b.ischarge, 'N') = 'Y'    ");
-//		sql.append("   AND b.userid = ?   ");
-//		spm.addParam(paramvo.getCuserid());
-//		if(!StringUtil.isEmpty(filtersql)){
-//			sql.append(" AND ").append(filtersql);
-//		}
-//		List<AccountVO> clist = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-//				new BeanListProcessor(AccountVO.class));
-//		if(clist != null && clist.size() > 0){
-//			for(AccountVO acvo : clist){
-//				if(!pklist.contains(acvo.getPk_corp())){
-//					pklist.add(acvo.getPk_corp());
-//				}
-//			}
-//		}
-//		//3.2、其他区域非负责人
-//		sql = new StringBuffer();
-//		spm = new SQLParameter();
-//		sql.append("SELECT b.pk_corp    ") ;
-//		sql.append("  FROM cn_chnarea_b b    ") ; 
-//		sql.append(" WHERE nvl(b.dr, 0) = 0    ") ; 
-//		sql.append("   AND nvl(b.ischarge, 'N') = 'N'    ") ; 
-//		sql.append("   AND nvl(b.type, 0) = 1    ");
-//		sql.append("   AND b.userid = ?   ");
-//		spm.addParam(paramvo.getCuserid());
-//		List<AccountVO> klist = (List<AccountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-//				new BeanListProcessor(AccountVO.class));
-//		if(klist != null && klist.size() > 0){
-//			for(AccountVO acvo : klist){
-//				if(!pklist.contains(acvo.getPk_corp())){
-//					pklist.add(acvo.getPk_corp());
-//				}
-//			}
-//		}
-//		if(pklist != null && pklist.size() > 0){
-//			String corpsql = SqlUtil.buildSqlForIn("account.pk_corp", pklist.toArray(new String[0]));
-//			pmap.put(3, corpsql);
-//		}
 		
 		String[] pk_corps = pubser.getManagerCorp(paramvo.getCuserid(), 1);
 		if(pk_corps != null && pk_corps.length > 0){
