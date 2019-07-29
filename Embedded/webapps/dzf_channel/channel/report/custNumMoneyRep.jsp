@@ -78,6 +78,14 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:left;width:115px" for='stype'>包含已解约加盟商</label> 
 					<input id="stype" type="checkbox" style="width:20px;height:28px;text-align:left;margin-left:2px;"/>
+					
+					<label style="width:97px;text-align:right">客户类型：</label>
+					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:100px;height:28px;">
+						<option value="">全部</option>
+						<option value="N">非存量客户</option>
+						<option value="Y">存量客户</option>
+					</select>
 				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 

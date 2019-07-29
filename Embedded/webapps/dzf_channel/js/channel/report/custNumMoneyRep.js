@@ -260,17 +260,32 @@ function reloadData() {
 	}
 	//包含已解约加盟商
 	var stype = $('#stype').is(':checked') ? 0 : 1;
+	var isncust = $('#isncust').combobox('getValue');
 	
-	$('#grid').datagrid('load', {
-		"aname" : $('#aname').combobox('getValue'),//大区
-		"ovince" : ovince,//省（市）
-		"uid" : $('#uid').combobox('getValue'),//会计运营经理
-		"corps" : $("#pk_account").val(),//加盟商
-		"stype" : stype,//包含已解约加盟商
-		"begdate" : bdate,
-		"enddate" : edate,
-		"period" : period,
-	});
+	if(isEmpty(isncust)){
+		$('#grid').datagrid('load', {
+			"aname" : $('#aname').combobox('getValue'),//大区
+			"ovince" : ovince,//省（市）
+			"uid" : $('#uid').combobox('getValue'),//会计运营经理
+			"corps" : $("#pk_account").val(),//加盟商
+			"stype" : stype,//包含已解约加盟商
+			"begdate" : bdate,
+			"enddate" : edate,
+			"period" : period,
+		});
+	}else{
+		$('#grid').datagrid('load', {
+			"aname" : $('#aname').combobox('getValue'),//大区
+			"ovince" : ovince,//省（市）
+			"uid" : $('#uid').combobox('getValue'),//会计运营经理
+			"corps" : $("#pk_account").val(),//加盟商
+			"stype" : stype,//包含已解约加盟商
+			"begdate" : bdate,
+			"enddate" : edate,
+			"period" : period,
+			"isncust" : isncust,
+		});
+	}
 	
 	$('#jqj').html(jqj);
 	$("#qrydialog").hide();
