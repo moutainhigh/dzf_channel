@@ -177,7 +177,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	private List<PersonStatisVO> queryPersonStatis(List<String> corplist, UserVO uservo,int type) {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select distinct ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, account.innercode,account.drelievedate");
-		sql.append("          from sm_user_role sur");
+		sql.append("          from sm_userole sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
 		sql.append("         inner join sm_user su on sur.cuserid = su.cuserid");
