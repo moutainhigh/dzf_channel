@@ -614,3 +614,29 @@ function MonthDiff(date1, date2) {
 	date2 = parseInt(date2[0]) * 12 + parseInt(date2[1]);
 	return Math.abs(date1 - date2);
 }
+
+/**
+ * 获取两个月份之前相差的月份
+ * @param start
+ * @param end
+ * @returns {Array}
+ */
+function getPeriodBetween(start, end) {
+	var result = [];
+	var s = start.split("-");
+	var e = end.split("-");
+	var nb = parseInt(s[0]) * 12 + parseInt(s[1].replace('0', ''));
+	var ne = parseInt(e[0]) * 12 + parseInt(e[1].replace('0', ''));
+	var year = 0;
+	var month = 0;
+	for (var i = nb; i <= ne; i++) {
+		month = i % 12;
+		year = parseInt(i / 12);
+		if (month == 0) {
+			month = 12;
+			year -= 1;
+		}
+		result.push(year + "-" + (month < 10 ? "0" + month : month));
+	}
+	return result;
+}
