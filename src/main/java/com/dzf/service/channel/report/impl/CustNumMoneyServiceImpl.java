@@ -154,7 +154,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 	 * @param corplist
 	 *            过滤后加盟商主键
 	 * @param qrytype
-	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；3：续费客户；
+	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -204,71 +204,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			sql.append(" AND substr(p.createdate, 1, 7) = ?   ");
 			String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
 			spm.addParam(preperiod);
-		} else if (qrytype != null && qrytype == 3) {
-			sql.append(" AND p.pk_corp IN (   ");
-			sql.append("SELECT t.pk_corpk   ");
-			sql.append("  FROM cn_contract t    ");
-			sql.append(" INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract    ");
-			sql.append("  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp    ");
-			sql.append("  LEFT JOIN bd_corp p ON acc.pk_corp = p.fathercorp    ");
-			sql.append(" WHERE nvl(t.dr, 0) = 0    ");
-			sql.append("   AND nvl(ct.dr, 0) = 0    ");
-			sql.append("   AND nvl(acc.dr, 0) = 0    ");
-			sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'  ");
-			sql.append("   AND nvl(p.dr, 0) = 0    ");
-			sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
-//			sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
-			sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
-			if(pamvo.getIsncust() != null){
-				sql.append("   AND nvl(p.isseal,'N') = ?   ");
-				spm.addParam(pamvo.getIsncust());
-			}
-			if (corplist != null && corplist.size() > 0) {
-				String where = SqlUtil.buildSqlForIn("acc.pk_corp", corplist.toArray(new String[0]));
-				sql.append(" AND ");
-				sql.append(where);
-			}
-			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			if (qrytype != null && qrytype == 3) {
-				if (pamvo.getQrytype() != null && pamvo.getQrytype() == 1) {// 查询扣款客户
-					if(!StringUtil.isEmpty(pamvo.getPeriod())){
-						sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
-						spm.addParam(pamvo.getPeriod());
-					}else{
-						if(pamvo.getBegdate() != null){
-							sql.append(" AND t.deductdata >= ? ");
-							spm.addParam(pamvo.getBegdate());
-						}
-						if(pamvo.getEnddate() != null){
-							sql.append(" AND t.deductdata <= ? ");
-							spm.addParam(pamvo.getEnddate());
-						}
-					}
-					sql.append(" AND t.vdeductstatus in (?, ?, ? )    ");
-					spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
-					spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
-					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-				} else if (pamvo.getQrytype() != null && pamvo.getQrytype() == 2) {// 查询退款客户
-					if(!StringUtil.isEmpty(pamvo.getPeriod())){
-						sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
-						spm.addParam(pamvo.getPeriod());
-					}else{
-						if(pamvo.getBegdate() != null){
-							sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
-							spm.addParam(pamvo.getBegdate());
-						}
-						if(pamvo.getEnddate() != null){
-							sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
-							spm.addParam(pamvo.getEnddate());
-						}
-					}
-					sql.append(" AND t.vdeductstatus = ?    ");
-					spm.addParam(IStatusConstant.IDEDUCTSTATUS_10);
-				}
-			}
-			sql.append(" AND nvl(ct.patchstatus,-1) not in (2, 5)   ");
-			sql.append(" ) ");
-		}
+		} 
 		sql.append(" GROUP BY p.fathercorp, NVL(p.chargedeptname, '小规模纳税人')   ");
 
 		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
@@ -289,7 +225,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 	 * @param qrytype
 	 * @param corplist
 	 * @param qrytype
-	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；3：续费客户；
+	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -329,7 +265,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 	 * @param pamvo
 	 * @param corplist
 	 * @param qrytype
-	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；3：续费客户；
+	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -385,24 +321,6 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
 				spm.addParam(preperiod);
 			}
-		} else if (qrytype != null && qrytype == 3) {
-			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			
-			if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-				// 按照查询月份查询
-				sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
-				spm.addParam(pamvo.getPeriod());
-			} else {
-				// 按照查询期间查询
-				if (pamvo.getBegdate() != null) {
-					sql.append(" AND t.deductdata >= ?   ");
-					spm.addParam(pamvo.getBegdate());
-				}
-				if (pamvo.getEnddate() != null) {
-					sql.append(" AND t.deductdata <= ?   ");
-					spm.addParam(pamvo.getEnddate());
-				}
-			}
 		}
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
@@ -419,7 +337,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 	 * @param pamvo
 	 * @param corplist
 	 * @param qrytype
-	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；3：续费客户；
+	 *            查询类型 空：所有数据； 1：新增客户；2：新增客户（上月）；
 	 * @return
 	 * @throws DZFWarpException
 	 */
@@ -474,24 +392,7 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
 				spm.addParam(preperiod);
 			}
-		} else if (qrytype != null && qrytype == 3) {
-			sql.append(" AND nvl(ct.isxq,'N') = 'Y' ");
-			if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-				// 按照查询月份查询
-				sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
-				spm.addParam(pamvo.getPeriod());
-			} else {
-				// 按照查询期间查询
-				if (pamvo.getBegdate() != null) {
-					sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
-					spm.addParam(pamvo.getBegdate());
-				}
-				if (pamvo.getEnddate() != null) {
-					sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
-					spm.addParam(pamvo.getEnddate());
-				}
-			}
-		}
+		} 
 		sql.append("   AND t.vdeductstatus in (?, ?)    ");
 		sql.append(" GROUP BY t.pk_corp, NVL(p.chargedeptname, '小规模纳税人')   ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -500,154 +401,154 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 				new BeanListProcessor(CustCountVO.class));
 	}
 
-	/**
-	 * 查询非存量客户数量、合同金额
-	 * 
-	 * @param paramvo
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, CustCountVO> queryStockNumMny(QryParamVO paramvo, List<String> corplist)
-			throws DZFWarpException {
-		Map<String, CustCountVO> stockmap = new HashMap<String, CustCountVO>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_corp, chargedeptname, COUNT(pk_corpk) AS num, SUM(ntotalmny) AS summny   ");
-		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname,   ");
-		sql.append("               t.pk_corp AS pk_corp,   ");
-		sql.append("               t.pk_corpk AS pk_corpk,   ");
-		sql.append(" 			CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny");
-		sql.append("                WHEN 9 THEN t.nchangetotalmny END AS ntotalmny   ");
-		sql.append("          FROM cn_contract t   ");
-		sql.append("         INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
-		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp   ");
-		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp     ");
-		sql.append("         WHERE nvl(t.dr, 0) = 0   ");
-		sql.append("           AND nvl(ct.dr, 0) = 0   ");
-		sql.append("           AND nvl(ct.isncust,'N')='N'   ");// 不统计存量客户
-		sql.append("   AND nvl(p.dr, 0) = 0    ");
-		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
-		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
-		if (corplist != null && corplist.size() > 0) {
-			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
-			sql.append(" and ");
-			sql.append(condition);
-		}
-		sql.append("           AND nvl(ct.patchstatus, -1) != 2   ");// 补单合同不统计
-		sql.append("           AND nvl(acc.dr, 0) = 0   ");
-		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'  ");
-		sql.append("           AND (ct.vbeginperiod = ? OR ct.vendperiod = ? OR   ");
-		spm.addParam(paramvo.getPeriod());
-		spm.addParam(paramvo.getPeriod());
-		sql.append("                (ct.vbeginperiod < ? AND ct.vendperiod > ? ))   ");
-		spm.addParam(paramvo.getPeriod());
-		spm.addParam(paramvo.getPeriod());
-		// 合同状态 = 已审核 或 已终止
-		sql.append("           AND t.vdeductstatus in ( 1 , 9)   ");
-		sql.append("   AND t.pk_corp NOT IN   ");
-		sql.append("       (SELECT f.pk_corp   ");
-		sql.append("          FROM ynt_franchisee f   ");
-		sql.append("         WHERE nvl(dr, 0) = 0   ");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y')) cu   ");
-		sql.append(" GROUP BY pk_corp, chargedeptname");
-		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-		if (list != null && list.size() > 0) {
-			String key = "";
-			for (CustCountVO vo : list) {
-				key = vo.getPk_corp() + "" + vo.getChargedeptname();
-				stockmap.put(key, vo);
-			}
-		}
-		return stockmap;
-	}
+//	/**
+//	 * 查询非存量客户数量、合同金额
+//	 * 
+//	 * @param paramvo
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public Map<String, CustCountVO> queryStockNumMny(QryParamVO paramvo, List<String> corplist)
+//			throws DZFWarpException {
+//		Map<String, CustCountVO> stockmap = new HashMap<String, CustCountVO>();
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter spm = new SQLParameter();
+//		sql.append("SELECT pk_corp, chargedeptname, COUNT(pk_corpk) AS num, SUM(ntotalmny) AS summny   ");
+//		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname,   ");
+//		sql.append("               t.pk_corp AS pk_corp,   ");
+//		sql.append("               t.pk_corpk AS pk_corpk,   ");
+//		sql.append(" 			CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny");
+//		sql.append("                WHEN 9 THEN t.nchangetotalmny END AS ntotalmny   ");
+//		sql.append("          FROM cn_contract t   ");
+//		sql.append("         INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+//		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp   ");
+//		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp     ");
+//		sql.append("         WHERE nvl(t.dr, 0) = 0   ");
+//		sql.append("           AND nvl(ct.dr, 0) = 0   ");
+//		sql.append("           AND nvl(ct.isncust,'N')='N'   ");// 不统计存量客户
+//		sql.append("   AND nvl(p.dr, 0) = 0    ");
+//		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
+//		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
+//		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
+//		if (corplist != null && corplist.size() > 0) {
+//			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
+//			sql.append(" and ");
+//			sql.append(condition);
+//		}
+//		sql.append("           AND nvl(ct.patchstatus, -1) != 2   ");// 补单合同不统计
+//		sql.append("           AND nvl(acc.dr, 0) = 0   ");
+//		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'  ");
+//		sql.append("           AND (ct.vbeginperiod = ? OR ct.vendperiod = ? OR   ");
+//		spm.addParam(paramvo.getPeriod());
+//		spm.addParam(paramvo.getPeriod());
+//		sql.append("                (ct.vbeginperiod < ? AND ct.vendperiod > ? ))   ");
+//		spm.addParam(paramvo.getPeriod());
+//		spm.addParam(paramvo.getPeriod());
+//		// 合同状态 = 已审核 或 已终止
+//		sql.append("           AND t.vdeductstatus in ( 1 , 9)   ");
+//		sql.append("   AND t.pk_corp NOT IN   ");
+//		sql.append("       (SELECT f.pk_corp   ");
+//		sql.append("          FROM ynt_franchisee f   ");
+//		sql.append("         WHERE nvl(dr, 0) = 0   ");
+//		sql.append("           AND nvl(f.isreport, 'N') = 'Y')) cu   ");
+//		sql.append(" GROUP BY pk_corp, chargedeptname");
+//		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+//				new BeanListProcessor(CustCountVO.class));
+//		if (list != null && list.size() > 0) {
+//			String key = "";
+//			for (CustCountVO vo : list) {
+//				key = vo.getPk_corp() + "" + vo.getChargedeptname();
+//				stockmap.put(key, vo);
+//			}
+//		}
+//		return stockmap;
+//	}
 
-	/**
-	 * 查询新增（续费）客户数量、合同金额
-	 * 
-	 * @param paramvo
-	 * @param corplist
-	 * @param qrytype
-	 * @return
-	 * @throws DZFWarpException
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, CustCountVO> queryNumMnyByType(QryParamVO paramvo, List<String> corplist, Integer qrytype)
-			throws DZFWarpException {
-		Map<String, CustCountVO> map = new HashMap<String, CustCountVO>();
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT pk_corp,  ");
-		sql.append("       chargedeptname,  ");
-		sql.append("       COUNT(pk_corpk) AS num,  ");
-		sql.append("       SUM(ntotalmny) AS summny  ");
-		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname,  ");
-		sql.append("               t.pk_corp AS pk_corp,  ");
-		sql.append("			CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny");
-		sql.append("                WHEN 9 THEN t.nchangetotalmny END AS ntotalmny,   ");
-		sql.append("               t.pk_corpk AS pk_corpk  ");
-		sql.append("          FROM cn_contract t  ");
-		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
-		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp   ");
-		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp     ");
-		sql.append("         WHERE nvl(t.dr, 0) = 0  ");
-		sql.append("           AND nvl(ct.dr, 0) = 0  ");
-		sql.append("   AND nvl(p.dr, 0) = 0    ");
-		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
-		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
-		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
-		if (corplist != null && corplist.size() > 0) {
-			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
-			sql.append(" and ");
-			sql.append(condition);
-		}
-		sql.append("           AND nvl(ct.patchstatus, -1) != 2   ");// 补单合同不统计
-		sql.append("           AND nvl(acc.dr, 0) = 0  ");
-		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'   ");
-		sql.append("           AND nvl(ct.isncust,'N')='N'   ");// 不统计存量客户
-		sql.append("   AND t.pk_corp NOT IN   ");
-		sql.append("       (SELECT f.pk_corp   ");
-		sql.append("          FROM ynt_franchisee f   ");
-		sql.append("         WHERE nvl(dr, 0) = 0   ");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
-		sql.append("           AND substr(ct.dsigndate, 1, 7) = ?   ");
-		spm.addParam(paramvo.getPeriod());
-		// 合同状态 = 已审核 或已终止
-		sql.append("           AND t.vdeductstatus in ( 1 , 9)   ");
-		if (qrytype == 1) {// 新增客户
-			sql.append("           AND t.pk_corpk NOT IN   ");
-		} else if (qrytype == 2) {// 续费客户
-			sql.append("           AND t.pk_corpk IN   ");
-		}
-		sql.append("               (SELECT t.pk_corpk AS pk_corpk  ");
-		sql.append("                  FROM cn_contract t  ");
-		sql.append("                  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  ");
-		sql.append("                 WHERE nvl(t.dr, 0) = 0  ");
-		sql.append("                   AND nvl(acc.dr, 0) = 0  ");
-		sql.append("                   AND nvl(acc.ischannel, 'N') = 'Y'  ");
-		sql.append("   AND t.pk_corp NOT IN   ");
-		sql.append("       (SELECT f.pk_corp   ");
-		sql.append("          FROM ynt_franchisee f   ");
-		sql.append("         WHERE nvl(dr, 0) = 0   ");
-		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
-		sql.append("                   AND substr(ct.dsigndate, 1, 7) < ?   ");
-		spm.addParam(paramvo.getPeriod());
-		// 合同状态 = 已审核 或已终止
-		sql.append("                   AND t.vdeductstatus in ( 1 , 9))) cu  ");//
-		sql.append(" GROUP BY pk_corp, chargedeptname");
-		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
-				new BeanListProcessor(CustCountVO.class));
-		if (list != null && list.size() > 0) {
-			String key = "";
-			for (CustCountVO vo : list) {
-				key = vo.getPk_corp() + "" + vo.getChargedeptname();
-				map.put(key, vo);
-			}
-		}
-		return map;
-	}
+//	/**
+//	 * 查询新增客户数量、合同金额
+//	 * 
+//	 * @param paramvo
+//	 * @param corplist
+//	 * @param qrytype
+//	 * @return
+//	 * @throws DZFWarpException
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public Map<String, CustCountVO> queryNumMnyByType(QryParamVO paramvo, List<String> corplist, Integer qrytype)
+//			throws DZFWarpException {
+//		Map<String, CustCountVO> map = new HashMap<String, CustCountVO>();
+//		StringBuffer sql = new StringBuffer();
+//		SQLParameter spm = new SQLParameter();
+//		sql.append("SELECT pk_corp,  ");
+//		sql.append("       chargedeptname,  ");
+//		sql.append("       COUNT(pk_corpk) AS num,  ");
+//		sql.append("       SUM(ntotalmny) AS summny  ");
+//		sql.append("  FROM (SELECT NVL(ct.chargedeptname, '小规模纳税人') AS chargedeptname,  ");
+//		sql.append("               t.pk_corp AS pk_corp,  ");
+//		sql.append("			CASE t.vdeductstatus WHEN 1 THEN ct.ntotalmny");
+//		sql.append("                WHEN 9 THEN t.nchangetotalmny END AS ntotalmny,   ");
+//		sql.append("               t.pk_corpk AS pk_corpk  ");
+//		sql.append("          FROM cn_contract t  ");
+//		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
+//		sql.append("          LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp   ");
+//		sql.append("          LEFT JOIN bd_corp p ON t.pk_corpk = p.pk_corp     ");
+//		sql.append("         WHERE nvl(t.dr, 0) = 0  ");
+//		sql.append("           AND nvl(ct.dr, 0) = 0  ");
+//		sql.append("   AND nvl(p.dr, 0) = 0    ");
+//		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
+//		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
+//		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
+//		if (corplist != null && corplist.size() > 0) {
+//			String condition = SqlUtil.buildSqlForIn("t.pk_corp", corplist.toArray(new String[corplist.size()]));
+//			sql.append(" and ");
+//			sql.append(condition);
+//		}
+//		sql.append("           AND nvl(ct.patchstatus, -1) != 2   ");// 补单合同不统计
+//		sql.append("           AND nvl(acc.dr, 0) = 0  ");
+//		sql.append("           AND nvl(acc.ischannel, 'N') = 'Y'   ");
+//		sql.append("           AND nvl(ct.isncust,'N')='N'   ");// 不统计存量客户
+//		sql.append("   AND t.pk_corp NOT IN   ");
+//		sql.append("       (SELECT f.pk_corp   ");
+//		sql.append("          FROM ynt_franchisee f   ");
+//		sql.append("         WHERE nvl(dr, 0) = 0   ");
+//		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
+//		sql.append("           AND substr(ct.dsigndate, 1, 7) = ?   ");
+//		spm.addParam(paramvo.getPeriod());
+//		// 合同状态 = 已审核 或已终止
+//		sql.append("           AND t.vdeductstatus in ( 1 , 9)   ");
+//		if (qrytype == 1) {// 新增客户
+//			sql.append("           AND t.pk_corpk NOT IN   ");
+//		} else if (qrytype == 2) {// 续费客户
+//			sql.append("           AND t.pk_corpk IN   ");
+//		}
+//		sql.append("               (SELECT t.pk_corpk AS pk_corpk  ");
+//		sql.append("                  FROM cn_contract t  ");
+//		sql.append("                  LEFT JOIN bd_account acc ON t.pk_corp = acc.pk_corp  ");
+//		sql.append("                 WHERE nvl(t.dr, 0) = 0  ");
+//		sql.append("                   AND nvl(acc.dr, 0) = 0  ");
+//		sql.append("                   AND nvl(acc.ischannel, 'N') = 'Y'  ");
+//		sql.append("   AND t.pk_corp NOT IN   ");
+//		sql.append("       (SELECT f.pk_corp   ");
+//		sql.append("          FROM ynt_franchisee f   ");
+//		sql.append("         WHERE nvl(dr, 0) = 0   ");
+//		sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
+//		sql.append("                   AND substr(ct.dsigndate, 1, 7) < ?   ");
+//		spm.addParam(paramvo.getPeriod());
+//		// 合同状态 = 已审核 或已终止
+//		sql.append("                   AND t.vdeductstatus in ( 1 , 9))) cu  ");//
+//		sql.append(" GROUP BY pk_corp, chargedeptname");
+//		List<CustCountVO> list = (List<CustCountVO>) singleObjectBO.executeQuery(sql.toString(), spm,
+//				new BeanListProcessor(CustCountVO.class));
+//		if (list != null && list.size() > 0) {
+//			String key = "";
+//			for (CustCountVO vo : list) {
+//				key = vo.getPk_corp() + "" + vo.getChargedeptname();
+//				map.put(key, vo);
+//			}
+//		}
+//		return map;
+//	}
 
 	/**
 	 * 整数类型增长率计算方法
