@@ -43,6 +43,15 @@ public class GoodsSpecVO extends SuperVO {
 	
 	private DZFBoolean isdefault;
 
+
+	/////////////////////////////////////////查询用的//////////////////////////////////////////
+
+	@FieldAlias("stocknum")
+	private Integer istocknum;
+
+	@FieldAlias("num")
+	private Integer nnum;//数量
+
 	public DZFBoolean getIsdefault() {
         return isdefault;
     }
@@ -61,6 +70,22 @@ public class GoodsSpecVO extends SuperVO {
 
     public DZFBoolean getIsbeused() {
 		return isbeused;
+	}
+
+	public Integer getIstocknum() {
+		return istocknum;
+	}
+
+	public void setIstocknum(Integer istocknum) {
+		this.istocknum = istocknum;
+	}
+
+	public Integer getNnum() {
+		return nnum;
+	}
+
+	public void setNnum(Integer nnum) {
+		this.nnum = nnum;
 	}
 
 	public void setIsbeused(DZFBoolean isbeused) {

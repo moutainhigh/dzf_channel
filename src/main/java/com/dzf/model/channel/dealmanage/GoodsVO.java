@@ -76,9 +76,14 @@ public class GoodsVO extends SuperVO {
 	
 	@FieldAlias("gtypenm")
 	private String vgoodstypename;//商品类型名称
+
+	@FieldAlias("fpath")
+	private String vfilepath;// 文件存储路径　
 	
 	@FieldAlias("isin")
 	private DZFBoolean isstockin;//是否已经入库（仅作查询使用）
+
+	private SuperVO[] bodys;
 	
 	//&&&&&&&&&&&&仅作查询或展示使用end&&&&&&&&&&&&&&&&
 	
@@ -108,6 +113,22 @@ public class GoodsVO extends SuperVO {
 
 	public String getPk_goodstype() {
 		return pk_goodstype;
+	}
+
+	public String getVfilepath() {
+		return vfilepath;
+	}
+
+	public void setVfilepath(String vfilepath) {
+		this.vfilepath = vfilepath;
+	}
+
+	public SuperVO[] getBodys() {
+		return bodys;
+	}
+
+	public void setBodys(SuperVO[] bodys) {
+		this.bodys = bodys;
 	}
 
 	public void setPk_goodstype(String pk_goodstype) {
