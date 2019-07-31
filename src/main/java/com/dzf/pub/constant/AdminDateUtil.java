@@ -94,6 +94,12 @@ public class AdminDateUtil {
          return new DZFDate(millis).toString();
      }
      
+     /**
+      * 时间计算
+      * @param date
+      * @param increment
+      * @return
+      */
      private static long incrementMonth(long date, int increment) {
          Calendar calendar = Calendar.getInstance();
          synchronized (calendar) {
@@ -102,4 +108,15 @@ public class AdminDateUtil {
              return calendar.getTimeInMillis();
          }
      }
+     
+     /**
+      * 取当前月份向后推N个月
+      * @param n
+      * @return
+      */
+      public static String getNextNPeriod(int n) {
+          long millis = incrementMonth(new DZFDate().getMillis(), +1*n);
+          DZFDate date =  new DZFDate(millis);
+          return date.getYear() + "-" + date.getStrMonth();
+      }
 }
