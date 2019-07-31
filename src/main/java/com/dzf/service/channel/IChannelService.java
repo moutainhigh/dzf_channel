@@ -5,6 +5,7 @@ import java.util.List;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 
 public interface IChannelService {
@@ -28,5 +29,12 @@ public interface IChannelService {
 	 * @throws DZFWarpException
 	 */
 	List<CorpVO> qryMultiChannel(QryParamVO paramvo) throws DZFWarpException;
+
+	/**
+	 * 查询当前登录用户角色
+	 * @param uservo
+	 * @return
+	 */
+	int queryQtype(UserVO uservo);
 
 }

@@ -15,6 +15,7 @@ import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.channel.sale.ChnAreaBVO;
 import com.dzf.model.channel.sale.ChnAreaVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.sys.sys_power.AccountVO;
 import com.dzf.model.sys.sys_power.SysFunNodeVO;
 import com.dzf.model.sys.sys_power.UserRoleVO;
@@ -48,7 +49,7 @@ public class PubServiceImpl implements IPubService {
 
 	@Autowired
 	private IUserService userser;
-	
+
 	private String filtersql = QueryUtil.getWhereSql();
 
 	@Override
@@ -153,8 +154,11 @@ public class PubServiceImpl implements IPubService {
 
 	/**
 	 * 获取渠道经理所负责客户
-	 * @param userids  以‘,’隔开
-	 * @param qrytype  1：渠道经理；2：培训师；3：渠道运营；
+	 * 
+	 * @param userids
+	 *            以‘,’隔开
+	 * @param qrytype
+	 *            1：渠道经理；2：培训师；3：渠道运营；
 	 * 
 	 */
 	@Override
@@ -249,7 +253,7 @@ public class PubServiceImpl implements IPubService {
 			if (blist != null && blist.size() > 0) {
 				String userid = blist.get(0).getUserid();
 				if (!StringUtil.isEmpty(userid)) {
-					UserVO uservo =  userser.queryUserJmVOByID(userid);
+					UserVO uservo = userser.queryUserJmVOByID(userid);
 					if (uservo != null) {
 						return uservo.getUser_name();
 					}
@@ -260,8 +264,7 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	/**
-	 * 获取加盟商直接对应的渠道经理/渠道运营(非省/市负责人)
-	 * 1：渠道区域；2：培训区域；3：运营区域；
+	 * 获取加盟商直接对应的渠道经理/渠道运营(非省/市负责人) 1：渠道区域；2：培训区域；3：运营区域；
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -272,7 +275,7 @@ public class PubServiceImpl implements IPubService {
 		sql.append("SELECT account.pk_corp, b.userid cuserid,u.user_name   ");
 		sql.append("  FROM bd_account account    ");
 		sql.append("  LEFT JOIN cn_chnarea_b b ON account.pk_corp = b.pk_corp    ");
-		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid    ") ; 
+		sql.append("  LEFT JOIN sm_user u ON b.userid = u.cuserid    ");
 		sql.append("   Where nvl(b.dr, 0) = 0    ");
 		sql.append("   AND nvl(b.type, 0) = ?   ");
 		spm.addParam(qrytype);
@@ -282,8 +285,8 @@ public class PubServiceImpl implements IPubService {
 			for (UserVO vo : list) {
 				if (!StringUtil.isEmpty(vo.getCuserid())) {
 					vo.setUser_name(CodeUtils1.deCode(vo.getUser_name()));
-					map.put(vo.getPk_corp(),vo);
-				} 
+					map.put(vo.getPk_corp(), vo);
+				}
 			}
 		}
 		return map;
@@ -343,16 +346,17 @@ public class PubServiceImpl implements IPubService {
 		}
 		return promap;
 	}
-	
+
 	@Override
 	public Map<Integer, ChnAreaVO> getChnMap(String areaname, Integer type) throws DZFWarpException {
 		Map<Integer, ChnAreaVO> chnMap = new HashMap<Integer, ChnAreaVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr,b.vprovname vprovnames   ");
+		sql.append(
+				"select a.areaname,a.areacode,a.userid,u.user_name username,b.vprovince dr,b.vprovname vprovnames   ");
 		sql.append("  from cn_chnarea_b b    ");
 		sql.append("  LEFT JOIN cn_chnarea a on b.pk_chnarea = a.pk_chnarea    ");
-		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid    ") ; 
+		sql.append("  LEFT JOIN sm_user u ON a.userid = u.cuserid    ");
 		sql.append(" where nvl(b.dr, 0) = 0    ");
 		sql.append("   and nvl(a.dr, 0) = 0    ");
 		sql.append("   and b.type = ?   ");
@@ -366,7 +370,7 @@ public class PubServiceImpl implements IPubService {
 		if (list != null && list.size() > 0) {
 			for (ChnAreaVO vo : list) {
 				vo.setUsername(CodeUtils1.deCode(vo.getUsername()));
-				chnMap.put(vo.getDr(),vo);
+				chnMap.put(vo.getDr(), vo);
 			}
 		}
 		return chnMap;
@@ -395,13 +399,13 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	@Override
-	public String makeCondition(String cuserid, String areaname,int type) throws DZFWarpException {
+	public String makeCondition(String cuserid, String areaname, int type) throws DZFWarpException {
 		Integer dataLevel = getDataLevel(cuserid);
 		String retstr = null;
 		if (dataLevel != null) {
 			StringBuffer sql = new StringBuffer();
 			if ((dataLevel == 1 && !StringUtil.isEmpty(areaname)) || (dataLevel == 2)) {
-				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
+				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname, type);
 				if (qryProvince != null && qryProvince.size() > 0) {
 					sql.append(" and account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
@@ -409,8 +413,8 @@ public class PubServiceImpl implements IPubService {
 					retstr = sql.toString();
 				}
 			} else if (dataLevel == 3) {
-				List<String> qryCorpIds = qryCorpIds(cuserid, areaname,type);
-				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname,type);
+				List<String> qryCorpIds = qryCorpIds(cuserid, areaname, type);
+				List<String> qryProvince = qryProvince(cuserid, dataLevel, areaname, type);
 				if (qryProvince != null && qryProvince.size() > 0 && qryCorpIds != null && qryCorpIds.size() > 0) {
 					sql.append(" and (account.vprovince  in (");
 					sql.append(SqlUtil.buildSqlConditionForIn(qryProvince.toArray(new String[qryProvince.size()])));
@@ -479,7 +483,7 @@ public class PubServiceImpl implements IPubService {
 	 * @param type(1:渠道；2：培训；3：运营)
 	 * @return
 	 */
-	private List<String> qryProvince(String cuserid, Integer dataLevel, String areaname,int type) {
+	private List<String> qryProvince(String cuserid, Integer dataLevel, String areaname, int type) {
 		StringBuffer buf = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append("select distinct to_char(b.vprovince)");
@@ -504,7 +508,7 @@ public class PubServiceImpl implements IPubService {
 	}
 
 	@Override
-	public List<String> qryCorpIds(String cuserid, String areaname,int type) {
+	public List<String> qryCorpIds(String cuserid, String areaname, int type) {
 		StringBuffer buf = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		buf.append("select distinct b.pk_corp");
@@ -557,27 +561,27 @@ public class PubServiceImpl implements IPubService {
 			throw new BusinessException("无操作节点权限，请联系管理员。");
 		}
 	}
-	
+
 	@Override
-	public void checkButton(UserVO uvo,String funnode,String btncode) throws DZFWarpException {
-        StringBuffer sql = new StringBuffer();
-        SQLParameter spm = new SQLParameter();
-        sql.append(" select b.userids,s.fun_name from cn_button b ");
-        sql.append(" left join sm_funnode s on b.pk_funnode=s.pk_funnode ");
-        sql.append(" where nvl(b.dr,0) = 0 and nvl(s.dr,0) = 0 and nvl(b.ispreset,'N')='N' ");
-        sql.append(" and b.btn_code = ? and s.fun_code = ? ");
-        spm.addParam(btncode);
-        spm.addParam(funnode);
-        Object executeQuery = singleObjectBO.executeQuery(sql.toString(),spm, new ColumnProcessor());
-        if(executeQuery!=null){
-             String userids =executeQuery.toString();
-             if(!userids.contains(uvo.getCuserid())){
-                 throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
-             }
-        }else{
-            throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
-        }
-    }
+	public void checkButton(UserVO uvo, String funnode, String btncode) throws DZFWarpException {
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		sql.append(" select b.userids,s.fun_name from cn_button b ");
+		sql.append(" left join sm_funnode s on b.pk_funnode=s.pk_funnode ");
+		sql.append(" where nvl(b.dr,0) = 0 and nvl(s.dr,0) = 0 and nvl(b.ispreset,'N')='N' ");
+		sql.append(" and b.btn_code = ? and s.fun_code = ? ");
+		spm.addParam(btncode);
+		spm.addParam(funnode);
+		Object executeQuery = singleObjectBO.executeQuery(sql.toString(), spm, new ColumnProcessor());
+		if (executeQuery != null) {
+			String userids = executeQuery.toString();
+			if (!userids.contains(uvo.getCuserid())) {
+				throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
+			}
+		} else {
+			throw new BusinessException("对不起，您没有导出权限，若需要导出权限，请联系您的领导，谢谢！");
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -597,8 +601,8 @@ public class PubServiceImpl implements IPubService {
 		spm.addParam(cuserid);
 		List<UserRoleVO> ret = (List<UserRoleVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(UserRoleVO.class));
-		if(ret != null && ret.size() > 0){
-			for(UserRoleVO rvo : ret){
+		if (ret != null && ret.size() > 0) {
+			for (UserRoleVO rvo : ret) {
 				list.add(rvo.getRole_code());
 			}
 		}
@@ -609,10 +613,10 @@ public class PubServiceImpl implements IPubService {
 	public String getPowerSql(String cuserid, Integer datatype) throws DZFWarpException {
 		Integer datalevel = getDataLevel(cuserid);
 		StringBuffer sql = new StringBuffer();
-		if(datalevel != null){
-			if(datalevel == 1){
+		if (datalevel != null) {
+			if (datalevel == 1) {
 				sql.append("alldata");
-			}else if (datalevel == 2) {
+			} else if (datalevel == 2) {
 				List<String> qryProvince = queryProvince(cuserid, datalevel, datatype);
 				if (qryProvince != null && qryProvince.size() > 0) {
 					sql.append(" AND account.vprovince  in (");
@@ -640,14 +644,15 @@ public class PubServiceImpl implements IPubService {
 				}
 			}
 		}
-		if(sql != null && sql.length() > 0){
+		if (sql != null && sql.length() > 0) {
 			return sql.toString();
 		}
 		return "";
 	}
-	
+
 	/**
 	 * 查询用户负责的省份
+	 * 
 	 * @param cuserid
 	 * @param datalevel
 	 * @param datatype
@@ -676,6 +681,7 @@ public class PubServiceImpl implements IPubService {
 
 	/**
 	 * 查询用户负责的客户
+	 * 
 	 * @param cuserid
 	 * @param datatype
 	 * @return
@@ -702,45 +708,73 @@ public class PubServiceImpl implements IPubService {
 	public Integer getAreaPower(String cuserid, Integer type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		//1、查询是否为总经理
-		sql.append("SELECT vdeptuserid    ") ;
-		sql.append("  FROM cn_leaderset    ") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		// 1、查询是否为总经理
+		sql.append("SELECT vdeptuserid    ");
+		sql.append("  FROM cn_leaderset    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		sql.append("   AND vdeptuserid = ?    ");
 		spm.addParam(cuserid);
 		boolean flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
-		if(flag){
+		if (flag) {
 			return 1;
 		}
-		//2、查询是否为区总
+		// 2、查询是否为区总
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("SELECT userid    ") ;
-		sql.append("  FROM cn_chnarea    ") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("SELECT userid    ");
+		sql.append("  FROM cn_chnarea    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		sql.append("   AND userid = ?    ");
 		spm.addParam(cuserid);
 		sql.append("   AND type = ?    ");
 		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
-		if(flag){
+		if (flag) {
 			return 2;
 		}
-		//3、查询是否为渠道经理
+		// 3、查询是否为渠道经理
 		sql = new StringBuffer();
 		spm = new SQLParameter();
-		sql.append("SELECT userid    ") ;
-		sql.append("  FROM cn_chnarea_b    ") ; 
-		sql.append(" WHERE nvl(dr, 0) = 0    ") ; 
+		sql.append("SELECT userid    ");
+		sql.append("  FROM cn_chnarea_b    ");
+		sql.append(" WHERE nvl(dr, 0) = 0    ");
 		sql.append("   AND userid = ?    ");
 		spm.addParam(cuserid);
 		sql.append("   AND type = ?    ");
 		spm.addParam(type);
 		flag = singleObjectBO.isExists(IDefaultValue.DefaultGroup, sql.toString(), spm);
-		if(flag){
+		if (flag) {
 			return 3;
 		}
 		return -1;
 	}
+   
 	
+	@Override
+	public int queryRole(String cuserid) {
+
+		int type = 0;
+		StringBuffer sql = new StringBuffer();
+		SQLParameter spm = new SQLParameter();
+		spm.addParam(cuserid);
+		sql.append("  select distinct sr.role_name   ");
+		sql.append("    from sm_user_role ur   ");
+		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role   ");
+		sql.append("    where nvl(ur.dr,0)=0   ");
+		sql.append("    and nvl(sr.dr,0)=0   ");
+		sql.append("    and ur.cuserid = ?   ");
+		List<String> rolename = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm,
+				new ColumnListProcessor());
+		for (String string : rolename) {
+			if ("渠道经理".equals(string) || "大区总".equals(string)) {
+				type = IStatusConstant.IQUDAO;
+				break;
+			} else if ("培训师".equals(string) || "运营培训经理".equals(string)) {
+				type = IStatusConstant.IPEIXUN;
+				break;
+			}
+		}
+		return type;
+	}
+
 }

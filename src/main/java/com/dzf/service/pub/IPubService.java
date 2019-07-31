@@ -168,4 +168,12 @@ public interface IPubService {
      */
     public Integer getAreaPower(String cuserid, Integer type) throws DZFWarpException;
     
+    /**
+     * 查询当前登录人角色
+     * 1：渠道  2：培训
+     * @param cuserid
+     * @return
+     * @throws DZFWarpException
+     */
+    public int queryRole(String cuserid) throws DZFWarpException;
 }

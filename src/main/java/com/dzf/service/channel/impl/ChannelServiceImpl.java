@@ -12,6 +12,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
@@ -186,6 +187,12 @@ public class ChannelServiceImpl implements IChannelService {
 			}
 		}
 		return list;
+	}
+	
+	
+	@Override
+	public int queryQtype(UserVO uservo) {
+		return pubservice.queryRole(uservo.getCuserid());
 	}
 	
 }

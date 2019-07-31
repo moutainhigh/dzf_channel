@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.dzf.action.pub.BaseAction;
 import com.dzf.model.channel.ChInvoiceVO;
 import com.dzf.model.pub.Grid;
+import com.dzf.model.pub.Json;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -42,9 +43,11 @@ public class ChannelAction extends BaseAction<UserVO> {
 				paramvo = new QryParamVO();
 			}
 			paramvo.setCuserid(uservo.getCuserid());
+			int page = paramvo.getPage();
+			int rows = paramvo.getRows();
 			List<CorpVO> list = channel.querySmall(paramvo);
 			if (list != null && list.size() > 0) {
-				CorpVO[] corpvos =  (CorpVO[]) QueryUtil.getPagedVOs(list.toArray(new CorpVO[0]), paramvo.getPage(), paramvo.getRows());
+				CorpVO[] corpvos = getPagedVOs(list.toArray(new CorpVO[0]), page, rows);
 				grid.setRows(Arrays.asList(corpvos));
 				grid.setTotal((long) (list.size()));
 			} else {
@@ -59,6 +62,7 @@ public class ChannelAction extends BaseAction<UserVO> {
 		writeJson(grid);
 	}
 	
+	
 	/**
 	 * 查询渠道商(包含演示加盟商)
 	 */
@@ -68,14 +72,15 @@ public class ChannelAction extends BaseAction<UserVO> {
 			checkLoginUser();
 			ChInvoiceVO paramvo = new ChInvoiceVO();
 			paramvo = (ChInvoiceVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if(paramvo == null){
-				paramvo = new ChInvoiceVO();
+			int page = paramvo == null ? 1 : paramvo.getPage();
+			int rows = paramvo == null ? 100000 : paramvo.getRows();
+			if(paramvo != null){
+				paramvo.setEmail(getLoginUserid());
 			}
-			paramvo.setEmail(getLoginUserid());
 			List<CorpVO> list = channel.queryChannel(paramvo);
 			if (list != null && list.size() > 0) {
 				CorpVO[] corpvos = list.toArray(new CorpVO[0]);
-				corpvos = (CorpVO[]) QueryUtil.getPagedVOs(corpvos, paramvo.getPage(), paramvo.getRows());
+				corpvos = (CorpVO[]) QueryUtil.getPagedVOs(corpvos, page, rows);
 				grid.setRows(Arrays.asList(corpvos));
 				grid.setTotal((long) (list.size()));
 			} else {
@@ -116,9 +121,23 @@ public class ChannelAction extends BaseAction<UserVO> {
 	}
 	
 	/**
-	 * 登录用户校验
-	 * @return
+	 * 查询当前登录用户角色
 	 */
+	public void queryQtype() {
+		Json json = new Json();
+		try {
+			UserVO uservo = getLoginUserInfo();
+			int type = channel.queryQtype(uservo);
+			json.setRows(type);
+			json.setMsg("查询成功");
+			json.setSuccess(true);
+		} catch (Exception e) {
+			printErrorLog(json, log, e, "查询失败");
+		}
+		writeJson(json);
+	}
+	
+	
 	private UserVO checkLoginUser(){
 		UserVO uservo = getLoginUserInfo();
 		if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
@@ -128,5 +147,17 @@ public class ChannelAction extends BaseAction<UserVO> {
 		}
 		return uservo;
 	}
+	
+	private CorpVO[] getPagedVOs(CorpVO[] cvos, int page, int rows) {
+		int beginIndex = rows * (page - 1);
+		int endIndex = rows * page;
+		if (endIndex >= cvos.length) {// 防止endIndex数组越界
+			endIndex = cvos.length;
+		}
+		cvos = Arrays.copyOfRange(cvos, beginIndex, endIndex);
+		return cvos;
+	}
+	
+	
 
 }
