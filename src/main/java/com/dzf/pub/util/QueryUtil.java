@@ -6,6 +6,7 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.SuperVO;
 
 public class QueryUtil {
+	
 	/**
 	 * 将查询后的结果分页
 	 * 
@@ -34,4 +35,23 @@ public class QueryUtil {
 	public static String getWhereSql(){
 	    return " nvl(account.dr,0) = 0 and nvl(account.channeltype,-1) != 9 and account.ischannel = 'Y' and account.isaccountcorp = 'Y' "; 
 	}
+	
+	/**
+	 * 字符分页
+	 * @param pks
+	 * @param page
+	 * @param rows
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public static String[] getPagedPKs(String[] pks, int page, int rows) throws DZFWarpException {
+		int beginIndex = rows * (page - 1);
+		int endIndex = rows * page;
+		if (endIndex >= pks.length) {// 防止endIndex数组越界
+			endIndex = pks.length;
+		}
+		pks = Arrays.copyOfRange(pks, beginIndex, endIndex);
+		return pks;
+	}
+	
 }
