@@ -616,12 +616,12 @@ function MonthDiff(date1, date2) {
 }
 
 /**
- * 获取两个月份之前相差的月份
+ * 获取两个月份之间的月份
  * @param start
  * @param end
  * @returns {Array}
  */
-function getPeriodBetween(start, end) {
+function getBetweenPeriod(start, end) {
 	var result = [];
 	var s = start.split("-");
 	var e = end.split("-");
