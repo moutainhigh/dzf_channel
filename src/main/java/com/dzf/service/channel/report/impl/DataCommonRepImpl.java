@@ -33,23 +33,23 @@ public class DataCommonRepImpl {
 
 	@Autowired
 	private IPubService pubService;
-	
+
 	@Autowired
-    private IUserService userser;
+	private IUserService userser;
 
 	private String filtersql = QueryUtil.getWhereSql();
 
-	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class cla,int type) throws DZFWarpException {
+	protected HashMap<String, DataVO> queryCorps(QryParamVO paramvo, Class<?> cla, int type) throws DZFWarpException {
 		Integer level = pubService.getDataLevel(paramvo.getUser_name());
 		HashMap<String, DataVO> map = new HashMap<>();
 		if (level == null) {
-			
+
 		} else if (level <= 2) {
-			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			map = qryBoth(paramvo, level, cla,queryUserMap,type);// 2大区+3渠道总
+			HashMap<String, UserVO> userMap = userser.queryUserMap("000001", true);
+			map = qryBoth(paramvo, level, cla, userMap, type);// 2大区+3渠道总
 		} else if (level == 3) {
-			HashMap<String, UserVO> queryUserMap = userser.queryUserMap("000001", true);
-			map = qryChannel(paramvo, cla,queryUserMap,type);// 1省
+			HashMap<String, UserVO> userMap = userser.queryUserMap("000001", true);
+			map = qryChannel(paramvo, cla, userMap, type);// 1省
 		}
 		return map;
 	}
@@ -58,14 +58,16 @@ public class DataCommonRepImpl {
 	 * 查询省市数据分析
 	 * 
 	 * @param qvo
-	 * @param type 
+	 * @param type
 	 * @return
 	 */
-	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla,HashMap<String, UserVO> queryUserMap, int type) {
-		List<DataVO> qryCharge = qryCharge(qvo, cla,type); // 查询 是 省/市负责人相关的数据
+	private HashMap<String, DataVO> qryChannel(QryParamVO qvo, Class cla, HashMap<String, UserVO> userMap,
+			int type) {
+		// 1、查询 是 省/市负责人相关的数据
+		List<DataVO> datalist = qryCharge(qvo, cla, type); 
 		String condition = null;
-		if (qryCharge == null || qryCharge.size() == 0) {
-			qryCharge = new ArrayList<>();
+		if (datalist == null || datalist.size() == 0) {
+			datalist = new ArrayList<>();
 		} else {
 			List<String> pros = pubService.qryPros(qvo.getUser_name(), 2);
 			if (pros != null && pros.size() > 0) {
@@ -73,29 +75,30 @@ public class DataCommonRepImpl {
 				qvo.setVqrysql(condition);
 			}
 		}
-		List<DataVO> qryNotCharge = qryNotCharge(qvo, cla,type);// 查询 非 省/市负责人相关的数据
-		if (qryNotCharge != null && qryNotCharge.size() > 0) {
-			qryCharge.addAll(qryNotCharge);
+		// 2、查询 非  省/市负责人相关的数据
+		List<DataVO> nplist = qryNotCharge(qvo, cla, type);
+		if (nplist != null && nplist.size() > 0) {
+			datalist.addAll(nplist);
 		}
 		HashMap<String, DataVO> map = new HashMap<>();
 		UserVO uservo;
-		if (qryCharge != null && qryCharge.size() > 0) {
-			for (DataVO dataVO : qryCharge) {
-				if (dataVO.getCorpname() != null && !(dataVO.getPk_corp().equals(dataVO.getCorpname()))) {
-					dataVO.setCuserid(null);
+		if (datalist != null && datalist.size() > 0) {
+			for (DataVO datavo : datalist) {
+				if (datavo.getCorpname() != null && !(datavo.getPk_corp().equals(datavo.getCorpname()))) {
+					datavo.setCuserid(null);
 				}
-				if (!map.containsKey(dataVO.getPk_corp())) {
-					map.put(dataVO.getPk_corp(), dataVO);
-				} else if (!StringUtil.isEmpty(dataVO.getCuserid())) {
-					map.put(dataVO.getPk_corp(), dataVO);
+				if (!map.containsKey(datavo.getPk_corp())) {
+					map.put(datavo.getPk_corp(), datavo);
+				} else if (!StringUtil.isEmpty(datavo.getCuserid())) {
+					map.put(datavo.getPk_corp(), datavo);
 				}
-				uservo = queryUserMap.get(dataVO.getUserid());
+				uservo = userMap.get(datavo.getUserid());
 				if (uservo != null) {
-					dataVO.setUsername(uservo.getUser_name());
+					datavo.setUsername(uservo.getUser_name());
 				}
-				uservo = queryUserMap.get(dataVO.getCuserid());
+				uservo = userMap.get(datavo.getCuserid());
 				if (uservo != null) {
-					dataVO.setCusername(uservo.getUser_name());
+					datavo.setCusername(uservo.getUser_name());
 				}
 			}
 		}
@@ -110,7 +113,8 @@ public class DataCommonRepImpl {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,HashMap<String, UserVO> queryUserMap,int type) {
+	private HashMap<String, DataVO> qryBoth(QryParamVO qvo, Integer level, Class cla,
+			HashMap<String, UserVO> userMap, int type) {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select a.areaname,    ");
@@ -118,7 +122,7 @@ public class DataCommonRepImpl {
 		sql.append("       y.region_name vprovname,    ");
 		sql.append("       account.pk_corp,    ");
 		sql.append("       account.innercode,    ");
-		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.drelievedate,    ");// 解约日期
 		sql.append("       account.djoindate chndate,   ");
 		sql.append("       account.vprovince,    ");
 		sql.append("       b.ischarge,    ");
@@ -181,28 +185,28 @@ public class DataCommonRepImpl {
 		if (list != null && list.size() > 0) {
 			Boolean isPut = true;
 			UserVO uservo;
-			for (DataVO dataVO : list) {
-				if (dataVO.getCorpname() == null || !(dataVO.getPk_corp().equals(dataVO.getCorpname()))) {
-					dataVO.setCuserid(null);
+			for (DataVO datavo : list) {
+				if (datavo.getCorpname() == null || !(datavo.getPk_corp().equals(datavo.getCorpname()))) {
+					datavo.setCuserid(null);
 				}
-				if (!isQuery && (dataVO.getIsCharge().booleanValue() || !StringUtil.isEmpty(dataVO.getCuserid()))) {
+				if (!isQuery && (datavo.getIsCharge().booleanValue() || !StringUtil.isEmpty(datavo.getCuserid()))) {
 					isPut = true;
 				} else if (!isQuery) {
 					isPut = false;
 				}
-				if (!map.containsKey(dataVO.getPk_corp()) && isPut) {
-					map.put(dataVO.getPk_corp(), dataVO);
-				} else if (!StringUtil.isEmpty(dataVO.getCuserid()) && isPut) {
-					map.put(dataVO.getPk_corp(), dataVO);
+				if (!map.containsKey(datavo.getPk_corp()) && isPut) {
+					map.put(datavo.getPk_corp(), datavo);
+				} else if (!StringUtil.isEmpty(datavo.getCuserid()) && isPut) {
+					map.put(datavo.getPk_corp(), datavo);
 				}
-				
-				uservo = queryUserMap.get(dataVO.getUserid());
+
+				uservo = userMap.get(datavo.getUserid());
 				if (uservo != null) {
-					dataVO.setUsername(uservo.getUser_name());
+					datavo.setUsername(uservo.getUser_name());
 				}
-				uservo = queryUserMap.get(dataVO.getCuserid());
+				uservo = userMap.get(datavo.getCuserid());
 				if (uservo != null) {
-					dataVO.setCusername(uservo.getUser_name());
+					datavo.setCusername(uservo.getUser_name());
 				}
 			}
 		}
@@ -216,7 +220,8 @@ public class DataCommonRepImpl {
 	 * @param cla
 	 * @return
 	 */
-	private List<DataVO> qryCharge(QryParamVO qvo, Class cla,int type) {
+	@SuppressWarnings("unchecked")
+	private List<DataVO> qryCharge(QryParamVO qvo, Class<?> cla, int type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select account.pk_corp,    ");
@@ -225,7 +230,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,    ");
 		sql.append("       b.vprovince,    ");
 		sql.append("       account.innercode,    ");
-		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.drelievedate,    ");// 解约日期
 		sql.append("       account.djoindate chndate,   ");
 		sql.append("       b.pk_corp corpname,    ");
 		sql.append("       (case    ");
@@ -268,8 +273,7 @@ public class DataCommonRepImpl {
 			sql.append(" and b.vprovince=? ");// 省市
 			spm.addParam(qvo.getVprovince());
 		}
-		List<DataVO> list = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
-		return list;
+		return (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
 	}
 
 	/**
@@ -279,7 +283,8 @@ public class DataCommonRepImpl {
 	 * @param cla
 	 * @return
 	 */
-	private List<DataVO> qryNotCharge(QryParamVO qvo, Class cla,int type) {
+	@SuppressWarnings("unchecked")
+	private List<DataVO> qryNotCharge(QryParamVO qvo, Class<?> cla, int type) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("select account.pk_corp,    ");
@@ -289,7 +294,7 @@ public class DataCommonRepImpl {
 		sql.append("       b.vprovname,    ");
 		sql.append("       account.vprovince,    ");
 		sql.append("       account.innercode,    ");
-		sql.append("       account.drelievedate,    ");//解约日期
+		sql.append("       account.drelievedate,    ");// 解约日期
 		sql.append("       account.djoindate chndate,   ");
 		sql.append("       b.pk_corp corpname    ");
 		sql.append("  from bd_account account    ");
@@ -328,8 +333,7 @@ public class DataCommonRepImpl {
 			sql.append(" and b.vprovince=? ");// 省市
 			spm.addParam(qvo.getVprovince());
 		}
-		List<DataVO> vos = (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
-		return vos;
+		return (List<DataVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(cla));
 	}
 
 }
