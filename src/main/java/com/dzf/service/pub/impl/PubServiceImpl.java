@@ -27,6 +27,7 @@ import com.dzf.pub.IDefaultValue;
 import com.dzf.pub.IGlobalConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.AreaCache;
+import com.dzf.pub.constant.IRoleCode;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
@@ -749,29 +750,26 @@ public class PubServiceImpl implements IPubService {
 		return -1;
 	}
    
-	
+	@SuppressWarnings("unchecked")
 	@Override
-	public int queryRole(String cuserid) {
-
-		int type = 0;
+	public Integer queryRoleType(String cuserid) throws DZFWarpException {
+		Integer type = -1;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT distinct ul.pk_role  ") ;
+		sql.append("  FROM sm_userole ul  ") ; 
+		sql.append("  LEFT JOIN sm_role rl ON ul.pk_role = rl.pk_role  ") ; 
+		sql.append(" WHERE nvl(ul.dr, 0) = 0  ") ; 
+		sql.append("   AND nvl(rl.dr, 0) = 0  ") ; 
+		sql.append("   AND ul.cuserid = ? ");
 		spm.addParam(cuserid);
-		sql.append("  select distinct sr.role_name   ");
-		sql.append("    from sm_user_role ur   ");
-		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role   ");
-		sql.append("    where nvl(ur.dr,0)=0   ");
-		sql.append("    and nvl(sr.dr,0)=0   ");
-		sql.append("    and ur.cuserid = ?   ");
-		List<String> rolename = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm,
+		List<String> codelist = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new ColumnListProcessor());
-		for (String string : rolename) {
-			if ("渠道经理".equals(string) || "大区总".equals(string)) {
-				type = IStatusConstant.IQUDAO;
-				break;
-			} else if ("培训师".equals(string) || "运营培训经理".equals(string)) {
-				type = IStatusConstant.IPEIXUN;
-				break;
+		if(codelist != null && codelist.size() > 0){
+			if(codelist.contains(IRoleCode.CORPQDJL) || codelist.contains(IRoleCode.CORPDQZ)){
+				return IStatusConstant.IQUDAO;
+			}else if(codelist.contains(IRoleCode.CORPPXJL) || codelist.contains(IRoleCode.CORPPXS)){
+				return IStatusConstant.IPEIXUN;
 			}
 		}
 		return type;

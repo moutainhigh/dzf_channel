@@ -187,11 +187,11 @@ public interface IPubService {
 	public Integer getAreaPower(String cuserid, Integer type) throws DZFWarpException;
 
 	/**
-	 * 查询当前登录人角色 1：渠道 2：培训
+	 * 查询当前登录人角色类型
 	 * 
 	 * @param cuserid
-	 * @return
+	 * @return 1：渠道 2：培训
 	 * @throws DZFWarpException
 	 */
-	public int queryRole(String cuserid) throws DZFWarpException;
+	public Integer queryRoleType(String cuserid) throws DZFWarpException;
 }
