@@ -13,6 +13,7 @@ import com.dzf.dao.bs.DAOException;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
+import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.dao.jdbc.framework.processor.ColumnProcessor;
 import com.dzf.model.pub.IExAggVO;
 import com.dzf.pub.BusinessException;
@@ -376,4 +377,31 @@ public class MultBodyObjectBO {
 		}
 		return 0;
 	}
+	
+	/**
+	 * 获取分页数据<单查某一个字段>
+	 * @param column 字段名称
+	 * @param sql
+	 * @param params
+	 * @param pageNo
+	 * @param pageSize
+	 * @param order
+	 * @return
+	 * @throws DZFWarpException
+	 */
+	public List<?> queryDataPage(String column, String sql, SQLParameter params, int pageNo, int pageSize, String order)
+			throws DZFWarpException {
+		StringBuffer qrysql = new StringBuffer();
+		qrysql.append(" select ").append(column);
+		qrysql.append(" from ( SELECT ROWNUM AS ROWNO, tt.* FROM ( ");
+		qrysql.append(sql);
+		if (!StringUtil.isEmpty(order)) {
+			qrysql.append(" order by " + order + " desc) tt WHERE ROWNUM<=" + pageNo * pageSize);
+		} else {
+			qrysql.append(" ) tt WHERE ROWNUM<=" + pageNo * pageSize + " ");
+		}
+		qrysql.append(" ) WHERE ROWNO> " + (pageNo - 1) * pageSize + " ");
+		return (List<?>) singleObjectBO.executeQuery(qrysql.toString(), params, new ColumnListProcessor());
+	}
+	
 }
