@@ -36,7 +36,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:250px;">
+			<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:280px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -55,7 +55,32 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:70px;">渠道经理：</label> 
 					<input id="cuid" name="cuid" class="easyui-combobox" style="width:295px;height:28px;text-align:left"
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
+						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />
+				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:right;width:70px">客户类型：</label>
+					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'"
+							style="width:120px;height:28px;">
+						<option value="">全部</option>
+						<option value="N" selected>非存量客户</option>
+						<option value="Y">存量客户</option>
+					</select>
+					<label style="text-align:right;width:70px">套餐类型：</label>
+					<select id="comptype" class="easyui-combobox" data-options="panelHeight:'auto'"
+							style="width:100px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">个体户</option>
+						<option value="2">非个体户</option>
+					</select>
+				</div>
+				<div class="time_col time_colp10">
+					<label style="text-align:right;width:70px">加盟状态：</label>
+					<select id="chantype" class="easyui-combobox" data-options="panelHeight:'auto'"
+							style="width:120px;height:28px;">
+						<option value="-1">全部</option>
+						<option value="1">加盟</option>
+						<option value="2">解约</option>
+					</select>
 				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 

@@ -64,16 +64,24 @@ public class FranchiseeManServiceImpl extends ManCommonServiceImpl implements IF
 		sql.append("       account.pk_corp, ");
 		sql.append("       account.innercode, ");
 		sql.append("       account.unitname corpname, ");
-		sql.append("        account.drelievedate,   ");//解约日期
+		sql.append("       account.drelievedate,   ");//解约日期
 		sql.append("       account.vprovince ");
 		sql.append("  from bd_account account ");
 		sql.append("  left join ynt_area y on account.vprovince = y.region_id ");
 		sql.append("                      and y.parenter_id = 1 ");
 		sql.append("                      and nvl(y.dr, 0) = 0 ");
 		sql.append(" where ").append(wheresql);
-		sql.append("   and account.vprovince is not null "); 
+		sql.append("   and account.vprovince is not null ");
+		if(qvo.getChantype() !=null && qvo.getChantype()>0){
+			sql.append(" and account.drelievedate ");
+			if(qvo.getChantype()==1){
+				sql.append(" is null ");
+			}else{
+				sql.append(" is not null ");
+			}
+		}
 		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
-			sql.append(" and account.vprovince=? ");// 省市
+			sql.append(" and account.vprovince=? ");
 			sp.addParam(qvo.getVprovince());
 		}
 		if(!StringUtil.isEmpty(qvo.getCuserid())){

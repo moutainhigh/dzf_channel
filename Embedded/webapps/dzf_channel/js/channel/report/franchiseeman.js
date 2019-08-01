@@ -89,25 +89,33 @@ function clearCondition(){
 	$('#aname').combobox('select',null);
 	$('#ovince').combobox('select',null);
 	$('#cuid').combobox('select',null);
+
+	$('#isncust').combobox('setValue',"N");
+	$('#comptype').combobox('setValue','-1');
+	$('#chantype').combobox('setValue','-1');
 }
 // 重新加载数据
 function reloadData() {
 	var queryParams =new Array();
+
 	var aname=$('#aname').combobox('getValue')
-	if(aname!=null && aname!=""){
-		queryParams['aname'] = $('#aname').combobox('getValue');
+	if(!isEmpty(aname)){
+		queryParams['aname'] = aname;
 	}
-	var ovince=$('#ovince').combobox('getValue')
-	if(ovince!=null && ovince!=""){
-		queryParams['ovince'] = $('#ovince').combobox('getValue');
+	var ovince=$('#ovince').combobox('getValue');
+	if(!isEmpty(ovince)){
+		queryParams['ovince'] = ovince;
 	}
-	var cuid=$('#cuid').combobox('getValue')
-	if(cuid!=null && cuid!=""){
-		queryParams['cuid'] = $('#cuid').combobox('getValue');
-	}
+
+	queryParams['cuid'] =$('#cuid').combobox('getValue');
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
 	queryParams['type'] = 3;
+
+	queryParams['isncust'] = $('#isncust').combobox('getValue');
+	queryParams['comptype'] = $('#comptype').combobox('getValue');
+	queryParams['chantype'] = $('#chantype').combobox('getValue');
+
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('options').url = DZF.contextPath +'/report/franchiseeman!query.action';
 	$("#grid").datagrid('reload');
@@ -143,7 +151,7 @@ function load() {
 					}else if(value=="合计"){
 						return "合计";
 					}else{
-						value= "<a href='javascript:void(0)' style='color:blue' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
+						value= "<a href='javascript:void(0)' style='color:#0000ff' onclick=\"qryDetail('"+row.corpid+"','"+row.corpnm+"')\">" + value + "</a>";
 		            	if (!isEmpty(row.dreldate)) {
 		            		return "<div style='position: relative;'>" + value + "<img style='right: 0; position: absolute;' src='../../images/rescission.png' /></div>"
 		            	}else{

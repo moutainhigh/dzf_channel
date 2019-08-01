@@ -83,6 +83,14 @@ public class RegionalManServiceImpl extends ManCommonServiceImpl implements IReg
 		// sql.append(" and a.areaname=? "); // 大区
 		// sp.addParam(qvo.getAreaname());
 		// }
+		if(qvo.getChantype() !=null && qvo.getChantype()>0){
+			sql.append(" and account.drelievedate ");
+			if(qvo.getChantype()==1){
+				sql.append(" is null ");
+			}else{
+				sql.append(" is not null ");
+			}
+		}
 		if (qvo.getVprovince() != null && qvo.getVprovince() != -1) {
 			sql.append(" and account.vprovince=? ");// 省市
 			sp.addParam(qvo.getVprovince());

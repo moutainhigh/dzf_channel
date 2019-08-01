@@ -109,11 +109,26 @@ function load() {
 	});
 }
 
+//查询框关闭事件
+function closeCx() {
+	$("#qrydialog").css("visibility", "hidden");
+}
+
+// 清空查询条件
+function clearCondition(){
+	$('#isncust').combobox('setValue',"N");
+	$('#comptype').combobox('setValue','-1');
+	$('#chantype').combobox('setValue','-1');
+}
+
 function reloadData(){
 	$('#grid').datagrid('load', {
 		bdate: $('#bdate').datebox('getValue'),
 		edate: $('#edate').datebox('getValue'),
-		"type":1
+		"type":1,
+		'isncust':$('#isncust').combobox('getValue'),
+		'comptype':$('#comptype').combobox('getValue'),
+		'chantype': $('#chantype').combobox('getValue'),
 	});
 }
 

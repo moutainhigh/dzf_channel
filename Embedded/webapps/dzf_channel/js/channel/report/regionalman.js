@@ -49,22 +49,29 @@ function closeCx() {
 function clearCondition(){
 	$('#ovince').combobox('select',null);
 	$('#cuid').combobox('select',null);
+
+	$('#isncust').combobox('setValue',"N");
+	$('#comptype').combobox('setValue','-1');
+	$('#chantype').combobox('setValue','-1');
 }
 
 // 重新加载数据
 function reloadData() {
 	var queryParams =new Array();
-	var ovince=$('#ovince').combobox('getValue')
-	if(ovince!=null&&ovince!=""){
-		queryParams['ovince'] = $('#ovince').combobox('getValue');
+
+	var ovince=$('#ovince').combobox('getValue');
+	if(!isEmpty(ovince)){
+		queryParams['ovince'] = ovince;
 	}
-	var cuid=$('#cuid').combobox('getValue')
-	if(cuid!=null&&cuid!=""){
-		queryParams['cuid'] = $('#cuid').combobox('getValue');
-	}
+
+	queryParams['cuid'] =$('#cuid').combobox('getValue');
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
 	queryParams['type'] = 2;
+
+	queryParams['isncust'] = $('#isncust').combobox('getValue');
+	queryParams['comptype'] = $('#comptype').combobox('getValue');
+	queryParams['chantype'] = $('#chantype').combobox('getValue');
 	
 	$('#grid').datagrid('options').queryParams = queryParams;
 	$('#grid').datagrid('options').url = DZF.contextPath +'/report/regionalman!query.action';

@@ -97,6 +97,12 @@ public class ManagerVO extends SuperVO {
     @FieldAlias("dreldate")
     private DZFDate drelievedate;//解约日期
 
+	private DZFBoolean isncust;//客户类型：是否存量客户
+
+	private Integer comptype;//套餐类型 1-个体户，2-非个体户；
+
+	private Integer chantype;//加盟状态 1加盟；2解约
+
 	public String getInnercode() {
 		return innercode;
 	}
@@ -111,6 +117,30 @@ public class ManagerVO extends SuperVO {
 
 	public void setDbegindate(DZFDate dbegindate) {
 		this.dbegindate = dbegindate;
+	}
+
+	public Integer getChantype() {
+		return chantype;
+	}
+
+	public void setChantype(Integer chantype) {
+		this.chantype = chantype;
+	}
+
+	public DZFBoolean getIsncust() {
+		return isncust;
+	}
+
+	public void setIsncust(DZFBoolean isncust) {
+		this.isncust = isncust;
+	}
+
+	public Integer getComptype() {
+		return comptype;
+	}
+
+	public void setComptype(Integer comptype) {
+		this.comptype = comptype;
 	}
 
 	public DZFDate getDenddate() {

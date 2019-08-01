@@ -117,6 +117,14 @@ public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChan
 		sql.append("       account.drelievedate,account.vprovince    ");
 		sql.append("  from bd_account account ");
 		sql.append(" where ").append(wheresql);
+		if(qvo.getChantype() !=null && qvo.getChantype()>0){
+			sql.append(" and account.drelievedate ");
+			if(qvo.getChantype()==1){
+				sql.append(" is null ");
+			}else{
+				sql.append(" is not null ");
+			}
+		}
 		sql.append("   and nvl(account.dr, 0) = 0 ");
 		sql.append("   and exists (select distinct b.vprovince ");
 		sql.append("          from cn_chnarea_b b ");
@@ -153,6 +161,14 @@ public class ChannelManServiceImpl extends ManCommonServiceImpl implements IChan
 		sql.append(" right join cn_chnarea_b b on account.pk_corp = b.pk_corp ");
 		sql.append("  left join cn_chnarea a on b.pk_chnarea = a.pk_chnarea ");
 		sql.append(" where ").append(wheresql);
+		if(qvo.getChantype() !=null && qvo.getChantype()>0){
+			sql.append(" and account.drelievedate ");
+			if(qvo.getChantype()==1){
+				sql.append(" is null ");
+			}else{
+				sql.append(" is not null ");
+			}
+		}
 		sql.append("   and nvl(b.dr, 0) = 0 ");
 		sql.append("   and nvl(a.dr, 0) = 0 ");
 		sql.append("   and b.type = ? ");

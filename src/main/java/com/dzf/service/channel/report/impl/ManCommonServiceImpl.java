@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.dzf.pub.lang.DZFBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,7 +120,21 @@ public class ManCommonServiceImpl{
 			buf.append("  sign(to_date(substr(t.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(t.nsubdedrebamny,0)))as ndedrebamny");
 			
 			buf.append("  from cn_contract t INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
-			buf.append("  where nvl(yt.isncust,'N')='N' and nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) and ");
+			buf.append("  left join cn_packagedef p on yt.pk_packagedef = p.pk_packagedef ");
+			buf.append("  where  nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) ");
+			if(qvo.getIsncust()!=null){
+				if(qvo.getIsncust().booleanValue()){
+					buf.append(" and nvl(yt.isncust,'N')='Y' ");
+				}else{
+					buf.append(" and nvl(yt.isncust,'N')='N' ");
+				}
+			}
+			if(qvo.getComptype()!=null && qvo.getComptype()==1){
+				buf.append(" and p.icompanytype = 20 ");
+			}else if(qvo.getComptype()!=null && qvo.getComptype()==2){
+				buf.append(" and p.icompanytype = 99 ");
+			}
+			buf.append(" and ");
 			buf.append(SqlUtil.buildSqlForIn("yt.pk_corp ",pks));
 			buf.append("  group by yt.pk_corp");
 			List<ManagerVO> list3 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), spm, new BeanListProcessor(ManagerVO.class));
@@ -131,7 +146,15 @@ public class ManCommonServiceImpl{
 			
 			buf=new StringBuffer();//小规模及一般纳税人的数量
 			buf.append(" select count(pk_corp) anum,chargedeptname corpname, fathercorp pk_corp from bd_corp  ");
-			buf.append(" where nvl(dr,0)=0 and nvl(isaccountcorp,'N')='N' and chargedeptname is not null and ");
+			buf.append(" where nvl(dr,0)=0 and nvl(isaccountcorp,'N')='N' and chargedeptname is not null  ");
+			if(qvo.getIsncust()!=null){
+				if(qvo.getIsncust().booleanValue()){
+					buf.append(" and nvl(isncust,'N')='Y' ");
+				}else{
+					buf.append(" and nvl(isncust,'N')='N' ");
+				}
+			}
+			buf.append(" and ");
 			buf.append(SqlUtil.buildSqlForIn("fathercorp ",pks));
 			buf.append(" group by fathercorp,chargedeptname  ");
 			List<ManagerVO> list5 =(List<ManagerVO>)singleObjectBO.executeQuery(buf.toString(), null, new BeanListProcessor(ManagerVO.class));
@@ -144,10 +167,10 @@ public class ManCommonServiceImpl{
 			spm.addParam(qvo.getDenddate());
 			
 			//地区提单量,地区合同代账费,（计算客单价）
-			List<ManagerVO> list6 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,2).toString(), spm, new BeanListProcessor(ManagerVO.class));
+			List<ManagerVO> list6 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,2, qvo).toString(), spm, new BeanListProcessor(ManagerVO.class));
 			//提单量,合同代账费,
 //			spm.addParam(qvo.getDbegindate());
-			List<ManagerVO> list7 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,1).toString(), spm, new BeanListProcessor(ManagerVO.class));
+			List<ManagerVO> list7 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,1, qvo).toString(), spm, new BeanListProcessor(ManagerVO.class));
 			
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
@@ -160,7 +183,7 @@ public class ManCommonServiceImpl{
 		    	 for (ManagerVO managerVO : list2) {
 						ManagerVO vo = map.get(managerVO.getPk_corp());
 						vo.setPredeposit(managerVO.getPredeposit());
-						vo.setOutmny(managerVO.getPredeposit()); //预存款余额金额s
+						vo.setOutmny(managerVO.getPredeposit()); //预存款余额金额
 						map.put(managerVO.getPk_corp(),vo);
 					}
 		     }
@@ -230,9 +253,10 @@ public class ManCommonServiceImpl{
 	
 	/**
 	 * 查询语句（提单量，合同代账费）
-	 * @param buf
+	 * @param pks
+	 * @param type
 	 */
-	protected StringBuffer getSql(String[] pks,Integer type) {
+	protected StringBuffer getSql(String[] pks, Integer type, ManagerVO qvo) {
 		StringBuffer buf=new StringBuffer();
 		if(type==2){
 			buf.append("  select sum(w.rnum) as rnum,");
@@ -265,12 +289,26 @@ public class ManCommonServiceImpl{
 		if(type==2){
 			buf.append("  ))as rntotalmny from cn_contract c");
 			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+			buf.append("  left join cn_packagedef p on yt.pk_packagedef=p.pk_packagedef ");
 			buf.append("  left join bd_corp b on c.pk_corp=b.pk_corp");
 		}else{
 			buf.append("  ))as rntotalmny from cn_contract c");
 			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+			buf.append("  left join cn_packagedef p on yt.pk_packagedef=p.pk_packagedef ");
 		}
-		buf.append("  where nvl(yt.isncust,'N')='N' and nvl(yt.dr,0) = 0 and nvl(c.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) ");
+		buf.append("  where nvl(c.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) ");
+		if(qvo.getIsncust()!=null){
+			if(qvo.getIsncust().booleanValue()){
+				buf.append(" and  nvl(yt.isncust,'N')='Y' ");
+			}else{
+				buf.append(" and  nvl(yt.isncust,'N')='N'");
+			}
+		}
+		if(qvo.getComptype()!=null && qvo.getComptype()==1){
+			buf.append(" and p.icompanytype=20 ");
+		}else if(qvo.getComptype()!=null && qvo.getComptype()==2){
+			buf.append(" and p.icompanytype=99 ");
+		}
 		if(type==2){
 			buf.append("  and b.vprovince is not null ");
 			buf.append("  group by c.pk_corp,b.vprovince  order by b.vprovince)w group by w.vprovince");
