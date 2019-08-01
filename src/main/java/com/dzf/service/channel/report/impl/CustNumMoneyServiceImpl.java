@@ -286,11 +286,10 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		sql.append("   AND nvl(acc.dr, 0) = 0    ");
 		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'  ");
 		sql.append("   AND nvl(p.dr, 0) = 0    ");
-//		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
 		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
 		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
 		if(pamvo.getIsncust() != null){
-			sql.append("   AND nvl(p.isseal,'N') = ?   ");
+			sql.append("   AND nvl(p.isncust,'N') = ?   ");
 			spm.addParam(pamvo.getIsncust());
 		}
 		if (corplist != null && corplist.size() > 0) {
@@ -357,11 +356,10 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 		sql.append("   AND nvl(ct.dr, 0) = 0    ");
 		sql.append("   AND nvl(acc.dr, 0) = 0    ");
 		sql.append("   AND nvl(acc.ischannel, 'N') = 'Y'  ");
-//		sql.append("   AND nvl(p.isncust, 'N') = 'N'   ");// 非存量客户
 		sql.append("   AND nvl(p.isseal,'N') = 'N'   ");// 非封存客户
 		sql.append("   AND nvl(p.isaccountcorp,'N') = 'N'   ");// 非会计公司
 		if(pamvo.getIsncust() != null){
-			sql.append("   AND nvl(p.isseal,'N') = ?   ");
+			sql.append("   AND nvl(p.isncust,'N') = ?   ");
 			spm.addParam(pamvo.getIsncust());
 		}
 		if (corplist != null && corplist.size() > 0) {
