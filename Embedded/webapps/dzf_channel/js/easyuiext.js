@@ -625,8 +625,14 @@ function getBetweenPeriod(start, end) {
 	var result = [];
 	var s = start.split("-");
 	var e = end.split("-");
-	var nb = parseInt(s[0]) * 12 + parseInt(s[1].replace('0', ''));
-	var ne = parseInt(e[0]) * 12 + parseInt(e[1].replace('0', ''));
+	if(s[1].indexOf('0') == 0){
+		s[1] = s[1].replace('0', '');
+	}
+	if(e[1].indexOf('0') == 0){
+		e[1].replace('0', '')
+	}
+	var nb = parseInt(s[0]) * 12 + parseInt(s[1]);
+	var ne = parseInt(e[0]) * 12 + parseInt(e[1]);
 	var year = 0;
 	var month = 0;
 	for (var i = nb; i <= ne; i++) {
