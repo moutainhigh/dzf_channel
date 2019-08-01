@@ -345,7 +345,7 @@ public class MultBodyObjectBO {
 		StringBuffer qrysql = new StringBuffer();
 		qrysql.append(" select * from ( SELECT ROWNUM AS ROWNO, tt.* FROM ( ");
 		qrysql.append(sql);
-		if (order != null) {
+		if (!StringUtil.isEmpty(order)) {
 			qrysql.append(" order by " + order + " desc) tt WHERE ROWNUM<="
 					+ pageNo * pageSize);
 		} else {
