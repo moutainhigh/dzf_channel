@@ -33,10 +33,10 @@ public interface IPubService {
 	public String[] getManagerCorp(String userids, Integer qrytype) throws DZFWarpException;
 
 	/**
-	 * 区域查询
+	 * 地区查询
 	 * 
 	 * @param parenter_id
-	 * @return
+	 * @return <地区编码,地区名称>
 	 * @throws DZFWarpException
 	 */
 	public HashMap<Integer, String> queryAreaMap(String parenter_id) throws DZFWarpException;
@@ -44,7 +44,7 @@ public interface IPubService {
 	/**
 	 * 查询大区信息
 	 * 
-	 * @return
+	 * @return <区域编码,(区域名称，区域编码，大区经理)>
 	 * @throws DZFWarpException
 	 */
 	public Map<String, ChnAreaVO> queryLargeArea() throws DZFWarpException;
@@ -58,7 +58,7 @@ public interface IPubService {
 	public Map<Integer, List<String>> getProviceCorp() throws DZFWarpException;
 
 	/**
-	 * 获取加盟商直接对应的渠道经理/渠道运营(非省/市负责人)
+	 * 获取加盟商直接对应的 渠道经理/渠道运营(非省/市负责人)
 	 * 
 	 * @param pk_corp
 	 * @param qrytype
