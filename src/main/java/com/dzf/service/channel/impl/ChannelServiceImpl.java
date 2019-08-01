@@ -192,7 +192,7 @@ public class ChannelServiceImpl implements IChannelService {
 	
 	@Override
 	public int queryQtype(UserVO uservo) {
-		return pubservice.queryRole(uservo.getCuserid());
+		return pubservice.queryRoleType(uservo.getCuserid());
 	}
 	
 }
