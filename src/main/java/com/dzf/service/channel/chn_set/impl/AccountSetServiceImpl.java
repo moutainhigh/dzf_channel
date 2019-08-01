@@ -280,7 +280,7 @@ public class AccountSetServiceImpl extends DataCommonRepImpl implements IAccount
 		sql.append("  update cn_accountset ac   ");
 		sql.append("    set ac.istatus = 1   ");
 		sql.append("    where nvl(ac.dr,0) = 0 and   ");
-		sql.append("    ac.stopperiod = ? and ac.istatus= 0   ");
+		sql.append("    ac.stopperiod <= ? and ac.istatus= 0   ");
 		singleObjectBO.executeUpdate(sql.toString(), spm);
 	}
 	

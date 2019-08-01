@@ -42,8 +42,8 @@ public class AccountProcListenter extends HttpServlet implements ServletContextL
 
         Calendar calender_schedule = Calendar.getInstance();//当前日历类并设置定时时间
         calender_schedule.setTime(new Date());
-        calender_schedule.set(Calendar.HOUR_OF_DAY,12);
-        calender_schedule.set(Calendar.MINUTE, 15);
+        calender_schedule.set(Calendar.HOUR_OF_DAY,0);
+        calender_schedule.set(Calendar.MINUTE, 0);
         calender_schedule.set(Calendar.SECOND, 0);
         calender_schedule.set(Calendar.MILLISECOND, 0);
         
