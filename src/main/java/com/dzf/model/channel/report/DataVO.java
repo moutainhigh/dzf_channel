@@ -40,7 +40,7 @@ public class DataVO extends SuperVO {
 	public String cuserid; // 用户主键（培训师）
 	
     @FieldAlias("cuname")
-    public String cusername; // 用户名称（培训师）
+    public String cusername; // 会计运营经理
     
 	@FieldAlias("isCharge")
 	public DZFBoolean isCharge;//是否省/市负责人
