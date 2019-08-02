@@ -26,11 +26,9 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.dealmanage.IStockOutInService;
-import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 
 @SuppressWarnings("serial")
@@ -131,7 +129,6 @@ public class StockOutInAction extends BaseAction<StockOutInMVO>{
 					num);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出出入库明细表", ISysConstants.SYS_3);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {

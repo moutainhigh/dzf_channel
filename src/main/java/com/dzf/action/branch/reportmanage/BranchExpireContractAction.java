@@ -31,13 +31,11 @@ import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.service.branch.reportmanage.IBranchExpireContractService;
-import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 到期合同统计
@@ -174,7 +172,6 @@ public class BranchExpireContractAction extends BaseAction<QueryContractVO>{
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_37.getValue(), "导出到期合同统计", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
