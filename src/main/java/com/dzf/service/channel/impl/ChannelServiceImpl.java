@@ -113,23 +113,15 @@ public class ChannelServiceImpl implements IChannelService {
 				sql.append(SqlUtil.buildSqlConditionForIn(split));
 				sql.append(" )");
 			}
-		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {// 增加权限的加盟商参照
-																				// -2（渠道）
-																				// -3（培训）
-																				// -4（运营）
-			String condition = pubservice.getPowerSql(vo.getEmail(), vo.getDr() == -5 ? 2 : -vo.getDr() - 1);
+		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {
+			// 增加权限的加盟商参照   
+			// 界面传入查询对应角色类型的值 ： -2（渠道） -3（培训） -4（运营）
+			Integer roletype = -vo.getDr() - 1;
+			String condition = pubservice.getPowerSql(vo.getEmail(), roletype);
 			if (condition != null && !condition.equals("alldata")) {
 				sql.append(condition);
 			} else if (condition == null) {
 				return null;
-			}
-			if (vo.getDr() == -5) {// 数据运营管理，4个报表
-				sql.append(" and account.pk_corp not in (");
-				sql.append("       (SELECT f.pk_corp    ");
-				sql.append("          FROM ynt_franchisee f    ");
-				sql.append("         WHERE nvl(dr, 0) = 0    ");
-				sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
-				sql.append(" )");
 			}
 		}
 		sql.append(" order by innercode ");

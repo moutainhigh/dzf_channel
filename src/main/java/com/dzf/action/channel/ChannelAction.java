@@ -63,6 +63,8 @@ public class ChannelAction extends BaseAction<UserVO> {
 
 	/**
 	 * 查询渠道商(包含演示加盟商)
+	 * email：用户主键
+	 * dr：界面传入查询对应角色类型的值 ： -2（渠道） -3（培训） -4（运营）
 	 */
 	public void queryChannel() {
 		Grid grid = new Grid();
