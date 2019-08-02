@@ -72,6 +72,12 @@ public class QryParamVO extends SuperVO {
 	@FieldAlias("eperiod")
 	private String endperiod;// 结束期间
 	
+	@FieldAlias("stdate")
+	private String startdate;// 开始期间
+
+	@FieldAlias("ovdate")
+	private String overdate;// 结束期间
+	
 	@FieldAlias("isncust")
 	private DZFBoolean isncust;// 是否存量客户
 	   
@@ -81,6 +87,8 @@ public class QryParamVO extends SuperVO {
 	private String[] corps;//渠道商ids
 	
 	private Integer corptype;
+	
+	private Integer servicetype;
 	
 	@FieldAlias("year")
 	private String vyear;//所属季度-年
@@ -363,6 +371,30 @@ public class QryParamVO extends SuperVO {
 
 	public void setQrytype(Integer qrytype) {
 		this.qrytype = qrytype;
+	}
+
+	public String getStartdate() {
+		return startdate;
+	}
+
+	public void setStartdate(String startdate) {
+		this.startdate = startdate;
+	}
+
+	public String getOverdate() {
+		return overdate;
+	}
+
+	public void setOverdate(String overdate) {
+		this.overdate = overdate;
+	}
+	
+	public Integer getServicetype() {
+		return servicetype;
+	}
+
+	public void setServicetype(Integer servicetype) {
+		this.servicetype = servicetype;
 	}
 
 	@Override
