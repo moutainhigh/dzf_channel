@@ -223,6 +223,12 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 			sql.append(" AND (account.drelievedate IS NULL OR account.drelievedate > ? ) ");
 			spm.addParam(new DZFDate());
 		}
+		sql.append(" AND EXISTS ");
+		sql.append("  (SELECT f.pk_corp  ");
+		sql.append("     FROM ynt_franchisee f    ");
+		sql.append("    WHERE nvl(dr, 0) = 0    ");
+		sql.append("      AND nvl(f.isreport, 'N') = 'Y' ");
+		sql.append("      AND account.pk_corp = f.pk_corp)  ");
 		sql.append(" ORDER BY account.innercode ");
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
