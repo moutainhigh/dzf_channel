@@ -13,14 +13,14 @@ public interface IChannelService {
 	/**
 	 * 查询加盟商（渠道级别）
 	 */
-	List<CorpVO> querySmall(QryParamVO paramvo) throws DZFWarpException;
+	public List<CorpVO> querySmall(QryParamVO paramvo) throws DZFWarpException;
 
 	/**
 	 * 查询渠道商(目前逻辑：过滤掉演示的)
 	 * @param paramvo
 	 * @return
 	 */    
-	List<CorpVO> queryChannel(ChInvoiceVO paramvo) throws DZFWarpException;
+	public List<CorpVO> queryChannel(ChInvoiceVO paramvo) throws DZFWarpException;
 	
 	/**
 	 * 查询渠道商（为多选参照使用）
@@ -28,13 +28,13 @@ public interface IChannelService {
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	List<CorpVO> qryMultiChannel(QryParamVO paramvo) throws DZFWarpException;
+	public List<CorpVO> qryMultiChannel(QryParamVO paramvo) throws DZFWarpException;
 
 	/**
 	 * 查询当前登录用户角色
 	 * @param uservo
 	 * @return
 	 */
-	int queryQtype(UserVO uservo);
+	public Integer queryQtype(UserVO uservo) throws DZFWarpException;
 
 }
