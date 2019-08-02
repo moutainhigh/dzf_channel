@@ -42,7 +42,7 @@
 					</div>
 		        </div>
 		    </div>
-		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:330px;">
+		    <div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:300px;">
 				<s class="s"><i class="i"></i></s>
 				<h3>
 					<span>查询</span> <a class="panel-tool-close" href="javascript:closeCx()"></a>
@@ -98,12 +98,14 @@
 				<table id="grid"></table>
 			</div>
 			
+			<!-- 加盟商参照 begin -->
 			<div id="kj_dialog"></div>
 			<div id="kj_buttons" style="display:none;">
 				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 				<a href="javascript:void(0)" class="easyui-linkbutton" style="width:90px"
 					onclick="javascript:$('#kj_dialog').dialog('close');">取消</a>
 			</div>
+			<!-- 加盟商参照 begin -->
 			
 		</div>
 	</div>

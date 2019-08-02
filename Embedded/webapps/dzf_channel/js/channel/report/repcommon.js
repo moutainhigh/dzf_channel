@@ -153,7 +153,11 @@ function initManager(queryData) {
 /**
  * 加盟商初始化
  */
-function initChannel() {
+function initChannel(roletype) {
+	var ovince = -3;
+	if(!isEmpty(roletype)){
+		ovince = roletype;
+	}
 	$('#channel_select').textbox({
 		editable : false,
 		icons : [ {
@@ -167,7 +171,8 @@ function initChannel() {
 					modal : true,
 					href : DZF.contextPath + '/ref/channel_select.jsp',
 					queryParams : {
-						ovince : "-5"
+						ovince : ovince,
+						qrytype : -1,
 					},
 					buttons : '#kj_buttons'
 				});

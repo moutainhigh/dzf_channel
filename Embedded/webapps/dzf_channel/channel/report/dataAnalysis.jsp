@@ -15,6 +15,9 @@
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/dataAnalysis.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%>
+	charset="UTF-8" type="text/javascript"></script>
+<script
 	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
@@ -106,12 +109,21 @@
 			<!-- 查询对话框 begin -->
 			
 			<!-- 查询加盟商参照begin -->
-			<div id="chnDlg"></div>
+			<!-- <div id="chnDlg"></div>
 			<div id="chnBtn" style="display:none;">
 				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#chnDlg').dialog('close');" style="width:90px">取消</a>
-			</div>
+			</div> -->
 			<!-- 查询加盟商参照end -->
+			
+			<!-- 加盟商参照 begin -->
+			<div id="kj_dialog"></div>
+			<div id="kj_buttons" style="display:none;">
+				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
+				<a href="javascript:void(0)" class="easyui-linkbutton" style="width:90px"
+					onclick="javascript:$('#kj_dialog').dialog('close');">取消</a>
+			</div>
+			<!-- 加盟商参照 begin -->
 			
 		</div>
 	</div>

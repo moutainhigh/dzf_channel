@@ -1,4 +1,5 @@
 var grid;
+var roletype;// 1：渠道；2：培训；3：运营；
 
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -12,9 +13,27 @@ $(function() {
 	//大区、省（市）、会计运营经理下拉初始化
 	initQryCommbox();
 	//加盟商参照初始化
-	initChannel();
+	initChannel(roletype);
 	load();
 });
+
+/**
+ * 查询登录用户角色类型
+ */
+function queryRoleType() {
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/corp/channel!queryQtype.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+				roletype = result.rows == 1 ? -2 : -3;
+			}
+		}
+	});
+}
 
 /**
  * 查询日期初始化

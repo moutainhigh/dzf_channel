@@ -9,6 +9,7 @@
 <%
 	String issingle = request.getParameter("issingle");
 	String ovince = request.getParameter("ovince");
+	String qrytype = request.getParameter("qrytype");
 	String funcName = request.getParameter("dblClickRowCallback");
 %>
 <body>
@@ -99,8 +100,12 @@
 		}
 		var params = new Object();
 		var ovince = <%=ovince%>;
-		if(ovince!=undefined){
-			params['dr']=ovince
+		var qrytype = <%=qrytype%>;
+		if(!isEmpty(ovince)){
+			params['dr'] = ovince;
+		}
+		if(!isEmpty(qrytype)){
+			params['qrytype'] = qrytype;
 		}
 		grid = $('#gsTable').datagrid({
 			url: DZF.contextPath + '/sys/sys_inv_manager!queryChannel.action',
@@ -142,8 +147,11 @@
 		       if(event.keyCode == "13") {//Enter 键事件
 		    	   var filtername = $("#unitcode").val(); ; 
 		      		var params = new Object();
-		    		if(ovince!=undefined){
-		    			params['dr']=ovince
+		    		if(!isEmpty(ovince)){
+		    			params['dr'] = ovince;
+		    		}
+		    		if(!isEmpty(qrytype)){
+		    			params['qrytype'] = qrytype;
 		    		}
 		      		params["corpcode"] = filtername;
 		      		grid.datagrid('load',params); 

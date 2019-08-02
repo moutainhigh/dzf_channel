@@ -91,69 +91,69 @@ function closeCx(){
 	$("#qrydialog").hide();
 }
 
-/**
- * 加盟商参照初始化
- */
-function initChannel(){
-    $('#channel_select').textbox({
-        editable: false,
-        icons: [{
-            iconCls: 'icon-search',
-            handler: function(e) {
-                $("#chnDlg").dialog({
-                    width: 600,
-                    height: 480,
-                    readonly: true,
-                    title: '选择加盟商',
-                    modal: true,
-                    href: DZF.contextPath + '/ref/channel_select.jsp',
-                    queryParams : {
-    					ovince :"-1"
-    				},
-                    buttons: '#chnBtn'
-                });
-            }
-        }]
-    });
-}
+///**
+// * 加盟商参照初始化
+// */
+//function initChannel(){
+//    $('#channel_select').textbox({
+//        editable: false,
+//        icons: [{
+//            iconCls: 'icon-search',
+//            handler: function(e) {
+//                $("#chnDlg").dialog({
+//                    width: 600,
+//                    height: 480,
+//                    readonly: true,
+//                    title: '选择加盟商',
+//                    modal: true,
+//                    href: DZF.contextPath + '/ref/channel_select.jsp',
+//                    queryParams : {
+//    					ovince :"-1"
+//    				},
+//                    buttons: '#chnBtn'
+//                });
+//            }
+//        }]
+//    });
+//}
 
-/**
- * 双击选择加盟商
- * @param rowTable
- */
-function dClickCompany(rowTable){
-	var str = "";
-	var corpIds = [];
-	if(rowTable){
-		if (rowTable.length > 300) {
-			Public.tips({
-				content : "一次最多只能选择300个客户!",
-				type : 2
-			});
-			return;
-		}
-		for(var i=0;i<rowTable.length;i++){
-			if(i == rowTable.length - 1){
-				str += rowTable[i].uname;
-			}else{
-				str += rowTable[i].uname+",";
-			}
-			corpIds.push(rowTable[i].pk_gs);
-		}
-		
-		$("#channel_select").textbox("setValue",str);
-		$("#pk_account").val(corpIds);
-	}
-	 $("#chnDlg").dialog('close');
-}
-
-/**
- * 选择加盟商
- */
-function selectCorps(){
-	var rows = $('#gsTable').datagrid('getChecked');
-	dClickCompany(rows);
-}
+///**
+// * 双击选择加盟商
+// * @param rowTable
+// */
+//function dClickCompany(rowTable){
+//	var str = "";
+//	var corpIds = [];
+//	if(rowTable){
+//		if (rowTable.length > 300) {
+//			Public.tips({
+//				content : "一次最多只能选择300个客户!",
+//				type : 2
+//			});
+//			return;
+//		}
+//		for(var i=0;i<rowTable.length;i++){
+//			if(i == rowTable.length - 1){
+//				str += rowTable[i].uname;
+//			}else{
+//				str += rowTable[i].uname+",";
+//			}
+//			corpIds.push(rowTable[i].pk_gs);
+//		}
+//		
+//		$("#channel_select").textbox("setValue",str);
+//		$("#pk_account").val(corpIds);
+//	}
+//	 $("#chnDlg").dialog('close');
+//}
+//
+///**
+// * 选择加盟商
+// */
+//function selectCorps(){
+//	var rows = $('#gsTable').datagrid('getChecked');
+//	dClickCompany(rows);
+//}
 
 /**
  * 查询大区初始化

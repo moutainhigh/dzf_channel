@@ -233,8 +233,8 @@ public class InvManagerServiceImpl implements InvManagerService {
 	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter sp = new SQLParameter();
-		sql.append("select pk_corp, unitname, innercode, vprovince    ") ;
-		sql.append("  from bd_account account    ") ; 
+		sql.append("select pk_corp, unitname, innercode, vprovince    ");
+		sql.append("  from bd_account account    ");
 		sql.append("where ");
 		sql.append(filtersql);
 		sql.append(" and account.fathercorp = '000001' ");
@@ -247,14 +247,17 @@ public class InvManagerServiceImpl implements InvManagerService {
 				sql.append(SqlUtil.buildSqlConditionForIn(split));
 				sql.append(" )");
 			}
-		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {// 增加权限的加盟商参照 -2（渠道） -3（培训） -4（运营）
-			String condition = pubser.getPowerSql(vo.getEmail(), vo.getDr()==-5 ? 2 :-vo.getDr()-1);
+		} else if (vo.getDr() != null && vo.getDr() < 0 && vo.getDr() != -1) {
+			// 界面传入查询对应角色类型的值 ： -2（渠道） -3（培训） -4（运营）
+			Integer roletype = -vo.getDr() - 1;
+			String condition = pubser.getPowerSql(vo.getEmail(), roletype);
 			if (condition != null && !condition.equals("alldata")) {
 				sql.append(condition);
 			} else if (condition == null) {
 				return null;
 			}
-			if (vo.getDr() == -5) {// 数据运营管理，4个报表
+			if (vo.getQrytype() != null && vo.getQrytype() == -1) {
+				// 数据运营管理，4个报表 ，受集团【加盟商管理】节点数据权限控制
 				sql.append(" and account.pk_corp not in (");
 				sql.append("       (SELECT f.pk_corp    ");
 				sql.append("          FROM ynt_franchisee f    ");
