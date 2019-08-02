@@ -26,21 +26,13 @@ public interface IPersonStatis {
 	 * 新增销售团队人数
 	 * @param marketvo
 	 */
-	public void save(MarketTeamVO marketvo);
+	public void save(MarketTeamVO marketvo) throws DZFWarpException;
 
 	/**
 	 * 编辑回显
 	 * @param id
 	 * @return
 	 */
-	public MarketTeamVO queryDataById(String id);
-
-	/**
-	 * 查询当前登录用户角色
-	 * @param uservo
-	 * @return
-	 */
-	public int queryQtype(UserVO uservo);
-
+	public MarketTeamVO queryDataById(String id) throws DZFWarpException;
 
 }

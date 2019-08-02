@@ -31,14 +31,12 @@ import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
-import com.dzf.pub.ISysConstants;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.util.DateUtils;
 import com.dzf.service.channel.report.IPersonStatis;
-import com.dzf.service.pub.LogRecordEnum;
 import com.dzf.service.pub.report.ExportExcel;
 
 /**
@@ -98,22 +96,6 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 		writeJson(grid);
 	}
 
-	/**
-	 * 查询当前登录用户角色
-	 */
-	public void queryQtype() {
-		Json json = new Json();
-		try {
-			UserVO uservo = getLoginUserInfo();
-			int type = personStatis.queryQtype(uservo);
-			json.setRows(type);
-			json.setMsg("查询成功");
-			json.setSuccess(true);
-		} catch (Exception e) {
-			printErrorLog(json, log, e, "查询失败");
-		}
-		writeJson(json);
-	}
 	
 	
 	/**
@@ -253,7 +235,6 @@ public class PersonStatisAction extends BaseAction<PersonStatisVO> {
 					fieldlist, num);
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
-			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出加盟商人员统计表", ISysConstants.SYS_3);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} finally {

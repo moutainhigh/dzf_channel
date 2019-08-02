@@ -12,14 +12,12 @@ import org.springframework.stereotype.Service;
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
-import com.dzf.dao.jdbc.framework.processor.ColumnListProcessor;
 import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.MarketTeamVO;
 import com.dzf.model.channel.report.PersonStatisVO;
 import com.dzf.model.channel.report.UserDetailVO;
 import com.dzf.model.jms.basicset.JMUserRoleVO;
 import com.dzf.model.pub.CommonUtil;
-import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
 import com.dzf.model.sys.sys_power.UserVO;
@@ -47,7 +45,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	@Override
 	public List<PersonStatisVO> query(QryParamVO paramvo,UserVO user) throws DZFWarpException {
 		List<PersonStatisVO> retlist = new ArrayList<PersonStatisVO>();
-		int type = queryRole(user.getCuserid());
+		int type = pubser.queryRoleType(user.getCuserid());
 		HashMap<String, DataVO> map = queryCorps(paramvo,PersonStatisVO.class,type);
 		List<String> corplist = null;
 		if(map!=null && !map.isEmpty()){
@@ -148,36 +146,11 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	}
 	
 	
-	private int queryRole(String cuserid) {
-		
-		int type = 0;
-		StringBuffer sql = new StringBuffer();
-		SQLParameter spm = new SQLParameter();
-		spm.addParam(cuserid);
-		sql.append("  select distinct sr.role_name   ");
-		sql.append("    from sm_user_role ur   ");
-		sql.append("    left join sm_role sr on ur.pk_role = sr.pk_role   ");
-		sql.append("    where nvl(ur.dr,0)=0   ");
-		sql.append("    and nvl(sr.dr,0)=0   ");
-		sql.append("    and ur.cuserid = ?   ");
-		List<String> rolename = (List<String>) singleObjectBO.executeQuery(sql.toString(), spm, new ColumnListProcessor());
-		for (String string : rolename) {
-			if("渠道经理".equals(string) || "大区总".equals(string)){
-				type = IStatusConstant.IQUDAO;
-				break;
-			}else if("培训师".equals(string) || "运营培训经理".equals(string)){
-				type = IStatusConstant.IPEIXUN;
-				break;
-			}
-		}
-		return type;
-	}
 
-
-	private List<PersonStatisVO> queryPersonStatis(List<String> corplist, UserVO uservo,int type) {
+	private List<PersonStatisVO> queryPersonStatis(List<String> corplist, UserVO uservo,int type) throws DZFWarpException{
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select distinct ma.pk_marketeam,ma.managernum,ma.departnum,ma.sellnum,sur.cuserid userid, sr.role_code areaname, su.pk_corp, account.innercode,account.drelievedate");
-		sql.append("          from sm_userole sur");
+		sql.append("          from sm_user_role sur");
 		sql.append("         inner join sm_role sr on sr.pk_role = sur.pk_role");
 		sql.append("                              and sr.roletype = 8");
 		sql.append("         inner join sm_user su on sur.cuserid = su.cuserid");
@@ -205,7 +178,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param Tmap
 	 * @param cuserid
 	 */
-	private void setZhanBi(PersonStatisVO setVO,HashMap<String,Integer> Tmap,PersonStatisVO vo) {
+	private void setZhanBi(PersonStatisVO setVO,HashMap<String,Integer> Tmap,PersonStatisVO vo) throws DZFWarpException{
 		String key=null;
 		
 		if(!"jms01".equals(vo.getAreaname())){
@@ -222,7 +195,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param corplist
 	 * @return
 	 */
-	private HashMap<String, Integer> queryUserNum(List<String> corplist) {
+	private HashMap<String, Integer> queryUserNum(List<String> corplist) throws DZFWarpException{
 		HashMap<String, Integer> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select count(cuserid) total,pk_corp from sm_user where nvl(dr,0)=0 and nvl(locked_tag,'N')= 'N' and ");
@@ -240,7 +213,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param corplist
 	 * @return
 	 */
-	private HashMap<String, Integer> queryCustNum(List<String> corplist) {
+	private HashMap<String, Integer> queryCustNum(List<String> corplist) throws DZFWarpException{
 		HashMap<String, Integer> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select count(pk_corp) total,fathercorp pk_corp from bd_corp  where nvl(dr,0)=0 and nvl(isseal,'N')='N' and ");
@@ -258,7 +231,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	 * @param corplist
 	 * @return
 	 */
-	private HashMap<String, Integer> queryEmployNum(List<String> corplist) {
+	private HashMap<String, Integer> queryEmployNum(List<String> corplist) throws DZFWarpException{
 		HashMap<String, Integer> map=new HashMap<>();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select count(u.pk_employee) lznum, u.pk_corp");
@@ -313,7 +286,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
      * @param pk_corp
      * @return
      */
-    private HashMap<String, Integer> queryUserCorps(String pk_corp){
+    private HashMap<String, Integer> queryUserCorps(String pk_corp) throws DZFWarpException{
         StringBuffer sql = new StringBuffer();
         sql.append(" select uc.cuserid as userid,count(uc.pk_corpk) as corpnum from sm_user_corp uc ");
         sql.append(" join bd_corp corp on corp.pk_corp = uc.pk_corpk");
@@ -341,7 +314,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
      * @param pk_corp
      * @return
      */
-    private HashMap<String, Integer> queryUserCorpsNum(String pk_corp){
+    private HashMap<String, Integer> queryUserCorpsNum(String pk_corp) throws DZFWarpException{ 
         StringBuffer sql = new StringBuffer();
         sql.append(" select uc.cuserid as userid,corp.chargedeptname,");
         sql.append(" decode(corp.chargedeptname,'小规模纳税人',count(uc.pk_corpk),count(uc.pk_corpk)) as corpnum1");
@@ -366,8 +339,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
         return map;
     }
     
-    private HashMap<String, String> queryUserRoles(String pk_corp){
-        StringBuffer sql = new StringBuffer();
+    private HashMap<String, String> queryUserRoles(String pk_corp) throws DZFWarpException{
+        StringBuffer sql = new StringBuffer(); 
         sql.append("select distinct us.cuserid,sr.role_name from sm_user us");
         sql.append(" join sm_userole ur on ur.cuserid = us.cuserid");
         sql.append(" join sm_role sr on ur.pk_role = sr.pk_role");
@@ -395,7 +368,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 
 
 	@Override
-	public void save(MarketTeamVO marketvo) {
+	public void save(MarketTeamVO marketvo)  throws DZFWarpException{
 		if(StringUtil.isEmpty(marketvo.getPk_marketeam())){
 			singleObjectBO.insertVO("000001", marketvo);
 		}else{
@@ -424,7 +397,7 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 	/**
 	 * 检验是否是最新数据
 	 */
-	private void checkData(String pk_marketeam, DZFDateTime updatets) {
+	private void checkData(String pk_marketeam, DZFDateTime updatets) throws DZFWarpException{
 		MarketTeamVO vo = (MarketTeamVO) singleObjectBO.queryByPrimaryKey(MarketTeamVO.class, pk_marketeam);
 		if (!updatets.equals(vo.getUpdatets())) {
 			throw new BusinessException("加盟商编码：" + vo.getInnercode() + ",数据已发生变化;<br>");
@@ -433,14 +406,8 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 
 
 	@Override
-	public MarketTeamVO queryDataById(String id) {
+	public MarketTeamVO queryDataById(String id)  throws DZFWarpException{
 		return (MarketTeamVO) singleObjectBO.queryByPrimaryKey(MarketTeamVO.class, id);
-	}
-
-
-	@Override
-	public int queryQtype(UserVO uservo) {
-		return queryRole(uservo.getCuserid());
 	}
 
 
