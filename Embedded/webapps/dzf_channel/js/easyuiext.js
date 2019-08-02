@@ -491,14 +491,12 @@ function isContains(str, substr) {
 }
 
 /**
- * 数值类型排序
+ * 字符类型排序
  * @param a
  * @param b
  * @returns
  */
-function orderfun(a,b){
-	a = getFloatValue(a);  
-	b = getFloatValue(b);  
+function charorderfun(a,b){
 	return (a>b?1:-1);
 }
 
@@ -553,6 +551,7 @@ function orderfun(a,b){
 	b = getFloatValue(b);  
 	return (a>b?1:-1);
 }
+
 
 /**
  * 去除字符空格（如果需要去掉字符间空格，第二个参数传'g'）

@@ -81,7 +81,7 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("    select \n");
-		sql.append("      co.fathercorp pk_corp,co.pk_corp pk_corpk,co.unitname corpkname,co.chargedeptname,co.sealeddate stopdatetime, \n");
+		sql.append("      co.fathercorp pk_corp,co.pk_corp pk_corpk,co.unitname corpkname,co.chargedeptname, nvl(co.sealeddate,'1970-01-01') stopdatetime, \n");
 		sql.append("      co.def17 stopreason,us.user_name stopname, \n");
 		sql.append("      substr(co.begindate,1,7) jzdate, \n");
 		sql.append("      case when jz.isqjsyjz ='Y' and jz.period is not null then jz.period||'已关账' end isClose \n");

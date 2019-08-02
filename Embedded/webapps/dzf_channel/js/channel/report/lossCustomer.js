@@ -52,6 +52,8 @@ function begloadData(){
 function reloadData(){
 	var url = DZF.contextPath + '/report/losscust!query.action';
 	$('#grid').datagrid('options').url = url;
+	$('#grid').datagrid('options').sortName = "";
+	$('#grid').datagrid('options').sortOder = "";
 	var province = $('#ovince').combobox('getValue') == "" ? -1 : $('#ovince').combobox('getValue');
 	$('#grid').datagrid('load', {
 		'corps' : $("#pk_account").val(),
@@ -155,6 +157,9 @@ function load(){
 		pagination : true,// 分页工具栏显示
 		pageSize : DZF.pageSize,
 		pageList : DZF.pageList,
+		remoteSort : false,//定义从服务器排序
+		sortName:"corpid",//排序字段
+		sortOrder:"desc",//排序方式
 		showFooter:true,
 		idField : 'corpid',
 		columns : [ [ {
@@ -171,6 +176,12 @@ function load(){
 			field : 'updatets',
 			hidden : true
 		}, {
+			width : '100',
+			title : '加盟商主键',
+			field : 'corpid',
+			hidden : true,
+			sortable:true,
+		},{
 			width : '80',
 			title : '大区',
 			field : 'aname',
@@ -224,6 +235,15 @@ function load(){
 			width : '100',
 			halign : 'center',
 			align : 'center',
+			sortable:true,
+			sorter:charorderfun,
+			formatter: function(value, row, index) {
+				if(!isEmpty(value) && value=='1970-01-01')
+					return null;
+				if(!isEmpty(value) && value!='1970-01-01')
+					return value;
+			}
+			
 		},  {
 			field : 'sname',
 			title : '停用人',
@@ -257,6 +277,8 @@ function closeCx(){
 function qryByType(type){
 	$('#grid').datagrid('unselectAll');
 	var queryParams = $('#grid').datagrid('options').queryParams;
+	$('#grid').datagrid('options').sortName = "";
+	$('#grid').datagrid('options').sortOder = "";
 	$('#grid').datagrid('options').url = DZF.contextPath + '/report/losscust!query.action';
 	queryParams.qtype = type;
 	queryParams.bperiod = null;

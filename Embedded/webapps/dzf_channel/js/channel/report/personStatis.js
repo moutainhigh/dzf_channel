@@ -38,7 +38,7 @@ function queryQtype(){
 	$.ajax({
 		type : 'POST',
 		async : false,
-		url : DZF.contextPath + '/report/personStatis!queryQtype.action',
+		url : DZF.contextPath + '/corp/channel!queryQtype.action',
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
