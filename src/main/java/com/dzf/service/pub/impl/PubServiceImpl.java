@@ -648,7 +648,7 @@ public class PubServiceImpl implements IPubService {
 		if (sql != null && sql.length() > 0) {
 			return sql.toString();
 		}
-		return "";
+		return null;
 	}
 
 	/**
