@@ -8,65 +8,169 @@ $(window).resize(function(){
 });
 
 $(function() {
-	initPeriod("#qryperiod");
 	initQryData();
 	//大区、省（市）、会计运营经理下拉初始化
 	initQryCommbox();
 	//加盟商参照初始化
 	initChannel();
 	load();
-	reloadData();
 });
 
 /**
  * 查询日期初始化
  */
 function initQryData(){
-	$('#jqj').html(parent.SYSTEM.PreDate + ' 至 ' + parent.SYSTEM.LoginDate);
-	$("#bdate").datebox("setValue", parent.SYSTEM.PreDate);
-	$("#edate").datebox("setValue", parent.SYSTEM.LoginDate);
+	initPeriod("#begperiod");
+	initPeriod("#endperiod");
+	var period = parent.SYSTEM.period;
 	
-	$("#qryperiod").datebox("setValue", parent.SYSTEM.period);
+	$("#begperiod").datebox("setValue", period);
+	$("#endperiod").datebox("setValue", nperiod);
+	
+	$('#jqj').html(period + ' 至 ' + nperiod);
 }
 
 /**
- * 查询框监听事件
+ * 初始化表格
  */
-function initQryLitener(){
-	$("#bdate").datebox("readonly", false);
-	$("#edate").datebox("readonly", false);
+function load() {
+	var begperiod = $("#begperiod").datebox("getValue");
+	var endperiod = $("#endperiod").datebox("getValue");
+	if (begperiod > endperiod) {
+		errMsg = "开始期间不能大于结束期间"
+	}
+	var diff = MonthDiff(begperiod, endperiod) + 1;
+	if (diff > 6) {
+		Public.tips({
+			content : '查询期间不能超过6个月',
+			type : 2
+		});
+		return;
+	}
 	
-	$('#qryperiod').datebox("readonly", true);
+	//1、获取展示列：
+	var columns = getColumns(begperiod, endperiod, diff);
 	
-	$('input:radio[name="seledate"]').change( function(){  
-		var ischeck = $('#tddate').is(':checked');
-		if(ischeck){
-			var sdv = $('#bdate').datebox('getValue');
-			var edv = $('#edate').datebox('getValue');
-			$('#jqj').html(sdv + ' 至 ' + edv);
-			$("#bdate").datebox("readonly", false);
-			$("#edate").datebox("readonly", false);
-			$('#qryperiod').datebox("readonly", true);
-		}else{
-			$("#qryperiod").datebox("setValue", parent.SYSTEM.period);
-			$('#jqj').html(parent.SYSTEM.period);
-			$("#bdate").datebox("readonly", true);
-			$("#edate").datebox("readonly", true);
-			$('#qryperiod').datebox("readonly", false);
-		}
-	});
+	//2、加载表格：
+	initGrid(columns);
+	
+	//3、查询数据：
+	reloadData();
+}
+
+/**
+ * 获取展示列
+ * @returns {Array}
+ */
+function getColumns(begperiod, endperiod, diff){
+	var columns = new Array(); 
+	var columnsh = new Array();//列及合并列名称
+	var columnsb = new Array();//子列表名称集合
+	
+	var column0 = {};
+	column0["title"] = '加盟日期';  
+	column0["field"] = 'chndate';  
+	column0["width"] = '80'; 
+	column0["halign"] = 'center'; 
+	column0["align"] = 'center'; 
+	column0["rowspan"] = 2; 
+	columnsh.push(column0); 
+	
+	var column1 = {};
+	column1["title"] = '会计运营<br>经理';  
+	column1["field"] = 'cuname';  
+	column1["width"] = '90'; 
+	column1["halign"] = 'center'; 
+	column1["align"] = 'left'; 
+	column1["rowspan"] = 2; 
+	columnsh.push(column1);
+	
+	var column2 = {};
+	column2["title"] = '总客户数';  
+	column2["field"] = 'corpnum';  
+	column2["width"] = '80'; 
+	column2["halign"] = 'center'; 
+	column2["align"] = 'left'; 
+	column2["rowspan"] = 2; 
+	columnsh.push(column2);
+	
+	var column3 = {};
+	column3["title"] = '建账数';  
+	column3["field"] = 'accnum';  
+	column3["width"] = '80'; 
+	column3["halign"] = 'center'; 
+	column3["align"] = 'left'; 
+	column3["rowspan"] = 2; 
+	columnsh.push(column3);
+	
+	var column4 = {};
+	column4["title"] = '未建账数';  
+	column4["field"] = 'naccnum';  
+	column4["width"] = '80'; 
+	column4["halign"] = 'center'; 
+	column4["align"] = 'left'; 
+	column4["rowspan"] = 2; 
+	columnsh.push(column4);
+	
+	var periods = getBetweenPeriod(begperiod, endperiod);
+	for(var i = 0; i < diff; i++){
+		var column = {};
+		column["title"] = periods[i];  
+		column["field"] = 'col'+i;  
+		column["width"] = '260'; 
+		column["colspan"] = 4; 
+		columnsh.push(column); 
+		
+		var column0 = {};
+		column0["title"] = '到期数';  
+		column0["field"] = 'expire'+i;  
+		column0["width"] = '60'; 
+		column0["halign"] = 'center'; 
+		column0["align"] = 'right'; 
+		columnsb.push(column0); 
+		
+		var column1 = {};
+		column1["title"] = '续费数';  
+		column1["field"] = 'num'+i;  
+		column1["width"] = '60'; 
+		column1["halign"] = 'center'; 
+		column1["align"] = 'right'; 
+		columnsb.push(column1);
+		
+		var column2 = {};
+		column2["title"] = '续费率<br>(%)';  
+		column2["field"] = 'rate'+i;  
+		column2["width"] = '60'; 
+		column2["halign"] = 'center'; 
+		column2["align"] = 'right'; 
+		column2["formatter"] = formatMny;
+		columnsb.push(column2);
+		
+		var column3 = {};
+		column3["title"] = '续费额';  
+		column3["field"] = 'mny'+i;  
+		column3["width"] = '80'; 
+		column3["halign"] = 'center'; 
+		column3["align"] = 'right'; 
+		column3["formatter"] = formatMny;
+		columnsb.push(column3);
+		
+	}
+	columns.push(columnsh);
+	columns.push(columnsb);
+	return columns;
 }
 
 /**
  * 数据表格初始化
  */
-function load(){
+function initGrid(columns){
 	$('#grid').datagrid({
 		striped : true,
 		title : '',
 		rownumbers : true,
 		height : Public.setGrid().h,
-		singleSelect : false,
+		singleSelect : true,
 		pagination : true, //显示分页
 		pageSize : 20, //默认20行
 		pageList : [ 20, 50, 100, 200 ],
@@ -90,119 +194,11 @@ function load(){
 		                	}
 		                },
         ]],
-		columns : [ [ 
-		            { field : 'chndate', title : '加盟日期', width:100,halign:'center',align:'center',rowspan:2},
-		            { field : 'cuname',  title : '会计运营经理', width : 120,halign:'center',align:'left',rowspan:2},
-		            
-		            { field : 'stockcust', title : '客户数量', halign:'center',align:'center',colspan:2},
-		            { field : 'stockcont', title : '客户合同金额', halign:'center',align:'center',colspan:2},
-		            { field : 'renewcust', title : '续费客户数量', halign:'center',align:'center',colspan:2},
-		            { field : 'renewcont', title : '续费客户合同金额', halign:'center',align:'center',colspan:2},
-		            { field : 'xqnum', title : '续签客户数', width:100,halign:'center',align:'right',colspan:2},
-		           ] ,
-        [
-            { field : 'stockcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
-            { field : 'stockcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
-            { field : 'stockconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'stockcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcusts', title : '小规模', width : 100, halign:'center',align:'right'}, 
-            { field : 'renewcustt', title : '一般纳税人', width : 100, halign:'center',align:'right'}, 
-            { field : 'renewconts', title : '小规模', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'renewcontt', title : '一般纳税人', width : 100, formatter:formatMny,halign:'center',align:'right'}, 
-            { field : 'yrenewnum', title : '应续签', width : 100, halign:'center',align:'center'},
-            { field : 'renewnum', title : '已续签', width : 100, halign:'center',align:'center',},
-            
-        ] ],
+        columns : columns,
         onLoadSuccess : function(data) {
-        	var rows = $('#grid').datagrid('getRows');
-        	var footerData = new Object();
-        	var stockcusts = 0;	//
-        	var stockcustt = 0;	//
-        	var stockconts = 0;	//
-        	var stockcontt = 0;	//
-        	
-        	var renewcusts = 0;	//
-        	var renewcustt = 0;	//
-        	var renewconts = 0;	//
-        	var renewcontt = 0;	//
-        	
-        	var yrenewnum = 0;
-        	var renewnum = 0;
-        	for (var i = 0; i < rows.length; i++) {
-        		if(!isEmpty(rows[i].stockcusts)){
-        			stockcusts += parseFloat(rows[i].stockcusts);
-        		}
-        		if(!isEmpty(rows[i].stockcustt)){
-        			stockcustt += parseFloat(rows[i].stockcustt);
-        		}
-        		if(!isEmpty(rows[i].stockconts)){
-        			stockconts += parseFloat(rows[i].stockconts);
-        		}
-        		if(!isEmpty(rows[i].stockcontt)){
-        			stockcontt += parseFloat(rows[i].stockcontt);
-        		}
-        		
-        		if(!isEmpty(rows[i].renewcusts)){
-        			renewcusts += parseFloat(rows[i].renewcusts);
-        		}
-        		if(!isEmpty(rows[i].renewcustt)){
-        			renewcustt += parseFloat(rows[i].renewcustt);
-        		}
-        		if(!isEmpty(rows[i].renewconts)){
-        			renewconts += parseFloat(rows[i].renewconts);
-        		}
-        		if(!isEmpty(rows[i].renewcontt)){
-        			renewcontt += parseFloat(rows[i].renewcontt);
-        		}
-        		
-        		if(!isEmpty(rows[i].yrenewnum)){
-        			yrenewnum += parseFloat(rows[i].yrenewnum);
-        		}
-        		if(!isEmpty(rows[i].renewnum)){
-        			renewnum += parseFloat(rows[i].renewnum);
-        		}
-
-        	}
-        	footerData['pname'] = '合计';
-        	footerData['stockcusts'] = stockcusts;
-        	footerData['stockcustt'] = stockcustt;
-        	footerData['stockconts'] = stockconts;
-        	footerData['stockcontt'] = stockcontt;
-        	
-        	footerData['renewcusts'] = renewcusts;
-        	footerData['renewcustt'] = renewcustt;
-        	footerData['renewconts'] = renewconts;
-        	footerData['renewcontt'] = renewcontt;
-        	
-        	footerData['yrenewnum'] = yrenewnum;
-        	footerData['renewnum'] = renewnum;
-        	
-        	var fs=new Array(1);
-        	fs[0] = footerData;
-        	$('#grid').datagrid('reloadFooter',fs);
-        },
+			
+		},
 	});
-}
-
-/**
- * 金额数据格式化
- * @param value
- * @returns {String}
- */
-function formatLocalMny(value){
-	if(value == null){
-		return;
-	}
-	if(getFloatValue(value) == parseFloat(0)){
-		return "--";
-	}else{
-		if(isContains(value,"-")){
-		    var mid = accMul(value, -1);
-		    return "-"+formatMny(mid);
-		}else{
-			return formatMny(value);
-		}
-	}
 }
 
 /**
@@ -212,47 +208,9 @@ function reloadData() {
 	var url = DZF.contextPath + "/report/renewachieverep!queryRenew.action";
 	$('#grid').datagrid('options').url = url;
 	
-	var bdate = null;//查询开始日期
-	var edate = null;//查询结束日期
-	var period = null;//查询月份
-	
+	var period = $("#begperiod").datebox("getValue");
+	var nperiod = $("#endperiod").datebox("getValue");
 	var jqj = null;//查询期间
-	
-	var ischeck = $('#tddate').is(':checked');
-	if(ischeck){
-		bdate = $('#bdate').datebox('getValue'); 
-		edate = $('#edate').datebox('getValue'); 
-		if(isEmpty(bdate)){
-			Public.tips({
-				content : '查询开始日期不能为空',
-				type : 2
-			});
-			return;
-		}
-		if(isEmpty(edate)){
-			Public.tips({
-				content : '查询结束日期不能为空',
-				type : 2
-			});
-			return;
-		}
-		if(!isEmpty(bdate) && !isEmpty(edate)){
-			if(!checkdate1("bdate","edate")){
-				return;
-			}		
-		}
-		jqj = bdate + ' 至 ' + edate;
-	}else{
-		period = $('#qryperiod').datebox('getValue');
-		if(isEmpty(period)){
-			Public.tips({
-				content : '查询月份不能为空',
-				type : 2
-			});
-			return;
-		}
-		jqj = period;
-	}
 	
 	//省（市）
 	var ovince = $('#ovince').combobox('getValue');
@@ -261,19 +219,32 @@ function reloadData() {
 	}
 	//包含已解约加盟商
 	var stype = $('#stype').is(':checked') ? 0 : 1;
+	var isncust = $('#isncust').combobox('getValue');
 
-	$('#grid').datagrid('load', {
-		"aname" : $('#aname').combobox('getValue'),//大区
-		"ovince" : ovince,//省（市）
-		"uid" : $('#uid').combobox('getValue'),//会计运营经理
-		"corps" : $("#pk_account").val(),//加盟商
-		"stype" : stype,//包含已解约加盟商
-		"begdate" : bdate,
-		"enddate" : edate,
-		"period" : period,
-	});
+	if(isEmpty(isncust)){
+		$('#grid').datagrid('load', {
+			"aname" : $('#aname').combobox('getValue'),//大区
+			"ovince" : ovince,//省（市）
+			"uid" : $('#uid').combobox('getValue'),//会计运营经理
+			"corps" : $("#pk_account").val(),//加盟商
+			"stype" : stype,//包含已解约加盟商
+			"bperiod" : period,
+			"eperiod" : nperiod,
+		});
+	}else{
+		$('#grid').datagrid('load', {
+			"aname" : $('#aname').combobox('getValue'),//大区
+			"ovince" : ovince,//省（市）
+			"uid" : $('#uid').combobox('getValue'),//会计运营经理
+			"corps" : $("#pk_account").val(),//加盟商
+			"stype" : stype,//包含已解约加盟商
+			"bperiod" : period,
+			"eperiod" : nperiod,
+			"isncust" : isncust,
+		});
+	}
 	
-	$('#jqj').html(jqj);
+	$('#jqj').html(period + ' 至 ' + nperiod);
 	$("#qrydialog").hide();
 }
 

@@ -3,6 +3,10 @@
 <%@ page import="java.util.Date"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@page import="com.dzf.pub.UpdateGradeVersion"%>
+<%@page import="com.dzf.pub.constant.AdminDateUtil"%>
+<%
+	String nperiod = AdminDateUtil.getNextNPeriod(2);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +16,9 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/renewAchieveRep.js");%> charset="UTF-8" type="text/javascript"></script>
+<script language=javaScript>
+	var nperiod = "<%=nperiod%>";
+</script>
 </head>
 <body>
 	<div class="wrapper">
@@ -42,18 +49,10 @@
 				</h3>
 				
 				<div class="time_col time_colp10">
-					<input id="tddate" type="radio" name="seledate" style="margin-left:12px;" checked />
-					<label style="text-align:right;width: 72px;">查询期间：</label>
-					<input name="bdate" type="text" id="bdate" class="easyui-datebox" 
-						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
-					-
-					<input name="edate" type="text" id="edate" class="easyui-datebox" 
-						style="width:116px;height:28px;" data-options="editable:true,validType:'checkdate'"/>
-				</div>
-				<div class="time_col time_colp10">
-				    <input id="kkdate" type="radio" name="seledate" style="margin-left:12px;" />
-					<label style="text-align:right;width: 72px;">查询月份：</label>
-					<input type="text" id="qryperiod" class="easyui-textbox" data-options="editable:false"
+					<label style="text-align:right;width: 100px;">查询期间：</label>
+					<input type="text" id="begperiod" class="easyui-textbox" data-options="editable:false"
+						style="width:116px;height:28px;" /> -
+					<input type="text" id="endperiod" class="easyui-textbox" data-options="editable:false"
 						style="width:116px;height:28px;" />
 				</div>
 				
@@ -80,10 +79,18 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:left;width:115px" for='stype'>包含已解约加盟商</label> 
 					<input id="stype" type="checkbox" style="width:20px;height:28px;text-align:left;margin-left:2px;"/>
+					
+					<label style="width:97px;text-align:right">客户类型：</label>
+					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
+						style="width:100px;height:28px;">
+						<option value="">全部</option>
+						<option value="N">非存量客户</option>
+						<option value="Y">存量客户</option>
+					</select>
 				</div>
 				<p>
 					<a class="ui-btn save_input" id="cleanbtn" onclick="clearCondition();">清除</a> 
-					<a class="ui-btn save_input" onclick="reloadData()">确定</a>
+					<a class="ui-btn save_input" onclick="load()">确定</a>
 					<a class="ui-btn cancel_input" onclick="closeCx()">取消</a>
 				</p>
 			</div>
@@ -94,7 +101,8 @@
 			<div id="kj_dialog"></div>
 			<div id="kj_buttons" style="display:none;">
 				<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectCorps()" style="width:90px">确认</a> 
-				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#kj_dialog').dialog('close');" style="width:90px">取消</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" style="width:90px"
+					onclick="javascript:$('#kj_dialog').dialog('close');">取消</a>
 			</div>
 			
 		</div>

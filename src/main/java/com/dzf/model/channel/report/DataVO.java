@@ -22,7 +22,7 @@ public class DataVO extends SuperVO {
 	public String corpname;//加盟商名称
     
 	@FieldAlias("chndate")
-	private DZFDate chndate;//加盟商时间
+	private DZFDate chndate;//加盟日期
 	
 	@FieldAlias("aname")
     public String areaname;//大区名称
@@ -34,7 +34,7 @@ public class DataVO extends SuperVO {
 	public String userid; // 用户主键（大区总经理）
     
     @FieldAlias("uname")
-    public String username; // 用户名称（大区总经理）
+    public String username; // 区总
     
 	@FieldAlias("cuid")
 	public String cuserid; // 用户主键（培训师）

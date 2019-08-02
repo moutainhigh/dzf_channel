@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +20,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dzf.model.channel.report.CustNumMoneyRepVO;
+import com.dzf.model.channel.report.RenewAchieveVO;
 import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.IButtonName;
 import com.dzf.model.pub.QryParamVO;
+import com.dzf.model.pub.QrySqlSpmVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
 import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.constant.IFunNode;
 import com.dzf.pub.util.DateUtils;
-import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.IRenewAchieveService;
 import com.dzf.service.pub.IPubService;
 import com.dzf.service.pub.LogRecordEnum;
@@ -46,14 +47,14 @@ import com.dzf.service.pub.report.PrintUtil;
 @ParentPackage("basePackage")
 @Namespace("/report")
 @Action(value = "renewachieverep")
-public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
+public class RenewAchieveRepAction extends PrintUtil<RenewAchieveVO> {
 
 	private static final long serialVersionUID = 7071363023455589093L;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@Autowired
-	private IPubService pubService;
+	private IPubService pubSer;
 	
 	@Autowired
 	private IRenewAchieveService renewser;
@@ -64,28 +65,38 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 	public void queryRenew() {
 		Grid grid = new Grid();
 		try {
-			QryParamVO paramvo = new QryParamVO();
-			paramvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), paramvo);
-			if(paramvo == null){
-				paramvo = new QryParamVO();
+			UserVO uservo = getLoginUserInfo();
+			pubSer.checkFunnode(uservo, IFunNode.CHANNEL_47);
+			if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+				throw new BusinessException("登陆用户错误");
+			} else if (uservo == null) {
+				throw new BusinessException("登陆用户错误");
 			}
-			paramvo.setUser_name(getLoginUserid());
-			if (StringUtil.isEmpty(paramvo.getPk_corp())) {
-				paramvo.setPk_corp(getLogincorppk());
+			
+			QryParamVO pamvo = new QryParamVO();
+			pamvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), pamvo);
+			if(pamvo == null){
+				pamvo = new QryParamVO();
 			}
-			List<CustNumMoneyRepVO> list = renewser.queryRenew(paramvo);
-			int page = paramvo == null ? 1 : paramvo.getPage();
-			int rows = paramvo == null ? 10000 : paramvo.getRows();
-			int len = list == null ? 0 : list.size();
-			if (len > 0) {
-				grid.setTotal((long) (len));
-				grid.setRows(Arrays.asList(QueryUtil.getPagedVOs(list.toArray(new CustNumMoneyRepVO[0]), page, rows)));
+			
+			QrySqlSpmVO qryvo = renewser.getCorpQrySql(pamvo, uservo);
+			Integer total = renewser.queryTotal(qryvo);
+			if (total > 0) {
+				String sql = qryvo.getSql();
+				StringBuffer qsql = new StringBuffer();
+				qsql.append(" SELECT account.pk_corp FROM ");
+				int index = sql.indexOf("FROM");
+				qsql.append(sql.substring(index + 4));
+				qryvo.setSql(qsql.toString());
+				List<RenewAchieveVO> list = renewser.query(pamvo, uservo, qryvo);
+				grid.setTotal((long) total);
+				grid.setRows(list);
 				grid.setSuccess(true);
 				grid.setMsg("查询成功");
 				writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "业绩续费统计查询成功", ISysConstants.SYS_3);
 			} else {
 				grid.setTotal(Long.valueOf(0));
-				grid.setRows(list);
+				grid.setRows(new ArrayList<RenewAchieveVO>());
 				grid.setSuccess(true);
 				grid.setMsg("查询结果为空");
 			}
@@ -99,7 +110,15 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 	 * Excel导出方法
 	 */
 	public void exportExcel() {
-		pubService.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_47, IButtonName.BTN_EXPORT);
+		UserVO uservo = getLoginUserInfo();
+		pubSer.checkFunnode(uservo, IFunNode.CHANNEL_47);
+		if (uservo != null && !"000001".equals(uservo.getPk_corp())) {
+			throw new BusinessException("登陆用户错误");
+		} else if (uservo == null) {
+			throw new BusinessException("登陆用户错误");
+		}
+		
+		pubSer.checkButton(getLoginUserInfo(), IFunNode.CHANNEL_47, IButtonName.BTN_EXPORT);
 		String strlist = getRequest().getParameter("strlist");
 		if (StringUtil.isEmpty(strlist)) {
 			throw new BusinessException("导出数据不能为空!");
@@ -210,4 +229,5 @@ public class RenewAchieveRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		}
 	}
 
+	
 }
