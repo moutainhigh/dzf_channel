@@ -93,15 +93,15 @@
 			    </div>
 			    <div class="time_col time_colp10">
 						<label style="text-align:right; width: 124px;">销售经理：</label> 
-						<input id="mnum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+						<input id="mnum" class="easyui-numberbox" style="width:168px;height:28px;"/>
 			    </div>
 			    <div class="time_col time_colp10">
 						<label style="text-align:right; width: 124px;">销售主管：</label> 
-						<input id="dnum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+						<input id="dnum" class="easyui-numberbox" style="width:168px;height:28px;"/>
 			    </div>
 			    <div class="time_col time_colp10">
 						<label style="text-align:right; width: 124px;">销售：</label> 
-						<input id="snum" class="easyui-numberbox" data-options="min:1" style="width:168px;height:28px;"/>
+						<input id="snum" class="easyui-numberbox" style="width:168px;height:28px;"/>
 			    </div>
 				<div style="float:right;margin-top:25px;margin-right:118px;">
 				    <a href="javascript:void(0)" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a> 
