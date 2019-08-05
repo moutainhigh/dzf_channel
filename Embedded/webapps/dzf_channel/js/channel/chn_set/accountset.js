@@ -453,7 +453,7 @@ function initCardCorp(){
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
                     	issingle : "true",
-    					ovince :"-5",
+    					ovince :"-3",
     					dblClickRowCallback:"selectCardCorps"
     				},
 //                    buttons: '#corp_buttons'
@@ -498,7 +498,7 @@ function initListCorp(){
                     modal: true,
                     href: DZF.contextPath + '/ref/channel_select.jsp',
                     queryParams : {
-    					ovince :"-5",
+    					ovince :"-3",
     					dblClickRowCallback:"selectListCorps"
     				},
     				buttons : [ {
