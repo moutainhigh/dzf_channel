@@ -756,8 +756,8 @@ public class PubServiceImpl implements IPubService {
 		Integer type = -1;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("SELECT distinct ul.pk_role  ") ;
-		sql.append("  FROM sm_userole ul  ") ; 
+		sql.append("SELECT distinct rl.role_code  ") ;
+		sql.append("  FROM sm_user_role ul  ") ; 
 		sql.append("  LEFT JOIN sm_role rl ON ul.pk_role = rl.pk_role  ") ; 
 		sql.append(" WHERE nvl(ul.dr, 0) = 0  ") ; 
 		sql.append("   AND nvl(rl.dr, 0) = 0  ") ; 
