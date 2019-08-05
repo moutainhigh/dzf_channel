@@ -130,6 +130,7 @@ public class InvManagerAction extends BaseAction<ChInvoiceVO> {
 	 * 查询加盟商(不包含演示加盟商)
 	 * email：用户主键
 	 * dr：界面传入查询对应角色类型的值 ： -2（渠道） -3（培训） -4（运营）
+	 * qrytype：数据运营管理下报表，传值-1
 	 */
 	public void queryChannel() {
 		Grid grid = new Grid();

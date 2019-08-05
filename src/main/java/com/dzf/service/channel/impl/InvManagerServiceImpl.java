@@ -232,18 +232,21 @@ public class InvManagerServiceImpl implements InvManagerService {
 	@Override
 	public List<CorpVO> queryChannel(ChInvoiceVO vo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
-		SQLParameter sp = new SQLParameter();
-		sql.append("select pk_corp, unitname, innercode, vprovince    ");
-		sql.append("  from bd_account account    ");
-		sql.append("where ");
-		sql.append(filtersql);
-		sql.append(" and account.fathercorp = '000001' ");
+		SQLParameter spm = new SQLParameter();
+		sql.append("SELECT pk_corp, ");
+		sql.append("       unitname, ");
+		sql.append("       innercode, ");
+		sql.append("       vprovince    ");
+		sql.append("  FROM bd_account account    ");
+		sql.append(" WHERE account.fathercorp = ? ");
+		spm.addParam(IDefaultValue.DefaultGroup);
+		sql.append("   AND ").append(filtersql);
 		if (vo.getDr() != null && vo.getDr() >= 0) {// 给区域划分（省市过滤）用的
-			sql.append(" and account.vprovince=? ");
-			sp.addParam(vo.getDr());
+			sql.append(" AND account.vprovince = ? ");
+			spm.addParam(vo.getDr());
 			if (!StringUtil.isEmpty(vo.getVmome())) {
 				String[] split = vo.getVmome().split(",");
-				sql.append(" and account.pk_corp not in (");
+				sql.append(" AND account.pk_corp not in (");
 				sql.append(SqlUtil.buildSqlConditionForIn(split));
 				sql.append(" )");
 			}
@@ -258,16 +261,16 @@ public class InvManagerServiceImpl implements InvManagerService {
 			}
 			if (vo.getQrytype() != null && vo.getQrytype() == -1) {
 				// 数据运营管理，4个报表 ，受集团【加盟商管理】节点数据权限控制
-				sql.append(" and account.pk_corp not in (");
-				sql.append("       (SELECT f.pk_corp    ");
+				sql.append(" AND NOT EXISTS (");
+				sql.append("        SELECT f.pk_corp    ");
 				sql.append("          FROM ynt_franchisee f    ");
 				sql.append("         WHERE nvl(dr, 0) = 0    ");
-				sql.append("           AND nvl(f.isreport, 'N') = 'Y')   ");
-				sql.append(" )");
+				sql.append("           AND nvl(f.isreport, 'N') = 'Y'   ");
+				sql.append("           AND account.pk_corp = f.pk_corp )");
 			}
 		}
-		sql.append(" order by innercode ");
-		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), sp,
+		sql.append(" ORDER BY innercode ");
+		List<CorpVO> list = (List<CorpVO>) singleObjectBO.executeQuery(sql.toString(), spm,
 				new BeanListProcessor(CorpVO.class));
 		if (list != null && list.size() > 0) {
 			QueryDeCodeUtils.decKeyUtils(new String[] { "unitname" }, list, 1);
