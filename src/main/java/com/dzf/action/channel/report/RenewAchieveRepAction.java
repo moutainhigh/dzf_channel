@@ -139,22 +139,7 @@ public class RenewAchieveRepAction extends PrintUtil<RenewAchieveVO> {
 		List<String> heads = new ArrayList<String>();
 		List<String> heads1 = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
-		List<String> fieldlist = new ArrayList<String>();
-		int num = 2;
-		fieldlist.add("aname");
-		fieldlist.add("uname");
-		fieldlist.add("provname");
-		fieldlist.add("incode");
-		fieldlist.add("chndate");
-		fieldlist.add("corpnm");
-		fieldlist.add("cuname");
-		fieldlist.add("stockcusts");
-		fieldlist.add("stockcustt");
-		fieldlist.add("renewcusts");
-		fieldlist.add("renewcustt");
-		
-		fieldlist.add("yrenewnum");
-		fieldlist.add("renewnum");
+		List<String> strcodes = new ArrayList<String>();
 		
 		heads.add("大区");
 		heads.add("区总");
@@ -162,40 +147,45 @@ public class RenewAchieveRepAction extends PrintUtil<RenewAchieveVO> {
 		heads.add("加盟商编码");
 		heads.add("加盟商名称");
 		
+		int num = 5;
 		Map<String, String> name = null;
+		String code = "";
 		for(int i = 0; i < djlist.size(); i++){
-			fieldslist.add(djlist.getString(i));
+			code = djlist.getString(i);
+			fieldslist.add(code);
+			strcodes.add(code);
 		}
 		
+		int index = 0;
+		String title = "";
 		for (int i = 0; i < headlist.size(); i++) {
 			name = (Map<String, String>) headlist.get(i);
-			if (i >= num) {
-				if(i == headlist.size() - 1){
-					heads.add("应续签");
-					heads.add("已续签");
-					heads1.add(name.get("title"));
-				}else{
-					heads.add("小规模");
-					heads.add("一般纳税人");
-					heads1.add(name.get("title"));
-				}
+			if (i >= 5) {
+				heads.add("到期数");
+				heads.add("续费数");
+				heads.add("续费率(%)");
+				heads.add("续费额");
+				heads1.add(name.get("title"));
+				
+				fieldslist.add("expire"+index);
+				fieldslist.add("num"+index);
+				fieldslist.add("rate"+index);
+				fieldslist.add("mny"+index);
+				
+				strcodes.add("expire"+index);
+				strcodes.add("num"+index);
+				index ++;
 			}else {
-				heads.add(name.get("title"));
+				title = name.get("title");
+				if(!StringUtil.isEmpty(title) && title.indexOf("<br>") != -1){
+					title = "会计运营经理";
+				}
+				heads.add(title);
 				fieldslist.add(name.get("field"));
+				strcodes.add(name.get("field"));
 			}
 		}
-		fieldslist.add("stockcusts");
-		fieldslist.add("stockcustt");
-		fieldslist.add("stockconts");
-		fieldslist.add("stockcontt");
-		fieldslist.add("renewcusts");
-		fieldslist.add("renewcustt");
-		fieldslist.add("renewconts");
-		fieldslist.add("renewcontt");
-		
-		fieldslist.add("yrenewnum");
-		fieldslist.add("renewnum");
-		num = 7;
+		num = 10;
 		ExportExcel<CustNumMoneyRepVO> ex = new ExportExcel<CustNumMoneyRepVO>();
 		ServletOutputStream servletOutputStream = null;
 		OutputStream toClient = null;
@@ -207,8 +197,8 @@ public class RenewAchieveRepAction extends PrintUtil<RenewAchieveVO> {
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportYjtjExcel("业绩续费统计", heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
-					num);
+			byte[] length = ex.exportYjtjExcel("业绩续费统计", heads, heads1, fieldslist, exparray, toClient, "", strcodes,
+					num, "renew");
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
 			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩续费统计表", ISysConstants.SYS_3);

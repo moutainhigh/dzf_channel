@@ -821,12 +821,12 @@ public class ExportExcel<T> {
 	 * @param array
 	 * @param out
 	 * @param pattern
-	 * @param fieldlist
+	 * @param strcodes
 	 * @param num
 	 * @return
 	 */
 	public byte[] exportYjtjExcel(String title, List<String> headers, List<String> headers1, List<String> fields,
-			JSONArray array, OutputStream out, String pattern, List<String> fieldlist, Integer num) {
+			JSONArray array, OutputStream out, String pattern, List<String> strcodes, Integer num, String opertype) {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		try {
 			int index = 4;
@@ -872,7 +872,6 @@ public class ExportExcel<T> {
 			style1.setFont(f);
 			style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 内容左右居中
 			style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 内容上下居中
-																		// 、
 
 			int headerlength = headers.size();
 			int fieldlength = fields.size();
@@ -893,10 +892,17 @@ public class ExportExcel<T> {
 				celltitle1m.setCellStyle(style);
 			}
 			for (int i = 0; i < headers1.size(); i++) {
-				HSSFCell celltitle1m = rowtitle1m.createCell(num + 2 * i);
-				celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
-				celltitle1m.setCellStyle(style); // 居中
-				sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 2 * i, num + 1 + 2 * i));
+				if("add".equals(opertype)){
+					HSSFCell celltitle1m = rowtitle1m.createCell(num + 2 * i);
+					celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
+					celltitle1m.setCellStyle(style); // 居中
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 2 * i, num + 1 + 2 * i));
+				}else if("renew".equals(opertype)){
+					HSSFCell celltitle1m = rowtitle1m.createCell(num + 4 * i);
+					celltitle1m.setCellValue(new HSSFRichTextString(headers1.get(i)));
+					celltitle1m.setCellStyle(style); // 居中
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, num + 4 * i, num + 3 + 4 * i));
+				}
 			}
 			HSSFCellStyle stylegsm = workbook.createCellStyle();// 表头样式
 			stylegsm.cloneStyleFrom(style);
@@ -931,14 +937,14 @@ public class ExportExcel<T> {
 						HSSFCell cell = row1.createCell(count);
 						if (map.get(key) != null) {
 							if (key.contains("trate")) {
-								if (new DZFDouble(map.get(key).toString()).equals(new DZFDouble().ZERO_DBL)) {
+								if (new DZFDouble(map.get(key).toString()).equals(DZFDouble.ZERO_DBL)) {
 									cell.setCellValue("--");
 								} else {
 									DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
 									doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 									cell.setCellValue(doublevalue.toString());
 								}
-							} else if (!fieldlist.contains(key)) {
+							} else if (!strcodes.contains(key)) {
 								DZFDouble doublevalue = new DZFDouble(map.get(key).toString());
 								doublevalue = doublevalue.setScale(2, DZFDouble.ROUND_HALF_UP);
 								cell.setCellValue(doublevalue.toString());
@@ -950,7 +956,7 @@ public class ExportExcel<T> {
 						} else {
 							cell.setCellValue("");
 						}
-						if (!fieldlist.contains(key)) {
+						if (!strcodes.contains(key)) {
 							cell.setCellStyle(st);
 						} else {
 							cell.setCellStyle(st1);

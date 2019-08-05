@@ -114,20 +114,20 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 		List<String> heads = new ArrayList<String>();
 		List<String> heads1 = new ArrayList<String>();
 		List<String> fieldslist = new ArrayList<String>();
-		List<String> fieldlist = new ArrayList<String>();
+		List<String> strcodes = new ArrayList<String>();
 		int num = 3;
-		fieldlist.add("aname");
-		fieldlist.add("uname");
-		fieldlist.add("provname");
-		fieldlist.add("incode");
-		fieldlist.add("chndate");
-		fieldlist.add("corpnm");
-		fieldlist.add("cuname");
-		fieldlist.add("contnum");
-		fieldlist.add("stockcusts");
-		fieldlist.add("stockcustt");
-		fieldlist.add("newcusts");
-		fieldlist.add("newcustt");
+		strcodes.add("aname");
+		strcodes.add("uname");
+		strcodes.add("provname");
+		strcodes.add("incode");
+		strcodes.add("chndate");
+		strcodes.add("corpnm");
+		strcodes.add("cuname");
+		strcodes.add("contnum");
+		strcodes.add("stockcusts");
+		strcodes.add("stockcustt");
+		strcodes.add("newcusts");
+		strcodes.add("newcustt");
 		
 		heads.add("大区");
 		heads.add("区总");
@@ -174,8 +174,8 @@ public class CustNumMoneyRepAction extends PrintUtil<CustNumMoneyRepVO> {
 			servletOutputStream = response.getOutputStream();
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("application/vnd.ms-excel;charset=gb2312");
-			byte[] length = ex.exportYjtjExcel("业绩新增统计", heads, heads1, fieldslist, exparray, toClient, "", fieldlist,
-					num);
+			byte[] length = ex.exportYjtjExcel("业绩新增统计", heads, heads1, fieldslist, exparray, toClient, "", strcodes,
+					num, "add");
 			String srt2 = new String(length, "UTF-8");
 			response.addHeader("Content-Length", srt2);
 			writeLogRecord(LogRecordEnum.OPE_CHANNEL_7.getValue(), "导出业绩新增统计表", ISysConstants.SYS_3);
