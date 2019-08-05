@@ -80,7 +80,12 @@ public class RenewAchieveRepAction extends PrintUtil<RenewAchieveVO> {
 			}
 			
 			QrySqlSpmVO qryvo = renewser.getCorpQrySql(pamvo, uservo);
-			Integer total = renewser.queryTotal(qryvo);
+			Integer total = null;
+			if(qryvo == null){
+				total = 0;
+			}else{
+				total = renewser.queryTotal(qryvo);
+			}
 			if (total > 0) {
 				String sql = qryvo.getSql();
 				StringBuffer qsql = new StringBuffer();

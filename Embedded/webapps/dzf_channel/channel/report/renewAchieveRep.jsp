@@ -59,17 +59,17 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 245px; height: 28px;" 
-						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
+						data-options="readonly:true,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">省（市）：</label> 
 					<input id="ovince"  name="ovince" class="easyui-combobox" style="width: 245px; height: 28px;" 
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
+						data-options="readonly:true,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>		
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:100px;">会计运营经理：</label> 
 					<input id="uid" name="uid" class="easyui-combobox" style="width:245px;height:28px;text-align:left"
-						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
+						data-options="readonly:true,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:100px">加盟商：</label>

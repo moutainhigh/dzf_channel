@@ -12,6 +12,7 @@ $(function() {
 	initQryData();
 	//大区、省（市）、会计运营经理下拉初始化
 	initQryCommbox();
+	queryRoleType();
 	//加盟商参照初始化
 	initChannel(roletype);
 	load();
@@ -30,9 +31,23 @@ function queryRoleType() {
 			var result = eval('(' + result + ')');
 			if (result.success) {
 				roletype = result.rows == 1 ? -2 : -3;
+				if(roletype == -2){
+					setReadOnly(true);
+				}else{
+					setReadOnly(false);
+				}
 			}
 		}
 	});
+}
+
+/**
+ * 设置是否可编辑
+ */
+function setReadOnly(flag){
+	$('#aname').combobox('readonly', flag);
+	$('#ovince').combobox('readonly', flag);
+	$('#uid').combobox('readonly', flag);
 }
 
 /**

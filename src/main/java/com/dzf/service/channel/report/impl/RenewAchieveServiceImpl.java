@@ -73,8 +73,9 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 	 */
 	private void setContData(List<RenewAchieveVO> dliat, String[] pk_corps, QryParamVO pamvo) throws DZFWarpException {
 		List<RenewCountVO> ctlist = queryContInfo(pk_corps, pamvo);
+		//获取加盟商信息，并对相关字段进行解密操作
+		Map<String, RenewAchieveVO> dmap = getDataMap(dliat);
 		if (ctlist != null && ctlist.size() > 0) {
-			Map<String, RenewAchieveVO> dmap = getDataMap(dliat);
 			List<String> periods = ToolsUtil.getPeriodsBp(pamvo.getBeginperiod(), pamvo.getEndperiod());
 			RenewAchieveVO rvo = null;
 			Integer index = null;
@@ -197,12 +198,16 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		sql.append(" AND ").append(filter);
 		//2、通过登陆人和大区过滤加盟商：
 		String addsql = pubService.makeCondition(uservo.getCuserid(), pamvo.getAreaname(), roletype);
-		if(!"alldata".equals(addsql)){
-			sql.append(" AND ").append(addsql);
+		if(!StringUtil.isEmpty(addsql)){
+			if(!"alldata".equals(addsql)){
+				sql.append(addsql);
+			}
+		}else{
+			return null;
 		}
 		//3、 省(市)：
 		if (pamvo.getVprovince() != null && pamvo.getVprovince() != -1) {
-			sql.append(" and account.vprovince = ? ");
+			sql.append(" AND account.vprovince = ? ");
 			spm.addParam(pamvo.getVprovince());
 		}
 		//4、会计运营经理：
@@ -223,7 +228,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 			sql.append(" AND (account.drelievedate IS NULL OR account.drelievedate > ? ) ");
 			spm.addParam(new DZFDate());
 		}
-		sql.append(" AND EXISTS ");
+		sql.append(" AND NOT EXISTS ");
 		sql.append("  (SELECT f.pk_corp  ");
 		sql.append("     FROM ynt_franchisee f    ");
 		sql.append("    WHERE nvl(dr, 0) = 0    ");
