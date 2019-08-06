@@ -86,6 +86,9 @@ public class CorpNameEVO extends SuperVO {
 
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省市
+	
+	@FieldAlias("uname")
+	private String vmanagername; // 渠道经理
 
 	public String getPk_corpnameedit() {
 		return pk_corpnameedit;
@@ -301,6 +304,14 @@ public class CorpNameEVO extends SuperVO {
 
 	public void setTs(DZFDateTime ts) {
 		this.ts = ts;
+	}
+
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
 	}
 
 	@Override

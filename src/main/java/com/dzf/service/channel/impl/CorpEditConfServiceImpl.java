@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,7 @@ import com.dzf.pub.encrypt.CryptCodeUtil;
 import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.ICorpEditConfService;
 import com.dzf.service.pub.IPubService;
@@ -54,6 +54,7 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(paramvo,uservo);
 		List<CorpNameEVO> list = (List<CorpNameEVO>) multBodyObjectBO.queryDataPage(CorpNameEVO.class, 
 					sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list != null && list.size() > 0){
 			CorpVO corpvo = null;
 			Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
@@ -65,12 +66,16 @@ public class CorpEditConfServiceImpl implements ICorpEditConfService {
 					}
 				}
 				corpvo = CorpCache.getInstance().get(null, vo.getFathercorp());
+				uservo = marmap.get(vo.getFathercorp());
 				if(corpvo != null){
 					vo.setFathername(corpvo.getUnitname());
 				}
 				corpvo = CorpCache.getInstance().get(null, vo.getPk_corp());
 				if(corpvo != null){
 					vo.setInnercode(corpvo.getInnercode());
+				}
+				if (uservo != null) {
+					vo.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
 				vo.setVoldname(CodeUtils1.deCode(vo.getVoldname()));
 				vo.setVnewname(CodeUtils1.deCode(vo.getVnewname()));

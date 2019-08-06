@@ -3,6 +3,7 @@ package com.dzf.service.channel.report.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class RebateCountServiceImpl implements IRebateCountService {
         sql.append("select reb.pk_corp,");
         sql.append(" account.innercode as corpcode,");
         sql.append(" account.unitname as corpname,");
+        sql.append(" account.vprovince, ");
         sql.append(" area.region_name as vprovname,");
         sql.append(" sum(decode(reb.iseason,1,reb.nrebatemny)) as nmny1,");
         sql.append(" sum(decode(reb.iseason,2,reb.nrebatemny)) as nmny2, ");
@@ -60,11 +62,11 @@ public class RebateCountServiceImpl implements IRebateCountService {
         if(!condition.equals("alldata")){
     		sql.append(condition);
     	}
-        sql.append(" group by reb.pk_corp,account.innercode,account.unitname,area.region_name");
+        sql.append(" group by reb.pk_corp,account.innercode,account.unitname,account.vprovince,area.region_name");
         params.addParam(paramvo.getPk_corp());
         params.addParam(paramvo.getVyear());
         List<RebateCountVO> list = (List<RebateCountVO>) singleObjectBO.executeQuery(sql.toString(), params, new BeanListProcessor(RebateCountVO.class));
-               
+        Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),1);       
         if(list != null && list.size() > 0){
             HashMap<String, String> map = queryChannelManger();
             HashMap<String, UserVO> usermap = userser.queryUserMap(paramvo.getPk_corp(), true);
@@ -86,6 +88,9 @@ public class RebateCountServiceImpl implements IRebateCountService {
                         listFilter.add(rvo);
                     }
                 }
+                if(areaMap.containsKey(rvo.getVprovince())){
+                	rvo.setAreaname(areaMap.get(rvo.getVprovince()));
+				}
                 
             }
             if(!StringUtil.isEmpty(paramvo.getCorpkname())){

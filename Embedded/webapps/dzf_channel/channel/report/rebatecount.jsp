@@ -13,6 +13,9 @@
 <script
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/rebatecount.js");%>
 	charset="UTF-8" type="text/javascript"></script>
+<script
+	src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%>
+	charset="UTF-8" type="text/javascript"></script>
 </head>
 
 <body>

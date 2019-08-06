@@ -32,6 +32,7 @@ function initGrid(){
 		idField : 'rebid',
 		showFooter:true,
 		columns : [ [ 
+		              { field : 'aname', title : '大区',width :'100',halign: 'center',align:'left'} ,
 		              { field : 'provname', title : '省(市)',width :'110',halign: 'center',align:'left'} ,
 		              { field : 'mname', title : '渠道经理',width :'115',halign: 'center',align:'left'} ,
 		              { field : 'corpcode', title : '加盟商编码',width :'115',halign: 'center',align:'left'} ,
@@ -44,8 +45,35 @@ function initGrid(){
 		] ],
 		onLoadSuccess : function(data) {
 //			$('#grid').datagrid("scrollTo",0);
-			$('#grid').datagrid("clearSelections");
-			
+		//	$('#grid').datagrid("clearSelections");
+			var rows = $('#grid').datagrid('getRows');
+        	var footerData = new Object();
+        	var nmny1 = 0;// 第一季度
+			var nmny2 = 0;// 第二季度
+			var nmny3 = 0;// 第三季度
+			var nmny4 = 0;// 第四季度
+			for (var i = 0; i < rows.length; i++) {
+				if (rows[i].hasOwnProperty("nmny1") && !isEmpty(rows[i].nmny1)) {
+					nmny1 += parseFloat(rows[i].nmny1);
+				}
+				if (rows[i].hasOwnProperty("nmny2") && !isEmpty(rows[i].nmny2)) {
+					nmny2 += parseFloat(rows[i].nmny2);
+				}
+				if (rows[i].hasOwnProperty("nmny3") && !isEmpty(rows[i].nmny3)) {
+					nmny3 += parseFloat(rows[i].nmny3);
+				}
+				if (rows[i].hasOwnProperty("nmny4") && !isEmpty(rows[i].nmny4)) {
+					nmny4 += parseFloat(rows[i].nmny4);
+				}
+			}
+			footerData['corp'] = '合计';
+			footerData['nmny1'] = nmny1;
+			footerData['nmny2'] = nmny2;
+			footerData['nmny3'] = nmny3;
+			footerData['nmny4'] = nmny4;
+			var fs = new Array(1);
+			fs[0] = footerData;
+			$('#grid').datagrid('reloadFooter', fs);
 		}
 	});
 }

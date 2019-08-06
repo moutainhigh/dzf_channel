@@ -49,6 +49,9 @@ public class RebateCountVO extends SuperVO {
 	@FieldAlias("provname")
 	public String vprovname;// 省（市）
 	
+	@FieldAlias("ovince")
+	public Integer vprovince;// 省市
+	
     @FieldAlias("mname")
     private String vmanagername; // 渠道经理
 
@@ -162,6 +165,14 @@ public class RebateCountVO extends SuperVO {
 
 	public void setNrebatemny(DZFDouble nrebatemny) {
 		this.nrebatemny = nrebatemny;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
 	}
 
 	@Override

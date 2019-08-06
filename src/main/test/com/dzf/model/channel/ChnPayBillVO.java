@@ -135,6 +135,9 @@ public class ChnPayBillVO extends SuperVO {
 	
     @FieldAlias("ictype")
     private Integer ichargetype;//1:首次充值;2:后续充值
+    
+    @FieldAlias("uname")
+	private String vmanagername; // 渠道经理
 
 	public String getVapproveid() {
 		return vapproveid;
@@ -462,6 +465,14 @@ public class ChnPayBillVO extends SuperVO {
 
 	public void setVstatus(Integer vstatus) {
 		this.vstatus = vstatus;
+	}
+
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
 	}
 
 	@Override

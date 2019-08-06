@@ -33,6 +33,7 @@ function load() {
 		    {field : 'ck',checkbox : true}, 
 			{width : '140',title : '大区',field : 'aname'}, 
 			{width : '140',title : '地区',field : 'provname'}, 
+			{width : '140',title : '渠道经理',field : 'uname'}, 
 			{width : '240',title : '加盟商',field : 'corpnm'}, 
 			{width : '100',title : '付款日期',field : 'dpdate',align:'center'}, 
 		  	{width : '200',title : '单据号',field : 'vcode',},  

@@ -28,11 +28,12 @@ function load(){
 		singleSelect : false,
 		pagination : true, //显示分页
 		pageSize : 50,
-		pageList : [10, 30, 50, 80, 100],
+		pageList : [10, 30, 50, 80, 1000],
 		showRefresh : false,// 不显示分页的刷新按钮
 		showFooter : true,
 		border : true,
 		remoteSort:false,
+		showFooter:true,
 		//冻结在 左边的列 
 		frozenColumns:[[
 						{ field : 'ck',	checkbox : true },
@@ -71,6 +72,42 @@ function load(){
 		            { field : 'smnsnum', title : '小规模', width : 60, halign:'center',align:'right'}, 
 		            { field : 'gensnum', title : '一般人', width : 60, halign:'center',align:'right'}, 
 		        ] ],
+		        onLoadSuccess : function(data) {
+		        	var rows = $('#grid').datagrid('getRows');
+		        	var footerData = new Object();
+		        	var naccmny = 0;// 合同代账费
+					var nbmny = 0;// 账本费
+					var ndpmny = 0;// 保证金
+					var ndtmny = 0;// 合同扣款
+					var ngbmny = 0;// 商品购买
+					
+					for (var i = 0; i < rows.length; i++) {
+						if (!isEmpty(rows[i].naccmny)) {
+							naccmny += parseFloat(rows[i].naccmny);
+						}
+						if (!isEmpty(rows[i].nbmny)) {
+							nbmny += parseFloat(rows[i].nbmny);
+						}
+						if (!isEmpty(rows[i].ndpmny)) {
+							ndpmny += parseFloat(rows[i].ndpmny);
+						}
+						if (!isEmpty(rows[i].ndtmny)) {
+							ndtmny += parseFloat(rows[i].ndtmny);
+						}
+						if (!isEmpty(rows[i].ngbmny)) {
+							ngbmny += parseFloat(rows[i].ngbmny);
+						}
+					}
+					footerData['corpname'] = '合计';
+					footerData['naccmny'] = naccmny;
+					footerData['nbmny'] = nbmny;
+					footerData['ndpmny'] = ndpmny;
+					footerData['ndtmny'] = ndtmny;
+					footerData['ngbmny'] = ngbmny;
+					var fs = new Array(1);
+					fs[0] = footerData;
+					$('#grid').datagrid('reloadFooter', fs);
+		        }
 	});
 }
 

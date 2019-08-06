@@ -61,14 +61,20 @@ public class ChnPayAuditServiceImpl implements IChnPayAuditService {
 		QrySqlSpmVO sqpvo =  getQrySqlSpm(paramvo);
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class, 
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list != null && list.size() > 0){
 			CorpVO accvo = null;
+			UserVO uservo = null;
 			Map<Integer, String> areamap = pubser.getAreaMap(paramvo.getAreaname(), 3);//渠道运营区域设置
 			QueryDeCodeUtils.decKeyUtils(new String[]{"vapprovename"}, list, 1);
 			for(ChnPayBillVO vo : list){
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+				uservo = marmap.get(vo.getPk_corp());
 				if(accvo != null){
 					vo.setCorpname(accvo.getUnitname());
+				}
+				if (uservo != null) {
+					vo.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
 				if(areamap != null && !areamap.isEmpty()){
 					String area = areamap.get(vo.getVprovince());

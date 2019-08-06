@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.dzf.pub.util.QueryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.dao.multbs.MultBodyObjectBO;
 import com.dzf.model.channel.sys_power.DeductRateLogVO;
 import com.dzf.model.channel.sys_power.DeductRateVO;
+import com.dzf.model.pub.IStatusConstant;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.pub.QrySqlSpmVO;
 import com.dzf.model.sys.sys_power.AccountVO;
@@ -31,7 +31,9 @@ import com.dzf.pub.jm.CodeUtils1;
 import com.dzf.pub.lang.DZFDate;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.sys_power.IDeductRateService;
+import com.dzf.service.pub.IPubService;
 
 @Service("deductrateser")
 public class DeductRateServiceImpl implements IDeductRateService {
@@ -41,6 +43,9 @@ public class DeductRateServiceImpl implements IDeductRateService {
 	
 	@Autowired
 	private MultBodyObjectBO multBodyObjectBO;
+	
+	@Autowired
+	private IPubService pubService;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO pamvo) throws DZFWarpException {
@@ -54,20 +59,28 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(pamvo);
 		List<DeductRateVO> list = (List<DeductRateVO>) multBodyObjectBO.queryDataPage(DeductRateVO.class, sqpvo.getSql(),
 				sqpvo.getSpm(), pamvo.getPage(), pamvo.getRows(), null);
+		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(),1);
+		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if (list != null && list.size() > 0) {
-			setShowName(list);
+			setShowName(list,areaMap,marmap);
 		}
+		
 		return list;
 	}
 	
 	/**
 	 * 设置显示名称
 	 * @param list
+	 * @param areaMap 
+	 * @param marmap 
 	 * @throws DZFWarpException
 	 */
-	private void setShowName(List<DeductRateVO> list) throws DZFWarpException {
+	private void setShowName(List<DeductRateVO> list, Map<Integer, String> areaMap, Map<String, UserVO> marmap) throws DZFWarpException {
 		UserVO uservo = null;
+		CorpVO deduvo = null;
 		for(DeductRateVO rvo : list){
+			deduvo = CorpCache.getInstance().get(null, rvo.getPk_corp());
+			uservo = marmap.get(rvo.getPk_corp());
 			rvo.setCorpname(CodeUtils1.deCode(rvo.getCorpname()));
 			if(StringUtil.isEmpty(rvo.getPk_deductrate())){
 				//1：普通加盟商；2：金牌加盟商；
@@ -78,6 +91,15 @@ public class DeductRateServiceImpl implements IDeductRateService {
 					rvo.setInewrate(10);
 					rvo.setIrenewrate(10);
 				}
+			}
+			if (deduvo != null) {
+				rvo.setVprovname(deduvo.getCitycounty());
+			}
+			if(areaMap.containsKey(rvo.getVprovince())){
+				rvo.setAreaname(areaMap.get(rvo.getVprovince()));
+			}
+			if (uservo != null) {
+				rvo.setVmanagername(uservo.getUser_name());// 渠道经理
 			}
 			rvo.setLastmodifypsn(CodeUtils1.deCode(rvo.getLastmodifypsn()));
 		}
@@ -99,6 +121,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		sql.append("       account.innercode AS corpcode,    ");
 		sql.append("       account.unitname AS corpname,    ");
 		sql.append("       account.channeltype,    ");
+		sql.append("       account.vprovince,     ");
 		sql.append("       d.pk_deductrate,    "); 
 		sql.append("       d.inewrate,    "); 
 		sql.append("       d.irenewrate,    "); 
@@ -126,6 +149,8 @@ public class DeductRateServiceImpl implements IDeductRateService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(pamvo);
 		List<DeductRateVO> list = (List<DeductRateVO>) singleObjectBO.executeQuery(sqpvo.getSql(), sqpvo.getSpm(),
 				new BeanListProcessor(DeductRateVO.class));
+		Map<Integer, String> areaMap = pubService.getAreaMap(pamvo.getAreaname(),1);
+		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if(list != null && list.size() > 0){
 			for(DeductRateVO rvo : list){
 				rvo.setCorpname(CodeUtils1.deCode(rvo.getCorpname()));
@@ -146,7 +171,7 @@ public class DeductRateServiceImpl implements IDeductRateService {
 			}
 		}
 		if (retlist != null && retlist.size() > 0) {
-			setShowName(retlist);
+			setShowName(retlist,areaMap,marmap);
 		}
 		return retlist;
 	}

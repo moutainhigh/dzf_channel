@@ -109,12 +109,14 @@ public class ChnPayServiceImpl implements IChnPayService {
 		List<ChnPayBillVO> chns = (List<ChnPayBillVO>) singleObjectBO.executeQuery(querysql.toString(), sp, 
 				new BeanListProcessor(ChnPayBillVO.class));
 		Map<Integer, String> areaMap = pubService.getAreaMap(chn.getAreaname(),3);
+		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		List<ChnPayBillVO> rets=new ArrayList<ChnPayBillVO>();
 		if (chns != null) {
 			CorpVO cvo = null;
 			QueryDeCodeUtils.decKeyUtils(new String[]{"vconfirmname","submitname"}, chns, 1);
 			for (ChnPayBillVO chnb : chns) {
 				cvo=CorpCache.getInstance().get(null, chnb.getPk_corp());
+				uservo = marmap.get(chnb.getPk_corp());
 				if(cvo!=null){
 					chnb.setCorpname(cvo.getUnitname());
 					chnb.setVprovname(cvo.getCitycounty());
@@ -123,6 +125,9 @@ public class ChnPayServiceImpl implements IChnPayService {
 							rets.add(chnb);
 						}
 					}
+				}
+				if (uservo != null) {
+					chnb.setVmanagername(uservo.getUser_name());// 渠道经理
 				}
 				if(areaMap.containsKey(chnb.getVprovince())){
 					chnb.setAreaname(areaMap.get(chnb.getVprovince()));

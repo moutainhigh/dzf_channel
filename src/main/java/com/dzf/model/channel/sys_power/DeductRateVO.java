@@ -59,6 +59,18 @@ public class DeductRateVO extends SuperVO {
 	
 	@FieldAlias("chtype")
 	private Integer channeltype;// 加盟商类型（不存库，仅作判断使用） 1：普通加盟商；2：金牌加盟商；
+	
+	@FieldAlias("ovince")
+	public Integer vprovince;// 省市 不存库
+	
+	@FieldAlias("aname")
+	private String areaname;// 大区名称 不存库
+	
+	@FieldAlias("provname")
+	public String vprovname;// 省市名称 （不存库  取客户缓存）
+	
+	@FieldAlias("uname")
+	private String vmanagername; // 渠道经理   不存库  
 
 	public Integer getChanneltype() {
 		return channeltype;
@@ -178,6 +190,38 @@ public class DeductRateVO extends SuperVO {
 
 	public void setLastmodifypsn(String lastmodifypsn) {
 		this.lastmodifypsn = lastmodifypsn;
+	}
+
+	public Integer getVprovince() {
+		return vprovince;
+	}
+
+	public void setVprovince(Integer vprovince) {
+		this.vprovince = vprovince;
+	}
+
+	public String getAreaname() {
+		return areaname;
+	}
+
+	public void setAreaname(String areaname) {
+		this.areaname = areaname;
+	}
+
+	public String getVprovname() {
+		return vprovname;
+	}
+
+	public void setVprovname(String vprovname) {
+		this.vprovname = vprovname;
+	}
+
+	public String getVmanagername() {
+		return vmanagername;
+	}
+
+	public void setVmanagername(String vmanagername) {
+		this.vmanagername = vmanagername;
 	}
 
 	@Override

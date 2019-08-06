@@ -88,7 +88,7 @@ public class QryParamVO extends SuperVO {
 	
 	private Integer corptype;
 	
-	private Integer servicetype;
+	private Integer comptype;
 	
 	@FieldAlias("year")
 	private String vyear;//所属季度-年
@@ -389,12 +389,12 @@ public class QryParamVO extends SuperVO {
 		this.overdate = overdate;
 	}
 	
-	public Integer getServicetype() {
-		return servicetype;
+	public Integer getComptype() {
+		return comptype;
 	}
 
-	public void setServicetype(Integer servicetype) {
-		this.servicetype = servicetype;
+	public void setComptype(Integer comptype) {
+		this.comptype = comptype;
 	}
 
 	@Override

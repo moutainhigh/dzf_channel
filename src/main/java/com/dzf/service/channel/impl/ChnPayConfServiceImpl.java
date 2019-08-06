@@ -2,6 +2,7 @@ package com.dzf.service.channel.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import com.dzf.pub.lock.LockUtil;
 import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.IChnPayConfService;
+import com.dzf.service.pub.IPubService;
 import com.dzf.service.sys.sys_power.IUserService;
 
 @Service("chnpayconfser")
@@ -45,6 +47,9 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 
 	@Autowired
 	private IUserService userServiceImpl;
+	
+	@Autowired
+	private IPubService pubService;
 
 	@Override
 	public Integer queryTotalRow(QryParamVO paramvo) throws DZFWarpException {
@@ -58,13 +63,24 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(paramvo);
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class,
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
+		Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
+		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if (list != null && list.size() > 0) {
 			CorpVO accvo = null;
+			UserVO uservo = null;
 			QueryDeCodeUtils.decKeyUtils(new String[] { "vconfirmname" }, list, 1);
 			for (ChnPayBillVO vo : list) {
 				accvo = CorpCache.getInstance().get(null, vo.getPk_corp());
+				uservo = marmap.get(vo.getPk_corp());
 				if (accvo != null) {
 					vo.setCorpname(accvo.getUnitname());
+					vo.setVprovname(accvo.getCitycounty());
+				}
+				if (uservo != null) {
+					vo.setVmanagername(uservo.getUser_name());// 渠道经理
+				}
+				if(areaMap.containsKey(vo.getVprovince())){
+					vo.setAreaname(areaMap.get(vo.getVprovince()));
 				}
 			}
 		}
@@ -111,7 +127,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		sql.append("       t.dapprovetime,   ");
 		sql.append("       t.irejectype,   ");
 		sql.append("       t.ichargetype,   ");
-		sql.append("       us.user_name as vconfirmname    ");
+		sql.append("       us.user_name as vconfirmname,   ");
+		sql.append("       account.vprovince    ");
 		sql.append("  FROM cn_paybill t  ");
 		sql.append("  LEFT JOIN sm_user us ON us.cuserid = t.vconfirmid");
 		sql.append("  LEFT JOIN bd_account account ON t.pk_corp = account.pk_corp   ");

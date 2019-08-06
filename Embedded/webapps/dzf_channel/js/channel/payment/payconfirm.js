@@ -167,6 +167,22 @@ function load(){
 			field : 'ck',
 			checkbox : true
 		}, {
+			width : '100',
+			title : '大区',
+			halign:'center',
+			field : 'aname',
+		}, {
+			width : '100',
+			title : '地区',
+			halign:'center',
+			field : 'provname',
+		}, {
+			width : '140',
+			title : '渠道经理',
+			align : 'left',
+            halign: 'center',
+			field : 'uname'
+		},{
 			width : '240',
 			title : '加盟商',
 			halign:'center',

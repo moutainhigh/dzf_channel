@@ -57,6 +57,21 @@ function load() {
 			field : 'fcorpid',
 			hidden : true
 		}, {
+			width : '100',
+			title : '大区',
+			halign:'center',
+			field : 'aname',
+		}, {
+			width : '100',
+			title : '地区',
+			halign:'center',
+			field : 'provname',
+		},{
+			width : '100',
+			title : '渠道经理',
+			halign:'center',
+			field : 'uname',
+		},{
 			width : '120',
 			title : '加盟商编码',
 			field : 'cpcode',
