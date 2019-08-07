@@ -1,19 +1,5 @@
 package com.dzf.service.channel.report.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.dzf.pub.lang.DZFBoolean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
@@ -21,6 +7,10 @@ import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.model.pub.CommonUtil;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.util.SqlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service("man_common")
 public class ManCommonServiceImpl{
@@ -166,12 +156,8 @@ public class ManCommonServiceImpl{
 			spm.addParam(qvo.getDbegindate());
 			spm.addParam(qvo.getDenddate());
 			
-			//地区提单量,地区合同代账费,（计算客单价）
-			List<ManagerVO> list6 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,2, qvo).toString(), spm, new BeanListProcessor(ManagerVO.class));
-			//提单量,合同代账费,
-//			spm.addParam(qvo.getDbegindate());
-			List<ManagerVO> list7 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks,1, qvo).toString(), spm, new BeanListProcessor(ManagerVO.class));
-			
+			List<ManagerVO> list7 =(List<ManagerVO>)singleObjectBO.executeQuery(getSql(pks, qvo).toString(), spm, new BeanListProcessor(ManagerVO.class));
+
 		     if(list1!=null&&list1.size()>0){//保证金
 		    	 for (ManagerVO managerVO : list1) {
 					ManagerVO vo = map.get(managerVO.getPk_corp());
@@ -218,32 +204,26 @@ public class ManCommonServiceImpl{
 				}
 		     }
 		     HashMap<Integer, ManagerVO> promap=new HashMap<Integer, ManagerVO>();
-		     if(list6!=null && list6.size()>0){//客单价
-		    	 for (ManagerVO managerVO : list6) {
-		    		 promap.put(managerVO.getVprovince(), managerVO);
-				}
-		    	Iterator<Entry<String, ManagerVO>> iterator = map.entrySet().iterator();
-		    	while (iterator.hasNext()){
-		    		Entry<String, ManagerVO> entry = iterator.next();
-		    		ManagerVO mapvo =(ManagerVO)entry.getValue();
-		    		if(promap.containsKey(mapvo.getVprovince())){
-		    			ManagerVO managerVO = promap.get(mapvo.getVprovince());
-			    		mapvo.setUnitprice(CommonUtil.getDZFDouble(managerVO.getRntotalmny()).div(CommonUtil.getDZFDouble(managerVO.getRnum())));
-		    		}
-		    	}
-		     }
 			if(list7!=null&&list7.size()>0){//提单量, 合同代账费
 				 for (ManagerVO managerVO : list7) {
-						ManagerVO vo = map.get(managerVO.getPk_corp());
-						if(managerVO.getIsxq()!=null && managerVO.getIsxq().booleanValue()){//续签
-							vo.setRnum(managerVO.getRnum());
-							vo.setRntotalmny(managerVO.getRntotalmny());
-						}else{//新增
-							vo.setAnum(managerVO.getRnum());
-							vo.setAntotalmny(managerVO.getRntotalmny());
-						}
-						map.put(managerVO.getPk_corp(),vo);
+                    ManagerVO vo = map.get(managerVO.getPk_corp());
+                    if(managerVO.getIsxq()!=null && managerVO.getIsxq().booleanValue()){//续签
+                        vo.setRnum(managerVO.getRnum());
+                        vo.setRntotalmny(managerVO.getRntotalmny());
+                    }else{//新增
+                        vo.setAnum(managerVO.getRnum());
+                        vo.setAntotalmny(managerVO.getRntotalmny());
+                    }
+                    //加盟商客单价
+					DZFDouble num = CommonUtil.getDZFDouble(vo.getRnum()).add(CommonUtil.getDZFDouble(vo.getAnum()));
+                    DZFDouble money = CommonUtil.getDZFDouble(vo.getRntotalmny()).add(CommonUtil.getDZFDouble(vo.getAntotalmny()));
+                    if(num.equals(DZFDouble.ZERO_DBL)){
+						vo.setUnitprice(DZFDouble.ZERO_DBL);
+					}else{
+						vo.setUnitprice(money.div(num));
 					}
+                    map.put(managerVO.getPk_corp(),vo);
+				 }
 			}
 		}
 		Collection<ManagerVO> manas = map.values();
@@ -254,17 +234,10 @@ public class ManCommonServiceImpl{
 	/**
 	 * 查询语句（提单量，合同代账费）
 	 * @param pks
-	 * @param type
 	 */
-	protected StringBuffer getSql(String[] pks, Integer type, ManagerVO qvo) {
+	protected StringBuffer getSql(String[] pks, ManagerVO qvo) {
 		StringBuffer buf=new StringBuffer();
-		if(type==2){
-			buf.append("  select sum(w.rnum) as rnum,");
-			buf.append("  sum(w.rntotalmny) as rntotalmny,w.vprovince as vprovince from ( ");
-			buf.append("  select c.pk_corp,b.vprovince, ");
-		}else{
-			buf.append("  select c.pk_corp,nvl(yt.isxq,'N') isxq,");
-		}
+		buf.append("  select c.pk_corp,nvl(yt.isxq,'N') isxq,");
 		buf.append("  sum(decode((sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(c.deductdata,'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,1))");
 		buf.append("  +sum(decode(c.vstatus,10," );
@@ -286,16 +259,10 @@ public class ManCommonServiceImpl{
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(c.nsubtotalmny,0)+nvl(yt.nbookmny,0)),");
 		buf.append("  decode((sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))*");
 		buf.append("  sign(to_date(substr(c.dchangetime,0,10),'yyyy-MM-dd')-to_date(?,'yyyy-MM-dd'))),1,0,nvl(c.nsubtotalmny,0))");
-		if(type==2){
-			buf.append("  ))as rntotalmny from cn_contract c");
-			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
-			buf.append("  left join cn_packagedef p on yt.pk_packagedef=p.pk_packagedef ");
-			buf.append("  left join bd_corp b on c.pk_corp=b.pk_corp");
-		}else{
-			buf.append("  ))as rntotalmny from cn_contract c");
-			buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
-			buf.append("  left join cn_packagedef p on yt.pk_packagedef=p.pk_packagedef ");
-		}
+
+		buf.append("  ))as rntotalmny from cn_contract c");
+		buf.append("  INNER join ynt_contract yt on c.pk_contract=yt.pk_contract");
+		buf.append("  left join cn_packagedef p on yt.pk_packagedef=p.pk_packagedef ");
 		buf.append("  where nvl(c.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) ");
 		if(qvo.getIsncust()!=null){
 			if(qvo.getIsncust().booleanValue()){
@@ -309,14 +276,9 @@ public class ManCommonServiceImpl{
 		}else if(qvo.getComptype()!=null && qvo.getComptype()==2){
 			buf.append(" and p.icompanytype=99 ");
 		}
-		if(type==2){
-			buf.append("  and b.vprovince is not null ");
-			buf.append("  group by c.pk_corp,b.vprovince  order by b.vprovince)w group by w.vprovince");
-		}else{
-			buf.append(" and  ");
-			buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
-			buf.append(" group by c.pk_corp,yt.isxq ");
-		}
+		buf.append(" and  ");
+		buf.append(SqlUtil.buildSqlForIn("c.pk_corp ",pks));
+		buf.append(" group by c.pk_corp,yt.isxq ");
 		return buf;
 	}
 	
