@@ -26,12 +26,14 @@ import com.dzf.model.pub.Grid;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.pub.BusinessException;
 import com.dzf.pub.DzfTypeUtils;
+import com.dzf.pub.ISysConstants;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.Field.FieldMapping;
 import com.dzf.pub.excel.Excelexport2003;
 import com.dzf.pub.util.JSONConvtoJAVA;
 import com.dzf.pub.util.QueryUtil;
 import com.dzf.service.channel.report.ILossCustomerService;
+import com.dzf.service.pub.LogRecordEnum;
 
 /**
  * 加盟商管理
@@ -105,6 +107,7 @@ public class LossCustomerAction extends BaseAction<LossCustomerVO>{
 			toClient = new BufferedOutputStream(servletOutputStream);
 			response.setContentType("applicationnd.ms-excel;charset=gb2312");
 			ex.exportExcel(fields, toClient);
+			writeLogRecord(LogRecordEnum.OPE_CHANNEL_45.getValue(), "导出流失客户成功", ISysConstants.SYS_3);
 		} catch (Exception e) {
 			log.error("导出失败",e);
 		}  finally {
