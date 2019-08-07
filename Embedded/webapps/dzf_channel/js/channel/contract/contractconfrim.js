@@ -2287,12 +2287,12 @@ function onExport(){
 		Public.tips({content:'请选择需导出的数据',type:2});
 		return;
 	}
-	var callback = function(){
+	//var callback = function(){
 		var columns = $('#grid').datagrid("options").columns[0];
     	Business.getFile(DZF.contextPath+ '/contract/contractconf!onExport.action',
     			{'strlist':JSON.stringify(datarows),'qj' : $('#querydate').html()}, true, true);
-	}
-	checkBtnPower('export','channel4',callback);
+	//}
+	//checkBtnPower('export','channel4',callback);
 }
 
 /**

@@ -106,7 +106,7 @@ public class UrlFilter implements Filter {
 					}
 				//powerMap.(url.replace(contextPath, "")) == null || !powerMap.get(url.replace(contextPath, ""))){
 				}
-				if(!b){
+				/*if(!b){
 					if(url.endsWith(".action")){
 						res.getWriter().write("{\"success\":false,\"msg\":\"无权操作,请联系管理员\"}");
 						res.getWriter().flush();
@@ -117,7 +117,7 @@ public class UrlFilter implements Filter {
 						req.getRequestDispatcher("/error_kj.jsp").forward(req,res);
 	   				 	return;
 					}
-				}
+				}*/
 			}
 	        filterChain.doFilter(request, response);
 			return;
