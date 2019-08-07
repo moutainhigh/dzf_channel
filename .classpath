@@ -3,6 +3,11 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<accessrules>
+			<accessrule kind="accessible" pattern="*/**"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="lib" path="Embedded/lib/ecj-4.4.2.jar"/>
 	<classpathentry kind="lib" path="Embedded/lib/tomcat-dbcp.jar"/>
 	<classpathentry kind="lib" path="Embedded/lib/tomcat-embed-core.jar"/>
@@ -129,7 +134,5 @@
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/fastdfs-client-java-1.25.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/jedis-2.9.3.jar"/>
 	<classpathentry kind="lib" path="Embedded/webapps/dzf_channel/WEB-INF/lib/druid-1.1.16.jar"/>
-	<classpathentry kind="lib" path="E:/devsoftware/eclipse-jee-mars-2-win32-x86_64/eclipse/lombok.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="Embedded/webapps/dzf_channel/WEB-INF/classes"/>
 </classpath>
