@@ -296,30 +296,53 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			sql.append(" AND ");
 			sql.append(where);
 		}
-		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
-			if (qrytype != null && qrytype == 1) {
-				if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-					// 按照查询月份查询
-					sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
-					spm.addParam(pamvo.getPeriod());
-				} else {
-					// 按照查询期间查询
-					if (pamvo.getBegdate() != null) {
-						sql.append(" AND t.deductdata >= ?   ");
-						spm.addParam(pamvo.getBegdate());
-					}
-					if (pamvo.getEnddate() != null) {
-						sql.append(" AND t.deductdata <= ?   ");
-						spm.addParam(pamvo.getEnddate());
-					}
+//		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
+//			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
+//			if (qrytype != null && qrytype == 1) {
+//				if (!StringUtil.isEmpty(pamvo.getPeriod())) {
+//					// 按照查询月份查询
+//					sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
+//					spm.addParam(pamvo.getPeriod());
+//				} else {
+//					// 按照查询期间查询
+//					if (pamvo.getBegdate() != null) {
+//						sql.append(" AND t.deductdata >= ?   ");
+//						spm.addParam(pamvo.getBegdate());
+//					}
+//					if (pamvo.getEnddate() != null) {
+//						sql.append(" AND t.deductdata <= ?   ");
+//						spm.addParam(pamvo.getEnddate());
+//					}
+//				}
+//			} else if (qrytype != null && qrytype == 2) {
+//				sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
+//				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
+//				spm.addParam(preperiod);
+//			}
+//		}
+		sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
+		if (qrytype != null && qrytype == 1) {// 新增客户
+			if (!StringUtil.isEmpty(pamvo.getPeriod())) {
+				// 按照查询月份查询
+				sql.append(" AND substr(p.createdate, 1, 7) = ?   ");
+				spm.addParam(pamvo.getPeriod());
+			} else {
+				// 按照查询期间查询
+				if (pamvo.getBegdate() != null) {
+					sql.append(" AND p.createdate >= ?   ");
+					spm.addParam(pamvo.getBegdate());
 				}
-			} else if (qrytype != null && qrytype == 2) {
-				sql.append(" AND substr(t.deductdata, 1, 7) = ? ");
-				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
-				spm.addParam(preperiod);
+				if (pamvo.getEnddate() != null) {
+					sql.append(" AND p.createdate <= ?   ");
+					spm.addParam(pamvo.getEnddate());
+				}
 			}
+		} else if (qrytype != null && qrytype == 2) {// 新增客户（上月）
+			sql.append(" AND substr(p.createdate, 1, 7) = ?   ");
+			String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
+			spm.addParam(preperiod);
 		}
+		
 		sql.append("   AND t.vdeductstatus in (?, ?, ?)    ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_1);
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
@@ -366,30 +389,53 @@ public class CustNumMoneyServiceImpl extends DataCommonRepImpl implements ICustN
 			sql.append(" AND ");
 			sql.append(where);
 		}
-		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
-			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
-			if (qrytype != null && qrytype == 1) {
-				if (!StringUtil.isEmpty(pamvo.getPeriod())) {
-					// 按照查询月份查询
-					sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
-					spm.addParam(pamvo.getPeriod());
-				} else {
-					// 按照查询期间查询
-					if (pamvo.getBegdate() != null) {
-						sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
-						spm.addParam(pamvo.getBegdate());
-					}
-					if (pamvo.getEnddate() != null) {
-						sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
-						spm.addParam(pamvo.getEnddate());
-					}
+//		if (qrytype != null && (qrytype == 1 || qrytype == 2)) {
+//			sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
+//			if (qrytype != null && qrytype == 1) {
+//				if (!StringUtil.isEmpty(pamvo.getPeriod())) {
+//					// 按照查询月份查询
+//					sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
+//					spm.addParam(pamvo.getPeriod());
+//				} else {
+//					// 按照查询期间查询
+//					if (pamvo.getBegdate() != null) {
+//						sql.append(" AND substr(t.dchangetime, 1, 10) >= ? ");
+//						spm.addParam(pamvo.getBegdate());
+//					}
+//					if (pamvo.getEnddate() != null) {
+//						sql.append(" AND substr(t.dchangetime, 1, 10) <= ? ");
+//						spm.addParam(pamvo.getEnddate());
+//					}
+//				}
+//			} else if (qrytype != null && qrytype == 2) {
+//				sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
+//				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
+//				spm.addParam(preperiod);
+//			}
+//		} 
+		sql.append(" AND nvl(ct.isxq,'N') = 'N' ");
+		if (qrytype != null && qrytype == 1) {// 新增客户
+			if (!StringUtil.isEmpty(pamvo.getPeriod())) {
+				// 按照查询月份查询
+				sql.append(" AND substr(p.createdate, 1, 7) = ?   ");
+				spm.addParam(pamvo.getPeriod());
+			} else {
+				// 按照查询期间查询
+				if (pamvo.getBegdate() != null) {
+					sql.append(" AND p.createdate >= ?   ");
+					spm.addParam(pamvo.getBegdate());
 				}
-			} else if (qrytype != null && qrytype == 2) {
-				sql.append(" AND substr(t.dchangetime, 1, 7) = ? ");
-				String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
-				spm.addParam(preperiod);
+				if (pamvo.getEnddate() != null) {
+					sql.append(" AND p.createdate <= ?   ");
+					spm.addParam(pamvo.getEnddate());
+				}
 			}
-		} 
+		} else if (qrytype != null && qrytype == 2) {// 新增客户（上月）
+			sql.append(" AND substr(p.createdate, 1, 7) = ?   ");
+			String preperiod = ToolsUtil.getPreviousMonth(pamvo.getPeriod());
+			spm.addParam(preperiod);
+		}
+		
 		sql.append("   AND t.vdeductstatus in (?, ?)    ");
 		sql.append(" GROUP BY t.pk_corp, NVL(p.chargedeptname, '小规模纳税人')   ");
 		spm.addParam(IStatusConstant.IDEDUCTSTATUS_9);
