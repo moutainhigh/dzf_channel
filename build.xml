@@ -149,6 +149,7 @@ config  配置文件存放目录
 		
 		
 	</target>
+	<!--
 	<target name="compres-js-css" depends="compile" description="压缩 .js 和 .css 文件">
 		    <taskdef name="compress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
 		        <classpath refid="path.build.classpath.yuicompress"/>
@@ -165,7 +166,7 @@ config  配置文件存放目录
 		            <include name="**/*.css"/>
 		        </fileset>
 		    </compress>
-		</target>  
+		</target>  -->
 	<target name="main" depends="init,compile,compres-js-css"></target>
 	<target name="dist" depends="main" description="将工程打成war包">
 		<!-- <war destfile="${build.dir}/${ant.project.name}/war" basedir="${build.dir}" webxml="D:\project\git\ch\webadmin\dzf_admin2\Embedded\webapps\dzf_admin2\WEB-INF\web.xml"></war>
