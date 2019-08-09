@@ -166,8 +166,11 @@ config  配置文件存放目录
 		            <include name="**/*.css"/>
 		        </fileset>
 		    </compress>
-		</target>  -->
-	<target name="main" depends="init,compile,compres-js-css"></target>
+		</target> 
+		<target name="main" depends="init,compile,compres-js-css"></target>
+		-->
+	
+	<target name="main" depends="init,compile"></target>
 	<target name="dist" depends="main" description="将工程打成war包">
 		<!-- <war destfile="${build.dir}/${ant.project.name}/war" basedir="${build.dir}" webxml="D:\project\git\ch\webadmin\dzf_admin2\Embedded\webapps\dzf_admin2\WEB-INF\web.xml"></war>
  -->		<!-- <war destfile="${build.dir}/${ant.project.name}/war" basedir="${build.dir}" webxml="${build.web.dir}/web.xml"></war> -->
