@@ -2,9 +2,9 @@ var contextPath = DZF.contextPath;
 var id='#gridh';
 
 $(function() {
-	$("#bdate").datebox("setValue", parent.SYSTEM.LoginDate.substring(0,7)+"-01");
-	$("#edate").datebox("setValue",parent.SYSTEM.LoginDate);
+	initQry();
 	load();
+	reloadData()
 	quickfiltet();
 	initDetailGrid();
 	initWshGrid();
@@ -12,20 +12,26 @@ $(function() {
 	initTabs();
 });
 
+function initQry(){
+	// 下拉按钮的事件
+	$("#jqj").on("mouseover", function() {
+		$("#qrydialog").show();
+		$("#qrydialog").css("visibility", "visible");
+	});
+	queryBoxChange('#bdate','#edate');
+	$("#bdate").datebox("setValue", parent.SYSTEM.LoginDate.substring(0,7)+"-01");
+	$("#edate").datebox("setValue",parent.SYSTEM.LoginDate);
+	$("#jqj").html(parent.SYSTEM.LoginDate.substring(0,7)+"-01"+" 至  "+parent.SYSTEM.LoginDate);
+}
+
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/channelman!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
 		width:'100%',
 		singleSelect : true,
-		queryParams: {
-			bdate: $('#bdate').datebox('getValue'),
-			edate: $('#edate').datebox('getValue'),
-			type:1
-		},
 		showFooter:true,
 		columns : [ [
 		    {width : '110',title : '省（市）',field : 'provname',align:'left',rowspan:2}, 
@@ -121,15 +127,27 @@ function clearCondition(){
 	$('#chantype').combobox('setValue','-1');
 }
 
-function reloadData(){
-	$('#grid').datagrid('load', {
-		bdate: $('#bdate').datebox('getValue'),
-		edate: $('#edate').datebox('getValue'),
-		"type":1,
-		'isncust':$('#isncust').combobox('getValue'),
-		'comptype':$('#comptype').combobox('getValue'),
-		'chantype': $('#chantype').combobox('getValue'),
-	});
+function reloadData(filtername){
+	var queryParams =new Array();
+	var isncust = $('#isncust').combobox('getValue');
+	if(!isEmpty(isncust)){
+		queryParams['isncust'] = isncust;
+	}
+	if(!isEmpty(filtername)){
+		queryParams['corpnm'] = filtername;
+	}
+	queryParams['bdate'] = $('#bdate').datebox('getValue');
+	queryParams['edate'] = $('#edate').datebox('getValue');
+	queryParams['type'] = 1;
+
+	queryParams['comptype'] = $('#comptype').combobox('getValue');
+	queryParams['chantype'] = $('#chantype').combobox('getValue');
+
+	$('#grid').datagrid('options').queryParams = queryParams;
+	$('#grid').datagrid('options').url = DZF.contextPath +'/report/channelman!query.action';
+	$("#grid").datagrid('reload');
+	$('#grid').datagrid('unselectAll');
+	$("#qrydialog").css("visibility", "hidden");
 }
 
 /**
@@ -138,20 +156,8 @@ function reloadData(){
 function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		 if (e.keyCode == 13) {
-            var filtername = $("#filter_value").val(); 
-            if (filtername != "") {
-            	var url = DZF.contextPath +'/report/channelman!query.action';
-            	$('#grid').datagrid('options').url = url;
-            	$('#grid').datagrid('loadData',{ total:0, rows:[]});
-            	$('#grid').datagrid('load', {
-            		bdate: $('#bdate').datebox('getValue'),
-        			edate: $('#edate').datebox('getValue'),
-            		"corpnm" :filtername,
-            		"type":1
-            	});
-            }else{
-            	load();
-            } 
+            var filtername = $("#filter_value").val();
+            reloadData(filtername);
          }
    });
 }

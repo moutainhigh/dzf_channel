@@ -6,16 +6,31 @@ function qryDetail(cid,corpnm){
 	var bdate = $("#bdate").datebox("getValue");
 	var edate = $("#edate").datebox("getValue");
 	var	qrydate = bdate + "至" + edate;
+	var isncust = $('#isncust').combobox('getValue');
+	var comptype = $('#comptype').combobox('getValue');
+	var data;
 	corpid=cid;
+	if(isEmpty(isncust)){
+		data = {
+			"corpid" : corpid,
+			"bdate" : bdate,
+			"edate" : edate,
+			'comptype' : comptype
+		};
+	}else{
+		data = {
+			"corpid" : corpid,
+			"bdate" : bdate,
+			"edate" : edate,
+			'isncust': isncust ,
+			'comptype' : comptype
+		};
+	}
 	$.ajax({
 		type : "post",
 		dataType : "json",
 		url : contextPath +'/report/manager!queryDetail.action',
-		data : {
-			"corpid" : corpid,
-			"bdate" : bdate,
-			"edate" : edate,
-		},
+		data : data,
 		traditional : true,
 		async : false,
 		success : function(data, textStatus) {
@@ -26,29 +41,29 @@ function qryDetail(cid,corpnm){
 				});
 			} else {
 				var res = data.rows;
-				if (isEmpty(res)) {
-					$('#detail_dialog').dialog('close');
-					Public.tips({
-						content : "无明细记录",
-						type : 2
-					});
-					return;
-				}
+				// if (isEmpty(res)) {
+				// 	$('#detail_dialog').dialog('close');
+				// 	Public.tips({
+				// 		content : "无明细记录",
+				// 		type : 2
+				// 	});
+				// 	return;
+				// }
 				$('#corpnm').html(corpnm);
 				$('#qrydate').html(qrydate);
 				$('#gridh').datagrid('loadData',res);
 				$('#detail_dialog').dialog('open');
-				var url;
-				if(id =="#gridh"){
-					url = contextPath + '/report/manager!queryDetail.action';
-				}else if(id == "#gridw"){
-					url = contextPath + '/report/manager!queryWDetail.action?ovince=5';
-				}else{
-					url = contextPath + '/report/manager!queryWDetail.action?ovince=7';
-				}
-				$(id).datagrid('options').url = url;
-				$(id).datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
-				$(id).datagrid('resize',{ 
+				// var url;
+				// if(id =="#gridh"){
+				// 	url = contextPath + '/report/manager!queryDetail.action';
+				// }else if(id == "#gridw"){
+				// 	url = contextPath + '/report/manager!queryWDetail.action?ovince=5';
+				// }else{
+				// 	url = contextPath + '/report/manager!queryWDetail.action?ovince=7';
+				// }
+				// $(id).datagrid('options').url = url;
+				// $(id).datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
+				$(id).datagrid('resize',{
 					height : '350',
 					width : '100%'
 				});
@@ -295,26 +310,6 @@ function setFooter(){
 }
 
 /**
- * 合并单元格
- * @returns
- */
-function mergeCell(data,is){
-	var mark=1;                                              
-　　　for (var i=1; i <data.rows.length; i++) {    
-　　　　　　if (data.rows[i]['provname'] == data.rows[i-1]['provname']) {  
-　　　　　　　　mark += 1;                                            
-　　　　　　　　$(is).datagrid('mergeCells',{ 
-　　　　　　　　　　index: i+1-mark,                 
-　　　　　　　　　　field: 'uprice',              
-　　　　　　　　　　rowspan:mark                 
-　　　　　　　　}); 
-　　　　　　}else{
-　　　　　　　　mark=1;                                
-　　　　　　}
-　	}
-}
-
-/**
  * 导出
  */
 function doExport(type){
@@ -500,7 +495,21 @@ function initTabs(){
 			if("已审核" == title){
 				id='#gridh';
 				$('#gridh').datagrid('options').url = contextPath + '/report/manager!queryDetail.action';
-				$('#gridh').datagrid('load', {"corpid":corpid,"bdate":$('#bdate').datebox('getValue'),"edate":$('#edate').datebox('getValue')});
+				var isncust = $('#isncust').combobox('getValue');
+				if(isEmpty(isncust)){
+					$('#gridh').datagrid('load', {"corpid":corpid,
+						"bdate":$('#bdate').datebox('getValue'),
+						"edate":$('#edate').datebox('getValue'),
+						'comptype' : $('#comptype').combobox('getValue')
+					});
+				}else{
+					$('#gridh').datagrid('load', {"corpid":corpid,
+						"bdate":$('#bdate').datebox('getValue'),
+						"edate":$('#edate').datebox('getValue'),
+						'isncust' : isncust,
+						'comptype' : $('#comptype').combobox('getValue')
+					});
+				}
 			}else if("未审核" == title){
 				id='#gridw';
 				$('#gridw').datagrid('options').url = contextPath + '/report/manager!queryWDetail.action?ovince=5';

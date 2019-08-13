@@ -4,6 +4,7 @@ var id='#gridh';
 $(function() {
 	initQry();
 	load();
+	reloadData();
 	quickfiltet();
 	initDetailGrid();
 	initWshGrid();
@@ -56,20 +57,25 @@ function clearCondition(){
 }
 
 // 重新加载数据
-function reloadData() {
+function reloadData(filtername) {
 	var queryParams =new Array();
 
-	var ovince=$('#ovince').combobox('getValue');
+	var ovince=$('#ovince').combobox('getValue');''
 	if(!isEmpty(ovince)){
 		queryParams['ovince'] = ovince;
 	}
-
+	var isncust = $('#isncust').combobox('getValue');
+	if(!isEmpty(isncust)){
+		queryParams['isncust'] = isncust;
+	}
+	if(!isEmpty(filtername)){
+		queryParams['corpnm'] = filtername;
+	}
 	queryParams['cuid'] =$('#cuid').combobox('getValue');
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
 	queryParams['type'] = 2;
 
-	queryParams['isncust'] = $('#isncust').combobox('getValue');
 	queryParams['comptype'] = $('#comptype').combobox('getValue');
 	queryParams['chantype'] = $('#chantype').combobox('getValue');
 	
@@ -84,7 +90,6 @@ function reloadData() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/regionalman!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
@@ -168,7 +173,6 @@ function load() {
 				    ]
 				],
 		onLoadSuccess : function(data) {
-//			mergeCell(data,this);
 			setFooter();
 		}
 	});
@@ -181,32 +185,7 @@ function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		 if (e.keyCode == 13) {
 	           var filtername = $("#filter_value").val(); 
-	           if (filtername != "") {
-		           	var url = DZF.contextPath +'/report/regionalman!query.action';
-		           	$('#grid').datagrid('options').url = url;
-	        		var ovince = isEmpty($('#ovince').combobox('getValue')) ? -1 : $('#ovince').combobox('getValue');
-	        		var cuid = isEmpty($('#cuid').combobox('getValue')) ? null : $('#cuid').combobox('getValue');
-		           	var rows = $('#grid').datagrid('getRows');
-		           	if(rows != null && rows.length > 0){
-		           		$('#grid').datagrid('load', {
-		           			"corpnm": filtername,
-		           			"type": 2,
-		           			"bdate": $('#bdate').datebox('getValue'),
-		           			"edate": $('#edate').datebox('getValue'),
-		           			"ovince": ovince,
-		           			"cuid": cuid,
-		           		});
-		           	}else{
-		           		$('#grid').datagrid('load', {
-		           			"corpnm": filtername,
-		           			"type": 2,
-		           			"bdate": $('#bdate').datebox('getValue'),
-		           			"edate": $('#edate').datebox('getValue'),
-		           		});
-		           	}
-	           }else{
-	        	   reloadData();
-	           } 
+	           reloadData(filtername)
         }
   });
 }

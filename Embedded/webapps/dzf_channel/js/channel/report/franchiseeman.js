@@ -4,6 +4,7 @@ var id='#gridh';
 $(function() {
 	initQry();
 	load();
+	reloadData();
 	quickfiltet();
 	initDetailGrid();
 	initWshGrid();
@@ -95,7 +96,7 @@ function clearCondition(){
 	$('#chantype').combobox('setValue','-1');
 }
 // 重新加载数据
-function reloadData() {
+function reloadData(filtername) {
 	var queryParams =new Array();
 
 	var aname=$('#aname').combobox('getValue')
@@ -106,13 +107,19 @@ function reloadData() {
 	if(!isEmpty(ovince)){
 		queryParams['ovince'] = ovince;
 	}
+	var isncust = $('#isncust').combobox('getValue');
 
+	if(!isEmpty(isncust)){
+		queryParams['isncust'] = isncust;
+	}
+	if(!isEmpty(filtername)){
+		queryParams['corpnm'] = filtername;
+	}
 	queryParams['cuid'] =$('#cuid').combobox('getValue');
 	queryParams['bdate'] = $('#bdate').datebox('getValue');
 	queryParams['edate'] = $('#edate').datebox('getValue');
 	queryParams['type'] = 3;
 
-	queryParams['isncust'] = $('#isncust').combobox('getValue');
 	queryParams['comptype'] = $('#comptype').combobox('getValue');
 	queryParams['chantype'] = $('#chantype').combobox('getValue');
 
@@ -127,17 +134,11 @@ function reloadData() {
 function load() {
 	// 列表显示的字段
 	$('#grid').datagrid({
-		url : DZF.contextPath + '/report/franchiseeman!query.action',
 		fit : false,
 		rownumbers : true,
 		height : Public.setGrid().h,
 		width:'100%',
 		singleSelect : true,
-		queryParams: {
-			bdate: $('#bdate').datebox('getValue'),
-			edate: $('#edate').datebox('getValue'),
-			"type":3
-		},
 		showFooter:true,
 		columns : [ [ 
 		    {width : '130',title : '大区',field : 'aname',align:'left',rowspan:2}, 
@@ -277,35 +278,8 @@ function load() {
 function quickfiltet(){
 	$('#filter_value').textbox('textbox').keydown(function (e) {
 		if (e.keyCode == 13) {
-			var filtername = $("#filter_value").val(); 
-	        if (filtername != "") {
-	        	var url = DZF.contextPath +'/report/franchiseeman!query.action';
-	        	$('#grid').datagrid('options').url = url;
-	        	var rows = $('#grid').datagrid('getRows');
-	        	if(rows != null && rows.length > 0){
-	        		var aname = isEmpty($('#aname').combobox('getValue')) ? null : $('#aname').combobox('getValue');
-	        		var ovince = isEmpty($('#ovince').combobox('getValue')) ? -1 : $('#ovince').combobox('getValue');
-	        		var cuid = isEmpty($('#cuid').combobox('getValue')) ? null : $('#cuid').combobox('getValue');
-	        		$('#grid').datagrid('load', {
-	        			"corpnm": filtername,
-	        			"bdate": $('#bdate').datebox('getValue'),
-	        			"edate": $('#edate').datebox('getValue'),
-	        			"type":3,
-	        			"aname": aname,
-	        			"ovince": ovince,
-	        			"cuid": cuid,
-	        		});
-	        	}else{
-	        		$('#grid').datagrid('load', {
-	        			"corpnm": filtername,
-	        			"bdate": $('#bdate').datebox('getValue'),
-	        			"edate": $('#bdate').datebox('getValue'),
-	        			"type":3,
-	        		});
-	        	}
-	        }else{
-	        	reloadData();
-	        } 
+			var filtername = $("#filter_value").val();
+			reloadData(filtername)
         }
   });
 }

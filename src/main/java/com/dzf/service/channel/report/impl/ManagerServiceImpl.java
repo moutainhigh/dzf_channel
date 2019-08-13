@@ -1,19 +1,19 @@
 package com.dzf.service.channel.report.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.dzf.dao.bs.SingleObjectBO;
 import com.dzf.dao.jdbc.framework.SQLParameter;
 import com.dzf.dao.jdbc.framework.processor.BeanListProcessor;
 import com.dzf.model.channel.report.ManagerVO;
 import com.dzf.pub.DZFWarpException;
+import com.dzf.pub.StringUtil;
 import com.dzf.service.channel.report.IManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service("mana_manager")
 public class ManagerServiceImpl implements IManagerService {
@@ -24,6 +24,21 @@ public class ManagerServiceImpl implements IManagerService {
 	@Override
 	public List<ManagerVO> queryDetail(ManagerVO qvo) throws DZFWarpException {
 		StringBuffer sql = new StringBuffer();
+		if(qvo.getIsncust()!=null){
+			if(qvo.getIsncust().booleanValue()){
+				sql.append(" and nvl(yt.isncust,'N')='Y' ");
+			}else{
+				sql.append(" and nvl(yt.isncust,'N')='N' ");
+			}
+		}
+		if(qvo.getComptype()!=null && qvo.getComptype()==1){
+			sql.append(" and p.icompanytype = 20 ");
+		}else if(qvo.getComptype()!=null && qvo.getComptype()==2){
+			sql.append(" and p.icompanytype = 99 ");
+		}
+		String conditionStr = StringUtil.isEmpty(sql.toString())? "" : sql.toString();
+
+		sql = new StringBuffer();
 		SQLParameter sp=new SQLParameter();
 		sp.addParam(qvo.getDbegindate());
 		sp.addParam(qvo.getDenddate());
@@ -33,17 +48,20 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" nvl(yt.nchangetotalmny,0)-nvl(yt.nbookmny,0) as antotalmny, " );   
 		sql.append(" nvl(t.ndeductmny,0) as ndeductmny,nvl(t.ndedrebamny,0) as ndedrebamny from cn_contract t" );
 		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
-		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) and " );
-		sql.append(" t.deductdata>=? and t.deductdata<=? and yt.pk_corp=? " );
+		sql.append(" LEFT join cn_packagedef p on yt.pk_packagedef = p.pk_packagedef ");
+		sql.append(" where nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and (yt.vstatus=1 or yt.vstatus=9 or yt.vstatus=10) and " );
+		sql.append(" t.deductdata>=? and t.deductdata<=? and yt.pk_corp=? " ).append(conditionStr);
+
 		List<ManagerVO> qryYSH =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 	    sql = new StringBuffer();
 	    sql.append(" select 0 as anum,t.pk_confrim as pk_corp,substr(t.dchangetime,0,10)as denddate,yt.vcontcode, ");
 		sql.append(" nvl(t.nsubtotalmny,0) as antotalmny,nvl(t.nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(t.nsubdedrebamny,0) as ndedrebamny from cn_contract  t" );
-		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");  
-		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(t.dr,0) = 0 and nvl(yt.dr,0)=0 and yt.vstatus=9  and" );
-		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and yt.pk_corp=?" );
+		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
+		sql.append(" LEFT join cn_packagedef p on yt.pk_packagedef = p.pk_packagedef ");
+		sql.append(" where nvl(t.dr,0) = 0 and nvl(yt.dr,0)=0 and yt.vstatus=9  and" );
+		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and yt.pk_corp=?" ).append(conditionStr);;
 		List<ManagerVO> qryYZZ =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 		
 		sql = new StringBuffer();
@@ -51,8 +69,9 @@ public class ManagerServiceImpl implements IManagerService {
 		sql.append(" nvl(t.nsubtotalmny,0)+nvl(yt.nbookmny,0) as antotalmny,nvl(t.nsubdeductmny,0) as ndeductmny , " );   
 		sql.append(" nvl(t.nsubdedrebamny,0) as ndedrebamny from cn_contract t" );
 		sql.append(" INNER JOIN ynt_contract yt ON t.pk_contract = yt.pk_contract ");
-		sql.append(" where nvl(yt.isncust,'N')='N' and nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and yt.vstatus=10 and" );
-		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and yt.pk_corp=?" );
+		sql.append(" LEFT join cn_packagedef p on yt.pk_packagedef = p.pk_packagedef ");
+		sql.append(" where nvl(t.dr,0) = 0 and nvl(yt.dr,0) = 0 and yt.vstatus=10 and" );
+		sql.append(" substr(t.dchangetime,0,10)>=? and substr(t.dchangetime,0,10)<=? and yt.pk_corp=?" ).append(conditionStr);;
 		List<ManagerVO> qryYZF =(List<ManagerVO>)singleObjectBO.executeQuery(sql.toString(), sp, new BeanListProcessor(ManagerVO.class));
 			
 		ArrayList<ManagerVO> vos=new ArrayList<>();
@@ -65,12 +84,7 @@ public class ManagerServiceImpl implements IManagerService {
 		if(qryYZF!=null && qryYZF.size()>0){
 			vos.addAll(qryYZF);
 		}
-		Collections.sort(vos, new Comparator<ManagerVO>() {
-			@Override
-			public int compare(ManagerVO o1, ManagerVO o2) {
-				return o1.getDenddate().compareTo(o2.getDenddate());
-			}
-		});
+		Collections.sort(vos,Comparator.comparing(ManagerVO::getDenddate));
 		return vos;
 	}
 	
