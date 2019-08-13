@@ -452,7 +452,9 @@ public class ChannelOrderServiceImpl implements IChannelOrderService {
 		if (list != null && list.size() > 0) {
 			for (StockOutVO vo : list) {
 				if (vo.getVstatus() != null && vo.getVstatus() != 0) {
-					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】已有商品出库，不允许取消确认；");
+					throw new BusinessException("订单：【" + pamvo.getVbillcode() + "】已有商品出库，不允许取消确认");
+				}else if(vo.getVstatus() != null && vo.getVstatus() == 0){
+					throw new BusinessException("订单关联出库单【" + pamvo.getVbillcode() + "】，请删除出库单后重试");
 				}
 			}
 		}
