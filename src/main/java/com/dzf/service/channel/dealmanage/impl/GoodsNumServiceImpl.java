@@ -99,8 +99,7 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 
     /**
      * 获取查询条件
-     * 
-     * @param pamvo
+     * @param qvo
      * @return
      * @throws DZFWarpException
      */
@@ -108,35 +107,73 @@ public class GoodsNumServiceImpl implements IGoodsNumService {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("    select t.vname, s.invspec, s.invtype,");
-		sql.append("  g.vgoodscode, g.vgoodsname, g.vmeasname goodsunit,s.nprice goodsprice,");
-//		sql.append("  nvl(num.ioutnum,0) ioutnum,  nvl(num.istocknum,0) istockinnum,");
-		sql.append("  num.pk_goods, num.pk_goodsspec,");
-		sql.append("  nvl(num.istocknum,0) - nvl(num.ioutnum, 0) istocknum, ");
-		sql.append("  nvl(num.isellnum, 0) - nvl(sh.nnum,0) ilocknum,  ");
-		sql.append("  nvl(stockbill.nsendnum,0)  nsendnum,   ");
-		sql.append("  nvl(stockbill.noutnum,0) noutnum,  ");
-		sql.append("  nvl(num.istocknum, 0) - nvl(num.isellnum,0) ibuynum");
-		sql.append("  from cn_stocknum num  ");
-		sql.append(" left join cn_goods g on num.pk_goods = g.pk_goods  ");
-		sql.append(" left join cn_goodstype t on g.pk_goodstype = t.pk_goodstype    ");
-		sql.append(" left join cn_goodsspec s on num.pk_goodsspec = s.pk_goodsspec  ");
-		sql.append(" left join (select sob.pk_goods, sob.pk_goodsspec, sum(case so.vstatus when 0 then sob.nnum else 0 end) as noutnum, ");
-		sql.append(" sum(case when so.vstatus=1 and sob.pk_goodsbill_b is not null then sob.nnum else 0 end) as nsendnum");
-		sql.append(" from cn_stockout so   ");
-		sql.append(" left join cn_stockout_b sob on sob.pk_stockout =  so.pk_stockout    ");
-		sql.append("  where (so.vstatus = 0 or so.vstatus = 1)  and nvl(so.dr, 0) = 0 and nvl(sob.dr, 0) = 0");
-		sql.append("   group by sob.pk_goods, sob.pk_goodsspec) stockbill   ");
-		sql.append("   on num.pk_goods = stockbill.pk_goods and num.pk_goodsspec = stockbill.pk_goodsspec ");
-		sql.append(" left join (select pk_goods,pk_goodsspec,sum(nnum) nnum from cn_stockout_b");
-		sql.append(" 	 where nvl(dr,0)=0 and pk_corp is null and pk_goodsbill_b is null");
-		sql.append(" 	 group by pk_goods,pk_goodsspec)sh  ");
-		sql.append(" 	on num.pk_goods = sh.pk_goods and num.pk_goodsspec = sh.pk_goodsspec   ");
-		sql.append("  where nvl(g.dr, 0) = 0    ");
-		sql.append("    and nvl(num.dr, 0) = 0  ");
-		sql.append("    and nvl(t.dr, 0) = 0    ");
-		sql.append("    and nvl(s.dr, 0) = 0     ");
-		sql.append("    and num.istocknum > 0");// 入库单数量大于0
+		sql.append(" ");
+		sql.append("SELECT ");
+		sql.append("    t.vname, ");
+		sql.append("    s.invspec, ");
+		sql.append("    s.invtype, ");
+		sql.append("    g.vgoodscode, ");
+		sql.append("    g.vgoodsname, ");
+		sql.append("    g.vmeasname   goodsunit, ");
+		sql.append("    s.nprice      goodsprice, ");
+		sql.append("    num.pk_goods, ");
+		sql.append("    num.pk_goodsspec, ");
+		sql.append("    nvl(num.istocknum, 0) - nvl(num.ioutnum, 0) istocknum, ");
+		sql.append("    nvl(num.isellnum, 0) - nvl(sh.nnum, 0) ilocknum, ");
+		sql.append("    nvl(stockbill.nsendnum,0) nsendnum, ");
+		sql.append("    nvl(bill.amount,0)- nvl(num.ioutnum, 0) noutnum, ");
+		sql.append("    nvl(num.istocknum, 0) - nvl(num.isellnum,0) ibuynum ");
+		sql.append("FROM ");
+		sql.append("    cn_stocknum    num ");
+		sql.append("    LEFT JOIN cn_goods       g ON num.pk_goods = g.pk_goods ");
+		sql.append("    LEFT JOIN cn_goodstype   t ON g.pk_goodstype = t.pk_goodstype ");
+		sql.append("    LEFT JOIN cn_goodsspec   s ON num.pk_goodsspec = s.pk_goodsspec ");
+		sql.append("    LEFT JOIN ( ");
+		sql.append("        SELECT sob.pk_goods,sob.pk_goodsspec,SUM(sob.nnum) AS nsendnum");
+		sql.append("        FROM  cn_stockout     so ");
+		sql.append("        LEFT JOIN cn_stockout_b   sob ON sob.pk_stockout = so.pk_stockout ");
+		sql.append("        WHERE ");
+		sql.append("            so.vstatus = 1 ");
+		sql.append("            AND nvl(so.dr, 0) = 0 ");
+		sql.append("            AND sob.pk_goodsbill_b IS NOT NULL ");
+		sql.append("            AND nvl(sob.dr, 0) = 0 ");
+		sql.append("        GROUP BY ");
+		sql.append("            sob.pk_goods, ");
+		sql.append("            sob.pk_goodsspec ");
+		sql.append("    ) stockbill ON num.pk_goods = stockbill.pk_goods ");
+		sql.append("                   AND num.pk_goodsspec = stockbill.pk_goodsspec ");
+		sql.append("    LEFT JOIN ( ");
+		sql.append("        SELECT  pk_goods,  pk_goodsspec,SUM(nnum) nnum");
+		sql.append("        FROM  cn_stockout_b ");
+		sql.append("        WHERE ");
+		sql.append("            nvl(dr, 0) = 0 ");
+		sql.append("            AND pk_corp IS NULL ");
+		sql.append("            AND pk_goodsbill_b IS NULL ");
+		sql.append("        GROUP BY ");
+		sql.append("            pk_goods, ");
+		sql.append("            pk_goodsspec ");
+		sql.append("    ) sh ON num.pk_goods = sh.pk_goods ");
+		sql.append("            AND num.pk_goodsspec = sh.pk_goodsspec ");
+		sql.append("    LEFT JOIN ( ");
+		sql.append("        SELECT b.pk_goods,b.pk_goodsspec,SUM(amount) amount ");
+		sql.append("        FROM  cn_goodsbill_b   b ");
+		sql.append("            LEFT JOIN cn_goodsbill     g ON b.pk_goodsbill = g.pk_goodsbill ");
+		sql.append("        WHERE ");
+		sql.append("            nvl(b.dr, 0) = 0 ");
+		sql.append("            AND nvl(g.dr, 0) = 0 ");
+		sql.append("            AND g.vstatus IN(1,2,3) ");
+		sql.append("        GROUP BY ");
+		sql.append("            b.pk_goods, ");
+		sql.append("            b.pk_goodsspec ");
+		sql.append("    ) bill ON num.pk_goods = bill.pk_goods ");
+		sql.append("              AND num.pk_goodsspec = bill.pk_goodsspec ");
+		sql.append("WHERE ");
+		sql.append("    nvl(g.dr, 0) = 0 ");
+		sql.append("    AND nvl(num.dr, 0) = 0 ");
+		sql.append("    AND nvl(t.dr, 0) = 0 ");
+		sql.append("    AND nvl(s.dr, 0) = 0 ");
+		// 入库单数量大于0
+		sql.append("    and num.istocknum > 0");
 		if (!StringUtil.isEmpty(qvo.getPk_goodstype())) {
 			sql.append("and g.pk_goodstype=? ");
 			spm.addParam(qvo.getPk_goodstype());
