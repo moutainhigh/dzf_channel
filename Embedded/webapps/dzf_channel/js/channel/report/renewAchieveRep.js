@@ -88,8 +88,12 @@ function load() {
 	//2、加载表格：
 	initGrid(columns);
 	
-	//3、查询数据：
-	reloadData();
+	setTimeout(function(){
+		$('#grid').datagrid('loadData',{ total:0, rows:[]});
+		//3、查询数据：
+		reloadData();
+		
+	},100);
 }
 
 /**
