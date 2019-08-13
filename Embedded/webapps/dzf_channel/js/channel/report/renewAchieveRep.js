@@ -74,7 +74,11 @@ function load() {
 	var begperiod = $("#begperiod").datebox("getValue");
 	var endperiod = $("#endperiod").datebox("getValue");
 	if (begperiod > endperiod) {
-		errMsg = "开始期间不能大于结束期间"
+		Public.tips({
+			content : "开始期间不能大于结束期间",
+			type : 2
+		});
+		return;
 	}
 	var diff = MonthDiff(begperiod, endperiod) + 1;
 	if (diff > 6) {
@@ -95,7 +99,6 @@ function load() {
 		$('#grid').datagrid('loadData',{ total:0, rows:[]});
 		//3、查询数据：
 		reloadData();
-		
 	},100);
 }
 
