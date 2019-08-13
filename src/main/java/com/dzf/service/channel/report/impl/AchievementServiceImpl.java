@@ -143,10 +143,11 @@ public class AchievementServiceImpl implements IAchievementService {
 		}else{
 			throw new BusinessException("季度查询条件不能为空");
 		}
-		if(showdate != null && showdate.size() > 0){
-			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", showdate.toArray(new String[0]));
+		List<String> qrylist = ToolsUtil.getPeriodsBp(paramvo.getBeginperiod(), paramvo.getEndperiod());
+		if(qrylist != null && qrylist.size() > 0){
+			String qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.deductdata, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> zlist = qryPositiveData(powmap, qrysql, "SUBSTR(t.deductdata, 1, 7)");//扣款金额
-			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", showdate.toArray(new String[0]));
+			qrysql = SqlUtil.buildSqlForIn("SUBSTR(t.dchangetime, 1, 7)", qrylist.toArray(new String[0]));
 			List<ContQryVO> flist = qryNegativeData(powmap, qrysql, "SUBSTR(t.dchangetime, 1, 7)");//退款金额
 			Map<String,DZFDouble> kkmap = new HashMap<String,DZFDouble>();
 			Map<String,DZFDouble> jemap = new HashMap<String,DZFDouble>();

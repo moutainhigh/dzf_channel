@@ -185,12 +185,12 @@ function initLineChart(row){
 		        }
 		    },
 		    series: [{
-		        name: '扣款金额增长率',
+		        name: '扣款金额',
 		        type: 'line',
 		        data: row.fir,
 		    },
 		    {
-		        name: '合同金额增长率',
+		        name: '合同金额',
 		        type: 'line',
 		        data: row.sec,
 		    }]
