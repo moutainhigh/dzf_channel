@@ -168,9 +168,9 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 			sql.append("   AND EXISTS (SELECT p.pk_corp  ") ; 
 			sql.append("          FROM bd_corp p  ") ; 
 			sql.append("         WHERE nvl(p.dr, 0) = 0  ") ; 
-			sql.append("           AND nvl(p.isseal, 'N') = 'N'  ") ; 
+//			sql.append("           AND nvl(p.isseal, 'N') = 'N'  ") ; 
 			sql.append("           AND nvl(p.isaccountcorp, 'N') = 'N'  ") ; 
-			sql.append("   AND nvl(p.isseal,'N') = ?   ");
+			sql.append("   AND nvl(p.isncust,'N') = ?   ");
 			spm.addParam(pamvo.getIsncust());
 			String filter = SqlUtil.buildSqlForIn("p.fathercorp", pk_corps);
 			sql.append("   AND ").append(filter);
@@ -280,7 +280,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		appendSql(sql, spm);
 		sql.append(" WHERE nvl(p.dr, 0) = 0  ") ; 
 		sql.append("   AND nvl(account.dr, 0) = 0  ") ; 
-		sql.append("   AND nvl(p.isseal, 'N') = 'N'  ") ; //非封存
+//		sql.append("   AND nvl(p.isseal, 'N') = 'N'  ") ; //非封存
 		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  ") ; 
 		sql.append("   AND account.fathercorp = '000001'  ") ; 
 		String where = SqlUtil.buildSqlForIn("account.pk_corp", pk_corps);
