@@ -380,6 +380,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		List<String> showdate = new ArrayList<String>();
 		showdate.add(paramvo.getVyear());
 		List<String> qrylist = new ArrayList<String>();
+		qrylist.add(paramvo.getVyear());
 		qrylist.add(String.valueOf(year - 1));
 		if(qrylist != null && qrylist.size() > 0){
 			Map<String, DZFDouble> mnymap = getMnyMap(paramvo, powmap, qrylist);
