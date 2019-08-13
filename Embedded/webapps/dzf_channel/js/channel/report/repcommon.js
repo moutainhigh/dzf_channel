@@ -1,11 +1,15 @@
-function initQryCommbox() {
-	changeArea();
-	changeProvince();
+function initQryCommbox(roletype) {
+	var qtype = 2;
+	if(!isEmpty(roletype)){
+		qtype = roletype;
+	}
+	changeArea(qtype);
+	changeProvince(qtype);
 	initArea({
-		"qtype" : 2
+		"qtype" : qtype
 	});
 	initProvince({
-		"qtype" : 2
+		"qtype" : qtype
 	});
 	initManager({
 		"qtype" : 2
@@ -15,16 +19,16 @@ function initQryCommbox() {
 /**
  * 大区改变事件
  */
-function changeArea() {
+function changeArea(qtype) {
 	$("#aname").combobox({
 		onChange : function(n, o) {
 			var queryData = {
-				"qtype" : 2
+				"qtype" : qtype
 			};
 			if (!isEmpty(n)) {
 				queryData = {
 					'aname' : n,
-					"qtype" : 2
+					"qtype" : qtype
 				};
 				$('#ovince').combobox('setValue', null);
 				$('#uid').combobox('setValue', null);
@@ -56,17 +60,17 @@ function clearCondition() {
 /**
  * 省(市)改变事件
  */
-function changeProvince() {
+function changeProvince(qtype) {
 	$("#ovince").combobox({
 		onChange : function(n, o) {
 			var queryData = {
-				"qtype" : 2
+				"qtype" : qtype
 			};
 			if (!isEmpty(n)) {
 				queryData = {
 					'aname' : $("#aname").combobox('getValue'),
 					'ovince' : n,
-					"qtype" : 2
+					"qtype" : qtype
 				};
 				$('#uid').combobox('setValue', null);
 			}
@@ -153,10 +157,10 @@ function initManager(queryData) {
 /**
  * 加盟商初始化
  */
-function initChannel(roletype) {
+function initChannel(qtype) {
 	var ovince = -3;
-	if(!isEmpty(roletype)){
-		ovince = roletype;
+	if(!isEmpty(qtype)){
+		ovince = qtype;
 	}
 	$('#channel_select').textbox({
 		editable : false,

@@ -1,4 +1,5 @@
 var grid;
+var qtype;
 var roletype;// 1：渠道；2：培训；3：运营；
 
 $(window).resize(function(){ 
@@ -10,11 +11,11 @@ $(window).resize(function(){
 
 $(function() {
 	initQryData();
-	//大区、省（市）、会计运营经理下拉初始化
-	initQryCommbox();
 	queryRoleType();
+	//大区、省（市）、会计运营经理下拉初始化
+	initQryCommbox(roletype);
 	//加盟商参照初始化
-	initChannel(roletype);
+	initChannel(qtype);
 	load();
 });
 
@@ -30,8 +31,10 @@ function queryRoleType() {
 		success : function(result) {
 			var result = eval('(' + result + ')');
 			if (result.success) {
-				roletype = result.rows == 1 ? -2 : -3;
-				if(roletype == -2){
+				// 1：渠道；2：培训；3：运营；
+				roletype = result.rows;
+				qtype = roletype == 1 ? -2 : -3;
+				if(qtype == -2){
 					setReadOnly(true);
 				}else{
 					setReadOnly(false);
@@ -45,8 +48,8 @@ function queryRoleType() {
  * 设置是否可编辑
  */
 function setReadOnly(flag){
-	$('#aname').combobox('readonly', flag);
-	$('#ovince').combobox('readonly', flag);
+//	$('#aname').combobox('readonly', flag);
+//	$('#ovince').combobox('readonly', flag);
 	$('#uid').combobox('readonly', flag);
 }
 
