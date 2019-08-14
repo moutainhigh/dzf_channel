@@ -255,7 +255,7 @@ function initDetailGrid(){
             halign:'center',
         }, {
             field: 'ckstatus',
-            title: '账务检查状态',
+            title: '关账状态',
             width: '120',
             align: 'left',
             halign: 'center',

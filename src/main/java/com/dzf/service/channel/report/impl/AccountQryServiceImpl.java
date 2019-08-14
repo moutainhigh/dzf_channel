@@ -23,6 +23,8 @@ import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
+import com.dzf.pub.lang.DZFDate;
+import com.dzf.pub.util.DateUtils;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IAccountQryService;
 
@@ -287,13 +289,27 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 */
 	private void getJzztSqlSpm(QryParamVO pamvo, String[] pks, StringBuffer sql, SQLParameter spm,
 			UserVO uvo) throws DZFWarpException {
+		boolean issame = false;//查询月与当前月不相等
+		String nperiod = DateUtils.getPeriod(new DZFDate());
+		if (nperiod.equals(pamvo.getPeriod())) {
+			issame = true;//查询月与当前月相等
+		}
+		
 		sql.append(" LEFT JOIN (   ");
 		sql.append("SELECT q.pk_corp,     ");
-		sql.append(" q.period as period   ");
+		if (issame) {
+			sql.append(" MAX(q.period) AS period   ");
+		} else {
+			sql.append(" q.period as period   ");
+		}
 		sql.append("  FROM ynt_qmcl q    ");
 		sql.append("  JOIN bd_corp corp ON corp.pk_corp = q.pk_corp    ");
 		sql.append(" WHERE q.isqjsyjz = 'Y'   ");
-		sql.append(" AND q.period = ? ");
+		if(issame){
+			sql.append(" AND q.period <= ? ");
+		}else{
+			sql.append(" AND q.period = ? ");
+		}
 		spm.addParam(pamvo.getPeriod());
 		if (pks != null && pks.length > 0) {
 			String where = SqlUtil.buildSqlForIn(" q.pk_corp ", pks);
@@ -301,6 +317,9 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		} else {
 			// 添加过滤查询条件
 			addSqlParam(pamvo, sql, spm);
+		}
+		if(issame){
+			sql.append(" GROUP BY q.pk_corp   ");
 		}
 		sql.append("  ) jzzt   ");
 		sql.append(" ON qcorp.pk_corp = jzzt.pk_corp    ");

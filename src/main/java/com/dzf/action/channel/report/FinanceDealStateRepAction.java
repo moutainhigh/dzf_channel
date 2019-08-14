@@ -86,7 +86,7 @@ public class FinanceDealStateRepAction extends BaseAction<FinanceDealStateRepVO>
 	}
 	
 	/**
-	 * 查询
+	 * 查询明细
 	 */
 	public void queryDetail() {
 		Grid grid = new Grid();

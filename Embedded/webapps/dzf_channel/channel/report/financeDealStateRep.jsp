@@ -123,7 +123,7 @@
 							<option value="已完成">已完成</option>
 							<option value="未完成">未完成</option>
 						</select>
-						<label style="width:85px;text-align:right;">账务检查：</label>
+						<label style="width:85px;text-align:right;">关账状态：</label>
 						<select id="vcode" class="easyui-combobox" data-options="panelHeight:'auto'" 
 							style="width:80px;height:28px;">
 							<option value="全部">全部</option>
