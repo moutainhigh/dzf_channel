@@ -649,12 +649,16 @@ function initconturnid() {
 			if(w < 150 || h<80){
 				return false
 			};
-			with(oImg.style) {
-				width = w +'px';
-				height = h +'px';
-				left = l +'px';
-				top = t +'px';
-			}
+//			with(oImg.style) {
+//				width = w +'px';
+//				height = h +'px';
+//				left = l +'px';
+//				top = t +'px';
+//			}
+			oImg.style.width = w +'px';
+			oImg.style.height = h +'px';
+			oImg.style.left = l +'px';
+			oImg.style.top = t +'px';
 		});
 	})();
 };
