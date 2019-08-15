@@ -22,6 +22,11 @@
 <script
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/rebate/rebateinput.js");%>
 	charset="UTF-8" type="text/javascript"></script>
+<style type="text/css">
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
+</style>
 </head>
 
 <body>
