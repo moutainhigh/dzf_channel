@@ -24,7 +24,7 @@
         text-align: center;
     }
     .mod-toolbar-top {
-		margin-right: 17px;
+		margin-right: 17px !important; 
 	}
 </style>
 </head>
