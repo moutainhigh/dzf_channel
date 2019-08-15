@@ -83,63 +83,63 @@
 			<table id="grid"></table>
 		</div>
 
+		<!-- 新增界面 begin -->
+		<div id="cardPanel" style="height:100%; width: 100%; overflow:auto; overflow-x: hidden">
+			<div class="mod-toolbar-top">
+		        <div class="mod-toolbar-content">
+			        <div class="right">
+						<a href="javascript:void(0)" id="savebtn" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a>
+			        	<a href="javascript:void(0)" id="cancbtn" class="ui-btn ui-btn-xz" onclick="showList()">返回</a>
+			        </div> 
+		        </div>
+	  		</div>
+	  		
+	  		<div class="mod-inner">
+	  			<div id="mainId" style="height: 81%; width:100%;">
+	  				<form id="stform" method="post" enctype="multipart/form-data" style="min-width:1150px;padding-top:18px;">
+	  					<input type="hidden" name="stid" id="stid">
+	  					<input type="hidden" name="updatets" id="updatets">
+	  					<input type="hidden" name="vcode" id="vcode">
+	  					
+	  					<input type="hidden" name="operid" id="operid">
+	  					<input type="hidden" name="opertime" id="opertime">
+	  					<input type="hidden" name="status" id="status">
+	  					<input type="hidden" name="corpid" id="corpid">
+	  					
+	  					<input type="hidden" name="confid" id="confid">
+	  					<input type="hidden" name="conftime" id="conftime">
+						<div class="time_col time_colp11">
+						    <div style="width: 25%;display: inline-block;">
+								<label style="text-align:right;width:35%;">入库日期：</label>
+								<input type="text" id="stdate" name="stdate" class="easyui-datebox" 
+									style="width:40%;height:28px;"  data-options="required:true" />
+						    </div>
+						    <div style="width: 25%;display: inline-block;">
+								<label style="text-align:right;width: 35%;">采购总金额：</label>
+								<input id="totalmny" name="totalmny" class="easyui-numberbox" 
+									data-options ="readonly:true,min:0,precision:2,groupSeparator:',' "  
+									style="width:40%;height:28px;text-align:left"   />
+						    </div>
+						    <div style="width: 25%;display: inline-block;">
+								<label style="text-align:right;width: 35%;">总成本：</label>
+								<input id="totalcost" name="totalcost" class="easyui-numberbox" 
+									data-options ="readonly:true,min:0,precision:4,groupSeparator:',' "  
+									style="width:40%;height:28px;text-align:left"   />
+						    </div>
+						</div>
+						<div id="dataGrid" style="width:100%;display:inline-block;">
+							<table id="stgrid"></table>
+					    </div>
+						
+					</form>
+	  			</div>
+	  		</div>
+			
+		</div>
+		<!-- 新增界面 end -->
 	</div>
 	<!-- 列表界面 end -->
 	
-	<!-- 卡片界面 begin -->
-	<div id="cardPanel" style="height:100%; width: 100%; overflow:auto; overflow-x: hidden">
-		<div class="mod-toolbar-top">
-	        <div class="mod-toolbar-content">
-		        <div class="right">
-					<a href="javascript:void(0)" id="savebtn" class="ui-btn ui-btn-xz" onclick="onSave()">保存</a>
-		        	<a href="javascript:void(0)" id="cancbtn" class="ui-btn ui-btn-xz" onclick="showList()">返回</a>
-		        </div> 
-	        </div>
-  		</div>
-  		
-  		<div class="mod-inner">
-  			<div id="mainId" style="height: 81%; width:100%;">
-  				<form id="stform" method="post" enctype="multipart/form-data" style="min-width:1150px;padding-top:18px;">
-  					<input type="hidden" name="stid" id="stid">
-  					<input type="hidden" name="updatets" id="updatets">
-  					<input type="hidden" name="vcode" id="vcode">
-  					
-  					<input type="hidden" name="operid" id="operid">
-  					<input type="hidden" name="opertime" id="opertime">
-  					<input type="hidden" name="status" id="status">
-  					<input type="hidden" name="corpid" id="corpid">
-  					
-  					<input type="hidden" name="confid" id="confid">
-  					<input type="hidden" name="conftime" id="conftime">
-					<div class="time_col time_colp11">
-					    <div style="width: 25%;display: inline-block;">
-							<label style="text-align:right;width:35%;">入库日期：</label>
-							<input type="text" id="stdate" name="stdate" class="easyui-datebox" 
-								style="width:40%;height:28px;"  data-options="required:true" />
-					    </div>
-					    <div style="width: 25%;display: inline-block;">
-							<label style="text-align:right;width: 35%;">采购总金额：</label>
-							<input id="totalmny" name="totalmny" class="easyui-numberbox" 
-								data-options ="readonly:true,min:0,precision:2,groupSeparator:',' "  
-								style="width:40%;height:28px;text-align:left"   />
-					    </div>
-					    <div style="width: 25%;display: inline-block;">
-							<label style="text-align:right;width: 35%;">总成本：</label>
-							<input id="totalcost" name="totalcost" class="easyui-numberbox" 
-								data-options ="readonly:true,min:0,precision:4,groupSeparator:',' "  
-								style="width:40%;height:28px;text-align:left"   />
-					    </div>
-					</div>
-					<div id="dataGrid" style="width:100%;display:inline-block;">
-						<table id="stgrid"></table>
-				    </div>
-					
-				</form>
-  			</div>
-  		</div>
-		
-	</div>
-	<!-- 卡片界面 end -->
 	
 	<!-- 供应商参照 -->
 	<div id = "refdiv"></div> 

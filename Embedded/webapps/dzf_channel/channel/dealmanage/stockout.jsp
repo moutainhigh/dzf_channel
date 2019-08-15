@@ -78,11 +78,7 @@
 			</p>
 		</div>
 		
-		<div id="dataGrid" class="grid-wrap">
-			<table id="grid"></table>
-		</div>
-		
-		<div id="cardDialog" >
+		<div id="cardDialog" class="easyui-dialog" data-options="closed:true" modal=true >
 			<form id="stockout" method="post" style="height:440px;width:1100px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<input id="soutid" name="soutid" class="easyui-textbox"> 
@@ -143,6 +139,10 @@
 					<a href="javascript:void(0)" id="addCancel" class="ui-btn ui-btn-xz"  onclick="addCancel()">取消</a>
 				</div>
 			</form>
+		</div>
+		
+		<div id="dataGrid" class="grid-wrap">
+			<table id="grid"></table>
 		</div>
 		
 		<div id="logDialog" class="easyui-dialog" style="width:400px;height:240px;padding-top:30px;" data-options="closed:true" modal=true>
