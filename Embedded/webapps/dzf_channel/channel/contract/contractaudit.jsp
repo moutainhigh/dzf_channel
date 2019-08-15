@@ -29,6 +29,9 @@
         padding: 1px 5px;
         text-align: center;
     }
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
 </style>
 </head>
 <% 

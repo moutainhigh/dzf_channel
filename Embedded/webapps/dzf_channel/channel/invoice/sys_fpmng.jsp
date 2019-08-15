@@ -25,9 +25,12 @@
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/invoice/sys_fpmng.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-.pos-background {
-	background-color: yellow;
-}
+	.pos-background {
+		background-color: yellow;
+	}
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
 </style>
 </head>
 <body>
