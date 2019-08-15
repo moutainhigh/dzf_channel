@@ -253,7 +253,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
-		sql.append("       SUM(nvl(t.ndedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(nvl(t.ndeductmny, 0)) AS ndedsummny,    ");
 		sql.append("       SUM(nvl(ct.nchangetotalmny, 0) - nvl(ct.nbookmny, 0)) AS naccountmny    ");
 		sql.append("  FROM cn_contract t    ");
 		sql.append("  INNER JOIN ynt_contract ct ON t.pk_contract = ct.pk_contract   ");
@@ -299,7 +299,7 @@ public class AchievementServiceImpl implements IAchievementService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ").append(qrtdate).append(" AS vperiod,    ");
-		sql.append("       SUM(nvl(t.nsubdedsummny, 0)) AS ndedsummny,    ");
+		sql.append("       SUM(nvl(t.nsubdeductmny, 0)) AS ndedsummny,    ");
 		sql.append("       SUM(CASE t.vstatus    ") ; 
 		sql.append("             WHEN 9 THEN    ") ; 
 		sql.append("              nvl(t.nsubtotalmny, 0)    ") ; 
