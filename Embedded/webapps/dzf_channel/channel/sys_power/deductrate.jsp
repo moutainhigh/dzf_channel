@@ -10,9 +10,12 @@
 <script src=<%UpdateGradeVersion.outversion(out,"../../jslib/ajaxfileupload.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/sys_power/deductrate.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-.selecticon {
-    background: url(../../img/add_lan.png) no-repeat;
-}
+	.selecticon {
+	    background: url(../../img/add_lan.png) no-repeat;
+	}
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
 </style>
 </head>
 <body>
