@@ -84,7 +84,7 @@
 		</div>
 
 		<!-- 新增界面 begin -->
-		<div id="cardPanel" style="height:100%; width: 100%; overflow:auto; overflow-x: hidden">
+		<div id="cardPanel" style="height:100%; width: 100%; overflow:auto; overflow-x: hidden" class="easyui-dialog" data-options="closed:true" modal=true>
 			<div class="mod-toolbar-top">
 		        <div class="mod-toolbar-content">
 			        <div class="right">

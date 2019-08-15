@@ -33,7 +33,7 @@
 		</div>
 		
 		<!--卡片界面开始-->
-		<div id="cardDialog">
+		<div id="cardDialog" class="easyui-dialog" data-options="closed:true" modal=true>
 			<form id="chnarea" method="post" style="height:360px;width:1000px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<label style="text-align:right">主键</label> 

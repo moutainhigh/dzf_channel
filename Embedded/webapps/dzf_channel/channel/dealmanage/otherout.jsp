@@ -82,7 +82,7 @@
 			<table id="grid"></table>
 		</div>
 		
-		<div id="cardDialog" >
+		<div id="cardDialog" class="easyui-dialog" data-options="closed:true" modal=true>
 			<form id="stockout" method="post" style="height:320px;width:880px;overflow:hidden;padding-top:18px;">
 				<div class="time_col time_colp11" style="display:none">
 					<input id="soutid" name="soutid" class="easyui-textbox"> 

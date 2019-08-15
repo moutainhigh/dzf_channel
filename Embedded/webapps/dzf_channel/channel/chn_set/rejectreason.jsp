@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		<!-- 新增或修改对话框 begin -->
-		<div id="datadlg" style="padding:10px 20px;">
+		<div id="datadlg" style="padding:10px 20px;" class="easyui-dialog" data-options="closed:true" modal=true>
 			<form id="dataform" method="post">
 				<div style="margin-top:10px;vertical-align: top;">
 					<label style="display: inline-block;vertical-align: top;">驳回原因：</label>
