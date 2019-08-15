@@ -14,6 +14,11 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorder.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorderinvoice.js");%> charset="UTF-8" type="text/javascript"></script>
+<style type="text/css">
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
+</style>
 </head>
 <body>
 	<div id="List_panel" class="wrapper" data-options="closed:false">

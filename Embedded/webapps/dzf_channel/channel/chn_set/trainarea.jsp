@@ -9,7 +9,12 @@
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/chn_set/areacommon.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-.panel-body{overflow:auto}
+	.panel-body {
+		overflow: auto
+	}
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
 </style>
 </head> 
 <body>
