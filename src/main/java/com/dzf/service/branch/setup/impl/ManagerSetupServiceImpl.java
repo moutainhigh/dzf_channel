@@ -320,6 +320,7 @@ public class ManagerSetupServiceImpl implements IManagerSetupService {
 				ubvo.setPk_corp(pk_corp);
 				ubvo.setPk_branchset(br.trim());
 				ubvo.setCuserid(uvo.getCuserid());
+				ubvo.setCoperatorid(uvo.getCuserid());
 				ubvo.setDoperatedate(new DZFDate());
 				ubvo.setDr(0);
 				mslist.add(ubvo);
