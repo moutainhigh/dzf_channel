@@ -85,6 +85,10 @@
 				<div class="time_col time_colp10">
 					<label style="width:90px;text-align:right">服务余额/月：</label>
 					<input id="qmonth" class="easyui-numberbox" style="width:102px;height:28px;" />
+					
+					<label style="width:70px;text-align:right">主办会计：</label>
+					<input id="cpcount" class="easyui-textbox" style="width:102px;height:28px;" />
+					<input id="cpcountid" type="hidden">
 				</div>
 			<p>
 				<a class="ui-btn save_input" id="cleanbtn" onclick="clearQuery()">清除</a> 

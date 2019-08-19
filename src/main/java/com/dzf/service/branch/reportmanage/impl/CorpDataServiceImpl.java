@@ -68,14 +68,14 @@ public class CorpDataServiceImpl implements ICorpDataService {
 
 	@Override
 	public Integer queryPcountTotal(QryParamVO pamvo) throws DZFWarpException {
-		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), true);
+		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), true, pamvo.getCorpcode());
 		return multBodyObjectBO.getDataTotal(qryvo.getSql(), qryvo.getSpm());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ComboBoxVO> queryPcount(QryParamVO pamvo) throws DZFWarpException {
-		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), false);
+		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), false, pamvo.getCorpcode());
 		List<ComboBoxVO> list = (List<ComboBoxVO>) multBodyObjectBO.queryDataPage(ComboBoxVO.class, qryvo.getSql(),
 				qryvo.getSpm(), pamvo.getPage(), pamvo.getRows(), "r.user_code");
 		if (list != null && list.size() > 0) {
@@ -87,7 +87,7 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ComboBoxVO> queryAllPcount(QryParamVO pamvo) throws DZFWarpException {
-		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), false);
+		QrySqlSpmVO qryvo = getPcountQry(pamvo.getCuserid(), false, pamvo.getCorpcode());
 		List<ComboBoxVO> list = (List<ComboBoxVO>) singleObjectBO.executeQuery(qryvo.getSql(), qryvo.getSpm(),
 				new BeanListProcessor(ComboBoxVO.class));
 		List<ComboBoxVO> retlist = new ArrayList<ComboBoxVO>();
@@ -104,14 +104,14 @@ public class CorpDataServiceImpl implements ICorpDataService {
 	}
 
 	/**
-	 * * 获取主办会计查询条件
-	 * 
+	 * 获取主办会计查询条件
 	 * @param cuserid
 	 * @param isqrynum
+	 * @param rolecode
 	 * @return
 	 * @throws DZFWarpException
 	 */
-	private QrySqlSpmVO getPcountQry(String cuserid, boolean isqrynum) throws DZFWarpException {
+	private QrySqlSpmVO getPcountQry(String cuserid, boolean isqrynum, String rolecode) throws DZFWarpException {
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -126,6 +126,10 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("  LEFT JOIN sm_user r ON p.vsuperaccount = r.cuserid    ");
 		sql.append("  LEFT JOIN br_branchcorp bp ON p.fathercorp = bp.pk_corp    ");
 		sql.append("  LEFT JOIN br_user_branch h ON h.pk_branchset = bp.pk_branchset    ");
+		if(!StringUtil.isEmpty(rolecode)){
+			sql.append("  LEFT JOIN sm_user_role ul ON h.cuserid = ul.cuserid    ");
+			sql.append("  LEFT JOIN sm_role rl ON ul.pk_role = rl.pk_role  ");
+		}
 		sql.append(" WHERE nvl(p.dr, 0) = 0    ");
 		sql.append("   AND nvl(r.dr, 0) = 0    ");
 		sql.append("   AND nvl(bp.dr, 0) = 0    ");
@@ -138,6 +142,10 @@ public class CorpDataServiceImpl implements ICorpDataService {
 		sql.append("   AND r.user_name is not null    ");
 		sql.append("   AND h.cuserid = ?   ");
 		spm.addParam(cuserid);
+		if(!StringUtil.isEmpty(rolecode)){
+			sql.append(" AND rl.role_code = ? ");
+			spm.addParam(rolecode);
+		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

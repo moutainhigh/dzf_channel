@@ -152,7 +152,11 @@ public class SaleCorpDataServiceImpl implements ISaleCorpDataService {
 			sql.append(" AND c.foreignname = ?   ");
 			spm.addParam(pamvo.getUser_name());
 		}
-		
+		//主办会计
+		if(!StringUtil.isEmpty(pamvo.getPk_contract())){
+			sql.append(" AND c.vsuperaccount = ?   ");
+			spm.addParam(pamvo.getPk_contract());
+		}
 		qryvo.setSql(sql.toString());
 		qryvo.setSpm(spm);
 		return qryvo;

@@ -12,6 +12,7 @@
 </head>
 <%
 	String funcName = request.getParameter("dblClickRowCallback");
+    String cpcode = request.getParameter("cpcode");
 %>
 <body>
 <script>
@@ -19,7 +20,7 @@ var rows=null;
 var grid;
 $(function(){
 	var params = new Object();
-	var params = new Object();
+	params["cpcode"] = '<%=cpcode%>';
 	grid = $('#kjgrid').datagrid({
 	    url: DZF.contextPath + '/branch/corpdataact!queryPcount.action',
 	    queryParams :params,
@@ -54,6 +55,7 @@ $(function(){
     	   	var filtername = $("#ucode").val();
       		var params = new Object();
       		params["ucode"] = filtername;
+      		params["cpcode"] = '<%=cpcode%>';
       		grid.datagrid('reload',params); 
        }
    });
@@ -61,21 +63,21 @@ $(function(){
 
 </script>
 <div class="wrapper" id="cardList">
-		<div class="mod-toolbar-top">
-			<div class="search-toolbar-content">
-				<div class="left search-crumb">
-					<input id="ucode" value="请输入会计编码或名称" 
-						style="height:35px;color:#999;float:center;width:80%"
-						onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
-						onBlur="if(!value){value=defaultValue;this.style.color='#999'}"/> 
-				</div>
-			</div>
-		</div>
-		<div class="mod-inner">
-			<div id="dataGrid" class="grid-wrap">
-				<table id="kjgrid"></table>
+	<div class="mod-toolbar-top">
+		<div class="search-toolbar-content">
+			<div class="left search-crumb">
+				<input id="ucode" value="请输入会计编码或名称" 
+					style="height:35px;color:#999;float:center;width:80%"
+					onFocus="if(value==defaultValue){value='';this.style.color='#000'}" 
+					onBlur="if(!value){value=defaultValue;this.style.color='#999'}"/> 
 			</div>
 		</div>
 	</div>
+	<div class="mod-inner">
+		<div id="dataGrid" class="grid-wrap">
+			<table id="kjgrid"></table>
+		</div>
+	</div>
+</div>
 </body>
 </html>

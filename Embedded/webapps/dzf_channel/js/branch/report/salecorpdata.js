@@ -12,6 +12,7 @@ $(function(){
 	initQueryData();
 	reloadData();
 	initCpname();
+	initPcount();
 });
 
 /**
@@ -43,6 +44,60 @@ function initCpname() {
 		}
 	});
 }
+
+/**
+ * 查询主办会计-初始化
+ */
+function initPcount() {
+	$('#cpcount').searchbox({
+		editable : false,
+		prompt : '选择会计',
+		searcher : function() {
+			$('#kjdlg').dialog({
+				width : 500,
+				height : 500,
+				readonly : true,
+				close : true,
+				title : '选择会计',
+				modal : true,
+				href : DZF.contextPath + '/branch/ref/kj_select.jsp',
+				queryParams : {
+					dblClickRowCallback : 'kjselect',
+					cpcode : 'brxs',
+				},
+				buttons : [ {
+					text : '确认',
+					handler : function() {
+						kjselect();
+						$('#kjdlg').dialog('close');
+					}
+				}, {
+					text : '取消',
+					handler : function() {
+						$('#kjdlg').dialog('close');
+					}
+				} ]
+			});
+		}
+	});
+}
+
+/**
+ * 会计选择事件
+ */
+function kjselect() {
+	var row = $('#kjgrid').datagrid('getSelected');
+	if (row) {
+		$('#cpcount').textbox('setValue', row.name);
+		$('#cpcountid').val(row.id);
+		$('#kjdlg').dialog('close');
+	} else {
+		Public.tips({
+			content : "请选择一行数据",
+			type : 2
+		});
+	}
+};
 
 /**
  * 数据表格初始化
@@ -79,6 +134,7 @@ function load(){
 		            { field : 'bszt',  title : '报税状态', width : 80,halign:'center',align:'center',rowspan:2},
 		            { field : 'contract', title : '合同信息', halign:'center',align:'center',colspan:5},
 		            { field : 'cdate',  title : '录入日期', width : 80,halign:'center',align:'center',rowspan:2},
+		            { field : 'pcount',  title : '主办会计', width : 100,halign:'center',align:'center',rowspan:2},
 	               ] ,
            [
             { field : 'cbdate', title : '开始日期', width : 80, halign:'center',align:'center'}, 
@@ -148,6 +204,7 @@ function reloadData() {
 		"mid" : $("#jzzt").combobox('getValue'),//记账状态
 		"vcode" : $("#bszt").combobox('getValue'),//报税状态
 		"oid" : $("#qmonth").numberbox('getValue'),//服务余额
+		"contractid" : $("#cpcountid").val(),//主办会计
 	});
 	$("#jqj").html(bdate + " 至 " + edate);
   	
@@ -167,6 +224,9 @@ function clearQuery(){
 	$("#jzzt").combobox('setValue', '全部');
 	$("#bszt").combobox('setValue', '全部');
 	$("#qmonth").numberbox('setValue', null);
+	
+	$("#cpcount").textbox('setValue', null);
+	$("#cpcountid").val(null);
 }
 
 /**
