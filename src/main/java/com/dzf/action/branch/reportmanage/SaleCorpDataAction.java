@@ -129,7 +129,7 @@ public class SaleCorpDataAction extends BaseAction<CorpDataVO> {
 	}
 	
 	/**
-	 * 获取导出插叙数据
+	 * 获取导出查询数据
 	 * @return
 	 * @throws DZFWarpException
 	 */
