@@ -300,10 +300,10 @@ public class ContractConfirmQueryServiceImpl implements IContractConfirmQuerySer
 	 */
 	private void setShowData(List<ContractConfrimVO> list, String showtype, String areaname) throws DZFWarpException {
 		Map<String, UserVO> marmap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
-		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IYUNYING);// 渠道运营
+		Map<String, UserVO> opermap = pubser.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		Map<Integer, String> areaMap = null;// 大区集合
 		if ("listqry".equals(showtype)) {
-			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IYUNYING);
+			areaMap = pubser.getAreaMap(areaname, IStatusConstant.IQUDAO);
 		}
 		HashMap<String, UserVO> map = userSer.queryUserMap(IDefaultValue.DefaultGroup, true);
 		for (ContractConfrimVO confvo : list) {
@@ -446,7 +446,7 @@ public class ContractConfirmQueryServiceImpl implements IContractConfirmQuerySer
 		if (opermap != null && !opermap.isEmpty()) {
 			uservo = opermap.get(confvo.getPk_corp());
 			if (uservo != null) {
-				confvo.setVoperater(uservo.getUser_name());// 渠道运营
+				confvo.setVoperater(uservo.getUser_name());// 渠道经理
 			}
 		}
 	}

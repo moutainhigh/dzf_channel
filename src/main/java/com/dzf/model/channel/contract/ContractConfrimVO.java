@@ -282,7 +282,7 @@ public class ContractConfrimVO extends SuperVO {
 	private DZFDateTime checkts;//数据校验时间戳(区分原合同数据和历史数据)
 	
 	@FieldAlias("aname")
-    private String areaname;//大区名称 (运营区域)
+    private String areaname;//大区名称 (运营区域)  合同查询（渠道区域）
 	
 	@FieldAlias("ovince")
 	public Integer vprovince;// 省/市(获取加盟商的运营区域设置)
