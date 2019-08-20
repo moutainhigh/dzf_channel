@@ -1,6 +1,6 @@
 $(function(){
 	initQryDlg();
-})
+});
 
 /**
  * 隐藏显示查询框
