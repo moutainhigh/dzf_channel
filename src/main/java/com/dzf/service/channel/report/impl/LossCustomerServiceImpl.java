@@ -74,31 +74,33 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 		if (corplist != null && corplist.size() > 0) {
 			CorpVO corpvo = null;
 			//LossCustomerVO retcorp = null;
-			LossCustomerVO showvo = null;
-			LossCustomerVO peishow = null;
-			
-			for (LossCustomerVO retcorp : retlist) {
-				if(retcorp!=null){
-					corpvo = CorpCache.getInstance().get(null, retcorp.getPk_corp());
-					if(corpvo!=null){
-						retcorp.setCorpname(corpvo.getUnitname());//加盟商名称
-						retcorp.setVprovname(corpvo.getCitycounty());//省市
-					}
-					showvo = (LossCustomerVO) map.get(retcorp.getPk_corp());
-					peishow = (LossCustomerVO) peimap.get(retcorp.getPk_corp());
-					if (showvo != null) {
-						retcorp.setAreaname(peishow.getAreaname());// 大区
-						retcorp.setCusername(showvo.getCusername());// 会计运营
-					}
-					if(!StringUtil.isEmpty(retcorp.getChargedeptname())){
-						if("小规模纳税人".equals(retcorp.getChargedeptname())){
-							retcorp.setChargedeptname("小规模");
-						}else if("一般纳税人".equals(retcorp.getChargedeptname())){
-							retcorp.setChargedeptname("一般人");
+		//	LossCustomerVO showvo = new LossCustomerVO();
+			LossCustomerVO peishow = new LossCustomerVO();
+			if(retlist!=null && retlist.size()>0){
+				for (LossCustomerVO retcorp : retlist) {
+					if(retcorp!=null){
+						corpvo = CorpCache.getInstance().get(null, retcorp.getPk_corp());
+						if(corpvo!=null){
+							retcorp.setCorpname(corpvo.getUnitname());//加盟商名称
+							retcorp.setVprovname(corpvo.getCitycounty());//省市
+						}
+						//showvo = (LossCustomerVO) map.get(retcorp.getPk_corp());
+						peishow = (LossCustomerVO) peimap.get(retcorp.getPk_corp());
+						if (peishow != null) {
+							retcorp.setAreaname(peishow.getAreaname());// 大区
+							retcorp.setCusername(peishow.getCusername());// 会计运营
+						}
+						if(!StringUtil.isEmpty(retcorp.getChargedeptname())){
+							if("小规模纳税人".equals(retcorp.getChargedeptname())){
+								retcorp.setChargedeptname("小规模");
+							}else if("一般纳税人".equals(retcorp.getChargedeptname())){
+								retcorp.setChargedeptname("一般人");
+							}
 						}
 					}
 				}
 			}
+			
 			return retlist;
 		}else{
 			return null;
