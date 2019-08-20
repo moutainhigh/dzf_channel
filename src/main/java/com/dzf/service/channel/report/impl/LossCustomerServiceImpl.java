@@ -39,6 +39,7 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 		// 过滤出符合条件的加盟商信息
 		Integer qtype = channel.queryQtype(uservo);
 		HashMap<String, DataVO> map = queryCorps(pamvo, LossCustomerVO.class, qtype);
+		HashMap<String, DataVO> peimap = queryCorps(pamvo, LossCustomerVO.class, 2);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
@@ -74,6 +75,7 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 			CorpVO corpvo = null;
 			//LossCustomerVO retcorp = null;
 			LossCustomerVO showvo = null;
+			LossCustomerVO peishow = null;
 			
 			for (LossCustomerVO retcorp : retlist) {
 				if(retcorp!=null){
@@ -83,8 +85,9 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 						retcorp.setVprovname(corpvo.getCitycounty());//省市
 					}
 					showvo = (LossCustomerVO) map.get(retcorp.getPk_corp());
+					peishow = (LossCustomerVO) peimap.get(retcorp.getPk_corp());
 					if (showvo != null) {
-						retcorp.setAreaname(showvo.getAreaname());// 大区
+						retcorp.setAreaname(peishow.getAreaname());// 大区
 						retcorp.setCusername(showvo.getCusername());// 会计运营
 					}
 					if(!StringUtil.isEmpty(retcorp.getChargedeptname())){
