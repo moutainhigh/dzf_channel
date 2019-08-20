@@ -375,6 +375,12 @@ public class AccountQryServiceImpl implements IAccountQryService {
 	 * @throws DZFWarpException
 	 */
 	private void getQryColumn(StringBuffer sql, SQLParameter spm, QryParamVO pamvo) throws DZFWarpException {
+		boolean issame = false;//查询月与当前月不相等
+		String nperiod = DateUtils.getPeriod(new DZFDate());
+		if (nperiod.equals(pamvo.getPeriod())) {
+			issame = true;//查询月与当前月相等
+		}
+		
 		sql.append("SELECT qcorp.corpkcode,    ");
 		sql.append("       qcorp.corpkname,    ");
 		sql.append("       qcorp.chargedeptname,    ");
@@ -383,12 +389,26 @@ public class AccountQryServiceImpl implements IAccountQryService {
 		sql.append("       qcorp.createdate,    ");
 		sql.append("       qcorp.begindate,    ");
 		//1、记账状态
+//		sql.append("       CASE WHEN jzzt.period IS NOT NULL THEN    ");
+//		sql.append("            jzzt.period || '已完成'   ");
+//		//查询月
+//		sql.append("            WHEN jzzt.period IS NULL AND substr(qcorp.begindate,0,7) <= ? THEN   ");
+//		spm.addParam(pamvo.getPeriod());
+//		sql.append("'").append(pamvo.getPeriod()).append("'").append(" || '未完成'");
+//		sql.append("       END AS jzstatus,   ");
+		
+		//记账状态
 		sql.append("       CASE WHEN jzzt.period IS NOT NULL THEN    ");
 		sql.append("            jzzt.period || '已完成'   ");
-		//查询月
-		sql.append("            WHEN jzzt.period IS NULL AND substr(qcorp.begindate,0,7) <= ? THEN   ");
-		spm.addParam(pamvo.getPeriod());
-		sql.append("'").append(pamvo.getPeriod()).append("'").append(" || '未完成'");
+		if(issame){
+			//查询月与服务器月份相同，查询最早未损益结转月份
+			sql.append("            WHEN jzzt.period IS NULL AND qcorp.begindate IS NOT NULL THEN   ");
+			sql.append("            substr(qcorp.begindate, 0, 7) || '未完成'   ");
+		}else {
+			sql.append("            WHEN jzzt.period IS NULL AND substr(qcorp.begindate,0,7) <= ? THEN   ");
+			spm.addParam(pamvo.getPeriod());
+			sql.append("'").append(pamvo.getPeriod()).append("'").append(" || '未完成'");
+		}
 		sql.append("       END AS jzstatus,   ");
 		
 		//2、账务检查
