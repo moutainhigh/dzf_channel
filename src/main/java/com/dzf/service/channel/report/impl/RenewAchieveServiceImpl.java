@@ -135,6 +135,8 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 	 * @throws DZFWarpException
 	 */
 	private QrySqlSpmVO getContSql(String[] pk_corps, QryParamVO pamvo) throws DZFWarpException {
+		//原合同-->纳税人性质变更合同--> 续费合同（续签主键记录原合同主键）
+		//原合同-->续费合同（续签主键记录原合同主键）-->纳税人性质变更合同（续签主键记录原合同主键）
 		QrySqlSpmVO qryvo = new QrySqlSpmVO();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -143,7 +145,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		sql.append("       ct.vendperiod AS vperiod,  ") ; 
 		sql.append("       SUM(CASE  ") ; 
 		sql.append("             WHEN xq.pk_contract IS NOT NULL AND  ") ; 
-		sql.append("                  nvl(xq.patchstatus, 0) NOT IN (1, 4) THEN  ") ; 
+		sql.append("                  nvl(xq.patchstatus, 0) NOT IN (2, 5) THEN  ") ; 
 		sql.append("              1  ") ; 
 		sql.append("             ELSE  ") ; 
 		sql.append("              0  ") ; 
@@ -156,7 +158,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		sql.append("   AND ct.icontracttype = 2  ") ; 
 		sql.append("   AND ct.icosttype = 0  ") ; 
 		sql.append("   AND ct.vstatus IN (1, 9)  ") ; 
-		sql.append("   AND nvl(ct.patchstatus, 0) NOT IN (1, 4)  ") ; 
+		sql.append("   AND nvl(ct.patchstatus, 0) NOT IN (2, 5)  ") ; 
 		sql.append("   AND ct.vendperiod >= ?  ") ; 
 		spm.addParam(pamvo.getBeginperiod());
 		sql.append("   AND ct.vendperiod <= ?  ") ; 
