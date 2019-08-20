@@ -44,16 +44,38 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 			Collection<String> col = map.keySet();
 			corplist = new ArrayList<String>(col);
 		}
-		//String[] clist = QueryUtil.getPagedPKs(corplist.toArray(new String[corplist.size()]),pamvo.getPage(),pamvo.getRows());
-		List<LossCustomerVO> list = queryLossCust(pamvo,corplist,2);
 		
+		List<LossCustomerVO> retlist = new ArrayList<LossCustomerVO>();//最终集合
+		//String[] clist = QueryUtil.getPagedPKs(corplist.toArray(new String[corplist.size()]),pamvo.getPage(),pamvo.getRows());
+		List<LossCustomerVO> closeList = queryCloseCorp(pamvo,corplist,true,null);//查询已经关账的客户，为最近关账状态
+		String condition = "";
+		if(closeList!=null && closeList.size()>0){
+			List<String> arrayList = new ArrayList<String>();
+			for (LossCustomerVO vo : closeList) {
+				retlist.add(vo);
+				arrayList.add(vo.getPk_corpk());
+			}
+			if(arrayList!=null && arrayList.size()>0){
+				for (String string : arrayList) {
+					condition = condition + ","+"'"+string+"'";
+				}
+				condition = condition.substring(1);
+				//condition = SqlUtil.buildSqlForIn("co.pk_corp", arrayList.toArray(new String[arrayList.size()]));
+			}
+		}
+		List<LossCustomerVO> list = queryCloseCorp(pamvo,corplist,false,condition);//查询未关账的客户
+		if(list!=null && list.size()>0){
+			for (LossCustomerVO vo : list) {
+				retlist.add(vo);
+			}
+		}
 		//List<LossCustomerVO> retlist = new ArrayList<LossCustomerVO>();
 		if (corplist != null && corplist.size() > 0) {
 			CorpVO corpvo = null;
 			//LossCustomerVO retcorp = null;
 			LossCustomerVO showvo = null;
-			for (LossCustomerVO retcorp : list) {
-				//System.out.println("pk_corp: "+pk_corp);
+			
+			for (LossCustomerVO retcorp : retlist) {
 				if(retcorp!=null){
 					corpvo = CorpCache.getInstance().get(null, retcorp.getPk_corp());
 					if(corpvo!=null){
@@ -74,23 +96,29 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 					}
 				}
 			}
-			return list;
+			return retlist;
 		}else{
 			return null;
 		}
 		
 	}
 
-	private List<LossCustomerVO> queryLossCust(QryParamVO pamvo, List<String> corplist, int type) throws DZFWarpException{
+	private List<LossCustomerVO> queryCloseCorp(QryParamVO pamvo, List<String> corplist,
+		Boolean isClose, String condition) throws DZFWarpException{
 		
 		//Map<String , LossCustomerVO> retMap = new HashMap<String, LossCustomerVO>();
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
-		sql.append("    select \n");
+		sql.append("    select ");
+		if(isClose){
+			sql.append("    max(jz.period) || '已关账' isClose, \n");
+		}
 		sql.append("      co.fathercorp pk_corp,co.pk_corp pk_corpk,co.unitname corpkname,co.chargedeptname, nvl(co.sealeddate,'1970-01-01') stopdatetime, \n");
 		sql.append("      co.def17 stopreason,us.user_name stopname, \n");
-		sql.append("      substr(co.begindate,1,7) jzdate, \n");
-		sql.append("      case when jz.isqjsyjz ='Y' and jz.period is not null then jz.period||'已关账' end isClose \n");
+		sql.append("      co.begindate jzdate \n");
+		/*if(isClose){
+			sql.append("      ,case when jz.period is not null then jz.period||'已关账' end isClose \n");
+		}*/
 		sql.append("      from bd_corp co \n");
 		sql.append("      left join sm_user us on us.cuserid = co.approve_user \n");
 		sql.append("      left join ynt_qmcl jz on jz.pk_corp = co.pk_corp \n");
@@ -99,6 +127,15 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 		sql.append("       and nvl(jz.dr, 0) = 0 \n");
 		sql.append("       and co.isseal = 'Y' \n");
 		sql.append("       and nvl(co.isaccountcorp,'N')= 'N' \n");
+		if(isClose){
+			sql.append("       and nvl(jz.isgz,'N')='Y' \n");//查询已经关账的
+		}else{
+			sql.append("       and nvl(jz.isgz,'N')='N' \n");//查询未关账的
+			if(!StringUtil.isEmpty(condition)){
+				sql.append("   and co.pk_corp not in ("+condition+")");
+			}
+		}
+		
 		//sql.append("       and co.sealeddate is not null \n");
 		if (!StringUtil.isEmpty(pamvo.getBeginperiod())) {
 			sql.append("  and substr(co.sealeddate, 1, 7) >= ? \n"); //开始期间
@@ -112,6 +149,7 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 			sql.append(" and co.def17 like ? "); //停用原因
 			spm.addParam("%"+pamvo.getVbillcode()+"%");
 		}
+		
 		if (corplist != null && corplist.size() > 0) {
 			sql.append(" and "+SqlUtil.buildSqlForIn("co.fathercorp", corplist.toArray(new String[corplist.size()])));
 		}
@@ -121,7 +159,10 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 		}else if(qrytype == 2 ){
 			sql.append(" and co.approve_status = 2 ");
         }
+		sql.append("   group by co.fathercorp,co.pk_corp,co.unitname, ");
+		sql.append("   co.chargedeptname,co.sealeddate,co.def17, us.user_name,co.begindate,jz.isgz ");
 		sql.append("   order by co.fathercorp desc,co.sealeddate desc \n");
+		@SuppressWarnings("unchecked")
 		List<LossCustomerVO> list = (List<LossCustomerVO>) singleObjectBO.executeQuery(sql.toString(), spm, new BeanListProcessor(LossCustomerVO.class));
 		
 		if(list!=null && list.size()>0){
