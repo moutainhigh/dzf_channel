@@ -63,7 +63,7 @@
 						style="width:137px;height:30px;" value=<%=bym%> />
 				</div>
 				<div class="time_col time_colp10">
-					<label style="text-align:right;width: 100px;">培训大区：</label> 
+					<label style="text-align:right;width: 100px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width: 90px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />
 					<label style="text-align:right;width: 70px;">会计运营：</label> 
