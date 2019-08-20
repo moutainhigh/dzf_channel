@@ -1917,14 +1917,16 @@ public class ContractConfirmImpl implements IContractConfirm {
 			DZFDouble midmny = CommonUtil.getDZFDouble(ndedsummny).div(
 					CommonUtil.getDZFDouble(ireceivcycle)).multiply(CommonUtil.getDZFDouble(changenum));
 			DZFDouble nreturnmny = SafeCompute.sub(ndedsummny, midmny);//退回扣款总金额
+			boolean isZeroDudect = false;
 			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) < 0){
 				nreturnmny = DZFDouble.ZERO_DBL;
+				isZeroDudect = true;
 			}
 			//变更后合同金额 = 原月代账费  *（原开始期间到终止期间的期数）+ 账本费
 			DZFDouble nmservicemny = oldvo.getNmservicemny(); // 每月服务费
 			DZFDouble nbookmny = oldvo.getNbookmny(); // 账本费
 			DZFDouble nchangetotalmny = DZFDouble.ZERO_DBL;
-			if(nreturnmny.compareTo(DZFDouble.ZERO_DBL) == 0){
+			if(isZeroDudect){
 				nchangetotalmny = ntotalmny;
 			}else{
 				nchangetotalmny = SafeCompute.multiply(nmservicemny, 

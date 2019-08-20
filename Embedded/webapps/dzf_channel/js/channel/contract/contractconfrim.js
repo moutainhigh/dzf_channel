@@ -1634,14 +1634,16 @@ function setChangeShowMny(row){
 		var srecycle = getFloatValue(row.recycle);//原收款周期
 		//退回扣款算法：原扣款金额-{（原扣款金额/原收款期间）*（原开始期间到终止期间的期数）}
 		var remny = sndesummny.sub(sndesummny.div(srecycle).mul(cnum));
+		var isZeroDudect = false;
 		if(getFloatValue(remny) < getFloatValue(0)){
 			remny = getFloatValue(0);
+			isZeroDudect = true;
 		}
 		$('#aremny').numberbox('setValue', remny);//退回扣款
 		var snmsmny = getFloatValue(row.nmsmny);//原月代账费
 		var snbmny = getFloatValue(row.nbmny);//账本费
 		var nchtlmny = snmsmny.mul(cnum).add(snbmny);
-		if(getFloatValue(remny) == getFloatValue(0)){
+		if(isZeroDudect){
 			$('#anchtlmny').numberbox('setValue', sntlmny);//变更后合同金额 = 原合同金额
 		}else{
 			$('#anchtlmny').numberbox('setValue', nchtlmny);//变更后合同金额 = 原月代账费 * （原开始期间到终止期间的期数）+ 账本费
