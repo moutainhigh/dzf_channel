@@ -1,5 +1,6 @@
 var grid;
 var ovince;
+var type;
 
 $(window).resize(function(){ 
 	$('#grid').datagrid('resize',{ 
@@ -11,14 +12,34 @@ $(window).resize(function(){
 $(function() {
 	initPeriod("#sbegdate");
 	initPeriod("#senddate");
+	queryQtype();
+	initArea({"qtype" :type});
+	initProvince({"qtype" :type});
+	initChannel(ovince);
 	initQry();
 	load();
 	begloadData();
-	queryQtype();
-	initQryCommbox();
+	//initQryCommbox();
 	initChannelName();
 	
 });
+
+
+function queryQtype(){
+	$.ajax({
+		type : 'POST',
+		async : false,
+		url : DZF.contextPath + '/corp/channel!queryQtype.action',
+		dataTye : 'json',
+		success : function(result) {
+			var result = eval('(' + result + ')');
+			if (result.success) {
+			    type = result.rows;
+			    ovince = type==1?-2:-3;
+			} 
+		}
+	});
+}
 
 //初始化
 function initQry(){
@@ -68,22 +89,6 @@ function reloadData(){
 	$('#grid').datagrid('clearChecked');
 	$('#qrydialog').hide();
 }
-
-function queryQtype(){
-	$.ajax({
-		type : 'POST',
-		async : false,
-		url : DZF.contextPath + '/corp/channel!queryQtype.action',
-		dataTye : 'json',
-		success : function(result) {
-			var result = eval('(' + result + ')');
-			if (result.success) {
-				ovince = result.rows==1?-2:-3;
-			} 
-		}
-	});
-}
-
 
 //初始化加盟商
 function initChannelName(){

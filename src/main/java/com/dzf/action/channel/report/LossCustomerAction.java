@@ -59,7 +59,7 @@ public class LossCustomerAction extends BaseAction<LossCustomerVO>{
 			QryParamVO qvo = new QryParamVO();
 			qvo = (QryParamVO) DzfTypeUtils.cast(getRequest(), qvo);
 			qvo.setUser_name(getLoginUserid());
-			List<LossCustomerVO> corpvos = losscust.query(qvo);
+			List<LossCustomerVO> corpvos = losscust.query(qvo,getLoginUserInfo());
 			
 			if(corpvos==null||corpvos.size()==0){
 				grid.setRows(new ArrayList<QryParamVO>());

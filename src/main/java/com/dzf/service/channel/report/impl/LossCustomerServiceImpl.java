@@ -15,11 +15,13 @@ import com.dzf.model.channel.report.DataVO;
 import com.dzf.model.channel.report.LossCustomerVO;
 import com.dzf.model.pub.QryParamVO;
 import com.dzf.model.sys.sys_power.CorpVO;
+import com.dzf.model.sys.sys_power.UserVO;
 import com.dzf.pub.DZFWarpException;
 import com.dzf.pub.QueryDeCodeUtils;
 import com.dzf.pub.StringUtil;
 import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.util.SqlUtil;
+import com.dzf.service.channel.IChannelService;
 import com.dzf.service.channel.report.ILossCustomerService;
 
 @Service("losscustservice")
@@ -27,12 +29,16 @@ public class LossCustomerServiceImpl extends DataCommonRepImpl implements ILossC
 
 	@Autowired
 	private SingleObjectBO singleObjectBO;
-
+	
+	@Autowired
+	private IChannelService channel;
+	
 	@Override
-	public  List<LossCustomerVO> query(QryParamVO pamvo) throws DZFWarpException {
+	public  List<LossCustomerVO> query(QryParamVO pamvo,UserVO uservo) throws DZFWarpException {
 
 		// 过滤出符合条件的加盟商信息
-		HashMap<String, DataVO> map = queryCorps(pamvo, LossCustomerVO.class, 2);
+		Integer qtype = channel.queryQtype(uservo);
+		HashMap<String, DataVO> map = queryCorps(pamvo, LossCustomerVO.class, qtype);
 		List<String> corplist = null;
 		if (map != null && !map.isEmpty()) {
 			Collection<String> col = map.keySet();
