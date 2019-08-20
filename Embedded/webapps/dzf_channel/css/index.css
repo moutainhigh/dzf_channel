@@ -1842,8 +1842,8 @@ pre {
 }
 
 .dzf-skin .mod-toolbar-top {
-	margin-right: 0px !important;
-	margin-bottom: 0px !important;
+	margin-right: 0px;
+	margin-bottom: 0px;
 }
 
 .mod-toolbar-top .right {
