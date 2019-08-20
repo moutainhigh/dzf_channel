@@ -262,8 +262,6 @@ public class CorpDataServiceImpl implements ICorpDataService {
 			String jzperid = cvo.getBegindate().getYear() + "-" + cvo.getBegindate().getStrMonth();
 			if(jzperid.compareTo(period) > 0){
 				cvo.setVbsstatues("");
-			}else{
-				cvo.setVbsstatues("");
 			}
 		}
 	}
