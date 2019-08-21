@@ -141,7 +141,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
 		sql.append("SELECT ct.pk_corp,  ") ;
-		sql.append("       COUNT(ct.pk_contract) AS iexpirenum,  ") ; 
+		sql.append("       COUNT(DISTINCT ct.pk_contract) AS iexpirenum,  ") ; 
 		sql.append("       ct.vendperiod AS vperiod,  ") ; 
 		sql.append("       SUM(CASE  ") ; 
 		sql.append("             WHEN xq.pk_contract IS NOT NULL AND  ") ; 

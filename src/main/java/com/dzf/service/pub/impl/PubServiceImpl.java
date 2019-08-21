@@ -753,6 +753,10 @@ public class PubServiceImpl implements IPubService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Integer queryRoleType(String cuserid) throws DZFWarpException {
+		//节点角色分类：
+		//1：分配“渠道经理、大区总”角色，为渠道人员
+		//2：分配“培训师、运营培训经理”角色，为培训人员
+		//3：渠道类角色和培训类角色都没有分配，则按培训人员查询大区和省（市）下拉数据
 		Integer type = -1;
 		StringBuffer sql = new StringBuffer();
 		SQLParameter spm = new SQLParameter();
@@ -769,6 +773,8 @@ public class PubServiceImpl implements IPubService {
 			if(codelist.contains(IRoleCode.CORPQDJL) || codelist.contains(IRoleCode.CORPDQZ)){
 				return IStatusConstant.IQUDAO;
 			}else if(codelist.contains(IRoleCode.CORPPXJL) || codelist.contains(IRoleCode.CORPPXS)){
+				return IStatusConstant.IPEIXUN;
+			}else{
 				return IStatusConstant.IPEIXUN;
 			}
 		}
