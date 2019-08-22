@@ -19,6 +19,8 @@ $(function() {
 	initProvince({"qtype" :type});
 	if(type==2){
 		initManager({"qtype" :2});
+	}else{
+		$('#uid').combobox('readonly',true);
 	}
 	initQry();
 	load();
