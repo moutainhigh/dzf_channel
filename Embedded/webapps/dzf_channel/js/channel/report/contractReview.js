@@ -13,9 +13,10 @@ $(function() {
 	initChannel();
 	initCorpk();
 	$('#corpkna_ae').textbox('readonly',true);
-	initManager();
+	initManager({"qtype" :1});
 	load();
 	initArea();
+	changeAreaName();
 	
 	$(document).on("mouseover", ".right_menu", function (e) {
 		$(this).removeClass("rt_menu").addClass("rt_menu2");
@@ -26,6 +27,20 @@ $(function() {
         $(this).find(".more_div").hide();
     });
 });
+
+
+function changeAreaName(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :1};
+			if(!isEmpty(n)){
+				queryData={'aname' : n,"qtype" :1};
+				$('#mid').combobox('setValue',null);
+			}
+			initManager(queryData);
+		}
+	});
+}
 
 /**
  * 查询框监听事件
@@ -76,12 +91,12 @@ function initQryLitener(){
 /**
  * 查询渠道经理初始化
  */
-function initManager(){
+function initManager(queryData){
 	$.ajax({
 		type : 'POST',
 		async : false,
 		url : DZF.contextPath + '/chn_set/chnarea!queryTrainer.action',
-		data : {"qtype" :1},
+		data : queryData,
 		dataTye : 'json',
 		success : function(result) {
 			var result = eval('(' + result + ')');
