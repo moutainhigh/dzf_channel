@@ -15,7 +15,7 @@ $(function() {
 	queryQtype();
 	initArea({"qtype" :type});
 	initProvince({"qtype" :type});
-	initChannel(ovince);
+	initManager({"qtype" :type});
 	initQry();
 	load();
 	begloadData();
