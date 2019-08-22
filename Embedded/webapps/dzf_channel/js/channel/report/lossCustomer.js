@@ -13,9 +13,13 @@ $(function() {
 	initPeriod("#sbegdate");
 	initPeriod("#senddate");
 	queryQtype();
+	changeAreaName();
+	changeProvinceName();
 	initArea({"qtype" :type});
 	initProvince({"qtype" :type});
-	initManager({"qtype" :type});
+	if(type==2){
+		initManager({"qtype" :2});
+	}
 	initQry();
 	load();
 	begloadData();
@@ -24,6 +28,38 @@ $(function() {
 	
 });
 
+
+function changeAreaName(){
+	 $("#aname").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :type};
+			if(!isEmpty(n)){
+				queryData={'aname' : n,"qtype" :type};
+				$('#ovince').combobox('setValue',null);
+				$('#uid').combobox('setValue',null);
+			}
+			initProvince(queryData);
+			if(type==2){
+				initManager(queryData);
+			}
+		}
+	});
+}
+
+function changeProvinceName(){
+	 $("#ovince").combobox({
+		onChange : function(n, o) {
+			var queryData={"qtype" :type};
+			if(!isEmpty(n)){
+				queryData={'aname' : $("#aname").combobox('getValue'),'ovince':n,"qtype" :type};
+				$('#uid').combobox('setValue',null);
+			}
+			if(type==2){
+				initManager(queryData);
+			}
+		}
+	});
+}
 
 function queryQtype(){
 	$.ajax({
