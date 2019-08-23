@@ -63,7 +63,8 @@ public class ChnPayConfServiceImpl implements IChnPayConfService {
 		QrySqlSpmVO sqpvo = getQrySqlSpm(paramvo);
 		List<ChnPayBillVO> list = (List<ChnPayBillVO>) multBodyObjectBO.queryDataPage(ChnPayBillVO.class,
 				sqpvo.getSql(), sqpvo.getSpm(), paramvo.getPage(), paramvo.getRows(), null);
-		Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(),3);
+		//查询该客户所在渠道大区：
+		Map<Integer, String> areaMap = pubService.getAreaMap(paramvo.getAreaname(), IStatusConstant.IQUDAO);
 		Map<String, UserVO> marmap = pubService.getManagerMap(IStatusConstant.IQUDAO);// 渠道经理
 		if (list != null && list.size() > 0) {
 			CorpVO accvo = null;
