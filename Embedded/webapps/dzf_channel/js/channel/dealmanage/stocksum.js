@@ -69,8 +69,8 @@ function load(){
 //		    pagination : true,// 分页工具栏显示
 //		    pageSize : DZF.pageSize,
 //		    pageList : DZF.pageList,
-		    showFooter : false,
 		    remoteSort : false,
+		    showFooter: true,
 		    idField : 'sid',
 		columns : [ 
 		            [     
@@ -106,7 +106,11 @@ function load(){
 		            	      align : 'left',
 		            	      rowspan:2,
 		            	      formatter : function(value, row, index) {
-		              			return '<a href="javascript:void(0)"  style="color:blue" onclick="toDetail(\''+row.gid+'\',\''+row.pk_goodsspec+'\')">' + value + '</a>';
+		            	    	  if(!isEmpty(row.gid)){
+		            	    		  return '<a href="javascript:void(0)"  style="color:blue" onclick="toDetail(\''+row.gid+'\',\''+row.pk_goodsspec+'\')">' + value + '</a>';
+			            	      }else{
+			            	          return ""; 
+			            	      }
 		                      }
 		            	    }, {
 		            	      width : '100',
@@ -155,20 +159,41 @@ function load(){
 		             ] ,
         [
             { field : 'numstart', title : '数量', width : 100, halign:'center',align:'right'},
-            { field : 'pricestart', title : '单价', width : 100, halign:'center',align:'right',formatter : formFourMny},
+            { field : 'pricestart', title : '单价', width : 100, halign:'center',align:'right',
+            	formatter : function(value, row, index) {
+            		if(!isEmpty(row.gid)){
+            			if(value == null || value=='0'){
+                			return "0.0000";
+                		}else{
+                			return value.toFixed(4);
+                		}
+            		}
+            	}
+            },
             { field : 'moneystart', title : '金额', width : 100, halign:'center',align:'right',formatter : formFourMny},
-            { field : 'numin', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}} },
+            { field : 'numin', title : '数量', width : 100, halign:'center',align:'right'},
             { field : 'moneyin', title : '金额', width : 100,halign:'center',align:'right',formatter : formFourMny},
-            { field : 'numout', title : '数量', width : 100, halign:'center',align:'right', formatter : function(value,row) { if(!isEmpty(row.gid)){if(value!=null){return value;}}}},
+            { field : 'numout', title : '数量', width : 100, halign:'center',align:'right'},
             { field : 'moneyout', title : '金额', width : 100,halign:'center',align:'right',formatter : formFourMny},            
             { field : 'numend', title : '数量', width : 100, halign:'center',align:'right'},
-            { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',formatter : formFourMny},
+            { field : 'priceend', title : '单价', width : 100, halign:'center',align:'right',
+            	formatter : function(value, row, index) {
+            		if(!isEmpty(row.gid)){
+            			if(value == null || value=='0'){
+                			return "0.0000";
+                		}else{
+                			return value.toFixed(4);
+                		}
+            		}
+            	}
+            },
             { field : 'moneyend', title : '金额', width : 100, halign:'center',align:'right',formatter : formFourMny},
             
         ] ],
         
         onLoadSuccess : function(data) {
         	var rows = $('#grid').datagrid('getRows');
+        	calFooter();
         	var numstart = 0;	
         	var pricestart = 0;	
         	var moneystart = 0;	
@@ -230,6 +255,66 @@ function formFourMny(value) {
 	}else{
 		return value.toFixed(4);
 	}
+}
+
+/**
+ * 计算合计
+ */
+function calFooter(){
+	var rows = $('#grid').datagrid('getRows');
+	var footerData = new Object();
+	//期初余额
+	var numstart = 0;	
+	//var pricestart = 0;
+	var moneystart = 0;
+	
+	//本期入库
+	var numin = 0;	
+	var moneyin = 0;
+	
+	//本期出库
+	var numout = 0;	
+	var moneyout = 0;
+	
+	//期末余额
+	var numend = 0;	
+	//var priceend = 0;
+	var moneyend = 0;
+	
+	for (var i = 0; i < rows.length; i++) {
+		numstart += getFloatValue(rows[i].numstart);
+		//pricestart += getFloatValue(rows[i].pricestart);
+		moneystart += getFloatValue(rows[i].moneystart);
+		
+		numin += getFloatValue(rows[i].numin);
+		moneyin += getFloatValue(rows[i].moneyin);
+		
+		numout += getFloatValue(rows[i].numout);
+		moneyout += getFloatValue(rows[i].moneyout);
+		
+		numend += getFloatValue(rows[i].numend);
+		//priceend += getFloatValue(rows[i].priceend);
+		moneyend += getFloatValue(rows[i].moneyend);
+	  
+	}
+
+	 footerData['gcode'] = "合计";
+	 footerData['numstart'] = numstart;
+	// footerData['pricestart'] = pricestart;
+	 footerData['moneystart'] = moneystart;
+	 
+	 footerData['numin'] = numin;
+	 footerData['moneyin'] = moneyin;
+	 
+	 footerData['numout'] = numout;
+	 footerData['moneyout'] = moneyout;
+	 
+	 footerData['numend'] = numend;
+	// footerData['priceend'] = priceend;
+	 footerData['moneyend'] = moneyend;
+    var fs=new Array(1);
+    fs[0] = footerData;
+    $('#grid').datagrid('reloadFooter',fs);
 }
 
 String.prototype.startWith=function(str){
