@@ -271,6 +271,7 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		sql.append("           END) AS iaccnum  ") ; 
 		sql.append("  FROM bd_account account  ") ; 
 		sql.append("  LEFT JOIN bd_corp p ON p.fathercorp = account.pk_corp  ") ; 
+		sql.append("                     AND nvl(p.isseal, 'N') = 'N'  ") ; //非封存
 		sql.append("  LEFT JOIN ynt_area a on account.vprovince = a.region_id  ") ; 
 		sql.append("                      AND a.parenter_id = 1  ") ; 
 		sql.append("                      AND nvl(a.dr, 0) = 0  ") ; 
@@ -282,7 +283,6 @@ public class RenewAchieveServiceImpl implements IRenewAchieveService {
 		appendSql(sql, spm);
 		sql.append(" WHERE nvl(p.dr, 0) = 0  ") ; 
 		sql.append("   AND nvl(account.dr, 0) = 0  ") ; 
-//		sql.append("   AND nvl(p.isseal, 'N') = 'N'  ") ; //非封存
 		sql.append("   AND nvl(p.isaccountcorp, 'N') = 'N'  ") ; 
 		sql.append("   AND account.fathercorp = '000001'  ") ; 
 		String where = SqlUtil.buildSqlForIn("account.pk_corp", pk_corps);
