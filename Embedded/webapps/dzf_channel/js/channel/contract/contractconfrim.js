@@ -1264,7 +1264,7 @@ function initFileDoc(row){
 							'<div id="reUpload' + i +
 							'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 							'<h4><span id="tips'+ i +'"></span></h4></div></span>'+
-							'<font>' + 	rows[i].doc_name + '</font></a></li>').appendTo($("#filedocs"));
+							'<div style="white-space:normal;word-break:break-all;word-wrap:break-word;" >' + 	rows[i].doc_name + '</div></a></li>').appendTo($("#filedocs"));
 					
 					var src = DZF.contextPath + "/contract/contractconf!getAttachImage.action?doc_id=" +
 					rows[i].doc_id + "&corp_id=" + rows[i].corp_id;

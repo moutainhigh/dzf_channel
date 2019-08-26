@@ -93,7 +93,7 @@ function viewAttachCard(){
 						'<div id="reUpload' + i +
 						'" style="width: 100%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 						'<h4><span id="tips'+i	+'"></span></h4></div></span>'+
-						'<font>' + rows[i].doc_name + '</font></a></li>').appendTo($("#attachs"));
+						'<div style="white-space:normal;word-break:break-all;word-wrap:break-word;" >' + rows[i].doc_name + '</div></a></li>').appendTo($("#attachs"));
 			}
 		}
 	});
@@ -236,7 +236,7 @@ function showChangeDetImage(row){
 			'<div id="reUpload0' +
 			'" style="width: 60%; height: 25px; position: absolute; top: 105px; left: 0px; display:none;">'+
 			'<h4><span id="tips0"></span></h4></div></span>'+
-			'<font>' + 	row.doc_name + '</font></a></li>').appendTo($("#aifiledocs"));
+			'<div style="white-space:normal;word-break:break-all;word-wrap:break-word;" >' + 	row.doc_name + '</div></a></li>').appendTo($("#aifiledocs"));
 }
 
 /**
