@@ -36,7 +36,7 @@ import com.dzf.service.channel.report.ILossCustomerService;
 import com.dzf.service.pub.LogRecordEnum;
 
 /**
- * 加盟商管理
+ * 流失客户
  * 
  */
 @SuppressWarnings("serial")
