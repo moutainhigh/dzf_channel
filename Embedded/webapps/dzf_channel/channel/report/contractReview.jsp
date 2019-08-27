@@ -90,11 +90,11 @@
 				<div class="time_col time_colp10">
 					<input id="dqdate" type="radio" name="seledate" checked />
 					<label style="text-align:right;width:70px;">到期月份：</label>
-					<input type="text" id="stdate" class="easyui-textbox" data-options="editable:false"
-						style="width:130px;height:27px;" value=<%=ym%> />
-					-
-					<input type="text" id="ovdate" class="easyui-textbox" data-options="editable:false"
-						style="width:130px;height:27px;" value=<%=bym%> />
+					<font><input type="text" id="stdate" class="easyui-textbox" data-options="editable:false"
+						style="width:130px;height:27px;" value=<%=ym%> /><font>
+					<font>-</font>
+					<font><input type="text" id="ovdate" class="easyui-textbox" data-options="editable:false"
+						style="width:130px;height:27px;" value=<%=bym%> /><font>
 				</div>
 				<div class="time_col time_colp10">
 					<input id="tddate" type="radio" name="seledate" />
@@ -122,7 +122,7 @@
 						<option value="1">小规模</option>
 						<option value="2">一般人</option>
 					</select>
-					<label style="width:85px;text-align:right">套餐类型：</label>
+					<label style="width:74px;text-align:right">套餐类型：</label>
 					<select id="comptype" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:100px;height:28px;" editable="false">
 						<option value="-1">全部</option>
@@ -151,7 +151,7 @@
 					</select>
 				</div>
 				<div class="time_col time_colp10">
-					<label style="width:74px;text-align:right">客户类型：</label>
+					<label style="width:85px;text-align:right">客户类型：</label>
 					<select id="isncust" class="easyui-combobox" data-options="panelHeight:'auto'" 
 						style="width:100px;height:28px;">
 						<option value="">全部</option>
@@ -160,10 +160,10 @@
 					</select>
 				</div>
 				<div class="time_col time_colp10">
-				<label style="text-align:right;width:74px;">大区：</label> 
+				<label style="text-align:right;width:85px;">大区：</label> 
 					<input id="aname"  name="aname" class="easyui-combobox" style="width:100px; height: 28px;" 
 						data-options="required:false,valueField:'name',textField:'name',panelHeight:100" editable="false" />  
-					<label style="width:85px;text-align:right">渠道经理：</label>
+					<label style="width:74px;text-align:right">渠道经理：</label>
 					<input id="mid"  name="mid" class="easyui-combobox" style="width:100px; height: 28px;" 
 						data-options="required:false,valueField:'id',textField:'name',panelHeight:100" editable="false" />  
 				</div>
