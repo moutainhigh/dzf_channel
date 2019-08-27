@@ -56,10 +56,10 @@
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width:100px;">停用日期：</label>
 					<input type="text" id="sbegdate" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=ym%> />
+						style="width:125px;height:30px;" value=<%=ym%> />
 					-
 					<input type="text" id="senddate" class="easyui-textbox" data-options="editable:false"
-						style="width:137px;height:30px;" value=<%=bym%> />
+						style="width:125px;height:30px;" value=<%=bym%> />
 				</div>
 				<div class="time_col time_colp10">
 					<label style="text-align:right;width: 100px;">大区：</label> 
