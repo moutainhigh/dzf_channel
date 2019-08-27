@@ -618,11 +618,11 @@ function load(){
 			field : 'submitime',
 			//sortable:true,
 			//sorter:charorderfun,
-			styler: function (value, row, index) {//扣款方式为续费
+			/*styler: function (value, row, index) {//扣款方式为续费
                 if (row.ictype == 2) {
                     return 'background:url(../../images/adde.png) no-repeat 132px 2px;';
                 }
-            }
+            }*/
 		}, {
 			width : '80',
 			title : '扣费日期',
