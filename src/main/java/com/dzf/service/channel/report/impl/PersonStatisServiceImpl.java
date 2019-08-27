@@ -29,6 +29,7 @@ import com.dzf.pub.cache.CorpCache;
 import com.dzf.pub.lang.DZFDateTime;
 import com.dzf.pub.lang.DZFDouble;
 import com.dzf.pub.lock.LockUtil;
+import com.dzf.pub.util.SafeCompute;
 import com.dzf.pub.util.SqlUtil;
 import com.dzf.service.channel.report.IPersonStatis;
 import com.dzf.service.pub.IPubService;
@@ -80,13 +81,13 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 							personStatisVO.getSellnum()!=null){
 						setVO.setXnum(0);
 						if(personStatisVO.getManagernum()!=null){
-							setVO.setXnum(setVO.getXnum()+personStatisVO.getManagernum());
+							setVO.setXnum(CommonUtil.getInteger(setVO.getXnum())+CommonUtil.getInteger(personStatisVO.getManagernum()));
 						}
 						if(personStatisVO.getDepartnum()!=null){
-							setVO.setXnum(setVO.getXnum()+personStatisVO.getDepartnum());
+							setVO.setXnum(CommonUtil.getInteger(setVO.getXnum())+CommonUtil.getInteger(personStatisVO.getDepartnum()));
 						}
 						if(personStatisVO.getSellnum()!=null){
-							setVO.setXnum(setVO.getXnum()+personStatisVO.getSellnum());
+							setVO.setXnum(CommonUtil.getInteger(setVO.getXnum())+CommonUtil.getInteger(personStatisVO.getSellnum()));
 						}
 					}
 					corpvo = CorpCache.getInstance().get(null, pk_corp);
@@ -117,13 +118,13 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 				pervo.setLznum(lznum);
 				if(pervo.getXnum()==null && pervo.getKnum()!=null){
 					pervo.setXtotal(null);
-					pervo.setTotal(pervo.getJms01()+pervo.getKnum());
-					pervo.setKtotal(new DZFDouble(pervo.getKnum()).div(pervo.getTotal()).multiply(100));
+					pervo.setTotal(CommonUtil.addInteger(pervo.getJms01(), pervo.getKnum()));
+					pervo.setKtotal(SafeCompute.div(CommonUtil.getDZFDouble(pervo.getKnum()), CommonUtil.getDZFDouble(pervo.getTotal())).multiply(100));
 				}
 				if(pervo.getKnum()==null && pervo.getXnum()!=null){
 					pervo.setKtotal(null);
-					pervo.setTotal(pervo.getJms01()+pervo.getXnum());
-					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
+					pervo.setTotal(CommonUtil.addInteger(pervo.getJms01(),pervo.getXnum()));
+					pervo.setXtotal(CommonUtil.getDZFDouble(pervo.getXnum()).div(CommonUtil.getDZFDouble(pervo.getTotal())).multiply(100));
 				}
 				if(pervo.getKnum()==null && pervo.getXnum()==null ){
 					pervo.setTotal(pervo.getJms01());
@@ -131,12 +132,12 @@ public class PersonStatisServiceImpl extends DataCommonRepImpl implements IPerso
 					pervo.setXtotal(null);
 				}
 				if(pervo.getKnum()!=null && pervo.getXnum()!=null){
-					pervo.setTotal(pervo.getKnum()+pervo.getJms01()+pervo.getXnum());
-					pervo.setKtotal(new DZFDouble(pervo.getKnum()).div(pervo.getTotal()).multiply(100));
-					pervo.setXtotal(new DZFDouble(pervo.getXnum()).div(pervo.getTotal()).multiply(100));
+					pervo.setTotal(CommonUtil.getInteger(pervo.getKnum())+CommonUtil.getInteger(pervo.getJms01())+CommonUtil.getInteger(pervo.getXnum()));
+					pervo.setKtotal(CommonUtil.getDZFDouble(pervo.getKnum()).div(CommonUtil.getDZFDouble(pervo.getTotal())).multiply(100));
+					pervo.setXtotal(CommonUtil.getDZFDouble(pervo.getXnum()).div(CommonUtil.getDZFDouble(pervo.getTotal())).multiply(100));
 				}
 				if(pervo.getLznum()!=null){
-					pervo.setLtotal(new DZFDouble(pervo.getLznum()).div(pervo.getTotal()+pervo.getLznum()).multiply(100));
+					pervo.setLtotal(CommonUtil.getDZFDouble(pervo.getLznum()).div(pervo.getTotal()+pervo.getLznum()).multiply(100));
 				}
 				
 			}
