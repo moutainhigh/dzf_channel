@@ -21,7 +21,6 @@
 %>
 
 <body class="dzf-skin">
-	<div class="wrapper">
 		<div id="List_panel" class="wrapper" style="width: 100%;/* overflow:hidden; */ height: 100%;" data-options="closed:false">
 		     <div class="mod-toolbar-top">
 		        <div class="mod-toolbar-content">
