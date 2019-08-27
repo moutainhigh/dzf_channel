@@ -12,12 +12,13 @@
 	.panel-body {
 		overflow: auto
 	}
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head> 
 <body>
+<div class="wrapper">
 	<input type="hidden" id="hidtype" value="2" >
 	<div id="listPanel" class="wrapper" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
@@ -77,7 +78,7 @@
 		</div>
 		
 	</div>
-	
+</div>	
 	
 	<div id="detail_dialog" class="easyui-dialog" title="加盟商联查" data-options="modal:true,closed:true" style="width:600px;height:400px;">
 		<div data-options="region:'center'" style="overflow-x:auto; overflow-y:auto;margin: 0 auto;width:90%;height:400px;padding:10px">
