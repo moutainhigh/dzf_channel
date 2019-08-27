@@ -10,13 +10,13 @@
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/channel/report/repcommon.js");%> charset="UTF-8" type="text/javascript"></script> 
 	<script src=<%UpdateGradeVersion.outversion(out,"../../js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 	<style type="text/css">
-	    .mod-toolbar-top {
+	    /* .mod-toolbar-top {
 			margin-right: 17px !important; 
-		}
+		} */
 	</style>
 </head>
 
-<body class="dzf-skin">
+<body>
 	<div class="wrapper">
 		<div id="List_panel" class="wrapper" style="width: 100%;/* overflow:hidden; */ height: 100%;" data-options="closed:false">
 		     <div class="mod-toolbar-top">

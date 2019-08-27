@@ -23,15 +23,16 @@
 	src=<%UpdateGradeVersion.outversion(out, "../../js/channel/rebate/rebateinput.js");%>
 	charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head>
 
 <body>
+<div class="wrapper">
 	<!-- 列表界面begin -->
-	<div id="List_panel" class="wrapper" data-options="closed:false">
+	<div id="List_panel" class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -312,6 +313,7 @@
 		
 	</div>
 	<!-- 列表界面end -->
+</div>
 	
 	<!-- 查询对话框 begin -->
 	<div id="qrydialog" class="qijian_box" style="display:none; width:450px; height:260px">
