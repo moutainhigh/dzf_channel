@@ -21,4 +21,4 @@ gulp.task('css',function(){
     .pipe(gulp.dest('Embedded/webapps/dzf_channel/css'));
 });
 
-gulp.task('default',['css','script']);
+gulp.task('default',['script']);
