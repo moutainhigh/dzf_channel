@@ -27,6 +27,11 @@
 <script src=<%UpdateGradeVersion.outversion(out,request.getContextPath()+"/js/easyuiext.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/payment/paybalance.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/report/periodext.js");%> charset="UTF-8" type="text/javascript"></script>
+<style type="text/css">
+    .mod-toolbar-top {
+		margin-right: 17px !important; 
+	}
+</style>
 </head>
 
 <body>
