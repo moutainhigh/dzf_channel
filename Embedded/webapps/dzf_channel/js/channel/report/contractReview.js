@@ -438,8 +438,8 @@ function load(){
 		pageList : DZF.pageList,
 		showFooter:true,
 		remoteSort : false,//定义从服务器排序
-		sortName:"submitime",//排序字段
-		sortOrder:"desc",//排序方式
+		//sortName:"submitime",//排序字段
+		//sortOrder:"desc",//排序方式
 		columns : [ [ {
 			field : 'ck',
 			checkbox : true
