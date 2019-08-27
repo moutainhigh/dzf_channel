@@ -26,9 +26,9 @@
         padding: 1px 5px;
         text-align: center;
     }
-    .mod-toolbar-top {
-		margin-right: 0px !important; 
-	}
+    /* .mod-toolbar-top {
+		margin-right: 17px !important; 
+	} */
 </style>
 </head>
 <%
@@ -43,7 +43,8 @@
 <body>
 	<input id="uid" name="uid" type="hidden" value=<%= login_user %>> 
 	<input id="period" name="period" type="hidden" value=<%= period %>> 
-	<div id="List_panel" class="wrapper" data-options="closed:false">
+<div class="wrapper">
+	<div id="List_panel" class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -417,6 +418,6 @@
 			<table id="grid"></table>
 		</div>
 	</div>
-	
+</div>	
 </body>
 </html>
