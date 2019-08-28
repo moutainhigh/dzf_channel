@@ -28,13 +28,14 @@
 	.pos-background {
 		background-color: yellow;
 	}
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head>
 <body>
-	<div class="wrapper" style="overflow:hidden">
+<div class="wrapper">
+	<div class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -253,6 +254,7 @@
 		</div>
 	</div>
   </div>
+</div>
   
  	<!-- 渠道经理参照对话框及按钮 begin -->
 	<div id="manDlg"></div>

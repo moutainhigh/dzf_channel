@@ -15,13 +15,14 @@
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorder.js");%> charset="UTF-8" type="text/javascript"></script>
 <script src=<%UpdateGradeVersion.outversion(out, "../../js/channel/dealmanage/channelorderinvoice.js");%> charset="UTF-8" type="text/javascript"></script>
 <style type="text/css">
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head>
 <body>
-	<div id="List_panel" class="wrapper" data-options="closed:false">
+<div class="wrapper">
+	<div id="List_panel" class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -504,5 +505,6 @@
 		</div>
 		<!-- 渠道运营参照对话框及按钮 end -->
 	</div>
+</div>
 </body>
 </html>

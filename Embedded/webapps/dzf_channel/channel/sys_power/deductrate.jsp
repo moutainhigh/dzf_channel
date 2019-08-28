@@ -13,13 +13,14 @@
 	.selecticon {
 	    background: url(../../img/add_lan.png) no-repeat;
 	}
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head>
 <body>
-	<div id="List_panel" class="wrapper" data-options="closed:false">
+<div class="wrapper">
+	<div id="List_panel" class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -129,5 +130,6 @@
 		<!-- 变更记录 end -->
 		
 	</div>
+</div>
 </body>
 </html>

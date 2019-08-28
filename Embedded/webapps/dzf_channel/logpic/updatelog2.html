@@ -25,6 +25,7 @@
 <script>
 var res = '<div class="layui-timeline-content layui-text">';
 res = res+'<ul>';
+res = res+'<li><a href="#V1.190827"><cite>V1.190827</cite></a></li>';
 res = res+'<li><a href="#V1.190725"><cite>V1.190725</cite></a></li>';
 res = res+'<li><a href="#V1.190626"><cite>V1.190626</cite></a></li>';
 res = res+'<li><a href="#V1.190528"><cite>V1.190528</cite></a></li>';
@@ -75,9 +76,99 @@ $(document).ready(function (){
    <!--  <h1 class="site-h1">更新日志</h1>
     <hr> -->
     <blockquote class="updatelognav layui-elem-quote" style="margin-bottom:20px;background: #d9ecf6; border: 1px #ddd solid;">
-	 &nbsp;2019年07月25日重磅更新
+	 &nbsp;2019年08月27日重磅更新
     </blockquote>
     <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <a name="V1.190827"></a>
+            <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>
+            <div class="layui-timeline-content layui-text">
+                <div class="layui-timeline-title" >
+                    <h2 style="color: #FF5722;">V1.190827&nbsp;&nbsp;<span class="layui-badge-rim">2019-08-27</span></h2>
+                </div>
+                <ul>
+                    <li style="list-style:none">
+                        <h3 >1.交易管理新增商品查看</h3>
+                        <ul>
+                            <li style="list-style:none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/1.png')" src="./20190827/1.png">
+                            </li>
+                        </ul>
+
+                        <!--<h4 style="margin-top:10px;">a.累计入库数量：截止到当前系统时间入库单物料的入库数量合计</h4>-->
+                        <!--<h4 style="margin-top:10px;">b.累计发出数量：截止到当前系统时间物料处理累计发出数量合计</h4>-->
+                        <!--<h4 style="margin-top:10px;">c.待发出数量：待处理的物料申请单，物料申请数合计</h4>-->
+                        <!--<h4 style="margin-top:10px;">d.可申请数量：截止到当前系统时间累计入库-累计发出</h4>-->
+
+                        <h3 style="margin-top:20px;">2.续费统计支持按月查询续费率及续费额</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/2.png')" src="./20190827/2.png">
+                            </li>
+                        </ul>
+                        <h3 style="margin-top:20px;">3.新增流失客户明细</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/3.png')" src="./20190827/3.png">
+                            </li>
+                        </ul>
+                        <h3 style="margin-top:20px;">4.新增合同查询</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/4.png')" src="./20190827/4.png">
+                            </li>
+                        </ul>
+                        <h3 style="margin-top:20px;">5.渠道业绩分析增长率改为预付款金额</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/5.png')" src="./20190827/5.png">
+                            </li>
+                        </ul>
+                        <h3 style="margin-top:20px;">5.渠道业绩分析增长率改为预付款金额</h3>
+                        <ul>
+                            <li style="list-style: none">
+                                <img alt="" class="logimg" onclick ="parent.loaduplogpic('./logpic/20190827/5.png')" src="./20190827/5.png">
+                            </li>
+                        </ul>
+
+                        <h3 style="margin-top:10px;">6.渠道数据分析优化</h3>
+                        <ul>
+                            <li>增加客户类型、套餐类型、加盟商状态查询条件<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/6.png')" src="./20190827/6.png">
+                            </li>
+                            <li>客单价改为以加盟商为维度统计，客单价=合同代账费/提单量<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/7png')" src="./20190827/7.png">
+                            </li>
+                        </ul>
+                        <h3 style="margin-top:10px;">7.易用性优化</h3>
+                        <ul>
+                            <li>新增统计增加客户类型查询件<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/8.png')" src="./20190827/8.png">
+                            </li>
+                            <li>账务处理分析记账状态取客户最近的记账进度<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/9png')" src="./20190827/9.png">
+                            </li>
+                            <li>加盟商数据分析列表增加合计行<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/10.png')" src="./20190827/10.png">
+                            </li>
+                            <li>返点金额统计界面增加合计行<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/11.png')" src="./20190827/11.png">
+                            </li>
+                            <li>付款单确认、返点金额统计、扣款率设置列表界面增加大区、地区、渠道经理<br/>
+                                <img alt="" class="logimg"  onclick ="parent.loaduplogpic('./logpic/20190827/12.png')" src="./20190827/12.png">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+
+
+
+
+
         <li class="layui-timeline-item">
             <a name="V1.190725"></a>
             <i class="layui-icon layui-timeline-axis" style ="border:solid rgb(221, 221, 221) 1px"></i>

@@ -67,6 +67,7 @@ function add(){
 		height:340,
 		modal: true,
 	});
+	$('#datadlg').dialog('open').dialog('center');
 }
 
 /**
@@ -138,6 +139,7 @@ function onEdit(index){
 					height:340,
 					modal: true,
 				});
+				$('#datadlg').dialog('open').dialog('center');
 				var row = rs.rows;
 				$('#dataform').form('clear');
 				$('#dataform').form('load', row);

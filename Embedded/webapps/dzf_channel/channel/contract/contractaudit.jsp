@@ -29,17 +29,18 @@
         padding: 1px 5px;
         text-align: center;
     }
-    .mod-toolbar-top {
+    /* .mod-toolbar-top {
 		margin-right: 17px !important; 
-	}
+	} */
 </style>
 </head>
 <% 
 	String cuserid = (String) session.getAttribute(IGlobalConstants.login_user);
 %>
 <body>
+<div class="wrapper">
 	<input id="uid" name="uid" type="hidden" value=<%= cuserid %>> 
-	<div id="List_panel" class="wrapper" data-options="closed:false">
+	<div id="List_panel" class="wrapper" data-options="closed:false" style="width: 100%;overflow:hidden; height: 100%;">
 		<div class="mod-toolbar-top">
 			<div class="mod-toolbar-content">
 				<div class="left mod-crumb">
@@ -70,7 +71,8 @@
 		</div>
 		
 	</div>
-	
+</div>	
+
 	<!-- 查询对话框 begin -->
 	<div class="qijian_box" id="qrydialog" style="display:none; width:450px; height:290px">
 		<s class="s" style="left: 25px;"><i class="i"></i> </s>
